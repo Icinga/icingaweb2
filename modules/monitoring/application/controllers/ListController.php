@@ -14,6 +14,8 @@ use Icinga\Web\Widget\FilterBox;
 use Icinga\Web\Widget\Chart\HistoryColorGrid;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget;
+use Icinga\Module\Monitoring\Web\Widget\SelectBox;
+use Icinga\Module\Monitoring\Form\StatehistoryForm;
 
 class Monitoring_ListController extends Controller
 {
@@ -359,15 +361,43 @@ class Monitoring_ListController extends Controller
 
     public function statehistorysummaryAction()
     {
-        $this->addTitleTab('statehistorysummary', 'Critical Events');
+        $this->addTitleTab('statehistorysummary', 'State Summary');
+
+        $form = new StatehistoryForm();
+        $form->setEnctype(Zend_Form::ENCTYPE_URLENCODED);
+        $form->setMethod('get');
+        $form->setTokenDisabled();
+        $form->setRequest($this->getRequest());
+        $form->buildForm();
+        $this->view->form = $form;
+
+        $orientation = $this->params->shift('horizontal', 0) ? 'horizontal' : 'vertical';
+
+        $orientationBox = new SelectBox(
+            'orientation',
+            array(
+                '0' => t('Vertical'),
+                '1' => t('Horizontal')
+            ),
+            t('Orientation'),
+            'horizontal'
+        );
+        $orientationBox->applyRequest($this->getRequest());
+
         $query = $this->backend->select()->from(
             'stateHistorySummary',
-            array('day', 'cnt_critical')
-        )->getQuery()->order('day');
-        $query->limit(365);
-        $this->view->summary = $query->fetchAll();
-        $this->view->grid = new HistoryColorGrid();
-        $this->handleFormatRequest($query);
+            array('day', $form->getValue('state'))
+        );
+        $this->params->shift('objecttype');
+        $this->params->shift('from');
+        $this->params->shift('to');
+        $this->params->shift('state');
+        $this->params->shift('btn_submit');
+        $this->applyFilters($query);
+        $this->view->summary = $query->getQuery()->fetchAll();
+        $this->view->column = $form->getValue('state');
+        $this->view->orientationBox = $orientationBox;
+        $this->view->orientation = $orientation;
     }
 
     public function contactgroupsAction()
@@ -649,6 +679,7 @@ class Monitoring_ListController extends Controller
             'hosts',
             'services',
             'eventhistory',
+            'statehistorysummary',
             'notifications'
         ))) {
             $tabs->extend(new OutputFormat())->extend(new DashboardAction());
