@@ -44,3 +44,7 @@ $this->addHelperFunction('prefixedTimeUntil', function ($timestamp, $ucfirst = f
         Format::prefixedTimeUntil($timestamp, $ucfirst)
     );
 });
+
+$this->addHelperFunction('dateTimeRenderer', function ($dateTimeOrTimestamp, $future = false) {
+    return DateTimeRenderer::create($dateTimeOrTimestamp, $future);
+});

@@ -543,25 +543,39 @@
         refreshTimeSince: function () {
 
             $('.timesince').each(function (idx, el) {
-                var m = el.innerHTML.match(/^(.*?)(-?\d+)m\s(-?\d+)s/);
+
+                // todo remove after replace timeSince
+                var mp = el.innerHTML.match(/^(.*?)(-?\d+)d\s(-?\d+)h/);
+                if (mp !== null) {
+                    return true;
+                }
+
+                var m = el.innerHTML.match(/^(.*?)(-?\d+)(.+\s)(-?\d+)(.+)/);
                 if (m !== null) {
                     var nm = parseInt(m[2]);
-                    var ns = parseInt(m[3]);
+                    var ns = parseInt(m[4]);
                     if (ns < 59) {
                         ns++;
                     } else {
                         ns = 0;
                         nm++;
                     }
-                    $(el).html(m[1] + nm + 'm ' + ns + 's');
+                    $(el).html(m[1] + nm + m[3] + ns + m[5]);
                 }
             });
 
             $('.timeuntil').each(function (idx, el) {
-                var m = el.innerHTML.match(/^(.*?)(-?\d+)m\s(-?\d+)s/);
+
+                // todo remove after replace timeUntil
+                var mp = el.innerHTML.match(/^(.*?)(-?\d+)d\s(-?\d+)h/);
+                if (mp !== null) {
+                    return true;
+                }
+
+                var m = el.innerHTML.match(/^(.*?)(-?\d+)(.+\s)(-?\d+)(.+)/);
                 if (m !== null) {
                     var nm = parseInt(m[2]);
-                    var ns = parseInt(m[3]);
+                    var ns = parseInt(m[4]);
                     var signed = '';
                     var sec = 0;
 
@@ -589,7 +603,7 @@
                     nm = Math.floor(sec/60);
                     ns = sec - nm * 60;
 
-                    $(el).html(m[1] + signed + nm + 'm ' + ns + 's');
+                    $(el).html(m[1] + signed + nm + m[3] + ns + m[5]);
                 }
             });
         },
