@@ -8,10 +8,7 @@ use Icinga\Web\Form;
 use Icinga\Web\Request;
 use Icinga\Web\Widget\AbstractWidget;
 
-/**
- * @todo Might be better if this is a generic selection widget.
- */
-class TimelineIntervalBox extends AbstractWidget
+class SelectBox extends AbstractWidget
 {
     /**
      * The name of the form that will be created
@@ -28,6 +25,20 @@ class TimelineIntervalBox extends AbstractWidget
     private $values;
 
     /**
+     * The label displayed next to the select box
+     *
+     * @var string
+     */
+    private $label;
+
+    /**
+     * The name of the url parameter to set
+     *
+     * @var string
+     */
+    private $parameter;
+
+    /**
      * A request object used for initial form population
      *
      * @var Request
@@ -39,11 +50,15 @@ class TimelineIntervalBox extends AbstractWidget
      *
      * @param   string  $name       The name of the form that will be created
      * @param   array   $values     An array containing all intervals with their associated labels
+     * @param   string  $label      The label displayed next to the select box
+     * @param   string  $param      The request parameter name to set
      */
-    public function __construct($name, array $values)
+    public function __construct($name, array $values, $label = 'Select', $param = 'selection')
     {
         $this->name = $name;
         $this->values = $values;
+        $this->label = $label;
+        $this->parameter = $param;
     }
 
     /**
@@ -88,9 +103,9 @@ class TimelineIntervalBox extends AbstractWidget
         $form->setName($this->name);
         $form->addElement(
             'select',
-            'interval',
+            $this->parameter,
             array(
-                'label'         => 'Timeline Interval',
+                'label'         => $this->label,
                 'multiOptions'  => $this->values,
                 'class'         => 'autosubmit'
             )

@@ -26,7 +26,8 @@ class JavaScript
         'js/icinga/behavior/tooltip.js',
         'js/icinga/behavior/sparkline.js',
         'js/icinga/behavior/tristate.js',
-        'js/icinga/behavior/navigation.js'
+        'js/icinga/behavior/navigation.js',
+        'js/icinga/behavior/form.js'
     );
 
     protected static $vendorFiles = array(

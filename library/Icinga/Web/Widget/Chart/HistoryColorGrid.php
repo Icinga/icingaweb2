@@ -28,29 +28,32 @@ class HistoryColorGrid extends AbstractWidget {
     private $maxValue = 1;
 
     private $start = null;
-
     private $end = null;
-
     private $data = array();
-
     private $color;
+    public $opacity = 1.0;
 
-    public function __construct($color = '#51e551') {
+    public function __construct($color = '#51e551', $start = null, $end = null) {
         $this->setColor($color);
+        if (isset($start)) {
+            $this->start = $this->tsToDateStr($start);
+        }
+        if (isset($end)) {
+            $this->end = $this->tsToDateStr($end);
+        }
     }
 
     /**
      * Set the displayed data-set
      *
-     * @param $data array   The values to display.
-     *                        properties for each entry:
+     * @param $events array The history events to display as an array of arrays:
      *                          value: The value to display
      *                          caption: The caption on mouse-over
      *                          url: The url to open on click.
      */
-    public function setData(array $data)
+    public function setData(array $events)
     {
-        $this->data = $data;
+        $this->data = $events;
         $start = time();
         $end = time();
         foreach ($this->data as $entry) {
@@ -68,8 +71,12 @@ class HistoryColorGrid extends AbstractWidget {
                 $start = $time;
             }
         }
-        $this->start = $this->tsToDateStr($start);
-        $this->end = $this->tsToDateStr($end);
+        if (!isset($this->start)) {
+            $this->start = $this->tsToDateStr($start);
+        }
+        if (!isset($this->end)) {
+            $this->end = $this->tsToDateStr($end);
+        }
     }
 
     /**
@@ -80,6 +87,16 @@ class HistoryColorGrid extends AbstractWidget {
     public function setColor($color)
     {
         $this->color = $color;
+    }
+
+    /**
+     * Set the used opacity
+     *
+     * @param $opacity
+     */
+    public function setOpacity($opacity)
+    {
+        $this->opacity = $opacity;
     }
 
     /**
@@ -104,16 +121,17 @@ class HistoryColorGrid extends AbstractWidget {
      */
     private function renderDay($day)
     {
-        if (array_key_exists($day, $this->data)) {
+        if (array_key_exists($day, $this->data) && $this->data[$day]['value'] > 0) {
             $entry = $this->data[$day];
             return'<a ' .
-                'style="background-color:' . $this->calculateColor($entry['value']) . ';" ' .
+                'style="background-color:' . $this->calculateColor($entry['value']) . '; '
+                    . ' opacity: ' . $this->opacity . ';"' .
                 'title="' . $entry['caption'] . '" ' .
                 'href="'  . $entry['url'] . '"' .
             '>&nbsp;</a>';
         } else {
             return '<a ' .
-                'style="background-color:' . $this->calculateColor(0) . ';" ' .
+                'style="background-color:' . $this->calculateColor(0) . '; ' . ' opacity: ' . $this->opacity . ';" ' .
                 'title="No entries for ' . $day . '" ' .
             '></a>';
         }
@@ -130,13 +148,14 @@ class HistoryColorGrid extends AbstractWidget {
     {
         $weeks = $grid['weeks'];
         $months = $grid['months'];
+        $years = $grid['years'];
         $html = '<table class="historycolorgrid">';
         $html .= '<tr><th></th>';
         $old = -1;
-        foreach ($months as $month) {
+        foreach ($months as $week => $month) {
             if ($old !== $month) {
                 $old = $month;
-                $txt = $this->monthName($month);
+                $txt = $this->monthName($month, $years[$week]);
             } else {
                 $txt = '';
             }
@@ -157,6 +176,7 @@ class HistoryColorGrid extends AbstractWidget {
      */
     private function renderVertical($grid)
     {
+        $years = $grid['years'];
         $weeks = $grid['weeks'];
         $months = $grid['months'];
         $html = '<table class="historycolorgrid">';
@@ -176,7 +196,7 @@ class HistoryColorGrid extends AbstractWidget {
             }
             if ($old !== $months[$index]) {
                 $old = $months[$index];
-                $txt = $this->monthName($old);
+                $txt = $this->monthName($old, $years[$index]);
             } else {
                 $txt = '';
             }
@@ -220,6 +240,7 @@ class HistoryColorGrid extends AbstractWidget {
         $weeks   = array(array());
         $week    = 0;
         $months  = array();
+        $years   = array();
         $start   = strtotime($this->start);
         $year    = intval(date('Y', $start));
         $month   = intval(date('n', $start));
@@ -232,6 +253,7 @@ class HistoryColorGrid extends AbstractWidget {
 
         $date = $this->toDateStr($day, $month, $year);
         $weeks[0][$weekday] = $date;
+        $years[0] = $year;
         $months[0] = $month;
         while ($date !== $this->end) {
             $day++;
@@ -242,6 +264,7 @@ class HistoryColorGrid extends AbstractWidget {
                 // PRESENT => The last day of week determines the month
                 if ($this->weekFlow === self::CAL_GROW_INTO_PRESENT) {
                     $months[$week] = $month;
+                    $years[$week] = $year;
                 }
                 $week++;
             }
@@ -257,21 +280,25 @@ class HistoryColorGrid extends AbstractWidget {
                 // PAST => The first day of each week determines the month
                 if ($this->weekFlow === self::CAL_GROW_INTO_PAST) {
                     $months[$week] = $month;
+                    $years[$week] = $year;
                 }
             }
             $date = $this->toDateStr($day, $month, $year);
             $weeks[$week][$weekday] = $date;
         };
+        $years[$week] = $year;
         $months[$week] = $month;
         if ($this->weekFlow == self::CAL_GROW_INTO_PAST) {
             return array(
                 'weeks'  => array_reverse($weeks),
-                'months' => array_reverse($months)
+                'months' => array_reverse($months),
+                'years'  => array_reverse($years)
             );
         }
         return array(
             'weeks'  => $weeks,
-            'months' => $months
+            'months' => $months,
+            'years'  => $years
         );
     }
 
@@ -282,9 +309,10 @@ class HistoryColorGrid extends AbstractWidget {
      *
      * @return string   The
      */
-    private function monthName($month)
+    private function monthName($month, $year)
     {
-        $dt = DateTimeFactory::create('2000-' . $month . '-01');
+        // TODO: find a way to render years without messing up the layout
+        $dt = DateTimeFactory::create($year . '-' . $month . '-01');
         return $dt->format('M');
     }
 
