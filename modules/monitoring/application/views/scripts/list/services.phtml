@@ -19,7 +19,7 @@ if (!$this->compact): ?>
 <?= $this->widget('limiter')->setCurrentPageCount($this->services->count()) ?>
 <?= $this->paginationControl($services, null, null, array('preserve' => $this->preserve)) ?>
 <?php endif ?>
-<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/service?' . $this->filter->toQueryString())) ?>
+<?= $this->selectionToolbar('multi', $this->href('monitoring/services/show?' . $this->filter->toQueryString())) ?>
 </div>
 
 <div class="content">
@@ -30,7 +30,7 @@ if (!$this->compact): ?>
 <?php endif ?>
 <table data-base-target="_next"
     class="action multiselect <?php if ($this->compact): ?> compact<?php endif ?>" style="table-layout: auto;"
-    data-icinga-multiselect-url="<?= $this->href("monitoring/multi/service") ?>"
+    data-icinga-multiselect-url="<?= $this->href("monitoring/services/show") ?>"
     data-icinga-multiselect-data="service,host">
   <tbody>
 <?php
