@@ -12,10 +12,11 @@
 <?php return; endif ?>
 
 <?php
-function contactsLink($match, $self) {
+$self = $this;
+function contactsLink($match, $view) {
     $links = array();
     foreach (preg_split('/,\s/', $match[1]) as $contact) {
-        $links[] = $self->qlink($contact, 'monitoring/show/contact', array('contact' => $contact));
+        $links[] = $view->qlink($contact, 'monitoring/show/contact', array('contact' => $contact));
     }
     return '[' . implode(', ', $links) . ']';
 }
@@ -39,7 +40,7 @@ function contactsLink($match, $self) {
 
           $msg = preg_replace_callback(
               '/^\[([^\]]+)\]/',
-              function($match) { return contactsLink($match, $this); },
+              function($match) use ($self) { return contactsLink($match, $self); },
               $this->escape($event->output)
           );
           break;
