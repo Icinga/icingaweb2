@@ -83,7 +83,7 @@
               date('H:i', $comment->expiration)
             ) : $this->translate('This comment does not expire.'); ?>
         </td>
-        <td style="width: 2em">
+        <td style="width: 2em" data-base-target="self">
           <?php
           $delCommentForm = clone $delCommentForm;
           $delCommentForm->populate(array('comment_id' => $comment->id, 'redirect' => $this->url));

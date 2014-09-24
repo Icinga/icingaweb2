@@ -92,7 +92,7 @@
         <?php endif ?>
           </small>
         </td>
-        <td style="width: 2em">
+        <td style="width: 2em" data-base-target="self">
           <?php
           $delDowntimeForm = clone $delDowntimeForm;
           $delDowntimeForm->populate(array('downtime_id' => $downtime->id, 'redirect' => $this->url));
