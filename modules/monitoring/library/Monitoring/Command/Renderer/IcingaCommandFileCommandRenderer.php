@@ -322,22 +322,10 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
 
     public function renderDeleteComment(DeleteCommentCommand $command)
     {
-        $object = $command->getObject();
         if ($command->getObject()->getType() === $command::TYPE_HOST) {
-            /** @var \Icinga\Module\Monitoring\Object\Host $object */
-            $commandString = sprintf(
-                '%s;%s',
-                'DEL_HOST_DOWNTIME',
-                $object->getName()
-            );
+            $commandString = 'DEL_HOST_COMMENT';
         } else {
-            /** @var \Icinga\Module\Monitoring\Object\Service $object */
-            $commandString = sprintf(
-                '%s;%s;%s',
-                'DEL_SVC_COMMENT',
-                $object->getHost()->getName(),
-                $object->getName()
-            );
+            $commandString = 'DEL_SVC_COMMENT';
         }
         return sprintf(
             '%s;%u',
@@ -348,22 +336,10 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
 
     public function renderDeleteDowntime(DeleteDowntimeCommand $command)
     {
-        $object = $command->getObject();
         if ($command->getObject()->getType() === $command::TYPE_HOST) {
-            /** @var \Icinga\Module\Monitoring\Object\Host $object */
-            $commandString = sprintf(
-                '%s;%s',
-                'DEL_HOST_DOWNTIME',
-                $object->getName()
-            );
+            $commandString = 'DEL_HOST_DOWNTIME';
         } else {
-            /** @var \Icinga\Module\Monitoring\Object\Service $object */
-            $commandString = sprintf(
-                '%s;%s;%s',
-                'DEL_SVC_DOWNTIME',
-                $object->getHost()->getName(),
-                $object->getName()
-            );
+            $commandString = 'DEL_SVC_DOWNTIME';
         }
         return sprintf(
             '%s;%u',
