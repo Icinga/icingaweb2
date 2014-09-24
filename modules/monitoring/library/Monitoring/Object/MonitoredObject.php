@@ -248,7 +248,7 @@ abstract class MonitoredObject
      */
     public function fetchHostgroups()
     {
-        $hostGroups = $this->backend->select()->from('hostGroup', array(
+        $hostGroups = $this->backend->select()->from('hostgroup', array(
             'hostgroup_name',
             'hostgroup_alias'
         ))
@@ -333,7 +333,7 @@ abstract class MonitoredObject
      */
     public function fetchServicegroups()
     {
-        $serviceGroups = $this->backend->select()->from('serviceGroup', array(
+        $serviceGroups = $this->backend->select()->from('servicegroup', array(
                 'servicegroup_name',
                 'servicegroup_alias'
         ))
@@ -350,7 +350,7 @@ abstract class MonitoredObject
      */
     public function fetchContactgroups()
     {
-        $contactsGroups = $this->backend->select()->from('contactGroup', array(
+        $contactsGroups = $this->backend->select()->from('contactgroup', array(
                 'contactgroup_name',
                 'contactgroup_alias'
         ))
