@@ -9,4 +9,6 @@ use Icinga\Exception\IcingaException;
 /**
  * Exception thrown if a command was not sent
  */
-class TransportException extends IcingaException {}
+class TransportException extends IcingaException
+{
+}

@@ -39,13 +39,6 @@ class ScheduleServiceCheckCommand extends ObjectCommand
     protected $forced = false;
 
     /**
-     * Whether to schedule a check of all services associated with a particular host
-     *
-     * @var bool
-     */
-    protected $ofAllServices = false;
-
-    /**
      * Set the time when the next check of a host or service is to be scheduled
      *
      * @param   int $checkTime Unix timestamp
