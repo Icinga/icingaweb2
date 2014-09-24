@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
+use Countable;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\SimpleQuery;
 use Icinga\Data\Browsable;
@@ -18,7 +19,7 @@ use Icinga\Module\Monitoring\Backend;
 /**
  * A read-only view of an underlying query
  */
-abstract class DataView implements Browsable, Filterable, Sortable
+abstract class DataView implements Browsable, Countable, Filterable, Sortable
 {
     /**
      * The query used to populate the view
@@ -26,7 +27,7 @@ abstract class DataView implements Browsable, Filterable, Sortable
      * @var SimpleQuery
      */
     private $query;
-    
+
     protected $filter;
 
     protected $connection;
@@ -327,5 +328,15 @@ public function dump()
     public function paginate($itemsPerPage = null, $pageNumber = null)
     {
         return $this->query->paginate($itemsPerPage, $pageNumber);
+    }
+
+    /**
+     * Count result set
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->query);
     }
 }

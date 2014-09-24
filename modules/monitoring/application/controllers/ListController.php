@@ -4,6 +4,8 @@
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Form\Command\Object\DeleteCommentCommandForm;
+use Icinga\Module\Monitoring\Form\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Web\Url;
 use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -299,6 +301,7 @@ class Monitoring_ListController extends Controller
             'downtime_scheduled_end'   => 'Scheduled End',
             'downtime_duration'        => 'Duration',
         ));
+        $this->view->delDowntimeForm = new DeleteDowntimeCommandForm();
     }
 
     /**
@@ -456,6 +459,7 @@ class Monitoring_ListController extends Controller
                 'comment_expiration' => 'Expiration',
             )
         );
+        $this->view->delCommentForm = new DeleteCommentCommandForm();
     }
 
     public function servicegroupsAction()

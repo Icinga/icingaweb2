@@ -1,9 +1,3 @@
-<?php
-
-$helper = $this->getHelper('CommandForm');
-
-?>
-
 <?php if (false === $this->compact): ?>
 <div class="controls">
   <?= $this->tabs->render($this); ?>
@@ -56,7 +50,7 @@ $helper = $this->getHelper('CommandForm');
         </td>
         <td>
         <?php if ($comment->objecttype === 'service'): ?>
-          <?= $this->icon('service.png'); ?> <a href="<?= $this->href('monitoring/show/service', array(
+          <?= $this->icon('service.png'); ?> <a href="<?= $this->href('monitoring/service/show', array(
             'host'    => $comment->host,
             'service' => $comment->service,
           )); ?>">
@@ -66,7 +60,7 @@ $helper = $this->getHelper('CommandForm');
             <?= $this->translate('on') . ' ' . $comment->host; ?>
           </small>
         <?php else: ?>
-          <?= $this->icon('host.png'); ?> <a href="<?= $this->href('monitoring/show/host', array(
+          <?= $this->icon('host.png'); ?> <a href="<?= $this->href('monitoring/host/show', array(
             'host' => $comment->host
           )); ?>">
             <?= $comment->host; ?>
@@ -89,23 +83,17 @@ $helper = $this->getHelper('CommandForm');
               date('H:i', $comment->expiration)
             ) : $this->translate('This comment does not expire.'); ?>
         </td>
-        <?php
-          $data = array(
-            'commentid' => $comment->id,
-            'host'      => $comment->host
-          );
-          if ($comment->objecttype === 'service') {
-            $data['service'] = $comment->service;
+        <td style="width: 2em" data-base-target="self">
+          <?php
+          $delCommentForm = clone $delCommentForm;
+          $delCommentForm->populate(array('comment_id' => $comment->id, 'redirect' => $this->url));
+          if ($comment->objecttype === 'host') {
+            $delCommentForm->setAction($this->url('monitoring/host/remove-comment', array('host' => $comment->host)));
+          } else {
+            $delCommentForm->setAction($this->url('monitoring/service/remove-comment', array('host' => $comment->host, 'service' => $comment->service)));
           }
-        ?>
-        <td style="width: 2em">
-          <?= $helper->labelSubmitForm(
-            'X',
-            $this->translate('Remove Comment'),
-            'link-like',
-            'removecomment',
-            $data
-          ); ?>
+          echo $delCommentForm;
+          ?>
         </td>
       </tr>
 <?php endforeach ?>

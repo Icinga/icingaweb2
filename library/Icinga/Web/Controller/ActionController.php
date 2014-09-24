@@ -39,10 +39,6 @@ class ActionController extends Zend_Controller_Action
      */
     protected $requiresAuthentication = true;
 
-    private $config;
-
-    private $configs = array();
-
     private $autorefreshInterval;
 
     private $reloadCss = false;
@@ -91,23 +87,29 @@ class ActionController extends Zend_Controller_Action
         }
 
         $this->view->tabs = new Tabs();
+        $this->prepareInit();
         $this->init();
+    }
+
+    /**
+     * Prepare controller initialization
+     *
+     * As it should not be required for controllers to call the parent's init() method, base controllers should use
+     * prepareInit() in order to prepare the controller initialization.
+     *
+     * @see \Zend_Controller_Action::init() For the controller initialization method.
+     */
+    protected function prepareInit()
+    {
     }
 
     public function Config($file = null)
     {
         if ($file === null) {
-            if ($this->config === null) {
-                $this->config = Config::app();
-            }
-            return $this->config;
+            return Config::app();
         } else {
-            if (! array_key_exists($file, $this->configs)) {
-                $this->configs[$file] = Config::module($module, $file);
-            }
-            return $this->configs[$file];
+            return Config::app($file);
         }
-        return $this->config;
     }
 
     public function Auth()

@@ -223,7 +223,7 @@ class DbQuery extends SimpleQuery
      */
     public function isTimestamp($field)
     {
-        return $this;
+        return false;
     }
 
     public function whereToSql($col, $sign, $expression)

@@ -1,179 +1,55 @@
 <div class="controls">
-<?= $this->tabs ?>
+    <?= $this->tabs ?>
 </div>
-<?php
-
-$ps = $this->programstatus;
-$cf = $this->getHelper('CommandForm');
-
-?>
 
 <div class="content processinfo">
-<p>Backend <strong><?= $this->backendName; ?></strong>
-<?= $ps->is_currently_running === '1'
-    ? sprintf(
-        $this->translate('has been running with PID %d '),
-        $ps->process_id
-    ) . $this->prefixedTimeSince($ps->program_start_time)
-    : $this->translate('is not running'); ?>.
-
-<table class="avp">
-  <tbody>
-    <tr>
-      <th><?= $this->translate('Last status update'); ?></th>
-      <td><?= $this->timeSince($ps->status_update_time) ?> ago</td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Last check command'); ?></th>
-      <td><?= $this->timeSince($ps->last_command_check) ?> ago</td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Global host event handler'); ?></th>
-      <td><?= $ps->global_host_event_handler ? $ps->global_host_event_handler : $this->translate('Not set'); ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Global service event handler'); ?></th>
-      <td><?= $ps->global_service_event_handler ? $ps->global_service_event_handler : $this->translate('Not set'); ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Notifications enabled'); ?></th>
-      <td><?= $cf->toggleSubmitForm(
-          '',
-          $ps->notifications_enabled,
-          'enablenotifications',
-          'disablenotifications',
-          false,
-          array('global' => '1')
-      ) ?>
-<?php if ($ps->notifications_enabled === '1'): ?>
- <a rel="tooltip" title="<?= $this->translate('Disable notifications for a specific time on a program-wide basis'); ?>"
-    href="<?= $this->href('monitoring/command/disablenotificationswithexpire') ?>" data-base-target="_next">
-     <?= $this->translate('Temporarily disable'); ?>
- </a>
-<?php elseif ($ps->disable_notif_expire_time): ?>
-<?= sprintf($this->translate('Will be re-enabled in %s'), '<strong>' . $this->timeUntil($ps->disable_notif_expire_time) . '</strong>'); ?>
-</div>
-<?php endif; ?>
-      </td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Execute active service checks'); ?></th>
-      <td><?= $cf->toggleSubmitForm(
-          '',
-          $ps->active_service_checks_enabled,
-          'enableactivechecks',
-          'disableactivechecks',
-          false,
-          array('global' => 'service')
-      ) ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Accept passive service checks'); ?></th>
-      <td><?= $cf->toggleSubmitForm(
-          '',
-          $ps->passive_service_checks_enabled,
-          'startacceptingpassivechecks',
-          'stopacceptingpassivechecks',
-          false,
-          array('global' => 'service')
-      ) ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Execute active host checks'); ?></th>
-      <td><?= $cf->toggleSubmitForm(
-          '',
-          $ps->active_host_checks_enabled,
-          'enableactivechecks',
-          'disableactivechecks',
-          false,
-          array('global' => 'host')
-      ) ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Accept passive host checks'); ?></th>
-      <td><?= $cf->toggleSubmitForm(
-          '',
-          $ps->passive_host_checks_enabled,
-          'startacceptingpassivechecks',
-          'stopacceptingpassivechecks',
-          false,
-          array('global' => 'host')
-      ) ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Eventhandlers enabled'); ?></th>
-      <td><?= $cf->toggleSubmitForm(
-          '',
-          $ps->event_handlers_enabled,
-          'enableeventhandler',
-          'disableeventhandler',
-          false,
-          array('global' => '1')
-      ) ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Obsessing over host checks'); ?></th>
-      <td><?= $cf->toggleSubmitForm(
-          '',
-          $ps->obsess_over_hosts,
-          'startobsessing',
-          'stopobsessing',
-          false,
-          array('global' => 'host')
-      ) ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Obsessing over service checks'); ?></th>
-      <td><?= $cf->toggleSubmitForm(
-          '',
-          $ps->obsess_over_services,
-          'startobsessing',
-          'stopobsessing',
-          false,
-          array('global' => 'service')
-      ) ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Flap detection enabled'); ?></th>
-      <td><?= $cf->toggleSubmitForm(
-          '',
-          $ps->flap_detection_enabled,
-          'enableflapdetection',
-          'disableflapdetection',
-          false,
-          array('global' => '1')
-      ) ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Process performance data'); ?></th>
-      <td><?= $cf->toggleSubmitForm(
-          '',
-          $ps->process_performance_data,
-          'enableperformancedata',
-          'disableperformancedata',
-          false,
-          array('global' => '1')
-      ) ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Monitoring Process'); ?></th>
-      <td><?= $cf->labelSubmitForm(
-          $this->translate('Restart'),
-          $this->translate('Restart the monitoring process'),
-          '',
-          'restartprocess'
-      ) ?>
-      <!--<?=
-      $cf->labelSubmitForm(
-          $this->translate('Shutdown monitoring process'),
-          $this->translate('Shutdown the monitoring process'),
-          'btn-cta',
-          'shutdownprocess'
-      );
-      ?>-->
-      </td>
-    </tr>
-  </tbody>
-</table>
-
+    <?php if ((bool) $this->programStatus->is_currently_running === true): ?>
+    <div class="backend-running">
+        <?= sprintf(
+            $this->translate('%s has been up and running with PID %d since %s'),
+            $this->backendName,
+            $this->programStatus->process_id,
+            $this->timeSince($this->programStatus->program_start_time)) ?>
+    </div>
+    <?php else: ?>
+    <div class="backend-not-running">
+        <?= sprintf($this->translate('%s is not running'), $this->backendName) ?>
+    </div>
+    <?php endif ?>
+    <table class="avp">
+        <tbody>
+        <tr>
+            <th><?= $this->translate('Program Start Time') ?></th>
+            <td><?= $this->dateFormat()->formatDateTime($this->programStatus->program_start_time) ?></td>
+        </tr>
+        <tr>
+            <th><?= $this->translate('Last Status Update'); ?></th>
+            <td><?= $this->timeSince($this->programStatus->status_update_time) ?> ago</td>
+        </tr>
+        <tr>
+            <th><?= $this->translate('Last External Command Check'); ?></th>
+            <td><?= $this->timeSince($this->programStatus->last_command_check) ?> ago</td>
+        </tr>
+        <tr>
+            <th><?= $this->translate('Last Log File Rotation'); ?></th>
+            <td><?= $this->programStatus->last_log_rotation
+                    ? $this->timeSince($this->programStatus->last_log_rotation)
+                    : $this->translate('N/A') ?></td>
+        </tr>
+        <tr>
+            <th><?= $this->translate('Global Service Event Handler'); ?></th>
+            <td><?= $this->programStatus->global_service_event_handler
+                    ? $this->programStatus->global_service_event_handler
+                    : $this->translate('N/A'); ?></td>
+        </tr>
+        <tr>
+            <th><?= $this->translate('Global Host Event Handler'); ?></th>
+            <td><?= $this->programStatus->global_host_event_handler
+                    ? $this->programStatus->global_host_event_handler
+                    : $this->translate('N/A'); ?></td>
+        </tr>
+        </tbody>
+    </table>
+    <hr>
+    <?= $this->toggleFeaturesForm ?>
 </div>

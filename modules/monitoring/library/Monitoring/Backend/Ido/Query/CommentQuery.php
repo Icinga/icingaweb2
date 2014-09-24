@@ -19,9 +19,9 @@ class CommentQuery extends IdoQuery
             'comment_is_persistent' => 'cm.is_persistent',
             'comment_expiration'    => 'CASE cm.expires WHEN 1 THEN UNIX_TIMESTAMP(cm.expiration_time) ELSE NULL END',
             'comment_host'          => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci',
-            'host'          => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci',
+            'host'                  => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci', // #7278, #7279
             'comment_service'       => 'so.name2 COLLATE latin1_general_ci',
-            'service'       => 'so.name2 COLLATE latin1_general_ci',
+            'service'               => 'so.name2 COLLATE latin1_general_ci', // #7278, #7279
             'comment_objecttype'    => "CASE WHEN ho.object_id IS NOT NULL THEN 'host' ELSE CASE WHEN so.object_id IS NOT NULL THEN 'service' ELSE NULL END END",
         )
     );

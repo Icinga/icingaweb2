@@ -24,7 +24,7 @@ class InlinePie extends AbstractWidget
     const NUMBER_FORMAT_TIME = 'time';
     const NUMBER_FORMAT_BYTES = 'bytes';
     const NUMBER_FORMAT_RATIO = 'ratio';
-        
+
     /**
      * The template string used for rendering this widget
      * The template string used for rendering this widget
@@ -137,7 +137,7 @@ EOD;
      * @var string
      */
     private $tooltipFormat = '<b>{{title}}</b></br> {{label}}: {{formatted}} ({{percent}}%)';
-    
+
     /**
      * The number format used to render numeric values in tooltips
      *
@@ -148,30 +148,36 @@ EOD;
     /**
      * Set if the tooltip for the empty area should be hidden
      *
-     * @param bool $hide    Whether to hide the empty area
+     * @param   bool $hide    Whether to hide the empty area
+     *
+     * @return  $this
      */
     public function setHideEmptyLabel($hide = true)
     {
         $this->hideEmptyLabel = $hide;
+        return $this;
     }
 
     /**
      * Set the data to be displayed.
      *
-     * @param $data array
+     * @param   $data array
+     *
+     * @return  $this
      */
     public function setData(array $data)
     {
         $this->data = $data;
         $this->url->setParam('data', implode(',', $data));
+        return $this;
     }
 
     /**
      * The labels to be displayed in the pie-chart
      *
-     * @param mixed $label     The label of the displayed value, or null for no labels
+     * @param   mixed $label     The label of the displayed value, or null for no labels
      *
-     * @return $this            Fluent interface
+     * @return  $this
      */
     public function setLabel($label)
     {
@@ -191,7 +197,9 @@ EOD;
     /**
      * Set the colors used by the slices of the pie chart.
      *
-     * @param array $colors
+     * @param   array $colors
+     *
+     * @return  $this
      */
     public function setColors(array $colors = null)
     {
@@ -201,18 +209,22 @@ EOD;
         } else {
             $this->url->setParam('colors', null);
         }
+        return $this;
     }
 
     /**
      * Set the used number format
      *
-     * @param $format   string  'bytes' or 'time'
+     * @param   $format   string  'bytes' or 'time'
+     *
+     * @return  $this
      */
     public function setNumberFormat($format)
     {
         $this->format = $format;
+        return $this;
     }
-    
+
     /**
      * A format string used to render the content of the piechart tooltips
      *
@@ -225,16 +237,23 @@ EOD;
      *      <li><b>percent</b>:   The percentage of the current value </li>
      * </ul>
      * Note: Changes will only affect JavaScript sparklines and not the SVG charts used for fallback
+     *
+     * @param   $format
+     *
+     * @return  $this
      */
     public function setTooltipFormat($format)
     {
         $this->tooltipFormat = $format;
+        return $this;
     }
 
     /**
-     * @param $height
+     * Set the height
      *
-     * @return $this
+     * @param   $height
+     *
+     * @return  $this
      */
     public function setHeight($height)
     {
@@ -245,17 +264,22 @@ EOD;
     /**
      * Set the border width of the pie chart
      *
-     * @param float $width    Width in px
+     * @param   float $width    Width in px
+     *
+     * @return  $this
      */
     public function setBorderWidth($width)
     {
         $this->borderWidth = $width;
+        return $this;
     }
 
     /**
      * Set the color of the pie chart border
      *
-     * @param string $col   The color string
+     * @param   string $col   The color string
+     *
+     * @return  $this
      */
     public function setBorderColor($col)
     {
@@ -263,9 +287,11 @@ EOD;
     }
 
     /**
-     * @param $width
+     * Set the width
      *
-     * @return $this
+     * @param   $width
+     *
+     * @return  $this
      */
     public function setWidth($width)
     {
@@ -276,7 +302,9 @@ EOD;
     /**
      * Set the styling of the created HtmlElement
      *
-     * @param string $style
+     * @param   string $style
+     *
+     * @return  $this
      */
     public function setStyle($style)
     {
@@ -286,11 +314,14 @@ EOD;
     /**
      * Set the title of the displayed Data
      *
-     * @param string $title
+     * @param   string $title
+     *
+     * @return  $this
      */
     public function setTitle($title)
     {
         $this->title = $title;
+        return $this;
     }
 
     /**
@@ -346,7 +377,7 @@ EOD;
     {
         $template = $this->template;
         $template = str_replace('{url}', $this->url, $template);
-        
+
         // style
         $template = str_replace('{width}', $this->width, $template);
         $template = str_replace('{height}', $this->height, $template);

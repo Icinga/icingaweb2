@@ -17,11 +17,7 @@ td.configTable {
   min-width: 300px;
 }
 
-div.config-form-group {
-  float: right;
-}
-
-.form-group {
+.form-element {
   margin-bottom: 1em;
 }
 
@@ -101,7 +97,7 @@ form.inline {
   display: inline;
 }
 
-button.link-like, input.link-like {
+form.link-like input[type="submit"] {
   color: @colorLinkDefault;
   font-weight: normal;
   border: none;
@@ -111,7 +107,7 @@ button.link-like, input.link-like {
   cursor: pointer;
 }
 
-button.link-like:hover, input.link-like:hover, input.link-like:focus {
+form.link-like input[type="submit"]:hover, form.link-like input[type="submit"]:focus {
   text-decoration: underline;
   background: none;
   color: @colorLinkDefault;
@@ -144,4 +140,39 @@ form ul.errors li {
   font-size: 0.8em;
 }
 
+.description {
+  display: block;
+}
 
+textarea {
+  height: 4em;
+
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  width: 100%;
+}
+
+input, select, textarea {
+  display: inline;
+}
+
+.control-group {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+  flex-flow: row wrap;
+}
+
+.control-group > div {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+@media (min-width: 480px) {
+  .control-group > div {
+    width: auto;
+  }
+}

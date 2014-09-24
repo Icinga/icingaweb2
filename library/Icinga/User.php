@@ -7,7 +7,6 @@ namespace Icinga;
 use DateTimeZone;
 use InvalidArgumentException;
 use Icinga\User\Preferences;
-use Icinga\User\Message;
 
 /**
  *  This class represents an authorized user
@@ -97,13 +96,6 @@ class User
      * @var Preferences
      */
     protected $preferences;
-
-    /**
-     * Queued notifications for this user.
-     *
-     * @var array()
-     */
-    protected $messages;
 
     /**
      * Creates a user object given the provided information
@@ -384,38 +376,6 @@ class User
         }
 
         return new DateTimeZone($tz);
-    }
-
-    /**
-     * Add a message that can be accessed from future requests, to this user.
-     *
-     * This function does NOT automatically write to the session, messages will not be persisted until you do.
-     *
-     * @param   Message     $msg    The message
-     */
-    public function addMessage(Message $msg)
-    {
-        $this->messages[] = $msg;
-    }
-
-    /**
-     * Get all currently pending messages
-     *
-     * @return  array   The messages
-     */
-    public function getMessages()
-    {
-        return isset($this->messages) ? $this->messages : array();
-    }
-
-    /**
-     * Remove all messages from this user
-     *
-     * This function does NOT automatically write the session, messages will not be persisted until you do.
-     */
-    public function clearMessages()
-    {
-        $this->messages = null;
     }
 
     /**

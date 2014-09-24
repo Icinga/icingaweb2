@@ -99,6 +99,7 @@ class SelectBox extends AbstractWidget
         $form = new Form();
         $form->setAttrib('class', 'inline');
         $form->setMethod('GET');
+        $form->setUidDisabled();
         $form->setTokenDisabled();
         $form->setName($this->name);
         $form->addElement(
@@ -107,12 +108,11 @@ class SelectBox extends AbstractWidget
             array(
                 'label'         => $this->label,
                 'multiOptions'  => $this->values,
-                'class'         => 'autosubmit'
+                'autosubmit'    => true
             )
         );
 
         if ($this->request) {
-            $form->setAction($this->request->getRequestUri());
             $form->populate($this->request->getParams());
         }
 

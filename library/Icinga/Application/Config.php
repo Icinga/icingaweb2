@@ -7,7 +7,6 @@ namespace Icinga\Application;
 use Zend_Config;
 use Zend_Config_Ini;
 use Icinga\Exception\NotReadableError;
-use Icinga\Exception\ProgrammingError;
 
 /**
  * Global registry of application and module configuration.
@@ -22,11 +21,11 @@ class Config extends Zend_Config
     public static $configDir;
 
     /**
-     * The INI file this configuration has been loaded from
+     * The INI file this configuration has been loaded from or should be written to
      *
      * @var string
      */
-    private $configFile;
+    protected $configFile;
 
     /**
      * Application config instances per file
@@ -42,30 +41,28 @@ class Config extends Zend_Config
      */
     protected static $modules = array();
 
-    private $instance;
-
     /**
-     * Load configuration from the config file $filename
+     * Load configuration from the given INI file
      *
-     * @param   string $filename    The filename to parse
-
+     * @param   string      $file   The file to parse
+     *
      * @throws  NotReadableError    When the file does not exist or cannot be read
      */
-    public function __construct($filename)
+    public static function fromIni($file)
     {
-        parent::__construct(array(), true);
-        $filepath = realpath($filename);
+        $config = new static(array(), true);
+        $filepath = realpath($file);
+
         if ($filepath === false) {
-            $this->configFile = $filename;
+            $config->setConfigFile($file);
         } elseif (is_readable($filepath)) {
-            $this->configFile = $filepath;
-            $this->merge(new Zend_Config_Ini($filepath));
+            $config->setConfigFile($filepath);
+            $config->merge(new Zend_Config_Ini($filepath));
         } else {
-            throw new NotReadableError(
-                'Cannot read config file "%s". Permission denied',
-                $filename
-            );
+            throw new NotReadableError('Cannot read config file "%s". Permission denied', $filepath);
         }
+
+        return $config;
     }
 
     /**
@@ -80,7 +77,7 @@ class Config extends Zend_Config
     public static function app($configname = 'config', $fromDisk = false)
     {
         if (!isset(self::$app[$configname]) || $fromDisk) {
-            self::$app[$configname] = new Config(self::resolvePath($configname . '.ini'));
+            self::$app[$configname] = Config::fromIni(self::resolvePath($configname . '.ini'));
         }
         return self::$app[$configname];
     }
@@ -113,7 +110,7 @@ class Config extends Zend_Config
         }
         $moduleConfigs = self::$modules[$modulename];
         if (!isset($moduleConfigs[$configname]) || $fromDisk) {
-            $moduleConfigs[$configname] = new Config(
+            $moduleConfigs[$configname] = Config::fromIni(
                 self::resolvePath('modules/' . $modulename . '/' . $configname . '.ini')
             );
         }
@@ -138,13 +135,26 @@ class Config extends Zend_Config
     }
 
     /**
-     * Return the application wide config file
+     * Return this config's file path
      *
-     * @return string
+     * @return  string
      */
     public function getConfigFile()
     {
         return $this->configFile;
+    }
+
+    /**
+     * Set this config's file path
+     *
+     * @param   string      $filepath   The path to the config file
+     *
+     * @return  self
+     */
+    public function setConfigFile($filepath)
+    {
+        $this->configFile = $filepath;
+        return $this;
     }
 
     /**

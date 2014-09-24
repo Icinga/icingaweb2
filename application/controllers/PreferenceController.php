@@ -3,11 +3,12 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Web\Controller\BasePreferenceController;
-use Icinga\Web\Widget\Tab;
-use Icinga\Application\Config as IcingaConfig;
 use Icinga\Web\Url;
-use Icinga\Form\Preference\GeneralForm;
-use Icinga\Web\Notification;
+use Icinga\Web\Widget\Tab;
+use Icinga\Application\Config;
+use Icinga\Form\PreferenceForm;
+use Icinga\Exception\ConfigurationError;
+use Icinga\User\Preferences\PreferencesStore;
 
 /**
  * Application wide preference controller for user preferences
@@ -34,27 +35,22 @@ class PreferenceController extends BasePreferenceController
     }
 
     /**
-     * General settings for date and time
+     * Show form to adjust user preferences
      */
     public function indexAction()
     {
-        $form = new GeneralForm();
-        $this->getTabs()->activate('general');
-        $form->setConfiguration(IcingaConfig::app())
-            ->setRequest($this->getRequest());
-        if ($form->isSubmittedAndValid()) {
-            try {
-                $this->savePreferences($form->getPreferences());
-                Notification::success(t('Preferences updated successfully'));
-                // Recreate form to show new values
-                // TODO(el): It must sufficient to call $form->populate(...)
-                $form = new GeneralForm();
-                $form->setConfiguration(IcingaConfig::app());
-                $form->setRequest($this->getRequest());
-            } catch (Exception $e) {
-                Notification::error(sprintf(t('Failed to persist preferences. (%s)'), $e->getMessage()));
-            }
+        $storeConfig = Config::app()->preferences;
+        if ($storeConfig === null) {
+            throw new ConfigurationError(t('You need to configure how to store preferences first.'));
         }
+
+        $user = $this->getRequest()->getUser();
+        $form = new PreferenceForm();
+        $form->setPreferences($user->getPreferences());
+        $form->setStore(PreferencesStore::create($storeConfig, $user));
+        $form->handleRequest();
+
         $this->view->form = $form;
+        $this->getTabs()->activate('general');
     }
 }

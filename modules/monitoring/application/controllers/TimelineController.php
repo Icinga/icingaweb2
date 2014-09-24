@@ -26,7 +26,7 @@ class Monitoring_TimelineController extends Controller
         $detailUrl = Url::fromPath('monitoring/list/eventhistory');
 
         $timeline = new TimeLine(
-            $this->backend->select()->from('eventHistory', 
+            $this->backend->select()->from('eventHistory',
                 array(
                     'name' => 'type',
                     'time' => 'timestamp'

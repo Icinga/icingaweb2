@@ -2,10 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Web\Form;
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Backend;
-use Icinga\Data\SimpleQuery;
 use Icinga\Web\Widget\Chart\InlinePie;
 use Icinga\Module\Monitoring\Form\Command\MultiCommandFlagForm;
 use Icinga\Web\Widget;

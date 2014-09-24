@@ -1,0 +1,131 @@
+<div class="controls">
+    <?= $this->tabs ?>
+</div>
+<div class="content">
+    <?php if (count($objects) === 0): ?>
+        <?= $this->translate('No services matching the filter') ?>
+    <?php else: ?>
+        <h1><?= sprintf($this->translate('Summary For %u Services'), count($objects)) ?></h1>
+        <table style="width: 100%; font-size: 0.8em;">
+            <tr>
+                <th colspan="2"><?= sprintf($this->translate('%u Services'), array_sum(array_values($serviceStates))) ?></th>
+                <th colspan="2"><?= sprintf($this->translate('%u Hosts'), array_sum(array_values($hostStates)))  ?></th>
+            </tr>
+            <tr>
+                <td align="center">
+                    <?= $this->serviceStatesPieChart ?>
+                </td>
+                <td>
+                    <?php
+
+                    foreach (array_filter($serviceStates) as $text => $count) {
+                        echo sprintf('%s: %u<br>', strtoupper($text), $count);
+                    }
+
+                    ?>
+                </td>
+                <td align="center">
+                    <?= $this->hostStatesPieChart ?>
+                </td>
+                <td>
+                    <?php
+
+                    foreach (array_filter($hostStates) as $text => $count) {
+                        echo sprintf('%s: %u<br>', strtoupper($text), $count);
+                    }
+
+                    ?>
+                </td>
+            </tr>
+        </table>
+
+        <div>
+            <a href="<?= $listAllLink ?>" title="<?= $this->translate('List all') ?>">
+                <?= $this->translate('List all') ?>
+            </a>
+        </div>
+
+        <hr>
+
+        <div>
+            <?= $checkNowForm ?>
+        </div>
+
+        <div>
+            <a href="<?= $rescheduleAllLink ?>">
+                <?= $this->icon('reschedule_petrol.png') ?>
+                <?= $this->translate('Reschedule service checks') ?>
+            </a>
+        </div>
+
+        <div>
+            <a href="<?= $downtimeAllLink ?>">
+                <?= $this->icon('in_downtime_petrol.png') ?>
+                <?= $this->translate('Schedule service downtimes') ?>
+            </a>
+        </div>
+
+        <?php if (! empty($unhandledObjects)): ?>
+        <h2>
+            <?= sprintf(
+                $this->translatePlural(
+                    '%u Unhandled Service Problem',
+                    '%u Unhandled Service Problems',
+                    count($unhandledObjects)
+                ),
+                count($unhandledObjects)
+            ) ?>
+        </h2>
+        <div>
+            <a href="<?= $downtimeUnhandledLink ?>"
+               title="<?= $this->translate('Schedule downtimes for unhandled problem services') ?>">
+                <?= $this->icon('in_downtime_petrol.png') ?>
+                <?= $this->translate('Schedule downtimes for unhandled problem services') ?>
+            </a>
+        </div>
+        <div>
+            <a href="<?= $acknowledgeUnhandledLink ?>"
+               title="<?= $this->translate('Acknowledge unhandled problem services') ?>">
+                <?= $this->icon('acknowledgement_petrol.png') ?>
+                <?= $this->translate('Acknowledge unhandled problem services') ?>
+            </a>
+        </div>
+        <?php endif ?>
+
+        <?php if (! empty($acknowledgedObjects)): ?>
+            <h2>
+                <?= sprintf(
+                    $this->translatePlural(
+                        '%u Acknowledged Service Problem',
+                        '%u Acknowledged Service Problems',
+                        count($acknowledgedObjects)
+                    ),
+                    count($acknowledgedObjects)
+                ) ?>
+            </h2>
+            <div>
+                <?= $removeAckForm ?>
+            </div>
+        <?php endif ?>
+
+        <?php if (! empty($objectsInDowntime)): ?>
+            <h2>
+                <a href="<?= $inDowntimeLink ?>"
+                   title="<?= $this->translate('Services in downtime') ?>">
+                    <?= $this->icon('in_downtime_petrol.png') ?>
+                    <?= $this->translate(sprintf('%u services are in downtime', count($objectsInDowntime))) ?>
+                </a>
+            </h2>
+        <?php endif ?>
+
+        <?php if (count($objects->getComments())): ?>
+            <h2>
+                <a href="<?= $havingCommentsLink ?>"
+                   title="<?= $this->translate('Comments') ?>">
+                    <?= $this->icon('comment.png') ?>
+                    <?= $this->translate(sprintf('%u comments', count($objects->getComments()))) ?>
+                </a>
+            </h2>
+        <?php endif ?>
+    <?php endif ?>
+</div>
