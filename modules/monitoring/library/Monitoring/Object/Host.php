@@ -61,13 +61,6 @@ class Host extends MonitoredObject
     protected $services;
 
     /**
-     * Stats
-     *
-     * @var object
-     */
-    protected $stats;
-
-    /**
      * Create a new host
      *
      * @param Backend   $backend    Backend to fetch host information from
@@ -157,36 +150,6 @@ class Host extends MonitoredObject
             $services[] = new Service($this->backend, $this->host, $service->service_description);
         }
         $this->services = $services;
-        return $this;
-    }
-
-    /**
-     * Fetch stats
-     *
-     * @return $this
-     */
-    public function fetchStats()
-    {
-        $this->stats = $this->backend->select()->from('statusSummary', array(
-            'services_total',
-            'services_ok',
-            'services_problem',
-            'services_problem_handled',
-            'services_problem_unhandled',
-            'services_critical',
-            'services_critical_unhandled',
-            'services_critical_handled',
-            'services_warning',
-            'services_warning_unhandled',
-            'services_warning_handled',
-            'services_unknown',
-            'services_unknown_unhandled',
-            'services_unknown_handled',
-            'services_pending',
-        ))
-            ->where('service_host_name', $this->host)
-            ->getQuery()
-            ->fetchRow();
         return $this;
     }
 

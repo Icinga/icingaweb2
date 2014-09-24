@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Exception\InvalidPropertyException;
 use Icinga\Module\Monitoring\Backend;
+use Icinga\Web\UrlParams;
 
 /**
  * A monitored Icinga object, i.e. host or service
@@ -107,6 +108,13 @@ abstract class MonitoredObject
      * @var \Icinga\Module\Monitoring\DataView\EventHistory
      */
     protected $eventhistory;
+
+    /**
+     * Stats
+     *
+     * @var object
+     */
+    protected $stats;
 
     /**
      * Create a monitored object, i.e. host or service
@@ -382,6 +390,36 @@ abstract class MonitoredObject
     }
 
     /**
+     * Fetch stats
+     *
+     * @return $this
+     */
+    public function fetchStats()
+    {
+        $this->stats = $this->backend->select()->from('statusSummary', array(
+            'services_total',
+            'services_ok',
+            'services_problem',
+            'services_problem_handled',
+            'services_problem_unhandled',
+            'services_critical',
+            'services_critical_unhandled',
+            'services_critical_handled',
+            'services_warning',
+            'services_warning_unhandled',
+            'services_warning_handled',
+            'services_unknown',
+            'services_unknown_unhandled',
+            'services_unknown_handled',
+            'services_pending',
+        ))
+            ->where('service_host_name', $this->host_name)
+            ->getQuery()
+            ->fetchRow();
+        return $this;
+    }
+
+    /**
      * Fetch all available data of the object
      *
      * @return $this
@@ -418,5 +456,18 @@ abstract class MonitoredObject
             }
         }
         throw new InvalidPropertyException('Can\'t access property \'%s\'. Property does not exist.', $name);
+    }
+
+    /**
+     * @deprecated
+     */
+    public static function fromParams(UrlParams $params)
+    {
+        if ($params->has('service') && $params->has('host')) {
+            return new Service(Backend::createBackend(), $params->get('host'), $params->get('service'));
+        } elseif ($params->has('host')) {
+            return new Host(Backend::createBackend(), $params->get('host'));
+        }
+        return null;
     }
 }
