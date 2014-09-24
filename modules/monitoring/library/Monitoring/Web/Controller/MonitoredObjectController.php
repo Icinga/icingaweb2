@@ -12,7 +12,10 @@ use Icinga\Module\Monitoring\Form\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Module\Monitoring\Form\Command\Object\ObjectsCommandForm;
 use Icinga\Module\Monitoring\Form\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Form\Command\Object\ToggleObjectFeaturesCommandForm;
+use Icinga\Web\Hook;
 use Icinga\Web\Url;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\OutputFormat;
 
 /**
  * Base class for the host and service controller
@@ -32,6 +35,21 @@ abstract class MonitoredObjectController extends Controller
      * @var string
      */
     protected $commandRedirectUrl;
+
+    /**
+     * (non-PHPDoc)
+     * @see \Icinga\Web\Controller\ActionController For the method documentation.
+     */
+    public function prepareInit()
+    {
+        parent::prepareInit();
+        if (Hook::has('ticket')) {
+            $this->view->tickets = Hook::first('ticket');
+        }
+        if (Hook::has('grapher')) {
+            $this->view->grapher = Hook::first('grapher');
+        }
+    }
 
     /**
      * Show a host or service
@@ -120,7 +138,6 @@ abstract class MonitoredObjectController extends Controller
      */
     abstract public function scheduleDowntimeAction();
 
-
     /**
      * Remove a comment
      */
@@ -147,5 +164,65 @@ abstract class MonitoredObjectController extends Controller
          * the downtime ID on GET or deny GET access.
          */
         $this->handleCommandForm(new DeleteDowntimeCommandForm());
+    }
+
+    /**
+     * Create tabs
+     */
+    protected function createTabs()
+    {
+        $tabs = $this->getTabs();
+        $object = $this->object;
+        if ($object->getType() === $object::TYPE_HOST) {
+            $params = array(
+                'host' => $object->getName()
+            );
+        } else {
+            $params = array(
+                'host'      => $object->getHost()->getName(),
+                'service'   => $object->getName()
+            );
+        }
+        $tabs->add(
+            'host',
+            array(
+                'title'     => 'Host',
+                'icon'      => 'img/icons/host.png',
+                'url'       => 'monitoring/host/show',
+                'urlParams' => $params
+            )
+        );
+        if (isset($params['service'])) {
+            $tabs->add(
+                'service',
+                array(
+                    'title'     => 'Service',
+                    'icon'      => 'img/icons/service.png',
+                    'url'       => 'monitoring/service/show',
+                    'urlParams' => $params
+                )
+            );
+        }
+        $tabs->add(
+            'services',
+            array(
+                'title'     => 'Services',
+                'icon'      => 'img/icons/service.png',
+                'url'       => 'monitoring/show/services',
+                'urlParams' => $params
+            )
+        );
+        $tabs->add(
+            'history',
+            array(
+                'title'     => 'History',
+                'icon'      => 'img/icons/history.png',
+                'url'       => 'monitoring/show/history',
+                'urlParams' => $params
+            )
+        );
+        $tabs
+            ->extend(new OutputFormat())
+            ->extend(new DashboardAction());
     }
 }

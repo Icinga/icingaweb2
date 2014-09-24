@@ -29,6 +29,16 @@ class Monitoring_ServiceController extends MonitoredObjectController
             throw new Zend_Controller_Action_Exception($this->translate('Service not found'));
         }
         $this->object = $service;
+        $this->createTabs();
+    }
+
+    /**
+     * Show a service
+     */
+    public function showAction()
+    {
+        $this->getTabs()->activate('service');
+        parent::showAction();
     }
 
     /**
