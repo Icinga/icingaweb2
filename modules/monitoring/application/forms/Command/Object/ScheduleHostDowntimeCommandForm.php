@@ -28,10 +28,9 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
                 'all_services',
                 array(
                     'label'         => mt('monitoring', 'All Services'),
-                    'value'         => true,
                     'description'   => mt(
                         'monitoring',
-                        'Schedule downtime for all services on the hosts and the hosts themself.'
+                        'Schedule downtime for all services on the hosts and the hosts themselves.'
                     )
                 )
             ),
