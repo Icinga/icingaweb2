@@ -26,10 +26,9 @@ class ScheduleHostCheckCommandForm extends ScheduleServiceCheckCommandForm
                 'all_services',
                 array(
                     'label'         => mt('monitoring', 'All Services'),
-                    'value'         => true,
                     'description'   => mt(
                         'monitoring',
-                        'Schedule check for all services on the hosts and the hosts themself.'
+                        'Schedule check for all services on the hosts and the hosts themselves.'
                     )
                 )
             )
