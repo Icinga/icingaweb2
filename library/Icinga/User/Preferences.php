@@ -79,17 +79,36 @@ class Preferences implements Countable
     }
 
     /**
-     * Retrieve a preference and return $default if the preference is not set
+     * Retrieve a preference section
      *
      * @param   string      $name
-     * @param   mixed       $default
      *
-     * @return  mixed
+     * @return  array|null
      */
-    public function get($name, $default = null)
+    public function get($name)
     {
         if (array_key_exists($name, $this->preferences)) {
             return $this->preferences[$name];
+        }
+
+        return null;
+    }
+
+    /**
+     * Retrieve a value from a specific section
+     *
+     * @param string    $section
+     * @param string    $name
+     * @param null      $default
+     *
+     * @return array|null
+     */
+    public function getValue($section, $name, $default = null)
+    {
+        if (array_key_exists($section, $this->preferences)
+            && array_key_exists($name, $this->preferences[$section])
+        ) {
+            return $this->preferences[$section][$name];
         }
 
         return $default;
