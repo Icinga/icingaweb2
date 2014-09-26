@@ -526,6 +526,10 @@ class Monitoring_ListController extends Controller
 
     public function eventhistoryAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
+
         $this->addTitleTab('eventhistory');
         $query = $this->backend->select()->from('eventHistory', array(
             'host_name',
