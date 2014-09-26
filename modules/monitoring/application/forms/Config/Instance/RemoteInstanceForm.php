@@ -51,7 +51,7 @@ class RemoteInstanceForm extends Form
                     'Enter the username to use for connecting to the remote machine or leave blank for default'
                 )
             )
-        );
+        );clear
         $this->addElement(
             'text',
             'path',

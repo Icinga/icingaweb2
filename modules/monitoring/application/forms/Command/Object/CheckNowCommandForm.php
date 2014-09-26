@@ -6,6 +6,7 @@ namespace Icinga\Module\Monitoring\Form\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\ScheduleHostCheckCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceCheckCommand;
+use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
 
@@ -30,8 +31,7 @@ class CheckNowCommandForm extends ObjectsCommandForm
     public function addSubmitButton()
     {
         $this->addElements(array(
-            array(
-                'note', // Bogus
+            new Note(
                 'icon', // Bogus
                 array(
                     'decorators' => array(array(
