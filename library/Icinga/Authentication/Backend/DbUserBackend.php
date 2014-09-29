@@ -126,4 +126,21 @@ class DbUserBackend extends UserBackend
 
         return ($row !== false) ? $row->count : 0;
     }
+
+    /**
+     * Return the names of all available users
+     *
+     * @return  array
+     */
+    public function listUsers()
+    {
+        $query = $this->conn->select()->from('account', array('username'));
+
+        $users = array();
+        foreach ($query->fetchAll() as $row) {
+            $users[] = $row->username;
+        }
+
+        return $users;
+    }
 }
