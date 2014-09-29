@@ -82,7 +82,7 @@ class AutologinBackendForm extends Form
      *
      * @return  bool            Whether validation succeeded or not
      */
-    public function isValidAuthenticationBackend(Form $form)
+    public static function isValidAuthenticationBackend(Form $form)
     {
         return true;
     }

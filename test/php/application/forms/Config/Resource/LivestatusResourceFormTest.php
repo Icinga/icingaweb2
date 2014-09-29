@@ -31,10 +31,8 @@ class LivestatusResourceFormTest extends BaseTestCase
                 ->shouldReceive('disconnect')->getMock()
         );
 
-        $form = new LivestatusResourceForm();
-
         $this->assertTrue(
-            $form->isValidResource($form),
+            LivestatusResourceForm::isValidResource(new LivestatusResourceForm()),
             'ResourceForm claims that a valid livestatus resource is not valid'
         );
     }
@@ -49,10 +47,8 @@ class LivestatusResourceFormTest extends BaseTestCase
             Mockery::mock()->shouldReceive('connect')->once()->andThrow('\Exception')->getMock()
         );
 
-        $form = new LivestatusResourceForm();
-
         $this->assertFalse(
-            $form->isValidResource($form),
+            LivestatusResourceForm::isValidResource(new LivestatusResourceForm()),
             'ResourceForm claims that an invalid livestatus resource is valid'
         );
     }

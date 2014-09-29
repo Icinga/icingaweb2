@@ -135,7 +135,7 @@ class ResourceConfigForm extends ConfigForm
     {
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
             $resourceForm = $this->getResourceForm($this->getElement('type')->getValue());
-            if (method_exists($resourceForm, 'isValidResource') && false === $resourceForm->isValidResource($this)) {
+            if (method_exists($resourceForm, 'isValidResource') && false === $resourceForm::isValidResource($this)) {
                 $this->addElement($this->getForceCreationCheckbox());
                 return false;
             }

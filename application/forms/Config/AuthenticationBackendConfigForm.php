@@ -201,7 +201,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
     {
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
             $backendForm = $this->getBackendForm($this->getElement('type')->getValue());
-            if (false === $backendForm->isValidAuthenticationBackend($this)) {
+            if (false === $backendForm::isValidAuthenticationBackend($this)) {
                 $this->addElement($this->getForceCreationCheckbox());
                 return false;
             }

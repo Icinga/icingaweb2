@@ -103,7 +103,7 @@ class DbResourceForm extends Form
      */
     public function onSuccess(Request $request)
     {
-        if (false === $this->isValidResource($this)) {
+        if (false === static::isValidResource($this)) {
             return false;
         }
     }
@@ -115,7 +115,7 @@ class DbResourceForm extends Form
      *
      * @return  bool            Whether validation succeeded or not
      */
-    public function isValidResource(Form $form)
+    public static function isValidResource(Form $form)
     {
         try {
             $resource = ResourceFactory::createResource(new Zend_Config($form->getValues()));

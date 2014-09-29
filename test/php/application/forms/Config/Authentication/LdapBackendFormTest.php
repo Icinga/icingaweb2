@@ -37,7 +37,7 @@ class LdapBackendFormTest extends BaseTestCase
         $form->populate(array('resource' => 'test_ldap_backend'));
 
         $this->assertTrue(
-            $form->isValidAuthenticationBackend($form),
+            LdapBackendForm::isValidAuthenticationBackend($form),
             'LdapBackendForm claims that a valid authentication backend with users is not valid'
         );
     }
@@ -58,7 +58,7 @@ class LdapBackendFormTest extends BaseTestCase
         $form->populate(array('resource' => 'test_ldap_backend'));
 
         $this->assertFalse(
-            $form->isValidAuthenticationBackend($form),
+            LdapBackendForm::isValidAuthenticationBackend($form),
             'LdapBackendForm claims that an invalid authentication backend without users is valid'
         );
     }

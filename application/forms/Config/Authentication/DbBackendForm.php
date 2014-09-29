@@ -88,7 +88,7 @@ class DbBackendForm extends Form
      */
     public function onSuccess(Request $request)
     {
-        if (false === $this->isValidAuthenticationBackend($this)) {
+        if (false === static::isValidAuthenticationBackend($this)) {
             return false;
         }
     }
@@ -100,7 +100,7 @@ class DbBackendForm extends Form
      *
      * @return  bool            Whether validation succeeded or not
      */
-    public function isValidAuthenticationBackend(Form $form)
+    public static function isValidAuthenticationBackend(Form $form)
     {
         $element = $form->getElement('resource');
 

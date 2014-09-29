@@ -30,10 +30,8 @@ class LdapResourceFormTest extends BaseTestCase
             Mockery::mock()->shouldReceive('connect')->getMock()
         );
 
-        $form = new LdapResourceForm();
-
         $this->assertTrue(
-            $form->isValidResource($form),
+            LdapResourceForm::isValidResource(new LdapResourceForm()),
             'ResourceForm claims that a valid ldap resource is not valid'
         );
     }
@@ -48,10 +46,8 @@ class LdapResourceFormTest extends BaseTestCase
             Mockery::mock()->shouldReceive('connect')->once()->andThrow('\Exception')->getMock()
         );
 
-        $form = new LdapResourceForm();
-
         $this->assertFalse(
-            $form->isValidResource($form),
+            LdapResourceForm::isValidResource(new LdapResourceForm()),
             'ResourceForm claims that an invalid ldap resource is valid'
         );
     }
