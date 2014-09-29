@@ -43,7 +43,11 @@ class Translator
     public static function translate($text, $domain, $context = null)
     {
         if ($context !== null) {
-            return self::pgettext($text, $domain, $context);
+            $res = self::pgettext($text, $domain, $context);
+            if ($res === $text && $domain !== self::DEFAULT_DOMAIN) {
+                $res = self::pgettext($text, self::DEFAULT_DOMAIN, $context);
+            }
+            return $res;
         }
 
         $res = dgettext($domain, $text);
@@ -56,6 +60,8 @@ class Translator
     /**
      * Translate a plural string
      *
+     * Falls back to the default domain in case the string cannot be translated using the given domain
+     *
      * @param   string      $textSingular   The string in singular form to translate
      * @param   string      $textPlural     The string in plural form to translate
      * @param   integer     $number         The number to get the plural or singular string
@@ -67,10 +73,17 @@ class Translator
     public static function translatePlural($textSingular, $textPlural, $number, $domain, $context = null)
     {
         if ($context !== null) {
-            return self::pngettext($textSingular, $textPlural, $number, $domain, $context);
+            $res = self::pngettext($textSingular, $textPlural, $number, $domain, $context);
+            if (($res === $textSingular || $res === $textPlural) && $domain !== self::DEFAULT_DOMAIN) {
+                $res = self::pngettext($textSingular, $textPlural, $number, self::DEFAULT_DOMAIN, $context);
+            }
+            return $res;
         }
 
         $res = dngettext($domain, $textSingular, $textPlural, $number);
+        if (($res === $textSingular || $res === $textPlural) && $domain !== self::DEFAULT_DOMAIN) {
+            $res = dngettext(self::DEFAULT_DOMAIN, $textSingular, $textPlural, $number);
+        }
         return $res;
     }
 
