@@ -307,7 +307,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
                 'required'          => true,
                 'autosubmit'        => true,
                 'label'             => t('Backend Type'),
-                'description'       => t('The type of the resource to use for this authenticaton backend'),
+                'description'       => t('The type of the resource to use for this authenticaton provider'),
                 'multiOptions'      => $backendTypes
             )
         );
