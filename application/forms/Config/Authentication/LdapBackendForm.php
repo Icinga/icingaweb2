@@ -8,6 +8,7 @@ use Exception;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
 use Icinga\Data\ResourceFactory;
+use Icinga\Exception\AuthenticationException;
 use Icinga\Authentication\Backend\LdapUserBackend;
 
 /**
@@ -122,20 +123,31 @@ class LdapBackendForm extends Form
      */
     public static function isValidAuthenticationBackend(Form $form)
     {
-        $element = $form->getElement('resource');
-
         try {
             $ldapUserBackend = new LdapUserBackend(
-                ResourceFactory::create($element->getValue()),
+                ResourceFactory::createResource($form->getResourceConfig()),
                 $form->getElement('user_class')->getValue(),
                 $form->getElement('user_name_attribute')->getValue()
             );
             $ldapUserBackend->assertAuthenticationPossible();
+        } catch (AuthenticationException $e) {
+            $form->addError($e->getMessage());
+            return false;
         } catch (Exception $e) {
-            $element->addError(sprintf(t('Connection validation failed: %s'), $e->getMessage()));
+            $form->addError(sprintf(t('Unable to validate authentication: %s'), $e->getMessage()));
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Return the configuration for the chosen resource
+     *
+     * @return  Zend_Config
+     */
+    public function getResourceConfig()
+    {
+        return ResourceFactory::getResourceConfig($this->getValue('resource'));
     }
 }

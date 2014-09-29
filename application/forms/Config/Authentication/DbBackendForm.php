@@ -102,19 +102,27 @@ class DbBackendForm extends Form
      */
     public static function isValidAuthenticationBackend(Form $form)
     {
-        $element = $form->getElement('resource');
-
         try {
-            $dbUserBackend = new DbUserBackend(ResourceFactory::create($element->getValue()));
+            $dbUserBackend = new DbUserBackend(ResourceFactory::createResource($form->getResourceConfig()));
             if ($dbUserBackend->count() < 1) {
-                $element->addError(t('No users found under the specified database backend'));
+                $form->addError(t('No users found under the specified database backend'));
                 return false;
             }
         } catch (Exception $e) {
-            $element->addError(sprintf(t('Using the specified backend failed: %s'), $e->getMessage()));
+            $form->addError(sprintf(t('Using the specified backend failed: %s'), $e->getMessage()));
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Return the configuration for the chosen resource
+     *
+     * @return  Zend_Config
+     */
+    public function getResourceConfig()
+    {
+        return ResourceFactory::getResourceConfig($this->getValue('resource'));
     }
 }
