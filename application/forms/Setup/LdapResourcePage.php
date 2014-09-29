@@ -5,6 +5,7 @@
 namespace Icinga\Form\Setup;
 
 use Icinga\Web\Form;
+use Icinga\Web\Form\Element\Note;
 use Icinga\Form\Config\Resource\LdapResourceForm;
 
 /**
@@ -34,12 +35,13 @@ class LdapResourcePage extends Form
             )
         );
         $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => t(
-                    'Now please configure your AD/LDAP resource. This will later '
-                    . 'be used to authenticate users logging in to Icinga Web 2.'
+            new Note(
+                'description',
+                array(
+                    'value' => t(
+                        'Now please configure your AD/LDAP resource. This will later '
+                        . 'be used to authenticate users logging in to Icinga Web 2.'
+                    )
                 )
             )
         );

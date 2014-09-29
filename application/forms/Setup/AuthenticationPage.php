@@ -6,6 +6,7 @@ namespace Icinga\Form\Setup;
 
 use Icinga\Web\Form;
 use Icinga\Application\Platform;
+use Icinga\Web\Form\Element\Note;
 
 /**
  * Wizard page to choose an authentication backend
@@ -26,12 +27,13 @@ class AuthenticationPage extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => t(
-                    'Please choose how you want to authenticate when accessing Icinga Web 2.'
-                    . ' Configuring backend specific details follows in a later step.'
+            new Note(
+                'description',
+                array(
+                    'value' => t(
+                        'Please choose how you want to authenticate when accessing Icinga Web 2.'
+                        . ' Configuring backend specific details follows in a later step.'
+                    )
                 )
             )
         );

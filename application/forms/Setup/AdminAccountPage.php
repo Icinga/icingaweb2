@@ -9,6 +9,7 @@ use Zend_Config;
 use LogicException;
 use Icinga\Web\Form;
 use Icinga\Data\ResourceFactory;
+use Icinga\Web\Form\Element\Note;
 use Icinga\Authentication\Backend\DbUserBackend;
 use Icinga\Authentication\Backend\LdapUserBackend;
 
@@ -171,15 +172,16 @@ class AdminAccountPage extends Form
         }
 
         $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => tp(
-                    'Now it\'s time to configure your first administrative account.'
-                    . ' Please follow the instructions below:',
-                    'Now it\'s time to configure your first administrative account.'
-                    . ' Below are several options you can choose from. Select one and follow its instructions:',
-                    count($choices)
+            new Note(
+                'description',
+                array(
+                    'value' => tp(
+                        'Now it\'s time to configure your first administrative account.'
+                        . ' Please follow the instructions below:',
+                        'Now it\'s time to configure your first administrative account.'
+                        . ' Below are several options you can choose from. Select one and follow its instructions:',
+                        count($choices)
+                    )
                 )
             )
         );

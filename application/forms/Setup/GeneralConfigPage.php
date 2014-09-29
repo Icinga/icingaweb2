@@ -5,6 +5,7 @@
 namespace Icinga\Form\Setup;
 
 use Icinga\Web\Form;
+use Icinga\Web\Form\Element\Note;
 use Icinga\Form\Config\General\LoggingConfigForm;
 use Icinga\Form\Config\General\ApplicationConfigForm;
 
@@ -27,11 +28,12 @@ class GeneralConfigPage extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => t(
-                    'Now please adjust all application and logging related configuration options to fit your needs.'
+            new Note(
+                'description',
+                array(
+                    'value' => t(
+                        'Now please adjust all application and logging related configuration options to fit your needs.'
+                    )
                 )
             )
         );

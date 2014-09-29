@@ -6,6 +6,7 @@ namespace Icinga\Form\Setup;
 
 use Icinga\Application\Icinga;
 use Icinga\Web\Form;
+use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Form\Validator\TokenValidator;
 
 /**
@@ -27,17 +28,19 @@ class WelcomePage extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
-            'note',
-            'welcome',
-            array(
-                'value' => t('%WELCOME%')
+            new Note(
+                'welcome',
+                array(
+                    'value' => t('%WELCOME%')
+                )
             )
         );
         $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => t('%DESCRIPTION%')
+            new Note(
+                'description',
+                array(
+                    'value' => t('%DESCRIPTION%')
+                )
             )
         );
         $this->addElement(

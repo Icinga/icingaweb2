@@ -6,6 +6,7 @@ namespace Icinga\Form\Setup;
 
 use Icinga\Web\Form;
 use Icinga\Application\Platform;
+use Icinga\Web\Form\Element\Note;
 
 /**
  * Wizard page to choose a preference backend
@@ -41,10 +42,11 @@ class PreferencesPage extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => t('Please choose how Icinga Web 2 should store user preferences.')
+            new Note(
+                'description',
+                array(
+                    'value' => t('Please choose how Icinga Web 2 should store user preferences.')
+                )
             )
         );
 

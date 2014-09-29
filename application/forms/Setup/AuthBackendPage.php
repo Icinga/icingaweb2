@@ -6,6 +6,7 @@ namespace Icinga\Form\Setup;
 
 use Zend_Config;
 use Icinga\Web\Form;
+use Icinga\Web\Form\Element\Note;
 use Icinga\Form\Config\Authentication\DbBackendForm;
 use Icinga\Form\Config\Authentication\LdapBackendForm;
 use Icinga\Form\Config\Authentication\AutologinBackendForm;
@@ -59,16 +60,18 @@ class AuthBackendPage extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => sprintf(
-                    t(
-                        'Now please enter all configuration details required to authenticate using this %s backend.',
-                        'setup.auth.backend'
-                    ),
-                    $this->config['type'] === 'db' ? t('database', 'setup.auth.backend.type') : (
-                        $this->config['type'] === 'ldap' ? 'LDAP' : t('autologin', 'setup.auth.backend.type')
+            new Note(
+                'description',
+                array(
+                    'value' => sprintf(
+                        t(
+                            'Now please enter all configuration details required'
+                            . ' to authenticate using this %s backend.',
+                            'setup.auth.backend'
+                        ),
+                        $this->config['type'] === 'db' ? t('database', 'setup.auth.backend.type') : (
+                            $this->config['type'] === 'ldap' ? 'LDAP' : t('autologin', 'setup.auth.backend.type')
+                        )
                     )
                 )
             )

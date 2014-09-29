@@ -7,6 +7,7 @@ namespace Icinga\Form\Setup;
 use PDOException;
 use Icinga\Web\Form;
 use Icinga\Web\Setup\DbTool;
+use Icinga\Web\Form\Element\Note;
 use Icinga\Form\Config\Resource\DbResourceForm;
 
 /**
@@ -36,12 +37,13 @@ class DbResourcePage extends Form
             )
         );
         $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => t(
-                    'Now please configure your database resource. Note that the database itself does not need'
-                    . ' to exist at this time as it is going to be created when installing Icinga Web 2.'
+            new Note(
+                'description',
+                array(
+                    'value' => t(
+                        'Now please configure your database resource. Note that the database itself does not need'
+                        . ' to exist at this time as it is going to be created when installing Icinga Web 2.'
+                    )
                 )
             )
         );
