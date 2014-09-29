@@ -44,7 +44,7 @@ class TokenValidator extends Zend_Validate_Abstract
      */
     public function isValid($value, $context = null)
     {
-        $tokenStats = stat($this->tokenPath);
+        $tokenStats = @stat($this->tokenPath);
         if (($tokenStats['mode'] & 4) === 4) {
             $this->_error('TOKEN_FILE_PUBLIC');
             return false;
