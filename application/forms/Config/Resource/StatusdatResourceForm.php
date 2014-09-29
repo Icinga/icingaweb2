@@ -28,6 +28,15 @@ class StatusdatResourceForm extends Form
     {
         $this->addElement(
             'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => t('Resource Name'),
+                'description'   => t('The unique name of this resource')
+            )
+        );
+        $this->addElement(
+            'text',
             'status_file',
             array(
                 'required'      => true,
