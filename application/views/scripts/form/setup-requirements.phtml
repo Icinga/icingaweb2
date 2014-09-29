@@ -1,0 +1,33 @@
+<?php
+
+use Icinga\Web\Wizard;
+use Icinga\Web\Setup\Requirements;
+
+$requirements = $form->getRequirements();
+
+?>
+<table>
+  <tbody>
+<?php foreach ($requirements as $requirement): ?>
+    <tr>
+      <td><?= $requirement->title; ?></td>
+      <td><?= $requirement->description; ?></td>
+      <td style="background-color: <?= $requirement->state === Requirements::STATE_OK ? 'green' : (
+        $requirement->state === Requirements::STATE_OPTIONAL ? 'yellow' : 'red'
+      ); ?>"><?= $requirement->message; ?></td>
+    </tr>
+<?php endforeach ?>
+  </tbody>
+</table>
+<form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>">
+  <?= $form->getElement($form->getTokenElementName()); ?>
+  <?= $form->getElement($form->getUidElementName()); ?>
+  <?= $form->getElement(Wizard::BTN_PREV); ?>
+  <?php
+    $btn = $form->getElement(Wizard::BTN_NEXT);
+    if (false === $requirements->fulfilled()) {
+        $btn->setAttrib('disabled', 1);
+    }
+    echo $btn;
+  ?>
+</form>
