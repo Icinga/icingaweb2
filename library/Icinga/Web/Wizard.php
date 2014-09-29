@@ -474,6 +474,6 @@ class Wizard
      */
     public function __toString()
     {
-        return $this->getForm()->render();
+        return (string) $this->getForm();
     }
 }
