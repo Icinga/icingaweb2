@@ -1,6 +1,6 @@
 <div class="controls">
 <?= $this->tabs ?>
-<h1>Installed Modules</h1>
+<h1><?= $this->translate('Installed Modules') ?></h1>
 <?= $this->paginationControl($modules) ?>
 </div>
 
@@ -11,9 +11,9 @@
     <tr>
       <td>
       <?php if ($module->enabled): ?>
-      <?= $this->icon('success.png', 'Module is enabled') ?>
+      <?= $this->icon('success.png', $this->translate('Module is enabled')) ?>
       <?php else: ?>
-      <?= $this->icon('remove.png', 'Module is disabled') ?>
+      <?= $this->icon('remove.png', $this->translate('Module is disabled')) ?>
       <? endif ?>
         <a href="<?= $this->url(
             'config/module/',
