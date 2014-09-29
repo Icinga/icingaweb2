@@ -96,7 +96,7 @@ class ConfigController extends ActionController
         try {
             $manager->enableModule($module);
             $manager->loadModule($module);
-            Notification::success('Module "' . $module . '" enabled');
+            Notification::success(sprintf($this->translate('Module "%s" enabled'), $module));
             $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
         } catch (Exception $e) {
             $this->view->exceptionMesssage = $e->getMessage();
@@ -115,7 +115,7 @@ class ConfigController extends ActionController
         $manager = Icinga::app()->getModuleManager();
         try {
             $manager->disableModule($module);
-            Notification::success('Module "' . $module . '" disabled');
+            Notification::success(sprintf($this->translate('Module "%s" disabled'), $module));
             $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
         } catch (Exception $e) {
             $this->view->exceptionMessage = $e->getMessage();

@@ -56,10 +56,12 @@ class SecurityConfigForm extends ConfigForm
             'protected_customvars',
             array(
                 'required'      => true,
-                'label'         => 'Protected Custom Variables',
-                'description'   => 'Comma separated case insensitive list of protected custom variables.'
+                'label'         => t('Protected Custom Variables'),
+                'description'   => t(
+                    'Comma separated case insensitive list of protected custom variables.'
                     . ' Use * as a placeholder for zero or more wildcard characters.'
                     . ' Existance of those custom variables will be shown, but their values will be masked.'
+                )
             )
         );
     }
