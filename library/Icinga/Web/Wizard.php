@@ -224,7 +224,7 @@ class Wizard
                 if ($isValid) {
                     $pageData = & $this->getPageData();
                     $pageData[$page->getName()] = $page->getValues();
-                    $this->setCurrentPage($this->getNewPage($requestedPage));
+                    $this->setCurrentPage($this->getNewPage($requestedPage, $page));
                     $page->getResponse()->redirectAndExit($page->getRedirectUrl());
                 }
             } else {
@@ -281,20 +281,30 @@ class Wizard
     /**
      * Return the new page to set as current page
      *
+     * Permission is checked by verifying that the requested page's previous page has page data available.
+     * The requested page is automatically permitted without any checks if the origin page is its previous
+     * page or one that occurs later in order.
+     *
      * @param   string  $requestedPage      The name of the requested page
+     * @param   Form    $originPage         The origin page
      *
      * @return  Form                        The new page
      *
      * @throws  InvalidArgumentException    In case the requested page does not exist or is not permitted yet
      */
-    protected function getNewPage($requestedPage)
+    protected function getNewPage($requestedPage, Form $originPage)
     {
         if (($page = $this->getPage($requestedPage)) !== null) {
             $permitted = true;
 
             $pages = $this->getPages();
             if (($index = array_search($page, $pages, true)) > 0) {
-                $permitted = $this->hasPageData($pages[$index - 1]->getName());
+                $previousPage = $pages[$index - 1];
+                if ($originPage === null || ($previousPage->getName() !== $originPage->getName()
+                    && array_search($originPage, $pages, true) < $index))
+                {
+                    $permitted = $this->hasPageData($previousPage->getName());
+                }
             }
 
             if ($permitted) {
