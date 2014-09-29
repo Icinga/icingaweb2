@@ -10,6 +10,7 @@ use Icinga\Web\Form;
 use Icinga\Web\Request;
 use Icinga\Web\Form\Element\Number;
 use Icinga\Data\ResourceFactory;
+use Icinga\Application\Platform;
 
 /**
  * Form class for adding/modifying database resources
@@ -29,6 +30,14 @@ class DbResourceForm extends Form
      */
     public function createElements(array $formData)
     {
+        $dbChoices = array();
+        if (Platform::zendClassExists('Zend_Db_Adapter_Pdo_Mysql')) {
+            $dbChoices['mysql'] = 'MySQL';
+        }
+        if (Platform::zendClassExists('Zend_Db_Adapter_Pdo_Pgsql')) {
+            $dbChoices['pgsql'] = 'PostgreSQL';
+        }
+
         $this->addElement(
             'text',
             'name',
@@ -45,11 +54,7 @@ class DbResourceForm extends Form
                 'required'      => true,
                 'label'         => t('Database Type'),
                 'description'   => t('The type of SQL database'),
-                'multiOptions'  => array(
-                    'mysql'     => 'MySQL',
-                    'pgsql'     => 'PostgreSQL'
-                    //'oracle'    => 'Oracle'
-                )
+                'multiOptions'  => $dbChoices
             )
         );
         $this->addElement(
