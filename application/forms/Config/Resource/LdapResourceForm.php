@@ -114,7 +114,13 @@ class LdapResourceForm extends Form
     {
         try {
             $resource = ResourceFactory::createResource(new Zend_Config($form->getValues()));
-            $resource->connect();
+            if (false === $resource->testCredentials(
+                $form->getElement('bind_dn')->getValue(),
+                $form->getElement('bind_pw')->getValue()
+                )
+            ) {
+                throw new Exception();
+            }
         } catch (Exception $e) {
             $form->addError(t('Connectivity validation failed, connection to the given resource not possible.'));
             return false;
