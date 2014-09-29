@@ -31,13 +31,23 @@ class Platform
     protected static $fqdn;
 
     /**
+     * Return the operating system's name
+     *
+     * @return  string
+     */
+    public static function getOperatingSystemName()
+    {
+        return php_uname('s');
+    }
+
+    /**
      * Test of windows
      *
      * @return bool
      */
     public static function isWindows()
     {
-        return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+        return strtoupper(substr(self::getOperatingSystemName(), 0, 3)) === 'WIN';
     }
 
     /**
@@ -47,7 +57,7 @@ class Platform
      */
     public static function isLinux()
     {
-        return strtoupper(substr(PHP_OS, 0, 5)) === 'LINUX';
+        return strtoupper(substr(self::getOperatingSystemName(), 0, 5)) === 'LINUX';
     }
 
     /**
@@ -121,6 +131,16 @@ class Platform
     }
 
     /**
+     * Return the version of PHP
+     *
+     * @return  string
+     */
+    public static function getPhpVersion()
+    {
+        return phpversion();
+    }
+
+    /**
      * Test for php extension
      *
      * @param   string  $extensionName  E.g. mysql, ldap
@@ -130,5 +150,33 @@ class Platform
     public static function extensionLoaded($extensionName)
     {
         return extension_loaded($extensionName);
+    }
+
+    /**
+     * Return the value for the given PHP configuration option
+     *
+     * @param   string  $option     The option name for which to return the value
+     *
+     * @return  string|false
+     */
+    public static function getPhpConfig($option)
+    {
+        return ini_get($option);
+    }
+
+    /**
+     * Return whether the given Zend framework class exists
+     *
+     * @param   string  $name   The name of the class to check
+     *
+     * @return  bool
+     */
+    public static function zendClassExists($name)
+    {
+        if (class_exists($name)) {
+            return true;
+        }
+
+        return (@include str_replace('_', '/', $name) . '.php') !== false;
     }
 }
