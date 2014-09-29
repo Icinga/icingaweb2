@@ -419,9 +419,10 @@ class Wizard
                 'button',
                 static::BTN_NEXT,
                 array(
-                    'type'  => 'submit',
-                    'value' => $pages[1]->getName(),
-                    'label' => t('Next')
+                    'type'          => 'submit',
+                    'value'         => $pages[1]->getName(),
+                    'label'         => t('Next'),
+                    'decorators'    => array('ViewHelper')
                 )
             );
         } elseif ($index < count($pages) - 1) {
@@ -429,18 +430,20 @@ class Wizard
                 'button',
                 static::BTN_PREV,
                 array(
-                    'type'  => 'submit',
-                    'value' => $pages[$index - 1]->getName(),
-                    'label' => t('Back')
+                    'type'          => 'submit',
+                    'value'         => $pages[$index - 1]->getName(),
+                    'label'         => t('Back'),
+                    'decorators'    => array('ViewHelper')
                 )
             );
             $page->addElement(
                 'button',
                 static::BTN_NEXT,
                 array(
-                    'type'  => 'submit',
-                    'value' => $pages[$index + 1]->getName(),
-                    'label' => t('Next')
+                    'type'          => 'submit',
+                    'value'         => $pages[$index + 1]->getName(),
+                    'label'         => t('Next'),
+                    'decorators'    => array('ViewHelper')
                 )
             );
         } else {
@@ -448,18 +451,20 @@ class Wizard
                 'button',
                 static::BTN_PREV,
                 array(
-                    'type'  => 'submit',
-                    'value' => $pages[$index - 1]->getName(),
-                    'label' => t('Back')
+                    'type'          => 'submit',
+                    'value'         => $pages[$index - 1]->getName(),
+                    'label'         => t('Back'),
+                    'decorators'    => array('ViewHelper')
                 )
             );
             $page->addElement(
                 'button',
                 static::BTN_NEXT,
                 array(
-                    'type'  => 'submit',
-                    'value' => $page->getName(),
-                    'label' => t('Finish')
+                    'type'          => 'submit',
+                    'value'         => $page->getName(),
+                    'label'         => t('Finish'),
+                    'decorators'    => array('ViewHelper')
                 )
             );
         }
