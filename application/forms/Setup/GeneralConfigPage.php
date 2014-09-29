@@ -26,6 +26,16 @@ class GeneralConfigPage extends Form
      */
     public function createElements(array $formData)
     {
+        $this->addElement(
+            'note',
+            'description',
+            array(
+                'value' => t(
+                    'Now please adjust all application and logging related configuration options to fit your needs.'
+                )
+            )
+        );
+
         $appForm = new ApplicationConfigForm();
         $this->addElement($appForm->createElements($formData)->getElement('global_modulePath'));
 
