@@ -370,7 +370,7 @@ class ActionController extends Zend_Controller_Action
         if ($user = $req->getUser()) {
             // Cast preference app.show_benchmark to bool because preferences loaded from a preferences storage are
             // always strings
-            if ((bool) $user->getPreferences()->get('app.show_benchmark', false) === true) {
+            if ((bool) $user->getPreferences()->getValue('icingaweb', 'show_benchmark', false) === true) {
                 if (!$this->_helper->viewRenderer->getNoRender()) {
                     $layout->benchmark = $this->renderBenchmark();
                 }

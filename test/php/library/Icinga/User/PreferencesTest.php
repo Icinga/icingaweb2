@@ -44,4 +44,18 @@ class PreferfencesTest extends BaseTestCase
 
         $this->assertEquals(2, count($prefs));
     }
+
+    public function testWhetherGetValueReturnsExpectedValue()
+    {
+        $prefs = new Preferences(array(
+            'test' => array (
+                'key1' => '1',
+                'key2' => '2',
+            )
+        ));
+
+        $result = $prefs->getValue('test', 'key2');
+
+        $this->assertEquals('2', $result, 'Preferences::getValue() do not return an expected value');
+    }
 }

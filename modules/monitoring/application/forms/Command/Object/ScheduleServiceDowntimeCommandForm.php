@@ -8,6 +8,7 @@ use DateTime;
 use DateInterval;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceDowntimeCommand;
 use Icinga\Web\Form\Element\DateTimePicker;
+use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Form\Element\Number;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
@@ -48,8 +49,7 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
         $end = clone $start;
         $end->add(new DateInterval('PT1H'));
         $this->addElements(array(
-            array(
-                'note',
+            new Note(
                 'command-info',
                 array(
                     'value' => mt(

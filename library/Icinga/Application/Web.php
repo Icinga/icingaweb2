@@ -278,7 +278,8 @@ class Web extends ApplicationBootstrap
 
         if ($this->user !== null && $this->user->getPreferences() !== null) {
             $detect = new TimezoneDetect();
-            $userTimezone = $this->user->getPreferences()->get('app.timezone', $detect->getTimezoneName());
+            $userTimezone = $this->user->getPreferences()
+                ->getValue('icingaweb', 'timezone', $detect->getTimezoneName());
         }
 
         try {
@@ -302,7 +303,7 @@ class Web extends ApplicationBootstrap
     {
         parent::setupInternationalization();
         if ($this->user !== null && $this->user->getPreferences() !== null
-            && (($locale = $this->user->getPreferences()->get('app.language')) !== null)
+            && (($locale = $this->user->getPreferences()->getValue('icingaweb', 'language')) !== null)
         ) {
             try {
                 Translator::setupLocale($locale);

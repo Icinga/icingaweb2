@@ -8,6 +8,7 @@ use DateTime;
 use DateInterval;
 use Icinga\Module\Monitoring\Command\Object\AcknowledgeProblemCommand;
 use Icinga\Web\Form\Element\DateTimePicker;
+use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
 
@@ -34,8 +35,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
     public function createElements(array $formData = array())
     {
         $this->addElements(array(
-            array(
-                'note',
+            new Note(
                 'command-info',
                 array(
                     'value' => mt(
