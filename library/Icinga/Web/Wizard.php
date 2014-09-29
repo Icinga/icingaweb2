@@ -217,12 +217,13 @@ class Wizard
                         $this->setIsFinished();
                     }
                 } elseif ($direction === static::BACKWARD) {
+                    $page->populate($requestData);
                     $isValid = true;
                 }
 
                 if ($isValid) {
                     $pageData = & $this->getPageData();
-                    $pageData[$page->getName()] = $requestData;
+                    $pageData[$page->getName()] = $page->getValues();
                     $this->setCurrentPage($this->getNewPage($requestedPage));
                     $page->getResponse()->redirectAndExit($page->getRedirectUrl());
                 }
