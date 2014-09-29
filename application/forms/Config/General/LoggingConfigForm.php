@@ -27,6 +27,7 @@ class LoggingConfigForm extends Form
             'select',
             'logging_level',
             array(
+                'value'         => 1,
                 'required'      => true,
                 'label'         => t('Logging Level'),
                 'description'   => t('The maximum loglevel to emit.'),
