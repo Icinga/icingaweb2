@@ -30,6 +30,7 @@ class apache {
 
   service { $apache:
     ensure  => running,
+    enable  => true,
     alias   => 'apache',
     require => Package['apache'],
   }
