@@ -93,4 +93,12 @@ class icingaweb2_dev {
   icingaweb2::config::module { [ 'backends', 'config', 'instances' ]:
     source  => 'puppet:///modules/icingaweb2_dev',
   }
+
+  package { 'iptables':
+    ensure => latest
+  }
+  -> exec { 'iptables-allow-http':
+    unless  => 'grep -Fxqe "-A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT" /etc/sysconfig/iptables',
+    command => '/sbin/iptables -I INPUT 5 -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT && /sbin/iptables-save > /etc/sysconfig/iptables'
+  }
 }
