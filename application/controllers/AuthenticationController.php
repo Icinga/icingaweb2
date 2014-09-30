@@ -111,7 +111,7 @@ class AuthenticationController extends ActionController
                 if ($backendsWithError) {
                     $this->view->form->getElement('username')->addError(
                         $this->translate(
-                            'Please note that not all authentication methods where available.'
+                            'Please note that not all authentication methods were available.'
                           . ' Check the system log or Icinga Web 2 log for more information.'
                         )
                     );
