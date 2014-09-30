@@ -37,7 +37,7 @@ class Monitoring_ShowController extends Controller
     public function init()
     {
         $this->view->object = MonitoredObject::fromParams($this->params);
-        if ($this->view->object->fetch() === false) {
+        if ($this->view->object && $this->view->object->fetch() === false) {
             throw new Zend_Controller_Action_Exception($this->translate('Host or service not found'));
         }
 
