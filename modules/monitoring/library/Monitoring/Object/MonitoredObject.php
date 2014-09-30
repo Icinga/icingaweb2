@@ -442,7 +442,7 @@ abstract class MonitoredObject
     {
         if (property_exists($this->properties, $name)) {
             return $this->properties->$name;
-        } elseif (isset($this->$name)) {
+        } elseif (property_exists($this, $name) && $this->$name !== null) {
             return $this->$name;
         } elseif (property_exists($this, $name)) {
             $fetchMethod = 'fetch' . ucfirst($name);
@@ -456,6 +456,16 @@ abstract class MonitoredObject
             }
         }
         throw new InvalidPropertyException('Can\'t access property \'%s\'. Property does not exist.', $name);
+    }
+
+    public function __isset($name)
+    {
+        if (property_exists($this->properties, $name)) {
+            return isset($this->properties->$name);
+        } elseif (property_exists($this, $name)) {
+            return isset($this->$name);
+        }
+        return false;
     }
 
     /**
