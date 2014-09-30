@@ -124,7 +124,9 @@ class AuthenticationController extends ActionController
                         $authenticated  = $backend->authenticate($user);
                         if ($authenticated === true) {
                             $auth->setAuthenticated($user);
-                            $this->rerenderLayout()->redirectNow($redirectUrl);
+                            $this->rerenderLayout()->redirectNow(
+                                Url::fromPath(Url::fromRequest()->getParam('redirect', 'dashboard'))
+                            );
                         }
                     }
                 }
