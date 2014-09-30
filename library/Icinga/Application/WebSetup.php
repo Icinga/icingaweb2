@@ -76,31 +76,25 @@ class WebSetup extends Wizard implements SetupWizard
      */
     protected function getNewPage($requestedPage, Form $originPage)
     {
+        $skip = false;
         $newPage = parent::getNewPage($requestedPage, $originPage);
         if ($newPage->getName() === 'setup_db_resource') {
             $prefData = $this->getPageData('setup_preferences_type');
             $authData = $this->getPageData('setup_authentication_type');
-            if ($prefData['type'] !== 'db' && $authData['type'] !== 'db') {
-                $pages = $this->getPages();
-                if ($this->getDirection() === static::FORWARD) {
-                    $nextPage = $pages[array_search($newPage, $pages, true) + 1];
-                    return $this->getNewPage($nextPage->getName(), $newPage);
-                } else { // $this->getDirection() === static::BACKWARD
-                    $previousPage = $pages[array_search($newPage, $pages, true) - 1];
-                    return $this->getNewPage($previousPage->getName(), $newPage);
-                }
-            }
+            $skip = $prefData['type'] !== 'db' && $authData['type'] !== 'db';
         } elseif ($newPage->getName() === 'setup_ldap_resource') {
             $authData = $this->getPageData('setup_authentication_type');
-            if ($authData['type'] !== 'ldap') {
-                $pages = $this->getPages();
-                if ($this->getDirection() === static::FORWARD) {
-                    $nextPage = $pages[array_search($newPage, $pages, true) + 1];
-                    return $this->getNewPage($nextPage->getName(), $newPage);
-                } else { // $this->getDirection() === static::BACKWARD
-                    $previousPage = $pages[array_search($newPage, $pages, true) - 1];
-                    return $this->getNewPage($previousPage->getName(), $newPage);
-                }
+            $skip = $authData['type'] !== 'ldap';
+        }
+
+        if ($skip) {
+            $pages = $this->getPages();
+            if ($this->getDirection() === static::FORWARD) {
+                $nextPage = $pages[array_search($newPage, $pages, true) + 1];
+                $newPage = $this->getNewPage($nextPage->getName(), $newPage);
+            } else { // $this->getDirection() === static::BACKWARD
+                $previousPage = $pages[array_search($newPage, $pages, true) - 1];
+                $newPage = $this->getNewPage($previousPage->getName(), $newPage);
             }
         }
 
