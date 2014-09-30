@@ -370,8 +370,8 @@ class Monitoring_ListController extends Controller
         $form->setEnctype(Zend_Form::ENCTYPE_URLENCODED);
         $form->setMethod('get');
         $form->setTokenDisabled();
-        $form->setRequest($this->getRequest());
-        $form->buildForm();
+        $form->setUidDisabled();
+        $form->render();
         $this->view->form = $form;
 
         $orientation = $this->params->shift('horizontal', 0) ? 'horizontal' : 'vertical';
@@ -391,11 +391,7 @@ class Monitoring_ListController extends Controller
             'stateHistorySummary',
             array('day', $form->getValue('state'))
         );
-        $this->params->shift('objecttype');
-        $this->params->shift('from');
-        $this->params->shift('to');
-        $this->params->shift('state');
-        $this->params->shift('btn_submit');
+        $this->params->remove(array('objecttype', 'from', 'to', 'state', 'btn_submit'));
         $this->applyFilters($query);
         $this->view->summary = $query->getQuery()->fetchAll();
         $this->view->column = $form->getValue('state');

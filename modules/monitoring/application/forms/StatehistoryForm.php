@@ -48,11 +48,9 @@ class StatehistoryForm extends Form
     }
 
     /**
-     * Create the confirmation form
-     *
-     * @see Form::create()
+     * @see Form::createElements()
      */
-    public function create()
+    public function createElements(array $formData)
     {
         $this->addElement(
             'select',
@@ -137,8 +135,6 @@ class StatehistoryForm extends Form
                 )
             );
         }
-
-        $this->enableAutoSubmit(array('from', 'objecttype', 'state'));
         $this->addElement(
             'button',
             'btn_submit',
