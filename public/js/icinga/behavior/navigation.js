@@ -24,8 +24,8 @@
     Navigation.prototype.onRendered = function(evt) {
         // get original source element of the rendered-event
         var el = evt.target;
-        // restore old menu state
         if (activeMenuId) {
+            // restore old menu state
             $('[role="navigation"] li.active', el).removeClass('active');
             var $selectedMenu = $('#' + activeMenuId).addClass('active');
             var $outerMenu = $selectedMenu.parent().closest('li');

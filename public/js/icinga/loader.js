@@ -340,9 +340,7 @@
             if (! req.autorefresh) {
                 // TODO: Hook for response/url?
                 var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
-
                 var $matches = $.merge($('[href="' + url + '"]'), $forms);
-
                 $matches.each(function (idx, el) {
                     if ($(el).closest('#menu').length) {
                         self.icinga.behaviors.navigation.resetActive();
@@ -367,7 +365,6 @@
                 });
             } else {
                 // TODO: next container url
-                // Get first container url?
                 active = $('[href].active', req.$target).attr('href');
             }
 
