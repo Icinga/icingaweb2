@@ -37,6 +37,9 @@
             var $menus = $('[role="navigation"] li.active', el);
             if ($menus.size()) {
                 activeMenuId = $menus[0].id;
+                $menus.find('li.active').first().each(function () {
+                    activeMenuId = this.id;
+                });
             }
         }
     };
