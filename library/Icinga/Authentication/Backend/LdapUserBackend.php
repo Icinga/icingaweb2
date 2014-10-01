@@ -4,6 +4,7 @@
 
 namespace Icinga\Authentication\Backend;
 
+use Icinga\Logger\Logger;
 use Icinga\User;
 use Icinga\Authentication\UserBackend;
 use Icinga\Protocol\Ldap\Connection;
@@ -23,11 +24,14 @@ class LdapUserBackend extends UserBackend
 
     protected $userNameAttribute;
 
-    public function __construct(Connection $conn, $userClass, $userNameAttribute)
+    protected $groupOptions;
+
+    public function __construct(Connection $conn, $userClass, $userNameAttribute, $groupOptions = null)
     {
         $this->conn = $conn;
         $this->userClass = $userClass;
         $this->userNameAttribute = $userNameAttribute;
+        $this->groupOptions = $groupOptions;
     }
 
     /**
@@ -84,6 +88,41 @@ class LdapUserBackend extends UserBackend
     }
 
     /**
+     * Retrieve the user groups
+     *
+     * @param string $dn
+     *
+     * @return array|null
+     */
+    public function getGroups($dn)
+    {
+        if (empty($this->groupOptions)) {
+            return null;
+        }
+
+        $q = $this->conn->select()
+            ->setBase($this->groupOptions['group_base_dn'])
+            ->from(
+                $this->groupOptions['group_class'],
+                array($this->groupOptions['group_attribute'])
+            )
+            ->where(
+                $this->groupOptions['group_member_attribute'],
+                $dn
+            );
+
+        $result = $this->conn->fetchAll($q);
+
+        $groups = array();
+
+        foreach ($result as $group) {
+            $groups[] = $group->{$this->groupOptions['group_attribute']};
+        }
+
+        return $groups;
+    }
+
+    /**
      * Test whether the given user exists
      *
      * @param   User $user
@@ -127,10 +166,15 @@ class LdapUserBackend extends UserBackend
             return false;
         }
         try {
-            return $this->conn->testCredentials(
-                $this->conn->fetchDN($this->createQuery($user->getUsername())),
+            $userDn = $this->conn->fetchDN($this->createQuery($user->getUsername()));
+            $authenticated = $this->conn->testCredentials(
+                $userDn,
                 $password
             );
+            if ($authenticated) {
+                $user->setGroups($this->getGroups($userDn));
+            }
+            return $authenticated;
         } catch (LdapException $e) {
             // Error during authentication of this specific user
             throw new AuthenticationException(
@@ -160,4 +204,3 @@ class LdapUserBackend extends UserBackend
         );
     }
 }
-

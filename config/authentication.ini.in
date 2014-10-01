@@ -18,6 +18,10 @@ backend             = ldap
 resource            = internal_ldap
 user_class          = @ldap_user_objectclass@
 user_name_attribute = @ldap_attribute_username@
+group_base_dn = @ldap_group_base_dn@
+group_attribute = @ldap_group_attribute@
+group_member_attribute = @ldap_group_member_attribute@
+group_class = @ldap_group_class@
 
 [internal_db_authentication]
 @internal_auth_disabled@
