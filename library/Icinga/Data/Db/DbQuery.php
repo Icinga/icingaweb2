@@ -117,7 +117,7 @@ class DbQuery extends SimpleQuery
         return $select;
     }
 
-    protected function applyFilterSql($query)
+    public function applyFilterSql($query)
     {
         $where = $this->renderFilter($this->filter);
         if ($where !== '') {
