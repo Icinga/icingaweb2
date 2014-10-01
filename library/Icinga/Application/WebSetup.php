@@ -130,8 +130,12 @@ class WebSetup extends Wizard implements SetupWizard
                         $skip = true;
                     }
                 } catch (PDOException $e) {
-                    $db->connectToHost();
-                    $skip = $db->checkPrivileges($this->databaseSetupPrivileges);
+                    try {
+                        $db->connectToHost();
+                        $skip = $db->checkPrivileges($this->databaseSetupPrivileges);
+                    } catch (PDOException $e) {
+                        // skip should already be false, nothing to do
+                    }
                 }
             } else {
                 $skip = true;
