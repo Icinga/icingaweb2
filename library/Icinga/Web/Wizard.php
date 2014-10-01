@@ -326,7 +326,8 @@ class Wizard
      */
     protected function isLastPage(Form $page)
     {
-        return $page->getName() === end($this->getPages())->getName();
+        $pages = $this->getPages();
+        return $page->getName() === end($pages)->getName();
     }
 
     /**
