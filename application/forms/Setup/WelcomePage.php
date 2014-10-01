@@ -19,7 +19,7 @@ class WelcomePage extends Form
      */
     public function init()
     {
-        $this->setName('form_setup_welcome');
+        $this->setName('setup_welcome');
     }
 
     /**
