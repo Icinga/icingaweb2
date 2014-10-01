@@ -52,12 +52,8 @@ class AdmissionLoader
             return $permissions;
         }
         foreach ($config as $section) {
-            if ($this->match($section, $username, $groups)) {
-                foreach ($section as $key => $value) {
-                    if (strpos($key, 'permission') === 0) {
-                        $permissions = array_merge($permissions, String::trimSplit($value));
-                    }
-                }
+            if ($this->match($section, $username, $groups) && isset($section->permissions)) {
+                $permissions += String::trimSplit($section->permissions);
             }
         }
         return $permissions;
