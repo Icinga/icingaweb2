@@ -75,12 +75,12 @@ class AdmissionLoader
         } catch (NotReadableError $e) {
             return $restrictions;
         }
-        foreach ($config as $section) {
+        foreach ($config as $name => $section) {
             if ($this->match($section, $username, $groups)) {
                 if (!array_key_exists($section->name, $restrictions)) {
                     $restrictions[$section->name] = array();
                 }
-                $restrictions[$section->name][] = $section->restriction;
+                $restrictions[$section->name][$name] = $section->restriction;
             }
         }
         return $restrictions;
