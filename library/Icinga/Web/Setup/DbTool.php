@@ -6,6 +6,9 @@ namespace Icinga\Web\Setup;
 
 use PDO;
 use PDOException;
+use LogicException;
+use Zend_Db_Adapter_Pdo_Mysql;
+use Zend_Db_Adapter_Pdo_Pgsql;
 use Icinga\Exception\ConfigurationError;
 
 /**
@@ -14,11 +17,18 @@ use Icinga\Exception\ConfigurationError;
 class DbTool
 {
     /**
-     * The database connection
+     * The PDO database connection
      *
      * @var PDO
      */
-    protected $conn;
+    protected $pdoConn;
+
+    /**
+     * The Zend database adapter
+     *
+     * @var Zend_Db_Adapter_Pdo_Abstract
+     */
+    protected $zendConn;
 
     /**
      * The resource configuration
@@ -39,21 +49,27 @@ class DbTool
 
     /**
      * Connect to the server
+     *
+     * @return  self
      */
     public function connectToHost()
     {
         $this->assertHostAccess();
         $this->connect();
+        return $this;
     }
 
     /**
      * Connect to the database
+     *
+     * @return  self
      */
     public function connectToDb()
     {
         $this->assertHostAccess();
         $this->assertDatabaseAccess();
         $this->connect($this->config['dbname']);
+        return $this;
     }
 
     /**
@@ -89,17 +105,73 @@ class DbTool
     }
 
     /**
+     * Assert that a connection with a database has been established
+     *
+     * @throws  LogicException
+     */
+    protected function assertConnectedToDb()
+    {
+        if ($this->zendConn === null) {
+            throw new LogicException('Not connected to database');
+        }
+    }
+
+    /**
      * Establish a connection with the database or just the server by omitting the database name
      *
      * @param   string  $dbname     The name of the database to connect to
      */
     public function connect($dbname = null)
     {
-        if ($this->conn !== null) {
+        $this->_pdoConnect($dbname);
+        if ($dbname !== null) {
+            $this->_zendConnect($dbname);
+        }
+    }
+
+    /**
+     * Initialize Zend database adapter
+     *
+     * @param   string  $dbname     The name of the database to connect with
+     *
+     * @throws  ConfigurationError  In case the resource type is not a supported PDO driver name
+     */
+    protected function _zendConnect($dbname)
+    {
+        if ($this->zendConn !== null) {
             return;
         }
 
-        $this->conn = new PDO(
+        $config = array(
+            'dbname'    => $dbname,
+            'username'  => $this->config['username'],
+            'password'  => $this->config['password']
+        );
+
+        if ($this->config['db'] === 'mysql') {
+            $this->zendConn = new Zend_Db_Adapter_Pdo_Mysql($config);
+        } elseif ($this->config['db'] === 'pgsql') {
+            $this->zendConn = new Zend_Db_Adapter_Pdo_Pgsql($config);
+        } else {
+            throw new ConfigurationError(
+                'Failed to connect to database. Unsupported PDO driver "%s"',
+                $this->config['db']
+            );
+        }
+    }
+
+    /**
+     * Initialize PDO connection
+     *
+     * @param   string  $dbname     The name of the database to connect with
+     */
+    protected function _pdoConnect($dbname)
+    {
+        if ($this->pdoConn !== null) {
+            return;
+        }
+
+        $this->pdoConn = new PDO(
             $this->buildDsn($this->config['db'], $dbname),
             $this->config['username'],
             $this->config['password'],
@@ -154,5 +226,28 @@ class DbTool
                 }
             }
         }
+    }
+
+    /**
+     * Return whether the given privileges were granted
+     *
+     * @param   array   $privileges     An array of strings with the required privilege names
+     *
+     * @return  bool
+     */
+    public function checkPrivileges(array $privileges)
+    {
+        return true; // TODO(7163): Implement privilege checks
+    }
+
+    /**
+     * Return a list of all existing database tables
+     *
+     * @return  array
+     */
+    public function listTables()
+    {
+        $this->assertConnectedToDb();
+        return $this->zendConn->listTables();
     }
 }

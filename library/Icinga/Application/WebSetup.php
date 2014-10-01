@@ -4,6 +4,7 @@
 
 namespace Icinga\Application;
 
+use PDOException;
 use Icinga\Form\Setup\WelcomePage;
 use Icinga\Form\Setup\DbResourcePage;
 use Icinga\Form\Setup\PreferencesPage;
@@ -13,9 +14,11 @@ use Icinga\Form\Setup\LdapResourcePage;
 use Icinga\Form\Setup\RequirementsPage;
 use Icinga\Form\Setup\GeneralConfigPage;
 use Icinga\Form\Setup\AuthenticationPage;
+use Icinga\Form\Setup\DatabaseCreationPage;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
 use Icinga\Web\Request;
+use Icinga\Web\Setup\DbTool;
 use Icinga\Web\Setup\SetupWizard;
 use Icinga\Web\Setup\Requirements;
 use Icinga\Application\Platform;
@@ -25,6 +28,31 @@ use Icinga\Application\Platform;
  */
 class WebSetup extends Wizard implements SetupWizard
 {
+    /**
+     * The database tables required by Icinga Web 2
+     *
+     * @var array
+     */
+    protected $databaseTables = array('account', 'preference');
+
+    /**
+     * The privileges required by Icinga Web 2 to setup the database
+     *
+     * @var array
+     */
+    protected $databaseSetupPrivileges = array(
+        'USAGE',
+        'CREATE',
+        'ALTER',
+        'INSERT',
+        'UPDATE',
+        'DELETE',
+        'TRUNCATE',
+        'REFERENCES',
+        'CREATE USER',
+        'GRANT OPTION'
+    );
+
     /**
      * @see Wizard::init()
      */
@@ -37,8 +65,9 @@ class WebSetup extends Wizard implements SetupWizard
         $this->addPage(new DbResourcePage());
         $this->addPage(new LdapResourcePage());
         $this->addPage(new AuthBackendPage());
-        $this->addPage(new GeneralConfigPage());
         $this->addPage(new AdminAccountPage());
+        $this->addPage(new GeneralConfigPage());
+        $this->addPage(new DatabaseCreationPage());
     }
 
     /**
@@ -68,6 +97,9 @@ class WebSetup extends Wizard implements SetupWizard
             } elseif ($authData['type'] === 'ldap') {
                 $page->setResourceConfig($this->getPageData('setup_ldap_resource'));
             }
+        } elseif ($page->getName() === 'setup_database_creation') {
+            $page->setDatabasePrivileges($this->databaseSetupPrivileges);
+            $page->setResourceConfig($this->getPageData('setup_db_resource'));
         }
     }
 
@@ -85,6 +117,25 @@ class WebSetup extends Wizard implements SetupWizard
         } elseif ($newPage->getName() === 'setup_ldap_resource') {
             $authData = $this->getPageData('setup_authentication_type');
             $skip = $authData['type'] !== 'ldap';
+        } elseif ($newPage->getName() === 'setup_database_creation') {
+            if ($this->hasPageData('setup_db_resource')) {
+                $db = new DbTool($this->getPageData('setup_db_resource'));
+
+                try {
+                    $db->connectToDb();
+                    $diff = array_diff($this->databaseTables, $db->listTables());
+                    if (false === empty($diff)) {
+                        $skip = $db->checkPrivileges($this->databaseSetupPrivileges);
+                    } else {
+                        $skip = true;
+                    }
+                } catch (PDOException $e) {
+                    $db->connectToHost();
+                    $skip = $db->checkPrivileges($this->databaseSetupPrivileges);
+                }
+            } else {
+                $skip = true;
+            }
         }
 
         if ($skip) {
