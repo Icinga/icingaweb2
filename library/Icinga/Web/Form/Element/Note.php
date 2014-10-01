@@ -7,7 +7,7 @@ namespace Icinga\Web\Form\Element;
 use Zend_Form_Element;
 
 /**
- * Implements note element for Zend forms
+ * A note
  */
 class Note extends Zend_Form_Element
 {
@@ -23,17 +23,25 @@ class Note extends Zend_Form_Element
     protected $_disableLoadDefaultDecorators = true;
 
     /**
-     * Name of the view helper
+     * Form view helper to use for rendering
      *
      * @var string
      */
     public $helper = 'formNote';
 
     /**
-     * Return true to ensure redrawing
+     * Ignore element when retrieving values at form level
      *
-     * @param mixed $value      The value of to validate (ignored)
-     * @return bool             Always true
+     * @var bool
+     */
+    protected $_ignore = true;
+
+    /**
+     * Validate element value (pseudo)
+     *
+     * @param   mixed $value    Ignored
+     *
+     * @return  bool            Always true
      */
     public function isValid($value)
     {
