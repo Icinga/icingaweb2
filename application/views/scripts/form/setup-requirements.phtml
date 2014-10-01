@@ -6,14 +6,14 @@ use Icinga\Web\Setup\Requirements;
 $requirements = $form->getRequirements();
 
 ?>
-<table>
+<table class="requirements">
   <tbody>
 <?php foreach ($requirements as $requirement): ?>
     <tr>
       <td><?= $requirement->title; ?></td>
       <td><?= $requirement->description; ?></td>
-      <td style="background-color: <?= $requirement->state === Requirements::STATE_OK ? 'green' : (
-        $requirement->state === Requirements::STATE_OPTIONAL ? 'yellow' : 'red'
+      <td class="<?= $requirement->state === Requirements::STATE_OK ? 'fulfilled' : (
+        $requirement->state === Requirements::STATE_OPTIONAL ? 'not-available' : 'missing'
       ); ?>"><?= $requirement->message; ?></td>
     </tr>
 <?php endforeach ?>

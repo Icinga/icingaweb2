@@ -10,11 +10,11 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
   <?= $form->getElement('description'); ?>
 <?php if (($byNameElem = $form->getElement('by_name')) !== null): ?>
   <div>
-    <div style="display: inline-block; width: 30.2em;">
+    <div class="instructions">
       <?= $byNameElem; ?>
     </div>
 <?php if ($showRadioBoxes): ?>
-    <div style="vertical-align: top; display: inline-block; padding: 0.4em 0.2em 0;">
+    <div class="radiobox">
       <label>
         <input type="radio" name="user_type" value="by_name">
         <?= $radioElem->getMultiOption('by_name'); ?>
@@ -25,11 +25,11 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
 <?php endif ?>
 <?php if (($existingUserElem = $form->getElement('existing_user')) !== null): ?>
   <div>
-    <div style="display: inline-block; width: 30.2em;">
+    <div class="instructions">
       <?= $existingUserElem; ?>
     </div>
 <?php if ($showRadioBoxes): ?>
-    <div style="vertical-align: top; display: inline-block; padding: 0.4em 0.2em 0;">
+    <div class="radiobox">
       <label>
         <input type="radio" name="user_type" value="existing_user">
         <?= $radioElem->getMultiOption('existing_user'); ?>
@@ -40,13 +40,13 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
 <?php endif ?>
 <?php if (($newUserElem = $form->getElement('new_user')) !== null): ?>
   <div>
-    <div style="display: inline-block; width: 30.2em;">
+    <div class="instructions">
       <?= $newUserElem; ?>
       <?= $form->getElement('new_user_password'); ?>
       <?= $form->getElement('new_user_2ndpass'); ?>
     </div>
 <?php if ($showRadioBoxes): ?>
-    <div style="vertical-align: top; display: inline-block; padding: 0.4em 0.2em 0;">
+    <div class="radiobox">
       <label>
         <input type="radio" name="user_type" value="new_user">
         <?= $radioElem->getMultiOption('new_user'); ?>
