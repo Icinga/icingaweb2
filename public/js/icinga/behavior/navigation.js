@@ -77,6 +77,12 @@
         $menu.data('icinga-url', menuDataUrl);
     };
 
+    Navigation.prototype.setActiveByUrl = function(url)
+    {
+        this.resetActive();
+        this.setActive($('#menu [href="' + url + '"]'));
+    }
+
     /**
      * Change the active menu element
      *

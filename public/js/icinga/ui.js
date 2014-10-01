@@ -136,6 +136,7 @@
             var kill = this.cutContainer($('#col1'));
             this.pasteContainer($('#col1'), col2);
             this.fixControls();
+            this.icinga.behaviors.navigation.setActiveByUrl($('#col1').data('icingaUrl'));
         },
 
         cutContainer: function ($col) {
