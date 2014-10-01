@@ -109,6 +109,18 @@ class Params
     }
 
     /**
+     * Support isset() and empty() checks on options
+     *
+     * @param   $name
+     *
+     * @return  bool
+     */
+    public function __isset($name)
+    {
+        return isset($this->params[$name]);
+    }
+
+    /**
      * @see Params::get()
      */
     public function __get($key)
