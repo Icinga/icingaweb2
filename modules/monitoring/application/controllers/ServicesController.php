@@ -43,6 +43,13 @@ class Monitoring_ServicesController extends Controller
 
     public function showAction()
     {
+        $this->getTabs()->add(
+            'show',
+            array(
+                'title' => t('Services'),
+                'url' => Url::fromRequest()
+            )
+        )->activate('show');
         $this->setAutorefreshInterval(15);
         $checkNowForm = new CheckNowCommandForm();
         $checkNowForm
