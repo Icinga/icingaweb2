@@ -23,6 +23,7 @@ class Tabs extends AbstractWidget implements Countable
 <ul class="tabs">
   {TABS}
   {DROPDOWN}
+  {CLOSE}
 </ul>
 EOT;
 
@@ -39,6 +40,18 @@ EOT;
   </ul>
 </li>
 EOT;
+
+    /**
+     * Template used for the close-button
+     *
+     * @var string
+     */
+    private $closeTpl = <<< 'EOT'
+<li class="dropdown" style="float: right;">
+  <a href="#" class="dropdown-toggle close-toggle">X</a>
+</li>
+EOT;
+
 
     /**
      * This is where single tabs added to this container will be stored
@@ -60,6 +73,21 @@ EOT;
      * @var array
      */
     private $dropdownTabs = array();
+
+    /**
+     * Whether the tabs should contain a close-button
+     *
+     * @var bool
+     */
+    private $closeTab = true;
+
+    /**
+     * Set whether the current tab is closable
+     */
+    public function hideCloseButton()
+    {
+        $this->closeTab = false;
+    }
 
     /**
      * Activate the tab with the given name
@@ -235,6 +263,11 @@ EOT;
         return $tabs;
     }
 
+    private function renderCloseTab()
+    {
+        return $this->closeTpl;
+    }
+
     /**
      * Render to HTML
      *
@@ -249,6 +282,7 @@ EOT;
         $html = $this->baseTpl;
         $html = str_replace('{TABS}', $this->renderTabs(), $html);
         $html = str_replace('{DROPDOWN}', $this->renderDropdownTabs(), $html);
+        $html = str_replace('{CLOSE}', $this->closeTab ? $this->renderCloseTab() : '', $html);
         return $html;
     }
 

@@ -199,6 +199,11 @@
             self.refreshDebug();
         },
 
+        /**
+         * Returns whether the layout is too small for more than one column
+         *
+         * @returns {boolean}   True when more than one column is available
+         */
         hasOnlyOneColumn: function () {
             return this.currentLayout === 'poor' || this.currentLayout === 'minimal';
         },
@@ -229,11 +234,21 @@
             return false;
         },
 
+        /**
+         * Returns whether only one column is displayed
+         *
+         * @returns {boolean}   True when only one column is displayed
+         */
+        isOneColLayout: function () {
+            return ! $('#layout').hasClass('twocols');
+        },
+
         layout1col: function () {
-            if (! $('#layout').hasClass('twocols')) { return; }
+            if (this.isOneColLayout()) { return; }
             this.icinga.logger.debug('Switching to single col');
             $('#layout').removeClass('twocols');
             this.closeContainer($('#col2'));
+            this.disableCloseButtons();
         },
 
         closeContainer: function($c) {
@@ -247,10 +262,11 @@
         },
 
         layout2col: function () {
-            if ($('#layout').hasClass('twocols')) { return; }
+            if (! this.isOneColLayout()) { return; }
             this.icinga.logger.debug('Switching to double col');
             $('#layout').addClass('twocols');
             this.fixControls();
+            this.enableCloseButtons();
         },
 
         getAvailableColumnSpace: function () {
@@ -696,6 +712,14 @@
             });
 
             this.fixControls(parent);
+        },
+
+        disableCloseButtons: function () {
+            $('a.close-toggle').hide();
+        },
+
+        enableCloseButtons: function () {
+            $('a.close-toggle').show();
         },
 
         fixControls: function ($parent) {
