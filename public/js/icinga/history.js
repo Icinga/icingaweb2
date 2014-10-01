@@ -90,6 +90,7 @@
                 }
             });
 
+            // TODO: update navigation
             // Did we find any URL? Then push it!
             if (url !== '') {
                 window.history.pushState({icinga: true}, null, this.cleanupUrl(url));
