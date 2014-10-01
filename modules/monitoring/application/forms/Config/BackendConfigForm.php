@@ -46,7 +46,7 @@ class BackendConfigForm extends ConfigForm
         $resources = array();
         foreach ($resourceConfig as $name => $resource) {
             if ($resource->type === 'db' || $resource->type === 'statusdat' || $resource->type === 'livestatus') {
-                $resources[$resource->type === 'db' ? 'ido' : strtolower($resource->type)][] = $name;
+                $resources[$resource->type === 'db' ? 'ido' : strtolower($resource->type)][$name] = $name;
             }
         }
 
