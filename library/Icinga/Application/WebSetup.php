@@ -6,6 +6,7 @@ namespace Icinga\Application;
 
 use PDOException;
 use Icinga\Form\Setup\WelcomePage;
+use Icinga\Form\Setup\SummaryPage;
 use Icinga\Form\Setup\DbResourcePage;
 use Icinga\Form\Setup\PreferencesPage;
 use Icinga\Form\Setup\AuthBackendPage;
@@ -68,6 +69,7 @@ class WebSetup extends Wizard implements SetupWizard
         $this->addPage(new AdminAccountPage());
         $this->addPage(new GeneralConfigPage());
         $this->addPage(new DatabaseCreationPage());
+        $this->addPage(new SummaryPage());
     }
 
     /**
@@ -109,6 +111,8 @@ class WebSetup extends Wizard implements SetupWizard
         } elseif ($page->getName() === 'setup_database_creation') {
             $page->setDatabasePrivileges($this->databaseSetupPrivileges);
             $page->setResourceConfig($this->getPageData('setup_db_resource'));
+        } elseif ($page->getName() === 'setup_summary') {
+            $page->setSummary($this->getInstaller()->getSummary());
         }
     }
 

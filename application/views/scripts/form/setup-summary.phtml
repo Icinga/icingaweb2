@@ -1,0 +1,60 @@
+<?php
+
+use Icinga\Web\Wizard;
+
+?>
+<p><?= t(
+    'The wizard is now complete. You can review the changes supposed to be made before issuing the actual installation'
+    . ' of Icinga Web 2. Make sure that everything is correct (Feel free to navigate back to make any corrections!) so'
+    . ' that you can start using Icinga Web 2 right after the installation has been finished.'
+); ?></p>
+<div class="summary">
+  <?php foreach ($form->getSummary() as $pageTitle => $pageContent): ?>
+    <div class="page">
+      <h2><?= $pageTitle; ?></h2>
+      <?php if (is_array($pageContent)): ?>
+        <?php foreach ($pageContent as $paragraphTitle => $paragraphContent): ?>
+          <div class="paragraph">
+            <?php if (false === is_int($paragraphTitle)): ?>
+              <h3><?= $paragraphTitle; ?></h3>
+            <?php endif ?>
+            <?php if (is_array($paragraphContent)): ?>
+              <?php if (is_int(key($paragraphContent))): ?>
+                <ul class="topic">
+                  <?php foreach ($paragraphContent as $listItem): ?>
+                    <li><?= $listItem; ?></li>
+                  <?php endforeach ?>
+                </ul>
+              <?php else: ?>
+                <?php foreach ($paragraphContent as $topicTitle => $topicContent): ?>
+                  <div class="topic">
+                    <h4><?= $topicTitle; ?></h4>
+                    <?php if (is_array($topicContent)): ?>
+                      <ul>
+                        <?php foreach ($topicContent as $listItem): ?>
+                          <li><?= $listItem; ?></li>
+                        <?php endforeach ?>
+                      </ul>
+                    <?php else: ?>
+                      <p><?= $topicContent; ?></p>
+                    <?php endif ?>
+                  </div>
+                <?php endforeach ?>
+              <?php endif ?>
+            <?php else: ?>
+              <p class="topic"><?= $paragraphContent; ?></p>
+            <?php endif ?>
+          </div>
+        <?php endforeach ?>
+      <?php else: ?>
+        <p class="paragraph"><?= $pageContent; ?></p>
+      <?php endif ?>
+    </div>
+  <?php endforeach ?>
+  <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>">
+    <?= $form->getElement($form->getTokenElementName()); ?>
+    <?= $form->getElement($form->getUidElementName()); ?>
+    <?= $form->getElement(Wizard::BTN_PREV); ?>
+    <?= $form->getElement(Wizard::BTN_NEXT)->setLabel(t('Install Icinga Web 2')); ?>
+  </form>
+</div>
