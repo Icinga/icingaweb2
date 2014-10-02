@@ -32,11 +32,11 @@ class LoggingConfigForm extends Form
                 'label'         => t('Logging Level'),
                 'description'   => t('The maximum loglevel to emit.'),
                 'multiOptions'  => array(
-                    0 => t('None'),
-                    1 => t('Error'),
-                    2 => t('Warning'),
-                    3 => t('Information'),
-                    4 => t('Debug')
+                    0 => t('None', 'app.config.logging.level'),
+                    1 => t('Error', 'app.config.logging.level'),
+                    2 => t('Warning', 'app.config.logging.level'),
+                    3 => t('Information', 'app.config.logging.level'),
+                    4 => t('Debug', 'app.config.logging.level')
                 )
             )
         );
@@ -50,7 +50,7 @@ class LoggingConfigForm extends Form
                 'description'   => t('The type of logging to utilize.'),
                 'multiOptions'  => array(
                     'syslog'    => 'Syslog',
-                    'file'      => t('File')
+                    'file'      => t('File', 'app.config.logging.type')
                 )
             )
         );
