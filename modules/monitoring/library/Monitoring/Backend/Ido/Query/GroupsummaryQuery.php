@@ -44,7 +44,6 @@ class GroupSummaryQuery extends IdoQuery
         $columns = array(
             'object_type',
             'host_state',
-            'host_name'
         );
 
         // Prepend group column since we'll use columns index 0 later for grouping
@@ -61,6 +60,9 @@ class GroupSummaryQuery extends IdoQuery
                 'in_downtime'  => 'host_in_downtime'
             )
         );
+        if (in_array('servicegroup', $this->desiredColumns)) {
+            $hosts->group(array('sgo.name1', 'ho.object_id', 'state', 'acknowledged', 'in_downtime'));
+        }
         $services = $this->createSubQuery(
             'Status',
             $columns + array(

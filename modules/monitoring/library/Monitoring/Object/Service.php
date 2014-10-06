@@ -191,7 +191,8 @@ class Service extends MonitoredObject
             'service_flap_detection_enabled_changed',
             'service_modified_service_attributes',
             'service_process_performance_data',
-            'service_percent_state_change'
+            'service_percent_state_change',
+            'service_host_name'
         ))
             ->where('host_name', $this->host->getName())
             ->where('service_description', $this->service);
