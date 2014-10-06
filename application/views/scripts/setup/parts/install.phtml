@@ -1,0 +1,14 @@
+<div class="report">
+<?php foreach ($report as $entry): ?>
+  <p class="<?= $entry->state ? 'ok' : 'failure'; ?>">
+    <?= $entry->message; ?>
+  </p>
+<?php endforeach ?>
+</div>
+<div class="buttons">
+<?php if ($success): ?>
+  <a href="<?= $this->href('authentication/login'); ?>" class="button-like login"><?= t('Login to Icinga Web 2'); ?></a>
+<?php else: ?>
+  <a href="<?= $this->href(); ?>" class="button-like"><?= t('Back'); ?></a>
+<?php endif ?>
+</div>
