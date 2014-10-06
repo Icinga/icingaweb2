@@ -86,15 +86,6 @@ class WebSetup extends Wizard implements SetupWizard
             }
         } elseif ($page->getName() === 'setup_authentication_backend') {
             $authData = $this->getPageData('setup_authentication_type');
-            if (($backendData = $this->getPageData($page->getName())) !== null
-                && $backendData['backend'] !== $authData['type']
-            ) {
-                // Drop any existing page data in case the authentication type has changed,
-                // otherwise it will conflict with other forms that depend on this one
-                $pageData = & $this->getPageData();
-                unset($pageData[$page->getName()]);
-            }
-
             if ($authData['type'] === 'db') {
                 $page->setResourceConfig($this->getPageData('setup_db_resource'));
             } elseif ($authData['type'] === 'ldap') {
@@ -124,6 +115,15 @@ class WebSetup extends Wizard implements SetupWizard
                 $page->addError(
                     t('The given resource name must be unique and is already in use by the database resource')
                 );
+            }
+        } elseif ($page->getName() === 'setup_authentication_type') {
+            $authData = $this->getPageData($page->getName());
+            if ($authData !== null && $request->getPost('type') !== $authData['type']) {
+                // Drop any existing page data in case the authentication type has changed,
+                // otherwise it will conflict with other forms that depend on this one
+                $pageData = & $this->getPageData();
+                unset($pageData['setup_admin_account']);
+                unset($pageData['setup_authentication_backend']);
             }
         }
     }
