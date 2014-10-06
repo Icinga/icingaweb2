@@ -56,7 +56,7 @@ use Icinga\Web\Wizard;
     <?= $form->getElement($form->getUidElementName()); ?>
     <div class="buttons">
       <?= $form->getElement(Wizard::BTN_PREV); ?>
-      <?= $form->getElement(Wizard::BTN_NEXT)->setLabel(t('Install Icinga Web 2')); ?>
+      <?= $form->getElement(Wizard::BTN_NEXT)->setLabel(t('Install Icinga Web 2'))->setAttrib('class', 'install'); ?>
     </div>
   </form>
 </div>
