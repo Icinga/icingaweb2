@@ -16,7 +16,7 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
 <?php if ($showRadioBoxes): ?>
     <div class="radiobox">
       <label>
-        <input type="radio" name="user_type" value="by_name">
+        <input type="radio" name="user_type" value="by_name"<?= $radioElem->getValue() === 'by_name' ? ' checked' : ''; ?>>
         <?= $radioElem->getMultiOption('by_name'); ?>
       </label>
     </div>
@@ -31,7 +31,7 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
 <?php if ($showRadioBoxes): ?>
     <div class="radiobox">
       <label>
-        <input type="radio" name="user_type" value="existing_user">
+        <input type="radio" name="user_type" value="existing_user"<?= $radioElem->getValue() === 'existing_user' ? ' checked' : ''; ?>>
         <?= $radioElem->getMultiOption('existing_user'); ?>
       </label>
     </div>
@@ -48,7 +48,7 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
 <?php if ($showRadioBoxes): ?>
     <div class="radiobox">
       <label>
-        <input type="radio" name="user_type" value="new_user">
+        <input type="radio" name="user_type" value="new_user"<?= $radioElem->getValue() === 'new_user' ? ' checked' : ''; ?>>
         <?= $radioElem->getMultiOption('new_user'); ?>
       </label>
     </div>
