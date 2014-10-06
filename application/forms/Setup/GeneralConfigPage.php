@@ -19,7 +19,7 @@ class GeneralConfigPage extends Form
      */
     public function init()
     {
-        $this->setName('setup_application_config');
+        $this->setName('setup_general_config');
     }
 
     /**

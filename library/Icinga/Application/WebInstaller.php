@@ -132,13 +132,13 @@ class WebInstaller implements Installer
                 )
         );
 
-        $loggingLevel = $this->pageData['setup_application_config']['logging_level'];
-        $loggingType = $this->pageData['setup_application_config']['logging_type'];
+        $loggingLevel = $this->pageData['setup_general_config']['logging_level'];
+        $loggingType = $this->pageData['setup_general_config']['logging_type'];
         $summary[t('Application Configuration')] = array(
             t('General', 'app.config') => array(
                 sprintf(
                     t('Icinga Web 2 will look for modules at: %s'),
-                    $this->pageData['setup_application_config']['global_modulePath']
+                    $this->pageData['setup_general_config']['global_modulePath']
                 ),
                 sprintf(
                     $prefType === 'ini' ? sprintf(
@@ -170,19 +170,19 @@ class WebInstaller implements Installer
                         $loggingType === 'syslog' ? 'Syslog' : t('File', 'app.config.logging.type')
                     )
                 ),
-                $this->pageData['setup_application_config']['logging_type'] === 'syslog' ? array(
+                $this->pageData['setup_general_config']['logging_type'] === 'syslog' ? array(
                     sprintf(
                         t('Application Prefix: %s'),
-                        $this->pageData['setup_application_config']['logging_application']
+                        $this->pageData['setup_general_config']['logging_application']
                     ),
                     sprintf(
                         t('Facility: %s'),
-                        $this->pageData['setup_application_config']['logging_facility']
+                        $this->pageData['setup_general_config']['logging_facility']
                     )
                 ) : array(
                     sprintf(
                         t('Filepath: %s'),
-                        $this->pageData['setup_application_config']['logging_target']
+                        $this->pageData['setup_general_config']['logging_target']
                     )
                 )
             )
