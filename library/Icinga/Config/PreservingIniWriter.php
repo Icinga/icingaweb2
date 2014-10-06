@@ -101,7 +101,7 @@ class PreservingIniWriter extends Zend_Config_Writer_FileAbstract
         $this->_config = $this->normalizeKeys($this->_config);
 
         $newconfig = $this->_config;
-        $editor = new IniEditor(file_get_contents($this->_filename), $this->options);
+        $editor = new IniEditor(@file_get_contents($this->_filename), $this->options);
         $this->diffConfigs($oldconfig, $newconfig, $editor);
         $this->updateSectionOrder($newconfig, $editor);
         return $editor->getText();
