@@ -131,8 +131,6 @@ abstract class Filter
 
     public static function expression($col, $op, $expression)
     {
-        $col = trim($col);
-        $expression = is_array($expression) ? array_map('trim', $expression) : trim($expression);
         switch ($op) {
             case '=': return new FilterMatch($col, $op, $expression);
             case '<': return new FilterLessThan($col, $op, $expression);
