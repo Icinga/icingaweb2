@@ -6,12 +6,14 @@ namespace Icinga\Module\Monitoring\DataView;
 
 use Countable;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterMatch;
 use Icinga\Data\SimpleQuery;
 use Icinga\Data\Browsable;
 use Icinga\Data\PivotTable;
 use Icinga\Data\Sortable;
 use Icinga\Data\ConnectionInterface;
 use Icinga\Data\Filterable;
+use Icinga\Exception\QueryException;
 use Icinga\Web\Request;
 use Icinga\Web\Url;
 use Icinga\Module\Monitoring\Backend;
@@ -206,13 +208,13 @@ public function dump()
         if ($sortRules !== null) {
             if ($column === null) {
                 $sortColumns = reset($sortRules);
-                if (!isset($sortColumns['columns'])) {
+                if (! isset($sortColumns['columns'])) {
                     $sortColumns['columns'] = array(key($sortRules));
                 }
             } else {
                 if (isset($sortRules[$column])) {
                     $sortColumns = $sortRules[$column];
-                    if (!isset($sortColumns['columns'])) {
+                    if (! isset($sortColumns['columns'])) {
                         $sortColumns['columns'] = array($column);
                     }
                 } else {
@@ -227,6 +229,13 @@ public function dump()
             $order = (strtoupper($order) === self::SORT_ASC) ? 'ASC' : 'DESC';
 
             foreach ($sortColumns['columns'] as $column) {
+                if (! $this->isValidFilterTarget($column)) {
+                    throw new QueryException(
+                        t('The sort column "%s" is not allowed in "%s".'),
+                        $column,
+                        get_class($this)
+                    );
+                }
                 $this->query->order($column, $order);
             }
             $this->isSorted = true;
@@ -289,13 +298,42 @@ public function dump()
      */
     public function getQuery()
     {
-        if (! $this->isSorted) { $this->sort(); }
+        if (! $this->isSorted) {
+            $this->order();
+        }
         return $this->query;
     }
 
     public function applyFilter(Filter $filter)
     {
+        $this->validateFilterColumns($filter);
+
         return $this->addFilter($filter);
+    }
+
+    /**
+     * Validates recursive the Filter columns against the isValidFilterTarget() method
+     *
+     * @param Filter $filter
+     *
+     * @throws \Icinga\Data\Filter\FilterException
+     */
+    public function validateFilterColumns(Filter $filter)
+    {
+        if ($filter instanceof FilterMatch) {
+            if (! $this->isValidFilterTarget($filter->getColumn())) {
+                throw new QueryException(
+                    t('The filter column "%s" is not allowed here.'),
+                    $filter->getColumn()
+                );
+            }
+        }
+
+        if (method_exists($filter, 'filters')) {
+            foreach ($filter->filters() as $filter) {
+                $this->validateFilterColumns($filter);
+            }
+        }
     }
 
     public function clearFilter()
