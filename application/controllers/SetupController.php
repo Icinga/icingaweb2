@@ -34,11 +34,9 @@ class SetupController extends ActionController
 
             $this->view->success = $success;
             $this->view->report = $installer->getReport();
-            $this->render('install');
         } else {
             $wizard->handleRequest();
             $this->view->wizard = $wizard;
-            $this->render('wizard');
         }
     }
 }
