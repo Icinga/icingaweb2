@@ -5,6 +5,7 @@
 namespace Icinga\Web;
 
 use LogicException;
+use Zend_Config;
 use Zend_Form;
 use Zend_View_Interface;
 use Icinga\Application\Icinga;
@@ -82,6 +83,19 @@ class Form extends Zend_Form
     protected $uidElementName = 'formUID';
 
     /**
+     * Default element decorators
+     *
+     * @var array
+     */
+    public static $defaultElementDecorators = array(
+        'ViewHelper',
+        'Errors',
+        array('Description', array('tag' => 'span', 'class' => 'description')),
+        'Label',
+        array('HtmlTag', array('tag' => 'div'))
+    );
+
+    /**
      * Create a new form
      *
      * Accepts an additional option `onSuccess' which is a callback that is called instead of this
@@ -103,16 +117,6 @@ class Form extends Zend_Form
 
         if ($this->onSuccess !== null && false === is_callable($this->onSuccess)) {
             throw new LogicException('The option `onSuccess\' is not callable');
-        }
-
-        if (! isset($options['elementDecorators'])) {
-            $options['elementDecorators'] = array(
-                'ViewHelper',
-                'Errors',
-                array('Description', array('tag' => 'span', 'class' => 'description')),
-                'Label',
-                array('HtmlTag', array('tag' => 'div'))
-            );
         }
 
         parent::__construct($options);
@@ -417,23 +421,35 @@ class Form extends Zend_Form
     /**
      * Create a new element
      *
-     * Additionally, all structural form element decorators by Zend are replaced with our own ones.
+     * Icinga Web 2 loads its own default element decorators. For loading Zend's default element decorators set the
+     * `disableLoadDefaultDecorators' option to any other value than `true'. For loading custom element decorators use
+     * the 'decorators' option.
      *
      * @param   string  $type       String element type
      * @param   string  $name       The name of the element to add
-     * @param   array   $options    The options for the element
+     * @param   mixed   $options    The options for the element
      *
      * @return  Zend_Form_Element
      *
-     * @see     Zend_Form::createElement()
+     * @see     Form::$defaultElementDecorators For Icinga Web 2's default element decorators.
      */
     public function createElement($type, $name, $options = null)
     {
-        if (is_array($options) && ! isset($options['disableLoadDefaultDecorators'])) {
-            $options['disableLoadDefaultDecorators'] = true;
+        if ($options !== null) {
+            if ($options instanceof Zend_Config) {
+                $options = $options->toArray();
+            }
+            if (! isset($options['decorators'])
+                && ! array_key_exists('disabledLoadDefaultDecorators', $options)
+            ) {
+                $options['decorators'] = static::$defaultElementDecorators;
+            }
+        } else {
+            $options = array('decorators' => static::$defaultElementDecorators);
         }
 
         $el = parent::createElement($type, $name, $options);
+
         if ($el && $el->getAttrib('autosubmit')) {
             $el->addDecorator(new NoScriptApply()); // Non-JS environments
             $class = $el->getAttrib('class');

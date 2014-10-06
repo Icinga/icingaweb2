@@ -4,8 +4,8 @@
 
 namespace Icinga\Web\Form\Element;
 
-use Zend_Form_Element_Xhtml;
 use Icinga\Web\Session;
+use Icinga\Web\Form\FormElement;
 use Icinga\Web\Form\InvalidCSRFTokenException;
 
 /**
@@ -13,7 +13,7 @@ use Icinga\Web\Form\InvalidCSRFTokenException;
  *
  * You must not set a value to successfully use this element, just give it a name and you're good to go.
  */
-class CsrfCounterMeasure extends Zend_Form_Element_Xhtml
+class CsrfCounterMeasure extends FormElement
 {
     /**
      * Default form view helper to use for rendering
@@ -23,13 +23,25 @@ class CsrfCounterMeasure extends Zend_Form_Element_Xhtml
     public $helper = 'formHidden';
 
     /**
+     * Counter measure element is required
+     *
+     * @var bool
+     */
+    protected $_ignore = true;
+
+    /**
+     * Ignore element when retrieving values at form level
+     *
+     * @var bool
+     */
+    protected $_required = true;
+
+    /**
      * Initialize this form element
      */
     public function init()
     {
-        $this->setRequired(true); // Not requiring this element would not make any sense
-        $this->setIgnore(true); // We do not want this element's value being retrieved by Form::getValues()
-        $this->setDecorators(array('ViewHelper'));
+        $this->addDecorator('ViewHelper');
         $this->setValue($this->generateCsrfToken());
     }
 

@@ -4,7 +4,7 @@
 
 namespace Icinga\Protocol\File;
 
-use FilterIterator;
+use Icinga\Util\EnumeratingFilterIterator;
 use Icinga\Util\File;
 
 /**
@@ -12,7 +12,7 @@ use Icinga\Util\File;
  *
  * Iterate over a file, yielding only fields of non-empty lines which match a PCRE expression
  */
-class FileIterator extends FilterIterator
+class FileIterator extends EnumeratingFilterIterator
 {
     /**
      * A PCRE string with the fields to extract from the file's lines as named subpatterns
