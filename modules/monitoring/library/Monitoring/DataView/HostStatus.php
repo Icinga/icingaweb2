@@ -64,7 +64,8 @@ class HostStatus extends DataView
             'host_percent_state_change',
             'host_modified_host_attributes',
             'host_severity',
-            'host_problem'
+            'host_problem',
+            'host_ipv4'
         );
     }
 
@@ -105,7 +106,7 @@ class HostStatus extends DataView
 
     public function getFilterColumns()
     {
-        return array('hostgroup', 'service_problems');
+        return array('hostgroup', 'service_problems', 'servicegroup');
     }
 
     public function isValidFilterTarget($column)
