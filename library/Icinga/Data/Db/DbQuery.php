@@ -59,6 +59,13 @@ class DbQuery extends SimpleQuery
      */
     protected $count;
 
+    /**
+     * GROUP BY clauses
+     *
+     * @var string|array
+     */
+    protected $group;
+
     protected function init()
     {
         $this->db = $this->ds->getDbAdapter();
@@ -98,6 +105,10 @@ class DbQuery extends SimpleQuery
                 list($alias, $field) = explode('.', $fieldAndDirection[0]);
                 $this->columns[$field] = $fieldAndDirection[0];
             }
+        }
+
+        if ($this->group) {
+            $select->group($this->group);
         }
 
         $select->columns($this->columns);
@@ -299,5 +310,18 @@ class DbQuery extends SimpleQuery
     public function __toString()
     {
         return (string) $this->getSelectQuery();
+    }
+
+    /**
+     * Add a GROUP BY clause
+     *
+     * @param   string|array $group
+     *
+     * @return  $this
+     */
+    public function group($group)
+    {
+        $this->group = $group;
+        return $this;
     }
 }
