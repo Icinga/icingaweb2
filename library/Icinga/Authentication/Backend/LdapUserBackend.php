@@ -90,13 +90,15 @@ class LdapUserBackend extends UserBackend
     /**
      * Retrieve the user groups
      *
+     * @TODO: Subject to change, see #7343
+     *
      * @param string $dn
      *
      * @return array|null
      */
     public function getGroups($dn)
     {
-        if (empty($this->groupOptions)) {
+        if (empty($this->groupOptions) || ! isset($this->groupOptions['group_base_dn'])) {
             return null;
         }
 

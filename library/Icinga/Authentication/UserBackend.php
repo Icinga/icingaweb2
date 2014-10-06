@@ -93,7 +93,6 @@ abstract class UserBackend implements Countable
                 $backend = new DbUserBackend($resource);
                 break;
             case 'msldap':
-                self::checkLdapConfiguration($name, $backendConfig);
                 $groupOptions = array(
                     'group_base_dn'             => $backendConfig->group_base_dn,
                     'group_attribute'           => $backendConfig->group_attribute,
@@ -108,7 +107,18 @@ abstract class UserBackend implements Countable
                 );
                 break;
             case 'ldap':
-                self::checkLdapConfiguration($name, $backendConfig);
+                if ($backendConfig->user_class === null) {
+                    throw new ConfigurationError(
+                        'Authentication configuration for backend "%s" is missing the user_class directive',
+                        $name
+                    );
+                }
+                if ($backendConfig->user_name_attribute === null) {
+                    throw new ConfigurationError(
+                        'Authentication configuration for backend "%s" is missing the user_name_attribute directive',
+                        $name
+                    );
+                }
                 $groupOptions = array(
                     'group_base_dn'             => $backendConfig->group_base_dn,
                     'group_attribute'           => $backendConfig->group_attribute,
@@ -152,52 +162,4 @@ abstract class UserBackend implements Countable
      * @return  bool
      */
     abstract public function authenticate(User $user, $password);
-
-    /**
-     * Checks the ldap configuration
-     *
-     * @param $name
-     * @param Zend_Config $backendConfig
-     *
-     * @throws \Icinga\Exception\ConfigurationError
-     */
-    protected static function checkLdapConfiguration($name, Zend_Config $backendConfig)
-    {
-        if ($backendConfig->user_class === null) {
-            throw new ConfigurationError(
-                'Authentication configuration for backend "%s" is missing the user_class directive',
-                $name
-            );
-        }
-        if ($backendConfig->user_name_attribute === null) {
-            throw new ConfigurationError(
-                'Authentication configuration for backend "%s" is missing the user_name_attribute directive',
-                $name
-            );
-        }
-        if ($backendConfig->group_base_dn === null) {
-            throw new ConfigurationError(
-                'Authentication configuration for backend "%s" is missing the group_base_dn directive',
-                $name
-            );
-        }
-        if ($backendConfig->group_attribute === null) {
-            throw new ConfigurationError(
-                'Authentication configuration for backend "%s" is missing the group_attribute directive',
-                $name
-            );
-        }
-        if ($backendConfig->group_member_attribute === null) {
-            throw new ConfigurationError(
-                'Authentication configuration for backend "%s" is missing the group_member_attribute directive',
-                $name
-            );
-        }
-        if ($backendConfig->group_class === null) {
-            throw new ConfigurationError(
-                'Authentication configuration for backend "%s" is missing the group_class directive',
-                $name
-            );
-        }
-    }
 }
