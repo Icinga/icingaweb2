@@ -469,6 +469,17 @@ class Wizard
                 )
             );
         }
+
+        $page->addDisplayGroup(
+            array(static::BTN_PREV, static::BTN_NEXT),
+            'buttons',
+            array(
+                'decorators' => array(
+                    'FormElements',
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'buttons'))
+                )
+            )
+        );
     }
 
     /**

@@ -60,6 +60,8 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
 <?php endif ?>
   <?= $form->getElement($form->getTokenElementName()); ?>
   <?= $form->getElement($form->getUidElementName()); ?>
-  <?= $form->getElement(Wizard::BTN_PREV); ?>
-  <?= $form->getElement(Wizard::BTN_NEXT); ?>
+  <div class="buttons">
+    <?= $form->getElement(Wizard::BTN_PREV); ?>
+    <?= $form->getElement(Wizard::BTN_NEXT); ?>
+  </div>
 </form>

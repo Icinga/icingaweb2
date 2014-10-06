@@ -22,12 +22,14 @@ $requirements = $form->getRequirements();
 <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>">
   <?= $form->getElement($form->getTokenElementName()); ?>
   <?= $form->getElement($form->getUidElementName()); ?>
-  <?= $form->getElement(Wizard::BTN_PREV); ?>
-  <?php
-    $btn = $form->getElement(Wizard::BTN_NEXT);
-    if (false === $requirements->fulfilled()) {
-        $btn->setAttrib('disabled', 1);
-    }
-    echo $btn;
-  ?>
+  <div class="buttons">
+    <?= $form->getElement(Wizard::BTN_PREV); ?>
+    <?php
+      $btn = $form->getElement(Wizard::BTN_NEXT);
+      if (false === $requirements->fulfilled()) {
+          $btn->setAttrib('disabled', 1);
+      }
+      echo $btn;
+    ?>
+  </div>
 </form>
