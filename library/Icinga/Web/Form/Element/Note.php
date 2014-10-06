@@ -5,23 +5,13 @@
 namespace Icinga\Web\Form\Element;
 
 use Zend_Form_Element;
+use Icinga\Web\Form;
 
 /**
  * A note
  */
 class Note extends Zend_Form_Element
 {
-    /**
-     * Disable default decorators
-     *
-     * \Icinga\Web\Form sets default decorators for elements.
-     *
-     * @var bool
-     *
-     * @see \Icinga\Web\Form::__construct() For default element decorators.
-     */
-    protected $_disableLoadDefaultDecorators = true;
-
     /**
      * Form view helper to use for rendering
      *
@@ -35,6 +25,15 @@ class Note extends Zend_Form_Element
      * @var bool
      */
     protected $_ignore = true;
+
+    /**
+     * (non-PHPDoc)
+     * @see Zend_Form_Element::init() For the method documentation.
+     */
+    public function init()
+    {
+        $this->setDecorators(Form::$defaultElementDecorators);
+    }
 
     /**
      * Validate element value (pseudo)
