@@ -113,6 +113,18 @@ class WebSetup extends Wizard implements SetupWizard
             $page->setResourceConfig($this->getPageData('setup_db_resource'));
         } elseif ($page->getName() === 'setup_summary') {
             $page->setSummary($this->getInstaller()->getSummary());
+        } elseif ($page->getName() === 'setup_db_resource') {
+            $ldapData = $this->getPageData('setup_ldap_resource');
+            if ($ldapData !== null && $request->getPost('name') === $ldapData['name']) {
+                $page->addError(t('The given resource name must be unique and is already in use by the LDAP resource'));
+            }
+        } elseif ($page->getName() === 'setup_ldap_resource') {
+            $dbData = $this->getPageData('setup_db_resource');
+            if ($dbData !== null && $request->getPost('name') === $dbData['name']) {
+                $page->addError(
+                    t('The given resource name must be unique and is already in use by the database resource')
+                );
+            }
         }
     }
 
