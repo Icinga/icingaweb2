@@ -126,7 +126,8 @@ class Platform
         if (substr(self::$fqdn, 0, strlen(self::$hostname)) === self::$hostname) {
             self::$domain = substr(self::$fqdn, strlen(self::$hostname) + 1);
         } else {
-            self::$domain = array_shift(preg_split('~\.~', self::$hostname, 2));
+            $parts = preg_split('~\.~', self::$hostname, 2);
+            self::$domain = array_shift($parts);
         }
     }
 
