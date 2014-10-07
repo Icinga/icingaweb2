@@ -8,39 +8,39 @@ class ContactgroupQuery extends IdoQuery
 {
     protected $columnMap = array(
         'contactgroups' => array(
-            'contactgroup_name'   => 'cgo.name1 COLLATE latin1_general_ci',
-            'contactgroup_alias'  => 'cg.alias',
+            'contactgroup'          => 'cgo.name1 COLLATE latin1_general_ci',
+            'contactgroup_name'     => 'cgo.name1 COLLATE latin1_general_ci',
+            'contactgroup_alias'    => 'cg.alias',
         ),
         'contacts' => array(
-            'contact_name'   => 'co.name1 COLLATE latin1_general_ci',
-            'contact_alias'  => 'c.alias',
-            'contact_email'  => 'c.email_address',
-            'contact_pager'  => 'c.pager_address',
-            'contact_has_host_notfications'    => 'c.host_notifications_enabled',
-            'contact_has_service_notfications' => 'c.service_notifications_enabled',
-            'contact_can_submit_commands'      => 'c.can_submit_commands',
-            'contact_notify_service_recovery'  => 'c.notify_service_recovery',
-            'contact_notify_service_warning'   => 'c.notify_service_warning',
-            'contact_notify_service_critical'  => 'c.notify_service_critical',
-            'contact_notify_service_unknown'   => 'c.notify_service_unknown',
-            'contact_notify_service_flapping'  => 'c.notify_service_flapping',
-            'contact_notify_service_downtime'  => 'c.notify_service_recovery',
-            'contact_notify_host_recovery'     => 'c.notify_host_recovery',
-            'contact_notify_host_down'         => 'c.notify_host_down',
-            'contact_notify_host_unreachable'  => 'c.notify_host_unreachable',
-            'contact_notify_host_flapping'     => 'c.notify_host_flapping',
-            'contact_notify_host_downtime'     => 'c.notify_host_downtime',
+            'contact'                           => 'co.name1 COLLATE latin1_general_ci',
+            'contact_name'                      => 'co.name1 COLLATE latin1_general_ci',
+            'contact_alias'                     => 'c.alias',
+            'contact_email'                     => 'c.email_address',
+            'contact_pager'                     => 'c.pager_address',
+            'contact_has_host_notfications'     => 'c.host_notifications_enabled',
+            'contact_has_service_notfications'  => 'c.service_notifications_enabled',
+            'contact_can_submit_commands'       => 'c.can_submit_commands',
+            'contact_notify_service_recovery'   => 'c.notify_service_recovery',
+            'contact_notify_service_warning'    => 'c.notify_service_warning',
+            'contact_notify_service_critical'   => 'c.notify_service_critical',
+            'contact_notify_service_unknown'    => 'c.notify_service_unknown',
+            'contact_notify_service_flapping'   => 'c.notify_service_flapping',
+            'contact_notify_service_downtime'   => 'c.notify_service_recovery',
+            'contact_notify_host_recovery'      => 'c.notify_host_recovery',
+            'contact_notify_host_down'          => 'c.notify_host_down',
+            'contact_notify_host_unreachable'   => 'c.notify_host_unreachable',
+            'contact_notify_host_flapping'      => 'c.notify_host_flapping',
+            'contact_notify_host_downtime'      => 'c.notify_host_downtime',
         ),
         'hosts' => array(
-            'host_object_id' => 'ho.object_id',
-            'host_name'      => 'ho.name1',
-            'host'           => 'ho.name1'
+            'host'      => 'ho.name1',
+            'host_name' => 'ho.name1'
         ),
         'services' => array(
-            'service_object_id'   => 'so.object_id',
-            'service_host_name'   => 'so.name1 COLLATE latin1_general_ci',
-            'service'             => 'so.name2 COLLATE latin1_general_ci',
-            'service_description' => 'so.name2 COLLATE latin1_general_ci',
+            'service'               => 'so.name2 COLLATE latin1_general_ci',
+            'service_description'   => 'so.name2 COLLATE latin1_general_ci',
+            'service_host_name'     => 'so.name1 COLLATE latin1_general_ci'
         )
     );
 
