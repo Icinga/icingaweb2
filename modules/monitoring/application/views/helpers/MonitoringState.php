@@ -22,6 +22,15 @@ class Zend_View_Helper_MonitoringState extends Zend_View_Helper_Abstract
         }
     }
 
+    public function monitoringStateById($id, $type = 'service')
+    {
+        if ($type === 'service') {
+            return $this->servicestates[$id];
+        } elseif ($type === 'host') {
+            return $this->hoststates[$id];
+        }
+    }
+
     /**
      * @deprecated Monitoring colors are clustered.
      */

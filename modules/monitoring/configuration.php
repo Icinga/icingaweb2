@@ -123,6 +123,18 @@ $section->add($this->translate('Events'), array(
 $section->add($this->translate('Timeline'))->setUrl('monitoring/timeline');
 
 /*
+ * Reporting Section
+ */
+$section = $this->menuSection($this->translate('Reporting'), array(
+    'icon'      => 'img/icons/hostgroup.png',
+    'priority'  => 100
+));
+
+$section->add($this->translate('Alert Summary'), array(
+   'url'    => 'monitoring/alertsummary/index'
+));
+
+/*
  * System Section
  */
 $section = $this->menuSection($this->translate('System'));

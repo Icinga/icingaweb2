@@ -1,0 +1,37 @@
+<?php
+$helper = $this->getHelper('MonitoringState');
+?>
+<div class="controls">
+    <div style="margin: 1em;" class="dontprint">
+        <?= $intervalBox; ?>
+    </div>
+</div>
+
+<div class="content alertsummary">
+    <h1>Alert summary</h1>
+
+    <h2>Notifications</h2>
+    <div>
+        <?= $this->action('defectimage', 'alertsummary', 'monitoring', array('interval' => $this->interval)); ?>
+    </div>
+
+    <?php if ($this->recentAlerts): ?>
+        <h2><?= $this->translate('Top 5 recent alerts'); ?></h2>
+        <table>
+            <tr>
+                <th><?= $this->translate('Host'); ?></th>
+                <th><?= $this->translate('Service'); ?></th>
+                <th><?= $this->translate('State'); ?></th>
+                <th><?= $this->translate('Timestamp'); ?></th>
+            </tr>
+        <?php foreach ($this->recentAlerts as $alert): ?>
+            <tr>
+                <td><?= $alert->host; ?></td>
+                <td><?= $alert->service; ?></td>
+                <td><?= ucfirst($helper->monitoringStateById($alert->notification_state, $alert->service ? 'service' : 'host')) ?></td>
+                <td><?= $this->prefixedTimeSince($alert->notification_start_time, true) ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </table>
+    <?php endif; ?>
+</div>
