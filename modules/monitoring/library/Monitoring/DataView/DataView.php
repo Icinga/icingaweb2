@@ -7,7 +7,6 @@ namespace Icinga\Module\Monitoring\DataView;
 use Countable;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterMatch;
-use Icinga\Data\SimpleQuery;
 use Icinga\Data\Browsable;
 use Icinga\Data\PivotTable;
 use Icinga\Data\Sortable;
@@ -26,7 +25,7 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
     /**
      * The query used to populate the view
      *
-     * @var SimpleQuery
+     * @var \Icinga\Data\SimpleQuery
      */
     private $query;
 
@@ -39,8 +38,8 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
     /**
      * Create a new view
      *
-     * @param SimpleQuery $query      Which backend to query
-     * @param array     $columns    Select columns
+     * @param ConnectionInterface   $connection
+     * @param array                 $columns
      */
     public function __construct(ConnectionInterface $connection, array $columns = null)
     {
@@ -64,17 +63,17 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
         return $tableName;
     }
 
-public function where($condition, $value = null)
-{
-    $this->filter->addFilter(Filter::where($condition, $value));
-    $this->query->where($condition, $value);
-    return $this;
-}
+    public function where($condition, $value = null)
+    {
+        $this->filter->addFilter(Filter::where($condition, $value));
+        $this->query->where($condition, $value);
+        return $this;
+    }
 
-public function dump()
-{
-    return $this->query->dump();
-}
+    public function dump()
+    {
+        return $this->query->dump();
+    }
 
     /**
      * Retrieve columns provided by this view
@@ -194,9 +193,10 @@ public function dump()
      * Sort the rows, according to the specified sort column and order
      *
      * @param   string  $column Sort column
-     * @param   int     $order  Sort order, one of the SORT_ constants
+     * @param   string  $order  Sort order, one of the SORT_ constants
      *
-     * @return  self
+     * @return  $this
+     * @throws  QueryException  If the sort column is not allowed
      * @see     DataView::SORT_ASC
      * @see     DataView::SORT_DESC
      * @deprecated Use DataView::order() instead
@@ -227,8 +227,8 @@ public function dump()
             };
         }
 
-        $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : self::SORT_ASC) : $order;
-        $order = (strtoupper($order) === self::SORT_ASC) ? 'ASC' : 'DESC';
+        $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : static::SORT_ASC) : $order;
+        $order = (strtoupper($order) === static::SORT_ASC) ? 'ASC' : 'DESC';
 
         foreach ($sortColumns['columns'] as $column) {
             if (! $this->isValidFilterTarget($column)) {
@@ -260,7 +260,7 @@ public function dump()
      * @param  string   $column
      * @param  string   $direction
      *
-     * @return self
+     * @return $this
      */
     public function order($column = null, $direction = null)
     {
@@ -295,7 +295,7 @@ public function dump()
     /**
      * Return the query which was created in the constructor
      *
-     * @return mixed
+     * @return \Icinga\Data\SimpleQuery
      */
     public function getQuery()
     {
