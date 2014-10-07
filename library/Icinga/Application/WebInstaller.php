@@ -362,7 +362,7 @@ class WebInstaller implements Installer
                     ),
                     $this->pageData['setup_database_creation']['username'],
                     $resourceConfig['dbname'],
-                    $this->pageData['setup_db_resource']['dbname']
+                    $this->pageData['setup_db_resource']['username']
                 );
             }
 
