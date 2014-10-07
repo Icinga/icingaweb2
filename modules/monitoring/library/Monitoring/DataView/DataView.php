@@ -204,42 +204,43 @@ public function dump()
     public function sort($column = null, $order = null)
     {
         $sortRules = $this->getSortRules();
-
-        if ($sortRules !== null) {
-            if ($column === null) {
-                $sortColumns = reset($sortRules);
+        if ($column === null) {
+            // Use first available sort rule as default
+            if (empty($sortRules)) {
+                return $this;
+            }
+            $sortColumns = reset($sortRules);
+            if (! isset($sortColumns['columns'])) {
+                $sortColumns['columns'] = array(key($sortRules));
+            }
+        } else {
+            if (isset($sortRules[$column])) {
+                $sortColumns = $sortRules[$column];
                 if (! isset($sortColumns['columns'])) {
-                    $sortColumns['columns'] = array(key($sortRules));
+                    $sortColumns['columns'] = array($column);
                 }
             } else {
-                if (isset($sortRules[$column])) {
-                    $sortColumns = $sortRules[$column];
-                    if (! isset($sortColumns['columns'])) {
-                        $sortColumns['columns'] = array($column);
-                    }
-                } else {
-                    $sortColumns = array(
-                        'columns' => array($column),
-                        'order' => $order
-                    );
-                };
-            }
-
-            $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : self::SORT_ASC) : $order;
-            $order = (strtoupper($order) === self::SORT_ASC) ? 'ASC' : 'DESC';
-
-            foreach ($sortColumns['columns'] as $column) {
-                if (! $this->isValidFilterTarget($column)) {
-                    throw new QueryException(
-                        t('The sort column "%s" is not allowed in "%s".'),
-                        $column,
-                        get_class($this)
-                    );
-                }
-                $this->query->order($column, $order);
-            }
-            $this->isSorted = true;
+                $sortColumns = array(
+                    'columns' => array($column),
+                    'order' => $order
+                );
+            };
         }
+
+        $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : self::SORT_ASC) : $order;
+        $order = (strtoupper($order) === self::SORT_ASC) ? 'ASC' : 'DESC';
+
+        foreach ($sortColumns['columns'] as $column) {
+            if (! $this->isValidFilterTarget($column)) {
+                throw new QueryException(
+                    t('The sort column "%s" is not allowed in "%s".'),
+                    $column,
+                    get_class($this)
+                );
+            }
+            $this->query->order($column, $order);
+        }
+        $this->isSorted = true;
         return $this;
     }
 
@@ -250,7 +251,7 @@ public function dump()
      */
     public function getSortRules()
     {
-        return null;
+        return array();
     }
 
     /**
@@ -365,6 +366,9 @@ public function dump()
      */
     public function paginate($itemsPerPage = null, $pageNumber = null)
     {
+        if (! $this->isSorted) {
+            $this->order();
+        }
         return $this->query->paginate($itemsPerPage, $pageNumber);
     }
 
