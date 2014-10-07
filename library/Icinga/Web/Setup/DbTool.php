@@ -9,6 +9,7 @@ use PDOException;
 use LogicException;
 use Zend_Db_Adapter_Pdo_Mysql;
 use Zend_Db_Adapter_Pdo_Pgsql;
+use Icinga\Util\File;
 use Icinga\Exception\ConfigurationError;
 
 /**
@@ -130,6 +131,18 @@ class DbTool
     }
 
     /**
+     * Reestablish a connection with the database or just the server by omitting the database name
+     *
+     * @param   string  $dbname     The name of the database to connect to
+     */
+    public function reconnect($dbname = null)
+    {
+        $this->pdoConn = null;
+        $this->zendConn = null;
+        $this->connect($dbname);
+    }
+
+    /**
      * Initialize Zend database adapter
      *
      * @param   string  $dbname     The name of the database to connect with
@@ -229,6 +242,35 @@ class DbTool
     }
 
     /**
+     * Execute a SQL statement and return the affected row count
+     *
+     * @param   string  $statement  The statement to execute
+     *
+     * @return  int
+     */
+    public function exec($statement)
+    {
+        return $this->pdoConn->exec($statement);
+    }
+
+    /**
+     * Import the given SQL file
+     *
+     * @param   string  $filepath   The file to import
+     */
+    public function import($filepath)
+    {
+        $file = new File($filepath);
+        $content = join(PHP_EOL, iterator_to_array($file)); // There is no fread() before PHP 5.5 :(
+
+        foreach (explode(';', $content) as $statement) {
+            if (($statement = trim($statement)) !== '') {
+                $this->exec($statement);
+            }
+        }
+    }
+
+    /**
      * Return whether the given privileges were granted
      *
      * @param   array   $privileges     An array of strings with the required privilege names
@@ -249,5 +291,29 @@ class DbTool
     {
         $this->assertConnectedToDb();
         return $this->zendConn->listTables();
+    }
+
+    /**
+     * Return a list of all available database logins
+     *
+     * @return  array
+     */
+    public function listLogins()
+    {
+        $users = array();
+
+        if ($this->config['db'] === 'mysql') {
+            $query = $this->pdoConn->query('SELECT DISTINCT grantee FROM information_schema.user_privileges');
+            foreach ($query->fetchAll() as $row) {
+                $users[] = $row['grantee'];
+            }
+        } elseif ($this->config['db'] === 'pgsql') {
+            $query = $this->pdoConn->query('SELECT usename FROM pg_catalog.pg_user');
+            foreach ($query->fetchAll() as $row) {
+                $users[] = $row['usename'];
+            }
+        }
+
+        return $users;
     }
 }

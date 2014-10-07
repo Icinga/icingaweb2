@@ -8,6 +8,7 @@ use Exception;
 use Zend_Config;
 use PDOException;
 use Icinga\Web\Setup\DbTool;
+use Icinga\Application\Icinga;
 use Icinga\Application\Config;
 use Icinga\Web\Setup\Installer;
 use Icinga\Config\PreservingIniWriter;
@@ -48,6 +49,17 @@ class WebInstaller implements Installer
     public function run()
     {
         $success = true;
+
+        if (isset($this->pageData['setup_db_resource']) && ! $this->pageData['setup_db_resource']['skip_validation']) {
+            try {
+                $this->setupDatabase();
+            } catch (Exception $e) {
+                $this->log(sprintf(t('Failed to set up the database: %s'), $e->getMessage()), false);
+                return false; // Bail out as early as possible as not being able to setup the database is fatal
+            }
+
+            $this->log(t('The database has been successfully set up!'));
+        }
 
         $configIniPath = Config::resolvePath('config.ini');
         try {
@@ -187,6 +199,159 @@ class WebInstaller implements Installer
             'filename'  => $configPath
         ));
         $writer->write();
+    }
+
+    /**
+     * Setup the database
+     */
+    protected function setupDatabase()
+    {
+        $resourceConfig = $this->pageData['setup_db_resource'];
+        if (isset($this->pageData['setup_database_creation'])) {
+            $resourceConfig['username'] = $this->pageData['setup_database_creation']['username'];
+            $resourceConfig['password'] = $this->pageData['setup_database_creation']['password'];
+        }
+
+        $db = new DbTool($resourceConfig);
+        if ($resourceConfig['db'] === 'mysql') {
+            $this->setupMysqlDatabase($db);
+        } elseif ($resourceConfig['db'] === 'pgsql') {
+            $this->setupPgsqlDatabase($db);
+        }
+    }
+
+    /**
+     * Setup a MySQL database
+     *
+     * @param   DbTool      $db     The database connection wrapper to use
+     *
+     * @todo    Escape user input or make use of prepared statements!
+     */
+    private function setupMysqlDatabase(DbTool $db)
+    {
+        try {
+            $db->connectToDb();
+            $this->log(sprintf(
+                t('Successfully connected to existing database "%s"...'),
+                $this->pageData['setup_db_resource']['dbname']
+            ));
+        } catch (PDOException $e) {
+            $db->connectToHost();
+            $this->log(sprintf(
+                t('Creating new database "%s"...'),
+                $this->pageData['setup_db_resource']['dbname']
+            ));
+            $db->exec('CREATE DATABASE ' . $this->pageData['setup_db_resource']['dbname']);
+            $db->reconnect($this->pageData['setup_db_resource']['dbname']);
+        }
+
+        $loginIdent = "'" . $this->pageData['setup_db_resource']['username'] . "'@'" . Platform::getFqdn() . "'";
+        if (false === array_search($loginIdent, $db->listLogins())) {
+            $this->log(sprintf(
+                t('Creating login "%s"...'),
+                $this->pageData['setup_db_resource']['username']
+            ));
+            $db->exec(
+                "CREATE USER $loginIdent IDENTIFIED BY '" .
+                $this->pageData['setup_db_resource']['password'] . "'"
+            );
+        } else {
+            $this->log(sprintf(
+                t('Login "%s" already exists...'),
+                $this->pageData['setup_db_resource']['username']
+            ));
+        }
+
+        $diff = array_diff(array('account', 'preference'), $db->listTables());
+        if (empty($diff)) {
+            $this->log(t('Database schema already exists...'));
+        } else {
+            $this->log(t('Creating database schema...'));
+            $db->import(Icinga::app()->getApplicationDir() . '/../etc/schema/mysql.sql');
+        }
+
+        $privileges = array('SELECT', 'INSERT', 'UPDATE', 'DELETE', 'EXECUTE', 'CREATE TEMPORARY TABLES');
+        if ($db->checkPrivileges(array_merge($privileges, array('GRANT OPTION')))) {
+            $this->log(sprintf(
+                t('Granting required privileges to login "%s"...'),
+                $this->pageData['setup_db_resource']['username']
+            ));
+            $db->exec(sprintf(
+                "GRANT %s ON %s.* TO %s",
+                join(',', $privileges),
+                $this->pageData['setup_db_resource']['dbname'],
+                $loginIdent
+            ));
+        }
+    }
+
+    /**
+     * Setup a PostgreSQL database
+     *
+     * @param   DbTool      $db     The database connection wrapper to use
+     *
+     * @todo    Escape user input or make use of prepared statements!
+     */
+    private function setupPgsqlDatabase(DbTool $db)
+    {
+        try {
+            $db->connectToDb();
+            $this->log(sprintf(
+                t('Successfully connected to existing database "%s"...'),
+                $this->pageData['setup_db_resource']['dbname']
+            ));
+        } catch (PDOException $e) {
+            $db->connectToHost();
+            $this->log(sprintf(
+                t('Creating new database "%s"...'),
+                $this->pageData['setup_db_resource']['dbname']
+            ));
+            $db->exec('CREATE DATABASE ' . $this->pageData['setup_db_resource']['dbname']);
+            $db->reconnect($this->pageData['setup_db_resource']['dbname']);
+        }
+
+        if (false === array_search($this->pageData['setup_db_resource']['username'], $db->listLogins())) {
+            $this->log(sprintf(
+                t('Creating login "%s"...'),
+                $this->pageData['setup_db_resource']['username']
+            ));
+            $db->exec(sprintf(
+                "CREATE USER %s WITH PASSWORD '%s'",
+                $this->pageData['setup_db_resource']['username'],
+                $this->pageData['setup_db_resource']['password']
+            ));
+        } else {
+            $this->log(sprintf(
+                t('Login "%s" already exists...'),
+                $this->pageData['setup_db_resource']['username']
+            ));
+        }
+
+        $diff = array_diff(array('account', 'preference'), $db->listTables());
+        if (empty($diff)) {
+            $this->log(t('Database schema already exists...'));
+        } else {
+            $this->log(t('Creating database schema...'));
+            $db->import(Icinga::app()->getApplicationDir() . '/../etc/schema/pgsql.sql');
+        }
+
+        $privileges = array('SELECT', 'INSERT', 'UPDATE', 'DELETE');
+        if ($db->checkPrivileges(array_merge($privileges, array('GRANT OPTION')))) {
+            $this->log(sprintf(
+                t('Granting required privileges to login "%s"...'),
+                $this->pageData['setup_db_resource']['username']
+            ));
+            $db->exec(sprintf(
+                "GRANT %s ON TABLE account TO %s",
+                join(',', $privileges),
+                $this->pageData['setup_db_resource']['username']
+            ));
+            $db->exec(sprintf(
+                "GRANT %s ON TABLE preference TO %s",
+                join(',', $privileges),
+                $this->pageData['setup_db_resource']['username']
+            ));
+        }
     }
 
     /**
