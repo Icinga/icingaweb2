@@ -45,8 +45,8 @@ class BackendConfigForm extends ConfigForm
     {
         $resources = array();
         foreach ($resourceConfig as $name => $resource) {
-            if ($resource->type === 'db' || $resource->type === 'statusdat' || $resource->type === 'livestatus') {
-                $resources[$resource->type === 'db' ? 'ido' : strtolower($resource->type)][$name] = $name;
+            if ($resource->type === 'db' || $resource->type === 'livestatus') {
+                $resources[$resource->type === 'db' ? 'ido' : 'livestatus'][$name] = $name;
             }
         }
 
@@ -191,9 +191,6 @@ class BackendConfigForm extends ConfigForm
         $resourceTypes = array();
         if ($resourceType === 'ido' || array_key_exists('ido', $this->resources)) {
             $resourceTypes['ido'] = 'IDO Backend';
-        }
-        if ($resourceType === 'statusdat' || array_key_exists('statusdat', $this->resources)) {
-            $resourceTypes['statusdat'] = 'Status.dat';
         }
         if ($resourceType === 'livestatus' || array_key_exists('livestatus', $this->resources)) {
             $resourceTypes['livestatus'] = 'Livestatus';
