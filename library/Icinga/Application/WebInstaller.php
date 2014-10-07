@@ -52,46 +52,28 @@ class WebInstaller implements Installer
         $configIniPath = Config::resolvePath('config.ini');
         try {
             $this->writeConfigIni($configIniPath);
-            $this->report[] = (object) array(
-                'state'     => true,
-                'message'   => sprintf(t('Successfully created: %s'), $configIniPath)
-            );
+            $this->log(sprintf(t('Successfully created: %s'), $configIniPath));
         } catch (Exception $e) {
             $success = false;
-            $this->report[] = (object) array(
-                'state'     => false,
-                'message'   => sprintf(t('Unable to create: %s (%s)'), $configIniPath, $e->getMessage())
-            );
+            $this->log(sprintf(t('Unable to create: %s (%s)'), $configIniPath, $e->getMessage()), false);
         }
 
         $resourcesIniPath = Config::resolvePath('resources.ini');
         try {
             $this->writeResourcesIni($resourcesIniPath);
-            $this->report[] = (object) array(
-                'state'     => true,
-                'message'   => sprintf(t('Successfully created: %s'), $resourcesIniPath)
-            );
+            $this->log(sprintf(t('Successfully created: %s'), $resourcesIniPath));
         } catch (Exception $e) {
             $success = false;
-            $this->report[] = (object) array(
-                'state'     => false,
-                'message'   => sprintf(t('Unable to create: %s (%s)'), $resourcesIniPath, $e->getMessage())
-            );
+            $this->log(sprintf(t('Unable to create: %s (%s)'), $resourcesIniPath, $e->getMessage()), false);
         }
 
         $authenticationIniPath = Config::resolvePath('authentication.ini');
         try {
             $this->writeAuthenticationIni($authenticationIniPath);
-            $this->report[] = (object) array(
-                'state'     => true,
-                'message'   => sprintf(t('Successfully created: %s'), $authenticationIniPath)
-            );
+            $this->log(sprintf(t('Successfully created: %s'), $authenticationIniPath));
         } catch (Exception $e) {
             $success = false;
-            $this->report[] = (object) array(
-                'state'     => false,
-                'message'   => sprintf(t('Unable to create: %s (%s)'), $authenticationIniPath, $e->getMessage())
-            );
+            $this->log(sprintf(t('Unable to create: %s (%s)'), $authenticationIniPath, $e->getMessage()), false);
         }
 
         return $success;
@@ -365,7 +347,10 @@ class WebInstaller implements Installer
             try {
                 $db->connectToDb();
                 $message = sprintf(
-                    t('The database user "%s" will be used to setup the missing schema required by Icinga Web 2 in database "%s".'),
+                    t(
+                        'The database user "%s" will be used to setup the missing'
+                        . ' schema required by Icinga Web 2 in database "%s".'
+                    ),
                     $this->pageData['setup_database_creation']['username'],
                     $resourceConfig['dbname']
                 );
@@ -393,5 +378,19 @@ class WebInstaller implements Installer
     public function getReport()
     {
         return $this->report;
+    }
+
+    /**
+     * Add a message to the report
+     *
+     * @param   string  $message    The message to add
+     * @param   bool    $success    Whether the message represents a success (true) or a failure (false)
+     */
+    protected function log($message, $success = true)
+    {
+        $this->report[] = (object) array(
+            'state'     => (bool) $success,
+            'message'   => $message
+        );
     }
 }
