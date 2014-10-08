@@ -42,8 +42,7 @@ Decide whether to use MySQL or PostgreSQL.
         FLUSH PRIVILEGES;
         quit
 
-    mysql -u root -p icingaweb < /usr/share/doc/icingaweb2*/schema/accounts.mysql.sql
-    mysql -u root -p icingaweb < /usr/share/doc/icingaweb2*/schema/preferences.mysql.sql
+    mysql -u root -p icingaweb < /usr/share/doc/icingaweb2*/schema/mysql.sql
 
 ### PostgreSQL
 
@@ -62,8 +61,7 @@ in `/var/lib/pgsql/data/pg_hba.conf` and restart the PostgreSQL server.
 
 Now install the `icingaweb` schema
 
-    bash$  psql -U icingaweb -a -f /usr/share/doc/icingaweb2*/schema/accounts.pgsql.sql
-    bash$  psql -U icingaweb -a -f /usr/share/doc/icingaweb2*/schema/preferences.pgsql.sql
+    bash$  psql -U icingaweb -a -f /usr/share/doc/icingaweb2*/schema/pgsql.sql
 
 
 ## Configuration
