@@ -8,8 +8,6 @@ use Exception;
 use Zend_Config;
 use PDOException;
 use Icinga\Web\Setup\DbTool;
-use Icinga\Application\Icinga;
-use Icinga\Application\Config;
 use Icinga\Web\Setup\Installer;
 use Icinga\Data\ResourceFactory;
 use Icinga\Config\PreservingIniWriter;
@@ -52,7 +50,12 @@ class WebInstaller implements Installer
     {
         $success = true;
 
-        if (isset($this->pageData['setup_db_resource']) && ! $this->pageData['setup_db_resource']['skip_validation']) {
+        if (isset($this->pageData['setup_db_resource'])
+            && ! $this->pageData['setup_db_resource']['skip_validation']
+            && (false === isset($this->pageData['setup_database_creation'])
+                || ! $this->pageData['setup_database_creation']['skip_validation']
+            )
+        ) {
             try {
                 $this->setupDatabase();
             } catch (Exception $e) {
@@ -92,10 +95,10 @@ class WebInstaller implements Installer
 
         try {
             $this->setupAdminAccount();
-            $this->log(t('Successfully created initial administrative account.'));
+            $this->log(t('Successfully defined initial administrative account.'));
         } catch (Exception $e) {
             $success = false;
-            $this->log(sprintf(t('Failed to create initial administrative account: %s'), $e->getMessage()));
+            $this->log(sprintf(t('Failed to define initial administrative account: %s'), $e->getMessage()), false);
         }
 
         return $success;
@@ -361,11 +364,16 @@ class WebInstaller implements Installer
     }
 
     /**
-     * Create the initial administrative account
+     * Define the initial administrative account
      */
     protected function setupAdminAccount()
     {
-        if ($this->pageData['setup_admin_account']['user_type'] === 'new_user') {
+        if ($this->pageData['setup_admin_account']['user_type'] === 'new_user'
+            && ! $this->pageData['setup_db_resource']['skip_validation']
+            && (false === isset($this->pageData['setup_database_creation'])
+                || ! $this->pageData['setup_database_creation']['skip_validation']
+            )
+        ) {
             $backend = new DbUserBackend(
                 ResourceFactory::createResource(new Zend_Config($this->pageData['setup_db_resource']))
             );
@@ -528,35 +536,66 @@ class WebInstaller implements Installer
             )
         );
 
-        if (isset($this->pageData['setup_database_creation'])) {
+        if (isset($this->pageData['setup_db_resource'])) {
+            $setupDatabase = true;
             $resourceConfig = $this->pageData['setup_db_resource'];
-            $resourceConfig['username'] = $this->pageData['setup_database_creation']['username'];
-            $resourceConfig['password'] = $this->pageData['setup_database_creation']['password'];
-            $db = new DbTool($resourceConfig);
-
-            try {
-                $db->connectToDb();
-                $message = sprintf(
-                    t(
-                        'The database user "%s" will be used to setup the missing'
-                        . ' schema required by Icinga Web 2 in database "%s".'
-                    ),
-                    $this->pageData['setup_database_creation']['username'],
-                    $resourceConfig['dbname']
-                );
-            } catch (PDOException $e) {
-                $message = sprintf(
-                    t(
-                        'The database user "%s" will be used to create the missing database "%s" '
-                        . 'with the schema required by Icinga Web 2 and a new login called "%s".'
-                    ),
-                    $this->pageData['setup_database_creation']['username'],
-                    $resourceConfig['dbname'],
-                    $this->pageData['setup_db_resource']['username']
-                );
+            if (isset($this->pageData['setup_database_creation'])) {
+                $resourceConfig['username'] = $this->pageData['setup_database_creation']['username'];
+                $resourceConfig['password'] = $this->pageData['setup_database_creation']['password'];
             }
 
-            $summary[t('Database Setup')] = $message;
+            if ($setupDatabase) {
+                $db = new DbTool($resourceConfig);
+                try {
+                    $db->connectToDb();
+                    if (array_search('account', $db->listTables()) === false) {
+                        $message = sprintf(
+                            t(
+                                'The database user "%s" will be used to setup the missing'
+                                . ' schema required by Icinga Web 2 in database "%s".'
+                            ),
+                            $resourceConfig['username'],
+                            $resourceConfig['dbname']
+                        );
+                    } else {
+                        $message = sprintf(
+                            t('The database "%s" already seems to be fully set up. No action required.'),
+                            $resourceConfig['dbname']
+                        );
+                    }
+                } catch (PDOException $e) {
+                    try {
+                        $db->connectToHost();
+                        if ($db->hasLogin($this->pageData['setup_db_resource']['username'])) {
+                            $message = sprintf(
+                                t(
+                                    'The database user "%s" will be used to create the missing '
+                                    . 'database "%s" with the schema required by Icinga Web 2.'
+                                ),
+                                $resourceConfig['username'],
+                                $resourceConfig['dbname']
+                            );
+                        } else {
+                            $message = sprintf(
+                                t(
+                                    'The database user "%s" will be used to create the missing database "%s" '
+                                    . 'with the schema required by Icinga Web 2 and a new login called "%s".'
+                                ),
+                                $resourceConfig['username'],
+                                $resourceConfig['dbname'],
+                                $this->pageData['setup_db_resource']['username']
+                            );
+                        }
+                    } catch (PDOException $e) {
+                        $message = t(
+                            'No connection to database host possible. You\'ll need to setup the'
+                            . ' database with the schema required by Icinga Web 2 manually.'
+                        );
+                    }
+                }
+
+                $summary[t('Database Setup')] = $message;
+            }
         }
 
         return $summary;
