@@ -188,6 +188,27 @@ class AdminAccountPage extends Form
     }
 
     /**
+     * Validate the given request data and ensure that any new user does not already exist
+     *
+     * @param   array   $data   The request data to validate
+     *
+     * @return  bool
+     */
+    public function isValid($data)
+    {
+        if (false === parent::isValid($data)) {
+            return false;
+        }
+
+        if ($data['user_type'] === 'new_user' && array_search($data['new_user'], $this->fetchUsers()) !== false) {
+            $this->getElement('new_user')->addError(t('Username already exists.'));
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Return the name of the externally authenticated user
      *
      * @return  string
