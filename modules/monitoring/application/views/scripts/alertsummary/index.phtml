@@ -13,57 +13,70 @@ $helper = $this->getHelper('MonitoringState');
 <div class="content alertsummary">
     <h1><?= $this->translate('Alert summary'); ?></h1>
 
-    <h2><?= $this->translate('Notifications and problems'); ?></h2>
+    <div class="alertsummary-flex-container">
+        <div class="alertsummary-flex">
+            <h2><?= $this->translate('Notifications and problems'); ?></h2>
+            <div>
+                <?= $defectChart->render(); ?>
+            </div>
+        </div>
 
-    <div class="svg-container-responsive">
-        <?= $defectChart->render(); ?>
-    </div>
-
-    <h2><?= $this->translate('Time to reaction (Ack, Recover)'); ?></h2>
-
-    <div class="svg-container-responsive">
-        <?= $healingChart->render(); ?>
+        <div class="alertsummary-flex">
+            <h2><?= $this->translate('Time to reaction (Ack, Recover)'); ?></h2>
+            <div>
+                <?= $healingChart->render(); ?>
+            </div>
+        </div>
     </div>
 
     <h2><?= $this->translate('Trend'); ?></h2>
 
-    <div>
-        <?= $this->translate('Average') ?>
-        <strong><?= $this->perf->avg; ?></strong>
-        <?= $this->translate('notifications per hour'); ?>,
-        <strong><?= $this->perf->last; ?></strong>
-        <?= $this->translate('in the last hour'); ?>.
-    </div>
+    <div class="alertsummary-flex-container">
+        <div class="alertsummary-flex">
+            <?= $this->translate('Average') ?>
+            <strong><?= $this->perf->avg; ?></strong>
+            <?= $this->translate('notifications per hour'); ?>,
+            <strong><?= $this->perf->last; ?></strong>
+            <?= $this->translate('in the last hour'); ?>.
 
-    <div>
-        <?= $this->translate('Trend, problems in 24h'); ?>
-        (<?= $this->trend->percent; ?>%
-        <?= $this->translate($this->trend->trend); ?>)
+            <?= $this->translate('Trend for the last 24h'); ?>
+            (<?= $this->trend->percent; ?>%
+            <strong><?= $this->translate($this->trend->trend); ?></strong>)
 
-        <span>
-            <?php if ($this->trend->trend === 'up'): ?>
-                <?= $this->icon('up.png'); ?>
-            <?php elseif ($this->trend->trend === 'unchanged'): ?>
-                <?= $this->icon('next.png'); ?>
-            <?php else: ?>
-                <?= $this->icon('down.png'); ?>
-            <?php endif; ?>
-        </span>
+            <span>
+                <?php if ($this->trend->trend === 'up'): ?>
+                    <?= $this->icon('up.png'); ?>
+                <?php elseif ($this->trend->trend === 'unchanged'): ?>
+                    <?= $this->icon('next.png'); ?>
+                <?php else: ?>
+                    <?= $this->icon('down.png'); ?>
+                <?php endif; ?>
+            </span>
+        </div>
     </div>
 
     <?php if ($this->recentAlerts): ?>
         <h2><?= $this->translate('Top 5 recent alerts'); ?></h2>
-        <?= $this->partial('list/notifications.phtml', array(
-            'notifications' => $this->recentAlerts,
-            'compact'       => true,
-            'inline'        => true
-        )); ?>
+
+        <div class="alertsummary-flex-container">
+            <div class="alertsummary-flex">
+                <?= $this->partial('list/notifications.phtml', array(
+                    'notifications' => $this->recentAlerts,
+                    'compact'       => true,
+                    'inline'        => true
+                )); ?>
+            </div>
+        </div>
     <?php endif; ?>
 
     <h2><?= $this->translate('History'); ?></h2>
-    <?= $this->partial('list/notifications.phtml', array(
-        'notifications' => $this->notifications,
-        'compact'       => true,
-        'inline'        => true
-    )); ?>
+    <div class="alertsummary-flex-container">
+        <div class="alertsummary-flex">
+            <?= $this->partial('list/notifications.phtml', array(
+                'notifications' => $this->notifications,
+                'compact'       => true,
+                'inline'        => true
+            )); ?>
+        </div>
+    </div>
 </div>
