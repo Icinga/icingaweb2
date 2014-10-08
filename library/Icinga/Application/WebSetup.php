@@ -22,7 +22,6 @@ use Icinga\Web\Request;
 use Icinga\Web\Setup\DbTool;
 use Icinga\Web\Setup\SetupWizard;
 use Icinga\Web\Setup\Requirements;
-use Icinga\Application\Platform;
 
 /**
  * Icinga Web 2 Setup Wizard
@@ -136,8 +135,8 @@ class WebSetup extends Wizard implements SetupWizard
             $authData = $this->getPageData('setup_authentication_type');
             $skip = $authData['type'] !== 'ldap';
         } elseif ($newPage->getName() === 'setup_database_creation') {
-            if ($this->hasPageData('setup_db_resource')) {
-                $db = new DbTool($this->getPageData('setup_db_resource'));
+            if (($config = $this->getPageData('setup_db_resource')) !== null && ! $config['skip_validation']) {
+                $db = new DbTool($config);
 
                 try {
                     $db->connectToDb();
