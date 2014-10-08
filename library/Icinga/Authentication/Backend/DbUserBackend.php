@@ -130,7 +130,7 @@ class DbUserBackend extends UserBackend
      */
     protected function generateSalt()
     {
-        return openssl_random_pseudo_bytes(64);
+        return bin2hex(openssl_random_pseudo_bytes(32));
     }
 
     /**
