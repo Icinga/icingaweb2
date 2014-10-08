@@ -3,6 +3,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Chart\GridChart;
+use Icinga\Chart\Unit\LinearUnit;
 use Icinga\Chart\Unit\StaticAxis;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Web\Widget\SelectBox;
@@ -49,6 +50,7 @@ class Monitoring_AlertsummaryController extends Controller
         $this->view->recentAlerts = $this->createRecentAlerts();
         $this->view->interval = $this->getInterval();
         $this->view->defectChart = $this->createDefectImage();
+        $this->view->healingChart = $this->createHealingChart();
         $this->view->perf = $this->createNotificationPerfdata();
         $this->view->trend = $this->createTrendInformation();
 
@@ -87,9 +89,11 @@ class Monitoring_AlertsummaryController extends Controller
 
         $query->order('notification_start_time', 'asc');
 
-        $records    = $query->paginate(10000);
+        $records    = $query->getQuery()->fetchAll();
         $data       = array();
         $period     = $this->createPeriod($interval);
+
+
 
         foreach ($period as $entry) {
             $id = $this->getPeriodFormat($interval, $entry->getTimestamp());
@@ -132,7 +136,7 @@ class Monitoring_AlertsummaryController extends Controller
 
         $query->order('notification_start_time', 'asc');
 
-        $records = $query->paginate(10000);
+        $records = $query->getQuery()->fetchAll();
         $slots = array();
 
         $period = new DatePeriod($beginDate, new DateInterval('P1D'), 2, DatePeriod::EXCLUDE_START_DATE);
@@ -194,7 +198,7 @@ class Monitoring_AlertsummaryController extends Controller
 
         $query->order('notification_start_time', 'desc');
 
-        $records = $query->paginate(10000);
+        $records = $query->getQuery()->fetchAll();
         $slots = array();
 
         foreach ($records as $item) {
@@ -250,7 +254,7 @@ class Monitoring_AlertsummaryController extends Controller
         );
 
         $defects = array();
-        $records = $query->paginate(10000);
+        $records = $query->getQuery()->fetchAll();
         $period     = $this->createPeriod($interval);
 
         foreach ($period as $entry) {
@@ -269,18 +273,134 @@ class Monitoring_AlertsummaryController extends Controller
         return $defects;
     }
 
+    public function createHealingChart()
+    {
+        $gridChart = new GridChart();
+
+        $gridChart->alignTopLeft();
+        $gridChart->setAxisLabel('', t('Notifications'))
+            ->setXAxis(new StaticAxis())
+            ->setAxisMin(null, 0)
+            ->setYAxis(new LinearUnit(10));
+
+        $interval = $this->getInterval();
+
+        $query = $this->backend->select()->from('notification', array(
+            'host',
+            'service',
+            'notification_object_id',
+            'notification_output',
+            'notification_contact',
+            'notification_start_time',
+            'notification_state',
+            'acknowledgement_entry_time'
+        ));
+
+        $query->setFilter(
+            new Icinga\Data\Filter\FilterExpression(
+                'n.start_time',
+                '>=',
+                $this->getBeginDate($interval)->format('Y-m-d H:i:s')
+            )
+        );
+
+        $query->order('notification_start_time', 'asc');
+
+        $records    = $query->getQuery()->fetchAll();
+
+        $interval       = $this->getInterval();
+        $period         = $this->createPeriod($interval);
+        $dAvg           = array();
+        $dMax           = array();
+        $notifications  = array();
+        $rData          = array();
+
+        foreach ($period as $entry) {
+            $id = $this->getPeriodFormat($interval, $entry->getTimestamp());
+            $dMax[$id] = array($id, 0);
+            $dAvg[$id] = array($id, 0, 0);
+            $notifications[$id] = array($id, 0);
+        }
+
+        foreach ($records as $item) {
+            $id = $this->getPeriodFormat($interval, $item->notification_start_time);
+
+            if ($item->notification_state == '0' && isset($rData[$item->notification_object_id])) {
+                $rData[$item->notification_object_id]['recover'] = $item->notification_start_time - $rData[$item->notification_object_id]['entry'];
+            } elseif ($item->notification_state !== '0') {
+                $recover = 0;
+                if ($item->acknowledgement_entry_time) {
+                    $recover = $item->acknowledgement_entry_time - $item->notification_start_time;
+                }
+                $rData[$item->notification_object_id] = array(
+                    'id'        => $id,
+                    'entry'     => $item->notification_start_time,
+                    'recover'   => $recover
+                );
+            }
+        }
+
+        foreach ($rData as $item) {
+            $notifications[$item['id']][1]++;
+
+            if ($item['recover'] > $dMax[$item['id']][1]) {
+                $dMax[$item['id']][1] = (int) $item['recover'];
+            }
+
+            $dAvg[$item['id']][1] += (int) $item['recover'];
+            $dAvg[$item['id']][2]++;
+        }
+
+        foreach ($dAvg as &$item) {
+            if ($item[2] > 0) {
+                $item[1] = ($item[1]/$item[2])/60/60;
+            }
+        }
+
+        foreach ($dMax as &$item) {
+            $item[1] = $item[1]/60/60;
+        }
+
+
+        $gridChart->drawBars(
+            array(
+                'label' => $this->translate('Notifications'),
+                'color' => 'blue',
+                'data'  =>  $notifications,
+                'showPoints' => true
+            )
+        );
+
+        $gridChart->drawLines(
+            array(
+                'label' => $this->translate('Avg (min)'),
+                'color' => 'orange',
+                'data'  =>  $dAvg,
+                'showPoints' => true
+            )
+        );
+
+        $gridChart->drawLines(
+            array(
+                'label' => $this->translate('Max (min)'),
+                'color' => 'red',
+                'data'  =>  $dMax,
+                'showPoints' => true
+            )
+        );
+
+        return $gridChart;
+    }
+
     public function createDefectImage()
     {
         $gridChart = new GridChart();
-        $interval = $this->getInterval();
 
         $gridChart->alignTopLeft();
-        $gridChart->setAxisLabel('', t('Services'))
+        $gridChart->setAxisLabel('', t('Notifications'))
             ->setXAxis(new StaticAxis())
             ->setAxisMin(null, 0)
-            ->setYAxis(new \Icinga\Chart\Unit\LinearUnit(10));
-
-
+            ->setYAxis(new LinearUnit(10));
 
         $gridChart->drawBars(
             array(

@@ -13,10 +13,16 @@ $helper = $this->getHelper('MonitoringState');
 <div class="content alertsummary">
     <h1><?= $this->translate('Alert summary'); ?></h1>
 
-    <h2><?= $this->translate('Notifications'); ?></h2>
+    <h2><?= $this->translate('Notifications and problems'); ?></h2>
 
     <div class="svg-container-responsive">
         <?= $defectChart->render(); ?>
+    </div>
+
+    <h2><?= $this->translate('Time to reaction (Ack, Recover)'); ?></h2>
+
+    <div class="svg-container-responsive">
+        <?= $healingChart->render(); ?>
     </div>
 
     <h2><?= $this->translate('Trend'); ?></h2>
