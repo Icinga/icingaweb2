@@ -10,6 +10,7 @@ use LogicException;
 use Zend_Db_Adapter_Pdo_Mysql;
 use Zend_Db_Adapter_Pdo_Pgsql;
 use Icinga\Util\File;
+use Icinga\Application\Platform;
 use Icinga\Exception\ConfigurationError;
 
 /**
@@ -294,26 +295,44 @@ class DbTool
     }
 
     /**
-     * Return a list of all available database logins
+     * Return whether the given database login exists
      *
-     * @return  array
+     * @param   string  $username   The username to search
+     *
+     * @return  bool
      */
-    public function listLogins()
+    public function hasLogin($username)
     {
-        $users = array();
-
         if ($this->config['db'] === 'mysql') {
-            $query = $this->pdoConn->query('SELECT DISTINCT grantee FROM information_schema.user_privileges');
-            foreach ($query->fetchAll() as $row) {
-                $users[] = $row['grantee'];
-            }
+            $stmt = $this->pdoConn->prepare(
+                'SELECT grantee FROM information_schema.user_privileges WHERE grantee = :ident LIMIT 1'
+            );
+            $stmt->execute(array(':ident' => "'" . $username . "'@'" . Platform::getFqdn() . "'"));
+            return $stmt->rowCount() === 1;
         } elseif ($this->config['db'] === 'pgsql') {
-            $query = $this->pdoConn->query('SELECT usename FROM pg_catalog.pg_user');
-            foreach ($query->fetchAll() as $row) {
-                $users[] = $row['usename'];
-            }
+            $stmt = $this->pdoConn->prepare(
+                'SELECT usename FROM pg_catalog.pg_user WHERE usename = :ident LIMIT 1'
+            );
+            $stmt->execute(array(':ident' => $username));
+            return $stmt->rowCount() === 1;
         }
 
-        return $users;
+        return false;
+    }
+
+    /**
+     * Add a new database login
+     *
+     * @param   string  $username   The username of the new login
+     * @param   string  $password   The password of the new login
+     */
+    public function addLogin($username, $password)
+    {
+        if ($this->config['db'] === 'mysql') {
+            $stmt = $this->pdoConn->prepare('CREATE USER :user@:host IDENTIFIED BY :passw');
+            $stmt->execute(array(':user' => $username, ':host' => Platform::getFqdn(), ':passw' => $password));
+        } elseif ($this->config['db'] === 'pgsql') {
+            $this->pdoConn->exec("CREATE USER $username WITH PASSWORD '$password'");
+        }
     }
 }

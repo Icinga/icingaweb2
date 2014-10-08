@@ -255,21 +255,20 @@ class WebInstaller implements Installer
             $db->reconnect($this->pageData['setup_db_resource']['dbname']);
         }
 
-        $loginIdent = "'" . $this->pageData['setup_db_resource']['username'] . "'@'" . Platform::getFqdn() . "'";
-        if (false === array_search($loginIdent, $db->listLogins())) {
-            $this->log(sprintf(
-                t('Creating login "%s"...'),
-                $this->pageData['setup_db_resource']['username']
-            ));
-            $db->exec(
-                "CREATE USER $loginIdent IDENTIFIED BY '" .
-                $this->pageData['setup_db_resource']['password'] . "'"
-            );
-        } else {
+        if ($db->hasLogin($this->pageData['setup_db_resource']['username'])) {
             $this->log(sprintf(
                 t('Login "%s" already exists...'),
                 $this->pageData['setup_db_resource']['username']
             ));
+        } else {
+            $this->log(sprintf(
+                t('Creating login "%s"...'),
+                $this->pageData['setup_db_resource']['username']
+            ));
+            $db->addLogin(
+                $this->pageData['setup_db_resource']['username'],
+                $this->pageData['setup_db_resource']['password']
+            );
         }
 
         if (array_search('account', $db->listTables()) !== false) {
@@ -289,7 +288,7 @@ class WebInstaller implements Installer
                 "GRANT %s ON %s.* TO %s",
                 join(',', $privileges),
                 $this->pageData['setup_db_resource']['dbname'],
-                $loginIdent
+                $this->pageData['setup_db_resource']['username'] . '@' . Platform::getFqdn()
             ));
         }
     }
@@ -319,21 +318,20 @@ class WebInstaller implements Installer
             $db->reconnect($this->pageData['setup_db_resource']['dbname']);
         }
 
-        if (false === array_search($this->pageData['setup_db_resource']['username'], $db->listLogins())) {
-            $this->log(sprintf(
-                t('Creating login "%s"...'),
-                $this->pageData['setup_db_resource']['username']
-            ));
-            $db->exec(sprintf(
-                "CREATE USER %s WITH PASSWORD '%s'",
-                $this->pageData['setup_db_resource']['username'],
-                $this->pageData['setup_db_resource']['password']
-            ));
-        } else {
+        if ($db->hasLogin($this->pageData['setup_db_resource']['username'])) {
             $this->log(sprintf(
                 t('Login "%s" already exists...'),
                 $this->pageData['setup_db_resource']['username']
             ));
+        } else {
+            $this->log(sprintf(
+                t('Creating login "%s"...'),
+                $this->pageData['setup_db_resource']['username']
+            ));
+            $db->addLogin(
+                $this->pageData['setup_db_resource']['username'],
+                $this->pageData['setup_db_resource']['password']
+            );
         }
 
         if (array_search('account', $db->listTables()) !== false) {
