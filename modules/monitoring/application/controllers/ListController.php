@@ -265,6 +265,9 @@ class Monitoring_ListController extends Controller
      */
     public function downtimesAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('downtimes');
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('downtime', array(
@@ -309,6 +312,9 @@ class Monitoring_ListController extends Controller
      */
     public function notificationsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('notifications');
         $this->setAutorefreshInterval(15);
         $query = $this->backend->select()->from('notification', array(
@@ -328,6 +334,9 @@ class Monitoring_ListController extends Controller
 
     public function contactsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('contacts');
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
@@ -364,6 +373,9 @@ class Monitoring_ListController extends Controller
 
     public function statehistorysummaryAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('statehistorysummary', 'State Summary');
 
         $form = new StatehistoryForm();
@@ -401,6 +413,9 @@ class Monitoring_ListController extends Controller
 
     public function contactgroupsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('contactgroups');
         $query = $this->backend->select()->from('contactgroup', array(
             'contactgroup_name',
@@ -430,6 +445,9 @@ class Monitoring_ListController extends Controller
 
     public function commentsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('comments');
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('comment', array(
@@ -550,6 +568,9 @@ class Monitoring_ListController extends Controller
 
     public function servicematrixAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('servicematrix');
         $this->setAutorefreshInterval(15);
         $query = $this->backend->select()->from('serviceStatus', array(
