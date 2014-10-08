@@ -11,7 +11,9 @@ use Icinga\Web\Setup\DbTool;
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
 use Icinga\Web\Setup\Installer;
+use Icinga\Data\ResourceFactory;
 use Icinga\Config\PreservingIniWriter;
+use Icinga\Authentication\Backend\DbUserBackend;
 
 /**
  * Icinga Web 2 Installer
@@ -86,6 +88,14 @@ class WebInstaller implements Installer
         } catch (Exception $e) {
             $success = false;
             $this->log(sprintf(t('Unable to create: %s (%s)'), $authenticationIniPath, $e->getMessage()), false);
+        }
+
+        try {
+            $this->setupAdminAccount();
+            $this->log(t('Successfully created initial administrative account.'));
+        } catch (Exception $e) {
+            $success = false;
+            $this->log(sprintf(t('Failed to create initial administrative account: %s'), $e->getMessage()));
         }
 
         return $success;
@@ -351,6 +361,25 @@ class WebInstaller implements Installer
                 join(',', $privileges),
                 $this->pageData['setup_db_resource']['username']
             ));
+        }
+    }
+
+    /**
+     * Create the initial administrative account
+     */
+    protected function setupAdminAccount()
+    {
+        if ($this->pageData['setup_admin_account']['user_type'] === 'new_user') {
+            $backend = new DbUserBackend(
+                ResourceFactory::createResource(new Zend_Config($this->pageData['setup_db_resource']))
+            );
+
+            if (array_search($this->pageData['setup_admin_account']['new_user'], $backend->listUsers()) === false) {
+                $backend->addUser(
+                    $this->pageData['setup_admin_account']['new_user'],
+                    $this->pageData['setup_admin_account']['new_user_password']
+                );
+            }
         }
     }
 

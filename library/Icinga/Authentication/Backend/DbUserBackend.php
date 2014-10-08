@@ -20,7 +20,7 @@ class DbUserBackend extends UserBackend
      *
      * @var DbConnection
      */
-    private $conn;
+    protected $conn;
 
     public function __construct(DbConnection $conn)
     {
@@ -42,6 +42,28 @@ class DbUserBackend extends UserBackend
             ->query()->fetchObject();
 
         return ($row !== false) ? true : false;
+    }
+
+    /**
+     * Add a new user
+     *
+     * @param   string  $username   The name of the new user
+     * @param   string  $password   The new user's password
+     * @param   bool    $active     Whether the user is active
+     */
+    public function addUser($username, $password, $active = true)
+    {
+        $passwordSalt = $this->generateSalt();
+        $hashedPassword = $this->hashPassword($password, $passwordSalt);
+        $stmt = $this->conn->getDbAdapter()->prepare(
+            'INSERT INTO account VALUES (:username, :salt, :password, :active);'
+        );
+        $stmt->execute(array(
+            ':active'   => $active,
+            ':username' => $username,
+            ':salt'     => $passwordSalt,
+            ':password' => $hashedPassword
+        ));
     }
 
     /**
@@ -92,11 +114,23 @@ class DbUserBackend extends UserBackend
      *
      * @return  string|null
      */
-    private function getSalt($username)
+    protected function getSalt($username)
     {
         $select = new Zend_Db_Select($this->conn->getConnection());
         $row = $select->from('account', array('salt'))->where('username = ?', $username)->query()->fetchObject();
         return ($row !== false) ? $row->salt : null;
+    }
+
+    /**
+     * Return a random salt
+     *
+     * The returned salt is safe to be used for hashing a user's password
+     *
+     * @return  string
+     */
+    protected function generateSalt()
+    {
+        return openssl_random_pseudo_bytes(64);
     }
 
     /**
@@ -107,7 +141,7 @@ class DbUserBackend extends UserBackend
      *
      * @return  string
      */
-    private function hashPassword($password, $salt) {
+    protected function hashPassword($password, $salt) {
         return hash_hmac('sha256', $password, $salt);
     }
 
