@@ -8,6 +8,29 @@ use Zend_Db_Expr;
 
 class StatusQuery extends IdoQuery
 {
+    /**
+     * This mode represents whether we are in HostStatus or ServiceStatus
+     *
+     * Implemented for `distinct as workaround
+     *
+     * @TODO Subject to change, see #7344
+     *
+     * @var string
+     */
+    protected $mode;
+
+    /**
+     * Sets the mode of the current query
+     *
+     * @TODO Subject to change, see #7344
+     *
+     * @param string $mode
+     */
+    public function setMode($mode)
+    {
+        $this->mode = $mode;
+    }
+
     protected $allowCustomVars = true;
 
     protected $columnMap = array(
@@ -430,6 +453,12 @@ class StatusQuery extends IdoQuery
             array()
             );
 
+        // @TODO Subject to change, see #7344
+        if ($this->mode === 'host' || $this->mode === 'service') {
+            $this->useSubqueryCount = true;
+            $this->distinct();
+        }
+
         return $this;
     }
 
@@ -449,7 +478,11 @@ class StatusQuery extends IdoQuery
             . ' AND hgo.is_active = 1',
             array()
         );
-
+        // @TODO Subject to change, see #7344
+        if ($this->mode === 'service') {
+            $this->distinct();
+            $this->useSubqueryCount = true;
+        }
         return $this;
     }
 
@@ -470,6 +503,14 @@ class StatusQuery extends IdoQuery
           . ' AND sgo.is_active = 1',
             array()
         );
+
+        // @TODO Subject to change, see #7344
+        if ($this->mode === 'host' || $this->mode === 'service') {
+            $this->distinct();
+        }
+        if ($this->mode === 'host') {
+            $this->useSubqueryCount = true;
+        }
 
         return $this;
     }

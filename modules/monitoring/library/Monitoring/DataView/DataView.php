@@ -27,7 +27,7 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
      *
      * @var \Icinga\Data\SimpleQuery
      */
-    private $query;
+    protected $query;
 
     protected $filter;
 
@@ -47,6 +47,18 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
         $queryClass = $connection->getQueryClass($this->getQueryName());
         $this->query = new $queryClass($this->connection->getResource(), $columns);
         $this->filter = Filter::matchAll();
+        $this->init();
+    }
+
+    /**
+     * Initializer for `distinct purposes
+     *
+     * Implemented for `distinct as workaround
+     *
+     * @TODO Subject to change, see #7344
+     */
+    public function init()
+    {
     }
 
     /**

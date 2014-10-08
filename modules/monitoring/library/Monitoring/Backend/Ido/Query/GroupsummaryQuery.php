@@ -79,7 +79,7 @@ class GroupSummaryQuery extends IdoQuery
         }
 
         $union = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);
-        $this->select->from(array('statussummary' => $union), array($groupColumn))->group(array($groupColumn));
+        $this->select->from(array('statussummary' => $union), array())->group(array($groupColumn));
 
         $this->joinedVirtualTables = array(
             'servicestatussummary'  => true,

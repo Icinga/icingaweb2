@@ -7,6 +7,14 @@ namespace Icinga\Module\Monitoring\DataView;
 class HostStatus extends DataView
 {
     /**
+     * @see DataView::init()
+     */
+    public function init()
+    {
+        $this->query->setMode('host');
+    }
+
+    /**
      * Retrieve columns provided by this view
      *
      * @return array
