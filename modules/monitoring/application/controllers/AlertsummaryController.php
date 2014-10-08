@@ -11,18 +11,28 @@ use Icinga\Web\Url;
 
 class Monitoring_AlertsummaryController extends Controller
 {
+    /**
+     * @var string
+     */
     protected $url;
 
+    /**
+     * @var array
+     */
     private $notificationData;
 
+    /**
+     * @var array
+     */
     private $problemData;
 
+    /**
+     * Init data set
+     */
     public function init()
     {
         $tabs = $this->getTabs();
-        if (in_array($this->_request->getActionName(), array(
-            'alertsummary',
-        ))) {
+        if (in_array($this->_request->getActionName(), array('alertsummary'))) {
             $tabs->extend(new OutputFormat())->extend(new DashboardAction());
         }
 
@@ -32,17 +42,26 @@ class Monitoring_AlertsummaryController extends Controller
         $this->problemData = $this->createProblemData();
     }
 
+    /**
+     * @param string $action
+     * @param bool $title
+     */
     protected function addTitleTab($action, $title = false)
     {
         $title = $title ?: ucfirst($action);
-        $this->getTabs()->add($action, array(
-            'title' => $title,
-            // 'url' => Url::fromPath('monitoring/list/' . $action)
-            'url' => $this->url
-        ))->activate($action);
+        $this->getTabs()->add(
+            $action,
+            array(
+                'title' => $title,
+                'url'   => $this->url
+            )
+        )->activate($action);
         $this->view->title = $title;
     }
 
+    /**
+     * Creat full report
+     */
     public function indexAction()
     {
         $this->addTitleTab('alertsummary');
@@ -55,29 +74,41 @@ class Monitoring_AlertsummaryController extends Controller
         $this->view->trend = $this->createTrendInformation();
 
         $this->setAutorefreshInterval(15);
-        $query = $this->backend->select()->from('notification', array(
-            'host',
-            'service',
-            'notification_output',
-            'notification_contact',
-            'notification_start_time',
-            'notification_state'
-        ));
+        $query = $this->backend->select()->from(
+            'notification',
+            array(
+                'host',
+                'service',
+                'notification_output',
+                'notification_contact',
+                'notification_start_time',
+                'notification_state'
+            )
+        );
 
         $this->view->notifications = $query->paginate();
     }
 
-    private function createNotificationData() {
+    /**
+     * Create data for charts
+     *
+     * @return array
+     */
+    private function createNotificationData()
+    {
         $interval = $this->getInterval();
 
-        $query = $this->backend->select()->from('notification', array(
-            'host',
-            'service',
-            'notification_output',
-            'notification_contact',
-            'notification_start_time',
-            'notification_state'
-        ));
+        $query = $this->backend->select()->from(
+            'notification',
+            array(
+                'host',
+                'service',
+                'notification_output',
+                'notification_contact',
+                'notification_start_time',
+                'notification_state'
+            )
+        );
 
         $query->setFilter(
             new Icinga\Data\Filter\FilterExpression(
@@ -92,8 +123,6 @@ class Monitoring_AlertsummaryController extends Controller
         $records    = $query->getQuery()->fetchAll();
         $data       = array();
         $period     = $this->createPeriod($interval);
-
-
 
         foreach ($period as $entry) {
             $id = $this->getPeriodFormat($interval, $entry->getTimestamp());
@@ -112,19 +141,27 @@ class Monitoring_AlertsummaryController extends Controller
         return $data;
     }
 
+    /**
+     * Trend information for notifications
+     *
+     * @return stdClass
+     */
     private function createTrendInformation()
     {
         $date = new DateTime();
 
         $beginDate = $date->sub(new DateInterval('P3D'));
-        $query = $this->backend->select()->from('notification', array(
-            'host',
-            'service',
-            'notification_output',
-            'notification_contact',
-            'notification_start_time',
-            'notification_state'
-        ));
+        $query = $this->backend->select()->from(
+            'notification',
+            array(
+                'host',
+                'service',
+                'notification_output',
+                'notification_contact',
+                'notification_start_time',
+                'notification_state'
+            )
+        );
 
         $query->setFilter(
             new Icinga\Data\Filter\FilterExpression(
@@ -175,18 +212,26 @@ class Monitoring_AlertsummaryController extends Controller
         return $out;
     }
 
+    /**
+     * Perfdata for notifications
+     *
+     * @return stdClass
+     */
     private function createNotificationPerfdata()
     {
         $interval = $this->getInterval();
 
-        $query = $this->backend->select()->from('notification', array(
-            'host',
-            'service',
-            'notification_output',
-            'notification_contact',
-            'notification_start_time',
-            'notification_state'
-        ));
+        $query = $this->backend->select()->from(
+            'notification',
+            array(
+                'host',
+                'service',
+                'notification_output',
+                'notification_contact',
+                'notification_start_time',
+                'notification_state'
+            )
+        );
 
         $query->setFilter(
             new Icinga\Data\Filter\FilterExpression(
@@ -218,24 +263,32 @@ class Monitoring_AlertsummaryController extends Controller
         return $out;
     }
 
+    /**
+     * Problems for notifications
+     *
+     * @return array
+     */
     private function createProblemData()
     {
         $interval = $this->getInterval();
 
-        $query = $this->backend->select()->from('eventhistory', array(
-            'host_name',
-            'service_description',
-            'object_type',
-            'timestamp',
-            'state',
-            'attempt',
-            'max_attempts',
-            'output',
-            'type',
-            'host',
-            'service',
-            'service_host_name'
-        ));
+        $query = $this->backend->select()->from(
+            'eventhistory',
+            array(
+                'host_name',
+                'service_description',
+                'object_type',
+                'timestamp',
+                'state',
+                'attempt',
+                'max_attempts',
+                'output',
+                'type',
+                'host',
+                'service',
+                'service_host_name'
+            )
+        );
 
         $query->addFilter(
             new Icinga\Data\Filter\FilterExpression(
@@ -273,6 +326,11 @@ class Monitoring_AlertsummaryController extends Controller
         return $defects;
     }
 
+    /**
+     * Healing svg image
+     *
+     * @return GridChart
+     */
     public function createHealingChart()
     {
         $gridChart = new GridChart();
@@ -285,16 +343,19 @@ class Monitoring_AlertsummaryController extends Controller
 
         $interval = $this->getInterval();
 
-        $query = $this->backend->select()->from('notification', array(
-            'host',
-            'service',
-            'notification_object_id',
-            'notification_output',
-            'notification_contact',
-            'notification_start_time',
-            'notification_state',
-            'acknowledgement_entry_time'
-        ));
+        $query = $this->backend->select()->from(
+            'notification',
+            array(
+                'host',
+                'service',
+                'notification_object_id',
+                'notification_output',
+                'notification_contact',
+                'notification_start_time',
+                'notification_state',
+                'acknowledgement_entry_time'
+            )
+        );
 
         $query->setFilter(
             new Icinga\Data\Filter\FilterExpression(
@@ -326,7 +387,8 @@ class Monitoring_AlertsummaryController extends Controller
             $id = $this->getPeriodFormat($interval, $item->notification_start_time);
 
             if ($item->notification_state == '0' && isset($rData[$item->notification_object_id])) {
-                $rData[$item->notification_object_id]['recover'] = $item->notification_start_time - $rData[$item->notification_object_id]['entry'];
+                $rData[$item->notification_object_id]['recover'] =
+                    $item->notification_start_time - $rData[$item->notification_object_id]['entry'];
             } elseif ($item->notification_state !== '0') {
                 $recover = 0;
                 if ($item->acknowledgement_entry_time) {
@@ -392,6 +454,11 @@ class Monitoring_AlertsummaryController extends Controller
         return $gridChart;
     }
 
+    /**
+     * Notifications and defects
+     *
+     * @return GridChart
+     */
     public function createDefectImage()
     {
         $gridChart = new GridChart();
@@ -423,22 +490,35 @@ class Monitoring_AlertsummaryController extends Controller
         return $gridChart;
     }
 
+    /**
+     * Top recent alerts
+     *
+     * @return mixed
+     */
     private function createRecentAlerts()
     {
-        $query = $this->backend->select()->from('notification', array(
-            'host',
-            'service',
-            'notification_output',
-            'notification_contact',
-            'notification_start_time',
-            'notification_state'
-        ));
+        $query = $this->backend->select()->from(
+            'notification',
+            array(
+                'host',
+                'service',
+                'notification_output',
+                'notification_contact',
+                'notification_start_time',
+                'notification_state'
+            )
+        );
 
         $query->order('notification_start_time', 'desc');
 
         return $query->paginate(5);
     }
 
+    /**
+     * Interval selector box
+     *
+     * @return SelectBox
+     */
     private function createIntervalBox()
     {
         $box = new SelectBox(
@@ -456,6 +536,14 @@ class Monitoring_AlertsummaryController extends Controller
         return $box;
     }
 
+    /**
+     * Return reasonable date time format for an interval
+     *
+     * @param   string $interval
+     * @param   string $timestamp
+     *
+     * @return  string
+     */
     private function getPeriodFormat($interval, $timestamp)
     {
         $format = '';
@@ -472,6 +560,12 @@ class Monitoring_AlertsummaryController extends Controller
         return strftime($format, $timestamp);
     }
 
+    /**
+     * Create a reasonable period based in interval strings
+     *
+     * @param $interval
+     * @return DatePeriod
+     */
     private function createPeriod($interval)
     {
         if ($interval === '1d') {
@@ -485,6 +579,12 @@ class Monitoring_AlertsummaryController extends Controller
         }
     }
 
+    /**
+     * Return start timestamps based on interval strings
+     *
+     * @param $interval
+     * @return DateTime|null
+     */
     private function getBeginDate($interval)
     {
         $new = new DateTime();
@@ -501,8 +601,20 @@ class Monitoring_AlertsummaryController extends Controller
         return null;
     }
 
+    /**
+     * Getter for interval
+     *
+     * @return string
+     *
+     * @throws Zend_Controller_Action_Exception
+     */
     private function getInterval()
     {
-        return $this->getParam('interval', '1d');
+        $interval = $this->getParam('interval', '1d');
+        if (false === in_array($interval, array('1d', '1w', '1m', '1y'))) {
+            throw new Zend_Controller_Action_Exception($this->translate('Value for interval not valid'));
+        }
+
+        return $interval;
     }
-} 
+}
