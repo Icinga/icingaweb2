@@ -1,4 +1,4 @@
-
+<?php var_dump($this->compact); ?>
 <?php if (!$this->compact): ?>
 <div class="controls">
   <?= $this->tabs ?>
@@ -10,7 +10,10 @@
  </div>
 <?php endif ?>
 
+<?php if (! $this->inline): ?>
 <div class="content">
+<?php endif; ?>
+
 <?php
 
 if (empty($this->notifications)) {
@@ -75,4 +78,6 @@ foreach ($notifications as $notification):
 </tbody>
 </table>
 
+<?php if (!$this->inline): ?>
 </div>
+<?php endif; ?>
