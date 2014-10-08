@@ -39,7 +39,9 @@ class SetupCommand extends Command
     /**
      * Create a new setup token
      *
-     * Re-generates the setup token used to authenticate when installing Icinga Web 2 using the web-based wizard
+     * Re-generates the setup token used to authenticate when installing Icinga Web 2 using the web-based wizard.
+     * Note that it is required to run this command while logged in as your webserver's user or to make him the
+     * owner of the created file afterwards manually.
      *
      * USAGE:
      *
