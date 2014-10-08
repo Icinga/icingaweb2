@@ -14,6 +14,18 @@ use Icinga\Web\Form\Element\CsrfCounterMeasure;
 
 /**
  * Base class for forms providing CSRF protection, confirmation logic and auto submission
+ *
+ * @method $this setDefaults(array $defaults) {
+ *     Use `Form::populate()' for setting default values for elements instead because `Form::setDefaults()' does not
+ *     create the form via `Form::create()'.
+ *
+ *     Due to a BC introduced with https://github.com/mhujer/zf1/commit/244e3d3f88a363ee0ca49cf63eee31f925f515cd
+ *     we cannot override this function without running into a strict standards violation on Zend version 1.12.7.
+ *
+ *     @param   array $defaults
+ *
+ *     @return  $this
+ * }
  */
 class Form extends Zend_Form
 {
@@ -508,10 +520,10 @@ class Form extends Zend_Form
      *
      * @param   array   $defaults   The values to populate the elements with
      */
-    public function setDefaults(array $defaults)
+    public function populate(array $defaults)
     {
         $this->create($defaults);
-        return parent::setDefaults($defaults);
+        return parent::populate($defaults);
     }
 
     /**
