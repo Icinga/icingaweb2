@@ -79,11 +79,13 @@ class DatabaseCreationPage extends Form
                 )
             )
         );
+
+        $skipValidation = isset($formData['skip_validation']) && $formData['skip_validation'];
         $this->addElement(
             'text',
             'username',
             array(
-                'required'      => true,
+                'required'      => false === $skipValidation,
                 'label'         => t('Username'),
                 'description'   => t('A user which is able to create databases and/or touch the database schema')
             )
@@ -92,11 +94,24 @@ class DatabaseCreationPage extends Form
             'password',
             'password',
             array(
-                'required'      => true,
+                'required'      => false === $skipValidation,
                 'label'         => t('Password'),
                 'description'   => t('The password for the database user defined above')
             )
         );
+
+        if ($skipValidation) {
+            $this->addSkipValidationCheckbox();
+        } else {
+            $this->addElement(
+                'hidden',
+                'skip_validation',
+                array(
+                    'required'  => true,
+                    'value'     => 0
+                )
+            );
+        }
     }
 
     /**
@@ -112,6 +127,10 @@ class DatabaseCreationPage extends Form
             return false;
         }
 
+        if (isset($data['skip_validation']) && $data['skip_validation']) {
+            return true;
+        }
+
         $this->config['username'] = $this->getValue('username');
         $this->config['password'] = $this->getValue('password');
         $db = new DbTool($this->config);
@@ -122,6 +141,7 @@ class DatabaseCreationPage extends Form
                 $this->addError(
                     t('The provided credentials do not have the required access rights to create the database schema.')
                 );
+                $this->addSkipValidationCheckbox();
                 return false;
             }
         } catch (PDOException $e) {
@@ -131,14 +151,33 @@ class DatabaseCreationPage extends Form
                     $this->addError(
                         t('The provided credentials cannot be used to create the database and/or the user.')
                     );
+                    $this->addSkipValidationCheckbox();
                     return false;
                 }
             } catch (PDOException $e) {
                 $this->addError($e->getMessage());
+                $this->addSkipValidationCheckbox();
                 return false;
             }
         }
 
         return true;
+    }
+
+    /**
+     * Add a checkbox to the form by which the user can skip the login and privilege validation
+     */
+    protected function addSkipValidationCheckbox()
+    {
+        $this->addElement(
+            'checkbox',
+            'skip_validation',
+            array(
+                'order'         => 1,
+                'required'      => true,
+                'label'         => t('Skip Validation'),
+                'description'   => t('Check this to not to validate the ability to login and required privileges')
+            )
+        );
     }
 }
