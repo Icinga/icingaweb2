@@ -122,7 +122,7 @@ class AuthenticationController extends ActionController
                 if ($backendsWithError) {
                     $this->view->form->getElement('username')->addError(
                         $this->translate(
-                            'Please note that not all authentication methods where available.'
+                            'Please note that not all authentication methods were available.'
                           . ' Check the system log or Icinga Web 2 log for more information.'
                         )
                     );
@@ -135,7 +135,9 @@ class AuthenticationController extends ActionController
                         $authenticated  = $backend->authenticate($user);
                         if ($authenticated === true) {
                             $auth->setAuthenticated($user);
-                            $this->rerenderLayout()->redirectNow($redirectUrl);
+                            $this->rerenderLayout()->redirectNow(
+                                Url::fromPath(Url::fromRequest()->getParam('redirect', 'dashboard'))
+                            );
                         }
                     }
                 }
@@ -151,14 +153,16 @@ class AuthenticationController extends ActionController
     public function logoutAction()
     {
         $auth = $this->Auth();
+        if (! $auth->isAuthenticated()) {
+            $this->redirectToLogin();
+        }
         $isRemoteUser = $auth->getUser()->isRemoteUser();
         $auth->removeAuthorization();
-
         if ($isRemoteUser === true) {
             $this->_helper->layout->setLayout('login');
             $this->_response->setHttpResponseCode(401);
         } else {
-            $this->rerenderLayout()->redirectToLogin();
+            $this->redirectToLogin();
         }
     }
 }

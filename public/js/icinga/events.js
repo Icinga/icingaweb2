@@ -83,6 +83,12 @@
             if (searchField.length && searchField.val().length) {
                 self.searchValue = searchField.val();
             }
+
+            if (icinga.ui.isOneColLayout()) {
+                icinga.ui.disableCloseButtons();
+            } else {
+                icinga.ui.enableCloseButtons();
+            }
         },
 
         /**
@@ -371,6 +377,18 @@
             // If link has hash tag...
             if (href.match(/#/)) {
                 if (href === '#') {
+                    if ($a.hasClass('close-toggle')) {
+                        if (! icinga.ui.isOneColLayout()) {
+                            var $cont = $a.closest('.container').first();
+                            if ($cont.attr('id') === 'col1') {
+                                icinga.ui.moveToLeft();
+                                icinga.ui.layout1col();
+                            } else {
+                                icinga.ui.layout1col();
+                            }
+                            icinga.history.pushCurrentState();
+                        }
+                    }
                     return false;
                 }
                 $target = self.getLinkTargetFor($a);

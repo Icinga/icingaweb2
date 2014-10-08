@@ -199,6 +199,18 @@ class FilterTest extends BaseTestCase
         $this->assertNotEquals((string) $c, (string) $d);
     }
 
+    public function testLeadingAndTrailingWhitespacesSanitizing()
+    {
+        $columnHasWhitespaces = Filter::where(' host ', 'localhost');
+        $expressionHasWhitespaces = Filter::where('host', ' localhost ');
+        $bothHaveWhitespaces = Filter::fromQueryString('  host  =  localhost  ');
+        $withArray = Filter::where(' host ', array(' no match  ', '  localhost  '));
+        $this->assertTrue($columnHasWhitespaces->matches($this->sampleData[0]));
+        $this->assertTrue($expressionHasWhitespaces->matches($this->sampleData[0]));
+        $this->assertTrue($bothHaveWhitespaces->matches($this->sampleData[0]));
+        $this->assertTrue($withArray->matches($this->sampleData[0]));
+    }
+
     private function row($idx)
     {
         return $this->sampleData[$idx];

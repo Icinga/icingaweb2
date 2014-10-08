@@ -24,8 +24,8 @@
     Navigation.prototype.onRendered = function(evt) {
         // get original source element of the rendered-event
         var el = evt.target;
-        // restore old menu state
         if (activeMenuId) {
+            // restore old menu state
             $('[role="navigation"] li.active', el).removeClass('active');
             var $selectedMenu = $('#' + activeMenuId).addClass('active');
             var $outerMenu = $selectedMenu.parent().closest('li');
@@ -37,6 +37,9 @@
             var $menus = $('[role="navigation"] li.active', el);
             if ($menus.size()) {
                 activeMenuId = $menus[0].id;
+                $menus.find('li.active').first().each(function () {
+                    activeMenuId = this.id;
+                });
             }
         }
     };
@@ -73,6 +76,12 @@
         menuDataUrl = icinga.utils.addUrlParams(menuDataUrl.path, { url: href });
         $menu.data('icinga-url', menuDataUrl);
     };
+
+    Navigation.prototype.setActiveByUrl = function(url)
+    {
+        this.resetActive();
+        this.setActive($('#menu [href="' + url + '"]'));
+    }
 
     /**
      * Change the active menu element

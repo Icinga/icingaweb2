@@ -340,12 +340,12 @@
             if (! req.autorefresh) {
                 // TODO: Hook for response/url?
                 var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
-
                 var $matches = $.merge($('[href="' + url + '"]'), $forms);
-
                 $matches.each(function (idx, el) {
                     if ($(el).closest('#menu').length) {
-                        self.icinga.behaviors.navigation.resetActive();
+                        if (req.$target[0].id === 'col1') {
+                            self.icinga.behaviors.navigation.resetActive();
+                        }
                     } else if ($(el).closest('table.action').length) {
                         $(el).closest('table.action').find('.active').removeClass('active');
                     }
@@ -357,7 +357,9 @@
                         if ($el.is('form')) {
                             $('input', $el).addClass('active');
                         } else {
-                            self.icinga.behaviors.navigation.setActive($el);
+                            if (req.$target[0].id === 'col1') {
+                                self.icinga.behaviors.navigation.setActive($el);
+                            }
                         }
                         // Interrupt .each, only on menu item shall be active
                         return false;
@@ -367,7 +369,6 @@
                 });
             } else {
                 // TODO: next container url
-                // Get first container url?
                 active = $('[href].active', req.$target).attr('href');
             }
 

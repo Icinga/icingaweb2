@@ -12,7 +12,6 @@ use Icinga\Form\Config\Resource\DbResourceForm;
 use Icinga\Form\Config\Resource\FileResourceForm;
 use Icinga\Form\Config\Resource\LdapResourceForm;
 use Icinga\Form\Config\Resource\LivestatusResourceForm;
-use Icinga\Form\Config\Resource\StatusdatResourceForm;
 use Icinga\Application\Platform;
 use Icinga\Exception\ConfigurationError;
 
@@ -42,8 +41,6 @@ class ResourceConfigForm extends ConfigForm
             return new LdapResourceForm();
         } elseif ($type === 'livestatus') {
             return new LivestatusResourceForm();
-        } elseif ($type === 'statusdat') {
-            return new StatusdatResourceForm();
         } elseif ($type === 'file') {
             return new FileResourceForm();
         } else {
@@ -214,7 +211,6 @@ class ResourceConfigForm extends ConfigForm
 
         $resourceTypes = array(
             'file'          => t('File'),
-            'statusdat'     => 'Status.dat',
             'livestatus'    => 'Livestatus',
         );
         if ($resourceType === 'ldap' || Platform::extensionLoaded('ldap')) {

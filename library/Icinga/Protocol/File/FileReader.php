@@ -6,7 +6,6 @@ namespace Icinga\Protocol\File;
 
 use Icinga\Data\Selectable;
 use Countable;
-use Icinga\Util\Enumerate;
 use Zend_Config;
 
 /**
@@ -53,9 +52,7 @@ class FileReader implements Selectable, Countable
      */
     public function iterate()
     {
-        return new Enumerate(
-            new FileIterator($this->filename, $this->fields)
-        );
+        return new FileIterator($this->filename, $this->fields);
     }
 
     /**

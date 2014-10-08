@@ -7,6 +7,14 @@ namespace Icinga\Module\Monitoring\DataView;
 class HostStatus extends DataView
 {
     /**
+     * @see DataView::init()
+     */
+    public function init()
+    {
+        $this->query->setMode('host');
+    }
+
+    /**
      * Retrieve columns provided by this view
      *
      * @return array
@@ -64,7 +72,8 @@ class HostStatus extends DataView
             'host_percent_state_change',
             'host_modified_host_attributes',
             'host_severity',
-            'host_problem'
+            'host_problem',
+            'host_ipv4'
         );
     }
 
@@ -105,7 +114,7 @@ class HostStatus extends DataView
 
     public function getFilterColumns()
     {
-        return array('hostgroup', 'service_problems');
+        return array('hostgroup', 'service_problems', 'servicegroup');
     }
 
     public function isValidFilterTarget($column)

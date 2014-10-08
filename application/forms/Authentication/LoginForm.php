@@ -24,7 +24,7 @@ class LoginForm extends Form
     /**
      * @see Form::createElements()
      */
-    public function createElements($formData)
+    public function createElements(array $formData)
     {
         $this->addElement(
             'text',

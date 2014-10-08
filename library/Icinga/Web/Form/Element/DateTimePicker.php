@@ -5,27 +5,15 @@
 namespace Icinga\Web\Form\Element;
 
 use DateTime;
-use Zend_Form_Element;
+use Icinga\Web\Form;
+use Icinga\Web\Form\FormElement;
 use Icinga\Web\Form\Validator\DateTimeValidator;
 
 /**
  * A date-and-time input control
- *
- * @method DateTime getValue()
  */
-class DateTimePicker extends Zend_Form_Element
+class DateTimePicker extends FormElement
 {
-    /**
-     * Disable default decorators
-     *
-     * \Icinga\Web\Form sets default decorators for elements.
-     *
-     * @var bool
-     *
-     * @see \Icinga\Web\Form::__construct() For default element decorators.
-     */
-    protected $_disableLoadDefaultDecorators = true;
-
     /**
      * Form view helper to use for rendering
      *
@@ -54,7 +42,7 @@ class DateTimePicker extends Zend_Form_Element
 
     /**
      * (non-PHPDoc)
-     * @see \Zend_Form_Element::init() For the method documentation.
+     * @see Zend_Form_Element::init() For the method documentation.
      */
     public function init()
     {

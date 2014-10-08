@@ -4,24 +4,13 @@
 
 namespace Icinga\Web\Form\Element;
 
-use Zend_Form_Element;
+use Icinga\Web\Form\FormElement;
 
 /**
  * A number input control
  */
-class Number extends Zend_Form_Element
+class Number extends FormElement
 {
-    /**
-     * Disable default decorators
-     *
-     * \Icinga\Web\Form sets default decorators for elements.
-     *
-     * @var bool
-     *
-     * @see \Icinga\Web\Form::__construct() For default element decorators.
-     */
-    protected $_disableLoadDefaultDecorators = true;
-
     /**
      * Form view helper to use for rendering
      *

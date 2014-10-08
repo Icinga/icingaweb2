@@ -12,6 +12,8 @@ class FilterExpression extends Filter
 
     public function __construct($column, $sign, $expression)
     {
+        $column = trim($column);
+        $expression = is_array($expression) ? array_map('trim', $expression) : trim($expression);
         $this->column = $column;
         $this->sign = $sign;
         $this->expression = $expression;

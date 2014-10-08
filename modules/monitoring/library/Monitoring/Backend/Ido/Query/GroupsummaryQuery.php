@@ -44,7 +44,6 @@ class GroupSummaryQuery extends IdoQuery
         $columns = array(
             'object_type',
             'host_state',
-            'host_name'
         );
 
         // Prepend group column since we'll use columns index 0 later for grouping
@@ -61,6 +60,9 @@ class GroupSummaryQuery extends IdoQuery
                 'in_downtime'  => 'host_in_downtime'
             )
         );
+        if (in_array('servicegroup', $this->desiredColumns)) {
+            $hosts->group(array('sgo.name1', 'ho.object_id', 'state', 'acknowledged', 'in_downtime'));
+        }
         $services = $this->createSubQuery(
             'Status',
             $columns + array(
@@ -77,7 +79,7 @@ class GroupSummaryQuery extends IdoQuery
         }
 
         $union = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);
-        $this->select->from(array('statussummary' => $union), array($groupColumn))->group(array($groupColumn));
+        $this->select->from(array('statussummary' => $union), array())->group(array($groupColumn));
 
         $this->joinedVirtualTables = array(
             'servicestatussummary'  => true,
