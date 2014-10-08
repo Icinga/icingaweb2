@@ -272,8 +272,7 @@ class WebInstaller implements Installer
             ));
         }
 
-        $diff = array_diff(array('account', 'preference'), $db->listTables());
-        if (empty($diff)) {
+        if (array_search('account', $db->listTables()) !== false) {
             $this->log(t('Database schema already exists...'));
         } else {
             $this->log(t('Creating database schema...'));
@@ -337,8 +336,7 @@ class WebInstaller implements Installer
             ));
         }
 
-        $diff = array_diff(array('account', 'preference'), $db->listTables());
-        if (empty($diff)) {
+        if (array_search('account', $db->listTables()) !== false) {
             $this->log(t('Database schema already exists...'));
         } else {
             $this->log(t('Creating database schema...'));

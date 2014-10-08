@@ -30,13 +30,6 @@ use Icinga\Application\Platform;
 class WebSetup extends Wizard implements SetupWizard
 {
     /**
-     * The database tables required by Icinga Web 2
-     *
-     * @var array
-     */
-    protected $databaseTables = array('account', 'preference');
-
-    /**
      * The privileges required by Icinga Web 2 to setup the database
      *
      * @var array
@@ -148,8 +141,7 @@ class WebSetup extends Wizard implements SetupWizard
 
                 try {
                     $db->connectToDb();
-                    $diff = array_diff($this->databaseTables, $db->listTables());
-                    if (false === empty($diff)) {
+                    if (array_search('account', $db->listTables()) === false) {
                         $skip = $db->checkPrivileges($this->databaseSetupPrivileges);
                     } else {
                         $skip = true;
