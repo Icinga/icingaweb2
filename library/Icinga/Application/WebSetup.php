@@ -11,6 +11,8 @@ use Icinga\Form\Setup\DbResourcePage;
 use Icinga\Form\Setup\PreferencesPage;
 use Icinga\Form\Setup\AuthBackendPage;
 use Icinga\Form\Setup\AdminAccountPage;
+use Icinga\Form\Setup\LdapDiscoveryPage;
+use Icinga\Form\Setup\LdapDiscoveryConfirmPage;
 use Icinga\Form\Setup\LdapResourcePage;
 use Icinga\Form\Setup\RequirementsPage;
 use Icinga\Form\Setup\GeneralConfigPage;
@@ -56,6 +58,8 @@ class WebSetup extends Wizard implements SetupWizard
         $this->addPage(new AuthenticationPage());
         $this->addPage(new PreferencesPage());
         $this->addPage(new DbResourcePage());
+        $this->addPage(new LdapDiscoveryPage());
+        $this->addPage(new LdapDiscoveryConfirmPage());
         $this->addPage(new LdapResourcePage());
         $this->addPage(new AuthBackendPage());
         $this->addPage(new AdminAccountPage());
@@ -82,7 +86,15 @@ class WebSetup extends Wizard implements SetupWizard
                 $page->setResourceConfig($this->getPageData('setup_db_resource'));
             } elseif ($authData['type'] === 'ldap') {
                 $page->setResourceConfig($this->getPageData('setup_ldap_resource'));
+
+                $suggestions = $this->getPageData('setup_ldap_discovery_confirm');
+                if (isset($suggestions['backend'])) {
+                    $page->setSuggestions($suggestions['backend']);
+                }
             }
+        } else if ($page->getName() === 'setup_ldap_discovery_confirm') {
+            $page->setResourceConfig($this->getPageData('setup_ldap_discovery'));
+
         } elseif ($page->getName() === 'setup_admin_account') {
             $page->setBackendConfig($this->getPageData('setup_authentication_backend'));
             $authData = $this->getPageData('setup_authentication_type');
@@ -108,6 +120,11 @@ class WebSetup extends Wizard implements SetupWizard
                     t('The given resource name must be unique and is already in use by the database resource')
                 );
             }
+            $suggestion = $this->getPageData('setup_ldap_discovery_confirm');
+            if (isset($suggestion['resource'])) {
+                $page->setSuggestions($suggestion['resource']);
+            }
+
         } elseif ($page->getName() === 'setup_authentication_type') {
             $authData = $this->getPageData($page->getName());
             if ($authData !== null && $request->getPost('type') !== $authData['type']) {
@@ -131,6 +148,8 @@ class WebSetup extends Wizard implements SetupWizard
             $prefData = $this->getPageData('setup_preferences_type');
             $authData = $this->getPageData('setup_authentication_type');
             $skip = $prefData['type'] !== 'db' && $authData['type'] !== 'db';
+        } elseif ($newPage->getName() === 'setup_ldap_discovery_confirm') {
+            $skip = $this->getPageData('setup_ldap_discovery') === null;
         } elseif ($newPage->getName() === 'setup_ldap_resource') {
             $authData = $this->getPageData('setup_authentication_type');
             $skip = $authData['type'] !== 'ldap';

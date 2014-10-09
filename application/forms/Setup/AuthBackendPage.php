@@ -24,6 +24,13 @@ class AuthBackendPage extends Form
     protected $config;
 
     /**
+     * Suggested configuration settings
+     *
+     * @var array
+     */
+    protected $suggestions;
+
+    /**
      * Initialize this page
      */
     public function init()
@@ -52,6 +59,19 @@ class AuthBackendPage extends Form
     public function getResourceConfig()
     {
         return new Zend_Config($this->config);
+    }
+
+    /**
+     * Set suggested configuration settings
+     *
+     * @param   array   $suggestions
+     *
+     * @return  self
+     */
+    public function setSuggestions(array $suggestions)
+    {
+        $this->suggestions = $suggestions;
+        return $this;
     }
 
     /**
@@ -85,6 +105,10 @@ class AuthBackendPage extends Form
             $backendForm = new DbBackendForm();
             $backendForm->createElements($formData)->removeElement('resource');
         } elseif ($this->config['type'] === 'ldap') {
+            if ($this->suggestions !== null) {
+                $formData += $this->suggestions;
+            }
+
             $backendForm = new LdapBackendForm();
             $backendForm->createElements($formData)->removeElement('resource');
         } else { // $this->config['type'] === 'autologin'
