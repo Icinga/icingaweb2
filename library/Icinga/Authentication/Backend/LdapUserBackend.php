@@ -96,12 +96,12 @@ class LdapUserBackend extends UserBackend
      *
      * @param string $dn
      *
-     * @return array|null
+     * @return array
      */
     public function getGroups($dn)
     {
         if (empty($this->groupOptions) || ! isset($this->groupOptions['group_base_dn'])) {
-            return null;
+            return array();
         }
 
         $q = $this->conn->select()
