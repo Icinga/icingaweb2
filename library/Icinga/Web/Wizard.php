@@ -7,6 +7,7 @@ namespace Icinga\Web;
 use LogicException;
 use InvalidArgumentException;
 use Icinga\Web\Session\SessionNamespace;
+use Icinga\Web\Form\Decorator\ElementDoubler;
 
 /**
  * Container and controller for form based wizards
@@ -476,6 +477,12 @@ class Wizard
             array(
                 'decorators' => array(
                     'FormElements',
+                    new ElementDoubler(array(
+                        'double'        => static::BTN_NEXT,
+                        'condition'     => static::BTN_PREV,
+                        'placement'     => ElementDoubler::PREPEND,
+                        'attributes'    => array('tabindex' => -1, 'class' => 'double')
+                    )),
                     array('HtmlTag', array('tag' => 'div', 'class' => 'buttons'))
                 )
             )
