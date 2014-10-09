@@ -245,13 +245,47 @@ class DbTool
     /**
      * Execute a SQL statement and return the affected row count
      *
+     * Use $params to use a prepared statement.
+     *
      * @param   string  $statement  The statement to execute
+     * @param   array   $params     The params to bind
      *
      * @return  int
      */
-    public function exec($statement)
+    public function exec($statement, $params = array())
     {
-        return $this->pdoConn->exec($statement);
+        if (empty($params)) {
+            return $this->pdoConn->exec($statement);
+        }
+
+        $stmt = $this->pdoConn->prepare($statement);
+        $stmt->execute($params);
+        return $stmt->rowCount();
+    }
+
+    /**
+     * Execute a SQL statement and return the result
+     *
+     * Use $params to use a prepared statement.
+     *
+     * @param   string  $statement  The statement to execute
+     * @param   array   $params     The params to bind
+     *
+     * @return  mixed
+     */
+    public function query($statement, $params = array())
+    {
+        if ($this->zendConn !== null) {
+            return $this->zendConn->query($statement, $params);
+        }
+
+        if (empty($params)) {
+            return $this->pdoConn->query($statement);
+        }
+
+        $stmt = $this->pdoConn->prepare($statement);
+        $stmt->execute($params);
+        return $stmt;
     }
 
     /**
@@ -304,20 +338,18 @@ class DbTool
     public function hasLogin($username)
     {
         if ($this->config['db'] === 'mysql') {
-            $stmt = $this->pdoConn->prepare(
-                'SELECT grantee FROM information_schema.user_privileges WHERE grantee = :ident LIMIT 1'
+            $rowCount = $this->exec(
+                'SELECT grantee FROM information_schema.user_privileges WHERE grantee = :ident LIMIT 1',
+                array(':ident' => "'" . $username . "'@'" . Platform::getFqdn() . "'")
             );
-            $stmt->execute(array(':ident' => "'" . $username . "'@'" . Platform::getFqdn() . "'"));
-            return $stmt->rowCount() === 1;
         } elseif ($this->config['db'] === 'pgsql') {
-            $stmt = $this->pdoConn->prepare(
-                'SELECT usename FROM pg_catalog.pg_user WHERE usename = :ident LIMIT 1'
+            $rowCount = $this->exec(
+                'SELECT usename FROM pg_catalog.pg_user WHERE usename = :ident LIMIT 1',
+                array(':ident' => $username)
             );
-            $stmt->execute(array(':ident' => $username));
-            return $stmt->rowCount() === 1;
         }
 
-        return false;
+        return $rowCount === 1;
     }
 
     /**
@@ -329,10 +361,12 @@ class DbTool
     public function addLogin($username, $password)
     {
         if ($this->config['db'] === 'mysql') {
-            $stmt = $this->pdoConn->prepare('CREATE USER :user@:host IDENTIFIED BY :passw');
-            $stmt->execute(array(':user' => $username, ':host' => Platform::getFqdn(), ':passw' => $password));
+            $this->exec(
+                'CREATE USER :user@:host IDENTIFIED BY :passw',
+                array(':user' => $username, ':host' => Platform::getFqdn(), ':passw' => $password)
+            );
         } elseif ($this->config['db'] === 'pgsql') {
-            $this->pdoConn->exec("CREATE USER $username WITH PASSWORD '$password'");
+            $this->exec("CREATE USER $username WITH PASSWORD '$password'");
         }
     }
 }
