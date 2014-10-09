@@ -205,6 +205,9 @@
 
             if ($button.length === 0) {
                 $button = $('input[type=submit]', $form).first();
+                if ($button.length === 0) {
+                    $button = $('button[type=submit]', $form).first();
+                }
             }
 
             event.stopPropagation();
