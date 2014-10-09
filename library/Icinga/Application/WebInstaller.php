@@ -237,8 +237,6 @@ class WebInstaller implements Installer
      * Setup a MySQL database
      *
      * @param   DbTool      $db     The database connection wrapper to use
-     *
-     * @todo    Escape user input or make use of prepared statements!
      */
     private function setupMysqlDatabase(DbTool $db)
     {
@@ -254,7 +252,7 @@ class WebInstaller implements Installer
                 t('Creating new database "%s"...'),
                 $this->pageData['setup_db_resource']['dbname']
             ));
-            $db->exec('CREATE DATABASE ' . $this->pageData['setup_db_resource']['dbname']);
+            $db->exec('CREATE DATABASE ' . $db->quoteIdentifier($this->pageData['setup_db_resource']['dbname']));
             $db->reconnect($this->pageData['setup_db_resource']['dbname']);
         }
 
@@ -288,10 +286,11 @@ class WebInstaller implements Installer
                 $this->pageData['setup_db_resource']['username']
             ));
             $db->exec(sprintf(
-                "GRANT %s ON %s.* TO %s",
+                "GRANT %s ON %s.* TO %s@%s",
                 join(',', $privileges),
-                $this->pageData['setup_db_resource']['dbname'],
-                $this->pageData['setup_db_resource']['username'] . '@' . Platform::getFqdn()
+                $db->quoteIdentifier($this->pageData['setup_db_resource']['dbname']),
+                $db->quoteIdentifier($this->pageData['setup_db_resource']['username']),
+                $db->quoteIdentifier(Platform::getFqdn())
             ));
         }
     }
@@ -300,8 +299,6 @@ class WebInstaller implements Installer
      * Setup a PostgreSQL database
      *
      * @param   DbTool      $db     The database connection wrapper to use
-     *
-     * @todo    Escape user input or make use of prepared statements!
      */
     private function setupPgsqlDatabase(DbTool $db)
     {
@@ -317,7 +314,7 @@ class WebInstaller implements Installer
                 t('Creating new database "%s"...'),
                 $this->pageData['setup_db_resource']['dbname']
             ));
-            $db->exec('CREATE DATABASE ' . $this->pageData['setup_db_resource']['dbname']);
+            $db->exec('CREATE DATABASE ' . $db->quoteIdentifier($this->pageData['setup_db_resource']['dbname']));
             $db->reconnect($this->pageData['setup_db_resource']['dbname']);
         }
 
@@ -353,12 +350,12 @@ class WebInstaller implements Installer
             $db->exec(sprintf(
                 "GRANT %s ON TABLE account TO %s",
                 join(',', $privileges),
-                $this->pageData['setup_db_resource']['username']
+                $db->quoteIdentifier($this->pageData['setup_db_resource']['username'])
             ));
             $db->exec(sprintf(
                 "GRANT %s ON TABLE preference TO %s",
                 join(',', $privileges),
-                $this->pageData['setup_db_resource']['username']
+                $db->quoteIdentifier($this->pageData['setup_db_resource']['username'])
             ));
         }
     }

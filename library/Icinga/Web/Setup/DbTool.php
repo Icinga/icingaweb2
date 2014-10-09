@@ -243,6 +243,45 @@ class DbTool
     }
 
     /**
+     * Return the given identifier escaped with backticks
+     *
+     * @param   string  $identifier     The identifier to escape
+     *
+     * @return  string
+     *
+     * @throws  LogicException          In case there is no behaviour implemented for the current PDO driver
+     */
+    public function quoteIdentifier($identifier)
+    {
+        if ($this->config['db'] === 'mysql') {
+            return '`' . str_replace('`', '``', $identifier) . '`';
+        } elseif ($this->config['db'] === 'pgsql') {
+            return '"' . str_replace('"', '""', $identifier) . '"';
+        } else {
+            throw new LogicException('Unable to quote identifier.');
+        }
+    }
+
+    /**
+     * Return the given value escaped as string
+     *
+     * @param   mixed  $value       The value to escape
+     *
+     * @return  string
+     *
+     * @throws  LogicException      In case there is no behaviour implemented for the current PDO driver
+     */
+    public function quote($value)
+    {
+        $value = $this->pdoConn->quote($value);
+        if ($value === false) {
+            throw new LogicException('Unable to quote value');
+        }
+
+        return $value;
+    }
+
+    /**
      * Execute a SQL statement and return the affected row count
      *
      * Use $params to use a prepared statement.
@@ -366,7 +405,11 @@ class DbTool
                 array(':user' => $username, ':host' => Platform::getFqdn(), ':passw' => $password)
             );
         } elseif ($this->config['db'] === 'pgsql') {
-            $this->exec("CREATE USER $username WITH PASSWORD '$password'");
+            $this->exec(sprintf(
+                'CREATE USER %s WITH PASSWORD %s',
+                $this->quoteIdentifier($username),
+                $this->quote($password)
+            ));
         }
     }
 }
