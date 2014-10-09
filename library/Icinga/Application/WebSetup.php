@@ -89,7 +89,7 @@ class WebSetup extends Wizard implements SetupWizard
 
                 $suggestions = $this->getPageData('setup_ldap_discovery_confirm');
                 if (isset($suggestions['backend'])) {
-                    $page->setSuggestions($suggestions['backend']);
+                    $page->populate($suggestions['backend']);
                 }
             }
         } else if ($page->getName() === 'setup_ldap_discovery_confirm') {
@@ -120,11 +120,11 @@ class WebSetup extends Wizard implements SetupWizard
                     t('The given resource name must be unique and is already in use by the database resource')
                 );
             }
+
             $suggestion = $this->getPageData('setup_ldap_discovery_confirm');
             if (isset($suggestion['resource'])) {
-                $page->setSuggestions($suggestion['resource']);
+                $page->populate($suggestion['resource']);
             }
-
         } elseif ($page->getName() === 'setup_authentication_type') {
             $authData = $this->getPageData($page->getName());
             if ($authData !== null && $request->getPost('type') !== $authData['type']) {

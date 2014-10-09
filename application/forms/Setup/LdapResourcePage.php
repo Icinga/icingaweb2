@@ -14,31 +14,11 @@ use Icinga\Form\Config\Resource\LdapResourceForm;
 class LdapResourcePage extends Form
 {
     /**
-     * Suggested configuration settings
-     *
-     * @var array
-     */
-    protected $suggestions;
-
-    /**
      * Initialize this page
      */
     public function init()
     {
         $this->setName('setup_ldap_resource');
-    }
-
-    /**
-     * Set suggested configuration settings
-     *
-     * @param   array   $suggestions
-     *
-     * @return  self
-     */
-    public function setSuggestions(array $suggestions)
-    {
-        $this->suggestions = $suggestions;
-        return $this;
     }
 
     /**
@@ -77,10 +57,6 @@ class LdapResourcePage extends Form
                     'value'     => 0
                 )
             );
-        }
-
-        if ($this->suggestions !== null) {
-            $formData += $this->suggestions;
         }
 
         $resourceForm = new LdapResourceForm();
