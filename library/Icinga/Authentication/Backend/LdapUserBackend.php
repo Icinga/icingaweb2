@@ -4,7 +4,6 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Icinga\Logger\Logger;
 use Icinga\User;
 use Icinga\Authentication\UserBackend;
 use Icinga\Protocol\Ldap\Connection;
@@ -20,15 +19,18 @@ class LdapUserBackend extends UserBackend
      **/
     protected $conn;
 
+    protected $baseDn;
+
     protected $userClass;
 
     protected $userNameAttribute;
 
     protected $groupOptions;
 
-    public function __construct(Connection $conn, $userClass, $userNameAttribute, $groupOptions = null)
+    public function __construct(Connection $conn, $userClass, $userNameAttribute, $baseDn, $groupOptions = null)
     {
         $this->conn = $conn;
+        $this->baseDn = $baseDn;
         $this->userClass = $userClass;
         $this->userNameAttribute = $userNameAttribute;
         $this->groupOptions = $groupOptions;
@@ -74,7 +76,7 @@ class LdapUserBackend extends UserBackend
             throw new AuthenticationException(
                 'No objects with objectClass="%s" in DN="%s" found.',
                 $this->userClass,
-                $this->conn->getDN()
+                $this->baseDn
             );
         }
 

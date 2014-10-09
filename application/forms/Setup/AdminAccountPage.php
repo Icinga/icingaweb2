@@ -244,7 +244,8 @@ class AdminAccountPage extends Form
             $backend = new LdapUserBackend(
                 ResourceFactory::createResource(new Zend_Config($this->resourceConfig)),
                 $this->backendConfig['user_class'],
-                $this->backendConfig['user_name_attribute']
+                $this->backendConfig['user_name_attribute'],
+                $this->backendConfig['base_dn']
             );
         } else {
             throw new LogicException(

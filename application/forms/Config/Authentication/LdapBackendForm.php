@@ -72,6 +72,15 @@ class LdapBackendForm extends Form
         );
         $this->addElement(
             'text',
+            'base_dn',
+            array(
+                'required'      => true,
+                'label'         => t('Bind DN'),
+                'description'   => t('The path where users can be found on the ldap server')
+            )
+        );
+        $this->addElement(
+            'text',
             'user_class',
             array(
                 'required'      => true,
@@ -127,7 +136,8 @@ class LdapBackendForm extends Form
             $ldapUserBackend = new LdapUserBackend(
                 ResourceFactory::createResource($form->getResourceConfig()),
                 $form->getElement('user_class')->getValue(),
-                $form->getElement('user_name_attribute')->getValue()
+                $form->getElement('user_name_attribute')->getValue(),
+                $form->getElement('base_dn')->getValue()
             );
             $ldapUserBackend->assertAuthenticationPossible();
         } catch (AuthenticationException $e) {
