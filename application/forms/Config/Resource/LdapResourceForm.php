@@ -65,7 +65,7 @@ class LdapResourceForm extends Form
             array(
                 'required'      => true,
                 'label'         => t('Root DN'),
-                'description'   => t('The path where users can be found on the ldap server')
+                'description'   => t('Only the root and its child nodes will be accessible on this resource.')
             )
         );
         $this->addElement(
