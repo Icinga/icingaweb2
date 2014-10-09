@@ -92,9 +92,8 @@ class WebSetup extends Wizard implements SetupWizard
                     $page->populate($suggestions['backend']);
                 }
             }
-        } else if ($page->getName() === 'setup_ldap_discovery_confirm') {
+        } elseif ($page->getName() === 'setup_ldap_discovery_confirm') {
             $page->setResourceConfig($this->getPageData('setup_ldap_discovery'));
-
         } elseif ($page->getName() === 'setup_admin_account') {
             $page->setBackendConfig($this->getPageData('setup_authentication_backend'));
             $authData = $this->getPageData('setup_authentication_type');
@@ -148,8 +147,11 @@ class WebSetup extends Wizard implements SetupWizard
             $prefData = $this->getPageData('setup_preferences_type');
             $authData = $this->getPageData('setup_authentication_type');
             $skip = $prefData['type'] !== 'db' && $authData['type'] !== 'db';
+        } elseif ($newPage->getname() === 'setup_ldap_discovery') {
+            $authData = $this->getPageData('setup_authentication_type');
+            $skip = $authData['type'] !== 'ldap';
         } elseif ($newPage->getName() === 'setup_ldap_discovery_confirm') {
-            $skip = $this->getPageData('setup_ldap_discovery') === null;
+            $skip = false === $this->hasPageData('setup_ldap_discovery');
         } elseif ($newPage->getName() === 'setup_ldap_resource') {
             $authData = $this->getPageData('setup_authentication_type');
             $skip = $authData['type'] !== 'ldap';
