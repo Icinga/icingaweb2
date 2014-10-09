@@ -9,7 +9,6 @@ namespace Icinga\Protocol;
  */
 class Dns
 {
-
     /**
      * Discover all service records on a given domain
      *
@@ -17,21 +16,12 @@ class Dns
      * @param string    $service    The type of the service, like for example 'ldaps' or 'ldap'
      * @param string    $protocol   The transport protocol used by the service, defaults to 'tcp'
      *
-     * @return array|null           An array of all service domains
+     * @return array                An array of all found service records
      */
     public static function getSrvRecords($domain, $service, $protocol = 'tcp')
     {
         $records = dns_get_record('_' . $service . '._' . $protocol . '.' . $domain, DNS_SRV);
-        if ($records === false) {
-            return null;
-        }
-        $targets = array();
-        foreach ($records as $record) {
-            if (array_key_exists('target', $record)) {
-                $targets[] = $record['target'];
-            }
-        }
-        return $targets;
+        return $records === false ? array() : $records;
     }
 
     /**
