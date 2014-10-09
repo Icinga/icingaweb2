@@ -61,6 +61,12 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
   <?= $form->getElement($form->getTokenElementName()); ?>
   <?= $form->getElement($form->getUidElementName()); ?>
   <div class="buttons">
+    <?php
+      $btn = clone $form->getElement(Wizard::BTN_NEXT);
+      $btn->setAttrib('class', 'double');
+      $btn->setAttrib('tabindex', -1);
+      echo $btn;
+    ?>
     <?= $form->getElement(Wizard::BTN_PREV); ?>
     <?= $form->getElement(Wizard::BTN_NEXT); ?>
   </div>
