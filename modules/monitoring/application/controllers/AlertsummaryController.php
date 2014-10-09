@@ -205,8 +205,10 @@ class Monitoring_AlertsummaryController extends Controller
         } elseif ($yesterday === $today) {
             $out->percent = 0;
         } else {
-            $out->percent = 100 -
-                ((100/($yesterday > $today ? $yesterday : $today)) * ($yesterday > $today ? $today : $yesterday));
+            $out->percent = sprintf(
+                '%.2f',
+                100 - ((100/($yesterday > $today ? $yesterday : $today)) * ($yesterday > $today ? $today : $yesterday))
+            );
         }
 
         return $out;
