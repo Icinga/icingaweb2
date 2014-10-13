@@ -88,7 +88,15 @@ EOT;
         $this->addElement(
             new Note(
                 'suggestion',
-                array('value' => $html)
+                array(
+                    'value'         => $html,
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array(
+                            'HtmlTag', array('tag' => 'div')
+                        )
+                    )
+                )
             )
         );
 
