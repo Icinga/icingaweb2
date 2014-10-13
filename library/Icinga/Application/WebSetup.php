@@ -33,6 +33,8 @@ class WebSetup extends Wizard implements SetupWizard
     /**
      * The privileges required by Icinga Web 2 to setup the database
      *
+     * @todo    This list is not intended to be exhaustive nor being correct. (Driver compatibilitiy, Necessity, ...)
+     *
      * @var array
      */
     protected $databaseSetupPrivileges = array(
