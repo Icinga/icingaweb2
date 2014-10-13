@@ -1,7 +1,9 @@
 <div id="setup" class="container">
+  <div class="setup-content">
 <?php if (isset($wizard)): ?>
-  <?= $this->render('setup/parts/wizard.phtml'); ?>
+    <?= $this->render('setup/parts/wizard.phtml'); ?>
 <?php else: ?>
-  <?= $this->render('setup/parts/install.phtml'); ?>
+    <?= $this->render('setup/parts/install.phtml'); ?>
 <?php endif ?>
+  </div>
 </div>
