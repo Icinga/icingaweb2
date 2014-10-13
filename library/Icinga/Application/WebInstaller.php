@@ -163,6 +163,7 @@ class WebInstaller implements Installer
             $resourceConfig[$this->pageData['setup_ldap_resource']['name']] = array(
                 'hostname'  => $this->pageData['setup_ldap_resource']['hostname'],
                 'port'      => $this->pageData['setup_ldap_resource']['port'],
+                'root_dn'   => $this->pageData['setup_ldap_resource']['root_dn'],
                 'bind_dn'   => $this->pageData['setup_ldap_resource']['bind_dn'],
                 'bind_pw'   => $this->pageData['setup_ldap_resource']['bind_pw']
             );
@@ -196,7 +197,7 @@ class WebInstaller implements Installer
             $backendConfig[$this->pageData['setup_authentication_backend']['backend']] = array(
                 'backend'               => $this->pageData['setup_authentication_backend']['backend'],
                 'resource'              => $this->pageData['setup_ldap_resource']['name'],
-                //'root_dn'               => $this->pageData['setup_ldap_resource']['root_dn'],
+                'base_dn'               => $this->pageData['setup_authentication_backend']['base_dn'],
                 'user_class'            => $this->pageData['setup_authentication_backend']['user_class'],
                 'user_name_attribute'   => $this->pageData['setup_authentication_backend']['user_name_attribute']
             );
