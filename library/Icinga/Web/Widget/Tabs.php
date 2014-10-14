@@ -75,6 +75,13 @@ EOT;
     private $dropdownTabs = array();
 
     /**
+     * Whether only the close-button should by rendered for this tab
+     *
+     * @var bool
+     */
+    private $closeButtonOnly = false;
+
+    /**
      * Whether the tabs should contain a close-button
      *
      * @var bool
@@ -275,14 +282,19 @@ EOT;
      */
     public function render()
     {
-        if (empty($this->tabs)) {
-            return '';
+        if (empty($this->tabs) || true === $this->closeButtonOnly) {
+            $tabs = '';
+            $drop = '';
+        } else {
+            $tabs = $this->renderTabs();
+            $drop = $this->renderDropdownTabs();
         }
+        $close = $this->closeTab ? $this->renderCloseTab() : '';
 
         $html = $this->baseTpl;
-        $html = str_replace('{TABS}', $this->renderTabs(), $html);
-        $html = str_replace('{DROPDOWN}', $this->renderDropdownTabs(), $html);
-        $html = str_replace('{CLOSE}', $this->closeTab ? $this->renderCloseTab() : '', $html);
+        $html = str_replace('{TABS}', $tabs, $html);
+        $html = str_replace('{DROPDOWN}', $drop, $html);
+        $html = str_replace('{CLOSE}', $close, $html);
         return $html;
     }
 
@@ -316,6 +328,18 @@ EOT;
     public function getTabs()
     {
         return $this->tabs;
+    }
+
+    /**
+     * Whether to hide all elements except of the close button
+     *
+     * @param   bool    $value
+     * @return  Tabs            fluent interface
+     */
+    public function showOnlyCloseButton($value = true)
+    {
+        $this->closeButtonOnly = $value;
+        return $this;
     }
 
     /**
