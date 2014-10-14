@@ -2,8 +2,95 @@
   overflow: auto; // TODO: Shouldn't be necessary, here, IMHO
 }
 
-#setup .setup-content {
-  margin: 1.5em 1.8em 0 1.8em;
+#setup {
+  .header {
+    width: 100%;
+    height: 5.4em;
+    background-color: #555;
+    background-image: -moz-linear-gradient(top, #777, #555);
+    background-image: -webkit-linear-gradient(top, #777, #555);
+    background-image: -o-linear-gradient(top, #777, #555);
+    background-image: -ms-linear-gradient(top, #777, #555);
+    background-image: linear-gradient(top, #777, #555);
+
+    img {
+      width: 12.5em;
+      margin: 0.5em;
+      float: left;
+    }
+
+    .progress-bar {
+      overflow: hidden;
+      padding-top: 1em;
+
+      .step {
+        float: left;
+
+        h1 {
+          margin: 0;
+          color: white;
+          font-size: 1em;
+          text-align: center;
+        }
+
+        table {
+          margin-top: 0.7em;
+
+          td {
+            padding: 0;
+
+            &.left, &.right {
+              width: 50%;
+            }
+          }
+        }
+
+        div {
+          background-color: lightgrey;
+
+          &.line {
+            height: 0.5em;
+
+            &.left {
+              margin-left: 0.1em;
+              margin-right: -0.1em;
+              border-top-left-radius: 0.5em;
+              border-bottom-left-radius: 0.5em;
+            }
+
+            &.right {
+              margin-left: -0.1em;
+              margin-right: 0.1em;
+              border-top-right-radius: 0.5em;
+              border-bottom-right-radius: 0.5em;
+            }
+          }
+
+          &.bubble {
+            width: 1.5em;
+            height: 1.5em;
+            border-radius: 1.5em;
+
+            // Make sure that such a bubble overlays lines
+            position: relative;
+            z-index: 1337;
+          }
+
+          &.active {
+            background-color: white;
+          }
+
+          &.complete {
+            background-color: green;
+          }
+        }
+      }
+    }
+  }
+
+  .setup-content {
+    margin: 1.5em 1.8em 0 1.8em;
+  }
 }
 
 #setup div.buttons {
