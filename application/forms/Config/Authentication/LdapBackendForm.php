@@ -72,15 +72,6 @@ class LdapBackendForm extends Form
         );
         $this->addElement(
             'text',
-            'base_dn',
-            array(
-                'required'      => true,
-                'label'         => t('Bind DN'),
-                'description'   => t('The path where users can be found on the ldap server')
-            )
-        );
-        $this->addElement(
-            'text',
             'user_class',
             array(
                 'required'      => true,
@@ -107,7 +98,16 @@ class LdapBackendForm extends Form
                 'value'     => 'ldap'
             )
         );
-
+        $this->addElement(
+            'text',
+            'base_dn',
+            array(
+                'required'      => false,
+                'label'         => t('Base DN'),
+                'description'   => t('The path where users can be found on the ldap server. ' .
+                    ' Leave empty to select all users available on the specified resource.')
+            )
+        );
         return $this;
     }
 
