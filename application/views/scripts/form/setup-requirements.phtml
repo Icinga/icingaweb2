@@ -10,9 +10,9 @@ $requirements = $form->getRequirements();
   <tbody>
 <?php foreach ($requirements as $requirement): ?>
     <tr>
-      <td><?= $requirement->title; ?></td>
-      <td><?= $requirement->description; ?></td>
-      <td class="<?= $requirement->state === Requirements::STATE_OK ? 'fulfilled' : (
+      <td><h2><?= $requirement->title; ?></h2></td>
+      <td style="width: 50%"><?= $requirement->description; ?></td>
+      <td class="state <?= $requirement->state === Requirements::STATE_OK ? 'fulfilled' : (
         $requirement->state === Requirements::STATE_OPTIONAL ? 'not-available' : 'missing'
       ); ?>"><?= $requirement->message; ?></td>
     </tr>

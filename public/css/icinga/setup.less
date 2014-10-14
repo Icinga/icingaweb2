@@ -103,17 +103,33 @@
 }
 
 #setup table.requirements {
+  margin-top: -1em;
+  margin-left: -1em;
+  border-spacing: 1em;
+  border-collapse: separate;
+
   td {
-    &.fulfilled {
-      background-color: green;
+    h2 {
+      margin: 0 1em 0 0;
     }
 
-    &.not-available {
-      background-color: yellow;
-    }
+    &.state {
+      color: white;
+      padding: 0.4em;
+      border-radius: 0.2em;
 
-    &.missing {
-      background-color: red;
+      &.fulfilled {
+        background-color: #4fad4b;
+      }
+
+      &.not-available {
+        color: black;
+        background-color: #e8ec70;
+      }
+
+      &.missing {
+        background-color: #fd7770;
+      }
     }
   }
 }
