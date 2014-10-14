@@ -30,10 +30,23 @@ class LdapUserBackend extends UserBackend
     public function __construct(Connection $conn, $userClass, $userNameAttribute, $baseDn, $groupOptions = null)
     {
         $this->conn = $conn;
-        $this->baseDn = $baseDn;
+        $this->baseDn = trim($baseDn) !== '' ? $baseDn : $conn->getDN();
         $this->userClass = $userClass;
         $this->userNameAttribute = $userNameAttribute;
         $this->groupOptions = $groupOptions;
+    }
+
+    /**
+     * @return \Icinga\Protocol\Ldap\Query
+     */
+    protected function selectUsers()
+    {
+        return $this->conn->select()->setBase($this->baseDn)->from(
+            $this->userClass,
+            array(
+                $this->userNameAttribute
+            )
+        );
     }
 
     /**
@@ -43,14 +56,9 @@ class LdapUserBackend extends UserBackend
      *
      * @return  \Icinga\Protocol\Ldap\Query
      **/
-    protected function createQuery($username)
+    protected function selectUser($username)
     {
-        return $this->conn->select()
-            ->from(
-                $this->userClass,
-                array($this->userNameAttribute)
-            )
-            ->where(
+        return $this->selectUsers()->where(
                 $this->userNameAttribute,
                 str_replace('*', '', $username)
             );
@@ -70,7 +78,7 @@ class LdapUserBackend extends UserBackend
      */
     public function assertAuthenticationPossible()
     {
-        $q = $this->conn->select()->from($this->userClass);
+        $q = $this->conn->select()->setBase($this->baseDn)->from($this->userClass);
         $result = $q->fetchRow();
         if (! isset($result)) {
             throw new AuthenticationException(
@@ -137,7 +145,7 @@ class LdapUserBackend extends UserBackend
     public function hasUser(User $user)
     {
         $username = $user->getUsername();
-        return $this->conn->fetchOne($this->createQuery($username)) === $username;
+        return $this->conn->fetchOne($this->selectUser($username)) === $username;
     }
 
     /**
@@ -170,7 +178,7 @@ class LdapUserBackend extends UserBackend
             return false;
         }
         try {
-            $userDn = $this->conn->fetchDN($this->createQuery($user->getUsername()));
+            $userDn = $this->conn->fetchDN($this->selectUser($user->getUsername()));
             $authenticated = $this->conn->testCredentials(
                 $userDn,
                 $password
@@ -197,15 +205,7 @@ class LdapUserBackend extends UserBackend
      */
     public function count()
     {
-
-        return $this->conn->count(
-            $this->conn->select()->from(
-                $this->userClass,
-                array(
-                    $this->userNameAttribute
-                )
-            )
-        );
+        return $this->conn->count($this->selectUsers());
     }
 
     /**
@@ -215,13 +215,10 @@ class LdapUserBackend extends UserBackend
      */
     public function listUsers()
     {
-        $query = $this->conn->select()->from($this->userClass, array($this->userNameAttribute));
-
         $users = array();
-        foreach ($query->fetchAll() as $row) {
+        foreach ($this->selectUsers()->fetchAll() as $row) {
             $users[] = $row->{$this->userNameAttribute};
         }
-
         return $users;
     }
 }
