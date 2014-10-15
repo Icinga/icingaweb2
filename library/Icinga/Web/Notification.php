@@ -75,7 +75,7 @@ class Notification
             return;
         }
 
-        $messages = Session::getSession()->getByRef('messages');
+        $messages = & Session::getSession()->getByRef('messages');
         $messages[] = (object) array(
             'type'    => $type,
             'message' => $message,
