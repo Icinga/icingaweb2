@@ -10,6 +10,7 @@ use Icinga\Form\ConfigForm;
 use Icinga\Web\Notification;
 use Icinga\Application\Config;
 use Icinga\Application\Platform;
+use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Form\Config\Authentication\DbBackendForm;
 use Icinga\Form\Config\Authentication\LdapBackendForm;
@@ -318,5 +319,15 @@ class AuthenticationBackendConfigForm extends ConfigForm
         }
 
         $this->addElements($this->getBackendForm($backendType)->createElements($formData)->getElements());
+    }
+
+    /**
+     * Return the configuration for the chosen resource
+     *
+     * @return  Zend_Config
+     */
+    public function getResourceConfig()
+    {
+        return ResourceFactory::getResourceConfig($this->getValue('resource'));
     }
 }
