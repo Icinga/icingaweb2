@@ -161,6 +161,7 @@ class WebInstaller implements Installer
 
         if (isset($this->pageData['setup_ldap_resource'])) {
             $resourceConfig[$this->pageData['setup_ldap_resource']['name']] = array(
+                'type'      => $this->pageData['setup_ldap_resource']['type'],
                 'hostname'  => $this->pageData['setup_ldap_resource']['hostname'],
                 'port'      => $this->pageData['setup_ldap_resource']['port'],
                 'root_dn'   => $this->pageData['setup_ldap_resource']['root_dn'],
