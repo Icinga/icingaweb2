@@ -112,16 +112,39 @@ form.link-like input[type="submit"]:hover, form.link-like input[type="submit"]:f
   color: @colorLinkDefault;
 }
 
-form ul.errors {
+.non-list-like-list {
   list-style-type: none;
-  margin: 0.3em 0 0 0.6em;
+  margin: 0;
   padding: 0;
 }
 
-form ul.errors li {
-  color: @colorCritical;
-  font-weight: bold;
-  line-height: 1.5em;
+form div.element ul.errors {
+  .non-list-like-list;
+  margin: 0.3em 0 0 0.6em;
+
+  li {
+    color: @colorCritical;
+    font-weight: bold;
+    line-height: 1.5em;
+  }
+}
+
+form ul.form-errors {
+  .non-list-like-list;
+  display: inline-block;
+  padding: 0.5em 1em;
+  border-radius: 1em;
+  background-color: @colorCritical;
+
+  ul.errors {
+    .non-list-like-list;
+  }
+
+  li {
+    color: white;
+    font-weight: bold;
+    line-height: 1.5em;
+  }
 }
 
 form div.element {
