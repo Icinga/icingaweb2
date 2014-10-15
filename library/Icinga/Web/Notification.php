@@ -91,11 +91,12 @@ class Notification
     public function getMessages()
     {
         $session = Session::getSession();
-        if (false === empty($session->messages)) {
+        $messages = $session->messages;
+        if (false === empty($messages)) {
             $session->messages = array();
         }
 
-        return $session->messages;
+        return $messages;
     }
 
     final private function __construct()
