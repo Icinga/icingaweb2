@@ -40,18 +40,12 @@ class AuthenticationBackendConfigForm extends ConfigForm
      * @param   Config      $resources      The resource configuration
      *
      * @return  self
-     *
-     * @throws  ConfigurationError          In case no resources are available for authentication
      */
     public function setResourceConfig(Config $resourceConfig)
     {
         $resources = array();
         foreach ($resourceConfig as $name => $resource) {
             $resources[strtolower($resource->type)][] = $name;
-        }
-
-        if (empty($resources)) {
-            throw new ConfigurationError(t('Could not find any resources for authentication'));
         }
 
         $this->resources = $resources;
@@ -252,6 +246,17 @@ class AuthenticationBackendConfigForm extends ConfigForm
             $configValues['type'] = $configValues['backend'];
             $configValues['name'] = $authBackend;
             $this->populate($configValues);
+        } elseif (empty($this->resources)) {
+            $autologinBackends = array_filter(
+                $this->config->toArray(),
+                function ($authBackendCfg) {
+                    return isset($authBackendCfg['backend']) && $authBackendCfg['backend'] === 'autologin';
+                }
+            );
+
+            if (false === empty($autologinBackends)) {
+                throw new ConfigurationError(t('Could not find any resources for authentication'));
+            }
         }
     }
 
