@@ -167,7 +167,7 @@ class LdapDiscoveryForm extends Form
         if (! isset($this->capabilities)) {
             return array();
         }
-        if (isset($this->capabilities->msCapabilities->ActiveDirectoryOid)) {
+        if ($this->capabilities->msCapabilities->ActiveDirectoryOid) {
             return array(
                 'hostname' => $this->domain,
                 'port' => $this->port,
@@ -192,7 +192,7 @@ class LdapDiscoveryForm extends Form
         if (! isset($this->capabilities)) {
             return array();
         }
-        if (isset($this->capabilities->msCapabilities->ActiveDirectoryOid)) {
+        if ($this->capabilities->msCapabilities->ActiveDirectoryOid) {
             return array(
                 'base_dn' => $this->namingContext,
                 'user_class' => 'user',
@@ -209,6 +209,6 @@ class LdapDiscoveryForm extends Form
 
     public function isAd()
     {
-        return isset($this->capabilities->msCapabilities->ActiveDirectoryOid);
+        return $this->capabilities->msCapabilities->ActiveDirectoryOid;
     }
 }
