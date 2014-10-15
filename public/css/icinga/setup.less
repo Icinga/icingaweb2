@@ -100,6 +100,49 @@
     position: absolute;
     left: -1337px;
   }
+
+  #btn_prev {
+    margin-right: 1em;
+  }
+
+  button, .button-like {
+    padding: 0.5em 1em;
+    font-weight: bold;
+    outline: 0;
+    border: 1px solid black;
+    border-radius: 0.2em;
+    background: #666;
+    color: #eee;
+
+    &:hover, &:focus {
+      background-color: #333;
+    }
+
+    &.install {
+      width: 25em;
+      color: #fffafa;
+      background: #aaa;
+
+      &:hover {
+        background: #888;
+      }
+    }
+
+    &.login {
+      width: 25em;
+      color: #333;
+      background: #9e4;
+
+      &:hover {
+        background: #7c2;
+      }
+    }
+  }
+
+  a.button-like {
+    cursor: default;
+    text-decoration: none;
+  }
 }
 
 #setup table.requirements {
