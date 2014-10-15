@@ -281,7 +281,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
     public function createElements(array $formData)
     {
         $backendTypes = array();
-        $backendType = isset($formData['type']) ? $formData['type'] : 'db';
+        $backendType = isset($formData['type']) ? $formData['type'] : null;
 
         if (isset($this->resources['db'])) {
             $backendTypes['db'] = t('Database');
@@ -298,6 +298,10 @@ class AuthenticationBackendConfigForm extends ConfigForm
         );
         if ($backendType === 'autologin' || empty($autologinBackends)) {
             $backendTypes['autologin'] = t('Autologin');
+        }
+
+        if ($backendType === null) {
+            $backendType = key($backendTypes);
         }
 
         $this->addElement(
