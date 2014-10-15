@@ -377,10 +377,9 @@ class ActionController extends Zend_Controller_Action
             }
         }
 
-        $this->shutdownSession();
-
         if ($req->getParam('format') === 'pdf') {
             $layout->setLayout('pdf');
+            $this->shutdownSession();
             $this->sendAsPdf();
             exit;
         }
@@ -388,6 +387,8 @@ class ActionController extends Zend_Controller_Action
         if ($this->isXhr()) {
             $this->postDispatchXhr();
         }
+
+        $this->shutdownSession();
     }
 
     protected function postDispatchXhr()
