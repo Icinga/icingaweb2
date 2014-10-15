@@ -134,7 +134,7 @@ class LdapBackendForm extends Form
     {
         try {
             $ldapUserBackend = new LdapUserBackend(
-                ResourceFactory::createResource(ResourceFactory::getResourceConfig($form->getValue('resource'))),
+                ResourceFactory::createResource($form->getResourceConfig()),
                 $form->getElement('user_class')->getValue(),
                 $form->getElement('user_name_attribute')->getValue(),
                 $form->getElement('base_dn')->getValue()
@@ -147,6 +147,7 @@ class LdapBackendForm extends Form
             $form->addError(sprintf(t('Unable to validate authentication: %s'), $e->getMessage()));
             return false;
         }
+
         return true;
     }
 
