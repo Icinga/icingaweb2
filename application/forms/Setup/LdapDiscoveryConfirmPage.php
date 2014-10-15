@@ -20,15 +20,14 @@ class LdapDiscoveryConfirmPage extends Form
     const TYPE_MISC = 'LDAP';
 
     private $infoTemplate = <<< 'EOT'
-<br/>
-  Found LDAP server on {domain}
-<ul>
-  <li><b>Type:</b>    {type}</li>
-  <li><b>Port:</b>    {port}</li>
-  <li><b>Root DN:</b> {root_dn}</li>
-  <li><b>User-Class:</b> {user_class}</li>
-  <li><b>User-Attribue:</b> {user_attribute}</li>
-</ul>
+Found LDAP server on {domain}
+<table><tbody>
+  <tr><td><strong>Type:</strong></td><td>{type}</td></tr>
+  <tr><td><strong>Port:</strong></td><td>{port}</td></tr>
+  <tr><td><strong>Root DN:</strong></td><td>{root_dn}</td></tr>
+  <tr><td><strong>User Object Class:</strong></td><td>{user_class}</td></tr>
+  <tr><td><strong>User Name Attribute:</strong></td><td>{user_attribute}</td></tr>
+</tbody></table>
 EOT;
 
     /**
