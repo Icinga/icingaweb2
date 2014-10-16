@@ -348,11 +348,7 @@ abstract class ApplicationBootstrap
         Logger::create(
             new Zend_Config(
                 array(
-                    'enable'        => true,
-                    'level'         => Logger::$ERROR,
-                    'type'          => 'syslog',
-                    'facility'      => 'LOG_USER',
-                    'application'   => 'icingaweb'
+                    'log' => 'syslog'
                 )
             )
         );
