@@ -5,6 +5,7 @@
 namespace Icinga\Form\Config\General;
 
 use Icinga\Application\Icinga;
+use Icinga\Logger\Logger;
 use Icinga\Web\Form;
 use Icinga\Web\Form\Validator\WritablePathValidator;
 
@@ -19,29 +20,14 @@ class LoggingConfigForm extends Form
     }
 
     /**
-     * @see Form::createElements()
+     * (non-PHPDoc)
+     * @see Form::createElements() For the method documentation.
      */
     public function createElements(array $formData)
     {
         $this->addElement(
             'select',
-            'logging_level',
-            array(
-                'required'      => true,
-                'label'         => t('Logging Level'),
-                'description'   => t('The maximum loglevel to emit.'),
-                'multiOptions'  => array(
-                    0 => t('None'),
-                    1 => t('Error'),
-                    2 => t('Warning'),
-                    3 => t('Information'),
-                    4 => t('Debug')
-                )
-            )
-        );
-        $this->addElement(
-            'select',
-            'logging_type',
+            'logging_log',
             array(
                 'required'      => true,
                 'class'         => 'autosubmit',
@@ -49,13 +35,32 @@ class LoggingConfigForm extends Form
                 'description'   => t('The type of logging to utilize.'),
                 'multiOptions'  => array(
                     'syslog'    => 'Syslog',
-                    'file'      => t('File')
+                    'file'      => t('File'),
+                    'none'      => t('None')
                 )
             )
         );
 
-        if (false === isset($formData['logging_type']) || $formData['logging_type'] === 'syslog') {
-           $this->addElement(
+        if (! isset($formData['logging_log']) || $formData['logging_log'] !== 'none') {
+            $this->addElement(
+                'select',
+                'logging_level',
+                array(
+                    'required'      => true,
+                    'label'         => t('Logging Level'),
+                    'description'   => t('The maximum logging level to emit.'),
+                    'multiOptions'  => array(
+                        Logger::$levels[Logger::ERROR]      => t('Error'),
+                        Logger::$levels[Logger::WARNING]    => t('Warning'),
+                        Logger::$levels[Logger::INFO]       => t('Information'),
+                        Logger::$levels[Logger::DEBUG]      => t('Debug')
+                    )
+                )
+            );
+        }
+
+        if (isset($formData['logging_log']) && $formData['logging_log'] === 'syslog') {
+            $this->addElement(
                 'text',
                 'logging_application',
                 array(
@@ -77,26 +82,30 @@ class LoggingConfigForm extends Form
                     )
                 )
             );
-            $this->addElement(
-                'select',
-                'logging_facility',
-                array(
-                    'required'      => true,
-                    'label'         => t('Facility'),
-                    'description'   => t('The Syslog facility to utilize.'),
-                    'multiOptions'  => array(
-                        'LOG_USER'  => 'LOG_USER'
-                    )
-                )
-            );
-        } elseif ($formData['logging_type'] === 'file') {
+            /*
+             * Note(el): Since we provide only one possible value for the syslog facility, I opt against exposing
+             * this configuration.
+             */
+//            $this->addElement(
+//                'select',
+//                'logging_facility',
+//                array(
+//                    'required'      => true,
+//                    'label'         => t('Facility'),
+//                    'description'   => t('The syslog facility to utilize.'),
+//                    'multiOptions'  => array(
+//                        'user' => 'LOG_USER'
+//                    )
+//                )
+//            );
+        } elseif (isset($formData['logging_log']) && $formData['logging_log'] === 'file') {
             $this->addElement(
                 'text',
-                'logging_target',
+                'logging_file',
                 array(
                     'required'      => true,
-                    'label'         => t('Filepath'),
-                    'description'   => t('The logfile to write messages to.'),
+                    'label'         => t('File path'),
+                    'description'   => t('The full path to the log file to write messages to.'),
                     'value'         => $this->getDefaultLogDir(),
                     'validators'    => array(new WritablePathValidator())
                 )
@@ -107,9 +116,9 @@ class LoggingConfigForm extends Form
     }
 
     /**
-     * Return the default logging directory for type "file"
+     * Return the default logging directory for type 'file'
      *
-     * @return  string
+     * @return string
      */
     protected function getDefaultLogDir()
     {
