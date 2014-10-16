@@ -259,7 +259,11 @@ class Monitoring_AlertsummaryController extends Controller
         }
 
         $out = new stdClass();
-        $out->avg = sprintf('%.2f', array_sum($slots) / count($slots));
+        if (! empty($slots)) {
+            $out->avg = sprintf('%.2f', array_sum($slots) / count($slots));
+        } else {
+            $out->avg = '0.0';
+        }
         $out->last = array_shift($slots);
 
         return $out;
