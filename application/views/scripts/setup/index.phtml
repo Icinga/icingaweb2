@@ -7,7 +7,7 @@ $currentPos = array_search($wizard->getCurrentPage(), $pages, true);
 list($configPagesLeft, $configPagesRight) = array_chunk($configPages, count($configPages) / 2, true);
 
 ?>
-<div id="setup" class="container">
+<div id="setup" data-base-target="layout">
   <div class="header">
     <?= $this->img('img/logo_icinga_big.png'); ?>
     <div class="progress-bar">
