@@ -9,7 +9,7 @@ use Icinga\Logger\Logger;
 use Icinga\Test\BaseTestCase;
 use Icinga\Logger\Writer\FileWriter;
 
-class LoggerTest extends BaseTestCase
+class StreamWriterTest extends BaseTestCase
 {
     public function setUp()
     {
@@ -27,7 +27,7 @@ class LoggerTest extends BaseTestCase
 
     public function testWhetherStreamWriterCreatesMissingFiles()
     {
-        new FileWriter(new Zend_Config(array('target' => $this->target)));
+        new FileWriter(new Zend_Config(array('file' => $this->target)));
         $this->assertFileExists($this->target, 'StreamWriter does not create missing files on initialization');
     }
 
@@ -36,8 +36,8 @@ class LoggerTest extends BaseTestCase
      */
     public function testWhetherStreamWriterWritesMessages()
     {
-        $writer = new FileWriter(new Zend_Config(array('target' => $this->target)));
-        $writer->log(Logger::$ERROR, 'This is a test error');
+        $writer = new FileWriter(new Zend_Config(array('file' => $this->target)));
+        $writer->log(Logger::ERROR, 'This is a test error');
         $log = file_get_contents($this->target);
         $this->assertContains('This is a test error', $log, 'StreamWriter does not write log messages');
     }
