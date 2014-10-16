@@ -40,13 +40,16 @@ class GeneralConfigForm extends ConfigForm
      */
     public function onSuccess(Request $request)
     {
+        $sections = array();
         foreach ($this->getValues() as $sectionAndPropertyName => $value) {
             list($section, $property) = explode('_', $sectionAndPropertyName);
-            if (isset($this->config->{$section})) {
-                $this->config->{$section}->{$property} = $value;
-            } else {
-                $this->config->{$section} = array($property => $value);
+            if (! isset($sections[$section])) {
+                $sections[$section] = array();
             }
+            $sections[$section][$property] = $value;
+        }
+        foreach ($sections as $section => $config) {
+            $this->config->{$section} = $config;
         }
 
         if ($this->save()) {
