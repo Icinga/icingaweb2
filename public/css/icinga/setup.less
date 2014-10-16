@@ -198,27 +198,39 @@
 
 #setup div.summary {
   div.page {
+    float: left;
+    width: 30em;
+    padding: 0 1em 1em;
+    margin: 1em 2em 2em;
+    border-radius: 0.5em;
+    border: 1px dashed lightgrey;
+
     h2 {
       font-size: 1.2em;
     }
 
-    .paragraph {
+    div.topic {
       margin-left: 2em;
 
       h3 {
         font-size: 1em;
       }
 
-      .topic {
-        h4 {
-          font-size: 0.8em;
-        }
+      ul {
+        list-style-type: circle;
       }
 
-      div.topic {
+      table {
+        border-spacing: 0.5em;
+        border-collapse: separate;
+        font-size: 0.9em;
         margin-left: 2em;
       }
     }
+  }
+
+  form {
+    clear: left;
   }
 }
 
