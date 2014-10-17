@@ -201,6 +201,22 @@ class WebSetup extends Wizard implements SetupWizard
     }
 
     /**
+     * @see Wizard::addButtons()
+     */
+    protected function addButtons(Form $page)
+    {
+        parent::addButtons($page);
+
+        $pages = $this->getPages();
+        $index = array_search($page, $pages, true);
+        if ($index === 0) {
+            $page->getElement(static::BTN_NEXT)->setLabel(t('Start', 'setup.welcome.btn.next'));
+        } elseif ($index === count($pages) - 1) {
+            $page->getElement(static::BTN_NEXT)->setLabel(t('Install Icinga Web 2', 'setup.summary.btn.finish'));
+        }
+    }
+
+    /**
      * @see SetupWizard::getInstaller()
      */
     public function getInstaller()
