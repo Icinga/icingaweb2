@@ -69,15 +69,14 @@ class LdapDiscoveryPage extends Form
      */
     public function isValid($data)
     {
-        if ($data['skip_validation'] === '1') {
-            return true;
-        }
         if (false === parent::isValid($data)) {
             return false;
         }
-        if (false === $this->discoveryForm->isValid($data)) {
+
+        if (! $data['skip_validation'] && false === $this->discoveryForm->isValid($data)) {
             return false;
         }
+
         return true;
     }
 
