@@ -51,10 +51,9 @@ class Cli extends ApplicationBootstrap
         Logger::create(
             new Zend_Config(
                 array(
-                    'enable' => true,
-                    'level'  => Logger::$INFO,
-                    'type'   => 'file',
-                    'target' => 'php://stderr'
+                    'level' => Logger::INFO,
+                    'log'   => 'file',
+                    'file'  => 'php://stderr'
                 )
             )
         );

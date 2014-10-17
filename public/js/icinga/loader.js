@@ -723,9 +723,6 @@
             }
             this.icinga.ui.assignUniqueContainerIds();
 
-            if (scrollPos !== false) {
-                $container.scrollTop(scrollPos);
-            }
             if (origFocus) {
                 $(origFocus).focus();
             }
@@ -733,6 +730,9 @@
             // TODO: this.icinga.events.refreshContainer(container);
             $container.trigger('rendered');
 
+            if (scrollPos !== false) {
+                $container.scrollTop(scrollPos);
+            }
             var icinga = this.icinga;
             //icinga.events.applyHandlers($container);
             icinga.ui.initializeControls($container);

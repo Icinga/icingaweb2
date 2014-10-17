@@ -5,38 +5,43 @@
 namespace Icinga\Logger\Writer;
 
 use Exception;
-use Icinga\Exception\IcingaException;
 use Zend_Config;
-use Icinga\Util\File;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Logger\Logger;
 use Icinga\Logger\LogWriter;
-use Icinga\Exception\ConfigurationError;
+use Icinga\Util\File;
 
 /**
- * Class to write log messages to a file
+ * Log to a file
  */
 class FileWriter extends LogWriter
 {
     /**
-     * The path to the file
+     * Path to the file
      *
      * @var string
      */
-    protected $path;
+    protected $file;
 
     /**
-     * Create a new log writer initialized with the given configuration
+     * Create a new file log writer
      *
-     * @throws  ConfigurationError      In case the log path does not exist
+     * @param   Zend_Config $config
+     *
+     * @throws  ConfigurationError  If the configuration directive 'file' is missing or if the path to 'file' does
+     *                              not exist or if writing to 'file' is not possible
      */
     public function __construct(Zend_Config $config)
     {
-        $this->path = $config->target;
+        if ($config->file === null) {
+            throw new ConfigurationError('Required logging configuration directive \'file\' missing');
+        }
+        $this->file = $config->file;
 
-        if (substr($this->path, 0, 6) !== 'php://' && false === file_exists(dirname($this->path))) {
+        if (substr($this->file, 0, 6) !== 'php://' && ! file_exists(dirname($this->file))) {
             throw new ConfigurationError(
                 'Log path "%s" does not exist',
-                dirname($this->path)
+                dirname($this->file)
             );
         }
 
@@ -45,70 +50,32 @@ class FileWriter extends LogWriter
         } catch (Exception $e) {
             throw new ConfigurationError(
                 'Cannot write to log file "%s" (%s)',
-                $this->path,
+                $this->file,
                 $e->getMessage()
             );
         }
     }
 
     /**
-     * Log a message with the given severity
+     * Log a message
      *
-     * @param   int     $severity   The severity to use
-     * @param   string  $message    The message to log
+     * @param   int     $level      The logging level
+     * @param   string  $message    The log message
      */
-    public function log($severity, $message)
+    public function log($level, $message)
     {
-        $this->write(date('c') . ' ' . $this->getSeverityString($severity) . ' ' . $message . PHP_EOL);
+        $this->write(date('c') . ' - ' . Logger::$levels[$level] . ' - ' . $message . PHP_EOL);
     }
 
     /**
-     * Return a string representation for the given severity
+     * Write a message to the log
      *
-     * @param   string      $severity   The severity to use
-     *
-     * @return  string                  The string representation of the severity
-     *
-     * @throws  IcingaException         In case the given severity is unknown
+     * @param string $message
      */
-    protected function getSeverityString($severity)
+    protected function write($message)
     {
-        switch ($severity) {
-            case Logger::$ERROR:
-                return '- ERROR -';
-            case Logger::$WARNING:
-                return '- WARNING -';
-            case Logger::$INFO:
-                return '- INFO -';
-            case Logger::$DEBUG:
-                return '- DEBUG -';
-            default:
-                throw new IcingaException(
-                    'Unknown severity "%s"',
-                    $severity
-                );
-        }
-    }
-
-    /**
-     * Write a message to the path
-     *
-     * @param   string  $text   The message to write
-     *
-     * @throws  Exception       In case write acess to the path failed
-     */
-    protected function write($text)
-    {
-        $file = new File($this->path, 'a');
-        $file->fwrite($text);
+        $file = new File($this->file, 'a');
+        $file->fwrite($message);
         $file->fflush();
-    }
-
-    /**
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->path;
     }
 }
