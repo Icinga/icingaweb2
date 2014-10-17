@@ -118,23 +118,13 @@
       background-color: #333;
     }
 
-    &.install {
+    &.install, &.login {
       width: 25em;
       color: #fffafa;
       background: #aaa;
 
-      &:hover {
+      &:hover, &:focus {
         background: #888;
-      }
-    }
-
-    &.login {
-      width: 25em;
-      color: #333;
-      background: #9e4;
-
-      &:hover {
-        background: #7c2;
       }
     }
   }
@@ -234,16 +224,43 @@
   }
 }
 
-#setup div.report {
-  p {
-    margin: 1em;
+.conspicuous-state-notification {
+  width: 66%;
+  margin: 0 auto;
+  padding: 0.5em;
+  color: white;
+  font-weight: bold;
+  border-radius: 1em;
+}
 
-    &.ok {
-      color: green;
-    }
+#installer {
+  div.report {
+    padding: 1em;
+    border-radius: 2em;
+    background-color: #eee;
 
-    &.failure {
-      color: red;
+    p {
+      margin: 1em;
+      color: #444;
+      text-align: center;
+
+      &.error {
+        color: red;
+      }
+
+      &.failure {
+        .conspicuous-state-notification;
+        background-color: @colorCritical;
+      }
+
+      &.success {
+        .conspicuous-state-notification;
+        background-color: @colorOk;
+      }
     }
+  }
+
+  div.buttons {
+    text-align: center;
   }
 }
