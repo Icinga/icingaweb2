@@ -59,7 +59,7 @@ class LoggingConfigForm extends Form
             );
         }
 
-        if (isset($formData['logging_log']) && $formData['logging_log'] === 'syslog') {
+        if (false === isset($formData['logging_log']) || $formData['logging_log'] === 'syslog') {
             $this->addElement(
                 'text',
                 'logging_application',
