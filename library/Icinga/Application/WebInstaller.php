@@ -118,13 +118,15 @@ class WebInstaller implements Installer
         }
 
         $loggingConfig = array();
-        $loggingConfig['type'] = $this->pageData['setup_general_config']['logging_type'];
-        $loggingConfig['level'] = $this->pageData['setup_general_config']['logging_level'];
-        if ($this->pageData['setup_general_config']['logging_type'] === 'syslog') {
-            $loggingConfig['application'] = $this->pageData['setup_general_config']['logging_application'];
-            $loggingConfig['facility'] = $this->pageData['setup_general_config']['logging_facility'];
-        } else { // $this->pageData['setup_general_config']['logging_type'] === 'file'
-            $loggingConfig['target'] = $this->pageData['setup_general_config']['logging_target'];
+        $loggingConfig['log'] = $this->pageData['setup_general_config']['logging_log'];
+        if ($this->pageData['setup_general_config']['logging_log'] !== 'none') {
+            $loggingConfig['level'] = $this->pageData['setup_general_config']['logging_level'];
+            if ($this->pageData['setup_general_config']['logging_log'] === 'syslog') {
+                $loggingConfig['application'] = $this->pageData['setup_general_config']['logging_application'];
+                //$loggingConfig['facility'] = $this->pageData['setup_general_config']['logging_facility'];
+            } else { // $this->pageData['setup_general_config']['logging_log'] === 'file'
+                $loggingConfig['file'] = $this->pageData['setup_general_config']['logging_file'];
+            }
         }
 
         $config = array(

@@ -1,14 +1,14 @@
 <?php
 
 use Icinga\Web\Wizard;
+use Icinga\Logger\Logger;
 use Icinga\Application\Config;
 
 $summary = $form->getSummary();
 $prefType = $summary['setup_preferences_type']['type'];
 $authType = $summary['setup_authentication_type']['type'];
 $adminType = $summary['setup_admin_account']['user_type'];
-$loggingType = $summary['setup_general_config']['logging_type'];
-$loggingLevel = $summary['setup_general_config']['logging_level'];
+$loggingType = $summary['setup_general_config']['logging_log'];
 
 ?>
 <p><?= t(
@@ -170,41 +170,40 @@ $loggingLevel = $summary['setup_general_config']['logging_level'];
     </div>
     <div class="topic">
       <h3><?= t('Logging', 'app.config'); ?></h3>
+    <?php if ($loggingType === 'none'): ?>
+      <p><?= t('Logging will be disabled.'); ?></p>
+    <?php else: ?>
       <table>
         <tbody>
-          <tr>
-            <td><strong><?= t('Level', 'app.config.logging'); ?></strong></td>
-            <td><?= $loggingLevel === 0 ? t('None', 'app.config.logging.level') : (
-                $loggingLevel === 1 ? t('Error', 'app.config.logging.level') : (
-                    $loggingLevel === 2 ? t('Warning', 'app.config.logging.level') : (
-                        $loggingLevel === 3 ? t('Information', 'app.config.logging.level') : (
-                            t('Debug', 'app.config.logging.level')
-                        )
-                    )
-                )
-            ); ?></td>
-          </tr>
           <tr>
             <td><strong><?= t('Type', 'app.config.logging'); ?></strong></td>
             <td><?= $loggingType === 'syslog' ? 'Syslog' : t('File', 'app.config.logging.type'); ?></td>
           </tr>
-          <?php if ($loggingType === 'syslog'): ?>
+          <tr>
+            <td><strong><?= t('Level', 'app.config.logging'); ?></strong></td>
+            <?php $loggingLevel = $summary['setup_general_config']['logging_level']; ?>
+            <td><?= $loggingLevel === Logger::$levels[Logger::ERROR] ? t('Error', 'app.config.logging.level') : (
+                $loggingLevel === Logger::$levels[Logger::WARNING] ? t('Warning', 'app.config.logging.level') : (
+                    $loggingLevel === Logger::$levels[Logger::INFO] ? t('Information', 'app.config.logging.level') : (
+                        t('Debug', 'app.config.logging.level')
+                    )
+                )
+            ); ?></td>
+          </tr>
+        <?php if ($loggingType === 'syslog'): ?>
           <tr>
             <td><strong><?= t('Application Prefix'); ?></strong></td>
             <td><?= $summary['setup_general_config']['logging_application']; ?></td>
           </tr>
-          <tr>
-            <td><strong><?= t('Facility'); ?></strong></td>
-            <td><?= $summary['setup_general_config']['logging_facility']; ?></td>
-          </tr>
-          <?php else: ?>
+        <?php else: ?>
           <tr>
             <td><strong><?= t('Filepath'); ?></strong></td>
-            <td><?= $summary['setup_general_config']['logging_target']; ?></td>
+            <td><?= $summary['setup_general_config']['logging_file']; ?></td>
           </tr>
-          <?php endif ?>
+        <?php endif ?>
         </tbody>
       </table>
+    <?php endif ?>
     </div>
   </div>
 <?php if (isset($summary['setup_db_resource'])): ?>
