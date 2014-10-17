@@ -126,7 +126,7 @@ class WebSetup extends Wizard implements SetupWizard
             if (isset($suggestion['resource'])) {
                 $page->populate($suggestion['resource']);
             }
-        } elseif ($page->getName() === 'setup_authentication_type') {
+        } elseif ($page->getName() === 'setup_authentication_type' && $this->getDirection() === static::FORWARD) {
             $authData = $this->getPageData($page->getName());
             if ($authData !== null && $request->getPost('type') !== $authData['type']) {
                 // Drop any existing page data in case the authentication type has changed,
