@@ -6,6 +6,12 @@ $configPages = array_slice($pages, 2, count($pages) - 3, true);
 $currentPos = array_search($wizard->getCurrentPage(), $pages, true);
 list($configPagesLeft, $configPagesRight) = array_chunk($configPages, count($configPages) / 2, true);
 
+$visitedPages = array_keys($wizard->getPageData());
+$maxProgress = @max(array_keys(array_filter(
+    $pages,
+    function ($page) use ($visitedPages) { return in_array($page->getName(), $visitedPages); }
+)));
+
 ?>
 <div id="setup" data-base-target="layout">
   <div class="header">
@@ -13,7 +19,9 @@ list($configPagesLeft, $configPagesRight) = array_chunk($configPages, count($con
     <div class="progress-bar">
       <div class="step" style="width: 10%;">
         <h1><?= t('Welcome', 'setup.progress'); ?></h1>
-        <?php $stateClass = $finished || $currentPos > 0 ? 'complete' : 'active'; ?>
+        <?php $stateClass = $finished || $currentPos > 0 ? 'complete' : (
+          $maxProgress > 0 ? 'visited' : 'active'
+        ); ?>
         <table><tbody><tr>
           <td class="left"></td>
           <td class="middle"><div class="bubble <?= $stateClass; ?>"></div></td>
@@ -22,7 +30,11 @@ list($configPagesLeft, $configPagesRight) = array_chunk($configPages, count($con
       </div>
       <div class="step" style="width: 10%;">
         <h1><?= t('Requirements', 'setup.progress'); ?></h1>
-        <?php $stateClass = $currentPos === 1 ? ' active' : ($finished || $currentPos > 1 ? ' complete' : ''); ?>
+        <?php $stateClass = $finished || $currentPos > 1 ? ' complete' : (
+          $maxProgress > 1 ? ' visited' : (
+            $currentPos === 1 ? ' active' : ''
+          )
+        ); ?>
         <table><tbody><tr>
           <td class="left"><div class="line left<?= $stateClass; ?>"></div></td>
           <td class="middle"><div class="bubble<?= $stateClass; ?>"></div></td>
@@ -39,7 +51,9 @@ list($configPagesLeft, $configPagesRight) = array_chunk($configPages, count($con
             $lineWidth = round(100 / count($configPagesLeft), 2, PHP_ROUND_HALF_DOWN);
           ?>
           <?php foreach ($configPagesLeft as $pos => $page): ?>
-            <?php $stateClass = $finished || $pos < $currentPos ? ' complete' : ($currentPos > 1 ? ' active' : ''); ?>
+            <?php $stateClass = $finished || $pos < $currentPos ? ' complete' : (
+              $pos < $maxProgress ? ' visited' : ($currentPos > 1 ? ' active' : '')
+            ); ?>
             <?php if ($page === $firstPage): ?>
             <div class="line left<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%; margin-right: 0"></div>
             <?php elseif ($page === $lastPage): ?>
@@ -50,7 +64,12 @@ list($configPagesLeft, $configPagesRight) = array_chunk($configPages, count($con
           <?php endforeach ?>
           </td>
           <td class="middle">
-            <div class="bubble<?= array_key_exists($currentPos, $configPagesLeft) ? ' active' : ($finished || $currentPos > 1 ? ' complete' : ''); ?>"></div>
+            <div class="bubble<?= array_key_exists($currentPos, $configPagesLeft) ? (
+              key($configPagesRight) <= $maxProgress ? ' visited' : ' active') : (
+              $finished || $currentPos > 1 ? ' complete' : (
+                key($configPagesRight) < $maxProgress ? ' visited' : ''
+              )
+            ); ?>"></div>
           </td>
           <td class="right">
           <?php
@@ -59,7 +78,9 @@ list($configPagesLeft, $configPagesRight) = array_chunk($configPages, count($con
             $lineWidth = round(100 / count($configPagesRight), 2, PHP_ROUND_HALF_DOWN);
           ?>
           <?php foreach ($configPagesRight as $pos => $page): ?>
-            <?php $stateClass = $finished || $pos < $currentPos ? ' complete' : ($currentPos > 1 ? ' active' : ''); ?>
+            <?php $stateClass = $finished || $pos < $currentPos ? ' complete' : (
+              $pos < $maxProgress ? ' visited' : ($currentPos > 1 ? ' active' : '')
+            ); ?>
             <?php if ($page === $firstPage): ?>
             <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%; margin-left: -0.1em;"></div>
             <?php elseif ($page === $lastPage): ?>
