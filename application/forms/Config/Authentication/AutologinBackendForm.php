@@ -50,7 +50,6 @@ class AutologinBackendForm extends Form
             'text',
             'strip_username_regexp',
             array(
-                'required'      => true,
                 'label'         => t('Backend Domain Pattern'),
                 'description'   => t('The domain pattern of this authentication backend'),
                 'value'         => '/\@[^$]+$/',

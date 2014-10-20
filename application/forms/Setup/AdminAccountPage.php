@@ -220,7 +220,7 @@ class AdminAccountPage extends Form
         }
 
         $name = $_SERVER['REMOTE_USER'];
-        if (isset($this->backendConfig['strip_username_regexp'])) {
+        if (isset($this->backendConfig['strip_username_regexp']) && $this->backendConfig['strip_username_regexp']) {
             // No need to silence or log anything here because the pattern has
             // already been successfully compiled during backend configuration
             $name = preg_replace($this->backendConfig['strip_username_regexp'], '', $name);

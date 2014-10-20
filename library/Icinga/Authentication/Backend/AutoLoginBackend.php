@@ -54,7 +54,7 @@ class AutoLoginBackend extends UserBackend
         if (isset($_SERVER['REMOTE_USER'])) {
             $username = $_SERVER['REMOTE_USER'];
             $user->setRemoteUserInformation($username, 'REMOTE_USER');
-            if ($this->stripUsernameRegexp !== null) {
+            if ($this->stripUsernameRegexp) {
                 $stripped = preg_replace($this->stripUsernameRegexp, '', $username);
                 if ($stripped !== false) {
                     // TODO(el): PHP issues a warning when PHP cannot compile the regular expression. Should we log an
