@@ -118,8 +118,17 @@
     background: #666;
     color: #eee;
 
+    &[disabled="1"] {
+      background-color: #aaa;
+      border: 1px dotted black;
+    }
+
     &:hover, &:focus {
       background-color: #333;
+
+      &[disabled="1"] {
+        background-color: #aaa;
+      }
     }
 
     &.install, &.login {
