@@ -8,7 +8,7 @@ class icingaweb2_dev {
     notify => Service['apache'],
   }
 
-  package { 'php-pdo':
+  package { [ 'php-pdo', 'php-ldap' ]:
     ensure => latest,
     notify => Service['apache'],
   }
