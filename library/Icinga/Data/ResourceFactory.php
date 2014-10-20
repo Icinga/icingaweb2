@@ -4,8 +4,9 @@
 
 namespace Icinga\Data;
 
-use Icinga\Exception\ProgrammingError;
 use Zend_Config;
+use Icinga\Application\Config;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Util\ConfigAwareFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Data\Db\DbConnection;
@@ -119,6 +120,9 @@ class ResourceFactory implements ConfigAwareFactory
                 break;
             case 'file':
                 $resource = new FileReader($config);
+                break;
+            case 'ini':
+                $resource = Config::fromIni($config->ini);
                 break;
             default:
                 throw new ConfigurationError(
