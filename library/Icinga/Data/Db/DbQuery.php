@@ -59,6 +59,13 @@ class DbQuery extends SimpleQuery
      */
     protected $count;
 
+    /**
+     * GROUP BY clauses
+     *
+     * @var string|array
+     */
+    protected $group;
+
     protected function init()
     {
         $this->db = $this->ds->getDbAdapter();
@@ -89,15 +96,19 @@ class DbQuery extends SimpleQuery
     public function getSelectQuery()
     {
         $select = $this->dbSelect();
-
         // Add order fields to select for postgres distinct queries (#6351)
         if ($this->hasOrder()
             && $this->getDatasource()->getDbType() === 'pgsql'
             && $select->getPart(Zend_Db_Select::DISTINCT) === true) {
             foreach ($this->getOrder() as $fieldAndDirection) {
-                list($alias, $field) = explode('.', $fieldAndDirection[0]);
-                $this->columns[$field] = $fieldAndDirection[0];
+                if (array_search($fieldAndDirection[0], $this->columns) === false) {
+                    $this->columns[] = $fieldAndDirection[0];
+                }
             }
+        }
+
+        if ($this->group) {
+            $select->group($this->group);
         }
 
         $select->columns($this->columns);
@@ -117,7 +128,7 @@ class DbQuery extends SimpleQuery
         return $select;
     }
 
-    protected function applyFilterSql($query)
+    public function applyFilterSql($query)
     {
         $where = $this->renderFilter($this->filter);
         if ($where !== '') {
@@ -223,7 +234,7 @@ class DbQuery extends SimpleQuery
      */
     public function isTimestamp($field)
     {
-        return $this;
+        return false;
     }
 
     public function whereToSql($col, $sign, $expression)
@@ -253,6 +264,7 @@ class DbQuery extends SimpleQuery
 
         $this->applyFilterSql($count);
         if ($this->useSubqueryCount) {
+            $count->columns($this->columns);
             $columns = array('cnt' => 'COUNT(*)');
             return $this->db->select()->from($count, $columns);
         }
@@ -299,5 +311,18 @@ class DbQuery extends SimpleQuery
     public function __toString()
     {
         return (string) $this->getSelectQuery();
+    }
+
+    /**
+     * Add a GROUP BY clause
+     *
+     * @param   string|array $group
+     *
+     * @return  $this
+     */
+    public function group($group)
+    {
+        $this->group = $group;
+        return $this;
     }
 }

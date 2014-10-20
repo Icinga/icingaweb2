@@ -8,10 +8,14 @@
     Icinga.Behaviors = Icinga.Behaviors || {};
 
     var Sparkline = function (icinga) {
-        this.icinga = icinga;
+        Icinga.EventListener.call(this, icinga);
+        this.on('rendered', this.onRendered, this);
     };
+    Sparkline.prototype = new Icinga.EventListener();
 
-    Sparkline.prototype.apply = function(el) {
+    Sparkline.prototype.onRendered = function(evt) {
+        var el = evt.target;
+
         $('span.sparkline', el).each(function(i, element) {
             // read custom options
             var $spark            = $(element);
@@ -43,12 +47,6 @@
                     }
             });
         });
-    };
-
-    Sparkline.prototype.bind = function() {
-    };
-
-    Sparkline.prototype.unbind = function() {
     };
 
     Icinga.Behaviors.Sparkline = Sparkline;

@@ -13,36 +13,45 @@ use Icinga\Web\Url;
 class LoginForm extends Form
 {
     /**
-     * Interface how the form should be created
+     * Initialize this login form
      */
-    protected function create()
+    public function init()
     {
-        $url = Url::fromRequest()->without('renderLayout');
-        
         $this->setName('form_login');
-        $this->addElement('text', 'username', array(
-            'label'       => t('Username'),
-            'placeholder' => t('Please enter your username...'),
-            'required'    => true,
-        ));
-        $redir = $this->addElement('hidden', 'redirect');
-        $redirectUrl = $url->shift('redirect');
-        if ($redirectUrl) {
-            $this->setDefault('redirect', $redirectUrl);
-        }
+        $this->setSubmitLabel(t('Login'));
+    }
 
-        $this->addElement('password', 'password', array(
-            'label'       => t('Password'),
-            'placeholder' => t('...and your password'),
-            'required'    => true
-        ));
-        // TODO: We need a place to intercept filled forms before rendering
-        if ($this->getRequest()->getPost('username') !== null) {
-            $this->getElement('password')->setAttrib('class', 'autofocus');
-        } else {
-            $this->getElement('username')->setAttrib('class', 'autofocus');
-        }
-        $this->setAction((string) $url);
-        $this->setSubmitLabel('Login');
+    /**
+     * @see Form::createElements()
+     */
+    public function createElements(array $formData)
+    {
+        $this->addElement(
+            'text',
+            'username',
+            array(
+                'required'      => true,
+                'label'         => t('Username'),
+                'placeholder'   => t('Please enter your username...'),
+                'class'         => false === isset($formData['username']) ? 'autofocus' : ''
+            )
+        );
+        $this->addElement(
+            'password',
+            'password',
+            array(
+                'required'      => true,
+                'label'         => t('Password'),
+                'placeholder'   => t('...and your password'),
+                'class'         => isset($formData['username']) ? 'autofocus' : ''
+            )
+        );
+        $this->addElement(
+            'hidden',
+            'redirect',
+            array(
+                'value' => Url::fromRequest()->getParam('redirect')
+            )
+        );
     }
 }

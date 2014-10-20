@@ -7,58 +7,109 @@ namespace Icinga\Logger;
 use Exception;
 use Zend_Config;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Logger\Writer\FileWriter;
+use Icinga\Logger\Writer\SyslogWriter;
 
 /**
- * Singleton logger
+ * Logger
  */
 class Logger
 {
     /**
+     * Debug message
+     */
+    const DEBUG = 1;
+
+    /**
+     * Informational message
+     */
+    const INFO = 2;
+
+    /**
+     * Warning message
+     */
+    const WARNING = 4;
+
+    /**
+     * Error message
+     */
+    const ERROR = 8;
+
+    /**
+     * Log levels
+     *
+     * @var array
+     */
+    public static $levels = array(
+        Logger::DEBUG   => 'DEBUG',
+        Logger::INFO    => 'INFO',
+        Logger::WARNING => 'WARNING',
+        Logger::ERROR   => 'ERROR'
+    );
+
+    /**
      * This logger's instance
      *
-     * @var Logger
+     * @var static
      */
     protected static $instance;
 
     /**
-     * The log writer to use
+     * Log writer
      *
      * @var \Icinga\Logger\LogWriter
      */
     protected $writer;
 
     /**
-     * The configured type
-     *
-     * @string Type (syslog, file)
-     */
-    protected $type = 'none';
-
-    /**
-     * The maximum severity to emit
+     * Maximum level to emit
      *
      * @var int
      */
-    protected $verbosity;
-
-    /**
-     * The supported severities
-     */
-    public static $ERROR = 0;
-    public static $WARNING = 1;
-    public static $INFO = 2;
-    public static $DEBUG = 3;
+    protected $level;
 
     /**
      * Create a new logger object
      *
-     * @param   Zend_Config     $config
+     * @param   Zend_Config $config
+     *
+     * @throws  ConfigurationError  If the logging configuration directive 'log' is missing or if the logging level is
+     *                              not defined
      */
     public function __construct(Zend_Config $config)
     {
-        $this->verbosity = $config->level;
+        if ($config->log === null) {
+            throw new ConfigurationError('Required logging configuration directive \'log\' missing');
+        }
 
-        if ($config->enable) {
+        if (($level = $config->level) !== null) {
+            if (is_numeric($level)) {
+                if (! isset(static::$levels[(int) $level])) {
+                    throw new ConfigurationError(
+                        'Can\'t set logging level %d. Logging level is not defined. Use one of %s or one of the'
+                        . ' Logger\'s constants.',
+                        $level,
+                        implode(', ', array_keys(static::$levels))
+                    );
+                }
+                $this->level = static::$levels[(int) $level];
+            } else {
+                $level = strtoupper($level);
+                $levels = array_flip(static::$levels);
+                if (! isset($levels[$level])) {
+                    throw new ConfigurationError(
+                        'Can\'t set logging level "%s". Logging level is not defined. Use one of %s.',
+                        $level,
+                        implode(', ', array_keys($levels))
+                    );
+                }
+                $this->level = $levels[$level];
+            }
+        } else {
+            $this->level = static::ERROR;
+        }
+
+        if (strtolower($config->get('log', 'syslog')) !== 'none') {
             $this->writer = $this->createWriter($config);
         }
     }
@@ -67,14 +118,17 @@ class Logger
      * Create a new logger object
      *
      * @param   Zend_Config     $config
+     *
+     * @return  static
      */
     public static function create(Zend_Config $config)
     {
         static::$instance = new static($config);
+        return static::$instance;
     }
 
     /**
-     * Return a log writer
+     * Create a log writer
      *
      * @param   Zend_Config     $config     The configuration to initialize the writer with
      *
@@ -83,28 +137,26 @@ class Logger
      */
     protected function createWriter(Zend_Config $config)
     {
-        $class = 'Icinga\\Logger\\Writer\\' . ucfirst(strtolower($config->type)) . 'Writer';
-        if (!class_exists($class)) {
+        $class = 'Icinga\\Logger\\Writer\\' . ucfirst(strtolower($config->log)) . 'Writer';
+        if (! class_exists($class)) {
             throw new ConfigurationError(
                 'Cannot find log writer of type "%s"',
-                $config->type
+                $config->log
             );
         }
-        $this->type = $config->type;
-
         return new $class($config);
     }
 
     /**
-     * Write a message to the log
+     * Log a message
      *
-     * @param   string  $message    The message to write
-     * @param   int     $severity   The severity to use
+     * @param   int     $level      The logging level
+     * @param   string  $message    The log message
      */
-    public function log($message, $severity)
+    public function log($level, $message)
     {
-        if ($this->writer !== null && $this->verbosity >= $severity) {
-            $this->writer->log($severity, $message);
+        if ($this->writer !== null && $this->level >= $level) {
+            $this->writer->log($level, $message);
         }
     }
 
@@ -162,7 +214,7 @@ class Logger
     public static function error()
     {
         if (static::$instance !== null && func_num_args() > 0) {
-            static::$instance->log(static::formatMessage(func_get_args()), static::$ERROR);
+            static::$instance->log(static::ERROR, static::formatMessage(func_get_args()));
         }
     }
 
@@ -174,7 +226,7 @@ class Logger
     public static function warning()
     {
         if (static::$instance !== null && func_num_args() > 0) {
-            static::$instance->log(static::formatMessage(func_get_args()), static::$WARNING);
+            static::$instance->log(static::WARNING, static::formatMessage(func_get_args()));
         }
     }
 
@@ -186,7 +238,7 @@ class Logger
     public static function info()
     {
         if (static::$instance !== null && func_num_args() > 0) {
-            static::$instance->log(static::formatMessage(func_get_args()), static::$INFO);
+            static::$instance->log(static::INFO, static::formatMessage(func_get_args()));
         }
     }
 
@@ -198,7 +250,7 @@ class Logger
     public static function debug()
     {
         if (static::$instance !== null && func_num_args() > 0) {
-            static::$instance->log(static::formatMessage(func_get_args()), static::$DEBUG);
+            static::$instance->log(static::DEBUG, static::formatMessage(func_get_args()));
         }
     }
 
@@ -212,20 +264,30 @@ class Logger
         return $this->writer;
     }
 
+    /**
+     * Is the logger writing to Syslog?
+     *
+     * @return bool
+     */
     public static function writesToSyslog()
     {
-        return static::$instance && static::$instance->type === 'syslog';
+        return static::$instance && static::$instance instanceof SyslogWriter;
     }
 
+    /**
+     * Is the logger writing to a file?
+     *
+     * @return bool
+     */
     public static function writesToFile()
     {
-        return static::$instance && static::$instance->type === 'file';
+        return static::$instance && static::$instance instanceof FileWriter;
     }
 
     /**
      * Get this' instance
      *
-     * @return Logger
+     * @return static
      */
     public static function getInstance()
     {

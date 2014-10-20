@@ -1,18 +1,5 @@
-<h4>
-    <i class="icinga-icon-edit"></i>
-    Edit Backend "<?= $this->escape($this->name); ?>"
-</h4>
-
-<?php if (isset($this->messageBox)): ?>
-  <?= $this->messageBox->render() ?>
-<?php endif ?>
-
-<?php if ($this->form->getErrorMessages()): ?>
-<div>
-  <?php foreach ($this->form->getErrorMessages() as $error): ?>
-    <?= $this->escape($error); ?><br/>
-  <?php endforeach; ?>
+<div class="controls">
+    <?= $this->tabs->showOnlyCloseButton() ?>
 </div>
-<?php endif; ?>
-
-<?= $this->form ?>
+<h4><?= $this->translate('Edit Backend'); ?></h4>
+<?= $form; ?>

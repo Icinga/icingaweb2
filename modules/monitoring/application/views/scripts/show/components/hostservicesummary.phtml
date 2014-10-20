@@ -6,10 +6,10 @@ $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
 
 ?>
 <h3 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
-<?= $this->qlink(sprintf($this->translate('%s service configured:'), $this->stats->services_total), $selfUrl) ?>
-<?php if ($this->stats->services_ok > 0): ?>
+<?= $this->qlink(sprintf($this->translate('%s configured services:'), $object->stats->services_total), $selfUrl) ?>
+<?php if ($object->stats->services_ok > 0): ?>
  <span class="state ok<?= $currentUrl === $selfUrl->with('service_state', 0)->getRelativeUrl() ? ' active' : '' ?>"><?= $this->qlink(
-    $this->stats->services_ok,
+    $object->stats->services_ok,
     $selfUrl,
     array('service_state' => 0),
     array('title' => sprintf($this->translate('Services with state %s'), strtoupper($this->translate('ok'))))
@@ -19,12 +19,12 @@ $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
 
 foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $state) {
     $pre = 'services_' . $state;
-    if ($this->stats->$pre) {
+    if ($object->stats->$pre) {
         $handled = $pre . '_handled';
         $unhandled = $pre . '_unhandled';
         $paramsHandled = array('service_state' => $stateId, 'service_handled' => 1);
         $paramsUnhandled = array('service_state' => $stateId, 'service_handled' => 0);
-        if ($this->stats->$unhandled) {
+        if ($object->stats->$unhandled) {
             $compareUrl = $selfUrl->with($paramsUnhandled)->getRelativeUrl();
         } else {
             $compareUrl = $selfUrl->with($paramsHandled)->getRelativeUrl();
@@ -35,34 +35,34 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
         } else {
             $active = '';
         }
-        
-        echo '<span class="state ' . $state . $active . ($this->stats->$unhandled ? '' : ' handled') . '">';
-        if ($this->stats->$unhandled) {
+
+        echo '<span class="state ' . $state . $active . ($object->stats->$unhandled ? '' : ' handled') . '">';
+        if ($object->stats->$unhandled) {
 
             echo $this->qlink(
-                $this->stats->$unhandled,
+                $object->stats->$unhandled,
                 $selfUrl,
                 $paramsUnhandled,
                 array('title' => sprintf($this->translate('Unhandled services with state %s'), strtoupper($this->translate($state))))
             );
         }
-        if ($this->stats->$handled) {
+        if ($object->stats->$handled) {
 
             if ($selfUrl->with($paramsHandled)->getRelativeUrl() === $currentUrl) {
                 $active = ' active';
             } else {
                 $active = '';
             }
-            if ($this->stats->$unhandled) {
+            if ($object->stats->$unhandled) {
                 echo '<span class="state handled ' . $state . $active . '">';
             }
             echo $this->qlink(
-                $this->stats->$handled,
+                $object->stats->$handled,
                 $selfUrl,
                 $paramsHandled,
                 array('title' => sprintf($this->translate('Handled services with state %s'), strtoupper($this->translate($state))))
             );
-            if ($this->stats->$unhandled) {
+            if ($object->stats->$unhandled) {
                 echo "</span>\n";
             }
         }
@@ -71,9 +71,9 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
 }
 
 ?>
-<?php if ($this->stats->services_pending): ?>
+<?php if ($object->stats->services_pending): ?>
  <span class="state pending<?= $currentUrl === $selfUrl->with('service_state', 99)->getRelativeUrl() ? ' active' : '' ?>"><?= $this->qlink(
-    $this->stats->services_pending,
+    $object->stats->services_pending,
     $selfUrl,
     array('service_state' => 99),
     array('title' => sprintf($this->translate('Services with state %s'), strtoupper($this->translate('pending'))))

@@ -27,14 +27,14 @@ class GroupSummaryQuery extends IdoQuery
             'services_ok'                   => 'SUM(CASE WHEN object_type = \'service\' AND state = 0 THEN 1 ELSE 0 END)',
             'services_pending'              => 'SUM(CASE WHEN object_type = \'service\' AND state = 99 THEN 1 ELSE 0 END)',
             'services_warning'              => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 THEN 1 ELSE 0 END)',
-            'services_warning_handled'      => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) > 0 THEN 1 ELSE 0 END)',
+            'services_warning_handled'      => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 AND acknowledged + in_downtime + host_state > 0 THEN 1 ELSE 0 END)',
             'services_critical'             => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 THEN 1 ELSE 0 END)',
-            'services_critical_handled'     => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) > 0 THEN 1 ELSE 0 END)',
+            'services_critical_handled'     => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 AND acknowledged + in_downtime + host_state > 0 THEN 1 ELSE 0 END)',
             'services_unknown'              => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 THEN 1 ELSE 0 END)',
-            'services_unknown_handled'      => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) > 0 THEN 1 ELSE 0 END)',
-            'services_warning_unhandled'    => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) = 0 THEN 1 ELSE 0 END)',
-            'services_critical_unhandled'   => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) = 0 THEN 1 ELSE 0 END)',
-            'services_unknown_unhandled'    => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 AND (acknowledged + in_downtime + COALESCE(host_state, 0)) = 0 THEN 1 ELSE 0 END)',
+            'services_unknown_handled'      => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 AND acknowledged + in_downtime + host_state > 0 THEN 1 ELSE 0 END)',
+            'services_warning_unhandled'    => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 AND acknowledged + in_downtime + host_state = 0 THEN 1 ELSE 0 END)',
+            'services_critical_unhandled'   => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 AND acknowledged + in_downtime + host_state = 0 THEN 1 ELSE 0 END)',
+            'services_unknown_unhandled'    => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 AND acknowledged + in_downtime + host_state = 0 THEN 1 ELSE 0 END)',
             'servicegroup'                  => 'servicegroup'
         )
     );
@@ -44,7 +44,6 @@ class GroupSummaryQuery extends IdoQuery
         $columns = array(
             'object_type',
             'host_state',
-            'host_name'
         );
 
         // Prepend group column since we'll use columns index 0 later for grouping
@@ -61,6 +60,9 @@ class GroupSummaryQuery extends IdoQuery
                 'in_downtime'  => 'host_in_downtime'
             )
         );
+        if (in_array('servicegroup', $this->desiredColumns)) {
+            $hosts->group(array('sgo.name1', 'ho.object_id', 'state', 'acknowledged', 'in_downtime'));
+        }
         $services = $this->createSubQuery(
             'Status',
             $columns + array(
@@ -77,7 +79,7 @@ class GroupSummaryQuery extends IdoQuery
         }
 
         $union = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);
-        $this->select->from(array('statussummary' => $union), array($groupColumn))->group(array($groupColumn));
+        $this->select->from(array('statussummary' => $union), array())->group(array($groupColumn));
 
         $this->joinedVirtualTables = array(
             'servicestatussummary'  => true,

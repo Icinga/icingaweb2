@@ -18,6 +18,7 @@ class JavaScript
         'js/icinga/ui.js',
         'js/icinga/timer.js',
         'js/icinga/loader.js',
+        'js/icinga/eventlistener.js',
         'js/icinga/events.js',
         'js/icinga/history.js',
         'js/icinga/module.js',
@@ -25,7 +26,8 @@ class JavaScript
         'js/icinga/behavior/tooltip.js',
         'js/icinga/behavior/sparkline.js',
         'js/icinga/behavior/tristate.js',
-        'js/icinga/behavior/navigation.js'
+        'js/icinga/behavior/navigation.js',
+        'js/icinga/behavior/form.js'
     );
 
     protected static $vendorFiles = array(

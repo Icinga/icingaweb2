@@ -19,7 +19,7 @@ if (!$this->compact): ?>
 <?= $this->widget('limiter')->setCurrentPageCount($this->services->count()) ?>
 <?= $this->paginationControl($services, null, null, array('preserve' => $this->preserve)) ?>
 <?php endif ?>
-<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/service?' . $this->filter->toQueryString())) ?>
+<?= $this->selectionToolbar('multi', $this->href('monitoring/services/show?' . $this->filter->toQueryString())) ?>
 </div>
 
 <div class="content">
@@ -30,7 +30,7 @@ if (!$this->compact): ?>
 <?php endif ?>
 <table data-base-target="_next"
     class="action multiselect <?php if ($this->compact): ?> compact<?php endif ?>" style="table-layout: auto;"
-    data-icinga-multiselect-url="<?= $this->href("monitoring/multi/service") ?>"
+    data-icinga-multiselect-url="<?= $this->href("monitoring/services/show") ?>"
     data-icinga-multiselect-data="service,host">
   <tbody>
 <?php
@@ -40,7 +40,7 @@ if (count($services) === 0) {
 }
 foreach ($services as $service):
     $serviceLink = $this->href(
-      'monitoring/show/service',
+      'monitoring/service/show',
       array(
         'host' => $service->host_name,
         'service' => $service->service_description
@@ -69,36 +69,36 @@ foreach ($services as $service):
         <?= $this->perfdata($service->service_perfdata, true, true) ?>
 
         <?php if (!$service->service_handled && $service->service_state > 0): ?>
-        <?= $this->icon('unhandled.png', 'Unhandled') ?>
+        <?= $this->icon('unhandled.png', $this->translate('Unhandled')) ?>
         <?php endif ?>
 
         <?php if ($service->service_acknowledged && !$service->service_in_downtime): ?>
-        <?= $this->icon('acknowledgement.png', 'Acknowledged' . (
+        <?= $this->icon('acknowledgement.png', $this->translate('Acknowledged') . (
             $service->service_last_ack ? ': ' . $service->service_last_ack : ''
         )) ?>
         <?php endif ?>
 
         <?php if ($service->service_is_flapping): ?>
-        <?= $this->icon('flapping.png', 'Flapping') ?>
+        <?= $this->icon('flapping.png', $this->translate('Flapping')) ?>
         <?php endif ?>
 
         <?php if (!$service->service_notifications_enabled): ?>
-        <?= $this->icon('notification_disabled.png', 'Notifications Disabled') ?>
+        <?= $this->icon('notification_disabled.png', $this->translate('Notifications Disabled')) ?>
         <?php endif ?>
 
         <?php if ($service->service_in_downtime): ?>
-        <?= $this->icon('in_downtime.png', 'In Downtime') ?>
+        <?= $this->icon('in_downtime.png', $this->translate('In Downtime')) ?>
         <?php endif ?>
 
         <?php if (isset($service->service_last_comment) && $service->service_last_comment !== null): ?>
-        <?= $this->icon('comment.png', 'Comment: ' . $service->service_last_comment) ?>
+        <?= $this->icon('comment.png', $this->translate('Comment: ') . $service->service_last_comment) ?>
         <?php endif ?>
 
         <?php if (!$service->service_active_checks_enabled): ?>
           <?php if (!$service->service_passive_checks_enabled): ?>
-            <?= $this->icon('active_passive_checks_disabled.png', 'Active And Passive Checks Disabled') ?>
+            <?= $this->icon('active_passive_checks_disabled.png', $this->translate('Active And Passive Checks Disabled')) ?>
           <?php else: ?>
-            <?= $this->icon('active_checks_disabled.png', 'Active Checks Disabled') ?>
+            <?= $this->icon('active_checks_disabled.png', $this->translate('Active Checks Disabled')) ?>
           <?php endif ?>
         <?php endif ?>
 

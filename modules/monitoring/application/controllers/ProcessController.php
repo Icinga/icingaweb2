@@ -2,66 +2,113 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Module\Monitoring\Controller as MonitoringController;
+use Icinga\Module\Monitoring\Controller;
+use Icinga\Module\Monitoring\Form\Command\Instance\DisableNotificationsExpireCommandForm;
+use Icinga\Module\Monitoring\Form\Command\Instance\ToggleInstanceFeaturesCommandForm;
 
 /**
- * Display process information and global commands
+ * Display process and performance information of the monitoring host and program-wide commands
  */
-class Monitoring_ProcessController extends MonitoringController
+class Monitoring_ProcessController extends Controller
 {
     /**
-     * Retrieve backend and hooks for this controller
+     * Add tabs
      *
-     * @see ActionController::init
+     * @see \Icinga\Web\Controller\ActionController::init()
      */
     public function init()
     {
-        $this->getTabs()->add('info', array(
-            'title' => 'Process Info',
-            'url' =>'monitoring/process/info'
-        ))->add('performance', array(
-            'title' => 'Performance Info',
-            'url' =>'monitoring/process/performance'
-        ));
+        $this
+            ->getTabs()
+            ->add(
+                'info',
+                array(
+                    'title' => $this->translate('Process Info'),
+                    'url'   =>'monitoring/process/info'
+                )
+            )
+            ->add(
+                'performance',
+                array(
+                    'title' => $this->translate('Performance Info'),
+                    'url'   => 'monitoring/process/performance'
+                )
+            );
     }
 
+    /**
+     * Display process information and program-wide commands
+     */
     public function infoAction()
     {
+        $this->view->title = $this->translate('Process Info');
         $this->getTabs()->activate('info');
         $this->setAutorefreshInterval(10);
-
-        // TODO: This one is broken right now, doublecheck default columns
-        $this->view->programstatus = $this->backend->select()
-            ->from('programstatus', array(
-                'id',
-                'status_update_time',
-                'program_start_time',
-                'program_end_time',
-                'is_currently_running',
-                'process_id',
-                'daemon_mode',
-                'last_command_check',
-                'last_log_rotation',
-                'notifications_enabled',
-                'disable_notif_expire_time',
-                'active_service_checks_enabled',
-                'passive_service_checks_enabled',
-                'active_host_checks_enabled',
-                'passive_host_checks_enabled',
-                'event_handlers_enabled',
-                'flap_detection_enabled',
-                'failure_prediction_enabled',
-                'process_performance_data',
-                'obsess_over_hosts',
-                'obsess_over_services',
-                'modified_host_attributes',
-                'modified_service_attributes',
-                'global_host_event_handler',
-                'global_service_event_handler'
-            ))
-            ->getQuery()->fetchRow();
-
         $this->view->backendName = $this->backend->getName();
+        $programStatus = $this->backend
+            ->select()
+            ->from(
+                'programstatus',
+                array(
+                    'is_currently_running',
+                    'process_id',
+                    'program_start_time',
+                    'status_update_time',
+                    'last_command_check',
+                    'last_log_rotation',
+                    'global_service_event_handler',
+                    'global_host_event_handler',
+                    'notifications_enabled',
+                    'disable_notif_expire_time',
+                    'active_service_checks_enabled',
+                    'passive_service_checks_enabled',
+                    'active_host_checks_enabled',
+                    'passive_host_checks_enabled',
+                    'event_handlers_enabled',
+                    'obsess_over_services',
+                    'obsess_over_hosts',
+                    'flap_detection_enabled',
+                    'process_performance_data'
+                )
+            )
+            ->getQuery()
+            ->fetchRow();
+        $this->view->programStatus = $programStatus;
+        $toggleFeaturesForm = new ToggleInstanceFeaturesCommandForm();
+        $toggleFeaturesForm
+            ->setStatus($programStatus)
+            ->load($programStatus)
+            ->handleRequest();
+        $this->view->toggleFeaturesForm = $toggleFeaturesForm;
+    }
+
+    /**
+     * Disable notifications w/ an optional expire time
+     */
+    public function disableNotificationsAction()
+    {
+        $this->view->title = $this->translate('Disable Notifications');
+        $programStatus = $this->backend
+            ->select()
+            ->from(
+                'programstatus',
+                array(
+                    'notifications_enabled',
+                    'disable_notif_expire_time'
+                )
+            )
+            ->getQuery()
+            ->fetchRow();
+        $this->view->programStatus = $programStatus;
+        if ((bool) $programStatus->notifications_enabled === false) {
+            return;
+        } else {
+            $form = new DisableNotificationsExpireCommandForm();
+            $form
+                ->setRedirectUrl('monitoring/process/info')
+                ->handleRequest();
+            $this->view->form = $form;
+        }
     }
 
     public function performanceAction()

@@ -1,40 +1,39 @@
 <?php
 
-use Icinga\Module\Monitoring\Object\Host;
-use Icinga\Module\Monitoring\Object\Service;
+/** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
 
 if (in_array((int) $object->state, array(0, 99))) {
+    // Ignore this markup if the object is in a non-problem state or pending
     return;
 }
 
-$cf = $this->getHelper('CommandForm');
-
-$data = array('host' => $object->host_name);
-if ($object->service_description) {
-    $data['service'] = $object->service_description;
+if ($object->getType() === $object::TYPE_HOST) {
+    $ackLink = $this->href(
+        'monitoring/host/acknowledge-problem',
+        array('host' => $object->getName())
+    );
+} else {
+    $ackLink = $this->href(
+        'monitoring/service/acknowledge-problem',
+        array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+    );
 }
 
-?>
-<tr>
-<?php
-
-if ($object instanceof Host && $object->host_acknowledged
-    || $object instanceof Service && $object->service_acknowledged): ?>
-  <th>Issue acknowledged</th>
-  <td data-base-target="_self"><?= $cf->labelSubmitForm(
-        $this->translate('Remove Acknowledgement'),
-        $this->translate('Remove problem acknowledgement'),
-        'link-like',
-        'removeacknowledgement',
-        $data
-    ) ?>
+if ($object->acknowledged): ?>
+    <tr>
+        <th><?= $this->translate('Acknowledged') ?></th>
+        <td><?= $removeAckForm ?></td>
+    </tr>
 <?php else: ?>
-  <th><?= $this->translate('Not acknowledged') ?></th>
-  <td>
-    <a href="<?= $this->href(
-        'monitoring/command/acknowledgeproblem',
-        $data
-    ) ?>"><?= $this->icon('acknowledgement_petrol.png') ?> <?= $this->translate('Acknowledge') ?></a>
-  </td>
+    <tr>
+        <th><?= $this->translate('Not acknowledged') ?></th>
+        <td>
+            <?php
+
+            ?>
+            <a href="<?= $ackLink ?>">
+                <?= $this->icon('acknowledgement_petrol.png') ?> <?= $this->translate('Acknowledge') ?>
+            </a>
+        </td>
+    </tr>
 <?php endif ?>
-</tr>

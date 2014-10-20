@@ -12,7 +12,7 @@ use Icinga\Util\DateTimeFactory;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Timeline\TimeLine;
 use Icinga\Module\Monitoring\Timeline\TimeRange;
-use Icinga\Module\Monitoring\Web\Widget\TimelineIntervalBox;
+use Icinga\Module\Monitoring\Web\Widget\SelectBox;
 use Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
 
 class Monitoring_TimelineController extends Controller
@@ -26,7 +26,7 @@ class Monitoring_TimelineController extends Controller
         $detailUrl = Url::fromPath('monitoring/list/eventhistory');
 
         $timeline = new TimeLine(
-            $this->backend->select()->from('eventHistory', 
+            $this->backend->select()->from('eventHistory',
                 array(
                     'name' => 'type',
                     'time' => 'timestamp'
@@ -85,7 +85,7 @@ class Monitoring_TimelineController extends Controller
      */
     private function setupIntervalBox()
     {
-        $box = new TimelineIntervalBox(
+        $box = new SelectBox(
             'intervalBox',
             array(
                 '4h' => t('4 Hours'),
@@ -93,7 +93,9 @@ class Monitoring_TimelineController extends Controller
                 '1w' => t('One week'),
                 '1m' => t('One month'),
                 '1y' => t('One year')
-            )
+            ),
+            t('TimeLine interval'),
+            'interval'
         );
         $box->applyRequest($this->getRequest());
         $this->view->intervalBox = $box;

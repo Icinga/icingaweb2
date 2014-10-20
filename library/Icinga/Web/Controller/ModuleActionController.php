@@ -6,9 +6,10 @@ namespace Icinga\Web\Controller;
 
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
-use Zend_Controller_Request_Abstract as Request;
-use Zend_Controller_Response_Abstract as Response;
 
+/**
+ * Base class for module action controllers
+ */
 class ModuleActionController extends ActionController
 {
     private $config;
@@ -17,34 +18,42 @@ class ModuleActionController extends ActionController
 
     private $module;
 
+    /**
+     * Module name
+     *
+     * @var string
+     */
     protected $moduleName;
 
-    public function __construct(
-        Request $request,
-        Response $response,
-        array $invokeArgs = array()
-    ) {
-        parent::__construct($request, $response, $invokeArgs);
-        $this->moduleName = $request->getModuleName();
+    /**
+     * (non-PHPDoc)
+     * @see \Icinga\Web\Controller\ActionController For the method documentation.
+     */
+    protected function prepareInit()
+    {
+        $this->moduleName = $this->_request->getModuleName();
         $this->_helper->layout()->moduleName = $this->moduleName;
         $this->view->translationDomain = $this->moduleName;
         $this->moduleInit();
     }
 
+    /**
+     * Prepare module action controller initialization
+     */
+    protected function moduleInit()
+    {
+    }
+
     public function Config($file = null)
     {
-        $module = $this->getRequest()->getModuleName();
-
-        $this->moduleName = $module;
-
         if ($file === null) {
             if ($this->config === null) {
-                $this->config = Config::module($module);
+                $this->config = Config::module($this->moduleName);
             }
             return $this->config;
         } else {
             if (! array_key_exists($file, $this->configs)) {
-                $this->configs[$file] = Config::module($module, $file);
+                $this->configs[$file] = Config::module($this->moduleName, $file);
             }
             return $this->configs[$file];
         }
@@ -58,19 +67,13 @@ class ModuleActionController extends ActionController
         return $this->module;
     }
 
-    public function postDispatch()
+    /**
+     * (non-PHPDoc)
+     * @see \Icinga\Web\Controller\ActionController::postDispatchXhr() For the method documentation.
+     */
+    public function postDispatchXhr()
     {
-        $req = $this->getRequest();
-        $resp = $this->getResponse();
-
-        if ($this->isXhr()) {
-            $resp->setHeader('X-Icinga-Module', $this->moduleName);
-        }
-
-        parent::postDispatch();
-    }
-
-    protected function moduleInit()
-    {
+        parent::postDispatchXhr();
+        $this->getResponse()->setHeader('X-Icinga-Module', $this->moduleName);
     }
 }

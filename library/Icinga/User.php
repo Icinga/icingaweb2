@@ -7,7 +7,6 @@ namespace Icinga;
 use DateTimeZone;
 use InvalidArgumentException;
 use Icinga\User\Preferences;
-use Icinga\User\Message;
 
 /**
  *  This class represents an authorized user
@@ -99,13 +98,6 @@ class User
     protected $preferences;
 
     /**
-     * Queued notifications for this user.
-     *
-     * @var array()
-     */
-    protected $messages;
-
-    /**
      * Creates a user object given the provided information
      *
      * @param   string      $username
@@ -187,9 +179,9 @@ class User
     }
 
     /**
-     * Return permission information for this user
+     * Get the user's permissions
      *
-     * @return  array
+     * @return array
      */
     public function getPermissions()
     {
@@ -197,13 +189,19 @@ class User
     }
 
     /**
-     * Setter for permissions
+     * Set the user's permissions
      *
-     * @param   array   $permissions
+     * @param   array $permissions
+     *
+     * @return  $this
      */
     public function setPermissions(array $permissions)
     {
-        $this->permissions = $permissions;
+        natcasesort($permissions);
+        if (! empty($permissions)) {
+            $this->permissions = array_combine($permissions, $permissions);
+        }
+        return $this;
     }
 
     /**
@@ -383,38 +381,6 @@ class User
     }
 
     /**
-     * Add a message that can be accessed from future requests, to this user.
-     *
-     * This function does NOT automatically write to the session, messages will not be persisted until you do.
-     *
-     * @param   Message     $msg    The message
-     */
-    public function addMessage(Message $msg)
-    {
-        $this->messages[] = $msg;
-    }
-
-    /**
-     * Get all currently pending messages
-     *
-     * @return  array   The messages
-     */
-    public function getMessages()
-    {
-        return isset($this->messages) ? $this->messages : array();
-    }
-
-    /**
-     * Remove all messages from this user
-     *
-     * This function does NOT automatically write the session, messages will not be persisted until you do.
-     */
-    public function clearMessages()
-    {
-        $this->messages = null;
-    }
-
-    /**
      * Set additional remote user information
      *
      * @param stirng    $username
@@ -442,6 +408,33 @@ class User
      */
     public function isRemoteUser()
     {
-        return (count($this->remoteUserInformation)) ? true : false;
+        return ! empty($this->remoteUserInformation);
+    }
+
+    /**
+     * Whether the user has a given permission
+     *
+     * @param   string $permission
+     *
+     * @return  bool
+     */
+    public function can($permission)
+    {
+        if (isset($this->permissions['*']) || isset($this->permissions[$permission])) {
+            return true;
+        }
+        foreach ($this->permissions as $permitted) {
+            $wildcard = strpos($permitted, '*');
+            if ($wildcard !== false) {
+                if (substr($permission, 0, $wildcard) === substr($permitted, 0, $wildcard)) {
+                    return true;
+                } else {
+                    if ($permission === $permitted) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

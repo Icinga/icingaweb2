@@ -115,14 +115,17 @@ class Monitoring_CommandController extends Controller
                 if ($targetConfig->get($instance)) {
                     $this->target = new CommandPipe($targetConfig->get($instance));
                 } else {
-                    throw new ConfigurationError('Instance is not configured: %s', $instance);
+                    throw new ConfigurationError(
+                        $this->translate('Instance is not configured: %s'),
+                        $instance
+                    );
                 }
             } else {
                 if ($targetConfig && $targetInfo = $targetConfig->current()) {
                     // Take the very first section
                     $this->target = new CommandPipe($targetInfo);
                 } else {
-                    throw new ConfigurationError('No instances are configured yet');
+                    throw new ConfigurationError($this->translate('No instances are configured yet'));
                 }
             }
         }

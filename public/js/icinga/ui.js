@@ -136,6 +136,7 @@
             var kill = this.cutContainer($('#col1'));
             this.pasteContainer($('#col1'), col2);
             this.fixControls();
+            this.icinga.behaviors.navigation.setActiveByUrl($('#col1').data('icingaUrl'));
         },
 
         cutContainer: function ($col) {
@@ -199,6 +200,11 @@
             self.refreshDebug();
         },
 
+        /**
+         * Returns whether the layout is too small for more than one column
+         *
+         * @returns {boolean}   True when more than one column is available
+         */
         hasOnlyOneColumn: function () {
             return this.currentLayout === 'poor' || this.currentLayout === 'minimal';
         },
@@ -229,11 +235,21 @@
             return false;
         },
 
+        /**
+         * Returns whether only one column is displayed
+         *
+         * @returns {boolean}   True when only one column is displayed
+         */
+        isOneColLayout: function () {
+            return ! $('#layout').hasClass('twocols');
+        },
+
         layout1col: function () {
-            if (! $('#layout').hasClass('twocols')) { return; }
+            if (this.isOneColLayout()) { return; }
             this.icinga.logger.debug('Switching to single col');
             $('#layout').removeClass('twocols');
             this.closeContainer($('#col2'));
+            this.disableCloseButtons();
         },
 
         closeContainer: function($c) {
@@ -247,10 +263,11 @@
         },
 
         layout2col: function () {
-            if ($('#layout').hasClass('twocols')) { return; }
+            if (! this.isOneColLayout()) { return; }
             this.icinga.logger.debug('Switching to double col');
             $('#layout').addClass('twocols');
             this.fixControls();
+            this.enableCloseButtons();
         },
 
         getAvailableColumnSpace: function () {
@@ -543,25 +560,39 @@
         refreshTimeSince: function () {
 
             $('.timesince').each(function (idx, el) {
-                var m = el.innerHTML.match(/^(.*?)(-?\d+)m\s(-?\d+)s/);
+
+                // todo remove after replace timeSince
+                var mp = el.innerHTML.match(/^(.*?)(-?\d+)d\s(-?\d+)h/);
+                if (mp !== null) {
+                    return true;
+                }
+
+                var m = el.innerHTML.match(/^(.*?)(-?\d+)(.+\s)(-?\d+)(.+)/);
                 if (m !== null) {
                     var nm = parseInt(m[2]);
-                    var ns = parseInt(m[3]);
+                    var ns = parseInt(m[4]);
                     if (ns < 59) {
                         ns++;
                     } else {
                         ns = 0;
                         nm++;
                     }
-                    $(el).html(m[1] + nm + 'm ' + ns + 's');
+                    $(el).html(m[1] + nm + m[3] + ns + m[5]);
                 }
             });
 
             $('.timeuntil').each(function (idx, el) {
-                var m = el.innerHTML.match(/^(.*?)(-?\d+)m\s(-?\d+)s/);
+
+                // todo remove after replace timeUntil
+                var mp = el.innerHTML.match(/^(.*?)(-?\d+)d\s(-?\d+)h/);
+                if (mp !== null) {
+                    return true;
+                }
+
+                var m = el.innerHTML.match(/^(.*?)(-?\d+)(.+\s)(-?\d+)(.+)/);
                 if (m !== null) {
                     var nm = parseInt(m[2]);
-                    var ns = parseInt(m[3]);
+                    var ns = parseInt(m[4]);
                     var signed = '';
                     var sec = 0;
 
@@ -589,7 +620,7 @@
                     nm = Math.floor(sec/60);
                     ns = sec - nm * 60;
 
-                    $(el).html(m[1] + signed + nm + 'm ' + ns + 's');
+                    $(el).html(m[1] + signed + nm + m[3] + ns + m[5]);
                 }
             });
         },
@@ -682,6 +713,14 @@
             });
 
             this.fixControls(parent);
+        },
+
+        disableCloseButtons: function () {
+            $('a.close-toggle').hide();
+        },
+
+        enableCloseButtons: function () {
+            $('a.close-toggle').show();
         },
 
         fixControls: function ($parent) {

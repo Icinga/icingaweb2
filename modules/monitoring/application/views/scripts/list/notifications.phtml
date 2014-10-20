@@ -1,4 +1,3 @@
-
 <?php if (!$this->compact): ?>
 <div class="controls">
   <?= $this->tabs ?>
@@ -10,7 +9,10 @@
  </div>
 <?php endif ?>
 
+<?php if (! $this->inline): ?>
 <div class="content">
+<?php endif; ?>
+
 <?php
 
 if (empty($this->notifications)) {
@@ -44,7 +46,14 @@ foreach ($notifications as $notification):
   }
 ?>
   <tr class="state <?= $stateName ?>">
-    <td class="state"><?= $this->timeSince($notification->notification_start_time) ?></td>
+    <td class="state">
+        <?= $this->dateTimeRenderer($notification->notification_start_time)->render(
+                $this->translate('on %s', 'datetime'),
+                $this->translate('at %s', 'time'),
+                $this->translate('%s ago', 'timespan')
+            );
+        ?>
+    </td>
     <td style="font-size: 0.8em">
       <?php if ($isService): ?>
         <a href="<?= $href ?>"><?= $notification->service ?></a> on <?= $notification->host ?>
@@ -68,4 +77,6 @@ foreach ($notifications as $notification):
 </tbody>
 </table>
 
+<?php if (!$this->inline): ?>
 </div>
+<?php endif; ?>

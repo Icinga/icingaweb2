@@ -1,15 +1,10 @@
-<h4>
-    <i class="icinga-icon-create"></i>
-    Create New Authentication Backend
-</h4>
-
-
-<?php if (isset($this->messageBox)): ?>
-  <?= $this->messageBox->render() ?>
-<?php endif ?>
-
+<div class="controls">
+    <?= $this->tabs->showOnlyCloseButton() ?>
+</div>
+<h4><?= $this->translate('Create New Authentication Backend'); ?></h4>
 <p>
-  Create a new backend for authenticating your users. This backend will be added at the end of your authentication order.
+  <?= $this->translate(
+    'Create a new backend for authenticating your users. This backend will be added at the end of your authentication order.'
+  ); ?>
 </p>
-
-<?= $this->form ?>
+<?= $form; ?>

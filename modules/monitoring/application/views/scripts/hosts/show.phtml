@@ -1,0 +1,113 @@
+<div class="controls">
+    <?= $this->tabs ?>
+</div>
+<div class="content">
+    <?php if (count($objects) === 0): ?>
+        <?= $this->translate('No hosts matching the filter') ?>
+    <?php else: ?>
+        <div class="hbox-item">
+            <b><?= sprintf($this->translate('Hosts (%u)'), array_sum(array_values($hostStates)))  ?></b>
+        </div>
+        <div class="hbox-item">
+            <?= $this->hostStatesPieChart ?>
+        </div>
+        <div class="hbox-item" style="font-size: 14px">
+            <?php foreach (array_filter($hostStates) as $text => $count) {
+                echo sprintf('%s: %u <br>', strtoupper($text), $count);
+            } ?>
+        </div>
+
+        <h3>
+            <?= sprintf($this->translate('%u Hosts'),
+                count($objects))
+            ?>
+        </h3>
+
+        <div>
+            <a href="<?= $listAllLink ?>" title="<?= $this->translate('List all') ?>">
+                <?= $this->translate('List all') ?>
+            </a>
+        </div>
+
+        <div>
+            <?= $checkNowForm ?>
+        </div>
+
+        <div>
+            <a href="<?= $rescheduleAllLink ?>">
+                <?= $this->icon('reschedule_petrol.png') ?>
+                <?= $this->translate('Reschedule host checks') ?>
+            </a>
+        </div>
+
+        <div>
+            <a href="<?= $downtimeAllLink ?>">
+                <?= $this->icon('in_downtime_petrol.png') ?>
+                <?= $this->translate('Schedule host downtimes') ?>
+            </a>
+        </div>
+
+        <?php if (! empty($unhandledObjects)): ?>
+        <h3>
+            <?= sprintf(
+                $this->translatePlural(
+                    '%u Unhandled Host Problem',
+                    '%u Unhandled Host Problems',
+                    count($unhandledObjects)
+                ),
+                count($unhandledObjects)
+            ) ?>
+        </h3>
+        <div>
+            <a href="<?= $downtimeUnhandledLink ?>"
+               title="<?= $this->translate('Schedule downtimes for unhandled problem hosts') ?>">
+                <?= $this->icon('in_downtime_petrol.png') ?>
+                <?= $this->translate('Schedule downtimes for unhandled problem hosts') ?>
+            </a>
+        </div>
+        <div>
+            <a href="<?= $acknowledgeUnhandledLink ?>"
+               title="<?= $this->translate('Acknowledge unhandled problem hosts') ?>">
+                <?= $this->icon('acknowledgement_petrol.png') ?>
+                <?= $this->translate('Acknowledge unhandled problem hosts') ?>
+            </a>
+        </div>
+        <?php endif ?>
+
+        <?php if (! empty($acknowledgedObjects)): ?>
+            <h2>
+                <?= sprintf(
+                    $this->translatePlural(
+                        '%u Acknowledged Host Problem',
+                        '%u Acknowledged Host Problems',
+                        count($acknowledgedObjects)
+                    ),
+                    count($acknowledgedObjects)
+                ) ?>
+            </h2>
+            <div>
+                <?= $removeAckForm ?>
+            </div>
+        <?php endif ?>
+
+        <?php if (! empty($objectsInDowntime)): ?>
+            <h2>
+                <a href="<?= $inDowntimeLink ?>"
+                   title="<?= $this->translate('Hosts in downtime') ?>">
+                    <?= $this->icon('in_downtime_petrol.png') ?>
+                    <?= $this->translate(sprintf('%u hosts are in downtime', count($objectsInDowntime))) ?>
+                </a>
+            </h2>
+        <?php endif ?>
+
+        <?php if (count($objects->getComments())): ?>
+            <h2>
+                <a href="<?= $havingCommentsLink ?>"
+                   title="<?= $this->translate('Comments') ?>">
+                    <?= $this->icon('comment.png') ?>
+                    <?= $this->translate(sprintf('%u comments', count($objects->getComments()))) ?>
+                </a>
+            </h2>
+        <?php endif ?>
+    <?php endif ?>
+</div>

@@ -119,20 +119,19 @@ class SortBox extends AbstractWidget
             'label'         => 'Sort By',
             'multiOptions'  => $this->sortFields,
             'style'         => 'width: 12em',
-            'class'         => 'autosubmit',
+            'autosubmit'    => true
         ));
         $form->addElement('select', 'dir', array(
             'multiOptions'  => array(
                 'asc'       => 'Asc',
                 'desc'      => 'Desc',
             ),
-            'style' => 'width: 5em',
-            'class' => 'autosubmit'
+            'style'         => 'width: 5em',
+            'autosubmit'    => true
         ));
         $sort = $form->getElement('sort')->setDecorators(array('ViewHelper'));
         $dir = $form->getElement('dir')->setDecorators(array('ViewHelper'));
         if ($this->request) {
-            $form->setAction($this->request->getRequestUri());
             $form->populate($this->request->getParams());
         }
         return $form;

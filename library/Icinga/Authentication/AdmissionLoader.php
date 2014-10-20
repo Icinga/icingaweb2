@@ -52,12 +52,8 @@ class AdmissionLoader
             return $permissions;
         }
         foreach ($config as $section) {
-            if ($this->match($section, $username, $groups)) {
-                foreach ($section as $key => $value) {
-                    if (strpos($key, 'permission') === 0) {
-                        $permissions = array_merge($permissions, String::trimSplit($value));
-                    }
-                }
+            if ($this->match($section, $username, $groups) && isset($section->permissions)) {
+                $permissions += String::trimSplit($section->permissions);
             }
         }
         return $permissions;
@@ -79,12 +75,12 @@ class AdmissionLoader
         } catch (NotReadableError $e) {
             return $restrictions;
         }
-        foreach ($config as $section) {
+        foreach ($config as $name => $section) {
             if ($this->match($section, $username, $groups)) {
                 if (!array_key_exists($section->name, $restrictions)) {
                     $restrictions[$section->name] = array();
                 }
-                $restrictions[$section->name][] = $section->restriction;
+                $restrictions[$section->name][$name] = $section->restriction;
             }
         }
         return $restrictions;

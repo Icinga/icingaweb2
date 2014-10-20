@@ -64,6 +64,9 @@ class Zend_View_Helper_Util extends Zend_View_Helper_Abstract
         return date('H:i d.m.Y', $timestamp);
     }
 
+    /**
+     * @deprecated Not used. This is monitoring module stuff.
+     */
     public static function getHostStateClassName($state)
     {
         $class = 'unknown';
@@ -82,6 +85,9 @@ class Zend_View_Helper_Util extends Zend_View_Helper_Abstract
         return $class;
     }
 
+    /**
+     * @deprecated Crap. This is monitoring module stuff.
+     */
     public static function getHostStateName($state)
     {
         $states = array(
@@ -98,6 +104,9 @@ class Zend_View_Helper_Util extends Zend_View_Helper_Abstract
         return sprintf('OUT OF BOUNDS (%s)', var_export($state, 1));
     }
 
+    /**
+     * @deprecated Crap. This is monitoring module stuff.
+     */
     public static function getServiceStateName($state)
     {
         if ($state === null) { $state = 3; } // really?

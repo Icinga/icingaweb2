@@ -1,10 +1,5 @@
-<h4>
-    <i class="icinga-icon-remove"></i>
-    Remove Backend "<?= $this->escape($this->name); ?>"
-</h4>
-
-<?php if (isset($this->messageBox)): ?>
-  <?= $this->messageBox->render() ?>
-<?php endif ?>
-
-<?= $this->form ?>
+<div class="controls">
+    <?= $this->tabs->showOnlyCloseButton() ?>
+</div>
+<h4><?= $this->translate('Remove Backend'); ?></h4>
+<?= $form; ?>

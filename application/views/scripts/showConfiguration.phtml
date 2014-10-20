@@ -1,0 +1,28 @@
+<div>
+  <h4><?= $this->translate('Saving Configuration Failed'); ?></h4>
+  <br>
+  <p>
+    <?= sprintf(
+      $this->translate('The file %s couldn\'t be stored. (Error: "%s")'),
+      $this->escape($filePath),
+      $this->escape($errorMessage)
+    ); ?>
+    <br>
+    <?= $this->translate('This could have one or more of the following reasons:'); ?>
+  </p>
+  <ul>
+    <li><?= $this->translate('You don\'t have file-system permissions to write to the file'); ?></li>
+    <li><?= $this->translate('Something went wrong while writing the file'); ?></li>
+    <li><?= $this->translate('There\'s an application error preventing you from persisting the configuration'); ?></li>
+  </ul>
+</div>
+<p>
+  <?= $this->translate('Details can be found in the application log. (If you don\'t have access to this log, call your administrator in this case)'); ?>
+  <br>
+  <?= $this->translate('In case you can access the file by yourself, you can open it and insert the config manually:'); ?>
+</p>
+<p>
+  <pre>
+    <code><?= $this->escape($configString); ?></code>
+  </pre>
+</p>

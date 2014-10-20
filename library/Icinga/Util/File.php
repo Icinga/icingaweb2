@@ -131,7 +131,7 @@ class File extends SplFileObject
         set_error_handler(
             function ($errno, $errstr, $errfile, $errline) {
                 restore_error_handler();
-                throw new ErrorException($errno, $errstr, $errfile, $errline);
+                throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
             },
             E_WARNING
         );

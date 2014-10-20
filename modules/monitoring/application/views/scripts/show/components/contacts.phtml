@@ -5,7 +5,7 @@ if (! empty($object->contacts)) {
     $list = array();
     foreach ($object->contacts as $contact) {
         $list[] = $this->qlink($contact->contact_alias, 'monitoring/show/contact', array(
-            'contact_name' => $contact->contact_name
+            'contact' => $contact->contact_name
         ));
     }
 
@@ -24,7 +24,7 @@ if (! empty($object->contactgroups)) {
         $list[] = $this->qlink(
             $contactgroup->contactgroup_alias,
             'monitoring/list/contactgroups',
-            array('contactgroup_name' => $contactgroup->contactgroup_name)
+            array('contactgroup' => $contactgroup->contactgroup_name)
         );
     }
 

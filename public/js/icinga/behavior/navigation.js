@@ -10,14 +10,24 @@
     Icinga.Behaviors = Icinga.Behaviors || {};
 
     var Navigation = function (icinga) {
-        this.icinga = icinga;
+        Icinga.EventListener.call(this, icinga);
+        this.on('click', '#menu a', this.linkClicked, this);
+        this.on('click', '#menu tr[href]', this.linkClicked, this);
+        this.on('mouseenter', 'li.dropdown', this.dropdownHover, this);
+        this.on('mouseleave', 'li.dropdown', this.dropdownLeave, this);
+        this.on('mouseenter', '#menu > ul > li', this.menuTitleHovered, this);
+        this.on('mouseleave', '#sidebar', this.leaveSidebar, this);
+        this.on('rendered', this.onRendered);
     };
+    Navigation.prototype = new Icinga.EventListener();
 
-    Navigation.prototype.apply = function(el) {
-        // restore old menu state
+    Navigation.prototype.onRendered = function(evt) {
+        // get original source element of the rendered-event
+        var el = evt.target;
         if (activeMenuId) {
+            // restore old menu state
             $('[role="navigation"] li.active', el).removeClass('active');
-            var $selectedMenu = $('#' + activeMenuId, el).addClass('active');
+            var $selectedMenu = $('#' + activeMenuId).addClass('active');
             var $outerMenu = $selectedMenu.parent().closest('li');
             if ($outerMenu.size()) {
                 $outerMenu.addClass('active');
@@ -27,26 +37,11 @@
             var $menus = $('[role="navigation"] li.active', el);
             if ($menus.size()) {
                 activeMenuId = $menus[0].id;
+                $menus.find('li.active').first().each(function () {
+                    activeMenuId = this.id;
+                });
             }
         }
-    };
-
-    Navigation.prototype.bind = function() {
-        $(document).on('click', '#menu a', { self: this }, this.linkClicked);
-        $(document).on('click', '#menu tr[href]', { self: this }, this.linkClicked);
-        $(document).on('mouseenter', 'li.dropdown', this.dropdownHover);
-        $(document).on('mouseleave', 'li.dropdown', {self: this}, this.dropdownLeave);
-        $(document).on('mouseenter', '#menu > ul > li', { self: this }, this.menuTitleHovered);
-        $(document).on('mouseleave', '#sidebar', { self: this }, this.leaveSidebar);
-    };
-
-    Navigation.prototype.unbind = function() {
-        $(document).off('click', '#menu a', this.linkClicked);
-        $(document).off('click', '#menu tr[href]', this.linkClicked);
-        $(document).off('mouseenter', 'li.dropdown', this.dropdownHover);
-        $(document).off('mouseleave', 'li.dropdown', this.dropdownLeave);
-        $(document).off('mouseenter', '#menu > ul > li', this.menuTitleHovered);
-        $(document).on('mouseleave', '#sidebar', this.leaveSidebar);
     };
 
     Navigation.prototype.linkClicked = function(event) {
@@ -80,6 +75,29 @@
         var menuDataUrl = icinga.utils.parseUrl($menu.data('icinga-url'));
         menuDataUrl = icinga.utils.addUrlParams(menuDataUrl.path, { url: href });
         $menu.data('icinga-url', menuDataUrl);
+    };
+
+    Navigation.prototype.setActiveByUrl = function(url)
+    {
+        this.resetActive();
+        this.setActive($('#menu [href="' + url + '"]'));
+    }
+
+    /**
+     * Change the active menu element
+     *
+     * @param $el   {jQuery}    A selector pointing to the active element
+     */
+    Navigation.prototype.setActive = function($el) {
+
+        $el.closest('li').addClass('active');
+        $el.parents('li').addClass('active');
+        activeMenuId = $el.closest('li').attr('id');
+    };
+
+    Navigation.prototype.resetActive = function() {
+        $('#menu .active').removeClass('active');
+        activeMenuId = null;
     };
 
     Navigation.prototype.menuTitleHovered = function(event) {

@@ -2,5 +2,5 @@
 <?php
 
 use Icinga\Application\Cli;
-require_once '/usr/share/icingaweb/library/Icinga/Application/Cli.php';
+require_once '/usr/share/icingaweb2/library/Icinga/Application/Cli.php';
 Cli::start()->dispatch();

@@ -39,10 +39,6 @@ class ActionController extends Zend_Controller_Action
      */
     protected $requiresAuthentication = true;
 
-    private $config;
-
-    private $configs = array();
-
     private $autorefreshInterval;
 
     private $reloadCss = false;
@@ -91,23 +87,29 @@ class ActionController extends Zend_Controller_Action
         }
 
         $this->view->tabs = new Tabs();
+        $this->prepareInit();
         $this->init();
+    }
+
+    /**
+     * Prepare controller initialization
+     *
+     * As it should not be required for controllers to call the parent's init() method, base controllers should use
+     * prepareInit() in order to prepare the controller initialization.
+     *
+     * @see \Zend_Controller_Action::init() For the controller initialization method.
+     */
+    protected function prepareInit()
+    {
     }
 
     public function Config($file = null)
     {
         if ($file === null) {
-            if ($this->config === null) {
-                $this->config = Config::app();
-            }
-            return $this->config;
+            return Config::app();
         } else {
-            if (! array_key_exists($file, $this->configs)) {
-                $this->configs[$file] = Config::module($module, $file);
-            }
-            return $this->configs[$file];
+            return Config::app($file);
         }
-        return $this->config;
     }
 
     public function Auth()
@@ -216,13 +218,29 @@ class ActionController extends Zend_Controller_Action
      *
      * Autoselects the module domain, if any, and falls back to the global one if no translation could be found.
      *
-     * @param   string  $text   The string to translate
+     * @param   string      $text       The string to translate
+     * @param   string|null $context    Optional parameter for context based translation
      *
-     * @return  string          The translated string
+     * @return  string                  The translated string
      */
-    public function translate($text)
+    public function translate($text, $context = null)
     {
-        return Translator::translate($text, $this->view->translationDomain);
+        return Translator::translate($text, $this->view->translationDomain, $context);
+    }
+
+    /**
+     * Translate a plural string
+     *
+     * @param string        $textSingular   The string in singular form to translate
+     * @param string        $textPlural     The string in plural form to translate
+     * @param string        $number         The number to get the plural or singular string
+     * @param string|null   $context        Optional parameter for context based translation
+     *
+     * @return string                       The translated string
+     */
+    public function translatePlural($textSingular, $textPlural, $number, $context = null)
+    {
+        return Translator::translatePlural($textSingular, $textPlural, $number, $this->view->translationDomain, $context);
     }
 
     protected function ignoreXhrBody()
@@ -347,7 +365,7 @@ class ActionController extends Zend_Controller_Action
         if ($user = $req->getUser()) {
             // Cast preference app.show_benchmark to bool because preferences loaded from a preferences storage are
             // always strings
-            if ((bool) $user->getPreferences()->get('app.show_benchmark', false) === true) {
+            if ((bool) $user->getPreferences()->getValue('icingaweb', 'show_benchmark', false) === true) {
                 if (!$this->_helper->viewRenderer->getNoRender()) {
                     $layout->benchmark = $this->renderBenchmark();
                 }

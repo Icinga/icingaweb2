@@ -4,100 +4,133 @@
 
 namespace Icinga\Web\Form\Element;
 
+use DateTime;
+use Icinga\Web\Form;
+use Icinga\Web\Form\FormElement;
 use Icinga\Web\Form\Validator\DateTimeValidator;
-use Zend_Form_Element_Text;
-use Zend_Form_Element;
-use Icinga\Util\DateTimeFactory;
 
 /**
- * Datetime form element which returns the input as Unix timestamp after the input has been proven valid. Utilizes
- * DateTimeFactory to ensure time zone awareness
- *
- * @see isValid()
+ * A date-and-time input control
  */
-class DateTimePicker extends Zend_Form_Element_Text
+class DateTimePicker extends FormElement
 {
     /**
-     * Default format used my js picker
+     * Form view helper to use for rendering
      *
-     * @var string
-     */
-    public $defaultFormat = 'Y-m-d H:i:s';
-
-    /**
-     * JS picker support on or off
-     * @var bool
-     */
-    public $jspicker = true;
-
-    /**
-     * View helper to use
      * @var string
      */
     public $helper = 'formDateTime';
 
     /**
-     * The validator used for datetime validation
-     * @var DateTimeValidator
+     * @var bool
      */
-    private $dateValidator;
+    protected $local = true;
 
     /**
-     * Valid formats to check user input against
-     * @var array
-     */
-    public $patterns = array();
-
-    /**
-     * Create a new DateTimePicker
+     * The expected lower bound for the element’s value
      *
-     * @param array|string|\Zend_Config $spec
-     * @param null $options
-     * @see Zend_Form_Element::__construct()
+     * @var DateTime|null
      */
-    public function __construct($spec, $options = null)
+    protected $min;
+
+    /**
+     * The expected upper bound for the element’s
+     *
+     * @var DateTime|null
+     */
+    protected $max;
+
+    /**
+     * (non-PHPDoc)
+     * @see Zend_Form_Element::init() For the method documentation.
+     */
+    public function init()
     {
-        parent::__construct($spec, $options);
+        $this->addValidator(
+            new DateTimeValidator($this->local), true  // true for breaking the validator chain on failure
+        );
+        if ($this->min !== null) {
+            $this->addValidator('GreaterThan', true, array('min' => $this->min));
+        }
+        if ($this->max !== null) {
+            $this->addValidator('LessThan', true, array('max' => $this->max));
+        }
+    }
 
-        $this->patterns[] = $this->defaultFormat;
+    public function setLocal($local)
+    {
+        $this->local = (bool) $local;
+        return $this;
+    }
 
-        $this->dateValidator = new DateTimeValidator($this->patterns);
-        $this->addValidator($this->dateValidator);
+    public function getLocal()
+    {
+        return $this->local;
     }
 
     /**
-     * Validate filtered date/time strings
+     * Set the expected lower bound for the element’s value
      *
-     * Expects one or more valid formats being set in $this->patterns. Sets element value as Unix timestamp
-     * if the input is considered valid. Utilizes DateTimeFactory to ensure time zone awareness.
+     * @param   DateTime $min
      *
-     * @param   string  $value
-     * @param   mixed   $context
+     * @return  $this
+     */
+    public function setMin(DateTime $min)
+    {
+        $this->min = $min;
+        return $this;
+    }
+
+    /**
+     * Get the expected lower bound for the element’s value
+     *
+     * @return DateTime|null
+     */
+    public function getMin()
+    {
+        return $this->min;
+    }
+
+    /**
+     * Set the expected upper bound for the element’s value
+     *
+     * @param   DateTime $max
+     *
+     * @return  $this
+     */
+    public function setMax(DateTime $max)
+    {
+        $this->max = $max;
+        return $this;
+    }
+
+    /**
+     * Get the expected upper bound for the element’s value
+     *
+     * @return DateTime|null
+     */
+    public function getMax()
+    {
+        return $this->max;
+    }
+
+    /**
+     * Is the date and time valid?
+     *
+     * @param   string|DateTime     $value
+     * @param   mixed               $context
+     *
      * @return  bool
      */
     public function isValid($value, $context = null)
     {
-        // Overwrite the internal validator to use
-
-        if (!parent::isValid($value, $context)) {
+        if (! parent::isValid($value, $context)) {
             return false;
         }
-        $pattern = $this->dateValidator->getValidPattern();
-        if (!$pattern) {
-            $this->setValue($value);
-            return true;
+        if (! $value instanceof DateTime) {
+            $format = $this->local === true ? 'Y-m-d\TH:i:s' : DateTime::RFC3339;
+            $this->setValue(DateTime::createFromFormat($format, $value));
         }
-        $this->setValue(DateTimeFactory::parse($value, $pattern)->getTimestamp());
         return true;
-    }
-
-    public function enableJsPicker()
-    {
-        $this->jspicker = true;
-    }
-
-    public function disableJsPicker()
-    {
-        $this->jspicker = false;
     }
 }

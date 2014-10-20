@@ -15,7 +15,7 @@ if ($this->compact): ?>
 
 <?= $this->widget('limiter')->setMaxLimit($this->hosts->count()) ?>
 <?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)) ?>
-<?= $this->selectionToolbar('multi', $this->href('monitoring/multi/host?' . $this->filter->toQueryString())) ?>
+<?= $this->selectionToolbar('multi', $this->href('monitoring/hosts/show?' . $this->filter->toQueryString())) ?>
 </div>
 
 <div class="content">
@@ -36,46 +36,46 @@ if ($hosts->count() === 0) {
 <table
     data-base-target="_next"
     class="action multiselect"
-    data-icinga-multiselect-url="<?= $this->href('/monitoring/multi/host') ?>"
+    data-icinga-multiselect-url="<?= $this->href('monitoring/hosts/show') ?>"
     data-icinga-multiselect-data="host"
 >
   <tbody>
   <?php foreach($hosts as $host):
 
     $hostStateName = strtolower($this->util()->getHostStateName($host->host_state));
-    $hostLink = $this->href('/monitoring/show/host', array('host' => $host->host_name));
+    $hostLink = $this->href('monitoring/host/show', array('host' => $host->host_name));
 
     $icons = array();
     if (! $host->host_handled && $host->host_state > 0){
-        $icons[] = $this->icon('unhandled.png', 'Unhandled');
+        $icons[] = $this->icon('unhandled.png', $this->translate('Unhandled'));
     }
 
     if ($host->host_acknowledged) {
-        $icons[] = $this->icon('acknowledgement.png', 'Acknowledged');
+        $icons[] = $this->icon('acknowledgement.png', $this->translate('Acknowledged'));
     }
 
     if ($host->host_is_flapping) {
-        $icons[] = $this->icon('flapping.png', 'Flapping');
+        $icons[] = $this->icon('flapping.png', $this->translate('Flapping'));
     }
 
     if (! $host->host_notifications_enabled) {
-        $icons[] = $this->icon('notification_disabled.png', 'Notifications Disabled');
+        $icons[] = $this->icon('notification_disabled.png', $this->translate('Notifications Disabled'));
     }
 
     if ($host->host_in_downtime) {
-        $icons[] = $this->icon('in_downtime.png', 'In Downtime');
+        $icons[] = $this->icon('in_downtime.png', $this->translate('In Downtime'));
     }
 
     if (! $host->host_active_checks_enabled) {
         if (! $host->host_passive_checks_enabled) {
-            $icons[] = $this->icon('active_passive_checks_disabled.png', 'Active And Passive Checks Disabled');
+            $icons[] = $this->icon('active_passive_checks_disabled.png', $this->translate('Active And Passive Checks Disabled'));
         } else {
-            $icons[] = $this->icon('active_checks_disabled.png', 'Active Checks Disabled');
+            $icons[] = $this->icon('active_checks_disabled.png', $this->translate('Active Checks Disabled'));
         }
     }
 
     if (isset($host->host_last_comment) && $host->host_last_comment !== null) {
-        $icons[] = $this->icon('comment.png', 'Comment: ' . $host->host_last_comment);
+        $icons[] = $this->icon('comment.png', $this->translate('Comment: ') . $host->host_last_comment);
     }
     ?>
     <tr class="state <?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
@@ -101,8 +101,10 @@ if ($hosts->count() === 0) {
         <?php if (isset($host->host_unhandled_services) && $host->host_unhandled_services > 0): ?>
         <span title="<?=
             $host->host_unhandled_services
-        ?> Service Problems on Host"> (<?= $this->qlink(
-           sprintf($this->translate('%d unhandled services'), $host->host_unhandled_services),
+        ?> <?= $this->translate('Service Problems on Host') ?>"> (<?= $this->qlink(
+           sprintf(
+               $this->translatePlural('%d unhandled service', '%d unhandled services', $host->host_unhandled_services),
+               $host->host_unhandled_services),
            'monitoring/show/services',
            array(
                'host'                 => $host->host_name,

@@ -1,0 +1,27 @@
+<div class="controls">
+    <?= $this->render('show/components/header.phtml') ?>
+    <h1><?= $this->translate("This service's current state") ?></h1>
+</div>
+<div class="content" data-base-target="_next">
+    <?= $this->render('show/components/output.phtml') ?>
+    <?= $this->render('show/components/grapher.phtml') ?>
+
+    <table class="avp newsection">
+        <tbody>
+        <?= $this->render('show/components/acknowledgement.phtml') ?>
+        <?= $this->render('show/components/comments.phtml') ?>
+        <?= $this->render('show/components/notifications.phtml') ?>
+        <?= $this->render('show/components/downtime.phtml') ?>
+        <?= $this->render('show/components/flapping.phtml') ?>
+        <?= $this->render('show/components/perfdata.phtml') ?>
+        <?= $this->render('show/components/checksource.phtml') ?>
+        <?= $this->render('show/components/actions.phtml') ?>
+        <?= $this->render('show/components/command.phtml') ?>
+        <?= $this->render('show/components/servicegroups.phtml') ?>
+        <?= $this->render('show/components/contacts.phtml') ?>
+        <?= $this->render('show/components/checkstatistics.phtml') ?>
+        <?= $this->render('show/components/customvars.phtml') ?>
+        <?= $this->render('show/components/flags.phtml') ?>
+        </tbody>
+    </table>
+</div>

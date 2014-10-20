@@ -4,10 +4,10 @@
 
 namespace Icinga\Application;
 
+use ErrorException;
 use Exception;
 use Zend_Config;
 use Icinga\Application\Modules\Manager as ModuleManager;
-use Icinga\Application\Config;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
@@ -348,11 +348,7 @@ abstract class ApplicationBootstrap
         Logger::create(
             new Zend_Config(
                 array(
-                    'enable'        => true,
-                    'level'         => Logger::$ERROR,
-                    'type'          => 'syslog',
-                    'facility'      => 'LOG_USER',
-                    'application'   => 'icingaweb'
+                    'log' => 'syslog'
                 )
             )
         );
@@ -383,9 +379,20 @@ abstract class ApplicationBootstrap
      */
     protected function setupErrorHandling()
     {
-        error_reporting(E_ALL | E_NOTICE);
+        error_reporting(E_ALL | E_STRICT);
         ini_set('display_startup_errors', 1);
         ini_set('display_errors', 1);
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            if (error_reporting() === 0) {
+                // Error was suppressed with the @-operator
+                return false; // Continue with the normal error handler
+            }
+            switch($errno) {
+                case E_STRICT:
+                    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+            }
+            return false; // Continue with the normal error handler
+        });
         return $this;
     }
 

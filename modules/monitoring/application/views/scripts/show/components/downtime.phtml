@@ -1,39 +1,31 @@
+<tr>
+    <th><?= $this->translate('Downtimes') ?></th>
+    <td>
+        <?php
+
+        /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+
+        if ($object->getType() === $object::TYPE_HOST) {
+            $scheduleDowntimeLink = $this->href(
+                'monitoring/host/schedule-downtime',
+                array('host' => $object->getName())
+            );
+        } else {
+            $scheduleDowntimeLink = $this->href(
+                'monitoring/service/schedule-downtime',
+                array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+            );
+        }
+        ?>
+        <a href="<?= $scheduleDowntimeLink ?>">
+            <?= $this->icon('in_downtime_petrol.png') ?> <?= $this->translate('Schedule downtime') ?>
+        </a>
+    </td>
+</tr>
+
 <?php
 
-$cf = $this->getHelper('CommandForm');
-
-$data = array('host' => $object->host_name);
-if ($object->service_description) {
-    $data['service'] = $object->service_description;
-}
-
-
-$list = array();
 foreach ($object->downtimes as $downtime) {
-    $deleteData = $data;
-    $deleteData['downtimeid'] = $downtime->id;
-
-    // TODO: This needs improvement
-    if ((int) $downtime->is_in_effect) {
-        $state = 'in downtime since ' . $this->timeSince($downtime->start);
-    } else {
-        if ($downtime->is_fixed) {
-            $state = 'scheduled ' . $this->timeUntil($downtime->start);
-        } else {
-            $state = 'scheduled flexible ' . $this->timeUntil($downtime->start);
-        }
-    }
-
-    // $iconForm = $cf->iconSubmitForm(
-    //     'img/icons/remove_petrol.png',
-    $iconForm = $cf->labelSubmitForm(
-        'X',
-        'Remove Downtime',
-        'link-like',
-        'removedowntime',
-        $deleteData
-    );
-    
     // Ticket hook sample
     $text = $this->tickets ? preg_replace_callback(
         $this->tickets->getPattern(),
@@ -41,20 +33,35 @@ foreach ($object->downtimes as $downtime) {
         $this->escape($downtime->comment)
     ) : $this->escape($downtime->comment);
 
-    $list[] = sprintf(
-        '<tr><th>%s</th><td><table><tr><td style="vertical-align: top;" data-base-target="_self">%s %s:</td><td style="padding-left: .5em;">%s</td></tr></table></td></tr>',
-        $this->escape($downtime->author),
-        $iconForm,
-        $state,
-        str_replace(array('\r\n', '\n'), '<br>', $text)
-    );
-}
+    $form = clone $delDowntimeForm;
+    $form->populate(array('downtime_id' => $downtime->id));
 
-?>
-<tr>
-  <th><?= $this->translate('Downtimes') ?></th>
-  <td>
-    <a href="<?= $this->href('monitoring/command/scheduleDowntime', $data) ?>"><?= $this->icon('in_downtime_petrol.png') ?> <?= $this->translate('Schedule downtime') ?></a>
-  </td>
-</tr>
-<?= implode("\n", $list) ?>
+    if ((bool) $downtime->is_in_effect) {
+        $state = 'in downtime since ' . $this->timeSince($downtime->start);
+    } else {
+        if ((bool) $downtime->is_fixed) {
+            $state = 'scheduled ' . $this->timeUntil($downtime->start);
+        } else {
+            $state = 'scheduled flexible ' . $this->timeUntil($downtime->start);
+        }
+    }
+
+    ?>
+
+    <tr>
+        <th><?= $this->escape($downtime->author) ?></th>
+        <td>
+            <table>
+                <tr>
+                    <td style="vertical-align: top;" data-base-target="_self">
+                        <?= $form ?> <?= $state ?>
+                    </td>
+                    <td style="padding-left: .5em;">
+                        <?= str_replace(array('\r\n', '\n'), '<br>', $text) ?>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+<?php }  // endforeach ?>

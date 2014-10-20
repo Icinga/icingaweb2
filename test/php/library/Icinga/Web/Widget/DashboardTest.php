@@ -47,7 +47,7 @@ class DashboardTest extends BaseTestCase
         Mockery::close(); // Necessary because some tests run in a separate process
     }
 
-    protected function setupIcingaMock(\Zend_Controller_Request_Abstract $request)
+    public function setUp()
     {
         $moduleMock = Mockery::mock('Icinga\Application\Modules\Module');
         $moduleMock->shouldReceive('getPaneItems')->andReturn(array(
@@ -59,14 +59,8 @@ class DashboardTest extends BaseTestCase
             'test-module' => $moduleMock
         ));
 
-        $bootstrapMock = Mockery::mock('Icinga\Application\ApplicationBootstrap')->shouldDeferMissing();
-        $bootstrapMock->shouldReceive('getFrontController->getRequest')->andReturnUsing(
-            function () use ($request) { return $request; }
-        )->shouldReceive('getApplicationDir')->andReturn(self::$appDir);
-
+        $bootstrapMock = $this->setupIcingaMock();
         $bootstrapMock->shouldReceive('getModuleManager')->andReturn($moduleManagerMock);
-
-        Icinga::setApp($bootstrapMock, true);
     }
 
     public function testWhetherCreatePaneCreatesAPane()

@@ -1,5 +1,6 @@
 <?php $contactHelper = $this->getHelper('ContactFlags') ?>
 <div class="controls">
+  <?= $this->tabs ?>
   <h1><?= $this->translate('Contact details') ?></h1>
   <div class="circular" style="margin-top: 1em; margin-left: 2em; width: 120px; height: 120px; float: left; background-image: url('<?=
       $this->href('static/gravatar', array('email' => $contact->contact_email))
@@ -40,7 +41,6 @@
       </tr>
     </tbody>
   </table>
-  <?php /* WTF?? */ ?>
   <?php if (count($commands)): ?>
   <h1><?= $this->translate('Commands') ?>:</h1>
   <ul>

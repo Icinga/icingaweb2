@@ -82,25 +82,29 @@ class DashboardController extends ActionController
         )->activate('addurl');
 
         $form = new AddUrlForm();
-        $form->setRequest($this->getRequest());
-        $form->setAction(Url::fromRequest()->setParams(array())->getAbsoluteUrl());
-        $this->view->form = $form;
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost()) && $form->isSubmitted()) {
+                $dashboard = $this->getDashboard();
+                $dashboard->setComponentUrl(
+                    $form->getValue('pane'),
+                    $form->getValue('component'),
+                    ltrim($form->getValue('url'), '/')
+                );
 
-        if ($form->isSubmittedAndValid()) {
-            $dashboard = $this->getDashboard();
-            $dashboard->setComponentUrl(
-                $form->getValue('pane'),
-                $form->getValue('component'),
-                ltrim($form->getValue('url'), '/')
-            );
-
-            $configFile = IcingaConfig::app('dashboard/dashboard')->getConfigFile();
-            if ($this->writeConfiguration(new Zend_Config($dashboard->toArray()), $configFile)) {
-                $this->redirectNow(Url::fromPath('dashboard', array('pane' => $form->getValue('pane'))));
-            } else {
-                $this->render('show-configuration');
+                $configFile = IcingaConfig::app('dashboard/dashboard')->getConfigFile();
+                if ($this->writeConfiguration(new Zend_Config($dashboard->toArray()), $configFile)) {
+                    $this->redirectNow(Url::fromPath('dashboard', array('pane' => $form->getValue('pane'))));
+                } else {
+                    $this->render('showConfiguration');
+                    return;
+                }
             }
+        } else {
+            $form->create()->setDefault('url', htmlspecialchars_decode($request->getParam('url', '')));
         }
+
+        $this->view->form = $form;
     }
 
     /**
@@ -160,9 +164,9 @@ class DashboardController extends ActionController
             $writer->write();
         } catch (Exception $e) {
             Logger::error(new ConfiguationError("Cannot write dashboard to $target", 0, $e));
-            $this->view->iniConfigurationString = $writer->render();
-            $this->view->exceptionMessage = $e->getMessage();
-            $this->view->file = $target;
+            $this->view->configString = $writer->render();
+            $this->view->errorMessage = $e->getMessage();
+            $this->view->filePath = $target;
             return false;
         }
 

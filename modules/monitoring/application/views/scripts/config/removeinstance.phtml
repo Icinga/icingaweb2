@@ -1,13 +1,4 @@
-
-<h4><i class="icinga-icon-remove"></i> Remove Instance "<?= $this->escape($this->name) ?>"</h4>
-
-<p>
-  Are you sure you want to remove the instance <?= $this->escape($this->name) ?>?
-</p>
-
-<p>
-  <i class="icinga-icon-warning"></i> If you have still any environments or views refering to this instance, you won't be able to send commands anymore
-  after deletion.
-</p>
-
-<?= $this->form; ?>
+<h4><?= $this->translate('Remove Existing Instance'); ?></h4>
+<p><?= $this->translate('Are you sure you want to remove this instance?'); ?></p>
+<p><?= $this->translate('If you have still any environments or views referring to this instance, you won\'t be able to send commands anymore after deletion.'); ?></p>
+<?= $form; ?>

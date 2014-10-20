@@ -18,7 +18,8 @@ class NotificationQuery extends IdoQuery
         'notification' => array(
             'notification_output'       => 'n.output',
             'notification_start_time'   => 'UNIX_TIMESTAMP(n.start_time)',
-            'notification_state'        => 'n.state'
+            'notification_state'        => 'n.state',
+            'notification_object_id'    => 'n.object_id'
         ),
         'objects' => array(
             'host'                      => 'o.name1',
@@ -30,6 +31,11 @@ class NotificationQuery extends IdoQuery
         ),
         'command' => array(
             'notification_command'      => 'cmd_o.name1'
+        ),
+        'acknowledgement' => array(
+            'acknowledgement_entry_time'    => 'UNIX_TIMESTAMP(a.entry_time)',
+            'acknowledgement_author_name'   => 'a.author_name',
+            'acknowledgement_comment_data'  => 'a.comment_data'
         )
     );
 
@@ -92,6 +98,15 @@ class NotificationQuery extends IdoQuery
         $this->select->joinLeft(
             array('cmd_o' => $this->prefix . 'objects'),
             'cmd_m.command_object_id = cmd_o.object_id',
+            array()
+        );
+    }
+
+    protected function joinAcknowledgement()
+    {
+        $this->select->joinLeft(
+            array('a' => $this->prefix . 'acknowledgements'),
+            'n.object_id = a.object_id',
             array()
         );
     }

@@ -340,12 +340,12 @@
             if (! req.autorefresh) {
                 // TODO: Hook for response/url?
                 var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
-
                 var $matches = $.merge($('[href="' + url + '"]'), $forms);
-
                 $matches.each(function (idx, el) {
                     if ($(el).closest('#menu').length) {
-                        $('#menu .active').removeClass('active');
+                        if (req.$target[0].id === 'col1') {
+                            self.icinga.behaviors.navigation.resetActive();
+                        }
                     } else if ($(el).closest('table.action').length) {
                         $(el).closest('table.action').find('.active').removeClass('active');
                     }
@@ -357,8 +357,9 @@
                         if ($el.is('form')) {
                             $('input', $el).addClass('active');
                         } else {
-                            $el.closest('li').addClass('active');
-                            $el.parents('li').addClass('active');
+                            if (req.$target[0].id === 'col1') {
+                                self.icinga.behaviors.navigation.setActive($el);
+                            }
                         }
                         // Interrupt .each, only on menu item shall be active
                         return false;
@@ -368,7 +369,6 @@
                 });
             } else {
                 // TODO: next container url
-                // Get first container url?
                 active = $('[href].active', req.$target).attr('href');
             }
 
@@ -540,7 +540,6 @@
                         }).addClass('active');
                 }
             }
-            req.$target.trigger('rendered');
         },
 
         /**
@@ -663,6 +662,7 @@
             // Container update happens here
             var scrollPos = false;
             var self = this;
+            var origFocus = document.activeElement;
             var containerId = $container.attr('id');
             if (typeof containerId !== 'undefined') {
                 if (autorefresh) {
@@ -672,13 +672,18 @@
                 }
             }
 
-            var origFocus = document.activeElement;
-            if (
-                // Do not reload menu when search field has content
-                (containerId === 'menu' && $(origFocus).length && $(origFocus).val().length)
-                // TODO: remove once #7146 is solved
-                || (containerId !== 'menu' && typeof containerId !== 'undefined' && autorefresh && origFocus && $(origFocus).closest('form').length && $container.has($(origFocus)) && $(origFocus).closest('#' + containerId).length && ! $(origFocus).hasClass('autosubmit'))) {
-                this.icinga.logger.debug('Not changing content for ', containerId, ' form has focus');
+            var discard = false;
+            $.each(self.icinga.behaviors, function(name, behavior) {
+                if (behavior.renderHook) {
+                    var changed = behavior.renderHook(content, $container, action, autorefresh);
+                    if (!changed) {
+                        discard = true;
+                    } else {
+                        content = changed;
+                    }
+                }
+            });
+            if (discard) {
                 return;
             }
 
@@ -718,16 +723,18 @@
             }
             this.icinga.ui.assignUniqueContainerIds();
 
-            if (scrollPos !== false) {
-                $container.scrollTop(scrollPos);
-            }
             if (origFocus) {
                 $(origFocus).focus();
             }
 
             // TODO: this.icinga.events.refreshContainer(container);
+            $container.trigger('rendered');
+
+            if (scrollPos !== false) {
+                $container.scrollTop(scrollPos);
+            }
             var icinga = this.icinga;
-            icinga.events.applyHandlers($container);
+            //icinga.events.applyHandlers($container);
             icinga.ui.initializeControls($container);
             icinga.ui.fixControls();
 

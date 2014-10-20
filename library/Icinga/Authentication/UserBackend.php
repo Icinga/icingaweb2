@@ -93,26 +93,44 @@ abstract class UserBackend implements Countable
                 $backend = new DbUserBackend($resource);
                 break;
             case 'msldap':
+                $groupOptions = array(
+                    'group_base_dn'             => $backendConfig->group_base_dn,
+                    'group_attribute'           => $backendConfig->group_attribute,
+                    'group_member_attribute'    => $backendConfig->group_member_attribute,
+                    'group_class'               => $backendConfig->group_class
+                );
                 $backend = new LdapUserBackend(
                     $resource,
                     $backendConfig->get('user_class', 'user'),
-                    $backendConfig->get('user_name_attribute', 'sAMAccountName')
+                    $backendConfig->get('user_name_attribute', 'sAMAccountName'),
+                    $groupOptions
                 );
                 break;
             case 'ldap':
-                if (($userClass = $backendConfig->user_class) === null) {
+                if ($backendConfig->user_class === null) {
                     throw new ConfigurationError(
                         'Authentication configuration for backend "%s" is missing the user_class directive',
                         $name
                     );
                 }
-                if (($userNameAttribute = $backendConfig->user_name_attribute) === null) {
+                if ($backendConfig->user_name_attribute === null) {
                     throw new ConfigurationError(
                         'Authentication configuration for backend "%s" is missing the user_name_attribute directive',
                         $name
                     );
                 }
-                $backend = new LdapUserBackend($resource, $userClass, $userNameAttribute);
+                $groupOptions = array(
+                    'group_base_dn'             => $backendConfig->group_base_dn,
+                    'group_attribute'           => $backendConfig->group_attribute,
+                    'group_member_attribute'    => $backendConfig->group_member_attribute,
+                    'group_class'               => $backendConfig->group_class
+                );
+                $backend = new LdapUserBackend(
+                    $resource,
+                    $backendConfig->user_class,
+                    $backendConfig->user_name_attribute,
+                    $groupOptions
+                );
                 break;
             default:
                 throw new ConfigurationError(

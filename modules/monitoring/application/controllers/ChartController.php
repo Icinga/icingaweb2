@@ -2,15 +2,8 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Application\Icinga;
-use Icinga\Application\Config;
-use Icinga\Logger\Logger;
-use Icinga\Web\Form;
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Chart\SVGRenderer;
 use Icinga\Chart\GridChart;
-use Icinga\Chart\Palette;
-use Icinga\Chart\Axis;
 use Icinga\Chart\PieChart;
 use Icinga\Chart\Unit\StaticAxis;
 
@@ -151,7 +144,7 @@ class Monitoring_ChartController extends Controller
         $this->view->chart = new GridChart();
         $this->view->chart->alignTopLeft();
         $this->view->chart->setAxisLabel('', t('Services'))
-            ->setXAxis(new \Icinga\Chart\Unit\StaticAxis())
+            ->setXAxis(new StaticAxis())
             ->setAxisMin(null, 0);
 
         $tooltip = t('<b>{title}:</b><br>{value} of {sum} services are {label}');
@@ -281,7 +274,7 @@ class Monitoring_ChartController extends Controller
             ),
             'colors' => array('#44bb77', '#ff4444', '#ff0000', '#E066FF', '#f099FF', '#fefefe'),
             'labels'=> array(
-                (int) $query->hosts_up . ' Up Hosts',
+                (int) $query->hosts_up . t(' Up Hosts'),
                 (int) $query->hosts_down_handled . t(' Down Hosts (Handled)'),
                 (int) $query->hosts_down_unhandled . t(' Down Hosts (Unhandled)'),
                 (int) $query->hosts_unreachable_handled . t(' Unreachable Hosts (Handled)'),
@@ -301,7 +294,7 @@ class Monitoring_ChartController extends Controller
             ),
             'colors' => array('#44bb77', '#ff4444', '#ff0000', '#ffff00', '#ffff33', '#E066FF', '#f099FF', '#fefefe'),
             'labels'=> array(
-                $query->services_ok . ' Up Services',
+                $query->services_ok . t(' Up Services'),
                 $query->services_warning_handled . t(' Warning Services (Handled)'),
                 $query->services_warning_unhandled . t(' Warning Services (Unhandled)'),
                 $query->services_critical_handled . t(' Down Services (Handled)'),

@@ -1,15 +1,32 @@
+<tr>
+    <th><?= $this->translate('Comments') ?></th>
+    <td>
+        <?php
+
+        /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+
+        if ($object->getType() === $object::TYPE_HOST) {
+            $addCommentLink = $this->href(
+                'monitoring/host/add-comment',
+                array('host' => $object->getName())
+            );
+        } else {
+            $addCommentLink = $this->href(
+                'monitoring/service/add-comment',
+                array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+            );
+        }
+
+        ?>
+        <a href="<?= $addCommentLink ?>">
+            <?= $this->icon('comment_petrol.png') ?> <?= $this->translate('Add comment') ?>
+        </a>
+    </td>
+</tr>
+
 <?php
 
-$cf = $this->getHelper('CommandForm');
-
-$data = array('host' => $object->host_name);
-if ($object->service_description) {
-    $data['service'] = $object->service_description;
-}
-
-$list = array();
 foreach ($object->comments as $comment) {
-
     // Ticket hook sample
     $text = $this->tickets ? preg_replace_callback(
         $this->tickets->getPattern(),
@@ -17,34 +34,26 @@ foreach ($object->comments as $comment) {
         $this->escape($comment->comment)
     ) : $this->escape($comment->comment);
 
-    $deleteData = $data;
-    $deleteData['commentid'] = $comment->id;
 
-    // $iconForm = $cf->iconSubmitForm(
-    //     'img/icons/remove_petrol.png',
-    $iconForm = $cf->labelSubmitForm(
-        'X',
-        'Remove comment',
-        'link-like',
-        'removecomment',
-        $deleteData
-    );
+    $form = clone $delCommentForm;
+    $form->populate(array('comment_id' => $comment->id));
 
-    $list[] = sprintf(
-        '<tr><th>%s (%s)</th><td><table><tr><td style="vertical-align: top;" data-base-target="_self">%s (%s):</td><td style="padding-left: .5em;">%s</td></tr></table></td></tr>',
-        $this->escape($comment->author),
-        $this->timeSince($comment->timestamp),
-        $iconForm,
-        ucfirst($comment->type),
-        str_replace(array('\r\n', '\n'), '<br>', $text)
-    );
-}
+    ?>
 
-?>
-<tr>
-    <th><?= $this->translate('Comments') ?></th>
-    <td>
-        <a href="<?= $this->href('monitoring/command/addComment', $data) ?>"><?= $this->icon('comment_petrol.png') ?> <?= $this->translate('Add comment') ?></a>
-    </td>
-</tr>
-<?= implode("\n", $list) ?>
+    <tr>
+        <th><?= $this->escape($comment->author) ?> (<?= $this->timeSince($comment->timestamp) ?>)</th>
+        <td>
+            <table>
+                <tr>
+                    <td style="vertical-align: top;" data-base-target="_self">
+                        <?= $form ?> (<?= ucfirst($comment->type) ?>):
+                    </td>
+                    <td style="padding-left: .5em;">
+                        <?= str_replace(array('\r\n', '\n'), '<br>', $text) ?>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+<?php }  // endforeach ?>

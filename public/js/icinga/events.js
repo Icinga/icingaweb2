@@ -29,20 +29,17 @@
          */
         initialize: function () {
             this.applyGlobalDefaults();
-            this.applyHandlers($('#layout'));
+            $('#layout').trigger('rendered');
+            //$('.container').trigger('rendered');
             $('.container').each(function(idx, el) {
-                icinga.events.applyHandlers($(el));
                 icinga.ui.initializeControls($(el));
             });
         },
 
         // TODO: What's this?
-        applyHandlers: function (el) {
-            $.each(this.icinga.behaviors, function (name, behavior) {
-                behavior.apply(el);
-            });
-
-            var icinga = this.icinga;
+        applyHandlers: function (evt) {
+            var el = $(evt.target), self = evt.data.self;
+            var icinga = self.icinga;
 
             $('.dashboard > div', el).each(function(idx, el) {
                 var url = $(el).data('icingaUrl');
@@ -78,12 +75,19 @@
                 }
             });
 
-            $('input.autofocus', el).focus();
-
+            if (document.activeElement === document.body) {
+                $('input.autofocus', el).focus();
+            }
             var searchField = $('#menu input.search', el);
             // Remember initial search field value if any
             if (searchField.length && searchField.val().length) {
-                this.searchValue = searchField.val();
+                self.searchValue = searchField.val();
+            }
+
+            if (icinga.ui.isOneColLayout()) {
+                icinga.ui.disableCloseButtons();
+            } else {
+                icinga.ui.enableCloseButtons();
             }
         },
 
@@ -92,8 +96,11 @@
          */
         applyGlobalDefaults: function () {
             $.each(self.icinga.behaviors, function (name, behavior) {
-                behavior.bind();
+                behavior.bind($(document));
             });
+
+            // Apply element-specific behavior whenever the layout is rendered
+            $(document).on('rendered', { self: this }, this.applyHandlers);
 
             // We catch resize events
             $(window).on('resize', { self: this.icinga.ui }, this.icinga.ui.onWindowResize);
@@ -145,7 +152,7 @@
         },
 
         onLoad: function (event) {
-            $('.container').trigger('rendered');
+            //$('.container').trigger('rendered');
         },
 
         onUnload: function (event) {
@@ -370,6 +377,18 @@
             // If link has hash tag...
             if (href.match(/#/)) {
                 if (href === '#') {
+                    if ($a.hasClass('close-toggle')) {
+                        if (! icinga.ui.isOneColLayout()) {
+                            var $cont = $a.closest('.container').first();
+                            if ($cont.attr('id') === 'col1') {
+                                icinga.ui.moveToLeft();
+                                icinga.ui.layout1col();
+                            } else {
+                                icinga.ui.layout1col();
+                            }
+                            icinga.history.pushCurrentState();
+                        }
+                    }
                     return false;
                 }
                 $target = self.getLinkTargetFor($a);
@@ -462,7 +481,7 @@
 
         unbindGlobalHandlers: function () {
             $.each(self.icinga.behaviors, function (name, behavior) {
-                behavior.unbind();
+                behavior.unbind($(document));
             });
             $(window).off('resize', this.onWindowResize);
             $(window).off('load', this.onLoad);

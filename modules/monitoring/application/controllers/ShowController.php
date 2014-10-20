@@ -5,6 +5,7 @@
 use Icinga\Application\Benchmark;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
 use Icinga\Web\Hook;
+use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -35,14 +36,11 @@ class Monitoring_ShowController extends Controller
      */
     public function init()
     {
-        if ($this->getRequest()->getActionName() === 'host') {
-            $this->view->object = new Host($this->params);
-        } elseif ($this->getRequest()->getActionName() === 'service') {
-            $this->view->object = new Service($this->params);
-        } else {
-            // TODO: Well... this could be done better
-            $this->view->object = MonitoredObject::fromParams($this->params);
+        $this->view->object = MonitoredObject::fromParams($this->params);
+        if ($this->view->object && $this->view->object->fetch() === false) {
+            throw new Zend_Controller_Action_Exception($this->translate('Host or service not found'));
         }
+
         if (Hook::has('ticket')) {
             $this->view->tickets = Hook::first('ticket');
         }
@@ -57,36 +55,19 @@ class Monitoring_ShowController extends Controller
     }
 
     /**
-     * Service overview
+     * @deprecated
      */
     public function serviceAction()
     {
-        $o = $this->view->object;
-        $this->setAutorefreshInterval(10);
-        $this->view->title = $o->service_description
-            . ' on ' . $o->host_name;
-        $this->getTabs()->activate('service');
-        $o->populate();
-        if ($this->grapher) {
-            $this->view->grapherHtml = $this->grapher->getPreviewHtml($o);
-        }
-        $this->fetchHostStats();
+        $this->redirectNow(Url::fromRequest()->setPath('monitoring/service/show'));
     }
 
     /**
-     * Host overview
+     * @deprecated
      */
     public function hostAction()
     {
-        $o = $this->view->object;
-        $this->setAutorefreshInterval(10);
-        $this->getTabs()->activate('host');
-        $this->view->title = $o->host_name;
-        $o->populate();
-        if ($this->grapher) {
-            $this->view->grapherHtml = $this->grapher->getPreviewHtml($o);
-        }
-        $this->fetchHostStats();
+        $this->redirectNow(Url::fromRequest()->setPath('monitoring/host/show'));
     }
 
     public function historyAction()
@@ -206,16 +187,17 @@ class Monitoring_ShowController extends Controller
         if (($object = $this->view->object) === null) {
             return;
         }
-
-        $tabs = $this->getTabs();
-        $params = array(
-            'host' => $object->host_name,
-        );
-        if ($object instanceof Service) {
-            $params['service'] = $object->service_description;
-        } elseif ($service = $this->_getParam('service')) {
-            $params['service'] = $service;
+        if ($object->getType() === $object::TYPE_HOST) {
+            $params = array(
+                'host' => $object->getName()
+            );
+        } else {
+            $params = array(
+                'host'      => $object->getHost()->getName(),
+                'service'   => $object->getName()
+            );
         }
+        $tabs = $this->getTabs();
         $tabs->add(
             'host',
             array(

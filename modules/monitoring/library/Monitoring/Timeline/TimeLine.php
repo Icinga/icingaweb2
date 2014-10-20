@@ -11,7 +11,6 @@ use Icinga\Exception\IcingaException;
 use IteratorAggregate;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Hook;
-use Icinga\Web\Session;
 use Icinga\Web\Session\SessionNamespace;
 use Icinga\Module\Monitoring\DataView\DataView;
 
