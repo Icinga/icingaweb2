@@ -52,7 +52,6 @@ $iframeClass = $isIframe ? ' iframe' : '';
 <div id="layout" class="default-layout">
 <?= $this->render('body.phtml') ?>
 </div>
-<?php if (! $isIframe): ?>
 <!--[if IE 8]>
 <script type="text/javascript" src="<?= $this->href($ie8jsfile) ?>"></script>
 <![endif]-->
@@ -64,6 +63,5 @@ var icinga = new Icinga({
   baseUrl: '<?= $this->href('/') ?>'
 });
 </script>
-<?php endif ?>
 </body>
 </html>
