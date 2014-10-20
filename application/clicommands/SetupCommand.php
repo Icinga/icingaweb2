@@ -53,7 +53,7 @@ class SetupCommand extends Command
         $filepath = $this->app->getConfigDir() . '/setup.token';
 
         if (false === @file_put_contents($filepath, $token)) {
-            $this->fail($this->translate('Cannot write setup token to disk.'));
+            $this->fail(sprintf($this->translate('Cannot write setup token "%s" to disk.'), $filepath));
         }
 
         if (false === @chmod($filepath, 0640)) {
