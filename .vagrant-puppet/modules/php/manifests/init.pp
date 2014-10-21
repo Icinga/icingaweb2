@@ -23,6 +23,10 @@ class php {
     require => Package['apache'],
     notify  => Service['apache']
   }
+  -> exec { 'php-timezone':
+    command => 'sed -re $\'s#^;?(date\\.timezone =).*$#\\1 "UTC"#\' -i /etc/php.ini',
+    notify  => Service['apache'],
+  }
 
   file { '/etc/php.d/error_reporting.ini':
     content => template('php/error_reporting.ini.erb'),
