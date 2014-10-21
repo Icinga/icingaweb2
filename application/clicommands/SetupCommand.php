@@ -26,7 +26,7 @@ class SetupCommand extends Command
      */
     public function showTokenAction()
     {
-        $token = @file_get_contents($this->app->getConfigDir() . '/setup.token');
+        $token = file_get_contents($this->app->getConfigDir() . '/setup.token');
         if (! $token) {
             $this->fail(
                 $this->translate('Nothing to show. Please create a new setup token using the generateToken action.')
@@ -55,12 +55,12 @@ class SetupCommand extends Command
         $token = bin2hex(openssl_random_pseudo_bytes(8));
         $filepath = $this->app->getConfigDir() . '/setup.token';
 
-        if (false === @file_put_contents($filepath, $token)) {
+        if (false === file_put_contents($filepath, $token)) {
             $this->fail(sprintf($this->translate('Cannot write setup token "%s" to disk.'), $filepath));
         }
 
-        if (false === @chmod($filepath, 0640)) {
-            $this->fail(sprintf($this->translate('Cannot change access mode of "%s" to %o.'), $filepath, 0640));
+        if (false === chmod($filepath, 0660)) {
+            $this->fail(sprintf($this->translate('Cannot change access mode of "%s" to %o.'), $filepath, 0660));
         }
 
         printf($this->translate("The newly generated setup token is: %s\n"), $token);
