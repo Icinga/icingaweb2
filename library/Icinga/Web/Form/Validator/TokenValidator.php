@@ -4,7 +4,9 @@
 
 namespace Icinga\Web\Form\Validator;
 
+use Exception;
 use Zend_Validate_Abstract;
+use Icinga\Util\File;
 
 /**
  * Validator that checks if a token matches with the contents of a corresponding token-file
@@ -27,10 +29,20 @@ class TokenValidator extends Zend_Validate_Abstract
     {
         $this->tokenPath = $tokenPath;
         $this->_messageTemplates = array(
-            'TOKEN_FILE_NOT_FOUND'  => t('Cannot validate token, file could not be opened or does not exist.'),
-            'TOKEN_FILE_EMPTY'      => t('Cannot validate token, file is empty. Please define a token.'),
-            'TOKEN_FILE_PUBLIC'     => t('Cannot validate token, file is publicly readable.'),
-            'TOKEN_INVALID'         => t('Invalid token supplied.')
+            'TOKEN_FILE_ERROR'  => sprintf(
+                t('Cannot validate token: %s (%s)'),
+                $tokenPath,
+                '%value%'
+            ),
+            'TOKEN_FILE_EMPTY'  => sprintf(
+                t('Cannot validate token, file "%s" is empty. Please define a token.'),
+                $tokenPath
+            ),
+            'TOKEN_FILE_PUBLIC' => sprintf(
+                t('Cannot validate token, file "%s" must only be accessible by the webserver\'s user.'),
+                $tokenPath
+            ),
+            'TOKEN_INVALID'     => t('Invalid token supplied.')
         );
     }
 
@@ -50,13 +62,15 @@ class TokenValidator extends Zend_Validate_Abstract
             return false;
         }
 
-        $expectedToken = @file_get_contents($this->tokenPath);
-        if ($expectedToken === false) {
-            $this->_error('TOKEN_FILE_NOT_FOUND');
+        try {
+            $file = new File($this->tokenPath);
+            $expectedToken = trim($file->fgets());
+        } catch (Exception $e) {
+            $msg = $e->getMessage();
+            $this->_error('TOKEN_FILE_ERROR', substr($msg, strpos($msg, ']: ') + 3));
             return false;
         }
 
-        $expectedToken = trim($expectedToken);
         if (empty($expectedToken)) {
             $this->_error('TOKEN_FILE_EMPTY');
             return false;
@@ -68,4 +82,3 @@ class TokenValidator extends Zend_Validate_Abstract
         return true;
     }
 }
-
