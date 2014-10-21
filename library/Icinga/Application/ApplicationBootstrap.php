@@ -15,6 +15,7 @@ use Icinga\Logger\Logger;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
 use Icinga\Exception\IcingaException;
+use Icinga\Config\PreservingIniWriter;
 
 /**
  * This class bootstraps a thin Icinga application layer
@@ -363,12 +364,20 @@ abstract class ApplicationBootstrap
     protected function loadConfig()
     {
         Config::$configDir = $this->configDir;
+
         try {
             $this->config = Config::app();
         } catch (NotReadableError $e) {
             Logger::error(new IcingaException('Cannot load application configuration. An exception was thrown:', $e));
             $this->config = new Zend_Config(array());
         }
+
+        if ($this->config->global !== null) {
+            PreservingIniWriter::$fileMode = octdec($this->config->global->get('filemode', '0664'));
+        } else {
+            PreservingIniWriter::$fileMode = 0664;
+        }
+
         return $this;
     }
 

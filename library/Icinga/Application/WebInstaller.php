@@ -131,13 +131,18 @@ class WebInstaller implements Installer
 
         $config = array(
             'global'        => array(
-                'modulepath'    => $this->pageData['setup_general_config']['global_modulePath']
+                'modulepath'    => $this->pageData['setup_general_config']['global_modulePath'],
+                'filemode'      => $this->pageData['setup_general_config']['global_filemode']
             ),
             'preferences'   => $preferencesConfig,
             'logging'       => $loggingConfig
         );
 
-        $writer = new PreservingIniWriter(array('config' => new Zend_Config($config), 'filename' => $configPath));
+        $writer = new PreservingIniWriter(array(
+            'config'    => new Zend_Config($config),
+            'filename'  => $configPath,
+            'filemode'  => octdec($this->pageData['setup_general_config']['global_filemode'])
+        ));
         $writer->write();
     }
 
@@ -178,7 +183,8 @@ class WebInstaller implements Installer
 
         $writer = new PreservingIniWriter(array(
             'config'    => new Zend_Config($resourceConfig),
-            'filename'  => $configPath
+            'filename'  => $configPath,
+            'filemode'  => octdec($this->pageData['setup_general_config']['global_filemode'])
         ));
         $writer->write();
     }
@@ -213,7 +219,8 @@ class WebInstaller implements Installer
 
         $writer = new PreservingIniWriter(array(
             'config'    => new Zend_Config($backendConfig),
-            'filename'  => $configPath
+            'filename'  => $configPath,
+            'filemode'  => octdec($this->pageData['setup_general_config']['global_filemode'])
         ));
         $writer->write();
     }

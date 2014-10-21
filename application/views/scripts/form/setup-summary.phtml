@@ -157,6 +157,10 @@ $loggingType = $summary['setup_general_config']['logging_log'];
           $summary['setup_general_config']['global_modulePath']
         ); ?></li>
         <li><?= sprintf(
+          t('Icinga Web 2 will save new configuration files using the mode "%s".'),
+          $summary['setup_general_config']['global_filemode']
+        ); ?></li>
+        <li><?= sprintf(
           $prefType === 'ini' ? sprintf(
             t('Preferences will be stored per user account in INI files at: %s'),
             Config::$configDir . '/preferences'
