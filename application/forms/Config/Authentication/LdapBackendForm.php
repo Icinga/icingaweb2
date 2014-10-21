@@ -55,7 +55,9 @@ class LdapBackendForm extends Form
             array(
                 'required'      => true,
                 'label'         => t('Backend Name'),
-                'description'   => t('The name of this authentication backend')
+                'description'   => t(
+                    'The name of this authentication provider that is used to differentiate it from others'
+                )
             )
         );
         $this->addElement(

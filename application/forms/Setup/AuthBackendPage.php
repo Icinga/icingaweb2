@@ -59,21 +59,28 @@ class AuthBackendPage extends Form
      */
     public function createElements(array $formData)
     {
+        $this->config['type'] = 'autologin';
+        if ($this->config['type'] === 'db') {
+            $note = t(
+                'As you\'ve chosen to use a database for authentication all you need '
+                . 'to do now is defining a name for your first authentication backend.'
+            );
+        } elseif ($this->config['type'] === 'ldap') {
+            $note = t(
+                'Before you are able to authenticate using the LDAP connection defined earlier you need to'
+                . ' provide some more information so that Icinga Web 2 is able to locate account details.'
+            );
+        } else { // if ($this->config['type'] === 'autologin'
+            $note = t(
+                'You\'ve chosen to authenticate using a web server\'s mechanism so it may be necessary'
+                . ' to adjust usernames before any permissions, restrictions, etc. are being applied.'
+            );
+        }
+
         $this->addElement(
             new Note(
                 'description',
-                array(
-                    'value' => sprintf(
-                        t(
-                            'Now please enter all configuration details required'
-                            . ' to authenticate using this %s backend.',
-                            'setup.auth.backend'
-                        ),
-                        $this->config['type'] === 'db' ? t('database', 'setup.auth.backend.type') : (
-                            $this->config['type'] === 'ldap' ? 'LDAP' : t('autologin', 'setup.auth.backend.type')
-                        )
-                    )
-                )
+                array('value' => $note)
             )
         );
 

@@ -31,7 +31,9 @@ class AutologinBackendForm extends Form
             array(
                 'required'      => true,
                 'label'         => t('Backend Name'),
-                'description'   => t('The name of this authentication backend'),
+                'description'   => t(
+                    'The name of this authentication provider that is used to differentiate it from others'
+                ),
                 'validators'    => array(
                     array(
                         'Regex',
@@ -50,8 +52,8 @@ class AutologinBackendForm extends Form
             'text',
             'strip_username_regexp',
             array(
-                'label'         => t('Backend Domain Pattern'),
-                'description'   => t('The domain pattern of this authentication backend'),
+                'label'         => t('Filter Pattern'),
+                'description'   => t('The regular expression to use to strip specific parts off from usernames. Leave empty if you do not want to strip off anything'),
                 'value'         => '/\@[^$]+$/',
                 'validators'    => array(
                     new Zend_Validate_Callback(function ($value) {
