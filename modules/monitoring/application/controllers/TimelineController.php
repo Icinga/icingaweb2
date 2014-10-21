@@ -35,32 +35,32 @@ class Monitoring_TimelineController extends Controller
             array(
                 'notify'        => array(
                     'detailUrl' => $detailUrl,
-                    'label'     => t('Notifications'),
+                    'label'     => mt('monitoring', 'Notifications'),
                     'color'     => '#3a71ea'
                 ),
                 'hard_state'    => array(
                     'detailUrl' => $detailUrl,
-                    'label'     => t('Hard state changes'),
+                    'label'     => mt('monitoring', 'Hard state changes'),
                     'color'     => '#ff7000'
                 ),
                 'comment'       => array(
                     'detailUrl' => $detailUrl,
-                    'label'     => t('Comments'),
+                    'label'     => mt('monitoring', 'Comments'),
                     'color'     => '#79bdba'
                 ),
                 'ack'           => array(
                     'detailUrl' => $detailUrl,
-                    'label'     => t('Acknowledgements'),
+                    'label'     => mt('monitoring', 'Acknowledgements'),
                     'color'     => '#a2721d'
                 ),
                 'dt_start'      => array(
                     'detailUrl' => $detailUrl,
-                    'label'     => t('Started downtimes'),
+                    'label'     => mt('monitoring', 'Started downtimes'),
                     'color'     => '#8e8e8e'
                 ),
                 'dt_end'        => array(
                     'detailUrl' => $detailUrl,
-                    'label'     => t('Ended downtimes'),
+                    'label'     => mt('monitoring', 'Ended downtimes'),
                     'color'     => '#d5d6ad'
                 )
             )
@@ -88,13 +88,13 @@ class Monitoring_TimelineController extends Controller
         $box = new SelectBox(
             'intervalBox',
             array(
-                '4h' => t('4 Hours'),
-                '1d' => t('One day'),
-                '1w' => t('One week'),
-                '1m' => t('One month'),
-                '1y' => t('One year')
+                '4h' => mt('monitoring', '4 Hours'),
+                '1d' => mt('monitoring', 'One day'),
+                '1w' => mt('monitoring', 'One week'),
+                '1m' => mt('monitoring', 'One month'),
+                '1y' => mt('monitoring', 'One year')
             ),
-            t('TimeLine interval'),
+            mt('monitoring', 'TimeLine interval'),
             'interval'
         );
         $box->applyRequest($this->getRequest());

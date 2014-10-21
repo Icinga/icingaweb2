@@ -71,7 +71,7 @@ class Backend implements Selectable, Queryable, ConnectionInterface
     {
         $config = IcingaConfig::module('monitoring', 'backends');
         if ($config->count() === 0) {
-            throw new ConfigurationError(t('No backend has been configured'));
+            throw new ConfigurationError(mt('monitoring', 'No backend has been configured'));
         }
         if ($backendName !== null) {
             $backendConfig = $config->get($backendName);
@@ -80,7 +80,7 @@ class Backend implements Selectable, Queryable, ConnectionInterface
             }
             if ((bool) $backendConfig->get('disabled', false) === true) {
                 throw new ConfigurationError(
-                    t('Configuration for backend %s available but backend is disabled'),
+                    mt('monitoring', 'Configuration for backend %s available but backend is disabled'),
                     $backendName
                 );
             }
@@ -92,7 +92,7 @@ class Backend implements Selectable, Queryable, ConnectionInterface
                 }
             }
             if ($backendName === null) {
-                throw new ConfigurationError(t('All backends are disabled'));
+                throw new ConfigurationError(mt('monitoring', 'All backends are disabled'));
             }
         }
         $resource = ResourceFactory::create($backendConfig->resource);

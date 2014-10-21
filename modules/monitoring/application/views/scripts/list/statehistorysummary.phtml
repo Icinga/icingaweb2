@@ -23,39 +23,39 @@ use Icinga\Web\Widget\Chart\HistoryColorGrid;
 
 $settings = array(
     'cnt_up' => array(
-        'tooltip' => t('%d ok on %s'),
+        'tooltip' => mt('monitoring', '%d ok on %s'),
         'color' => '#49DF96',
         'opacity' => '0.55'
     ),
     'cnt_unreachable_hard' => array(
-        'tooltip' => t('%d unreachable on %s'),
+        'tooltip' => mt('monitoring', '%d unreachable on %s'),
         'color' => '#77AAFF',
         'opacity' => '0.55'
     ),
     'cnt_critical_hard' => array(
-        'tooltip' => t('%d critical on %s'),
+        'tooltip' => mt('monitoring', '%d critical on %s'),
         'color' => '#ff5566',
         'opacity' => '0.9'
     ),
 
     'cnt_warning_hard' => array(
-        'tooltip' => t('%d warning on %s'),
+        'tooltip' => mt('monitoring', '%d warning on %s'),
         'color' => '#ffaa44',
         'opacity' => '1.0'
     ),
 
     'cnt_down_hard' => array(
-        'tooltip' => t('%d down on %s'),
+        'tooltip' => mt('monitoring', '%d down on %s'),
         'color' => '#ff5566',
         'opacity' => '0.9'
     ),
     'cnt_unknown_hard' => array(
-        'tooltip' => t('%d unknown on %s'),
+        'tooltip' => mt('monitoring', '%d unknown on %s'),
         'color' => '#cc77ff',
         'opacity' => '0.7'
     ),
     'cnt_ok' => array(
-        'tooltip' => t('%d ok on %s'),
+        'tooltip' => mt('monitoring', '%d ok on %s'),
         'color' => '#49DF96',
         'opacity' => '0.55'
     )
@@ -71,7 +71,7 @@ if ($to - $from > 315360000) {
 $data = array();
 
 if (count($summary) === 0) {
-    echo t('No state changes in the selected time period.');
+    echo mt('monitoring', 'No state changes in the selected time period.');
 }
 foreach ($summary as $entry) {
     $day = $entry->day;

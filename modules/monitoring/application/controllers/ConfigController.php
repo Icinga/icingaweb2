@@ -73,7 +73,7 @@ class Monitoring_ConfigController extends ModuleActionController
                 }
 
                 if ($configForm->save()) {
-                    Notification::success(sprintf(t('Backend "%s" successfully removed.'), $backendName));
+                    Notification::success(sprintf(mt('monitoring', 'Backend "%s" successfully removed.'), $backendName));
                 } else {
                     return false;
                 }
@@ -105,7 +105,7 @@ class Monitoring_ConfigController extends ModuleActionController
                 }
 
                 if ($configForm->save()) {
-                    Notification::success(sprintf(t('Instance "%s" successfully removed.'), $instanceName));
+                    Notification::success(sprintf(mt('monitoring', 'Instance "%s" successfully removed.'), $instanceName));
                 } else {
                     return false;
                 }

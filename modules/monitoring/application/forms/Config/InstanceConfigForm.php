@@ -23,7 +23,7 @@ class InstanceConfigForm extends ConfigForm
     public function init()
     {
         $this->setName('form_config_monitoring_instance');
-        $this->setSubmitLabel(t('Save Changes'));
+        $this->setSubmitLabel(mt('monitoring', 'Save Changes'));
     }
 
     /**
@@ -42,7 +42,7 @@ class InstanceConfigForm extends ConfigForm
         } elseif ($type === 'remote') {
             return new RemoteInstanceForm();
         } else {
-            throw new InvalidArgumentException(sprintf(t('Invalid instance type "%s" provided'), $type));
+            throw new InvalidArgumentException(sprintf(mt('monitoring', 'Invalid instance type "%s" provided'), $type));
         }
     }
 
@@ -61,9 +61,9 @@ class InstanceConfigForm extends ConfigForm
     {
         $name = isset($values['name']) ? $values['name'] : '';
         if (! $name) {
-            throw new InvalidArgumentException(t('Instance name missing'));
+            throw new InvalidArgumentException(mt('monitoring', 'Instance name missing'));
         } elseif ($this->config->get($name) !== null) {
-            throw new InvalidArgumentException(t('Instance already exists'));
+            throw new InvalidArgumentException(mt('monitoring', 'Instance already exists'));
         }
 
         unset($values['name']);
@@ -84,11 +84,11 @@ class InstanceConfigForm extends ConfigForm
     public function edit($name, array $values)
     {
         if (! $name) {
-            throw new InvalidArgumentException(t('Old instance name missing'));
+            throw new InvalidArgumentException(mt('monitoring', 'Old instance name missing'));
         } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
-            throw new InvalidArgumentException(t('New instance name missing'));
+            throw new InvalidArgumentException(mt('monitoring', 'New instance name missing'));
         } elseif (! ($instanceConfig = $this->config->get($name))) {
-            throw new InvalidArgumentException(t('Unknown instance name provided'));
+            throw new InvalidArgumentException(mt('monitoring', 'Unknown instance name provided'));
         }
 
         unset($values['name']);
@@ -109,9 +109,9 @@ class InstanceConfigForm extends ConfigForm
     public function remove($name)
     {
         if (! $name) {
-            throw new InvalidArgumentException(t('Instance name missing'));
+            throw new InvalidArgumentException(mt('monitoring', 'Instance name missing'));
         } elseif (! ($instanceConfig = $this->config->get($name))) {
-            throw new InvalidArgumentException(t('Unknown instance name provided'));
+            throw new InvalidArgumentException(mt('monitoring', 'Unknown instance name provided'));
         }
 
         unset($this->config->{$name});
@@ -128,10 +128,10 @@ class InstanceConfigForm extends ConfigForm
         try {
             if ($instanceName === null) { // create new instance
                 $this->add($this->getValues());
-                $message = t('Instance "%s" created successfully.');
+                $message = mt('monitoring', 'Instance "%s" created successfully.');
             } else { // edit existing instance
                 $this->edit($instanceName, $this->getValues());
-                $message = t('Instance "%s" edited successfully.');
+                $message = mt('monitoring', 'Instance "%s" edited successfully.');
             }
         } catch (InvalidArgumentException $e) {
             Notification::error($e->getMessage());
@@ -155,9 +155,9 @@ class InstanceConfigForm extends ConfigForm
         $instanceName = $request->getQuery('instance');
         if ($instanceName !== null) {
             if (! $instanceName) {
-                throw new ConfigurationError(t('Instance name missing'));
+                throw new ConfigurationError(mt('monitoring', 'Instance name missing'));
             } elseif (false === isset($this->config->{$instanceName})) {
-                throw new ConfigurationError(t('Unknown instance name provided'));
+                throw new ConfigurationError(mt('monitoring', 'Unknown instance name provided'));
             }
 
             $instanceConfig = $this->config->{$instanceName}->toArray();
@@ -182,7 +182,7 @@ class InstanceConfigForm extends ConfigForm
             'name',
             array(
                 'required'  => true,
-                'label'     => t('Instance Name')
+                'label'     => mt('monitoring', 'Instance Name')
             )
         );
         $this->addElement(
@@ -192,13 +192,13 @@ class InstanceConfigForm extends ConfigForm
                 'required'      => true,
                 'ignore'        => true,
                 'autosubmit'    => true,
-                'label'         => t('Instance Type'),
-                'description'   => t(
+                'label'         => mt('monitoring', 'Instance Type'),
+                'description'   => mt('monitoring',
                     'When configuring a remote host, you need to setup passwordless key authentication'
                 ),
                 'multiOptions'  => array(
-                    'local'     => t('Local Command Pipe'),
-                    'remote'    => t('Remote Command Pipe')
+                    'local'     => mt('monitoring', 'Local Command Pipe'),
+                    'remote'    => mt('monitoring', 'Remote Command Pipe')
                 ),
                 'value'         => $instanceType
             )

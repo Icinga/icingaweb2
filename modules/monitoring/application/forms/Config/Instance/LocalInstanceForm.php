@@ -26,9 +26,9 @@ class LocalInstanceForm extends Form
             'path',
             array(
                 'required'      => true,
-                'label'         => t('Local Filepath'),
+                'label'         => mt('monitoring', 'Local Filepath'),
                 'value'         => '/usr/local/icinga/var/rw/icinga.cmd',
-                'description'   => t('The file path where the icinga commandpipe can be found')
+                'description'   => mt('monitoring', 'The file path where the icinga commandpipe can be found')
             )
         );
 

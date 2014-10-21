@@ -46,7 +46,7 @@ class Monitoring_HostsController extends Controller
         $this->getTabs()->add(
             'show',
             array(
-                'title' => t('Hosts'),
+                'title' => mt('monitoring', 'Hosts'),
                 'url' => Url::fromRequest()
             )
         )->activate('show');

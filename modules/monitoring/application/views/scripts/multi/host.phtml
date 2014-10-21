@@ -10,7 +10,7 @@ $this->target = array('host'	=> $this->hostquery);
 
 <div class="content">
     <?php if (count($objects) === 0): ?>
-         <?= t('No hosts matching the filter'); ?>
+         <?= mt('monitoring', 'No hosts matching the filter'); ?>
     <?php else: ?>
     <h1> Summary for <?= count($objects) ?> hosts </h1>
     <?= $this->render('multi/components/objectlist.phtml'); ?>

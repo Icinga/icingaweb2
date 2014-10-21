@@ -24,8 +24,8 @@ class RemoteInstanceForm extends Form
             'host',
             array(
                 'required'      => true,
-                'label'         => t('Remote Host'),
-                'description'   => t(
+                'label'         => mt('monitoring', 'Remote Host'),
+                'description'   => mt('monitoring',
                     'Enter the hostname or address of the machine on which the icinga instance is running'
                 )
             )
@@ -35,8 +35,8 @@ class RemoteInstanceForm extends Form
                 array(
                     'required'      => true,
                     'name'          => 'port',
-                    'label'         => t('Remote SSH Port'),
-                    'description'   => t('Enter the ssh port to use for connecting to the remote icinga instance'),
+                    'label'         => mt('monitoring', 'Remote SSH Port'),
+                    'description'   => mt('monitoring', 'Enter the ssh port to use for connecting to the remote icinga instance'),
                     'value'         => 22
                 )
             )
@@ -46,8 +46,8 @@ class RemoteInstanceForm extends Form
             'user',
             array(
                 'required'      => true,
-                'label'         => t('Remote SSH User'),
-                'description'   => t(
+                'label'         => mt('monitoring', 'Remote SSH User'),
+                'description'   => mt('monitoring',
                     'Enter the username to use for connecting to the remote machine or leave blank for default'
                 )
             )
@@ -57,9 +57,9 @@ class RemoteInstanceForm extends Form
             'path',
             array(
                 'required'      => true,
-                'label'         => t('Remote Filepath'),
+                'label'         => mt('monitoring', 'Remote Filepath'),
                 'value'         => '/usr/local/icinga/var/rw/icinga.cmd',
-                'description'   => t('The file path where the icinga commandpipe can be found')
+                'description'   => mt('monitoring', 'The file path where the icinga commandpipe can be found')
             )
         );
 
