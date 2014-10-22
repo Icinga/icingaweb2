@@ -59,7 +59,6 @@ class AuthBackendPage extends Form
      */
     public function createElements(array $formData)
     {
-        $this->config['type'] = 'autologin';
         if ($this->config['type'] === 'db') {
             $note = t(
                 'As you\'ve chosen to use a database for authentication all you need '
