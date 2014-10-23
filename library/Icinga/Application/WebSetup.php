@@ -257,20 +257,6 @@ class WebSetup extends Wizard implements SetupWizard
             ))
         );
 
-        if (isset($pageData['setup_db_resource']) || isset($pageData['setup_ldap_resource'])) {
-            $installer->addStep(
-                new ResourceStep(array(
-                    'fileMode'              => $pageData['setup_general_config']['global_filemode'],
-                    'dbResourceConfig'      => isset($pageData['setup_db_resource'])
-                        ? array_diff_key($pageData['setup_db_resource'], array('skip_validation' => null))
-                        : null,
-                    'ldapResourceConfig'    => isset($pageData['setup_ldap_resource'])
-                        ? array_diff_key($pageData['setup_ldap_resource'], array('skip_validation' => null))
-                        : null
-                ))
-            );
-        }
-
         $adminAccountType = $pageData['setup_admin_account']['user_type'];
         $adminAccountData = array('username' => $pageData['setup_admin_account'][$adminAccountType]);
         if ($adminAccountType === 'new_user' && ! $pageData['setup_db_resource']['skip_validation']
@@ -292,6 +278,20 @@ class WebSetup extends Wizard implements SetupWizard
                 )
             ))
         );
+
+        if (isset($pageData['setup_db_resource']) || isset($pageData['setup_ldap_resource'])) {
+            $installer->addStep(
+                new ResourceStep(array(
+                    'fileMode'              => $pageData['setup_general_config']['global_filemode'],
+                    'dbResourceConfig'      => isset($pageData['setup_db_resource'])
+                        ? array_diff_key($pageData['setup_db_resource'], array('skip_validation' => null))
+                        : null,
+                    'ldapResourceConfig'    => isset($pageData['setup_ldap_resource'])
+                        ? array_diff_key($pageData['setup_ldap_resource'], array('skip_validation' => null))
+                        : null
+                ))
+            );
+        }
 
         return $installer;
     }

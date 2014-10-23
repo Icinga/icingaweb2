@@ -199,40 +199,45 @@
   }
 }
 
-#setup div.summary {
-  div.page {
-    float: left;
-    width: 30em;
-    padding: 0 1em 1em;
-    margin: 1em 2em 2em;
-    border-radius: 0.5em;
-    border: 1px dashed lightgrey;
+#setup {
+  div.summary {
+    font-size: 90%;
 
-    h2 {
-      font-size: 1.2em;
-    }
+    div.page {
+      float: left;
+      width: 25em;
+      min-height: 20em;
+      padding: 0 1em 1em;
+      margin: 1em 1.5em 1.5em;
+      border-radius: 0.5em;
+      border: 1px dashed lightgrey;
 
-    div.topic {
-      margin-left: 2em;
-
-      h3 {
-        font-size: 1em;
+      h2 {
+        font-size: 1.2em;
       }
 
-      ul {
-        list-style-type: circle;
-      }
-
-      table {
-        border-spacing: 0.5em;
-        border-collapse: separate;
-        font-size: 0.9em;
+      div.topic {
         margin-left: 2em;
+
+        h3 {
+          font-size: 1em;
+        }
+
+        ul {
+          list-style-type: circle;
+        }
+
+        table {
+          border-spacing: 0.5em;
+          border-collapse: separate;
+          font-size: 0.9em;
+          margin-left: 2em;
+        }
       }
     }
   }
 
-  form {
+  form#setup_summary {
     clear: left;
   }
 }
