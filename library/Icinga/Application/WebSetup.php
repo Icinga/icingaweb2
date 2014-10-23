@@ -18,10 +18,15 @@ use Icinga\Form\Setup\RequirementsPage;
 use Icinga\Form\Setup\GeneralConfigPage;
 use Icinga\Form\Setup\AuthenticationPage;
 use Icinga\Form\Setup\DatabaseCreationPage;
+use Icinga\Application\Installation\DatabaseStep;
+use Icinga\Application\Installation\GeneralConfigStep;
+use Icinga\Application\Installation\ResourceStep;
+use Icinga\Application\Installation\AuthenticationStep;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
 use Icinga\Web\Request;
 use Icinga\Web\Setup\DbTool;
+use Icinga\Web\Setup\Installer;
 use Icinga\Web\Setup\SetupWizard;
 use Icinga\Web\Setup\Requirements;
 
@@ -221,7 +226,74 @@ class WebSetup extends Wizard implements SetupWizard
      */
     public function getInstaller()
     {
-        return new WebInstaller($this->getPageData());
+        $pageData = $this->getPageData();
+        $installer = new Installer();
+
+        if (isset($pageData['setup_db_resource'])
+            && ! $pageData['setup_db_resource']['skip_validation']
+            && (false === isset($pageData['setup_database_creation'])
+                || ! $pageData['setup_database_creation']['skip_validation']
+            )
+        ) {
+            $installer->addStep(
+                new DatabaseStep(array(
+                    'resourceConfig'    => $pageData['setup_db_resource'],
+                    'adminName'         => isset($pageData['setup_database_creation']['username'])
+                        ? $pageData['setup_database_creation']['username']
+                        : null,
+                    'adminPassword'     => isset($pageData['setup_database_creation']['password'])
+                        ? $pageData['setup_database_creation']['password']
+                        : null
+                ))
+            );
+        }
+
+        $installer->addStep(
+            new GeneralConfigStep(array(
+                'generalConfig'         => $pageData['setup_general_config'],
+                'preferencesType'       => $pageData['setup_preferences_type']['type'],
+                'preferencesResource'   => $pageData['setup_db_resource']['name'],
+                'fileMode'              => $pageData['setup_general_config']['global_filemode']
+            ))
+        );
+
+        if (isset($pageData['setup_db_resource']) || isset($pageData['setup_ldap_resource'])) {
+            $installer->addStep(
+                new ResourceStep(array(
+                    'fileMode'              => $pageData['setup_general_config']['global_filemode'],
+                    'dbResourceConfig'      => isset($pageData['setup_db_resource'])
+                        ? array_diff_key($pageData['setup_db_resource'], array('skip_validation' => null))
+                        : null,
+                    'ldapResourceConfig'    => isset($pageData['setup_ldap_resource'])
+                        ? array_diff_key($pageData['setup_ldap_resource'], array('skip_validation' => null))
+                        : null
+                ))
+            );
+        }
+
+        $adminAccountType = $pageData['setup_admin_account']['user_type'];
+        $adminAccountData = array('username' => $pageData['setup_admin_account'][$adminAccountType]);
+        if ($adminAccountType === 'new_user' && ! $pageData['setup_db_resource']['skip_validation']
+            && (false === isset($pageData['setup_database_creation'])
+                || ! $pageData['setup_database_creation']['skip_validation']
+            )
+        ) {
+            $adminAccountData['resourceConfig'] = $pageData['setup_db_resource'];
+            $adminAccountData['password'] = $pageData['setup_admin_account']['new_user_password'];
+        }
+        $authType = $pageData['setup_authentication_type']['type'];
+        $installer->addStep(
+            new AuthenticationStep(array(
+                'adminAccountData'  => $adminAccountData,
+                'fileMode'          => $pageData['setup_general_config']['global_filemode'],
+                'backendConfig'     => $pageData['setup_authentication_backend'],
+                'resourceName'      => $authType === 'db' ? $pageData['setup_db_resource']['name'] : (
+                    $authType === 'ldap' ? $pageData['setup_ldap_resource']['name'] : null
+                )
+            ))
+        );
+
+        return $installer;
     }
 
     /**
