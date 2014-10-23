@@ -95,7 +95,53 @@ class AuthenticationStep extends Step
 
     public function getSummary()
     {
-        return '';
+        $pageTitle = '<h2>' . t('Authentication') . '</h2>';
+        $backendTitle = '<h3>' . t('Backend Configuration') . '</h3>';
+        $adminTitle = '<h3>' . t('Initial Administrative Account') . '</h3>';
+
+        $authType = $this->data['backendConfig']['backend'];
+        $backendDesc = '<p>' . sprintf(
+            t('Users will authenticate using %s.', 'setup.summary.auth'),
+            $authType === 'db' ? t('a database', 'setup.summary.auth.type') : (
+                $authType === 'ldap' ? 'LDAP' : t('webserver authentication', 'setup.summary.auth.type')
+            )
+        ) . '</p>';
+
+        $backendHtml = ''
+            . '<table>'
+            . '<tbody>'
+            . '<tr>'
+            . '<td><strong>' . t('Backend Name') . '</strong></td>'
+            . '<td>' . $this->data['backendConfig']['name'] . '</td>'
+            . '</tr>'
+            . ($authType === 'ldap' ? (
+                '<tr>'
+                . '<td><strong>' . t('User Object Class') . '</strong></td>'
+                . '<td>' . $this->data['backendConfig']['user_class'] . '</td>'
+                . '</tr>'
+                . '<tr>'
+                . '<td><strong>' . t('User Name Attribute') . '</strong></td>'
+                . '<td>' . $this->data['backendConfig']['user_name_attribute'] . '</td>'
+                . '</tr>'
+            ) : ($authType === 'autologin' ? (
+                '<tr>'
+                . '<td><strong>' . t('Filter Pattern') . '</strong></td>'
+                . '<td>' . $this->data['backendConfig']['strip_username_regexp'] . '</td>'
+                . '</tr>'
+            ) : ''))
+            . '</tbody>'
+            . '</table>';
+
+        $adminHtml = '<p>' . (isset($this->data['adminAccountData']['resourceConfig']) ? sprintf(
+            t('Administrative rights will initially be granted to an existing account called "%s".'),
+            $this->data['adminAccountData']['username']
+        ) : sprintf(
+            t('Administrative rights will initially be granted to a new account called "%s".'),
+            $this->data['adminAccountData']['username']
+        )) . '</p>';
+
+        return $pageTitle . '<div class="topic">' . $backendDesc . $backendTitle . $backendHtml . '</div>'
+            . '<div class="topic">' . $adminTitle . $adminHtml . '</div>';
     }
 
     public function getReport()

@@ -1,227 +1,25 @@
 <?php
 
 use Icinga\Web\Wizard;
-use Icinga\Logger\Logger;
-use Icinga\Application\Config;
-
-$summary = $form->getSummary();
-$prefType = $summary['setup_preferences_type']['type'];
-$authType = $summary['setup_authentication_type']['type'];
-$adminType = $summary['setup_admin_account']['user_type'];
-$loggingType = $summary['setup_general_config']['logging_log'];
 
 ?>
 <p><?= t(
-    'The wizard is now complete. You can review the changes supposed to be made before issuing the actual installation'
-    . ' of Icinga Web 2. Make sure that everything is correct (Feel free to navigate back to make any corrections!) so'
-    . ' that you can start using Icinga Web 2 right after the installation has been finished.'
+  'The wizard is now complete. You can review the changes supposed to be made before issuing the actual installation'
+  . ' of Icinga Web 2. Make sure that everything is correct (Feel free to navigate back to make any corrections!) so'
+  . ' that you can start using Icinga Web 2 right after the installation has been finished.'
 ); ?></p>
 <div class="summary">
-<?php if ($authType !== 'autologin' || $prefType === 'db'): ?>
+<?php foreach ($form->getSummary() as $pageHtml): ?>
   <div class="page">
-    <h2><?= $authType === 'ldap' && $prefType === 'db' ? t('Resources') : t('Resource'); ?></h2>
-  <?php if ($authType === 'db' || $prefType === 'db'): ?>
-    <div class="topic">
-      <p>
-        <?= $authType === 'db' && $prefType === 'db'
-          ? t('The following database will be used to authenticate users and to store preferences.') : (
-            $authType === 'db' ? t('The following database will be used to authenticate users.') : (
-              t('The following database will be used to store preferences.')
-            )
-          );
-        ?>
-      </p>
-      <h3><?= t('Database'); ?></h3>
-      <table>
-        <tbody>
-          <tr>
-            <td><strong><?= t('Resource Name'); ?></strong></td>
-            <td><?= $summary['setup_db_resource']['name']; ?></td>
-          </tr>
-          <tr>
-            <td><strong><?= t('Database Type'); ?></strong></td>
-            <td><?= $summary['setup_db_resource']['db']; ?></td>
-          </tr>
-          <tr>
-            <td><strong><?= t('Host'); ?></strong></td>
-            <td><?= $summary['setup_db_resource']['host']; ?></td>
-          </tr>
-          <tr>
-            <td><strong><?= t('Port'); ?></strong></td>
-            <td><?= $summary['setup_db_resource']['port']; ?></td>
-          </tr>
-          <tr>
-            <td><strong><?= t('Database Name'); ?></strong></td>
-            <td><?= $summary['setup_db_resource']['dbname']; ?></td>
-          </tr>
-          <tr>
-            <td><strong><?= t('Username'); ?></strong></td>
-            <td><?= $summary['setup_db_resource']['username']; ?></td>
-          </tr>
-          <tr>
-            <td><strong><?= t('Password'); ?></strong></td>
-            <td><?= str_repeat('*', strlen($summary['setup_db_resource']['password'])); ?></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  <?php endif ?>
-  <?php if ($authType === 'ldap'): ?>
-    <div class="topic">
-      <p><?= t('The following LDAP connection will be used to authenticate users.'); ?></p>
-      <h3>LDAP</h3>
-      <table>
-        <tbody>
-          <tr>
-            <td><strong><?= t('Resource Name'); ?></strong></td>
-            <td><?= $summary['setup_ldap_resource']['name']; ?></td>
-          </tr>
-          <tr>
-            <td><strong><?= t('Host'); ?></strong></td>
-            <td><?= $summary['setup_ldap_resource']['hostname']; ?></td>
-          </tr>
-          <tr>
-            <td><strong><?= t('Port'); ?></strong></td>
-            <td><?= $summary['setup_ldap_resource']['port']; ?></td>
-          </tr>
-          <tr>
-            <td><strong><?= t('Root DN'); ?></strong></td>
-            <td><?= $summary['setup_ldap_resource']['root_dn']; ?></td>
-          </tr>
-          <tr>
-            <td><strong><?= t('Bind DN'); ?></strong></td>
-            <td><?= $summary['setup_ldap_resource']['bind_dn']; ?></td>
-          </tr>
-          <tr>
-            <td><strong><?= t('Bind Password'); ?></strong></td>
-            <td><?= str_repeat('*', strlen($summary['setup_ldap_resource']['bind_pw'])); ?></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  <?php endif ?>
+    <?= $pageHtml; ?>
   </div>
-<?php endif ?>
-  <div class="page">
-    <h2><?= t('Authentication'); ?></h2>
-    <div class="topic">
-      <p><?= sprintf(
-        t('Users will authenticate using %s.', 'setup.summary.auth'),
-        $authType === 'db' ? t('a database', 'setup.summary.auth.type') : (
-          $authType === 'ldap' ? 'LDAP' : t('webserver authentication', 'setup.summary.auth.type')
-        )
-      ); ?></p>
-      <h3><?= t('Backend Configuration'); ?></h3>
-      <table>
-        <tbody>
-          <tr>
-            <td><strong><?= t('Backend Name'); ?></strong></td>
-            <td><?= $summary['setup_authentication_backend']['name']; ?></td>
-          </tr>
-        <?php if ($authType === 'ldap'): ?>
-          <tr>
-            <td><strong><?= t('User Object Class'); ?></strong></td>
-            <td><?= $summary['setup_authentication_backend']['user_class']; ?></td>
-          </tr>
-          <tr>
-            <td><strong><?= t('User Name Attribute'); ?></strong></td>
-            <td><?= $summary['setup_authentication_backend']['user_name_attribute']; ?></td>
-          </tr>
-        <?php elseif ($authType === 'autologin'): ?>
-          <tr>
-            <td><strong><?= t('Backend Domain Pattern'); ?></strong></td>
-            <td><?= $summary['setup_authentication_backend']['strip_username_regexp']; ?></td>
-          </tr>
-        <?php endif ?>
-        </tbody>
-      </table>
-    </div>
-    <div class="topic">
-      <h3><?= t('Initial Administrative Account'); ?></h3>
-      <p><?= $adminType === 'by_name' || $adminType === 'existing_user' ? sprintf(
-        t('Administrative rights will initially be granted to an existing account called "%s".'),
-        $summary['setup_admin_account'][$adminType]
-      ) : sprintf(
-        t('Administrative rights will initially be granted to a new account called "%s".'),
-        $summary['setup_admin_account'][$adminType]
-      ); ?>
-    </div>
-  </div>
-  <div class="page">
-    <h2><?= t('Application Configuration'); ?></h2>
-    <div class="topic">
-      <h3><?= t('General', 'app.config'); ?></h3>
-      <ul>
-        <li><?= sprintf(
-          t('Icinga Web 2 will look for modules at: %s'),
-          $summary['setup_general_config']['global_modulePath']
-        ); ?></li>
-        <li><?= sprintf(
-          t('Icinga Web 2 will save new configuration files using the mode "%s".'),
-          $summary['setup_general_config']['global_filemode']
-        ); ?></li>
-        <li><?= sprintf(
-          $prefType === 'ini' ? sprintf(
-            t('Preferences will be stored per user account in INI files at: %s'),
-            Config::$configDir . '/preferences'
-          ) : (
-            $prefType === 'db' ? t('Preferences will be stored using a database.') : (
-              t('Preferences will not be persisted across browser sessions.')
-            )
-          )
-        ); ?></li>
-      </ul>
-    </div>
-    <div class="topic">
-      <h3><?= t('Logging', 'app.config'); ?></h3>
-    <?php if ($loggingType === 'none'): ?>
-      <p><?= t('Logging will be disabled.'); ?></p>
-    <?php else: ?>
-      <table>
-        <tbody>
-          <tr>
-            <td><strong><?= t('Type', 'app.config.logging'); ?></strong></td>
-            <td><?= $loggingType === 'syslog' ? 'Syslog' : t('File', 'app.config.logging.type'); ?></td>
-          </tr>
-          <tr>
-            <td><strong><?= t('Level', 'app.config.logging'); ?></strong></td>
-            <?php $loggingLevel = $summary['setup_general_config']['logging_level']; ?>
-            <td><?= $loggingLevel === Logger::$levels[Logger::ERROR] ? t('Error', 'app.config.logging.level') : (
-                $loggingLevel === Logger::$levels[Logger::WARNING] ? t('Warning', 'app.config.logging.level') : (
-                    $loggingLevel === Logger::$levels[Logger::INFO] ? t('Information', 'app.config.logging.level') : (
-                        t('Debug', 'app.config.logging.level')
-                    )
-                )
-            ); ?></td>
-          </tr>
-        <?php if ($loggingType === 'syslog'): ?>
-          <tr>
-            <td><strong><?= t('Application Prefix'); ?></strong></td>
-            <td><?= $summary['setup_general_config']['logging_application']; ?></td>
-          </tr>
-        <?php else: ?>
-          <tr>
-            <td><strong><?= t('Filepath'); ?></strong></td>
-            <td><?= $summary['setup_general_config']['logging_file']; ?></td>
-          </tr>
-        <?php endif ?>
-        </tbody>
-      </table>
-    <?php endif ?>
-    </div>
-  </div>
-<?php if (isset($summary['setup_db_resource'])): ?>
-  <div class="page">
-    <h2><?= t('Database Setup'); ?></h2>
-    <p><?= $summary['database_info']; ?></p>
-  </div>
-<?php endif ?>
-  <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>">
-    <?= $form->getElement($form->getTokenElementName()); ?>
-    <?= $form->getElement($form->getUidElementName()); ?>
-    <div class="buttons">
-      <?= $form->getElement(Wizard::BTN_PREV); ?>
-      <?= $form->getElement(Wizard::BTN_NEXT)->setAttrib('class', 'install'); ?>
-    </div>
-  </form>
+<?php endforeach ?>
 </div>
+<form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>">
+  <?= $form->getElement($form->getTokenElementName()); ?>
+  <?= $form->getElement($form->getUidElementName()); ?>
+  <div class="buttons">
+    <?= $form->getElement(Wizard::BTN_PREV); ?>
+    <?= $form->getElement(Wizard::BTN_NEXT)->setAttrib('class', 'install'); ?>
+  </div>
+</form>

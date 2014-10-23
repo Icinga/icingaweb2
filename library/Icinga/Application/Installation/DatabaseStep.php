@@ -152,7 +152,65 @@ class DatabaseStep extends Step
 
     public function getSummary()
     {
-        return '';
+        $resourceConfig = $this->data['resourceConfig'];
+        if (isset($this->data['adminName'])) {
+            $resourceConfig['username'] = $this->data['adminName'];
+            if (isset($this->data['adminPassword'])) {
+                $resourceConfig['password'] = $this->data['adminPassword'];
+            }
+        }
+
+        $db = new DbTool($resourceConfig);
+
+        try {
+            $db->connectToDb();
+            if (array_search('account', $db->listTables()) === false) {
+                $message = sprintf(
+                    t(
+                        'The database user "%s" will be used to setup the missing'
+                        . ' schema required by Icinga Web 2 in database "%s".'
+                    ),
+                    $resourceConfig['username'],
+                    $resourceConfig['dbname']
+                );
+            } else {
+                $message = sprintf(
+                    t('The database "%s" already seems to be fully set up. No action required.'),
+                    $resourceConfig['dbname']
+                );
+            }
+        } catch (PDOException $e) {
+            try {
+                $db->connectToHost();
+                if ($db->hasLogin($this->data['resourceConfig']['username'])) {
+                    $message = sprintf(
+                        t(
+                            'The database user "%s" will be used to create the missing '
+                            . 'database "%s" with the schema required by Icinga Web 2.'
+                        ),
+                        $resourceConfig['username'],
+                        $resourceConfig['dbname']
+                    );
+                } else {
+                    $message = sprintf(
+                        t(
+                            'The database user "%s" will be used to create the missing database "%s" '
+                            . 'with the schema required by Icinga Web 2 and a new login called "%s".'
+                        ),
+                        $resourceConfig['username'],
+                        $resourceConfig['dbname'],
+                        $this->data['resourceConfig']['username']
+                    );
+                }
+            } catch (Exception $ex) {
+                $message = t(
+                    'No connection to database host possible. You\'ll need to setup the'
+                    . ' database with the schema required by Icinga Web 2 manually.'
+                );
+            }
+        }
+
+        return '<h2>' . t('Database Setup') . '</h2><p>' . $message . '</p>';
     }
 
     public function getReport()
