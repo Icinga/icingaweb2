@@ -27,7 +27,7 @@ class SetupController extends ActionController
             $installer = $wizard->getInstaller();
             $success = $installer->run();
             if ($success) {
-                $wizard->getSession()->clear();
+                $wizard->clearSession();
             } else {
                 $wizard->setIsFinished(false);
             }

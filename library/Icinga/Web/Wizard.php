@@ -408,6 +408,14 @@ class Wizard
     }
 
     /**
+     * Clear the session being used by this wizard
+     */
+    public function clearSession()
+    {
+        $this->getSession()->clear();
+    }
+
+    /**
      * Add buttons to the given page based on its position in the page-chain
      *
      * @param   Form    $page   The page to add the buttons to
