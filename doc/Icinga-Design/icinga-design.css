@@ -263,7 +263,7 @@ select.input-sm {
 .pagination > .active > span:focus {
 
   background-color: #049baf !important;
-  border-color: fuchsia !mportant;
+  border-color: fuchsia !important;
 
 }
 
@@ -682,7 +682,7 @@ ul.icinga-subnavigation {
 .nav-stacked > li > a:hover,
 .icinga-subnavigation > li > a:focus {
 /*  font-weight: bold;*/
-  background-color: transparent; !important;
+  background-color: transparent !important;
   display: inline-block;
 }
 
@@ -781,7 +781,6 @@ background-color: #fff;
   position: absolute;
   overflow: hidden;
   padding-top: 0;
-  padding-bottom;
   margin-left: 2px;
   margin-top: -8px;
 }
