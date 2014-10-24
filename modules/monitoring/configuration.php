@@ -18,6 +18,7 @@ $this->provideConfigTab('security', array(
     'title' => 'Security',
     'url' => 'config/security'
 ));
+$this->provideSetupWizard('Icinga\Module\Monitoring\Setup');
 
 /*
  * Available Search Urls

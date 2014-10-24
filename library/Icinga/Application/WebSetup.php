@@ -5,6 +5,7 @@
 namespace Icinga\Application;
 
 use PDOException;
+use Icinga\Form\Setup\ModulePage;
 use Icinga\Form\Setup\WelcomePage;
 use Icinga\Form\Setup\SummaryPage;
 use Icinga\Form\Setup\DbResourcePage;
@@ -72,6 +73,7 @@ class WebSetup extends Wizard implements SetupWizard
         $this->addPage(new AdminAccountPage());
         $this->addPage(new GeneralConfigPage());
         $this->addPage(new DatabaseCreationPage());
+        $this->addPage(new ModulePage());
         $this->addPage(new SummaryPage());
     }
 
@@ -139,6 +141,16 @@ class WebSetup extends Wizard implements SetupWizard
                 $pageData = & $this->getPageData();
                 unset($pageData['setup_admin_account']);
                 unset($pageData['setup_authentication_backend']);
+            }
+        } elseif ($page->getName() === 'setup_modules') {
+            $configData = $this->getPageData('setup_general_config');
+            $page->setModulePaths(explode(':', $configData['global_modulePath']));
+            $page->handleRequest($request);
+        } elseif ($page->getName() === 'setup_general_config' && $this->getDirection() === static::FORWARD) {
+            $configData = $this->getPageData($page->getName());
+            if ($configData !== null && $request->getPost('global_modulePath') !== $configData['global_modulePath']) {
+                // Drop the ModulePage's session and all associated wizard sessions once the module path changes
+                $this->getPage('setup_modules')->clearSession();
             }
         }
     }
@@ -222,6 +234,15 @@ class WebSetup extends Wizard implements SetupWizard
     }
 
     /**
+     * @see Wizard::clearSession()
+     */
+    public function clearSession()
+    {
+        parent::clearSession();
+        $this->getPage('setup_modules')->clearSession();
+    }
+
+    /**
      * @see SetupWizard::getInstaller()
      */
     public function getInstaller()
@@ -293,6 +314,12 @@ class WebSetup extends Wizard implements SetupWizard
                         : null
                 ))
             );
+        }
+
+        foreach ($this->getPage('setup_modules')->getWizards() as $wizard) {
+            if ($wizard->isFinished()) {
+                $installer->addSteps($wizard->getInstaller()->getSteps());
+            }
         }
 
         return $installer;
@@ -414,6 +441,10 @@ class WebSetup extends Wizard implements SetupWizard
                 $configDir
             )
         );
+
+        foreach ($this->getPage('setup_modules')->getWizards() as $wizard) {
+            $requirements->merge($wizard->getRequirements()->allOptional());
+        }
 
         return $requirements;
     }

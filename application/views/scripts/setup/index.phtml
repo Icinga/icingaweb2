@@ -2,7 +2,7 @@
 
 $pages = $wizard->getPages();
 $finished = isset($success);
-$configPages = array_slice($pages, 2, count($pages) - 3, true);
+$configPages = array_slice($pages, 2, count($pages) - 4, true);
 $currentPos = array_search($wizard->getCurrentPage(), $pages, true);
 list($configPagesLeft, $configPagesRight) = array_chunk($configPages, count($configPages) / 2, true);
 
@@ -41,7 +41,7 @@ $maxProgress = @max(array_keys(array_filter(
           <td class="right"><div class="line right<?= $stateClass; ?>"></div></td>
         </tr></tbody></table>
       </div>
-      <div class="step" style="width: 60%;">
+      <div class="step" style="width: 50%;">
         <h1><?= t('Configuration', 'setup.progress'); ?></h1>
         <table><tbody><tr>
           <td class="left">
@@ -90,6 +90,17 @@ $maxProgress = @max(array_keys(array_filter(
             <?php endif ?>
           <?php endforeach ?>
           </td>
+        </tr></tbody></table>
+      </div>
+      <div class="step" style="width: 10%;">
+        <h1><?= t('Modules', 'setup.progress'); ?></h1>
+        <?php $stateClass = $finished || $currentPos > count($pages) - 2 ? ' complete' : (
+          $maxProgress > count($pages) - 2 ? ' visited' : ($currentPos === count($pages) - 2 ? ' active' : '')
+        ); ?>
+        <table><tbody><tr>
+          <td class="left"><div class="line left<?= $stateClass; ?>"></div></td>
+          <td class="middle"><div class="bubble<?= $stateClass; ?>"></div></td>
+          <td class="right"><div class="line right<?= $stateClass; ?>"></div></td>
         </tr></tbody></table>
       </div>
       <div class="step" style="width: 10%;">

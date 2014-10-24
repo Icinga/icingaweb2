@@ -123,7 +123,7 @@
       border: 1px dotted black;
     }
 
-    &:hover, &:focus {
+    &:hover, &:focus, &:active {
       background-color: #333;
 
       &[disabled="1"] {
@@ -136,7 +136,7 @@
       color: #fffafa;
       background: #aaa;
 
-      &:hover, &:focus {
+      &:hover, &:focus, &:active {
         background: #888;
       }
     }
@@ -303,5 +303,69 @@
     border-radius: 1em;
     background-color: #eee;
     border: 1px solid lightgrey;
+  }
+}
+
+#setup {
+  div.module-wizard {
+    width: auto;
+    padding: 1em;
+    overflow: hidden;
+    border-radius: 1em;
+    background-color: #f4f4f4;
+
+    div.buttons button[type=submit] {
+      padding: 0.5em;
+      line-height: 0.5em;
+      background-color: #888;
+
+      &:hover, &:focus, &:active {
+        background-color: #666;
+      }
+    }
+  }
+
+  div.module-menu {
+    width: 25%;
+    float: right;
+    margin-left: 1.5em;
+
+    p {
+      margin-top: 0;
+
+      &.all-completed {
+        .conspicuous-state-notification;
+        text-align: center;
+        font-size: 90%;
+        background-color: @colorOk;
+      }
+    }
+
+    ul {
+      padding-left: 1.2em;
+
+      button {
+        margin: 0 0 0.8em;
+        padding: 0;
+        color: black;
+        border: none;
+        outline: none;
+        font-size: 90%;
+        background-color: inherit;
+
+        &:hover {
+          color: #666;
+          cursor: pointer;
+        }
+
+        &:focus, &:active {
+          color: #666;
+        }
+      }
+
+      img {
+        margin: 0 0.5em 0.2em;
+      }
+    }
   }
 }
