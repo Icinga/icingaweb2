@@ -99,7 +99,7 @@ class ConfigController extends ActionController
             Notification::success(sprintf($this->translate('Module "%s" enabled'), $module));
             $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
         } catch (Exception $e) {
-            $this->view->exceptionMesssage = $e->getMessage();
+            $this->view->exceptionMessage = $e->getMessage();
             $this->view->moduleName = $module;
             $this->view->action = 'enable';
             $this->render('module-configuration-error');
