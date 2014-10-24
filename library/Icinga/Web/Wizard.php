@@ -134,8 +134,8 @@ class Wizard
     protected function assertHasPages()
     {
         $pages = $this->getPages();
-        if (empty($pages)) {
-            throw new LogicException('Although Chuck Norris can advance a wizard without any pages, you can\'t.');
+        if (count($pages) < 2) {
+            throw new LogicException("Although Chuck Norris can advance a wizard with less than two pages, you can't.");
         }
     }
 
