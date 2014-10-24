@@ -252,7 +252,9 @@ class WebSetup extends Wizard implements SetupWizard
             new GeneralConfigStep(array(
                 'generalConfig'         => $pageData['setup_general_config'],
                 'preferencesType'       => $pageData['setup_preferences_type']['type'],
-                'preferencesResource'   => $pageData['setup_db_resource']['name'],
+                'preferencesResource'   => isset($pageData['setup_db_resource']['name'])
+                    ? $pageData['setup_db_resource']['name']
+                    : null,
                 'fileMode'              => $pageData['setup_general_config']['global_filemode']
             ))
         );
