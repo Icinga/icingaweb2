@@ -487,11 +487,14 @@ class Manager
     /**
      * Detect installed modules from every path provided in modulePaths
      *
+     * @param   array   $availableDirs      Installed modules location
+     *
      * @return self
      */
-    public function detectInstalledModules()
+    public function detectInstalledModules(array $availableDirs = null)
     {
-        foreach ($this->modulePaths as $basedir) {
+        $modulePaths = $availableDirs !== null ? $availableDirs : $this->modulePaths;
+        foreach ($modulePaths as $basedir) {
             $canonical = realpath($basedir);
             if ($canonical === false) {
                 Logger::warning('Module path "%s" does not exist', $basedir);
