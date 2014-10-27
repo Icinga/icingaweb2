@@ -100,22 +100,45 @@ class SetupCommand extends Command
             return false;
         }
 
-        $path = $this->params->get('path', $this->app->getConfigDir());
-        if (file_exists($path)) {
-            $this->fail(sprintf($this->translate('Path "%s" already exists.'), $path));
+        $configPath = $this->params->get('path', $this->app->getConfigDir());
+        if (file_exists($configPath)) {
+            $this->fail(sprintf($this->translate('Path "%s" already exists.'), $configPath));
+            return false;
+        }
+        if (false === mkdir($configPath)) {
+            $this->fail(sprintf($this->translate('Unable to create path: %s'), $configPath));
+            return false;
+        }
+
+        $moduleConfigPath = $configPath . '/modules';
+        if (false === mkdir($moduleConfigPath)) {
+            $this->fail(sprintf($this->translate('Unable to create path: %s'), $moduleConfigPath));
+            return false;
+        }
+
+        $preferencesPath = $configPath . '/preferences';
+        if (false === mkdir($preferencesPath)) {
+            $this->fail(sprintf($this->translate('Unable to create path: %s'), $preferencesPath));
+            return false;
+        }
+
+        $enabledModulesPath = $configPath . '/enabledModules';
+        if (false === mkdir($enabledModulesPath)) {
+            $this->fail(sprintf($this->translate('Unable to create path: %s'), $enabledModulesPath));
             return false;
         }
 
         $mode = octdec($this->params->get('mode', '2775'));
-        if (false === mkdir($path)) {
-            $this->fail(sprintf($this->translate('Unable to create path: %s'), $path));
-            return false;
-        }
-
         $old = umask(0); // Prevent $mode from being mangled by the system's umask ($old)
-        chmod($path, $mode);
+        chmod($configPath, $mode);
+        chmod($moduleConfigPath, $mode);
+        chmod($preferencesPath, $mode);
+        chmod($enabledModulesPath, $mode);
         umask($old);
-        chgrp($path, $group);
+        chgrp($configPath, $group);
+        chgrp($moduleConfigPath, $group);
+        chgrp($preferencesPath, $group);
+        chgrp($enabledModulesPath, $group);
     }
 
     /**
