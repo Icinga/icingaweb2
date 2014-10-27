@@ -47,7 +47,7 @@ class ModulePage extends Form
             }
         } else {
             $wizard = $this->getCurrentWizard();
-            $wizardPage = $wizard->getForm();
+            $wizardPage = $wizard->getCurrentPage();
 
             if (false === $wizard->isFinished() || $wizardPage->wasSent($wizardPage->getRequestData($request))) {
                 $wizard->handleRequest($request);
