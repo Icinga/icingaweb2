@@ -94,7 +94,6 @@ class DatabaseCreationPage extends Form
             'password',
             'password',
             array(
-                'required'      => false === $skipValidation,
                 'label'         => t('Password'),
                 'description'   => t('The password for the database user defined above')
             )
@@ -134,14 +133,35 @@ class DatabaseCreationPage extends Form
         $this->config['username'] = $this->getValue('username');
         $this->config['password'] = $this->getValue('password');
         $db = new DbTool($this->config);
+        $database = $this->config['dbname'];
+        $dbtype = $this->config['db'];
 
         try {
-            $db->connectToDb();
-            if (false === $db->checkPrivileges($this->databasePrivileges)) {
-                $this->addError(
-                    t('The provided credentials do not have the required access rights to create the database schema.')
-                );
+            $error = false;
+            $msg = '';
+            if ($dbtype === 'pgsql') {
+                $db->connectToHost();
+                if (
+                    false === $db->checkPgsqlGrantOption($this->databasePrivileges, $database, 'account') &&
+                    false === $db->checkPgsqlGrantOption($this->databasePrivileges, $database, 'preference')
+                ) {
+                    $error = true;
+                    $msg = sprintf(t('The role does not seem to have permission to create ' .
+                     ' or to grant access to the database "%s" and the tables "account", "preference".'), $database);
+                }
+            } else if ($dbtype === 'mysql') {
+                $db->connectToHost();
+                if (false === $db->checkMysqlGrantOption($this->databasePrivileges)) {
+                    $error = true;
+                    $msg = sprintf(t('The user does not seem to have permission to create ' .
+                        ' or to grant access to the database %s.'), $database);
+                }
+            }
+            if ($error) {
                 $this->addSkipValidationCheckbox();
+                $this->addError(t(
+                    'The provided credentials do not have the required access rights to create the database schema: '
+                ) . $msg);
                 return false;
             }
         } catch (PDOException $e) {

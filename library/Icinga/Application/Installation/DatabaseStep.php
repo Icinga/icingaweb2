@@ -68,7 +68,10 @@ class DatabaseStep extends Step
             $db->reconnect($this->data['resourceConfig']['dbname']);
         }
 
-        if ($db->hasLogin($this->data['resourceConfig']['username'])) {
+        if ($db->hasLogin(
+            $this->data['resourceConfig']['username'],
+            $this->data['resourceConfig']['password']
+        )) {
             $this->log(t('Login "%s" already exists...'), $this->data['resourceConfig']['username']);
         } else {
             $this->log(t('Creating login "%s"...'), $this->data['resourceConfig']['username']);
@@ -83,14 +86,13 @@ class DatabaseStep extends Step
         }
 
         $privileges = array('SELECT', 'INSERT', 'UPDATE', 'DELETE', 'EXECUTE', 'CREATE TEMPORARY TABLES');
-        if ($db->checkPrivileges(array_merge($privileges, array('GRANT OPTION')))) {
+        if ($db->checkMysqlGrantOption(array_merge($privileges))) {
             $this->log(t('Granting required privileges to login "%s"...'), $this->data['resourceConfig']['username']);
             $db->exec(sprintf(
-                "GRANT %s ON %s.* TO %s@%s",
+                "GRANT %s ON %s.* TO %s@'%%'",
                 join(',', $privileges),
                 $db->quoteIdentifier($this->data['resourceConfig']['dbname']),
-                $db->quoteIdentifier($this->data['resourceConfig']['username']),
-                $db->quoteIdentifier(Platform::getFqdn())
+                $db->quoteIdentifier($this->data['resourceConfig']['username'])
             ));
         } else {
             $this->log(
@@ -115,7 +117,10 @@ class DatabaseStep extends Step
             $db->reconnect($this->data['resourceConfig']['dbname']);
         }
 
-        if ($db->hasLogin($this->data['resourceConfig']['username'])) {
+        if ($db->hasLogin(
+            $this->data['resourceConfig']['username'],
+            $this->data['resourceConfig']['password']
+        )) {
             $this->log(t('Login "%s" already exists...'), $this->data['resourceConfig']['username']);
         } else {
             $this->log(t('Creating login "%s"...'), $this->data['resourceConfig']['username']);
@@ -129,8 +134,12 @@ class DatabaseStep extends Step
             $db->import(Icinga::app()->getApplicationDir() . '/../etc/schema/pgsql.sql');
         }
 
-        $privileges = array('SELECT', 'INSERT', 'UPDATE', 'DELETE');
-        if ($db->checkPrivileges(array_merge($privileges, array('GRANT OPTION')))) {
+        $privileges = array('SELECT', 'INSERT', 'UPDATE', 'DELETE', 'REFERENCES');
+        if ($db->checkPgsqlGrantOption(
+            $privileges,
+            $this->data['resourceConfig']['dbname'],
+            'account'
+        )) {
             $this->log(t('Granting required privileges to login "%s"...'), $this->data['resourceConfig']['username']);
             $db->exec(sprintf(
                 "GRANT %s ON TABLE account TO %s",
@@ -182,7 +191,10 @@ class DatabaseStep extends Step
         } catch (PDOException $e) {
             try {
                 $db->connectToHost();
-                if ($db->hasLogin($this->data['resourceConfig']['username'])) {
+                if ($db->hasLogin(
+                    $this->data['resourceConfig']['username'],
+                    $this->data['resourceConfig']['password']
+                )) {
                     $message = sprintf(
                         t(
                             'The database user "%s" will be used to create the missing '
