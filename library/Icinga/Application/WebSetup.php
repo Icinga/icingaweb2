@@ -112,6 +112,7 @@ class WebSetup extends Wizard implements SetupWizard
             $page->setDatabasePrivileges($this->databaseSetupPrivileges);
             $page->setResourceConfig($this->getPageData('setup_db_resource'));
         } elseif ($page->getName() === 'setup_summary') {
+            $page->setSubjectTitle('Icinga Web 2');
             $page->setSummary($this->getInstaller()->getSummary());
         } elseif ($page->getName() === 'setup_db_resource') {
             $ldapData = $this->getPageData('setup_ldap_resource');

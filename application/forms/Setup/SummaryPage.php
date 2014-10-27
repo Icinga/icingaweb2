@@ -12,6 +12,13 @@ use Icinga\Web\Form;
 class SummaryPage extends Form
 {
     /**
+     * The title of what is being installed
+     *
+     * @var string
+     */
+    protected $title;
+
+    /**
      * The summary to show
      *
      * @var array
@@ -25,6 +32,26 @@ class SummaryPage extends Form
     {
         $this->setName('setup_summary');
         $this->setViewScript('form/setup-summary.phtml');
+    }
+
+    /**
+     * Set the title of what is being installed
+     *
+     * @param   string  $title
+     */
+    public function setSubjectTitle($title)
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * Return the title of what is being installed
+     *
+     * @return  string
+     */
+    public function getSubjectTitle()
+    {
+        return $this->title;
     }
 
     /**
