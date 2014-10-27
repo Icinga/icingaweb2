@@ -18,7 +18,7 @@ class ModulePage extends Form
 
     protected $modules;
 
-    protected $modulePaths;
+    protected $pageData;
 
     /**
      * Initialize this page
@@ -30,9 +30,9 @@ class ModulePage extends Form
         $this->session = Session::getSession()->getNamespace(get_class($this));
     }
 
-    public function setModulePaths(array $availableDirs)
+    public function setPageData(array $pageData)
     {
-        $this->modulePaths = $availableDirs;
+        $this->pageData = $pageData;
     }
 
     public function handleRequest(Request $request = null)
@@ -115,7 +115,9 @@ class ModulePage extends Form
         }
 
         $moduleManager = Icinga::app()->getModuleManager();
-        $moduleManager->detectInstalledModules($this->modulePaths);
+        $moduleManager->detectInstalledModules(
+            explode(':', $this->pageData['setup_general_config']['global_modulePath'])
+        );
         foreach ($moduleManager->listInstalledModules() as $moduleName) {
             $this->modules[] = $moduleManager->loadModule($moduleName)->getModule($moduleName);
         }
@@ -137,6 +139,17 @@ class ModulePage extends Form
             }
         }
 
+        $this->mergePageData($this->wizards);
         return $this->wizards;
+    }
+
+    protected function mergePageData(array $wizards)
+    {
+        foreach ($wizards as $wizard) {
+            $wizardPageData = & $wizard->getPageData();
+            foreach ($this->pageData as $pageName => $pageData) {
+                $wizardPageData[$pageName] = $pageData;
+            }
+        }
     }
 }

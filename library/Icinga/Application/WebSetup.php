@@ -140,8 +140,7 @@ class WebSetup extends Wizard implements SetupWizard
                 unset($pageData['setup_authentication_backend']);
             }
         } elseif ($page->getName() === 'setup_modules') {
-            $configData = $this->getPageData('setup_general_config');
-            $page->setModulePaths(explode(':', $configData['global_modulePath']));
+            $page->setPageData($this->getPageData());
             $page->handleRequest($request);
         } elseif ($page->getName() === 'setup_general_config' && $this->getDirection() === static::FORWARD) {
             $configData = $this->getPageData($page->getName());
