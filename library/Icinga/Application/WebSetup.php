@@ -19,6 +19,7 @@ use Icinga\Form\Setup\RequirementsPage;
 use Icinga\Form\Setup\GeneralConfigPage;
 use Icinga\Form\Setup\AuthenticationPage;
 use Icinga\Form\Setup\DatabaseCreationPage;
+use Icinga\Application\Installation\MakeDirStep;
 use Icinga\Application\Installation\DatabaseStep;
 use Icinga\Application\Installation\GeneralConfigStep;
 use Icinga\Application\Installation\ResourceStep;
@@ -313,6 +314,18 @@ class WebSetup extends Wizard implements SetupWizard
             );
         }
 
+        $configDir = $this->getConfigDir();
+        $installer->addStep(
+            new MakeDirStep(
+                array(
+                    $configDir . '/modules',
+                    $configDir . '/preferences',
+                    $configDir . '/enabledModules'
+                ),
+                $pageData['setup_general_config']['global_filemode']
+            )
+        );
+
         foreach ($this->getPage('setup_modules')->getWizards() as $wizard) {
             if ($wizard->isFinished()) {
                 $installer->addSteps($wizard->getInstaller()->getSteps());
@@ -410,7 +423,6 @@ class WebSetup extends Wizard implements SetupWizard
             $pgsqlAdapterFound ? t('The Zend database adapter for PostgreSQL is available.') : (
                 t('The Zend database adapter for PostgreSQL is missing.')
             )
-
         );
 
         $defaultTimezone = Platform::getPhpConfig('date.timezone');
