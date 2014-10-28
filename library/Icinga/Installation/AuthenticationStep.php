@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Application\Installation;
+namespace Icinga\Installation;
 
 use Exception;
 use Zend_Config;
