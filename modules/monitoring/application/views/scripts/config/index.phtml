@@ -3,7 +3,7 @@
 </div>
 
 <div class="content" data-base-target="_next">
-  <h1>Monitoring Backends</h1>
+  <h1><?= $this->translate('Monitoring Backends') ?></h1>
   <p>
     <a href="<?= $this->href('/monitoring/config/createbackend'); ?>">
       <?= $this->icon('create.png'); ?> <?= $this->translate('Create New Monitoring Backend'); ?>
@@ -35,7 +35,7 @@
 <?php endforeach; ?>
     </tbody>
   </table>
-  <h1>Monitoring Instances</h1>
+  <h1><?= $this->translate('Monitoring Instances') ?></h1>
   <p>
     <a href="<?= $this->href('/monitoring/config/createinstance'); ?>">
       <?= $this->icon('create.png'); ?> <?= $this->translate('Create New Instance'); ?>
