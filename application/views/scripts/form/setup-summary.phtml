@@ -13,9 +13,11 @@ use Icinga\Web\Wizard;
 ); ?></p>
 <div class="summary">
 <?php foreach ($form->getSummary() as $pageHtml): ?>
+ <?php if ($pageHtml): ?>
   <div class="page">
     <?= $pageHtml; ?>
   </div>
+ <?php endif ?>
 <?php endforeach ?>
 </div>
 <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">

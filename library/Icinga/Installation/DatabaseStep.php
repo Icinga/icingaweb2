@@ -235,8 +235,6 @@ class DatabaseStep extends Step
             return '<p>' . join('</p><p>', $this->messages) . '</p>'
                 . '<p class="error">' . $message . '</p><p>' . $this->error->getMessage() . '</p>';
         }
-
-        return '';
     }
 
     protected function log()

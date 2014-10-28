@@ -128,7 +128,5 @@ class GeneralConfigStep extends Step
             return '<p class="error">' . sprintf($message, Config::resolvePath('config.ini')) . '</p>'
                 . '<p>' . $this->error->getMessage() . '</p>';
         }
-
-        return '';
     }
 }

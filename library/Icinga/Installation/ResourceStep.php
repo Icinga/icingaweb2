@@ -146,7 +146,5 @@ class ResourceStep extends Step
             return '<p class="error">' . sprintf($message, Config::resolvePath('resources.ini')) . '</p>'
                 . '<p>' . $this->error->getMessage() . '</p>';
         }
-
-        return '';
     }
 }
