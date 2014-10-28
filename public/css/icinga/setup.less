@@ -98,7 +98,7 @@
 }
 
 #setup div.buttons {
-  margin-top: 1.5em;
+  margin: 1.5em 0;
 
   .double {
     position: absolute;
@@ -314,13 +314,17 @@
     border-radius: 1em;
     background-color: #f4f4f4;
 
-    div.buttons button[type=submit] {
-      padding: 0.5em;
-      line-height: 0.5em;
-      background-color: #888;
+    div.buttons {
+      margin: 1.5em 0 0;
 
-      &:hover, &:focus, &:active {
-        background-color: #666;
+      button[type=submit] {
+        padding: 0.5em;
+        line-height: 0.5em;
+        background-color: #888;
+
+        &:hover, &:focus, &:active {
+          background-color: #666;
+        }
       }
     }
   }
