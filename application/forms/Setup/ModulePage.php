@@ -33,6 +33,7 @@ class ModulePage extends Form
     public function setPageData(array $pageData)
     {
         $this->pageData = $pageData;
+        return $this;
     }
 
     public function handleRequest(Request $request = null)
