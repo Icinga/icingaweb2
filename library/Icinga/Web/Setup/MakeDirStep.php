@@ -45,34 +45,8 @@ class MakeDirStep extends Step
 
     public function getSummary()
     {
-        $pageHtml = '';
-        $pageTitle = t('Directory Creation');
-        $createMsg = t('The setup will create the following directories:');
-        $existsMsg = t('The setup does not need to create the following already existing directories:');
-
-        $toBeCreated = array_filter($this->paths, function ($p) { return false === file_exists($p); });
-        if (false === empty($toBeCreated)) {
-            $pageHtml .= '<p>' . $createMsg . '</p>';
-
-            $pageHtml .= '<ul>';
-            foreach ($toBeCreated as $path) {
-                $pageHtml .= '<li>' . $path . '</li>';
-            }
-            $pageHtml .= '</ul>';
-        }
-
-        $existing = array_diff($this->paths, $toBeCreated);
-        if (false === empty($existing)) {
-            $pageHtml .= '<p>' . $existsMsg . '</p>';
-
-            $pageHtml .= '<ul>';
-            foreach ($existing as $path) {
-                $pageHtml .= '<li>' . $path . '</li>';
-            }
-            $pageHtml .= '</ul>';
-        }
-
-        return '<h2>' . $pageTitle . '</h2>' . $pageHtml;
+        // This step is usually being used for directories which are required for the installation but are
+        // not configured in any way by the user. So there is no need to show a summary for this step.
     }
 
     public function getReport()
