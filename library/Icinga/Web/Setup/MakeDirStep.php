@@ -2,9 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Application\Installation;
-
-use Icinga\Web\Setup\Step;
+namespace Icinga\Web\Setup;
 
 class MakeDirStep extends Step
 {

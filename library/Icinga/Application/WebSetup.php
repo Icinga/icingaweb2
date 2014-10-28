@@ -19,7 +19,6 @@ use Icinga\Form\Setup\RequirementsPage;
 use Icinga\Form\Setup\GeneralConfigPage;
 use Icinga\Form\Setup\AuthenticationPage;
 use Icinga\Form\Setup\DatabaseCreationPage;
-use Icinga\Application\Installation\MakeDirStep;
 use Icinga\Application\Installation\DatabaseStep;
 use Icinga\Application\Installation\GeneralConfigStep;
 use Icinga\Application\Installation\ResourceStep;
@@ -29,6 +28,7 @@ use Icinga\Web\Wizard;
 use Icinga\Web\Request;
 use Icinga\Web\Setup\DbTool;
 use Icinga\Web\Setup\Installer;
+use Icinga\Web\Setup\MakeDirStep;
 use Icinga\Web\Setup\SetupWizard;
 use Icinga\Web\Setup\Requirements;
 
