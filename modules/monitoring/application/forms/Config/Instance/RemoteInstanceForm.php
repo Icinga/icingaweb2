@@ -9,60 +9,65 @@ use Icinga\Web\Form\Element\Number;
 
 class RemoteInstanceForm extends Form
 {
+    /**
+     * (non-PHPDoc)
+     * @see Form::init() For the method documentation.
+     */
     public function init()
     {
         $this->setName('form_config_monitoring_instance_remote');
     }
 
     /**
-     * @see Form::createElements()
+     * (non-PHPDoc)
+     * @see Form::createElements() For the method documentation.
      */
-    public function createElements(array $formData)
+    public function createElements(array $formData = array())
     {
-        $this->addElement(
-            'text',
-            'host',
+        $this->addElements(array(
             array(
-                'required'      => true,
-                'label'         => mt('monitoring', 'Remote Host'),
-                'description'   => mt('monitoring',
-                    'Enter the hostname or address of the machine on which the icinga instance is running'
+                'text',
+                'host',
+                array(
+                    'required'      => true,
+                    'label'         => mt('monitoring', 'Host'),
+                    'description'   => mt('monitoring',
+                        'Hostname or address of the remote Icinga instance'
+                    )
                 )
-            )
-        );
-        $this->addElement(
+            ),
             new Number(
                 array(
                     'required'      => true,
                     'name'          => 'port',
-                    'label'         => mt('monitoring', 'Remote SSH Port'),
-                    'description'   => mt('monitoring', 'Enter the ssh port to use for connecting to the remote icinga instance'),
+                    'label'         => mt('monitoring', 'Port'),
+                    'description'   => mt('monitoring', 'SSH port to connect to on the remote Icinga instance'),
                     'value'         => 22
                 )
-            )
-        );
-        $this->addElement(
-            'text',
-            'user',
+            ),
             array(
-                'required'      => true,
-                'label'         => mt('monitoring', 'Remote SSH User'),
-                'description'   => mt('monitoring',
-                    'Enter the username to use for connecting to the remote machine or leave blank for default'
+                'text',
+                'user',
+                array(
+                    'required'      => true,
+                    'label'         => mt('monitoring', 'User'),
+                    'description'   => mt('monitoring',
+                        'User to log in as on the remote Icinga instance. Please note that key-based SSH login must be'
+                        . ' possible for this user'
+                    )
+                )
+            ),
+            array(
+                'text',
+                'path',
+                array(
+                    'required'      => true,
+                    'label'         => mt('monitoring', 'Command File'),
+                    'value'         => '/usr/local/icinga/var/rw/icinga.cmd',
+                    'description'   => mt('monitoring', 'Path to the Icinga command file on the remote Icinga instance')
                 )
             )
-        );
-        $this->addElement(
-            'text',
-            'path',
-            array(
-                'required'      => true,
-                'label'         => mt('monitoring', 'Remote Filepath'),
-                'value'         => '/usr/local/icinga/var/rw/icinga.cmd',
-                'description'   => mt('monitoring', 'The file path where the icinga commandpipe can be found')
-            )
-        );
-
+        ));
         return $this;
     }
 }
