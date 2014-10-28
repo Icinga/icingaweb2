@@ -50,9 +50,8 @@ class ModulePage extends Form
             $wizard = $this->getCurrentWizard();
             $wizardPage = $wizard->getCurrentPage();
 
-            if (false === $wizard->isFinished() || $wizardPage->wasSent($wizardPage->getRequestData($request))) {
-                $wizard->handleRequest($request);
-            } elseif ($wizard->isFinished()) {
+            $wizard->handleRequest($request);
+            if ($wizard->isFinished() && $wizardPage->wasSent($wizardPage->getRequestData($request))) {
                 $wizards = $this->getWizards();
 
                 $newModule = null;
