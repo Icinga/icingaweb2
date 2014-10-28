@@ -4,8 +4,8 @@ use Icinga\Web\Wizard;
 
 ?>
 <div class="module-menu">
-  <p><?= t('The following modules are available for installation using a web-based wizard as well. To install a module, just complete it\'s wizard and advance to the summary!'); ?></p>
-  <p><?= t('You can freely switch to a module\'s wizard by clicking it\'s name below. The wizard you are currently looking at is written in bold. A small tick is shown on the right once a wizard has been completed.'); ?></p>
+  <p><?= t('The following modules are available for installation using a web-based wizard as well. To install a module, just complete its wizard and advance to the summary!'); ?></p>
+  <p><?= t('You can freely switch to a module\'s wizard by clicking its name below. The wizard you are currently looking at is written in bold. A small tick is shown on the right once a wizard has been completed.'); ?></p>
   <form name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
     <?= $form->getElement($form->getTokenElementName()); ?>
     <?= $form->getElement($form->getUidElementName()); ?>
@@ -31,7 +31,7 @@ use Icinga\Web\Wizard;
  <?php if ($allFinished): ?>
   <p class="all-completed"><?= t('You\'ve completed all module wizards!'); ?></p>
  <?php else: ?>
-  <p style="font-size: 80%;"><?= t('Note that you can skip a specific module by just not completing it\'s wizard.'); ?></p>
+  <p style="font-size: 80%;"><?= t('Note that you can skip a specific module by just not completing its wizard.'); ?></p>
  <?php endif ?>
 </div>
 <div class="module-wizard">
