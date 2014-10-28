@@ -9,7 +9,8 @@ use Icinga\Web\Form;
 class LocalInstanceForm extends Form
 {
     /**
-     * Initialize this form
+     * (non-PHPDoc)
+     * @see Form::init() For the method documentation.
      */
     public function init()
     {
@@ -17,21 +18,21 @@ class LocalInstanceForm extends Form
     }
 
     /**
-     * @see Form::createElements()
+     * (non-PHPDoc)
+     * @see Form::createElements() For the method documentation.
      */
-    public function createElements(array $formData)
+    public function createElements(array $formData = array())
     {
         $this->addElement(
             'text',
             'path',
             array(
                 'required'      => true,
-                'label'         => mt('monitoring', 'Local Filepath'),
+                'label'         => mt('monitoring', 'Command File'),
                 'value'         => '/usr/local/icinga/var/rw/icinga.cmd',
-                'description'   => mt('monitoring', 'The file path where the icinga commandpipe can be found')
+                'description'   => mt('monitoring', 'Path to the local Icinga command file')
             )
         );
-
         return $this;
     }
 }
