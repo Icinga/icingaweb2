@@ -1,0 +1,74 @@
+<?php
+use Icinga\Web\Wizard;
+$setupToken = $this->form->configDir . '/setup.token';
+?>
+
+<form style="margin-top: 4em;" id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
+    <h2><?= t('Welcome to the installation of Icinga Web 2!') ?></h2>
+
+    <!-- TODO: Remove this once we release the first public version -->
+    <div style="border:1px solid #777;border-radius:1em;background-color:beige;padding:1em;margin-bottom:1em;display:inline-block;">
+        Icinga Web 2 is still in development and not meant for production deployment.
+        Watch the <a href="https://dev.icinga.org/projects/icingaweb2/roadmap">development roadmap</a> and
+        <a href="https://www.icinga.org/">Icinga website</a> for release schedule updates!
+    </div>
+
+    <div class="info">
+        <p>
+            <?= sprintf(
+                t(
+                    'Icinga Web 2 is the next generation monitoring web interface,'
+                    . ' framework and CLI tool developed by the %s.'
+                ),
+                '<a href="https://www.icinga.org/community/team/">' . t('Icinga Project') . '</a>'
+            ); ?>
+        </p>
+        <p><?= t('Responsive and fast, rewritten from scratch supporting multiple backends and providing a CLI tool. ' .
+                ' Compatible with Icinga Core 2.x and 1.x.') ?>
+        </p>
+        <p>
+            <?= sprintf(
+            t('Check the Icinga website for some %s.', 'setup.welcome.screenshots'),
+            '<a href="https://www.icinga.org/icinga/screenshots/icinga-web-2/">'
+                . t('insights', 'setup.welcome.screenshots.label') . '</a>'
+            ) ?>
+        </p>
+    </div>
+    <p>
+        <?= t('This wizard will guide you through the installation of Icinga Web 2. Once completed and successfully ' .
+                'finished you are able to log in and to explore all the new and stunning features!') ?>
+    </p>
+    <?= $form->getElement('token') ?>
+    <?= $form->getElement($form->getTokenElementName()) ?>
+    <?= $form->getElement($form->getUidElementName()) ?>
+    <div class="buttons">
+        <?php
+            echo $form->getElement(Wizard::BTN_NEXT);
+        ?>
+    </div>
+    <br>
+</form>
+
+
+<div style="border-radius: 0.2em; margin: auto; margin-top: 3em; text-align: center; max-width: 46em; border: 1px solid #eeeeee;">
+    <div style="border-radius: 0.2em; padding: 0.1em; background-color: #eeeeee; ">
+        <img style="float: right;" src="<?= $this->href('img/icons/comment.png') ?>"/>
+        Generating a new Security Token:
+    </div>
+    <div>
+        <p style="margin: 1em">
+            <?= t('As the Icinga Web 2 administrator you need set a security token, so the installer can authorize its user:') ?>
+        </p>
+        <span class="code"> sudo icingacli setup generateToken </span>
+        <p style="margin: 1em">
+            <?= t('If you don\'t have IcingaCLI available, you can set it yourself:') ?>
+        </p>
+             <span class="code">
+                head -c 12 /dev/urandom | base64 | sudo -u 'apache' tee <?= $setupToken ?>; <br/>
+                sudo chmod 0660 <?= $setupToken ?>; <br/>
+            </span> <br/>
+        <p>
+           <?= t('For further help, please check out the <a href="#">IcingaWeb2 Documentation</a> on this topic.') ?>
+        </p>
+    </div>
+</div>
