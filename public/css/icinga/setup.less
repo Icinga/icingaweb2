@@ -290,7 +290,8 @@
   }
 }
 
-#setup_welcome {
+.welcome-page {
+  margin-top: 3em;
   text-align: center;
 
   h2 {
@@ -303,6 +304,45 @@
     border-radius: 1em;
     background-color: #eee;
     border: 1px solid lightgrey;
+  }
+
+  div.note {
+    width: 40%;
+    padding: 1em;
+    margin: 3em auto 0;
+    text-align: left;
+    border-radius: 0.5em;
+    border: 1px solid #eee;
+
+    div.title {
+      padding: 0.2em;
+      margin: -1em -1em 1em;
+      text-align: center;
+      background-color: #eee;
+      border-top-left-radius: 0.5em;
+      border-top-right-radius: 0.5em;
+    }
+
+    img {
+      float: right;
+    }
+
+    p {
+      margin: 2em 0 1em 0;
+
+      &:first-child {
+        margin-top: 1em;
+      }
+    }
+
+    div.code {
+      margin: 0 2em;
+
+      span {
+        display: block;
+        font-family: monospace;
+      }
+    }
   }
 }
 
@@ -372,13 +412,4 @@
       }
     }
   }
-}
-
-.code {
-  font-family: monospace;
-  display: inline-block;
-  padding: 1 1em;
-  border-radius: 1em;
-  min-width: 42em;
-  text-align: left;
 }

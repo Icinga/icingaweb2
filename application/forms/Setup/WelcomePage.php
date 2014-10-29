@@ -6,7 +6,6 @@ namespace Icinga\Form\Setup;
 
 use Icinga\Application\Icinga;
 use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Form\Validator\TokenValidator;
 
 /**
@@ -15,20 +14,12 @@ use Icinga\Web\Form\Validator\TokenValidator;
 class WelcomePage extends Form
 {
     /**
-     * The configuration directory displayed to the user in the "generate security token" infobox
-     *
-     * @var string
-     */
-    public $configDir = '/etc/icingaweb';
-
-    /**
      * Initialize this page
      */
     public function init()
     {
         $this->setName('setup_welcome');
         $this->setViewScript('form/setup-welcome.phtml');
-        $this->configDir = preg_replace('_/$_', '', Icinga::app()->getConfigDir());
     }
 
     /**
@@ -43,7 +34,8 @@ class WelcomePage extends Form
                 'required'      => true,
                 'label'         => t('Setup Token'),
                 'description'   => t(
-                    'For security reasons, we need to check that you are permitted to execute this setup. Please provide the token from the file "setup.token".'
+                    'For security reasons we need to ensure that you are permitted to run this wizard.'
+                    . ' Please provide a token by following the instructions below.'
                 ),
                 'validators'    => array(new TokenValidator(Icinga::app()->getConfigDir() . '/setup.token'))
             )

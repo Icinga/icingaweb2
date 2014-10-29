@@ -142,6 +142,21 @@ class Platform
     }
 
     /**
+     * Return the username PHP is running as
+     *
+     * @return  string
+     */
+    public static function getPhpUser()
+    {
+        if (static::isWindows()) {
+            return get_current_user(); // http://php.net/manual/en/function.get-current-user.php#75059
+        }
+
+        $userInfo = posix_getpwuid(posix_geteuid());
+        return $userInfo['name'];
+    }
+
+    /**
      * Test for php extension
      *
      * @param   string  $extensionName  E.g. mysql, ldap
