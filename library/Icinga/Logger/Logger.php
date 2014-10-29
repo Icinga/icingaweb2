@@ -156,7 +156,7 @@ class Logger
      */
     public function log($level, $message)
     {
-        if ($this->writer !== null && $this->level >= $level) {
+        if ($this->writer !== null && $this->level <= $level) {
             $this->writer->log($level, $message);
         }
     }
