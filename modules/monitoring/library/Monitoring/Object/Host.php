@@ -164,6 +164,7 @@ class Host extends MonitoredObject
      */
     public static function getStateText($state, $translate = false)
     {
+        $translate = (bool) $translate;
         switch ((int) $state) {
             case self::STATE_UP:
                 $text = $translate ? mt('monitoring', 'up') : 'up';
@@ -179,7 +180,6 @@ class Host extends MonitoredObject
                 break;
             default:
                 throw new InvalidArgumentException('Invalid host state \'%s\'', $state);
-                break;
         }
         return $text;
     }
