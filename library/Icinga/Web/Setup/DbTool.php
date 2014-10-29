@@ -423,18 +423,17 @@ class DbTool
     public function addLogin($username, $password)
     {
         if ($this->config['db'] === 'mysql') {
+            list($_, $host) = explode('@', $this->query('select current_user()')->fetchColumn());
             $this->exec(
                 'CREATE USER :user@:host IDENTIFIED BY :passw',
-                array(':user' => $username, ':host' => '%', ':passw' => $password)
+                array(':user' => $username, ':host' => $host, ':passw' => $password)
             );
-            return true;
         } elseif ($this->config['db'] === 'pgsql') {
             $this->exec(sprintf(
                 'CREATE USER %s WITH PASSWORD %s',
                 $this->quoteIdentifier($username),
                 $this->quote($password)
             ));
-            return true;
         }
     }
 
