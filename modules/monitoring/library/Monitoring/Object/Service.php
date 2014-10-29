@@ -199,34 +199,35 @@ class Service extends MonitoredObject
     }
 
     /**
-     * Get the translated textual representation of a service state
+     * Get the optional translated textual representation of a service state
      *
-     * @param   int $state
+     * @param   int     $state
+     * @param   bool    $translate
      *
      * @return  string
      * @throws  InvalidArgumentException If the service state is not valid
      */
-    public static function getStateText($state)
+    public static function getStateText($state, $translate = false)
     {
+        $translate = (bool) $translate;
         switch ((int) $state) {
             case self::STATE_OK:
-                $text = mt('monitoring', 'ok');
+                $text = $translate ? mt('monitoring', 'ok') : 'ok';
                 break;
             case self::STATE_WARNING:
-                $text = mt('monitoring', 'warning');
+                $text = $translate ? mt('monitoring', 'warning') : 'warning';
                 break;
             case self::STATE_CRITICAL:
-                $text = mt('monitoring', 'critical');
+                $text = $translate ? mt('monitoring', 'critical') : 'critical';
                 break;
             case self::STATE_UNKNOWN:
-                $text = mt('monitoring', 'unknown');
+                $text = $translate ? mt('monitoring', 'unknown') : 'unknown';
                 break;
             case self::STATE_PENDING:
-                $text = mt('monitoring', 'pending');
+                $text = $translate ? mt('monitoring', 'pending') : 'pending';
                 break;
             default:
                 throw new InvalidArgumentException('Invalid service state \'%s\'', $state);
-                break;
         }
         return $text;
     }
