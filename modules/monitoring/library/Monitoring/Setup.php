@@ -16,7 +16,6 @@ use Icinga\Module\Monitoring\Installation\BackendStep;
 use Icinga\Module\Monitoring\Installation\InstanceStep;
 use Icinga\Module\Monitoring\Installation\SecurityStep;
 use Icinga\Form\Setup\SummaryPage;
-use Icinga\Form\Setup\RequirementsPage;
 use Icinga\Module\Monitoring\Form\Setup\WelcomePage;
 use Icinga\Module\Monitoring\Form\Setup\BackendPage;
 use Icinga\Module\Monitoring\Form\Setup\InstancePage;
@@ -35,7 +34,6 @@ class Setup extends Wizard implements SetupWizard
     public function init()
     {
         $this->addPage(new WelcomePage());
-        $this->addPage(new RequirementsPage());
         $this->addPage(new BackendPage());
         $this->addPage(new IdoResourcePage());
         $this->addPage(new LivestatusResourcePage());
