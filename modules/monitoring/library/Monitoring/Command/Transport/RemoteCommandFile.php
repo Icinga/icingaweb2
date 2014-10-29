@@ -173,10 +173,10 @@ class RemoteCommandFile implements CommandTransportInterface
     public function send(IcingaCommand $command, $now = null)
     {
         if (! isset($this->path)) {
-            throw new LogicException;
+            throw new LogicException('Can\'t send external Icinga Command. Path to the remote command file is missing');
         }
         if (! isset($this->host)) {
-            throw new LogicException;
+            throw new LogicException('Can\'t send external Icinga Command. Remote host is missing');
         }
         $commandString = $this->renderer->render($command, $now);
         Logger::debug(

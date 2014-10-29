@@ -109,7 +109,7 @@ class LocalCommandFile implements CommandTransportInterface
     public function send(IcingaCommand $command, $now = null)
     {
         if (! isset($this->path)) {
-            throw new LogicException;
+            throw new LogicException('Can\'t send external Icinga Command. Path to the local command file is missing');
         }
         $commandString = $this->renderer->render($command, $now);
         Logger::debug(
