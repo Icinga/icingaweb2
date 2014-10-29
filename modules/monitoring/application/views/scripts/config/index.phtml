@@ -15,7 +15,7 @@
       <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
     </thead>
     <tbody>
-<?php foreach ($this->backendsConfig as $backendName => $config): ?>
+    <?php foreach ($this->backendsConfig as $backendName => $config): ?>
       <tr>
         <td>
           <a href="<?= $this->href('/monitoring/config/editbackend', array('backend' => $backendName)); ?>">
@@ -32,7 +32,7 @@
           </a>
         </td>
       </tr>
-<?php endforeach; ?>
+    <?php endforeach; ?>
     </tbody>
   </table>
   <h1><?= $this->translate('Monitoring Instances') ?></h1>
@@ -47,7 +47,7 @@
       <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
     </thead>
     <tbody>
-<?php foreach ($this->instancesConfig as $instanceName => $config): ?>
+    <?php foreach ($this->instancesConfig as $instanceName => $config): ?>
       <tr>
         <td>
           <a href="<?= $this->href('/monitoring/config/editinstance', array('instance' => $instanceName)); ?>">
@@ -64,7 +64,7 @@
           </a>
         </td>
       </tr>
-<?php endforeach; ?>
+    <?php endforeach; ?>
     </tbody>
   </table>
 </div>
