@@ -152,8 +152,12 @@ class Platform
             return get_current_user(); // http://php.net/manual/en/function.get-current-user.php#75059
         }
 
-        $userInfo = posix_getpwuid(posix_geteuid());
-        return $userInfo['name'];
+        if (function_exists('posix_geteuid')) {
+            $userInfo = posix_getpwuid(posix_geteuid());
+            return $userInfo['name'];
+        }
+
+        return 'php_username';
     }
 
     /**
