@@ -397,6 +397,16 @@ class WebSetup extends Wizard implements SetupWizard
             )
         );
 
+        // TODO(6172): Remove this requirement once we do not ship dompdf with Icinga Web 2 anymore
+        $requirements->addOptional(
+            t('PHP Module: DOM'),
+            t('To be able to export views and reports to PDF, the DOM module for PHP is required.'),
+            Platform::extensionLoaded('dom'),
+            Platform::extensionLoaded('dom') ? t('The PHP module DOM is available') : (
+                t('The PHP module DOM is missing')
+            )
+        );
+
         $requirements->addOptional(
             t('PHP Module: GD'),
             t(
