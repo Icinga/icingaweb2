@@ -133,10 +133,10 @@ class AuthenticationStep extends Step
             . '</table>';
 
         $adminHtml = '<p>' . (isset($this->data['adminAccountData']['resourceConfig']) ? sprintf(
-            t('Administrative rights will initially be granted to an existing account called "%s".'),
+            t('Administrative rights will initially be granted to a new account called "%s".'),
             $this->data['adminAccountData']['username']
         ) : sprintf(
-            t('Administrative rights will initially be granted to a new account called "%s".'),
+            t('Administrative rights will initially be granted to an existing account called "%s".'),
             $this->data['adminAccountData']['username']
         )) . '</p>';
 

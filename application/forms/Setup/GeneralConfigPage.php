@@ -41,7 +41,6 @@ class GeneralConfigPage extends Form
         // TODO: This is splitted as not all elements are required (as of d201cff)
         $appForm = new ApplicationConfigForm();
         $appForm->createElements($formData);
-        $this->addElement($appForm->getElement('global_modulePath'));
         $this->addElement($appForm->getElement('global_filemode'));
 
         $loggingForm = new LoggingConfigForm();

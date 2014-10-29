@@ -20,6 +20,8 @@ class ModulePage extends Form
 
     protected $pageData;
 
+    protected $modulePaths;
+
     /**
      * Initialize this page
      */
@@ -28,6 +30,11 @@ class ModulePage extends Form
         $this->setName('setup_modules');
         $this->setViewScript('form/setup-modules.phtml');
         $this->session = Session::getSession()->getNamespace(get_class($this));
+
+        $this->modulePaths = array();
+        if (($appModulePath = realpath(Icinga::app()->getApplicationDir() . '/../modules')) !== false) {
+            $this->modulePaths[] = $appModulePath;
+        }
     }
 
     public function setPageData(array $pageData)
@@ -115,9 +122,7 @@ class ModulePage extends Form
         }
 
         $moduleManager = Icinga::app()->getModuleManager();
-        $moduleManager->detectInstalledModules(
-            explode(':', $this->pageData['setup_general_config']['global_modulePath'])
-        );
+        $moduleManager->detectInstalledModules($this->modulePaths);
         foreach ($moduleManager->listInstalledModules() as $moduleName) {
             $this->modules[] = $moduleManager->loadModule($moduleName)->getModule($moduleName);
         }

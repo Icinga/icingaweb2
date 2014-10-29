@@ -144,12 +144,6 @@ class WebSetup extends Wizard implements SetupWizard
         } elseif ($page->getName() === 'setup_modules') {
             $page->setPageData($this->getPageData());
             $page->handleRequest($request);
-        } elseif ($page->getName() === 'setup_general_config' && $this->getDirection() === static::FORWARD) {
-            $configData = $this->getPageData($page->getName());
-            if ($configData !== null && $request->getPost('global_modulePath') !== $configData['global_modulePath']) {
-                // Drop the ModulePage's session and all associated wizard sessions once the module path changes
-                $this->getPage('setup_modules')->clearSession();
-            }
         }
     }
 

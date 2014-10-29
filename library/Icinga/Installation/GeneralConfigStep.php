@@ -60,10 +60,6 @@ class GeneralConfigStep extends Step
         $generalHtml = ''
             . '<ul>'
             . '<li>' . sprintf(
-                t('Icinga Web 2 will look for modules at: %s'),
-                $this->data['generalConfig']['global_modulePath']
-            ) . '</li>'
-            . '<li>' . sprintf(
                 t('Icinga Web 2 will save new configuration files using the mode "%s".'),
                 $this->data['generalConfig']['global_filemode']
             ) . '</li>'

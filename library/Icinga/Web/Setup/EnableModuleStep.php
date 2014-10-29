@@ -9,23 +9,27 @@ use Icinga\Application\Icinga;
 
 class EnableModuleStep extends Step
 {
-    protected $availableDirs;
+    protected $modulePaths;
 
     protected $moduleName;
 
     protected $error;
 
-    public function __construct($availableDirs, $moduleName)
+    public function __construct($moduleName)
     {
-        $this->availableDirs = $availableDirs;
         $this->moduleName = $moduleName;
+
+        $this->modulePaths = array();
+        if (($appModulePath = realpath(Icinga::app()->getApplicationDir() . '/../modules')) !== false) {
+            $this->modulePaths[] = $appModulePath;
+        }
     }
 
     public function apply()
     {
         try {
             $moduleManager = Icinga::app()->getModuleManager();
-            $moduleManager->detectInstalledModules($this->availableDirs);
+            $moduleManager->detectInstalledModules($this->modulePaths);
             $moduleManager->enableModule($this->moduleName);
         } catch (Exception $e) {
             $this->error = $e;
