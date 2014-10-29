@@ -340,33 +340,31 @@ class WebSetup extends Wizard implements SetupWizard
         $requirements->addMandatory(
             t('PHP Version'),
             t(
-                'Running Icingaweb requires PHP version 5.3.2. Advanced features'
+                'Running Icinga Web 2 requires PHP version 5.3.2. Advanced features'
                 . ' like the built-in web server require PHP version 5.4.'
             ),
             version_compare($phpVersion, '5.3.2', '>='),
             sprintf(t('You are running PHP version %s.'), $phpVersion)
         );
 
+        $defaultTimezone = Platform::getPhpConfig('date.timezone');
+        $requirements->addMandatory(
+            t('Default Timezone'),
+            t('It is required that a default timezone has been set using date.timezone in php.ini.'),
+            $defaultTimezone,
+            $defaultTimezone ? sprintf(t('Your default timezone is: %s'), $defaultTimezone) : (
+                t('You did not define a default timezone.')
+            )
+        );
+
         $requirements->addOptional(
             t('Linux Platform'),
             t(
-                'Icingaweb is developed for and tested on Linux. While we cannot'
+                'Icinga Web 2 is developed for and tested on Linux. While we cannot'
                 . ' guarantee they will, other platforms may also perform as well.'
             ),
             Platform::isLinux(),
             sprintf(t('You are running PHP on a %s system.'), Platform::getOperatingSystemName())
-        );
-
-        $requirements->addOptional(
-            t('PHP Module: POSIX'),
-            t(
-                'It is strongly suggested to install/enable the POSIX module for PHP. While ' .
-                'it is not required for the web frontend it is essential for the Icinga CLI.'
-            ),
-            Platform::extensionLoaded('posix'),
-            Platform::extensionLoaded('posix') ? t('The PHP module POSIX is available.') : (
-                t('The PHP module POSIX is missing.')
-            )
         );
 
         $requirements->addOptional(
@@ -388,14 +386,61 @@ class WebSetup extends Wizard implements SetupWizard
         );
 
         $requirements->addOptional(
-            t('PHP Module: PDO'),
+            t('PHP Module: INTL'),
             t(
-                'Though Icingaweb can be operated without any database access, it is recommended to install/enable' .
-                ' the PDO module for PHP to gain a significant performance increase as well as more flexibility.'
+                'If you want your users to benefit from language, timezone and date/time'
+                . ' format negotiation, the INTL module for PHP is required.'
+            ),
+            Platform::extensionLoaded('intl'),
+            Platform::extensionLoaded('intl') ? t('The PHP module INTL is available') : (
+                t('The PHP module INTL is missing')
+            )
+        );
+
+        $requirements->addOptional(
+            t('PHP Module: GD'),
+            t(
+                'In case you want icons and graphs being exported to PDF'
+                . ' as well, you\'ll need the GD extension for PHP.'
+            ),
+            Platform::extensionLoaded('gd'),
+            Platform::extensionLoaded('gd') ? t('The PHP module GD is available') : (
+                t('The PHP module GD is missing')
+            )
+        );
+
+        $requirements->addMandatory(
+            t('PHP Module: POSIX'),
+            t(
+                'It is required to install the POSIX module for PHP in case you\'re on a POSIX compliant'
+                . ' system as it\'s essential for some parts of the web frontend and the Icinga CLI.'
+            ),
+            Platform::isWindows() || Platform::extensionLoaded('posix'),
+            Platform::isWindows() ? t('Your\'re not on a POSIX compliant system.') : (
+                Platform::extensionLoaded('posix') ? t('The PHP module POSIX is available.') : (
+                    t('The PHP module POSIX is missing.')
+                )
+            )
+        );
+
+        $requirements->addOptional(
+            t('PHP Module: PDO-MySQL'),
+            t('Is Icinga Web 2 supposed to access a MySQL database the PDO-MySQL module for PHP is required.'),
+            Platform::extensionLoaded('pdo'),
+            Platform::extensionLoaded('pdo') ? t('The PHP module PDO-MySQL is available.') : (
+                t('The PHP module PDO-MySQL is missing.')
+            )
+        );
+
+        $requirements->addOptional(
+            t('PHP Module: PDO-PostgreSQL'),
+            t(
+                'Is Icinga Web 2 supposed to access a PostgreSQL database'
+                . ' the PDO-PostgreSQL module for PHP is required.'
             ),
             Platform::extensionLoaded('pdo'),
-            Platform::extensionLoaded('pdo') ? t('The PHP module PDO is available.') : (
-                t('The PHP module PDO is missing.')
+            Platform::extensionLoaded('pdo') ? t('The PHP module PDO-PostgreSQL is available.') : (
+                t('The PHP module PDO-PostgreSQL is missing.')
             )
         );
 
@@ -420,21 +465,11 @@ class WebSetup extends Wizard implements SetupWizard
             )
         );*/
 
-        $defaultTimezone = Platform::getPhpConfig('date.timezone');
-        $requirements->addMandatory(
-            t('Default Timezone'),
-            t('It is required that a default timezone has been set using date.timezone in php.ini.'),
-            $defaultTimezone,
-            $defaultTimezone ? sprintf(t('Your default timezone is: %s'), $defaultTimezone) : (
-                t('You did not define a default timezone.')
-            )
-        );
-
         $configDir = $this->getConfigDir();
         $requirements->addMandatory(
             t('Writable Config Directory'),
             t(
-                'The Icingaweb configuration directory defaults to "/etc/icingaweb", if' .
+                'The Icinga Web 2 configuration directory defaults to "/etc/icingaweb", if' .
                 ' not explicitly set in the environment variable "ICINGAWEB_CONFIGDIR".'
             ),
             is_writable($configDir),
