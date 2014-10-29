@@ -102,8 +102,8 @@ class SetupCommand extends Command
 
         $path = $this->params->get('path', $this->app->getConfigDir());
         if (file_exists($path)) {
-            $this->fail(sprintf($this->translate('Path "%s" already exists.'), $path));
-            return false;
+            printf($this->translate("Configuration directory already exists at: %s\n"), $path);
+            return true;
         }
 
         $mode = octdec($this->params->get('mode', '2775'));
@@ -116,6 +116,8 @@ class SetupCommand extends Command
         chmod($path, $mode);
         umask($old);
         chgrp($path, $group);
+
+        printf($this->translate("Successfully created configuration directory at: %s\n"), $path);
     }
 
     /**
