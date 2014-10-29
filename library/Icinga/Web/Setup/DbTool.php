@@ -4,7 +4,6 @@
 
 namespace Icinga\Web\Setup;
 
-use Icinga\Exception\ProgrammingError;
 use PDO;
 use PDOException;
 use LogicException;
@@ -66,7 +65,6 @@ class DbTool
             // Therefore, we specify the maintenance database 'postgres' as database, which
             // is most probably present and public.
             $this->connect('postgres');
-
         } else {
             $this->connect();
         }
@@ -387,13 +385,11 @@ class DbTool
      * Return whether the given database login exists
      *
      * @param   string  $username   The username to search
-     * @param   string  $password   The username to login
+     * @param   string  $password   The password for user $username, required in case it's a MySQL database
      *
      * @return  bool
-     * @throws  PDOException        When logging in is not possible due to an Exception not related
-     *                              to authentication
      */
-    public function hasLogin($username, $password)
+    public function hasLogin($username, $password = null)
     {
         if ($this->config['db'] === 'mysql') {
             // probe login by trial and error since we don't know our host name or it may be globbed
@@ -404,12 +400,9 @@ class DbTool
                 $probe = new DbTool($probeConf);
                 $probe->connectToHost();
             } catch (PDOException $e) {
-                $code = $e->getCode();
-                if ($code === 1045 || $code === 1044) {
-                    return false;
-                }
-                throw $e;
+                return false;
             }
+
             return true;
         } elseif ($this->config['db'] === 'pgsql') {
             $rowCount = $this->exec(
