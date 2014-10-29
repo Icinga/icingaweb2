@@ -399,7 +399,8 @@ class WebSetup extends Wizard implements SetupWizard
             )
         );
 
-        $mysqlAdapterFound = Platform::zendClassExists('Zend_Db_Adapter_Pdo_Mysql');
+        // TODO(7464): Re-enable or remove this entirely once a decision has been made regarding shipping Zend with Iw2
+        /*$mysqlAdapterFound = Platform::zendClassExists('Zend_Db_Adapter_Pdo_Mysql');
         $requirements->addOptional(
             t('Zend Database Adapter For MySQL'),
             t('The Zend database adapter for MySQL is required to access a MySQL database.'),
@@ -417,7 +418,7 @@ class WebSetup extends Wizard implements SetupWizard
             $pgsqlAdapterFound ? t('The Zend database adapter for PostgreSQL is available.') : (
                 t('The Zend database adapter for PostgreSQL is missing.')
             )
-        );
+        );*/
 
         $defaultTimezone = Platform::getPhpConfig('date.timezone');
         $requirements->addMandatory(
