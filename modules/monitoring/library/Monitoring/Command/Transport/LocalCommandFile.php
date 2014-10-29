@@ -18,6 +18,11 @@ use Icinga\Util\File;
 class LocalCommandFile implements CommandTransportInterface
 {
     /**
+     * Transport identifier
+     */
+    const TRANSPORT = 'local';
+
+    /**
      * Path to the icinga command file
      *
      * @var String
@@ -108,11 +113,9 @@ class LocalCommandFile implements CommandTransportInterface
         }
         $commandString = $this->renderer->render($command, $now);
         Logger::debug(
-            sprintf(
-                mt('monitoring', 'Sending external Icinga command "%s" to the local command file "%s"'),
-                $commandString,
-                $this->path
-            )
+            'Sending external Icinga command "%s" to the local command file "%s"',
+            $commandString,
+            $this->path
         );
         try {
             $file = new File($this->path, $this->openMode);
@@ -120,10 +123,7 @@ class LocalCommandFile implements CommandTransportInterface
             $file->fflush();
         } catch (Exception $e) {
             throw new TransportException(
-                mt(
-                    'monitoring',
-                    'Can\'t send external Icinga command "%s" to the local command file "%s": %s'
-                ),
+                'Can\'t send external Icinga command "%s" to the local command file "%s": %s',
                 $commandString,
                 $this->path,
                 $e
