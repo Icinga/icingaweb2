@@ -451,7 +451,7 @@ class WebSetup extends Wizard implements SetupWizard
             )
         );
 
-        foreach ($this->getPage('setup_modules')->getWizards() as $wizard) {
+        foreach ($this->getPage('setup_modules')->setPageData($this->getPageData())->getWizards() as $wizard) {
             $requirements->merge($wizard->getRequirements()->allOptional());
         }
 
