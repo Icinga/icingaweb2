@@ -6,14 +6,14 @@ namespace Icinga\Authentication;
 
 use Exception;
 use Zend_Config;
-use Icinga\User;
-use Icinga\Web\Session;
-use Icinga\Logger\Logger;
+use Icinga\Application\Config;
+use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
-use Icinga\Application\Config as IcingaConfig;
+use Icinga\Logger\Logger;
+use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
-use Icinga\Exception\IcingaException;
+use Icinga\Web\Session;
 
 class Manager
 {
@@ -53,7 +53,7 @@ class Manager
     {
         $username = $user->getUsername();
         try {
-            $config = IcingaConfig::app();
+            $config = Config::app();
         } catch (NotReadableError $e) {
             Logger::error(
                 new IcingaException(
@@ -85,18 +85,32 @@ class Manager
             $preferences = new Preferences();
         }
         $user->setPreferences($preferences);
-        $membership = new Membership();
-        $groups = $membership->getGroupsByUsername($username);
+        $groups = array();
+        foreach (Config::app('groups') as $name => $config) {
+            try {
+                $groupBackend = UserGroupBackend::create($name, $config);
+                $groupsFromBackend = $groupBackend->getMemberships($user);
+            } catch (Exception $e) {
+                Logger::error(
+                    'Can\'t get group memberships for user \'%s\' from backend \'%s\'. An exception was thrown:',
+                    $username,
+                    $name,
+                    $e
+                );
+                continue;
+            }
+            if (empty($groupsFromBackend)) {
+                continue;
+            }
+            $groupsFromBackend = array_values($groupsFromBackend);
+            $groups = array_merge($groups, array_combine($groupsFromBackend, $groupsFromBackend));
+        }
         $user->setGroups($groups);
         $admissionLoader = new AdmissionLoader();
-        $user->setPermissions(
-            $admissionLoader->getPermissions($username, $groups)
-        );
-        $user->setRestrictions(
-            $admissionLoader->getRestrictions($username, $groups)
-        );
+        $user->setPermissions($admissionLoader->getPermissions($user));
+        $user->setRestrictions($admissionLoader->getRestrictions($user));
         $this->user = $user;
-        if ($persist == true) {
+        if ($persist) {
             $this->persistCurrentUser();
         }
     }

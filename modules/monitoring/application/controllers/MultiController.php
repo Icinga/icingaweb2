@@ -54,7 +54,7 @@ class Monitoring_MultiController extends Controller
         $this->view->pie = $this->createPie(
             $this->view->states,
             $this->view->getHelper('MonitoringState')->getHostStateColors(),
-            t('Host State')
+            mt('monitoring', 'Host State')
         );
 
         // Handle configuration changes
@@ -117,12 +117,12 @@ class Monitoring_MultiController extends Controller
         $this->view->service_pie    = $this->createPie(
             $this->view->service_states,
             $this->view->getHelper('MonitoringState')->getServiceStateColors(),
-            t('Service State')
+            mt('monitoring', 'Service State')
         );
         $this->view->host_pie       = $this->createPie(
             $this->view->host_states,
             $this->view->getHelper('MonitoringState')->getHostStateColors(),
-            t('Host State')
+            mt('monitoring', 'Host State')
         );
         $this->view->errors         = $errors;
 

@@ -13,7 +13,7 @@ $contactHelper = $this->getHelper('ContactFlags');
 <div data-base-target="_next" class="content contacts">
     <?php
     if (count($contacts) === 0) {
-        echo t('No contacts matching the filter');
+        echo mt('monitoring', 'No contacts matching the filter');
         return;
     }
     foreach ($contacts as $contact): ?>
@@ -25,12 +25,12 @@ $contactHelper = $this->getHelper('ContactFlags');
             ) ?>"><strong><?= $contact->contact_name ?></strong></a> (<?= $contact->contact_alias ?>)
             <div><?= sprintf(
                 '%1$s: <a href="mailto:%2$s">%2$s</a>',
-                t('Email'),
+                mt('monitoring', 'Email'),
                 $this->escape($contact->contact_email)
             ) ?></div>
             <?php if ($contact->contact_pager): ?>
             <div>
-                <?= t('Pager') ?>:
+                <?= mt('monitoring', 'Pager') ?>:
                 <?= $this->escape($contact->contact_pager) ?>
             </div>
             <?php endif; ?>
@@ -38,13 +38,13 @@ $contactHelper = $this->getHelper('ContactFlags');
             <div class="notification-periods">
                 <?php if ($contact->contact_notify_service_timeperiod): ?>
                 <div>
-                    <?= t('Service notification period') ?>:
+                    <?= mt('monitoring', 'Service notification period') ?>:
                     <?= $this->escape($contact->contact_notify_service_timeperiod) ?>
                 </div>
                 <?php endif; ?>
                 <?php if ($contact->contact_notify_host_timeperiod): ?>
                 <div>
-                    <?= t('Host notification period') ?>:
+                    <?= mt('monitoring', 'Host notification period') ?>:
                     <?= $this->escape($contact->contact_notify_host_timeperiod) ?>
                 </div>
                 <?php endif; ?>

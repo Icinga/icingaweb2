@@ -29,7 +29,7 @@ $iframeClass = $isIframe ? ' iframe' : '';
   <title><?= $this->title ? $this->escape($this->title) : 'Icinga Web' ?></title>
   <!-- TODO: viewport and scale settings make no sense for us, fix this -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<? if ($isIframe): ?>
+<?php if ($isIframe): ?>
   <base target="_parent"/>
 <?php else: ?>
   <script type="text/javascript">
@@ -52,7 +52,6 @@ $iframeClass = $isIframe ? ' iframe' : '';
 <div id="layout" class="default-layout">
 <?= $this->render('body.phtml') ?>
 </div>
-<?php if (! $isIframe): ?>
 <!--[if IE 8]>
 <script type="text/javascript" src="<?= $this->href($ie8jsfile) ?>"></script>
 <![endif]-->
@@ -64,6 +63,5 @@ var icinga = new Icinga({
   baseUrl: '<?= $this->href('/') ?>'
 });
 </script>
-<?php endif ?>
 </body>
 </html>

@@ -342,7 +342,7 @@ class Monitoring_AlertsummaryController extends Controller
         $gridChart = new GridChart();
 
         $gridChart->alignTopLeft();
-        $gridChart->setAxisLabel('', t('Notifications'))
+        $gridChart->setAxisLabel('', mt('monitoring', 'Notifications'))
             ->setXAxis(new StaticAxis())
             ->setAxisMin(null, 0)
             ->setYAxis(new LinearUnit(10));
@@ -470,7 +470,7 @@ class Monitoring_AlertsummaryController extends Controller
         $gridChart = new GridChart();
 
         $gridChart->alignTopLeft();
-        $gridChart->setAxisLabel('', t('Notifications'))
+        $gridChart->setAxisLabel('', mt('monitoring', 'Notifications'))
             ->setXAxis(new StaticAxis())
             ->setAxisMin(null, 0)
             ->setYAxis(new LinearUnit(10));
@@ -530,12 +530,12 @@ class Monitoring_AlertsummaryController extends Controller
         $box = new SelectBox(
             'intervalBox',
             array(
-                '1d' => t('One day'),
-                '1w' => t('One week'),
-                '1m' => t('One month'),
-                '1y' => t('One year')
+                '1d' => mt('monitoring', 'One day'),
+                '1w' => mt('monitoring', 'One week'),
+                '1m' => mt('monitoring', 'One month'),
+                '1y' => mt('monitoring', 'One year')
             ),
-            t('Report interval'),
+            mt('monitoring', 'Report interval'),
             'interval'
         );
         $box->applyRequest($this->getRequest());

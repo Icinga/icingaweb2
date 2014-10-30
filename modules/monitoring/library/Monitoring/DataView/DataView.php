@@ -245,7 +245,7 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
         foreach ($sortColumns['columns'] as $column) {
             if (! $this->isValidFilterTarget($column)) {
                 throw new QueryException(
-                    t('The sort column "%s" is not allowed in "%s".'),
+                    mt('monitoring', 'The sort column "%s" is not allowed in "%s".'),
                     $column,
                     get_class($this)
                 );
@@ -336,7 +336,7 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
         if ($filter instanceof FilterMatch) {
             if (! $this->isValidFilterTarget($filter->getColumn())) {
                 throw new QueryException(
-                    t('The filter column "%s" is not allowed here.'),
+                    mt('monitoring', 'The filter column "%s" is not allowed here.'),
                     $filter->getColumn()
                 );
             }

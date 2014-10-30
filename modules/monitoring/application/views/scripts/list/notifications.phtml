@@ -26,7 +26,7 @@ if (empty($this->notifications)) {
 <?php
 
 if (count($notifications) === 0) {
-    echo t('No notifications matching the filter');
+    echo mt('monitoring', 'No notifications matching the filter');
 }
 foreach ($notifications as $notification):
 

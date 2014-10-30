@@ -64,6 +64,9 @@ class DbConnection implements Selectable
     public function __construct(Zend_Config $config = null)
     {
         $this->config = $config;
+        if (isset($config->prefix)) {
+            $this->tablePrefix = $config->prefix;
+        }
         $this->connect();
     }
 

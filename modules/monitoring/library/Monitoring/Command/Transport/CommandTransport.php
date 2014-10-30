@@ -33,7 +33,10 @@ abstract class CommandTransport
         if (! isset(self::$config)) {
             self::$config = Config::module('monitoring', 'instances');
             if (self::$config->count() === 0) {
-                throw new ConfigurationError;
+                throw new ConfigurationError(
+                    'No instances have been configured in \'%s\'.',
+                    self::$config->getConfigFile()
+                );
             }
         }
         return self::$config;
@@ -50,15 +53,22 @@ abstract class CommandTransport
     public static function fromConfig(Zend_Config $config)
     {
         switch (strtolower($config->transport)) {
-            case 'remote':
+            case RemoteCommandFile::TRANSPORT:
                 $transport = new RemoteCommandFile();
                 break;
-            case 'local':
+            case LocalCommandFile::TRANSPORT:
             case '':  // Casting null to string is the empty string
                 $transport = new LocalCommandFile();
                 break;
             default:
-                throw new ConfigurationError();
+                throw new ConfigurationError(
+                    'Can\'t create command transport \'%s\'. Invalid transport defined in \'%s\'.'
+                    . ' Use one of \'%s\' or \'%s\'.',
+                    $config->transport,
+                    self::$config->getConfigFile(),
+                    LocalCommandFile::TRANSPORT,
+                    RemoteCommandFile::TRANSPORT
+                );
         }
         unset($config->transport);
         foreach ($config as $key => $value) {

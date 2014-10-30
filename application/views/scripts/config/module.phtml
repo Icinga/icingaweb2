@@ -4,7 +4,7 @@
 <div class="content">
 <?php if (! $module): ?>
 <?= $this->translate('There is no such module installed.') ?>
-<? return; endif ?>
+<?php return; endif ?>
 <?php
 $dependencies = $module->getDependencies();
 $restrictions = $module->getProvidedRestrictions();
