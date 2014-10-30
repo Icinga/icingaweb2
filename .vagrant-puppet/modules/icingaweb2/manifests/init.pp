@@ -7,7 +7,7 @@ class icingaweb2 {
     links   => follow,
     owner   => 'apache',
     group   => 'apache',
-    mode    => 6750,
+    mode    => 6755,
     require => Class['apache'],
   }
 }

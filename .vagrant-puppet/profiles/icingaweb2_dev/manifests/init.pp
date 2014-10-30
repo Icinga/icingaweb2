@@ -19,7 +19,7 @@ class icingaweb2_dev {
     ensure  => directory,
     owner   => 'apache',
     group   => 'apache',
-    mode    => 6750,
+    mode    => 6755,
     require => [
       Class['apache'],
       File['icingaweb2cfgDir']
