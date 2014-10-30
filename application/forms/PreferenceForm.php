@@ -6,14 +6,15 @@ namespace Icinga\Form;
 
 use Exception;
 use DateTimeZone;
-use Icinga\Web\Form;
-use Icinga\Web\Request;
-use Icinga\Web\Session;
-use Icinga\Web\Notification;
-use Icinga\Util\Translator;
-use Icinga\Util\TimezoneDetect;
+use Icinga\Logger\Logger;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
+use Icinga\Util\TimezoneDetect;
+use Icinga\Util\Translator;
+use Icinga\Web\Form;
+use Icinga\Web\Notification;
+use Icinga\Web\Request;
+use Icinga\Web\Session;
 
 /**
  * Form class to adjust user preferences
@@ -108,6 +109,7 @@ class PreferenceForm extends Form
             $this->save();
             Notification::success(t('Preferences successfully saved'));
         } catch (Exception $e) {
+            Logger::error($e);
             Notification::error($e->getMessage());
         }
     }
