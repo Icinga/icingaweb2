@@ -232,6 +232,11 @@ class WebSetup extends Wizard implements SetupWizard
     {
         parent::clearSession();
         $this->getPage('setup_modules')->clearSession();
+
+        $tokenPath = Config::resolvePath('setup.token');
+        if (file_exists($tokenPath)) {
+            @unlink($tokenPath);
+        }
     }
 
     /**
