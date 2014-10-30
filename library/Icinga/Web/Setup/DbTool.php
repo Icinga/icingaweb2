@@ -360,7 +360,7 @@ class DbTool
      *
      * @return  bool
      */
-    public function checkPrivileges(array $privileges, $table = null)
+    public function checkPrivileges(array $privileges)
     {
         if ($this->config['db'] === 'mysql') {
             return $this->checkMysqlPriv($privileges);
