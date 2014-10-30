@@ -10,7 +10,6 @@ use LogicException;
 use Zend_Db_Adapter_Pdo_Mysql;
 use Zend_Db_Adapter_Pdo_Pgsql;
 use Icinga\Util\File;
-use Icinga\Application\Platform;
 use Icinga\Exception\ConfigurationError;
 
 /**
