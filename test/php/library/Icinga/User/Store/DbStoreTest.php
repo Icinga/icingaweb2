@@ -167,7 +167,7 @@ class DbStoreTest extends BaseTestCase
         return new DbStoreWithSetPreferences(
             new Zend_Config(
                 array(
-                    'connection' => Mockery::mock(array('getConnection' => $dbMock))
+                    'connection' => Mockery::mock(array('getDbAdapter' => $dbMock))
                 )
             ),
             Mockery::mock('Icinga\User', array('getUsername' => 'unittest'))

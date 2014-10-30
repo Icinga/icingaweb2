@@ -72,9 +72,11 @@ class DbStore extends PreferencesStore
     public function load()
     {
         try {
-            $select = $this->getStoreConfig()->connection->select();
-            $result = $select->from($this->table, array(self::COLUMN_PREFERENCE, self::COLUMN_VALUE))
+            $select = $this->getStoreConfig()->connection->getDbAdapter()->select();
+            $result = $select
+                ->from($this->table, array(self::COLUMN_PREFERENCE, self::COLUMN_VALUE))
                 ->where(self::COLUMN_USERNAME . ' = ?', $this->getUser()->getUsername())
+                ->query()
                 ->fetchAll();
         } catch (Exception $e) {
             throw new NotReadableError(
@@ -132,7 +134,7 @@ class DbStore extends PreferencesStore
      */
     protected function insert(array $preferences)
     {
-        $db = $this->getStoreConfig()->connection->getConnection();
+        $db = $this->getStoreConfig()->connection->getDbAdapter();
 
         try {
             foreach ($preferences as $key => $value) {
@@ -163,7 +165,7 @@ class DbStore extends PreferencesStore
      */
     protected function update(array $preferences)
     {
-        $db = $this->getStoreConfig()->connection->getConnection();
+        $db = $this->getStoreConfig()->connection->getDbAdapter();
 
         try {
             foreach ($preferences as $key => $value) {
@@ -194,7 +196,7 @@ class DbStore extends PreferencesStore
      */
     protected function delete(array $preferenceKeys)
     {
-        $db = $this->getStoreConfig()->connection->getConnection();
+        $db = $this->getStoreConfig()->connection->getDbAdapter();
 
         try {
             $db->delete(
