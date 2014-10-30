@@ -19,7 +19,7 @@ class SecurityConfigForm extends ConfigForm
     public function init()
     {
         $this->setName('form_config_monitoring_security');
-        $this->setSubmitLabel(t('Save Changes'));
+        $this->setSubmitLabel(mt('monitoring', 'Save Changes'));
     }
 
     /**
@@ -30,7 +30,7 @@ class SecurityConfigForm extends ConfigForm
         $this->config->security = $this->getValues();
 
         if ($this->save()) {
-            Notification::success(t('New security configuration has successfully been stored'));
+            Notification::success(mt('monitoring', 'New security configuration has successfully been stored'));
         } else {
             return false;
         }
@@ -56,8 +56,8 @@ class SecurityConfigForm extends ConfigForm
             'protected_customvars',
             array(
                 'required'      => true,
-                'label'         => t('Protected Custom Variables'),
-                'description'   => t(
+                'label'         => mt('monitoring', 'Protected Custom Variables'),
+                'description'   => mt('monitoring',
                     'Comma separated case insensitive list of protected custom variables.'
                     . ' Use * as a placeholder for zero or more wildcard characters.'
                     . ' Existance of those custom variables will be shown, but their values will be masked.'

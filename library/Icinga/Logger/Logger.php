@@ -84,7 +84,8 @@ class Logger
 
         if (($level = $config->level) !== null) {
             if (is_numeric($level)) {
-                if (! isset(static::$levels[(int) $level])) {
+                $level = (int) $level;
+                if (! isset(static::$levels[$level])) {
                     throw new ConfigurationError(
                         'Can\'t set logging level %d. Logging level is not defined. Use one of %s or one of the'
                         . ' Logger\'s constants.',
@@ -92,7 +93,7 @@ class Logger
                         implode(', ', array_keys(static::$levels))
                     );
                 }
-                $this->level = static::$levels[(int) $level];
+                $this->level = $level;
             } else {
                 $level = strtoupper($level);
                 $levels = array_flip(static::$levels);
@@ -155,7 +156,7 @@ class Logger
      */
     public function log($level, $message)
     {
-        if ($this->writer !== null && $this->level >= $level) {
+        if ($this->writer !== null && $this->level <= $level) {
             $this->writer->log($level, $message);
         }
     }

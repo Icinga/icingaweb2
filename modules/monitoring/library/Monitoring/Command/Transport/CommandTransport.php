@@ -33,7 +33,10 @@ abstract class CommandTransport
         if (! isset(self::$config)) {
             self::$config = Config::module('monitoring', 'instances');
             if (self::$config->count() === 0) {
-                throw new ConfigurationError;
+                throw new ConfigurationError(
+                    'No instances have been configured in \'%s\'.',
+                    self::$config->getConfigFile()
+                );
             }
         }
         return self::$config;
@@ -58,7 +61,12 @@ abstract class CommandTransport
                 $transport = new LocalCommandFile();
                 break;
             default:
-                throw new ConfigurationError();
+                throw new ConfigurationError(
+                    'Can\'t create command transport \'%s\'. Invalid transport defined in \'%s\'.'
+                    . ' Use one of \'local\' or \'remote\'.',
+                    $config->transport,
+                    self::$config->getConfigFile()
+                );
         }
         unset($config->transport);
         foreach ($config as $key => $value) {

@@ -174,7 +174,10 @@ class LdapUserBackend extends UserBackend
                 $password
             );
             if ($authenticated) {
-                $user->setGroups($this->getGroups($userDn));
+                $groups = $this->getGroups($userDn);
+                if ($groups !== null) {
+                    $user->setGroups($groups);
+                }
             }
             return $authenticated;
         } catch (LdapException $e) {

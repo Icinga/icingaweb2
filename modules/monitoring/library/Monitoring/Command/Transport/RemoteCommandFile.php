@@ -18,6 +18,11 @@ use Icinga\Module\Monitoring\Command\Renderer\IcingaCommandFileCommandRenderer;
 class RemoteCommandFile implements CommandTransportInterface
 {
     /**
+     * Transport identifier
+     */
+    const TRANSPORT = 'remote';
+
+    /**
      * Remote host
      *
      * @var string
@@ -168,20 +173,18 @@ class RemoteCommandFile implements CommandTransportInterface
     public function send(IcingaCommand $command, $now = null)
     {
         if (! isset($this->path)) {
-            throw new LogicException;
+            throw new LogicException('Can\'t send external Icinga Command. Path to the remote command file is missing');
         }
         if (! isset($this->host)) {
-            throw new LogicException;
+            throw new LogicException('Can\'t send external Icinga Command. Remote host is missing');
         }
         $commandString = $this->renderer->render($command, $now);
         Logger::debug(
-            sprintf(
-                mt('monitoring', 'Sending external Icinga command "%s" to the remote command file "%s:%u%s"'),
-                $commandString,
-                $this->host,
-                $this->port,
-                $this->path
-            )
+            'Sending external Icinga command "%s" to the remote command file "%s:%u%s"',
+            $commandString,
+            $this->host,
+            $this->port,
+            $this->path
         );
         $ssh = sprintf('ssh -o BatchMode=yes -p %u', $this->port);
         // -o BatchMode=yes for disabling interactive authentication methods
@@ -197,10 +200,7 @@ class RemoteCommandFile implements CommandTransportInterface
         exec($ssh, $output, $status);
         if ($status !== 0) {
             throw new TransportException(
-                mt(
-                    'monitoring',
-                    'Can\'t send external Icinga command "%s": %s'
-                ),
+                'Can\'t send external Icinga command "%s": %s',
                 $ssh,
                 implode(' ', $output)
             );

@@ -5,12 +5,14 @@
 namespace Icinga\Module\Monitoring\Form\Config;
 
 use InvalidArgumentException;
-use Icinga\Web\Request;
-use Icinga\Form\ConfigForm;
-use Icinga\Web\Notification;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Form\ConfigForm;
+use Icinga\Module\Monitoring\Command\Transport\LocalCommandFile;
+use Icinga\Module\Monitoring\Command\Transport\RemoteCommandFile;
 use Icinga\Module\Monitoring\Form\Config\Instance\LocalInstanceForm;
 use Icinga\Module\Monitoring\Form\Config\Instance\RemoteInstanceForm;
+use Icinga\Web\Notification;
+use Icinga\Web\Request;
 
 /**
  * Form for modifying/creating monitoring instances
@@ -18,32 +20,39 @@ use Icinga\Module\Monitoring\Form\Config\Instance\RemoteInstanceForm;
 class InstanceConfigForm extends ConfigForm
 {
     /**
-     * Initialize this form
+     * (non-PHPDoc)
+     * @see Form::init() For the method documentation.
      */
     public function init()
     {
         $this->setName('form_config_monitoring_instance');
-        $this->setSubmitLabel(t('Save Changes'));
+        $this->setSubmitLabel(mt('monitoring', 'Save Changes'));
     }
 
     /**
-     * Return a form object for the given instance type
+     * Get a form object for the given instance type
      *
-     * @param   string  $type               The instance type for which to return a form
+     * @param   string $type                The instance type for which to return a form
      *
-     * @return  Form
+     * @return  LocalInstanceForm|RemoteInstanceForm
      *
      * @throws  InvalidArgumentException    In case the given instance type is invalid
      */
     public function getInstanceForm($type)
     {
-        if ($type === 'local') {
-            return new LocalInstanceForm();
-        } elseif ($type === 'remote') {
-            return new RemoteInstanceForm();
-        } else {
-            throw new InvalidArgumentException(sprintf(t('Invalid instance type "%s" provided'), $type));
+        switch (strtolower($type)) {
+            case LocalCommandFile::TRANSPORT:
+                $form = new LocalInstanceForm();
+                break;
+            case RemoteCommandFile::TRANSPORT;
+                $form = new RemoteInstanceForm();
+                break;
+            default:
+                throw new InvalidArgumentException(
+                    sprintf(mt('monitoring', 'Invalid instance type "%s" given'), $type)
+                );
         }
+        return $form;
     }
 
     /**
@@ -61,9 +70,10 @@ class InstanceConfigForm extends ConfigForm
     {
         $name = isset($values['name']) ? $values['name'] : '';
         if (! $name) {
-            throw new InvalidArgumentException(t('Instance name missing'));
-        } elseif ($this->config->get($name) !== null) {
-            throw new InvalidArgumentException(t('Instance already exists'));
+            throw new InvalidArgumentException(mt('monitoring', 'Instance name missing'));
+        }
+        if (isset($this->config->{$name})) {
+            throw new InvalidArgumentException(mt('monitoring', 'Instance already exists'));
         }
 
         unset($values['name']);
@@ -84,16 +94,16 @@ class InstanceConfigForm extends ConfigForm
     public function edit($name, array $values)
     {
         if (! $name) {
-            throw new InvalidArgumentException(t('Old instance name missing'));
+            throw new InvalidArgumentException(mt('monitoring', 'Old instance name missing'));
         } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
-            throw new InvalidArgumentException(t('New instance name missing'));
+            throw new InvalidArgumentException(mt('monitoring', 'New instance name missing'));
         } elseif (! ($instanceConfig = $this->config->get($name))) {
-            throw new InvalidArgumentException(t('Unknown instance name provided'));
+            throw new InvalidArgumentException(mt('monitoring', 'Unknown instance name provided'));
         }
 
         unset($values['name']);
         unset($this->config->{$name});
-        $this->config->{$newName} = array_merge($instanceConfig->toArray(), $values);
+        $this->config->{$newName} = $values;
         return $this->config->{$newName};
     }
 
@@ -102,16 +112,16 @@ class InstanceConfigForm extends ConfigForm
      *
      * @param   string      $name           The name of the resource to remove
      *
-     * @return  array                       The removed resource confguration
+     * @return  array                       The removed resource configuration
      *
      * @throws  InvalidArgumentException    In case the resource name is missing or invalid
      */
     public function remove($name)
     {
         if (! $name) {
-            throw new InvalidArgumentException(t('Instance name missing'));
+            throw new InvalidArgumentException(mt('monitoring', 'Instance name missing'));
         } elseif (! ($instanceConfig = $this->config->get($name))) {
-            throw new InvalidArgumentException(t('Unknown instance name provided'));
+            throw new InvalidArgumentException(mt('monitoring', 'Unknown instance name provided'));
         }
 
         unset($this->config->{$name});
@@ -119,19 +129,40 @@ class InstanceConfigForm extends ConfigForm
     }
 
     /**
-     * @see Form::onSuccess()
+     * @see     Form::onRequest()   For the method documentation.
+     * @throws  ConfigurationError  In case the instance name is missing or invalid
+     */
+    public function onRequest(Request $request)
+    {
+        $instanceName = $request->getQuery('instance');
+        if ($instanceName !== null) {
+            if (! $instanceName) {
+                throw new ConfigurationError(mt('monitoring', 'Instance name missing'));
+            }
+            if (! isset($this->config->{$instanceName})) {
+                throw new ConfigurationError(mt('monitoring', 'Unknown instance name given'));
+            }
+
+            $instanceConfig = $this->config->{$instanceName}->toArray();
+            $instanceConfig['name'] = $instanceName;
+            $this->populate($instanceConfig);
+        }
+    }
+
+    /**
+     * (non-PHPDoc)
+     * @see Form::onSuccess() For the method documentation.
      */
     public function onSuccess(Request $request)
     {
         $instanceName = $request->getQuery('instance');
-
         try {
             if ($instanceName === null) { // create new instance
                 $this->add($this->getValues());
-                $message = t('Instance "%s" created successfully.');
+                $message = mt('monitoring', 'Instance "%s" created successfully.');
             } else { // edit existing instance
                 $this->edit($instanceName, $this->getValues());
-                $message = t('Instance "%s" edited successfully.');
+                $message = mt('monitoring', 'Instance "%s" edited successfully.');
             }
         } catch (InvalidArgumentException $e) {
             Notification::error($e->getMessage());
@@ -146,63 +177,37 @@ class InstanceConfigForm extends ConfigForm
     }
 
     /**
-     * @see Form::onRequest()
-     *
-     * @throws  ConfigurationError      In case the instance name is missing or invalid
+     * (non-PHPDoc)
+     * @see Form::createElements() For the method documentation.
      */
-    public function onRequest(Request $request)
+    public function createElements(array $formData = array())
     {
-        $instanceName = $request->getQuery('instance');
-        if ($instanceName !== null) {
-            if (! $instanceName) {
-                throw new ConfigurationError(t('Instance name missing'));
-            } elseif (false === isset($this->config->{$instanceName})) {
-                throw new ConfigurationError(t('Unknown instance name provided'));
-            }
+        $instanceType = isset($formData['transport']) ? $formData['transport'] : LocalCommandFile::TRANSPORT;
 
-            $instanceConfig = $this->config->{$instanceName}->toArray();
-            $instanceConfig['name'] = $instanceName;
-            if (isset($instanceConfig['host'])) {
-                // Necessary as we have no config directive for setting the instance's type
-                $instanceConfig['type'] = 'remote';
-            }
-            $this->populate($instanceConfig);
-        }
-    }
-
-    /**
-     * @see Form::createElements()
-     */
-    public function createElements(array $formData)
-    {
-        $instanceType = isset($formData['type']) ? $formData['type'] : 'local';
-
-        $this->addElement(
-            'text',
-            'name',
+        $this->addElements(array(
             array(
-                'required'  => true,
-                'label'     => t('Instance Name')
-            )
-        );
-        $this->addElement(
-            'select',
-            'type',
+                'text',
+                'name',
+                array(
+                    'required'  => true,
+                    'label'     => mt('monitoring', 'Instance Name')
+                )
+            ),
             array(
-                'required'      => true,
-                'ignore'        => true,
-                'autosubmit'    => true,
-                'label'         => t('Instance Type'),
-                'description'   => t(
-                    'When configuring a remote host, you need to setup passwordless key authentication'
-                ),
-                'multiOptions'  => array(
-                    'local'     => t('Local Command Pipe'),
-                    'remote'    => t('Remote Command Pipe')
-                ),
-                'value'         => $instanceType
+                'select',
+                'transport',
+                array(
+                    'required'      => true,
+                    'autosubmit'    => true,
+                    'label'         => mt('monitoring', 'Instance Type'),
+                    'multiOptions'  => array(
+                        LocalCommandFile::TRANSPORT     => mt('monitoring', 'Local Command File'),
+                        RemoteCommandFile::TRANSPORT    => mt('monitoring', 'Remote Command File')
+                    ),
+                    'value' => $instanceType
+                )
             )
-        );
+        ));
 
         $this->addElements($this->getInstanceForm($instanceType)->createElements($formData)->getElements());
     }

@@ -395,10 +395,10 @@ class Monitoring_ListController extends Controller
         $orientationBox = new SelectBox(
             'orientation',
             array(
-                '0' => t('Vertical'),
-                '1' => t('Horizontal')
+                '0' => mt('monitoring', 'Vertical'),
+                '1' => mt('monitoring', 'Horizontal')
             ),
-            t('Orientation'),
+            mt('monitoring', 'Orientation'),
             'horizontal'
         );
         $orientationBox->applyRequest($this->getRequest());

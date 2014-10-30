@@ -36,7 +36,7 @@ if (!$this->compact): ?>
 <?php
 
 if (count($services) === 0) {
-    echo t('No services matching the filter');
+    echo mt('monitoring', 'No services matching the filter');
 }
 foreach ($services as $service):
     $serviceLink = $this->href(

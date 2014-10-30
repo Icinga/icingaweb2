@@ -56,14 +56,14 @@ class StatehistoryForm extends Form
             'select',
             'from',
             array(
-                'label' => t('From'),
+                'label' => mt('monitoring', 'From'),
                 'value' => $this->getRequest()->getParam('from', strtotime('3 months ago')),
                 'multiOptions' => array(
-                    strtotime('midnight 3 months ago') => t('3 Months'),
-                    strtotime('midnight 4 months ago') => t('4 Months'),
-                    strtotime('midnight 8 months ago') => t('8 Months'),
-                    strtotime('midnight 12 months ago') => t('1 Year'),
-                    strtotime('midnight 24 months ago') => t('2 Years')
+                    strtotime('midnight 3 months ago') => mt('monitoring', '3 Months'),
+                    strtotime('midnight 4 months ago') => mt('monitoring', '4 Months'),
+                    strtotime('midnight 8 months ago') => mt('monitoring', '8 Months'),
+                    strtotime('midnight 12 months ago') => mt('monitoring', '1 Year'),
+                    strtotime('midnight 24 months ago') => mt('monitoring', '2 Years')
                 ),
                 'class' => 'autosubmit'
             )
@@ -72,10 +72,10 @@ class StatehistoryForm extends Form
             'select',
             'to',
             array(
-                'label' => t('To'),
+                'label' => mt('monitoring', 'To'),
                 'value' => $this->getRequest()->getParam('to', time()),
                 'multiOptions' => array(
-                    time() => t('Today')
+                    time() => mt('monitoring', 'Today')
                 ),
                 'class' => 'autosubmit'
             )
@@ -86,11 +86,11 @@ class StatehistoryForm extends Form
             'select',
             'objecttype',
             array(
-                'label' => t('Object type'),
+                'label' => mt('monitoring', 'Object type'),
                 'value' => $objectType,
                 'multiOptions' => array(
-                    'services' => t('Services'),
-                    'hosts' => t('Hosts')
+                    'services' => mt('monitoring', 'Services'),
+                    'hosts' => mt('monitoring', 'Hosts')
                 ),
                 'class' => 'autosubmit'
             )
@@ -104,13 +104,13 @@ class StatehistoryForm extends Form
                 'select',
                 'state',
                 array(
-                    'label' => t('State'),
+                    'label' => mt('monitoring', 'State'),
                     'value' => $serviceState,
                     'multiOptions' => array(
-                        'cnt_critical_hard' => t('Critical'),
-                        'cnt_warning_hard' => t('Warning'),
-                        'cnt_unknown_hard' => t('Unknown'),
-                        'cnt_ok' => t('Ok')
+                        'cnt_critical_hard' => mt('monitoring', 'Critical'),
+                        'cnt_warning_hard' => mt('monitoring', 'Warning'),
+                        'cnt_unknown_hard' => mt('monitoring', 'Unknown'),
+                        'cnt_ok' => mt('monitoring', 'Ok')
                     ),
                     'class' => 'autosubmit'
                 )
@@ -124,12 +124,12 @@ class StatehistoryForm extends Form
                 'select',
                 'state',
                 array(
-                    'label' => t('State'),
+                    'label' => mt('monitoring', 'State'),
                     'value' => $hostState,
                     'multiOptions' =>  array(
-                        'cnt_up' => t('Up'),
-                        'cnt_down_hard' => t('Down'),
-                        'cnt_unreachable_hard' => t('Unreachable')
+                        'cnt_up' => mt('monitoring', 'Up'),
+                        'cnt_down_hard' => mt('monitoring', 'Down'),
+                        'cnt_unreachable_hard' => mt('monitoring', 'Unreachable')
                     ),
                     'class' => 'autosubmit'
                 )
@@ -143,7 +143,7 @@ class StatehistoryForm extends Form
                 'escape'    => false,
                 'value'     => '1',
                 'class'     => 'btn btn-cta btn-common',
-                'label'     => t('Apply')
+                'label'     => mt('monitoring', 'Apply')
             )
         );
     }

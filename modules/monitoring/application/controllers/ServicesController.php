@@ -46,7 +46,7 @@ class Monitoring_ServicesController extends Controller
         $this->getTabs()->add(
             'show',
             array(
-                'title' => t('Services'),
+                'title' => mt('monitoring', 'Services'),
                 'url' => Url::fromRequest()
             )
         )->activate('show');
