@@ -67,6 +67,24 @@ class AuthenticationStep extends Step
 
     protected function defineInitialAdmin()
     {
+        $config = array();
+        $config['admins'] = array(
+            'users'         => $this->data['adminAccountData']['username'],
+            'permission'    => '*'
+        );
+
+        try {
+            $writer = new PreservingIniWriter(array(
+                'config'    => new Zend_Config($config),
+                'filename'  => Config::resolvePath('permissions.ini'),
+                'filemode'  => octdec($this->data['fileMode'])
+            ));
+            $writer->write();
+        } catch (Exception $e) {
+            $this->permIniError = $e;
+            return false;
+        }
+
         $this->permIniError = false;
         return true;
     }
