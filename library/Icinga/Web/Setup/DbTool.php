@@ -522,7 +522,7 @@ class DbTool
      * Check whether the current role has the given privileges
      *
      * NOTE: The only global role privileges in Postgres are SUPER (superuser), CREATE and CREATE USER
-     * (databases and roles), all others will be ignored in case no database was given
+     * (databases and roles), all others will be ignored in case no table was given
      *
      * @param array     $privileges     The privileges to check
      * @param           $table          The optional schema to use, defaults to 'public'
