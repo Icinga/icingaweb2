@@ -11,10 +11,23 @@ use Icinga\Exception\AuthenticationException;
 use Exception;
 use Zend_Db_Expr;
 use Zend_Db_Select;
-use Icinga\Exception\IcingaException;
 
 class DbUserBackend extends UserBackend
 {
+    /**
+     * The algorithm to use when hashing passwords
+     *
+     * @var string
+     */
+    const HASH_ALGORITHM = '$1$'; // MD5
+
+    /**
+     * The length of the salt to use when hashing a password
+     *
+     * @var int
+     */
+    const SALT_LENGTH = 12; // 12 is required by MD5
+
     /**
      * Connection to the database
      *
@@ -37,8 +50,8 @@ class DbUserBackend extends UserBackend
     public function hasUser(User $user)
     {
         $select = new Zend_Db_Select($this->conn->getConnection());
-        $row = $select->from('account', array(new Zend_Db_Expr(1)))
-            ->where('username = ?', $user->getUsername())
+        $row = $select->from('icingaweb_user', array(new Zend_Db_Expr(1)))
+            ->where('name = ?', $user->getUsername())
             ->query()->fetchObject();
 
         return ($row !== false) ? true : false;
@@ -53,50 +66,51 @@ class DbUserBackend extends UserBackend
      */
     public function addUser($username, $password, $active = true)
     {
-        $passwordSalt = $this->generateSalt();
-        $hashedPassword = $this->hashPassword($password, $passwordSalt);
         $stmt = $this->conn->getDbAdapter()->prepare(
-            'INSERT INTO account VALUES (:username, :salt, :password, :active);'
+            'INSERT INTO icingaweb_user VALUES (:name, :active, :password_hash, :ctime);'
         );
         $stmt->execute(array(
-            ':active'   => $active,
-            ':username' => $username,
-            ':salt'     => $passwordSalt,
-            ':password' => $hashedPassword
+            ':name'             => $username,
+            ':active'           => (int) $active,
+            ':password_hash'    => $this->hashPassword($password),
+            ':ctime'            => time()
         ));
     }
 
     /**
-     * Authenticate the given user and return true on success, false on failure and null on error
+     * Fetch the row for the given user from the database
+     *
+     * @param   string      $username   The name of the user to fetch
+     *
+     * @return  array|null              NULL in case the user does not exist
+     */
+    public function getUser($username)
+    {
+        $select = new Zend_Db_Select($this->conn->getConnection());
+        $row = $select->from('icingaweb_user')->where('name = ?', $username)->query()->fetch();
+        return empty($row) ? null : $row;
+    }
+
+    /**
+     * Authenticate the given user and return true on success, false on failure and throw an exception on error
      *
      * @param   User        $user
      * @param   string      $password
      *
-     * @return  bool|null
+     * @return  bool
+     *
      * @throws  AuthenticationException
      */
     public function authenticate(User $user, $password)
     {
         try {
-            $salt = $this->getSalt($user->getUsername());
-            if ($salt === null) {
+            $userData = $this->getUser($user->getUsername());
+            if ($userData === null || ! $userData['active']) {
                 return false;
             }
-            if ($salt === '') {
-                throw new IcingaException(
-                    'Cannot find salt for user %s',
-                    $user->getUsername()
-                );
-            }
 
-            $select = new Zend_Db_Select($this->conn->getConnection());
-            $row = $select->from('account', array(new Zend_Db_Expr(1)))
-                ->where('username = ?', $user->getUsername())
-                ->where('active = ?', true)
-                ->where('password = ?', $this->hashPassword($password, $salt))
-                ->query()->fetchObject();
-
-            return ($row !== false) ? true : false;
+            $hashToCompare = $this->hashPassword($password, $this->getSalt($userData['password_hash']));
+            return $hashToCompare === $userData['password_hash'];
         } catch (Exception $e) {
             throw new AuthenticationException(
                 'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
@@ -108,17 +122,15 @@ class DbUserBackend extends UserBackend
     }
 
     /**
-     * Get salt by username
+     * Extract salt from the given password hash
      *
-     * @param   string $username
+     * @param   string  $hash   The hashed password
      *
-     * @return  string|null
+     * @return  string
      */
-    protected function getSalt($username)
+    protected function getSalt($hash)
     {
-        $select = new Zend_Db_Select($this->conn->getConnection());
-        $row = $select->from('account', array('salt'))->where('username = ?', $username)->query()->fetchObject();
-        return ($row !== false) ? $row->salt : null;
+        return substr($hash, strlen(self::HASH_ALGORITHM) + self::SALT_LENGTH);
     }
 
     /**
@@ -130,19 +142,20 @@ class DbUserBackend extends UserBackend
      */
     protected function generateSalt()
     {
-        return bin2hex(openssl_random_pseudo_bytes(32));
+        return openssl_random_pseudo_bytes(self::SALT_LENGTH);
     }
 
     /**
      * Hash a password
      *
-     * @param   string $password
-     * @param   string $salt
+     * @param   string  $password
+     * @param   string  $salt
      *
      * @return  string
      */
-    protected function hashPassword($password, $salt) {
-        return hash_hmac('sha256', $password, $salt);
+    protected function hashPassword($password, $salt = null)
+    {
+        return crypt($password, self::HASH_ALGORITHM . ($salt !== null ? $salt : $this->generateSalt()));
     }
 
     /**
@@ -154,7 +167,7 @@ class DbUserBackend extends UserBackend
     {
         $select = new Zend_Db_Select($this->conn->getConnection());
         $row = $select->from(
-            'account',
+            'icingaweb_user',
             array('count' => 'COUNT(*)')
         )->query()->fetchObject();
 
@@ -168,11 +181,11 @@ class DbUserBackend extends UserBackend
      */
     public function listUsers()
     {
-        $query = $this->conn->select()->from('account', array('username'));
+        $query = $this->conn->select()->from('icingaweb_user', array('name'));
 
         $users = array();
         foreach ($query->fetchAll() as $row) {
-            $users[] = $row->username;
+            $users[] = $row->name;
         }
 
         return $users;
