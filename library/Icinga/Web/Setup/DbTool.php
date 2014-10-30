@@ -488,8 +488,6 @@ class DbTool
      * A more fine-grained check of schema, table and columns permissions in the database
      * will not happen.
      *
-     * WARNING: May reconnect to another database
-     *
      * @param   array   $privileges
      * @param           $database   The database
      * @param           $table      The optional table
