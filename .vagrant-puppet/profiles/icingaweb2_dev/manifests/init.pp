@@ -30,6 +30,10 @@ class icingaweb2_dev {
     user    => 'apache',
     require => Class[[ 'icingacli', 'apache' ]],
   }
+  -> exec { 'enable-test-module':
+    command => 'icingacli module enable test',
+    user    => 'apache'
+  }
 
   group { 'icingacmd':
     ensure => present,
