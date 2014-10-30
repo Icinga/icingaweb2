@@ -101,4 +101,8 @@ class icingaweb2_dev {
     unless  => 'grep -Fxqe "-A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT" /etc/sysconfig/iptables',
     command => '/sbin/iptables -I INPUT 1 -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT && /sbin/iptables-save > /etc/sysconfig/iptables'
   }
+
+  package { 'php-phpunit-PHPUnit':
+    ensure => latest
+  }
 }
