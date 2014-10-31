@@ -4,7 +4,7 @@
 
 namespace Icinga\Web\Session;
 
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
 
 /**

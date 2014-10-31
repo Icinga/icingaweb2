@@ -9,7 +9,7 @@ require_once __DIR__ . '/ApplicationBootstrap.php';
 use Icinga\Authentication\Manager as AuthenticationManager;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Web\Request;
 use Icinga\Web\Response;

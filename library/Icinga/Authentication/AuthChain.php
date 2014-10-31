@@ -6,7 +6,7 @@ namespace Icinga\Authentication;
 
 use Iterator;
 use Zend_Config;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
 
 /**

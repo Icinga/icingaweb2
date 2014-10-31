@@ -6,7 +6,7 @@ namespace Icinga\Application\Modules;
 
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Icinga;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\SimpleQuery;
 use Icinga\Exception\ConfigurationError;

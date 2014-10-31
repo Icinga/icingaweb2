@@ -4,7 +4,7 @@
 
 // namespace Icinga\Application\Controllers;
 
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Icinga;
 

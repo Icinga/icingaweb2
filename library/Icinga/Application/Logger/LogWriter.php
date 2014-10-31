@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Logger;
+namespace Icinga\Application\Logger;
 
 use Zend_Config;
 

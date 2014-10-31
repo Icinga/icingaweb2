@@ -2,13 +2,13 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Logger;
+namespace Icinga\Application;
 
 use Exception;
 use Zend_Config;
+use Icinga\Application\Logger\Writer\FileWriter;
+use Icinga\Application\Logger\Writer\SyslogWriter;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Logger\Writer\FileWriter;
-use Icinga\Logger\Writer\SyslogWriter;
 
 /**
  * Logger
@@ -57,7 +57,7 @@ class Logger
     /**
      * Log writer
      *
-     * @var \Icinga\Logger\LogWriter
+     * @var \Icinga\Application\Logger\LogWriter
      */
     protected $writer;
 
@@ -133,12 +133,12 @@ class Logger
      *
      * @param   Zend_Config     $config     The configuration to initialize the writer with
      *
-     * @return  \Icinga\Logger\LogWriter    The requested log writer
-     * @throws  ConfigurationError          If the requested writer cannot be found
+     * @return  \Icinga\Application\Logger\LogWriter    The requested log writer
+     * @throws  ConfigurationError                      If the requested writer cannot be found
      */
     protected function createWriter(Zend_Config $config)
     {
-        $class = 'Icinga\\Logger\\Writer\\' . ucfirst(strtolower($config->log)) . 'Writer';
+        $class = 'Icinga\\Application\\Logger\\Writer\\' . ucfirst(strtolower($config->log)) . 'Writer';
         if (! class_exists($class)) {
             throw new ConfigurationError(
                 'Cannot find log writer of type "%s"',
@@ -258,7 +258,7 @@ class Logger
     /**
      * Get the log writer to use
      *
-     * @return \Icinga\Logger\LogWriter
+     * @return \Icinga\Application\Logger\LogWriter
      */
     public function getWriter()
     {

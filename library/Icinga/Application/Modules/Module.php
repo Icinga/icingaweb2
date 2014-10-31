@@ -12,7 +12,7 @@ use Zend_Controller_Router_Route_Regex as RegexRoute;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Util\Translator;
 use Icinga\Web\Hook;
 use Icinga\Web\Menu;

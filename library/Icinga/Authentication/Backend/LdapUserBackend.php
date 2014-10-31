@@ -4,7 +4,7 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\User;
 use Icinga\Authentication\UserBackend;
 use Icinga\Protocol\Ldap\Connection;

@@ -6,7 +6,7 @@ namespace Icinga\Form;
 
 use Exception;
 use DateTimeZone;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Util\TimezoneDetect;

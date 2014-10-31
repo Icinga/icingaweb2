@@ -7,7 +7,7 @@ namespace Icinga\Protocol\Ldap;
 use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Application\Platform;
 use Icinga\Application\Config;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Zend_Config;
 
 /**

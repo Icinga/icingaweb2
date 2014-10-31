@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Zend_Db_Select;
 
 class GroupSummaryQuery extends IdoQuery

@@ -3,7 +3,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Web\Url;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Config\PreservingIniWriter;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Web\Widget\Dashboard;

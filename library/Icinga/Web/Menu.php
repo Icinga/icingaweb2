@@ -9,7 +9,7 @@ use RecursiveIterator;
 use Zend_Config;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Url;

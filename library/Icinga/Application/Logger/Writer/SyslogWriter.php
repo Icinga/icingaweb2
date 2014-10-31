@@ -2,11 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Logger\Writer;
+namespace Icinga\Application\Logger\Writer;
 
 use Zend_Config;
-use Icinga\Logger\Logger;
-use Icinga\Logger\LogWriter;
+use Icinga\Application\Logger;
+use Icinga\Application\Logger\LogWriter;
 
 /**
  * Log to the syslog service

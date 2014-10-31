@@ -9,7 +9,7 @@ use Icinga\Application\ApplicationBootstrap;
 use Icinga\Cli\Params;
 use Icinga\Cli\Loader;
 use Icinga\Cli\Screen;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Application\Benchmark;
 use Icinga\Exception\ProgrammingError;
 use Zend_Config;

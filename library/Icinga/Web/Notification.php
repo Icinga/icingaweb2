@@ -6,7 +6,7 @@ namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
 use Icinga\Application\Platform;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Web\Session;
 
 /**

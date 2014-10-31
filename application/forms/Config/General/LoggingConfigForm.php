@@ -5,7 +5,7 @@
 namespace Icinga\Form\Config\General;
 
 use Icinga\Application\Icinga;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Web\Form;
 use Icinga\Web\Form\Validator\WritablePathValidator;
 
