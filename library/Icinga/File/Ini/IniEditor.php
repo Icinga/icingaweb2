@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Config;
+namespace Icinga\File\Ini;
 
 /**
  * Edit the sections and keys of an ini in-place

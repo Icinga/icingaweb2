@@ -6,10 +6,10 @@ namespace Tests\Icinga\Config;
 
 use Zend_Config;
 use Zend_Config_Ini;
+use Icinga\File\Ini\IniWriter;
 use Icinga\Test\BaseTestCase;
-use Icinga\Config\PreservingIniWriter;
 
-class PreservingIniWriterTest extends BaseTestCase
+class IniWriterTest extends BaseTestCase
 {
     protected $tempFile;
     protected $tempFile2;
@@ -34,22 +34,22 @@ class PreservingIniWriterTest extends BaseTestCase
     {
         $target = $this->writeConfigToTemporaryFile('');
         $config = new Zend_Config(array('key' => 'value'));
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
-        $this->assertEquals('value', $newConfig->get('key'), 'PreservingIniWriter does not insert in empty files');
+        $this->assertEquals('value', $newConfig->get('key'), 'IniWriter does not insert in empty files');
     }
 
     public function testWhetherSimplePropertiesAreInsertedInExistingFiles()
     {
         $target = $this->writeConfigToTemporaryFile('key1 = "1"');
         $config = new Zend_Config(array('key2' => '2'));
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
-        $this->assertEquals('2', $newConfig->get('key2'), 'PreservingIniWriter does not insert in existing files');
+        $this->assertEquals('2', $newConfig->get('key2'), 'IniWriter does not insert in existing files');
     }
 
     /**
@@ -59,11 +59,11 @@ class PreservingIniWriterTest extends BaseTestCase
     {
         $target = $this->writeConfigToTemporaryFile('key = "value"');
         $config = new Zend_Config(array('key' => 'eulav'));
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
-        $this->assertEquals('eulav', $newConfig->get('key'), 'PreservingIniWriter does not update simple properties');
+        $this->assertEquals('eulav', $newConfig->get('key'), 'IniWriter does not update simple properties');
     }
 
     /**
@@ -73,30 +73,30 @@ class PreservingIniWriterTest extends BaseTestCase
     {
         $target = $this->writeConfigToTemporaryFile('key = "value"');
         $config = new Zend_Config(array());
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
-        $this->assertNull($newConfig->get('key'), 'PreservingIniWriter does not delete simple properties');
+        $this->assertNull($newConfig->get('key'), 'IniWriter does not delete simple properties');
     }
 
     public function testWhetherNestedPropertiesAreInserted()
     {
         $target = $this->writeConfigToTemporaryFile('');
         $config = new Zend_Config(array('a' => array('b' => 'c')));
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertInstanceOf(
             '\Zend_Config',
             $newConfig->get('a'),
-            'PreservingIniWriter does not insert nested properties'
+            'IniWriter does not insert nested properties'
         );
         $this->assertEquals(
             'c',
             $newConfig->get('a')->get('b'),
-            'PreservingIniWriter does not insert nested properties'
+            'IniWriter does not insert nested properties'
         );
     }
 
@@ -107,19 +107,19 @@ class PreservingIniWriterTest extends BaseTestCase
     {
         $target = $this->writeConfigToTemporaryFile('a.b = "c"');
         $config = new Zend_Config(array('a' => array('b' => 'cc')));
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertInstanceOf(
             '\Zend_Config',
             $newConfig->get('a'),
-            'PreservingIniWriter does not update nested properties'
+            'IniWriter does not update nested properties'
         );
         $this->assertEquals(
             'cc',
             $newConfig->get('a')->get('b'),
-            'PreservingIniWriter does not update nested properties'
+            'IniWriter does not update nested properties'
         );
     }
 
@@ -130,13 +130,13 @@ class PreservingIniWriterTest extends BaseTestCase
     {
         $target = $this->writeConfigToTemporaryFile('a.b = "c"');
         $config = new Zend_Config(array());
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertNull(
             $newConfig->get('a'),
-            'PreservingIniWriter does not delete nested properties'
+            'IniWriter does not delete nested properties'
         );
     }
 
@@ -144,19 +144,19 @@ class PreservingIniWriterTest extends BaseTestCase
     {
         $target = $this->writeConfigToTemporaryFile('');
         $config = new Zend_Config(array('section' => array('key' => 'value')));
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertInstanceOf(
             '\Zend_Config',
             $newConfig->get('section'),
-            'PreservingIniWriter does not insert sections'
+            'IniWriter does not insert sections'
         );
         $this->assertEquals(
             'value',
             $newConfig->get('section')->get('key'),
-            'PreservingIniWriter does not insert simple section properties'
+            'IniWriter does not insert simple section properties'
         );
     }
 
@@ -171,14 +171,14 @@ key = "value"
 EOD
         );
         $config = new Zend_Config(array('section' => array('key' => 'eulav')));
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertEquals(
             'eulav',
             $newConfig->get('section')->get('key'),
-            'PreservingIniWriter does not update simple section properties'
+            'IniWriter does not update simple section properties'
         );
     }
 
@@ -193,13 +193,13 @@ key = "value"
 EOD
         );
         $config = new Zend_Config(array('section' => array()));
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertNull(
             $newConfig->get('section')->get('key'),
-            'PreservingIniWriter does not delete simple section properties'
+            'IniWriter does not delete simple section properties'
         );
     }
 
@@ -207,24 +207,24 @@ EOD
     {
         $target = $this->writeConfigToTemporaryFile('');
         $config = new Zend_Config(array('section' => array('a' => array('b' => 'c'))));
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertInstanceOf(
             '\Zend_Config',
             $newConfig->get('section'),
-            'PreservingIniWriter does not insert sections'
+            'IniWriter does not insert sections'
         );
         $this->assertInstanceOf(
             '\Zend_Config',
             $newConfig->get('section')->get('a'),
-            'PreservingIniWriter does not insert nested section properties'
+            'IniWriter does not insert nested section properties'
         );
         $this->assertEquals(
             'c',
             $newConfig->get('section')->get('a')->get('b'),
-            'PreservingIniWriter does not insert nested section properties'
+            'IniWriter does not insert nested section properties'
         );
     }
 
@@ -239,14 +239,14 @@ a.b = "c"
 EOD
         );
         $config = new Zend_Config(array('section' => array('a' => array('b' => 'cc'))));
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertEquals(
             'cc',
             $newConfig->get('section')->get('a')->get('b'),
-            'PreservingIniWriter does not update nested section properties'
+            'IniWriter does not update nested section properties'
         );
     }
 
@@ -261,13 +261,13 @@ a.b = "c"
 EOD
         );
         $config = new Zend_Config(array('section' => array()));
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertNull(
             $newConfig->get('section')->get('a'),
-            'PreservingIniWriter does not delete nested section properties'
+            'IniWriter does not delete nested section properties'
         );
     }
 
@@ -281,29 +281,29 @@ EOD
             )
         );
         $config->setExtend('bar', 'foo');
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertInstanceOf(
             '\Zend_Config',
             $newConfig->get('foo'),
-            'PreservingIniWriter does not insert extended sections'
+            'IniWriter does not insert extended sections'
         );
         $this->assertInstanceOf(
             '\Zend_Config',
             $newConfig->get('bar'),
-            'PreservingIniWriter does not insert extending sections'
+            'IniWriter does not insert extending sections'
         );
         $this->assertEquals(
             '2',
             $newConfig->get('bar')->get('key2'),
-            'PreservingIniWriter does not insert simple properties into extending sections'
+            'IniWriter does not insert simple properties into extending sections'
         );
         $this->assertEquals(
             '1',
             $newConfig->get('foo')->get('key1'),
-            'PreservingIniWriter does not properly define extending sections'
+            'IniWriter does not properly define extending sections'
         );
     }
 
@@ -327,14 +327,14 @@ EOD
             )
         );
         $config->setExtend('bar', 'foo');
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertEquals(
             '22',
             $newConfig->get('bar')->get('key2'),
-            'PreservingIniWriter does not update simple properties of extending sections'
+            'IniWriter does not update simple properties of extending sections'
         );
     }
 
@@ -358,13 +358,13 @@ EOD
             )
         );
         $config->setExtend('bar', 'foo');
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertNull(
             $newConfig->get('bar')->get('key2'),
-            'PreservingIniWriter does not delete simple properties of extending sections'
+            'IniWriter does not delete simple properties of extending sections'
         );
     }
 
@@ -378,34 +378,34 @@ EOD
             )
         );
         $config->setExtend('bar', 'foo');
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertInstanceOf(
             '\Zend_Config',
             $newConfig->get('foo'),
-            'PreservingIniWriter does not insert extended sections'
+            'IniWriter does not insert extended sections'
         );
         $this->assertInstanceOf(
             '\Zend_Config',
             $newConfig->get('bar'),
-            'PreservingIniWriter does not insert extending sections'
+            'IniWriter does not insert extending sections'
         );
         $this->assertInstanceOf(
             '\Zend_Config',
             $newConfig->get('bar')->get('d'),
-            'PreservingIniWriter does not insert nested properties into extending sections'
+            'IniWriter does not insert nested properties into extending sections'
         );
         $this->assertEquals(
             'f',
             $newConfig->get('bar')->get('d')->get('e'),
-            'PreservingIniWriter does not insert nested properties into extending sections'
+            'IniWriter does not insert nested properties into extending sections'
         );
         $this->assertEquals(
             'c',
             $newConfig->get('bar')->get('a')->get('b'),
-            'PreservingIniWriter does not properly define extending sections with nested properties'
+            'IniWriter does not properly define extending sections with nested properties'
         );
     }
 
@@ -429,14 +429,14 @@ EOD
             )
         );
         $config->setExtend('bar', 'foo');
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertEquals(
             'ff',
             $newConfig->get('bar')->get('d')->get('e'),
-            'PreservingIniWriter does not update nested properties of extending sections'
+            'IniWriter does not update nested properties of extending sections'
         );
     }
 
@@ -460,13 +460,13 @@ EOD
             )
         );
         $config->setExtend('bar', 'foo');
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = new Zend_Config_Ini($target);
         $this->assertNull(
             $newConfig->get('bar')->get('d'),
-            'PreservingIniWriter does not delete nested properties of extending sections'
+            'IniWriter does not delete nested properties of extending sections'
         );
     }
 
@@ -504,7 +504,7 @@ key1                = "1"
 key2                = "2"
 EOD;
         $target = $this->writeConfigToTemporaryFile($config);
-        $writer = new PreservingIniWriter(
+        $writer = new IniWriter(
             array(
                 'config'    => new Zend_Config(
                     array(
@@ -535,7 +535,7 @@ EOD;
         $this->assertEquals(
             trim($reverted),
             trim($writer->render()),
-            'PreservingIniWriter does not preserve section and/or property order'
+            'IniWriter does not preserve section and/or property order'
         );
     }
 
@@ -559,7 +559,7 @@ EOD;
 [one]
 EOD;
         $target = $this->writeConfigToTemporaryFile($config);
-        $writer = new PreservingIniWriter(
+        $writer = new IniWriter(
             array(
                 'config' => new Zend_Config(
                     array(
@@ -574,7 +574,7 @@ EOD;
         $this->assertEquals(
             trim($reverted),
             trim($writer->render()),
-            'PreservingIniWriter does not preserve section and/or property order'
+            'IniWriter does not preserve section and/or property order'
         );
     }
 
@@ -588,14 +588,14 @@ key                 = "value"
 ; boring comment
 EOD;
         $target = $this->writeConfigToTemporaryFile($config);
-        $writer = new PreservingIniWriter(
+        $writer = new IniWriter(
             array('config' => new Zend_Config(array('key' => 'value')), 'filename' => $target)
         );
 
         $this->assertEquals(
             $config,
             $writer->render(),
-            'PreservingIniWriter does not preserve comments on empty lines'
+            'IniWriter does not preserve comments on empty lines'
         );
     }
 
@@ -608,7 +608,7 @@ key                 = "value"               ; some comment for a small sized pro
 xxl                 = "very loooooooooooooooooooooong" ; my value is very lo...
 EOD;
         $target = $this->writeConfigToTemporaryFile($config);
-        $writer = new PreservingIniWriter(
+        $writer = new IniWriter(
             array(
                 'config' => new Zend_Config(
                     array(
@@ -625,7 +625,7 @@ EOD;
         $this->assertEquals(
             $config,
             $writer->render(),
-            'PreservingIniWriter does not preserve comments on property lines'
+            'IniWriter does not preserve comments on property lines'
         );
     }
 
@@ -637,14 +637,14 @@ EOD;
 key                 = "value"
 EOD;
         $target = $this->writeConfigToTemporaryFile($config);
-        $writer = new PreservingIniWriter(
+        $writer = new IniWriter(
             array('config' => new Zend_Config(array('section' => array('key' => 'value'))), 'filename' => $target)
         );
 
         $this->assertEquals(
             $config,
             $writer->render(),
-            'PreservingIniWriter does not preserve comments on empty section lines'
+            'IniWriter does not preserve comments on empty section lines'
         );
     }
 
@@ -658,7 +658,7 @@ key                 = "value"               ; some comment for a small sized pro
 xxl                 = "very loooooooooooooooooooooong" ; my value is very lo...
 EOD;
         $target = $this->writeConfigToTemporaryFile($config);
-        $writer = new PreservingIniWriter(
+        $writer = new IniWriter(
             array(
                 'config' => new Zend_Config(
                     array(
@@ -677,13 +677,13 @@ EOD;
         $this->assertEquals(
             $config,
             $writer->render(),
-            'PreservingIniWriter does not preserve comments on property lines'
+            'IniWriter does not preserve comments on property lines'
         );
     }
 
     public function testKeyNormalization()
     {
-        $normalKeys = new PreservingIniWriter(
+        $normalKeys = new IniWriter(
             array (
                 'config' => new Zend_Config(array (
                         'foo' => 'bar',
@@ -704,7 +704,7 @@ EOD;
 
         );
 
-        $nestedKeys = new PreservingIniWriter(
+        $nestedKeys = new IniWriter(
             array (
                 'config' => new Zend_Config(array (
                     'foo' => 'bar',

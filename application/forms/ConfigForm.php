@@ -7,7 +7,7 @@ namespace Icinga\Form;
 use Exception;
 use Icinga\Web\Form;
 use Icinga\Application\Config;
-use Icinga\Config\PreservingIniWriter;
+use Icinga\File\Ini\IniWriter;
 
 /**
  * Form base-class providing standard functionality for configuration forms
@@ -43,7 +43,7 @@ class ConfigForm extends Form
      */
     public function save()
     {
-        $writer = new PreservingIniWriter(
+        $writer = new IniWriter(
             array(
                 'config'    => $this->config,
                 'filename'  => $this->config->getConfigFile()
