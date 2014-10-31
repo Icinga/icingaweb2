@@ -317,10 +317,12 @@ abstract class MonitoredObject
                 'contact_alias',
                 'contact_email',
                 'contact_pager',
-        ))
-            ->where('host_name', $this->host_name);
+        ));
         if ($this->type === self::TYPE_SERVICE) {
+            $contacts->where('service_host_name', $this->host_name);
             $contacts->where('service_description', $this->service_description);
+        } else {
+            $contacts->where('host_name', $this->host_name);
         }
         $this->contacts = $contacts->getQuery()->fetchAll();
         return $this;
