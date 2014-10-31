@@ -39,7 +39,7 @@ class Form extends Zend_Form
     /**
      * The callback to call instead of Form::onSuccess()
      *
-     * @var Callback
+     * @var callable
      */
     protected $onSuccess;
 
