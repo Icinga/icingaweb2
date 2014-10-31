@@ -167,4 +167,14 @@ class Config extends Zend_Config
     {
         return self::$configDir . DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR);
     }
+
+    /**
+     * Is the configuration empty?
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->_data);
+    }
 }
