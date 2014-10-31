@@ -372,10 +372,9 @@ class Manager
     }
 
     /**
-     * Return an array containing all loaded modules
+     * Get the currently loaded modules
      *
-     * @return  array
-     * @see     Module
+     * @return  Module[]
      */
     public function getLoadedModules()
     {
