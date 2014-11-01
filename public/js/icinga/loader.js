@@ -269,15 +269,24 @@
                 }
 
             } else {
-                if (req.$target.attr('id') === 'col2') { // TODO: multicol
-                    if ($('#col1').data('icingaUrl') === redirect) {
-                        icinga.ui.layout1col();
-                        req.$target = $('#col1');
-                        delete(this.requests['col2']);
-                    }
-                }
 
-                this.loadUrl(redirect, req.$target);
+                if (redirect.match(/#!/)) {
+                    var parts = redirect.split(/#!/);
+                    icinga.ui.layout2col();
+                    this.loadUrl(parts.shift(), $('#col1'));
+                    this.loadUrl(parts.shift(), $('#col2'));
+                } else {
+
+                    if (req.$target.attr('id') === 'col2') { // TODO: multicol
+                        if ($('#col1').data('icingaUrl') === redirect) {
+                            icinga.ui.layout1col();
+                            req.$target = $('#col1');
+                            delete(this.requests['col2']);
+                        }
+                    }
+
+                    this.loadUrl(redirect, req.$target);
+                }
             }
             return true;
         },
