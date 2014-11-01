@@ -672,6 +672,8 @@
                 }
             }
 
+            $container.trigger('beforerender');
+
             var discard = false;
             $.each(self.icinga.behaviors, function(name, behavior) {
                 if (behavior.renderHook) {
