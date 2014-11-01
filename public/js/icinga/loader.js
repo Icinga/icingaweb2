@@ -691,11 +691,12 @@
             var $content = $('<div>' + content + '</div>');
 
             // Disable all click events while rendering
-            $('*').click(function (event) {
-                event.stopImmediatePropagation();
-                event.stopPropagation();
-                event.preventDefault();
-            });
+            // (Disabling disabled, was ways too slow)
+            // $('*').click(function (event) {
+            //     event.stopImmediatePropagation();
+            //     event.stopPropagation();
+            //     event.preventDefault();
+            // });
 
             $('.container', $container).each(function() {
                 self.stopPendingRequestsFor($(this));
@@ -738,8 +739,8 @@
             icinga.ui.initializeControls($container);
             icinga.ui.fixControls();
 
-            // Re-enable all click events
-            $('*').off('click');
+            // Re-enable all click events (disabled as of performance reasons)
+            // $('*').off('click');
         },
 
         /**
