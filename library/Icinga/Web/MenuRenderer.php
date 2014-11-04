@@ -6,7 +6,7 @@ namespace Icinga\Web;
 
 use Exception;
 use RecursiveIteratorIterator;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 
 /**
  * A renderer to draw a menu with its sub-menus using an unordered html list

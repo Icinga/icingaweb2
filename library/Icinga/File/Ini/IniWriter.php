@@ -2,18 +2,17 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Config;
+namespace Icinga\File\Ini;
 
 use Zend_Config;
 use Zend_Config_Ini;
 use Zend_Config_Exception;
 use Zend_Config_Writer_FileAbstract;
-use Icinga\Config\IniEditor;
 
 /**
- * A ini file adapter that respects the file structure and the comments of already existing ini files
+ * A INI file adapter that respects the file structure and the comments of already existing ini files
  */
-class PreservingIniWriter extends Zend_Config_Writer_FileAbstract
+class IniWriter extends Zend_Config_Writer_FileAbstract
 {
     /**
      * Stores the options
@@ -30,7 +29,7 @@ class PreservingIniWriter extends Zend_Config_Writer_FileAbstract
     public static $fileMode;
 
     /**
-     * Create a new PreservingIniWriter
+     * Create a new INI writer
      *
      * @param array $options   Supports all options of Zend_Config_Writer and additional options:
      *                          * filemode:             The mode to set on new files

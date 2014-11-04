@@ -78,8 +78,16 @@ class LdapUserBackend extends UserBackend
      */
     public function assertAuthenticationPossible()
     {
-        $q = $this->conn->select()->setBase($this->baseDn)->from($this->userClass);
-        $result = $q->fetchRow();
+        try {
+            $q = $this->conn->select()->setBase($this->baseDn)->from($this->userClass);
+            $result = $q->fetchRow();
+        } catch (LdapException $e) {
+            throw new AuthenticationException(
+                'Connection not possible: %s',
+                $e->getMessage()
+            );
+        }
+
         if (! isset($result)) {
             throw new AuthenticationException(
                 'No objects with objectClass="%s" in DN="%s" found.',
@@ -168,7 +176,7 @@ class LdapUserBackend extends UserBackend
             } catch (AuthenticationException $e) {
                 // Authentication not possible
                 throw new AuthenticationException(
-                    'Authentication against backend "%s" not possible: ',
+                    'Authentication against backend "%s" not possible: %s',
                     $this->getName(),
                     $e
                 );

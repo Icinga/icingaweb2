@@ -4,7 +4,7 @@
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Module\Monitoring\Form\Command\DisableNotificationWithExpireForm;
 use Icinga\Module\Monitoring\Form\Command\SingleArgumentCommandForm;
 use Icinga\Web\Form;

@@ -7,7 +7,7 @@ namespace Icinga\Web\Widget\Chart;
 use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Url;
 use Icinga\Util\Format;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 
 /**
  * A SVG-PieChart intended to be displayed as a small icon next to labels, to offer a better visualization of the

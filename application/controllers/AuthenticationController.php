@@ -9,7 +9,7 @@ use Icinga\Web\Controller\ActionController;
 use Icinga\Form\Authentication\LoginForm;
 use Icinga\Authentication\AuthChain;
 use Icinga\Application\Config;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ConfigurationError;

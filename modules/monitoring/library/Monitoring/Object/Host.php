@@ -130,7 +130,8 @@ class Host extends MonitoredObject
             'host_notes_url',
             'host_modified_host_attributes',
             'host_problem',
-            'host_process_performance_data'
+            'host_process_performance_data',
+            'process_perfdata' => 'host_process_performance_data'
         ))
             ->where('host_name', $this->host);
     }

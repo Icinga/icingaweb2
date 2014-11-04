@@ -2,13 +2,13 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Logger\Writer;
+namespace Icinga\Application\Logger\Writer;
 
 use Exception;
 use Zend_Config;
+use Icinga\Application\Logger;
+use Icinga\Application\Logger\LogWriter;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Logger\Logger;
-use Icinga\Logger\LogWriter;
 use Icinga\Util\File;
 
 /**

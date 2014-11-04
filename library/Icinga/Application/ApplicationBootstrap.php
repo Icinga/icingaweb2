@@ -11,7 +11,7 @@ use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
 use Icinga\Exception\IcingaException;
@@ -397,6 +397,7 @@ abstract class ApplicationBootstrap
                 return false; // Continue with the normal error handler
             }
             switch($errno) {
+                case E_WARNING:
                 case E_STRICT:
                     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
             }

@@ -9,7 +9,7 @@ use Zend_Config;
 use Icinga\Application\Config;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;

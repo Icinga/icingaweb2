@@ -191,6 +191,7 @@ class Service extends MonitoredObject
             'service_flap_detection_enabled_changed',
             'service_modified_service_attributes',
             'service_process_performance_data',
+            'process_perfdata' => 'service_process_performance_data',
             'service_percent_state_change',
             'service_host_name'
         ))

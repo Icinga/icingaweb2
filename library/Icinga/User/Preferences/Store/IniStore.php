@@ -5,12 +5,12 @@
 namespace Icinga\User\Preferences\Store;
 
 use Zend_Config;
-use Icinga\Util\File;
-use Icinga\Config\PreservingIniWriter;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\NotWritableError;
+use Icinga\File\Ini\IniWriter;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
+use Icinga\Util\File;
 
 /**
  * Load and save user preferences from and to INI files
@@ -34,7 +34,7 @@ class IniStore extends PreferencesStore
     /**
      * Writer which stores the preferences
      *
-     * @var PreservingIniWriter
+     * @var IniWriter
      */
     protected $writer;
 
@@ -114,7 +114,7 @@ class IniStore extends PreferencesStore
                 );
             }
 
-            $this->writer = new PreservingIniWriter(
+            $this->writer = new IniWriter(
                 array(
                     'config'    => new Zend_Config($this->preferences),
                     'filename'  => $this->preferencesFile
