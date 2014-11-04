@@ -81,13 +81,13 @@ class DbUserBackend extends UserBackend
      *
      * @param   string      $username   The name of the user to fetch
      *
-     * @return  array|null              NULL in case the user does not exist
+     * @return  stdClass|null           NULL in case the user does not exist
      */
     public function getUser($username)
     {
         $select = new Zend_Db_Select($this->conn->getConnection());
-        $row = $select->from('icingaweb_user')->where('name = ?', $username)->query()->fetch();
-        return empty($row) ? null : $row;
+        $row = $select->from('icingaweb_user')->where('name = ?', $username)->query()->fetchObject();
+        return $row === false ? null : $row;
     }
 
     /**
@@ -104,12 +104,12 @@ class DbUserBackend extends UserBackend
     {
         try {
             $userData = $this->getUser($user->getUsername());
-            if ($userData === null || ! $userData['active']) {
+            if ($userData === null || ! $userData->active) {
                 return false;
             }
 
-            $hashToCompare = $this->hashPassword($password, $this->getSalt($userData['password_hash']));
-            return $hashToCompare === $userData['password_hash'];
+            $hashToCompare = $this->hashPassword($password, $this->getSalt($userData->password_hash));
+            return $hashToCompare === $userData->password_hash;
         } catch (Exception $e) {
             throw new AuthenticationException(
                 'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
