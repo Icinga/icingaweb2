@@ -4,6 +4,7 @@
 
 namespace Icinga\Authentication\Backend;
 
+use PDO;
 use Icinga\Authentication\UserBackend;
 use Icinga\Data\Db\DbConnection;
 use Icinga\User;
@@ -49,7 +50,7 @@ class DbUserBackend extends UserBackend
      */
     public function hasUser(User $user)
     {
-        $select = new Zend_Db_Select($this->conn->getConnection());
+        $select = new Zend_Db_Select($this->conn->getDbAdapter());
         $row = $select->from('icingaweb_user', array(new Zend_Db_Expr(1)))
             ->where('name = ?', $user->getUsername())
             ->query()->fetchObject();
@@ -66,28 +67,33 @@ class DbUserBackend extends UserBackend
      */
     public function addUser($username, $password, $active = true)
     {
+        $passwordHash = $this->hashPassword($password);
+
         $stmt = $this->conn->getDbAdapter()->prepare(
             'INSERT INTO icingaweb_user VALUES (:name, :active, :password_hash, now(), DEFAULT);'
         );
-        $stmt->execute(array(
-            ':name'             => $username,
-            ':active'           => (int) $active,
-            ':password_hash'    => $this->hashPassword($password)
-        ));
+        $stmt->bindParam(':name', $username, PDO::PARAM_STR);
+        $stmt->bindParam(':active', $active, PDO::PARAM_INT);
+        $stmt->bindParam(':password_hash', $passwordHash, PDO::PARAM_LOB);
+        $stmt->execute();
     }
 
     /**
-     * Fetch the row for the given user from the database
+     * Fetch the hashed password for the given user
      *
-     * @param   string      $username   The name of the user to fetch
+     * @param   string  $username   The name of the user
      *
-     * @return  stdClass|null           NULL in case the user does not exist
+     * @return  string
      */
-    public function getUser($username)
+    protected function getPasswordHash($username)
     {
-        $select = new Zend_Db_Select($this->conn->getConnection());
-        $row = $select->from('icingaweb_user')->where('name = ?', $username)->query()->fetchObject();
-        return $row === false ? null : $row;
+        $stmt = $this->conn->getDbAdapter()->prepare(
+            'SELECT password_hash FROM icingaweb_user WHERE name = :name AND active = 1'
+        );
+        $stmt->execute(array(':name' => $username));
+        $stmt->bindColumn(1, $lob, PDO::PARAM_LOB);
+        $stmt->fetch(PDO::FETCH_BOUND);
+        return is_resource($lob) ? stream_get_contents($lob) : $lob;
     }
 
     /**
@@ -103,13 +109,10 @@ class DbUserBackend extends UserBackend
     public function authenticate(User $user, $password)
     {
         try {
-            $userData = $this->getUser($user->getUsername());
-            if ($userData === null || ! $userData->active) {
-                return false;
-            }
-
-            $hashToCompare = $this->hashPassword($password, $this->getSalt($userData->password_hash));
-            return $hashToCompare === $userData->password_hash;
+            $passwordHash = $this->getPasswordHash($user->getUsername());
+            $passwordSalt = $this->getSalt($passwordHash);
+            $hashToCompare = $this->hashPassword($password, $passwordSalt);
+            return $hashToCompare === $passwordHash;
         } catch (Exception $e) {
             throw new AuthenticationException(
                 'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
@@ -164,7 +167,7 @@ class DbUserBackend extends UserBackend
      */
     public function count()
     {
-        $select = new Zend_Db_Select($this->conn->getConnection());
+        $select = new Zend_Db_Select($this->conn->getDbAdapter());
         $row = $select->from(
             'icingaweb_user',
             array('count' => 'COUNT(*)')
