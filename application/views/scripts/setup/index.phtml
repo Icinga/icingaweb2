@@ -1,5 +1,7 @@
 <?php
 
+use Icinga\Web\Notification;
+
 $pages = $wizard->getPages();
 $finished = isset($success);
 $configPages = array_slice($pages, 2, count($pages) - 4, true);
@@ -13,6 +15,16 @@ $maxProgress = @max(array_keys(array_filter(
 )));
 
 ?>
+<ul id="notifications"><?php
+
+$notifications = Notification::getInstance();
+if ($notifications->hasMessages()) {
+    foreach ($notifications->getMessages() as $m) {
+        echo '<li class="' . $m->type . '">' . $this->escape($m->message) . '</li>';
+    }
+}
+
+?></ul>
 <div id="setup" data-base-target="layout">
   <div class="header">
     <?= $this->img('img/logo_icinga_big.png'); ?>
