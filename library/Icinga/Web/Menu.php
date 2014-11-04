@@ -68,7 +68,7 @@ class Menu implements RecursiveIterator
      * @var MenuItemRenderer
      */
     protected $itemRenderer = null;
-    
+
     /*
      * Parent menu
      *
@@ -222,6 +222,10 @@ class Menu implements RecursiveIterator
         $section->add(t('Modules'), array(
             'url'      => 'config/modules',
             'priority' => 400
+        ));
+        $section->add(t('Security'), array(
+            'url'      => 'security',
+            'priority' => 500
         ));
 
         if (Logger::writesToFile()) {
@@ -691,7 +695,7 @@ class Menu implements RecursiveIterator
     }
 
     /**
-     * PHP 5.3 GC should not leak, but just to be on the safe side... 
+     * PHP 5.3 GC should not leak, but just to be on the safe side...
      */
     public function __destruct()
     {
