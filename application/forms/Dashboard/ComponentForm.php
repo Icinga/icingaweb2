@@ -162,26 +162,6 @@ class ComponentForm extends Form
     }
 
     /**
-     * Adjust preferences and persist them
-     *
-     * @see Form::onSuccess()
-     */
-    public function onSuccess(Request $request)
-    {
-        return true;
-    }
-
-    /**
-     * Populate data if any
-     *
-     * @see Form::onRequest()
-     */
-    public function onRequest(Request $request)
-    {
-        return true;
-    }
-
-    /**
      * @param \Icinga\Web\Widget\Dashboard $dashboard
      */
     public function setDashboard(Dashboard $dashboard)

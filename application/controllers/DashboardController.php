@@ -44,7 +44,7 @@ class DashboardController extends ActionController
             $params['url'] = rawurldecode($this->_request->getParam('url'));
             $form->populate($params);
         }
-        $form->setOnSuccess(function (Request $request, Form $form) use ($dashboard) {
+        $form->setOnSuccess(function (Form $form) use ($dashboard) {
             try {
                 $pane = $dashboard->getPane($form->getValue('pane'));
             } catch (ProgrammingError $e) {
@@ -83,8 +83,14 @@ class DashboardController extends ActionController
                 400
             );
         }
-        $form->setOnSuccess(function (Request $request, Form $form) use ($dashboard) {
-            $pane = $dashboard->getPane($form->getValue('pane'));
+        $form->setOnSuccess(function (Form $form) use ($dashboard) {
+            try {
+                $pane = $dashboard->getPane($form->getValue('pane'));
+            } catch (ProgrammingError $e) {
+                $pane = new Dashboard\Pane($form->getValue('pane'));
+                $pane->setUserWidget();
+                $dashboard->addPane($pane);
+            }
             try {
                 $component = $pane->getComponent($form->getValue('component'));
                 $component->setUrl($form->getValue('url'));
@@ -97,7 +103,11 @@ class DashboardController extends ActionController
             if ($form->getValue('org_component') && $form->getValue('org_component') !== $component->getTitle()) {
                 $pane->removeComponent($form->getValue('org_component'));
             }
-            $dashboard->write();
+            // Move
+            if ($form->getValue('org_pane') && $form->getValue('org_pane') !== $pane->getTitle()) {
+                $oldPane = $dashboard->getPane($form->getValue('org_pane'));
+                $oldPane->removeComponent($component->getTitle());
+            }
             $dashboard->write();
             Notification::success(t('Component updated'));
             return true;
@@ -130,7 +140,7 @@ class DashboardController extends ActionController
         }
         $pane = $this->_request->getParam('pane');
         $component = $this->_request->getParam('component');
-        $form->setOnSuccess(function (Request $request, Form $form) use ($dashboard, $component, $pane) {
+        $form->setOnSuccess(function (Form $form) use ($dashboard, $component, $pane) {
             try {
                 $pane = $dashboard->getPane($pane);
                 $pane->removeComponent($component);
@@ -162,7 +172,7 @@ class DashboardController extends ActionController
             );
         }
         $pane = $this->_request->getParam('pane');
-        $form->setOnSuccess(function (Request $request, Form $form) use ($dashboard, $pane) {
+        $form->setOnSuccess(function (Form $form) use ($dashboard, $pane) {
             try {
                 $pane = $dashboard->getPane($pane);
                 $dashboard->removePane($pane->getTitle());

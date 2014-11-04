@@ -164,6 +164,26 @@ class Form extends Zend_Form
     }
 
     /**
+     * Set a callback that is called instead of this form's onSuccess method
+     *
+     * It is called using the following signature: (Request $request, Form $form).
+     *
+     * @param   callable    $onSuccess  Callback
+     *
+     * @return  $this
+     *
+     * @throws  LogicException          If the callback is not callable
+     */
+    public function setOnSuccess($onSuccess)
+    {
+        if (! is_callable($onSuccess)) {
+            throw new LogicException('The option `onSuccess\' is not callable');
+        }
+        $this->onSuccess = $onSuccess;
+        return $this;
+    }
+
+    /**
      * Set the label to use for the standard submit button
      *
      * @param   string  $label  The label to use for the submit button

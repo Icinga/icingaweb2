@@ -6,6 +6,7 @@ namespace Icinga\Web\Widget;
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ProgrammingError;
@@ -102,7 +103,8 @@ class Dashboard extends AbstractWidget
             }
         }
 
-        $config = new Config($output);
+        $co = new ConfigObject($output);
+        $config = new Config($co);
         $writer = new IniWriter(array('config' => $config, 'filename' => $configFile));
         $writer->write();
     }
