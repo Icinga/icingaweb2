@@ -85,8 +85,10 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
     {
         if (file_exists($this->_filename)) {
             $oldconfig = new Zend_Config_Ini($this->_filename);
+            $content = file_get_contents($this->_filename);
         } else {
             $oldconfig = new Zend_Config(array());
+            $content = '';
         }
 
         // create an internal copy of the given configuration, since the user of this class
@@ -100,7 +102,7 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
         $this->_config = $this->normalizeKeys($this->_config);
 
         $newconfig = $this->_config;
-        $editor = new IniEditor(file_get_contents($this->_filename), $this->options);
+        $editor = new IniEditor($content, $this->options);
         $this->diffConfigs($oldconfig, $newconfig, $editor);
         $this->updateSectionOrder($newconfig, $editor);
         return $editor->getText();
