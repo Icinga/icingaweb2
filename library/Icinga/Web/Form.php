@@ -108,30 +108,23 @@ class Form extends Zend_Form
     );
 
     /**
-     * Create a new form
+     * Set a callback that is called instead of this form's onSuccess method
      *
-     * Accepts an additional option `onSuccess' which is a callback that is called instead of this
-     * form's method. It is called using the following signature: (Request $request, Form $form).
+     * It is called using the following signature: (Request $request, Form $form).
      *
-     * @see Zend_Form::__construct()
+     * @param   callable    $onSuccess  Callback
      *
-     * @throws  LogicException      In case `onSuccess' is not callable
+     * @return  $this
+     *
+     * @throws  LogicException          If the callback is not callable
      */
-    public function __construct($options = null)
+    public function setOnSuccess($onSuccess)
     {
-        if (is_array($options) && isset($options['onSuccess'])) {
-            $this->onSuccess = $options['onSuccess'];
-            unset($options['onSuccess']);
-        } elseif (isset($options->onSuccess)) {
-            $this->onSuccess = $options->onSuccess;
-            unset($options->onSuccess);
-        }
-
-        if ($this->onSuccess !== null && false === is_callable($this->onSuccess)) {
+        if (! is_callable($onSuccess)) {
             throw new LogicException('The option `onSuccess\' is not callable');
         }
-
-        parent::__construct($options);
+        $this->onSuccess = $onSuccess;
+        return $this;
     }
 
     /**
