@@ -625,14 +625,18 @@ EOD;
         array $context = null,
         $username = null
     ) {
+        $mysqlPrivileges = array_intersect($privileges, array_keys($this->mysqlGrantContexts));
         list($_, $host) = explode('@', $this->query('select current_user()')->fetchColumn());
         $grantee = "'" . ($username === null ? $this->config['username'] : $username) . "'@'" . $host . "'";
-        $privilegeCondition = 'privilege_type IN (' . join(',', array_map(array($this, 'quote'), $privileges)) . ')';
+        $privilegeCondition = sprintf(
+            'privilege_type IN (%s)',
+            join(',', array_map(array($this, 'quote'), $mysqlPrivileges))
+        );
 
         if (isset($this->config['dbname'])) {
             $dbPrivileges = array();
             $tablePrivileges = array();
-            foreach (array_intersect($privileges, array_keys($this->mysqlGrantContexts)) as $privilege) {
+            foreach ($mysqlPrivileges as $privilege) {
                 if (false === empty($context) && $this->mysqlGrantContexts[$privilege] & static::TABLE_LEVEL) {
                     $tablePrivileges[] = $privilege;
                 } elseif ($this->mysqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
@@ -681,7 +685,7 @@ EOD;
             . ' AND ' . $privilegeCondition . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
             array(':grantee' => $grantee)
         );
-        return (int) $query->fetchObject()->matches === count($privileges);
+        return (int) $query->fetchObject()->matches === count($mysqlPrivileges);
     }
 
     /**
