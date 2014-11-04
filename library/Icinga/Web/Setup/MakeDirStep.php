@@ -52,7 +52,6 @@ class MakeDirStep extends Step
     public function getReport()
     {
         $okMessage = t('Directory "%s" in "%s" has been successfully created.');
-        $existsMessage = t('Directory "%s" does already exist in "%s". Nothing to do.');
         $failMessage = t('Unable to create directory "%s" in "%s". An error occured:');
 
         $report = '';
@@ -64,8 +63,6 @@ class MakeDirStep extends Step
                 } else {
                     $report .= '<p>' . sprintf($okMessage, basename($path), dirname($path)) . '</p>';
                 }
-            } else {
-                $report .= '<p>' . sprintf($existsMessage, basename($path), dirname($path)) . '</p>';
             }
         }
 
