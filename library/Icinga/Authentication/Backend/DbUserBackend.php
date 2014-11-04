@@ -129,7 +129,7 @@ class DbUserBackend extends UserBackend
      */
     protected function getSalt($hash)
     {
-        return substr($hash, strlen(self::HASH_ALGORITHM) + self::SALT_LENGTH);
+        return substr($hash, strlen(self::HASH_ALGORITHM), self::SALT_LENGTH);
     }
 
     /**
