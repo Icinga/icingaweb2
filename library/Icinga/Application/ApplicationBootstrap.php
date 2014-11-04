@@ -14,8 +14,8 @@ use Icinga\Exception\NotReadableError;
 use Icinga\Application\Logger;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
+use Icinga\File\Ini\IniWriter;
 use Icinga\Exception\IcingaException;
-use Icinga\Config\PreservingIniWriter;
 
 /**
  * This class bootstraps a thin Icinga application layer
@@ -373,9 +373,9 @@ abstract class ApplicationBootstrap
         }
 
         if ($this->config->global !== null) {
-            PreservingIniWriter::$fileMode = octdec($this->config->global->get('filemode', '0664'));
+            IniWriter::$fileMode = octdec($this->config->global->get('filemode', '0664'));
         } else {
-            PreservingIniWriter::$fileMode = 0664;
+            IniWriter::$fileMode = 0664;
         }
 
         return $this;

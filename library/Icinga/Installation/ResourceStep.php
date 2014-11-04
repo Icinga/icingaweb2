@@ -8,7 +8,7 @@ use Exception;
 use Zend_Config;
 use Icinga\Web\Setup\Step;
 use Icinga\Application\Config;
-use Icinga\Config\PreservingIniWriter;
+use Icinga\File\Ini\IniWriter;
 
 class ResourceStep extends Step
 {
@@ -39,7 +39,7 @@ class ResourceStep extends Step
         }
 
         try {
-            $writer = new PreservingIniWriter(array(
+            $writer = new IniWriter(array(
                 'config'    => new Zend_Config($resourceConfig),
                 'filename'  => Config::resolvePath('resources.ini'),
                 'filemode'  => octdec($this->data['fileMode'])

@@ -8,7 +8,7 @@ use Exception;
 use Zend_Config;
 use Icinga\Web\Setup\Step;
 use Icinga\Application\Config;
-use Icinga\Config\PreservingIniWriter;
+use Icinga\File\Ini\IniWriter;
 
 class InstanceStep extends Step
 {
@@ -28,7 +28,7 @@ class InstanceStep extends Step
         unset($instanceConfig['name']);
 
         try {
-            $writer = new PreservingIniWriter(array(
+            $writer = new IniWriter(array(
                 'config'    => new Zend_Config(array($instanceName => $instanceConfig)),
                 'filename'  => Config::resolvePath('modules/monitoring/instances.ini'),
                 'filemode'  => octdec($this->data['fileMode'])

@@ -8,7 +8,7 @@ use Exception;
 use Zend_Config;
 use Icinga\Web\Setup\Step;
 use Icinga\Application\Config;
-use Icinga\Config\PreservingIniWriter;
+use Icinga\File\Ini\IniWriter;
 
 class SecurityStep extends Step
 {
@@ -27,7 +27,7 @@ class SecurityStep extends Step
         $config['security'] = $this->data['securityConfig'];
 
         try {
-            $writer = new PreservingIniWriter(array(
+            $writer = new IniWriter(array(
                 'config'    => new Zend_Config($config),
                 'filename'  => Config::resolvePath('modules/monitoring/config.ini'),
                 'filemode'  => octdec($this->data['fileMode'])

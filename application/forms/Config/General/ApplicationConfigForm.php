@@ -9,7 +9,7 @@ use Icinga\Web\Form;
 use Icinga\Util\Translator;
 use Icinga\Data\ResourceFactory;
 use Icinga\Web\Form\Element\Number;
-use Icinga\Config\PreservingIniWriter;
+use Icinga\File\Ini\IniWriter;
 
 /**
  * Form class to modify the general application configuration
@@ -76,7 +76,7 @@ class ApplicationConfigForm extends Form
                     'description'   => t(
                         'This is the global default file mode for new configuration files created by Icinga Web 2.'
                     ),
-                    'value'         => decoct(PreservingIniWriter::$fileMode)
+                    'value'         => decoct(IniWriter::$fileMode)
                 )
             )
         );

@@ -8,8 +8,8 @@ use Exception;
 use Zend_Config;
 use Icinga\Web\Setup\Step;
 use Icinga\Application\Config;
+use Icinga\File\Ini\IniWriter;
 use Icinga\Data\ResourceFactory;
-use Icinga\Config\PreservingIniWriter;
 use Icinga\Authentication\Backend\DbUserBackend;
 
 class AuthenticationStep extends Step
@@ -50,7 +50,7 @@ class AuthenticationStep extends Step
         }
 
         try {
-            $writer = new PreservingIniWriter(array(
+            $writer = new IniWriter(array(
                 'config'    => new Zend_Config($config),
                 'filename'  => Config::resolvePath('authentication.ini'),
                 'filemode'  => octdec($this->data['fileMode'])
@@ -74,7 +74,7 @@ class AuthenticationStep extends Step
         );
 
         try {
-            $writer = new PreservingIniWriter(array(
+            $writer = new IniWriter(array(
                 'config'    => new Zend_Config($config),
                 'filename'  => Config::resolvePath('permissions.ini'),
                 'filemode'  => octdec($this->data['fileMode'])

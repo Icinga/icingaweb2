@@ -9,7 +9,7 @@ use Zend_Config;
 use Icinga\Logger\Logger;
 use Icinga\Web\Setup\Step;
 use Icinga\Application\Config;
-use Icinga\Config\PreservingIniWriter;
+use Icinga\File\Ini\IniWriter;
 
 class GeneralConfigStep extends Step
 {
@@ -36,7 +36,7 @@ class GeneralConfigStep extends Step
         }
 
         try {
-            $writer = new PreservingIniWriter(array(
+            $writer = new IniWriter(array(
                 'config'    => new Zend_Config($config),
                 'filename'  => Config::resolvePath('config.ini'),
                 'filemode'  => octdec($this->data['fileMode'])
