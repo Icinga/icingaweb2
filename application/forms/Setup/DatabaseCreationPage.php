@@ -22,11 +22,18 @@ class DatabaseCreationPage extends Form
     protected $config;
 
     /**
-     * The required database privileges
+     * The required privileges to setup the database
      *
      * @var array
      */
-    protected $databasePrivileges;
+    protected $databaseSetupPrivileges;
+
+    /**
+     * The required privileges to operate the database
+     *
+     * @var array
+     */
+    protected $databaseUsagePrivileges;
 
     /**
      * Initialize this page
@@ -50,15 +57,28 @@ class DatabaseCreationPage extends Form
     }
 
     /**
-     * Set the required database privileges
+     * Set the required privileges to setup the database
      *
-     * @param   array   $privileges     The required privileges
+     * @param   array   $privileges     The privileges
      *
      * @return  self
      */
-    public function setDatabasePrivileges(array $privileges)
+    public function setDatabaseSetupPrivileges(array $privileges)
     {
-        $this->databasePrivileges = $privileges;
+        $this->databaseSetupPrivileges = $privileges;
+        return $this;
+    }
+
+    /**
+     * Set the required privileges to operate the database
+     *
+     * @param   array   $privileges     The privileges
+     *
+     * @return  self
+     */
+    public function setDatabaseUsagePrivileges(array $privileges)
+    {
+        $this->databaseUsagePrivileges = $privileges;
         return $this;
     }
 
@@ -130,55 +150,40 @@ class DatabaseCreationPage extends Form
             return true;
         }
 
-        $this->config['username'] = $this->getValue('username');
-        $this->config['password'] = $this->getValue('password');
-        $db = new DbTool($this->config);
-        $database = $this->config['dbname'];
-        $dbtype = $this->config['db'];
+        $config = $this->config;
+        $config['username'] = $this->getValue('username');
+        $config['password'] = $this->getValue('password');
+        $db = new DbTool($config);
 
         try {
-            $error = false;
-            $msg = '';
-            if ($dbtype === 'pgsql') {
-                $db->connectToHost();
-                if (
-                    false === $db->checkPgsqlGrantOption($this->databasePrivileges, $database, 'account') &&
-                    false === $db->checkPgsqlGrantOption($this->databasePrivileges, $database, 'preference')
-                ) {
-                    $error = true;
-                    $msg = sprintf(t('The role does not seem to have permission to create ' .
-                     ' or to grant access to the database "%s" and the tables "account", "preference".'), $database);
-                }
-            } else if ($dbtype === 'mysql') {
-                $db->connectToHost();
-                if (false === $db->checkMysqlGrantOption($this->databasePrivileges)) {
-                    $error = true;
-                    $msg = sprintf(t('The user does not seem to have permission to create ' .
-                        ' or to grant access to the database %s.'), $database);
-                }
-            }
-            if ($error) {
-                $this->addSkipValidationCheckbox();
-                $this->addError(t(
-                    'The provided credentials do not have the required access rights to create the database schema: '
-                ) . $msg);
-                return false;
-            }
-        } catch (PDOException $e) {
+            $db->connectToDb(); // Are we able to login on the database?
+        } catch (PDOException $_) {
             try {
-                $db->connectToHost();
-                if (false === $db->checkPrivileges($this->databasePrivileges)) {
-                    $this->addError(
-                        t('The provided credentials cannot be used to create the database and/or the user.')
-                    );
-                    $this->addSkipValidationCheckbox();
-                    return false;
-                }
+                $db->connectToHost(); // Are we able to login on the server?
             } catch (PDOException $e) {
+                // We are NOT able to login on the server..
                 $this->addError($e->getMessage());
                 $this->addSkipValidationCheckbox();
                 return false;
             }
+        }
+
+        // In case we are connected the credentials filled into this
+        // form need to be granted to create databases, users...
+        if (false === $db->checkPrivileges($this->databaseSetupPrivileges)) {
+            $this->addError(t('The provided credentials cannot be used to create the database and/or the user.'));
+            $this->addSkipValidationCheckbox();
+            return false;
+        }
+
+        // ...and to grant all required usage privileges to others
+        if (false === $db->isGrantable($this->databaseUsagePrivileges)) {
+            $this->addError(sprintf(
+                t('The provided credentials cannot be used to grant all required privileges to the login "%s".'),
+                $this->config['username']
+            ));
+            $this->addSkipValidationCheckbox();
+            return false;
         }
 
         return true;

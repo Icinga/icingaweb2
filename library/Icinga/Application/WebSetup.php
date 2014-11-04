@@ -44,14 +44,37 @@ class WebSetup extends Wizard implements SetupWizard
      */
     protected $databaseSetupPrivileges = array(
         'CREATE',
+        'ALTER',
+        'REFERENCES',
+        'CREATE USER', // MySQL
+        'CREATEROLE' // PostgreSQL
+    );
+
+    /**
+     * The privileges required by Icinga Web 2 to operate the database
+     *
+     * @var array
+     */
+    protected $databaseUsagePrivileges = array(
         'SELECT',
         'INSERT',
         'UPDATE',
         'DELETE',
-        'REFERENCES',
         'EXECUTE',
-        'CREATE TEMPORARY TABLES',
-        'CREATE USER'
+        'TEMPORARY', // PostgreSql
+        'CREATE TEMPORARY TABLES' // MySQL
+    );
+
+    /**
+     * The database tables operated by Icinga Web 2
+     *
+     * @var array
+     */
+    protected $databaseTables = array(
+        'icingaweb_group',
+        'icingaweb_group_membership',
+        'icingaweb_user',
+        'icingaweb_user_preference'
     );
 
     /**
@@ -110,7 +133,8 @@ class WebSetup extends Wizard implements SetupWizard
                 $page->setResourceConfig($this->getPageData('setup_ldap_resource'));
             }
         } elseif ($page->getName() === 'setup_database_creation') {
-            $page->setDatabasePrivileges($this->databaseSetupPrivileges);
+            $page->setDatabaseSetupPrivileges($this->databaseSetupPrivileges);
+            $page->setDatabaseUsagePrivileges($this->databaseUsagePrivileges);
             $page->setResourceConfig($this->getPageData('setup_db_resource'));
         } elseif ($page->getName() === 'setup_summary') {
             $page->setSubjectTitle('Icinga Web 2');
@@ -171,18 +195,24 @@ class WebSetup extends Wizard implements SetupWizard
                 $db = new DbTool($config);
 
                 try {
-                    $db->connectToDb();
-                    if (array_search('account', $db->listTables()) === false) {
-                        $skip = $db->checkPrivileges($this->databaseSetupPrivileges);
+                    $db->connectToDb(); // Are we able to login on the database?
+                    if (array_search(key($this->databaseTables), $db->listTables()) === false) {
+                        // In case the database schema does not yet exist the user
+                        // needs the privileges to create and setup the database
+                        $skip = $db->checkPrivileges($this->databaseSetupPrivileges, $this->databaseTables);
                     } else {
-                        $skip = true;
+                        // In case the database schema exists the user needs the required privileges
+                        // to operate the database, if those are missing we ask for another user
+                        $skip = $db->checkPrivileges($this->databaseUsagePrivileges, $this->databaseTables);
                     }
-                } catch (PDOException $e) {
+                } catch (PDOException $_) {
                     try {
-                        $db->connectToHost();
-                        $skip = $db->checkPrivileges($this->databaseSetupPrivileges);
-                    } catch (PDOException $e) {
-                        // skip should already be false, nothing to do
+                        $db->connectToHost(); // Are we able to login on the server?
+                        // It is not possible to reliably determine whether a database exists or not if a user can't
+                        // log in to the database, so we just require the user to be able to create the database
+                        $skip = $db->checkPrivileges($this->databaseSetupPrivileges, $this->databaseTables);
+                    } catch (PDOException $_) {
+                        // We are NOT able to login on the server..
                     }
                 }
             } else {
@@ -255,6 +285,8 @@ class WebSetup extends Wizard implements SetupWizard
         ) {
             $installer->addStep(
                 new DatabaseStep(array(
+                    'tables'            => $this->databaseTables,
+                    'privileges'        => $this->databaseUsagePrivileges,
                     'resourceConfig'    => $pageData['setup_db_resource'],
                     'adminName'         => isset($pageData['setup_database_creation']['username'])
                         ? $pageData['setup_database_creation']['username']

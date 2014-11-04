@@ -39,6 +39,83 @@ class DbTool
     protected $config;
 
     /**
+     * Whether we are connected to the database from the resource configuration
+     *
+     * @var bool
+     */
+    protected $dbFromConfig = false;
+
+    /**
+     * GRANT privilege level identifiers
+     */
+    const GLOBAL_LEVEL = 1;
+    const PROCEDURE_LEVEL = 2;
+    const DATABASE_LEVEL = 4;
+    const TABLE_LEVEL = 8;
+    const COLUMN_LEVEL = 16;
+    const FUNCTION_LEVEL = 32;
+
+    /**
+     * All MySQL GRANT privileges with their respective level identifiers
+     *
+     * @var array
+     */
+    protected $mysqlGrantContexts = array(
+        'ALL'                       => 31,
+        'ALL PRIVILEGES'            => 31,
+        'ALTER'                     => 13,
+        'ALTER ROUTINE'             => 7,
+        'CREATE'                    => 13,
+        'CREATE ROUTINE'            => 5,
+        'CREATE TEMPORARY TABLES'   => 5,
+        'CREATE USER'               => 1,
+        'CREATE VIEW'               => 13,
+        'DELETE'                    => 13,
+        'DROP'                      => 13,
+        'EXECUTE'                   => 5, // MySQL reference states this also supports database level, 5.1.73 not though
+        'FILE'                      => 1,
+        'GRANT OPTION'              => 15,
+        'INDEX'                     => 13,
+        'INSERT'                    => 29,
+        'LOCK TABLES'               => 5,
+        'PROCESS'                   => 1,
+        'REFERENCES'                => 0,
+        'RELOAD'                    => 1,
+        'REPLICATION CLIENT'        => 1,
+        'REPLICATION SLAVE'         => 1,
+        'SELECT'                    => 29,
+        'SHOW DATABASES'            => 1,
+        'SHOW VIEW'                 => 13,
+        'SHUTDOWN'                  => 1,
+        'SUPER'                     => 1,
+        'UPDATE'                    => 29
+    );
+
+    /**
+     * All PostgreSQL GRANT privileges with their respective level identifiers
+     *
+     * @var array
+     */
+    protected $pgsqlGrantContexts = array(
+        'ALL'               => 63,
+        'ALL PRIVILEGES'    => 63,
+        'SELECT'            => 24,
+        'INSERT'            => 24,
+        'UPDATE'            => 24,
+        'DELETE'            => 8,
+        'TRUNCATE'          => 8,
+        'REFERENCES'        => 24,
+        'TRIGGER'           => 8,
+        'CREATE'            => 12,
+        'CONNECT'           => 4,
+        'TEMPORARY'         => 4,
+        'TEMP'              => 4,
+        'EXECUTE'           => 32,
+        'USAGE'             => 33,
+        'CREATEROLE'        => 1
+    );
+
+    /**
      * Create a new DbTool
      *
      * @param   array   $config     The resource configuration to use
@@ -62,11 +139,12 @@ class DbTool
             // the current user name as default database in cases none is provided. If
             // that database doesn't exist (which might be the case here) it will error.
             // Therefore, we specify the maintenance database 'postgres' as database, which
-            // is most probably present and public.
+            // is most probably present and public. (http://stackoverflow.com/q/4483139)
             $this->connect('postgres');
         } else {
             $this->connect();
         }
+
         return $this;
     }
 
@@ -137,6 +215,7 @@ class DbTool
         $this->_pdoConnect($dbname);
         if ($dbname !== null) {
             $this->_zendConnect($dbname);
+            $this->dbFromConfig = $dbname === $this->config['dbname'];
         }
     }
 
@@ -282,12 +361,12 @@ class DbTool
      */
     public function quote($value)
     {
-        $value = $this->pdoConn->quote($value);
-        if ($value === false) {
-            throw new LogicException('Unable to quote value');
+        $quoted = $this->pdoConn->quote($value);
+        if ($quoted === false) {
+            throw new LogicException(sprintf('Unable to quote value: %s', $value));
         }
 
-        return $value;
+        return $quoted;
     }
 
     /**
@@ -346,7 +425,7 @@ class DbTool
         $file = new File($filepath);
         $content = join(PHP_EOL, iterator_to_array($file)); // There is no fread() before PHP 5.5 :(
 
-        foreach (explode(';', $content) as $statement) {
+        foreach (preg_split('@;(?! \\\\)@', $content) as $statement) {
             if (($statement = trim($statement)) !== '') {
                 $this->exec($statement);
             }
@@ -357,15 +436,108 @@ class DbTool
      * Return whether the given privileges were granted
      *
      * @param   array   $privileges     An array of strings with the required privilege names
+     * @param   array   $context        An array describing the context for which the given privileges need to apply.
+     *                                  Only one or more table names are currently supported
+     * @param   string  $username       The login name for which to check the privileges,
+     *                                  if NULL the current login is used
      *
      * @return  bool
      */
-    public function checkPrivileges(array $privileges)
+    public function checkPrivileges(array $privileges, array $context = null, $username = null)
     {
         if ($this->config['db'] === 'mysql') {
-            return $this->checkMysqlPriv($privileges);
-        } else {
-            return $this->checkPgsqlPriv($privileges, $table);
+            return $this->checkMysqlPrivileges($privileges, false, $context, $username);
+        } elseif ($this->config['db'] === 'pgsql') {
+            return $this->checkPgsqlPrivileges($privileges, false, $context, $username);
+        }
+    }
+
+    /**
+     * Return whether the given privileges are grantable to other users
+     *
+     * @param   array   $privileges     The privileges that should be grantable
+     *
+     * @return  bool
+     */
+    public function isGrantable($privileges)
+    {
+        if ($this->config['db'] === 'mysql') {
+            return $this->checkMysqlPrivileges($privileges, true);
+        } elseif ($this->config['db'] === 'pgsql') {
+            return $this->checkPgsqlPrivileges($privileges, true);
+        }
+    }
+
+    /**
+     * Grant all given privileges to the given user
+     *
+     * @param   array   $privileges     The privilege names to grant
+     * @param   array   $context        An array describing the context for which the given privileges need to apply.
+     *                                  Only one or more table names are currently supported
+     * @param   string  $username       The username to grant the privileges to
+     */
+    public function grantPrivileges(array $privileges, array $context, $username)
+    {
+        if ($this->config['db'] === 'mysql') {
+            list($_, $host) = explode('@', $this->query('select current_user()')->fetchColumn());
+            $queryString = sprintf(
+                'GRANT %%s ON %s.%%s TO %s@%s',
+                $this->quoteIdentifier($this->config['dbname']),
+                $this->quoteIdentifier($username),
+                $this->quoteIdentifier($host)
+            );
+
+            $dbPrivileges = array();
+            $tablePrivileges = array();
+            foreach (array_intersect($privileges, array_keys($this->mysqlGrantContexts)) as $privilege) {
+                if (false === empty($context) && $this->mysqlGrantContexts[$privilege] & static::TABLE_LEVEL) {
+                    $tablePrivileges[] = $privilege;
+                } elseif ($this->mysqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
+                    $dbPrivileges[] = $privilege;
+                }
+            }
+
+            if (false === empty($tablePrivileges)) {
+                foreach ($context as $table) {
+                    $this->exec(
+                        sprintf($queryString, join(',', $tablePrivileges), $this->quoteIdentifier($table))
+                    );
+                }
+            }
+
+            if (false === empty($dbPrivileges)) {
+                $this->exec(sprintf($queryString, join(',', $dbPrivileges), '*'));
+            }
+        } elseif ($this->config['db'] === 'pgsql') {
+            $dbPrivileges = array();
+            $tablePrivileges = array();
+            foreach (array_intersect($privileges, array_keys($this->pgsqlGrantContexts)) as $privilege) {
+                if (false === empty($context) && $this->pgsqlGrantContexts[$privilege] & static::TABLE_LEVEL) {
+                    $tablePrivileges[] = $privilege;
+                } elseif ($this->pgsqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
+                    $dbPrivileges[] = $privilege;
+                }
+            }
+
+            if (false === empty($dbPrivileges)) {
+                $this->exec(sprintf(
+                    'GRANT %s ON DATABASE %s TO %s',
+                    join(',', $dbPrivileges),
+                    $this->config['dbname'],
+                    $username
+                ));
+            }
+
+            if (false === empty($tablePrivileges)) {
+                foreach ($context as $table) {
+                    $this->exec(sprintf(
+                        'GRANT %s ON TABLE %s TO %s',
+                        join(',', $tablePrivileges),
+                        $table,
+                        $username
+                    ));
+                }
+            }
         }
     }
 
@@ -384,33 +556,33 @@ class DbTool
      * Return whether the given database login exists
      *
      * @param   string  $username   The username to search
-     * @param   string  $password   The password for user $username, required in case it's a MySQL database
      *
      * @return  bool
      */
-    public function hasLogin($username, $password = null)
+    public function hasLogin($username)
     {
         if ($this->config['db'] === 'mysql') {
-            // probe login by trial and error since we don't know our host name or it may be globbed
-            try {
-                $probeConf = $this->config;
-                $probeConf['username'] = $username;
-                $probeConf['password'] = $password;
-                $probe = new DbTool($probeConf);
-                $probe->connectToHost();
-            } catch (PDOException $e) {
-                return false;
-            }
+            $queryString = <<<EOD
+SELECT 1
+ FROM information_schema.user_privileges
+ WHERE grantee = REPLACE(CONCAT("'", REPLACE(CURRENT_USER(), '@', "'@'"), "'"), :current, :wanted)
+EOD;
 
-            return true;
+            $query = $this->query(
+                $queryString,
+                array(
+                    ':current'  => $this->config['username'],
+                    ':wanted'   => $username
+                )
+            );
+            return count($query->fetchAll()) > 0;
         } elseif ($this->config['db'] === 'pgsql') {
-            $rowCount = $this->exec(
-                'SELECT usename FROM pg_catalog.pg_user WHERE usename = :ident LIMIT 1',
+            $query = $this->query(
+                'SELECT 1 FROM pg_catalog.pg_user WHERE usename = :ident LIMIT 1',
                 array(':ident' => $username)
             );
+            return count($query->fetchAll()) === 1;
         }
-
-        return $rowCount === 1;
     }
 
     /**
@@ -437,139 +609,169 @@ class DbTool
     }
 
     /**
-     * Check whether the current role has GRANT permissions
+     * Check whether the current user has the given privileges
      *
-     * @param array $privileges
-     * @param       $database
+     * @param   array   $privileges     The privilege names
+     * @param   bool    $requireGrants  Only return true when all privileges can be granted to others
+     * @param   array   $context        An array describing the context for which the given privileges need to apply.
+     *                                  Only one or more table names are currently supported
+     * @param   string  $username       The login name to which the passed privileges need to be granted
+     *
+     * @return  bool
      */
-    public function checkMysqlGrantOption(array $privileges)
-    {
-        return $this->checkMysqlPriv($privileges, true);
-    }
+    protected function checkMysqlPrivileges(
+        array $privileges,
+        $requireGrants = false,
+        array $context = null,
+        $username = null
+    ) {
+        list($_, $host) = explode('@', $this->query('select current_user()')->fetchColumn());
+        $grantee = "'" . ($username === null ? $this->config['username'] : $username) . "'@'" . $host . "'";
+        $privilegeCondition = 'privilege_type IN (' . join(',', array_map(array($this, 'quote'), $privileges)) . ')';
 
-    /**
-     * Check whether the current user has the given global privileges
-     *
-     * @param array     $privileges     The privilege names
-     * @param boolean   $requireGrants  Only return true when all privileges can be granted to others
-     *
-     * @return bool
-     */
-    public function checkMysqlPriv(array $privileges, $requireGrants = false)
-    {
-        $cnt = count($privileges);
-        if ($cnt <= 0) {
-            return true;
-        }
-        $grantOption = '';
-        if ($requireGrants) {
-            $grantOption = ' AND IS_GRANTABLE = \'YES\'';
-        }
-        $rows = $this->exec(
-            'SELECT PRIVILEGE_TYPE FROM information_schema.user_privileges ' .
-            ' WHERE GRANTEE = CONCAT("\'", REPLACE(CURRENT_USER(), \'@\', "\'@\'"), "\'") ' .
-            ' AND PRIVILEGE_TYPE IN (?' . str_repeat(',?', $cnt - 1) . ') ' . $grantOption . ';',
-            $privileges
-        );
+        if (isset($this->config['dbname'])) {
+            $dbPrivileges = array();
+            $tablePrivileges = array();
+            foreach (array_intersect($privileges, array_keys($this->mysqlGrantContexts)) as $privilege) {
+                if (false === empty($context) && $this->mysqlGrantContexts[$privilege] & static::TABLE_LEVEL) {
+                    $tablePrivileges[] = $privilege;
+                } elseif ($this->mysqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
+                    $dbPrivileges[] = $privilege;
+                }
+            }
 
-        return $cnt === $rows;
-    }
+            $dbPrivilegesGranted = true;
+            if (false === empty($dbPrivileges)) {
+                $query = $this->query(
+                    'SELECT COUNT(*) as matches'
+                    . ' FROM information_schema.schema_privileges'
+                    . ' WHERE grantee = :grantee'
+                    . ' AND table_schema = :dbname'
+                    . ' AND ' . $privilegeCondition
+                    . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
+                    array(':grantee' => $grantee, ':dbname' => $this->config['dbname'])
+                );
+                $dbPrivilegesGranted = (int) $query->fetchObject()->matches === count($dbPrivileges);
+            }
 
-    /**
-     * Check whether the current role has GRANT permissions for the given database name
-     *
-     * For Postgres, this will be assumed as true when:
-     * <ul>
-     *  <li>The role can create new databases and the database does <b>not</b> yet exist </li>
-     *  <li>The database exists but the current role is the owner of it</li>
-     *  <li>The database exists but the role has superuser permissions</li>
-     *  <li>The role does not own the database, but has the necessary grants on it</li>
-     * </ul>
-     * A more fine-grained check of schema, table and columns permissions in the database
-     * will not happen.
-     *
-     * @param   array   $privileges
-     * @param           $database   The database
-     * @param           $table      The optional table
-     *
-     * @return bool
-     */
-    public function checkPgsqlGrantOption(array $privileges, $database, $table = null)
-    {
-        if ($this->checkPgsqlPriv(array('SUPER'))) {
-            // superuser
-            return true;
-        }
-        $create = $this->checkPgsqlPriv(array('CREATE', 'CREATE USER'));
-        $owner = $this->query(sprintf(
-            'SELECT pg_catalog.pg_get_userbyid(datdba) FROM pg_database WHERE datname = %s',
-            $this->quote($database)
-        ))->fetchColumn();
-        if ($owner !== false) {
-            if ($owner !== $this->config['username']) {
-                // database already exists and the user is not owner of the database
-                return $this->checkPgsqlPriv($privileges, $table, true);
-            } else {
-                // database already exists and the user is owner of the database
+            $tablePrivilegesGranted = true;
+            if (false === empty($tablePrivileges)) {
+                $tableCondition = 'table_name IN (' . join(',', array_map(array($this, 'quote'), $context)) . ')';
+                $query = $this->query(
+                    'SELECT COUNT(*) as matches'
+                    . ' FROM information_schema.table_privileges'
+                    . ' WHERE grantee = :grantee'
+                    . ' AND table_schema = :dbname'
+                    . ' AND ' . $tableCondition
+                    . ' AND ' . $privilegeCondition
+                    . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
+                    array(':grantee' => $grantee, ':dbname' => $this->config['dbname'])
+                );
+                $expectedAmountOfMatches = count($context) * count($tablePrivileges);
+                $tablePrivilegesGranted = (int) $query->fetchObject()->matches === $expectedAmountOfMatches;
+            }
+
+            if ($dbPrivilegesGranted && $tablePrivilegesGranted) {
                 return true;
             }
         }
-        // database does not exist, permission depends on createdb and createrole permissions
-        return $create;
+
+        $query = $this->query(
+            'SELECT COUNT(*) as matches FROM information_schema.user_privileges WHERE grantee = :grantee'
+            . ' AND ' . $privilegeCondition . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
+            array(':grantee' => $grantee)
+        );
+        return (int) $query->fetchObject()->matches === count($privileges);
     }
 
     /**
-     * Check whether the current role has the given privileges
+     * Check whether the current user has the given privileges
      *
-     * NOTE: The only global role privileges in Postgres are SUPER (superuser), CREATE and CREATE USER
-     * (databases and roles), all others will be ignored in case no table was given
+     * Note that database and table specific privileges (i.e. not SUPER, CREATE and CREATEROLE) are ignored
+     * in case no connection to the database defined in the resource configuration has been established
      *
-     * @param array     $privileges     The privileges to check
-     * @param           $table          The optional schema to use, defaults to 'public'
-     * @param           $withGrant      Whether we also require the grant option on the given privileges
+     * @param   array   $privileges     The privilege names
+     * @param   bool    $requireGrants  Only return true when all privileges can be granted to others
+     * @param   array   $context        An array describing the context for which the given privileges need to apply.
+     *                                  Only one or more table names are currently supported
+     * @param   string  $username       The login name to which the passed privileges need to be granted
      *
-     * @return bool
+     * @return  bool
      */
-    public function checkPgsqlPriv(array $privileges, $table = null, $withGrantOption = false)
-    {
-        if (isset($table)) {
-            $queries = array();
-            foreach ($privileges as $privilege) {
-                if (false === array_search($privilege, array('CREATE USER', 'CREATE', 'SUPER'))) {
-                    $queries[] = sprintf (
-                            'has_table_privilege(%s, %s)',
-                            $this->quote($table),
-                            $this->quote($privilege . ($withGrantOption ? ' WITH GRANT OPTION' : ''))
-                        ) . ' AS ' . $this->quoteIdentifier($privilege);
+    public function checkPgsqlPrivileges(
+        array $privileges,
+        $requireGrants = false,
+        array $context = null,
+        $username = null
+    ) {
+        $privilegesGranted = true;
+        if ($this->dbFromConfig) {
+            $dbPrivileges = array();
+            $tablePrivileges = array();
+            foreach (array_intersect($privileges, array_keys($this->pgsqlGrantContexts)) as $privilege) {
+                if (false === empty($context) && $this->pgsqlGrantContexts[$privilege] & static::TABLE_LEVEL) {
+                    $tablePrivileges[] = $privilege;
+                } elseif ($this->pgsqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
+                    $dbPrivileges[] = $privilege;
                 }
             }
-            $ret = $this->query('SELECT ' . join (', ', $queries) . ';')->fetch();
-            if (false === $ret || false !== array_search(false, $ret)) {
-                return false;
+
+            if (false === empty($dbPrivileges)) {
+                $query = $this->query(
+                    'SELECT has_database_privilege(:user, :dbname, :privileges) AS db_privileges_granted',
+                    array(
+                        ':user'         => $username !== null ? $username : $this->config['username'],
+                        ':dbname'       => $this->config['dbname'],
+                        ':privileges'   => join(',', $dbPrivileges) . ($requireGrants ? ' WITH GRANT OPTION' : '')
+                    )
+                );
+                $privilegesGranted &= $query->fetchObject()->db_privileges_granted;
             }
-        }
-        if (false !== array_search('CREATE USER', $privileges)) {
-            $query = $this->query('select rolcreaterole from pg_roles where rolname = current_user;');
-            $createrole = $query->fetchColumn();
-            if (false === $createrole) {
-                return false;
+
+            if (false === empty($tablePrivileges)) {
+                foreach (array_intersect($context, $this->listTables()) as $table) {
+                    $query = $this->query(
+                        'SELECT has_table_privilege(:user, :table, :privileges) AS table_privileges_granted',
+                        array(
+                            ':user'         => $username !== null ? $username : $this->config['username'],
+                            ':table'        => $table,
+                            ':privileges'   => join(',', $tablePrivileges) . ($requireGrants ? ' WITH GRANT OPTION' : '')
+                        )
+                    );
+                    $privilegesGranted &= $query->fetchObject()->table_privileges_granted;
+                }
             }
+        } else {
+            // In case we cannot check whether the user got the required db-/table-privileges due to not being
+            // connected to the database defined in the resource configuration it is safe to just ignore them
+            // as the chances are very high that the database is created later causing the current user being
+            // the owner with ALL privileges. (Which in turn can be granted to others.)
         }
 
-        if (false !== array_search('CREATE', $privileges)) {
-            $query = $this->query('select rolcreatedb from pg_roles where rolname = current_user;');
-            $createdb = $query->fetchColumn();
-            if (false === $createdb) {
-                return false;
-            }
+        if (array_search('CREATE', $privileges) !== false) {
+            $query = $this->query(
+                'select rolcreatedb from pg_roles where rolname = :user',
+                array(':user' => $username !== null ? $username : $this->config['username'])
+            );
+            $privilegesGranted &= $query->fetchColumn() !== false;
         }
-        if (false !== array_search('SUPER', $privileges)) {
-            $query = $this->query('select rolsuper from pg_roles where rolname = current_user;');
-            $super = $query->fetchColumn();
-            if (false === $super) {
-                return false;
-            }
+
+        if (array_search('CREATEROLE', $privileges) !== false) {
+            $query = $this->query(
+                'select rolcreaterole from pg_roles where rolname = :user',
+                array(':user' => $username !== null ? $username : $this->config['username'])
+            );
+            $privilegesGranted &= $query->fetchColumn() !== false;
         }
-        return true;
+
+        if (array_search('SUPER', $privileges) !== false) {
+            $query = $this->query(
+                'select rolsuper from pg_roles where rolname = :user',
+                array(':user' => $username !== null ? $username : $this->config['username'])
+            );
+            $privilegesGranted &= $query->fetchColumn() !== false;
+        }
+
+        return $privilegesGranted;
     }
 }

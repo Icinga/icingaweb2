@@ -9,7 +9,6 @@ use PDOException;
 use Icinga\Web\Setup\Step;
 use Icinga\Web\Setup\DbTool;
 use Icinga\Application\Icinga;
-use Icinga\Application\Platform;
 use Icinga\Exception\InstallException;
 
 class DatabaseStep extends Step
@@ -61,42 +60,38 @@ class DatabaseStep extends Step
                 t('Successfully connected to existing database "%s"...'),
                 $this->data['resourceConfig']['dbname']
             );
-        } catch (PDOException $e) {
+        } catch (PDOException $_) {
             $db->connectToHost();
             $this->log(t('Creating new database "%s"...'), $this->data['resourceConfig']['dbname']);
             $db->exec('CREATE DATABASE ' . $db->quoteIdentifier($this->data['resourceConfig']['dbname']));
             $db->reconnect($this->data['resourceConfig']['dbname']);
         }
 
-        if ($db->hasLogin(
-            $this->data['resourceConfig']['username'],
-            $this->data['resourceConfig']['password']
-        )) {
+        if (array_search(key($this->data['tables']), $db->listTables()) !== false) {
+            $this->log(t('Database schema already exists...'));
+        } else {
+            $this->log(t('Creating database schema...'));
+            $db->import(Icinga::app()->getApplicationDir() . '/../etc/schema/mysql.schema.sql');
+        }
+
+        if ($db->hasLogin($this->data['resourceConfig']['username'])) {
             $this->log(t('Login "%s" already exists...'), $this->data['resourceConfig']['username']);
         } else {
             $this->log(t('Creating login "%s"...'), $this->data['resourceConfig']['username']);
             $db->addLogin($this->data['resourceConfig']['username'], $this->data['resourceConfig']['password']);
         }
 
-        if (array_search('account', $db->listTables()) !== false) {
-            $this->log(t('Database schema already exists...'));
-        } else {
-            $this->log(t('Creating database schema...'));
-            $db->import(Icinga::app()->getApplicationDir() . '/../etc/schema/mysql.sql');
-        }
-
-        $privileges = array('SELECT', 'INSERT', 'UPDATE', 'DELETE', 'EXECUTE', 'CREATE TEMPORARY TABLES');
-        if ($db->checkMysqlGrantOption(array_merge($privileges))) {
-            $this->log(t('Granting required privileges to login "%s"...'), $this->data['resourceConfig']['username']);
-            $db->exec(sprintf(
-                "GRANT %s ON %s.* TO %s@'%%'",
-                join(',', $privileges),
-                $db->quoteIdentifier($this->data['resourceConfig']['dbname']),
-                $db->quoteIdentifier($this->data['resourceConfig']['username'])
-            ));
-        } else {
+        $username = $this->data['resourceConfig']['username'];
+        if ($db->checkPrivileges($this->data['privileges'], $this->data['tables'], $username)) {
             $this->log(
                 t('Required privileges were already granted to login "%s".'),
+                $this->data['resourceConfig']['username']
+            );
+        } else {
+            $this->log(t('Granting required privileges to login "%s"...'), $this->data['resourceConfig']['username']);
+            $db->grantPrivileges(
+                $this->data['privileges'],
+                $this->data['tables'],
                 $this->data['resourceConfig']['username']
             );
         }
@@ -110,50 +105,41 @@ class DatabaseStep extends Step
                 t('Successfully connected to existing database "%s"...'),
                 $this->data['resourceConfig']['dbname']
             );
-        } catch (PDOException $e) {
+        } catch (PDOException $_) {
             $db->connectToHost();
             $this->log(t('Creating new database "%s"...'), $this->data['resourceConfig']['dbname']);
-            $db->exec('CREATE DATABASE ' . $db->quoteIdentifier($this->data['resourceConfig']['dbname']));
+            $db->exec(sprintf(
+                "CREATE DATABASE %s WITH ENCODING 'UTF-8'",
+                $db->quoteIdentifier($this->data['resourceConfig']['dbname'])
+            ));
             $db->reconnect($this->data['resourceConfig']['dbname']);
         }
 
-        if ($db->hasLogin(
-            $this->data['resourceConfig']['username'],
-            $this->data['resourceConfig']['password']
-        )) {
+        if (array_search(key($this->data['tables']), $db->listTables()) !== false) {
+            $this->log(t('Database schema already exists...'));
+        } else {
+            $this->log(t('Creating database schema...'));
+            $db->import(Icinga::app()->getApplicationDir() . '/../etc/schema/pgsql.schema.sql');
+        }
+
+        if ($db->hasLogin($this->data['resourceConfig']['username'])) {
             $this->log(t('Login "%s" already exists...'), $this->data['resourceConfig']['username']);
         } else {
             $this->log(t('Creating login "%s"...'), $this->data['resourceConfig']['username']);
             $db->addLogin($this->data['resourceConfig']['username'], $this->data['resourceConfig']['password']);
         }
 
-        if (array_search('account', $db->listTables()) !== false) {
-            $this->log(t('Database schema already exists...'));
-        } else {
-            $this->log(t('Creating database schema...'));
-            $db->import(Icinga::app()->getApplicationDir() . '/../etc/schema/pgsql.sql');
-        }
-
-        $privileges = array('SELECT', 'INSERT', 'UPDATE', 'DELETE', 'REFERENCES');
-        if ($db->checkPgsqlGrantOption(
-            $privileges,
-            $this->data['resourceConfig']['dbname'],
-            'account'
-        )) {
-            $this->log(t('Granting required privileges to login "%s"...'), $this->data['resourceConfig']['username']);
-            $db->exec(sprintf(
-                "GRANT %s ON TABLE account TO %s",
-                join(',', $privileges),
-                $db->quoteIdentifier($this->data['resourceConfig']['username'])
-            ));
-            $db->exec(sprintf(
-                "GRANT %s ON TABLE preference TO %s",
-                join(',', $privileges),
-                $db->quoteIdentifier($this->data['resourceConfig']['username'])
-            ));
-        } else {
+        $username = $this->data['resourceConfig']['username'];
+        if ($db->checkPrivileges($this->data['privileges'], $this->data['tables'], $username)) {
             $this->log(
                 t('Required privileges were already granted to login "%s".'),
+                $this->data['resourceConfig']['username']
+            );
+        } else {
+            $this->log(t('Granting required privileges to login "%s"...'), $this->data['resourceConfig']['username']);
+            $db->grantPrivileges(
+                $this->data['privileges'],
+                $this->data['tables'],
                 $this->data['resourceConfig']['username']
             );
         }
@@ -173,48 +159,71 @@ class DatabaseStep extends Step
 
         try {
             $db->connectToDb();
-            if (array_search('account', $db->listTables()) === false) {
-                $message = sprintf(
-                    t(
-                        'The database user "%s" will be used to setup the missing'
-                        . ' schema required by Icinga Web 2 in database "%s".'
-                    ),
-                    $resourceConfig['username'],
-                    $resourceConfig['dbname']
-                );
+            if (array_search(key($this->data['tables']), $db->listTables()) === false) {
+                if ($resourceConfig['username'] !== $this->data['resourceConfig']['username']) {
+                    $message = sprintf(
+                        t(
+                            'The database user "%s" will be used to setup the missing schema required by Icinga'
+                            . ' Web 2 in database "%s" and to grant access to it to a new login called "%s".'
+                        ),
+                        $resourceConfig['username'],
+                        $resourceConfig['dbname'],
+                        $this->data['resourceConfig']['username']
+                    );
+                } else {
+                    $message = sprintf(
+                        t(
+                            'The database user "%s" will be used to setup the missing'
+                            . ' schema required by Icinga Web 2 in database "%s".'
+                        ),
+                        $resourceConfig['username'],
+                        $resourceConfig['dbname']
+                    );
+                }
             } else {
                 $message = sprintf(
                     t('The database "%s" already seems to be fully set up. No action required.'),
                     $resourceConfig['dbname']
                 );
             }
-        } catch (PDOException $e) {
+        } catch (PDOException $_) {
             try {
                 $db->connectToHost();
-                if ($db->hasLogin(
-                    $this->data['resourceConfig']['username'],
-                    $this->data['resourceConfig']['password']
-                )) {
+                if ($resourceConfig['username'] !== $this->data['resourceConfig']['username']) {
+                    if ($db->hasLogin($this->data['resourceConfig']['username'])) {
+                        $message = sprintf(
+                            t(
+                                'The database user "%s" will be used to create the missing database'
+                                . ' "%s" with the schema required by Icinga Web 2 and to grant'
+                                . ' access to it to an existing login called "%s".'
+                            ),
+                            $resourceConfig['username'],
+                            $resourceConfig['dbname'],
+                            $this->data['resourceConfig']['username']
+                        );
+                    } else {
+                        $message = sprintf(
+                            t(
+                                'The database user "%s" will be used to create the missing database'
+                                . ' "%s" with the schema required by Icinga Web 2 and to grant'
+                                . ' access to it to a new login called "%s".'
+                            ),
+                            $resourceConfig['username'],
+                            $resourceConfig['dbname'],
+                            $this->data['resourceConfig']['username']
+                        );
+                    }
+                } else {
                     $message = sprintf(
                         t(
-                            'The database user "%s" will be used to create the missing '
-                            . 'database "%s" with the schema required by Icinga Web 2.'
+                            'The database user "%s" will be used to create the missing'
+                            . ' database "%s" with the schema required by Icinga Web 2.'
                         ),
                         $resourceConfig['username'],
                         $resourceConfig['dbname']
                     );
-                } else {
-                    $message = sprintf(
-                        t(
-                            'The database user "%s" will be used to create the missing database "%s" '
-                            . 'with the schema required by Icinga Web 2 and a new login called "%s".'
-                        ),
-                        $resourceConfig['username'],
-                        $resourceConfig['dbname'],
-                        $this->data['resourceConfig']['username']
-                    );
                 }
-            } catch (Exception $ex) {
+            } catch (Exception $_) {
                 $message = t(
                     'No connection to database host possible. You\'ll need to setup the'
                     . ' database with the schema required by Icinga Web 2 manually.'
