@@ -3,10 +3,9 @@
 namespace Icinga\Form;
 
 use Icinga\Application\Config;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Protocol\Ldap\Connection;
-use Icinga\Web\Request;
 use Icinga\Protocol\Dns;
 use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Form;
