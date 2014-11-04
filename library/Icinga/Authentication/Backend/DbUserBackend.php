@@ -67,13 +67,12 @@ class DbUserBackend extends UserBackend
     public function addUser($username, $password, $active = true)
     {
         $stmt = $this->conn->getDbAdapter()->prepare(
-            'INSERT INTO icingaweb_user VALUES (:name, :active, :password_hash, :ctime);'
+            'INSERT INTO icingaweb_user VALUES (:name, :active, :password_hash, now(), DEFAULT);'
         );
         $stmt->execute(array(
             ':name'             => $username,
             ':active'           => (int) $active,
-            ':password_hash'    => $this->hashPassword($password),
-            ':ctime'            => time()
+            ':password_hash'    => $this->hashPassword($password)
         ));
     }
 
