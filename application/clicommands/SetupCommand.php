@@ -4,7 +4,10 @@
 
 namespace Icinga\Clicommands;
 
+use Icinga\Application\Logger;
 use Icinga\Cli\Command;
+use Icinga\Config\Webserver\WebServer;
+use Icinga\Exception\ProgrammingError;
 
 /**
  * Setup Icinga Web 2
@@ -118,6 +121,71 @@ class SetupCommand extends Command
         chgrp($path, $group);
 
         printf($this->translate("Successfully created configuration directory at: %s\n"), $path);
+    }
+
+    /**
+     * Create webserver configuration
+     *
+     * USAGE:
+     *
+     *  icingacli setup webserver <apache2|apache24|nginx> [options]
+     *
+     * OPTIONS:
+     *
+     *  --path=<webpath>        Path for the web server, default /icingaweb
+     *
+     *  --publicPath=<wwwroot>  Path to htdocs system path
+     *
+     *  --file=<filename>       Write configuration to file
+     *
+     *
+     * EXAMPLES:
+     *
+     * icingacli setup webserver apache24
+     *
+     * icingacli setup webserver apache2 --path /icingaweb --publicPath /usr/share/icingaweb/public
+     *
+     * icingacli setup webserver apache2 --file /etc/apache2/conf.d/icingaweb.conf
+     */
+    public function webserverAction()
+    {
+        if (($type = $this->params->getStandalone()) === null) {
+            $this->fail($this->translate('Argument type is mandatory.'));
+        }
+        try {
+            $webserver = WebServer::createInstance($type);
+        } catch (ProgrammingError $e) {
+            $this->fail($this->translate('Unknown type') . ': ' . $type);
+        }
+        $webserver->setApp($this->app);
+        if (($sapi = $this->params->get('sapi', 'server')) === null) {
+            $this->fail($this->translate('argument --sapi is mandatory.'));
+        }
+        if (($path = $this->params->get('path', '/icingaweb')) === null) {
+            $this->fail($this->translate('argument --path is mandatory.'));
+        }
+        if (($publicPath = $this->params->get('publicPath', $webserver->getPublicPath())) === null) {
+            $this->fail($this->translate('argument --publicPath is mandatory.'));
+        }
+        $webserver->setWebPath($path);
+        $webserver->setPublicPath($publicPath);
+        $webserver->setSapi($sapi);
+        $config = $webserver->generate() . "\n";
+        if (($file = $this->params->get('file')) !== null) {
+            if (file_exists($file) === true) {
+                $this->fail(sprintf($this->translate('File %s already exists. Please delete it first.'), $file));
+            }
+            Logger::info($this->translate('Write %s configuration to file: %s'), $type, $file);
+            $re = file_put_contents($file, $config);
+            if ($re === false) {
+                $this->fail($this->translate('Could not write to file') . ': ' . $file);
+            }
+            Logger::info($this->translate('Successfully written %d bytes to file'), $re);
+            return true;
+        }
+        printf("# Your %s configuration:\n", $type);
+        echo $config;
+        return true;
     }
 
     /**
