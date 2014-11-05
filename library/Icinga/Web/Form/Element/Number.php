@@ -1,66 +1,130 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Form\Element;
 
-use Zend_Form_Element_Xhtml;
+use Icinga\Web\Form\FormElement;
 
 /**
- * Number form element
+ * A number input control
  */
-class Number extends Zend_Form_Element_Xhtml
+class Number extends FormElement
 {
     /**
-     * Default form view helper to use for rendering
+     * Form view helper to use for rendering
      *
      * @var string
      */
-    public $helper = "formNumber";
+    public $helper = 'formNumber';
 
     /**
-     * Check whether $value is of type integer
+     * The expected lower bound for the element’s value
      *
-     * @param   string      $value      The value to check
-     * @param   mixed       $context    Context to use
-     *
-     * @return  bool
+     * @var float|null
      */
-    public function isValid($value, $context = null)
+    protected $min;
+
+    /**
+     * The expected upper bound for the element’s
+     *
+     * @var float|null
+     */
+    protected $max;
+
+    /**
+     * The value granularity of the element’s value
+     *
+     * Normally, number input controls are limited to an accuracy of integer values.
+     *
+     * @var float|string|null
+     */
+    protected $step;
+
+    /**
+     * (non-PHPDoc)
+     * @see \Zend_Form_Element::init() For the method documentation.
+     */
+    public function init()
     {
-        if (parent::isValid($value, $context)) {
-            if (is_numeric($value)) {
-                return true;
-            }
-
-            $this->addError(t('Please enter a number.'));
+        $this->addValidator('Float', true);  // true for breaking the validator chain on failure
+        if ($this->min !== null) {
+            $this->addValidator('GreaterThan', true, array('min' => $this->min));
         }
+        if ($this->max !== null) {
+            $this->addValidator('LessThan', true, array('max' => $this->max));
+        }
+    }
 
-        return false;
+    /**
+     * Set the expected lower bound for the element’s value
+     *
+     * @param   float $min
+     *
+     * @return  $this
+     */
+    public function setMin($min)
+    {
+        $this->min = (float) $min;
+        return $this;
+    }
+
+    /**
+     * Get the expected lower bound for the element’s value
+     *
+     * @return float|null
+     */
+    public function getMin()
+    {
+        return $this->min;
+    }
+
+    /**
+     * Set the expected upper bound for the element’s value
+     *
+     * @param   float $max
+     *
+     * @return  $this
+     */
+    public function setMax($max)
+    {
+        $this->max = (int) $max;
+        return $this;
+    }
+
+    /**
+     * Get the expected upper bound for the element’s value
+     *
+     * @return float|null
+     */
+    public function getMax()
+    {
+        return $this->max;
+    }
+
+    /**
+     * Set the value granularity of the element’s value
+     *
+     * @param   float|string $step
+     *
+     * @return  $this
+     */
+    public function setStep($step)
+    {
+        if ($step !== 'any') {
+            $step = (float) $step;
+        }
+        $this->step = $step;
+        return $this;
+    }
+
+    /**
+     * Get the value granularity of the element’s value
+     *
+     * @return float|string|null
+     */
+    public function getStep()
+    {
+        return $this->step;
     }
 }

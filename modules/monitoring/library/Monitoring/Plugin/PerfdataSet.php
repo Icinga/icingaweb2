@@ -85,7 +85,7 @@ class PerfdataSet implements IteratorAggregate
             $value = trim($this->readUntil(' '));
 
             if ($label && $value) {
-                $this->perfdata[$label] = Perfdata::fromString($value);
+                $this->perfdata[] = new Perfdata($label, $value);
             }
         }
     }

@@ -1,57 +1,80 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
+use \Zend_View_Helper_FormElement;
+
 /**
- * Helper to generate a number input
+ * Render number input controls
  */
-class Zend_View_Helper_FormNumber extends \Zend_View_Helper_FormText
+class Zend_View_Helper_FormNumber extends Zend_View_Helper_FormElement
 {
     /**
-     * Generates a html number input
+     * Format a number
      *
-     * @access public
+     * @param   $number
      *
-     * @param string $name The element name.
-     * @param string $value The default value.
-     * @param array $attribs Attributes which should be added to the input tag.
+     * @return  string
+     */
+    public function formatNumber($number)
+    {
+        if (empty($number)) {
+            return $number;
+        }
+        return $this->view->escape(
+            sprintf(
+                ctype_digit((string) $number) ? '%d' : '%F',
+                $number
+            )
+        );
+    }
+
+    /**
+     * Render the number input control
      *
-     * @return string The input tag and options XHTML.
+     * @param   string  $name
+     * @param   int     $value
+     * @param   array   $attribs
+     *
+     * @return  string  The rendered number input control
      */
     public function formNumber($name, $value = null, $attribs = null)
     {
-        return '<input type="number"'
-             . ' name="' . $this->view->escape($name) . '"'
-             . ' value="' . $this->view->escape($value) . '"'
-             . ' id="' . $this->view->escape($name) . '"'
-             . $this->_htmlAttribs($attribs)
-             . $this->getClosingBracket();
+        $info = $this->_getInfo($name, $value, $attribs);
+        extract($info);  // name, id, value, attribs, options, listsep, disable
+        /** @var string $id  */
+        /** @var bool $disable  */
+        $disabled = '';
+        if ($disable) {
+            $disabled = ' disabled="disabled"';
+        }
+        $min = '';
+        if (isset($attribs['min'])) {
+            $min = sprintf(' min="%s"', $this->formatNumber($attribs['min']));
+        }
+        unset($attribs['min']);  // Unset min to not render it again in $this->_htmlAttribs($attribs)
+        $max = '';
+        if (isset($attribs['max'])) {
+            $max = sprintf(' max="%s"', $this->formatNumber($attribs['max']));
+        }
+        unset($attribs['max']);  // Unset max to not render it again in $this->_htmlAttribs($attribs)
+        $step = '';
+        if (isset($attribs['step'])) {
+            $step = sprintf(' step="%s"', $attribs['step'] === 'any' ? 'any' : $this->formatNumber($attribs['step']));
+        }
+        unset($attribs['step']);  // Unset step to not render it again in $this->_htmlAttribs($attribs)
+        $html5 = sprintf(
+            '<input type="number" name="%s" id="%s" value="%s"%s%s%s%s%s%s',
+            $this->view->escape($name),
+            $this->view->escape($id),
+            $this->view->escape($this->formatNumber($value)),
+            $min,
+            $max,
+            $step,
+            $disabled,
+            $this->_htmlAttribs($attribs),
+            $this->getClosingBracket()
+        );
+        return $html5;
     }
 }
-// @codeCoverageIgnoreEnd

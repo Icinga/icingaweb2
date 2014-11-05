@@ -23,26 +23,26 @@ $obj->passive_checks_enabled =
 
 $i = array();
 if (! $obj->handled && $obj->state > 0) {
-    $i[] = $this->icon('unhandled.png', 'Unhandled');
+    $i[] = $this->icon('unhandled.png', $this->translate('Unhandled'));
 }
 
 if ($obj->acknowledged && ! $obj->in_downtime) {
-    $i[] = $this->icon('acknowledgement.png', 'Acknowledged');
+    $i[] = $this->icon('acknowledgement.png', $this->translate('Acknowledged'));
 }
 
 if (!$obj->notifications_enabled) {
-    $i[] = $this->icon('notification_disabled.png', 'Notifications Disabled');
+    $i[] = $this->icon('notification_disabled.png', $this->translate('Notifications Disabled'));
 }
 
 if ($obj->in_downtime) {
-    $i[] = $this->icon('in_downtime.png', 'In Downtime');
+    $i[] = $this->icon('in_downtime.png', $this->translate('In Downtime'));
 }
 
 if (! $obj->active_checks_enabled) {
     if ($obj->passive_checks_enabled) {
-        $i[] = $this->icon('active_checks_disabled.png', 'Active Checks Disabled');
+        $i[] = $this->icon('active_checks_disabled.png', $this->translate('Active Checks Disabled'));
     } else {
-        $i[] = $this->icon('active_passive_checks_disabled.png', 'Active And Passive Checks Disabled');
+        $i[] = $this->icon('active_passive_checks_disabled.png', $this->translate('Active And Passive Checks Disabled'));
     }
 }
 

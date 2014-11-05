@@ -1,3 +1,6 @@
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 /**
  * Icinga.Loader
  *
@@ -70,7 +73,7 @@
             }
 
             // If we have a pending request for the same target...
-            if (id in this.requests) {
+            if (typeof this.requests[id] !== 'undefined') {
                 if (autorefresh) {
                     return false;
                 }
@@ -163,7 +166,7 @@
             $('.container').filter(this.filterAutorefreshingContainers).each(function (idx, el) {
                 var $el = $(el);
                 var id = $el.attr('id');
-                if (id in self.requests) {
+                if (typeof self.requests[id] !== 'undefined') {
                     self.icinga.logger.debug('No refresh, request pending for ', id);
                     return;
                 }
@@ -244,18 +247,46 @@
         },
 
         processRedirectHeader: function(req) {
+            var icinga = this.icinga;
             var redirect = req.getResponseHeader('X-Icinga-Redirect');
             if (! redirect) return false;
-            this.icinga.logger.debug(
+            redirect = decodeURIComponent(redirect);
+            if (redirect.match(/__SELF__/)) {
+                redirect = redirect.replace(/__SELF__/, encodeURIComponent(document.location.pathname + document.location.search + document.location.hash));
+            }
+            icinga.logger.debug(
                 'Got redirect for ', req.$target, ', URL was ' + redirect
             );
-            redirect = decodeURIComponent(redirect);
 
             if (req.getResponseHeader('X-Icinga-Rerender-Layout')) {
+                var parts = redirect.split(/#!/);
+                redirect = parts.shift();
                 var redirectionUrl = this.addUrlFlag(redirect, 'renderLayout');
-                this.loadUrl(redirectionUrl, $('#layout')).url = redirect;
+                var r = this.loadUrl(redirectionUrl, $('#layout'));
+                r.url = redirect;
+                if (parts.length) {
+                    r.loadNext = parts;
+                }
+
             } else {
-                this.loadUrl(redirect, req.$target);
+
+                if (redirect.match(/#!/)) {
+                    var parts = redirect.split(/#!/);
+                    icinga.ui.layout2col();
+                    this.loadUrl(parts.shift(), $('#col1'));
+                    this.loadUrl(parts.shift(), $('#col2'));
+                } else {
+
+                    if (req.$target.attr('id') === 'col2') { // TODO: multicol
+                        if ($('#col1').data('icingaUrl') === redirect) {
+                            icinga.ui.layout1col();
+                            req.$target = $('#col1');
+                            delete(this.requests['col2']);
+                        }
+                    }
+
+                    this.loadUrl(redirect, req.$target);
+                }
             }
             return true;
         },
@@ -307,8 +338,7 @@
                 this.icinga.ui.reloadCss();
             }
 
-            var redirect = req.getResponseHeader('X-Icinga-Redirect');
-            if (this.processRedirectHeader(req)) return;
+            if (req.getResponseHeader('X-Icinga-Redirect')) return;
 
             // div helps getting an XML tree
             var $resp = $('<div>' + req.responseText + '</div>');
@@ -319,12 +349,12 @@
             if (! req.autorefresh) {
                 // TODO: Hook for response/url?
                 var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
-
                 var $matches = $.merge($('[href="' + url + '"]'), $forms);
-
                 $matches.each(function (idx, el) {
                     if ($(el).closest('#menu').length) {
-                        $('#menu .active').removeClass('active');
+                        if (req.$target[0].id === 'col1') {
+                            self.icinga.behaviors.navigation.resetActive();
+                        }
                     } else if ($(el).closest('table.action').length) {
                         $(el).closest('table.action').find('.active').removeClass('active');
                     }
@@ -336,8 +366,9 @@
                         if ($el.is('form')) {
                             $('input', $el).addClass('active');
                         } else {
-                            $el.closest('li').addClass('active');
-                            $el.parents('li').addClass('active');
+                            if (req.$target[0].id === 'col1') {
+                                self.icinga.behaviors.navigation.setActive($el);
+                            }
                         }
                         // Interrupt .each, only on menu item shall be active
                         return false;
@@ -347,7 +378,6 @@
                 });
             } else {
                 // TODO: next container url
-                // Get first container url?
                 active = $('[href].active', req.$target).attr('href');
             }
 
@@ -385,6 +415,9 @@
                 classes.push('module-' + moduleName);
             } else {
                 req.$target.removeData('icingaModule');
+                if (req.$target.attr('data-icinga-module')) {
+                    req.$target.removeAttr('data-icinga-module');
+                }
             }
             req.$target.attr('class', classes.join(' '));
 
@@ -398,6 +431,9 @@
                 req.$target.data('icingaRefresh', refresh);
             } else {
                 req.$target.removeData('icingaRefresh');
+                if (req.$target.attr('data-icinga-refresh')) {
+                    req.$target.removeAttr('data-icinga-refresh');
+                }
             }
 
             // Set a window identifier if the server asks us to do so
@@ -513,7 +549,6 @@
                         }).addClass('active');
                 }
             }
-            req.$target.trigger('rendered');
         },
 
         /**
@@ -538,6 +573,18 @@
             req.$target.data('lastUpdate', (new Date()).getTime());
             delete this.requests[req.$target.attr('id')];
             this.icinga.ui.fadeNotificationsAway();
+
+            this.processRedirectHeader(req);
+
+            if (typeof req.loadNext !== 'undefined') {
+                if ($('#col2').length) {
+                    this.loadUrl(req.loadNext[0], $('#col2'));
+                    this.icinga.ui.layout2col();
+                } else {
+                  this.icinga.logger.error('Failed to load URL for #col2', req.loadNext);
+                }
+            }
+
             this.icinga.ui.refreshDebug();
         },
 
@@ -624,14 +671,30 @@
             // Container update happens here
             var scrollPos = false;
             var self = this;
+            var origFocus = document.activeElement;
             var containerId = $container.attr('id');
             if (typeof containerId !== 'undefined') {
-                scrollPos = $container.scrollTop();
+                if (autorefresh) {
+                    scrollPos = $container.scrollTop();
+                } else {
+                    scrollPos = 0;
+                }
             }
 
-            var origFocus = document.activeElement;
-            if (typeof containerId !== 'undefined' && autorefresh && origFocus && $(origFocus).closest('form').length && $container.has($(origFocus)) && $(origFocus).closest('#' + containerId).length && ! $(origFocus).hasClass('autosubmit')) {
-                this.icinga.logger.debug('Not changing content, form has focus');
+            $container.trigger('beforerender');
+
+            var discard = false;
+            $.each(self.icinga.behaviors, function(name, behavior) {
+                if (behavior.renderHook) {
+                    var changed = behavior.renderHook(content, $container, action, autorefresh);
+                    if (!changed) {
+                        discard = true;
+                    } else {
+                        content = changed;
+                    }
+                }
+            });
+            if (discard) {
                 return;
             }
 
@@ -639,11 +702,12 @@
             var $content = $('<div>' + content + '</div>');
 
             // Disable all click events while rendering
-            $('*').click(function (event) {
-                event.stopImmediatePropagation();
-                event.stopPropagation();
-                event.preventDefault();
-            });
+            // (Disabling disabled, was ways too slow)
+            // $('*').click(function (event) {
+            //     event.stopImmediatePropagation();
+            //     event.stopPropagation();
+            //     event.preventDefault();
+            // });
 
             $('.container', $container).each(function() {
                 self.stopPendingRequestsFor($(this));
@@ -671,21 +735,23 @@
             }
             this.icinga.ui.assignUniqueContainerIds();
 
-            if (scrollPos !== false) {
-                $container.scrollTop(scrollPos);
-            }
             if (origFocus) {
                 $(origFocus).focus();
             }
 
             // TODO: this.icinga.events.refreshContainer(container);
+            $container.trigger('rendered');
+
+            if (scrollPos !== false) {
+                $container.scrollTop(scrollPos);
+            }
             var icinga = this.icinga;
-            icinga.events.applyHandlers($container);
+            //icinga.events.applyHandlers($container);
             icinga.ui.initializeControls($container);
             icinga.ui.fixControls();
 
-            // Re-enable all click events
-            $('*').off('click');
+            // Re-enable all click events (disabled as of performance reasons)
+            // $('*').off('click');
         },
 
         /**

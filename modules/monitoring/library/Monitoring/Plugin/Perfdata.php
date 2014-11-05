@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Plugin;
 
-use Icinga\Exception\ProgrammingError;
+use InvalidArgumentException;
 
 class Perfdata
 {
@@ -21,6 +21,13 @@ class Perfdata
      * @var string
      */
     protected $unit;
+
+    /**
+     * The label
+     *
+     * @var string
+     */
+    protected $label;
 
     /**
      * The value
@@ -44,27 +51,29 @@ class Perfdata
     protected $maxValue;
 
     /**
-     * The WARNING treshold
+     * The WARNING threshold
      *
      * @var string
      */
-    protected $warningTreshold;
+    protected $warningThreshold;
 
     /**
-     * The CRITICAL treshold
+     * The CRITICAL threshold
      *
      * @var string
      */
-    protected $criticalTreshold;
+    protected $criticalThreshold;
 
     /**
-     * Create a new Perfdata object based on the given performance data value
+     * Create a new Perfdata object based on the given performance data label and value
      *
-     * @param   string      $perfdataValue      The value to parse
+     * @param   string      $label      The perfdata label
+     * @param   string      $value      The perfdata value
      */
-    protected function __construct($perfdataValue)
+    public function __construct($label, $value)
     {
-        $this->perfdataValue = $perfdataValue;
+        $this->perfdataValue = $value;
+        $this->label = $label;
         $this->parse();
 
         if ($this->unit === '%') {
@@ -78,25 +87,30 @@ class Perfdata
     }
 
     /**
-     * Return a new Perfdata object based on the given performance data value
+     * Return a new Perfdata object based on the given performance data key=value pair
      *
-     * @param   string      $perfdataValue      The value to parse
+     * @param   string      $perfdata       The key=value pair to parse
      *
      * @return  Perfdata
      *
-     * @throws  ProgrammingError                In case the given performance data value has no content
+     * @throws  InvalidArgumentException    In case the given performance data has no content or a invalid format
      */
-    public static function fromString($perfdataValue)
+    public static function fromString($perfdata)
     {
-        if (empty($perfdataValue)) {
-            throw new ProgrammingError('Perfdata::fromString expects a string with content');
+        if (empty($perfdata)) {
+            throw new InvalidArgumentException('Perfdata::fromString expects a string with content');
+        } elseif (false === strpos($perfdata, '=')) {
+            throw new InvalidArgumentException(
+                'Perfdata::fromString expects a key=value formatted string. Got "' . $perfdata . '" instead'
+            );
         }
 
-        return new static($perfdataValue);
+        list($label, $value) = explode('=', $perfdata, 2);
+        return new static(trim($label), trim($value));
     }
 
     /**
-     * Return whether this performance data value is a number
+     * Return whether this performance data's value is a number
      *
      * @return  bool    True in case it's a number, otherwise False
      */
@@ -106,7 +120,7 @@ class Perfdata
     }
 
     /**
-     * Return whether this performance data value are seconds
+     * Return whether this performance data's value are seconds
      *
      * @return  bool    True in case it's seconds, otherwise False
      */
@@ -116,7 +130,7 @@ class Perfdata
     }
 
     /**
-     * Return whether this performance data value is in percentage
+     * Return whether this performance data's value is in percentage
      *
      * @return  bool    True in case it's in percentage, otherwise False
      */
@@ -126,7 +140,7 @@ class Perfdata
     }
 
     /**
-     * Return whether this performance data value is in bytes
+     * Return whether this performance data's value is in bytes
      *
      * @return  bool    True in case it's in bytes, otherwise False
      */
@@ -136,13 +150,21 @@ class Perfdata
     }
 
     /**
-     * Return whether this performance data value is a counter
+     * Return whether this performance data's value is a counter
      *
      * @return  bool    True in case it's a counter, otherwise False
      */
     public function isCounter()
     {
         return $this->unit === 'c';
+    }
+
+    /**
+     * Return this perfomance data's label
+     */
+    public function getLabel()
+    {
+        return $this->label;
     }
 
     /**
@@ -168,6 +190,9 @@ class Perfdata
 
         if ($this->maxValue !== null) {
             $minValue = $this->minValue !== null ? $this->minValue : 0;
+            if ($this->maxValue - $minValue === 0.0) {
+                return null;
+            }
 
             if ($this->value > $minValue) {
                 return (($this->value - $minValue) / ($this->maxValue - $minValue)) * 100;
@@ -176,23 +201,23 @@ class Perfdata
     }
 
     /**
-     * Return this value's warning treshold or null if it is not available
+     * Return this performance data's warning treshold or null if it is not available
      *
      * @return  null|string
      */
-    public function getWarningTreshold()
+    public function getWarningThreshold()
     {
-        return $this->warningTreshold;
+        return $this->warningThreshold;
     }
 
     /**
-     * Return this value's critical treshold or null if it is not available
+     * Return this performance data's critical treshold or null if it is not available
      *
      * @return  null|string
      */
-    public function getCriticalTreshold()
+    public function getCriticalThreshold()
     {
-        return $this->criticalTreshold;
+        return $this->criticalThreshold;
     }
 
     /**
@@ -216,6 +241,16 @@ class Perfdata
     }
 
     /**
+     * Return this performance data as string
+     *
+     * @return  string
+     */
+    public function __toString()
+    {
+        return sprintf(strpos($this->label, ' ') === false ? '%s=%s' : "'%s'=%s", $this->label, $this->perfdataValue);
+    }
+
+    /**
      * Parse the current performance data value
      *
      * @todo    Handle optional min/max if UOM == %
@@ -235,15 +270,19 @@ class Perfdata
         switch (count($parts))
         {
             case 5:
-                $this->maxValue = self::convert($parts[4], $this->unit);
+                if ($parts[4] !== '') {
+                    $this->maxValue = self::convert($parts[4], $this->unit);
+                }
             case 4:
-                $this->minValue = self::convert($parts[3], $this->unit);
+                if ($parts[3] !== '') {
+                    $this->minValue = self::convert($parts[3], $this->unit);
+                }
             case 3:
                 // TODO(#6123): Tresholds have the same UOM and need to be converted as well!
-                $this->criticalTreshold = trim($parts[2]) ? trim($parts[2]) : null;
+                $this->criticalThreshold = trim($parts[2]) ? trim($parts[2]) : null;
             case 2:
                 // TODO(#6123): Tresholds have the same UOM and need to be converted as well!
-                $this->warningTreshold = trim($parts[1]) ? trim($parts[1]) : null;
+                $this->warningThreshold = trim($parts[1]) ? trim($parts[1]) : null;
         }
     }
 

@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\DataView;
 
@@ -16,7 +18,9 @@ class Contactgroup extends DataView
     public function getColumns()
     {
         return array(
+            'contact',
             'contact_name',
+            'contactgroup',
             'contactgroup_name',
             'contactgroup_alias',
             'host',

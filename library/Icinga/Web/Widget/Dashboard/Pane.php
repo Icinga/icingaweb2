@@ -1,30 +1,5 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Widget\Dashboard;
@@ -64,7 +39,7 @@ class Pane extends AbstractWidget
     /**
      * Create a new pane
      *
-     * @param $name         The pane to create
+     * @param string $name         The pane to create
      */
     public function __construct($name)
     {
@@ -118,6 +93,16 @@ class Pane extends AbstractWidget
     }
 
     /**
+     * Checks if the current pane has any components
+     *
+     * @return bool
+     */
+    public function hasComponents()
+    {
+        return ! empty($this->components);
+    }
+
+    /**
      * Return a component with the given name if existing
      *
      * @param string $title         The title of the component to return
@@ -130,7 +115,10 @@ class Pane extends AbstractWidget
         if ($this->hasComponent($title)) {
             return $this->components[$title];
         }
-        throw new ProgrammingError(sprintf('Trying to access invalid component: %s', $title));
+        throw new ProgrammingError(
+            'Trying to access invalid component: %s',
+            $title
+        );
     }
 
     /**
@@ -143,6 +131,24 @@ class Pane extends AbstractWidget
     {
         if ($this->hasComponent($title)) {
             unset($this->components[$title]);
+        }
+        return $this;
+    }
+
+    /**
+     * Removes all or a given list of components from this pane
+     *
+     * @param array $components Optional list of component titles
+     * @return Pane $this
+     */
+    public function removeComponents(array $components = null)
+    {
+        if ($components === null) {
+            $this->components = array();
+        } else {
+            foreach ($components as $component) {
+                $this->removeComponent($component);
+            }
         }
         return $this;
     }
@@ -182,9 +188,50 @@ class Pane extends AbstractWidget
         } elseif (is_string($component) && $url !== null) {
              $this->components[$component] = new Component($component, $url, $this);
         } else {
-            throw new ConfigurationError('Invalid component added: ' . $component);
+            throw new ConfigurationError('Invalid component added: %s', $component);
         }
         return $this;
+    }
+
+    /**
+     * Add new components to existing components
+     *
+     * @param array $components
+     * @return $this
+     */
+    public function addComponents(array $components)
+    {
+        /* @var $component Component */
+        foreach ($components as $component) {
+            if (array_key_exists($component->getTitle(), $this->components)) {
+                if (preg_match('/_(\d+)$/', $component->getTitle(), $m)) {
+                    $name = preg_replace('/_\d+$/', $m[1]++, $component->getTitle());
+                } else {
+                    $name = $component->getTitle() . '_2';
+                }
+                $this->components[$name] = $component;
+            } else {
+                $this->components[$component->getTitle()] = $component;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add a component to the current pane
+     *
+     * @param $title
+     * @param $url
+     * @return Component
+     *
+     * @see addComponent()
+     */
+    public function add($title, $url = null)
+    {
+        $this->addComponent($title, $url);
+
+        return $this->components[$title];
     }
 
     /**

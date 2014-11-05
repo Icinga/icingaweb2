@@ -1,37 +1,36 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Zend_Db_Expr;
+
 class StatusQuery extends IdoQuery
 {
+    /**
+     * This mode represents whether we are in HostStatus or ServiceStatus
+     *
+     * Implemented for `distinct as workaround
+     *
+     * @TODO Subject to change, see #7344
+     *
+     * @var string
+     */
+    protected $mode;
+
+    /**
+     * Sets the mode of the current query
+     *
+     * @TODO Subject to change, see #7344
+     *
+     * @param string $mode
+     */
+    public function setMode($mode)
+    {
+        $this->mode = $mode;
+    }
+
     protected $allowCustomVars = true;
 
     protected $columnMap = array(
@@ -65,7 +64,7 @@ class StatusQuery extends IdoQuery
             'host_next_check'             => 'CASE hs.should_be_scheduled WHEN 1 THEN UNIX_TIMESTAMP(hs.next_check) ELSE NULL END',
             'host_check_execution_time'   => 'hs.execution_time',
             'host_check_latency'          => 'hs.latency',
-            'host_problem'                => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
+            'host_problem'                => 'CASE WHEN COALESCE(hs.current_state, 0) = 0 THEN 0 ELSE 1 END',
 
             'host_notifications_enabled'  => 'hs.notifications_enabled',
 
@@ -154,6 +153,11 @@ class StatusQuery extends IdoQuery
                             ELSE 4
                         END
                 END
+            END
+            +
+            CASE WHEN hs.state_type = 1
+                THEN 8
+                ELSE 0
             END'
         ),
         'hostgroups' => array(
@@ -290,19 +294,48 @@ class StatusQuery extends IdoQuery
                                      END
                              END
                          END
+                END
+                +
+                CASE WHEN ss.state_type = 1
+                    THEN 8
+                    ELSE 0
                 END'
         ),
+
         'serviceproblemsummary' => array(
-//            'host_unhandled_service_count' => 'sps.unhandled_service_count'
-            'host_unhandled_service_count' => '(NULL)'
+            'host_unhandled_services' => 'sps.unhandled_services_count'
         ),
-        'lasthostcomment' => array(
-//            'host_last_comment' => 'hlc.comment_id'
-            'host_last_comment' => '(NULL)'
+
+        'lasthostcommentgeneric' => array(
+            'host_last_comment' => 'hlcg.last_comment_data'
         ),
-        'lastservicecomment' => array(
-//            'service_last_comment' => 'slc.comment_id'
-            'service_last_comment' => '(NULL)'
+
+        'lasthostcommentdowntime' => array(
+            'host_last_downtime' => 'hlcd.last_downtime_data'
+        ),
+
+        'lasthostcommentflapping' => array(
+            'host_last_flapping' => 'hlcf.last_flapping_data'
+        ),
+
+        'lasthostcommentack' => array(
+            'host_last_ack' => 'hlca.last_ack_data'
+        ),
+
+        'lastservicecommentgeneric' => array(
+            'service_last_comment' => 'slcg.last_comment_data'
+        ),
+
+        'lastservicecommentdowntime' => array(
+            'service_last_downtime' => 'slcd.last_downtime_data'
+        ),
+
+        'lastservicecommentflapping' => array(
+            'service_last_flapping' => 'slcf.last_flapping_data'
+        ),
+
+        'lastservicecommentack' => array(
+            'service_last_ack' => 'slca.last_ack_data'
         )
     );
 
@@ -325,10 +358,47 @@ class StatusQuery extends IdoQuery
         $this->joinedVirtualTables = array(
             'hosts'      => true,
             'hoststatus' => true,
-            'lasthostcomment' => true,
-            'lastservicecomment' => true,
-            'serviceproblemsummary' => true,
         );
+    }
+
+    // Tuning experiments
+    public function whereToSql($col, $sign, $expression)
+    {
+        switch ($col) {
+
+            case 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END':
+                if ($sign !== '=') break;
+               
+                if ($expression) {
+                    return 'ss.current_state > 0';
+                } else {
+                    return 'ss.current_state = 0';
+               }
+               break;
+
+            case 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END':
+                if ($sign !== '=') break;
+
+                if ($expression) {
+                    return 'hs.current_state > 0';
+                } else {
+                    return 'hs.current_state = 0';
+               }
+               break;
+
+           case 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE CASE WHEN ss.state_type = 1 THEN ss.current_state ELSE ss.last_hard_state END END':
+               if ($sign !== '=') break;
+               if ($expression == 99) {
+                   return 'ss.has_been_checked = 0 OR ss.has_been_checked IS NULL';
+               }
+               if (in_array($expression, array(0, 1, 2, 3))) {
+                  return sprintf('((ss.state_type = 1 AND ss.current_state = %d) OR (ss.state_type = 0 AND ss.last_hard_state = %d))', $expression, $expression);
+               }
+               break;
+
+        }
+
+        return parent::whereToSql($col, $sign, $expression);
     }
 
     protected function joinStatus()
@@ -383,6 +453,12 @@ class StatusQuery extends IdoQuery
             array()
             );
 
+        // @TODO Subject to change, see #7344
+        if ($this->mode === 'host' || $this->mode === 'service') {
+            $this->useSubqueryCount = true;
+            $this->distinct();
+        }
+
         return $this;
     }
 
@@ -402,7 +478,11 @@ class StatusQuery extends IdoQuery
             . ' AND hgo.is_active = 1',
             array()
         );
-
+        // @TODO Subject to change, see #7344
+        if ($this->mode === 'service') {
+            $this->distinct();
+            $this->useSubqueryCount = true;
+        }
         return $this;
     }
 
@@ -424,13 +504,34 @@ class StatusQuery extends IdoQuery
             array()
         );
 
+        // @TODO Subject to change, see #7344
+        if ($this->mode === 'host' || $this->mode === 'service') {
+            $this->distinct();
+        }
+        if ($this->mode === 'host') {
+            $this->useSubqueryCount = true;
+        }
+
         return $this;
     }
 
-    // TODO: This will be obsolete once status is based on the new hoststatus, offering much more
-    //       columns in a more efficient way
     protected function joinServiceproblemsummary()
     {
+        $sub = new Zend_Db_Expr('(SELECT'
+             . ' SUM(CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) > 0 THEN 0 ELSE 1 END) AS unhandled_services_count,'
+             . ' SUM(CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END) AS handled_services_count,'
+             . ' s.host_object_id FROM icinga_servicestatus ss'
+             . ' JOIN icinga_services s'
+             . ' ON s.service_object_id = ss.service_object_id'
+             . ' AND ss.current_state > 0'
+             . ' GROUP BY s.host_object_id)');
+        $this->select->joinLeft(
+            array('sps' => $sub),
+            'sps.host_object_id = hs.host_object_id',
+            array()
+        );
+        return;
+
         $this->select->joinleft(
             array ('sps' => new \Zend_Db_Expr(
                 '(SELECT COUNT(s.service_object_id) as unhandled_service_count, s.host_object_id as host_object_id '.
@@ -444,30 +545,118 @@ class StatusQuery extends IdoQuery
         );
     }
 
-    // TODO: Terribly slow. As I have no idea of how to fix this we should remove it.
-    protected function joinLasthostcomment()
+    /**
+     * Create a subquery to join comments into status query
+     * @param   int     $entryType
+     * @param   string  $fieldName
+     * @return  Zend_Db_Expr
+     */
+    protected function getLastCommentSubQuery($entryType, $fieldName)
     {
-        $this->select->joinleft(
-            array ('hlc' => new \Zend_Db_Expr(
-                '(SELECT MAX(c.comment_id) as comment_id, c.object_id '.
-                'FROM icinga_comments c GROUP BY c.object_id)')
-            ),
-            'hlc.object_id = hs.host_object_id',
+        $sub = '(SELECT'
+            . ' c.object_id,'
+            . " '[' || c.author_name || '] ' || c.comment_data AS $fieldName"
+            . ' FROM icinga_comments c JOIN ('
+            . ' SELECT MAX(comment_id) AS comment_id, object_id FROM icinga_comments'
+            . ' WHERE entry_type = ' . $entryType . ' GROUP BY object_id'
+            . ' ) lc ON c.comment_id = lc.comment_id)';
+
+        return new Zend_Db_Expr($sub);
+    }
+
+    /**
+     * Join last host comment
+     */
+    protected function joinLasthostcommentgeneric()
+    {
+        $this->select->joinLeft(
+            array('hlcg' => $this->getLastCommentSubQuery(1, 'last_comment_data')),
+            'hlcg.object_id = hs.host_object_id',
             array()
         );
     }
 
-    // TODO: Terribly slow. As I have no idea of how to fix this we should remove it.
-    protected function joinLastservicecomment()
+    /**
+     * Join last host downtime comment
+     */
+    protected function joinLasthostcommentdowntime()
     {
-        $this->select->joinleft(
-            array ('slc' => new \Zend_Db_Expr(
-                '(SELECT MAX(c.comment_id) as comment_id, c.object_id '.
-                'FROM icinga_comments c GROUP BY c.object_id)')
-            ),
-            'slc.object_id = ss.service_object_id',
+        $this->select->joinLeft(
+            array('hlcd' => $this->getLastCommentSubQuery(2, 'last_downtime_data')),
+            'hlcg.object_id = hs.host_object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join last host flapping comment
+     */
+    protected function joinLastHostcommentflapping()
+    {
+        $this->select->joinLeft(
+            array('hlcf' => $this->getLastCommentSubQuery(3, 'last_flapping_data')),
+            'hlcg.object_id = hs.host_object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join last host acknowledgement comment
+     */
+    protected function joinLasthostcommentack()
+    {
+        $this->select->joinLeft(
+            array('hlca' => $this->getLastCommentSubQuery(4, 'last_ack_data')),
+            'hlca.object_id = hs.host_object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join last service comment
+     */
+    protected function joinLastservicecommentgeneric()
+    {
+        $this->select->joinLeft(
+            array('slcg' => $this->getLastCommentSubQuery(1, 'last_comment_data')),
+            'slcg.object_id = ss.service_object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join last service downtime comment
+     */
+    protected function joinLastservicecommentdowntime()
+    {
+        $this->select->joinLeft(
+            array('slcd' => $this->getLastCommentSubQuery(2, 'last_downtime_data')),
+            'slcd.object_id = ss.service_object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join last service flapping comment
+     */
+    protected function joinLastservicecommentflapping()
+    {
+        $this->select->joinLeft(
+            array('slcf' => $this->getLastCommentSubQuery(3, 'last_flapping_data')),
+            'slcf.object_id = ss.service_object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join last service acknowledgement comment
+     */
+    protected function joinLastservicecommentack()
+    {
+        $this->select->joinLeft(
+            array('slca' => $this->getLastCommentSubQuery(4, 'last_ack_data')),
+            'slca.object_id = ss.service_object_id',
             array()
         );
     }
 }
-// @codingStandardsIgnoreStop

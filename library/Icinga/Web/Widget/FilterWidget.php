@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Widget;
 
@@ -86,7 +88,7 @@ class FilterWidget extends AbstractWidget
         $editorUrl->setParam('modifyFilter', true);
         if  ($this->filter->isEmpty()) {
             $title = t('Filter this list');
-            $txt = $view->icon('create.png', $title);
+            $txt = $view->icon('create.png');
             $remove = '';
         } else {
             $txt = t('Filtered');
@@ -96,7 +98,7 @@ class FilterWidget extends AbstractWidget
                 . '" title="'
                 . t('Remove this filter')
                 . '">'
-                . $view->icon('remove.png', $title)
+                . $view->icon('remove.png')
                 . '</a>';
         }
         $filter = $this->filter->isEmpty() ? '' : ': ' . $this->filter;

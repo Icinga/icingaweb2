@@ -1,35 +1,11 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2014 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2014 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Util;
 
 use Exception;
+use Icinga\Exception\IcingaException;
 
 /**
  * Helper class to ease internationalization when using gettext
@@ -58,13 +34,22 @@ class Translator
      *
      * Falls back to the default domain in case the string cannot be translated using the given domain
      *
-     * @param   string  $text       The string to translate
-     * @param   string  $domain     The primary domain to use
+     * @param   string  $text           The string to translate
+     * @param   string  $domain         The primary domain to use
+     * @param   string|null $context    Optional parameter for context based translation
      *
-     * @return  string              The translated string
+     * @return  string                  The translated string
      */
-    public static function translate($text, $domain)
+    public static function translate($text, $domain, $context = null)
     {
+        if ($context !== null) {
+            $res = self::pgettext($text, $domain, $context);
+            if ($res === $text && $domain !== self::DEFAULT_DOMAIN) {
+                $res = self::pgettext($text, self::DEFAULT_DOMAIN, $context);
+            }
+            return $res;
+        }
+
         $res = dgettext($domain, $text);
         if ($res === $text && $domain !== self::DEFAULT_DOMAIN) {
             return dgettext(self::DEFAULT_DOMAIN, $text);
@@ -73,17 +58,101 @@ class Translator
     }
 
     /**
+     * Translate a plural string
+     *
+     * Falls back to the default domain in case the string cannot be translated using the given domain
+     *
+     * @param   string      $textSingular   The string in singular form to translate
+     * @param   string      $textPlural     The string in plural form to translate
+     * @param   integer     $number         The number to get the plural or singular string
+     * @param   string      $domain         The primary domain to use
+     * @param   string|null $context        Optional parameter for context based translation
+     *
+     * @return string                       The translated string
+     */
+    public static function translatePlural($textSingular, $textPlural, $number, $domain, $context = null)
+    {
+        if ($context !== null) {
+            $res = self::pngettext($textSingular, $textPlural, $number, $domain, $context);
+            if (($res === $textSingular || $res === $textPlural) && $domain !== self::DEFAULT_DOMAIN) {
+                $res = self::pngettext($textSingular, $textPlural, $number, self::DEFAULT_DOMAIN, $context);
+            }
+            return $res;
+        }
+
+        $res = dngettext($domain, $textSingular, $textPlural, $number);
+        if (($res === $textSingular || $res === $textPlural) && $domain !== self::DEFAULT_DOMAIN) {
+            $res = dngettext(self::DEFAULT_DOMAIN, $textSingular, $textPlural, $number);
+        }
+        return $res;
+    }
+
+    /**
+     * Emulated pgettext()
+     *
+     * @link http://php.net/manual/de/book.gettext.php#89975
+     *
+     * @param $text
+     * @param $domain
+     * @param $context
+     *
+     * @return string
+     */
+    public static function pgettext($text, $domain, $context)
+    {
+        $contextString = "{$context}\004{$text}";
+
+        $translation = dcgettext($domain, $contextString, LC_MESSAGES);
+
+        if ($translation == $contextString) {
+            return $text;
+        } else {
+            return $translation;
+        }
+    }
+
+    /**
+     * Emulated pngettext()
+     *
+     * @link http://php.net/manual/de/book.gettext.php#89975
+     *
+     * @param $textSingular
+     * @param $textPlural
+     * @param $number
+     * @param $domain
+     * @param $context
+     *
+     * @return string
+     */
+    public static function pngettext($textSingular, $textPlural, $number, $domain, $context)
+    {
+        $contextString = "{$context}\004{$textSingular}";
+
+        $translation = dcngettext($domain, $contextString, $textPlural, $number, LC_MESSAGES);
+
+        if ($translation == $contextString || $translation == $textPlural) {
+            return ($number == 1 ? $textSingular : $textPlural);
+        } else {
+            return $translation;
+        }
+    }
+
+    /**
      * Register a new gettext domain
      *
      * @param   string  $name       The name of the domain to register
      * @param   string  $directory  The directory where message catalogs can be found
      *
-     * @throws  Exception           In case the domain was not successfully registered
+     * @throws  IcingaException     In case the domain was not successfully registered
      */
     public static function registerDomain($name, $directory)
     {
         if (bindtextdomain($name, $directory) === false) {
-            throw new Exception("Cannot register domain '$name' with path '$directory'");
+            throw new IcingaException(
+                'Cannot register domain \'%s\' with path \'%s\'',
+                $name,
+                $directory
+            );
         }
         bind_textdomain_codeset($name, 'UTF-8');
         self::$knownDomains[$name] = $directory;
@@ -94,14 +163,17 @@ class Translator
      *
      * @param   string  $localeName     The name of the locale to use
      *
-     * @throws  Exception               In case the locale's name is invalid
+     * @throws  IcingaException         In case the locale's name is invalid
      */
     public static function setupLocale($localeName)
     {
         if (setlocale(LC_ALL, $localeName . '.UTF-8') === false && setlocale(LC_ALL, $localeName) === false) {
             setlocale(LC_ALL, 'C'); // C == "use whatever is hardcoded"
             if ($localeName !== self::DEFAULT_LOCALE) {
-                throw new Exception("Cannot set locale '$localeName' for category 'LC_ALL'");
+                throw new IcingaException(
+                    'Cannot set locale \'%s\' for category \'LC_ALL\'',
+                    $localeName
+                );
             }
         } else {
             $locale = setlocale(LC_ALL, 0);
@@ -140,18 +212,19 @@ class Translator
      */
     public static function getAvailableLocaleCodes()
     {
-        $codes = array();
-        $postfix = '.UTF-8';
+        $codes = array(static::DEFAULT_LOCALE);
         foreach (array_values(self::$knownDomains) as $directory) {
             $dh = opendir($directory);
             while (false !== ($name = readdir($dh))) {
-                if (substr($name, 0, 1) === '.') continue;
-                if (substr($name, -6) !== $postfix) continue;
-                if (is_dir($directory . DIRECTORY_SEPARATOR . $name)) {
-                    $codes[] = substr($name, 0, -6);
+                if (substr($name, 0, 1) !== '.'
+                    && false === in_array($name, $codes)
+                    && is_dir($directory . DIRECTORY_SEPARATOR . $name)
+                ) {
+                    $codes[] = $name;
                 }
             }
         }
+
         return $codes;
     }
 

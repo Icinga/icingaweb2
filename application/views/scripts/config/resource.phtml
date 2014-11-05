@@ -1,30 +1,32 @@
 <div class="controls">
-<?= $this->tabs ?>
+  <?= $tabs; ?>
 </div>
-
 <div class="content" data-base-target="_next">
-<?php
-
-if (isset($this->messageBox)) {
-    // TODO: Get rid of messageBoxes in favour of notifications
-    echo $this->messageBox->render();
-}
-
-?>
-<p><a href="<?= $this->href('/config/createresource') ?>"><?= $this->icon('create.png'); ?> Create A New Resource</a></p>
-
-<table class="action">
- <thead>
-  <th>Resource</th>
-  <th style="width: 5em">Remove</th>
- </thead>
- <tbody>
+  <p>
+    <a href="<?= $this->href('/config/createresource'); ?>">
+      <?= $this->icon('create.png'); ?> <?= $this->translate('Create A New Resource'); ?>
+    </a>
+  </p>
+  <table class="action">
+    <thead>
+      <th><?= $this->translate('Resource'); ?></th>
+      <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
+    </thead>
+    <tbody>
 <?php foreach ($this->resources as $name => $resource): ?>
-  <tr>
-    <td><a href="<?= $this->href('config/editresource', array('resource' => $name)) ?>"><?= $this->icon('edit.png') ?> <?= $this->escape($name); ?></td>
-    <td style="text-align: center"><a href="<?= $this->href('config/removeresource', array('resource' => $name)) ?>"><?= $this->icon('remove.png'); ?></a></td>
-  </tr>
+      <tr>
+        <td>
+          <a href="<?= $this->href('config/editresource', array('resource' => $name)); ?>">
+            <?= $this->icon('edit.png'); ?> <?= $this->escape($name); ?>
+          </a>
+        </td>
+        <td style="text-align: center">
+          <a href="<?= $this->href('config/removeresource', array('resource' => $name)); ?>">
+            <?= $this->icon('remove.png'); ?>
+          </a>
+        </td>
+      </tr>
 <?php endforeach; ?>
-</table>
+    </tbody>
+  </table>
 </div>
-

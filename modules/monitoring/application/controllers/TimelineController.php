@@ -12,7 +12,7 @@ use Icinga\Util\DateTimeFactory;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Timeline\TimeLine;
 use Icinga\Module\Monitoring\Timeline\TimeRange;
-use Icinga\Module\Monitoring\Web\Widget\TimelineIntervalBox;
+use Icinga\Module\Monitoring\Web\Widget\SelectBox;
 use Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
 
 class Monitoring_TimelineController extends Controller
@@ -26,7 +26,7 @@ class Monitoring_TimelineController extends Controller
         $detailUrl = Url::fromPath('monitoring/list/eventhistory');
 
         $timeline = new TimeLine(
-            $this->backend->select()->from('eventHistory', 
+            $this->backend->select()->from('eventHistory',
                 array(
                     'name' => 'type',
                     'time' => 'timestamp'
@@ -35,32 +35,32 @@ class Monitoring_TimelineController extends Controller
             array(
                 'notify'        => array(
                     'detailUrl' => $detailUrl,
-                    'label'     => t('Notifications'),
+                    'label'     => mt('monitoring', 'Notifications'),
                     'color'     => '#3a71ea'
                 ),
                 'hard_state'    => array(
                     'detailUrl' => $detailUrl,
-                    'label'     => t('Hard state changes'),
+                    'label'     => mt('monitoring', 'Hard state changes'),
                     'color'     => '#ff7000'
                 ),
                 'comment'       => array(
                     'detailUrl' => $detailUrl,
-                    'label'     => t('Comments'),
+                    'label'     => mt('monitoring', 'Comments'),
                     'color'     => '#79bdba'
                 ),
                 'ack'           => array(
                     'detailUrl' => $detailUrl,
-                    'label'     => t('Acknowledgements'),
+                    'label'     => mt('monitoring', 'Acknowledgements'),
                     'color'     => '#a2721d'
                 ),
                 'dt_start'      => array(
                     'detailUrl' => $detailUrl,
-                    'label'     => t('Started downtimes'),
+                    'label'     => mt('monitoring', 'Started downtimes'),
                     'color'     => '#8e8e8e'
                 ),
                 'dt_end'        => array(
                     'detailUrl' => $detailUrl,
-                    'label'     => t('Ended downtimes'),
+                    'label'     => mt('monitoring', 'Ended downtimes'),
                     'color'     => '#d5d6ad'
                 )
             )
@@ -85,15 +85,17 @@ class Monitoring_TimelineController extends Controller
      */
     private function setupIntervalBox()
     {
-        $box = new TimelineIntervalBox(
+        $box = new SelectBox(
             'intervalBox',
             array(
-                '4h' => t('4 Hours'),
-                '1d' => t('One day'),
-                '1w' => t('One week'),
-                '1m' => t('One month'),
-                '1y' => t('One year')
-            )
+                '4h' => mt('monitoring', '4 Hours'),
+                '1d' => mt('monitoring', 'One day'),
+                '1w' => mt('monitoring', 'One week'),
+                '1m' => mt('monitoring', 'One month'),
+                '1y' => mt('monitoring', 'One year')
+            ),
+            mt('monitoring', 'TimeLine interval'),
+            'interval'
         );
         $box->applyRequest($this->getRequest());
         $this->view->intervalBox = $box;
@@ -278,9 +280,8 @@ class Monitoring_TimelineController extends Controller
      */
     private function getTimeFormat()
     {
-        $globalConfig = $this->getGlobalConfiguration();
-        $preferences = $this->getRequest()->getUser()->getPreferences();
-        return $preferences->get('app.timeFormat', $globalConfig->get('timeFormat', 'g:i A'));
+        // TODO(mh): Missing localized format (#6077)
+        return 'g:i A';
     }
 
     /**
@@ -290,8 +291,7 @@ class Monitoring_TimelineController extends Controller
      */
     private function getDateFormat()
     {
-        $globalConfig = $this->getGlobalConfiguration();
-        $preferences = $this->getRequest()->getUser()->getPreferences();
-        return $preferences->get('app.dateFormat', $globalConfig->get('dateFormat', 'd/m/Y'));
+        // TODO(mh): Missing localized format (#6077)
+        return 'd/m/Y';
     }
 }

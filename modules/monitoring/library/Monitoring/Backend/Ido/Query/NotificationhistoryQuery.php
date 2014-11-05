@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
@@ -40,15 +42,15 @@ class NotificationhistoryQuery extends IdoQuery
     {
         switch ($this->ds->getDbType()) {
             case 'mysql':
-                $concattedContacts = "GROUP_CONCAT(c.alias ORDER BY c.alias SEPARATOR ', ')";
+                $concattedContacts = "GROUP_CONCAT(co.name1 ORDER BY co.name1 SEPARATOR ', ') COLLATE latin1_general_ci";
                 break;
             case 'pgsql':
                 // TODO: Find a way to order the contact alias list:
-                $concattedContacts = "ARRAY_TO_STRING(ARRAY_AGG(c.alias), ', ')";
+                $concattedContacts = "ARRAY_TO_STRING(ARRAY_AGG(co.name1), ', ')";
                 break;
             case 'oracle':
                 // TODO: This is only valid for Oracle >= 11g Release 2
-                $concattedContacts = "LISTAGG(c.alias, ', ') WITHIN GROUP (ORDER BY c.alias)";
+                $concattedContacts = "LISTAGG(co.name1, ', ') WITHIN GROUP (ORDER BY co.name1)";
                 // Alternatives:
                 //
                 //   RTRIM(XMLAGG(XMLELEMENT(e, column_name, ',').EXTRACT('//text()')),
@@ -73,8 +75,12 @@ class NotificationhistoryQuery extends IdoQuery
             'cn.notification_id = n.notification_id',
             array()
         )->joinLeft(
+            array('co' => $this->prefix . 'objects'),
+            'cn.contact_object_id = co.object_id',
+            array()
+        )->joinLeft(
             array('c' => $this->prefix . 'contacts'),
-            'cn.contact_object_id = c.contact_object_id',
+            'co.object_id = c.contact_object_id',
             array()
         )->group('cn.notification_id');
 
@@ -83,7 +89,8 @@ class NotificationhistoryQuery extends IdoQuery
             $this->select->group('n.object_id')
                 ->group('n.start_time')
                 ->group('n.output')
-                ->group('n.state');
+                ->group('n.state')
+                ->group('o.objecttype_id');
         }
 
         $this->joinedVirtualTables = array('history' => true);

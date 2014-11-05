@@ -53,6 +53,7 @@ class AutoLoginBackend extends UserBackend
     {
         if (isset($_SERVER['REMOTE_USER'])) {
             $username = $_SERVER['REMOTE_USER'];
+            $user->setRemoteUserInformation($username, 'REMOTE_USER');
             if ($this->stripUsernameRegexp !== null) {
                 $stripped = preg_replace($this->stripUsernameRegexp, '', $username);
                 if ($stripped !== false) {

@@ -1,31 +1,5 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web;
@@ -129,10 +103,8 @@ class View extends Zend_View_Abstract
     {
         if ($this->hasHelperFunction($name)) {
             throw new ProgrammingError(
-                sprintf(
-                    'Cannot assign the same helper function twice: "%s"',
-                    $name
-                )
+                'Cannot assign the same helper function twice: "%s"',
+                $name
             );
         }
 
@@ -155,9 +127,19 @@ class View extends Zend_View_Abstract
         );
     }
 
-    public function translate($text)
+    public function translate($text, $context = null)
     {
-        return Translator::translate($text, $this->translationDomain);
+        return Translator::translate($text, $this->translationDomain, $context);
+    }
+
+    /**
+     * Translate a plural string
+     *
+     * @see Translator::translatePlural()
+     */
+    public function translatePlural($textSingular, $textPlural, $number, $context = null)
+    {
+        return Translator::translatePlural($textSingular, $textPlural, $number, $this->translationDomain, $context);
     }
 
     /**
@@ -172,7 +154,6 @@ class View extends Zend_View_Abstract
         }
     }
 
-    // @codingStandardsIgnoreStart
     /**
      * Use to include the view script in a scope that only allows public
      * members.
@@ -193,7 +174,6 @@ class View extends Zend_View_Abstract
             include func_get_arg(0);
         }
     }
-    // @codingStandardsIgnoreEnd
 
     /**
      * Accesses a helper object from within a script
@@ -212,4 +192,3 @@ class View extends Zend_View_Abstract
         }
     }
 }
-// @codeCoverageIgnoreEnd

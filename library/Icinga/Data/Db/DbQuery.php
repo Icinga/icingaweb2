@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Data\Db;
 
@@ -9,6 +11,7 @@ use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Filter\FilterOr;
 use Icinga\Data\Filter\FilterAnd;
 use Icinga\Data\Filter\FilterNot;
+use Icinga\Exception\IcingaException;
 use Zend_Db_Select;
 
 /**
@@ -56,6 +59,13 @@ class DbQuery extends SimpleQuery
      */
     protected $count;
 
+    /**
+     * GROUP BY clauses
+     *
+     * @var string|array
+     */
+    protected $group;
+
     protected function init()
     {
         $this->db = $this->ds->getDbAdapter();
@@ -86,6 +96,21 @@ class DbQuery extends SimpleQuery
     public function getSelectQuery()
     {
         $select = $this->dbSelect();
+        // Add order fields to select for postgres distinct queries (#6351)
+        if ($this->hasOrder()
+            && $this->getDatasource()->getDbType() === 'pgsql'
+            && $select->getPart(Zend_Db_Select::DISTINCT) === true) {
+            foreach ($this->getOrder() as $fieldAndDirection) {
+                if (array_search($fieldAndDirection[0], $this->columns) === false) {
+                    $this->columns[] = $fieldAndDirection[0];
+                }
+            }
+        }
+
+        if ($this->group) {
+            $select->group($this->group);
+        }
+
         $select->columns($this->columns);
         $this->applyFilterSql($select);
 
@@ -99,10 +124,11 @@ class DbQuery extends SimpleQuery
                 );
             }
         }
+
         return $select;
     }
 
-    protected function applyFilterSql($query)
+    public function applyFilterSql($query)
     {
         $where = $this->renderFilter($this->filter);
         if ($where !== '') {
@@ -122,7 +148,10 @@ class DbQuery extends SimpleQuery
                 $op = ' AND ';
                 $str .= ' NOT ';
             } else {
-                throw new \Exception('Cannot render filter: ' . $filter);
+                throw new IcingaException(
+                    'Cannot render filter: %s',
+                    $filter
+                );
             }
             $parts = array();
             if (! $filter->isEmpty()) {
@@ -175,7 +204,7 @@ class DbQuery extends SimpleQuery
         if (! $value) {
             /*
             NOTE: It's too late to throw exceptions, we might finish in __toString
-            throw new \Exception(sprintf(
+            throw new IcingaException(sprintf(
                 '"%s" is not a valid time expression',
                 $value
             ));
@@ -188,6 +217,24 @@ class DbQuery extends SimpleQuery
     {
         // TODO: do this db-aware
         return $this->escapeForSql(date('Y-m-d H:i:s', $value));
+    }
+
+    /**
+     * Check for timestamp fields
+     *
+     * TODO: This is not here to do automagic timestamp stuff. One may
+     *       override this function for custom voodoo, IdoQuery right now
+     *       does. IMO we need to split whereToSql functionality, however
+     *       I'd prefer to wait with this unless we understood how other
+     *       backends will work. We probably should also rename this
+     *       function to isTimestampColumn().
+     *
+     * @param  string $field Field Field name to checked
+     * @return bool          Whether this field expects timestamps
+     */
+    public function isTimestamp($field)
+    {
+        return false;
     }
 
     public function whereToSql($col, $sign, $expression)
@@ -217,6 +264,7 @@ class DbQuery extends SimpleQuery
 
         $this->applyFilterSql($count);
         if ($this->useSubqueryCount) {
+            $count->columns($this->columns);
             $columns = array('cnt' => 'COUNT(*)');
             return $this->db->select()->from($count, $columns);
         }
@@ -263,5 +311,18 @@ class DbQuery extends SimpleQuery
     public function __toString()
     {
         return (string) $this->getSelectQuery();
+    }
+
+    /**
+     * Add a GROUP BY clause
+     *
+     * @param   string|array $group
+     *
+     * @return  $this
+     */
+    public function group($group)
+    {
+        $this->group = $group;
+        return $this;
     }
 }

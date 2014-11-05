@@ -1,36 +1,11 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web;
 
 use Exception;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Exception\ProgrammingError;
 
 /**
@@ -65,6 +40,15 @@ class Hook
      * @var string
      */
     public static $BASE_NS = 'Icinga\\Web\\Hook\\';
+
+    /**
+     * Append this string to base class
+     *
+     * All base classes renamed to *Hook
+     *
+     * @var string
+     */
+    public static $classSuffix = 'Hook';
 
     /**
      * Reset object state
@@ -139,14 +123,17 @@ class Hook
      */
     private static function assertValidHook($instance, $name)
     {
-        $base_class = self::$BASE_NS . ucfirst($name);
+        $base_class = self::$BASE_NS . ucfirst($name) . 'Hook';
+
+        if (strpos($base_class, self::$classSuffix) === false) {
+            $base_class .= self::$classSuffix;
+        }
+
         if (!$instance instanceof $base_class) {
             throw new ProgrammingError(
-                sprintf(
-                    '%s is not an instance of %s',
-                    get_class($instance),
-                    $base_class
-                )
+                '%s is not an instance of %s',
+                get_class($instance),
+                $base_class
             );
         }
     }
@@ -188,18 +175,6 @@ class Hook
     }
 
     /**
-     * Register your hook
-     *
-     * Alias for Hook::registerClass()
-     *
-     * @see Hook::registerClass()
-     */
-    public static function register($name, $key, $class)
-    {
-        self::registerClass($name, $key, $class);
-    }
-
-    /**
      * Register a class
      *
      * @param   string      $name   One of the predefined hook names
@@ -207,39 +182,12 @@ class Hook
      * @param   string      $class  Your class name, must inherit one of the
      *                              classes in the Icinga/Web/Hook folder
      */
-    public static function registerClass($name, $key, $class)
+    public static function register($name, $key, $class)
     {
-        if (!class_exists($class)) {
-            throw new ProgrammingError('"' . $class . '" is not an existing class');
-        }
-
         if (!isset(self::$hooks[$name])) {
             self::$hooks[$name] = array();
         }
 
         self::$hooks[$name][$key] = $class;
-    }
-
-    /**
-     * Register an object
-     *
-     * @param   string      $name   One of the predefined hook names
-     * @param   string      $key    The identifier of a specific subtype
-     * @param   object      $object The instantiated hook to register
-     *
-     * @throws  ProgrammingError
-     */
-    public static function registerObject($name, $key, $object)
-    {
-        if (!is_object($object)) {
-            throw new ProgrammingError('"' . $object . '" is not an instantiated class');
-        }
-
-        if (!isset(self::$instances[$name])) {
-            self::$instances[$name] = array();
-        }
-
-        self::$instances[$name][$key] = $object;
-        self::registerClass($name, $key, get_class($object));
     }
 }

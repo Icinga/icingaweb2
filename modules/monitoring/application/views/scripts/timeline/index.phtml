@@ -8,6 +8,7 @@ $firstRow = !$beingExtended;
 ?>
 <?php if (!$beingExtended): ?>
 <div class="controls">
+    <?= $this->tabs ?>
     <div style="margin: 1em;" class="dontprint">
         <?= $intervalBox; ?>
     </div>
@@ -48,25 +49,25 @@ $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$g
 <?php if ($firstRow && $extrapolatedCircleWidth !== $circleWidth): ?>
             <div class="circle-box" style="width: <?= $extrapolatedCircleWidth; ?>;">
                 <div class="outer-circle extrapolated" style="<?= sprintf(
-                    'width: %4$s; height: %4$s; border-color: %3$s; background-color: %1$s; margin-top: -%2$s;',
+                    'width: %4$s; height: %4$s; border-color: %3$s; background-color: %1$s; margin-top: -%2$Fem;',
                     Color::changeBrightness($timeInfo[1][$groupName]->getColor(), 0.7),
-                    ((float) substr($extrapolatedCircleWidth, 0, -2) / 2) . 'em',
+                    (float) substr($extrapolatedCircleWidth, 0, -2) / 2,
                     $timeInfo[1][$groupName]->getColor(),
                     $extrapolatedCircleWidth
                 ); ?>">
 <?php else: ?>
             <div class="circle-box" style="width: <?= $circleWidth; ?>;">
                 <div class="outer-circle" style="<?= sprintf(
-                    'width: %2$s; height: %2$s; margin-top: -%1$s;',
-                    ((float) substr($circleWidth, 0, -2) / 2) . 'em',
+                    'width: %2$s; height: %2$s; margin-top: -%1$Fem;',
+                    (float) substr($circleWidth, 0, -2) / 2,
                     $circleWidth
                 ); ?>">
 <?php endif ?>
                     <a class="inner-circle" style="<?= sprintf(
-                        'width: %3$s; height: %3$s; background-color: %2$s; margin-top: -%1$s; margin-left: -%1$s;',
-                        ((float) substr($circleWidth, 0, -2) / 2) . 'em',
+                        'width: %3$s; height: %3$s; background-color: %2$s; margin-top: -%1$Fem; margin-left: -%1$Fem;',
+                        (float) substr($circleWidth, 0, -2) / 2,
                         $timeInfo[1][$groupName]->getColor(),
-                        $circleWidth
+                        (string) $circleWidth
                     ); ?>" href="<?= $timeInfo[1][$groupName]->getDetailUrl()->overwriteParams(
                         array(
                             'timestamp<' => $timeInfo[0]->start->getTimestamp(),

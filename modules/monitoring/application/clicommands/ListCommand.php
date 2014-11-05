@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Clicommands;
 
@@ -70,6 +72,7 @@ class ListCommand extends Command
 
     protected function showFormatted($query, $format, $columns)
     {
+        $query = $query->getQuery();
         switch($format) {
             case 'json':
                 echo json_encode($query->fetchAll());
@@ -153,7 +156,7 @@ class ListCommand extends Command
             'service_perfdata',
             'service_last_state_change'
         );
-        $query = $this->getQuery('status', $columns)
+        $query = $this->getQuery('serviceStatus', $columns)
             ->order('host_name');
         echo $this->renderStatusQuery($query);
     }
@@ -165,6 +168,7 @@ class ListCommand extends Command
         $screen = $this->screen;
         $utils = new CliUtils($screen);
         $maxCols = $screen->getColumns();
+        $query = $query->getQuery();
         $rows = $query->fetchAll();
         $count = $query->count();
         $count = count($rows);
@@ -263,13 +267,13 @@ class ListCommand extends Command
             try {
                 $pset = PerfdataSet::fromString($row->service_perfdata);
                 $perfs = array();
-                foreach ($pset as $perfName => $p) {
+                foreach ($pset as $p) {
                     if ($percent = $p->getPercentage()) {
                         if ($percent < 0 || $percent > 100) {
                             continue;
                         }
                         $perfs[] = ' '
-                                 . $perfName
+                                 . $p->getLabel()
                                  . ': '
                                  . $this->getPercentageSign($percent)
                                  . '  '

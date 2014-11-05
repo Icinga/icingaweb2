@@ -5,12 +5,12 @@
 namespace Icinga\User\Preferences\Store;
 
 use Zend_Config;
-use Icinga\Util\File;
-use Icinga\Config\PreservingIniWriter;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\NotWritableError;
+use Icinga\File\Ini\IniWriter;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
+use Icinga\Util\File;
 
 /**
  * Load and save user preferences from and to INI files
@@ -34,7 +34,7 @@ class IniStore extends PreferencesStore
     /**
      * Writer which stores the preferences
      *
-     * @var PreservingIniWriter
+     * @var IniWriter
      */
     protected $writer;
 
@@ -62,8 +62,9 @@ class IniStore extends PreferencesStore
         if (file_exists($this->preferencesFile)) {
             if (!is_readable($this->preferencesFile)) {
                 throw new NotReadableError(
-                    'Preferences INI file ' . $this->preferencesFile . ' for user '
-                    . $this->getUser()->getUsername() . ' is not readable'
+                    'Preferences INI file %s for user %s is not readable',
+                    $this->preferencesFile,
+                    $this->getUser()->getUsername()
                 );
             } else {
                 $this->preferences = parse_ini_file($this->preferencesFile);
@@ -81,12 +82,7 @@ class IniStore extends PreferencesStore
     public function save(Preferences $preferences)
     {
         $preferences = $preferences->toArray();
-        $this->update(
-            array_merge(
-                array_diff_key($preferences, $this->preferences),
-                array_intersect_key($preferences, $this->preferences)
-            )
-        );
+        $this->update(array_diff_assoc($preferences, $this->preferences));
         $this->delete(array_keys(array_diff_key($this->preferences, $preferences)));
         $this->write();
     }
@@ -102,24 +98,23 @@ class IniStore extends PreferencesStore
             if (!file_exists($this->preferencesFile)) {
                 if (!is_writable($this->getStoreConfig()->location)) {
                     throw new NotWritableError(
-                        sprintf(
-                            'Path to the preferences INI files %s is not writable',
-                            $this->getStoreConfig()->location
-                        )
+                        'Path to the preferences INI files %s is not writable',
+                        $this->getStoreConfig()->location
                     );
                 }
 
-                File::open($this->preferencesFile, 'a')->chmod(0664)->close();
+                File::create($this->preferencesFile, 0664);
             }
 
             if (!is_writable($this->preferencesFile)) {
                 throw new NotWritableError(
-                    'Preferences INI file ' . $this->preferencesFile . ' for user '
-                    . $this->getUser()->getUsername() . ' is not writable'
+                    'Preferences INI file %s for user %s is not writable',
+                    $this->preferencesFile,
+                    $this->getUser()->getUsername()
                 );
             }
 
-            $this->writer = new PreservingIniWriter(
+            $this->writer = new IniWriter(
                 array(
                     'config'    => new Zend_Config($this->preferences),
                     'filename'  => $this->preferencesFile

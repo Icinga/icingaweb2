@@ -1,30 +1,5 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Widget;
@@ -48,6 +23,7 @@ class Tabs extends AbstractWidget implements Countable
 <ul class="tabs">
   {TABS}
   {DROPDOWN}
+  {CLOSE}
 </ul>
 EOT;
 
@@ -64,6 +40,18 @@ EOT;
   </ul>
 </li>
 EOT;
+
+    /**
+     * Template used for the close-button
+     *
+     * @var string
+     */
+    private $closeTpl = <<< 'EOT'
+<li class="dropdown" style="float: right;">
+  <a href="#" class="dropdown-toggle close-toggle">X</a>
+</li>
+EOT;
+
 
     /**
      * This is where single tabs added to this container will be stored
@@ -85,6 +73,28 @@ EOT;
      * @var array
      */
     private $dropdownTabs = array();
+
+    /**
+     * Whether only the close-button should by rendered for this tab
+     *
+     * @var bool
+     */
+    private $closeButtonOnly = false;
+
+    /**
+     * Whether the tabs should contain a close-button
+     *
+     * @var bool
+     */
+    private $closeTab = true;
+
+    /**
+     * Set whether the current tab is closable
+     */
+    public function hideCloseButton()
+    {
+        $this->closeTab = false;
+    }
 
     /**
      * Activate the tab with the given name
@@ -179,10 +189,8 @@ EOT;
     {
         if ($this->has($name)) {
             throw new ProgrammingError(
-                sprintf(
-                    'Cannot add a tab named "%s" twice"',
-                    $name
-                )
+                'Cannot add a tab named "%s" twice"',
+                $name
             );
         }
         return $this->set($name, $tab);
@@ -262,6 +270,11 @@ EOT;
         return $tabs;
     }
 
+    private function renderCloseTab()
+    {
+        return $this->closeTpl;
+    }
+
     /**
      * Render to HTML
      *
@@ -269,13 +282,19 @@ EOT;
      */
     public function render()
     {
-        if (empty($this->tabs)) {
-            return '';
+        if (empty($this->tabs) || true === $this->closeButtonOnly) {
+            $tabs = '';
+            $drop = '';
+        } else {
+            $tabs = $this->renderTabs();
+            $drop = $this->renderDropdownTabs();
         }
+        $close = $this->closeTab ? $this->renderCloseTab() : '';
 
         $html = $this->baseTpl;
-        $html = str_replace('{TABS}', $this->renderTabs(), $html);
-        $html = str_replace('{DROPDOWN}', $this->renderDropdownTabs(), $html);
+        $html = str_replace('{TABS}', $tabs, $html);
+        $html = str_replace('{DROPDOWN}', $drop, $html);
+        $html = str_replace('{CLOSE}', $close, $html);
         return $html;
     }
 
@@ -309,6 +328,18 @@ EOT;
     public function getTabs()
     {
         return $this->tabs;
+    }
+
+    /**
+     * Whether to hide all elements except of the close button
+     *
+     * @param   bool    $value
+     * @return  Tabs            fluent interface
+     */
+    public function showOnlyCloseButton($value = true)
+    {
+        $this->closeButtonOnly = $value;
+        return $this;
     }
 
     /**

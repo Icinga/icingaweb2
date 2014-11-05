@@ -1,36 +1,10 @@
 <?php
-// @codingStandardsIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Module\Monitoring\Form\Command\DisableNotificationWithExpireForm;
 use Icinga\Module\Monitoring\Form\Command\SingleArgumentCommandForm;
 use Icinga\Web\Form;
@@ -51,6 +25,7 @@ use Icinga\Module\Monitoring\Form\Command\DelayNotificationForm;
 use Icinga\Module\Monitoring\Form\Command\RescheduleNextCheckForm;
 use Icinga\Module\Monitoring\Form\Command\ScheduleDowntimeForm;
 use Icinga\Module\Monitoring\Form\Command\SubmitPassiveCheckResultForm;
+use Icinga\Exception\IcingaException;
 
 /**
  * Class Monitoring_CommandController
@@ -140,14 +115,17 @@ class Monitoring_CommandController extends Controller
                 if ($targetConfig->get($instance)) {
                     $this->target = new CommandPipe($targetConfig->get($instance));
                 } else {
-                    throw new ConfigurationError('Instance is not configured: '. $instance);
+                    throw new ConfigurationError(
+                        $this->translate('Instance is not configured: %s'),
+                        $instance
+                    );
                 }
             } else {
                 if ($targetConfig && $targetInfo = $targetConfig->current()) {
                     // Take the very first section
                     $this->target = new CommandPipe($targetInfo);
                 } else {
-                    throw new ConfigurationError('No instances are configured yet');
+                    throw new ConfigurationError($this->translate('No instances are configured yet'));
                 }
             }
         }
@@ -264,13 +242,16 @@ class Monitoring_CommandController extends Controller
         $given = array_intersect_key($supported, $this->getRequest()->getParams());
 
         if (empty($given)) {
-            throw new \Exception('Missing parameter, supported: '.implode(', ', array_flip($supported)));
+            throw new IcingaException(
+                'Missing parameter, supported: %s',
+                implode(', ', array_flip($supported))
+            );
         }
 
         if (isset($given['host'])) {
             $objects = $this->selectCommandTargets(!in_array("service", $supported));
             if (empty($objects)) {
-                throw new \Exception("No objects found for your command");
+                throw new IcingaException('No objects found for your command');
             }
         }
 
@@ -1118,4 +1099,3 @@ class Monitoring_CommandController extends Controller
         }
     }
 }
-// @codingStandardsIgnoreStop

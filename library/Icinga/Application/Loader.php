@@ -4,7 +4,7 @@
 
 namespace Icinga\Application;
 
-use Exception;
+use Icinga\Exception\ProgrammingError;
 
 class Loader
 {
@@ -39,11 +39,11 @@ class Loader
     public function registerNamespace($namespace, $directory)
     {
         if (!is_dir($directory)) {
-            throw new Exception(sprintf(
-                'Namespace directory "%s" for "%s" does not exist',
-                $namespace,
-                $directory
-            ));
+            throw new ProgrammingError(
+                'Directory "%s" for namespace "%s" does not exist',
+                $directory,
+                $namespace
+            );
         }
 
         $this->namespaces[$namespace] = $directory;

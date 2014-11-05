@@ -1,37 +1,12 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart\Graph;
 
-use \DOMElement;
-use \Icinga\Chart\Primitive\Drawable;
-use \Icinga\Chart\Render\RenderContext;
+use DOMElement;
+use Icinga\Chart\Primitive\Drawable;
+use Icinga\Chart\Render\RenderContext;
 
 /**
  * Graph implementation that stacks several graphs and displays them in a cumulative way
@@ -66,6 +41,10 @@ class StackedGraph implements Drawable
             if (!isset($this->points[$x])) {
                 $this->points[$x] = 0;
             }
+            // store old y-value for displaying the actual (non-aggregated)
+            // value in the tooltip
+            $point[2] = $point[1];
+
             $this->points[$x] += $point[1];
             $point[1] = $this->points[$x];
         }

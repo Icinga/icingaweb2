@@ -1,16 +1,37 @@
-# $Id$
-# Authority: The icinga devel team <icinga-devel at lists.icinga.org>
-# Upstream: The icinga devel team <icinga-devel at lists.icinga.org>
-# ExcludeDist: el4 el3
+#/**
+# * This file is part of Icinga Web 2.
+# *
+# * Icinga Web 2 - Head for multiple monitoring backends.
+# * Copyright (C) 2014 Icinga Development Team
+# *
+# * This program is free software; you can redistribute it and/or
+# * modify it under the terms of the GNU General Public License
+# * as published by the Free Software Foundation; either version 2
+# * of the License, or (at your option) any later version.
+# *
+# * This program is distributed in the hope that it will be useful,
+# * but WITHOUT ANY WARRANTY; without even the implied warranty of
+# * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# * GNU General Public License for more details.
+# *
+# * You should have received a copy of the GNU General Public License
+# * along with this program; if not, write to the Free Software
+# * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+# *
+# * @copyright  2014 Icinga Development Team <info@icinga.org>
+# * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
+# * @author     Icinga Development Team <info@icinga.org>
+# *
+# */
 
-%define revision 0
+%define revision 1
 
-%define configdir %{_sysconfdir}/icingaweb
-%define sharedir %{_datadir}/icingaweb
-%define prefixdir %{_datadir}/icingaweb
-%define logdir %{sharedir}/log
+%define configdir %{_sysconfdir}/%{name}
+%define sharedir %{_datadir}/%{name}
+%define prefixdir %{_datadir}/%{name}
 %define usermodparam -a -G
-#%define logdir %{_localstatedir}/log/icingaweb
+%define logdir %{_localstatedir}/log/%{name}
+%define docdir %{sharedir}/log
 
 %if "%{_vendor}" == "suse"
 %define phpname php5
@@ -19,11 +40,12 @@
 %endif
 # SLE 11 = 1110
 %if 0%{?suse_version} == 1110
+%define phpname php53
 %define apache2modphpname apache2-mod_php53
 %define usermodparam -A
 %endif
 
-%if "%{_vendor}" == "redhat" || 0%{?suse_version} == 1110
+%if "%{_vendor}" == "redhat"
 %define phpname php
 %define phpzendname php-ZendFramework
 %endif
@@ -37,15 +59,15 @@
 %define apacheconfdir  %{_sysconfdir}/apache2/conf.d
 %define apacheuser wwwrun
 %define apachegroup www
-%define extcmdfile1x %{_localstatedir}/icinga/rw/icinga.cmd
-%define livestatussocket1x %{_localstatedir}/icinga/rw/live
+%define extcmdfile %{_localstatedir}/run/icinga2/cmd/icinga.cmd
+%define livestatussocket %{_localstatedir}/run/icinga2/cmd/livestatus
 %endif
 %if "%{_vendor}" == "redhat"
 %define apacheconfdir %{_sysconfdir}/httpd/conf.d
 %define apacheuser apache
 %define apachegroup apache
-%define extcmdfile-1x %{_localstatedir}/spool/icinga/cmd/icinga.cmd
-%define livestatussocket1x %{_localstatedir}/spool/icinga/cmd/live
+%define extcmdfile %{_localstatedir}/run/icinga2/cmd/icinga.cmd
+%define livestatussocket %{_localstatedir}/run/icinga2/cmd/livestatus
 %endif
 
 Summary:        Open Source host, service and network monitoring Web UI
@@ -61,7 +83,7 @@ BuildArch:      noarch
 AutoReqProv:    Off
 %endif
 
-Source0:        icingaweb2-%{version}.tar.gz
+Source:        icingaweb2-%{version}.tar.gz
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
@@ -109,8 +131,8 @@ Requires:       php-Icinga
 
 
 %description
-IcingaWeb for Icinga 2 or Icinga 1.x using status data,
-IDOUtils or Livestatus as backend provider.
+Icinga Web 2 for Icinga 2 or Icinga 1.x using multiple backends
+for example DB IDO.
 
 %package -n icingacli
 Summary:        Icinga CLI
@@ -130,24 +152,14 @@ Requires:       %{phpzendname}
 
 
 %description -n php-Icinga
-Icinga Web 2 PHP Libraries shared with icingacli.
-
-
+Icinga Web 2 PHP Libraries required by the web frontend and cli tool.
 
 
 %prep
-#%setup -q -n %{name}-%{version}
-%setup -q -n %{name}
+#VERSION=0.0.1; git archive --format=tar --prefix=icingaweb2-$VERSION/ HEAD | gzip >icingaweb2-$VERSION.tar.gz
+%setup -q -n %{name}-%{version}
 
 %build
-
-cat > README.RHEL.SUSE <<"EOF"
-IcingaWeb for RHEL and SUSE
-===========================
-
-Please check ./doc/installation.md
-for requirements and database setup.
-EOF
 
 %install
 [ "%{buildroot}" != "/" ] && [ -d "%{buildroot}" ] && rm -rf %{buildroot}
@@ -155,33 +167,35 @@ EOF
 # prepare configuration for sub packages
 
 # install rhel apache config
-install -D -m0644 packages/rhel/etc/httpd/conf.d/icingaweb.conf %{buildroot}/%{apacheconfdir}/icingaweb.conf
+install -D -m0644 packages/rpm/etc/httpd/conf.d/icingaweb.conf %{buildroot}/%{apacheconfdir}/icingaweb.conf
 
 # install public, library, modules
 %{__mkdir} -p %{buildroot}/%{sharedir}
 %{__mkdir} -p %{buildroot}/%{logdir}
-%{__mkdir} -p %{buildroot}/%{_sysconfdir}/icingaweb/enabledModules
+%{__mkdir} -p %{buildroot}/%{docdir}
+%{__mkdir} -p %{buildroot}/%{_sysconfdir}/%{name}
+%{__mkdir} -p %{buildroot}/%{_sysconfdir}/dashboard
+%{__mkdir} -p %{buildroot}/%{_sysconfdir}/%{name}/modules
+%{__mkdir} -p %{buildroot}/%{_sysconfdir}/%{name}/modules/monitoring
+%{__mkdir} -p %{buildroot}/%{_sysconfdir}/%{name}/enabledModules
 
-%{__cp} -r application library modules public %{buildroot}/%{sharedir}/
+%{__cp} -r application doc library modules public %{buildroot}/%{sharedir}/
 
-# install index.php
-install -m0644 packages/rhel/usr/share/icingaweb/public/index.php %{buildroot}/%{sharedir}/public/index.php
-
-# use the vagrant config for configuration for now - TODO
-%{__cp} -r .vagrant-puppet/files/etc/icingaweb %{buildroot}/%{_sysconfdir}/
-
-# we use the default 'icinga' database
-sed -i 's/icinga2/icinga/g' %{buildroot}/%{_sysconfdir}/icingaweb/resources.ini
+## config
+# authentication is db only
+install -D -m0644 packages/rpm/etc/%{name}/authentication.ini %{buildroot}/%{_sysconfdir}/%{name}/authentication.ini
+# custom resource paths
+install -D -m0644 packages/rpm/etc/%{name}/resources.ini %{buildroot}/%{_sysconfdir}/%{name}/resources.ini
+# monitoring module (icinga2)
+install -D -m0644 packages/rpm/etc/%{name}/modules/monitoring/backends.ini %{buildroot}/%{_sysconfdir}/%{name}/modules/monitoring/backends.ini
+install -D -m0644 packages/rpm/etc/%{name}/modules/monitoring/instances.ini %{buildroot}/%{_sysconfdir}/%{name}/modules/monitoring/instances.ini
 
 # enable the monitoring module by default
-ln -s %{sharedir}/modules/monitoring %{buildroot}/%{_sysconfdir}/icingaweb/enabledModules/monitoring
+ln -s %{sharedir}/modules/monitoring %{buildroot}/%{_sysconfdir}/%{name}/enabledModules/monitoring
+## config
 
 # install icingacli
-install -D -m0755 bin/icingacli %{buildroot}/usr/bin/icingacli
-
-# install sql schema files as example
-
-# delete all *.in files
+install -D -m0755 packages/rpm/usr/bin/icingacli %{buildroot}/usr/bin/icingacli
 
 %pre
 # Add apacheuser in the icingacmd group
@@ -196,9 +210,6 @@ if [ $? -eq 0 ]; then
 %{_sbindir}/usermod %{usermodparam} icingacmd %{apacheuser}
 fi
 
-# uncomment if building from git
-# %{__rm} -rf %{buildroot}%{_datadir}/icinga2-web/.git
-
 %preun
 
 %post
@@ -209,16 +220,17 @@ fi
 %files
 # main dirs
 %defattr(-,root,root)
-%doc etc/schema doc packages/rhel/README
+%doc etc/schema doc packages/rpm/README.md
 %attr(755,%{apacheuser},%{apachegroup}) %{sharedir}/public
 %attr(755,%{apacheuser},%{apachegroup}) %{sharedir}/modules
 # configs
 %defattr(-,root,root)
 %config(noreplace) %attr(-,root,root) %{apacheconfdir}/icingaweb.conf
-%dir %{configdir}
-%config(noreplace) %attr(775,%{apacheuser},%{apachegroup}) %{configdir}
+%config(noreplace) %attr(-,%{apacheuser},%{apachegroup}) %{configdir}
 # logs
 %attr(2775,%{apacheuser},%{apachegroup}) %dir %{logdir}
+# shipped docs
+%attr(755,%{apacheuser},%{apachegroup}) %{sharedir}/doc
 
 %files -n php-Icinga
 %attr(755,%{apacheuser},%{apachegroup}) %{sharedir}/application
@@ -228,6 +240,3 @@ fi
 %attr(0755,root,root) /usr/bin/icingacli
 
 %changelog
-* Tue May 11 2014 Michael Friedrich <michael.friedrich@netways.de> - 0.0.1-1
-- initial creation
-

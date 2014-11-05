@@ -1,30 +1,5 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga;
@@ -32,7 +7,6 @@ namespace Icinga;
 use DateTimeZone;
 use InvalidArgumentException;
 use Icinga\User\Preferences;
-use Icinga\User\Message;
 
 /**
  *  This class represents an authorized user
@@ -84,6 +58,18 @@ class User
     protected $additionalInformation = array();
 
     /**
+     * Information if the user is external authenticated
+     *
+     * Keys:
+     *
+     * 0: origin username
+     * 1: origin field name
+     *
+     * @var array
+     */
+    protected $remoteUserInformation = array();
+
+    /**
      * Set of permissions
      *
      * @var array
@@ -110,13 +96,6 @@ class User
      * @var Preferences
      */
     protected $preferences;
-
-    /**
-     * Queued notifications for this user.
-     *
-     * @var array()
-     */
-    protected $messages;
 
     /**
      * Creates a user object given the provided information
@@ -200,9 +179,9 @@ class User
     }
 
     /**
-     * Return permission information for this user
+     * Get the user's permissions
      *
-     * @return  array
+     * @return array
      */
     public function getPermissions()
     {
@@ -210,13 +189,19 @@ class User
     }
 
     /**
-     * Setter for permissions
+     * Set the user's permissions
      *
-     * @param   array   $permissions
+     * @param   array $permissions
+     *
+     * @return  $this
      */
     public function setPermissions(array $permissions)
     {
-        $this->permissions = $permissions;
+        natcasesort($permissions);
+        if (! empty($permissions)) {
+            $this->permissions = array_combine($permissions, $permissions);
+        }
+        return $this;
     }
 
     /**
@@ -396,34 +381,60 @@ class User
     }
 
     /**
-     * Add a message that can be accessed from future requests, to this user.
+     * Set additional remote user information
      *
-     * This function does NOT automatically write to the session, messages will not be persisted until you do.
-     *
-     * @param   Message     $msg    The message
+     * @param stirng    $username
+     * @param string    $field
      */
-    public function addMessage(Message $msg)
+    public function setRemoteUserInformation($username, $field)
     {
-        $this->messages[] = $msg;
+        $this->remoteUserInformation = array($username, $field);
     }
 
     /**
-     * Get all currently pending messages
+     * Get additional remote user information
      *
-     * @return  array   The messages
+     * @return array
      */
-    public function getMessages()
+    public function getRemoteUserInformation()
     {
-        return isset($this->messages) ? $this->messages : array();
+        return $this->remoteUserInformation;
     }
 
     /**
-     * Remove all messages from this user
+     * Return true if user has remote user information set
      *
-     * This function does NOT automatically write the session, messages will not be persisted until you do.
+     * @return bool
      */
-    public function clearMessages()
+    public function isRemoteUser()
     {
-        $this->messages = null;
+        return ! empty($this->remoteUserInformation);
+    }
+
+    /**
+     * Whether the user has a given permission
+     *
+     * @param   string $permission
+     *
+     * @return  bool
+     */
+    public function can($permission)
+    {
+        if (isset($this->permissions['*']) || isset($this->permissions[$permission])) {
+            return true;
+        }
+        foreach ($this->permissions as $permitted) {
+            $wildcard = strpos($permitted, '*');
+            if ($wildcard !== false) {
+                if (substr($permission, 0, $wildcard) === substr($permitted, 0, $wildcard)) {
+                    return true;
+                } else {
+                    if ($permission === $permitted) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

@@ -1,52 +1,89 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Icinga\Util\Translator;
+use Icinga\Util\Translator;
 
 if (extension_loaded('gettext')) {
-    function t($messageId)
+
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translate() For the function documentation.
+     */
+    function t($messageId, $context = null)
     {
-        return Translator::translate($messageId, Translator::DEFAULT_DOMAIN);
+        return Translator::translate($messageId, Translator::DEFAULT_DOMAIN, $context);
     }
 
-    function mt($domain, $messageId)
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translate() For the function documentation.
+     */
+    function mt($domain, $messageId, $context = null)
     {
-        return Translator::translate($messageId, $domain);
+        return Translator::translate($messageId, $domain, $context);
     }
+
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translatePlural() For the function documentation.
+     */
+    function tp($messageId, $messageId2, $number, $context = null)
+    {
+        return Translator::translatePlural($messageId, $messageId2, $number, Translator::DEFAULT_DOMAIN, $context);
+    }
+
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translatePlural() For the function documentation.
+     */
+    function mtp($domain, $messageId, $messageId2, $number, $context = null)
+    {
+        return Translator::translatePlural($messageId, $messageId2, $number, $domain, $context);
+    }
+
 } else {
-    function t($messageId)
+
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translate() For the function documentation.
+     */
+    function t($messageId, $context = null)
     {
         return $messageId;
     }
 
-    function mt($domain, $messageId)
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translate() For the function documentation.
+     */
+    function mt($domain, $messageId, $context = null)
     {
         return $messageId;
     }
+
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translatePlural() For the function documentation.
+     */
+    function tp($messageId, $messageId2, $number, $context = null)
+    {
+        if ((int) $number !== 1) {
+            return $messageId2;
+        }
+        return $messageId;
+    }
+
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translatePlural() For the function documentation.
+     */
+    function mtp($domain, $messageId, $messageId2, $number, $context = null)
+    {
+        if ((int) $number !== 1) {
+            return $messageId2;
+        }
+        return $messageId;
+    }
+
 }

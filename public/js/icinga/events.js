@@ -1,3 +1,6 @@
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 /**
  * Icinga.Events
  *
@@ -26,14 +29,17 @@
          */
         initialize: function () {
             this.applyGlobalDefaults();
-            this.applyHandlers($('#layout'));
-            this.icinga.ui.prepareContainers();
+            $('#layout').trigger('rendered');
+            //$('.container').trigger('rendered');
+            $('.container').each(function(idx, el) {
+                icinga.ui.initializeControls($(el));
+            });
         },
 
         // TODO: What's this?
-        applyHandlers: function (el) {
-
-            var icinga = this.icinga;
+        applyHandlers: function (evt) {
+            var el = $(evt.target), self = evt.data.self;
+            var icinga = self.icinga;
 
             $('.dashboard > div', el).each(function(idx, el) {
                 var url = $(el).data('icingaUrl');
@@ -49,6 +55,8 @@
                     $(el).attr('href', $a.attr('href'));
                 }
             });
+
+            $('td.state span.timesince').attr('title', null);
 
             var moduleName = el.data('icingaModule');
             if (moduleName) {
@@ -67,44 +75,19 @@
                 }
             });
 
-            $('input.autofocus', el).focus();
-
-            // replace all sparklines
-            $('span.sparkline', el).each(function(i, element) {
-                // read custom options
-                var $spark            = $(element);
-                var labels            = $spark.attr('labels').split('|');
-                var formatted         = $spark.attr('formatted').split('|');
-                var tooltipChartTitle = $spark.attr('sparkTooltipChartTitle') || '';
-                var format            = $spark.attr('tooltipformat');
-                var hideEmpty         = $spark.attr('hideEmptyLabel') === 'true';
-                $spark.sparkline(
-                    'html',
-                    {
-                        enableTagOptions: true,
-                        tooltipFormatter: function (sparkline, options, fields) {
-                            var out       = format;
-                            if (hideEmpty && fields.offset === 3) {
-                                return '';
-                            }
-                            var replace   = {
-                                title:     tooltipChartTitle,
-                                label:     labels[fields.offset] ? labels[fields.offset] : fields.offset,
-                                formatted: formatted[fields.offset] ? formatted[fields.offset] : '',
-                                value:     fields.value,
-                                percent:   Math.round(fields.percent * 100) / 100
-                            };
-                            $.each(replace, function(key, value) {
-                                out = out.replace('{{' + key + '}}', value);
-                            });
-                            return out;
-                        }
-                });
-            });
+            if (document.activeElement === document.body) {
+                $('input.autofocus', el).focus();
+            }
             var searchField = $('#menu input.search', el);
             // Remember initial search field value if any
             if (searchField.length && searchField.val().length) {
-                this.searchValue = searchField.val();
+                self.searchValue = searchField.val();
+            }
+
+            if (icinga.ui.isOneColLayout()) {
+                icinga.ui.disableCloseButtons();
+            } else {
+                icinga.ui.enableCloseButtons();
             }
         },
 
@@ -112,6 +95,13 @@
          * Global default event handlers
          */
         applyGlobalDefaults: function () {
+            $.each(self.icinga.behaviors, function (name, behavior) {
+                behavior.bind($(document));
+            });
+
+            // Apply element-specific behavior whenever the layout is rendered
+            $(document).on('rendered', { self: this }, this.applyHandlers);
+
             // We catch resize events
             $(window).on('resize', { self: this.icinga.ui }, this.icinga.ui.onWindowResize);
 
@@ -143,98 +133,12 @@
 
             $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitSearch);
 
-            $(document).on('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
-            $(document).on('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
-            $(document).on('mouseenter', 'li.dropdown', this.dropdownHover);
-            $(document).on('mouseleave', 'li.dropdown', {self: this}, this.dropdownLeave);
-
-            $(document).on('mouseenter', '#menu > ul > li', { self: this }, this.menuTitleHovered);
-            $(document).on('mouseleave', '#sidebar', { self: this }, this.leaveSidebar);
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
-
-            // Toggle all triStateButtons
-            $(document).on('click', 'div.tristate .tristate-dummy', { self: this }, this.clickTriState);
 
             // TBD: a global autocompletion handler
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
             // $(document).on('change', 'form.auto input', this.formChanged);
             // $(document).on('change', 'form.auto select', this.submitForm);
-        },
-
-        menuTitleHovered: function (event) {
-            var $li = $(this),
-                delay = 800,
-                self = event.data.self;
-
-            if ($li.hasClass('active')) {
-                $li.siblings().removeClass('hover');
-                return;
-            }
-            if ($li.children('ul').children('li').length === 0) {
-                return;
-            }
-            if ($('#menu').scrollTop() > 0) {
-                return;
-            }
-
-            if ($('#layout').hasClass('hoveredmenu')) {
-                delay = 0;
-            }
-
-            setTimeout(function () {
-                if (! $li.is('li:hover')) {
-                    return;
-                }
-                if ($li.hasClass('active')) {
-                    return;
-                }
-
-                $li.siblings().each(function () {
-                    var $sibling = $(this);
-                    if ($sibling.is('li:hover')) {
-                        return;
-                    }
-                    if ($sibling.hasClass('hover')) {
-                        $sibling.removeClass('hover');
-                    }
-                });
-
-                $('#layout').addClass('hoveredmenu');
-                $li.addClass('hover');
-            }, delay);
-        },
-
-        leaveSidebar: function (event) {
-            var $sidebar = $(this),
-                $li = $sidebar.find('li.hover'),
-                self = event.data.self;
-            if (! $li.length) {
-                $('#layout').removeClass('hoveredmenu');
-                return;
-            }
-
-            setTimeout(function () {
-                if ($li.is('li:hover') || $sidebar.is('sidebar:hover') ) {
-                    return;
-                }
-                $li.removeClass('hover');
-                $('#layout').removeClass('hoveredmenu');
-            }, 500);
-        },
-
-        dropdownHover: function () {
-            $(this).addClass('hover');
-        },
-
-        dropdownLeave: function (event) {
-            var $li = $(this),
-                self = event.data.self;
-            setTimeout(function () {
-                // TODO: make this behave well together with keyboard navigation
-                if (! $li.is('li:hover') /*&& ! $li.find('a:focus')*/) {
-                    $li.removeClass('hover');
-                }
-            }, 300);
         },
 
         treeNodeToggle: function () {
@@ -248,7 +152,7 @@
         },
 
         onLoad: function (event) {
-            $('.container').trigger('rendered');
+            //$('.container').trigger('rendered');
         },
 
         onUnload: function (event) {
@@ -265,14 +169,6 @@
             icinga.ui.fixControls();
         },
 
-        historycolorgridHover: function () {
-            $(this).addClass('hover');
-        },
-
-        historycolorgidUnhover: function() {
-            $(this).removeClass('hover');
-        },
-
         autoSubmitSearch: function(event) {
             var self = event.data.self;
             if ($('#menu input.search').val() === self.searchValue) {
@@ -284,39 +180,6 @@
 
         autoSubmitForm: function (event) {
             return event.data.self.submitForm(event, true);
-        },
-
-        clickTriState: function (event) {
-            var self = event.data.self;
-            var $tristate = $(this);
-            var triState  = parseInt($tristate.data('icinga-tristate'), 10);
-
-            // load current values
-            var old   = $tristate.data('icinga-old').toString();
-            var value = $tristate.parent().find('input:radio:checked').first().prop('checked', false).val();
-
-            // calculate the new value
-            if (triState) {
-                // 1         => 0
-                // 0         => unchanged
-                // unchanged => 1
-                value = value === '1' ? '0' : (value === '0' ? 'unchanged' : '1');
-            } else {
-                // 1 => 0
-                // 0 => 1
-                value = value === '1' ? '0' : '1';
-            }
-
-            // update form value
-            $tristate.parent().find('input:radio[value="' + value + '"]').prop('checked', true);
-            // update dummy
-
-            if (value !== old) {
-                $tristate.parent().find('b.tristate-changed').css('visibility', 'visible');
-            } else {
-                $tristate.parent().find('b.tristate-changed').css('visibility', 'hidden');
-            }
-            self.icinga.ui.setTriState(value.toString(), $tristate);    
         },
 
         /**
@@ -352,12 +215,20 @@
             $target = self.getLinkTargetFor($form);
 
             if (method === 'GET') {
-                url = icinga.utils.addUrlParams(url, $form.serializeObject());
+                var dataObj = $form.serializeObject();
+
+                if (typeof autosubmit === 'undefined' || ! autosubmit) {
+                    if ($button.length && $button.attr('name') !== 'undefined') {
+                        dataObj[$button.attr('name')] = $button.attr('value');
+                    }
+                }
+
+                url = icinga.utils.addUrlParams(url, dataObj);
             } else {
                 data = $form.serializeArray();
 
                 if (typeof autosubmit === 'undefined' || ! autosubmit) {
-                    if ($button.length) {
+                    if ($button.length && $button.attr('name') !== 'undefined') {
                         data.push({
                             name: $button.attr('name'),
                             value: $button.attr('value')
@@ -454,21 +325,27 @@
             var $a = $(this);
             var href = $a.attr('href');
             var linkTarget = $a.attr('target');
-            var $li;
             var $target;
-            var isMenuLink = $a.closest('#menu').length > 0;
             var formerUrl;
             var remote = /^(?:[a-z]+:)\/\//;
-            if (href.match(/^javascript:/)) {
+            if (href.match(/^(mailto|javascript):/)) {
                 return true;
             }
 
-            // Ignore clicks on multiselect table inner links while key pressed
-            if ((event.ctrlKey || event.metaKey || event.shiftKey) &&
-                ! $a.is('tr[href]') && $a.closest('table.multiselect').length > 0 &&
-                $a.closest('tr[href]').length > 0)
-            {
-                return self.rowSelected.call($a.closest('tr[href]'), event);
+            // Special checks for link clicks in multiselect rows
+            if (! $a.is('tr[href]') && $a.closest('tr[href]').length > 0 && $a.closest('table.multiselect').length > 0) {
+
+                // Forward clicks to ANY link with special key pressed to rowSelected
+                if (event.ctrlKey || event.metaKey || event.shiftKey)
+                {
+                    return self.rowSelected.call($a.closest('tr[href]'), event);
+                }
+
+                // Forward inner links matching the row URL to rowSelected
+                if ($a.attr('href') === $a.closest('tr[href]').attr('href'))
+                {
+                    return self.rowSelected.call($a.closest('tr[href]'), event);
+                }
             }
 
             // Let remote links pass through
@@ -482,6 +359,12 @@
                 return false;
             }
 
+            // Ignore form elements in action rows
+            if ($(event.target).is('input') || $(event.target).is('button')) {
+                return;
+            }
+
+
             // ignore multiselect table row clicks
             if ($a.is('tr') && $a.closest('table.multiselect').length > 0) {
                 return;
@@ -493,25 +376,21 @@
 
             // If link has hash tag...
             if (href.match(/#/)) {
-                // ...it may be a menu section without a dedicated link.
-                // Switch the active menu item:
-                if (isMenuLink) {
-                    $li = $a.closest('li');
-                    $('#menu .active').removeClass('active');
-                    $li.addClass('active');
-                    if ($li.hasClass('hover')) {
-                        $li.removeClass('hover');
-                    }
-                }
                 if (href === '#') {
-                    // Allow to access dropdown menu by keyboard
-                    if ($a.hasClass('dropdown-toggle')) {
-                        $a.closest('li').toggleClass('hover');
+                    if ($a.hasClass('close-toggle')) {
+                        if (! icinga.ui.isOneColLayout()) {
+                            var $cont = $a.closest('.container').first();
+                            if ($cont.attr('id') === 'col1') {
+                                icinga.ui.moveToLeft();
+                                icinga.ui.layout1col();
+                            } else {
+                                icinga.ui.layout1col();
+                            }
+                            icinga.history.pushCurrentState();
+                        }
                     }
-                    // Ignore link, no action
                     return false;
                 }
-
                 $target = self.getLinkTargetFor($a);
 
                 formerUrl = $target.data('icingaUrl');
@@ -530,8 +409,8 @@
             // Load link URL
             icinga.loader.loadUrl(href, $target);
 
-            // Menu links should remove all but the first layout column
-            if (isMenuLink) {
+            if ($a.closest('#menu').length > 0) {
+                // Menu links should remove all but the first layout column
                 icinga.ui.layout1col();
             }
 
@@ -601,6 +480,9 @@
     */
 
         unbindGlobalHandlers: function () {
+            $.each(self.icinga.behaviors, function (name, behavior) {
+                behavior.unbind($(document));
+            });
             $(window).off('resize', this.onWindowResize);
             $(window).off('load', this.onLoad);
             $(window).off('unload', this.onUnload);
@@ -612,11 +494,6 @@
             $(document).off('submit', 'form', this.submitForm);
             $(document).off('click', 'button', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
-            $(document).off('mouseenter', '.historycolorgrid td', this.historycolorgridHover);
-            $(document).off('mouseleave', '.historycolorgrid td', this.historycolorgidUnhover);
-            $(document).off('mouseenter', 'li.dropdown', this.dropdownHover);
-            $(document).off('mouseleave', 'li.dropdown', this.dropdownLeave);
-            $(document).off('click', 'div.tristate .tristate-dummy', this.clickTriState);
         },
 
         destroy: function() {

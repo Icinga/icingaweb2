@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
@@ -11,6 +13,7 @@ class ContactQuery extends IdoQuery
             'contact_alias'  => 'c.alias COLLATE latin1_general_ci',
             'contact_email'  => 'c.email_address COLLATE latin1_general_ci',
             'contact_pager'  => 'c.pager_address',
+            'contact_object_id'                => 'c.contact_object_id',
             'contact_has_host_notfications'    => 'c.host_notifications_enabled',
             'contact_has_service_notfications' => 'c.service_notifications_enabled',
             'contact_can_submit_commands'      => 'c.can_submit_commands',
@@ -92,12 +95,12 @@ class ContactQuery extends IdoQuery
 
     protected function joinTimeperiods()
     {
-        $this->select->join(
+        $this->select->joinLeft(
             array('ht' => $this->prefix . 'timeperiods'),
             'ht.timeperiod_object_id = c.host_timeperiod_object_id',
             array()
         );
-        $this->select->join(
+        $this->select->joinLeft(
             array('st' => $this->prefix . 'timeperiods'),
             'st.timeperiod_object_id = c.service_timeperiod_object_id',
             array()

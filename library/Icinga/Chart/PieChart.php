@@ -1,47 +1,22 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart;
 
-use \DOMElement;
-use \Icinga\Chart\Chart;
-use \Icinga\Chart\Primitive\Canvas;
-use \Icinga\Chart\Primitive\PieSlice;
-use \Icinga\Chart\Primitive\RawElement;
-use \Icinga\Chart\Primitive\Rect;
-use \Icinga\Chart\Render\RenderContext;
-use \Icinga\Chart\Render\LayoutBox;
+use DOMElement;
+use Icinga\Chart\Chart;
+use Icinga\Chart\Primitive\Canvas;
+use Icinga\Chart\Primitive\PieSlice;
+use Icinga\Chart\Primitive\RawElement;
+use Icinga\Chart\Primitive\Rect;
+use Icinga\Chart\Render\RenderContext;
+use Icinga\Chart\Render\LayoutBox;
 
 /**
  * Graphing component for rendering Pie Charts.
  *
- * See the graphs.md documentation for futher information about how to use this component
+ * See the graphs.md documentation for further information about how to use this component
  */
 class PieChart extends Chart
 {
@@ -77,46 +52,6 @@ class PieChart extends Chart
     private $noCaption = false;
 
     /**
-     * Scaling level of the rendered svgs width in percent.
-     *
-     * @var float
-     */
-    private $width = 100;
-
-    /**
-     * Scaling level of the rendered svgs height in percent.
-     *
-     * @var int
-     */
-    private $height = 100;
-
-    /**
-     * Set the size of the rendered pie-chart svg.
-     *
-     * @param $width    int The width in percent.
-     *
-     * @return self  Fluent interface
-     */
-    public function setWidth($width)
-    {
-        $this->width = $width;
-        return $this;
-    }
-
-    /**
-     * Set the size of the rendered pie-chart svg.
-     *
-     * @param $height   int The height in percent.
-     *
-     * @return self  Fluent interface
-     */
-    public function setHeight($height)
-    {
-        $this->height = $height;
-        return $this;
-    }
-
-    /**
      * Test if the given pies have the correct format
      *
      * @return bool True when the given pies are correct, otherwise false
@@ -136,10 +71,7 @@ class PieChart extends Chart
      */
     protected function build()
     {
-        $this->renderer = new SVGRenderer(
-            $this->type === self::STACKED ? $this->width : count($this->pies) * $this->width,
-            $this->width
-        );
+        $this->renderer = new SVGRenderer(($this->type === self::STACKED) ? 1 : count($this->pies), 1);
         foreach ($this->pies as &$pie) {
             $this->normalizeDataSet($pie);
         }
@@ -190,11 +122,16 @@ class PieChart extends Chart
      */
     public function toSvg(RenderContext $ctx)
     {
-        $outerBox = new Canvas('outerGraph', new LayoutBox(0, 0, 100, 100));
-        $innerBox = new Canvas('graph', new LayoutBox(0, 0, 100, 100));
         $labelBox = $ctx->getDocument()->createElement('g');
         if (!$this->noCaption) {
+            // Scale SVG to make room for captions
+            $outerBox = new Canvas('outerGraph', new LayoutBox(33, -5, 40, 40));
+            $innerBox = new Canvas('graph', new LayoutBox(0, 0, 100, 100));
             $innerBox->getLayout()->setPadding(10, 10, 10, 10);
+        } else {
+            $outerBox = new Canvas('outerGraph', new LayoutBox(1.5, -10, 124, 124));
+            $innerBox = new Canvas('graph', new LayoutBox(0, 0, 100, 100));
+            $innerBox->getLayout()->setPadding(0, 0, 0, 0);
         }
         $this->createContentClipBox($innerBox);
         $this->renderPies($innerBox, $labelBox);
@@ -299,9 +236,6 @@ class PieChart extends Chart
             $lastRadius = 0;
             foreach ($pie['data'] as $idx => $dataset) {
                 $color = $this->getColorForPieSlice($pie, $idx);
-                if ($dataset === 100) {
-                    $dataset = 99.9;
-                }
                 if ($dataset == 0) {
                     $labelPos++;
                     continue;
@@ -365,3 +299,4 @@ class PieChart extends Chart
         $clipBox->addElement($rect);
     }
 }
+

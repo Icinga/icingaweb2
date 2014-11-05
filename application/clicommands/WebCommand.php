@@ -1,10 +1,11 @@
 <?php
-// @codeCoverageIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Clicommands;
 
 use Icinga\Cli\Command;
-use Exception;
+use Icinga\Exception\IcingaException;
 
 class WebCommand extends Command
 {
@@ -12,11 +13,11 @@ class WebCommand extends Command
     {
         $minVersion = '5.4.0';
         if (version_compare(PHP_VERSION, $minVersion) < 0) {
-            throw new Exception(sprintf(
+            throw new IcingaException(
                 'You are running PHP %s, internal webserver requires %s.',
                 PHP_VERSION,
                 $minVersion
-            ));
+            );
         }
 
         $fork = $this->params->get('daemonize');
@@ -26,12 +27,12 @@ class WebCommand extends Command
         // TODO: Sanity check!!
         if ($socket === null) {
             $socket = '0.0.0.0:80';
-            // throw new Exception('Socket is required');
+            // throw new IcingaException('Socket is required');
         }
         if ($basedir === null) {
             $basedir = dirname(ICINGAWEB_APPDIR) . '/public';
             if (! file_exists($basedir) || ! is_dir($basedir)) {
-                throw new Exception('Basedir is required');
+                throw new IcingaException('Basedir is required');
             }
         }
         $basedir = realpath($basedir);
@@ -67,7 +68,7 @@ class WebCommand extends Command
     {
         $pid = pcntl_fork();
         if ($pid == -1) {
-             throw new Exception('Could not fork');
+             throw new IcingaException('Could not fork');
         } else if ($pid) {
             echo $this->screen->colorize('[OK]')
                . " Icinga Web server forked successfully\n";
@@ -81,4 +82,3 @@ class WebCommand extends Command
         }
     }
 }
-// @codeCoverageIgnoreEnd

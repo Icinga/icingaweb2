@@ -1,16 +1,8 @@
 <?php
-
-if (! $object->customvars) { return; }
-
 foreach ($object->customvars as $name => $value) {
-    $name = ucwords(str_replace('_', ' ', strtolower($name)));
-    if (preg_match('~(?:pw|pass|community)~', strtolower($name))) {
-        $value = '***';
-    }
     printf(
         "<tr><th>%s</th><td>%s</td></tr>\n",
         $this->escape($name),
         $this->escape($value)
     );
 }
-

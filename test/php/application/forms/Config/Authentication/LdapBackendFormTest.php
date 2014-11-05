@@ -11,6 +11,7 @@ require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
 use Mockery;
 use Icinga\Test\BaseTestCase;
 use Icinga\Form\Config\Authentication\LdapBackendForm;
+use Icinga\Exception\AuthenticationException;
 
 class LdapBackendFormTest extends BaseTestCase
 {
@@ -26,19 +27,17 @@ class LdapBackendFormTest extends BaseTestCase
      */
     public function testValidBackendIsValid()
     {
-        Mockery::mock('alias:Icinga\Authentication\UserBackend')
-            ->shouldReceive('create')->with('test', Mockery::type('\Zend_Config'))->andReturnUsing(
-                function () { return Mockery::mock(array('count' => 1)); }
-        );
+        $this->setUpResourceFactoryMock();
+        Mockery::mock('overload:Icinga\Authentication\Backend\LdapUserBackend')
+            ->shouldReceive('assertAuthenticationPossible')->andReturnNull();
 
         $form = new LdapBackendForm();
-        $form->setBackendName('test');
-        $form->setResources(array('test_ldap_backend' => null));
-        $form->create();
-        $form->populate(array('backend_test_resource' => 'test_ldap_backend'));
+        $form->setTokenDisabled();
+        $form->setResources(array('test_ldap_backend'));
+        $form->populate(array('resource' => 'test_ldap_backend'));
 
         $this->assertTrue(
-            $form->isValidAuthenticationBackend(),
+            $form->isValidAuthenticationBackend($form),
             'LdapBackendForm claims that a valid authentication backend with users is not valid'
         );
     }
@@ -49,20 +48,27 @@ class LdapBackendFormTest extends BaseTestCase
      */
     public function testInvalidBackendIsNotValid()
     {
-        Mockery::mock('alias:Icinga\Authentication\UserBackend')
-            ->shouldReceive('create')->with('test', Mockery::type('\Zend_Config'))->andReturnUsing(
-                function () { return Mockery::mock(array('count' => 0)); }
-        );
+        $this->setUpResourceFactoryMock();
+        Mockery::mock('overload:Icinga\Authentication\Backend\LdapUserBackend')
+            ->shouldReceive('assertAuthenticationPossible')->andThrow(new AuthenticationException);
 
         $form = new LdapBackendForm();
-        $form->setBackendName('test');
-        $form->setResources(array('test_ldap_backend' => null));
-        $form->create();
-        $form->populate(array('backend_test_resource' => 'test_ldap_backend'));
+        $form->setTokenDisabled();
+        $form->setResources(array('test_ldap_backend'));
+        $form->populate(array('resource' => 'test_ldap_backend'));
 
         $this->assertFalse(
-            $form->isValidAuthenticationBackend(),
+            $form->isValidAuthenticationBackend($form),
             'LdapBackendForm claims that an invalid authentication backend without users is valid'
         );
+    }
+
+    protected function setUpResourceFactoryMock()
+    {
+        Mockery::mock('alias:Icinga\Data\ResourceFactory')
+            ->shouldReceive('getResourceConfig')
+            ->andReturn(new \Zend_Config(array()))
+            ->shouldReceive('create')
+            ->andReturn(Mockery::mock('Icinga\Protocol\Ldap\Connection'));
     }
 }

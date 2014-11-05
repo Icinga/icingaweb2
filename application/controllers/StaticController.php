@@ -1,37 +1,12 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Zend_Controller_Action_Exception as ActionException;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Icinga;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
+use Icinga\Web\FileCache;
+use Zend_Controller_Action_Exception as ActionException;
 
 /**
  * Delivery static content to clients
@@ -56,8 +31,25 @@ class StaticController extends ActionController
 
     public function gravatarAction()
     {
-        $img = file_get_contents('http://www.gravatar.com/avatar/' . md5(strtolower(trim($this->_request->getParam('email')))) . '?s=200&d=mm');
-        header('image/jpeg');
+        $cache = FileCache::instance();
+        $filename = md5(strtolower(trim($this->_request->getParam('email'))));
+        $cacheFile = 'gravatar-' . $filename;
+        header('Cache-Control: public');
+        header('Pragma: cache');
+        if ($etag = $cache->etagMatchesCachedFile($cacheFile)) {
+            header("HTTP/1.1 304 Not Modified");
+            return;
+        }
+
+        header('Content-Type: image/jpg');
+        if ($cache->has($cacheFile)) {
+            header('ETag: "' . $cache->etagForCachedFile($cacheFile) . '"');
+            $cache->send($cacheFile);
+            return;
+        }
+        $img = file_get_contents('http://www.gravatar.com/avatar/' . $filename . '?s=120&d=mm');
+        $cache->store($cacheFile, $img);
+        header('ETag: "' . $cache->etagForCachedFile($cacheFile) . '"');
         echo $img;
     }
 
@@ -67,13 +59,12 @@ class StaticController extends ActionController
     public function imgAction()
     {
         $module = $this->_getParam('module_name');
-        // TODO: This is more than dangerous, must be fixed!!
         $file   = $this->_getParam('file');
-
         $basedir = Icinga::app()->getModuleManager()->getModule($module)->getBaseDir();
 
-        $filePath = $basedir . '/public/img/' . $file;
-        if (! file_exists($filePath)) {
+        $filePath = realpath($basedir . '/public/img/' . $file);
+
+        if (! $filePath || strpos($filePath, $basedir) !== 0) {
             throw new ActionException(sprintf(
                 '%s does not exist',
                 $filePath
@@ -188,4 +179,3 @@ class StaticController extends ActionController
         $lessCompiler->printStack();
     }
 }
-// @codeCoverageIgnoreEnd

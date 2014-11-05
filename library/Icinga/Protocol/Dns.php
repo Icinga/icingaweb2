@@ -1,30 +1,5 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Protocol;
@@ -42,13 +17,13 @@ class Dns
      * @param string    $service    The type of the service, like for example 'ldaps' or 'ldap'
      * @param string    $protocol   The transport protocol used by the service, defaults to 'tcp'
      *
-     * @return array|bool           An array of all service domains
+     * @return array|null           An array of all service domains
      */
     public static function getSrvRecords($domain, $service, $protocol = 'tcp')
     {
         $records = dns_get_record('_' . $service . '._' . $protocol . '.' . $domain, DNS_SRV);
         if ($records === false) {
-            return false;
+            return null;
         }
         $targets = array();
         foreach ($records as $record) {
@@ -66,7 +41,7 @@ class Dns
      * @param   int     $type     The type of DNS-entry to fetch, see
      *                            http://www.php.net/manual/de/function.dns-get-record.php for available types
      *
-     * @return  array|bool        An array of entries
+     * @return  array|null        An array of record entries
      */
     public static function records($query, $type = DNS_ANY)
     {
@@ -79,14 +54,14 @@ class Dns
      * @param   string  $ipAddress
      * @param   int     $type
      *
-     * @return array|bool
+     * @return array|null
      */
     public static function ptr($ipAddress, $type = DNS_ANY)
     {
         $host = gethostbyaddr($ipAddress);
         if ($host === false || $host === $ipAddress) {
             // malformed input or no host found
-            return false;
+            return null;
         }
         return self::records($host, $type);
     }
@@ -96,7 +71,7 @@ class Dns
      *
      * @param   $hostname       The hostname to resolve
      *
-     * @return  string|bool     The IPv4 address of the given hostname, or false when no entry exists.
+     * @return  string|null     The IPv4 address of the given hostname or null, when no entry exists.
      */
     public static function ipv4($hostname)
     {
@@ -104,7 +79,7 @@ class Dns
         if ($records !== false && count($records) > 0) {
             return $records[0]['ip'];
         }
-        return false;
+        return null;
     }
 
     /**
@@ -112,7 +87,7 @@ class Dns
      *
      * @param   $hostname       The hostname to resolve
      *
-     * @return  string|bool     The IPv6 address of the given hostname, or false when no entry exists.
+     * @return  string|null     The IPv6 address of the given hostname or null, when no entry exists.
      */
     public static function ipv6($hostname)
     {
@@ -120,6 +95,6 @@ class Dns
         if ($records !== false && count($records) > 0) {
             return $records[0]['ip'];
         }
-        return false;
+        return null;
     }
 }

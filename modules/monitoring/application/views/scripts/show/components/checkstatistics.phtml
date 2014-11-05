@@ -1,31 +1,36 @@
 <?php
 
-$cf = $this->getHelper('CommandForm');
+/** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
 
-?><tr>
-  <th><?= $this->translate('Last check') ?></th>
-  <td data-base-target="_self"><?= $this->img('img/icons/refresh_petrol.png') ?> <?= $cf->labelSubmitForm(
-                    $this->translate('Check now'),
-                    $this->translate('Reschedule next check immediately'),
-                    'link-like',
-                    'reschedulenextcheck',
-                    array(
-                        'host'          => $this->object->host_name,
-                        'service'       => $this->object->service_description,
-                        'checktime'     => time(),
-                        'forcecheck'    => '1'
-                    )
-                ) ?> <?= $this->timeSince($object->last_check) ?></td>
+if ($object->getType() === $object::TYPE_HOST) {
+    $reschedule = $this->href(
+        'monitoring/host/reschedule-check',
+        array('host' => $object->getName())
+    );
+} else {
+    $reschedule = $this->href(
+        'monitoring/service/reschedule-check',
+        array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+    );
+}
+
+?>
+
+<tr>
+    <th><?= $this->translate('Last check') ?></th>
+    <td data-base-target="_self">
+        <?= $checkNowForm ?>
+        <?= $this->timeSince($object->last_check) ?>
+    </td>
 </tr>
 <tr>
   <th><?= $this->translate('Next check') ?></th>
-  <td><!--<input type="submit" value="Reschedule" style="width: 7em;" /> --><a href="<?= $this->href(
-        'monitoring/command/reschedulenextcheck',
-        array(
-            'host'      => $object->host_name,
-            'service'   => $object->service_description
-        )
-    ) ?>"><?= $this->img('img/icons/reschedule_petrol.png') ?> <?= $this->translate('Reschedule') ?></a> <?= $this->timeUntil($object->next_check) ?></td>
+  <td>
+      <a href="<?= $reschedule ?>">
+          <?= $this->icon('reschedule_petrol.png') ?> <?= $this->translate('Reschedule') ?>
+      </a>
+      <?= $this->timeUntil($object->next_check) ?>
+  </td>
 </tr>
 <?php if ($object->check_execution_time): ?>
 <tr>
@@ -39,4 +44,3 @@ $cf = $this->getHelper('CommandForm');
  <td><?= $object->check_latency ?>s</td>
 </tr>
 <?php endif ?>
-

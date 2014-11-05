@@ -1,37 +1,12 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Application\Modules;
 
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Icinga;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\SimpleQuery;
 use Icinga\Exception\ConfigurationError;
@@ -135,12 +110,14 @@ class Manager
         }
         if (!is_dir($this->enableDir)) {
             throw new NotReadableError(
-                'Cannot read enabled modules. Module directory "' . $this->enableDir . '" is not a directory'
+                'Cannot read enabled modules. Module directory "%s" is not a directory',
+                $this->enableDir
             );
         }
         if (!is_readable($this->enableDir)) {
             throw new NotReadableError(
-                'Cannot read enabled modules. Module directory "' . $this->enableDir . '" is not readable'
+                'Cannot read enabled modules. Module directory "%s" is not readable',
+                $this->enableDir
             );
         }
         if (($dh = opendir($canonical)) !== false) {
@@ -231,10 +208,8 @@ class Manager
     {
         if (!$this->hasInstalled($name)) {
             throw new ConfigurationError(
-                sprintf(
-                    'Cannot enable module "%s". Module is not installed.',
-                    $name
-                )
+                'Cannot enable module "%s". Module is not installed.',
+                $name
             );
         }
 
@@ -244,8 +219,8 @@ class Manager
 
         if (!is_writable($this->enableDir)) {
             throw new SystemPermissionException(
-                'Can not enable module "' . $name . '". '
-                . 'Insufficient system permissions for enabling modules.'
+                'Can not enable module "%s". Insufficient system permissions for enabling modules.',
+                $name
             );
         }
 
@@ -257,9 +232,11 @@ class Manager
             $error = error_get_last();
             if (strstr($error["message"], "File exists") === false) {
                 throw new SystemPermissionException(
-                    'Could not enable module "' . $name . '" due to file system errors. '
+                    'Could not enable module "%s" due to file system errors. '
                     . 'Please check path and mounting points because this is not a permission error. '
-                    . 'Primary error was: ' . $error['message']
+                    . 'Primary error was: %s',
+                    $name,
+                    $error['message']
                 );
             }
         }
@@ -293,14 +270,18 @@ class Manager
         }
         $link = $this->enableDir . '/' . $name;
         if (!file_exists($link)) {
-            throw new ConfigurationError('Could not disable module. The module ' . $name . ' was not found.');
+            throw new ConfigurationError(
+                'Could not disable module. The module %s was not found.',
+                $name
+            );
         }
         if (!is_link($link)) {
             throw new ConfigurationError(
-                'Could not disable module. The module "' . $name . '" is not a symlink. '
+                'Could not disable module. The module "%s" is not a symlink. '
                 . 'It looks like you have installed this module manually and moved it to your module folder. '
                 . 'In order to dynamically enable and disable modules, you have to create a symlink to '
-                . 'the enabled_modules folder.'
+                . 'the enabled_modules folder.',
+                $name
             );
         }
 
@@ -308,9 +289,11 @@ class Manager
             if (!@unlink($link)) {
                 $error = error_get_last();
                 throw new SystemPermissionException(
-                    'Could not disable module "' . $name . '" due to file system errors. '
+                    'Could not disable module "%s" due to file system errors. '
                     . 'Please check path and mounting points because this is not a permission error. '
-                    . 'Primary error was: ' . $error['message']
+                    . 'Primary error was: %s',
+                    $name,
+                    $error['message']
                 );
             }
         }
@@ -344,10 +327,8 @@ class Manager
         }
 
         throw new ProgrammingError(
-            sprintf(
-                'Trying to access uninstalled module dir: %s',
-                $name
-            )
+            'Trying to access uninstalled module dir: %s',
+            $name
         );
     }
 
@@ -413,10 +394,8 @@ class Manager
     {
         if (!$this->hasLoaded($name)) {
             throw new ProgrammingError(
-                sprintf(
-                    'Cannot access module %s as it hasn\'t been loaded',
-                    $name
-                )
+                'Cannot access module %s as it hasn\'t been loaded',
+                $name
             );
         }
         return $this->loadedModules[$name];

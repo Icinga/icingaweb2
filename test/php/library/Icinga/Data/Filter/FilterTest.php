@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Tests\Icinga\Data;
 
@@ -180,7 +182,7 @@ class FilterTest extends BaseTestCase
 
     public function testComplexFilterFromQueryString()
     {
-        $q = 'host=localhost|nohost*&problem&service=*www*|ups*&state!=1&!handled';
+        $q = '(host=localhost|host=nohost*)&problem&(service=*www*|service=ups*)&state!=1&!handled';
         $filter = Filter::fromQueryString($q);
         $this->assertFalse($filter->matches($this->row(0)));
         $this->assertTrue($filter->matches($this->row(1)));
@@ -195,6 +197,18 @@ class FilterTest extends BaseTestCase
         $d = clone $c;
         $b->setColumn('bb');
         $this->assertNotEquals((string) $c, (string) $d);
+    }
+
+    public function testLeadingAndTrailingWhitespacesSanitizing()
+    {
+        $columnHasWhitespaces = Filter::where(' host ', 'localhost');
+        $expressionHasWhitespaces = Filter::where('host', ' localhost ');
+        $bothHaveWhitespaces = Filter::fromQueryString('  host  =  localhost  ');
+        $withArray = Filter::where(' host ', array(' no match  ', '  localhost  '));
+        $this->assertTrue($columnHasWhitespaces->matches($this->sampleData[0]));
+        $this->assertTrue($expressionHasWhitespaces->matches($this->sampleData[0]));
+        $this->assertTrue($bothHaveWhitespaces->matches($this->sampleData[0]));
+        $this->assertTrue($withArray->matches($this->sampleData[0]));
     }
 
     private function row($idx)

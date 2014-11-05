@@ -1,30 +1,5 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart\Unit;
@@ -115,15 +90,50 @@ class LinearUnit implements AxisUnit
         }
         sort($datapoints);
         if (!$this->staticMax) {
-            $this->max = max($this->max, $datapoints[count($datapoints)-1]);
+            $this->max = max($this->max, $datapoints[count($datapoints) - 1]);
         }
         if (!$this->staticMin) {
             $this->min = min($this->min, $datapoints[0]);
         }
-
+        if (!$this->staticMin || !$this->staticMax) {
+            $this->updateMaxValue();
+        }
         $this->currentTick = 0;
         $this->currentValue = $this->min;
         return $this;
+    }
+
+    /**
+     * Refresh the range depending on the current values of min, max and nrOfTicks
+     */
+    private function updateMaxValue()
+    {
+        $this->max = $this->calculateTickRange($this->max - $this->min, $this->nrOfTicks) *
+             $this->nrOfTicks + $this->min;
+    }
+
+    /**
+     * Determine the minimum tick range that is necessary to display the given value range
+     * correctly
+     *
+     * @param   int range   The range to display
+     * @param   int ticks   The amount of ticks to use
+     *
+     * @return  int         The value for each tick
+     */
+    private function calculateTickRange($range, $ticks)
+    {
+        $factor = 1;
+        $steps = array(1, 2, 5);
+        $step = 0;
+        while ($range / ($factor * $steps[$step]) > $ticks) {
+            $step++;
+            if ($step === count($steps)) {
+                $step = 0;
+                $factor *= 10;
+            }
+        }
+        return $steps[$step] * $factor;
     }
 
     /**
@@ -139,7 +149,7 @@ class LinearUnit implements AxisUnit
         } elseif ($value > $this->max) {
             return 100;
         } else {
-            return 100 * ($value - $this->min) / ($this->max - $this->min);
+            return 100 * ($value - $this->min) / $this->max - $this->min;
         }
     }
 
@@ -201,6 +211,7 @@ class LinearUnit implements AxisUnit
         if ($max !== null) {
             $this->max = $max;
             $this->staticMax = true;
+            $this->updateMaxValue();
         }
     }
 
@@ -214,6 +225,7 @@ class LinearUnit implements AxisUnit
         if ($min !== null) {
             $this->min = $min;
             $this->staticMin = true;
+            $this->updateMaxValue();
         }
     }
 

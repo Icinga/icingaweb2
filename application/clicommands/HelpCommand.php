@@ -1,5 +1,6 @@
 <?php
-// @codeCoverageIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Clicommands;
 
@@ -41,4 +42,3 @@ class HelpCommand extends Command
         );
     }
 }
-// @codeCoverageIgnoreEnd

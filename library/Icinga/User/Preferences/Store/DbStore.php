@@ -5,7 +5,6 @@
 namespace Icinga\User\Preferences\Store;
 
 use Exception;
-use Zend_Db_Select;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\NotWritableError;
 use Icinga\User\Preferences;
@@ -73,13 +72,17 @@ class DbStore extends PreferencesStore
     public function load()
     {
         try {
-            $select = new Zend_Db_Select($this->getStoreConfig()->connection->getConnection());
-            $result = $select->from($this->table, array(self::COLUMN_PREFERENCE, self::COLUMN_VALUE))
+            $select = $this->getStoreConfig()->connection->getDbAdapter()->select();
+            $result = $select
+                ->from($this->table, array(self::COLUMN_PREFERENCE, self::COLUMN_VALUE))
                 ->where(self::COLUMN_USERNAME . ' = ?', $this->getUser()->getUsername())
-                ->query()->fetchAll();
+                ->query()
+                ->fetchAll();
         } catch (Exception $e) {
             throw new NotReadableError(
-                'Cannot fetch preferences for user ' . $this->getUser()->getUsername() . ' from database', 0, $e
+                'Cannot fetch preferences for user %s from database',
+                $this->getUser()->getUsername(),
+                $e
             );
         }
 
@@ -108,14 +111,10 @@ class DbStore extends PreferencesStore
             $this->insert($toBeInserted);
         }
 
-        $current = $this->preferences;
-        $toBeUpdated = array();
-        foreach (array_filter(
-            array_keys(array_intersect_key($preferences, $this->preferences)),
-            function ($k) use ($current, $preferences) { return $current[$k] == $preferences[$k] ? false : true; }
-        ) as $key) {
-            $toBeUpdated[$key] = $preferences[$key];
-        }
+        $toBeUpdated = array_intersect_key(
+            array_diff_assoc($preferences, $this->preferences),
+            array_diff_assoc($this->preferences, $preferences)
+        );
         if (!empty($toBeUpdated)) {
             $this->update($toBeUpdated);
         }
@@ -135,7 +134,7 @@ class DbStore extends PreferencesStore
      */
     protected function insert(array $preferences)
     {
-        $db = $this->getStoreConfig()->connection->getConnection();
+        $db = $this->getStoreConfig()->connection->getDbAdapter();
 
         try {
             foreach ($preferences as $key => $value) {
@@ -150,7 +149,9 @@ class DbStore extends PreferencesStore
             }
         } catch (Exception $e) {
             throw new NotWritableError(
-                'Cannot insert preferences for user ' . $this->getUser()->getUsername() . ' into database', 0, $e
+                'Cannot insert preferences for user %s into database',
+                $this->getUser()->getUsername(),
+                $e
             );
         }
     }
@@ -164,7 +165,7 @@ class DbStore extends PreferencesStore
      */
     protected function update(array $preferences)
     {
-        $db = $this->getStoreConfig()->connection->getConnection();
+        $db = $this->getStoreConfig()->connection->getDbAdapter();
 
         try {
             foreach ($preferences as $key => $value) {
@@ -179,7 +180,9 @@ class DbStore extends PreferencesStore
             }
         } catch (Exception $e) {
             throw new NotWritableError(
-                'Cannot update preferences for user ' . $this->getUser()->getUsername() . ' in database', 0, $e
+                'Cannot update preferences for user %s in database',
+                $this->getUser()->getUsername(),
+                $e
             );
         }
     }
@@ -193,7 +196,7 @@ class DbStore extends PreferencesStore
      */
     protected function delete(array $preferenceKeys)
     {
-        $db = $this->getStoreConfig()->connection->getConnection();
+        $db = $this->getStoreConfig()->connection->getDbAdapter();
 
         try {
             $db->delete(
@@ -205,7 +208,9 @@ class DbStore extends PreferencesStore
             );
         } catch (Exception $e) {
             throw new NotWritableError(
-                'Cannot delete preferences for user ' . $this->getUser()->getUsername() . ' from database', 0, $e
+                'Cannot delete preferences for user %s from database',
+                $this->getUser()->getUsername(),
+                $e
             );
         }
     }

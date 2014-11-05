@@ -1,43 +1,17 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use \Zend_Config;
-use Icinga\Web\Url;
-use Icinga\Logger\Logger;
-use Icinga\Config\PreservingIniWriter;
-use Icinga\Application\Config as IcingaConfig;
-use Icinga\Web\Widget\Dashboard;
-use Icinga\Form\Dashboard\AddUrlForm;
-use Icinga\Exception\NotReadableError;
+use Icinga\Application\Config;
+use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\IcingaException;
+use Icinga\Exception\NotReadableError;
+use Icinga\File\Ini\IniWriter;
+use Icinga\Form\Dashboard\AddUrlForm;
 use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Url;
+use Icinga\Web\Widget\Dashboard;
 
 /**
  * Handle creation, removal and displaying of dashboards, panes and components
@@ -62,13 +36,13 @@ class DashboardController extends ActionController
     {
         $dashboard = new Dashboard();
         try {
-            $dashboardConfig = IcingaConfig::app($config);
+            $dashboardConfig = Config::app($config);
             if (count($dashboardConfig) === 0) {
                 return null;
             }
             $dashboard->readConfig($dashboardConfig);
         } catch (NotReadableError $e) {
-            Logger::error(new Exception('Cannot load dashboard configuration. An exception was thrown:', 0, $e));
+            Logger::error(new IcingaException('Cannot load dashboard configuration. An exception was thrown:', $e));
             return null;
         }
         return $dashboard;
@@ -108,25 +82,29 @@ class DashboardController extends ActionController
         )->activate('addurl');
 
         $form = new AddUrlForm();
-        $form->setRequest($this->getRequest());
-        $form->setAction(Url::fromRequest()->setParams(array())->getAbsoluteUrl());
-        $this->view->form = $form;
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            if ($form->isValid($request->getPost()) && $form->isSubmitted()) {
+                $dashboard = $this->getDashboard();
+                $dashboard->setComponentUrl(
+                    $form->getValue('pane'),
+                    $form->getValue('component'),
+                    ltrim($form->getValue('url'), '/')
+                );
 
-        if ($form->isSubmittedAndValid()) {
-            $dashboard = $this->getDashboard();
-            $dashboard->setComponentUrl(
-                $form->getValue('pane'),
-                $form->getValue('component'),
-                ltrim($form->getValue('url'), '/')
-            );
-
-            $configFile = IcingaConfig::app('dashboard/dashboard')->getConfigFile();
-            if ($this->writeConfiguration(new Zend_Config($dashboard->toArray()), $configFile)) {
-                $this->redirectNow(Url::fromPath('dashboard', array('pane' => $form->getValue('pane'))));
-            } else {
-                $this->render('show-configuration');
+                $configFile = Config::app('dashboard/dashboard')->getConfigFile();
+                if ($this->writeConfiguration(new Zend_Config($dashboard->toArray()), $configFile)) {
+                    $this->redirectNow(Url::fromPath('dashboard', array('pane' => $form->getValue('pane'))));
+                } else {
+                    $this->render('showConfiguration');
+                    return;
+                }
             }
+        } else {
+            $form->create()->setDefault('url', htmlspecialchars_decode($request->getParam('url', '')));
         }
+
+        $this->view->form = $form;
     }
 
     /**
@@ -137,19 +115,23 @@ class DashboardController extends ActionController
      */
     public function indexAction()
     {
-        $dashboard = $this->getDashboard();
-        if ($this->_getParam('pane')) {
-            $pane = $this->_getParam('pane');
-            $dashboard->activate($pane);
-        }
+        $dashboard = Dashboard::load();
 
-        $this->view->configPath = IcingaConfig::resolvePath(self::DEFAULT_CONFIG);
-
-        if ($dashboard === null) {
+        if (! $dashboard->hasPanes()) {
             $this->view->title = 'Dashboard';
         } else {
-            $this->view->title = $dashboard->getActivePane()->getTitle() . ' :: Dashboard';
-            $this->view->tabs = $dashboard->getTabs();
+            if ($this->_getParam('pane')) {
+                $pane = $this->_getParam('pane');
+                $dashboard->activate($pane);
+            }
+
+            $this->view->configPath = Config::resolvePath(self::DEFAULT_CONFIG);
+
+            if ($dashboard === null) {
+                $this->view->title = 'Dashboard';
+            } else {
+                $this->view->title = $dashboard->getActivePane()->getTitle() . ' :: Dashboard';
+                $this->view->tabs = $dashboard->getTabs();
 
                 /* Temporarily removed
                 $this->view->tabs->add(
@@ -161,8 +143,8 @@ class DashboardController extends ActionController
                 );
                 */
 
-            $this->view->dashboard = $dashboard;
-
+                $this->view->dashboard = $dashboard;
+            }
         }
     }
 
@@ -176,19 +158,18 @@ class DashboardController extends ActionController
      */
     protected function writeConfiguration(Zend_Config $config, $target)
     {
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
 
         try {
             $writer->write();
         } catch (Exception $e) {
             Logger::error(new ConfiguationError("Cannot write dashboard to $target", 0, $e));
-            $this->view->iniConfigurationString = $writer->render();
-            $this->view->exceptionMessage = $e->getMessage();
-            $this->view->file = $target;
+            $this->view->configString = $writer->render();
+            $this->view->errorMessage = $e->getMessage();
+            $this->view->filePath = $target;
             return false;
         }
 
         return true;
     }
 }
-// @codeCoverageIgnoreEnd

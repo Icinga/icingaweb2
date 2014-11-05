@@ -1,38 +1,14 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Protocol\Ldap;
 
+use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Application\Platform;
 use Icinga\Application\Config;
-use Icinga\Logger\Logger;
-use \Zend_Config;
+use Icinga\Application\Logger;
+use Zend_Config;
 
 /**
  * Backend class managing all the LDAP stuff for you.
@@ -110,7 +86,7 @@ class Connection
      *
      * @var bool
      */
-    protected $bindDone = false;
+    protected $bound = false;
 
     protected $root;
 
@@ -179,7 +155,7 @@ class Connection
             if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
                 return false;
             }
-            throw new \Exception(
+            throw new LdapException(
                 sprintf(
                     'LDAP list for "%s" failed: %s',
                     $dn,
@@ -192,7 +168,7 @@ class Connection
             $result = $this->deleteRecursively($children[$i]['dn']);
             if (!$result) {
                 //return result code, if delete fails
-                throw new \Exception(sprintf('Recursively deleting "%s" failed', $dn));
+                throw new LdapException(sprintf('Recursively deleting "%s" failed', $dn));
             }
         }
         return $this->deleteDN($dn);
@@ -208,7 +184,7 @@ class Connection
             if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
                 return false;
             }
-            throw new \Exception(
+            throw new LdapException(
                 sprintf(
                     'LDAP delete for "%s" failed: %s',
                     $dn,
@@ -227,13 +203,13 @@ class Connection
      * @param array $fields  The fields to fetch
      *
      * @return string        Returns the distinguished name, or false when the given query yields no results
-     * @throws \Exception    When the query result is empty and contains no DN to fetch
+     * @throws LdapException When the query result is empty and contains no DN to fetch
      */
     public function fetchDN($query, $fields = array())
     {
         $rows = $this->fetchAll($query, $fields);
         if (count($rows) !== 1) {
-            throw new \Exception(
+            throw new LdapException(
                 sprintf(
                     'Cannot fetch single DN for %s',
                     $query
@@ -331,7 +307,7 @@ class Connection
         $results = @ldap_search(
             $this->ds,
             $base,
-            (string) $query,
+            $query->create(),
             $fields,
             0, // Attributes and values
             0  // No limit - at least where possible
@@ -340,7 +316,7 @@ class Connection
             if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
                 return false;
             }
-            throw new \Exception(
+            throw new LdapException(
                 sprintf(
                     'LDAP query "%s" (root %s) failed: %s',
                     $query,
@@ -399,7 +375,7 @@ class Connection
      * Connect to the given ldap server and apply settings depending on the discovered capabilities
      *
      * @return resource        A positive LDAP link identifier
-     * @throws \Exception      When the connection is not possible
+     * @throws LdapException   When the connection is not possible
      */
     protected function prepareNewConnection()
     {
@@ -422,7 +398,7 @@ class Connection
                     Logger::debug('LDAP STARTTLS succeeded');
                 } else {
                     Logger::debug('LDAP STARTTLS failed: %s', ldap_error($ds));
-                    throw new \Exception(
+                    throw new LdapException(
                         sprintf(
                             'LDAP STARTTLS failed: %s',
                             ldap_error($ds)
@@ -430,7 +406,7 @@ class Connection
                     );
                 }
             } elseif ($force_tls) {
-                throw new \Exception(
+                throw new LdapException(
                     sprintf(
                         'TLS is required but not announced by %s',
                         $this->host_name
@@ -443,7 +419,7 @@ class Connection
         // ldap_rename requires LDAPv3:
         if ($cap->supports_ldapv3) {
             if (! ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3)) {
-                throw new \Exception('LDAPv3 is required');
+                throw new LdapException('LDAPv3 is required');
             }
         } else {
 
@@ -473,7 +449,7 @@ class Connection
             }
             putenv('LDAPRC=' . $ldap_conf);
             if (getenv('LDAPRC') !== $ldap_conf) {
-                throw new \Exception('putenv failed');
+                throw new LdapException('putenv failed');
             }
         }
     }
@@ -620,7 +596,7 @@ class Connection
      * @param  resource     $ds     The link identifier of the current ldap connection
      *
      * @return array                The capabilities and naming-contexts
-     * @throws \Exception           When the capability query fails
+     * @throws LdapException        When the capability query fails
      */
     protected function discoverCapabilities($ds)
     {
@@ -643,12 +619,12 @@ class Connection
         $result = @ldap_read(
             $ds,
             '',
-            (string) $query,
+            $query->create(),
             $query->listFields()
         );
 
         if (! $result) {
-            throw new \Exception(
+            throw new LdapException(
                 sprintf(
                     'Capability query failed (%s:%d): %s',
                     $this->hostname,
@@ -681,7 +657,7 @@ class Connection
     /**
      * Try to connect to the given ldap server
      *
-     * @throws \Exception   When connecting is not possible
+     * @throws LdapException   When connecting is not possible
      */
     public function connect()
     {
@@ -694,17 +670,17 @@ class Connection
     /**
      * Try to bind to the current ldap domain using the provided bind_dn and bind_pw
      *
-     * @throws \Exception   When binding is not possible
+     * @throws LdapException   When binding is not possible
      */
     public function bind()
     {
-        if ($this->bindDone) {
+        if ($this->bound) {
             return;
         }
 
         $r = @ldap_bind($this->ds, $this->bind_dn, $this->bind_pw);
         if (! $r) {
-            throw new \Exception(
+            throw new LdapException(
                 sprintf(
                     'LDAP connection to %s:%s (%s / %s) failed: %s',
                     $this->hostname,
@@ -715,7 +691,7 @@ class Connection
                 )
             );
         }
-        $this->bindDone = true;
+        $this->bound = true;
     }
 
     /**
@@ -750,7 +726,7 @@ class Connection
      * @param   string $dn          DN of the object
      * @param   string $newRdn      Relative DN identifier
      * @param   string $newParentDn Parent or superior entry
-     * @throws  \Exception          Thrown then rename failed
+     * @throws  LdapException       Thrown then rename failed
      *
      * @return bool                 True on success
      */
@@ -759,7 +735,7 @@ class Connection
         $returnValue = ldap_rename($this->ds, $dn, $newRdn, $newParentDn, false);
 
         if ($returnValue === false) {
-            throw new \Exception('Could not move entry: ' . ldap_error($this->ds));
+            throw new LdapException('Could not move entry: ' . ldap_error($this->ds));
         }
 
         return $returnValue;

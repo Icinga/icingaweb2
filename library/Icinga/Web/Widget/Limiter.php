@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Widget;
 
@@ -51,8 +53,10 @@ class Limiter extends AbstractWidget
             50 => '50',
             100 => '100',
             500 => '500'
-            // 0 => t('all')
         );
+        if ($currentLimit === 0) {
+            $availableLimits[0] = t('all');
+        }
 
         // if ($this->pages === 1 && $currentLimit === 10) return '';
 
@@ -77,7 +81,7 @@ class Limiter extends AbstractWidget
                     $this->url->setParam('limit', $limit),
                     null,
                     array(
-                        'title' => t(sprintf('Show %s rows on one page', $caption))
+                        'title' => sprintf(t('Show %s rows on one page'), $caption)
                     )
                 );
             }

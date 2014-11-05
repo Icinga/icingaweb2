@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Data\Filter;
 
@@ -32,9 +34,12 @@ abstract class Filter
         if ((string) $id === $this->getId()) {
             return $this;
         }
-        throw new ProgrammingError(sprintf(
-            'Trying to get invalid filter index "%s" from "%s" ("%s")', $id, $this, $this->id
-        ));
+        throw new ProgrammingError(
+            'Trying to get invalid filter index "%s" from "%s" ("%s")',
+            $id,
+            $this,
+            $this->id
+        );
     }
 
     public function getId()
@@ -127,14 +132,15 @@ abstract class Filter
     public static function expression($col, $op, $expression)
     {
         switch ($op) {
-            case '=': return new FilterEqual($col, $op, $expression);
+            case '=': return new FilterMatch($col, $op, $expression);
             case '<': return new FilterLessThan($col, $op, $expression);
             case '>': return new FilterGreaterThan($col, $op, $expression);
             case '>=': return new FilterEqualOrGreaterThan($col, $op, $expression);
             case '<=': return new FilterEqualOrLessThan($col, $op, $expression);
-            case '!=': return new FilterNotEqual($col, $op, $expression);
+            case '!=': return new FilterMatchNot($col, $op, $expression);
             default: throw new ProgrammingError(
-                sprintf('There is no such filter sign: %s', $op)
+                'There is no such filter sign: %s',
+                $op
             );
         }
     }
@@ -186,7 +192,7 @@ abstract class Filter
                 $args = $args[0];
             }
         }
-        if (count($args) > 1) { 
+        if (count($args) > 1) {
             return new FilterNot(array(new FilterAnd($args)));
         } else {
             return new FilterNot($args);
@@ -201,7 +207,8 @@ abstract class Filter
             case 'NOT': return self::not($filters);
         }
         throw new ProgrammingError(
-            sprintf('"%s" is not a valid filter chain operator', $operator)
+            '"%s" is not a valid filter chain operator',
+            $operator
         );
     }
 

@@ -1,0 +1,59 @@
+<?php $contactHelper = $this->getHelper('ContactFlags') ?>
+<div class="controls">
+  <?= $this->tabs ?>
+  <h1><?= $this->translate('Contact details') ?></h1>
+  <div class="circular" style="margin-top: 1em; margin-left: 2em; width: 120px; height: 120px; float: left; background-image: url('<?=
+      $this->href('static/gravatar', array('email' => $contact->contact_email))
+  ?>')"></div>
+
+<?php if (! $contact): ?>
+  <?= $this->translate('No such contact') ?>: <?= $contactName ?>
+</div>
+<?php return; endif ?>
+
+  <table class="avp" style="width: 70%">
+    <tbody>
+      <tr>
+        <th style="width: 20%"></th>
+        <td><strong><?= $this->escape($contact->contact_alias) ?></strong> (<?= $contact->contact_name ?>)</td>
+      </tr>
+<?php if ($contact->contact_email): ?>
+      <tr>
+        <th><?= mt('monitoring', 'Email') ?></th>
+        <td><?= sprintf('<a href="mailto:%1$s">%1$s</a>', $this->escape($contact->contact_email)) ?></td>
+      </tr>
+<?php endif ?>
+<?php if ($contact->contact_pager): ?>
+      <tr>
+        <th><?= mt('monitoring', 'Pager') ?></th>
+        <td><?= $this->escape($contact->contact_pager) ?></td>
+      </tr>
+<?php endif ?>
+      <tr>
+        <th><?= mt('monitoring', 'Hosts') ?></th>
+        <td><?= $this->escape($contactHelper->contactFlags($contact, 'host')) ?><br />
+        <?= $this->escape($contact->contact_notify_host_timeperiod) ?></td>
+      </tr>
+      <tr>
+        <th><?= mt('monitoring', 'Services') ?></th>
+        <td><?= $this->escape($contactHelper->contactFlags($contact, 'service')) ?><br />
+        <?= $this->escape($contact->contact_notify_service_timeperiod) ?></td>
+      </tr>
+    </tbody>
+  </table>
+  <?php if (count($commands)): ?>
+  <h1><?= $this->translate('Commands') ?>:</h1>
+  <ul>
+  <?php foreach ($commands as $command): ?>
+    <li><?= $command->command_name ?></li>
+  <?php endforeach ?>
+  </ul>
+  <?php endif ?>
+  <h1><?= $this->translate('Notifications sent to this contact') ?></h1>
+</div>
+
+<?php if (count($notifications)): ?>
+<?= $this->render('list/notifications.phtml') ?>
+<?php else: ?>
+<div class="content"><?= $this->translate('No notifications have been sent for this contact') ?></div>
+<?php endif ?>

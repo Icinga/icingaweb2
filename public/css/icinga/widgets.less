@@ -1,3 +1,6 @@
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 table.historycolorgrid {
   font-size: 1.5em;
 }
@@ -16,7 +19,7 @@ table.historycolorgrid td {
   margin: 1em;
 }
 
-table.historycolorgrid td.hover {
+table.historycolorgrid td:hover {
   opacity: 0.5;
 }
 
@@ -85,7 +88,7 @@ ul.tree li {
 }
 
 ul.tree li .handle {
-  background-image: url('../img/tree/tree-minus.gif'); 
+  background-image: url('../img/tree/tree-minus.gif');
   background-repeat: no-repeat;
   display: inline-block;
   position: absolute;
@@ -98,7 +101,7 @@ ul.tree li .handle {
 }
 
 ul.tree li.collapsed > .handle {
-  background-image: url('../img/tree/tree-plus.gif'); 
+  background-image: url('../img/tree/tree-plus.gif');
 }
 
 ul.tree li.collapsed > ul {
@@ -107,7 +110,7 @@ ul.tree li.collapsed > ul {
 
 ul.tree li::before, ul.tree li::after {
   content: '';
-  position: absolute; 
+  position: absolute;
   right: auto;
   left: -0.2em;
   border-color: #aaa;
@@ -119,7 +122,7 @@ ul.tree li::before, ul.tree li::after {
 ul.tree li::before {
   border-left-width: 1px;
   top: 0;
-  width: 1em; 
+  width: 1em;
   height: 100%;
   bottom: 1em;
 }
@@ -169,4 +172,84 @@ ul.tree li a:hover {
 
 ul.tree li a.error:hover {
   color: @colorCritical;
+}
+
+/* Add hover effect to chart data */
+.chart-data:hover {
+  opacity: 0.85;
+}
+
+.pie-data:hover {
+  opacity: 0.6;
+}
+
+/* charts should grow as much as possible but never beyond the current viewport's size */
+.svg-container-responsive {
+  padding: 1.5em;
+  height: 80vh;
+}
+
+.badge-container {
+  font-size: 1em;
+  display: inline-block;
+  float: right;
+  margin-right: 0.6em;
+}
+
+
+li li .badge-container {
+  /*
+   fix margin for smaller font-size of list elements
+   1 = 0,8em / 0.8em
+  */
+  margin-right: 0.75em;
+}
+
+#menu > ul > li.active > a > .badge-container {
+  display: none;
+}
+
+#layout.hoveredmenu .hover > a > .badge-container {
+  margin-right: 14.15em;
+}
+
+.badge {
+  position: relative;
+  top: -0.1em;
+  display: inline-block;
+  min-width: 1em;
+  padding: 3px 7px;
+  font-size: 0.8em;
+  font-weight: 700;
+  line-height: 1.1em;
+  color: white;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 1em;
+  background-color: @colorInvalid;
+}
+
+li li .badge {
+  font-size: 0.975em;
+}
+
+.badge-critical {
+  background-color: @colorCritical;
+}
+
+.badge-warning {
+  background-color: @colorWarning;
+}
+
+.badge-ok {
+  background-color: @colorOk;
+}
+
+.badge-pending {
+  background-color: @colorPending;
+}
+
+.badge-pending {
+  background-color: @colorUnknown;
 }

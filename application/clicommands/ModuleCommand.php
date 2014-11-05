@@ -1,5 +1,6 @@
 <?php
-// @codeCoverageIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Clicommands;
 
@@ -212,4 +213,3 @@ class ModuleCommand extends Command
         $this->fail("Not implemented yet");
     }
 }
-// @codeCoverageIgnoreEnd

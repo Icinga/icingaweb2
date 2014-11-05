@@ -1,41 +1,16 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-// @codingStandardsIgnoreStart
 use Icinga\Application\Benchmark;
+use Icinga\Module\Monitoring\Object\MonitoredObject;
 use Icinga\Web\Hook;
+use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Object\AbstractObject;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
@@ -51,6 +26,9 @@ class Monitoring_ShowController extends Controller
      */
     protected $backend;
 
+    /**
+     * @var Hook\GrapherHook
+     */
     protected $grapher;
 
     /**
@@ -58,53 +36,38 @@ class Monitoring_ShowController extends Controller
      */
     public function init()
     {
-        if ($this->getRequest()->getActionName() === 'host') {
-            $this->view->object = new Host($this->params);
-        } elseif ($this->getRequest()->getActionName() === 'service') {
-            $this->view->object = new Service($this->params);
-        } else {
-            // TODO: Well... this could be done better
-            $this->view->object = AbstractObject::fromParams($this->params);
+        $this->view->object = MonitoredObject::fromParams($this->params);
+        if ($this->view->object && $this->view->object->fetch() === false) {
+            throw new Zend_Controller_Action_Exception($this->translate('Host or service not found'));
         }
+
         if (Hook::has('ticket')) {
             $this->view->tickets = Hook::first('ticket');
         }
         if (Hook::has('grapher')) {
             $this->grapher = Hook::first('grapher');
+            if ($this->grapher && ! $this->grapher->hasPreviews()) {
+                $this->grapher = null;
+            }
         }
 
         $this->createTabs();
     }
 
     /**
-     * Service overview
+     * @deprecated
      */
     public function serviceAction()
     {
-        $o = $this->view->object;
-        $this->setAutorefreshInterval(10);
-        $this->view->title = $o->service_description
-            . ' on ' . $o->host_name;
-        $this->getTabs()->activate('service');
-        $o->populate();
-        if ($this->grapher && $this->grapher->hasGraph($o->host_name, $o->service_description)) {
-            $this->view->grapherHtml = $this->grapher->getPreviewImage($o->host_name, $o->service_description);
-        }
+        $this->redirectNow(Url::fromRequest()->setPath('monitoring/service/show'));
     }
 
     /**
-     * Host overview
+     * @deprecated
      */
     public function hostAction()
     {
-        $o = $this->view->object;
-        $this->setAutorefreshInterval(10);
-        $this->getTabs()->activate('host');
-        $this->view->title = $o->host_name;
-        $o->populate();
-        if ($this->grapher && $this->grapher->hasGraph($o->host_name)) {
-            $this->view->grapherHtml = $this->grapher->getPreviewImage($o->host_name);
-        }
+        $this->redirectNow(Url::fromRequest()->setPath('monitoring/host/show'));
     }
 
     public function historyAction()
@@ -112,9 +75,9 @@ class Monitoring_ShowController extends Controller
         $this->getTabs()->activate('history');
         //$this->view->object->populate();
         $this->view->object->fetchEventHistory();
+        $this->view->history = $this->view->object->eventhistory->paginate($this->params->get('limit', 50));
         $this->handleFormatRequest($this->view->object->eventhistory);
-        $this->view->history = $this->view->object->eventhistory
-            ->paginate($this->params->get('limit', 50));
+        $this->fetchHostStats();
     }
 
     public function servicesAction()
@@ -127,6 +90,92 @@ class Monitoring_ShowController extends Controller
             'view'  => 'compact',
             'sort'  => 'service_description',
         ));
+        $this->fetchHostStats();
+    }
+
+    protected function fetchHostStats()
+    {
+        $this->view->stats = $this->backend->select()->from('statusSummary', array(
+            'services_total',
+            'services_ok',
+            'services_problem',
+            'services_problem_handled',
+            'services_problem_unhandled',
+            'services_critical',
+            'services_critical_unhandled',
+            'services_critical_handled',
+            'services_warning',
+            'services_warning_unhandled',
+            'services_warning_handled',
+            'services_unknown',
+            'services_unknown_unhandled',
+            'services_unknown_handled',
+            'services_pending',
+        ))->where('service_host_name', $this->params->get('host'))->getQuery()->fetchRow();
+    }
+
+    public function contactAction()
+    {
+        $contactName = $this->getParam('contact');
+
+        if (! $contactName) {
+            throw new Zend_Controller_Action_Exception(
+                $this->translate('The parameter `contact\' is required'),
+                404
+            );
+        }
+
+        $query = $this->backend->select()->from('contact', array(
+            'contact_name',
+            'contact_id',
+            'contact_alias',
+            'contact_email',
+            'contact_pager',
+            'contact_object_id',
+            'contact_notify_service_timeperiod',
+            'contact_notify_service_recovery',
+            'contact_notify_service_warning',
+            'contact_notify_service_critical',
+            'contact_notify_service_unknown',
+            'contact_notify_service_flapping',
+            'contact_notify_service_downtime',
+            'contact_notify_host_timeperiod',
+            'contact_notify_host_recovery',
+            'contact_notify_host_down',
+            'contact_notify_host_unreachable',
+            'contact_notify_host_flapping',
+            'contact_notify_host_downtime',
+        ));
+
+        $query->where('contact_name', $contactName);
+
+        $contact = $query->getQuery()->fetchRow();
+
+        if ($contact) {
+            $commands = $this->backend->select()->from('command', array(
+                'command_line',
+                'command_name'
+            ))->where('contact_id', $contact->contact_id);
+
+            $this->view->commands = $commands->paginate();
+
+            $notifications = $this->backend->select()->from('notification', array(
+                'host',
+                'service',
+                'notification_output',
+                'notification_contact',
+                'notification_start_time',
+                'notification_state'
+            ));
+
+            $notifications->where('contact_object_id', $contact->contact_object_id);
+
+            $this->view->compact = true;
+            $this->view->notifications = $notifications->paginate();
+        }
+
+        $this->view->contact = $contact;
+        $this->view->contactName = $contactName;
     }
 
     /**
@@ -138,16 +187,17 @@ class Monitoring_ShowController extends Controller
         if (($object = $this->view->object) === null) {
             return;
         }
-
-        $tabs = $this->getTabs();
-        $params = array(
-            'host' => $object->host_name,
-        );
-        if ($object instanceof Service) {
-            $params['service'] = $object->service_description;
-        } elseif ($service = $this->_getParam('service')) {
-            $params['service'] = $service;
+        if ($object->getType() === $object::TYPE_HOST) {
+            $params = array(
+                'host' => $object->getName()
+            );
+        } else {
+            $params = array(
+                'host'      => $object->getHost()->getName(),
+                'service'   => $object->getName()
+            );
         }
+        $tabs = $this->getTabs();
         $tabs->add(
             'host',
             array(
@@ -190,4 +240,3 @@ class Monitoring_ShowController extends Controller
             ->extend(new DashboardAction());
     }
 }
-// @codingStandardsIgnoreEnd

@@ -1,31 +1,5 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Widget\Chart;
@@ -33,7 +7,7 @@ namespace Icinga\Web\Widget\Chart;
 use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Url;
 use Icinga\Util\Format;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 
 /**
  * A SVG-PieChart intended to be displayed as a small icon next to labels, to offer a better visualization of the
@@ -46,10 +20,11 @@ use Icinga\Logger\Logger;
  */
 class InlinePie extends AbstractWidget
 {
-    const NUMBER_FORMAT_TIME  = 'time';
+    const NUMBER_FORMAT_NONE = 'none';
+    const NUMBER_FORMAT_TIME = 'time';
     const NUMBER_FORMAT_BYTES = 'bytes';
     const NUMBER_FORMAT_RATIO = 'ratio';
-        
+
     /**
      * The template string used for rendering this widget
      * The template string used for rendering this widget
@@ -75,7 +50,7 @@ class InlinePie extends AbstractWidget
         sparkType="pie"></span>
     <noscript>
     <img class="inlinepie"
-        title="{title}" src="{url}" style="width: {width}px; height: {height}px; {style}"
+        title="{title}" src="{url}" style="position: relative; top: 10px; width: {width}px; height: {height}px; {style}"
         data-icinga-colors="{colors}" data-icinga-values="{data}"
     />
     </noscript>
@@ -126,7 +101,7 @@ EOD;
      *
      * @var string
      */
-    private $title = '';
+    private $title;
 
     /**
      * The style for the HtmlElement
@@ -162,57 +137,69 @@ EOD;
      * @var string
      */
     private $tooltipFormat = '<b>{{title}}</b></br> {{label}}: {{formatted}} ({{percent}}%)';
-    
+
     /**
      * The number format used to render numeric values in tooltips
      *
      * @var array
      */
-    private $format = self::NUMBER_FORMAT_BYTES;
+    private $format = self::NUMBER_FORMAT_NONE;
 
     /**
      * Set if the tooltip for the empty area should be hidden
      *
-     * @param bool $hide    Whether to hide the empty area
+     * @param   bool $hide    Whether to hide the empty area
+     *
+     * @return  $this
      */
     public function setHideEmptyLabel($hide = true)
     {
         $this->hideEmptyLabel = $hide;
+        return $this;
     }
 
     /**
      * Set the data to be displayed.
      *
-     * @param $data array
+     * @param   $data array
+     *
+     * @return  $this
      */
     public function setData(array $data)
     {
         $this->data = $data;
         $this->url->setParam('data', implode(',', $data));
+        return $this;
     }
 
     /**
      * The labels to be displayed in the pie-chart
      *
-     * @param null $labels
+     * @param   mixed $label     The label of the displayed value, or null for no labels
      *
-     * @return $this
+     * @return  $this
      */
-    public function setLabels($labels = null)
+    public function setLabel($label)
     {
-        if ($labels != null) {
-            $this->url->setParam('labels', implode(',', $labels));
+        if (is_array($label)) {
+            $this->url->setParam('labels', implode(',', array_keys($label)));
+        } elseif ($label != null) {
+            $labelArr =  array($label, $label, $label, '');
+            $this->url->setParam('labels', implode(',', $labelArr));
+            $label = $labelArr;
         } else {
             $this->url->removeKey('labels');
         }
-        $this->labels = $labels;
+        $this->labels = $label;
         return $this;
     }
 
     /**
      * Set the colors used by the slices of the pie chart.
      *
-     * @param array $colors
+     * @param   array $colors
+     *
+     * @return  $this
      */
     public function setColors(array $colors = null)
     {
@@ -222,18 +209,22 @@ EOD;
         } else {
             $this->url->setParam('colors', null);
         }
+        return $this;
     }
 
     /**
      * Set the used number format
      *
-     * @param $format   string  'bytes' or 'time'
+     * @param   $format   string  'bytes' or 'time'
+     *
+     * @return  $this
      */
     public function setNumberFormat($format)
     {
         $this->format = $format;
+        return $this;
     }
-    
+
     /**
      * A format string used to render the content of the piechart tooltips
      *
@@ -246,16 +237,23 @@ EOD;
      *      <li><b>percent</b>:   The percentage of the current value </li>
      * </ul>
      * Note: Changes will only affect JavaScript sparklines and not the SVG charts used for fallback
+     *
+     * @param   $format
+     *
+     * @return  $this
      */
     public function setTooltipFormat($format)
     {
         $this->tooltipFormat = $format;
+        return $this;
     }
 
     /**
-     * @param $height
+     * Set the height
      *
-     * @return $this
+     * @param   $height
+     *
+     * @return  $this
      */
     public function setHeight($height)
     {
@@ -266,17 +264,22 @@ EOD;
     /**
      * Set the border width of the pie chart
      *
-     * @param float $width    Width in px
+     * @param   float $width    Width in px
+     *
+     * @return  $this
      */
     public function setBorderWidth($width)
     {
         $this->borderWidth = $width;
+        return $this;
     }
 
     /**
      * Set the color of the pie chart border
      *
-     * @param string $col   The color string
+     * @param   string $col   The color string
+     *
+     * @return  $this
      */
     public function setBorderColor($col)
     {
@@ -284,9 +287,11 @@ EOD;
     }
 
     /**
-     * @param $width
+     * Set the width
      *
-     * @return $this
+     * @param   $width
+     *
+     * @return  $this
      */
     public function setWidth($width)
     {
@@ -297,7 +302,9 @@ EOD;
     /**
      * Set the styling of the created HtmlElement
      *
-     * @param string $style
+     * @param   string $style
+     *
+     * @return  $this
      */
     public function setStyle($style)
     {
@@ -307,21 +314,26 @@ EOD;
     /**
      * Set the title of the displayed Data
      *
-     * @param string $title
+     * @param   string $title
+     *
+     * @return  $this
      */
     public function setTitle($title)
     {
         $this->title = $title;
+        return $this;
     }
 
     /**
      * Create a new InlinePie
      *
      * @param array  $data      The data displayed by the slices
+     * @param string $title     The title of this Pie
      * @param array  $colors    An array of RGB-Color values to use
      */
-    public function __construct(array $data, $colors = null)
+    public function __construct(array $data, $title, $colors = null)
     {
+        $this->title = $title;
         $this->url = Url::fromPath('svg/chart.php');
         if (array_key_exists('data', $data)) {
             $this->data = $data['data'];
@@ -346,10 +358,11 @@ EOD;
      *
      * @return string   A serialized array of labels
      */
-    private function createLabelString () {
+    private function createLabelString ()
+    {
         $labels = $this->labels;
         foreach ($labels as $key => $label) {
-            $labels[$key] = preg_replace('/|/', '', $label);
+            $labels[$key] = str_replace('|', '', $label);
         }
         return isset($this->labels) && is_array($this->labels) ? implode('|', $this->labels) : '';
     }
@@ -363,27 +376,35 @@ EOD;
     public function render()
     {
         $template = $this->template;
-        $template = preg_replace('{{url}}', $this->url, $template);
+        $template = str_replace('{url}', $this->url, $template);
 
         // style
-        $template = preg_replace('{{width}}', htmlspecialchars($this->width), $template);
-        $template = preg_replace('{{height}}', htmlspecialchars($this->height), $template);
-        $template = preg_replace('{{title}}', htmlspecialchars($this->title), $template);
-        $template = preg_replace('{{style}}', $this->style, $template);
-        $template = preg_replace('{{colors}}', implode(',', $this->colors), $template);
-        $template = preg_replace('{{borderWidth}}', htmlspecialchars($this->borderWidth), $template);
-        $template = preg_replace('{{borderColor}}', htmlspecialchars($this->borderColor), $template);
-        $template = preg_replace('{{hideEmptyLabel}}', $this->hideEmptyLabel ? 'true' : 'false', $template);
+        $template = str_replace('{width}', $this->width, $template);
+        $template = str_replace('{height}', $this->height, $template);
+        $template = str_replace('{title}', htmlspecialchars($this->title), $template);
+        $template = str_replace('{style}', $this->style, $template);
+        $template = str_replace('{colors}', implode(',', $this->colors), $template);
+        $template = str_replace('{borderWidth}', $this->borderWidth, $template);
+        $template = str_replace('{borderColor}', $this->borderColor, $template);
+        $template = str_replace('{hideEmptyLabel}', $this->hideEmptyLabel ? 'true' : 'false', $template);
+
+        // Locale-ignorant string cast. Please. Do. NOT. Remove. This. Again.
+        // Problem is that implode respects locales when casting floats. This means
+        // that implode(',', array(1.1, 1.2)) would read '1,1,1,2'.
+        $data = array();
+        foreach ($this->data as $dat) {
+            $data[] = sprintf('%F', $dat);
+        }
 
         // values
         $formatted = array();
         foreach ($this->data as $key => $value) {
             $formatted[$key] = $this->formatValue($value);
         }
-        $template = preg_replace('{{data}}', htmlspecialchars(implode(',', $this->data)), $template);
-        $template = preg_replace('{{formatted}}', htmlspecialchars(implode('|', $formatted)), $template);
-        $template = preg_replace('{{labels}}', htmlspecialchars($this->createLabelString()), $template);
-        $template = preg_replace('{{tooltipFormat}}', $this->tooltipFormat, $template);
+        $template = str_replace('{data}', htmlspecialchars(implode(',', $data)), $template);
+        $template = str_replace('{formatted}', htmlspecialchars(implode('|', $formatted)), $template);
+        $template = str_replace('{labels}', htmlspecialchars($this->createLabelString()), $template);
+        $template = str_replace('{tooltipFormat}', $this->tooltipFormat, $template);
         return $template;
     }
 
@@ -396,11 +417,13 @@ EOD;
      */
     private function formatValue($value)
     {
-        if ($this->format === self::NUMBER_FORMAT_BYTES) {
+        if ($this->format === self::NUMBER_FORMAT_NONE) {
+            return (string)$value;
+        } elseif ($this->format === self::NUMBER_FORMAT_BYTES) {
             return Format::bytes($value);
-        } else if ($this->format === self::NUMBER_FORMAT_TIME) {
+        } elseif ($this->format === self::NUMBER_FORMAT_TIME) {
             return Format::duration($value);
-        } else if ($this->format === self::NUMBER_FORMAT_RATIO) {
+        } elseif ($this->format === self::NUMBER_FORMAT_RATIO) {
             return $value;
         } else {
             Logger::warning('Unknown format string "' . $this->format . '" for InlinePie, value not formatted.');
@@ -408,4 +431,3 @@ EOD;
         }
     }
 }
-// @codeCoverageIgnoreEnd

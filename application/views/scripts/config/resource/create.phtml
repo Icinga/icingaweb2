@@ -1,14 +1,6 @@
-<h4>
-    <i class="icinga-icon-create"></i>
-    Create New Resource
-</h4>
-
-<?php if (isset($this->messageBox)): ?>
-  <?= $this->messageBox->render() ?>
-<?php endif ?>
-
-<p>
-  Resources are entities that provide data to Icingaweb.
-</p>
-
-<?= $this->form ?>
+<div class="controls">
+    <?= $this->tabs->showOnlyCloseButton() ?>
+</div>
+<h4><?= $this->translate('Create A New Resource'); ?></h4>
+<p><?= $this->translate('Resources are entities that provide data to Icinga Web 2.'); ?></p>
+<?= $form; ?>

@@ -3,8 +3,8 @@ $this->is_service = true;
 $this->hostquery = implode($this->hostnames, ',');
 $this->servicequery = implode($this->servicenames, ',');
 $this->target = array(
-	'host'	=> $this->hostquery,
-	'service' => $this->servicequery
+    'host' => $this->hostquery,
+    'service' => $this->servicequery
 );
 ?>
 
@@ -13,6 +13,9 @@ $this->target = array(
 </div>
 
 <div class="content">
+  <?php if (count($objects) === 0): ?>
+      <?= mt('monitoring', 'No services matching the filter'); ?>
+  <?php else: ?>
   <h1> Summary for <?= count($objects) ?> services </h1>
 
   <table style="width: 100%; font-size: 0.8em;">
@@ -24,11 +27,11 @@ $this->target = array(
       <td align="center"><?= $this->service_pie->render() ?></td>
       <td><?php
 
-        foreach ($service_states as $state => $count) {
-            if ($count > 0) {
-                echo ucfirst($state) . ': ' . $count . '<br />';
-            }
-        }
+          foreach ($service_states as $state => $count) {
+              if ($count > 0) {
+                  echo ucfirst($state) . ': ' . $count . '<br />';
+              }
+          }
 
       ?></td>
       <td align="center"><?= $this->host_pie->render() ?></td>
@@ -54,4 +57,5 @@ $this->target = array(
   </table>
 
   <?= $this->render('multi/components/flags.phtml') ?>
+  <?php endif ?>
 </div>

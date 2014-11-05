@@ -1,33 +1,95 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Object;
 
-use Icinga\Module\Monitoring\DataView\HostStatus;
-use Icinga\Data\Db\DbQuery;
+use InvalidArgumentException;
+use Icinga\Module\Monitoring\Backend;
 
-class Host extends AbstractObject
+/**
+ * A Icinga host
+ */
+class Host extends MonitoredObject
 {
-    public $type   = 'host';
+    /**
+     * Host state 'UP'
+     */
+    const STATE_UP = 0;
+
+    /**
+     * Host state 'DOWN'
+     */
+    const STATE_DOWN = 1;
+
+    /**
+     * Host state 'UNREACHABLE'
+     */
+    const STATE_UNREACHABLE = 2;
+
+    /**
+     * Host state 'PENDING'
+     */
+    const STATE_PENDING = 99;
+
+    /**
+     * Type of the Icinga host
+     *
+     * @var string
+     */
+    public $type = self::TYPE_HOST;
+
+    /**
+     * Prefix of the Icinga host
+     *
+     * @var string
+     */
     public $prefix = 'host_';
 
-    protected function applyObjectFilter(DbQuery $query)
+    /**
+     * Host name
+     *
+     * @var string
+     */
+    protected $host;
+
+    /**
+     * The services running on the hosts
+     *
+     * @var \Icinga\Module\Monitoring\Object\Service[]
+     */
+    protected $services;
+
+    /**
+     * Create a new host
+     *
+     * @param Backend   $backend    Backend to fetch host information from
+     * @param string    $host       Host name
+     */
+    public function __construct(Backend $backend, $host)
     {
-        return $query->where('host_name', $this->host_name);
+        parent::__construct($backend);
+        $this->host = $host;
     }
 
-    public function populate()
+    /**
+     * Get the host name
+     *
+     * @return string
+     */
+    public function getName()
     {
-        $this->fetchComments()
-            ->fetchHostgroups()
-            ->fetchContacts()
-            ->fetchContactGroups()
-            ->fetchCustomvars()
-            ->fetchDowntimes();
+        return $this->host;
     }
 
-    protected function getProperties()
+    /**
+     * Get the data view to fetch the host information from
+     *
+     * @return \Icinga\Module\Monitoring\DataView\HostStatus
+     */
+    protected function getDataView()
     {
-        $this->view = HostStatus::fromParams(array('backend' => null), array(
+        return $this->backend->select()->from('hostStatus', array(
             'host_name',
             'host_alias',
             'host_address',
@@ -67,8 +129,59 @@ class Host extends AbstractObject
             'host_action_url',
             'host_notes_url',
             'host_modified_host_attributes',
-            'host_problem'
-        ))->where('host_name', $this->params->get('host'));
-        return $this->view->getQuery()->fetchRow();
+            'host_problem',
+            'host_process_performance_data',
+            'process_perfdata' => 'host_process_performance_data'
+        ))
+            ->where('host_name', $this->host);
+    }
+
+    /**
+     * Fetch the services running on the host
+     *
+     * @return $this
+     */
+    public function fetchServices()
+    {
+        $services = array();
+        foreach ($this->backend->select()->from('serviceStatus', array('service_description'))
+                ->where('host_name', $this->host)
+                ->getQuery()
+                ->fetchAll() as $service) {
+            $services[] = new Service($this->backend, $this->host, $service->service_description);
+        }
+        $this->services = $services;
+        return $this;
+    }
+
+    /**
+     * Get the optional translated textual representation of a host state
+     *
+     * @param   int     $state
+     * @param   bool    $translate
+     *
+     * @return  string
+     * @throws  InvalidArgumentException If the host state is not valid
+     */
+    public static function getStateText($state, $translate = false)
+    {
+        $translate = (bool) $translate;
+        switch ((int) $state) {
+            case self::STATE_UP:
+                $text = $translate ? mt('monitoring', 'up') : 'up';
+                break;
+            case self::STATE_DOWN:
+                $text = $translate ? mt('monitoring', 'down') : 'down';
+                break;
+            case self::STATE_UNREACHABLE:
+                $text = $translate ? mt('monitoring', 'unreachable') : 'unreachable';
+                break;
+            case self::STATE_PENDING:
+                $text = $translate ? mt('monitoring', 'pending') : 'pending';
+                break;
+            default:
+                throw new InvalidArgumentException('Invalid host state \'%s\'', $state);
+        }
+        return $text;
     }
 }

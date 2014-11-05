@@ -1,45 +1,23 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart;
 
-use \Exception;
-use \Icinga\Chart\Legend;
-use \Icinga\Chart\Palette;
-use \Icinga\Chart\Primitive\Drawable;
-use \Icinga\Chart\SVGRenderer;
+use Exception;
+use Icinga\Chart\Legend;
+use Icinga\Chart\Palette;
+use Icinga\Chart\Primitive\Drawable;
+use Icinga\Chart\SVGRenderer;
+use Icinga\Exception\IcingaException;
 
 /**
  * Base class for charts, extended by all other Chart classes.
  */
 abstract class Chart implements Drawable
 {
+    protected $align = false;
+
     /**
      * SVG renderer that handles
      *
@@ -112,19 +90,33 @@ abstract class Chart implements Drawable
      *
      * Render this graph and return the created SVG
      *
-     * @return  string      The SVG created by the SvgRenderer
+     * @return  string              The SVG created by the SvgRenderer
      *
-     * @throws  Exception   Thrown wen the dataset is not valid for this graph
+     * @throws  IcingaException     Thrown wen the dataset is not valid for this graph
      * @see     SVGRenderer::render
      */
     public function render()
     {
         if (!$this->isValidDataFormat()) {
-            throw new Exception('Dataset for graph doesn\'t have the proper structure');
+            throw new IcingaException('Dataset for graph doesn\'t have the proper structure');
         }
         $this->build();
-
+        if ($this->align) {
+            $this->renderer->preserveAspectRatio();
+            $this->renderer->setXAspectRatioAlignment(SVGRenderer::X_ASPECT_RATIO_MIN);
+            $this->renderer->setYAspectRatioAlignment(SVGRenderer::Y_ASPECT_RATIO_MIN);
+        }
         $this->renderer->getCanvas()->addElement($this);
         return $this->renderer->render();
+    }
+
+    /**
+     * Align the chart to the top left corner instead of centering it
+     *
+     * @param bool $align
+     */
+    public function alignTopLeft ($align = true)
+    {
+        $this->align = $align;
     }
 }

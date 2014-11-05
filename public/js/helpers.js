@@ -1,3 +1,5 @@
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 (function (Object) {
 
@@ -92,6 +94,13 @@ if (!Function.prototype.bind) {
 (function ($) {
 
     'use strict';
+
+    /* Whether a HTML tag has a specific attribute */
+    $.fn.hasAttr = function(name) {
+        // We have inconsistent behaviour across browsers (false VS undef)
+        var val = this.attr(name);
+        return typeof val !== 'undefined' && val !== false;
+    };
 
     /* Get class list */
     $.fn.classes = function (callback) {

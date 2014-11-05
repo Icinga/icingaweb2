@@ -51,7 +51,7 @@ define cmmi(
     require => Class['wget']
   }
 
-  $tld = inline_template('<%= File.basename(output, ".tar.gz") %>')
+  $tld = inline_template('<%= File.basename(@output, ".tar.gz") %>')
   $src = "${cwd}/${name}/${tld}"
 
   exec { "extract-${name}":

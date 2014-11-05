@@ -4,8 +4,6 @@
 
 namespace Icinga\Exception;
 
-use RuntimeException;
-
-class NotWritableError extends RuntimeException
+class NotWritableError extends IcingaException
 {
 }

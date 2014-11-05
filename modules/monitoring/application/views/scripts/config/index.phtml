@@ -1,99 +1,70 @@
-<?php
-use Icinga\Web\Url;
-
-$fileNotReadable = array();
-foreach (array('backends', 'instances') as $element) {
-    if (is_object($this->{$element}) &&
-        get_class($this->{$element}) === 'Icinga\Exception\NotReadableError') {
-        $fileNotReadable[$element] = $this->{$element}->getMessage();
-    } else {
-        $fileNotReadable[$element] = false;
-    }
-}
-?>
-
 <div class="controls">
-    <?= $this->tabs->render($this); ?>
+  <?= $tabs; ?>
 </div>
 
 <div class="content" data-base-target="_next">
-    <?php if ($fileNotReadable['backends'] === false): ?>
-        <h1>Monitoring Backends</h1>
-
-        <?php if (isset($this->messageBox)): ?>
-            <?= $this->messageBox->render() ?>
-        <?php endif ?>
-
-        <p>
-            <a href="<?= Url::fromPath('/monitoring/config/createbackend')->getAbsoluteUrl();?>">
-                <?= $this->icon('create.png'); ?> Create New Monitoring Backend
-            </a>
-        </p>
-
-        <table class="action">
-            <thead>
-            <th>Monitoring Backend</th>
-            <th style="width: 5em">Remove</th>
-            </thead>
-            <tbody>
-            <?php foreach ($this->backends as $backendName => $config): ?>
-                <?php
-                $removeUrl = Url::fromPath('/monitoring/config/removebackend', array('backend' => $backendName));
-                $editUrl = Url::fromPath('/monitoring/config/editbackend', array('backend' => $backendName));
-                ?>
-                <tr>
-                    <td>
-                        <a href="<?= $editUrl; ?>"><?= $this->icon('edit.png'); ?> <?= $this->escape($backendName); ?></a>
-                        <small>(Type: <?= $this->escape($config['type'] === 'ido' ? 'IDO' : ucfirst($config['type'])); ?>)</small>
-                    </td>
-                    <td>
-                        <a href="<?= $removeUrl; ?>"><?= $this->icon('remove.png'); ?></a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php else: ?>
-        <p class="fileNotReadable">
-            <?= $this->escape($fileNotReadable['backends']) ?>
-        </p>
-    <?php endif ?>
-
-    <?php if ($fileNotReadable['instances'] === false): ?>
-        <h1>Monitoring Instances</h1>
-
-        <p>
-            <a href="<?= Url::fromPath('/monitoring/config/createinstance')->getAbsoluteUrl();?>">
-                <?= $this->icon('create.png'); ?> Create New Instance
-            </a>
-        </p>
-
-        <table class="action">
-            <thead>
-                <th>Instance</th>
-                <th style="width: 5em">Remove</th>
-            </thead>
-            <tbody>
-                <?php foreach ($this->instances as $instanceName => $config): ?>
-                    <?php
-                    $removeUrl = Url::fromPath('/monitoring/config/removeinstance', array('instance' => $instanceName));
-                    $editUrl = Url::fromPath('/monitoring/config/editinstance', array('instance' => $instanceName));
-                    ?>
-                    <tr>
-                        <td>
-                            <a href="<?= $editUrl; ?>"><?= $this->icon('edit.png'); ?> <?= $this->escape($instanceName); ?></a>
-                            <small>(Type: <?= isset($config['host']) ? 'Remote' : 'Local'; ?>)</small>
-                        </td>
-                        <td>
-                            <a href="<?= $removeUrl; ?>"><?= $this->icon('remove.png'); ?></a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php else: ?>
-        <p class="fileNotReadable">
-            <?= $this->escape($fileNotReadable['instances']) ?>
-        </p>
-    <?php endif ?>
+  <h1><?= $this->translate('Monitoring Backends') ?></h1>
+  <p>
+    <a href="<?= $this->href('/monitoring/config/createbackend'); ?>">
+      <?= $this->icon('create.png'); ?> <?= $this->translate('Create New Monitoring Backend'); ?>
+    </a>
+  </p>
+  <table class="action">
+    <thead>
+      <th><?= $this->translate('Monitoring Backend'); ?></th>
+      <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
+    </thead>
+    <tbody>
+    <?php foreach ($this->backendsConfig as $backendName => $config): ?>
+      <tr>
+        <td>
+          <a href="<?= $this->href('/monitoring/config/editbackend', array('backend' => $backendName)); ?>">
+            <?= $this->icon('edit.png'); ?> <?= $this->escape($backendName); ?>
+          </a>
+          <small>(<?= sprintf(
+            $this->translate('Type: %s'),
+            $this->escape($config->type === 'ido' ? 'IDO' : ucfirst($config->type))
+          ); ?>)</small>
+        </td>
+        <td>
+          <a href="<?= $this->href('/monitoring/config/removebackend', array('backend' => $backendName)); ?>">
+            <?= $this->icon('remove.png'); ?>
+          </a>
+        </td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
+  <h1><?= $this->translate('Monitoring Instances') ?></h1>
+  <p>
+    <a href="<?= $this->href('/monitoring/config/createinstance'); ?>">
+      <?= $this->icon('create.png'); ?> <?= $this->translate('Create New Instance'); ?>
+    </a>
+  </p>
+  <table class="action">
+    <thead>
+      <th><?= $this->translate('Instance'); ?></th>
+      <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
+    </thead>
+    <tbody>
+    <?php foreach ($this->instancesConfig as $instanceName => $config): ?>
+      <tr>
+        <td>
+          <a href="<?= $this->href('/monitoring/config/editinstance', array('instance' => $instanceName)); ?>">
+            <?= $this->icon('edit.png'); ?> <?= $this->escape($instanceName); ?>
+          </a>
+          <small>(<?= sprintf(
+            $this->translate('Type: %s'),
+            $config->host !== null ? $this->translate('Remote') : $this->translate('Local')
+          ); ?>)</small>
+        </td>
+        <td>
+          <a href="<?= $this->href('/monitoring/config/removeinstance', array('instance' => $instanceName)); ?>">
+            <?= $this->icon('remove.png'); ?>
+          </a>
+        </td>
+      </tr>
+    <?php endforeach; ?>
+    </tbody>
+  </table>
 </div>

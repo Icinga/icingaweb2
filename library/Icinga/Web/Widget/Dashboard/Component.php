@@ -1,34 +1,10 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Widget\Dashboard;
 
+use Icinga\Exception\IcingaException;
 use Icinga\Util\Dimension;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
@@ -67,6 +43,13 @@ class Component extends AbstractWidget
     private $pane;
 
     /**
+     * The disabled option is used to "delete" default dashlets provided by modules
+     *
+     * @var bool
+     */
+    private $disabled = false;
+
+    /**
      * The template string used for rendering this widget
      *
      * @var string
@@ -97,11 +80,9 @@ EOD;
         } elseif ($url) {
             $this->url = Url::fromPath($url);
         } else {
-            throw new Exception(
-                sprintf(
-                    'Cannot create dashboard component "%s" without valid URL',
-                    $title
-                )
+            throw new IcingaException(
+                'Cannot create dashboard component "%s" without valid URL',
+                $title
             );
         }
     }
@@ -144,6 +125,26 @@ EOD;
     }
 
     /**
+     * Set the disabled property
+     *
+     * @param boolean $disabled
+     */
+    public function setDisabled($disabled)
+    {
+        $this->disabled = $disabled;
+    }
+
+    /**
+     * Get the disabled property
+     *
+     * @return boolean
+     */
+    public function getDisabled()
+    {
+        return $this->disabled;
+    }
+
+    /**
      * Return this component's structure as array
      *
      * @return  array
@@ -151,10 +152,9 @@ EOD;
     public function toArray()
     {
         $array = array('url' => $this->url->getPath());
-        foreach ($this->url->getParams() as $key => $value) {
-            $array[$key] = $value;
+        foreach ($this->url->getParams()->toArray() as $param) {
+            $array[$param[0]] = $param[1];
         }
-
         return $array;
     }
 
@@ -163,6 +163,10 @@ EOD;
      */
     public function render()
     {
+        if ($this->disabled === true) {
+            return '';
+        }
+
         $view = $this->view();
         $url = clone($this->url);
         $url->setParam('view', 'compact');

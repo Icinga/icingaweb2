@@ -1,3 +1,6 @@
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 /**
  * Icinga.Logger
  *
@@ -34,7 +37,7 @@
         /**
          * Raise or lower current log level
          *
-         * Messages blow this threshold will be silently discarded
+         * Messages below this threshold will be silently discarded
          */
         setLevel: function (level) {
             if ('undefined' !== typeof this.numericLevel(level)) {

@@ -1,43 +1,19 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2014 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2014 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Authentication;
 
 use Exception;
 use Zend_Config;
-use Icinga\User;
-use Icinga\Web\Session;
-use Icinga\Logger\Logger;
+use Icinga\Application\Config;
+use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
-use Icinga\Application\Config as IcingaConfig;
+use Icinga\Application\Logger;
+use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
+use Icinga\Web\Session;
 
 class Manager
 {
@@ -52,15 +28,9 @@ class Manager
      * Authenticated user
      *
      * @var User
-     **/
+     */
     private $user;
 
-    /**
-     * If the user was authenticated from the REMOTE_USER server variable
-     *
-     * @var Boolean
-     */
-    private $fromRemoteUser = false;
 
     private function __construct()
     {
@@ -83,10 +53,14 @@ class Manager
     {
         $username = $user->getUsername();
         try {
-            $config = IcingaConfig::app();
+            $config = Config::app();
         } catch (NotReadableError $e) {
             Logger::error(
-                new Exception('Cannot load preferences for user "' . $username . '". An exception was thrown', 0, $e)
+                new IcingaException(
+                    'Cannot load preferences for user "%s". An exception was thrown',
+                    $username,
+                    $e
+                )
             );
             $config = new Zend_Config(array());
         }
@@ -99,8 +73,10 @@ class Manager
                 $preferences = new Preferences($preferencesStore->load());
             } catch (NotReadableError $e) {
                 Logger::error(
-                    new Exception(
-                        'Cannot load preferences for user "' . $username . '". An exception was thrown', 0, $e
+                    new IcingaException(
+                        'Cannot load preferences for user "%s". An exception was thrown',
+                        $username,
+                        $e
                     )
                 );
                 $preferences = new Preferences();
@@ -109,52 +85,74 @@ class Manager
             $preferences = new Preferences();
         }
         $user->setPreferences($preferences);
-        $membership = new Membership();
-        $groups = $membership->getGroupsByUsername($username);
+        $groups = array();
+        foreach (Config::app('groups') as $name => $config) {
+            try {
+                $groupBackend = UserGroupBackend::create($name, $config);
+                $groupsFromBackend = $groupBackend->getMemberships($user);
+            } catch (Exception $e) {
+                Logger::error(
+                    'Can\'t get group memberships for user \'%s\' from backend \'%s\'. An exception was thrown:',
+                    $username,
+                    $name,
+                    $e
+                );
+                continue;
+            }
+            if (empty($groupsFromBackend)) {
+                continue;
+            }
+            $groupsFromBackend = array_values($groupsFromBackend);
+            $groups = array_merge($groups, array_combine($groupsFromBackend, $groupsFromBackend));
+        }
         $user->setGroups($groups);
         $admissionLoader = new AdmissionLoader();
-        $user->setPermissions(
-            $admissionLoader->getPermissions($username, $groups)
-        );
-        $user->setRestrictions(
-            $admissionLoader->getRestrictions($username, $groups)
-        );
+        $user->setPermissions($admissionLoader->getPermissions($user));
+        $user->setRestrictions($admissionLoader->getRestrictions($user));
         $this->user = $user;
-        if ($persist == true) {
-            $session = Session::getSession();
-            $session->refreshId();
+        if ($persist) {
             $this->persistCurrentUser();
         }
     }
 
     /**
      * Writes the current user to the session
-     **/
+     */
     public function persistCurrentUser()
     {
         $session = Session::getSession();
         $session->set('user', $this->user);
         $session->write();
+        $session->refreshId();
     }
 
     /**
-     * Tries to authenticate the user with the current session
-     **/
+     * Try to authenticate the user with the current session
+     *
+     * Authentication for externally-authenticated users will be revoked if the username changed or external
+     * authentication is no longer in effect
+     */
     public function authenticateFromSession()
     {
         $this->user = Session::getSession()->get('user');
+        if ($this->user !== null && $this->user->isRemoteUser() === true) {
+            list($originUsername, $field) = $this->user->getRemoteUserInformation();
+            if (! array_key_exists($field, $_SERVER) || $_SERVER[$field] !== $originUsername) {
+                $this->removeAuthorization();
+            }
+        }
     }
 
     /**
-     * Returns true when the user is currently authenticated
+     * Whether the user is authenticated
      *
-     * @param  Boolean  $ignoreSession  Set to true to prevent authentication by session
+     * @param  bool $ignoreSession True to prevent session authentication
      *
      * @return bool
      */
     public function isAuthenticated($ignoreSession = false)
     {
-        if ($this->user === null && !$ignoreSession) {
+        if ($this->user === null && ! $ignoreSession) {
             $this->authenticateFromSession();
         }
         return is_object($this->user);
@@ -163,25 +161,16 @@ class Manager
     /**
      * Whether an authenticated user has a given permission
      *
-     * This is true if the user owns this permission, false if not.
-     * Also false if there is no authenticated user
-     *
-     * TODO: I'd like to see wildcard support, e.g. module/*
-     *
      * @param  string  $permission  Permission name
-     * @return bool
+     *
+     * @return bool                 True if the user owns the given permission, false if not or if not authenticated
      */
     public function hasPermission($permission)
     {
         if (! $this->isAuthenticated()) {
             return false;
         }
-        foreach ($this->user->getPermissions() as $p) {
-            if ($p === $permission) {
-                return true;
-            }
-        }
-        return false;
+        return $this->user->can($permission);
     }
 
     /**
@@ -202,19 +191,19 @@ class Manager
     }
 
     /**
-     * Purges the current authorization information and removes the user from the session
-     **/
+     * Purges the current authorization information and session
+     */
     public function removeAuthorization()
     {
         $this->user = null;
-        $this->persistCurrentUser();
+        Session::getSession()->purge();
     }
 
     /**
      * Returns the current user or null if no user is authenticated
      *
      * @return User
-     **/
+     */
     public function getUser()
     {
         return $this->user;
@@ -225,40 +214,9 @@ class Manager
      *
      * @return  array
      * @see     User::getGroups
-     **/
+     */
     public function getGroups()
     {
         return $this->user->getGroups();
-    }
-
-    /**
-     * Tries to authenticate the user from the session, and then from the REMOTE_USER superglobal, that can be set by
-     * an external authentication provider.
-     */
-    public function authenticateFromRemoteUser()
-    {
-        if (array_key_exists('REMOTE_USER', $_SERVER)) {
-            $this->fromRemoteUser = true;
-        }
-        $this->authenticateFromSession();
-        if ($this->user !== null) {
-            if (array_key_exists('REMOTE_USER', $_SERVER) && $this->user->getUsername() !== $_SERVER["REMOTE_USER"]) {
-                // Remote user has changed, clear all sessions
-                $this->removeAuthorization();
-            }
-            return;
-        }
-        if (array_key_exists('REMOTE_USER', $_SERVER) && $_SERVER["REMOTE_USER"]) {
-            $this->user = new User($_SERVER["REMOTE_USER"]);
-            $this->persistCurrentUser();
-        }
-    }
-
-    /**
-     * If the session was established from the REMOTE_USER server variable.
-     */
-    public function isAuthenticatedFromRemoteUser()
-    {
-        return $this->fromRemoteUser;
     }
 }

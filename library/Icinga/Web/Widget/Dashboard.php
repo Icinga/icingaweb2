@@ -1,30 +1,5 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Widget;
@@ -33,7 +8,6 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Config as IcingaConfig;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
 use Icinga\Web\Url;
@@ -89,6 +63,46 @@ class Dashboard extends AbstractWidget
     }
 
     /**
+     * Load Pane items provided by all enabled modules
+     *
+     * @return  self
+     */
+    public static function load()
+    {
+        /** @var $dashboard Dashboard */
+        $dashboard = new static('dashboard');
+        $manager = Icinga::app()->getModuleManager();
+        foreach ($manager->getLoadedModules() as $module) {
+            /** @var $module \Icinga\Application\Modules\Module */
+            $dashboard->mergePanes($module->getPaneItems());
+
+        }
+        return $dashboard;
+    }
+
+    /**
+     * Merge panes with existing panes
+     *
+     * @param array $panes
+     * @return $this
+     */
+    public function mergePanes(array $panes)
+    {
+        /** @var $pane Pane  */
+        foreach ($panes as $pane) {
+            if (array_key_exists($pane->getName(), $this->panes)) {
+                /** @var $current Pane */
+                $current = $this->panes[$pane->getName()];
+                $current->addComponents($pane->getComponents());
+            } else {
+                $this->panes[$pane->getName()] = $pane;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Return the tab object used to navigate through this dashboard
      *
      * @return Tabs
@@ -111,6 +125,16 @@ class Dashboard extends AbstractWidget
             }
         }
         return $this->tabs;
+    }
+
+    /**
+     * Return all panes of this dashboard
+     *
+     * @return array
+     */
+    public function getPanes()
+    {
+        return $this->panes;
     }
 
     /**
@@ -149,9 +173,9 @@ class Dashboard extends AbstractWidget
      *
      * @TODO:   Should only allow component objects to be added directly as soon as we store more information
      *
-     * @param string $pane                  The pane to add the component to
-     * @param Component|string $component   The component to add or the title of the newly created component
-     * @param $url                          The url to use for the component
+     * @param   string              $pane       The pane to add the component to
+     * @param   Component|string    $component  The component to add or the title of the newly created component
+     * @param   string|null         $url        The url to use for the component
      *
      * @return self
      */
@@ -173,20 +197,24 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * Return true if a pane doesn't exist or doesn't have any components in it
-     *
-     * @param string $pane      The name of the pane to check for emptyness
+     * Checks if the current dashboard has any panes
      *
      * @return bool
      */
-    public function isEmptyPane($pane)
+    public function hasPanes()
     {
-        $paneObj = $this->getPane($pane);
-        if ($paneObj === null) {
-            return true;
-        }
-        $cmps = $paneObj->getComponents();
-        return !empty($cmps);
+        return ! empty($this->panes);
+    }
+
+    /**
+     * Check if this dashboard has a specific pane
+     *
+     * @param $pane string  The name of the pane
+     * @return bool
+     */
+    public function hasPane($pane)
+    {
+        return array_key_exists($pane, $this->panes);
     }
 
     /**
@@ -249,7 +277,8 @@ class Dashboard extends AbstractWidget
     {
         if (! array_key_exists($name, $this->panes)) {
             throw new ProgrammingError(
-                sprintf('Trying to retrieve invalid dashboard pane "%s"', $name)
+                'Trying to retrieve invalid dashboard pane "%s"',
+                $name
             );
         }
         return $this->panes[$name];
@@ -279,11 +308,11 @@ class Dashboard extends AbstractWidget
         return $active;
     }
 
+    /**
+     * @see determineActivePane()
+     */
     public function getActivePane()
     {
-        if ($active = $this->getTabs()->getActiveName()) {
-            return $this->getPane($active);
-        }
         return $this->determineActivePane();
     }
 
@@ -297,10 +326,12 @@ class Dashboard extends AbstractWidget
         $active = $this->getTabs()->getActiveName();
         if (! $active) {
             if ($active = Url::fromRequest()->getParam($this->tabParam)) {
-                if ($this->isEmptyPane($active)) {
-                    $active = $this->setDefaultPane();
-                } else {
+                if ($this->hasPane($active)) {
                     $this->activate($active);
+                } else {
+                    throw new ProgrammingError(
+                        'Try to get an inexistent pane.'
+                    );
                 }
             } else {
                 $active = $this->setDefaultPane();

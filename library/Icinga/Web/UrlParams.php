@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web;
 
@@ -112,6 +114,18 @@ class UrlParams
         return $ret;
     }
 
+    public function addEncoded($param, $value = true)
+    {
+        $this->params[] = array($param, $this->cleanupValue($value));
+        $this->indexLastOne();
+        return $this;
+    }
+
+    protected function urlEncode($value)
+    {
+        return rawurlencode((string) $value);
+    }
+
     /**
      * Add the given parameter with the given value
      *
@@ -125,9 +139,7 @@ class UrlParams
      */
     public function add($param, $value = true)
     {
-        $this->params[] = array($param, $this->cleanupValue($value));
-        $this->indexLastOne();
-        return $this;
+        return $this->addEncoded($this->urlEncode($param), $this->urlEncode($value));
     }
 
     /**
@@ -169,6 +181,9 @@ class UrlParams
                 $this->set($k, $v);
             }
         } else {
+            if (! is_array($values)) {
+                $values = array($values);
+            }
             foreach ($values as $value) {
                 $this->set($param, $value);
             }
@@ -196,7 +211,7 @@ class UrlParams
      */
     public function unshift($param, $value)
     {
-        array_unshift($this->params, array($param, $this->cleanupValue($value)));
+        array_unshift($this->params, array($this->urlEncode($param), $this->urlEncode($value)));
         $this->reIndexAll();
         return $this;
     }
@@ -222,7 +237,10 @@ class UrlParams
             unset($this->params[$remove]);
         }
 
-        $this->params[$this->index[$param][0]] = array($param, $this->cleanupValue($value));
+        $this->params[$this->index[$param][0]] = array(
+            $this->urlEncode($param),
+            $this->urlEncode($this->cleanupValue($value))
+        );
         $this->reIndexAll();
 
         return $this;        
@@ -241,7 +259,7 @@ class UrlParams
                 foreach ($this->index[$p] as $key) {
                     unset($this->params[$key]);
                 }
-                $this->changed = true;
+                $changed = true;
             }
         }
 
@@ -301,15 +319,23 @@ class UrlParams
     protected function parseQueryStringPart($part)
     {
         if (strpos($part, '=') === false) {
-            $this->add($part, true);
+            $this->addEncoded($part, true);
         } else {
             list($key, $val) = preg_split('/=/', $part, 2);
-            $this->add($key, $val);
+            $this->addEncoded($key, $val);
         }
     }
 
-    public function __toString()
+    public function toArray()
     {
+        return $this->params;
+    }
+
+    public function toString($separator = null)
+    {
+        if ($separator === null) {
+            $separator = $this->separator;
+        }
         $parts = array();
         foreach ($this->params as $p) {
             if ($p[1] === true) {
@@ -318,13 +344,18 @@ class UrlParams
                 $parts[] = $p[0] . '=' . $p[1];
             }
         }
-        return implode($this->separator, $parts);
+        return implode($separator, $parts);
+    }
+
+    public function __toString()
+    {
+        return $this->toString();
     }
 
     public static function fromQueryString($queryString = null)
     {
         if ($queryString === null) {
-            $queryString = $_SERVER['QUERY_STRING'];
+            $queryString = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
         }
         $params = new static();
         $params->parseQueryString($queryString);

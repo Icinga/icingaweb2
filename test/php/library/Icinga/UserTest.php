@@ -60,4 +60,19 @@ class UserTest extends BaseTestCase
         $user = new User('unittest');
         $user->setEmail('mySampleEmail at someDomain dot org');
     }
+
+    public function testPermissions()
+    {
+        $user = new User('test');
+        $user->setPermissions(array(
+            'test',
+            'test/some/specific',
+            'test/more/*'
+        ));
+        $this->assertTrue($user->can('test'));
+        $this->assertTrue($user->can('test/some/specific'));
+        $this->assertTrue($user->can('test/more/everything'));
+        $this->assertFalse($user->can('not/test'));
+        $this->assertFalse($user->can('test/some/not/so/specific'));
+    }
 }

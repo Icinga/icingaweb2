@@ -1,8 +1,11 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Backend;
-use Icinga\Module\Monitoring\DataView\DataView;
+use Icinga\Module\Monitoring\Form\Command\Object\DeleteCommentCommandForm;
+use Icinga\Module\Monitoring\Form\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Web\Url;
 use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -13,6 +16,8 @@ use Icinga\Web\Widget\FilterBox;
 use Icinga\Web\Widget\Chart\HistoryColorGrid;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget;
+use Icinga\Module\Monitoring\Web\Widget\SelectBox;
+use Icinga\Module\Monitoring\Form\StatehistoryForm;
 
 class Monitoring_ListController extends Controller
 {
@@ -27,21 +32,55 @@ class Monitoring_ListController extends Controller
     {
         $this->createTabs();
         $this->view->compact = $this->_request->getParam('view') === 'compact';
+        if ($this->_request->getParam('view') === 'inline') {
+            $this->view->compact = true;
+            $this->view->inline = true;
+        }
         $this->url = Url::fromRequest();
     }
 
     protected function hasBetterUrl()
     {
+        $request = $this->getRequest();
         $url = clone($this->url);
+
         if ($this->getRequest()->isPost()) {
+
+            if ($request->getPost('sort')) {
+                $url->setParam('sort', $request->getPost('sort'));
+                if ($request->getPost('dir')) {
+                    $url->setParam('dir', $request->getPost('dir'));
+                } else {
+                    $url->removeParam('dir');
+                }
+                return $url;
+            }
+
             $q = $this->getRequest()->getPost('q');
+            if ($q) {
+                list($k, $v) = preg_split('/=/', $q);
+                $url->addParams(array($k => $v));
+                return $url;
+            }
         } else {
             $q = $url->shift('q');
-        }
-        if ($q) {
-            list($k, $v) = preg_split('/=/', $q);
-            $url->addParams(array($k => $v));
-            return $url;
+            if ($q !== null) {
+                $action = $this->_request->getActionName();
+                switch($action) {
+                    case 'services':
+                        $this->params->remove('q')->set('service_description', '*' . $q . '*');
+                        break;
+                    case 'hosts':
+                        $this->params->remove('q')->set('host_name', '*' . $q . '*');
+                        break;
+                    case 'hostgroups':
+                        $this->params->remove('q')->set('hostgroup', '*' . $q . '*');
+                        break;
+                    case 'servicegroups':
+                        $this->params->remove('q')->set('servicegroup', '*' . $q . '*');
+                        break;
+                }
+            }
         }
         return false;
     }
@@ -64,27 +103,41 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
+        // Handle soft and hard states
+        $stateType = $this->params->shift('stateType', 'soft');
+        if ($stateType == 'hard') {
+            $stateColumn = 'host_hard_state';
+            $stateChangeColumn = 'host_last_hard_state_change';
+        } else {
+            $stateType = 'soft';
+            $stateColumn = 'host_state';
+            $stateChangeColumn = 'host_last_state_change';
+        }
+
         $this->addTitleTab('hosts');
         $this->setAutorefreshInterval(10);
-        $this->compactView = 'hosts-compact';
         $query = $this->backend->select()->from('hostStatus', array_merge(array(
             'host_icon_image',
             'host_name',
-            'host_state',
+            'host_state' => $stateColumn,
             'host_address',
             'host_acknowledged',
             'host_output',
+            'host_attempt',
             'host_in_downtime',
             'host_is_flapping',
             'host_state_type',
             'host_handled',
             'host_last_check',
-            'host_last_state_change',
+            'host_last_state_change' => $stateChangeColumn,
             'host_notifications_enabled',
-            // 'host_unhandled_service_count',
+            'host_unhandled_services',
             'host_action_url',
             'host_notes_url',
-            // 'host_last_comment',
+            'host_last_comment',
+            'host_last_ack',
+            'host_last_downtime',
             'host_active_checks_enabled',
             'host_passive_checks_enabled',
             'host_current_check_attempt',
@@ -94,12 +147,12 @@ class Monitoring_ListController extends Controller
         $this->applyFilters($query);
 
         $this->setupSortControl(array(
-            'host_last_check'   => 'Last Check',
-            'host_severity'     => 'Severity',
-            'host_name'         => 'Hostname',
-            'host_address'      => 'Address',
-            'host_state'        => 'Current State',
-            'host_state'        => 'Hard State'
+            'host_last_check'   => $this->translate('Last Check'),
+            'host_severity'     => $this->translate('Severity'),
+            'host_name'         => $this->translate('Hostname'),
+            'host_address'      => $this->translate('Address'),
+            'host_state'        => $this->translate('Current State'),
+            'host_state'        => $this->translate('Hard State')
         ));
         $this->view->hosts = $query->paginate();
     }
@@ -112,6 +165,18 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
+        // Handle soft and hard states
+        $stateType = $this->params->shift('stateType', 'soft');
+        if ($stateType == 'hard') {
+            $stateColumn = 'service_hard_state';
+            $stateChangeColumn = 'service_last_hard_state_change';
+        } else {
+            $stateColumn = 'service_state';
+            $stateChangeColumn = 'service_last_state_change';
+            $stateType = 'soft';
+        }
+
         $this->addTitleTab('services');
         $this->view->showHost = true;
         if ($host = $this->_getParam('host')) {
@@ -120,7 +185,7 @@ class Monitoring_ListController extends Controller
             }
         }
         $this->setAutorefreshInterval(10);
-        
+
         $columns = array_merge(array(
             'host_name',
             'host_state',
@@ -130,14 +195,14 @@ class Monitoring_ListController extends Controller
             'host_handled',
             'service_description',
             'service_display_name',
-            'service_state',
+            'service_state' => $stateColumn,
             'service_in_downtime',
             'service_acknowledged',
             'service_handled',
             'service_output',
             'service_perfdata',
             'service_attempt',
-            'service_last_state_change',
+            'service_last_state_change' => $stateChangeColumn,
             'service_icon_image',
             'service_is_flapping',
             'service_state_type',
@@ -147,7 +212,9 @@ class Monitoring_ListController extends Controller
             'service_notifications_enabled',
             'service_action_url',
             'service_notes_url',
-            // 'service_last_comment',
+            'service_last_comment',
+            'service_last_ack',
+            'service_last_downtime',
             'service_active_checks_enabled',
             'service_passive_checks_enabled',
             'current_check_attempt' => 'service_current_check_attempt',
@@ -157,19 +224,44 @@ class Monitoring_ListController extends Controller
 
         $this->applyFilters($query);
         $this->setupSortControl(array(
-            'service_last_check'    =>  'Last Service Check',
-            'service_severity'      =>  'Severity',
-            'service_state'         =>  'Current Service State',
-            'service_description'   =>  'Service Name',
-            'service_state_type'    =>  'Hard State',
-            'host_severity'         =>  'Host Severity',
-            'host_state'            =>  'Current Host State',
-            'host_name'             =>  'Host Name',
-            'host_address'          =>  'Host Address',
-            'host_last_check'       =>  'Last Host Check'
+            'service_last_check'    => $this->translate('Last Service Check'),
+            'service_severity'      => $this->translate('Severity'),
+            'service_state'         => $this->translate('Current Service State'),
+            'service_description'   => $this->translate('Service Name'),
+            'service_state_type'    => $this->translate('Hard State'),
+            'host_severity'         => $this->translate('Host Severity'),
+            'host_state'            => $this->translate('Current Host State'),
+            'host_name'             => $this->translate('Host Name'),
+            'host_address'          => $this->translate('Host Address'),
+            'host_last_check'       => $this->translate('Last Host Check')
         ));
-        // TODO: Workaround, paginate should be able to fetch limit from new params
-        $this->view->services = $query->paginate($this->params->get('limit'));
+        $limit = $this->params->get('limit');
+        $this->view->limit = $limit;
+        if ($limit === 0) {
+            $this->view->services = $query->getQuery()->fetchAll();
+        } else {
+            // TODO: Workaround, paginate should be able to fetch limit from new params
+            $this->view->services = $query->paginate($this->params->get('limit'));
+        }
+
+        $this->view->stats = $this->backend->select()->from('statusSummary', array(
+            'services_total',
+            'services_ok',
+            'services_problem',
+            'services_problem_handled',
+            'services_problem_unhandled',
+            'services_critical',
+            'services_critical_unhandled',
+            'services_critical_handled',
+            'services_warning',
+            'services_warning_unhandled',
+            'services_warning_handled',
+            'services_unknown',
+            'services_unknown_unhandled',
+            'services_unknown_handled',
+            'services_pending',
+        ))->getQuery()->fetchRow();
+
     }
 
     /**
@@ -177,6 +269,9 @@ class Monitoring_ListController extends Controller
      */
     public function downtimesAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('downtimes');
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('downtime', array(
@@ -186,6 +281,7 @@ class Monitoring_ListController extends Controller
             'author'          => 'downtime_author',
             'start'           => 'downtime_start',
             'scheduled_start' => 'downtime_scheduled_start',
+            'scheduled_end'   => 'downtime_scheduled_end',
             'end'             => 'downtime_end',
             'duration'        => 'downtime_duration',
             'is_flexible'     => 'downtime_is_flexible',
@@ -193,23 +289,26 @@ class Monitoring_ListController extends Controller
             'is_in_effect'    => 'downtime_is_in_effect',
             'entry_time'      => 'downtime_entry_time',
             'host'            => 'downtime_host',
-            'service'         => 'downtime_service'
+            'service'         => 'downtime_service',
+            'host_state'      => 'downtime_host_state',
+            'service_state'   => 'downtime_service_state'
         ))->order('downtime_is_in_effect', 'DESC')
           ->order('downtime_scheduled_start', 'DESC');
 
         $this->applyFilters($query);
         $this->view->downtimes = $query->paginate();
         $this->setupSortControl(array(
-            'downtime_is_in_effect'    => 'Is In Effect',
-            'downtime_host'            => 'Host / Service',
-            'downtime_entry_time'      => 'Entry Time',
-            'downtime_author'          => 'Author',
-            'downtime_start'           => 'Start Time',
-            'downtime_start'           => 'End Time',
-            'downtime_scheduled_start' => 'Scheduled Start',
-            'downtime_scheduled_end'   => 'Scheduled End',
-            'downtime_duration'        => 'Duration',
+            'downtime_is_in_effect'    => $this->translate('Is In Effect'),
+            'downtime_host'            => $this->translate('Host / Service'),
+            'downtime_entry_time'      => $this->translate('Entry Time'),
+            'downtime_author'          => $this->translate('Author'),
+            'downtime_start'           => $this->translate('Start Time'),
+            'downtime_start'           => $this->translate('End Time'),
+            'downtime_scheduled_start' => $this->translate('Scheduled Start'),
+            'downtime_scheduled_end'   => $this->translate('Scheduled End'),
+            'downtime_duration'        => $this->translate('Duration'),
         ));
+        $this->view->delDowntimeForm = new DeleteDowntimeCommandForm();
     }
 
     /**
@@ -217,6 +316,9 @@ class Monitoring_ListController extends Controller
      */
     public function notificationsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('notifications');
         $this->setAutorefreshInterval(15);
         $query = $this->backend->select()->from('notification', array(
@@ -230,12 +332,15 @@ class Monitoring_ListController extends Controller
         $this->applyFilters($query);
         $this->view->notifications = $query->paginate();
         $this->setupSortControl(array(
-            'notification_start_time' => 'Notification Start'
+            'notification_start_time' => $this->translate('Notification Start')
         ));
     }
 
     public function contactsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('contacts');
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
@@ -261,30 +366,60 @@ class Monitoring_ListController extends Controller
         $this->view->contacts = $query->paginate();
 
         $this->setupSortControl(array(
-            'contact_name' => 'Name',
-            'contact_alias' => 'Alias',
-            'contact_email' => 'Email',
-            'contact_pager' => 'Pager Address / Number',
-            'contact_notify_service_timeperiod' => 'Service Notification Timeperiod',
-            'contact_notify_host_timeperiod' => 'Host Notification Timeperiod'
+            'contact_name' => $this->translate('Name'),
+            'contact_alias' => $this->translate('Alias'),
+            'contact_email' => $this->translate('Email'),
+            'contact_pager' => $this->translate('Pager Address / Number'),
+            'contact_notify_service_timeperiod' => $this->translate('Service Notification Timeperiod'),
+            'contact_notify_host_timeperiod' => $this->translate('Host Notification Timeperiod')
         ));
     }
 
     public function statehistorysummaryAction()
     {
-        $this->addTitleTab('statehistorysummary', 'Critical Events');
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
+        $this->addTitleTab('statehistorysummary', 'State Summary');
+
+        $form = new StatehistoryForm();
+        $form->setEnctype(Zend_Form::ENCTYPE_URLENCODED);
+        $form->setMethod('get');
+        $form->setTokenDisabled();
+        $form->setUidDisabled();
+        $form->render();
+        $this->view->form = $form;
+
+        $orientation = $this->params->shift('horizontal', 0) ? 'horizontal' : 'vertical';
+
+        $orientationBox = new SelectBox(
+            'orientation',
+            array(
+                '0' => mt('monitoring', 'Vertical'),
+                '1' => mt('monitoring', 'Horizontal')
+            ),
+            mt('monitoring', 'Orientation'),
+            'horizontal'
+        );
+        $orientationBox->applyRequest($this->getRequest());
+
         $query = $this->backend->select()->from(
             'stateHistorySummary',
-            array('day', 'cnt_critical')
-        )->getQuery()->order('day');
-        $query->limit(365);
-        $this->view->summary = $query->fetchAll();
-        $this->view->grid = new HistoryColorGrid();
-        $this->handleFormatRequest($query);
+            array('day', $form->getValue('state'))
+        );
+        $this->params->remove(array('objecttype', 'from', 'to', 'state', 'btn_submit'));
+        $this->applyFilters($query);
+        $this->view->summary = $query->getQuery()->fetchAll();
+        $this->view->column = $form->getValue('state');
+        $this->view->orientationBox = $orientationBox;
+        $this->view->orientation = $orientation;
     }
 
     public function contactgroupsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('contactgroups');
         $query = $this->backend->select()->from('contactgroup', array(
             'contactgroup_name',
@@ -314,6 +449,9 @@ class Monitoring_ListController extends Controller
 
     public function commentsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('comments');
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('comment', array(
@@ -333,16 +471,20 @@ class Monitoring_ListController extends Controller
 
         $this->setupSortControl(
             array(
-                'comment_timestamp'  => 'Comment Timestamp',
-                'comment_host'       => 'Host / Service',
-                'comment_type'       => 'Comment Type',
-                'comment_expiration' => 'Expiration',
+                'comment_timestamp'  => $this->translate('Comment Timestamp'),
+                'comment_host'       => $this->translate('Host / Service'),
+                'comment_type'       => $this->translate('Comment Type'),
+                'comment_expiration' => $this->translate('Expiration'),
             )
         );
+        $this->view->delCommentForm = new DeleteCommentCommandForm();
     }
 
     public function servicegroupsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('servicegroups');
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('groupsummary', array(
@@ -365,12 +507,15 @@ class Monitoring_ListController extends Controller
         $this->applyFilters($query);
         $this->view->servicegroups = $query->paginate();
         $this->setupSortControl(array(
-            'servicegroup_name' => 'Servicegroup Name'
+            'servicegroup_name' => $this->translate('Servicegroup Name')
         ));
     }
 
     public function hostgroupsAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('hostgroups');
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('groupsummary', array(
@@ -393,12 +538,16 @@ class Monitoring_ListController extends Controller
         $this->applyFilters($query);
         $this->view->hostgroups = $query->paginate();
         $this->setupSortControl(array(
-            'hostgroup_name' => 'Hostgroup Name'
+            'hostgroup_name' => $this->translate('Hostgroup Name')
         ));
     }
 
     public function eventhistoryAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
+
         $this->addTitleTab('eventhistory');
         $query = $this->backend->select()->from('eventHistory', array(
             'host_name',
@@ -415,7 +564,7 @@ class Monitoring_ListController extends Controller
         ));
 
         $this->setupSortControl(array(
-            'raw_timestamp' => 'Occurence'
+            'timestamp' => 'Occurence'
         ));
         $this->applyFilters($query);
         $this->view->history = $query->paginate();
@@ -423,21 +572,24 @@ class Monitoring_ListController extends Controller
 
     public function servicematrixAction()
     {
+        if ($url = $this->hasBetterUrl()) {
+            return $this->redirectNow($url);
+        }
         $this->addTitleTab('servicematrix');
         $this->setAutorefreshInterval(15);
-        $dataview = $this->backend->select()->from('serviceStatus', array(
+        $query = $this->backend->select()->from('serviceStatus', array(
             'host_name',
             'service_description',
             'service_state',
             'service_output',
             'service_handled'
         ));
-        $this->applyFilters($dataview);
+        $this->applyFilters($query);
         $this->setupSortControl(array(
-            'host_name'           => 'Hostname',
-            'service_description' => 'Service description'
+            'host_name'           => $this->translate('Hostname'),
+            'service_description' => $this->translate('Service description')
         ));
-        $pivot = $dataview->pivot('service_description', 'host_name');
+        $pivot = $query->pivot('service_description', 'host_name');
         $this->view->pivot = $pivot;
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
         $this->view->verticalPaginator   = $pivot->paginateYAxis();
@@ -449,15 +601,8 @@ class Monitoring_ListController extends Controller
         $request = $this->getRequest();
 
         $limit   = $params->shift('limit');
-
-        $sort = null;
-        $dir = null;
-        if ($request->isPost()) {
-            $sort = $request->getPost('sort', null);
-            $dir  = $request->getPost('dir', null);
-        }
-        $sort    = $params->shift('sort', $sort);
-        $dir     = $params->shift('dir', $dir);
+        $sort    = $params->shift('sort');
+        $dir     = $params->shift('dir');
         $page    = $params->shift('page');
         $format  = $params->shift('format');
         $view    = $params->shift('view');
@@ -482,7 +627,7 @@ class Monitoring_ListController extends Controller
 
         if ($modifyFilter) {
             if ($this->_request->isPost()) {
-                $filter = $filter->applyChanges($_POST);
+                $filter = $filter->applyChanges($this->_request->getPost());
                 $this->redirectNow($this->url->without('page')->setQueryString($filter->toQueryString()));
             }
             $this->view->filterEditor = Widget::create('filterEditor', array(
@@ -490,7 +635,9 @@ class Monitoring_ListController extends Controller
                 'query'  => $query
             ));
         }
-        $query->applyFilter($filter);
+        if (! $filter->isEmpty()) {
+            $query->applyFilter($filter);
+        }
         $this->view->filter = $filter;
         if ($sort) {
             $query->order($sort, $dir);
@@ -502,10 +649,6 @@ class Monitoring_ListController extends Controller
 
     /**
      * Apply current user's `monitoring/filter' restrictions on the given data view
-     *
-     * @param   DataView $dataView
-     *
-     * @return  DataView
      */
     protected function applyRestrictions($query)
     {
@@ -565,6 +708,7 @@ class Monitoring_ListController extends Controller
             'hosts',
             'services',
             'eventhistory',
+            'statehistorysummary',
             'notifications'
         ))) {
             $tabs->extend(new OutputFormat())->extend(new DashboardAction());

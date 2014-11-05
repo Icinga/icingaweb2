@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\DataView;
 
@@ -16,6 +18,7 @@ class Contact extends DataView
     public function getColumns()
     {
         return array(
+            'contact',
             'contact_name',
             'contact_alias',
             'contact_email',
@@ -36,6 +39,7 @@ class Contact extends DataView
             'contact_notify_host_unreachable',
             'contact_notify_host_flapping',
             'contact_notify_host_downtime',
+            'contact_object_id',
             'host_object_id',
             'host_name',
             'service_object_id',

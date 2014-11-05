@@ -1,3 +1,6 @@
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
 table.action.comments td p, table.action.downtimes td p {
   margin: 0;
   font-size: 0.8em;
@@ -28,4 +31,130 @@ table.objectstate td.state {
   line-height: 1.8em;
   padding-top: 0.5em;
   padding-bottom: 0.5em;
+}
+
+div.contacts div.contact {
+  background-color: lightgray;
+  padding: 0.5em;
+  border-radius: 0.5em;
+  overflow: hidden;
+  margin: 0.125em;
+  float: left;
+}
+
+div.contacts div.contact > img {
+  width: 60px;
+  border: 4px solid white;
+  border-radius: 8px;
+  margin-right: 8px;
+  float: left;
+}
+
+div.contacts div.notification-periods {
+  margin-top: 0.5em;
+}
+
+h3.tinystatesummary {
+    line-height: 2em;
+    font-size: 1em;
+    font-weight: bold;
+    padding-left: 1em;
+    background-color: #555;
+    color: white;
+    border: none;
+    border-radius: 0.2em;
+    -moz-border-radius: 0.2em;
+    -webkit-border-radius: 0.2em;
+}
+
+h3.tinystatesummary a {
+    color: inherit;
+    text-decoration: none;
+    padding: 1px 3px;
+}
+
+h3.tinystatesummary a:hover {
+    text-decoration: underline;
+}
+
+/* State badges */
+span.state {
+    font-size: 0.8em;
+    color: white;
+    font-weight: bold;
+    padding: 1px 2px;
+    margin-right: 5px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border: 2px solid transparent;
+}
+
+span.state.active {
+    border: 2px solid white;
+}
+
+span.state span.state {
+    font-size: 1em;
+    margin: 0 -3px 0 5px;
+}
+
+span.state.ok {
+    background: @colorOk;
+}
+
+span.state.critical {
+    background: @colorCritical;
+}
+
+span.state.handled.critical {
+    background: @colorCriticalHandled;
+}
+
+span.state.warning {
+    background: @colorWarning;
+}
+
+span.state.handled.warning {
+    background: @colorWarningHandled;
+}
+
+span.state.unknown {
+    background: @colorUnknown;
+}
+
+span.state.handled.unknown {
+    background: @colorUnknownHandled;
+}
+
+span.state.pending {
+    background: @colorPending;
+}
+
+form.instance-features span.description, form.object-features span.description {
+  display: inline;
+}
+
+.alertsummary-flex-container {
+  display: -ms-Flexbox;
+  -ms-box-orient: horizontal;
+
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
+
+  -webkit-flex-flow: row wrap;
+  -moz-flex-flow: row wrap;
+  -ms-flex-flow: row wrap;
+  flex-flow: row wrap;
+}
+
+.alertsummary-flex {
+  flex: 1 1 auto;
+  overflow: auto;
+  border: 1px #333 solid;
+  padding: 5px;
+  margin: 0 10px 0 0;
+  border-spacing: 10px 10px;
 }

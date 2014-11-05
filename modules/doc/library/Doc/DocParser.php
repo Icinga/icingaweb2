@@ -1,149 +1,68 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Doc;
 
-use RecursiveIteratorIterator;
-use RecursiveDirectoryIterator;
-use Parsedown;
-use Icinga\Application\Icinga;
-use Icinga\Web\Menu;
-use Icinga\Web\Url;
-
-require_once 'IcingaVendor/Parsedown/Parsedown.php';
+use SplDoublyLinkedList;
+use Icinga\Exception\NotReadableError;
+use Icinga\Module\Doc\Exception\DocEmptyException;
+use Icinga\Module\Doc\Exception\DocException;
 
 /**
  * Parser for documentation written in Markdown
  */
 class DocParser
 {
-    protected $dir;
-
-    protected $module;
+    /**
+     * Path to the documentation
+     *
+     * @var string
+     */
+    protected $path;
 
     /**
-     * Create a new documentation parser for the given module or the application
+     * Iterator over documentation files
      *
-     * @param   string $module
-     *
-     * @throws  DocException
+     * @var DocIterator
      */
-    public function __construct($module = null)
-    {
-        if ($module === null) {
-            $dir = Icinga::app()->getApplicationDir('/../doc');
-        } else {
-            $mm = Icinga::app()->getModuleManager();
-            if (!$mm->hasInstalled($module)) {
-                throw new DocException('Module is not installed');
-            }
-            if (!$mm->hasEnabled($module)) {
-                throw new DocException('Module is not enabled');
-            }
-            $dir = $mm->getModuleDir($module, '/doc');
-        }
-        if (!is_dir($dir)) {
-            throw new DocException('Doc directory does not exist');
-        }
-        $this->dir      = $dir;
-        $this->module   = $module;
-    }
+    protected $docIterator;
 
     /**
-     * Retrieve table of contents and HTML converted from markdown files sorted by filename
+     * Create a new documentation parser for the given path
      *
-     * @return  array
-     * @throws  DocException
+     * @param   string $path Path to the documentation
+     *
+     * @throws  DocException        If the documentation directory does not exist
+     * @throws  NotReadableError    If the documentation directory is not readable
+     * @throws  DocEmptyException   If the documentation directory is empty
      */
-    public function getDocumentation()
+    public function __construct($path)
     {
-        $iter = new RecursiveIteratorIterator(
-            new MarkdownFileIterator(
-                new RecursiveDirectoryIterator($this->dir)
-            )
-        );
-        $fileInfos = iterator_to_array($iter);
-        natcasesort($fileInfos);
-        $cat    = array();
-        $toc    = array((object) array(
-            'level' => 0,
-            'item'  => new Menu('doc')
-        ));
-        $itemPriority = 1;
-        foreach ($fileInfos as $fileInfo) {
-            try {
-                $fileObject = $fileInfo->openFile();
-            } catch (RuntimeException $e) {
-                throw new DocException($e->getMessage());
-            }
-            if ($fileObject->flock(LOCK_SH) === false) {
-                throw new DocException('Couldn\'t get the lock');
-            }
-            $line = null;
-            while (!$fileObject->eof()) {
-                // Save last line for setext-style headers
-                $lastLine   = $line;
-                $line       = $fileObject->fgets();
-                $header     = $this->extractHeader($line, $lastLine);
-                if ($header !== null) {
-                    list($header, $level)   = $header;
-                    $id                     = $this->extractHeaderId($header);
-                    $attribs                = array();
-                    $this->reduceToc($toc, $level);
-                    if ($id === null) {
-                        $path = array();
-                        foreach (array_slice($toc, 1) as $entry) {
-                            $path[] = $entry->item->getTitle();
-                        }
-                        $path[]         = $header;
-                        $id             = implode('-', $path);
-                        $attribs['rel'] = 'nofollow';
-                    }
-                    $id     = urlencode(str_replace('.', '&#46;', strip_tags($id)));
-                    $item   = end($toc)->item->addChild(
-                        $id,
-                        array(
-                            'url' => Url::fromPath(
-                                'doc/module/view',
-                                array(
-                                    'name' => $this->module
-                                )
-                            )->setAnchor($id)->getRelativeUrl(),
-                            'title'     => htmlspecialchars($header),
-                            'priority'  => $itemPriority++,
-                            'attribs'   => $attribs
-                        )
-                    );
-                    $toc[]  = ((object) array(
-                        'level' => $level,
-                        'item'  => $item
-                    ));
-                    $line = '<a name="' . $id . '"></a>' . PHP_EOL . $line;
-                }
-                $cat[] = $line;
-            }
-            $fileObject->flock(LOCK_UN);
+        if (! is_dir($path)) {
+            throw new DocException(
+                sprintf(mt('doc', 'Documentation directory \'%s\' does not exist'), $path)
+            );
         }
-        $html = Parsedown::instance()->parse(implode('', $cat));
-        $html = preg_replace_callback(
-            '#<pre><code class="language-php">(.*?)\</code></pre>#s',
-            array($this, 'highlight'),
-            $html
-        );
-        return array($html, $toc[0]->item);
-    }
-
-    /**
-     * Syntax highlighting for PHP code
-     *
-     * @param   $match
-     *
-     * @return  string
-     */
-    protected function highlight($match)
-    {
-        return highlight_string(htmlspecialchars_decode($match[1]), true);
+        if (! is_readable($path)) {
+            throw new DocException(
+                sprintf(mt('doc', 'Documentation directory \'%s\' is not readable'), $path)
+            );
+        }
+        $docIterator = new DocIterator($path);
+        if ($docIterator->count() === 0) {
+            throw new DocEmptyException(
+                sprintf(
+                    mt(
+                        'doc',
+                        'Documentation directory \'%s\' does not contain any non-empty Markdown file (\'.md\' suffix)'
+                    ),
+                    $path
+                )
+            );
+        }
+        $this->path = $path;
+        $this->docIterator = $docIterator;
     }
 
     /**
@@ -156,28 +75,28 @@ class DocParser
      */
     protected function extractHeader($line, $lastLine)
     {
-        if (!$line) {
+        if (! $line) {
             return null;
         }
         $header = null;
-        if ($line &&
-            $line[0] === '#' &&
-            preg_match('/^#+/', $line, $match) === 1
+        if ($line
+            && $line[0] === '#'
+            && preg_match('/^#+/', $line, $match) === 1
         ) {
-            // Atx-style
+            // Atx
             $level  = strlen($match[0]);
             $header = trim(substr($line, $level));
-            if (!$header) {
+            if (! $header) {
                 return null;
             }
         } elseif (
-            $line &&
-            ($line[0] === '=' || $line[0] === '-') &&
-            preg_match('/^[=-]+\s*$/', $line, $match) === 1
+            $line
+            && ($line[0] === '=' || $line[0] === '-')
+            && preg_match('/^[=-]+\s*$/', $line, $match) === 1
         ) {
             // Setext
             $header = trim($lastLine);
-            if (!$header) {
+            if (! $header) {
                 return null;
             }
             if ($match[0][0] === '=') {
@@ -189,36 +108,67 @@ class DocParser
         if ($header === null) {
             return null;
         }
-        return array($header, $level);
-    }
-
-    /**
-     * Extract header id in an a or a span tag
-     *
-     * @param   string  &$header
-     *
-     * @return  id|null
-     */
-    protected function extractHeaderId(&$header)
-    {
-        if ($header[0] === '<' &&
-            preg_match('#(?:<(?P<tag>a|span) id="(?P<id>.+)"></(?P=tag)>)#u', $header, $match)
+        if ($header[0] === '<'
+            && preg_match('#(?:<(?P<tag>a|span) (?:id|name)="(?P<id>.+)"></(?P=tag)>)\s*#u', $header, $match)
         ) {
             $header = str_replace($match[0], '', $header);
-            return $match['id'];
+            $id = $match['id'];
+        } else {
+            $id = null;
         }
-        return null;
+        return array($header, $id, $level);
     }
 
     /**
-     * Reduce the toc to the given level
+     * Get the documentation tree
      *
-     * @param array &$toc
-     * @param int   $level
+     * @return DocTree
      */
-    protected function reduceToc(array &$toc, $level) {
-        while (end($toc)->level >= $level) {
-            array_pop($toc);
+    public function getDocTree()
+    {
+        $tree = new DocTree();
+        $stack = new SplDoublyLinkedList();
+        foreach ($this->docIterator as $fileInfo) {
+            /* @var $file \SplFileInfo */
+            $file = $fileInfo->openFile();
+            /* @var $file \SplFileObject */
+            $lastLine = null;
+            foreach ($file as $line) {
+                $header = $this->extractHeader($line, $lastLine);
+                if ($header !== null) {
+                    list($title, $id, $level) = $header;
+                    while (! $stack->isEmpty() && $stack->top()->getLevel() >= $level) {
+                        $stack->pop();
+                    }
+                    if ($id === null) {
+                        $path = array();
+                        foreach ($stack as $section) {
+                            /* @var $section Section */
+                            $path[] = $section->getTitle();
+                        }
+                        $path[] = $title;
+                        $id = implode('-', $path);
+                        $noFollow = true;
+                    } else {
+                        $noFollow = false;
+                    }
+                    if ($stack->isEmpty()) {
+                        $chapterId = $id;
+                        $section = new Section($id, $title, $level, $noFollow, $chapterId);
+                        $tree->addRoot($section);
+                    } else {
+                        $chapterId = $stack->bottom()->getId();
+                        $section = new Section($id, $title, $level, $noFollow, $chapterId);
+                        $tree->addChild($section, $stack->top());
+                    }
+                    $stack->push($section);
+                } else {
+                    $stack->top()->appendContent($line);
+                }
+                // Save last line for setext-style headers
+                $lastLine = $line;
+            }
         }
+        return $tree;
     }
 }

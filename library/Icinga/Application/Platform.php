@@ -1,51 +1,60 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Application;
 
+/**
+ * Platform tests for icingaweb
+ */
 class Platform
 {
+    /**
+     * Domain name
+     *
+     * @var string
+     */
     protected static $domain;
+
+    /**
+     * Host name
+     *
+     * @var string
+     */
     protected static $hostname;
+
+    /**
+     * Fully qualified domain name
+     *
+     * @var string
+     */
     protected static $fqdn;
 
+    /**
+     * Test of windows
+     *
+     * @return bool
+     */
     public static function isWindows()
     {
         return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
     }
 
+    /**
+     * Test of linux
+     *
+     * @return bool
+     */
     public static function isLinux()
     {
         return strtoupper(substr(PHP_OS, 0, 5)) === 'LINUX';
     }
 
+    /**
+     * Test of CLI environment
+     *
+     * @return bool
+     */
     public static function isCli()
     {
         if (PHP_SAPI == 'cli') {
@@ -57,6 +66,11 @@ class Platform
         return false;
     }
 
+    /**
+     * Get the hostname
+     *
+     * @return string
+     */
     public static function getHostname()
     {
         if (self::$hostname === null) {
@@ -65,6 +79,11 @@ class Platform
         return self::$hostname;
     }
 
+    /**
+     * Get the domain name
+     *
+     * @return string
+     */
     public static function getDomain()
     {
         if (self::$domain === null) {
@@ -73,6 +92,11 @@ class Platform
         return self::$domain;
     }
 
+    /**
+     * Get the fully qualified domain name
+     *
+     * @return string
+     */
     public static function getFqdn()
     {
         if (self::$fqdn === null) {
@@ -81,6 +105,9 @@ class Platform
         return self::$fqdn;
     }
 
+    /**
+     * Initialize domain and host strings
+     */
     protected static function discoverHostname()
     {
         self::$hostname = gethostname();
@@ -92,5 +119,16 @@ class Platform
             self::$domain = array_shift(preg_split('~\.~', self::$hostname, 2));
         }
     }
+
+    /**
+     * Test for php extension
+     *
+     * @param   string  $extensionName  E.g. mysql, ldap
+     *
+     * @return  bool
+     */
+    public static function extensionLoaded($extensionName)
+    {
+        return extension_loaded($extensionName);
+    }
 }
-// @codeCoverageIgnoreEnd

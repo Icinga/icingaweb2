@@ -1,36 +1,8 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Web\Form;
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Backend;
-use Icinga\Data\SimpleQuery;
 use Icinga\Web\Widget\Chart\InlinePie;
 use Icinga\Module\Monitoring\Form\Command\MultiCommandFlagForm;
 use Icinga\Web\Widget;
@@ -49,7 +21,6 @@ class Monitoring_MultiController extends Controller
             array(
                 'host_name',
                 'host_in_downtime',
-                'host_unhandled_service_count',
                 'host_passive_checks_enabled',
                 'host_obsessing',
                 'host_state',
@@ -73,23 +44,27 @@ class Monitoring_MultiController extends Controller
         $uniqueComments = array_keys($this->getUniqueValues($comments->getQuery()->fetchAll(), 'comment_internal_id'));
 
         // Populate view
-        $this->view->objects   = $this->view->hosts = $hosts;
-        $this->view->problems  = $this->getProblems($hosts);
-        $this->view->comments  = $uniqueComments;
+        $this->view->objects = $this->view->hosts = $hosts;
+        $this->view->problems = $this->getProblems($hosts);
+        $this->view->comments = $uniqueComments;
         $this->view->hostnames = $this->getProperties($hosts, 'host_name');
         $this->view->downtimes = $this->getDowntimes($hosts);
-        $this->view->errors    = $errors;
-        $this->view->states    = $this->countStates($hosts, 'host', 'host_name');
-        $this->view->pie       = $this->createPie($this->view->states, $this->view->getHelper('MonitoringState')->getHostStateColors());
+        $this->view->errors = $errors;
+        $this->view->states = $this->countStates($hosts, 'host', 'host_name');
+        $this->view->pie = $this->createPie(
+            $this->view->states,
+            $this->view->getHelper('MonitoringState')->getHostStateColors(),
+            mt('monitoring', 'Host State')
+        );
 
         // Handle configuration changes
         $this->handleConfigurationForm(array(
-            'host_passive_checks_enabled' => 'Passive Checks',
-            'host_active_checks_enabled'  => 'Active Checks',
-            'host_notifications_enabled'  => 'Notifications',
-            'host_event_handler_enabled'  => 'Event Handler',
-            'host_flap_detection_enabled' => 'Flap Detection',
-            'host_obsessing'              => 'Obsessing'
+            'host_passive_checks_enabled' => $this->translate('Passive Checks'),
+            'host_active_checks_enabled'  => $this->translate('Active Checks'),
+            'host_notifications_enabled'  => $this->translate('Notifications'),
+            'host_event_handler_enabled'  => $this->translate('Event Handler'),
+            'host_flap_detection_enabled' => $this->translate('Flap Detection'),
+            'host_obsessing'              => $this->translate('Obsessing')
         ));
     }
 
@@ -138,18 +113,26 @@ class Monitoring_MultiController extends Controller
         $this->view->servicenames   = $this->getProperties($services, 'service_description');
         $this->view->downtimes      = $this->getDowntimes($services);
         $this->view->service_states = $this->countStates($services, 'service');
-        $this->view->host_states    = $this->countStates($services, 'host',  'host_name');
-        $this->view->service_pie    = $this->createPie($this->view->service_states, $this->view->getHelper('MonitoringState')->getServiceStateColors());
-        $this->view->host_pie       = $this->createPie($this->view->host_states, $this->view->getHelper('MonitoringState')->getHostStateColors());
+        $this->view->host_states    = $this->countStates($services, 'host', 'host_name');
+        $this->view->service_pie    = $this->createPie(
+            $this->view->service_states,
+            $this->view->getHelper('MonitoringState')->getServiceStateColors(),
+            mt('monitoring', 'Service State')
+        );
+        $this->view->host_pie       = $this->createPie(
+            $this->view->host_states,
+            $this->view->getHelper('MonitoringState')->getHostStateColors(),
+            mt('monitoring', 'Host State')
+        );
         $this->view->errors         = $errors;
 
         $this->handleConfigurationForm(array(
-            'service_passive_checks_enabled' => 'Passive Checks',
-            'service_active_checks_enabled'  => 'Active Checks',
-            'service_notifications_enabled'  => 'Notifications',
-            'service_event_handler_enabled'  => 'Event Handler',
-            'service_flap_detection_enabled' => 'Flap Detection',
-            'service_obsessing'              => 'Obsessing',
+            'service_passive_checks_enabled' => $this->translate('Passive Checks'),
+            'service_active_checks_enabled'  => $this->translate('Active Checks'),
+            'service_notifications_enabled'  => $this->translate('Notifications'),
+            'service_event_handler_enabled'  => $this->translate('Event Handler'),
+            'service_flap_detection_enabled' => $this->translate('Flap Detection'),
+            'service_obsessing'              => $this->translate('Obsessing'),
         ));
     }
 
@@ -181,13 +164,12 @@ class Monitoring_MultiController extends Controller
     private function getUniqueValues($values, $key)
     {
         $unique = array();
-        foreach ($values as $value)
-        {
-			if (is_array($value)) {
-				$unique[$value[$key]] = $value[$key];
-			} else {
-            	$unique[$value->$key] = $value->$key;
-			}
+        foreach ($values as $value) {
+            if (is_array($value)) {
+                $unique[$value[$key]] = $value[$key];
+            } else {
+                $unique[$value->$key] = $value->$key;
+            }
         }
         return $unique;
     }
@@ -236,10 +218,11 @@ class Monitoring_MultiController extends Controller
         return $states;
     }
 
-    private function createPie($states, $colors)
+    private function createPie($states, $colors, $title)
     {
-        $chart = new InlinePie(array_values($states), $colors);
-        $chart->setLabels(array_keys($states))->setHeight(100)->setWidth(100);
+        $chart = new InlinePie(array_values($states), $title, $colors);
+        $chart->setLabel(array_keys($states))->setHeight(100)->setWidth(100);
+        $chart->setTitle($title);
         return $chart;
     }
 

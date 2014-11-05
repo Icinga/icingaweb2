@@ -1,25 +1,26 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-/**
- * Icingaweb 2
- *
- * @link https://git.icinga.org/icingaweb2.git/ for the official source repository
- * @copyright Copyright (c) 2013-2014 Icinga Development Team (https://www.icinga.org)
- * @license http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- */
 namespace Icinga\Application\Modules;
 
 use Exception;
+use Zend_Config;
+use Zend_Controller_Router_Route_Abstract;
 use Zend_Controller_Router_Route as Route;
+use Zend_Controller_Router_Route_Regex as RegexRoute;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Util\Translator;
 use Icinga\Web\Hook;
+use Icinga\Web\Menu;
 use Icinga\Web\Widget;
+use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Util\File;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\IcingaException;
 
 /**
  * Module handling
@@ -141,6 +142,106 @@ class Module
     private $app;
 
     /**
+     * Routes to add to the route chain
+     *
+     * @var array Array of name-route pairs
+     *
+     * @see addRoute()
+     */
+    protected $routes = array();
+
+    /**
+     * A set of menu elements
+     *
+     * @var array
+     */
+    protected $menuItems = array();
+
+    /**
+     * A set of Pane elements
+     *
+     * @var array
+     */
+    protected $paneItems = array();
+
+    /**
+     * @var array
+     */
+    protected $searchUrls = array();
+
+    /**
+     * @param string $title
+     * @param string $url
+     */
+    public function provideSearchUrl($title, $url)
+    {
+        $searchUrl = (object) array(
+            'title' => $title,
+            'url'   => $url
+        );
+
+        $this->searchUrls[] = $searchUrl;
+    }
+
+    public function getSearchUrls()
+    {
+        $this->launchConfigScript();
+        return $this->searchUrls;
+    }
+
+    /**
+     * Get all Menu Items
+     *
+     * @return array
+     */
+    public function getPaneItems()
+    {
+        $this->launchConfigScript();
+        return $this->paneItems;
+    }
+
+    /**
+     * Add a pane to dashboard
+     *
+     * @param $name
+     * @return Pane
+     */
+    protected function dashboard($name)
+    {
+        $this->paneItems[$name] = new Pane($name);
+        return $this->paneItems[$name];
+    }
+
+    /**
+     * Get all Menu Items
+     *
+     * @return array
+     */
+    public function getMenuItems()
+    {
+        $this->launchConfigScript();
+        return $this->menuItems;
+    }
+
+    /**
+     * Add a menu Section to the Sidebar menu
+     *
+     * @param $name
+     * @param array $properties
+     * @return mixed
+     */
+    protected function menuSection($name, array $properties = array())
+    {
+        if (array_key_exists($name, $this->menuItems)) {
+            $this->menuItems[$name]->setProperties($properties);
+        } else {
+            $this->menuItems[$name] = new Menu($name, new Zend_Config($properties));
+        }
+
+        return $this->menuItems[$name];
+    }
+
+    /**
      * Create a new module object
      *
      * @param ApplicationBootstrap  $app
@@ -171,8 +272,7 @@ class Module
      */
     public function register()
     {
-        $this->registerAutoloader()
-             ->registerWebIntegration();
+        $this->registerAutoloader();
         try {
             $this->launchRunScript();
         } catch (Exception $e) {
@@ -184,6 +284,7 @@ class Module
             );
             return false;
         }
+        $this->registerWebIntegration();
         return true;
     }
 
@@ -329,12 +430,9 @@ class Module
 
             if (file_exists($this->metadataFile)) {
 
-                $file = File::open($this->metadataFile, 'r');
-                $lines = $file->readlines();
-                $file->close();
                 $key = null;
-
-                foreach ($lines as $line) {
+                $file = new File($this->metadataFile, 'r');
+                foreach ($file as $line) {
                     $line = rtrim($line);
 
                     if ($key === 'description') {
@@ -556,8 +654,9 @@ class Module
     protected function providePermission($name, $description)
     {
         if ($this->providesPermission($name)) {
-            throw new Exception(
-                sprintf('Cannot provide permission "%s" twice', $name)
+            throw new IcingaException(
+                'Cannot provide permission "%s" twice',
+                $name
             );
         }
         $this->permissionList[$name] = (object) array(
@@ -577,8 +676,9 @@ class Module
     protected function provideRestriction($name, $description)
     {
         if ($this->providesRestriction($name)) {
-            throw new Exception(
-                sprintf('Cannot provide restriction "%s" twice', $name)
+            throw new IcingaException(
+                'Cannot provide restriction "%s" twice',
+                $name
             );
         }
         $this->restrictionList[$name] = (object) array(
@@ -634,10 +734,42 @@ class Module
      */
     protected function registerLocales()
     {
-        if (file_exists($this->localedir) && is_dir($this->localedir)) {
+        if ($this->hasLocales()) {
             Translator::registerDomain($this->name, $this->localedir);
         }
         return $this;
+    }
+
+    /**
+     * return bool Whether this module has translations
+     */
+    public function hasLocales()
+    {
+        return file_exists($this->localedir) && is_dir($this->localedir);
+    }
+
+    /**
+     * List all available locales
+     *
+     * return array Locale list
+     */
+    public function listLocales()
+    {
+        $locales = array();
+        if (! $this->hasLocales()) {
+            return $locales;
+        }
+
+        $dh = opendir($this->localedir);
+        while (false !== ($file = readdir($dh))) {
+            $filename = $this->localedir . DIRECTORY_SEPARATOR . $file;
+            if (preg_match('/^[a-z]{2}_[A-Z]{2}$/', $file) && is_dir($filename)) {
+                $locales[] = $file;
+            }
+        }
+        closedir($dh);
+        sort($locales);
+        return $locales;
     }
 
     /**
@@ -666,31 +798,39 @@ class Module
     }
 
     /**
-     * Register routes for web access
+     * Add routes for static content and any route added via addRoute() to the route chain
      *
-     * @return self
+     * @return  self
+     * @see     addRoute()
      */
     protected function registerRoutes()
     {
-        $this->app->getFrontController()->getRouter()->addRoute(
+        $router = $this->app->getFrontController()->getRouter();
+        foreach ($this->routes as $name => $route) {
+            $router->addRoute($name, $route);
+        }
+        $router->addRoute(
             $this->name . '_jsprovider',
             new Route(
                 'js/' . $this->name . '/:file',
                 array(
                     'controller'    => 'static',
                     'action'        =>'javascript',
-                    'module_name'    => $this->name
+                    'module_name'   => $this->name
                 )
             )
         );
-        $this->app->getFrontController()->getRouter()->addRoute(
+        $router->addRoute(
             $this->name . '_img',
-            new Route(
-                'img/' . $this->name . '/:file',
+            new RegexRoute(
+                'img/' . $this->name . '/(.+)',
                 array(
                     'controller'    => 'static',
                     'action'        => 'img',
                     'module_name'   => $this->name
+                ),
+                array(
+                    1 => 'file'
                 )
             )
         );
@@ -757,5 +897,42 @@ class Module
         Hook::register($name, $key, $class);
 
         return $this;
+    }
+
+    /**
+     * Add a route which will be added to the route chain
+     *
+     * @param   string                                  $name   Name of the route
+     * @param   Zend_Controller_Router_Route_Abstract   $route  Instance of the route
+     *
+     * @return  self
+     * @see     registerRoutes()
+     */
+    protected function addRoute($name, Zend_Controller_Router_Route_Abstract $route)
+    {
+        $this->routes[$name] = $route;
+        return $this;
+    }
+
+    /**
+     * Translate a string with the global mt()
+     *
+     * @param $string
+     * @param null $context
+     *
+     * @return mixed|string
+     */
+    protected function translate($string, $context = null)
+    {
+        return mt($this->name, $string, $context);
+    }
+
+    /**
+     * (non-PHPDoc)
+     * @see Translator::translatePlural() For the function documentation.
+     */
+    protected function translatePlural($textSingular, $textPlural, $number, $context = null)
+    {
+        return mtp($this->name, $textSingular, $textPlural, $number, $context);
     }
 }

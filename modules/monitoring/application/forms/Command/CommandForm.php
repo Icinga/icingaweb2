@@ -1,181 +1,64 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Form\Command;
 
-use Zend_Config;
-use Zend_Controller_Request_Abstract;
-use Zend_Form_Element_Hidden;
-use Icinga\Module\Monitoring\Command\AcknowledgeCommand;
+use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Command\Transport\CommandTransport;
 use Icinga\Web\Form;
+use Icinga\Web\Request;
 
 /**
- * Simple confirmation command
+ * Base class for command forms
  */
 abstract class CommandForm extends Form
 {
     /**
-     * If the form is for a global command
+     * Monitoring backend
      *
-     * @var bool
+     * @var Backend
      */
-    protected $globalCommand = false;
+    protected $backend;
 
     /**
-     * Set command program wide
+     * Set the monitoring backend
      *
-     * @param bool $flag
+     * @param   Backend $backend
+     *
+     * @return  $this
      */
-    public function setProvideGlobalCommand($flag = true)
+    public function setBackend(Backend $backend)
     {
-        $this->globalCommand = (boolean) $flag;
+        $this->backend = $backend;
+        return $this;
     }
 
     /**
-     * Getter for globalCommand
+     * Get the monitoring backend
      *
-     * @return bool
+     * @return Backend
      */
-    public function provideGlobalCommand()
+    public function getBackend()
     {
-        return (boolean) $this->globalCommand;
+        return $this->backend;
     }
 
     /**
-     * Create an instance name containing hidden field
+     * Get the transport used to send commands
      *
-     * @return Zend_Form_Element_Hidden
-     */
-    private function createInstanceHiddenField()
-    {
-        $field = new Zend_Form_Element_Hidden('instance');
-        $value = $this->getRequest()->getParam($field->getName());
-        $field->setValue($value);
-        return $field;
-    }
-
-    /**
-     * Add elements to this form (used by extending classes)
+     * @param   Request $request
      *
-     * @see Form::create
+     * @return  \Icinga\Module\Monitoring\Command\Transport\CommandTransportInterface
      */
-    protected function create()
+    public function getTransport(Request $request)
     {
-        $this->addElement($this->createInstanceHiddenField());
-    }
-
-    /**
-     * Get the author name
-     *
-     * @return string
-     */
-    protected function getAuthorName()
-    {
-        if (is_a($this->getRequest(), "Zend_Controller_Request_HttpTestCase")) {
-            return "Test user";
+        $instance = $request->getParam('instance');
+        if ($instance !== null) {
+            $transport = CommandTransport::create($instance);
+        } else {
+            $transport = CommandTransport::first();
         }
-        return $this->getRequest()->getUser()->getUsername();
+        return $transport;
     }
-
-    /**
-     * Creator for author field
-     *
-     * @return Zend_Form_Element_Hidden
-     */
-    protected function createAuthorField()
-    {
-        $authorName = $this->getAuthorName();
-
-        $authorField = new Zend_Form_Element_Hidden(
-            array(
-                'name'       => 'author',
-                'label'      => t('Author (Your Name)'),
-                'value'      => $authorName,
-                'required'   => true
-            )
-        );
-
-        $authorField->addDecorator(
-            'Callback',
-            array(
-                'callback' => function () use ($authorName) {
-                    return sprintf('<strong>%s</strong>', $authorName);
-                }
-            )
-        );
-
-        return $authorField;
-    }
-
-    /**
-     * Get a list of valid datetime formats
-     *
-     * @return array
-     */
-    public function getValidDateTimeFormats()
-    {
-        $config = $this->getConfiguration();
-        $global = $config->global;
-        if ($global === null) {
-            $global = new Zend_Config(array());
-        }
-        $preferences = $this->getUserPreferences();
-        return array(
-            implode(
-                ' ',
-                array(
-                    $preferences->get('app.dateFormat', $global->get('dateFormat', 'd/m/Y')),
-                    $preferences->get('app.timeFormat', $global->get('timeFormat', 'g:i A'))
-                )
-            )
-        );
-    }
-
-    /**
-     * Sets the form to global if we have data in the request
-     *
-     * @param Zend_Controller_Request_Abstract $request
-     */
-    public function setRequest(Zend_Controller_Request_Abstract $request)
-    {
-        parent::setRequest($request);
-
-        if ($request->getParam('global')) {
-            $this->setProvideGlobalCommand(true);
-        }
-    }
-
-
-    /**
-     * Create command object for CommandPipe protocol
-     *
-     * @return AcknowledgeCommand
-     */
-    abstract public function createCommand();
 }

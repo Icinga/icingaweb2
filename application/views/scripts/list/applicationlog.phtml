@@ -5,6 +5,7 @@
 </div>
 
 <div class="content">
+    <?php if ($this->logData !== null): ?>
     <table class="action">
         <tbody>
             <?php foreach ($this->logData as $value): ?>
@@ -21,4 +22,5 @@
             <?php endforeach; ?>
         </tbody>
     </table>
+    <?php endif; ?>
 </div>

@@ -1,39 +1,13 @@
-<ul>
-    <?php foreach ($items as $item): ?>
-        <?php
-        $itemClass = '';
-        if ($sub) {
-            // $itemClass .= 'submenu ';
-        }
-        if ($this->href($url) === $this->href($item->getUrl())) {
-            $itemClass .= 'active ';
-        }
-        ?>
-        <li <?php if (!empty($itemClass)): ?>class="<?= $itemClass ?>"<?php endif ?>>
-            <?php if($item->getUrl()): ?>
-                <a href="<?= $this->href($item->getUrl()); ?>" <?php foreach($item->getAttribs() as $attrib => $value): ?> <?= $attrib ?>="<?= $value ?>"<?php endforeach?>>
-            <?php endif; ?>
-            <?php
-            if ($icon = $item->getIcon()) {
-                echo $this->img($icon, array('height' => 16, 'width' => 16));
-            }
-            ?>
-            <?php if ($iconClass = $item->getIconClass()): ?>
-            <i class="<?= $iconClass ?>"></i>
-            <?php endif ?>
-            <?= $item->getTitle();?>
-            <?php if($item->getUrl()): ?>
-                </a>
-            <?php endif; ?>
-            <?php
-            if($item->hasChildren()) {
-                echo $this->partial(
-                    'layout/menu.phtml',
-                    'default',
-                    array('items' => $item->getChildren(), 'sub' => true, 'url' => $this->url)
-                );
-            }
-            ?>
-        </li>
-    <?php endforeach ?>
-</ul>
+<?php
+use Icinga\Web\Widget\SearchDashboard;
+?>
+
+<? if (SearchDashboard::search('dummy')->getPane('search')->hasComponents()): ?>
+    <form action="<?= $this->href('search') ?>" method="get" role="search">
+        <input
+            type="text" name="q" class="search autofocus" placeholder="<?= $this->translate('Search...') ?>"
+            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        />
+    </form>
+<? endif; ?>
+<?= $menuRenderer; ?>

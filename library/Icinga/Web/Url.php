@@ -1,35 +1,11 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web;
 
 use Icinga\Application\Icinga;
+use Icinga\Cli\FakeRequest;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\UrlParams;
 
@@ -47,7 +23,7 @@ class Url
     /**
      * An array of all parameters stored in this Url
      *
-     * @var array
+     * @var UrlParams
      */
     protected $params;
 
@@ -123,7 +99,12 @@ class Url
      */
     protected static function getRequest()
     {
-        return Icinga::app()->getFrontController()->getRequest();
+        $app = Icinga::app();
+        if ($app->isCli()) {
+            return new FakeRequest();
+        } else {
+            return $app->getFrontController()->getRequest();
+        }
     }
 
     /**
@@ -145,17 +126,16 @@ class Url
         }
 
         if (!is_string($url)) {
-            throw new ProgrammingError(sprintf('url "%s" is not a string', $url));
+            throw new ProgrammingError(
+                'url "%s" is not a string',
+                $url
+            );
         }
 
         $urlObject = new Url();
         $baseUrl = $request->getBaseUrl();
         $urlObject->setBaseUrl($baseUrl);
 
-        // Fetch fragment manually and remove it from the url, to 'help' the parse_url() function
-        // parsing the url properly. Otherwise calling the function with a fragment, but without a
-        // query will cause unpredictable behaviour.
-        $url = self::stripUrlFragment($url);
         $urlParts = parse_url($url);
         if (isset($urlParts['path'])) {
             if ($baseUrl !== '' && strpos($urlParts['path'], $baseUrl) === 0) {
@@ -169,42 +149,12 @@ class Url
             $params = UrlParams::fromQueryString($urlParts['query'])->mergeValues($params);
         }
 
-        $fragment = self::getUrlFragment($url);
-        if ($fragment !== '') {
-            $urlObject->setAnchor($fragment);
+        if (isset($urlParts['fragment'])) {
+            $urlObject->setAnchor($urlParts['fragment']);
         }
 
         $urlObject->setParams($params);
         return $urlObject;
-    }
-
-    /**
-     * Get the fragment of a given url
-     *
-     * @param   string  $url    The url containing the fragment.
-     *
-     * @return  string          The fragment without the '#'
-     */
-    protected static function getUrlFragment($url)
-    {
-        $url = parse_url($url);
-        if (isset($url['fragment'])) {
-            return $url['fragment'];
-        } else {
-            return '';
-        }
-    }
-
-    /**
-     * Remove the fragment-part of a given url
-     *
-     * @param   string  $url    The url to strip from its fragment
-     *
-     * @return  string          The url without the fragment
-     */
-    protected static function stripUrlFragment($url)
-    {
-        return preg_replace('/#.*$/', '', $url);
     }
 
     /**
@@ -266,12 +216,12 @@ class Url
      *
      * @return  string
      */
-    public function getRelativeUrl()
+    public function getRelativeUrl($separator = '&')
     {
         if ($this->params->isEmpty()) {
             return $this->path . $this->anchor;
         } else {
-            return $this->path . '?' . $this->params->setSeparator('&amp;') . $this->anchor;
+            return $this->path . '?' . $this->params->toString($separator) . $this->anchor;
         }
     }
 
@@ -291,9 +241,9 @@ class Url
      *
      * @return  string
      */
-    public function getAbsoluteUrl()
+    public function getAbsoluteUrl($separator = '&')
     {
-        return $this->baseUrl . ($this->baseUrl !== '/' ? '/' : '') . $this->getRelativeUrl();
+        return $this->baseUrl . ($this->baseUrl !== '/' ? '/' : '') . $this->getRelativeUrl($separator);
     }
 
     /**
@@ -356,7 +306,7 @@ class Url
     /**
      * Return all parameters that will be used in the query part
      *
-     * @return  array   An associative key => value array containing all parameters
+     * @return  UrlParams   An instance of UrlParam containing all parameters
      */
     public function getParams()
     {
@@ -442,6 +392,23 @@ class Url
     }
 
     /**
+     * Whether the given URL matches this URL object
+     *
+     * This does an exact match, parameters MUST be in the same order
+     *
+     * @param Url|string $url the URL to compare against
+     *
+     * @return bool whether the URL matches
+     */
+    public function matches($url)
+    {
+        if (! $url instanceof Url) {
+            $url = Url::fromPath($url);
+        }
+        return (string) $url === (string) $this;
+    }
+
+    /**
      * Return a copy of this url without the parameter given
      *
      * The argument can be either a single query parameter name or an array of parameter names to
@@ -463,6 +430,24 @@ class Url
         return $url;
     }
 
+    /**
+     * Return a copy of this url with the given parameter(s)
+     *
+     * The argument can be either a single query parameter name or an array of parameter names to
+     * remove from the query list
+     *
+     * @param string|array $param  A single string or an array containing parameter names
+     * @param array        $values an optional values array
+     *
+     * @return Url
+     */
+    public function with($param, $values = null)
+    {
+        $url = clone($this);
+        $url->params->mergeValues($param, $values);
+        return $url;
+    }
+
     public function __clone()
     {
         $this->params = clone $this->params;
@@ -475,6 +460,6 @@ class Url
      */
     public function __toString()
     {
-        return $this->getAbsoluteUrl();
+        return $this->getAbsoluteUrl('&amp;');
     }
 }

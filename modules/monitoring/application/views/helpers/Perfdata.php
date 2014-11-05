@@ -11,42 +11,43 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 {
     public function perfdata($perfdataStr, $compact = false, $float = false)
     {
+        $pset = PerfdataSet::fromString($perfdataStr)->asArray();
+        $onlyPieChartData = array_filter($pset, function ($e) { return $e->getPercentage() > 0; });
+        if ($compact) {
+            $onlyPieChartData = array_slice($onlyPieChartData, 0, 5);
+        } else {
+            $nonPieChartData = array_filter($pset, function ($e) { return $e->getPercentage() == 0; });
+        }
+
         $result = '';
         $table = array();
-        $pset = array_slice(PerfdataSet::fromString($perfdataStr)->asArray(), 0, ($compact ? 5 : null));
-        foreach ($pset as $label => $perfdata) {
-            if (!$perfdata->isPercentage() && $perfdata->getMaximumValue() === null) {
-                continue;
-            }
-            $pieChart = $this->createInlinePie($perfdata, $label);
+        foreach ($onlyPieChartData as $perfdata) {
+            $pieChart = $this->createInlinePie($perfdata);
             if ($compact) {
-                $pieChart->setTitle(
-                    htmlspecialchars($label) /* . ': ' . htmlspecialchars($this->formatPerfdataValue($perfdata) */
-                );
                 if (! $float) {
                     $result .= $pieChart->render();
                 } else {
                     $result .= '<div style="float: right;">' . $pieChart->render() . '</div>';
                 }
             } else {
-                $pieChart->setTitle(htmlspecialchars($label));
                 if (! $perfdata->isPercentage()) {
+                    // TODO: Should we trust sprintf-style placeholders in perfdata titles?
                     $pieChart->setTooltipFormat('{{label}}: {{formatted}} ({{percent}}%)');
                 }
-                $pieChart->setStyle('float: left; margin: 0.2em 0.5em 0.2em 0.5em;');
+                // $pieChart->setStyle('margin: 0.2em 0.5em 0.2em 0.5em;');
                 $table[] = '<tr><th>' . $pieChart->render()
-                    . htmlspecialchars($label)
+                    . htmlspecialchars($perfdata->getLabel())
                     . '</th><td> '
                     . htmlspecialchars($this->formatPerfdataValue($perfdata)) .
                     ' </td></tr>';
             }
         }
 
-        // TODO: What if we have both? And should we trust sprintf-style placeholders in perfdata titles?
-        if (empty($table)) {
-            return $compact ? $result : $perfdataStr;
+        if ($compact) {
+            return $result;
         } else {
-            return '<table class="perfdata">' . implode("\n", $table) . '</table>';
+            $pieCharts = empty($table) ? '' : '<table class="perfdata">' . implode("\n", $table) . '</table>';
+            return $pieCharts . "\n" . implode("<br>\n", $nonPieChartData);
         }
     }
 
@@ -61,9 +62,9 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         $gray = $unusedValue;
         $green = $orange = $red = 0;
         // TODO(#6122): Add proper treshold parsing.
-        if ($perfdata->getCriticalTreshold() && $perfdata->getValue() > $perfdata->getCriticalTreshold()) {
+        if ($perfdata->getCriticalThreshold() && $perfdata->getValue() > $perfdata->getCriticalThreshold()) {
             $red = $usedValue;
-        } elseif ($perfdata->getWarningTreshold() && $perfdata->getValue() > $perfdata->getWarningTreshold()) {
+        } elseif ($perfdata->getWarningThreshold() && $perfdata->getValue() > $perfdata->getWarningThreshold()) {
             $orange = $usedValue;
         } else {
             $green = $usedValue;
@@ -85,10 +86,10 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         return $perfdata->getValue();
     }
 
-    protected function createInlinePie(Perfdata $perfdata, $label = '')
+    protected function createInlinePie(Perfdata $perfdata)
     {
-        $pieChart = new InlinePie($this->calculatePieChartData($perfdata));
-        $pieChart->setLabels(array($label, $label, $label, ''));
+        $pieChart = new InlinePie($this->calculatePieChartData($perfdata), $perfdata->getLabel());
+        $pieChart->setLabel(htmlspecialchars($perfdata->getLabel()));
         $pieChart->setHideEmptyLabel();
 
         //$pieChart->setHeight(32)->setWidth(32);

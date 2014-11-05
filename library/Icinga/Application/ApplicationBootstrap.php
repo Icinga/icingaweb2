@@ -1,45 +1,20 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Application;
 
+use ErrorException;
 use Exception;
 use Zend_Config;
 use Icinga\Application\Modules\Manager as ModuleManager;
-use Icinga\Application\Config;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
+use Icinga\Exception\IcingaException;
 
 /**
  * This class bootstraps a thin Icinga application layer
@@ -358,7 +333,7 @@ abstract class ApplicationBootstrap
         try {
             $this->moduleManager->loadEnabledModules();
         } catch (NotReadableError $e) {
-            Logger::error(new Exception('Cannot load enabled modules. An exception was thrown:', 0, $e));
+            Logger::error(new IcingaException('Cannot load enabled modules. An exception was thrown:', $e));
         }
         return $this;
     }
@@ -373,11 +348,7 @@ abstract class ApplicationBootstrap
         Logger::create(
             new Zend_Config(
                 array(
-                    'enable'        => true,
-                    'level'         => Logger::$ERROR,
-                    'type'          => 'syslog',
-                    'facility'      => 'LOG_USER',
-                    'application'   => 'icingaweb'
+                    'log' => 'syslog'
                 )
             )
         );
@@ -395,7 +366,7 @@ abstract class ApplicationBootstrap
         try {
             $this->config = Config::app();
         } catch (NotReadableError $e) {
-            Logger::error(new Exception('Cannot load application configuration. An exception was thrown:', 0, $e));
+            Logger::error(new IcingaException('Cannot load application configuration. An exception was thrown:', $e));
             $this->config = new Zend_Config(array());
         }
         return $this;
@@ -408,9 +379,21 @@ abstract class ApplicationBootstrap
      */
     protected function setupErrorHandling()
     {
-        error_reporting(E_ALL | E_NOTICE);
+        error_reporting(E_ALL | E_STRICT);
         ini_set('display_startup_errors', 1);
         ini_set('display_errors', 1);
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            if (error_reporting() === 0) {
+                // Error was suppressed with the @-operator
+                return false; // Continue with the normal error handler
+            }
+            switch($errno) {
+                case E_WARNING:
+                case E_STRICT:
+                    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+            }
+            return false; // Continue with the normal error handler
+        });
         return $this;
     }
 
@@ -443,7 +426,7 @@ abstract class ApplicationBootstrap
             ResourceFactory::setConfig($config);
         } catch (NotReadableError $e) {
             Logger::error(
-                new Exception('Cannot load resource configuration. An exception was thrown:', 0, $e)
+                new IcingaException('Cannot load resource configuration. An exception was thrown:', $e)
             );
         }
 
@@ -477,9 +460,8 @@ abstract class ApplicationBootstrap
      */
     protected function setupInternationalization()
     {
-        $localeDir = $this->getApplicationDir('locale');
-        if (file_exists($localeDir) && is_dir($localeDir)) {
-            Translator::registerDomain(Translator::DEFAULT_DOMAIN, $localeDir);
+        if ($this->hasLocales()) {
+            Translator::registerDomain(Translator::DEFAULT_DOMAIN, $this->getLocaleDir());
         }
 
         try {
@@ -494,5 +476,48 @@ abstract class ApplicationBootstrap
 
         return $this;
     }
+
+    /**
+     * @return string Our locale directory
+     */
+    public function getLocaleDir()
+    {
+        return $this->getApplicationDir('locale');
+    }
+
+    /**
+     * return bool Whether Icinga Web has translations
+     */
+    public function hasLocales()
+    {
+        $localedir = $this->getLocaleDir();
+        return file_exists($localedir) && is_dir($localedir);
+    }
+
+    /**
+     * List all available locales
+     *
+     * NOTE: Might be a candidate for a static function in Translator
+     *
+     * return array Locale list
+     */
+    public function listLocales()
+    {
+        $locales = array();
+        if (! $this->hasLocales()) {
+            return $locales;
+        }
+        $localedir = $this->getLocaleDir();
+
+        $dh = opendir($localedir);
+        while (false !== ($file = readdir($dh))) {
+            $filename = $localedir . DIRECTORY_SEPARATOR . $file;
+            if (preg_match('/^[a-z]{2}_[A-Z]{2}$/', $file) && is_dir($filename)) {
+                $locales[] = $file;
+            }
+        }
+        closedir($dh);
+        sort($locales);
+        return $locales;
+    }
 }
-// @codeCoverageIgnoreEnd

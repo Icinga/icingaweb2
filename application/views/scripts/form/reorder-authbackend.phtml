@@ -1,0 +1,40 @@
+<form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>">
+  <table class="action">
+    <thead>
+      <th>Backend</th>
+      <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
+      <th style="width: 5em"><?= $this->translate('Order'); ?></th>
+    </thead>
+    <tbody>
+<?php $backendNames = $form->getBackendOrder(); ?>
+<?php for ($i = 0; $i < count($backendNames); $i++): ?>
+      <tr>
+        <td class="action">
+          <a href="<?= $this->href('config/editAuthenticationBackend', array('auth_backend' => $backendNames[$i])); ?>">
+            <?= $this->icon('edit.png'); ?> <?= $this->escape($backendNames[$i]); ?>
+          </a>
+        </td>
+        <td>
+          <a href="<?= $this->href('config/removeAuthenticationBackend', array('auth_backend' => $backendNames[$i])); ?>">
+            <?= $this->icon('remove.png', $this->translate('Remove')); ?>
+          </a>
+        </td>
+        <td>
+<?php if ($i > 0): ?>
+          <button type="submit" name="backend_newpos" value="<?= sprintf('%s|%s', $backendNames[$i], $i - 1); ?>">
+            <?= $this->icon('up.png', $this->translate('Move up in authentication order')); ?>
+          </button>
+<?php endif; ?>
+<?php if ($i + 1 < count($backendNames)): ?>
+          <button type="submit" name="backend_newpos" value="<?= sprintf('%s|%s', $backendNames[$i], $i + 1); ?>">
+            <?= $this->icon('down.png', $this->translate('Move down in authentication order')); ?>
+          </button>
+<?php endif; ?>
+        </td>
+      </tr>
+<?php endfor; ?>
+    </tbody>
+  </table>
+  <?= $form->getElement($form->getTokenElementName()); ?>
+  <?= $form->getElement($form->getUidElementName()); ?>
+</form>

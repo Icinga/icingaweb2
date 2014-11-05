@@ -1,8 +1,11 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-use Icinga\Logger\Logger;
+use Icinga\Exception\IcingaException;
+use Icinga\Application\Logger;
 use Icinga\Data\Db\DbQuery;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Application\Icinga;
@@ -270,7 +273,10 @@ abstract class IdoQuery extends DbQuery
         $this->requireColumn($condition);
         $col = $this->getMappedField($condition);
         if ($col === null) {
-            throw new \Exception("No such field: $condition");
+            throw new IcingaException(
+                'No such field: %s',
+                $condition
+            );
         }
         return parent::where($col, $value);
     }
@@ -440,7 +446,11 @@ abstract class IdoQuery extends DbQuery
         } elseif ($this->isCustomVar($alias)) {
             $this->requireCustomvar($alias);
         } else {
-            throw new ProgrammingError(sprintf('%s : Got invalid column: %s', get_called_class(), $alias));
+            throw new ProgrammingError(
+                '%s : Got invalid column: %s',
+                get_called_class(),
+                $alias
+            );
         }
         return $this;
     }
@@ -474,7 +484,8 @@ abstract class IdoQuery extends DbQuery
     {
         if ($this->hasJoinedVirtualTable($name)) {
             throw new ProgrammingError(
-                sprintf('IDO query virtual table conflict with "%s"', $name)
+                'IDO query virtual table conflict with "%s"',
+                $name
             );
         }
         return $this;
@@ -497,10 +508,8 @@ abstract class IdoQuery extends DbQuery
             $this->$func();
         } else {
             throw new ProgrammingError(
-                sprintf(
-                    'Cannot join "%s", no such table found',
-                    $table
-                )
+                'Cannot join "%s", no such table found',
+                $table
             );
         }
         $this->joinedVirtualTables[$table] = true;
@@ -579,10 +588,8 @@ abstract class IdoQuery extends DbQuery
         // TODO: Improve this:
         if (! preg_match('~^_(host|service)_([a-zA-Z0-9_]+)$~', $customvar, $m)) {
             throw new ProgrammingError(
-                sprintf(
-                    'Got invalid custom var: "%s"',
-                    $customvar
-                )
+                'Got invalid custom var: "%s"',
+                $customvar
             );
         }
         return array($m[1], $m[2]);

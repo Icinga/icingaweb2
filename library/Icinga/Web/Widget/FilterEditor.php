@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Widget;
 
@@ -95,6 +97,8 @@ class FilterEditor extends AbstractWidget
              . $view->escape(t('Click to remove this part of your filter'))
              . '">' . $view->icon('remove.png') .  '</a>';
 
+        /*
+        // Temporarilly removed, not implemented yet
         $addUrl = clone($url);
         $addUrl->setParam('addToId', $idx);
         $addLink = ' <a href="' . $addUrl . '" title="'
@@ -103,7 +107,7 @@ class FilterEditor extends AbstractWidget
         $addLink .= ' <a href="' . $addUrl . '" title="'
              . $view->escape(t('Click to add a filter expression to this operator'))
              . '">' . t('Expression') .  ' (=, &lt;, &gt;, &lt;=, &gt;=)</a>';
-
+        */
         $selectedIndex = ($idx === $this->selectedIdx ? ' -&lt;--' : '');
         $selectIndex = ' <a href="' . $markUrl . '">o</a>';
 
@@ -125,7 +129,7 @@ class FilterEditor extends AbstractWidget
                 ),
                 $filter->getOperatorName(),
                 array('style' => 'width: 5em')
-            ) . $removeLink . ' ' . t('Add') . ': ' . $addLink;
+            ) . $removeLink; // Disabled: . ' ' . t('Add') . ': ' . $addLink;
             $html .= '<span class="handle"> </span>';
 
             if ($level === 0) {
@@ -179,9 +183,10 @@ class FilterEditor extends AbstractWidget
     {
         $name = 'sign_' . $filter->getId();
         $signs = array(
-            '=' => '=',
-            '>' => '>',
-            '<' => '<',
+            '='  => '=',
+            '!=' => '!=',
+            '>'  => '>',
+            '<'  => '<',
             '>=' => '>=',
             '<=' => '<=',
         );

@@ -1,9 +1,7 @@
 <?php
-// @codeCoverageIgnoreStart
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-/**
- * Web widget class
- */
 namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
@@ -40,10 +38,8 @@ class Widget
 
         if (! class_exists($class)) {
             throw new ProgrammingError(
-                sprintf(
-                    'There is no such widget: %s',
-                    $name
-                )
+                'There is no such widget: %s',
+                $name
             );
         }
 
@@ -51,4 +47,3 @@ class Widget
         return $widget;
     }
 }
-// @codeCoverageIgnoreEnd

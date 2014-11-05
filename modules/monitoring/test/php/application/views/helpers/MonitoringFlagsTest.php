@@ -4,12 +4,10 @@
 
 namespace Tests\Icinga\Module\Monitoring\Application\Views\Helpers;
 
-use \Zend_View_Helper_MonitoringFlags;
+use Zend_View_Helper_MonitoringFlags;
 use Icinga\Test\BaseTestCase;
 
-// @codingStandardsIgnoreStart
 require_once realpath(BaseTestCase::$moduleDir . '/monitoring/application/views/helpers/MonitoringFlags.php');
-// @codingStandardsIgnoreEnd
 
 class MonitoringFlagsTest extends BaseTestCase
 {

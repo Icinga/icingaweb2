@@ -1,35 +1,12 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2014 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2014 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Translation\Util;
 
-use \Exception;
+use Exception;
+use Icinga\Exception\IcingaException;
+use Icinga\Util\File;
 use Icinga\Application\Modules\Manager;
 use Icinga\Application\ApplicationBootstrap;
 
@@ -61,11 +38,18 @@ class GettextTranslationHelper
     private $moduleMgr;
 
     /**
-     * The current version of IcingaWeb2
+     * The current version of Icingaweb 2 or of the module the catalog is being created for
      *
      * @var string
      */
     private $version;
+
+    /**
+     * The name of the module if any
+     *
+     * @var string
+     */
+    private $moduleName;
 
     /**
      * The locale used by this helper
@@ -117,8 +101,7 @@ class GettextTranslationHelper
      */
     public function __construct(ApplicationBootstrap $bootstrap, $locale)
     {
-        $this->version = $bootstrap->getConfig()->app()->global->get('version', '0.1');
-        $this->moduleMgr = $bootstrap->getModuleManager();
+        $this->moduleMgr = $bootstrap->getModuleManager()->loadEnabledModules();
         $this->appDir = $bootstrap->getApplicationDir();
         $this->locale = $locale;
     }
@@ -130,6 +113,7 @@ class GettextTranslationHelper
     {
         $this->catalogPath = tempnam(sys_get_temp_dir(), 'IcingaTranslation_');
         $this->templatePath = tempnam(sys_get_temp_dir(), 'IcingaPot_');
+        $this->version = 'None'; // TODO: Access icinga version from a file or property
 
         $this->moduleDir = null;
         $this->tablePath = implode(
@@ -157,6 +141,8 @@ class GettextTranslationHelper
     {
         $this->catalogPath = tempnam(sys_get_temp_dir(), 'IcingaTranslation_');
         $this->templatePath = tempnam(sys_get_temp_dir(), 'IcingaPot_');
+        $this->version = $this->moduleMgr->getModule($module)->getVersion();
+        $this->moduleName = $this->moduleMgr->getModule($module)->getName();
 
         $this->moduleDir = $this->moduleMgr->getModuleDir($module);
         $this->tablePath = implode(
@@ -230,7 +216,10 @@ class GettextTranslationHelper
         } else {
             if ((!is_dir(dirname($this->tablePath)) && !@mkdir(dirname($this->tablePath), 0755, true)) ||
                 !rename($this->templatePath, $this->tablePath)) {
-                throw new Exception('Unable to create ' . $this->tablePath);
+                throw new IcingaException(
+                    'Unable to create %s',
+                    $this->tablePath
+                );
             }
         }
         $this->updateHeader($this->tablePath);
@@ -248,8 +237,16 @@ class GettextTranslationHelper
                     '/usr/bin/xgettext',
                     '--language=PHP',
                     '--keyword=translate',
+                    '--keyword=translate:1,2c',
+                    '--keyword=translatePlural:1,2',
+                    '--keyword=translatePlural:1,2,4c',
                     '--keyword=mt:2',
+                    '--keyword=mtp:2,3',
+                    '--keyword=mtp:2,3,5c',
                     '--keyword=t',
+                    '--keyword=t:1,2c',
+                    '--keyword=tp:1,2',
+                    '--keyword=tp:1,2,4c',
                     '--sort-output',
                     '--force-po',
                     '--omit-header',
@@ -275,13 +272,14 @@ class GettextTranslationHelper
             'author_name' => 'FIRST AUTHOR',
             'author_mail' => 'EMAIL@ADDRESS',
             'author_year' => 'YEAR',
-            'project_name' => 'Icinga Web 2',
+            'project_name' => $this->moduleName ? ucfirst($this->moduleName) . ' Module' : 'Icinga Web 2',
             'project_version' => $this->version,
             'project_bug_mail' => 'dev@icinga.org',
             'pot_creation_date' => date('Y-m-d H:iO'),
             'po_revision_date' => 'YEAR-MO-DA HO:MI+ZONE',
             'translator_name' => 'FULL NAME',
             'translator_mail' => 'EMAIL@ADDRESS',
+            'language'  => $this->locale,
             'language_team_name' => 'LANGUAGE',
             'language_team_url' => 'LL@li.org',
             'charset' => self::FILE_ENCODING
@@ -304,10 +302,14 @@ class GettextTranslationHelper
                 $headerInfo['translator_name'] = $translatorInfo[1];
                 $headerInfo['translator_mail'] = $translatorInfo[2];
             }
+            $languageTeamInfo = array();
+            if (preg_match('@Language-Team: (.+) <(.+)>@', $content, $languageTeamInfo)) {
+                $headerInfo['language_team_name'] = $languageTeamInfo[1];
+                $headerInfo['language_team_url'] = $languageTeamInfo[2];
+            }
             $languageInfo = array();
-            if (preg_match('@Language-Team: (.+) <(.+)>@', $content, $languageInfo)) {
-                $headerInfo['language_team_name'] = $languageInfo[1];
-                $headerInfo['language_team_url'] = $languageInfo[2];
+            if (preg_match('@Language: ([a-z]{2}_[A-Z]{2})@', $content, $languageInfo)) {
+                $headerInfo['language'] = $languageInfo[1];
             }
         }
 
@@ -332,11 +334,13 @@ class GettextTranslationHelper
                     '"PO-Revision-Date: ' . $headerInfo['po_revision_date'] . '\n"',
                     '"Last-Translator: ' . $headerInfo['translator_name'] . ' <'
                     . $headerInfo['translator_mail'] . '>\n"',
+                    '"Language: ' . $headerInfo['language'] . '\n"',
                     '"Language-Team: ' . $headerInfo['language_team_name'] . ' <'
                     . $headerInfo['language_team_url'] . '>\n"',
                     '"MIME-Version: 1.0\n"',
                     '"Content-Type: text/plain; charset=' . $headerInfo['charset'] . '\n"',
                     '"Content-Transfer-Encoding: 8bit\n"',
+                    '"Plural-Forms: nplurals=2; plural=(n != 1);\n"',
                     ''
                 )
             ) . PHP_EOL . substr($content, strpos($content, '#: '))
@@ -350,47 +354,46 @@ class GettextTranslationHelper
      */
     private function createFileCatalog()
     {
-        $catalogHandle = fopen($this->catalogPath, 'w');
-        if (!$catalogHandle) {
-            throw new Exception('Unable to create ' . $this->catalogPath);
-        }
+        $catalog = new File($this->catalogPath, 'w');
 
         try {
             if ($this->moduleDir) {
-                $this->getSourceFileNames($this->moduleDir, $catalogHandle);
+                $this->getSourceFileNames($this->moduleDir, $catalog);
             } else {
-                $this->getSourceFileNames($this->appDir, $catalogHandle);
-                $this->getSourceFileNames(realpath($this->appDir . '/../library/Icinga'), $catalogHandle);
+                $this->getSourceFileNames($this->appDir, $catalog);
+                $this->getSourceFileNames(realpath($this->appDir . '/../library/Icinga'), $catalog);
             }
         } catch (Exception $error) {
-            fclose($catalogHandle);
             throw $error;
         }
 
-        fclose($catalogHandle);
+        $catalog->fflush();
     }
 
     /**
      * Recursively scan the given directory for translatable source files
      *
      * @param   string      $directory      The directory where to search for sources
-     * @param   resource    $fileHandle     The file where to write the results
+     * @param   File        $file           The file where to write the results
      * @param   array       $blacklist      A list of directories to omit
      *
      * @throws  Exception                   In case the given directory is not readable
      */
-    private function getSourceFileNames($directory, &$fileHandle)
+    private function getSourceFileNames($directory, File $file)
     {
         $directoryHandle = opendir($directory);
         if (!$directoryHandle) {
-            throw new Exception('Unable to read files from ' . $directory);
+            throw new IcingaException(
+                'Unable to read files from %s',
+                $directory
+            );
         }
 
         $subdirs = array();
         while (($filename = readdir($directoryHandle)) !== false) {
             $filepath = $directory . DIRECTORY_SEPARATOR . $filename;
             if (preg_match('@^[^\.].+\.(' . implode('|', $this->sourceExtensions) . ')$@', $filename)) {
-                fwrite($fileHandle, $filepath . PHP_EOL);
+                $file->fwrite($filepath . PHP_EOL);
             } elseif (is_dir($filepath) && !preg_match('@^(\.|\.\.)$@', $filename)) {
                 $subdirs[] = $filepath;
             }
@@ -398,7 +401,7 @@ class GettextTranslationHelper
         closedir($directoryHandle);
 
         foreach ($subdirs as $subdir) {
-            $this->getSourceFileNames($subdir, $fileHandle);
+            $this->getSourceFileNames($subdir, $file);
         }
     }
 

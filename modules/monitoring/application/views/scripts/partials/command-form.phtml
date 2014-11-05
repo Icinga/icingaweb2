@@ -1,0 +1,29 @@
+<div class="controls">
+    <?= $this->tabs->showOnlyCloseButton() ?>
+</div>
+
+<div class="content">
+    <h1><?= $title ?></h1>
+    <table class="objectlist">
+        <thead>
+            <tr>
+                <th><?= $this->img('img/icons/host.png') ?> <?= $this->translate('Host') ?></th>
+                <th><?= $this->img('img/icons/service.png') ?> <?= $this->translate('Service') ?></th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($form->getObjects() as $object): /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */ ?>
+            <tr>
+                <?php if ($object->getType() === $object::TYPE_HOST): ?>
+                <td colspan="2"><?= $this->escape($object->getName()) ?></td>
+                <?php else: ?>
+                <td><?= $this->escape($object->getHost()->getName()) ?></td>
+                <td><?= $this->escape($object->getName()) ?></td>
+                <?php endif ?>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <hr>
+    <?= $form ?>
+</div>

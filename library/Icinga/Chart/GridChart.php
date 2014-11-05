@@ -1,46 +1,22 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Chart;
 
-use \DOMElement;
-use \Icinga\Chart\Chart;
-use \Icinga\Chart\Axis;
-use \Icinga\Chart\Graph\BarGraph;
-use \Icinga\Chart\Graph\LineGraph;
-use \Icinga\Chart\Graph\StackedGraph;
-use \Icinga\Chart\Primitive\Canvas;
-use \Icinga\Chart\Primitive\Rect;
-use \Icinga\Chart\Primitive\Path;
-use \Icinga\Chart\Render\LayoutBox;
-use \Icinga\Chart\Render\RenderContext;
-use \Icinga\Chart\Unit\AxisUnit;
+use DOMElement;
+use Icinga\Chart\Chart;
+use Icinga\Chart\Axis;
+use Icinga\Chart\Graph\BarGraph;
+use Icinga\Chart\Graph\LineGraph;
+use Icinga\Chart\Graph\StackedGraph;
+use Icinga\Chart\Graph\Tooltip;
+use Icinga\Chart\Primitive\Canvas;
+use Icinga\Chart\Primitive\Rect;
+use Icinga\Chart\Primitive\Path;
+use Icinga\Chart\Render\LayoutBox;
+use Icinga\Chart\Render\RenderContext;
+use Icinga\Chart\Unit\AxisUnit;
 
 /**
  * Base class for grid based charts.
@@ -98,6 +74,16 @@ class GridChart extends Chart
      * @var array
      */
     private $stacks = array();
+
+    /**
+     * An associative array containing all Tooltips used to render the titles
+     *
+     * Each tooltip represents the summary for all y-values of a certain x-value
+     * in the grid chart
+     *
+     * @var Tooltip
+     */
+    private $tooltips = array();
 
     /**
      * Check if the current dataset has the proper structure for this chart.
@@ -192,6 +178,26 @@ class GridChart extends Chart
             $this->graphs[$axisName][] = $graph;
             if ($this->legend) {
                 $this->legend->addDataset($graph);
+            }
+        }
+        $this->initTooltips($data);
+    }
+
+
+    private function initTooltips($data)
+    {
+        foreach ($data as &$graph) {
+            foreach  ($graph['data'] as $x => $point) {
+                if (!array_key_exists($x, $this->tooltips)) {
+                    $this->tooltips[$x] = new Tooltip(
+                        array(
+                            'color' => $graph['color'],
+
+                        )
+
+                    );
+                }
+                $this->tooltips[$x]->addDataPoint($point);
             }
         }
     }
@@ -378,11 +384,16 @@ class GridChart extends Chart
         foreach ($this->graphs as $axisName => $graphs) {
             $axis = $this->axis[$axisName];
             $graphObj = null;
-            foreach ($graphs as $graph) {
+            foreach ($graphs as $dataset => $graph) {
                 // determine the type and create a graph object for it
                 switch ($graph['graphType']) {
                     case self::TYPE_BAR:
-                        $graphObj = new BarGraph($axis->transform($graph['data']));
+                        $graphObj = new BarGraph(
+                            $axis->transform($graph['data']),
+                            $graphs,
+                            $dataset,
+                            $this->tooltips
+                        );
                         break;
                     case self::TYPE_LINE:
                         $graphObj = new LineGraph($axis->transform($graph['data']));

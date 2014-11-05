@@ -1,8 +1,8 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
+use Icinga\Web\MenuRenderer;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Hook;
 use Icinga\Web\Menu;
@@ -18,9 +18,12 @@ class LayoutController extends ActionController
      */
     public function menuAction()
     {
-        $this->view->url    = Url::fromRequest()->getRelativeUrl();
-        $this->view->items  = Menu::fromConfig()->getChildren();
-        $this->view->sub    = false;
+        $this->setAutorefreshInterval(15);
+        $this->_helper->layout()->disableLayout();
+
+        $url = Url::fromRequest();
+        $menu = new MenuRenderer(Menu::load(), $url->getRelativeUrl());
+        $this->view->menuRenderer = $menu->useCustomRenderer();
     }
 
     /**
@@ -30,11 +33,11 @@ class LayoutController extends ActionController
     {
         $topbarHtmlParts = array();
 
-        /** @var Hook\Layout\TopBar $hook */
+        /** @var Hook\TopBarHook $hook */
         $hook = null;
 
         foreach (Hook::all('TopBar') as $hook) {
-            $topbarHtmlParts[] = $hook->getHtml($this->getRequest(), $this->view);
+            $topbarHtmlParts[] = $hook->getHtml($this->getRequest());
         }
 
         $this->view->topbarHtmlParts = $topbarHtmlParts;
@@ -43,4 +46,3 @@ class LayoutController extends ActionController
         $this->renderScript('parts/topbar.phtml');
     }
 }
-// @codeCoverageIgnoreEnd

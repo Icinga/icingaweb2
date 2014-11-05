@@ -69,34 +69,33 @@ class Backend implements Selectable, Queryable, ConnectionInterface
      */
     public static function createBackend($backendName = null)
     {
-        $allBackends = array();
-        $defaultBackend = null;
-        foreach (IcingaConfig::module('monitoring', 'backends') as $name => $config) {
-            if (!(bool) $config->get('disabled', false) && $defaultBackend === null) {
-                $defaultBackend = $config;
+        $config = IcingaConfig::module('monitoring', 'backends');
+        if ($config->count() === 0) {
+            throw new ConfigurationError(mt('monitoring', 'No backend has been configured'));
+        }
+        if ($backendName !== null) {
+            $backendConfig = $config->get($backendName);
+            if ($backendConfig === null) {
+                throw new ConfigurationError('No configuration for backend %s', $backendName);
             }
-            $allBackends[$name] = $config;
-        }
-        if (empty($allBackends)) {
-            throw new ConfigurationError('No backend has been configured');
-        }
-        if ($defaultBackend === null) {
-            throw new ConfigurationError('All backends are disabled');
-        }
-        if ($backendName === null) {
-            $backendConfig = $defaultBackend;
-        } else {
-            if (!array_key_exists($backendName, $allBackends)) {
-                throw new ConfigurationError('No configuration for backend ' . $backendName);
-            }
-            $backendConfig = $allBackends[$backendName];
-            if ((bool) $backendConfig->get('disabled', false)) {
+            if ((bool) $backendConfig->get('disabled', false) === true) {
                 throw new ConfigurationError(
-                    'Configuration for backend ' . $backendName . ' available but backend is disabled'
+                    mt('monitoring', 'Configuration for backend %s available but backend is disabled'),
+                    $backendName
                 );
             }
+        } else {
+            foreach ($config as $name => $backendConfig) {
+                if ((bool) $backendConfig->get('disabled', false) === false) {
+                    $backendName = $name;
+                    break;
+                }
+            }
+            if ($backendName === null) {
+                throw new ConfigurationError(mt('monitoring', 'All backends are disabled'));
+            }
         }
-        $resource = ResourceFactory::createResource(ResourceFactory::getResourceConfig($backendConfig->resource));
+        $resource = ResourceFactory::create($backendConfig->resource);
         if ($backendConfig->type === 'ido' && $resource->getDbType() !== 'oracle') {
             // TODO(el): The resource should set the table prefix
             $resource->setTablePrefix('icinga_');
@@ -147,7 +146,10 @@ public function getResource()
     {
         $viewClass = '\\Icinga\\Module\\Monitoring\\DataView\\' . ucfirst($viewName);
         if (!class_exists($viewClass)) {
-            throw new ProgrammingError('DataView ' . ucfirst($viewName) . ' does not exist');
+            throw new ProgrammingError(
+                'DataView %s does not exist',
+                ucfirst($viewName)
+            );
         }
         return $viewClass;
     }
@@ -174,7 +176,9 @@ public function getResource()
             . 'Query';
         if (!class_exists($queryClass)) {
             throw new ProgrammingError(
-                'Query "' . ucfirst($queryName) . '" does not exist for backend ' . ucfirst($this->type)
+                'Query "%s" does not exist for backend %s',
+                ucfirst($queryName),
+                ucfirst($this->type)
             );
         }
         return $queryClass;

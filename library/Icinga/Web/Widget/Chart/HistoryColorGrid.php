@@ -1,31 +1,5 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Widget\Chart;
@@ -34,7 +8,6 @@ use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Color;
 use Icinga\Web\Widget\AbstractWidget;
 use DateInterval;
-use Zend_View_Abstract;
 
 /**
  * Display a colored grid that visualizes a set of values for each day
@@ -42,38 +15,45 @@ use Zend_View_Abstract;
  */
 class HistoryColorGrid extends AbstractWidget {
 
-    const ORIENTATION_VERTICAL = 'vertical';
+    const CAL_GROW_INTO_PAST = 'past';
+    const CAL_GROW_INTO_PRESENT = 'present';
 
+    const ORIENTATION_VERTICAL = 'vertical';
     const ORIENTATION_HORIZONTAL = 'horizontal';
 
-    public $orientation = self::ORIENTATION_HORIZONTAL;
+    public $weekFlow = self::CAL_GROW_INTO_PAST;
+    public $orientation = self::ORIENTATION_VERTICAL;
+    public $weekStartMonday = true;
 
     private $maxValue = 1;
 
     private $start = null;
-
     private $end = null;
-
     private $data = array();
-
     private $color;
+    public $opacity = 1.0;
 
-    public function __construct($color = '#51e551') {
+    public function __construct($color = '#51e551', $start = null, $end = null) {
         $this->setColor($color);
+        if (isset($start)) {
+            $this->start = $this->tsToDateStr($start);
+        }
+        if (isset($end)) {
+            $this->end = $this->tsToDateStr($end);
+        }
     }
 
     /**
      * Set the displayed data-set
      *
-     * @param $data array   The values to display.
-     *                        properties for each entry:
+     * @param $events array The history events to display as an array of arrays:
      *                          value: The value to display
      *                          caption: The caption on mouse-over
      *                          url: The url to open on click.
      */
-    public function setData(array $data)
+    public function setData(array $events)
     {
-        $this->data = $data;
+        $this->data = $events;
         $start = time();
         $end = time();
         foreach ($this->data as $entry) {
@@ -91,8 +71,12 @@ class HistoryColorGrid extends AbstractWidget {
                 $start = $time;
             }
         }
-        $this->start = $this->tsToDateStr($start);
-        $this->end = $this->tsToDateStr($end);
+        if (!isset($this->start)) {
+            $this->start = $this->tsToDateStr($start);
+        }
+        if (!isset($this->end)) {
+            $this->end = $this->tsToDateStr($end);
+        }
     }
 
     /**
@@ -103,6 +87,16 @@ class HistoryColorGrid extends AbstractWidget {
     public function setColor($color)
     {
         $this->color = $color;
+    }
+
+    /**
+     * Set the used opacity
+     *
+     * @param $opacity
+     */
+    public function setOpacity($opacity)
+    {
+        $this->opacity = $opacity;
     }
 
     /**
@@ -127,16 +121,17 @@ class HistoryColorGrid extends AbstractWidget {
      */
     private function renderDay($day)
     {
-        if (array_key_exists($day, $this->data)) {
+        if (array_key_exists($day, $this->data) && $this->data[$day]['value'] > 0) {
             $entry = $this->data[$day];
             return'<a ' .
-                'style="background-color:' . $this->calculateColor($entry['value']) . ';" ' .
+                'style="background-color:' . $this->calculateColor($entry['value']) . '; '
+                    . ' opacity: ' . $this->opacity . ';"' .
                 'title="' . $entry['caption'] . '" ' .
                 'href="'  . $entry['url'] . '"' .
             '>&nbsp;</a>';
         } else {
             return '<a ' .
-                'style="background-color:' . $this->calculateColor(0) . ';" ' .
+                'style="background-color:' . $this->calculateColor(0) . '; ' . ' opacity: ' . $this->opacity . ';" ' .
                 'title="No entries for ' . $day . '" ' .
             '></a>';
         }
@@ -153,13 +148,14 @@ class HistoryColorGrid extends AbstractWidget {
     {
         $weeks = $grid['weeks'];
         $months = $grid['months'];
+        $years = $grid['years'];
         $html = '<table class="historycolorgrid">';
         $html .= '<tr><th></th>';
         $old = -1;
-        foreach ($months as $month) {
+        foreach ($months as $week => $month) {
             if ($old !== $month) {
                 $old = $month;
-                $txt = $this->monthName($month);
+                $txt = $this->monthName($month, $years[$week]);
             } else {
                 $txt = '';
             }
@@ -180,12 +176,13 @@ class HistoryColorGrid extends AbstractWidget {
      */
     private function renderVertical($grid)
     {
+        $years = $grid['years'];
         $weeks = $grid['weeks'];
         $months = $grid['months'];
         $html = '<table class="historycolorgrid">';
         $html .= '<tr>';
         for ($i = 0; $i < 7; $i++) {
-            $html .= '<th>' . $this->weekdayName($i) . "</th>";
+            $html .= '<th>' . $this->weekdayName($this->weekStartMonday ? $i + 1 : $i) . "</th>";
         }
         $html .= '</tr>';
         $old = -1;
@@ -199,7 +196,7 @@ class HistoryColorGrid extends AbstractWidget {
             }
             if ($old !== $months[$index]) {
                 $old = $months[$index];
-                $txt = $this->monthName($old);
+                $txt = $this->monthName($old, $years[$index]);
             } else {
                 $txt = '';
             }
@@ -219,7 +216,9 @@ class HistoryColorGrid extends AbstractWidget {
      */
     private function renderWeekdayHorizontal($weekday, &$weeks)
     {
-        $html = '<tr><td class="weekday">' . $this->weekdayName($weekday) . '</td>';
+        $html = '<tr><td class="weekday">'
+            . $this->weekdayName($this->weekStartMonday ? $weekday + 1 : $weekday)
+        . '</td>';
         foreach ($weeks as $week) {
             if (array_key_exists($weekday, $week)) {
                 $html .= '<td>' . $this->renderDay($week[$weekday]) . '</td>';
@@ -241,14 +240,20 @@ class HistoryColorGrid extends AbstractWidget {
         $weeks   = array(array());
         $week    = 0;
         $months  = array();
+        $years   = array();
         $start   = strtotime($this->start);
         $year    = intval(date('Y', $start));
         $month   = intval(date('n', $start));
         $day     = intval(date('j', $start));
         $weekday = intval(date('w', $start));
+        if ($this->weekStartMonday) {
+            // 0 => monday, 6 => sunday
+            $weekday = $weekday === 0 ? 6 : $weekday - 1;
+        }
 
         $date = $this->toDateStr($day, $month, $year);
         $weeks[0][$weekday] = $date;
+        $years[0] = $year;
         $months[0] = $month;
         while ($date !== $this->end) {
             $day++;
@@ -256,8 +261,12 @@ class HistoryColorGrid extends AbstractWidget {
             if ($weekday > 6) {
                 $weekday = 0;
                 $weeks[] = array();
+                // PRESENT => The last day of week determines the month
+                if ($this->weekFlow === self::CAL_GROW_INTO_PRESENT) {
+                    $months[$week] = $month;
+                    $years[$week] = $year;
+                }
                 $week++;
-                $months[$week] = $month;
             }
             if ($day > cal_days_in_month(CAL_GREGORIAN, $month, $year)) {
                 $month++;
@@ -267,13 +276,29 @@ class HistoryColorGrid extends AbstractWidget {
                 }
                 $day = 1;
             }
+            if ($weekday === 0) {
+                // PAST => The first day of each week determines the month
+                if ($this->weekFlow === self::CAL_GROW_INTO_PAST) {
+                    $months[$week] = $month;
+                    $years[$week] = $year;
+                }
+            }
             $date = $this->toDateStr($day, $month, $year);
             $weeks[$week][$weekday] = $date;
         };
+        $years[$week] = $year;
         $months[$week] = $month;
+        if ($this->weekFlow == self::CAL_GROW_INTO_PAST) {
+            return array(
+                'weeks'  => array_reverse($weeks),
+                'months' => array_reverse($months),
+                'years'  => array_reverse($years)
+            );
+        }
         return array(
             'weeks'  => $weeks,
-            'months' => $months
+            'months' => $months,
+            'years'  => $years
         );
     }
 
@@ -284,9 +309,10 @@ class HistoryColorGrid extends AbstractWidget {
      *
      * @return string   The
      */
-    private function monthName($month)
+    private function monthName($month, $year)
     {
-        $dt = DateTimeFactory::create('2000-' . $month . '-01');
+        // TODO: find a way to render years without messing up the layout
+        $dt = DateTimeFactory::create($year . '-' . $month . '-01');
         return $dt->format('M');
     }
 
@@ -300,7 +326,7 @@ class HistoryColorGrid extends AbstractWidget {
         $sun = DateTimeFactory::create('last Sunday');
         $interval = new DateInterval('P' .  $weekday . 'D');
         $sun->add($interval);
-        return $sun->format('D');
+        return substr($sun->format('D'), 0, 2);
     }
 
     /**
@@ -344,4 +370,3 @@ class HistoryColorGrid extends AbstractWidget {
         return $this->renderVertical($grid);
     }
 }
-// @codeCoverageIgnoreEnd

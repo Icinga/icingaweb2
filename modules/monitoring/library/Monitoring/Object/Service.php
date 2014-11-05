@@ -1,34 +1,112 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Object;
 
-use Icinga\Module\Monitoring\DataView\ServiceStatus;
-use Icinga\Data\Db\DbQuery;
+use InvalidArgumentException;
+use Icinga\Module\Monitoring\Backend;
 
-class Service extends AbstractObject
+/**
+ * A Icinga service
+ */
+class Service extends MonitoredObject
 {
-    public $type   = 'service';
+    /**
+     * Service state 'OK'
+     */
+    const STATE_OK = 0;
+
+    /**
+     * Service state 'WARNING'
+     */
+    const STATE_WARNING = 1;
+
+    /**
+     * Service state 'CRITICAL'
+     */
+    const STATE_CRITICAL = 2;
+
+    /**
+     * Service state 'UNKNOWN'
+     */
+    const STATE_UNKNOWN = 3;
+
+    /**
+     * Service state 'PENDING'
+     */
+    const STATE_PENDING = 99;
+
+    /**
+     * Type of the Icinga service
+     *
+     * @var string
+     */
+    public $type = self::TYPE_SERVICE;
+
+    /**
+     * Prefix of the Icinga service
+     *
+     * @var string
+     */
     public $prefix = 'service_';
 
-    protected function applyObjectFilter(DbQuery $query)
+    /**
+     * Host the service is running on
+     *
+     * @var Host
+     */
+    protected $host;
+
+    /**
+     * Service name
+     *
+     * @var string
+     */
+    protected $service;
+
+    /**
+     * Create a new service
+     *
+     * @param Backend   $backend    Backend to fetch service information from
+     * @param string    $host       Host name the service is running on
+     * @param string    $service    Service name
+     */
+    public function __construct(Backend $backend, $host, $service)
     {
-        return $query->where('service_host_name', $this->host_name)
-                     ->where('service_description', $this->service_description);
+        parent::__construct($backend);
+        $this->host = new Host($backend, $host);
+        $this->service = $service;
     }
 
-    public function populate()
+    /**
+     * Get the host the service is running on
+     *
+     * @return Host
+     */
+    public function getHost()
     {
-        $this->fetchComments()
-            ->fetchServicegroups()
-            ->fetchContacts()
-            ->fetchContactGroups()
-            ->fetchCustomvars()
-            ->fetchDowntimes();
+        return $this->host;
     }
 
-    protected function getProperties()
+    /**
+     * Get the service name
+     *
+     * @return string
+     */
+    public function getName()
     {
-        $this->view = ServiceStatus::fromParams(array('backend' => null), array(
+        return $this->service;
+    }
+
+    /**
+     * Get the data view
+     *
+     * @return \Icinga\Module\Monitoring\DataView\ServiceStatus
+     */
+    protected function getDataView()
+    {
+        return $this->backend->select()->from('serviceStatus', array(
             'host_name',
             'host_state',
             'host_state_type',
@@ -70,10 +148,9 @@ class Service extends AbstractObject
             'host_is_flapping',
             'host_last_check',
             'host_notifications_enabled',
-            'host_unhandled_service_count',
+            'host_unhandled_services',
             'host_action_url',
             'host_notes_url',
-            'host_last_comment',
             'host_display_name',
             'host_alias',
             'host_ipv4',
@@ -113,9 +190,46 @@ class Service extends AbstractObject
             'service_flap_detection_enabled',
             'service_flap_detection_enabled_changed',
             'service_modified_service_attributes',
-        ))->where('host_name', $this->params->get('host'))
-          ->where('service_description', $this->params->get('service'));
+            'service_process_performance_data',
+            'process_perfdata' => 'service_process_performance_data',
+            'service_percent_state_change',
+            'service_host_name'
+        ))
+            ->where('host_name', $this->host->getName())
+            ->where('service_description', $this->service);
+    }
 
-        return $this->view->getQuery()->fetchRow();
+    /**
+     * Get the optional translated textual representation of a service state
+     *
+     * @param   int     $state
+     * @param   bool    $translate
+     *
+     * @return  string
+     * @throws  InvalidArgumentException If the service state is not valid
+     */
+    public static function getStateText($state, $translate = false)
+    {
+        $translate = (bool) $translate;
+        switch ((int) $state) {
+            case self::STATE_OK:
+                $text = $translate ? mt('monitoring', 'ok') : 'ok';
+                break;
+            case self::STATE_WARNING:
+                $text = $translate ? mt('monitoring', 'warning') : 'warning';
+                break;
+            case self::STATE_CRITICAL:
+                $text = $translate ? mt('monitoring', 'critical') : 'critical';
+                break;
+            case self::STATE_UNKNOWN:
+                $text = $translate ? mt('monitoring', 'unknown') : 'unknown';
+                break;
+            case self::STATE_PENDING:
+                $text = $translate ? mt('monitoring', 'pending') : 'pending';
+                break;
+            default:
+                throw new InvalidArgumentException('Invalid service state \'%s\'', $state);
+        }
+        return $text;
     }
 }

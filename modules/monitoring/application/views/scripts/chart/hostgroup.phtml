@@ -1,6 +1,9 @@
 
-<div style="width:<?= $this->width; ?>px;height:<?= $this->height; ?>px;margin:auto;">
-<?=
-$chart->render();
-?>
-</div>
+<?php if (! $this->compact) { ?>
+    <div class="svg-container-responsive">
+        <?= $chart->render(); ?>
+        <?= isset($chart2) ? $chart2->render() : ''; ?>
+    </div>
+<?php } else { ?>
+    <?= $chart->render(); ?>
+<?php } ?>

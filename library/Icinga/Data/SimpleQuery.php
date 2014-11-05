@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Data;
 
@@ -7,6 +9,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 use Zend_Paginator;
 use Exception;
+use Icinga\Exception\IcingaException;
 
 class SimpleQuery implements QueryInterface, Queryable
 {
@@ -156,7 +159,7 @@ class SimpleQuery implements QueryInterface, Queryable
 
     public function setOrderColumns(array $orderColumns)
     {
-        throw new Exception('This function does nothing and will be removed');
+        throw new IcingaException('This function does nothing and will be removed');
     }
 
     /**

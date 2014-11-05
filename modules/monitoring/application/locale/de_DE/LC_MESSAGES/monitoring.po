@@ -1,0 +1,1580 @@
+# Icinga Web 2 - Head for multiple monitoring backends.
+# Copyright (C) 2014 Icinga Development Team
+# This file is distributed under the same license as Monitoring Module.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Monitoring Module (2.0.0~alpha4)\n"
+"Report-Msgid-Bugs-To: dev@icinga.org\n"
+"POT-Creation-Date: 2014-08-22 18:04+0200\n"
+"PO-Revision-Date: 2014-08-22 18:05+0100\n"
+"Last-Translator: Thomas Gelf <thomas@gelf.net>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:235
+msgid " Down Hosts (Handled)"
+msgstr "Hosts Down (bestätigt)"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:236
+msgid " Down Hosts (Unhandled)"
+msgstr "Hosts Down (unbestätigt)"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:257
+msgid " Down Services (Handled)"
+msgstr "Hosts Down (bestätigt)"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:258
+msgid " Down Services (Unhandled)"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:41
+msgid " If you work with other administrators you may find it useful to share information about a host or service that is having problems if more than one of you may be working on it. Make sure you enter a brief description of what you are doing."
+msgstr "Wenn du mit anderen Administratoren zusammenarbeitest wirst du es als nützlich empfinden, Informationen über Probleme auf Hosts oder Services an denen du arbeitest zu teilen. Stell sicher eine kurze Beschreibung von dem was du gerade machst zu hinterlassen."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:239
+msgid " Pending Hosts"
+msgstr "Ungeprüfte Hosts"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:261
+msgid " Pending Services"
+msgstr "Ungeprüfte Services"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:237
+msgid " Unreachable Hosts (Handled)"
+msgstr "Nicht erreichbare Hosts (bestätigt)"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:238
+msgid " Unreachable Hosts (Unhandled)"
+msgstr "Nicht erreichbare Hosts (unbestätigt)"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:259
+msgid " Unreachable Services (Handled)"
+msgstr "Nicht erreichbare Services (bestätigt)"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:260
+msgid " Unreachable Services (Unhandled)"
+msgstr "Nicht erreichbare Services (unbestätigt)"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:255
+msgid " Warning Services (Handled)"
+msgstr "Service-Warnungen (bestätigt)"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:256
+msgid " Warning Services (Unhandled)"
+msgstr "Service-Warnungen (unbestätigt)"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:10
+#, php-format
+msgid "%d Hosts DOWN"
+msgstr "%d Hosts DOWN"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:22
+#, php-format
+msgid "%d Hosts PENDING"
+msgstr "%d Hosts UNGEPRÜFT"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:17
+#, php-format
+msgid "%d Hosts UNREACHABLE"
+msgstr "%d Hosts NICHT ERREICHBAR"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:15
+#, php-format
+msgid "%d Hosts UP"
+msgstr "%d Hosts UP"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:57
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:127
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:197
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:232
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:267
+#, php-format
+msgid "%d are not checked at all"
+msgstr "%d werden nicht überwacht"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:32
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:102
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:172
+#, php-format
+msgid "%d are passively checked"
+msgstr "%d werden passiv überwacht"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:20
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:87
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:138
+#, php-format
+msgid "%d hosts disabled"
+msgstr "%d deaktivierte Hosts"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:36
+#, php-format
+msgid "%d hosts flapping"
+msgstr "%d flapping Hosts"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:62
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:132
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:202
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:237
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:272
+#, php-format
+msgid "%d is not checked at all"
+msgstr "%d wird nicht überwacht"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:37
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:107
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:177
+#, php-format
+msgid "%d is passively checked"
+msgstr "%d wird passiv überwacht"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:48
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:107
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:158
+#, php-format
+msgid "%d services disabled"
+msgstr "%d deaktivierte Services"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:64
+#, php-format
+msgid "%d services flapping"
+msgstr "%d flapping services"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/hosts.phtml:105
+#, php-format
+msgid "%d unhandled services"
+msgstr "%d unbestätigte Services"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/notifications.phtml:22
+#, php-format
+msgid "%s notications have been sent for this issue"
+msgstr "%s Benachrichtigungen wurden für dieses Problem versandt"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:3
+#, php-format
+msgid "%s services:"
+msgstr "%s Services:"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/TimelineController.php:91
+msgid "4 Hours"
+msgstr "4 Stunden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/notifications.phtml:17
+#, php-format
+msgid "A notication has been sent for this issue %s ago"
+msgstr "Eine Benachrichtigung für dieses Problem wurde vor %s gesendet"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:93
+msgid "Accept passive host checks"
+msgstr "Akzeptiere passive Host Checks"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:71
+msgid "Accept passive service checks"
+msgstr "Akzeptiere passive Service-Checks"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/history.phtml:43
+msgid "Ack removed"
+msgstr "Bestätigung entfernt"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/history.phtml:38
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:37
+msgid "Acknowledge"
+msgstr "Bestätigen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:116
+msgid "Acknowledge Problem"
+msgstr "Problem bestätigen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/multi/components/comments.phtml:14
+msgid "Acknowledge all problems on the selected hosts or services"
+msgstr "Bestätige alle Probleme auf den ausgewählten Hosts oder Services"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/servicegroups.phtml:59
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/servicegroups.phtml:89
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/servicegroups.phtml:155
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/servicegroups.phtml:189
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/servicegroups.phtml:223
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/hostgroups.phtml:56
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/hostgroups.phtml:86
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/hostgroups.phtml:152
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/hostgroups.phtml:186
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/hostgroups.phtml:220
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:16
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:86
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:156
+msgid "Acknowledged"
+msgstr "Bestätigt"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:45
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/eventhistory.phtml:37
+msgid "Acknowledgement"
+msgstr "Bestätigung"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:945
+msgid "Acknowledgement has been sent"
+msgstr "Bestätigung wurde gesendet"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:967
+msgid "Acknowledgement removal has been requested"
+msgstr "Löschung der Bestätigung wurde angefragt"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/TimelineController.php:53
+msgid "Acknowledgements"
+msgstr "Bestätigungen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:20
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:52
+msgid "Active"
+msgstr "Aktiv"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/flags.phtml:24
+msgid "Active Checks"
+msgstr "Aktive Checks"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/comments.phtml:47
+msgid "Add comment"
+msgstr "Kommentar hinzufügen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:109
+msgid "All Events"
+msgstr "Alle Ereignisse"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:28
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:95
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:146
+msgid "All hosts enabled"
+msgstr "Alle Hosts aktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/services.phtml:3
+msgid "All services configured on this host"
+msgstr "Alle auf diesem Host konfigurierten Services"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:56
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:115
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:166
+msgid "All services enabled"
+msgstr "Alle Services aktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CommandForm.php:93
+msgid "Author (Your Name)"
+msgstr "Autor (Dein Name)"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CustomNotificationForm.php:63
+msgid "Broadcast"
+msgstr "Broadcast"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:53
+msgid "CRITICAL"
+msgstr "KRITISCH"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:140
+msgid "Check Output"
+msgstr "Check Ausgabe"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:116
+msgid "Check Result"
+msgstr "Check-Ergebnis"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/checksource.phtml:3
+msgid "Check Source"
+msgstr "Check-Quelle"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/RescheduleNextCheckForm.php:33
+msgid "Check Time"
+msgstr "Ausführungszeit"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:32
+msgid "Check execution time"
+msgstr "Check-Ausführungsdauer"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:38
+msgid "Check latency"
+msgstr "Check-Latenz"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:8
+msgid "Check now"
+msgstr "Jetzt prüfen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:253
+msgid "Child Objects"
+msgstr "Kind-Objekte"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/command.phtml:7
+msgid "Command"
+msgstr "Befehl"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:290
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:721
+msgid "Command has been sent, active checks will be disabled"
+msgstr "Befehl wurde gesendet, aktive Checks werden deaktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:315
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:741
+msgid "Command has been sent, active checks will be enabled"
+msgstr "Befehl wurde gesendet, aktive Checks werden aktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:334
+msgid "Command has been sent, check will be rescheduled"
+msgstr "Befehl wurde gesendet, Check wird neu geplant"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:701
+msgid "Command has been sent, checks will be rescheduled"
+msgstr "Befehl wurde gesendet, Checks werden neu geplant"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:772
+msgid "Command has been sent, event handlers will be disabled"
+msgstr "Befehl wurde gesendet, Eventhandler werden deaktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:804
+msgid "Command has been sent, event handlers will be enabled"
+msgstr "Befehl wurde gesendet, Eventhandler werden aktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:837
+msgid "Command has been sent, flap detection will be disabled"
+msgstr "Befehl wurde gesendet, Flap-Erkennung wird deaktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:870
+msgid "Command has been sent, flap detection will be enabled"
+msgstr "Befehl wurde gesendet, Flap-Erkennung wird aktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:1047
+msgid "Command has been sent, monitoring process will restart now"
+msgstr "Befehl wurde gesendet, der Monitoring-Prozess wird jetzt neustarten"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:510
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:538
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:661
+msgid "Command has been sent, notifications will be disabled"
+msgstr "Befehl wurde gesendet, Benachrichtigungen werden deaktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:568
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:682
+msgid "Command has been sent, notifications will be enabled"
+msgstr "Befehl wurde gesendet, Benachrichtigungen werden aktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:391
+msgid "Command has been sent, obsessing will be disabled"
+msgstr "Befehl wurde gesendet, Verfolgung wird deaktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:425
+msgid "Command has been sent, obsessing will be enabled"
+msgstr "Befehl wurde gesendet, Verfolgung wird aktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:492
+msgid "Command has been sent, passive check results will be accepted"
+msgstr "Befehl wurde gesendet, passive Checks werden akzeptiert werden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:459
+msgid "Command has been sent, passive check results will be refused"
+msgstr "Befehl wurde gesendet, passive Checks werden abgewiesen werden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:1069
+msgid "Command has been sent, performance data processing will be disabled"
+msgstr "Befehl wurde gesendet, Performancedatenverarbeitung wird deaktiviert werden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:1091
+msgid "Command has been sent, performance data processing will be enabled"
+msgstr "Befehl wurde gesendet, Performancedatenverarbeitung wird aktiviert werden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:1026
+msgid "Command has been sent, process will shut down"
+msgstr "Befehl wurde gesendet, der Monitoringprozess wird herunterfahren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/eventhistory.phtml:32
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/history.phtml:28
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:36
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CommentForm.php:30
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CustomNotificationForm.php:34
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:134
+msgid "Comment"
+msgstr "Kommentar"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/history.phtml:33
+msgid "Comment deleted"
+msgstr "Kommentar gelöscht"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:909
+msgid "Comment removal has been requested"
+msgstr "Löschung des Kommentars wurde angefordert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:42
+msgid "Comment was caused by a downtime."
+msgstr "Kommentar wurde durch eine Downtime erstellt."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:32
+msgid "Comment was caused by a flapping host or service."
+msgstr "Kommentar wurde durch einen flappenden Host oder service erstellt."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:46
+msgid "Comment was caused by an acknowledgement."
+msgstr "Kommentar wurde durch eine Bestätigung erstellt."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:37
+msgid "Comment was created by an user."
+msgstr "Kommentar wurde von einem Benutzer erstellt."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:86
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/TimelineController.php:48
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/comments.phtml:45
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/multi/components/comments.phtml:6
+msgid "Comments"
+msgstr "Kommentare"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:78
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/contacts.phtml:33
+msgid "Contactgroups"
+msgstr "Kontaktgruppen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:90
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/contacts.phtml:14
+msgid "Contacts"
+msgstr "Kontakte"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:160
+msgid "Critical"
+msgstr "Kritisch"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:101
+msgid "Critical Events"
+msgstr "Kritische Ereignisse"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:45
+msgid "Current Downtimes"
+msgstr "Aktuelle Downtimes"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:584
+msgid "Custom notification has been sent"
+msgstr "Benutzerdefinierte Bestätigung wurde gesendet"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CustomNotificationForm.php:52
+msgid "Custom notifications normally follow the regular notification logic in Icinga. Selecting this option will force the notification to be sent out, regardless of time restrictions, whether or not notifications are enabled, etc."
+msgstr "Benutzeredefinierte Benachrichtigungen verhalten sich gemäß der gewöhnlichen Benachrichtigungslogik in Icinga. Wenn du diese Option wählst wird eine Benachrichtigung erzwungen. Einschränkungen durch Zeitspannen und durch eventuell deaktivierte Benachrichtigungen werden dabei ignoriert."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:47
+msgid "DOWN"
+msgstr "DOWN"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/DelayNotificationForm.php:51
+msgid "Delay Notification"
+msgstr "Benachrichtigung verzögern"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/multi/components/comments.phtml:13
+msgid "Delay Notifications"
+msgstr "Benachrichtigungen verzögern"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:997
+msgid "Delete Downtime"
+msgstr "Downtime löschen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:999
+msgid "Delete a single downtime with the id shown above"
+msgstr "Lösche eine einzelne Downtime mit der oben gezeigten ID."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:278
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:713
+msgid "Disable Active Checks"
+msgstr "Aktive Checks deaktivieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:753
+msgid "Disable Event Handler"
+msgstr "Event-Handler deaktivieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:816
+msgid "Disable Flapping Detection"
+msgstr "Flap-Erkennung deaktivieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:523
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:652
+msgid "Disable Notifications"
+msgstr "Benachrichtigungen deaktivieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:1060
+msgid "Disable Performance Data"
+msgstr "Performancedaten deaktivieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:714
+msgid "Disable active checks for this host and its services."
+msgstr "Deaktiviere aktive Service-Checks für diesen Host und seine Service-Checks."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:283
+msgid "Disable active checks for this object."
+msgstr "Deaktiviere aktive Service-Checks für dieses Objekt."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:281
+msgid "Disable active checks on a program-wide basis."
+msgstr "Deaktiviere applikationsweit sämtliche aktiven Service-Checks."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:756
+msgid "Disable event handler for the whole system."
+msgstr "Dektiviere Event-Handler für das ganze System."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:758
+msgid "Disable event handler for this object."
+msgstr "Dektiviere Event-Handler für dieses Objekt."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:821
+msgid "Disable flapping detection for this object."
+msgstr "Deaktiviere die Flap-Erkennnung für dieses Objekt."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:819
+msgid "Disable flapping detection on a program-wide basis."
+msgstr "Deaktiviere die Flap-Erkennnung applikationsweit."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:49
+msgid "Disable notifications for a specific time on a program-wide basis"
+msgstr "Deaktivieren Benachrichtigungen applikationsweit für eine bestimmte Zeitspanne."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:526
+msgid "Disable notifications on a program-wide basis."
+msgstr "Deaktiviere die Flap-Erkennnung applikationsweit."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:372
+msgid "Disable obsessing on a program-wide basis."
+msgstr "Deaktiviere die Verfolgung applikationsweit."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:440
+msgid "Disable passive checks on a program-wide basis."
+msgstr "Deaktiviere Passive Checks applikationsweit."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:1061
+msgid "Disable processing of performance data on a program-wide basis."
+msgstr "Deaktiviere die Verarbeitung von Performance-Daten applikationsweit."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:40
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:72
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:256
+msgid "Do nothing with child objects"
+msgstr "Mach nichts mit Kind-Objekten"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:205
+msgid "Down"
+msgstr "Down"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:41
+msgid "Downtime"
+msgstr "Downtime"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/eventhistory.phtml:77
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/history.phtml:93
+msgid "Downtime End"
+msgstr "Downtime Ende"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/eventhistory.phtml:72
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/history.phtml:88
+msgid "Downtime Start"
+msgstr "Downtime Beginn"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:185
+msgid "Downtime Type"
+msgstr "Downtime-Typ"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:1006
+msgid "Downtime removal has been requested"
+msgstr "Entfernung dieser Downtime wurde angefordert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:640
+msgid "Downtime removal requested"
+msgstr "Entfernung dieser Downtime wurde angefordert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/history.phtml:53
+msgid "Downtime removed"
+msgstr "Downtime entfernt"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:603
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:621
+msgid "Downtime scheduling requested"
+msgstr "Die Planung dieser Downtime wurde angefordert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:82
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/downtime.phtml:55
+msgid "Downtimes"
+msgstr "Downtimes"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/contacts.phtml:28
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/contact.phtml:18
+msgid "Email"
+msgstr "E-Mail"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:305
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:733
+msgid "Enable Active Checks"
+msgstr "Aktive Checks aktivieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:785
+msgid "Enable Event Handler"
+msgstr "Eventhandler aktivieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:849
+msgid "Enable Flapping Detection"
+msgstr "Flap-Erkennung aktivieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:553
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:673
+msgid "Enable Notifications"
+msgstr "Benachrichtigungen aktivieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:1082
+msgid "Enable Performance Data"
+msgstr "Performancedaten aktivieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:734
+msgid "Enable active checks for this host and its services."
+msgstr "Aktive Checks für diesen Host und seine Services aktivieren."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:309
+msgid "Enable active checks for this object."
+msgstr "Aktive Checks für dieses Objekt aktivieren."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:307
+msgid "Enable active checks on a program-wide basis."
+msgstr "Aktive Checks anwendungsweit aktivieren."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:790
+msgid "Enable event handler for this object."
+msgstr "Event-Handler für dieses Objekt aktivieren."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:788
+msgid "Enable event handlers on the whole system."
+msgstr "Event-Handler für das gesamte System aktivieren."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:854
+msgid "Enable flapping detection for this object."
+msgstr "Flap-Erkennung für dieses Objekt aktivieren."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:852
+msgid "Enable flapping detection on a program-wide basis."
+msgstr "Flap-Erkennung anwendungsweit aktivieren."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:556
+msgid "Enable notifications on a program-wide basis."
+msgstr "Benachrichtigungen anwendungsweit aktivieren."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:406
+msgid "Enable obsessing on a program-wide basis."
+msgstr "Verfolgung anwendungsweit aktivieren."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:474
+msgid "Enable passive checks on a program-wide basis."
+msgstr "Passive Checks anwendungsweit aktivieren."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:1083
+msgid "Enable processing of performance data on a program-wide basis."
+msgstr "Performancedaten-Verarbeitung anwendungsweit aktivieren."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:173
+msgid "End Time"
+msgstr "Endzeitpunkt"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/TimelineController.php:63
+msgid "Ended downtimes"
+msgstr "Beendete Downtimes"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:238
+msgid "Enter here the duration of the downtime. Icinga will automatically delete the downtime after this time expired."
+msgstr "Die gewünschte Dauer der Downtime hier eintragen. Icinga wird die Downtime nach Ablauf dieser Zeit automatisch löschen."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:81
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/DisableNotificationWithExpireForm.php:32
+msgid "Enter the expire date/time for this acknowledgement here. Icinga will  delete the acknowledgement after this date expired."
+msgstr "Den gewünschten Verfallszeitpunkt der Downtime hier eintragen. Icinga wird die Downtime bei Überschreitung dieses Zeitpunkts löschen."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/flags.phtml:46
+msgid "Event Handler"
+msgstr "Eventhandler"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:124
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:126
+msgid "Event handlers"
+msgstr "Eventhandler"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:104
+msgid "Eventhandlers enabled"
+msgstr "Eventhandler aktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:108
+msgid "Events"
+msgstr "Ereignisse"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:82
+msgid "Execute active host checks"
+msgstr "Aktiven Host Check ausführen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:60
+msgid "Execute active service checks"
+msgstr "Aktive Service-Checks ausführen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:77
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/DisableNotificationWithExpireForm.php:28
+msgid "Expire Time"
+msgstr "Verfallszeitpunkt"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/downtimes.phtml:34
+msgid "Expires"
+msgstr "Verfällt"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:144
+msgid "Fill in the check output string which should be send to Icinga."
+msgstr "Ausgabetext des Checkergebnisses welches an Icinga gesendet werden soll hier eintragen."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:155
+msgid "Fill in the performance data string which should be send to Icinga."
+msgstr "Performancedaten des Checkergebnisses welches an Icinga gesendet werden soll hier eintragen."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:52
+msgid "Fixed"
+msgstr "Fix"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/contact.phtml:35
+msgid "Flags (host)"
+msgstr "Flags (Host)"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/contact.phtml:31
+msgid "Flags (service)"
+msgstr "Flags (Service)"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/flags.phtml:57
+msgid "Flap Detection"
+msgstr "Flap-Erkennung"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:6
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:8
+msgid "Flap detection"
+msgstr "Flap-Erkennung"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:137
+msgid "Flap detection enabled"
+msgstr "Flap-Erkennung aktiv"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:31
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/eventhistory.phtml:47
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/history.phtml:58
+msgid "Flapping"
+msgstr "Flapping"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/history.phtml:63
+msgid "Flapping stopped"
+msgstr "Flapping beendet"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:53
+msgid "Flexible"
+msgstr "Flexibel"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:209
+msgid "Flexible Duration"
+msgstr "Flexible Dauer"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/RescheduleNextCheckForm.php:46
+msgid "Force Check"
+msgstr "Check erzwingen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CustomNotificationForm.php:50
+msgid "Forced"
+msgstr "Erzwungen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:31
+msgid "Global host event handler"
+msgstr "Globaler Host Event Handler"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:35
+msgid "Global service event handler"
+msgstr "Globaler Service Event Handler"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:34
+#, php-format
+msgid "Handled services with state %s"
+msgstr "Bestätigte Services mit Status %s"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/TimelineController.php:43
+msgid "Hard state changes"
+msgstr "Harte Status-Änderungen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:98
+msgid "History"
+msgstr "Historie"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:37
+msgid "Host Problems"
+msgstr "Host-Probleme"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/MultiController.php:60
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/MultiController.php:128
+msgid "Host State"
+msgstr "Host-Status"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/contacts.phtml:44
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/contact.phtml:43
+msgid "Host notification period"
+msgstr "Host-Benachrichtigungszeitraum"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:2
+msgid "Host- and Servicechecks"
+msgstr "Host- und Servicechecks"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:74
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/hostgroups.phtml:13
+msgid "Hostgroups"
+msgstr "Hostgruppen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:58
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:194
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/servicegroups.phtml:28
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/hostgroups.phtml:25
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:7
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/multi/components/objectlist.phtml:37
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/multi/components/summary.phtml:5
+msgid "Hosts"
+msgstr "Hosts"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:217
+msgid "Hours"
+msgstr "Stunden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:66
+msgid "If the acknowledgement should expire, check this option."
+msgstr "Diese Option aktivieren, wenn die Bestätigung verfallen soll"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:110
+msgid "If you do not want an acknowledgement notification to be sent out to the appropriate contacts, uncheck this option."
+msgstr "Wenn du keine Bestätigungsbenachrichtigung zu den jeweiligen Kontakten senden willst, deaktiviere diese Option."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:198
+msgid "If you select the fixed option, the downtime will be in effect between the start and end times you specify whereas a flexible downtime starts when the service enters a non-OK state (sometime between the start and end times you specified) and lasts as long as the duration of time you enter. The duration fields do not apply for fixed downtime."
+msgstr "Wenn du die Option \"fix\" wählst, wird die Downtime zwischen dem gewählten Start- und Endzeitpunkt aktiv sein. Bei einer flexiblen Downtime beginnt die Downtime sobald der Dienst (irgendwann zwischen dem gewählten Start- und Endzeitpunkt) einen nicht-OK Zustand erreicht, und dauert so lange, wie im Feld \"Dauer\" angegeben. Diese Dauer gibt es für fixe Downtimes nicht."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/RescheduleNextCheckForm.php:49
+msgid "If you select this option, Icinga will force a check regardless of both what time the scheduled check occurs and whether or not checks are enabled."
+msgstr "Wenn diese Option aktiviert wird, erzwingt Icinga einen Check unabhängig vom eingeplanten zeitraum und auch dann, wenn aktive Checks nicht aktiv sind."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CommentForm.php:49
+msgid "If you uncheck this option, the comment will automatically be deleted the next time Icinga is restarted."
+msgstr "Wenn diese Option deaktiviert wird, wird der Kommentar beim nächsten Neustart von Icinga automatisch gelöscht."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:97
+msgid "If you want the acknowledgement to disable notifications until the host/service recovers, check this option."
+msgstr "Diese Option aktivieren, wenn die Bestätigung Benachrichtigungen unterdrücken soll, bis der Host/Service sich erholt."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CommentForm.php:35
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CustomNotificationForm.php:39
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:139
+msgid "If you work with other administrators, you may find it useful to share information about a host or service that is having problems if more than one of you may be working on it. Make sure you enter a brief description of what you are doing."
+msgstr "Wenn du mit anderen Administratoren zusammenarbeitest, wirst du es nützlich finden, Informationen zu Hosts oder Services mit Problemen zu teilen, insbesondere dann, wenn gemeinsam daran gearbeitet wird. Stell sicher eine kurze Beschreibung zu deiner Tätigkeit hier einzutragen."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:55
+msgid "If you would like the comment to remain even when the acknowledgement is removed, check this option."
+msgstr "Diese Option aktivieren, wenn der Kommentar auch nach dem Löschen der Bestätigung bestehen bleiben soll"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/eventhistory.phtml:42
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/history.phtml:48
+msgid "In Downtime"
+msgstr "In Downtime"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:6
+msgid "Last check"
+msgstr "Letzter Check"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:27
+msgid "Last check command"
+msgstr "Letztes Check-Kommando"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:23
+msgid "Last status update"
+msgstr "Letzer Status-Aktualisierung"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/timeline/index.phtml:15
+msgid "Legend"
+msgstr "Legende"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/command/list.phtml:1
+msgid "List Of Supported Commands"
+msgstr "Liste unterstützter Befehle"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/multi/components/objectlist.phtml:49
+msgid "List all"
+msgstr "Alle anzeigen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/multi/components/objectlist.phtml:52
+msgid "List all selected objects"
+msgstr "Alle gewählten Objekte anzeigen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:222
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:231
+msgid "Minutes"
+msgstr "Minuten"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:2
+msgid "Monitoring Features"
+msgstr "Monitoring-Features"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:159
+msgid "Monitoring Process"
+msgstr "Monitoring-Prozess"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:21
+msgid "Next check"
+msgstr "Nächster Check"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/servicematrix.phtml:26
+msgid "No Services matching the filter"
+msgstr "Zu diesem Filter wurden keine Services gefunden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:20
+msgid "No comments matching the filter"
+msgstr "Zu diesem Filter wurden keine Kommentare gefunden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/contactgroups.phtml:11
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/contacts.phtml:16
+msgid "No contacts matching the filter"
+msgstr "Zu diesem Filter wurden keine Kontakte gefunden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/downtimes.phtml:18
+msgid "No downtimes matching the filter"
+msgstr "Zu diesem Filter wurden keine Downtimes gefunden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/history.phtml:10
+msgid "No history available for this object"
+msgstr "Zu diesem Filter wurden keine historischen Ereignisse gefunden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/statehistorysummary.phtml:12
+msgid "No history entry matching the filter"
+msgstr "Zu diesem Filter wurden keine historischen Ereignisse gefunden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/eventhistory.phtml:14
+msgid "No history events matching the filter"
+msgstr "Zu diesem Filter wurden keine historischen Ereignisse gefunden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/hostgroups.phtml:11
+msgid "No host groups matching the filter"
+msgstr "Zu diesem Filter wurden keine Hostgruppen gefunden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/hosts.phtml:28
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/multi/host.phtml:13
+msgid "No hosts matching the filter"
+msgstr "Zu diesem Filter wurden keine Hosts gefunden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/notifications.phtml:31
+msgid "No notification has been sent for this issue"
+msgstr "Für dieses Problem wurde keine Benachrichtigung gesendet"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/notifications.phtml:29
+msgid "No notifications matching the filter"
+msgstr "Zu diesem Filter wurde keine Benachrichtigung gefunden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/servicegroups.phtml:11
+msgid "No service groups matching the filter"
+msgstr "Zu diesem Filter wurden keine Servicegruppen gefunden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/services.phtml:40
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/multi/service.phtml:17
+msgid "No services matching the filter"
+msgstr "Zu diesem Filter wurden keine Services gefunden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/contact.phtml:53
+msgid "No such contact"
+msgstr "Der gewünschte Kontakt existiert nicht"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:32
+msgid "Not acknowledged"
+msgstr "Nicht bestätigt"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:32
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:36
+msgid "Not set"
+msgstr "Nicht gesetzt"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/eventhistory.phtml:27
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/history.phtml:23
+msgid "Notification"
+msgstr "Benachrichtigung"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/DelayNotificationForm.php:30
+msgid "Notification Delay (Minutes From Now)"
+msgstr "Benachrichtigungsverzögerung (Minuten ab jetzt)"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:984
+msgid "Notification delay has been requested"
+msgstr "Benachrichtigungsverzögerung wurde angefragt"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:105
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/TimelineController.php:38
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/flags.phtml:35
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/notifications.phtml:10
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:73
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:75
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:39
+msgid "Notifications enabled"
+msgstr "Benachrichtigungen aktiv"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:653
+msgid "Notifications for this host and its services will be disabled."
+msgstr "Benachrichtigungen für diesen Host und seine Services werden deaktiviert."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:674
+msgid "Notifications for this host and its services will be enabled."
+msgstr "Benachrichtigungen für diesen Host und seine Services werden aktiviert."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:528
+msgid "Notifications for this object will be disabled."
+msgstr "Benachrichtigungen für dieses Objekt werden deaktiviert."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:558
+msgid "Notifications for this object will be enabled."
+msgstr "Benachrichtigungen für dieses Objekt werden aktiviert."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:51
+msgid "OK"
+msgstr "OK"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/flags.phtml:68
+msgid "Obsessing"
+msgstr "Verfolgung"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:115
+msgid "Obsessing over host checks"
+msgstr "Host-Checks verfolgen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:126
+msgid "Obsessing over service checks"
+msgstr "Service-Checks verfolgen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:148
+msgid "Ok"
+msgstr "Ok"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/TimelineController.php:92
+msgid "One day"
+msgstr "Ein Tag"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/TimelineController.php:94
+msgid "One month"
+msgstr "Ein Monat"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/TimelineController.php:93
+msgid "One week"
+msgstr "Eine Woche"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/TimelineController.php:95
+msgid "One year"
+msgstr "Ein Jahr"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:50
+msgid "Overview"
+msgstr "Übersicht"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/contacts.phtml:33
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/contact.phtml:26
+msgid "Pager"
+msgstr "Pager"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:30
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:62
+msgid "Passive"
+msgstr "Passiv"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/flags.phtml:13
+msgid "Passive Checks"
+msgstr "Passive Checks"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:357
+msgid "Passive check result has been submitted"
+msgstr "Passives Check-Ergebnis wurde gesendet"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:476
+msgid "Passive checks for this object will be accepted."
+msgstr "Passives Check-Ergebnis für dieses Objekt werden akzeptiert."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:442
+msgid "Passive checks for this object will be omitted."
+msgstr "Passives Check-Ergebnis für dieses Objekt werden ignoriert."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:152
+msgid "Performance Data"
+msgstr "Performancedaten"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:122
+msgid "Performance Info"
+msgstr "Performance-Info"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/perfdata.phtml:3
+msgid "Performance data"
+msgstr "Performancedaten"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CommentForm.php:46
+msgid "Persistent"
+msgstr "Persisten"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:52
+msgid "Persistent Comment"
+msgstr "Persistenter Kommentar"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CommentForm.php:55
+msgid "Post Comment"
+msgstr "Kommentar absenden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:25
+msgid "Problems"
+msgstr "Probleme"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:118
+msgid "Process Info"
+msgstr "Prozess Info"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:148
+msgid "Process performance data"
+msgstr "Performancedaten verarbeiten"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:25
+msgid "Remove Acknowledgement"
+msgstr "Bestätigung entfernen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:104
+msgid "Remove Comment"
+msgstr "Kommentar entfernen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/multi/components/comments.phtml:10
+msgid "Remove Comments"
+msgstr "Kommentare entfernen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:633
+msgid "Remove Downtime(s)"
+msgstr "Downtime(s) entfernen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:960
+msgid "Remove Problem Acknowledgement"
+msgstr "Problembestätigung entfernen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:903
+msgid "Remove comment"
+msgstr "Kommentar entfernen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:634
+msgid "Remove downtime(s) from this host and its services."
+msgstr "Downtime(s) für diesen Host und seine Services entfernen."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:26
+msgid "Remove problem acknowledgement"
+msgstr "Problembestätigung entfernen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:961
+msgid "Remove problem acknowledgement for this object."
+msgstr "Problembestätigungen für diesen Host und seine Services entfernen."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:28
+msgid "Reschedule"
+msgstr "Neu planen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/RescheduleNextCheckForm.php:64
+msgid "Reschedule Check"
+msgstr "Check neu planen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:9
+msgid "Reschedule next check immediately"
+msgstr "Nächsten Check sofort einplanen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:921
+msgid "Reset Attributes"
+msgstr "Attribute zurücksetzen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:922
+msgid "Reset modified attributes to its default."
+msgstr "Veränderte Attribute zurücksetzen."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:161
+msgid "Restart"
+msgstr "Neustarten"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:1039
+msgid "Restart monitoring process"
+msgstr "Monitoring-Prozess neu starten"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:162
+msgid "Restart the monitoring process"
+msgstr "Monitoring-Prozess neu starten"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:1040
+msgid "Restart the monitoring process."
+msgstr "Monitoring-Prozess neu starten."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:278
+msgid "Schedule Downtime"
+msgstr "Downtime planen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/downtime.phtml:57
+msgid "Schedule downtime"
+msgstr "Downtime planen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:258
+msgid "Schedule non-triggered downtime for all child objects"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:257
+msgid "Schedule triggered downtime for all child objects"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CustomNotificationForm.php:65
+msgid "Selecting this option causes the notification to be sent out to all normal (non-escalated)  and escalated contacts. These options allow you to override the normal notification logic if you need to get an important message out."
+msgstr "Das Aktivieren diese Option verursacht, dass die Benachrichtigung an alle normalen (nicht-eskalierten) sowie eskalierten Kontakte gesendet wird. Die erlaubt es, die normale Benachrichtigungslogik zu übergehen, wenn eine dringende Nachricht versendet werden muss."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CustomNotificationForm.php:72
+msgid "Send Custom Notification"
+msgstr "Benutzerdefinierte Benachrichtigung senden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:107
+msgid "Send Notification"
+msgstr "Benachrichtigung senden"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/header.phtml:23
+msgid "Service"
+msgstr "Service"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:41
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:55
+msgid "Service Problems"
+msgstr "Service-Probleme"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/MultiController.php:123
+msgid "Service State"
+msgstr "Service-Zustand"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/contacts.phtml:40
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/contact.phtml:39
+msgid "Service notification period"
+msgstr "Benachrichtigungzeitraum des Services"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:70
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/servicegroups.phtml:14
+msgid "Servicegroups"
+msgstr "Servicegruppen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:66
+msgid "Servicematrix"
+msgstr "Service-Matrix"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:62
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:142
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/servicegroups.phtml:29
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/hostgroups.phtml:26
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:8
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:28
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:22
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/multi/components/objectlist.phtml:30
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/multi/components/summary.phtml:5
+msgid "Services"
+msgstr "Services"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:8
+#, php-format
+msgid "Services with state %s"
+msgstr "Service im Zustand %s"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/RescheduleNextCheckForm.php:37
+msgid "Set the date/time when this check should be executed."
+msgstr "Setze den Zeitpunkt zu welchem dieser Check ausgeführt werden soll."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:176
+msgid "Set the end date/time for the downtime."
+msgstr "Setze den Endzeitpunkt für diese Downtime."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:165
+msgid "Set the start date/time for the downtime."
+msgstr "Setze den Startzeitpunkt für diese Downtime."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:132
+msgid "Set the state which should be send to Icinga for this objects."
+msgstr "Setze den Status welcher für dieses Objekt an Icinga gesendet werden soll."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:1019
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:168
+msgid "Shutdown monitoring process"
+msgstr "Monitoring-Prozess herunterefahren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:169
+msgid "Shutdown the monitoring process"
+msgstr "Monitoring-Prozess herunterfahren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/notifications.phtml:6
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/servicematrix.phtml:5
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:11
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/downtimes.phtml:9
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/eventhistory.phtml:5
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/hosts.phtml:10
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/services.phtml:10
+msgid "Sort by"
+msgstr "Sortiere nach"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:471
+msgid "Start Accepting Passive Checks"
+msgstr "Passive Checks akzepzieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:162
+msgid "Start Time"
+msgstr "Anfangszeit"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:403
+msgid "Start obsessing"
+msgstr "Verfolgung beginnen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:408
+msgid "Start obsessing over this object."
+msgstr "Verfolgung dieses Objekts beginnen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/TimelineController.php:58
+msgid "Started downtimes"
+msgstr "Begonnene Downtimes"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/downtimes.phtml:34
+msgid "Starts"
+msgstr "Beginnt"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:94
+msgid "Sticky Acknowledgement"
+msgstr "Klebrige Bestätigung"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:437
+msgid "Stop Accepting Passive Checks"
+msgstr "Passive Checks nicht mehr akzeptieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:1020
+msgid "Stop monitoring instance. You have to start it again from command line."
+msgstr "Überwachungsinstanz stoppen. Muss anschließen von der Kommandozeile aus neu gestartet werden."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:369
+msgid "Stop obsessing"
+msgstr "Verfolgung deaktivieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:374
+msgid "Stop obsessing over this object."
+msgstr "Verfolgung für dieses Objekt deaktivieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:159
+msgid "Submit Passive Check Result"
+msgstr "Passives Check-Ergebnis übermitteln"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:117
+msgid "System"
+msgstr "System"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/RescheduleNextCheckForm.php:61
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:275
+msgid "TODO: Help message when with children is disabled"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/RescheduleNextCheckForm.php:59
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:247
+msgid "TODO: Help message when with children is enabled"
+msgstr ""
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:54
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/TacticalController.php:15
+msgid "Tactical Overview"
+msgstr "Taktische Übersicht"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:51
+msgid "Temporarily disable"
+msgstr "Temporär deaktivieren"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/components/notifications.phtml:25
+#, php-format
+msgid "The last one occured %s ago"
+msgstr "Die letzte geschah vor %s"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/DelayNotificationForm.php:45
+msgid "The notification delay will be disregarded if the host/service changes state before the next notification is scheduled to be sent out."
+msgstr "Die Benachrichtigungsverzögerung wird ignoriert wenn der Host/Service vor der nächsten zu versendenden Benachrichtigung seinen Status ändert."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ShowController.php:111
+msgid "The parameter `contact' is required"
+msgstr "Der Parameter `contact' ist erforderlich"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/history.phtml:3
+msgid "This Object's Event History"
+msgstr "Historie dieses Objekts"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:24
+msgid "This command is used to acknowledge host or service problems. When a problem is acknowledged, future notifications about problems are temporarily disabled until the host/service changes from its current state."
+msgstr "Dieses Kommando wird benutzt um Host- oder Service-Probleme zu bestätigen. Wenn ein Problem bestätigt ist, werden zukünftige Benachrichtigungen temporär deaktiviert, bis der Host/Service seinen Zustand wieder ändert."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CommentForm.php:22
+msgid "This command is used to add a comment to hosts or services."
+msgstr "Dieses Kommando wird benutzt um Kommentare zu Hosts oder Services hinzuzufügen."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/DelayNotificationForm.php:24
+msgid "This command is used to delay the next problem notification that is sent out."
+msgstr "Dieses Kommando wird benutzt um den Versand der nächsten Benachrichtigung zu diesem Problem zu verzögern."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:121
+msgid "This command is used to schedule downtime for hosts/services. During the specified downtime, Icinga will not send notifications out about the affected objects. When the scheduled downtime expires, Icinga will send out notifications as it normally would. Scheduled downtimes are preserved across program shutdowns and restarts."
+msgstr "Dieses Kommando wird benutzt um Downtimes für Hosts/Services einzuplanen. Während der angegebenen Downtime wird Icinga keine Benachrichtigungen zum entsprechenden Objekt versenden. Wenn die eingeplante Downtime vorüber ist, wird Icinga mit dem Versand der Benachrichtigungen wie gewohnt fortfahren. Eingeplante Downtimes übersteh das Herunterfahren und Neustarten der Applikation."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/RescheduleNextCheckForm.php:24
+msgid "This command is used to schedule the next check of hosts/services. Icinga will re-queue the check at the time you specify."
+msgstr "Dieses Kommando wird benutzt, um den nächsten Check des Hosts/Services einzuplanen. Icinga wird den Check für den von dir gewählten Zeitpunkt vormerken."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/CustomNotificationForm.php:22
+msgid "This command is used to send a custom notification about hosts or services. Useful in emergencies when you need to notify admins of an issue regarding a monitored system or service."
+msgstr "Dieses Kommando ermöglicht es, personalisierte Benachrichtigungen für Hosts oder Services zu versenden. Nützlich ist das vor allem im Notfall, wenn man andere Administratoren über Probleme zu einem bestimmten System oder Dienst informieren möchte."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:106
+msgid "This command is used to submit a passive check result for particular hosts/services. It is particularly useful for resetting security-related objects to OK states once they have been dealt with."
+msgstr "Dieses Kommando erlaubt es, ein passives Check-Ergebnis für einen bestimmten Host oder Service einzuliefern. Das ist for allem dann nützlich, wenn man sicherheitsrelevante Objekte zurück auf einen OK-Status setzen möchte, sobald man sich darum gekümmert hat."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:90
+msgid "This comment does not expire."
+msgstr "Dieser Kommentar verfällt nicht."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:87
+#, php-format
+msgid "This comment expires on %s at %s."
+msgstr "Dieser Kommentar verfällt am %s um %s."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:83
+msgid "This comment is not persistent."
+msgstr "Dieser Kommentar ist nicht persistent."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:82
+msgid "This comment is persistent."
+msgstr "Dieser Kommentar ist persistent."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/downtimes.phtml:89
+#, php-format
+msgid "This fixed downtime has been scheduled to start on %s at %s and to end on %s at %s."
+msgstr "Diese fixe Downtime wurde eingeplant um am %s um %s zu starten und am %s um %s zu enden."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/downtimes.phtml:81
+#, php-format
+msgid "This fixed downtime was started on %s at %s and expires on %s at %s."
+msgstr "Diese fixe Downtime begann am %s um %s und endet am %s um %s."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/downtimes.phtml:72
+#, php-format
+msgid "This flexible downtime has been scheduled to start between %s - %s and to last for %s."
+msgstr "Diese flexible Downtime wurde für den Zeitraum von %s - %s eingeplant und wird %s dauern."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/downtimes.phtml:63
+#, php-format
+msgid "This flexible downtime was started on %s at %s and lasts for %s until %s at %s."
+msgstr "Diese flexible Downtime begann am %s um %s und dauert %s bis %s am %s."
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/host.phtml:4
+msgid "This host's current state"
+msgstr "Aktueller Zustand dieses Host"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/service.phtml:4
+msgid "This service's current state"
+msgstr "Aktueller Zustand dieses Services"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:112
+msgid "Timeline"
+msgstr "Zeitleiste"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/ScheduleDowntimeForm.php:150
+msgid "Triggered by"
+msgstr "Ausgelöst von"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:54
+msgid "UNKNOWN"
+msgstr "UNBEKANNT"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:48
+msgid "UNREACHABLE"
+msgstr "UNERREICHBAR"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:46
+msgid "UP"
+msgstr "UP"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:23
+#, php-format
+msgid "Unhandled services with state %s"
+msgstr "Unbestätigte Services mit Status %s"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:29
+msgid "Unhandled Hosts"
+msgstr "Unbestätigte Hosts"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/configuration.php:33
+msgid "Unhandled Services"
+msgstr "Unbestätigte Services"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:166
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:211
+msgid "Unreachable"
+msgstr "Nicht erreichbar"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:199
+msgid "Up"
+msgstr "Up"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/AcknowledgeForm.php:65
+msgid "Use Expire Time"
+msgstr "Verfallszeitpunkt nutzen"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:36
+msgid "User Comment"
+msgstr "Benutzerkommentar"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/forms/Command/SubmitPassiveCheckResultForm.php:52
+msgid "WARNING"
+msgstr "WARNUNG"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/ChartController.php:154
+msgid "Warning"
+msgstr "Warnung"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:54
+#, php-format
+msgid "Will be re-enabled in %s"
+msgstr "Wird in %s wieder aktiviert"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/controllers/CommandController.php:888
+msgid "Your new comment has been submitted"
+msgstr "Dein neuer Kommentar wurde gesendet"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/multi/components/objectlist.phtml:60
+#, php-format
+msgid "and %d more"
+msgstr "und %d weitere"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/statehistorysummary.phtml:18
+msgid "critical events on "
+msgstr "kritische Ereignisse auf"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:15
+#, php-format
+msgid "has been running with PID %d "
+msgstr "läuft mit PID %d"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/process/info.phtml:18
+msgid "is not running"
+msgstr "läuft nicht"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:8
+msgid "ok"
+msgstr "ok"
+
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/comments.phtml:66
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/downtimes.phtml:47
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/list/eventhistory.phtml:97
+#: /usr/local/src/bugfix.master/modules/monitoring/application/views/scripts/show/history.phtml:114
+msgid "on"
+msgstr "auf"
+
+#~ msgid "No entries found"
+#~ msgstr "Keine Einträge gefunden"
+
+#~ msgid "No host found"
+#~ msgstr "Kein Host gefunden"
+
+#~ msgid "Since"
+#~ msgstr "Seit"

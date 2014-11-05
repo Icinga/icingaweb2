@@ -1,30 +1,5 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}}
 
 namespace Icinga\Authentication;
@@ -79,16 +54,18 @@ abstract class UserBackend implements Countable
             // Use a custom backend class, this is only useful for testing
             if (!class_exists($backendConfig->class)) {
                 throw new ConfigurationError(
-                    'Authentication configuration for backend "' . $name . '" defines an invalid backend'
-                    . ' class. Backend class "' . $backendConfig->class. '" not found'
+                    'Authentication configuration for backend "%s" defines an invalid backend class.'
+                    . ' Backend class "%s" not found',
+                    $name,
+                    $backendConfig->class
                 );
             }
             return new $backendConfig->class($backendConfig);
         }
         if (($backendType = $backendConfig->backend) === null) {
             throw new ConfigurationError(
-                'Authentication configuration for backend "' . $name
-                . '" is missing the backend directive'
+                'Authentication configuration for backend "%s" is missing the backend directive',
+                $name
             );
         }
         $backendType = strtolower($backendType);
@@ -99,8 +76,8 @@ abstract class UserBackend implements Countable
         }
         if ($backendConfig->resource === null) {
             throw new ConfigurationError(
-                'Authentication configuration for backend "' . $name
-                . '" is missing the resource directive'
+                'Authentication configuration for backend "%s" is missing the resource directive',
+                $name
             );
         }
         try {
@@ -116,31 +93,51 @@ abstract class UserBackend implements Countable
                 $backend = new DbUserBackend($resource);
                 break;
             case 'msldap':
+                $groupOptions = array(
+                    'group_base_dn'             => $backendConfig->group_base_dn,
+                    'group_attribute'           => $backendConfig->group_attribute,
+                    'group_member_attribute'    => $backendConfig->group_member_attribute,
+                    'group_class'               => $backendConfig->group_class
+                );
                 $backend = new LdapUserBackend(
                     $resource,
                     $backendConfig->get('user_class', 'user'),
-                    $backendConfig->get('user_name_attribute', 'sAMAccountName')
+                    $backendConfig->get('user_name_attribute', 'sAMAccountName'),
+                    $groupOptions
                 );
                 break;
             case 'ldap':
-                if (($userClass = $backendConfig->user_class) === null) {
+                if ($backendConfig->user_class === null) {
                     throw new ConfigurationError(
-                        'Authentication configuration for backend "' . $name
-                        . '" is missing the user_class directive'
+                        'Authentication configuration for backend "%s" is missing the user_class directive',
+                        $name
                     );
                 }
-                if (($userNameAttribute = $backendConfig->user_name_attribute) === null) {
+                if ($backendConfig->user_name_attribute === null) {
                     throw new ConfigurationError(
-                        'Authentication configuration for backend "' . $name
-                        . '" is missing the user_name_attribute directive'
+                        'Authentication configuration for backend "%s" is missing the user_name_attribute directive',
+                        $name
                     );
                 }
-                $backend = new LdapUserBackend($resource, $userClass, $userNameAttribute);
+                $groupOptions = array(
+                    'group_base_dn'             => $backendConfig->group_base_dn,
+                    'group_attribute'           => $backendConfig->group_attribute,
+                    'group_member_attribute'    => $backendConfig->group_member_attribute,
+                    'group_class'               => $backendConfig->group_class
+                );
+                $backend = new LdapUserBackend(
+                    $resource,
+                    $backendConfig->user_class,
+                    $backendConfig->user_name_attribute,
+                    $groupOptions
+                );
                 break;
             default:
                 throw new ConfigurationError(
-                    'Authentication configuration for backend "' . $name. '" defines an invalid backend'
-                    . ' type. Backend type "' . $backendType . '" is not supported'
+                    'Authentication configuration for backend "%s" defines an invalid backend type.'
+                    . ' Backend type "%s" is not supported',
+                    $name,
+                    $backendType
                 );
         }
         $backend->setName($name);

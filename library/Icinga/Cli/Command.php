@@ -1,12 +1,16 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Cli;
 
 use Icinga\Cli\Screen;
 use Icinga\Util\Translator;
 use Icinga\Cli\Params;
+use Icinga\Application\Config;
 use Icinga\Application\ApplicationBootstrap as App;
 use Exception;
+use Icinga\Exception\IcingaException;
 
 abstract class Command
 {
@@ -20,6 +24,10 @@ abstract class Command
     protected $moduleName;
     protected $commandName;
     protected $actionName;
+
+    private $config;
+
+    private $configs;
 
     protected $defaultActionName = 'default';
 
@@ -37,6 +45,51 @@ abstract class Command
         if ($initialize) {
             $this->init();
         }
+    }
+
+    public function Config($file = null)
+    {
+        if ($this->isModule()) {
+            return $this->getModuleConfig($file);
+        } else {
+            return $this->getMainConfig($file);
+        }
+    }
+
+    private function getModuleConfig($file = null)
+    {
+        if ($file === null) {
+            if ($this->config === null) {
+                $this->config = Config::module($this->moduleName);
+            }
+            return $this->config;
+        } else {
+            if (! array_key_exists($file, $this->configs)) {
+                $this->configs[$file] = Config::module($this->moduleName, $file);
+            }
+            return $this->configs[$file];
+        }
+    }
+
+    private function getMainConfig($file = null)
+    {
+        if ($file === null) {
+            if ($this->config === null) {
+                $this->config = Config::app();
+            }
+            return $this->config;
+        } else {
+            if (! array_key_exists($file, $this->configs)) {
+                $this->configs[$file] = Config::module($module, $file);
+            }
+            return $this->configs[$file];
+        }
+        return $this->config;
+    }
+
+    public function isModule()
+    {
+        return substr(get_class($this), 0, 14) === 'Icinga\\Module\\';
     }
 
     public function setParams(Params $params)
@@ -71,7 +124,7 @@ abstract class Command
 
     public function fail($msg)
     {
-        throw new Exception($msg);
+        throw new IcingaException('%s', $msg);
     }
 
     public function getDefaultActionName()

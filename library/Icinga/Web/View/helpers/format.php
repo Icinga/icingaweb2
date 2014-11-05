@@ -1,4 +1,6 @@
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\View;
 
@@ -11,7 +13,7 @@ $this->addHelperFunction('format', function () {
 
 $this->addHelperFunction('timeSince', function ($timestamp) {
     return sprintf(
-        '<span class="timeuntil" title="%s">%s</span>',
+        '<span class="timesince" title="%s">%s</span>',
         date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
         Format::timeSince($timestamp)
     );
@@ -19,7 +21,7 @@ $this->addHelperFunction('timeSince', function ($timestamp) {
 
 $this->addHelperFunction('prefixedTimeSince', function ($timestamp, $ucfirst = false) {
     return sprintf(
-        '<span class="timeuntil" title="%s">%s</span>',
+        '<span class="timesince" title="%s">%s</span>',
         date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
         Format::prefixedTimeSince($timestamp, $ucfirst)
     );
@@ -41,4 +43,8 @@ $this->addHelperFunction('prefixedTimeUntil', function ($timestamp, $ucfirst = f
         date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
         Format::prefixedTimeUntil($timestamp, $ucfirst)
     );
+});
+
+$this->addHelperFunction('dateTimeRenderer', function ($dateTimeOrTimestamp, $future = false) {
+    return DateTimeRenderer::create($dateTimeOrTimestamp, $future);
 });

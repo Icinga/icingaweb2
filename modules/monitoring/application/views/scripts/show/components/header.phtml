@@ -1,4 +1,4 @@
-<?php $showService = $object->service_description && $tabs->getActiveName() !== 'host' ?>
+<?php $showService = $object->getType() === $object::TYPE_SERVICE ?>
 <?php if (!$this->compact): ?>
 <?= $tabs ?>
 <?php endif ?>

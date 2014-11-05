@@ -1,36 +1,12 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2014 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2014 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Translation\Cli;
 
-use \Exception;
+use Exception;
 use Icinga\Cli\Command;
+use Icinga\Exception\IcingaException;
 
 /**
  * Base class for translation commands
@@ -48,12 +24,11 @@ class TranslationCommand extends Command
      */
     public function validateLocaleCode($code)
     {
-        $current = setlocale(LC_ALL, '0');
-        $result = setlocale(LC_ALL, $code);
-        setlocale(LC_ALL, $current);
-
-        if ($result === false) {
-            throw new Exception("Locale code '$code' is not valid");
+        if (! preg_match('@[a-z]{2}_[A-Z]{2}@', $code)) {
+            throw new IcingaException(
+                'Locale code \'%s\' is not valid. Expected format is: ll_CC',
+                $code
+            );
         }
 
         return $code;
@@ -73,7 +48,10 @@ class TranslationCommand extends Command
         $enabledModules = $this->app->getModuleManager()->listEnabledModules();
 
         if (!in_array($name, $enabledModules)) {
-            throw new Exception("Module with name '$name' not found or is not enabled");
+            throw new IcingaException(
+                'Module with name \'%s\' not found or is not enabled',
+                $name
+            );
         }
 
         return $name;

@@ -1,41 +1,18 @@
 <?php
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\DataView;
 
+use Countable;
 use Icinga\Data\Filter\Filter;
-use Icinga\Data\SimpleQuery;
+use Icinga\Data\Filter\FilterMatch;
 use Icinga\Data\Browsable;
 use Icinga\Data\PivotTable;
 use Icinga\Data\Sortable;
 use Icinga\Data\ConnectionInterface;
 use Icinga\Data\Filterable;
+use Icinga\Exception\QueryException;
 use Icinga\Web\Request;
 use Icinga\Web\Url;
 use Icinga\Module\Monitoring\Backend;
@@ -43,24 +20,26 @@ use Icinga\Module\Monitoring\Backend;
 /**
  * A read-only view of an underlying query
  */
-abstract class DataView implements Browsable, Filterable, Sortable
+abstract class DataView implements Browsable, Countable, Filterable, Sortable
 {
     /**
      * The query used to populate the view
      *
-     * @var SimpleQuery
+     * @var \Icinga\Data\SimpleQuery
      */
-    private $query;
-    
+    protected $query;
+
     protected $filter;
 
     protected $connection;
 
+    protected $isSorted = false;
+
     /**
      * Create a new view
      *
-     * @param SimpleQuery $query      Which backend to query
-     * @param array     $columns    Select columns
+     * @param ConnectionInterface   $connection
+     * @param array                 $columns
      */
     public function __construct(ConnectionInterface $connection, array $columns = null)
     {
@@ -68,6 +47,18 @@ abstract class DataView implements Browsable, Filterable, Sortable
         $queryClass = $connection->getQueryClass($this->getQueryName());
         $this->query = new $queryClass($this->connection->getResource(), $columns);
         $this->filter = Filter::matchAll();
+        $this->init();
+    }
+
+    /**
+     * Initializer for `distinct purposes
+     *
+     * Implemented for `distinct as workaround
+     *
+     * @TODO Subject to change, see #7344
+     */
+    public function init()
+    {
     }
 
     /**
@@ -84,17 +75,17 @@ abstract class DataView implements Browsable, Filterable, Sortable
         return $tableName;
     }
 
-public function where($condition, $value = null)
-{
-    $this->filter->addFilter(Filter::where($condition, $value));
-    $this->query->where($condition, $value);
-    return $this;
-}
+    public function where($condition, $value = null)
+    {
+        $this->filter->addFilter(Filter::where($condition, $value));
+        $this->query->where($condition, $value);
+        return $this;
+    }
 
-public function dump()
-{
-    return $this->query->dump();
-}
+    public function dump()
+    {
+        return $this->query->dump();
+    }
 
     /**
      * Retrieve columns provided by this view
@@ -124,6 +115,7 @@ public function dump()
     protected function applyUrlFilter($request = null)
     {
         $url = Url::fromRequest();
+
         $limit = $url->shift('limit');
         $sort = $url->shift('sort');
         $dir = $url->shift('dir');
@@ -157,20 +149,19 @@ public function dump()
             }
         }
 
-        $order = isset($params['order']) ? $params['order'] : null;
-        if ($order !== null) {
-            if (strtolower($order) === 'desc') {
-                $order = self::SORT_DESC;
-            } else {
-                $order = self::SORT_ASC;
+        if (isset($params['sort'])) {
+
+            $order = isset($params['order']) ? $params['order'] : null;
+            if ($order !== null) {
+                if (strtolower($order) === 'desc') {
+                    $order = self::SORT_DESC;
+                } else {
+                    $order = self::SORT_ASC;
+                }
             }
+
+            $view->sort($params['sort'], $order);
         }
-
-        $view->sort(
-            isset($params['sort']) ? $params['sort'] : null,
-            $order
-        );
-
         return $view;
     }
 
@@ -214,9 +205,10 @@ public function dump()
      * Sort the rows, according to the specified sort column and order
      *
      * @param   string  $column Sort column
-     * @param   int     $order  Sort order, one of the SORT_ constants
+     * @param   string  $order  Sort order, one of the SORT_ constants
      *
-     * @return  self
+     * @return  $this
+     * @throws  QueryException  If the sort column is not allowed
      * @see     DataView::SORT_ASC
      * @see     DataView::SORT_DESC
      * @deprecated Use DataView::order() instead
@@ -224,34 +216,43 @@ public function dump()
     public function sort($column = null, $order = null)
     {
         $sortRules = $this->getSortRules();
-
-        if ($sortRules !== null) {
-            if ($column === null) {
-                $sortColumns = reset($sortRules);
-                if (!isset($sortColumns['columns'])) {
-                    $sortColumns['columns'] = array(key($sortRules));
+        if ($column === null) {
+            // Use first available sort rule as default
+            if (empty($sortRules)) {
+                return $this;
+            }
+            $sortColumns = reset($sortRules);
+            if (! isset($sortColumns['columns'])) {
+                $sortColumns['columns'] = array(key($sortRules));
+            }
+        } else {
+            if (isset($sortRules[$column])) {
+                $sortColumns = $sortRules[$column];
+                if (! isset($sortColumns['columns'])) {
+                    $sortColumns['columns'] = array($column);
                 }
             } else {
-                if (isset($sortRules[$column])) {
-                    $sortColumns = $sortRules[$column];
-                    if (!isset($sortColumns['columns'])) {
-                        $sortColumns['columns'] = array($column);
-                    }
-                } else {
-                    $sortColumns = array(
-                        'columns' => array($column),
-                        'order' => $order
-                    );
-                };
-            }
-
-            $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : self::SORT_ASC) : $order;
-            $order = ($order === self::SORT_ASC) ? 'ASC' : 'DESC';
-
-            foreach ($sortColumns['columns'] as $column) {
-                $this->query->order($column, $order);
-            }
+                $sortColumns = array(
+                    'columns' => array($column),
+                    'order' => $order
+                );
+            };
         }
+
+        $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : static::SORT_ASC) : $order;
+        $order = (strtoupper($order) === static::SORT_ASC) ? 'ASC' : 'DESC';
+
+        foreach ($sortColumns['columns'] as $column) {
+            if (! $this->isValidFilterTarget($column)) {
+                throw new QueryException(
+                    mt('monitoring', 'The sort column "%s" is not allowed in "%s".'),
+                    $column,
+                    get_class($this)
+                );
+            }
+            $this->query->order($column, $order);
+        }
+        $this->isSorted = true;
         return $this;
     }
 
@@ -262,7 +263,7 @@ public function dump()
      */
     public function getSortRules()
     {
-        return null;
+        return array();
     }
 
     /**
@@ -271,7 +272,7 @@ public function dump()
      * @param  string   $column
      * @param  string   $direction
      *
-     * @return self
+     * @return $this
      */
     public function order($column = null, $direction = null)
     {
@@ -306,16 +307,46 @@ public function dump()
     /**
      * Return the query which was created in the constructor
      *
-     * @return mixed
+     * @return \Icinga\Data\SimpleQuery
      */
     public function getQuery()
     {
+        if (! $this->isSorted) {
+            $this->order();
+        }
         return $this->query;
     }
 
     public function applyFilter(Filter $filter)
     {
+        $this->validateFilterColumns($filter);
+
         return $this->addFilter($filter);
+    }
+
+    /**
+     * Validates recursive the Filter columns against the isValidFilterTarget() method
+     *
+     * @param Filter $filter
+     *
+     * @throws \Icinga\Data\Filter\FilterException
+     */
+    public function validateFilterColumns(Filter $filter)
+    {
+        if ($filter instanceof FilterMatch) {
+            if (! $this->isValidFilterTarget($filter->getColumn())) {
+                throw new QueryException(
+                    mt('monitoring', 'The filter column "%s" is not allowed here.'),
+                    $filter->getColumn()
+                );
+            }
+        }
+
+        if (method_exists($filter, 'filters')) {
+            foreach ($filter->filters() as $filter) {
+                $this->validateFilterColumns($filter);
+            }
+        }
     }
 
     public function clearFilter()
@@ -347,6 +378,19 @@ public function dump()
      */
     public function paginate($itemsPerPage = null, $pageNumber = null)
     {
+        if (! $this->isSorted) {
+            $this->order();
+        }
         return $this->query->paginate($itemsPerPage, $pageNumber);
+    }
+
+    /**
+     * Count result set
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->query);
     }
 }

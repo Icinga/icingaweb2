@@ -1,31 +1,5 @@
 <?php
-// @codeCoverageIgnoreStart
 // {{{ICINGA_LICENSE_HEADER}}}
-/**
- * This file is part of Icinga Web 2.
- *
- * Icinga Web 2 - Head for multiple monitoring backends.
- * Copyright (C) 2013 Icinga Development Team
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * @copyright  2013 Icinga Development Team <info@icinga.org>
- * @license    http://www.gnu.org/licenses/gpl-2.0.txt GPL, version 2
- * @author     Icinga Development Team <info@icinga.org>
- *
- */
 // {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Controller;
@@ -34,6 +8,7 @@ use Exception;
 use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Application\Benchmark;
 use Icinga\Application\Config;
+use Icinga\Exception\IcingaException;
 use Icinga\Util\Translator;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Window;
@@ -63,17 +38,6 @@ class ActionController extends Zend_Controller_Action
      * @var bool
      */
     protected $requiresAuthentication = true;
-
-    /**
-     * Whether the controller requires configuration
-     *
-     * @var bool
-     */
-    protected $requiresConfiguration = true;
-
-    private $config;
-
-    private $configs = array();
 
     private $autorefreshInterval;
 
@@ -112,11 +76,10 @@ class ActionController extends Zend_Controller_Action
         $this->handlerBrowserWindows();
         $this->view->translationDomain = 'icinga';
         $this->_helper->layout()->isIframe = $this->params->shift('isIframe');
+        $this->_helper->layout()->moduleName = false;
+
         if ($this->rerenderLayout = $this->params->shift('renderLayout')) {
             $this->xhrLayout = 'body';
-        }
-        if ($this->requiresConfig()) {
-            $this->redirectNow(Url::fromPath('install'));
         }
 
         if ($this->requiresLogin()) {
@@ -124,23 +87,29 @@ class ActionController extends Zend_Controller_Action
         }
 
         $this->view->tabs = new Tabs();
+        $this->prepareInit();
         $this->init();
+    }
+
+    /**
+     * Prepare controller initialization
+     *
+     * As it should not be required for controllers to call the parent's init() method, base controllers should use
+     * prepareInit() in order to prepare the controller initialization.
+     *
+     * @see \Zend_Controller_Action::init() For the controller initialization method.
+     */
+    protected function prepareInit()
+    {
     }
 
     public function Config($file = null)
     {
         if ($file === null) {
-            if ($this->config === null) {
-                $this->config = Config::app();
-            }
-            return $this->config;
+            return Config::app();
         } else {
-            if (! array_key_exists($file, $this->configs)) {
-                $this->configs[$file] = Config::module($module, $file);
-            }
-            return $this->configs[$file];
+            return Config::app($file);
         }
-        return $this->config;
     }
 
     public function Auth()
@@ -211,34 +180,10 @@ class ActionController extends Zend_Controller_Action
     {
         if (! $this->Auth()->hasPermission($name)) {
             // TODO: Shall this be an Auth Exception? Or a 404?
-            throw new Exception(sprintf('Auth error, no permission for "%s"', $name));
-        }
-    }
-
-    /**
-     * Check whether the controller requires configuration. That is when no configuration
-     * is available and when it is possible to setup the configuration
-     *
-     * @return  bool
-     *
-     * @see     requiresConfiguration
-     */
-    protected function requiresConfig()
-    {
-        if (!$this->requiresConfiguration) {
-            return false;
-        }
-
-        if (file_exists(Config::$configDir . '/setup.token')) {
-            try {
-                $config = Config::app()->toArray();
-            } catch (NotReadableError $e) {
-                return true;
-            }
-
-            return empty($config);
-        } else {
-            return false;
+            throw new IcingaException(
+                'Auth error, no permission for "%s"',
+                $name
+            );
         }
     }
 
@@ -247,7 +192,6 @@ class ActionController extends Zend_Controller_Action
      * user is currently not authenticated
      *
      * @return  bool
-     *
      * @see     requiresAuthentication
      */
     protected function requiresLogin()
@@ -274,13 +218,29 @@ class ActionController extends Zend_Controller_Action
      *
      * Autoselects the module domain, if any, and falls back to the global one if no translation could be found.
      *
-     * @param   string  $text   The string to translate
+     * @param   string      $text       The string to translate
+     * @param   string|null $context    Optional parameter for context based translation
      *
-     * @return  string          The translated string
+     * @return  string                  The translated string
      */
-    public function translate($text)
+    public function translate($text, $context = null)
     {
-        return Translator::translate($text, $this->view->translationDomain);
+        return Translator::translate($text, $this->view->translationDomain, $context);
+    }
+
+    /**
+     * Translate a plural string
+     *
+     * @param string        $textSingular   The string in singular form to translate
+     * @param string        $textPlural     The string in plural form to translate
+     * @param string        $number         The number to get the plural or singular string
+     * @param string|null   $context        Optional parameter for context based translation
+     *
+     * @return string                       The translated string
+     */
+    public function translatePlural($textSingular, $textPlural, $number, $context = null)
+    {
+        return Translator::translatePlural($textSingular, $textPlural, $number, $this->view->translationDomain, $context);
     }
 
     protected function ignoreXhrBody()
@@ -316,10 +276,27 @@ class ActionController extends Zend_Controller_Action
      *
      * @throws  \Exception
      */
-    protected function redirectToLogin($afterLogin = '/dashboard')
+    protected function redirectToLogin($afterLogin = null)
     {
+        $redir = null;
+        if ($afterLogin !== null) {
+            if (! $afterLogin instanceof Url) {
+                $afterLogin = Url::fromPath($afterLogin);
+            }
+            if ($this->isXhr()) {
+                $redir = '__SELF__';
+            } else {
+                // TODO: Ignore /?
+                $redir = $afterLogin->getRelativeUrl();
+            }
+        }
+
         $url = Url::fromPath('authentication/login');
-        $url->setParam('redirect', $afterLogin);
+
+        if ($redir) {
+            $url->setParam('redirect', $redir);
+        }
+
         $this->rerenderLayout()->redirectNow($url);
     }
 
@@ -335,6 +312,27 @@ class ActionController extends Zend_Controller_Action
         return $this->getRequest()->isXmlHttpRequest();
     }
 
+    protected function redirectXhr($url)
+    {
+        if (! $url instanceof Url) {
+            $url = Url::fromPath($url);
+        }
+
+        if ($this->rerenderLayout) {
+            $this->getResponse()->setHeader('X-Icinga-Rerender-Layout', 'yes');
+        }
+        if ($this->reloadCss) {
+            $this->getResponse()->setHeader('X-Icinga-Reload-Css', 'now');
+        }
+
+        $this->getResponse()
+            ->setHeader('X-Icinga-Redirect', rawurlencode($url->getAbsoluteUrl()))
+            ->sendHeaders();
+
+        // TODO: Session shutdown?
+        exit;
+    }
+
     /**
     *  Redirect to a specific url, updating the browsers URL field
     *
@@ -342,26 +340,13 @@ class ActionController extends Zend_Controller_Action
     **/
     public function redirectNow($url)
     {
-        if (! $url instanceof Url) {
-            $url = Url::fromPath($url);
-        }
-        $url = preg_replace('~&amp;~', '&', $url);
         if ($this->isXhr()) {
-            if ($this->rerenderLayout) {
-                $this->getResponse()->setHeader('X-Icinga-Rerender-Layout', 'yes');
-            }
-            if ($this->reloadCss) {
-                $this->getResponse()->setHeader('X-Icinga-Reload-Css', 'now');
-            }
-
-            $this->getResponse()
-                ->setHeader('X-Icinga-Redirect', rawurlencode($url))
-                ->sendHeaders();
-
-            // TODO: Session shutdown?
-            exit;
+            $this->redirectXhr($url);
         } else {
-            $this->_helper->Redirector->gotoUrlAndExit(Url::fromPath($url)->getRelativeUrl());
+            if (! $url instanceof Url) {
+                $url = Url::fromPath($url);
+            }
+            $this->_helper->Redirector->gotoUrlAndExit($url->getRelativeUrl());
         }
     }
 
@@ -376,14 +361,14 @@ class ActionController extends Zend_Controller_Action
 
         $req = $this->getRequest();
         $layout = $this->_helper->layout();
-        $layout->moduleName = false;
 
         if ($user = $req->getUser()) {
             // Cast preference app.show_benchmark to bool because preferences loaded from a preferences storage are
             // always strings
-            if ((bool) $user->getPreferences()->get('app.show_benchmark', false) === true) {
-                Benchmark::measure('Response ready');
-                $layout->benchmark = $this->renderBenchmark();
+            if ((bool) $user->getPreferences()->getValue('icingaweb', 'show_benchmark', false) === true) {
+                if (!$this->_helper->viewRenderer->getNoRender()) {
+                    $layout->benchmark = $this->renderBenchmark();
+                }
             }
         }
 
@@ -420,12 +405,14 @@ class ActionController extends Zend_Controller_Action
         if ($this->view->title) {
             if (preg_match('~[\r\n]~', $this->view->title)) {
                 // TODO: Innocent exception and error log for hack attempts
-                throw new Exception('No way, guy');
+                throw new IcingaException('No way, guy');
             }
             $resp->setHeader(
                 'X-Icinga-Title',
                 rawurlencode($this->view->title . ' :: Icinga Web')
             );
+        } else {
+            $resp->setHeader('X-Icinga-Title', rawurlencode('Icinga Web'));
         }
 
         if ($this->rerenderLayout) {
@@ -450,6 +437,8 @@ class ActionController extends Zend_Controller_Action
      */
     protected function renderBenchmark()
     {
+        $this->render();
+        Benchmark::measure('Response ready');
         return Benchmark::renderToHtml();
     }
 
@@ -476,4 +465,3 @@ class ActionController extends Zend_Controller_Action
         return parent::__call($name, $params);
     }
 }
-// @codeCoverageIgnoreEnd
