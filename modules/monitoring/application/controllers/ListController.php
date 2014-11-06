@@ -296,7 +296,7 @@ class Monitoring_ListController extends Controller
           ->order('downtime_scheduled_start', 'DESC');
 
         $this->applyFilters($query);
-        $this->view->downtimes = $query->paginate();
+
         $this->setupSortControl(array(
             'downtime_is_in_effect'    => $this->translate('Is In Effect'),
             'downtime_host'            => $this->translate('Host / Service'),
@@ -308,6 +308,8 @@ class Monitoring_ListController extends Controller
             'downtime_scheduled_end'   => $this->translate('Scheduled End'),
             'downtime_duration'        => $this->translate('Duration'),
         ));
+
+        $this->view->downtimes = $query->paginate();
         $this->view->delDowntimeForm = new DeleteDowntimeCommandForm();
     }
 
