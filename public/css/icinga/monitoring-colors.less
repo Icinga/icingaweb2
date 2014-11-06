@@ -20,11 +20,13 @@ table.colors td {
 
 /* Action table */
 table.action {
+  font-size: 0.9em;
   border-collapse: separate;
   border-spacing: 1px;
   width: 100%;
   table-layout: fixed;
   margin: 0;
+  color: #666;
 }
 
 table.action th {
@@ -57,6 +59,7 @@ table.action td .pluginoutput {
 table.action td a {
   color: inherit;
   text-decoration: none;
+  color: #555;
 }
 
 table.action td a:hover {
@@ -131,7 +134,7 @@ tr.state.handled td.state, tr.state.ok td.state, tr.state.up td.state, tr.state.
 }
 
 tr[href].active {
-  background-color: #ddd;
+  background-color: #eee;
   color: black;
 }
 
@@ -196,7 +199,7 @@ tr.state.handled td.state {
 
 tr[href]:hover, tr.state[href]:hover td.state {
   color: white;
-  background-color: #555;
+  background-color: #eee;
 }
 
 tr.state.ok[href]:hover, tr.state.up[href]:hover {
@@ -279,7 +282,7 @@ a.critical {
   padding: 0.4em;
   margin: 0.4em;
 
-  background: #555;
+  background: #eee;
   border-radius: 0.4em;
   -moz-border-radius: 0.4em;
 }
