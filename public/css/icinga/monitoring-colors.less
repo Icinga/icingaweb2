@@ -335,16 +335,10 @@ a.critical {
 .boxview div.box-separator {
   font-size: 0.8em;
   padding: 0.4em 0 0.4em;
-  border-top-width: 1px;
-  border-bottom-width: 1px;
-  border-left-width: 0;
-  border-right-width: 0;
+  border: 1px solid #d9d9d9;
   
   font-weight: bold;
   letter-spacing: 0.1em;
-  border-style: solid;
-  border-color: #555;
-  background-color: #bbb;
 }
 
 /* Box entry */
@@ -354,7 +348,7 @@ a.critical {
   font-size: 0.9em;
   white-space: nowrap;
   
-  color: black;
+  color: #666;
 }
 
 /* Any line of a box entry */
@@ -435,7 +429,8 @@ div.box.entry.handled a:hover {
 /* Tactical overview element styles */
 
 .tactical > .boxview > div.box {
-  min-height: 17em;
+  min-height: 20em;
+  min-width: 12.1em;
 }
 
 .tactical div.box.contents {
@@ -463,7 +458,7 @@ div.box.contents.zero h3 {
 }
 
 div.box.ok_hosts.state_up {
-  background-color: @colorOk;
+  border: 5px solid @colorOk;
 }
 
 div.box.ok_hosts.state_pending {
@@ -471,7 +466,7 @@ div.box.ok_hosts.state_pending {
 }
 
 div.box.problem_hosts.state_down {
-  background-color: @colorCritical;
+  border: 5px solid @colorCritical;
 }
 
 div.box.problem_hosts.state_down.handled {
@@ -494,6 +489,10 @@ div.box.monitoringfeatures div.box.contents {
   padding: 0 0 0.4em;
 }
 
+div.box.monitoringfeatures {
+  border: 5px solid #d9d9d9;
+}
+
 div.box.monitoringfeatures div.box-separator {
   color: white;
   background-color: @colorOk;
@@ -505,6 +504,10 @@ div.box.monitoringfeatures div.feature-highlight {
 
 div.box.monitoringfeatures a.feature-highlight {
   font-weight: bold;
+}
+
+div.box.hostservicechecks {
+  border: 5px solid #d9d9d9;
 }
 
 /* Contactgroup element styles */
@@ -524,12 +527,10 @@ div.box.contactgroup div.box.entry {
 }
 
 div.box.contactgroup div.box.entry img {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   float: left;
   
-  border: 4px solid LightGrey;
-  border-radius: 8px;
 }
 
 div.box.contactgroup div.box.entry a {
@@ -540,6 +541,16 @@ div.box.contactgroup div.box.entry a {
 
 div.box.contactgroup div.box.entry p {
   margin: 0.4em 0 0;
+}
+
+div.circular {
+  margin-top: 0.5em;
+  margin-left: 2em;
+  margin-right: 1em;
+  width: 80px;
+  height: 80px; 
+  float: left;
+  background-size: 100% 100%;
 }
 
 /* End of monitoring box element styles */
