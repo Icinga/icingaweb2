@@ -37,13 +37,13 @@ ul.tabs > li > a {
 }
 
 ul.tabs > li > a:focus {
-  color: #666;
+  color: @colorTextDefault;
   text-shadow: none;
 }
 
 ul.tabs > li.active > a:focus {
   text-shadow: none;
-  color: #666;
+  color: @colorTextDefault;
 }
 
 ul.tabs li.dropdown > a{
@@ -107,7 +107,7 @@ ul.tabs ul.dropdown-menu {
 }
 
 ul.tabs ul.dropdown-menu li a {
-  color: #555;
+  color: @colorTextDarkDefault;
   margin: 0em;
 }
 
@@ -122,7 +122,7 @@ ul.tabs ul.dropdown-menu li a:hover, ul.tabs ul.dropdown-menu li a:focus {
 
 ul.tabs li.dropdown:hover a {
   text-decoration: none;
-  color: #555;
+  color: @colorTextDarkDefault;
 }
 
 li.dropdown:hover ul.dropdown-menu, li.dropdown.hover ul.dropdown-menu {
