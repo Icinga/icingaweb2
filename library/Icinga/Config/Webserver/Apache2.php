@@ -7,7 +7,7 @@ namespace Icinga\Config\Webserver;
 /**
  * Generate apache 2.x (< 2.4) configuration
  */
-class Apache2 extends WebServer
+class Apache2 extends Webserver
 {
     /**
      * @return array

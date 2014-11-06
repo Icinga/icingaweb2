@@ -6,7 +6,7 @@ namespace Icinga\Clicommands;
 
 use Icinga\Application\Logger;
 use Icinga\Cli\Command;
-use Icinga\Config\Webserver\WebServer;
+use Icinga\Config\Webserver\Webserver;
 use Icinga\Exception\ProgrammingError;
 
 /**
@@ -153,7 +153,7 @@ class SetupCommand extends Command
             $this->fail($this->translate('Argument type is mandatory.'));
         }
         try {
-            $webserver = WebServer::createInstance($type);
+            $webserver = Webserver::createInstance($type);
         } catch (ProgrammingError $e) {
             $this->fail($this->translate('Unknown type') . ': ' . $type);
         }

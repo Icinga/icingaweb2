@@ -10,7 +10,7 @@ use Icinga\Exception\ProgrammingError;
 /**
  * Generate webserver configuration
  */
-abstract class WebServer
+abstract class Webserver
 {
     /**
      * Web path
