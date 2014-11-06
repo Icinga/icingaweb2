@@ -700,8 +700,7 @@ table.pivot {
 div.timeline-legend {
   float: left;
   padding: 0.5em;
-  border: 1px solid #ccc;
-  border-radius: 0.5em;
+  border: 1px solid #d9d9d9;
   background-color: #eee;
 
   h2 {
@@ -714,7 +713,6 @@ div.timeline-legend {
     display: inline-block;
     padding: 0.5em;
     margin: 0.5em;
-    border-radius: 0.5em;
 
     span {
       color: white;
@@ -740,7 +738,7 @@ div.timeline {
       text-align: center;
 
       a {
-        color: black;
+        color: @colorTextDefault;
         font-size: 0.8em;
         font-weight: bold;
         text-decoration: none;
@@ -748,6 +746,8 @@ div.timeline {
 
         &:hover {
           color: @colorTextDefault;
+          text-decoration: underline;
+         
         }
       }
     }
