@@ -6,19 +6,17 @@
   height: 100%;
 
   .logo {
-    background-color: #555;
-    -moz-background-image: linear-gradient(to bottom, #333, #555);
-    -ms-background-image: linear-gradient(to bottom, #333, #555);
-    -o-background-image: linear-gradient(to bottom, #333, #555);
-    -webkit-background-image: linear-gradient(to bottom, #333, #555);
-    background-image: linear-gradient(to bottom, #333, #555);
+    background-color: #049baf;
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 60%;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #d9d9d9d;
     text-align: center;
+    -webkit-box-shadow: 0 3px 7px -3px #000;
+    -moz-box-shadow: 0 3px 7px -3px #000;
+    box-shadow: 0 3px 7px -3px #000;
   }
 
   .image {
@@ -30,13 +28,13 @@
   }
 
   .image img {
-    width: 400px;
+    width: 375px;
   }
 
   .form {
     position: absolute;
     font-size: 0.9em;
-    top: 42%;
+    top: 50%;
     left: 0;
     bottom: 0;
     right: 0;
@@ -79,11 +77,17 @@
     background: white;
   }
 
+  ul.errors {
+    margin-left: 11.2em;
+  }
+
   input[type=submit] {
-    color: #eee;
-    border-color: #777;
-    background: #777;
-    margin-left: 11em;
+    color: #fff;
+    border: 2px solid #ddd;
+    border-color: #049baf;
+    background: #049baf;
+    margin-top: 1.5em;
+    margin-left: 11.2em;
   }
 
   input[type=submit]:hover, a.button:hover, input[type=submit]:focus {
@@ -92,8 +96,34 @@
   }
 
   .footer {
+    margin-top: 1em;
     font-size: 0.9em;
     text-align: center;
   }
-
 }
+
+  /* make keyframes that tell the start state and the end state of our object */
+  @-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  @-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+  .fade-in {
+    opacity:0;  /* make things invisible upon start */
+    -webkit-animation:fadeIn ease-in 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+    -moz-animation:fadeIn ease-in 1;
+    animation:fadeIn ease-in 1;
+
+    -webkit-animation-fill-mode:forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+    -moz-animation-fill-mode:forwards;
+    animation-fill-mode:forwards;
+
+    -webkit-animation-duration:1s;
+    -moz-animation-duration:1s;
+    animation-duration:1s;
+  }
+
+  .fade-in.one {
+    -webkit-animation-delay: 0.7s;
+    -moz-animation-delay: 0.7s;
+    animation-delay: 0.7s;
+  }

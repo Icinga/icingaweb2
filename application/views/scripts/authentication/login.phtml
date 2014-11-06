@@ -1,11 +1,10 @@
  <div id="login">
   <div class="logo">
    <div class="image">
-    <img src="<?= $this->baseUrl('img/logo_icinga_big.png') ?>" alt="<?= t('The Icinga logo') ?>" >
+    <img class="fade-in one" src="<?= $this->baseUrl('img/logo_icinga_big.png') ?>" alt="<?= t('The Icinga logo') ?>" >
    </div>
   </div>
   <div class="form" data-base-target="layout">
-   <h1><?= $this->translate('Icingaweb Login') ?></h1>
    <?php
    /* TODO: remove this as soon as notifications and forms are ready */
    if (isset($this->errorInfo)): ?>
@@ -14,6 +13,6 @@
     </div>
    <?php endif ?>
    <?= $this->form ?>
-   <div class="footer">Icinga Web 2 &copy; 2013-2014 Icinga Team</div>
+   <div class="footer">Icinga Web 2 &copy; 2013-2014<br><a href="https://www.icinga.org">The Icinga Project</a></div>
   </div>
  </div>
