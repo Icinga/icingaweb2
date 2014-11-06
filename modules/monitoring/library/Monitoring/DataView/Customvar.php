@@ -19,6 +19,7 @@ class Customvar extends DataView
         return array(
             'varname',
             'varvalue',
+            'is_json',
             'object_type'
         );
     }
