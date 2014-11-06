@@ -33,16 +33,17 @@ ul.tabs li a {
 }
 
 ul.tabs > li > a {
+  color: white;
 }
 
 ul.tabs > li > a:focus {
-  color: #eee;
-  text-shadow: 1px 1px 1px #ddd;
+  color: #666;
+  text-shadow: none;
 }
 
 ul.tabs > li.active > a:focus {
-  text-shadow: 1px 1px 2px #555;
-  color: #555;
+  text-shadow: none;
+  color: #666;
 }
 
 ul.tabs li.dropdown > a{
@@ -51,7 +52,10 @@ ul.tabs li.dropdown > a{
 
 ul.tabs li.active a, ul.tabs li.dropdown:hover a, ul.tabs li.dropdown.hover a {
   background-color: white;
-  color: #333;
+  filter:alpha(opacity=80); /* IE */
+  -moz-opacity: 0.80; /* Mozilla */
+  opacity: 0.80; /* Opera */
+  color: black;
 }
 
 .impact ul.tabs li.active a, .impact ul.tabs li.dropdown:hover, .impact ul.tabs li.dropdown.hover a {
@@ -69,11 +73,11 @@ ul.tabs li a:hover {
 ul.dropdown-menu {
   margin: 0;
   padding: 0;
-  background-color: #555;
+  background-color: #eee;
   position: absolute;
   overflow: hidden;
   z-index: 1000;
-  border: 1px solid #555;
+  border: 1px solid #d9d9d9;
   border-top: none;
   margin-left: -1px;
 }
