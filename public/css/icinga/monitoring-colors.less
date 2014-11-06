@@ -281,10 +281,8 @@ a.critical {
   display: inline-block;
   padding: 0.4em;
   margin: 0.4em;
-
+  border: 1px solid #d9d9d9;
   background: #eee;
-  border-radius: 0.4em;
-  -moz-border-radius: 0.4em;
 }
 
 /* Box caption */
@@ -292,36 +290,32 @@ a.critical {
   margin-top: 0;
   margin-bottom: 0.6em;
   font-size: 0.8em;
-
-  color: #eee;
+  color: #666;
 }
 
 .boxview div.box h2:first-child {
   margin-top: 0.2em;
+  padding-bottom: 0.5em;
   font-size: inherit;
-
-  color: white;
+  color: #666;
+  border-bottom: 1px solid #d9d9d9;
 }
 
 .boxview div.box h2 > a {
   color: inherit;
+  margin-bottom: 0.2em;
 }
 
 .boxview div.box h2 > a:hover {
-  color: #fafafa;
+  text-decoration: underline;
 }
 
 .boxview div.box h2:first-child > a:hover {
-  color: #dfdfdf;
 }
 
 /* Box body of contents */
 .boxview div.box.contents {
   padding: 0.2em;
-
-  background: #fbfbfb;
-  border-radius: 0.4em;
-  -moz-border-radius: 0.4em;
 }
 
 .boxview div.box.contents table {
@@ -329,18 +323,13 @@ a.critical {
 }
 
 .boxview div.box.contents td {
-  width: 11.1em;
+  width: 13em;
   vertical-align: top;
 }
 
 /* Box separator */
 .boxview div.box-separator:first-child {
   border-top-width: 0;
-
-  border-top-left-radius: 0.4em;
-  border-top-right-radius: 0.4em;
-  -moz-border-top-left-radius: 0.4em;
-  -moz-border-top-right-radius: 0.4em;
 }
 
 .boxview div.box-separator {
@@ -366,8 +355,6 @@ a.critical {
   white-space: nowrap;
   
   color: black;
-  border-radius: 0.2em;
-  -moz-border-radius: 0.2em;
 }
 
 /* Any line of a box entry */
@@ -394,14 +381,17 @@ a.critical {
 /* Host- and Servicegroup element styles */
 
 div.box.entry.state_up, div.box.entry.state_ok {
+  border: 1px solid @colorOk;
   border-left: 1em solid @colorOk;
 }
 
 div.box.entry.state_pending {
+  border: 1px solid @colorPending;
   border-left: 1em solid @colorPending;
 }
 
 div.box.entry.state_down, div.box.entry.state_critical {
+  border: 1px solid @colorCritical;
   border-left: 1em solid @colorCritical;
   background-color: @colorCritical;
   color: white;
@@ -412,6 +402,7 @@ div.box.entry.state_down a:hover, div.box.entry.state_critical a:hover {
 }
 
 div.box.entry.state_warning {
+  border: 1px solid @colorWarning;
   border-left: 1em solid @colorWarning;
   background-color: @colorWarning;
   color: white;
@@ -422,6 +413,7 @@ div.box.entry.state_warning a:hover {
 }
 
 div.box.entry.state_unreachable, div.box.entry.state_unknown {
+  border: 1px solid @colorUnknown;
   border-left: 1em solid @colorUnknown;
   background-color: @colorUnknown;
   color: white;
