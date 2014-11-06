@@ -25,6 +25,8 @@ class Nginx extends Webserver
             '  fastcgi_param SCRIPT_FILENAME {publicPath}/index.php;',
             '}',
 
+
+
             'location ~ ^{webPath} {',
             '  alias {publicPath};',
             '  index index.php;',
