@@ -39,4 +39,46 @@
             <?= $this->translate('Grant Permissions') ?>
         </a>
     </div>
+    <div>
+        <h1><?= $this->translate('Restrictions') ?></h1>
+        <?php /** @var \Icinga\Application\Config $restrictions */ if ($restrictions->isEmpty()): ?>
+            <?= $this->translate('No restrictions found.') ?>
+        <?php else: ?>
+            <table class="action" data-base-target="_next">
+                <thead>
+                <tr>
+                    <th><?= $this->translate('Name') ?></th>
+                    <th><?= $this->translate('Restriction Name') ?></th>
+                    <th><?= $this->translate('Restriction') ?></th>
+                    <th><?= $this->translate('Users') ?></th>
+                    <th><?= $this->translate('Groups') ?></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($restrictions as $name => $restriction): /** @var object $restriction */ ?>
+                    <tr>
+                        <td>
+                            <?= $this->escape($name) ?>
+                            <div class="hidden" data-base-target="_next">
+                                <a href="<?= $this->url('security/update-restriction', array('restriction' => $name)) ?>"></a>
+                            </div>
+                        </td>
+                        <td><?= $this->escape($restriction->name) ?></td>
+                        <td><?= $this->escape($restriction->restriction) ?></td>
+                        <td><?= $this->escape($restriction->users) ?></td>
+                        <td><?= $this->escape($restriction->groups) ?></td>
+                        <td>
+                            <a href="<?= $this->url('security/remove-restriction', array('restriction' => $name)) ?>">
+                                <?= $this->translate('Remove restriction') ?>
+                            </a>
+                        </td>
+                    </tr>
+                <?php endforeach ?>
+                </tbody>
+            </table>
+        <?php endif ?>
+        <a class="btn" data-base-target="_next" href="<?= $this->href('security/new-restriction') ?>">
+            <?= $this->translate('Set Restriction') ?>
+        </a>
+    </div>
 </div>
