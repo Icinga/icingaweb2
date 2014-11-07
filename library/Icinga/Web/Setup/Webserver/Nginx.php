@@ -25,10 +25,10 @@ location ~ ^{webPath}/index\.php(.*)$ {
   fastcgi_param SCRIPT_FILENAME {publicPath}/index.php;
 }
 
-location ~ ^{webPath} {
+location ~ ^{webPath}(.+)? {
   alias {publicPath};
   index index.php;
-  try_files $uri $uri/ {webPath}/index.php$is_args$args;
+  try_files $1 $uri $uri/ {webPath}/index.php$is_args$args;
 }
 EOD;
     }
