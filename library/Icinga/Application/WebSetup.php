@@ -473,8 +473,8 @@ class WebSetup extends Wizard implements SetupWizard
         $requirements->addOptional(
             t('PHP Module: PDO-MySQL'),
             t('Is Icinga Web 2 supposed to access a MySQL database the PDO-MySQL module for PHP is required.'),
-            Platform::extensionLoaded('pdo'),
-            Platform::extensionLoaded('pdo') ? t('The PHP module PDO-MySQL is available.') : (
+            Platform::extensionLoaded('mysql'),
+            Platform::extensionLoaded('mysql') ? t('The PHP module PDO-MySQL is available.') : (
                 t('The PHP module PDO-MySQL is missing.')
             )
         );
@@ -485,8 +485,8 @@ class WebSetup extends Wizard implements SetupWizard
                 'Is Icinga Web 2 supposed to access a PostgreSQL database'
                 . ' the PDO-PostgreSQL module for PHP is required.'
             ),
-            Platform::extensionLoaded('pdo'),
-            Platform::extensionLoaded('pdo') ? t('The PHP module PDO-PostgreSQL is available.') : (
+            Platform::extensionLoaded('pgsql'),
+            Platform::extensionLoaded('pgsql') ? t('The PHP module PDO-PostgreSQL is available.') : (
                 t('The PHP module PDO-PostgreSQL is missing.')
             )
         );

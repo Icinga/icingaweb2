@@ -52,9 +52,7 @@ class PreferencesPage extends Form
 
         $storageTypes = array();
         $storageTypes['ini'] = t('File System (INI Files)');
-        if (Platform::extensionLoaded('pdo') && (Platform::zendClassExists('Zend_Db_Adapter_Pdo_Mysql')
-            || Platform::zendClassExists('Zend_Db_Adapter_Pdo_Pgsql')))
-        {
+        if (Platform::extensionLoaded('mysql') || Platform::extensionLoaded('pgsql')) {
             $storageTypes['db'] = t('Database');
         }
         $storageTypes['null'] = t('Don\'t Store Preferences');

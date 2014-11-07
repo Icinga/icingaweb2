@@ -39,9 +39,7 @@ class AuthenticationPage extends Form
         );
 
         $backendTypes = array();
-        if (Platform::extensionLoaded('pdo') && (Platform::zendClassExists('Zend_Db_Adapter_Pdo_Mysql')
-            || Platform::zendClassExists('Zend_Db_Adapter_Pdo_Pgsql')))
-        {
+        if (Platform::extensionLoaded('mysql') || Platform::extensionLoaded('pgsql')) {
             $backendTypes['db'] = t('Database');
         }
         if (Platform::extensionLoaded('ldap')) {

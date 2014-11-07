@@ -40,12 +40,7 @@ class BackendPage extends Form
         );
 
         $resourceTypes = array('livestatus' => 'Livestatus');
-        if (
-            Platform::extensionLoaded('pdo') && (
-            Platform::zendClassExists('Zend_Db_Adapter_Pdo_Mysql')
-            || Platform::zendClassExists('Zend_Db_Adapter_Pdo_Pgsql')
-            )
-        ) {
+        if (Platform::extensionLoaded('mysql') || Platform::extensionLoaded('pgsql')) {
             $resourceTypes['ido'] = 'IDO';
         }
 
