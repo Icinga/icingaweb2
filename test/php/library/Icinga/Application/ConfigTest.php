@@ -85,7 +85,26 @@ class ConfigTest extends BaseTestCase
         $config = new Config(array('a' => 'b', 'c' => array('d' => 'e')));
 
         $this->assertInstanceOf('Countable', $config, 'Config objects do not implement interface `Countable\'');
-        $this->assertEquals(2, $config->count(), 'Config objects do not count properties and sections correctly');
+        $this->assertEquals(2, count($config), 'Config objects do not count properties and sections correctly');
+    }
+
+    public function testWhetherConfigObjectsAreTraversable()
+    {
+        $config = new Config(array('a' => 'b', 'c' => 'd'));
+        $config->e = 'f';
+
+        $this->assertInstanceOf('Iterator', $config, 'Config objects do not implement interface `Iterator\'');
+
+        $actual = array();
+        foreach ($config as $key => $value) {
+            $actual[$key] = $value;
+        }
+
+        $this->assertEquals(
+            array('a' => 'b', 'c' => 'd', 'e' => 'f'),
+            $actual,
+            'Config objects do not iterate properly in the order their values were inserted'
+        );
     }
 
     public function testWhetherOneCanCheckWhetherConfigObjectsHaveACertainPropertyOrSection()

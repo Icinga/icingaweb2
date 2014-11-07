@@ -4,10 +4,9 @@
 
 namespace Icinga\Application;
 
+use Iterator;
 use Countable;
 use ArrayAccess;
-use ArrayIterator;
-use IteratorAggregate;
 use LogicException;
 use UnexpectedValueException;
 use Icinga\Exception\NotReadableError;
@@ -15,7 +14,7 @@ use Icinga\Exception\NotReadableError;
 /**
  * Container for configuration values and global registry of application and module related configuration.
  */
-class Config implements Countable, ArrayAccess, IteratorAggregate
+class Config implements Countable, Iterator, ArrayAccess
 {
     /**
      * Configuration directory where ALL (application and module) configuration is located
@@ -121,13 +120,53 @@ class Config implements Countable, ArrayAccess, IteratorAggregate
     }
 
     /**
-     * Return a iterator for this config's data
+     * Reset the current position of $this->data
      *
-     * @return  ArrayIterator
+     * @return  mixed
      */
-    public function getIterator()
+    public function rewind()
     {
-        return new ArrayIterator($this->data);
+        return reset($this->data);
+    }
+
+    /**
+     * Return the section's or property's value of the current iteration
+     *
+     * @return  mixed
+     */
+    public function current()
+    {
+        return current($this->data);
+    }
+
+    /**
+     * Return whether the position of the current iteration is valid
+     *
+     * @return  bool
+     */
+    public function valid()
+    {
+        return key($this->data) !== null;
+    }
+
+    /**
+     * Return the section's or property's name of the current iteration
+     *
+     * @return  mixed
+     */
+    public function key()
+    {
+        return key($this->data);
+    }
+
+    /**
+     * Advance the position of the current iteration and return the new section's or property's value
+     *
+     * @return  mixed
+     */
+    public function next()
+    {
+        return next($this->data);
     }
 
     /**
