@@ -69,11 +69,13 @@ abstract class Webserver
 
         $searchTokens = array(
             '{webPath}',
-            '{publicPath}'
+            '{publicPath}',
+            '{configPath}',
         );
         $replaceTokens = array(
             $this->getWebPath(),
-            $this->getPublicPath()
+            $this->getPublicPath(),
+            $this->getApp()->getConfigDir()
         );
         $template = str_replace($searchTokens, $replaceTokens, $template);
         return $template;

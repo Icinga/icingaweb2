@@ -128,7 +128,7 @@ class SetupCommand extends Command
      *
      * USAGE:
      *
-     *  icingacli setup webserver <apache2|apache24|nginx> [options]
+     *  icingacli setup webserver <apache2|nginx> [options]
      *
      * OPTIONS:
      *
@@ -141,11 +141,13 @@ class SetupCommand extends Command
      *
      * EXAMPLES:
      *
-     * icingacli setup webserver apache24
+     * icingacli setup webserver apache2
      *
      * icingacli setup webserver apache2 --path /icingaweb --publicPath /usr/share/icingaweb/public
      *
      * icingacli setup webserver apache2 --file /etc/apache2/conf.d/icingaweb.conf
+     *
+     * icingacli setup webserver nginx
      */
     public function webserverAction()
     {

@@ -15,14 +15,37 @@ class Apache2 extends Webserver
     protected function getTemplate()
     {
             return  <<<'EOD'
-Alias {webPath} {publicPath}
-<directory {publicPath}>
-  Options -Indexes
-  AllowOverride All
-  Order allow,deny
-  Allow from all
-  EnableSendfile Off
-</directory>
+Alias {webPath} "{publicPath}"
+
+<Directory "{publicPath}">
+    Options SymLinksIfOwnerMatch
+    AllowOverride None
+
+    <IfModule mod_authz_core.c>
+        # Apache 2.4
+        <RequireAll>
+            Require all granted
+        </RequireAll>
+    </IfModule>
+
+    <IfModule !mod_authz_core.c>
+        # Apache 2.2
+        Order allow,deny
+        Allow from all
+    </IfModule>
+
+    SetEnv ICINGAWEB_CONFIGDIR /etc/icingaweb/
+
+    EnableSendfile Off
+
+    RewriteEngine on
+    RewriteBase {webPath}/
+    RewriteCond %{REQUEST_FILENAME} -s [OR]
+    RewriteCond %{REQUEST_FILENAME} -l [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^.*$ - [NC,L]
+    RewriteRule ^.*$ index.php [NC,L]
+</Directory>
 EOD;
 
     }
