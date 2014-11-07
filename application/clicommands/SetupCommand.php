@@ -105,7 +105,11 @@ class SetupCommand extends Command
         $old = umask(0); // Prevent $mode from being mangled by the system's umask ($old)
         chmod($path, $mode);
         umask($old);
-        chgrp($path, $group);
+
+        if (chgrp($path, $group) === false) {
+            $this->fail(sprintf($this->translate('Unable to change the group of "%s" to "%s".'), $path, $group));
+            return false;
+        }
 
         printf($this->translate("Successfully created configuration directory at: %s\n"), $path);
     }
