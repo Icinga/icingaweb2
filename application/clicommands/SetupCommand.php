@@ -47,11 +47,6 @@ class SetupCommand extends Command
      */
     public function generateTokenAction()
     {
-        if (false === $this->isSuperUser()) {
-            $this->fail($this->translate('This action needs to be run as super user in order to work properly!'));
-            return false;
-        }
-
         $token = bin2hex(openssl_random_pseudo_bytes(8));
         $filepath = $this->app->getConfigDir() . '/setup.token';
 
@@ -89,11 +84,6 @@ class SetupCommand extends Command
      */
     public function createConfigDirectoryAction()
     {
-        if (false === $this->isSuperUser()) {
-            $this->fail($this->translate('This action needs to be run as super user in order to work properly!'));
-            return false;
-        }
-
         $group = $this->params->getStandalone();
         if ($group === null) {
             $this->fail($this->translate('The `group\' argument is mandatory.'));
@@ -118,15 +108,5 @@ class SetupCommand extends Command
         chgrp($path, $group);
 
         printf($this->translate("Successfully created configuration directory at: %s\n"), $path);
-    }
-
-    /**
-     * Return whether the current user is a super user
-     *
-     * @return  bool
-     */
-    protected function isSuperUser()
-    {
-        return intval(shell_exec('echo $EUID')) === 0;
     }
 }
