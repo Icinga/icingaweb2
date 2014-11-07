@@ -39,10 +39,11 @@ class BackendPage extends Form
             )
         );
 
-        $resourceTypes = array('livestatus' => 'Livestatus');
+        $resourceTypes = array();
         if (Platform::extensionLoaded('mysql') || Platform::extensionLoaded('pgsql')) {
             $resourceTypes['ido'] = 'IDO';
         }
+        $resourceTypes['livestatus'] = 'Livestatus';
 
         $this->addElement(
             'select',
