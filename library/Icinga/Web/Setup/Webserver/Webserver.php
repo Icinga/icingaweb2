@@ -66,9 +66,7 @@ abstract class Webserver
     public function generate()
     {
         $template = $this->getTemplate();
-        if (is_array($template)) {
-            $template = implode(PHP_EOL, $template);
-        }
+
         $searchTokens = array(
             '{webPath}',
             '{publicPath}'
@@ -84,7 +82,7 @@ abstract class Webserver
     /**
      * Specific template
      *
-     * @return array|string
+     * @return string
      */
     abstract protected function getTemplate();
 

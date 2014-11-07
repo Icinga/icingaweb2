@@ -7,7 +7,7 @@ namespace Icinga\Web\Setup\Webserver;
 /**
  * Generate apache2.4 configuration
  */
-class Apache24 extends Apache2
+class Apache24 extends Webserver
 {
     /**
      * Use default template and change granted syntax for 2.4
@@ -16,11 +16,14 @@ class Apache24 extends Apache2
      */
     protected function getTemplate()
     {
-        $template = parent::getTemplate();
-        $replace = array(
-            '  Require all granted'
-        );
-        array_splice($template, count($template)-4, 2, $replace);
-        return $template;
+        return  <<<'EOD'
+Alias {webPath} {publicPath}
+<directory {publicPath}>
+  Options -Indexes
+  AllowOverride All
+  Require all granted
+  EnableSendfile Off
+</directory>
+EOD;
     }
 }

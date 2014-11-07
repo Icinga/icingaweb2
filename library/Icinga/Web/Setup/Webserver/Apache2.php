@@ -14,15 +14,16 @@ class Apache2 extends Webserver
      */
     protected function getTemplate()
     {
-        return array(
-            'Alias {webPath} {publicPath}',
-            '<directory {publicPath}>',
-            '  Options -Indexes',
-            '  AllowOverride All',
-            '  Order allow,deny',
-            '  Allow from all',
-            '  EnableSendfile Off',
-            '</directory>'
-        );
+            return  <<<'EOD'
+Alias {webPath} {publicPath}
+<directory {publicPath}>
+  Options -Indexes
+  AllowOverride All
+  Order allow,deny
+  Allow from all
+  EnableSendfile Off
+</directory>
+EOD;
+
     }
 }
