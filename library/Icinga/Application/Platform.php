@@ -156,8 +156,6 @@ class Platform
             $userInfo = posix_getpwuid(posix_geteuid());
             return $userInfo['name'];
         }
-
-        return 'php_username';
     }
 
     /**
