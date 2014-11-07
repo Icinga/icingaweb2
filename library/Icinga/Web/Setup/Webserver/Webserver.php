@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Config\Webserver;
+namespace Icinga\Web\Setup\Webserver;
 
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Exception\ProgrammingError;

@@ -6,7 +6,7 @@ namespace Icinga\Clicommands;
 
 use Icinga\Application\Logger;
 use Icinga\Cli\Command;
-use Icinga\Config\Webserver\Webserver;
+use Icinga\Web\Setup\Webserver\Webserver;
 use Icinga\Exception\ProgrammingError;
 
 /**

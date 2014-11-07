@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Config\Webserver;
+namespace Icinga\Web\Setup\Webserver;
 
 /**
  * Generate apache2.4 configuration
