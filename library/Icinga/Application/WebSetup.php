@@ -456,20 +456,6 @@ class WebSetup extends Wizard implements SetupWizard
             )
         );
 
-        $requirements->addMandatory(
-            t('PHP Module: POSIX'),
-            t(
-                'It is required to install the POSIX module for PHP in case you\'re on a POSIX compliant'
-                . ' system as it\'s essential for some parts of the web frontend and the Icinga CLI.'
-            ),
-            Platform::isWindows() || Platform::extensionLoaded('posix'),
-            Platform::isWindows() ? t('Your\'re not on a POSIX compliant system.') : (
-                Platform::extensionLoaded('posix') ? t('The PHP module POSIX is available.') : (
-                    t('The PHP module POSIX is missing.')
-                )
-            )
-        );
-
         $requirements->addOptional(
             t('PHP Module: PDO-MySQL'),
             t('Is Icinga Web 2 supposed to access a MySQL database the PDO-MySQL module for PHP is required.'),
