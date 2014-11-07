@@ -4,7 +4,7 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Zend_Config;
+use Icinga\Application\Config;
 use Icinga\Authentication\UserBackend;
 use Icinga\User;
 
@@ -23,9 +23,9 @@ class AutoLoginBackend extends UserBackend
     /**
      * Create new autologin backend
      *
-     * @param Zend_Config $config
+     * @param Config $config
      */
-    public function __construct(Zend_Config $config)
+    public function __construct(Config $config)
     {
         $this->stripUsernameRegexp = $config->get('strip_username_regexp');
     }

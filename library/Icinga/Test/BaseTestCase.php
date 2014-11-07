@@ -24,9 +24,9 @@ namespace Icinga\Test {
     use Exception;
     use RuntimeException;
     use Mockery;
-    use Zend_Config;
     use PHPUnit_Framework_TestCase;
     use Icinga\Application\Icinga;
+    use Icinga\Application\Config;
     use Icinga\Util\DateTimeFactory;
     use Icinga\Data\ResourceFactory;
     use Icinga\Data\Db\DbConnection;
@@ -191,17 +191,17 @@ namespace Icinga\Test {
         }
 
         /**
-         * Create Zend_Config for database configuration
+         * Create Config for database configuration
          *
          * @param   string $name
          *
-         * @return  Zend_Config
+         * @return  Config
          * @throws  RuntimeException
          */
         protected function createDbConfigFor($name)
         {
             if (array_key_exists($name, self::$dbConfiguration)) {
-                return new Zend_Config(self::$dbConfiguration[$name]);
+                return new Config(self::$dbConfiguration[$name]);
             }
 
             throw new RuntimeException('Configuration for database type not available: ' . $name);

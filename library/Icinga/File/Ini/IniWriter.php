@@ -7,6 +7,7 @@ namespace Icinga\File\Ini;
 use Zend_Config;
 use Zend_Config_Ini;
 use Zend_Config_Writer_FileAbstract;
+use Icinga\Application\Config;
 
 /**
  * A INI file adapter that respects the file structure and the comments of already existing ini files
@@ -33,6 +34,12 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
      */
     public function __construct(array $options = null)
     {
+        if (isset($options['config']) && $options['config'] instanceof Config) {
+            // As this class inherits from Zend_Config_Writer_FileAbstract we must
+            // not pass the config directly as it needs to be of type Zend_Config
+            $options['config'] = new Zend_Config($options['config']->toArray(), true);
+        }
+
         $this->options = $options;
         parent::__construct($options);
     }
