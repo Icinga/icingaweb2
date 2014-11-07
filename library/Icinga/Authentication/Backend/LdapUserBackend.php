@@ -72,10 +72,7 @@ class LdapUserBackend extends UserBackend
             $q = $this->conn->select()->from($this->userClass);
             $result = $q->fetchRow();
         } catch (LdapException $e) {
-            throw new AuthenticationException(
-                'Connection not possible: %s',
-                $e->getMessage()
-            );
+            throw new AuthenticationException('Connection not possible.', $e);
         }
 
         if (! isset($result)) {
@@ -166,7 +163,7 @@ class LdapUserBackend extends UserBackend
             } catch (AuthenticationException $e) {
                 // Authentication not possible
                 throw new AuthenticationException(
-                    'Authentication against backend "%s" not possible: %s',
+                    'Authentication against backend "%s" not possible.',
                     $this->getName(),
                     $e
                 );

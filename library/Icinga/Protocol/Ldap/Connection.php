@@ -335,9 +335,9 @@ class Connection
 
     public function testCredentials($username, $password)
     {
-        $ds = $this->prepareNewConnection();
+        $this->connect();
 
-        $r = @ldap_bind($ds, $username, $password);
+        $r = @ldap_bind($this->ds, $username, $password);
         if ($r) {
             Logger::debug(
                 'Successfully tested LDAP credentials (%s / %s)',
@@ -350,7 +350,7 @@ class Connection
                 'Testing LDAP credentials (%s / %s) failed: %s',
                 $username,
                 '***',
-                ldap_error($ds)
+                ldap_error($this->ds)
             );
             return false;
         }
@@ -387,7 +387,19 @@ class Connection
         }
 
         $ds = ldap_connect($this->hostname, $this->port);
-        list($cap, $namingContexts) = $this->discoverCapabilities($ds);
+        try {
+            $capabilities = $this->discoverCapabilities($ds);
+            list($cap, $namingContexts) = $capabilities;
+        } catch (LdapException $e) {
+
+            // discovery failed, guess defaults
+            $cap = (object) array(
+                'supports_ldapv3'   => true,
+                'supports_starttls' => false,
+                'msCapabilities'    => array()
+            );
+            $namingContexts = null;
+        }
         $this->capabilities = $cap;
         $this->namingContexts = $namingContexts;
 
@@ -625,7 +637,8 @@ class Connection
         if (! $result) {
             throw new LdapException(
                 sprintf(
-                    'Capability query failed (%s:%d): %s',
+                    'Capability query failed (%s:%d): %s. Check if hostname and port of the ldap resource are correct '
+                        . ' and if anonymous access is permitted.',
                     $this->hostname,
                     $this->port,
                     ldap_error($ds)
@@ -633,6 +646,16 @@ class Connection
             );
         }
         $entry = ldap_first_entry($ds, $result);
+        if ($entry === false) {
+            throw new LdapException(
+                sprintf(
+                    'Capabilities not available (%s:%d): %s. Discovery of root DSE probably not permitted.',
+                    $this->hostname,
+                    $this->port,
+                    ldap_error($ds)
+                )
+            );
+        }
 
         $cap = (object) array(
             'supports_ldapv3'   => false,
@@ -640,10 +663,6 @@ class Connection
             'msCapabilities' => array()
         );
 
-        if ($entry === false) {
-            // TODO: Is it OK to have no capabilities?
-            return false;
-        }
         $ldapAttributes = ldap_get_attributes($ds, $entry);
         $result = $this->cleanupAttributes($ldapAttributes);
         $cap->supports_ldapv3 = $this->hasCapabilityLdapV3($result);

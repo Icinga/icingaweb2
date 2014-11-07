@@ -1,8 +1,11 @@
 <?php
+
 foreach ($object->customvars as $name => $value) {
+
     printf(
-        "<tr><th>%s</th><td>%s</td></tr>\n",
+        '<tr><th>%s</th><td class="customvar">%s</td></tr>' . "\n",
         $this->escape($name),
-        $this->escape($value)
+        $this->customvar($value)
     );
 }
+
