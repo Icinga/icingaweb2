@@ -401,7 +401,7 @@ class Config implements Countable, Iterator, ArrayAccess
             $config->setConfigFile($file);
         } elseif (is_readable($filepath)) {
             $config->setConfigFile($filepath);
-            $config->merge(parse_ini_file($filepath, true, INI_SCANNER_RAW));
+            $config->merge(parse_ini_file($filepath, true));
         } else {
             throw new NotReadableError(t('Cannot read config file "%s". Permission denied'), $filepath);
         }
