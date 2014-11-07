@@ -8,7 +8,6 @@ use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Application\Platform;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
-use Zend_Config;
 
 /**
  * Backend class managing all the LDAP stuff for you.
@@ -101,9 +100,9 @@ class Connection
      *
      * TODO: Allow to pass port and SSL options
      *
-     * @param Zend_Config $config
+     * @param Config $config
      */
-    public function __construct(Zend_Config $config)
+    public function __construct(Config $config)
     {
         $this->hostname = $config->hostname;
         $this->bind_dn  = $config->bind_dn;
@@ -364,7 +363,7 @@ class Connection
      */
     protected function getConfigDir($sub = null)
     {
-        $dir = Config::getInstance()->getConfigDir() . '/ldap';
+        $dir = Config::$configDir . '/ldap';
         if ($sub !== null) {
             $dir .= '/' . $sub;
         }

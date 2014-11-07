@@ -5,7 +5,7 @@
 namespace Icinga\Application\Logger\Writer;
 
 use Exception;
-use Zend_Config;
+use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Application\Logger\LogWriter;
 use Icinga\Exception\ConfigurationError;
@@ -26,12 +26,12 @@ class FileWriter extends LogWriter
     /**
      * Create a new file log writer
      *
-     * @param   Zend_Config $config
+     * @param   Config  $config
      *
      * @throws  ConfigurationError  If the configuration directive 'file' is missing or if the path to 'file' does
      *                              not exist or if writing to 'file' is not possible
      */
-    public function __construct(Zend_Config $config)
+    public function __construct(Config $config)
     {
         if ($config->file === null) {
             throw new ConfigurationError('Required logging configuration directive \'file\' missing');

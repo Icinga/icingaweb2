@@ -9,7 +9,7 @@ use Icinga\Data\Selectable;
 use Icinga\Data\Queryable;
 use Icinga\Data\ConnectionInterface;
 
-use Icinga\Application\Config as IcingaConfig;
+use Icinga\Application\Config;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 
@@ -69,7 +69,7 @@ class Backend implements Selectable, Queryable, ConnectionInterface
      */
     public static function createBackend($backendName = null)
     {
-        $config = IcingaConfig::module('monitoring', 'backends');
+        $config = Config::module('monitoring', 'backends');
         if ($config->count() === 0) {
             throw new ConfigurationError(mt('monitoring', 'No backend has been configured'));
         }

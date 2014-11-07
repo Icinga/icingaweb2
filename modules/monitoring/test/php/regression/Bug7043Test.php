@@ -10,12 +10,11 @@ use Icinga\Application\Config;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Test\BaseTestCase;
 use Mockery;
-use Zend_Config;
 
 
 class ConfigWithSetModuleConfig extends Config
 {
-    public static function setModuleConfig($moduleName, $configName, Zend_Config $config)
+    public static function setModuleConfig($moduleName, $configName, $config)
     {
         static::$modules[$moduleName][$configName] = $config;
     }
