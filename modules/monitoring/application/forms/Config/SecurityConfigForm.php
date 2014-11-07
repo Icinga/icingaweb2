@@ -55,7 +55,8 @@ class SecurityConfigForm extends ConfigForm
             'text',
             'protected_customvars',
             array(
-                'required'      => true,
+                'allowEmpty'    => true,
+                'value'         => '*pw*,*pass*,community',
                 'label'         => mt('monitoring', 'Protected Custom Variables'),
                 'description'   => mt('monitoring',
                     'Comma separated case insensitive list of protected custom variables.'

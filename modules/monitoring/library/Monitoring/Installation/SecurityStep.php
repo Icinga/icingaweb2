@@ -56,7 +56,9 @@ class SecurityStep extends Step
             . '<tbody>'
             . '<tr>'
             . '<td><strong>' . mt('monitoring', 'Protected Custom Variables') . '</strong></td>'
-            . '<td>' . $this->data['securityConfig']['protected_customvars'] . '</td>'
+            . '<td>' . ($this->data['securityConfig']['protected_customvars'] ? (
+                $this->data['securityConfig']['protected_customvars']
+            ) : mt('monitoring', 'None', 'monitoring.protected_customvars')) . '</td>'
             . '</tr>'
             . '</tbody>'
             . '</table>';
