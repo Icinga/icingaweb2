@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Installation;
+namespace Icinga\Module\Monitoring;
 
 use Exception;
 use Zend_Config;
