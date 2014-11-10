@@ -65,14 +65,14 @@ $setupTokenPath = rtrim(Icinga::app()->getConfigDir(), '/') . '/setup.token';
       ); ?></p>
       <p><?= t('If you\'ve got the IcingaCLI installed you can do the following:'); ?></p>
       <div class="code">
-        <span>sudo icingacli setup createConfigDirectory <?= ($user = Platform::getPhpUser()) !== null ? $user : 'your_webserver_group'; ?>;</span>
-        <span>sudo icingacli setup generateToken;</span>
+        <span>icingacli setup createConfigDirectory <?= ($user = Platform::getPhpUser()) !== null ? $user : 'your_webserver_group'; ?>;</span>
+        <span>icingacli setup generateToken;</span>
       </div>
       <p><?= t('In case the IcingaCLI is missing you can create the token manually:'); ?></p>
       <div class="code">
-        <span>sudo mkdir -m 2775 <?= dirname($setupTokenPath); ?> && sudo chgrp <?= ($user = Platform::getPhpUser()) !== null ? $user : 'your_webserver_group'; ?> <?= dirname($setupTokenPath); ?>;</span>
-        <span>head -c 12 /dev/urandom | base64 | sudo -u '<?= ($user = Platform::getPhpUser()) !== null ? $user : 'your_webserver_group'; ?>' tee <?= $setupTokenPath; ?>;</span>
-        <span>sudo chmod 0660 <?= $setupTokenPath; ?>;</span>
+        <span>su <?= ($user = Platform::getPhpUser()) !== null ? $user : 'your_webserver_group'; ?> && mkdir -m 2775 <?= dirname($setupTokenPath); ?>;</span>
+        <span>head -c 12 /dev/urandom | base64 | tee <?= $setupTokenPath; ?>;</span>
+        <span>chmod 0660 <?= $setupTokenPath; ?>;</span>
       </div>
       <p style="font-size: 85%;"><?= sprintf(
         t('Please see the %s for an extensive description on how to access and use this wizard.'),
