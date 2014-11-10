@@ -2,11 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Setup;
+namespace Icinga\Module\Setup\Form;
 
 use Icinga\Application\Icinga;
 use Icinga\Web\Form;
-use Icinga\Web\Form\Validator\TokenValidator;
+use Icinga\Module\Setup\Web\Form\Validator\TokenValidator;
 
 /**
  * Wizard page to authenticate and welcome the user

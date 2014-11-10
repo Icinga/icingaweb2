@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Web\Form\Validator;
+namespace Icinga\Module\Setup\Web\Form\Validator;
 
 use Exception;
 use Zend_Validate_Abstract;

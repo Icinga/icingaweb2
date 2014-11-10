@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Web\Setup;
+namespace Icinga\Module\Setup;
 
 /**
  * Interface for wizards providing a setup and requirements

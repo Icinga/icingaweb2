@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Exception;
+namespace Icinga\Module\Setup\Exception;
 
 /**
  * Class SetupException

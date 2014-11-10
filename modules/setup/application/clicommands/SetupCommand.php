@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Clicommands;
+namespace Icinga\Module\Setup\Clicommands;
 
 use Icinga\Cli\Command;
 

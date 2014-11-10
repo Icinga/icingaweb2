@@ -2,14 +2,14 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Installation;
+namespace Icinga\Module\Setup\Steps;
 
 use Exception;
 use Zend_Config;
 use Icinga\Application\Logger;
-use Icinga\Web\Setup\Step;
 use Icinga\Application\Config;
 use Icinga\File\Ini\IniWriter;
+use Icinga\Module\Setup\Step;
 
 class GeneralConfigStep extends Step
 {

@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Setup;
+namespace Icinga\Module\Setup\Form;
 
 use Exception;
 use Zend_Config;

@@ -18,7 +18,7 @@ use Icinga\Web\Hook;
 use Icinga\Web\Menu;
 use Icinga\Web\Widget;
 use Icinga\Web\Widget\Dashboard\Pane;
-use Icinga\Web\Setup\SetupWizard;
+use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\IcingaException;

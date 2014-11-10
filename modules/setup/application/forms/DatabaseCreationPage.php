@@ -2,12 +2,12 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Setup;
+namespace Icinga\Module\Setup\Form;
 
 use PDOException;
 use Icinga\Web\Form;
 use Icinga\Web\Form\Element\Note;
-use Icinga\Web\Setup\DbTool;
+use Icinga\Module\Setup\Utils\DbTool;
 
 /**
  * Wizard page to define a database user that is able to create databases and tables

@@ -2,13 +2,13 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Setup;
+namespace Icinga\Module\Setup\Form;
 
 use PDOException;
 use Icinga\Web\Form;
-use Icinga\Web\Setup\DbTool;
 use Icinga\Web\Form\Element\Note;
 use Icinga\Form\Config\Resource\DbResourceForm;
+use Icinga\Module\Setup\Utils\DbTool;
 
 /**
  * Wizard page to define connection details for a database resource

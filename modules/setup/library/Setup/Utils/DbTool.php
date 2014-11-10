@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Web\Setup;
+namespace Icinga\Module\Setup\Utils;
 
 use PDO;
 use PDOException;

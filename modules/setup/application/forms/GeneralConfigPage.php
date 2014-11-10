@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Setup;
+namespace Icinga\Module\Setup\Form;
 
 use Icinga\Web\Form;
 use Icinga\Web\Form\Element\Note;

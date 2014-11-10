@@ -2,11 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Web\Setup;
+namespace Icinga\Module\Setup;
 
 use ArrayIterator;
 use IteratorAggregate;
-use Icinga\Exception\SetupException;
+use Icinga\Module\Setup\Exception\SetupException;
 
 /**
  * Container for multiple configuration steps

@@ -2,14 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Setup;
+namespace Icinga\Module\Setup\Form;
 
-use Icinga\Protocol\Dns;
 use Icinga\Web\Form;
 use Icinga\Web\Form\Element\Note;
 use Icinga\Form\LdapDiscoveryForm;
-use Icinga\Form\Config\Resource\LdapResourceForm;
-use Icinga\Web\Request;
 
 /**
  * Wizard page to define the connection details for a LDAP resource

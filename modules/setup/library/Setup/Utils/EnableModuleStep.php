@@ -2,10 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Web\Setup;
+namespace Icinga\Module\Setup\Utils;
 
 use Exception;
 use Icinga\Application\Icinga;
+use Icinga\Module\Setup\Step;
 
 class EnableModuleStep extends Step
 {

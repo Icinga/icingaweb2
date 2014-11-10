@@ -2,8 +2,8 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Application\WebWizard;
 use Icinga\Web\Controller\ActionController;
+use Icinga\Module\Setup\WebWizard;
 
 class SetupController extends ActionController
 {

@@ -6,7 +6,7 @@ namespace Icinga\Module\Monitoring\Installation;
 
 use Exception;
 use Zend_Config;
-use Icinga\Web\Setup\Step;
+use Icinga\Module\Setup\Step;
 use Icinga\Application\Config;
 use Icinga\File\Ini\IniWriter;
 

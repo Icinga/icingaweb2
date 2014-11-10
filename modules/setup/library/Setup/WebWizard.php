@@ -2,35 +2,34 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Application;
+namespace Icinga\Module\Setup;
 
 use PDOException;
-use Icinga\Form\Setup\ModulePage;
-use Icinga\Form\Setup\WelcomePage;
-use Icinga\Form\Setup\SummaryPage;
-use Icinga\Form\Setup\DbResourcePage;
-use Icinga\Form\Setup\PreferencesPage;
-use Icinga\Form\Setup\AuthBackendPage;
-use Icinga\Form\Setup\AdminAccountPage;
-use Icinga\Form\Setup\LdapDiscoveryPage;
-use Icinga\Form\Setup\LdapDiscoveryConfirmPage;
-use Icinga\Form\Setup\LdapResourcePage;
-use Icinga\Form\Setup\RequirementsPage;
-use Icinga\Form\Setup\GeneralConfigPage;
-use Icinga\Form\Setup\AuthenticationPage;
-use Icinga\Form\Setup\DatabaseCreationPage;
-use Icinga\Installation\DatabaseStep;
-use Icinga\Installation\GeneralConfigStep;
-use Icinga\Installation\ResourceStep;
-use Icinga\Installation\AuthenticationStep;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
 use Icinga\Web\Request;
-use Icinga\Web\Setup\Setup;
-use Icinga\Web\Setup\DbTool;
-use Icinga\Web\Setup\MakeDirStep;
-use Icinga\Web\Setup\SetupWizard;
-use Icinga\Web\Setup\Requirements;
+use Icinga\Application\Config;
+use Icinga\Application\Platform;
+use Icinga\Module\Setup\Form\ModulePage;
+use Icinga\Module\Setup\Form\WelcomePage;
+use Icinga\Module\Setup\Form\SummaryPage;
+use Icinga\Module\Setup\Form\DbResourcePage;
+use Icinga\Module\Setup\Form\PreferencesPage;
+use Icinga\Module\Setup\Form\AuthBackendPage;
+use Icinga\Module\Setup\Form\AdminAccountPage;
+use Icinga\Module\Setup\Form\LdapDiscoveryPage;
+use Icinga\Module\Setup\Form\LdapDiscoveryConfirmPage;
+use Icinga\Module\Setup\Form\LdapResourcePage;
+use Icinga\Module\Setup\Form\RequirementsPage;
+use Icinga\Module\Setup\Form\GeneralConfigPage;
+use Icinga\Module\Setup\Form\AuthenticationPage;
+use Icinga\Module\Setup\Form\DatabaseCreationPage;
+use Icinga\Module\Setup\Steps\DatabaseStep;
+use Icinga\Module\Setup\Steps\GeneralConfigStep;
+use Icinga\Module\Setup\Steps\ResourceStep;
+use Icinga\Module\Setup\Steps\AuthenticationStep;
+use Icinga\Module\Setup\Utils\MakeDirStep;
+use Icinga\Module\Setup\Utils\DbTool;
 
 /**
  * Icinga Web 2 Setup Wizard

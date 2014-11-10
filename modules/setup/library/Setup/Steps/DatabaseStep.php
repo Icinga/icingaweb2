@@ -2,14 +2,14 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Installation;
+namespace Icinga\Module\Setup\Steps;
 
 use Exception;
 use PDOException;
-use Icinga\Web\Setup\Step;
-use Icinga\Web\Setup\DbTool;
 use Icinga\Application\Icinga;
-use Icinga\Exception\SetupException;
+use Icinga\Module\Setup\Step;
+use Icinga\Module\Setup\Utils\DbTool;
+use Icinga\Module\Setup\Exception\SetupException;
 
 class DatabaseStep extends Step
 {
