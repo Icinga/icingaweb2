@@ -13,7 +13,7 @@ use Icinga\Util\File;
 use Icinga\Exception\ConfigurationError;
 
 /**
- * Utility class to ease working with databases when installing Icinga Web 2 or one of its modules
+ * Utility class to ease working with databases when setting up Icinga Web 2 or one of its modules
  */
 class DbTool
 {

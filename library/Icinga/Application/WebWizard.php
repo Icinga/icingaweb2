@@ -26,8 +26,8 @@ use Icinga\Installation\AuthenticationStep;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
 use Icinga\Web\Request;
+use Icinga\Web\Setup\Setup;
 use Icinga\Web\Setup\DbTool;
-use Icinga\Web\Setup\Installer;
 use Icinga\Web\Setup\MakeDirStep;
 use Icinga\Web\Setup\SetupWizard;
 use Icinga\Web\Setup\Requirements;
@@ -35,7 +35,7 @@ use Icinga\Web\Setup\Requirements;
 /**
  * Icinga Web 2 Setup Wizard
  */
-class WebSetup extends Wizard implements SetupWizard
+class WebWizard extends Wizard implements SetupWizard
 {
     /**
      * The privileges required by Icinga Web 2 to setup the database
@@ -138,7 +138,7 @@ class WebSetup extends Wizard implements SetupWizard
             $page->setResourceConfig($this->getPageData('setup_db_resource'));
         } elseif ($page->getName() === 'setup_summary') {
             $page->setSubjectTitle('Icinga Web 2');
-            $page->setSummary($this->getInstaller()->getSummary());
+            $page->setSummary($this->getSetup()->getSummary());
         } elseif ($page->getName() === 'setup_db_resource') {
             $ldapData = $this->getPageData('setup_ldap_resource');
             if ($ldapData !== null && $request->getPost('name') === $ldapData['name']) {
@@ -251,7 +251,7 @@ class WebSetup extends Wizard implements SetupWizard
         if ($index === 0) {
             $page->getElement(static::BTN_NEXT)->setLabel(t('Start', 'setup.welcome.btn.next'));
         } elseif ($index === count($pages) - 1) {
-            $page->getElement(static::BTN_NEXT)->setLabel(t('Install Icinga Web 2', 'setup.summary.btn.finish'));
+            $page->getElement(static::BTN_NEXT)->setLabel(t('Setup Icinga Web 2', 'setup.summary.btn.finish'));
         }
     }
 
@@ -270,12 +270,12 @@ class WebSetup extends Wizard implements SetupWizard
     }
 
     /**
-     * @see SetupWizard::getInstaller()
+     * @see SetupWizard::getSetup()
      */
-    public function getInstaller()
+    public function getSetup()
     {
         $pageData = $this->getPageData();
-        $installer = new Installer();
+        $setup = new Setup();
 
         if (isset($pageData['setup_db_resource'])
             && ! $pageData['setup_db_resource']['skip_validation']
@@ -283,7 +283,7 @@ class WebSetup extends Wizard implements SetupWizard
                 || ! $pageData['setup_database_creation']['skip_validation']
             )
         ) {
-            $installer->addStep(
+            $setup->addStep(
                 new DatabaseStep(array(
                     'tables'            => $this->databaseTables,
                     'privileges'        => $this->databaseUsagePrivileges,
@@ -298,7 +298,7 @@ class WebSetup extends Wizard implements SetupWizard
             );
         }
 
-        $installer->addStep(
+        $setup->addStep(
             new GeneralConfigStep(array(
                 'generalConfig'         => $pageData['setup_general_config'],
                 'preferencesType'       => $pageData['setup_preferences_type']['type'],
@@ -320,7 +320,7 @@ class WebSetup extends Wizard implements SetupWizard
             $adminAccountData['password'] = $pageData['setup_admin_account']['new_user_password'];
         }
         $authType = $pageData['setup_authentication_type']['type'];
-        $installer->addStep(
+        $setup->addStep(
             new AuthenticationStep(array(
                 'adminAccountData'  => $adminAccountData,
                 'fileMode'          => $pageData['setup_general_config']['global_filemode'],
@@ -332,7 +332,7 @@ class WebSetup extends Wizard implements SetupWizard
         );
 
         if (isset($pageData['setup_db_resource']) || isset($pageData['setup_ldap_resource'])) {
-            $installer->addStep(
+            $setup->addStep(
                 new ResourceStep(array(
                     'fileMode'              => $pageData['setup_general_config']['global_filemode'],
                     'dbResourceConfig'      => isset($pageData['setup_db_resource'])
@@ -346,7 +346,7 @@ class WebSetup extends Wizard implements SetupWizard
         }
 
         $configDir = $this->getConfigDir();
-        $installer->addStep(
+        $setup->addStep(
             new MakeDirStep(
                 array(
                     $configDir . '/modules',
@@ -359,11 +359,11 @@ class WebSetup extends Wizard implements SetupWizard
 
         foreach ($this->getPage('setup_modules')->setPageData($this->getPageData())->getWizards() as $wizard) {
             if ($wizard->isFinished()) {
-                $installer->addSteps($wizard->getInstaller()->getSteps());
+                $setup->addSteps($wizard->getSetup()->getSteps());
             }
         }
 
-        return $installer;
+        return $setup;
     }
 
     /**

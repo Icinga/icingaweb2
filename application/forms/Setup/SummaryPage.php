@@ -12,7 +12,7 @@ use Icinga\Web\Form;
 class SummaryPage extends Form
 {
     /**
-     * The title of what is being installed
+     * The title of what is being set up
      *
      * @var string
      */
@@ -35,7 +35,7 @@ class SummaryPage extends Form
     }
 
     /**
-     * Set the title of what is being installed
+     * Set the title of what is being set up
      *
      * @param   string  $title
      */
@@ -45,7 +45,7 @@ class SummaryPage extends Form
     }
 
     /**
-     * Return the title of what is being installed
+     * Return the title of what is being set up
      *
      * @return  string
      */

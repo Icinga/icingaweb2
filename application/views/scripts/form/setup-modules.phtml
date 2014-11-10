@@ -4,7 +4,7 @@ use Icinga\Web\Wizard;
 
 ?>
 <div class="module-menu">
-  <p><?= t('The following modules are available for installation using a web-based wizard as well. To install a module, just complete its wizard and advance to the summary!'); ?></p>
+  <p><?= t('The following modules can be set up by using a web-based wizard as well. To setup a module, just complete its wizard and advance to the summary!'); ?></p>
   <p><?= t('You can freely switch to a module\'s wizard by clicking its name below. The wizard you are currently looking at is written in bold. A small tick is shown on the right once a wizard has been completed.'); ?></p>
   <form name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
     <?= $form->getElement($form->getTokenElementName()); ?>

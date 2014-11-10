@@ -1,4 +1,4 @@
-<div id="installer">
+<div id="setup-finish">
   <div class="report">
   <?php $firstLine = true; ?>
   <?php foreach ($report as $entry): ?>
@@ -11,9 +11,9 @@
     <?php endif ?>
   <?php endforeach ?>
   <?php if ($success): ?>
-    <p class="success"><?= t('Congratulations! The installation of Icinga Web 2 has been successfully completed.'); ?></p>
+    <p class="success"><?= t('Congratulations! Icinga Web 2 has been successfully set up.'); ?></p>
   <?php else: ?>
-    <p class="failure"><?= t('Sorry! The installation of Icinga Web 2 has failed.'); ?></p>
+    <p class="failure"><?= t('Sorry! Failed to set up Icinga Web 2 successfully.'); ?></p>
   <?php endif ?>
   </div>
   <div class="buttons">

@@ -5,16 +5,16 @@
 namespace Icinga\Web\Setup;
 
 /**
- * Interface for setup wizards providing an installer and requirements
+ * Interface for wizards providing a setup and requirements
  */
 interface SetupWizard
 {
     /**
-     * Return the installer for this wizard
+     * Return the setup for this wizard
      *
-     * @return  Installer
+     * @return  Setup
      */
-    public function getInstaller();
+    public function getSetup();
 
     /**
      * Return the requirements of this wizard

@@ -45,8 +45,8 @@ class MakeDirStep extends Step
 
     public function getSummary()
     {
-        // This step is usually being used for directories which are required for the installation but are
-        // not configured in any way by the user. So there is no need to show a summary for this step.
+        // This step is usually being used for directories which are required for the configuration but
+        // are not defined in any way by the user. So there is no need to show a summary for this step.
     }
 
     public function getReport()

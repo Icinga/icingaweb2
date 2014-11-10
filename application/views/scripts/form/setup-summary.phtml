@@ -5,9 +5,9 @@ use Icinga\Web\Wizard;
 ?>
 <p><?= sprintf(
   t(
-    'The wizard is now complete. You can review the changes supposed to be made before issuing the actual installation'
-    . ' of %1$s. Make sure that everything is correct (Feel free to navigate back to make any corrections!) so'
-    . ' that you can start using %1$s right after the installation has been finished.'
+    'The wizard is now complete. You can review the changes supposed to be made before setting up %1$s.'
+    . ' Make sure that everything is correct (Feel free to navigate back to make any corrections!) so'
+    . ' that you can start using %1$s right after it has successfully been set up.'
   ),
   $form->getSubjectTitle()
 ); ?></p>
@@ -25,6 +25,6 @@ use Icinga\Web\Wizard;
   <?= $form->getElement($form->getUidElementName()); ?>
   <div class="buttons">
     <?= $form->getElement(Wizard::BTN_PREV); ?>
-    <?= $form->getElement(Wizard::BTN_NEXT)->setAttrib('class', 'install'); ?>
+    <?= $form->getElement(Wizard::BTN_NEXT)->setAttrib('class', 'finish'); ?>
   </div>
 </form>

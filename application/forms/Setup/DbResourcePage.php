@@ -41,8 +41,8 @@ class DbResourcePage extends Form
                 'description',
                 array(
                     'value' => t(
-                        'Now please configure your database resource. Note that the database itself does not need'
-                        . ' to exist at this time as it is going to be created when installing Icinga Web 2.'
+                        'Now please configure your database resource. Note that the database itself does not need to'
+                        . ' exist at this time as it is going to be created once the wizard is about to be finished.'
                     )
                 )
             )

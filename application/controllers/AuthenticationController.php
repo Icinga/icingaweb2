@@ -107,7 +107,7 @@ class AuthenticationController extends ActionController
                     throw new ConfigurationError(
                         $this->translate(
                             'No authentication methods available. Did you create'
-                          . ' authentication.ini when installing Icinga Web 2?'
+                          . ' authentication.ini when setting up Icinga Web 2?'
                          )
                     );
                 }

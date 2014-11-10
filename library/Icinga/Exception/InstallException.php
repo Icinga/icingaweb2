@@ -5,10 +5,10 @@
 namespace Icinga\Exception;
 
 /**
- * Class InstallException
+ * Class SetupException
  *
- * Used to indicate that a installation should be aborted.
+ * Used to indicate that a setup should be aborted.
  */
-class InstallException extends IcingaException
+class SetupException extends IcingaException
 {
 }

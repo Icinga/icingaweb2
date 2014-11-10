@@ -125,7 +125,7 @@ if ($notifications->hasMessages()) {
         </tr></tbody></table>
       </div>
       <div class="step" style="width: 10%;">
-        <h1><?= t('Installation', 'setup.progress'); ?></h1>
+        <h1><?= t('Finish', 'setup.progress'); ?></h1>
         <?php $stateClass = $finished ? ' active' : ''; ?>
         <table><tbody><tr>
           <td class="left"><div class="line left<?= $stateClass; ?>"></div></td>
@@ -137,7 +137,7 @@ if ($notifications->hasMessages()) {
   </div>
   <div class="setup-content">
 <?php if ($finished): ?>
-    <?= $this->render('setup/parts/install.phtml'); ?>
+    <?= $this->render('setup/parts/finish.phtml'); ?>
 <?php else: ?>
     <?= $this->render('setup/parts/wizard.phtml'); ?>
 <?php endif ?>

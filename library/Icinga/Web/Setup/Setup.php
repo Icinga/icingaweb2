@@ -6,12 +6,12 @@ namespace Icinga\Web\Setup;
 
 use ArrayIterator;
 use IteratorAggregate;
-use Icinga\Exception\InstallException;
+use Icinga\Exception\SetupException;
 
 /**
- * Container for multiple installation steps
+ * Container for multiple configuration steps
  */
-class Installer implements IteratorAggregate
+class Setup implements IteratorAggregate
 {
     protected $steps;
 
@@ -45,7 +45,7 @@ class Installer implements IteratorAggregate
     }
 
     /**
-     * Run the installation and return whether it succeeded
+     * Run the configuration and return whether it succeeded
      *
      * @return  bool
      */
@@ -57,7 +57,7 @@ class Installer implements IteratorAggregate
             foreach ($this->steps as $step) {
                 $this->state &= $step->apply();
             }
-        } catch (InstallException $e) {
+        } catch (SetupException $_) {
             $this->state = false;
         }
 

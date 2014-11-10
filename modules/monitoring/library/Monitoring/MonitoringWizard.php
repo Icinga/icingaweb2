@@ -7,7 +7,7 @@ namespace Icinga\Module\Monitoring;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
 use Icinga\Web\Request;
-use Icinga\Web\Setup\Installer;
+use Icinga\Web\Setup\Setup;
 use Icinga\Web\Setup\MakeDirStep;
 use Icinga\Web\Setup\EnableModuleStep;
 use Icinga\Web\Setup\SetupWizard;
@@ -26,7 +26,7 @@ use Icinga\Module\Monitoring\Form\Setup\LivestatusResourcePage;
 /**
  * Monitoring Module Setup Wizard
  */
-class Setup extends Wizard implements SetupWizard
+class MonitoringWizard extends Wizard implements SetupWizard
 {
     /**
      * @see Wizard::init()
@@ -50,7 +50,7 @@ class Setup extends Wizard implements SetupWizard
         if ($page->getName() === 'setup_requirements') {
             $page->setRequirements($this->getRequirements());
         } elseif ($page->getName() === 'setup_summary') {
-            $page->setSummary($this->getInstaller()->getSummary());
+            $page->setSummary($this->getSetup()->getSummary());
             $page->setSubjectTitle(mt('monitoring', 'the monitoring module', 'setup.summary.subject'));
         } elseif (
             $this->getDirection() === static::FORWARD
@@ -114,27 +114,27 @@ class Setup extends Wizard implements SetupWizard
             $page->getElement(static::BTN_NEXT)->setLabel(t('Start', 'setup.welcome.btn.next'));
         } elseif ($index === count($pages) - 1) {
             $page->getElement(static::BTN_NEXT)->setLabel(
-                mt('monitoring', 'Install the monitoring module for Icinga Web 2', 'setup.summary.btn.finish')
+                mt('monitoring', 'Setup the monitoring module for Icinga Web 2', 'setup.summary.btn.finish')
             );
         }
     }
 
     /**
-     * @see SetupWizard::getInstaller()
+     * @see SetupWizard::getSetup()
      */
-    public function getInstaller()
+    public function getSetup()
     {
         $pageData = $this->getPageData();
-        $installer = new Installer();
+        $setup = new Setup();
 
-        $installer->addStep(
+        $setup->addStep(
             new MakeDirStep(
                 array($this->getConfigDir() . '/modules/monitoring'),
                 $pageData['setup_general_config']['global_filemode']
             )
         );
 
-        $installer->addStep(
+        $setup->addStep(
             new BackendStep(array(
                 'backendConfig'     => $pageData['setup_monitoring_backend'],
                 'resourceConfig'    => isset($pageData['setup_monitoring_ido'])
@@ -144,23 +144,23 @@ class Setup extends Wizard implements SetupWizard
             ))
         );
 
-        $installer->addStep(
+        $setup->addStep(
             new InstanceStep(array(
                 'instanceConfig'    => $pageData['setup_monitoring_instance'],
                 'fileMode'          => $pageData['setup_general_config']['global_filemode']
             ))
         );
 
-        $installer->addStep(
+        $setup->addStep(
             new SecurityStep(array(
                 'securityConfig'    => $pageData['setup_monitoring_security'],
                 'fileMode'          => $pageData['setup_general_config']['global_filemode']
             ))
         );
 
-        $installer->addStep(new EnableModuleStep('monitoring'));
+        $setup->addStep(new EnableModuleStep('monitoring'));
 
-        return $installer;
+        return $setup;
     }
 
     /**

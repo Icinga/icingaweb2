@@ -9,7 +9,7 @@ use PDOException;
 use Icinga\Web\Setup\Step;
 use Icinga\Web\Setup\DbTool;
 use Icinga\Application\Icinga;
-use Icinga\Exception\InstallException;
+use Icinga\Exception\SetupException;
 
 class DatabaseStep extends Step
 {
@@ -45,7 +45,7 @@ class DatabaseStep extends Step
             }
         } catch (Exception $e) {
             $this->error = $e;
-            throw new InstallException();
+            throw new SetupException();
         }
 
         $this->error = false;

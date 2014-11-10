@@ -8,7 +8,7 @@ use Icinga\Web\Form;
 use Icinga\Web\Setup\Requirements;
 
 /**
- * Wizard page to list installation requirements
+ * Wizard page to list setup requirements
  */
 class RequirementsPage extends Form
 {

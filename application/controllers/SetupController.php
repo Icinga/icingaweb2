@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Application\WebSetup;
+use Icinga\Application\WebWizard;
 use Icinga\Web\Controller\ActionController;
 
 class SetupController extends ActionController
@@ -17,15 +17,15 @@ class SetupController extends ActionController
     protected $requiresAuthentication = false;
 
     /**
-     * Show the web wizard and run the installation once finished
+     * Show the web wizard and run the configuration once finished
      */
     public function indexAction()
     {
-        $wizard = new WebSetup();
+        $wizard = new WebWizard();
 
         if ($wizard->isFinished()) {
-            $installer = $wizard->getInstaller();
-            $success = $installer->run();
+            $setup = $wizard->getSetup();
+            $success = $setup->run();
             if ($success) {
                 $wizard->clearSession();
             } else {
@@ -33,7 +33,7 @@ class SetupController extends ActionController
             }
 
             $this->view->success = $success;
-            $this->view->report = $installer->getReport();
+            $this->view->report = $setup->getReport();
         } else {
             $wizard->handleRequest();
         }

@@ -18,7 +18,7 @@ class SetupCommand extends Command
     /**
      * Display the current setup token
      *
-     * Shows you the current setup token used to authenticate when installing Icinga Web 2 using the web-based wizard
+     * Shows you the current setup token used to authenticate when setting up Icinga Web 2 using the web-based wizard
      *
      * USAGE:
      *
@@ -39,7 +39,7 @@ class SetupCommand extends Command
     /**
      * Create a new setup token
      *
-     * Re-generates the setup token used to authenticate when installing Icinga Web 2 using the web-based wizard.
+     * Re-generates the setup token used to authenticate when setting up Icinga Web 2 using the web-based wizard.
      *
      * USAGE:
      *

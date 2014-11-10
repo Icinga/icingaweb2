@@ -9,7 +9,7 @@ $setupTokenPath = rtrim(Icinga::app()->getConfigDir(), '/') . '/setup.token';
 
 ?>
 <div class="welcome-page">
-  <h2><?= t('Welcome to the installation of Icinga Web 2!') ?></h2>
+  <h2><?= t('Welcome to the configuration of Icinga Web 2!') ?></h2>
   <!-- TODO: Remove this once we release the first public version -->
   <div style="border:1px solid #777;border-radius:1em;background-color:beige;padding:1em;margin-bottom:1em;display:inline-block;">
     Icinga Web 2 is still in development and not meant for production deployment.
@@ -36,12 +36,12 @@ $setupTokenPath = rtrim(Icinga::app()->getConfigDir(), '/') . '/setup.token';
   </div>
  <?php if (false === file_exists($setupTokenPath) && file_exists(Config::resolvePath('config.ini'))): ?>
   <p class="restart-warning"><?= t(
-    'You\'ve already completed the installation of Icinga Web 2. Note that most of your configuration'
+    'You\'ve already completed the configuration of Icinga Web 2. Note that most of your configuration'
       . ' files will be overwritten in case you\'ll re-configure Icinga Web 2 using this wizard!'
   ); ?></p>
  <?php else: ?>
   <p><?= t(
-    'This wizard will guide you through the installation of Icinga Web 2. Once completed and successfully'
+    'This wizard will guide you through the configuration of Icinga Web 2. Once completed and successfully'
     . ' finished you are able to log in and to explore all the new and stunning features!'
   ); ?></p>
  <?php endif ?>
