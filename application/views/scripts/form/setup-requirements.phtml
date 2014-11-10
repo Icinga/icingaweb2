@@ -17,12 +17,21 @@ $requirements = $form->getRequirements();
       ); ?>"><?= $requirement->message; ?></td>
     </tr>
 <?php endforeach ?>
+    <tr>
+      <td></td>
+      <td></td>
+      <td class="btn-update">
+        <div class="buttons">
+          <a href="<?= $this->href(); ?>" class="button-like"><?= t('Update'); ?></a>
+        </div>
+      </td>
+    </tr>
   </tbody>
 </table>
 <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
   <?= $form->getElement($form->getTokenElementName()); ?>
   <?= $form->getElement($form->getUidElementName()); ?>
-  <div class="buttons">
+  <div class="buttons" style="margin: 0 0 1.5em;">
     <?= $form->getElement(Wizard::BTN_PREV); ?>
     <?php
       $btn = $form->getElement(Wizard::BTN_NEXT);
