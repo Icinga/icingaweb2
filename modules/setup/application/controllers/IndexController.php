@@ -2,10 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Module\Setup\WebWizard;
 
-class SetupController extends ActionController
+class Setup_IndexController extends ModuleActionController
 {
     /**
      * Whether the controller requires the user to be authenticated
