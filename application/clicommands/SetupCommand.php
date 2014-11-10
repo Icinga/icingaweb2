@@ -47,7 +47,12 @@ class SetupCommand extends Command
      */
     public function generateTokenAction()
     {
-        $token = bin2hex(openssl_random_pseudo_bytes(8));
+        if (function_exists('openssl_random_pseudo_bytes')) {
+            $token = bin2hex(openssl_random_pseudo_bytes(8));
+        } else {
+            $token = substr(md5(mt_rand()), 16);
+        }
+
         $filepath = $this->app->getConfigDir() . '/setup.token';
 
         if (false === file_put_contents($filepath, $token)) {

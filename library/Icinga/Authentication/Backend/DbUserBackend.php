@@ -144,7 +144,12 @@ class DbUserBackend extends UserBackend
      */
     protected function generateSalt()
     {
-        return openssl_random_pseudo_bytes(self::SALT_LENGTH);
+        if (function_exists('openssl_random_pseudo_bytes')) {
+            return openssl_random_pseudo_bytes(self::SALT_LENGTH);
+        } else {
+            // If you know a more secure way to generate a salt, do not hesitate to change this!
+            return substr(md5(mt_rand()), self::SALT_LENGTH);
+        }
     }
 
     /**
