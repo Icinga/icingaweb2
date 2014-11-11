@@ -117,6 +117,20 @@ abstract class FilterChain extends Filter
         return $this->operatorSymbol;
     }
 
+    public function listFilteredColumns()
+    {
+        $columns = array();
+        foreach ($this->filters as $filter) {
+            if ($filter instanceof FilterExpression) {
+                $columns[] = $filter->getColumn();
+            } else {
+                $columns += $filter->listFilteredColumns();
+            }
+        }
+        // array_unique?
+        return $columns;
+    }
+
     public function toQueryString()
     {
         $parts = array();
