@@ -40,7 +40,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
     protected $name;
 
     /**
-     * Already created instances. YES, static.
+     * Already created instances
      *
      * @var array
      */
