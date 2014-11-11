@@ -38,13 +38,21 @@ Alias {webPath} "{publicPath}"
 
     EnableSendfile Off
 
-    RewriteEngine on
-    RewriteBase {webPath}/
-    RewriteCond %{REQUEST_FILENAME} -s [OR]
-    RewriteCond %{REQUEST_FILENAME} -l [OR]
-    RewriteCond %{REQUEST_FILENAME} -d
-    RewriteRule ^.*$ - [NC,L]
-    RewriteRule ^.*$ index.php [NC,L]
+    <IfModule mod_rewrite.c>
+        RewriteEngine on
+        RewriteBase {webPath}/
+        RewriteCond %{REQUEST_FILENAME} -s [OR]
+        RewriteCond %{REQUEST_FILENAME} -l [OR]
+        RewriteCond %{REQUEST_FILENAME} -d
+        RewriteRule ^.*$ - [NC,L]
+        RewriteRule ^.*$ index.php [NC,L]
+    </IfModule>
+
+    <IfModule !mod_rewrite.c>
+        DirectoryIndex error_norewrite.html
+        ErrorDocument 404 /error_norewrite.html
+    </IfModule>
+
 </Directory>
 EOD;
 
