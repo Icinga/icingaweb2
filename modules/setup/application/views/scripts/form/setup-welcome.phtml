@@ -6,6 +6,7 @@ use Icinga\Application\Platform;
 use Icinga\Web\Wizard;
 
 $setupTokenPath = rtrim(Icinga::app()->getConfigDir(), '/') . '/setup.token';
+$cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
 
 ?>
 <div class="welcome-page">
@@ -71,8 +72,8 @@ $setupTokenPath = rtrim(Icinga::app()->getConfigDir(), '/') . '/setup.token';
       ); ?></p>
       <p><?= mt('setup', 'If you\'ve got the IcingaCLI installed you can do the following:'); ?></p>
       <div class="code">
-        <span>icingacli setup config createDirectory <?= ($user = Platform::getPhpUser()) !== null ? $user : 'your_webserver_group'; ?>;</span>
-        <span>icingacli setup token create;</span>
+        <span><?= $cliPath ? $cliPath : 'icingacli'; ?> setup config createDirectory <?= ($user = Platform::getPhpUser()) !== null ? $user : 'your_webserver_group'; ?>;</span>
+        <span><?= $cliPath ? $cliPath : 'icingacli'; ?> setup token create;</span>
       </div>
       <p><?= mt('setup', 'In case the IcingaCLI is missing you can create the token manually:'); ?></p>
       <div class="code">
