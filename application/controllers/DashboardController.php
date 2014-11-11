@@ -21,54 +21,6 @@ use Icinga\Web\Widget\Dashboard;
 class DashboardController extends ActionController
 {
     /**
-     * Default configuration
-     */
-    const DEFAULT_CONFIG = 'dashboard/dashboard';
-
-    /**
-     * Retrieve a dashboard from the provided config
-     *
-     * @param   string $config The config to read the dashboard from, or 'dashboard/dashboard' if none is given
-     *
-     * @return  \Icinga\Web\Widget\Dashboard
-     */
-    private function getDashboard($config = self::DEFAULT_CONFIG)
-    {
-        $dashboard = new Dashboard();
-        try {
-            $dashboardConfig = Config::app($config);
-            if (count($dashboardConfig) === 0) {
-                return null;
-            }
-            $dashboard->readConfig($dashboardConfig);
-        } catch (NotReadableError $e) {
-            Logger::error(new IcingaException('Cannot load dashboard configuration. An exception was thrown:', $e));
-            return null;
-        }
-        return $dashboard;
-    }
-
-    /**
-     * Remove a component from the pane identified by the 'pane' parameter
-     */
-    public function removecomponentAction()
-    {
-        $pane =  $this->_getParam('pane');
-        $dashboard = $this->getDashboard();
-        try {
-            $dashboard->removeComponent(
-                $pane,
-                $this->_getParam('component')
-            )->store();
-            $this->redirectNow(Url::fromPath('dashboard', array('pane' => $pane)));
-        } catch (ConfigurationError $exc ) {
-            $this->_helper->viewRenderer('show_configuration');
-            $this->view->exceptionMessage = $exc->getMessage();
-            $this->view->iniConfigurationString = $dashboard->toIni();
-        }
-    }
-
-    /**
      * Display the form for adding new components or add the new component if submitted
      */
     public function addurlAction()
@@ -93,7 +45,9 @@ class DashboardController extends ActionController
      */
     public function indexAction()
     {
-        $dashboard = Dashboard::load();
+        $dashboard = new Dashboard();
+        $dashboard->setUser($this->getRequest()->getUser());
+        $dashboard->load();
 
         if (! $dashboard->hasPanes()) {
             $this->view->title = 'Dashboard';
@@ -102,8 +56,6 @@ class DashboardController extends ActionController
                 $pane = $this->_getParam('pane');
                 $dashboard->activate($pane);
             }
-
-            $this->view->configPath = Config::resolvePath(self::DEFAULT_CONFIG);
 
             if ($dashboard === null) {
                 $this->view->title = 'Dashboard';
@@ -124,30 +76,5 @@ class DashboardController extends ActionController
                 $this->view->dashboard = $dashboard;
             }
         }
-    }
-
-    /**
-     * Store the given configuration as INI file
-     *
-     * @param   Config  $config     The configuration to store
-     * @param   string  $target     The path where to store the configuration
-     *
-     * @return  bool                        Whether the configuartion has been successfully stored
-     */
-    protected function writeConfiguration(Config $config, $target)
-    {
-        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
-
-        try {
-            $writer->write();
-        } catch (Exception $e) {
-            Logger::error(new ConfiguationError("Cannot write dashboard to $target", 0, $e));
-            $this->view->configString = $writer->render();
-            $this->view->errorMessage = $e->getMessage();
-            $this->view->filePath = $target;
-            return false;
-        }
-
-        return true;
     }
 }

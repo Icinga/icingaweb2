@@ -8,6 +8,7 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
+use Icinga\User;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
 use Icinga\Web\Url;
@@ -23,13 +24,6 @@ use Icinga\Web\Url;
  */
 class Dashboard extends AbstractWidget
 {
-    /**
-     * The configuration containing information about this dashboard
-     *
-     * @var Config;
-     */
-    private $config;
-
     /**
      * An array containing all panes of this dashboard
      *
@@ -52,6 +46,11 @@ class Dashboard extends AbstractWidget
     private $tabParam = 'pane';
 
     /**
+     * @var User
+     */
+    private $user;
+
+    /**
      * Set the given tab name as active.
      *
      * @param string $name      The tab name to activate
@@ -67,24 +66,72 @@ class Dashboard extends AbstractWidget
      *
      * @return  self
      */
-    public static function load()
+    public function load()
     {
-        /** @var $dashboard Dashboard */
-        $dashboard = new static('dashboard');
         $manager = Icinga::app()->getModuleManager();
         foreach ($manager->getLoadedModules() as $module) {
             /** @var $module \Icinga\Application\Modules\Module */
-            $dashboard->mergePanes($module->getPaneItems());
+            $this->mergePanes($module->getPaneItems());
 
         }
-        return $dashboard;
+        if ($this->user !== null) {
+            $this->loadUserDashboards();
+        }
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    private function loadUserDashboards()
+    {
+        $configFile = '/var/lib/icingaweb/' . $this->user->getUsername() . '/dashboard.ini';
+        $config = Config::fromIni($configFile);
+        if (! count($config)) {
+            return false;
+        }
+        $panes = array();
+        $components = array();
+        foreach ($config as $key => $part) {
+            if (strpos($key, '.') === false) {
+                $panes[$key] = new Pane($key);
+                $panes[$key]->setTitle($part->title);
+
+            } else {
+                list($paneName, $componentName) = explode('.', $key, 2);
+                $part->pane = $paneName;
+                $part->component = $componentName;
+                $components[] = $part;
+            }
+        }
+        foreach ($components as $componentData) {
+            $pane = null;
+
+            if (array_key_exists($componentData->pane, $panes) === true) {
+                $pane = $panes[$componentData->pane];
+            } elseif (array_key_exists($componentData->pane, $this->panes) === true) {
+                $pane = $this->panes[$componentData->pane];
+            } else {
+                continue;
+            }
+            $pane->addComponent(
+                new DashboardComponent(
+                    $componentData->title,
+                    $componentData->url,
+                    $pane
+                )
+            );
+        }
+        $this->mergePanes($panes);
+        return true;
     }
 
     /**
      * Merge panes with existing panes
      *
-     * @param array $panes
-     * @return $this
+     * @param   array $panes
+     *
+     * @return  $this
      */
     public function mergePanes(array $panes)
     {
@@ -134,23 +181,10 @@ class Dashboard extends AbstractWidget
      */
     public function getPanes()
     {
+        return '';
         return $this->panes;
     }
 
-    /**
-     * Populate this dashboard via the given configuration file
-     *
-     * @param Config    $config      The configuration file to populate this dashboard with
-     *
-     * @return self
-     */
-    public function readConfig(Config $config)
-    {
-        $this->config = $config;
-        $this->panes = array();
-        $this->loadConfigPanes();
-        return $this;
-    }
 
     /**
      * Creates a new empty pane with the given title
@@ -169,34 +203,6 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * Update or adds a new component with the given url to a pane
-     *
-     * @TODO:   Should only allow component objects to be added directly as soon as we store more information
-     *
-     * @param   string              $pane       The pane to add the component to
-     * @param   Component|string    $component  The component to add or the title of the newly created component
-     * @param   string|null         $url        The url to use for the component
-     *
-     * @return self
-     */
-    public function setComponentUrl($pane, $component, $url)
-    {
-        if ($component === null && strpos($pane, '.')) {
-            list($pane, $component) = preg_split('~\.~', $pane, 2);
-        }
-        if (!isset($this->panes[$pane])) {
-            $this->createPane($pane);
-        }
-        $pane = $this->getPane($pane);
-        if ($pane->hasComponent($component)) {
-            $pane->getComponent($component)->setUrl($url);
-        } else {
-            $pane->addComponent($component, $url);
-        }
-        return $this;
-    }
-
-    /**
      * Checks if the current dashboard has any panes
      *
      * @return bool
@@ -204,52 +210,6 @@ class Dashboard extends AbstractWidget
     public function hasPanes()
     {
         return ! empty($this->panes);
-    }
-
-    /**
-     * Check if this dashboard has a specific pane
-     *
-     * @param $pane string  The name of the pane
-     * @return bool
-     */
-    public function hasPane($pane)
-    {
-        return array_key_exists($pane, $this->panes);
-    }
-
-    /**
-     * Remove a component $component from the given pane
-     *
-     * @param string $pane                      The pane to remove the component from
-     * @param Component|string $component       The component to remove or it's name
-     *
-     * @return self
-     */
-    public function removeComponent($pane, $component)
-    {
-        if ($component === null && strpos($pane, '.')) {
-            list($pane, $component) = preg_split('~\.~', $pane, 2);
-        }
-        $pane = $this->getPane($pane);
-        if ($pane !== null) {
-            $pane->removeComponent($component);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Return an array with pane name=>title format used for comboboxes
-     *
-     * @return array
-     */
-    public function getPaneKeyTitleArray()
-    {
-        $list = array();
-        foreach ($this->panes as $name => $pane) {
-            $list[$name] = $pane->getTitle();
-        }
-        return $list;
     }
 
     /**
@@ -319,7 +279,10 @@ class Dashboard extends AbstractWidget
     /**
      * Determine the active pane either by the selected tab or the current request
      *
-     * @return Pane         The currently active pane
+     * @throws \Icinga\Exception\ConfigurationError
+     * @throws \Icinga\Exception\ProgrammingError
+     *
+     * @return Pane The currently active pane
      */
     public function determineActivePane()
     {
@@ -346,36 +309,18 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * Return this dashboard's structure as array
-     *
-     * @return  array
+     * @param \Icinga\User $user
      */
-    public function toArray()
+    public function setUser($user)
     {
-        $array = array();
-        foreach ($this->panes as $pane) {
-            $array += $pane->toArray();
-        }
-
-        return $array;
+        $this->user = $user;
     }
 
     /**
-     * Load all config panes from @see Dashboard::$config
-     *
+     * @return \Icinga\User
      */
-    private function loadConfigPanes()
+    public function getUser()
     {
-        $items = $this->config;
-        foreach ($items->keys() as $key) {
-            $item = $this->config->get($key, false);
-            if (false === strstr($key, '.')) {
-                $this->addPane(Pane::fromIni($key, $item));
-            } else {
-                list($paneName, $title) = explode('.', $key, 2);
-                $pane = $this->getPane($paneName);
-                $pane->addComponent(DashboardComponent::fromIni($title, $item, $pane));
-            }
-        }
+        return $this->user;
     }
 }

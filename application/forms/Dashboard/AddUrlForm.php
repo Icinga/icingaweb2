@@ -5,6 +5,7 @@
 namespace Icinga\Forms\Dashboard;
 
 use Icinga\Application\Config;
+use Icinga\File\Ini\IniWriter;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
@@ -14,6 +15,13 @@ use Icinga\Web\Request;
  */
 class AddUrlForm extends Form
 {
+    /**
+     * Config file name
+     *
+     * @var string
+     */
+    private $configFile = 'dashboard/dashboard';
+
     /**
      * Initialize this form
      */
@@ -135,15 +143,41 @@ class AddUrlForm extends Form
     }
 
     /**
+     * Create a dashboard object
+     *
+     * @return Dashboard
+     */
+    private function createDashboard()
+    {
+        $dashboard = new Dashboard();
+        $dashboard->readConfig(Config::app($this->getConfigFile()));
+        return $dashboard;
+    }
+
+    /**
      * Return the names and titles of the available dashboard panes as key-value array
      *
      * @return  array
      */
-    protected function getDashboardPaneSelectionValues()
+    private function getDashboardPaneSelectionValues()
     {
-        $dashboard = new Dashboard();
-        $dashboard->readConfig(Config::app('dashboard/dashboard'));
-        return $dashboard->getPaneKeyTitleArray();
+        return $this->createDashboard()->getPaneKeyTitleArray();
+    }
+
+    /**
+     * @param string $configFile
+     */
+    public function setConfigFile($configFile)
+    {
+        $this->configFile = $configFile;
+    }
+
+    /**
+     * @return string
+     */
+    public function getConfigFile()
+    {
+        return $this->configFile;
     }
 
     /**
@@ -153,6 +187,22 @@ class AddUrlForm extends Form
      */
     public function onSuccess(Request $request)
     {
+        $dashboard = $this->createDashboard();
+        $dashboard->setComponentUrl(
+            $this->getValue('pane'),
+            $this->getValue('component'),
+            ltrim($this->getValue('url'), '/')
+        );
+        /*
+        $writer = new IniWriter(
+            array(
+                'config'    => new Config($dashboard->toArray()),
+                'filename'  => $dashboard->getConfig()->getConfigFile()
+            )
+        );
+
+        $writer->write();
+        */
         return false;
     }
 
@@ -163,6 +213,9 @@ class AddUrlForm extends Form
      */
     public function onRequest(Request $request)
     {
-
+        $data = array(
+            'url' => $request->getParam('url')
+        );
+        $this->populate($data);
     }
 }
