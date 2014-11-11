@@ -11,12 +11,6 @@ $cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
 ?>
 <div class="welcome-page">
   <h2><?= mt('setup', 'Welcome to the configuration of Icinga Web 2!') ?></h2>
-  <!-- TODO: Remove this once we release the first public version -->
-  <div style="border:1px solid #777;border-radius:1em;background-color:beige;padding:1em;margin-bottom:1em;display:inline-block;">
-    Icinga Web 2 is still in development and not meant for production deployment.
-    Watch the <a href="https://dev.icinga.org/projects/icingaweb2/roadmap">development roadmap</a> and
-    <a href="https://www.icinga.org/">Icinga website</a> for release schedule updates!
-  </div>
   <div class="info">
     <p><?= sprintf(
       mt(
