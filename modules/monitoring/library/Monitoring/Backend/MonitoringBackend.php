@@ -14,8 +14,10 @@ use Icinga\Exception\ProgrammingError;
 class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
 {
     /**
-     * @var Config
+     * Backend configuration
      *
+     * @var Config
+     */
     protected $config;
 
     /**
@@ -58,6 +60,15 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
         $this->config = $config;
     }
 
+    /**
+     * Get a backend instance
+     *
+     * You may ask for a specific backend name or get the default one otherwise
+     *
+     * @param  string $name Backend name
+     *
+     * @return MonitoringBackend
+     */
     public static function instance($name = null)
     {
         if (! array_key_exists($name, self::$instances)) {
@@ -206,6 +217,11 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
         return self::instance($name);
     }
 
+    /**
+     * Get this backend's internal resource
+     *
+     * @return mixed
+     */
     public function getResource()
     {
         if ($this->resource === null) {
