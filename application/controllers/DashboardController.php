@@ -80,30 +80,8 @@ class DashboardController extends ActionController
                 'url' => Url::fromRequest()
             )
         )->activate('addurl');
-
         $form = new AddUrlForm();
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            if ($form->isValid($request->getPost()) && $form->isSubmitted()) {
-                $dashboard = $this->getDashboard();
-                $dashboard->setComponentUrl(
-                    $form->getValue('pane'),
-                    $form->getValue('component'),
-                    ltrim($form->getValue('url'), '/')
-                );
-
-                $configFile = Config::app('dashboard/dashboard')->getConfigFile();
-                if ($this->writeConfiguration(new Config($dashboard->toArray()), $configFile)) {
-                    $this->redirectNow(Url::fromPath('dashboard', array('pane' => $form->getValue('pane'))));
-                } else {
-                    $this->render('showConfiguration');
-                    return;
-                }
-            }
-        } else {
-            $form->create()->setDefault('url', htmlspecialchars_decode($request->getParam('url', '')));
-        }
-
+        $form->handleRequest();
         $this->view->form = $form;
     }
 
