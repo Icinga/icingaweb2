@@ -8,6 +8,7 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
+use Icinga\File\Ini\IniWriter;
 use Icinga\User;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
@@ -78,6 +79,29 @@ class Dashboard extends AbstractWidget
             $this->loadUserDashboards();
         }
         return $this;
+    }
+
+    /**
+     * Write user specific dashboards to disk
+     */
+    public function write()
+    {
+        $configFile = $this->getConfigFile();
+        $output = array();
+        foreach ($this->panes as $pane) {
+            if ($pane->isUserWidget() === true) {
+                $output[$pane->getName()] = $pane->toArray();
+            }
+            foreach ($pane->getComponents() as $component) {
+                if ($component->isUserWidget() === true) {
+                    $output[$pane->getName() . '.' . $component->getTitle()] = $component->toArray();
+                }
+            }
+        }
+
+        $config = new Config($output);
+        $writer = new IniWriter(array('config' => $config, 'filename' => $configFile));
+        $writer->write();
     }
 
     /**
@@ -316,21 +340,30 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * @param \Icinga\User $user
+     * Setter for user object
+     *
+     * @param User $user
      */
-    public function setUser($user)
+    public function setUser(User $user)
     {
         $this->user = $user;
     }
 
     /**
-     * @return \Icinga\User
+     * Getter for user object
+     *
+     * @return User
      */
     public function getUser()
     {
         return $this->user;
     }
 
+    /**
+     * Get config file
+     *
+     * @return string
+     */
     public function getConfigFile()
     {
         if ($this->user === null) {

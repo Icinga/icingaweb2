@@ -247,12 +247,9 @@ class Pane extends UserWidget
      */
     public function toArray()
     {
-        $array = array($this->getName() => array('title' => $this->getTitle()));
-        foreach ($this->components as $title => $component) {
-            $array[$this->getName() . ".$title"] = $component->toArray();
-        }
-
-        return $array;
+        return array(
+            'title' => $this->getTitle()
+        );
     }
 
     /**
