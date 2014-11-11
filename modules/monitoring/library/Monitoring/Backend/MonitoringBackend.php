@@ -73,7 +73,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
                 )
             );
 
-            if (! class_exists($class)) {
+            if (!class_exists($class)) {
                 throw new ConfigurationError(
                     mt('monitoring', 'There is no "%s" monitoring backend'),
                     $class
@@ -256,7 +256,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
         if (!class_exists($class)) {
             throw new ProgrammingError(
                 'DataView %s does not exist',
-                ucfirst($viewName)
+                ucfirst($view)
             );
         }
         return $class;
