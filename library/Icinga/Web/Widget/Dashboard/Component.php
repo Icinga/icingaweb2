@@ -175,13 +175,25 @@ EOD;
         $iframeUrl = clone($url);
         $iframeUrl->setParam('isIframe');
 
-        $html = str_replace('{URL}', $url, $this->template);
-        $html = str_replace('{IFRAME_URL}', $iframeUrl, $html);
-        $html = str_replace('{FULL_URL}', $url->getUrlWithout(array('view', 'limit')), $html);
-        $html = str_replace('{REMOVE_BTN}', $this->getRemoveForm($view), $html);
-        $html = str_replace('{TITLE}', $view->escape($this->getTitle()), $html);
-        $html = str_replace('{REMOVE}', $this->getRemoveForm(), $html);
-        return $html;
+        $searchTokens = array(
+            '{URL}',
+            '{IFRAME_URL}',
+            '{FULL_URL}',
+            '{REMOVE_BTN}',
+            '{TITLE}',
+            '{REMOVE}'
+        );
+
+        $replaceTokens = array(
+            $url,
+            $iframeUrl,
+            $url->getUrlWithout(array('view', 'limit')),
+            $this->getRemoveForm($view),
+            $view->escape($this->getTitle()),
+            $this->getRemoveForm()
+        );
+
+        return str_replace($searchTokens, $replaceTokens, $this->template);
     }
 
     /**
