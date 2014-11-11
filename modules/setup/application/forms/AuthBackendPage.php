@@ -59,6 +59,19 @@ class AuthBackendPage extends Form
      */
     public function createElements(array $formData)
     {
+        $this->addElement(
+            new Note(
+                'title',
+                array(
+                    'value'         => mt('setup', 'Authentication Backend', 'setup.page.title'),
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array('HtmlTag', array('tag' => 'h2'))
+                    )
+                )
+            )
+        );
+
         if ($this->config['type'] === 'db') {
             $note = mt(
                 'setup',
@@ -137,7 +150,7 @@ class AuthBackendPage extends Form
             'checkbox',
             'skip_validation',
             array(
-                'order'         => 1,
+                'order'         => 2,
                 'ignore'        => true,
                 'required'      => true,
                 'label'         => mt('setup', 'Skip Validation'),

@@ -7,6 +7,7 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
 
 ?>
 <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
+  <?= $form->getElement('title'); ?>
   <?= $form->getElement('description'); ?>
 <?php if (($byNameElem = $form->getElement('by_name')) !== null): ?>
   <div>

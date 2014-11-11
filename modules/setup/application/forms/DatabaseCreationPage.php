@@ -89,6 +89,18 @@ class DatabaseCreationPage extends Form
     {
         $this->addElement(
             new Note(
+                'title',
+                array(
+                    'value'         => mt('setup', 'Database Setup', 'setup.page.title'),
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array('HtmlTag', array('tag' => 'h2'))
+                    )
+                )
+            )
+        );
+        $this->addElement(
+            new Note(
                 'description',
                 array(
                     'value' => mt(
@@ -204,7 +216,7 @@ class DatabaseCreationPage extends Form
             'checkbox',
             'skip_validation',
             array(
-                'order'         => 1,
+                'order'         => 2,
                 'required'      => true,
                 'label'         => mt('setup', 'Skip Validation'),
                 'description'   => mt(

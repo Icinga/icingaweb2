@@ -17,7 +17,6 @@ class LdapDiscoveryConfirmPage extends Form
     const TYPE_MISC = 'LDAP';
 
     private $infoTemplate = <<< 'EOT'
-Found LDAP server on {domain}
 <table><tbody>
   <tr><td><strong>Type:</strong></td><td>{type}</td></tr>
   <tr><td><strong>Port:</strong></td><td>{port}</td></tr>
@@ -73,13 +72,36 @@ EOT;
         $resource = $this->config['resource'];
         $backend = $this->config['backend'];
         $html = $this->infoTemplate;
-        $html = str_replace('{domain}', $this->config['domain'], $html);
         $html = str_replace('{type}', $this->config['type'], $html);
         $html = str_replace('{hostname}', $resource['hostname'], $html);
         $html = str_replace('{port}', $resource['port'], $html);
         $html = str_replace('{root_dn}', $resource['root_dn'], $html);
         $html = str_replace('{user_attribute}', $backend['user_name_attribute'], $html);
         $html = str_replace('{user_class}', $backend['user_class'], $html);
+
+        $this->addElement(
+            new Note(
+                'title',
+                array(
+                    'value'         => mt('setup', 'LDAP Discovery Results', 'setup.page.title'),
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array('HtmlTag', array('tag' => 'h2'))
+                    )
+                )
+            )
+        );
+        $this->addElement(
+            new Note(
+                'description',
+                array(
+                    'value' => sprintf(
+                        mt('setup', 'The following directory service has been found on domain "%s":'),
+                        $this->config['domain']
+                    )
+                )
+            )
+        );
 
         $this->addElement(
             new Note(

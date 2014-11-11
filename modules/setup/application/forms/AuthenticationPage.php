@@ -28,6 +28,18 @@ class AuthenticationPage extends Form
     {
         $this->addElement(
             new Note(
+                'title',
+                array(
+                    'value'         => mt('setup', 'Authentication', 'setup.page.title'),
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array('HtmlTag', array('tag' => 'h2'))
+                    )
+                )
+            )
+        );
+        $this->addElement(
+            new Note(
                 'description',
                 array(
                     'value' => mt(

@@ -33,6 +33,18 @@ class LdapDiscoveryPage extends Form
     {
         $this->addElement(
             new Note(
+                'title',
+                array(
+                    'value'         => mt('setup', 'LDAP Discovery', 'setup.page.title'),
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array('HtmlTag', array('tag' => 'h2'))
+                    )
+                )
+            )
+        );
+        $this->addElement(
+            new Note(
                 'description',
                 array(
                     'value' => mt(
@@ -46,6 +58,9 @@ class LdapDiscoveryPage extends Form
 
         $this->discoveryForm = new LdapDiscoveryForm();
         $this->addElements($this->discoveryForm->createElements($formData)->getElements());
+        $this->getElement('domain')->setRequired(
+            isset($formData['skip_validation']) === false || ! $formData['skip_validation']
+        );
 
         $this->addElement(
             'checkbox',

@@ -52,7 +52,7 @@ class GeneralConfigStep extends Step
 
     public function getSummary()
     {
-        $pageTitle = '<h2>' . mt('setup', 'Application Configuration') . '</h2>';
+        $pageTitle = '<h2>' . mt('setup', 'Application Configuration', 'setup.page.title') . '</h2>';
         $generalTitle = '<h3>' . t('General', 'app.config') . '</h3>';
         $loggingTitle = '<h3>' . t('Logging', 'app.config') . '</h3>';
 

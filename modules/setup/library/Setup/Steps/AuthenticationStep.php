@@ -112,9 +112,9 @@ class AuthenticationStep extends Step
 
     public function getSummary()
     {
-        $pageTitle = '<h2>' . mt('setup', 'Authentication') . '</h2>';
-        $backendTitle = '<h3>' . mt('setup', 'Backend Configuration') . '</h3>';
-        $adminTitle = '<h3>' . mt('setup', 'Initial Administrative Account') . '</h3>';
+        $pageTitle = '<h2>' . mt('setup', 'Authentication', 'setup.page.title') . '</h2>';
+        $backendTitle = '<h3>' . mt('setup', 'Authentication Backend', 'setup.page.title') . '</h3>';
+        $adminTitle = '<h3>' . mt('setup', 'Administration', 'setup.page.title') . '</h3>';
 
         $authType = $this->data['backendConfig']['backend'];
         $backendDesc = '<p>' . sprintf(

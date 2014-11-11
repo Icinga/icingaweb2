@@ -243,7 +243,7 @@ class DatabaseStep extends Step
             }
         }
 
-        return '<h2>' . mt('setup', 'Database Setup') . '</h2><p>' . $message . '</p>';
+        return '<h2>' . mt('setup', 'Database Setup', 'setup.page.title') . '</h2><p>' . $message . '</p>';
     }
 
     public function getReport()

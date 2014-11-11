@@ -56,13 +56,13 @@ class ResourceStep extends Step
     public function getSummary()
     {
         if (isset($this->data['dbResourceConfig']) && isset($this->data['ldapResourceConfig'])) {
-            $pageTitle = '<h2>' . mt('setup', 'Resources') . '</h2>';
+            $pageTitle = '<h2>' . mt('setup', 'Resources', 'setup.page.title') . '</h2>';
         } else {
-            $pageTitle = '<h2>' . mt('setup', 'Resource') . '</h2>';
+            $pageTitle = '<h2>' . mt('setup', 'Resource', 'setup.page.title') . '</h2>';
         }
 
         if (isset($this->data['dbResourceConfig'])) {
-            $dbTitle = '<h3>' . mt('setup', 'Database') . '</h3>';
+            $dbTitle = '<h3>' . mt('setup', 'Database', 'setup.page.title') . '</h3>';
             $dbHtml = ''
                 . '<table>'
                 . '<tbody>'

@@ -80,7 +80,7 @@ class BackendStep extends Step
 
     public function getSummary()
     {
-        $pageTitle = '<h2>' . mt('monitoring', 'Monitoring Backend') . '</h2>';
+        $pageTitle = '<h2>' . mt('monitoring', 'Monitoring Backend', 'setup.page.title') . '</h2>';
         $backendDescription = '<p>' . sprintf(
             mt(
                 'monitoring',

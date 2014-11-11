@@ -46,6 +46,18 @@ class PreferencesPage extends Form
     {
         $this->addElement(
             new Note(
+                'title',
+                array(
+                    'value'         => mt('setup', 'Preferences', 'setup.page.title'),
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array('HtmlTag', array('tag' => 'h2'))
+                    )
+                )
+            )
+        );
+        $this->addElement(
+            new Note(
                 'description',
                 array(
                     'value' => mt('setup', 'Please choose how Icinga Web 2 should store user preferences.')

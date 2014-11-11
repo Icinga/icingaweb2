@@ -44,7 +44,7 @@ class InstanceStep extends Step
 
     public function getSummary()
     {
-        $pageTitle = '<h2>' . mt('monitoring', 'Monitoring Instance') . '</h2>';
+        $pageTitle = '<h2>' . mt('monitoring', 'Monitoring Instance', 'setup.page.title') . '</h2>';
 
         if (isset($this->data['instanceConfig']['host'])) {
             $pipeHtml = '<p>' . sprintf(

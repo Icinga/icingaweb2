@@ -43,7 +43,7 @@ class SecurityStep extends Step
 
     public function getSummary()
     {
-        $pageTitle = '<h2>' . mt('monitoring', 'Monitoring Security') . '</h2>';
+        $pageTitle = '<h2>' . mt('monitoring', 'Monitoring Security', 'setup.page.title') . '</h2>';
         $pageDescription = '<p>' . mt(
             'monitoring',
             'Icinga Web 2 will protect your monitoring environment against'
