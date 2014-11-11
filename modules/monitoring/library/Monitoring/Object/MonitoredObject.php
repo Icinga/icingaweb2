@@ -480,9 +480,9 @@ abstract class MonitoredObject
     public static function fromParams(UrlParams $params)
     {
         if ($params->has('service') && $params->has('host')) {
-            return new Service(MonitoringBackend::createBackend(), $params->get('host'), $params->get('service'));
+            return new Service(MonitoringBackend::instance(), $params->get('host'), $params->get('service'));
         } elseif ($params->has('host')) {
-            return new Host(MonitoringBackend::createBackend(), $params->get('host'));
+            return new Host(MonitoringBackend::instance(), $params->get('host'));
         }
         return null;
     }
