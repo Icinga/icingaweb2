@@ -7,6 +7,7 @@ namespace Icinga\Forms\Dashboard;
 use Icinga\Application\Config;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Form;
+use Icinga\Web\Request;
 
 /**
  * Form to add an url a dashboard pane
@@ -23,35 +24,49 @@ class AddUrlForm extends Form
     }
 
     /**
+     * Build AddUrl form elements
+     *
      * @see Form::createElements()
      */
     public function createElements(array $formData)
     {
+        $paneSelectionValues = $this->getDashboardPaneSelectionValues();
+        $groupElements = array();
+
         $this->addElement(
             'text',
             'url',
             array(
-                'required'  => true,
-                'label'     => t('Url'),
-                'helptext'  => t('The url being loaded in the dashlet')
+                'required'      => true,
+                'label'         => t('Url'),
+                'description'   =>
+                    t('Enter url being loaded in the dashlet. You can paste the full URL, including filters.')
             )
         );
-
-        $paneSelectionValues = $this->getDashboardPaneSelectionValues();
+        $this->addElement(
+            'text',
+            'component',
+            array(
+                'required'  => true,
+                'label'     => t('Dashlet Title'),
+                'description'  => t('Enter a title for the dashlet.')
+            )
+        );
         if (empty($paneSelectionValues) ||
             ((isset($formData['create_new_pane']) && $formData['create_new_pane'] != false) &&
              (false === isset($formData['use_existing_dashboard']) || $formData['use_existing_dashboard'] != true))
         ) {
-            $this->addElement(
+            $groupElements[] = $this->createElement(
                 'text',
                 'pane',
                 array(
-                    'required'  => true,
-                    'label'     => t("The New Pane's Title"),
-                    'style'     => 'display: inline-block'
+                    'required'      => true,
+                    'label'         => t("New Pane Title"),
+                    'description'   =>
+                        t('Enter a title for the new pane.')
                 )
             );
-            $this->addElement( // Prevent the button from being displayed again on validation errors
+            $groupElements[] = $this->createElement( // Prevent the button from being displayed again on validation errors
                 'hidden',
                 'create_new_pane',
                 array(
@@ -59,45 +74,62 @@ class AddUrlForm extends Form
                 )
             );
             if (false === empty($paneSelectionValues)) {
-                $this->addElement(
+                $buttonExistingPane = $this->createElement(
                     'submit',
                     'use_existing_dashboard',
                     array(
-                        'ignore'    => true,
-                        'label'     => t('Use An Existing Pane'),
-                        'style'     => 'display: inline-block'
+                        'ignore'        => true,
+                        'label'         => t('Use An Existing Pane'),
+                        'description'   =>
+                            t('Click on the button to add the dashlet to an existing pane on your dashboard.')
                     )
                 );
+                $buttonExistingPane->removeDecorator('Label');
+                $groupElements[] = $buttonExistingPane;
             }
         } else {
-            $this->addElement(
+            $groupElements[] = $this->createElement(
                 'select',
                 'pane',
                 array(
                     'required'      => true,
                     'label'         => t('Pane'),
-                    'style'         => 'display: inline-block;',
-                    'multiOptions'  => $paneSelectionValues
+                    'multiOptions'  => $paneSelectionValues,
+                    'description'   =>
+                        t('Select a pane you want to add the dashlet.')
                 )
             );
-            $this->addElement(
+            $buttonNewPane = $this->createElement(
                 'submit',
                 'create_new_pane',
                 array(
-                    'ignore'    => true,
-                    'label'     => t('Create A New Pane'),
-                    'style'     => 'display: inline-block'
+                    'ignore'        => true,
+                    'label'         => t('Create A New Pane'),
+                    'description'   =>
+                        t('Click on the button if you want to add the dashlet to a new pane on the dashboard.')
                 )
             );
+            $buttonNewPane->removeDecorator('Label');
+            $groupElements[] = $buttonNewPane;
         }
-
-        $this->addElement(
-            'text',
-            'component',
+        $this->addDisplayGroup(
+            $groupElements,
+            'pane_group',
             array(
-                'required'  => true,
-                'label'     => t('Title'),
-                'helptext'  => t('The title for the dashlet')
+                'legend'        => t('Pane'),
+                'description'   => t(
+                    'Decide if you want add the dashlet to an existing pane'
+                    . ' or create a new pane. Have a look on the button below.'
+                ),
+                'decorators' => array(
+                    'FormElements',
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group')),
+                    array(
+                        'Description',
+                        array('tag' => 'span', 'class' => 'description', 'placement' => 'prepend')
+                    ),
+                    'Fieldset'
+                )
             )
         );
     }
@@ -112,5 +144,25 @@ class AddUrlForm extends Form
         $dashboard = new Dashboard();
         $dashboard->readConfig(Config::app('dashboard/dashboard'));
         return $dashboard->getPaneKeyTitleArray();
+    }
+
+    /**
+     * Adjust preferences and persist them
+     *
+     * @see Form::onSuccess()
+     */
+    public function onSuccess(Request $request)
+    {
+        return false;
+    }
+
+    /**
+     * Populate data if any
+     *
+     * @see Form::onRequest()
+     */
+    public function onRequest(Request $request)
+    {
+
     }
 }
