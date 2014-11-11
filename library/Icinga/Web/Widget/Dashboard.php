@@ -5,7 +5,7 @@
 namespace Icinga\Web\Widget;
 
 use Icinga\Application\Icinga;
-use Icinga\Application\Config as IcingaConfig;
+use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Widget\Dashboard\Pane;
@@ -26,7 +26,7 @@ class Dashboard extends AbstractWidget
     /**
      * The configuration containing information about this dashboard
      *
-     * @var IcingaConfig;
+     * @var Config;
      */
     private $config;
 
@@ -140,11 +140,11 @@ class Dashboard extends AbstractWidget
     /**
      * Populate this dashboard via the given configuration file
      *
-     * @param IcingaConfig $config      The configuration file to populate this dashboard with
+     * @param Config    $config      The configuration file to populate this dashboard with
      *
      * @return self
      */
-    public function readConfig(IcingaConfig $config)
+    public function readConfig(Config $config)
     {
         $this->config = $config;
         $this->panes = array();

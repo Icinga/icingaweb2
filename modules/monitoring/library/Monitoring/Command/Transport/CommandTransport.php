@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Monitoring\Command\Transport;
 
-use Zend_Config;
 use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
 
@@ -45,12 +44,12 @@ abstract class CommandTransport
     /**
      * Create a transport from config
      *
-     * @param   Zend_Config $config
+     * @param   Config  $config
      *
      * @return  LocalCommandFile|RemoteCommandFile
      * @throws  ConfigurationError
      */
-    public static function fromConfig(Zend_Config $config)
+    public static function fromConfig(Config $config)
     {
         switch (strtolower($config->transport)) {
             case RemoteCommandFile::TRANSPORT:

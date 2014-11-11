@@ -4,6 +4,7 @@
 
 namespace Icinga\Application;
 
+use Icinga\Application\Config;
 use Icinga\Application\Platform;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Cli\Params;
@@ -12,7 +13,6 @@ use Icinga\Cli\Screen;
 use Icinga\Application\Logger;
 use Icinga\Application\Benchmark;
 use Icinga\Exception\ProgrammingError;
-use Zend_Config;
 
 require_once __DIR__ . '/ApplicationBootstrap.php';
 
@@ -49,7 +49,7 @@ class Cli extends ApplicationBootstrap
     protected function setupLogging()
     {
         Logger::create(
-            new Zend_Config(
+            new Config(
                 array(
                     'level' => Logger::INFO,
                     'log'   => 'file',

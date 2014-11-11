@@ -4,7 +4,7 @@
 
 namespace Icinga\User\Preferences\Store;
 
-use Zend_Config;
+use Icinga\Application\Config;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\NotWritableError;
 use Icinga\File\Ini\IniWriter;
@@ -116,7 +116,7 @@ class IniStore extends PreferencesStore
 
             $this->writer = new IniWriter(
                 array(
-                    'config'    => new Zend_Config($this->preferences),
+                    'config'    => new Config($this->preferences),
                     'filename'  => $this->preferencesFile
                 )
             );

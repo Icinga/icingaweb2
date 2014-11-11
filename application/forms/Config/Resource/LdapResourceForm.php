@@ -5,7 +5,7 @@
 namespace Icinga\Form\Config\Resource;
 
 use Exception;
-use Zend_Config;
+use Icinga\Application\Config;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
 use Icinga\Web\Form\Element\Number;
@@ -104,7 +104,7 @@ class LdapResourceForm extends Form
     public function isValidResource(Form $form)
     {
         try {
-            $resource = ResourceFactory::createResource(new Zend_Config($form->getValues()));
+            $resource = ResourceFactory::createResource(new Config($form->getValues()));
             $resource->connect();
         } catch (Exception $e) {
             $form->addError(t('Connectivity validation failed, connection to the given resource not possible.'));
