@@ -7,7 +7,7 @@ namespace Icinga\Module\Monitoring\Object;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Exception\InvalidPropertyException;
-use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Web\UrlParams;
 
 /**
@@ -28,7 +28,7 @@ abstract class MonitoredObject
     /**
      * Backend to fetch object information from
      *
-     * @var Backend
+     * @var MonitoringBackend
      */
     protected $backend;
 
@@ -119,9 +119,9 @@ abstract class MonitoredObject
     /**
      * Create a monitored object, i.e. host or service
      *
-     * @param Backend $backend Backend to fetch object information from
+     * @param MonitoringBackend $backend Backend to fetch object information from
      */
-    public function __construct(Backend $backend)
+    public function __construct(MonitoringBackend $backend)
     {
         $this->backend = $backend;
     }
@@ -480,9 +480,9 @@ abstract class MonitoredObject
     public static function fromParams(UrlParams $params)
     {
         if ($params->has('service') && $params->has('host')) {
-            return new Service(Backend::createBackend(), $params->get('host'), $params->get('service'));
+            return new Service(MonitoringBackend::createBackend(), $params->get('host'), $params->get('service'));
         } elseif ($params->has('host')) {
-            return new Host(Backend::createBackend(), $params->get('host'));
+            return new Host(MonitoringBackend::createBackend(), $params->get('host'));
         }
         return null;
     }
