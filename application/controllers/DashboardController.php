@@ -63,6 +63,12 @@ class DashboardController extends ActionController
                 $this->view->title = $dashboard->getActivePane()->getTitle() . ' :: Dashboard';
                 $this->view->tabs = $dashboard->getTabs();
 
+                if ($this->hasParam('remove')) {
+                    $dashboard->getActivePane()->removeComponent($this->getParam('remove'));
+                    $dashboard->write();
+                    $this->redirectNow(URL::fromRequest()->remove('remove'));
+                }
+
                 /* Temporarily removed
                 $this->view->tabs->add(
                     'Add',

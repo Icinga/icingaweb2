@@ -130,7 +130,13 @@ class Pane extends UserWidget
     public function removeComponent($title)
     {
         if ($this->hasComponent($title)) {
-            unset($this->components[$title]);
+            $component = $this->getComponent($title);
+            if ($component->isUserWidget() === true) {
+                unset($this->components[$title]);
+            } else {
+                $component->setUserWidget();
+                $component->setDisabled(true);
+            }
         }
         return $this;
     }

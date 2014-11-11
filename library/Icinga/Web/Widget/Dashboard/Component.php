@@ -53,7 +53,7 @@ class Component extends UserWidget
     private $template =<<<'EOD'
 
     <div class="container" data-icinga-url="{URL}">
-        <h1>{REMOVE}<a href="{FULL_URL}" data-base-target="col1">{TITLE}</a></h1>
+        <h1><a href="{FULL_URL}" data-base-target="col1">{TITLE}</a> ({REMOVE})</h1>
         <noscript>
             <iframe src="{IFRAME_URL}" style="height:100%; width:99%" frameborder="no"></iframe>
         </noscript>
@@ -179,7 +179,6 @@ EOD;
             '{URL}',
             '{IFRAME_URL}',
             '{FULL_URL}',
-            '{REMOVE_BTN}',
             '{TITLE}',
             '{REMOVE}'
         );
@@ -188,9 +187,8 @@ EOD;
             $url,
             $iframeUrl,
             $url->getUrlWithout(array('view', 'limit')),
-            $this->getRemoveForm($view),
             $view->escape($this->getTitle()),
-            $this->getRemoveForm()
+            $this->getRemoveLink()
         );
 
         return str_replace($searchTokens, $replaceTokens, $this->template);
@@ -201,32 +199,13 @@ EOD;
      *
      * @return string                       The html representation of the form
      */
-    protected function getRemoveForm()
+    protected function getRemoveLink()
     {
-        // TODO: temporarily disabled, should point to a form asking for confirmal
-        return '';
-        $removeUrl = Url::fromPath(
-            '/dashboard/removecomponent',
-            array(
-                'pane' => $this->pane->getName(),
-                'component' => $this->getTitle()
-            )
+        return sprintf(
+            '<a data-base-target="main" href="%s">%s</a>',
+            Url::fromRequest(array('remove' => $this->getTitle())),
+            t('Remove')
         );
-        $form = new Form();
-        $form->setMethod('POST');
-        $form->setAttrib('class', 'inline');
-        $form->setAction($removeUrl);
-        $form->addElement(
-            new Zend_Form_Element_Button(
-                'remove_pane_btn',
-                array(
-                    'class'=> 'link-like pull-right',
-                    'type' => 'submit',
-                    'label' => 'x'
-                )
-            )
-        );
-        return $form;
     }
 
     /**
