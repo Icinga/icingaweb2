@@ -102,10 +102,6 @@ abstract class ApplicationBootstrap
     {
         $this->libDir = realpath(__DIR__ . '/../..');
 
-        if (!defined('ICINGA_LIBDIR')) {
-            define('ICINGA_LIBDIR', $this->libDir);
-        }
-
         if (defined('ICINGAWEB_APPDIR')) {
             $this->appDir = ICINGAWEB_APPDIR;
         } elseif (array_key_exists('ICINGAWEB_APPDIR', $_SERVER)) {
