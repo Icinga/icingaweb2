@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Setup\Form;
 
+use Icinga\Application\Config;
 use Icinga\Web\Form;
 use Icinga\Web\Form\Element\Note;
 
@@ -55,13 +56,13 @@ EOT;
     }
 
     /**
-     * Return the resource configuration as Zend_Config object
+     * Return the resource configuration as Config object
      *
-     * @return  Zend_Config
+     * @return  Config
      */
     public function getResourceConfig()
     {
-        return new Zend_Config($this->config);
+        return new Config($this->config);
     }
 
     /**

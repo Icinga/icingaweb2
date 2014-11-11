@@ -5,7 +5,6 @@
 namespace Icinga\Module\Setup\Steps;
 
 use Exception;
-use Zend_Config;
 use Icinga\Application\Config;
 use Icinga\File\Ini\IniWriter;
 use Icinga\Data\ResourceFactory;
@@ -51,7 +50,7 @@ class AuthenticationStep extends Step
 
         try {
             $writer = new IniWriter(array(
-                'config'    => new Zend_Config($config),
+                'config'    => new Config($config),
                 'filename'  => Config::resolvePath('authentication.ini'),
                 'filemode'  => octdec($this->data['fileMode'])
             ));
@@ -75,7 +74,7 @@ class AuthenticationStep extends Step
 
         try {
             $writer = new IniWriter(array(
-                'config'    => new Zend_Config($config),
+                'config'    => new Config($config),
                 'filename'  => Config::resolvePath('permissions.ini'),
                 'filemode'  => octdec($this->data['fileMode'])
             ));
@@ -93,7 +92,7 @@ class AuthenticationStep extends Step
     {
         try {
             $backend = new DbUserBackend(
-                ResourceFactory::createResource(new Zend_Config($this->data['adminAccountData']['resourceConfig']))
+                ResourceFactory::createResource(new Config($this->data['adminAccountData']['resourceConfig']))
             );
 
             if (array_search($this->data['adminAccountData']['username'], $backend->listUsers()) === false) {

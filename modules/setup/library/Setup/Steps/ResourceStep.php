@@ -5,7 +5,6 @@
 namespace Icinga\Module\Setup\Steps;
 
 use Exception;
-use Zend_Config;
 use Icinga\Application\Config;
 use Icinga\File\Ini\IniWriter;
 use Icinga\Module\Setup\Step;
@@ -40,7 +39,7 @@ class ResourceStep extends Step
 
         try {
             $writer = new IniWriter(array(
-                'config'    => new Zend_Config($resourceConfig),
+                'config'    => new Config($resourceConfig),
                 'filename'  => Config::resolvePath('resources.ini'),
                 'filemode'  => octdec($this->data['fileMode'])
             ));

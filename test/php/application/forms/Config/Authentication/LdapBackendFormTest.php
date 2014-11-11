@@ -9,7 +9,6 @@ namespace Tests\Icinga\Form\Config\Authentication;
 require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
 
 use Mockery;
-use Zend_Config;
 use Icinga\Test\BaseTestCase;
 use Icinga\Application\Config;
 use Icinga\Form\Config\Authentication\LdapBackendForm;

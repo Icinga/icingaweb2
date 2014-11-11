@@ -5,7 +5,6 @@
 namespace Icinga\Module\Monitoring;
 
 use Exception;
-use Zend_Config;
 use Icinga\Module\Setup\Step;
 use Icinga\Application\Config;
 use Icinga\File\Ini\IniWriter;
@@ -40,7 +39,7 @@ class BackendStep extends Step
 
         try {
             $writer = new IniWriter(array(
-                'config'    => new Zend_Config($config),
+                'config'    => new Config($config),
                 'filename'  => Config::resolvePath('modules/monitoring/backends.ini'),
                 'filemode'  => octdec($this->data['fileMode'])
             ));
@@ -62,7 +61,7 @@ class BackendStep extends Step
 
         try {
             $config = Config::app('resources', true);
-            $config->merge(new Zend_Config(array($resourceName => $resourceConfig)));
+            $config->merge(new Config(array($resourceName => $resourceConfig)));
 
             $writer = new IniWriter(array(
                 'config'    => $config,

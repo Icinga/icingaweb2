@@ -5,7 +5,6 @@
 namespace Icinga\Module\Monitoring;
 
 use Exception;
-use Zend_Config;
 use Icinga\Module\Setup\Step;
 use Icinga\Application\Config;
 use Icinga\File\Ini\IniWriter;
@@ -29,7 +28,7 @@ class InstanceStep extends Step
 
         try {
             $writer = new IniWriter(array(
-                'config'    => new Zend_Config(array($instanceName => $instanceConfig)),
+                'config'    => new Config(array($instanceName => $instanceConfig)),
                 'filename'  => Config::resolvePath('modules/monitoring/instances.ini'),
                 'filemode'  => octdec($this->data['fileMode'])
             ));

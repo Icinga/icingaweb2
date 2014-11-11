@@ -5,7 +5,6 @@
 namespace Icinga\Module\Monitoring;
 
 use Exception;
-use Zend_Config;
 use Icinga\Module\Setup\Step;
 use Icinga\Application\Config;
 use Icinga\File\Ini\IniWriter;
@@ -28,7 +27,7 @@ class SecurityStep extends Step
 
         try {
             $writer = new IniWriter(array(
-                'config'    => new Zend_Config($config),
+                'config'    => new Config($config),
                 'filename'  => Config::resolvePath('modules/monitoring/config.ini'),
                 'filemode'  => octdec($this->data['fileMode'])
             ));

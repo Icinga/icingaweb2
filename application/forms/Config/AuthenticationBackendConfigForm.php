@@ -333,7 +333,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
     /**
      * Return the configuration for the chosen resource
      *
-     * @return  Zend_Config
+     * @return  Config
      */
     public function getResourceConfig()
     {

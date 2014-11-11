@@ -5,7 +5,6 @@
 namespace Icinga\Module\Setup\Steps;
 
 use Exception;
-use Zend_Config;
 use Icinga\Application\Logger;
 use Icinga\Application\Config;
 use Icinga\File\Ini\IniWriter;
@@ -37,7 +36,7 @@ class GeneralConfigStep extends Step
 
         try {
             $writer = new IniWriter(array(
-                'config'    => new Zend_Config($config),
+                'config'    => new Config($config),
                 'filename'  => Config::resolvePath('config.ini'),
                 'filemode'  => octdec($this->data['fileMode'])
             ));
