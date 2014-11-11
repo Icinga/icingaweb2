@@ -4,7 +4,7 @@
 
 namespace Icinga\Web\Menu;
 
-use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Web\Menu;
 use Icinga\Web\Url;
 
@@ -17,7 +17,7 @@ class MonitoringMenuItemRenderer implements MenuItemRenderer {
     protected static function summary($column = null)
     {
         if (self::$summary === null) {
-            self::$summary = Backend::createBackend()->select()->from(
+            self::$summary = MonitoringBackend::instance()->select()->from(
                 'statusSummary',
                 array(
                     'hosts_down_unhandled',
