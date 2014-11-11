@@ -44,8 +44,7 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
     public function __construct(ConnectionInterface $connection, array $columns = null)
     {
         $this->connection = $connection;
-        $queryClass = $connection->getQueryClass($this->getQueryName());
-        $this->query = new $queryClass($this->connection->getResource(), $columns);
+        $this->query = $connection->query($this->getQueryName(), $columns);
         $this->filter = Filter::matchAll();
         $this->init();
     }
