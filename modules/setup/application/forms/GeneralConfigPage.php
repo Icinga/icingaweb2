@@ -31,7 +31,8 @@ class GeneralConfigPage extends Form
             new Note(
                 'description',
                 array(
-                    'value' => t(
+                    'value' => mt(
+                        'setup',
                         'Now please adjust all application and logging related configuration options to fit your needs.'
                     )
                 )

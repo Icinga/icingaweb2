@@ -75,15 +75,16 @@ class AdminAccountPage extends Form
         $choices = array();
 
         if ($this->backendConfig['backend'] !== 'db') {
-            $choices['by_name'] = t('By Name', 'setup.admin');
+            $choices['by_name'] = mt('setup', 'By Name', 'setup.admin');
             $this->addElement(
                 'text',
                 'by_name',
                 array(
                     'required'      => isset($formData['user_type']) && $formData['user_type'] === 'by_name',
                     'value'         => $this->getUsername(),
-                    'label'         => t('Username'),
-                    'description'   => t(
+                    'label'         => mt('setup', 'Username'),
+                    'description'   => mt(
+                        'setup',
                         'Define the initial administrative account by providing a username that reflects'
                         . ' a user created later or one that is authenticated using external mechanisms'
                     )
@@ -94,19 +95,22 @@ class AdminAccountPage extends Form
         if ($this->backendConfig['backend'] === 'db' || $this->backendConfig['backend'] === 'ldap') {
             $users = $this->fetchUsers();
             if (false === empty($users)) {
-                $choices['existing_user'] = t('Existing User');
+                $choices['existing_user'] = mt('setup', 'Existing User');
                 $this->addElement(
                     'select',
                     'existing_user',
                     array(
                         'required'      => isset($formData['user_type']) && $formData['user_type'] === 'existing_user',
-                        'label'         => t('Username'),
+                        'label'         => mt('setup', 'Username'),
                         'description'   => sprintf(
-                            t(
+                            mt(
+                                'setup',
                                 'Choose a user reported by the %s backend as the initial administrative account',
                                 'setup.admin'
                             ),
-                            $this->backendConfig['backend'] === 'db' ? t('database', 'setup.admin.authbackend') : 'LDAP'
+                            $this->backendConfig['backend'] === 'db'
+                                ? mt('setup', 'database', 'setup.admin.authbackend')
+                                : 'LDAP'
                         ),
                         'multiOptions'  => array_combine($users, $users)
                     )
@@ -115,15 +119,16 @@ class AdminAccountPage extends Form
         }
 
         if ($this->backendConfig['backend'] === 'db') {
-            $choices['new_user'] = t('New User');
+            $choices['new_user'] = mt('setup', 'New User');
             $required = isset($formData['user_type']) && $formData['user_type'] === 'new_user';
             $this->addElement(
                 'text',
                 'new_user',
                 array(
                     'required'      => $required,
-                    'label'         => t('Username'),
-                    'description'   => t(
+                    'label'         => mt('setup', 'Username'),
+                    'description'   => mt(
+                        'setup',
                         'Enter the username to be used when creating an initial administrative account'
                     )
                 )
@@ -133,8 +138,8 @@ class AdminAccountPage extends Form
                 'new_user_password',
                 array(
                     'required'      => $required,
-                    'label'         => t('Password'),
-                    'description'   => t('Enter the password to assign to the newly created account')
+                    'label'         => mt('setup', 'Password'),
+                    'description'   => mt('setup', 'Enter the password to assign to the newly created account')
                 )
             );
             $this->addElement(
@@ -142,8 +147,8 @@ class AdminAccountPage extends Form
                 'new_user_2ndpass',
                 array(
                     'required'      => $required,
-                    'label'         => t('Repeat password'),
-                    'description'   => t('Please repeat the password given above to avoid typing errors'),
+                    'label'         => mt('setup', 'Repeat password'),
+                    'description'   => mt('setup', 'Please repeat the password given above to avoid typing errors'),
                     'validators'    => array(
                         array('identical', false, array('new_user_password'))
                     )
@@ -201,7 +206,7 @@ class AdminAccountPage extends Form
         }
 
         if ($data['user_type'] === 'new_user' && array_search($data['new_user'], $this->fetchUsers()) !== false) {
-            $this->getElement('new_user')->addError(t('Username already exists.'));
+            $this->getElement('new_user')->addError(mt('setup', 'Username already exists.'));
             return false;
         }
 

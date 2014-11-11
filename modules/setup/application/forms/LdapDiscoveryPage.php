@@ -35,7 +35,8 @@ class LdapDiscoveryPage extends Form
             new Note(
                 'description',
                 array(
-                    'value' => t(
+                    'value' => mt(
+                        'setup',
                         'You can use this page to discover LDAP or ActiveDirectory servers ' .
                         ' for authentication. If you don\' want to execute a discovery, just skip this step.'
                     )
@@ -51,8 +52,8 @@ class LdapDiscoveryPage extends Form
             'skip_validation',
             array(
                 'required'      => true,
-                'label'         => t('Skip'),
-                'description'   => t('Do not discover LDAP servers and enter all settings manually.')
+                'label'         => mt('setup', 'Skip'),
+                'description'   => mt('setup', 'Do not discover LDAP servers and enter all settings manually.')
             )
         );
     }

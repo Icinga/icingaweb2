@@ -38,7 +38,8 @@ class LdapResourcePage extends Form
             new Note(
                 'description',
                 array(
-                    'value' => t(
+                    'value' => mt(
+                        'setup',
                         'Now please configure your AD/LDAP resource. This will later '
                         . 'be used to authenticate users logging in to Icinga Web 2.'
                     )
@@ -96,8 +97,11 @@ class LdapResourcePage extends Form
             'skip_validation',
             array(
                 'required'      => true,
-                'label'         => t('Skip Validation'),
-                'description'   => t('Check this to not to validate connectivity with the given directory service')
+                'label'         => mt('setup', 'Skip Validation'),
+                'description'   => mt(
+                    'setup',
+                    'Check this to not to validate connectivity with the given directory service'
+                )
             )
         );
     }

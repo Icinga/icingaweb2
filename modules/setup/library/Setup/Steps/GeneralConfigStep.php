@@ -53,14 +53,14 @@ class GeneralConfigStep extends Step
 
     public function getSummary()
     {
-        $pageTitle = '<h2>' . t('Application Configuration') . '</h2>';
+        $pageTitle = '<h2>' . mt('setup', 'Application Configuration') . '</h2>';
         $generalTitle = '<h3>' . t('General', 'app.config') . '</h3>';
         $loggingTitle = '<h3>' . t('Logging', 'app.config') . '</h3>';
 
         $generalHtml = ''
             . '<ul>'
             . '<li>' . sprintf(
-                t('Icinga Web 2 will save new configuration files using the mode "%s".'),
+                mt('setup', 'Icinga Web 2 will save new configuration files using the mode "%s".'),
                 $this->data['generalConfig']['global_filemode']
             ) . '</li>'
             . '<li>' . sprintf(
@@ -77,7 +77,7 @@ class GeneralConfigStep extends Step
 
         $type = $this->data['generalConfig']['logging_log'];
         if ($type === 'none') {
-            $loggingHtml = '<p>' . t('Logging will be disabled.') . '</p>';
+            $loggingHtml = '<p>' . mt('setup', 'Logging will be disabled.') . '</p>';
         } else {
             $level = $this->data['generalConfig']['logging_level'];
             $loggingHtml = ''
@@ -117,10 +117,10 @@ class GeneralConfigStep extends Step
     public function getReport()
     {
         if ($this->error === false) {
-            $message = t('General configuration has been successfully written to: %s');
+            $message = mt('setup', 'General configuration has been successfully written to: %s');
             return '<p>' . sprintf($message, Config::resolvePath('config.ini')) . '</p>';
         } elseif ($this->error !== null) {
-            $message = t('General configuration could not be written to: %s; An error occured:');
+            $message = mt('setup', 'General configuration could not be written to: %s; An error occured:');
             return '<p class="error">' . sprintf($message, Config::resolvePath('config.ini')) . '</p>'
                 . '<p>' . $this->error->getMessage() . '</p>';
         }

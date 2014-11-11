@@ -11,16 +11,16 @@
     <?php endif ?>
   <?php endforeach ?>
   <?php if ($success): ?>
-    <p class="success"><?= t('Congratulations! Icinga Web 2 has been successfully set up.'); ?></p>
+    <p class="success"><?= mt('setup', 'Congratulations! Icinga Web 2 has been successfully set up.'); ?></p>
   <?php else: ?>
-    <p class="failure"><?= t('Sorry! Failed to set up Icinga Web 2 successfully.'); ?></p>
+    <p class="failure"><?= mt('setup', 'Sorry! Failed to set up Icinga Web 2 successfully.'); ?></p>
   <?php endif ?>
   </div>
   <div class="buttons">
   <?php if ($success): ?>
-    <a href="<?= $this->href('authentication/login'); ?>" class="button-like login"><?= t('Login to Icinga Web 2'); ?></a>
+    <a href="<?= $this->href('authentication/login'); ?>" class="button-like login"><?= mt('setup', 'Login to Icinga Web 2'); ?></a>
   <?php else: ?>
-    <a href="<?= $this->href(); ?>" class="button-like"><?= t('Back'); ?></a>
+    <a href="<?= $this->href(); ?>" class="button-like"><?= mt('setup', 'Back'); ?></a>
   <?php endif ?>
   </div>
 </div>

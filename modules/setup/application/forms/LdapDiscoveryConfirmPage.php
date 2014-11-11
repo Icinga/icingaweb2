@@ -100,7 +100,7 @@ EOT;
             'confirm',
             array(
                 'value' => '1',
-                'label' => t('Use this configuration?')
+                'label' => mt('setup', 'Use this configuration?')
             )
         );
     }

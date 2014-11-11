@@ -113,15 +113,15 @@ class AuthenticationStep extends Step
 
     public function getSummary()
     {
-        $pageTitle = '<h2>' . t('Authentication') . '</h2>';
-        $backendTitle = '<h3>' . t('Backend Configuration') . '</h3>';
-        $adminTitle = '<h3>' . t('Initial Administrative Account') . '</h3>';
+        $pageTitle = '<h2>' . mt('setup', 'Authentication') . '</h2>';
+        $backendTitle = '<h3>' . mt('setup', 'Backend Configuration') . '</h3>';
+        $adminTitle = '<h3>' . mt('setup', 'Initial Administrative Account') . '</h3>';
 
         $authType = $this->data['backendConfig']['backend'];
         $backendDesc = '<p>' . sprintf(
-            t('Users will authenticate using %s.', 'setup.summary.auth'),
-            $authType === 'db' ? t('a database', 'setup.summary.auth.type') : (
-                $authType === 'ldap' ? 'LDAP' : t('webserver authentication', 'setup.summary.auth.type')
+            mt('setup', 'Users will authenticate using %s.', 'setup.summary.auth'),
+            $authType === 'db' ? mt('setup', 'a database', 'setup.summary.auth.type') : (
+                $authType === 'ldap' ? 'LDAP' : mt('setup', 'webserver authentication', 'setup.summary.auth.type')
             )
         ) . '</p>';
 
@@ -151,10 +151,10 @@ class AuthenticationStep extends Step
             . '</table>';
 
         $adminHtml = '<p>' . (isset($this->data['adminAccountData']['resourceConfig']) ? sprintf(
-            t('Administrative rights will initially be granted to a new account called "%s".'),
+            mt('setup', 'Administrative rights will initially be granted to a new account called "%s".'),
             $this->data['adminAccountData']['username']
         ) : sprintf(
-            t('Administrative rights will initially be granted to an existing account called "%s".'),
+            mt('setup', 'Administrative rights will initially be granted to an existing account called "%s".'),
             $this->data['adminAccountData']['username']
         )) . '</p>';
 
@@ -166,28 +166,28 @@ class AuthenticationStep extends Step
     {
         $report = '';
         if ($this->authIniError === false) {
-            $message = t('Authentication configuration has been successfully written to: %s');
+            $message = mt('setup', 'Authentication configuration has been successfully written to: %s');
             $report .= '<p>' . sprintf($message, Config::resolvePath('authentication.ini')) . '</p>';
         } elseif ($this->authIniError !== null) {
-            $message = t('Authentication configuration could not be written to: %s; An error occured:');
+            $message = mt('setup', 'Authentication configuration could not be written to: %s; An error occured:');
             $report .= '<p class="error">' . sprintf($message, Config::resolvePath('authentication.ini')) . '</p>'
                 . '<p>' . $this->authIniError->getMessage() . '</p>';
         }
 
         if ($this->dbError === false) {
-            $message = t('Account "%s" has been successfully created.');
+            $message = mt('setup', 'Account "%s" has been successfully created.');
             $report .= '<p>' . sprintf($message, $this->data['adminAccountData']['username']) . '</p>';
         } elseif ($this->dbError !== null) {
-            $message = t('Unable to create account "%s". An error occured:');
+            $message = mt('setup', 'Unable to create account "%s". An error occured:');
             $report .= '<p class="error">' . sprintf($message, $this->data['adminAccountData']['username']) . '</p>'
                 . '<p>' . $this->dbError->getMessage() . '</p>';
         }
 
         if ($this->permIniError === false) {
-            $message = t('Account "%s" has been successfully defined as initial administrator.');
+            $message = mt('setup', 'Account "%s" has been successfully defined as initial administrator.');
             $report .= '<p>' . sprintf($message, $this->data['adminAccountData']['username']) . '</p>';
         } elseif ($this->permIniError !== null) {
-            $message = t('Unable to define account "%s" as initial administrator. An error occured:');
+            $message = mt('setup', 'Unable to define account "%s" as initial administrator. An error occured:');
             $report .= '<p class="error">' . sprintf($message, $this->data['adminAccountData']['username']) . '</p>'
                 . '<p>' . $this->permIniError->getMessage() . '</p>';
         }

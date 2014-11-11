@@ -53,8 +53,8 @@ class MakeDirStep extends Step
 
     public function getReport()
     {
-        $okMessage = t('Directory "%s" in "%s" has been successfully created.');
-        $failMessage = t('Unable to create directory "%s" in "%s". An error occured:');
+        $okMessage = mt('setup', 'Directory "%s" in "%s" has been successfully created.');
+        $failMessage = mt('setup', 'Unable to create directory "%s" in "%s". An error occured:');
 
         $report = '';
         foreach ($this->paths as $path) {

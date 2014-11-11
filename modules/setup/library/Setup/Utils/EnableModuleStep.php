@@ -49,9 +49,9 @@ class EnableModuleStep extends Step
     public function getReport()
     {
         if ($this->error === false) {
-            return '<p>' . sprintf(t('Module "%s" has been successfully enabled.'), $this->moduleName) . '</p>';
+            return '<p>' . sprintf(mt('setup', 'Module "%s" has been successfully enabled.'), $this->moduleName) . '</p>';
         } elseif ($this->error !== null) {
-            $message = t('Module "%s" could not be enabled. An error occured:');
+            $message = mt('setup', 'Module "%s" could not be enabled. An error occured:');
             return '<p class="error">' . sprintf($message, $this->moduleName) . '</p>'
                 . '<p>' . $this->error->getMessage() . '</p>';
         }

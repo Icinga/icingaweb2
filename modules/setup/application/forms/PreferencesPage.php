@@ -31,7 +31,10 @@ class PreferencesPage extends Form
         $this->getElement('type')
             ->setValue('db')
             ->setDescription(
-                t('Note that choosing "Database" causes Icinga Web 2 to use the same database as for authentication.')
+                mt(
+                    'setup',
+                    'Note that choosing "Database" causes Icinga Web 2 to use the same database as for authentication.'
+                )
             );
         return $this;
     }
@@ -45,7 +48,7 @@ class PreferencesPage extends Form
             new Note(
                 'description',
                 array(
-                    'value' => t('Please choose how Icinga Web 2 should store user preferences.')
+                    'value' => mt('setup', 'Please choose how Icinga Web 2 should store user preferences.')
                 )
             )
         );

@@ -30,19 +30,19 @@ class TokenValidator extends Zend_Validate_Abstract
         $this->tokenPath = $tokenPath;
         $this->_messageTemplates = array(
             'TOKEN_FILE_ERROR'  => sprintf(
-                t('Cannot validate token: %s (%s)'),
+                mt('setup', 'Cannot validate token: %s (%s)'),
                 $tokenPath,
                 '%value%'
             ),
             'TOKEN_FILE_EMPTY'  => sprintf(
-                t('Cannot validate token, file "%s" is empty. Please define a token.'),
+                mt('setup', 'Cannot validate token, file "%s" is empty. Please define a token.'),
                 $tokenPath
             ),
             'TOKEN_FILE_PUBLIC' => sprintf(
-                t('Cannot validate token, file "%s" must only be accessible by the webserver\'s user.'),
+                mt('setup', 'Cannot validate token, file "%s" must only be accessible by the webserver\'s user.'),
                 $tokenPath
             ),
-            'TOKEN_INVALID'     => t('Invalid token supplied.')
+            'TOKEN_INVALID'     => mt('setup', 'Invalid token supplied.')
         );
     }
 

@@ -32,8 +32,9 @@ class WelcomePage extends Form
             'token',
             array(
                 'required'      => true,
-                'label'         => t('Setup Token'),
-                'description'   => t(
+                'label'         => mt('setup', 'Setup Token'),
+                'description'   => mt(
+                    'setup',
                     'For security reasons we need to ensure that you are permitted to run this wizard.'
                     . ' Please provide a token by following the instructions below.'
                 ),

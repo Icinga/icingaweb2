@@ -57,13 +57,13 @@ class ResourceStep extends Step
     public function getSummary()
     {
         if (isset($this->data['dbResourceConfig']) && isset($this->data['ldapResourceConfig'])) {
-            $pageTitle = '<h2>' . t('Resources') . '</h2>';
+            $pageTitle = '<h2>' . mt('setup', 'Resources') . '</h2>';
         } else {
-            $pageTitle = '<h2>' . t('Resource') . '</h2>';
+            $pageTitle = '<h2>' . mt('setup', 'Resource') . '</h2>';
         }
 
         if (isset($this->data['dbResourceConfig'])) {
-            $dbTitle = '<h3>' . t('Database') . '</h3>';
+            $dbTitle = '<h3>' . mt('setup', 'Database') . '</h3>';
             $dbHtml = ''
                 . '<table>'
                 . '<tbody>'
@@ -139,10 +139,10 @@ class ResourceStep extends Step
     public function getReport()
     {
         if ($this->error === false) {
-            $message = t('Resource configuration has been successfully written to: %s');
+            $message = mt('setup', 'Resource configuration has been successfully written to: %s');
             return '<p>' . sprintf($message, Config::resolvePath('resources.ini')) . '</p>';
         } elseif ($this->error !== null) {
-            $message = t('Resource configuration could not be written to: %s; An error occured:');
+            $message = mt('setup', 'Resource configuration could not be written to: %s; An error occured:');
             return '<p class="error">' . sprintf($message, Config::resolvePath('resources.ini')) . '</p>'
                 . '<p>' . $this->error->getMessage() . '</p>';
         }

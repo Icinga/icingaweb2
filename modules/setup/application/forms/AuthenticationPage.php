@@ -30,7 +30,8 @@ class AuthenticationPage extends Form
             new Note(
                 'description',
                 array(
-                    'value' => t(
+                    'value' => mt(
+                        'setup',
                         'Please choose how you want to authenticate when accessing Icinga Web 2.'
                         . ' Configuring backend specific details follows in a later step.'
                     )
@@ -52,8 +53,8 @@ class AuthenticationPage extends Form
             'type',
             array(
                 'required'      => true,
-                'label'         => t('Authentication Type'),
-                'description'   => t('The type of authentication to use when accessing Icinga Web 2'),
+                'label'         => mt('setup', 'Authentication Type'),
+                'description'   => mt('setup', 'The type of authentication to use when accessing Icinga Web 2'),
                 'multiOptions'  => $backendTypes
             )
         );
