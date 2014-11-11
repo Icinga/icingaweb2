@@ -90,6 +90,14 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
     }
 
     /**
+     * Clear all cached instances. Mostly for testing purposes.
+     */
+    public static function clearInstances()
+    {
+        self::$instances = array();
+    }
+
+    /**
      * Whether this backend is of a specific type
      *
      * @param  string $type Backend type
