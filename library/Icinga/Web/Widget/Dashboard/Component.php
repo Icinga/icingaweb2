@@ -17,7 +17,7 @@ use Icinga\Exception\IcingaException;
  * This is the element displaying a specific view in icinga2web
  *
  */
-class Component extends AbstractWidget
+class Component extends UserWidget
 {
     /**
      * The url of this Component

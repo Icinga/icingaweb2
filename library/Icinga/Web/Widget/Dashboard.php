@@ -85,8 +85,7 @@ class Dashboard extends AbstractWidget
      */
     private function loadUserDashboards()
     {
-        $configFile = '/var/lib/icingaweb/' . $this->user->getUsername() . '/dashboard.ini';
-        $config = Config::fromIni($configFile);
+        $config = Config::fromIni($this->getConfigFile());
         if (! count($config)) {
             return false;
         }
@@ -96,6 +95,7 @@ class Dashboard extends AbstractWidget
             if (strpos($key, '.') === false) {
                 $panes[$key] = new Pane($key);
                 $panes[$key]->setTitle($part->title);
+                $panes[$key]->setUserWidget();
 
             } else {
                 list($paneName, $componentName) = explode('.', $key, 2);
@@ -114,15 +114,22 @@ class Dashboard extends AbstractWidget
             } else {
                 continue;
             }
-            $pane->addComponent(
-                new DashboardComponent(
-                    $componentData->title,
-                    $componentData->url,
-                    $pane
-                )
+            $component = new DashboardComponent(
+                $componentData->title,
+                $componentData->url,
+                $pane
             );
+
+            if ((bool) $componentData->get('disabled', false) === true) {
+                $component->setDisabled(true);
+            }
+
+            $component->setUserWidget();
+            $pane->addComponent($component);
         }
+
         $this->mergePanes($panes);
+
         return true;
     }
 
@@ -322,5 +329,13 @@ class Dashboard extends AbstractWidget
     public function getUser()
     {
         return $this->user;
+    }
+
+    public function getConfigFile()
+    {
+        if ($this->user === null) {
+            return '';
+        }
+        return '/var/lib/icingaweb/' . $this->user->getUsername() . '/dashboard.ini';
     }
 }

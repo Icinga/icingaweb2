@@ -12,7 +12,7 @@ use Icinga\Exception\ConfigurationError;
 /**
  * A pane, displaying different Dashboard components
  */
-class Pane extends AbstractWidget
+class Pane extends UserWidget
 {
     /**
      * The name of this pane, as defined in the ini file
@@ -168,7 +168,13 @@ class Pane extends AbstractWidget
      */
     public function render()
     {
-        return implode("\n", $this->components) . "\n";
+        $components = array_filter(
+            $this->components,
+            function ($e) {
+                return ! $e->getDisabled();
+            }
+        );
+        return implode("\n", $components) . "\n";
     }
 
     /**
