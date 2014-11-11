@@ -6,6 +6,7 @@ namespace Icinga\Application;
 
 use ErrorException;
 use Exception;
+use LogicException;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
@@ -104,13 +105,15 @@ abstract class ApplicationBootstrap
 
         if (defined('ICINGAWEB_APPDIR')) {
             $this->appDir = ICINGAWEB_APPDIR;
-        } elseif (array_key_exists('ICINGAWEB_APPDIR', $_SERVER)) {
-            $this->appDir = $_SERVER['ICINGAWEB_APPDIR'];
         } else {
-            $this->appDir = realpath($this->libDir. '/../application');
-        }
-
-        if (!defined('ICINGAWEB_APPDIR')) {
+            if (array_key_exists('ICINGAWEB_APPDIR', $_SERVER)) {
+                $this->appDIr = $_SERVER['ICINGAWEB_APPDIR'];
+            } else {
+                if (! defined('ICINGAWEB_BASEDIR')) {
+                    throw new LogicException('\'ICINGAWEB_BASEDIR\' is not defined');
+                }
+                $this->appDir = ICINGAWEB_BASEDIR . '/application';
+            }
             define('ICINGAWEB_APPDIR', $this->appDir);
         }
 
@@ -394,7 +397,7 @@ abstract class ApplicationBootstrap
      */
     protected function setupLogger()
     {
-        if (($loggingConfig = $this->config->get('logging')) !== null) {
+        if (($loggingConfig = $this->config->logging) !== null) {
             try {
                 Logger::create($loggingConfig);
             } catch (ConfigurationError $e) {
