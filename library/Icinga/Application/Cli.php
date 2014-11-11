@@ -52,8 +52,7 @@ class Cli extends ApplicationBootstrap
             new Config(
                 array(
                     'level' => Logger::INFO,
-                    'log'   => 'file',
-                    'file'  => 'php://stderr'
+                    'log'   => 'stdout',
                 )
             )
         );
