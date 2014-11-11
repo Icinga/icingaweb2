@@ -8,6 +8,10 @@ class FilterMatch extends FilterExpression
 {
     public function matches($row)
     {
+        if (! isset($row->{$this->column})) {
+            // TODO: REALLY? Exception?
+            return false;
+        }
         $expression = (string) $this->expression;
         if (strpos($expression, '*') === false) {
             return (string) $row->{$this->column} === $expression;
