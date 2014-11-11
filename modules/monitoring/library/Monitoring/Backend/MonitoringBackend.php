@@ -62,7 +62,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
     {
         if (! array_key_exists($name, self::$instances)) {
 
-            $config = static::loadConfig($name);
+            list($foundName, $config) = static::loadConfig($name);
             $type = $config->get('type');
             $class = implode(
                 '\\',
@@ -80,7 +80,10 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
                 );
             }
 
-            self::$instances[$name] = new $class($name, $config);
+            self::$instances[$name] = new $class($foundName, $config);
+            if ($name === null) {
+                self::$instances[$foundName] = self::$instances[$name];
+            }
         }
 
         return self::$instances[$name];
@@ -144,7 +147,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
             foreach ($backends as $name => $config) {
                 $count++;
                 if ((bool) $config->get('disabled', false) === false) {
-                    return $config;
+                    return array($name, $config);
                 }
             }
 
@@ -174,7 +177,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
                 );
             }
 
-            return $config;
+            return array($name, $config);
         }
     }
 
