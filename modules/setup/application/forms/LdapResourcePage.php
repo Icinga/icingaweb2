@@ -62,6 +62,7 @@ class LdapResourcePage extends Form
 
         $resourceForm = new LdapResourceForm();
         $this->addElements($resourceForm->createElements($formData)->getElements());
+        $this->getElement('name')->setValue('icingaweb_ldap');
     }
 
     /**

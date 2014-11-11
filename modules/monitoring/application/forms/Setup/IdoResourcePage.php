@@ -53,6 +53,7 @@ class IdoResourcePage extends Form
 
         $livestatusResourceForm = new DbResourceForm();
         $this->addElements($livestatusResourceForm->createElements($formData)->getElements());
+        $this->getElement('name')->setValue('icinga_ido');
     }
 
     public function isValid($data)

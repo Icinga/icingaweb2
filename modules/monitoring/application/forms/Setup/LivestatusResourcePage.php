@@ -53,6 +53,7 @@ class LivestatusResourcePage extends Form
 
         $livestatusResourceForm = new LivestatusResourceForm();
         $this->addElements($livestatusResourceForm->createElements($formData)->getElements());
+        $this->getElement('name')->setValue('icinga_livestatus');
     }
 
     public function isValid($data)

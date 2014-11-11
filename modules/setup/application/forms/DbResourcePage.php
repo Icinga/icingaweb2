@@ -64,6 +64,7 @@ class DbResourcePage extends Form
 
         $resourceForm = new DbResourceForm();
         $this->addElements($resourceForm->createElements($formData)->getElements());
+        $this->getElement('name')->setValue('icingaweb_db');
         $this->addElement(
             'hidden',
             'prefix',

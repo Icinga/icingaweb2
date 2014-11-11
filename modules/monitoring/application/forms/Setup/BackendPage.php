@@ -34,6 +34,7 @@ class BackendPage extends Form
             'name',
             array(
                 'required'      => true,
+                'value'         => 'icinga',
                 'label'         => mt('monitoring', 'Backend Name'),
                 'description'   => mt('monitoring', 'The identifier of this backend')
             )

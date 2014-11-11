@@ -36,5 +36,6 @@ class InstancePage extends Form
         $instanceConfigForm = new InstanceConfigForm();
         $instanceConfigForm->createElements($formData);
         $this->addElements($instanceConfigForm->getElements());
+        $this->getElement('name')->setValue('icinga');
     }
 }

@@ -102,6 +102,7 @@ class AuthBackendPage extends Form
         }
 
         $this->addElements($backendForm->getElements());
+        $this->getElement('name')->setValue('icingaweb');
     }
 
     /**
