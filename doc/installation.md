@@ -19,7 +19,7 @@ package). OpenSUSE requires the [server monitoring](https://build.opensuse.org/p
 If you like to configurea and install icinga2-web from the command line or 
 if you want to create packages, configure and make is the best choice for installation.
 
-    ./autogen.sh && ./configure && make install && make install-apache2-config
+    ./autogen.sh && ./configure && make install && make install-apache-config
 
 will install the application to the default target (/usr/local/icinga2-web). Also
 an apache configuration entry is added to your apache server, so you should restart
