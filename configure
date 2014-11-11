@@ -2864,19 +2864,7 @@ fi
 
 internal_auth_disabled="disabled    = \"1\""
 if test "x$internal_authentication" != xno; then :
-
-  for x in ldap;do
-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking if php has $x module" >&5
-$as_echo_n "checking if php has $x module... " >&6; }
-     if  php -m | $GREP -iq "^$x$" ; then :
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
-$as_echo "found" >&6; }
-else
-   as_fn_error $? "not found" "$LINENO" 5
-fi
-  done
-
-    internal_auth_disabled=""
+  internal_auth_disabled=""
 
 fi
 
