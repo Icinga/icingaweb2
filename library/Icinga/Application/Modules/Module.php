@@ -5,7 +5,6 @@
 namespace Icinga\Application\Modules;
 
 use Exception;
-use Zend_Config;
 use Zend_Controller_Router_Route_Abstract;
 use Zend_Controller_Router_Route as Route;
 use Zend_Controller_Router_Route_Regex as RegexRoute;
@@ -243,7 +242,7 @@ class Module
         if (array_key_exists($name, $this->menuItems)) {
             $this->menuItems[$name]->setProperties($properties);
         } else {
-            $this->menuItems[$name] = new Menu($name, new Zend_Config($properties));
+            $this->menuItems[$name] = new Menu($name, new Config($properties));
         }
 
         return $this->menuItems[$name];

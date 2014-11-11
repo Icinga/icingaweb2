@@ -6,7 +6,7 @@ namespace Icinga\Authentication;
 
 use Countable;
 use Icinga\Authentication\Backend\AutoLoginBackend;
-use Zend_Config;
+use Icinga\Application\Config;
 use Icinga\Authentication\Backend\DbUserBackend;
 use Icinga\Authentication\Backend\LdapUserBackend;
 use Icinga\Data\ResourceFactory;
@@ -45,7 +45,7 @@ abstract class UserBackend implements Countable
         return $this->name;
     }
 
-    public static function create($name, Zend_Config $backendConfig)
+    public static function create($name, Config $backendConfig)
     {
         if ($backendConfig->name !== null) {
             $name = $backendConfig->name;

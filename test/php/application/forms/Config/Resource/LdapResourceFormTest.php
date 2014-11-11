@@ -62,7 +62,7 @@ class LdapResourceFormTest extends BaseTestCase
     {
         Mockery::mock('alias:Icinga\Data\ResourceFactory')
             ->shouldReceive('createResource')
-            ->with(Mockery::type('\Zend_Config'))
+            ->with(Mockery::type('Icinga\Application\Config'))
             ->andReturn($resourceMock);
     }
 }

@@ -225,15 +225,31 @@ class BackendConfigForm extends ConfigForm
                 'value'         => $resourceType
             )
         );
-        $this->addElement(
+
+        $resourceElement = $this->createElement(
             'select',
             'resource',
             array(
                 'required'      => true,
                 'label'         => mt('monitoring', 'Resource'),
                 'description'   => mt('monitoring', 'The resource to use'),
-                'multiOptions'  => $this->resources[$resourceType]
+                'multiOptions'  => $this->resources[$resourceType],
+                'autosubmit'    => true
             )
         );
+
+        $resourceName = (isset($formData['resource'])) ? $formData['resource'] : $this->getValue('resource');
+        if ($resourceElement) {
+            $resourceElement->getDecorator('Description')->setEscape(false);
+            $link = sprintf(
+                '<a href="%s" data-base-target="_main">%s</a>',
+                $this->getView()->href('/icingaweb/config/editresource', array('resource' => $resourceName)),
+                mt('monitoring', 'Show resource configuration')
+            );
+            $resourceElement->setDescription($resourceElement->getDescription() . ' (' . $link . ')');
+        }
+
+        $this->addElement($resourceElement);
+
     }
 }

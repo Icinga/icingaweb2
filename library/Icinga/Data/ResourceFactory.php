@@ -4,7 +4,6 @@
 
 namespace Icinga\Data;
 
-use Zend_Config;
 use Icinga\Application\Config;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Util\ConfigAwareFactory;
@@ -22,14 +21,14 @@ class ResourceFactory implements ConfigAwareFactory
     /**
      * Resource configuration
      *
-     * @var Zend_Config
+     * @var Config
      */
     private static $resources;
 
     /**
      * Set resource configurations
      *
-     * @param Zend_Config $config
+     * @param Config $config
      */
     public static function setConfig($config)
     {
@@ -41,7 +40,7 @@ class ResourceFactory implements ConfigAwareFactory
      *
      * @param   $resourceName   String      The resource's name
      *
-     * @return                  Zend_Config The configuration of the resource
+     * @return                  Config The configuration of the resource
      *
      * @throws                  ConfigurationError
      */
@@ -62,7 +61,7 @@ class ResourceFactory implements ConfigAwareFactory
      *
      * @param  String|null  $type   Fetch only resources that have the given type.
      *
-     * @return Zend_Config          The configuration containing all resources
+     * @return Config          The configuration containing all resources
      */
     public static function getResourceConfigs($type = null)
     {
@@ -76,7 +75,7 @@ class ResourceFactory implements ConfigAwareFactory
                     $resources[$name] = $resource;
                 }
             }
-            return new Zend_Config($resources);
+            return new Config($resources);
         }
     }
 
@@ -100,13 +99,13 @@ class ResourceFactory implements ConfigAwareFactory
      * NOTE: The factory does not test if the given configuration is valid and the resource is accessible, this
      * depends entirely on the implementation of the returned resource.
      *
-     * @param Zend_Config $config                   The configuration for the created resource.
+     * @param Config $config                   The configuration for the created resource.
      *
      * @return DbConnection|LdapConnection|LivestatusConnection An object that can be used to access
      *         the given resource. The returned class depends on the configuration property 'type'.
      * @throws ConfigurationError When an unsupported type is given
      */
-    public static function createResource(Zend_Config $config)
+    public static function createResource(Config $config)
     {
         switch (strtolower($config->type)) {
             case 'db':

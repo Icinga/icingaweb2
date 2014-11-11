@@ -283,7 +283,8 @@ abstract class MonitoredObject
 
         $query = $this->backend->select()->from('customvar', array(
             'varname',
-            'varvalue'
+            'varvalue',
+            'is_json'
         ))
             ->where('object_type', $this->type)
             ->where('host_name', $this->host_name);
@@ -293,13 +294,16 @@ abstract class MonitoredObject
 
         $this->customvars = array();
 
-        $customvars = $query->getQuery()->fetchPairs();
-        foreach ($customvars as $name => $value) {
-            $name = ucwords(str_replace('_', ' ', strtolower($name)));
-            if ($blacklistPattern && preg_match($blacklistPattern, $name)) {
-                $value = '***';
+        $customvars = $query->getQuery()->fetchAll();
+        foreach ($customvars as $name => $cv) {
+            $name = ucwords(str_replace('_', ' ', strtolower($cv->varname)));
+            if ($blacklistPattern && preg_match($blacklistPattern, $cv->varname)) {
+                $this->customvars[$name] = '***';
+            } elseif ($cv->is_json) {
+                $this->customvars[$name] = json_decode($cv->varvalue);
+            } else {
+                $this->customvars[$name] = $cv->varvalue;
             }
-            $this->customvars[$name] = $value;
         }
 
         return $this;

@@ -6,7 +6,6 @@ namespace Icinga\Application;
 
 use ErrorException;
 use Exception;
-use Zend_Config;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
@@ -58,7 +57,7 @@ abstract class ApplicationBootstrap
     /**
      * Config object
      *
-     * @var Zend_Config
+     * @var Config
      */
     protected $config;
 
@@ -314,12 +313,7 @@ abstract class ApplicationBootstrap
         $this->moduleManager = new ModuleManager(
             $this,
             $this->configDir . '/enabledModules',
-            explode(
-                ':',
-                $this->config->global !== null
-                    ? $this->config->global->get('modulePath', ICINGAWEB_APPDIR . '/../modules')
-                    : ICINGAWEB_APPDIR . '/../modules'
-            )
+            explode(':', $this->config->fromSection('global', 'modulePath', ICINGAWEB_APPDIR . '/../modules'))
         );
         return $this;
     }
@@ -362,7 +356,7 @@ abstract class ApplicationBootstrap
     protected function setupLogging()
     {
         Logger::create(
-            new Zend_Config(
+            new Config(
                 array(
                     'log' => 'syslog'
                 )
@@ -384,7 +378,7 @@ abstract class ApplicationBootstrap
             $this->config = Config::app();
         } catch (NotReadableError $e) {
             Logger::error(new IcingaException('Cannot load application configuration. An exception was thrown:', $e));
-            $this->config = new Zend_Config(array());
+            $this->config = new Config();
         }
 
         if ($this->config->global !== null) {
@@ -428,9 +422,9 @@ abstract class ApplicationBootstrap
      */
     protected function setupLogger()
     {
-        if ($this->config->logging !== null) {
+        if (($loggingConfig = $this->config->get('logging')) !== null) {
             try {
-                Logger::create($this->config->logging);
+                Logger::create($loggingConfig);
             } catch (ConfigurationError $e) {
                 Logger::error($e);
             }
@@ -469,7 +463,7 @@ abstract class ApplicationBootstrap
         if (! $default) {
             $default = 'UTC';
         }
-        $timeZoneString = $this->config->global !== null ? $this->config->global->get('timezone', $default) : $default;
+        $timeZoneString = $this->config->fromSection('global', 'timezone', $default);
         date_default_timezone_set($timeZoneString);
         DateTimeFactory::setConfig(array('timezone' => $timeZoneString));
         return $this;

@@ -4,9 +4,9 @@
 
 namespace Icinga\Protocol\File;
 
-use Icinga\Data\Selectable;
 use Countable;
-use Zend_Config;
+use Icinga\Application\Config;
+use Icinga\Data\Selectable;
 
 /**
  * Read file line by line
@@ -30,11 +30,11 @@ class FileReader implements Selectable, Countable
     /**
      * Create a new reader
      *
-     * @param   Zend_Config $config
+     * @param   Config $config
      *
      * @throws  FileReaderException If a required $config directive (filename or fields) is missing
      */
-    public function __construct(Zend_Config $config)
+    public function __construct(Config $config)
     {
         foreach (array('filename', 'fields') as $key) {
             if (isset($config->{$key})) {
