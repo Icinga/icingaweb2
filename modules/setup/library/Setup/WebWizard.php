@@ -407,6 +407,15 @@ class WebWizard extends Wizard implements SetupWizard
             sprintf(mt('setup', 'You are running PHP on a %s system.'), Platform::getOperatingSystemName())
         );
 
+        $requirements->addMandatory(
+            mt('setup', 'PHP Module: OpenSSL'),
+            mt('setup', 'The PHP module for OpenSSL is required to generate cryptographically safe password salts.'),
+            Platform::extensionLoaded('openssl'),
+            Platform::extensionLoaded('openssl') ? mt('setup', 'The PHP module for OpenSSL is available.') : (
+                mt('setup', 'The PHP module for OpenSSL is missing.')
+            )
+        );
+
         $requirements->addOptional(
             mt('setup', 'PHP Module: JSON'),
             mt('setup', 'The JSON module for PHP is required for various export functionalities as well as APIs.'),
