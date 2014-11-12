@@ -103,15 +103,17 @@ abstract class ApplicationBootstrap
     {
         $this->libDir = realpath(__DIR__ . '/../..');
 
+        if (! defined('ICINGAWEB_BASEDIR')) {
+            throw new LogicException('\'ICINGAWEB_BASEDIR\' is not defined');
+        }
+        define('ICINGAWEB_VENDORS', ICINGAWEB_BASEDIR . '/library/vendor');
+
         if (defined('ICINGAWEB_APPDIR')) {
             $this->appDir = ICINGAWEB_APPDIR;
         } else {
             if (array_key_exists('ICINGAWEB_APPDIR', $_SERVER)) {
-                $this->appDIr = $_SERVER['ICINGAWEB_APPDIR'];
+                $this->appDir = $_SERVER['ICINGAWEB_APPDIR'];
             } else {
-                if (! defined('ICINGAWEB_BASEDIR')) {
-                    throw new LogicException('\'ICINGAWEB_BASEDIR\' is not defined');
-                }
                 $this->appDir = ICINGAWEB_BASEDIR . '/application';
             }
             define('ICINGAWEB_APPDIR', $this->appDir);
