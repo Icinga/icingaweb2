@@ -27,7 +27,7 @@ class PreferenceController extends BasePreferenceController
         return array(
             'general' => new Tab(
                 array(
-                    'title'     => 'General settings',
+                    'title'     => t('General settings'),
                     'url'       => Url::fromPath('/preference')
                 )
             )
