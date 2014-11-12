@@ -37,8 +37,7 @@ class GeneralConfigStep extends Step
         try {
             $writer = new IniWriter(array(
                 'config'    => new Config($config),
-                'filename'  => Config::resolvePath('config.ini'),
-                'filemode'  => octdec($this->data['fileMode'])
+                'filename'  => Config::resolvePath('config.ini')
             ));
             $writer->write();
         } catch (Exception $e) {

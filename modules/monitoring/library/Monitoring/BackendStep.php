@@ -40,8 +40,7 @@ class BackendStep extends Step
         try {
             $writer = new IniWriter(array(
                 'config'    => new Config($config),
-                'filename'  => Config::resolvePath('modules/monitoring/backends.ini'),
-                'filemode'  => octdec($this->data['fileMode'])
+                'filename'  => Config::resolvePath('modules/monitoring/backends.ini')
             ));
             $writer->write();
         } catch (Exception $e) {
@@ -66,7 +65,7 @@ class BackendStep extends Step
             $writer = new IniWriter(array(
                 'config'    => $config,
                 'filename'  => Config::resolvePath('resources.ini'),
-                'filemode'  => octdec($this->data['fileMode'])
+                'filemode'  => 0660
             ));
             $writer->write();
         } catch (Exception $e) {

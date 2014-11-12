@@ -51,8 +51,7 @@ class AuthenticationStep extends Step
         try {
             $writer = new IniWriter(array(
                 'config'    => new Config($config),
-                'filename'  => Config::resolvePath('authentication.ini'),
-                'filemode'  => octdec($this->data['fileMode'])
+                'filename'  => Config::resolvePath('authentication.ini')
             ));
             $writer->write();
         } catch (Exception $e) {
@@ -75,8 +74,7 @@ class AuthenticationStep extends Step
         try {
             $writer = new IniWriter(array(
                 'config'    => new Config($config),
-                'filename'  => Config::resolvePath('permissions.ini'),
-                'filemode'  => octdec($this->data['fileMode'])
+                'filename'  => Config::resolvePath('permissions.ini')
             ));
             $writer->write();
         } catch (Exception $e) {

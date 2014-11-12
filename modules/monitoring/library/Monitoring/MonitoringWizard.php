@@ -131,22 +131,19 @@ class MonitoringWizard extends Wizard implements SetupWizard
                 'backendConfig'     => $pageData['setup_monitoring_backend'],
                 'resourceConfig'    => isset($pageData['setup_monitoring_ido'])
                     ? array_diff_key($pageData['setup_monitoring_ido'], array('skip_validation' => null))
-                    : array_diff_key($pageData['setup_monitoring_livestatus'], array('skip_validation' => null)),
-                'fileMode'          => $pageData['setup_general_config']['global_filemode']
+                    : array_diff_key($pageData['setup_monitoring_livestatus'], array('skip_validation' => null))
             ))
         );
 
         $setup->addStep(
             new InstanceStep(array(
-                'instanceConfig'    => $pageData['setup_monitoring_instance'],
-                'fileMode'          => $pageData['setup_general_config']['global_filemode']
+                'instanceConfig'    => $pageData['setup_monitoring_instance']
             ))
         );
 
         $setup->addStep(
             new SecurityStep(array(
-                'securityConfig'    => $pageData['setup_monitoring_security'],
-                'fileMode'          => $pageData['setup_general_config']['global_filemode']
+                'securityConfig'    => $pageData['setup_monitoring_security']
             ))
         );
 

@@ -41,7 +41,7 @@ class ResourceStep extends Step
             $writer = new IniWriter(array(
                 'config'    => new Config($resourceConfig),
                 'filename'  => Config::resolvePath('resources.ini'),
-                'filemode'  => octdec($this->data['fileMode'])
+                'filemode'  => 0660
             ));
             $writer->write();
         } catch (Exception $e) {

@@ -28,8 +28,7 @@ class SecurityStep extends Step
         try {
             $writer = new IniWriter(array(
                 'config'    => new Config($config),
-                'filename'  => Config::resolvePath('modules/monitoring/config.ini'),
-                'filemode'  => octdec($this->data['fileMode'])
+                'filename'  => Config::resolvePath('modules/monitoring/config.ini')
             ));
             $writer->write();
         } catch (Exception $e) {

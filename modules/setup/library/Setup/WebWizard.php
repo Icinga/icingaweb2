@@ -306,8 +306,7 @@ class WebWizard extends Wizard implements SetupWizard
                 'preferencesType'       => $pageData['setup_preferences_type']['type'],
                 'preferencesResource'   => isset($pageData['setup_db_resource']['name'])
                     ? $pageData['setup_db_resource']['name']
-                    : null,
-                'fileMode'              => $pageData['setup_general_config']['global_filemode']
+                    : null
             ))
         );
 
@@ -325,7 +324,6 @@ class WebWizard extends Wizard implements SetupWizard
         $setup->addStep(
             new AuthenticationStep(array(
                 'adminAccountData'  => $adminAccountData,
-                'fileMode'          => $pageData['setup_general_config']['global_filemode'],
                 'backendConfig'     => $pageData['setup_authentication_backend'],
                 'resourceName'      => $authType === 'db' ? $pageData['setup_db_resource']['name'] : (
                     $authType === 'ldap' ? $pageData['setup_ldap_resource']['name'] : null
@@ -336,7 +334,6 @@ class WebWizard extends Wizard implements SetupWizard
         if (isset($pageData['setup_db_resource']) || isset($pageData['setup_ldap_resource'])) {
             $setup->addStep(
                 new ResourceStep(array(
-                    'fileMode'              => $pageData['setup_general_config']['global_filemode'],
                     'dbResourceConfig'      => isset($pageData['setup_db_resource'])
                         ? array_diff_key($pageData['setup_db_resource'], array('skip_validation' => null))
                         : null,

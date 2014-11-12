@@ -27,7 +27,7 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
      *
      * @var int
      */
-    public static $fileMode;
+    public static $fileMode = 0664;
 
     /**
      * Create a new INI writer
