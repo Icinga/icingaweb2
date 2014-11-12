@@ -463,7 +463,15 @@ class Form extends Zend_Form
         $el = parent::createElement($type, $name, $options);
 
         if ($el && $el->getAttrib('autosubmit')) {
-            $el->addDecorator(new NoScriptApply()); // Non-JS environments
+            $noScript = new NoScriptApply(); // Non-JS environments
+            $decorators = $el->getDecorators();
+            $pos = array_search('Zend_Form_Decorator_ViewHelper', array_keys($decorators)) + 1;
+            $el->setDecorators(
+                array_slice($decorators, 0, $pos, true)
+                + array(get_class($noScript) => $noScript)
+                + array_slice($decorators, $pos, count($decorators) - $pos, true)
+            );
+
             $class = $el->getAttrib('class');
             if (is_array($class)) {
                 $class[] = 'autosubmit';
@@ -473,6 +481,7 @@ class Form extends Zend_Form
                 $class .= ' autosubmit';
             }
             $el->setAttrib('class', $class); // JS environments
+
             unset($el->autosubmit);
         }
 
