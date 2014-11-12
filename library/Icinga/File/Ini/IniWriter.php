@@ -6,6 +6,7 @@ namespace Icinga\File\Ini;
 
 use Zend_Config;
 use Zend_Config_Ini;
+use Zend_Config_Exception;
 use Zend_Config_Writer_FileAbstract;
 use Icinga\Application\Config;
 
@@ -22,10 +23,17 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
     protected $options;
 
     /**
+     * The mode to set on new files
+     *
+     * @var int
+     */
+    public static $fileMode = 0664;
+
+    /**
      * Create a new INI writer
      *
-     * @param array $options   Supports all options of Zend_Config_Writer and additional
-     *                         options for the internal IniEditor:
+     * @param array $options   Supports all options of Zend_Config_Writer and additional options:
+     *                          * filemode:             The mode to set on new files
      *                          * valueIndentation:     The indentation level of the values
      *                          * commentIndentation:   The indentation level of the comments
      *                          * sectionSeparators:    The amount of newlines between sections
@@ -45,45 +53,6 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
     }
 
     /**
-     * Find all keys containing dots and convert it to a nested configuration
-     *
-     * Ensure that configurations with the same ini representation the have
-     * similarly nested Zend_Config objects. The configuration may be altered
-     * during that process.
-     *
-     * @param   Zend_Config $config   The configuration to normalize
-     * @return  Zend_Config           The normalized config
-     */
-    private function normalizeKeys(Zend_Config $config)
-    {
-        foreach ($config as $key => $value) {
-            if (preg_match('/\./', $key) > 0) {
-                // remove old key
-                unset ($config->$key);
-
-                // insert new key
-                $nests = explode('.', $key);
-                $current = $config;
-                $i = 0;
-                for (; $i < count($nests) - 1; $i++) {
-                    if (! isset($current->{$nests[$i]})) {
-                        // configuration key doesn't exist, create a new nesting level
-                        $current->{$nests[$i]} = new Zend_Config (array(), true);
-                    }
-                    // move to next nesting level
-                    $current = $current->{$nests[$i]};
-                }
-                // reached last nesting level, insert value
-                $current->{$nests[$i]} = $value;
-            }
-            if ($value instanceof Zend_Config) {
-                $config->$key = $this->normalizeKeys ($value);
-            }
-        }
-        return $config;
-    }
-
-    /**
      * Render the Zend_Config into a config file string
      *
      * @return  string
@@ -96,21 +65,35 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
             $oldconfig = new Zend_Config(array());
         }
 
-        // create an internal copy of the given configuration, since the user of this class
-        // won't expect that a configuration will ever be altered during
-        // the rendering process.
-        $extends = $this->_config->getExtends();
-        $this->_config = new Zend_Config ($this->_config->toArray(), true);
-        foreach ($extends as $extending => $extended) {
-           $this->_config->setExtend($extending, $extended);
-        }
-        $this->_config = $this->normalizeKeys($this->_config);
-
         $newconfig = $this->_config;
-        $editor = new IniEditor(file_get_contents($this->_filename), $this->options);
+        $editor = new IniEditor(@file_get_contents($this->_filename), $this->options);
         $this->diffConfigs($oldconfig, $newconfig, $editor);
         $this->updateSectionOrder($newconfig, $editor);
         return $editor->getText();
+    }
+
+    /**
+     * Write configuration to file and set file mode in case it does not exist yet
+     *
+     * @param string $filename
+     * @param Zend_Config $config
+     * @param bool $exclusiveLock
+     */
+    public function write($filename = null, Zend_Config $config = null, $exclusiveLock = null)
+    {
+        $filePath = $filename !== null ? $filename : $this->_filename;
+        $setMode = false === file_exists($filePath);
+
+        parent::write($filename, $config, $exclusiveLock);
+
+        if ($setMode) {
+            $mode = isset($this->options['filemode']) ? $this->options['filemode'] : static::$fileMode;
+            $old = umask(0); // Make sure that the mode we're going to set doesn't get mangled
+            if (is_int($mode) && false === @chmod($filePath, $mode)) {
+                throw new Zend_Config_Exception(sprintf('Failed to set file mode "%o" on file "%s"', $mode, $filePath));
+            }
+            umask($old);
+        }
     }
 
     /**

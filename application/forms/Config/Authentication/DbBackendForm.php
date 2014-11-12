@@ -5,6 +5,7 @@
 namespace Icinga\Form\Config\Authentication;
 
 use Exception;
+use Icinga\Application\Config;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
 use Icinga\Data\ResourceFactory;
@@ -54,7 +55,9 @@ class DbBackendForm extends Form
             array(
                 'required'      => true,
                 'label'         => t('Backend Name'),
-                'description'   => t('The name of this authentication provider'),
+                'description'   => t(
+                    'The name of this authentication provider that is used to differentiate it from others'
+                ),
             )
         );
         $this->addElement(
@@ -88,7 +91,7 @@ class DbBackendForm extends Form
      */
     public function onSuccess(Request $request)
     {
-        if (false === $this->isValidAuthenticationBackend($this)) {
+        if (false === static::isValidAuthenticationBackend($this)) {
             return false;
         }
     }
@@ -100,21 +103,29 @@ class DbBackendForm extends Form
      *
      * @return  bool            Whether validation succeeded or not
      */
-    public function isValidAuthenticationBackend(Form $form)
+    public static function isValidAuthenticationBackend(Form $form)
     {
-        $element = $form->getElement('resource');
-
         try {
-            $dbUserBackend = new DbUserBackend(ResourceFactory::create($element->getValue()));
+            $dbUserBackend = new DbUserBackend(ResourceFactory::createResource($form->getResourceConfig()));
             if ($dbUserBackend->count() < 1) {
-                $element->addError(t('No users found under the specified database backend'));
+                $form->addError(t('No users found under the specified database backend'));
                 return false;
             }
         } catch (Exception $e) {
-            $element->addError(sprintf(t('Using the specified backend failed: %s'), $e->getMessage()));
+            $form->addError(sprintf(t('Using the specified backend failed: %s'), $e->getMessage()));
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Return the configuration for the chosen resource
+     *
+     * @return  Config
+     */
+    public function getResourceConfig()
+    {
+        return ResourceFactory::getResourceConfig($this->getValue('resource'));
     }
 }

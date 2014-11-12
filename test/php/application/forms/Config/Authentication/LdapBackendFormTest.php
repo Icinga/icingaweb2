@@ -38,7 +38,7 @@ class LdapBackendFormTest extends BaseTestCase
         $form->populate(array('resource' => 'test_ldap_backend'));
 
         $this->assertTrue(
-            $form->isValidAuthenticationBackend($form),
+            LdapBackendForm::isValidAuthenticationBackend($form),
             'LdapBackendForm claims that a valid authentication backend with users is not valid'
         );
     }
@@ -59,7 +59,7 @@ class LdapBackendFormTest extends BaseTestCase
         $form->populate(array('resource' => 'test_ldap_backend'));
 
         $this->assertFalse(
-            $form->isValidAuthenticationBackend($form),
+            LdapBackendForm::isValidAuthenticationBackend($form),
             'LdapBackendForm claims that an invalid authentication backend without users is valid'
         );
     }
@@ -67,9 +67,9 @@ class LdapBackendFormTest extends BaseTestCase
     protected function setUpResourceFactoryMock()
     {
         Mockery::mock('alias:Icinga\Data\ResourceFactory')
+            ->shouldReceive('createResource')
+            ->andReturn(Mockery::mock('Icinga\Protocol\Ldap\Connection'))
             ->shouldReceive('getResourceConfig')
-            ->andReturn(new Config(array()))
-            ->shouldReceive('create')
-            ->andReturn(Mockery::mock('Icinga\Protocol\Ldap\Connection'));
+            ->andReturn(new Config());
     }
 }

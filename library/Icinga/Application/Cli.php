@@ -43,7 +43,8 @@ class Cli extends ApplicationBootstrap
             ->parseBasicParams()
             ->setupLogger()
             ->setupResourceFactory()
-            ->setupModuleManager();
+            ->setupModuleManager()
+            ->loadCoreModules();
     }
 
     protected function setupLogging()
@@ -52,8 +53,7 @@ class Cli extends ApplicationBootstrap
             new Config(
                 array(
                     'level' => Logger::INFO,
-                    'log'   => 'file',
-                    'file'  => 'php://stderr'
+                    'log'   => 'stdout',
                 )
             )
         );

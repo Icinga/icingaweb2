@@ -572,12 +572,12 @@ class Monitoring_ListController extends Controller
         $this->view->history = $query->paginate();
     }
 
-    public function servicematrixAction()
+    public function servicegridAction()
     {
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
-        $this->addTitleTab('servicematrix');
+        $this->addTitleTab('servicegrid', $this->translate('Service Grid'));
         $this->setAutorefreshInterval(15);
         $query = $this->backend->select()->from('serviceStatus', array(
             'host_name',

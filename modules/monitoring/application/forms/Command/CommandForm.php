@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Form\Command;
 
-use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Module\Monitoring\Command\Transport\CommandTransport;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
@@ -24,11 +24,11 @@ abstract class CommandForm extends Form
     /**
      * Set the monitoring backend
      *
-     * @param   Backend $backend
+     * @param   MonitoringBackend $backend
      *
      * @return  $this
      */
-    public function setBackend(Backend $backend)
+    public function setBackend(MonitoringBackend $backend)
     {
         $this->backend = $backend;
         return $this;

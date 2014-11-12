@@ -31,6 +31,15 @@ class LivestatusResourceForm extends Form
     {
         $this->addElement(
             'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => t('Resource Name'),
+                'description'   => t('The unique name of this resource')
+            )
+        );
+        $this->addElement(
+            'text',
             'socket',
             array(
                 'required'      => true,
@@ -50,7 +59,7 @@ class LivestatusResourceForm extends Form
      */
     public function onSuccess(Request $request)
     {
-        if (false === $this->isValidResource($this)) {
+        if (false === static::isValidResource($this)) {
             return false;
         }
     }
@@ -62,7 +71,7 @@ class LivestatusResourceForm extends Form
      *
      * @return  bool            Whether validation succeeded or not
      */
-    public function isValidResource(Form $form)
+    public static function isValidResource(Form $form)
     {
         try {
             $resource = ResourceFactory::createResource(new Config($form->getValues()));

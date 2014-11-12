@@ -29,6 +29,30 @@ class IniWriterTest extends BaseTestCase
         unlink($this->tempFile2);
     }
 
+    public function testWhetherPointInSectionIsNotNormalized()
+    {
+        $writer = new IniWriter(
+            array(
+                'config' => new Config(
+                        array(
+                            'section' => array(
+                                'foo.bar' => 1337
+                            ),
+                            'section.with.multiple.dots' => array(
+                                'some more' => array(
+                                    'nested stuff' => 'With more values'
+                                )
+                            )
+                        )
+                    ),
+                'filename' => $this->tempFile
+            )
+        );
+        $writer->write();
+        $config = Config::fromIni($this->tempFile)->toArray();
+        $this->assertTrue(array_key_exists('section.with.multiple.dots', $config), 'Section names not normalized');
+    }
+
     public function testWhetherSimplePropertiesAreInsertedInEmptyFiles()
     {
         $this->markTestSkipped('Implementation has changed. Section-less properties are not supported anymore');
@@ -700,44 +724,6 @@ EOD;
             $writer->render(),
             'IniWriter does not preserve comments on property lines'
         );
-    }
-
-    public function testKeyNormalization()
-    {
-        $normalKeys = new IniWriter(
-            array (
-                'config' => new Config(array (
-                        'foo' => 'bar',
-                        'nest' => array (
-                            'nested' => array (
-                                'stuff' => 'nested configuration element'
-                            )
-                        ),
-                        'preserving' => array (
-                            'ini' => array(
-                                'writer' => 'n'
-                            ),
-                            'foo' => 'this should not be overwritten'
-                        )
-                 )),
-                'filename' => $this->tempFile
-            )
-
-        );
-
-        $nestedKeys = new IniWriter(
-            array (
-                'config' => new Config(array (
-                    'foo' => 'bar',
-                    'nest.nested.stuff' => 'nested configuration element',
-                    'preserving.ini.writer' => 'n',
-                    'preserving.foo' => 'this should not be overwritten'
-                )),
-                'filename' => $this->tempFile2
-            )
-
-        );
-        $this->assertEquals($normalKeys->render(), $nestedKeys->render());
     }
 
     /**

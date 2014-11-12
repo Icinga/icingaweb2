@@ -67,7 +67,7 @@ class JavaScript
     public static function send($minified = false)
     {
         header('Content-Type: application/javascript');
-        $basedir = Icinga::app()->getBootstrapDirecory();
+        $basedir = Icinga::app()->getBootstrapDirectory();
 
         $js = $out = '';
         $min = $minified ? '.min' : '';

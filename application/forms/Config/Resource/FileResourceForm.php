@@ -27,6 +27,15 @@ class FileResourceForm extends Form
     {
         $this->addElement(
             'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => t('Resource Name'),
+                'description'   => t('The unique name of this resource')
+            )
+        );
+        $this->addElement(
+            'text',
             'filename',
             array(
                 'required'      => true,

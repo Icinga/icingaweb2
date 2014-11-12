@@ -12,9 +12,17 @@ use Icinga\Application\Config;
 abstract class LogWriter
 {
     /**
+     * @var Zend_Config
+     */
+    protected $config;
+
+    /**
      * Create a new log writer initialized with the given configuration
      */
-    abstract public function __construct(Config $config);
+    public function __construct(Config $config)
+    {
+        $this->config = $config;
+    }
 
     /**
      * Log a message with the given severity
