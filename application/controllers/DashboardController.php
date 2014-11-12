@@ -63,20 +63,16 @@ class DashboardController extends ActionController
                 $pane = $this->_getParam('pane');
                 $dashboard->activate($pane);
             }
-
             if ($dashboard === null) {
                 $this->view->title = 'Dashboard';
             } else {
                 $this->view->title = $dashboard->getActivePane()->getTitle() . ' :: Dashboard';
                 $this->view->tabs = $dashboard->getTabs();
-
                 if ($this->hasParam('remove')) {
                     $dashboard->getActivePane()->removeComponent($this->getParam('remove'));
                     $dashboard->write();
                     $this->redirectNow(URL::fromRequest()->remove('remove'));
                 }
-
-                /* Temporarily removed
                 $this->view->tabs->add(
                     'Add',
                     array(
@@ -84,8 +80,6 @@ class DashboardController extends ActionController
                         'url' => Url::fromPath('dashboard/addurl')
                     )
                 );
-                */
-
                 $this->view->dashboard = $dashboard;
             }
         }
