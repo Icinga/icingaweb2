@@ -128,7 +128,9 @@ class DbStore extends PreferencesStore
             if (! array_key_exists($section, $this->preferences)) {
                 $this->preferences[$section] = array();
             }
-
+            if (! array_key_exists($section, $preferences)) {
+                $preferences[$section] = array();
+            }
             $toBeInserted = array_diff_key($preferences[$section], $this->preferences[$section]);
             if (!empty($toBeInserted)) {
                 $this->insert($toBeInserted, $section);
