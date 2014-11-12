@@ -101,13 +101,12 @@ abstract class ApplicationBootstrap
      */
     protected function __construct($configDir = null)
     {
-        $this->libDir = realpath(__DIR__ . '/../..');
-
-        if (! defined('ICINGAWEB_BASEDIR')) {
-            throw new LogicException('\'ICINGAWEB_BASEDIR\' is not defined');
-        }
+        define('ICINGAWEB_BASEDIR', dirname($this->getBootstrapDirecory()));
         define('ICINGAWEB_VENDORS', ICINGAWEB_BASEDIR . '/library/vendor');
         define('ICINGAWEB_APPDIR', ICINGAWEB_BASEDIR . '/application');
+
+        $this->appDir = ICINGAWEB_APPDIR;
+        $this->libDir = realpath(__DIR__ . '/../..');
 
         if ($configDir === null) {
             if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
