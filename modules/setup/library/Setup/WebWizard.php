@@ -355,7 +355,7 @@ class WebWizard extends Wizard implements SetupWizard
                     $configDir . '/preferences',
                     $configDir . '/enabledModules'
                 ),
-                $pageData['setup_general_config']['global_filemode']
+                0775
             )
         );
 

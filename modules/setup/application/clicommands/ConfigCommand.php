@@ -20,13 +20,13 @@ class ConfigCommand extends Command
      *
      * OPTIONS:
      *
-     *   --mode  The access mode to use. Default is: 2775
+     *   --mode  The access mode to use. Default is: 2770
      *   --path  The path to the configuration directory. If omitted the default is used.
      *
      * EXAMPLES:
      *
      *   icingacli setup config createDirectory apache
-     *   icingacli setup config createDirectory apache --mode 2770
+     *   icingacli setup config createDirectory apache --mode 2775
      *   icingacli setup config createDirectory apache --path /some/path
      */
     public function createDirectoryAction()
@@ -43,7 +43,7 @@ class ConfigCommand extends Command
             return true;
         }
 
-        $mode = octdec($this->params->get('mode', '2775'));
+        $mode = octdec($this->params->get('mode', '2770'));
         if (false === mkdir($path)) {
             $this->fail(sprintf($this->translate('Unable to create path: %s'), $path));
             return false;

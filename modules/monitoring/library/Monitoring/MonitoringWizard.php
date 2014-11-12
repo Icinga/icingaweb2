@@ -124,12 +124,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
         $pageData = $this->getPageData();
         $setup = new Setup();
 
-        $setup->addStep(
-            new MakeDirStep(
-                array($this->getConfigDir() . '/modules/monitoring'),
-                $pageData['setup_general_config']['global_filemode']
-            )
-        );
+        $setup->addStep(new MakeDirStep(array($this->getConfigDir() . '/modules/monitoring'), 0775));
 
         $setup->addStep(
             new BackendStep(array(
