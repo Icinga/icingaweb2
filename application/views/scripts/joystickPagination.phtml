@@ -1,0 +1,99 @@
+<?php
+
+use Icinga\Web\Url;
+
+if ($xAxisPaginator->count() <= 1 && $yAxisPaginator->count() <= 1) {
+    return; // Display this pagination only if there are multiple pages
+}
+
+$fromTo = t('%s: %d to %d of %d');
+$xAxisPages = $xAxisPaginator->getPages('all');
+$yAxisPages = $yAxisPaginator->getPages('all');
+
+$totalYAxisPages = $yAxisPaginator->count();
+$currentYAxisPage = $yAxisPaginator->getCurrentPageNumber();
+$prevYAxisPage = $currentYAxisPage > 1 ? $currentYAxisPage - 1 : null;
+$nextYAxisPage = $currentYAxisPage < $totalYAxisPages ? $currentYAxisPage + 1 : null;
+
+$totalXAxisPages = $xAxisPaginator->count();
+$currentXAxisPage = $xAxisPaginator->getCurrentPageNumber();
+$prevXAxisPage = $currentXAxisPage > 1 ? $currentXAxisPage - 1 : null;
+$nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : null;
+
+?>
+
+<table class="joystick-pagination">
+  <tbody>
+    <tr>
+      <td>&nbsp;</td>
+      <td>
+      <?php if ($prevYAxisPage): ?>
+        <a href="<?= Url::fromRequest()->overwriteParams(array(
+          'page' => $currentXAxisPage . ',' . $prevYAxisPage
+        ))->getAbsoluteUrl(); ?>" title="<?= sprintf(
+          $fromTo,
+          t('Hosts'),
+          ($prevYAxisPage - 1) * $yAxisPages->itemCountPerPage + 1,
+          $prevYAxisPage * $yAxisPages->itemCountPerPage,
+          $yAxisPages->totalItemCount
+        ); ?>"><?= $this->icon('up_petrol.png'); ?></a>
+      <?php else: ?>
+        <?= $this->icon('up.png'); ?>
+      <?php endif ?>
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>
+      <?php if ($prevXAxisPage): ?>
+        <a href="<?= Url::fromRequest()->overwriteParams(array(
+          'page' => $prevXAxisPage . ',' . $currentYAxisPage
+        ))->getAbsoluteUrl(); ?>" title="<?= sprintf(
+          $fromTo,
+          t('Services'),
+          ($prevXAxisPage - 1) * $xAxisPages->itemCountPerPage + 1,
+          $prevXAxisPage * $xAxisPages->itemCountPerPage,
+          $xAxisPages->totalItemCount
+        ); ?>"><?= $this->icon('prev_petrol.png'); ?></a>
+      <?php else: ?>
+        <?= $this->icon('prev.png'); ?>
+      <?php endif ?>
+      </td>
+      <td>&nbsp;</td>
+      <td>
+      <?php if ($nextXAxisPage): ?>
+        <a href="<?= Url::fromRequest()->overwriteParams(array(
+          'page' => $nextXAxisPage . ',' . $currentYAxisPage
+        ))->getAbsoluteUrl(); ?>" title="<?= sprintf(
+          $fromTo,
+          t('Services'),
+          $currentXAxisPage * $xAxisPages->itemCountPerPage + 1,
+          $nextXAxisPage * $xAxisPages->itemCountPerPage,
+          $xAxisPages->totalItemCount
+        ); ?>"><?= $this->icon('next_petrol.png'); ?></a>
+      <?php else: ?>
+        <?= $this->icon('next.png'); ?>
+      <?php endif ?>
+      </td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td>
+      <?php if ($nextYAxisPage): ?>
+        <a href="<?= Url::fromRequest()->overwriteParams(array(
+          'page' => $currentXAxisPage . ',' . $nextYAxisPage
+        ))->getAbsoluteUrl(); ?>" title="<?= sprintf(
+          $fromTo,
+          t('Hosts'),
+          $currentYAxisPage * $yAxisPages->itemCountPerPage + 1,
+          $nextYAxisPage * $yAxisPages->itemCountPerPage,
+          $yAxisPages->totalItemCount
+        ); ?>"><?= $this->icon('down_petrol.png'); ?></a>
+      <?php else: ?>
+        <?= $this->icon('down.png'); ?>
+      <?php endif ?>
+      </td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
