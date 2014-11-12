@@ -114,11 +114,11 @@ abstract class ApplicationBootstrap
     protected function __construct($baseDir = null, $configDir = null)
     {
         if ($baseDir === null) {
-            $baseDir = dirname($this->getBootstrapDirecory());
+            $baseDir = dirname($this->getBootstrapDirectory());
         }
         $this->baseDir = $baseDir;
         if (! defined('ICINGAWEB_BASEDIR')) {
-            define('ICINGAWEB_BASEDIR', dirname($this->getBootstrapDirecory()));
+            define('ICINGAWEB_BASEDIR', dirname($this->getBootstrapDirectory()));
         }
         define('ICINGAWEB_VENDORS', ICINGAWEB_BASEDIR . '/library/vendor');
         define('ICINGAWEB_APPDIR', ICINGAWEB_BASEDIR . '/application');
@@ -265,7 +265,7 @@ abstract class ApplicationBootstrap
      *
      * @return string
      */
-    public function getBootstrapDirecory()
+    public function getBootstrapDirectory()
     {
         return dirname(realpath($_SERVER['SCRIPT_FILENAME']));
     }

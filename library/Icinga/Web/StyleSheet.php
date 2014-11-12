@@ -31,7 +31,7 @@ class StyleSheet
     public static function compileForPdf()
     {
         $less = new LessCompiler();
-        $basedir = Icinga::app()->getBootstrapDirecory();
+        $basedir = Icinga::app()->getBootstrapDirectory();
         foreach (self::$lessFiles as $file) {
             $less->addFile($basedir . '/' . $file);
         }
@@ -57,7 +57,7 @@ class StyleSheet
     public static function send($minified = false)
     {
         $app = Icinga::app();
-        $basedir = $app->getBootstrapDirecory();
+        $basedir = $app->getBootstrapDirectory();
         foreach (self::$lessFiles as $file) {
             $lessFiles[] = $basedir . '/' . $file;
         }
