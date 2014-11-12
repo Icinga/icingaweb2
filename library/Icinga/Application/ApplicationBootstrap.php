@@ -101,7 +101,9 @@ abstract class ApplicationBootstrap
      */
     protected function __construct($configDir = null)
     {
-        define('ICINGAWEB_BASEDIR', dirname($this->getBootstrapDirecory()));
+        if (! defined('ICINGAWEB_BASEDIR')) {
+            define('ICINGAWEB_BASEDIR', dirname($this->getBootstrapDirecory()));
+        }
         define('ICINGAWEB_VENDORS', ICINGAWEB_BASEDIR . '/library/vendor');
         define('ICINGAWEB_APPDIR', ICINGAWEB_BASEDIR . '/application');
 
