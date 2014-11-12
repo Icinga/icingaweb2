@@ -27,26 +27,6 @@ class ApplicationConfigForm extends Form
      */
     public function createElements(array $formData)
     {
-        $tzList = array();
-        foreach (DateTimeZone::listIdentifiers() as $tz) {
-            $tzList[$tz] = $tz;
-        }
-
-        $this->addElement(
-            'select',
-            'global_timezone',
-            array(
-                'label'         => t('Default Application Timezone'),
-                'required'      => true,
-                'multiOptions'  => $tzList,
-                'description'   => t(
-                    'Select the timezone to be used as the default. User\'s can set their own timezone if'
-                    . ' they like to, but this is the timezone to be used as the default setting .'
-                ),
-                'value'         => date_default_timezone_get()
-            )
-        );
-
         $this->addElement(
             'text',
             'global_modulePath',
