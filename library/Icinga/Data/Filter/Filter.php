@@ -79,7 +79,7 @@ abstract class Filter
             }
         }
 
-        krsort($operators, SORT_NATURAL);
+        krsort($operators, version_compare(PHP_VERSION, '5.4.0') >= 0 ? SORT_NATURAL : SORT_REGULAR);
         foreach ($operators as $id => $operator) {
             $f = $filter->getById($id);
             if ($f->getOperatorName() !== $operator) {

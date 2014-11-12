@@ -201,7 +201,7 @@ class Tab extends AbstractWidget
         $caption = $view->escape($this->title);
 
         if ($this->icon !== null) {
-            $caption = $view->img($this->icon, array('class' => 'icon')) . ' ' . $caption;
+            $caption = $view->img($this->icon, array('class' => 'icon')) . $caption;
         }
         if ($this->url !== null) {
             $this->url->overwriteParams($this->urlParams);
