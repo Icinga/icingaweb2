@@ -4,6 +4,7 @@
 
 namespace Icinga\Web;
 
+use Icinga\Authentication\Manager;
 use Icinga\Web\Menu\MenuItemRenderer;
 use RecursiveIterator;
 use Zend_Config;
@@ -201,41 +202,50 @@ class Menu implements RecursiveIterator
      */
     protected function addMainMenuItems()
     {
-        $this->add(t('Dashboard'), array(
-            'url'      => 'dashboard',
-            'icon'     => 'img/icons/dashboard.png',
-            'priority' => 10
-        ));
+        $auth = Manager::getInstance();
 
-        $section = $this->add(t('System'), array(
-            'icon'     => 'img/icons/configuration.png',
-            'priority' => 200
-        ));
-        $section->add(t('Preferences'), array(
-            'url'      => 'preference',
-            'priority' => 200
-        ));
-        $section->add(t('Configuration'), array(
-            'url'      => 'config',
-            'priority' => 300
-        ));
-        $section->add(t('Modules'), array(
-            'url'      => 'config/modules',
-            'priority' => 400
-        ));
+        if ($auth->isAuthenticated()) {
 
-        if (Logger::writesToFile()) {
-            $section->add(t('Application Log'), array(
-                'url'      => 'list/applicationlog',
-                'priority' => 500
+            $this->add(t('Dashboard'), array(
+                'url'      => 'dashboard',
+                'icon'     => 'img/icons/dashboard.png',
+                'priority' => 10
+            ));
+
+            $section = $this->add(t('System'), array(
+                'icon'     => 'img/icons/configuration.png',
+                'priority' => 200
+            ));
+            $section->add(t('Configuration'), array(
+                'url'      => 'config',
+                'priority' => 300
+            ));
+            $section->add(t('Modules'), array(
+                'url'      => 'config/modules',
+                'priority' => 400
+            ));
+
+            if (Logger::writesToFile()) {
+                $section->add(t('Application Log'), array(
+                    'url'      => 'list/applicationlog',
+                    'priority' => 500
+                ));
+            }
+
+            $section = $this->add($auth->getUser()->getUsername(), array(
+                'icon'     => 'img/icons/user.png',
+                'priority' => 600
+            ));
+            $section->add(t('Preferences'), array(
+                'url'      => 'preference',
+                'priority' => 601
+            ));
+
+            $section->add(t('Logout'), array(
+                'url'      => 'authentication/logout',
+                'priority' => 700
             ));
         }
-
-        $this->add(t('Logout'), array(
-            'url'      => 'authentication/logout',
-            'icon'     => 'img/icons/logout.png',
-            'priority' => 300
-        ));
     }
 
     /**
