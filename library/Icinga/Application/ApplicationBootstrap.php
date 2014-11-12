@@ -14,6 +14,7 @@ use Icinga\Exception\NotReadableError;
 use Icinga\Application\Logger;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
+use Icinga\Util\TimezoneDetect;
 use Icinga\Exception\IcingaException;
 
 /**
@@ -441,7 +442,14 @@ abstract class ApplicationBootstrap
      */
     protected function setupTimezone()
     {
-        $default = @date_default_timezone_get();
+        $detect = new TimezoneDetect();
+
+        if ($detect->success()) {
+            $default = $detect->getTimezoneName();
+        } else {
+            $default = @date_default_timezone_get();
+        }
+
         if (! $default) {
             $default = 'UTC';
         }
