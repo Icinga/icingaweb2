@@ -95,8 +95,11 @@ class Zend_View_Helper_MonitoringState extends Zend_View_Helper_Abstract
      */
     public function getStateTitle($object, $type)
     {
-        return strtoupper($this->monitoringState($object, $type))
-        . ' since '
-        . date('Y-m-d H:i:s', $object->{$type.'_last_state_change'});
+        return sprintf(
+            '%s %s %s',
+             $this->view->translate(strtoupper($this->monitoringState($object, $type))),
+            $this->view->translate('since'),
+            date('Y-m-d H:i:s', $object->{$type.'_last_state_change'})
+        );
     }
 }

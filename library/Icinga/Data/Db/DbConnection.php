@@ -216,7 +216,10 @@ class DbConnection implements Selectable
      */
     public function fetchRow(DbQuery $query)
     {
-        return $this->dbAdapter->fetchRow($query->getSelectQuery());
+        Benchmark::measure('DB is fetching row');
+        $result = $this->dbAdapter->fetchRow($query->getSelectQuery());
+        Benchmark::measure('DB row done');
+        return $result;
     }
 
     /**

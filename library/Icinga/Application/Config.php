@@ -378,7 +378,7 @@ class Config implements Countable, Iterator, ArrayAccess
             );
         }
 
-        if ($default !== null) {
+        if ($value === null && $default !== null) {
             $value = $default;
         }
 

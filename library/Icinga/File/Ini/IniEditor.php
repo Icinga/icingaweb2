@@ -433,6 +433,9 @@ class IniEditor
      */
     private function formatKey(array $key)
     {
+        foreach ($key as $i => $separator) {
+            $key[$i] = $this->sanitize($separator);
+        }
         return implode($this->nestSeparator, $key);
     }
 
@@ -599,7 +602,7 @@ class IniEditor
     }
 
     /**
-     * Prepare a value for INe
+     * Prepare a value for INI
      *
      * @param $value    The value of the string
      *
@@ -613,10 +616,12 @@ class IniEditor
             return $value;
         } elseif (is_bool($value)) {
             return ($value ? 'true' : 'false');
-        } elseif (strpos($value, '"') === false) {
-            return '"' . $value .  '"';
-        } else {
-            return '"' . str_replace('"', '\"', $value) . '"';
         }
+        return '"' . str_replace('"', '\"', $this->sanitize($value)) . '"';
+    }
+
+    private function sanitize($value)
+    {
+        return str_replace('\n', '', $value);
     }
 }

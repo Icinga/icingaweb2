@@ -266,6 +266,11 @@ class ConfigTest extends BaseTestCase
             $config->fromSection('a', 'c', 'test'),
             'Config::fromSection does not return the given default value for non-existent section properties'
         );
+        $this->assertEquals(
+            'c',
+            $config->fromSection('a', 'b', 'test'),
+            'Config::fromSection does not return the actual value of a section\'s property in case a default is given'
+        );
     }
 
     /**

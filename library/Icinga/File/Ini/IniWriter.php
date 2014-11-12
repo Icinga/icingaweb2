@@ -53,45 +53,6 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
     }
 
     /**
-     * Find all keys containing dots and convert it to a nested configuration
-     *
-     * Ensure that configurations with the same ini representation the have
-     * similarly nested Zend_Config objects. The configuration may be altered
-     * during that process.
-     *
-     * @param   Zend_Config $config   The configuration to normalize
-     * @return  Zend_Config           The normalized config
-     */
-    private function normalizeKeys(Zend_Config $config)
-    {
-        foreach ($config as $key => $value) {
-            if (preg_match('/\./', $key) > 0) {
-                // remove old key
-                unset ($config->$key);
-
-                // insert new key
-                $nests = explode('.', $key);
-                $current = $config;
-                $i = 0;
-                for (; $i < count($nests) - 1; $i++) {
-                    if (! isset($current->{$nests[$i]})) {
-                        // configuration key doesn't exist, create a new nesting level
-                        $current->{$nests[$i]} = new Zend_Config (array(), true);
-                    }
-                    // move to next nesting level
-                    $current = $current->{$nests[$i]};
-                }
-                // reached last nesting level, insert value
-                $current->{$nests[$i]} = $value;
-            }
-            if ($value instanceof Zend_Config) {
-                $config->$key = $this->normalizeKeys ($value);
-            }
-        }
-        return $config;
-    }
-
-    /**
      * Render the Zend_Config into a config file string
      *
      * @return  string
@@ -103,16 +64,6 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
         } else {
             $oldconfig = new Zend_Config(array());
         }
-
-        // create an internal copy of the given configuration, since the user of this class
-        // won't expect that a configuration will ever be altered during
-        // the rendering process.
-        $extends = $this->_config->getExtends();
-        $this->_config = new Zend_Config ($this->_config->toArray(), true);
-        foreach ($extends as $extending => $extended) {
-           $this->_config->setExtend($extending, $extended);
-        }
-        $this->_config = $this->normalizeKeys($this->_config);
 
         $newconfig = $this->_config;
         $editor = new IniEditor(@file_get_contents($this->_filename), $this->options);
