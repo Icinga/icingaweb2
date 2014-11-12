@@ -28,7 +28,7 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
       <td>&nbsp;</td>
       <td>
       <?php if ($prevYAxisPage): ?>
-        <a href="<?= Url::fromRequest()->overwriteParams(array(
+        <a target="_self" href="<?= Url::fromRequest()->overwriteParams(array(
           'page' => $currentXAxisPage . ',' . $prevYAxisPage
         ))->getAbsoluteUrl(); ?>" title="<?= sprintf(
           $fromTo,
@@ -46,7 +46,7 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
     <tr>
       <td>
       <?php if ($prevXAxisPage): ?>
-        <a href="<?= Url::fromRequest()->overwriteParams(array(
+        <a target="_self" href="<?= Url::fromRequest()->overwriteParams(array(
           'page' => $prevXAxisPage . ',' . $currentYAxisPage
         ))->getAbsoluteUrl(); ?>" title="<?= sprintf(
           $fromTo,
@@ -62,7 +62,7 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
       <td>&nbsp;</td>
       <td>
       <?php if ($nextXAxisPage): ?>
-        <a href="<?= Url::fromRequest()->overwriteParams(array(
+        <a target="_self" href="<?= Url::fromRequest()->overwriteParams(array(
           'page' => $nextXAxisPage . ',' . $currentYAxisPage
         ))->getAbsoluteUrl(); ?>" title="<?= sprintf(
           $fromTo,
@@ -80,7 +80,7 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
       <td>&nbsp;</td>
       <td>
       <?php if ($nextYAxisPage): ?>
-        <a href="<?= Url::fromRequest()->overwriteParams(array(
+        <a target="_self" href="<?= Url::fromRequest()->overwriteParams(array(
           'page' => $currentXAxisPage . ',' . $nextYAxisPage
         ))->getAbsoluteUrl(); ?>" title="<?= sprintf(
           $fromTo,
