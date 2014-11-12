@@ -58,10 +58,6 @@ class GeneralConfigStep extends Step
         $generalHtml = ''
             . '<ul>'
             . '<li>' . sprintf(
-                mt('setup', 'Icinga Web 2 will save new configuration files using the mode "%s".'),
-                $this->data['generalConfig']['global_filemode']
-            ) . '</li>'
-            . '<li>' . sprintf(
                 $this->data['preferencesType'] === 'ini' ? sprintf(
                     t('Preferences will be stored per user account in INI files at: %s'),
                     Config::resolvePath('preferences')

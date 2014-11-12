@@ -8,8 +8,6 @@ use DateTimeZone;
 use Icinga\Web\Form;
 use Icinga\Util\Translator;
 use Icinga\Data\ResourceFactory;
-use Icinga\Web\Form\Element\Number;
-use Icinga\File\Ini\IniWriter;
 
 /**
  * Form class to modify the general application configuration
@@ -64,20 +62,6 @@ class ApplicationConfigForm extends Form
                     . ' they like to, but this is the timezone to be used as the default setting .'
                 ),
                 'value'         => date_default_timezone_get()
-            )
-        );
-
-        $this->addElement(
-            new Number(
-                'global_filemode',
-                array(
-                    'required'      => true,
-                    'label'         => t('Default File Mode'),
-                    'description'   => t(
-                        'This is the global default file mode for new configuration files created by Icinga Web 2.'
-                    ),
-                    'value'         => decoct(IniWriter::$fileMode)
-                )
             )
         );
 

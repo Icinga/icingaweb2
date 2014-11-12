@@ -381,12 +381,6 @@ abstract class ApplicationBootstrap
             $this->config = new Config();
         }
 
-        if ($this->config->global !== null) {
-            IniWriter::$fileMode = octdec($this->config->global->get('filemode', '0664'));
-        } else {
-            IniWriter::$fileMode = 0664;
-        }
-
         return $this;
     }
 
