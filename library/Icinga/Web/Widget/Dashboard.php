@@ -276,6 +276,20 @@ class Dashboard extends AbstractWidget
     }
 
     /**
+     * Return an array with pane name=>title format used for comboboxes
+     *
+     * @return array
+     */
+    public function getPaneKeyTitleArray()
+    {
+        $list = array();
+        foreach ($this->panes as $name => $pane) {
+            $list[$name] = $pane->getTitle();
+        }
+        return $list;
+    }
+
+    /**
      * @see Icinga\Web\Widget::render
      */
     public function render()

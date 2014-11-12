@@ -32,7 +32,14 @@ class DashboardController extends ActionController
                 'url' => Url::fromRequest()
             )
         )->activate('addurl');
+
         $form = new AddUrlForm();
+
+        $dashboard = new Dashboard();
+        $dashboard->setUser($this->getRequest()->getUser());
+        $dashboard->load();
+        $form->setDashboard($dashboard);
+        $form->setRedirectUrl($this->getParam('url'));
         $form->handleRequest();
         $this->view->form = $form;
     }

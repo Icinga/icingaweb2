@@ -5,7 +5,9 @@
 namespace Icinga\Forms\Dashboard;
 
 use Icinga\Application\Config;
+use Icinga\Exception\ProgrammingError;
 use Icinga\File\Ini\IniWriter;
+use Icinga\Web\Url;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
@@ -23,6 +25,11 @@ class AddUrlForm extends Form
     private $configFile = 'dashboard/dashboard';
 
     /**
+     * @var Dashboard
+     */
+    private $dashboard;
+
+    /**
      * Initialize this form
      */
     public function init()
@@ -38,7 +45,12 @@ class AddUrlForm extends Form
      */
     public function createElements(array $formData)
     {
-        $paneSelectionValues = $this->getDashboardPaneSelectionValues();
+        $paneSelectionValues = array();
+
+        if ($this->dashboard !== null) {
+            $paneSelectionValues = $this->dashboard->getPaneKeyTitleArray();
+        }
+
         $groupElements = array();
 
         $this->addElement(
@@ -143,67 +155,40 @@ class AddUrlForm extends Form
     }
 
     /**
-     * Create a dashboard object
-     *
-     * @return Dashboard
-     */
-    private function createDashboard()
-    {
-        $dashboard = new Dashboard();
-        $dashboard->readConfig(Config::app($this->getConfigFile()));
-        return $dashboard;
-    }
-
-    /**
-     * Return the names and titles of the available dashboard panes as key-value array
-     *
-     * @return  array
-     */
-    private function getDashboardPaneSelectionValues()
-    {
-        return $this->createDashboard()->getPaneKeyTitleArray();
-    }
-
-    /**
-     * @param string $configFile
-     */
-    public function setConfigFile($configFile)
-    {
-        $this->configFile = $configFile;
-    }
-
-    /**
-     * @return string
-     */
-    public function getConfigFile()
-    {
-        return $this->configFile;
-    }
-
-    /**
      * Adjust preferences and persist them
      *
      * @see Form::onSuccess()
      */
     public function onSuccess(Request $request)
     {
-        $dashboard = $this->createDashboard();
-        $dashboard->setComponentUrl(
-            $this->getValue('pane'),
+        $pane = null;
+
+        if ($this->dashboard === null) {
+            throw new ProgrammingError('Dashboard is not set, can not write values');
+        }
+
+        try {
+            $pane = $this->dashboard->getPane($this->getValue('pane'));
+        } catch (ProgrammingError $e) {
+            $pane = new Dashboard\Pane($this->getValue('pane'));
+            $pane->setUserWidget();
+            $this->dashboard->addPane($pane);
+        }
+
+        $component = new Dashboard\Component(
             $this->getValue('component'),
-            ltrim($this->getValue('url'), '/')
-        );
-        /*
-        $writer = new IniWriter(
-            array(
-                'config'    => new Config($dashboard->toArray()),
-                'filename'  => $dashboard->getConfig()->getConfigFile()
-            )
+            $this->getValue('url'),
+            $pane
         );
 
-        $writer->write();
-        */
-        return false;
+        $component->setUserWidget();
+
+        $pane->addComponent($component);
+
+        $this->dashboard->write();
+
+
+        return true;
     }
 
     /**
@@ -213,9 +198,36 @@ class AddUrlForm extends Form
      */
     public function onRequest(Request $request)
     {
+        // TODO(mh): Im not sure if this is the right place for that
+        $url = $this->getValue('url');
+        if (! $url) {
+            $url = $request->getParam('url');
+        }
+
+        if (! $url) {
+            return;
+        }
+
         $data = array(
-            'url' => $request->getParam('url')
+            'url' => urldecode(Url::fromPath($url)->getPath())
         );
+
         $this->populate($data);
+    }
+
+    /**
+     * @param Dashboard $dashboard
+     */
+    public function setDashboard(Dashboard $dashboard)
+    {
+        $this->dashboard = $dashboard;
+    }
+
+    /**
+     * @return Dashboard
+     */
+    public function getDashboard()
+    {
+        return $this->dashboard;
     }
 }
