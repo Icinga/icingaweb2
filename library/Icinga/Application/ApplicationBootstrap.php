@@ -6,7 +6,6 @@ namespace Icinga\Application;
 
 use ErrorException;
 use Exception;
-use LogicException;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
@@ -41,6 +40,15 @@ use Icinga\Exception\IcingaException;
  */
 abstract class ApplicationBootstrap
 {
+    /**
+     * Base directory
+     *
+     * Parent folder for at least application, bin, modules, library/vendor and public
+     *
+     * @var string
+     */
+    protected $baseDir;
+
     /**
      * Icinga auto loader
      *
@@ -99,9 +107,16 @@ abstract class ApplicationBootstrap
 
     /**
      * Constructor
+     *
+     * @param string $baseDir   Icinga Web 2 base directory
+     * @param string $configDir Path to Icinga Web 2's configuration files
      */
-    protected function __construct($configDir = null)
+    protected function __construct($baseDir = null, $configDir = null)
     {
+        if ($baseDir === null) {
+            $baseDir = dirname($this->getBootstrapDirecory());
+        }
+        $this->baseDir = $baseDir;
         if (! defined('ICINGAWEB_BASEDIR')) {
             define('ICINGAWEB_BASEDIR', dirname($this->getBootstrapDirecory()));
         }
@@ -189,6 +204,35 @@ abstract class ApplicationBootstrap
     }
 
     /**
+     * Helper to glue directories together
+     *
+     * @param   string $dir
+     * @param   string $subdir
+     *
+     * @return  string
+     */
+    private function getDirWithSubDir($dir, $subdir = null)
+    {
+        if ($subdir !== null) {
+            $dir .= '/' . ltrim($subdir, '/');
+        }
+
+        return $dir;
+    }
+
+    /**
+     * Get the base directory
+     *
+     * @param   string $subDir Optional sub directory to get
+     *
+     * @return  string
+     */
+    public function getBaseDir($subDir = null)
+    {
+        return $this->getDirWithSubDir($subDir);
+    }
+
+    /**
      * Getter for application dir
      *
      * Optional append sub directory
@@ -227,32 +271,16 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Helper to glue directories together
+     * Start the bootstrap
      *
-     * @param   string $dir
-     * @param   string $subdir
+     * @param   string $baseDir     Icinga Web 2 base directory
+     * @param   string $configDir   Path to Icinga Web 2's configuration files
      *
-     * @return  string
+     * @return  static
      */
-    private function getDirWithSubDir($dir, $subdir = null)
+    public static function start($baseDir = null, $configDir = null)
     {
-        if ($subdir !== null) {
-            $dir .= '/' . ltrim($subdir, '/');
-        }
-
-        return $dir;
-    }
-
-    /**
-     * Starting concrete bootstrap classes
-     *
-     * @param   string $configDir
-     *
-     * @return  ApplicationBootstrap
-     */
-    public static function start($configDir = null)
-    {
-        $application = new static($configDir);
+        $application = new static($baseDir, $configDir);
         $application->bootstrap();
         return $application;
     }

@@ -75,8 +75,8 @@ $section->add($this->translate('Services'), array(
     'url'      => 'monitoring/list/services',
     'priority' => 50
 ));
-$section->add($this->translate('Servicematrix'), array(
-    'url'      => 'monitoring/list/servicematrix?service_problem=1',
+$section->add($this->translate('Service Grid'), array(
+    'url'      => 'monitoring/list/servicegrid?service_problem=1',
     'priority' => 51
 ));
 $section->add($this->translate('Servicegroups'), array(
