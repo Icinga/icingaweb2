@@ -9,6 +9,7 @@ use Icinga\Exception\NotReadableError;
 use Icinga\Exception\NotWritableError;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
+use Zend_Db_Expr;
 
 /**
  * Load and save user preferences by using a database
@@ -21,9 +22,14 @@ class DbStore extends PreferencesStore
     const COLUMN_USERNAME = 'username';
 
     /**
+     * Column name for section
+     */
+    const COLUMN_SECTION = 'section';
+
+    /**
      * Column name for preference
      */
-    const COLUMN_PREFERENCE = 'key';
+    const COLUMN_PREFERENCE = 'name';
 
     /**
      * Column name for value
@@ -31,11 +37,21 @@ class DbStore extends PreferencesStore
     const COLUMN_VALUE = 'value';
 
     /**
+     * Column name for created time
+     */
+    const COLUMN_CREATED_TIME = 'ctime';
+
+    /**
+     * Column name for modified time
+     */
+    const COLUMN_MODIFIED_TIME = 'mtime';
+
+    /**
      * Table name
      *
      * @var string
      */
-    protected $table = 'preference';
+    protected $table = 'icingaweb_user_preference';
 
     /**
      * Stored preferences
@@ -74,7 +90,7 @@ class DbStore extends PreferencesStore
         try {
             $select = $this->getStoreConfig()->connection->getDbAdapter()->select();
             $result = $select
-                ->from($this->table, array(self::COLUMN_PREFERENCE, self::COLUMN_VALUE))
+                ->from($this->table, array(self::COLUMN_SECTION, self::COLUMN_PREFERENCE, self::COLUMN_VALUE))
                 ->where(self::COLUMN_USERNAME . ' = ?', $this->getUser()->getUsername())
                 ->query()
                 ->fetchAll();
@@ -89,7 +105,7 @@ class DbStore extends PreferencesStore
         if ($result !== false) {
             $values = array();
             foreach ($result as $row) {
-                $values[$row->{self::COLUMN_PREFERENCE}] = $row->{self::COLUMN_VALUE};
+                $values[$row->{self::COLUMN_SECTION}][$row->{self::COLUMN_PREFERENCE}] = $row->{self::COLUMN_VALUE};
             }
             $this->preferences = $values;
         }
@@ -106,22 +122,30 @@ class DbStore extends PreferencesStore
     {
         $preferences = $preferences->toArray();
 
-        $toBeInserted = array_diff_key($preferences, $this->preferences);
-        if (!empty($toBeInserted)) {
-            $this->insert($toBeInserted);
-        }
+        $sections = array_keys($preferences);
 
-        $toBeUpdated = array_intersect_key(
-            array_diff_assoc($preferences, $this->preferences),
-            array_diff_assoc($this->preferences, $preferences)
-        );
-        if (!empty($toBeUpdated)) {
-            $this->update($toBeUpdated);
-        }
+        foreach ($sections as $section) {
+            if (! array_key_exists($section, $this->preferences)) {
+                $this->preferences[$section] = array();
+            }
 
-        $toBeDeleted = array_keys(array_diff_key($this->preferences, $preferences));
-        if (!empty($toBeDeleted)) {
-            $this->delete($toBeDeleted);
+            $toBeInserted = array_diff_key($preferences[$section], $this->preferences[$section]);
+            if (!empty($toBeInserted)) {
+                $this->insert($toBeInserted, $section);
+            }
+
+            $toBeUpdated = array_intersect_key(
+                array_diff_assoc($preferences[$section], $this->preferences[$section]),
+                array_diff_assoc($this->preferences[$section], $preferences[$section])
+            );
+            if (!empty($toBeUpdated)) {
+                $this->update($toBeUpdated, $section);
+            }
+
+            $toBeDeleted = array_keys(array_diff_key($this->preferences[$section], $preferences[$section]));
+            if (!empty($toBeDeleted)) {
+                $this->delete($toBeDeleted, $section);
+            }
         }
     }
 
@@ -129,11 +153,13 @@ class DbStore extends PreferencesStore
      * Insert the given preferences into the database
      *
      * @param   array   $preferences    The preferences to insert
+     * @param   string  $section        The preferences in section to update
      *
      * @throws  NotWritableError        In case the database operation failed
      */
-    protected function insert(array $preferences)
+    protected function insert(array $preferences, $section)
     {
+        /** @var \Zend_Db_Adapter_Abstract $db */
         $db = $this->getStoreConfig()->connection->getDbAdapter();
 
         try {
@@ -142,8 +168,11 @@ class DbStore extends PreferencesStore
                     $this->table,
                     array(
                         self::COLUMN_USERNAME => $this->getUser()->getUsername(),
+                        $db->quoteIdentifier(self::COLUMN_SECTION) => $section,
                         $db->quoteIdentifier(self::COLUMN_PREFERENCE) => $key,
-                        self::COLUMN_VALUE => $value
+                        self::COLUMN_VALUE => $value,
+                        self::COLUMN_CREATED_TIME => new Zend_Db_Expr('NOW()'),
+                        self::COLUMN_MODIFIED_TIME => new Zend_Db_Expr('NOW()')
                     )
                 );
             }
@@ -160,11 +189,13 @@ class DbStore extends PreferencesStore
      * Update the given preferences in the database
      *
      * @param   array   $preferences    The preferences to update
+     * @param   string  $section        The preferences in section to update
      *
      * @throws  NotWritableError        In case the database operation failed
      */
-    protected function update(array $preferences)
+    protected function update(array $preferences, $section)
     {
+        /** @var \Zend_Db_Adapter_Abstract $db */
         $db = $this->getStoreConfig()->connection->getDbAdapter();
 
         try {
@@ -174,7 +205,9 @@ class DbStore extends PreferencesStore
                     array(self::COLUMN_VALUE => $value),
                     array(
                         self::COLUMN_USERNAME . '=?' => $this->getUser()->getUsername(),
-                        $db->quoteIdentifier(self::COLUMN_PREFERENCE) . '=?' => $key
+                        $db->quoteIdentifier(self::COLUMN_SECTION) . '=?' => $section,
+                        $db->quoteIdentifier(self::COLUMN_PREFERENCE) . '=?' => $key,
+                        self::COLUMN_MODIFIED_TIME => new Zend_Db_Expr('NOW()')
                     )
                 );
             }
@@ -191,11 +224,13 @@ class DbStore extends PreferencesStore
      * Delete the given preference names from the database
      *
      * @param   array   $preferenceKeys     The preference names to delete
+     * @param   string  $section            The preferences in section to update
      *
      * @throws  NotWritableError            In case the database operation failed
      */
-    protected function delete(array $preferenceKeys)
+    protected function delete(array $preferenceKeys, $section)
     {
+        /** @var \Zend_Db_Adapter_Abstract $db */
         $db = $this->getStoreConfig()->connection->getDbAdapter();
 
         try {
@@ -203,6 +238,7 @@ class DbStore extends PreferencesStore
                 $this->table,
                 array(
                     self::COLUMN_USERNAME . '=?' => $this->getUser()->getUsername(),
+                    $db->quoteIdentifier(self::COLUMN_SECTION) . '=?' => $section,
                     $db->quoteIdentifier(self::COLUMN_PREFERENCE) . ' IN (?)' => $preferenceKeys
                 )
             );
