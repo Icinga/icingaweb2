@@ -132,7 +132,7 @@ class ResourceConfigForm extends ConfigForm
     {
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
             $resourceForm = $this->getResourceForm($this->getElement('type')->getValue());
-            if (method_exists($resourceForm, 'isValidResource') && false === $resourceForm->isValidResource($this)) {
+            if (method_exists($resourceForm, 'isValidResource') && false === $resourceForm::isValidResource($this)) {
                 $this->addElement($this->getForceCreationCheckbox());
                 return false;
             }
@@ -220,15 +220,6 @@ class ResourceConfigForm extends ConfigForm
             $resourceTypes['db'] = t('SQL Database');
         }
 
-        $this->addElement(
-            'text',
-            'name',
-            array(
-                'required'      => true,
-                'label'         => t('Resource Name'),
-                'description'   => t('The unique name of this resource')
-            )
-        );
         $this->addElement(
             'select',
             'type',

@@ -19,6 +19,7 @@ class StyleSheet
         'css/icinga/main-content.less',
         'css/icinga/tabs.less',
         'css/icinga/forms.less',
+        'css/icinga/setup.less',
         'css/icinga/widgets.less',
         'css/icinga/pagination.less',
         'css/icinga/monitoring-colors.less',

@@ -1,0 +1,44 @@
+<?php
+
+use Icinga\Web\Wizard;
+use Icinga\Module\Setup\Requirements;
+
+$requirements = $form->getRequirements();
+
+?>
+<table class="requirements">
+  <tbody>
+<?php foreach ($requirements as $requirement): ?>
+    <tr>
+      <td><h2><?= $requirement->title; ?></h2></td>
+      <td style="width: 50%"><?= $requirement->description; ?></td>
+      <td class="state <?= $requirement->state === Requirements::STATE_OK ? 'fulfilled' : (
+        $requirement->state === Requirements::STATE_OPTIONAL ? 'not-available' : 'missing'
+      ); ?>"><?= $requirement->message; ?></td>
+    </tr>
+<?php endforeach ?>
+    <tr>
+      <td></td>
+      <td></td>
+      <td class="btn-update">
+        <div class="buttons">
+          <a href="<?= $this->href(); ?>" class="button-like"><?= mt('setup', 'Update'); ?></a>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
+  <?= $form->getElement($form->getTokenElementName()); ?>
+  <?= $form->getElement($form->getUidElementName()); ?>
+  <div class="buttons" style="margin: 0 0 1.5em;">
+    <?= $form->getElement(Wizard::BTN_PREV); ?>
+    <?php
+      $btn = $form->getElement(Wizard::BTN_NEXT);
+      if (false === $requirements->fulfilled()) {
+          $btn->setAttrib('disabled', 1);
+      }
+      echo $btn;
+    ?>
+  </div>
+</form>

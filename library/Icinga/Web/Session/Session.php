@@ -75,7 +75,7 @@ abstract class Session extends SessionNamespace
                 unset($this->removedNamespaces[array_search($identifier, $this->removedNamespaces)]);
             }
 
-            $this->namespaces[$identifier] = new SessionNamespace($this);
+            $this->namespaces[$identifier] = new SessionNamespace();
         }
 
         return $this->namespaces[$identifier];
@@ -105,12 +105,21 @@ abstract class Session extends SessionNamespace
     }
 
     /**
+     * Return whether the session has changed
+     *
+     * @return  bool
+     */
+    public function hasChanged()
+    {
+        return parent::hasChanged() || false === empty($this->namespaces) || false === empty($this->removedNamespaces);
+    }
+
+    /**
      * Clear all values and namespaces from the session cache
      */
     public function clear()
     {
-        $this->values = array();
-        $this->removed = array();
+        parent::clear();
         $this->namespaces = array();
         $this->removedNamespaces = array();
     }

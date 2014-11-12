@@ -121,7 +121,7 @@ class PhpSession extends Session
 
         foreach ($_SESSION as $key => $value) {
             if (strpos($key, self::NAMESPACE_PREFIX) === 0) {
-                $namespace = new SessionNamespace($this);
+                $namespace = new SessionNamespace();
                 $namespace->setAll($value);
                 $this->namespaces[substr($key, strlen(self::NAMESPACE_PREFIX))] = $namespace;
             } else {

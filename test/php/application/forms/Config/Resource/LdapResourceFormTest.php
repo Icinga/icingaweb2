@@ -27,13 +27,14 @@ class LdapResourceFormTest extends BaseTestCase
     public function testValidLdapResourceIsValid()
     {
         $this->setUpResourceFactoryMock(
-            Mockery::mock()->shouldReceive('connect')->getMock()
+            Mockery::mock()->shouldReceive('testCredentials')->once()->andReturn(true)->getMock()
         );
 
         $form = new LdapResourceForm();
+        $form->setTokenDisabled();
 
         $this->assertTrue(
-            $form->isValidResource($form),
+            LdapResourceForm::isValidResource($form->create()),
             'ResourceForm claims that a valid ldap resource is not valid'
         );
     }
@@ -45,13 +46,14 @@ class LdapResourceFormTest extends BaseTestCase
     public function testInvalidLdapResourceIsNotValid()
     {
         $this->setUpResourceFactoryMock(
-            Mockery::mock()->shouldReceive('connect')->once()->andThrow('\Exception')->getMock()
+            Mockery::mock()->shouldReceive('testCredentials')->once()->andThrow('\Exception')->getMock()
         );
 
         $form = new LdapResourceForm();
+        $form->setTokenDisabled();
 
         $this->assertFalse(
-            $form->isValidResource($form),
+            LdapResourceForm::isValidResource($form->create()),
             'ResourceForm claims that an invalid ldap resource is valid'
         );
     }

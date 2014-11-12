@@ -31,6 +31,15 @@ class LdapResourceForm extends Form
     {
         $this->addElement(
             'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => t('Resource Name'),
+                'description'   => t('The unique name of this resource')
+            )
+        );
+        $this->addElement(
+            'text',
             'hostname',
             array(
                 'required'      => true,
@@ -56,7 +65,7 @@ class LdapResourceForm extends Form
             array(
                 'required'      => true,
                 'label'         => t('Root DN'),
-                'description'   => t('The path where users can be found on the ldap server')
+                'description'   => t('Only the root and its child nodes will be accessible on this resource.')
             )
         );
         $this->addElement(
@@ -89,7 +98,7 @@ class LdapResourceForm extends Form
      */
     public function onSuccess(Request $request)
     {
-        if (false === $this->isValidResource($this)) {
+        if (false === static::isValidResource($this)) {
             return false;
         }
     }
@@ -101,11 +110,17 @@ class LdapResourceForm extends Form
      *
      * @return  bool            Whether validation succeeded or not
      */
-    public function isValidResource(Form $form)
+    public static function isValidResource(Form $form)
     {
         try {
             $resource = ResourceFactory::createResource(new Config($form->getValues()));
-            $resource->connect();
+            if (false === $resource->testCredentials(
+                $form->getElement('bind_dn')->getValue(),
+                $form->getElement('bind_pw')->getValue()
+                )
+            ) {
+                throw new Exception();
+            }
         } catch (Exception $e) {
             $form->addError(t('Connectivity validation failed, connection to the given resource not possible.'));
             return false;

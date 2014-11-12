@@ -9,6 +9,7 @@ namespace Tests\Icinga\Form\Config\Authentication;
 require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
 
 use Mockery;
+use Icinga\Application\Config;
 use Icinga\Test\BaseTestCase;
 use Icinga\Form\Config\Authentication\DbBackendForm;
 
@@ -37,7 +38,7 @@ class DbBackendFormTest extends BaseTestCase
         $form->populate(array('resource' => 'test_db_backend'));
 
         $this->assertTrue(
-            $form->isValidAuthenticationBackend($form),
+            DbBackendForm::isValidAuthenticationBackend($form),
             'DbBackendForm claims that a valid authentication backend with users is not valid'
         );
     }
@@ -59,7 +60,7 @@ class DbBackendFormTest extends BaseTestCase
         $form->populate(array('resource' => 'test_db_backend'));
 
         $this->assertFalse(
-            $form->isValidAuthenticationBackend($form),
+            DbBackendForm::isValidAuthenticationBackend($form),
             'DbBackendForm claims that an invalid authentication backend without users is valid'
         );
     }
@@ -67,7 +68,9 @@ class DbBackendFormTest extends BaseTestCase
     protected function setUpResourceFactoryMock()
     {
         Mockery::mock('alias:Icinga\Data\ResourceFactory')
-            ->shouldReceive('create')
-            ->andReturn(Mockery::mock('Icinga\Data\Db\DbConnection'));
+            ->shouldReceive('createResource')
+            ->andReturn(Mockery::mock('Icinga\Data\Db\DbConnection'))
+            ->shouldReceive('getResourceConfig')
+            ->andReturn(new Config());
     }
 }

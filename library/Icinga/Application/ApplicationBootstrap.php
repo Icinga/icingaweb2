@@ -13,6 +13,7 @@ use Icinga\Exception\NotReadableError;
 use Icinga\Application\Logger;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
+use Icinga\File\Ini\IniWriter;
 use Icinga\Exception\IcingaException;
 
 /**
@@ -338,6 +339,21 @@ abstract class ApplicationBootstrap
     }
 
     /**
+     * Load all core modules
+     *
+     * @return self
+     */
+    protected function loadCoreModules()
+    {
+        try {
+            $this->moduleManager->loadCoreModules();
+        } catch (NotReadableError $e) {
+            Logger::error(new IcingaException('Cannot load core modules. An exception was thrown:', $e));
+        }
+        return $this;
+    }
+
+    /**
      * Load all enabled modules
      *
      * @return self
@@ -377,12 +393,14 @@ abstract class ApplicationBootstrap
     protected function loadConfig()
     {
         Config::$configDir = $this->configDir;
+
         try {
             $this->config = Config::app();
         } catch (NotReadableError $e) {
             Logger::error(new IcingaException('Cannot load application configuration. An exception was thrown:', $e));
             $this->config = new Config();
         }
+
         return $this;
     }
 
