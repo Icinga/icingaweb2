@@ -7,6 +7,7 @@ namespace Icinga\Application;
 require_once __DIR__ . '/ApplicationBootstrap.php';
 
 use Icinga\Authentication\Manager as AuthenticationManager;
+use Icinga\Authentication\Manager;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Application\Logger;
@@ -296,8 +297,12 @@ class Web extends ApplicationBootstrap
      */
     protected function setupTimezone()
     {
-        if ($this->user !== null && $this->user->getPreferences() !== null) {
-            $userTimezone = $this->user->getPreferences()->get('app.timezone');
+        $auth = Manager::getInstance();
+
+        if ($auth->isAuthenticated() &&
+            ($timezone = $auth->getUser()->getPreferences()->getValue('icingaweb', 'timezone')) !== null
+        ) {
+            $userTimezone = $timezone;
         } else {
             $userTimezone = null;
         }
@@ -323,21 +328,10 @@ class Web extends ApplicationBootstrap
     {
         parent::setupInternationalization();
 
-        $locale = Session::getSession()->get('language');
-        if ($locale !== null) {
-            try {
-                Translator::setupLocale($locale);
-            } catch (Exception $e) {
-                Logger::debug(
-                    'Cannot set locale "' . $locale . '" configured in session' .
-                    ' "' . session_id() . '" (' . $e->getMessage() . ')'
-                );
-                $locale = null;
-            }
-        }
+        $auth = Manager::getInstance();
 
-        if ($locale === null && $this->user !== null && $this->user->getPreferences() !== null
-            && (($locale = $this->user->getPreferences()->getValue('icingaweb', 'language')) !== null)
+        if ($auth->isAuthenticated() &&
+            ($locale = $auth->getUser()->getPreferences()->getValue('icingaweb', 'language')) !== null
         ) {
             try {
                 Translator::setupLocale($locale);
