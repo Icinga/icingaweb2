@@ -146,7 +146,7 @@ class AuthenticationController extends ActionController
             $this->view->errorInfo = $e->getMessage();
         }
 
-        $this->view->configMissing = Config::app()->isEmpty();
+        $this->view->configMissing = is_dir(Config::$configDir) === false;
     }
 
     /**
