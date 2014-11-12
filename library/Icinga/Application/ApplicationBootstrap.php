@@ -107,17 +107,7 @@ abstract class ApplicationBootstrap
             throw new LogicException('\'ICINGAWEB_BASEDIR\' is not defined');
         }
         define('ICINGAWEB_VENDORS', ICINGAWEB_BASEDIR . '/library/vendor');
-
-        if (defined('ICINGAWEB_APPDIR')) {
-            $this->appDir = ICINGAWEB_APPDIR;
-        } else {
-            if (array_key_exists('ICINGAWEB_APPDIR', $_SERVER)) {
-                $this->appDir = $_SERVER['ICINGAWEB_APPDIR'];
-            } else {
-                $this->appDir = ICINGAWEB_BASEDIR . '/application';
-            }
-            define('ICINGAWEB_APPDIR', $this->appDir);
-        }
+        define('ICINGAWEB_APPDIR', ICINGAWEB_BASEDIR . '/application');
 
         if ($configDir === null) {
             if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
