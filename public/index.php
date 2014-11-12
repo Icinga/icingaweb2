@@ -3,7 +3,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 define('ICINGAWEB_BASEDIR', dirname(__DIR__));
-// ICINGAWEB_BASEDIR is the parent folder for at least application, bin, modules and public
+// ICINGAWEB_BASEDIR is the parent folder for at least application, bin, modules, library/vendor and public
 
 
 if (! @include_once ICINGAWEB_BASEDIR . '/library/Icinga/Application/webrouter.php') {

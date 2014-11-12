@@ -1,6 +1,17 @@
 #!/usr/bin/php
-<?php
 
-use Icinga\Application\Cli;
-require_once dirname(__DIR__) . '/library/Icinga/Application/Cli.php';
-Cli::start()->dispatch();
+<?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
+define('ICINGAWEB_BASEDIR', dirname(__DIR__));
+// ICINGAWEB_BASEDIR is the parent folder for at least application, bin, modules, library/vendor and public
+
+
+if (! @include_once ICINGAWEB_BASEDIR . 'Icinga/Application/Cli.php') {
+    // If the Icinga library wasn't found under ICINGAWEB_BASEDIR, require that the Icinga library is found in PHP's
+    // include path which is the case if Icinga Web 2 is installed via packages
+    require_once 'Icinga/Application/Cli.php';
+}
+
+Icinga\Application\Cli::start()->dispatch();
