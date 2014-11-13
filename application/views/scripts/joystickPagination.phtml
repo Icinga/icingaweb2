@@ -68,7 +68,7 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
           $fromTo,
           t('Services'),
           $currentXAxisPage * $xAxisPages->itemCountPerPage + 1,
-          $nextXAxisPage * $xAxisPages->itemCountPerPage,
+          $nextXAxisPage === $xAxisPages->last ? $xAxisPages->totalItemCount : $nextXAxisPage * $xAxisPages->itemCountPerPage,
           $xAxisPages->totalItemCount
         ); ?>"><?= $this->icon('next_petrol.png'); ?></a>
       <?php else: ?>
@@ -86,7 +86,7 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
           $fromTo,
           t('Hosts'),
           $currentYAxisPage * $yAxisPages->itemCountPerPage + 1,
-          $nextYAxisPage * $yAxisPages->itemCountPerPage,
+          $nextYAxisPage === $yAxisPages->last ? $yAxisPages->totalItemCount : $nextYAxisPage * $yAxisPages->itemCountPerPage,
           $yAxisPages->totalItemCount
         ); ?>"><?= $this->icon('down_petrol.png'); ?></a>
       <?php else: ?>
