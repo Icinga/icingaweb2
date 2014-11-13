@@ -64,7 +64,7 @@ class AuthenticationController extends ActionController
                 $config = Config::app('authentication');
             } catch (NotReadableError $e) {
                 throw new ConfigurationError(
-                    $this->translate('Could not read your authentiction.ini, no authentication methods are available.'),
+                    $this->translate('Could not read your authentication.ini, no authentication methods are available.'),
                     0,
                     $e
                 );
