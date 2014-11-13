@@ -30,13 +30,13 @@ class LoggingConfigForm extends Form
             'logging_log',
             array(
                 'required'      => true,
-                'class'         => 'autosubmit',
+                'autosubmit'    => true,
                 'label'         => t('Logging Type'),
                 'description'   => t('The type of logging to utilize.'),
                 'multiOptions'  => array(
                     'syslog'    => 'Syslog',
-                    'file'      => t('File'),
-                    'none'      => t('None')
+                    'file'      => t('File', 'app.config.logging.type'),
+                    'none'      => t('None', 'app.config.logging.type')
                 )
             )
         );
@@ -50,16 +50,16 @@ class LoggingConfigForm extends Form
                     'label'         => t('Logging Level'),
                     'description'   => t('The maximum logging level to emit.'),
                     'multiOptions'  => array(
-                        Logger::$levels[Logger::ERROR]      => t('Error'),
-                        Logger::$levels[Logger::WARNING]    => t('Warning'),
-                        Logger::$levels[Logger::INFO]       => t('Information'),
-                        Logger::$levels[Logger::DEBUG]      => t('Debug')
+                        Logger::$levels[Logger::ERROR]      => t('Error', 'app.config.logging.level'),
+                        Logger::$levels[Logger::WARNING]    => t('Warning', 'app.config.logging.level'),
+                        Logger::$levels[Logger::INFO]       => t('Information', 'app.config.logging.level'),
+                        Logger::$levels[Logger::DEBUG]      => t('Debug', 'app.config.logging.level')
                     )
                 )
             );
         }
 
-        if (isset($formData['logging_log']) && $formData['logging_log'] === 'syslog') {
+        if (false === isset($formData['logging_log']) || $formData['logging_log'] === 'syslog') {
             $this->addElement(
                 'text',
                 'logging_application',

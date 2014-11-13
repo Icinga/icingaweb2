@@ -1,0 +1,145 @@
+<?php
+
+use Icinga\Web\Notification;
+
+$pages = $wizard->getPages();
+$finished = isset($success);
+$configPages = array_slice($pages, 2, count($pages) - 4, true);
+$currentPos = array_search($wizard->getCurrentPage(), $pages, true);
+list($configPagesLeft, $configPagesRight) = array_chunk($configPages, count($configPages) / 2, true);
+
+$visitedPages = array_keys($wizard->getPageData());
+$maxProgress = @max(array_keys(array_filter(
+    $pages,
+    function ($page) use ($visitedPages) { return in_array($page->getName(), $visitedPages); }
+)));
+
+?>
+<ul id="notifications"><?php
+
+$notifications = Notification::getInstance();
+if ($notifications->hasMessages()) {
+    foreach ($notifications->getMessages() as $m) {
+        echo '<li class="' . $m->type . '">' . $this->escape($m->message) . '</li>';
+    }
+}
+
+?></ul>
+<div id="setup" data-base-target="layout">
+  <div class="header">
+    <?= $this->img('img/logo_icinga_big.png'); ?>
+    <div class="progress-bar">
+      <div class="step" style="width: 10%;">
+        <h1><?= mt('setup', 'Welcome', 'setup.progress'); ?></h1>
+        <?php $stateClass = $finished || $currentPos > 0 ? 'complete' : (
+          $maxProgress > 0 ? 'visited' : 'active'
+        ); ?>
+        <table><tbody><tr>
+          <td class="left"></td>
+          <td class="middle"><div class="bubble <?= $stateClass; ?>"></div></td>
+          <td class="right"><div class="line right <?= $stateClass; ?>"></div></td>
+        </tr></tbody></table>
+      </div>
+      <div class="step" style="width: 10%;">
+        <h1><?= mt('setup', 'Requirements', 'setup.progress'); ?></h1>
+        <?php $stateClass = $finished || $currentPos > 1 ? ' complete' : (
+          $maxProgress > 1 ? ' visited' : (
+            $currentPos === 1 ? ' active' : ''
+          )
+        ); ?>
+        <table><tbody><tr>
+          <td class="left"><div class="line left<?= $stateClass; ?>"></div></td>
+          <td class="middle"><div class="bubble<?= $stateClass; ?>"></div></td>
+          <td class="right"><div class="line right<?= $stateClass; ?>"></div></td>
+        </tr></tbody></table>
+      </div>
+      <div class="step" style="width: 50%;">
+        <h1><?= mt('setup', 'Configuration', 'setup.progress'); ?></h1>
+        <table><tbody><tr>
+          <td class="left">
+          <?php
+            $firstPage = current($configPagesLeft);
+            $lastPage = end($configPagesLeft);
+            $lineWidth = round(100 / count($configPagesLeft), 2, PHP_ROUND_HALF_DOWN);
+          ?>
+          <?php foreach ($configPagesLeft as $pos => $page): ?>
+            <?php $stateClass = $finished || $pos < $currentPos ? ' complete' : (
+              $pos < $maxProgress ? ' visited' : ($currentPos > 1 ? ' active' : '')
+            ); ?>
+            <?php if ($page === $firstPage): ?>
+            <div class="line left<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%; margin-right: 0"></div>
+            <?php elseif ($page === $lastPage): ?>
+            <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%; margin-right: -0.1em;"></div>
+            <?php else: ?>
+            <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%;"></div>
+            <?php endif ?>
+          <?php endforeach ?>
+          </td>
+          <td class="middle">
+            <div class="bubble<?= array_key_exists($currentPos, $configPagesLeft) ? (
+              key($configPagesRight) <= $maxProgress ? ' visited' : ' active') : (
+              $finished || $currentPos > 1 ? ' complete' : (
+                key($configPagesRight) < $maxProgress ? ' visited' : ''
+              )
+            ); ?>"></div>
+          </td>
+          <td class="right">
+          <?php
+            $firstPage = current($configPagesRight);
+            $lastPage = end($configPagesRight);
+            $lineWidth = round(100 / count($configPagesRight), 2, PHP_ROUND_HALF_DOWN);
+          ?>
+          <?php foreach ($configPagesRight as $pos => $page): ?>
+            <?php $stateClass = $finished || $pos < $currentPos ? ' complete' : (
+              $pos < $maxProgress ? ' visited' : ($currentPos > 1 ? ' active' : '')
+            ); ?>
+            <?php if ($page === $firstPage): ?>
+            <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%; margin-left: -0.1em;"></div>
+            <?php elseif ($page === $lastPage): ?>
+            <div class="line right<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%; margin-left: 0;"></div>
+            <?php else: ?>
+            <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%;"></div>
+            <?php endif ?>
+          <?php endforeach ?>
+          </td>
+        </tr></tbody></table>
+      </div>
+      <div class="step" style="width: 10%;">
+        <h1><?= mt('setup', 'Modules', 'setup.progress'); ?></h1>
+        <?php $stateClass = $finished || $currentPos > count($pages) - 2 ? ' complete' : (
+          $maxProgress > count($pages) - 2 ? ' visited' : ($currentPos === count($pages) - 2 ? ' active' : '')
+        ); ?>
+        <table><tbody><tr>
+          <td class="left"><div class="line left<?= $stateClass; ?>"></div></td>
+          <td class="middle"><div class="bubble<?= $stateClass; ?>"></div></td>
+          <td class="right"><div class="line right<?= $stateClass; ?>"></div></td>
+        </tr></tbody></table>
+      </div>
+      <div class="step" style="width: 10%;">
+        <h1><?= mt('setup', 'Summary', 'setup.progress'); ?></h1>
+        <?php $stateClass = $finished ? ' complete' : ($currentPos === count($pages) - 1 ? ' active' : ''); ?>
+        <table><tbody><tr>
+          <td class="left"><div class="line left<?= $stateClass; ?>"></div></td>
+          <td class="middle"><div class="bubble<?= $stateClass; ?>"></div></td>
+          <td class="right"><div class="line right<?= $stateClass; ?>"></div></td>
+        </tr></tbody></table>
+      </div>
+      <div class="step" style="width: 10%;">
+        <h1><?= mt('setup', 'Finish', 'setup.progress'); ?></h1>
+        <?php $stateClass = $finished ? ' active' : ''; ?>
+        <table><tbody><tr>
+          <td class="left"><div class="line left<?= $stateClass; ?>"></div></td>
+          <td class="middle"><div class="bubble<?= $stateClass; ?>"></div></td>
+          <td class="right"></td>
+        </tr></tbody></table>
+      </div>
+    </div>
+  </div>
+  <div class="setup-content">
+<?php if ($finished): ?>
+    <?= $this->render('index/parts/finish.phtml'); ?>
+<?php else: ?>
+    <?= $this->render('index/parts/wizard.phtml'); ?>
+<?php endif ?>
+  </div>
+</div>

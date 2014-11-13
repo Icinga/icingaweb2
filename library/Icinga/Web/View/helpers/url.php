@@ -51,19 +51,32 @@ $this->addHelperFunction('img', function ($url, array $properties = array()) use
 });
 
 $this->addHelperFunction('icon', function ($img, $title = null, array $properties = array()) use ($view) {
-    // TODO: join with classes passed in $properties?
-    $attributes = array(
-        'class' => 'icon',
-    );
-    if ($title !== null) {
-        $attributes['alt'] = $title;
-        $attributes['title'] = $title;
-    }
+    $isClass = strpos($img, '.') === false;
+    $class = null;
 
-    return $view->img(
-        'img/icons/' . $img,
-        array_merge($attributes, $properties)
-    );
+    if ($isClass) {
+        $class = 'icon-' . $img;
+    } else {
+        $class = 'icon';
+    }
+    if ($title !== null) {
+        $properties['alt'] = $title;
+        $properties['title'] = $title;
+    }
+ 
+    if ($class !== null) {
+        if (isset($props['class'])) {
+            $properties['class'] .= ' ' . $class;
+        } else {
+            $properties['class'] = $class;
+        }
+    }
+    if ($isClass) {
+        return sprintf('<i %s ></i>', $view->propertiesToString($properties));
+
+    } else {
+        return $view->img('img/icons/' . $img, $properties);
+    }
 });
 
 $this->addHelperFunction('propertiesToString', function ($properties) use ($view) {

@@ -30,10 +30,8 @@ class DbResourceFormTest extends BaseTestCase
             Mockery::mock()->shouldReceive('getConnection')->atMost()->twice()->andReturn(Mockery::self())->getMock()
         );
 
-        $form = new DbResourceForm();
-
         $this->assertTrue(
-            $form->isValidResource($form),
+            DbResourceForm::isValidResource(new DbResourceForm()),
             'ResourceForm claims that a valid db resource is not valid'
         );
     }
@@ -48,10 +46,8 @@ class DbResourceFormTest extends BaseTestCase
             Mockery::mock()->shouldReceive('getConnection')->once()->andThrow('\Exception')->getMock()
         );
 
-        $form = new DbResourceForm();
-
         $this->assertFalse(
-            $form->isValidResource($form),
+            DbResourceForm::isValidResource(new DbResourceForm()),
             'ResourceForm claims that an invalid db resource is valid'
         );
     }
@@ -60,7 +56,7 @@ class DbResourceFormTest extends BaseTestCase
     {
         Mockery::mock('alias:Icinga\Data\ResourceFactory')
             ->shouldReceive('createResource')
-            ->with(Mockery::type('\Zend_Config'))
+            ->with(Mockery::type('Icinga\Application\Config'))
             ->andReturn($resourceMock);
     }
 }

@@ -4,14 +4,14 @@
 
 namespace Icinga\Data\Db;
 
+use PDO;
+use Zend_Db;
+use Icinga\Application\Config;
 use Icinga\Application\Benchmark;
 use Icinga\Data\Db\DbQuery;
 use Icinga\Data\ResourceFactory;
 use Icinga\Data\Selectable;
 use Icinga\Exception\ConfigurationError;
-use PDO;
-use Zend_Config;
-use Zend_Db;
 
 /**
  * Encapsulate database connections and query creation
@@ -21,7 +21,7 @@ class DbConnection implements Selectable
     /**
      * Connection config
      *
-     * @var Zend_Config
+     * @var Config
      */
     private $config;
 
@@ -59,9 +59,9 @@ class DbConnection implements Selectable
     /**
      * Create a new connection object
      *
-     * @param Zend_Config $config
+     * @param Config $config
      */
-    public function __construct(Zend_Config $config = null)
+    public function __construct(Config $config = null)
     {
         $this->config = $config;
         if (isset($config->prefix)) {
@@ -216,7 +216,10 @@ class DbConnection implements Selectable
      */
     public function fetchRow(DbQuery $query)
     {
-        return $this->dbAdapter->fetchRow($query->getSelectQuery());
+        Benchmark::measure('DB is fetching row');
+        $result = $this->dbAdapter->fetchRow($query->getSelectQuery());
+        Benchmark::measure('DB row done');
+        return $result;
     }
 
     /**

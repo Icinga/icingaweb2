@@ -1,0 +1,74 @@
+<?php
+
+use Icinga\Web\Wizard;
+
+$radioElem = $form->getElement('user_type');
+$showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
+
+?>
+<form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
+  <?= $form->getElement('title'); ?>
+  <?= $form->getElement('description'); ?>
+<?php if (($byNameElem = $form->getElement('by_name')) !== null): ?>
+  <div>
+    <div class="instructions">
+      <?= $byNameElem; ?>
+    </div>
+<?php if ($showRadioBoxes): ?>
+    <div class="radiobox">
+      <label>
+        <input type="radio" name="user_type" value="by_name"<?= $radioElem->getValue() === 'by_name' ? ' checked' : ''; ?>>
+        <?= $radioElem->getMultiOption('by_name'); ?>
+      </label>
+    </div>
+<?php endif ?>
+  </div>
+<?php endif ?>
+<?php if (($existingUserElem = $form->getElement('existing_user')) !== null): ?>
+  <div>
+    <div class="instructions">
+      <?= $existingUserElem; ?>
+    </div>
+<?php if ($showRadioBoxes): ?>
+    <div class="radiobox">
+      <label>
+        <input type="radio" name="user_type" value="existing_user"<?= $radioElem->getValue() === 'existing_user' ? ' checked' : ''; ?>>
+        <?= $radioElem->getMultiOption('existing_user'); ?>
+      </label>
+    </div>
+<?php endif ?>
+  </div>
+<?php endif ?>
+<?php if (($newUserElem = $form->getElement('new_user')) !== null): ?>
+  <div>
+    <div class="instructions">
+      <?= $newUserElem; ?>
+      <?= $form->getElement('new_user_password'); ?>
+      <?= $form->getElement('new_user_2ndpass'); ?>
+    </div>
+<?php if ($showRadioBoxes): ?>
+    <div class="radiobox">
+      <label>
+        <input type="radio" name="user_type" value="new_user"<?= $radioElem->getValue() === 'new_user' ? ' checked' : ''; ?>>
+        <?= $radioElem->getMultiOption('new_user'); ?>
+      </label>
+    </div>
+<?php endif ?>
+  </div>
+<?php endif ?>
+<?php if (false === $showRadioBoxes): ?>
+  <?= $radioElem; ?>
+<?php endif ?>
+  <?= $form->getElement($form->getTokenElementName()); ?>
+  <?= $form->getElement($form->getUidElementName()); ?>
+  <div class="buttons">
+    <?php
+      $btn = clone $form->getElement(Wizard::BTN_NEXT);
+      $btn->setAttrib('class', 'double');
+      $btn->setAttrib('tabindex', -1);
+      echo $btn;
+    ?>
+    <?= $form->getElement(Wizard::BTN_PREV); ?>
+    <?= $form->getElement(Wizard::BTN_NEXT); ?>
+  </div>
+</form>

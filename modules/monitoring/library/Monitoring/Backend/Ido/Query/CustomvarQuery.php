@@ -10,6 +10,7 @@ class CustomvarQuery extends IdoQuery
         'customvars' => array(
             'varname'  => 'cvs.varname',
             'varvalue' => 'cvs.varvalue',
+            'is_json'  => 'cvs.is_json',
         ),
         'objects' => array(
             'host'                => 'cvo.name1 COLLATE latin1_general_ci',
@@ -37,6 +38,10 @@ class CustomvarQuery extends IdoQuery
 
     protected function joinBaseTables()
     {
+        if (version_compare($this->getIdoVersion(), '1.12.0', '<')) {
+            $this->columnMap['customvars']['is_json'] = '(0)';
+        }
+
         $this->select->from(
             array('cvs' => $this->prefix . 'customvariablestatus'),
             array()

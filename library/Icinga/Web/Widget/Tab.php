@@ -197,11 +197,18 @@ class Tab extends AbstractWidget
     public function render()
     {
         $view = $this->view();
-        $class = $this->active ? ' class="active" ' : '';
+        $classes = array();
+        if ($this->active) {
+            $classes[] = 'active';
+        }
         $caption = $view->escape($this->title);
 
         if ($this->icon !== null) {
-            $caption = $view->img($this->icon, array('class' => 'icon')) . ' ' . $caption;
+            if (strpos($this->icon, '.') === false) {
+                $classes[] = 'icon-' . $this->icon;
+            } else {
+                $caption = $view->img($this->icon, array('class' => 'icon')) . $caption;
+            }
         }
         if ($this->url !== null) {
             $this->url->overwriteParams($this->urlParams);
@@ -218,6 +225,7 @@ class Tab extends AbstractWidget
         } else {
             $tab = $caption;
         }
+        $class = empty($classes) ? '' : sprintf(' class="%s"', implode(' ', $classes));
         return '<li ' . $class . '>' . $tab . "</li>\n";
     }
 }

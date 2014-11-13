@@ -10,6 +10,7 @@ use Icinga\Form\ConfigForm;
 use Icinga\Web\Notification;
 use Icinga\Application\Config;
 use Icinga\Application\Platform;
+use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Form\Config\Authentication\DbBackendForm;
 use Icinga\Form\Config\Authentication\LdapBackendForm;
@@ -39,18 +40,12 @@ class AuthenticationBackendConfigForm extends ConfigForm
      * @param   Config      $resources      The resource configuration
      *
      * @return  self
-     *
-     * @throws  ConfigurationError          In case no resources are available for authentication
      */
     public function setResourceConfig(Config $resourceConfig)
     {
         $resources = array();
         foreach ($resourceConfig as $name => $resource) {
             $resources[strtolower($resource->type)][] = $name;
-        }
-
-        if (empty($resources)) {
-            throw new ConfigurationError(t('Could not find any resources for authentication'));
         }
 
         $this->resources = $resources;
@@ -201,7 +196,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
     {
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
             $backendForm = $this->getBackendForm($this->getElement('type')->getValue());
-            if (false === $backendForm->isValidAuthenticationBackend($this)) {
+            if (false === $backendForm::isValidAuthenticationBackend($this)) {
                 $this->addElement($this->getForceCreationCheckbox());
                 return false;
             }
@@ -251,6 +246,17 @@ class AuthenticationBackendConfigForm extends ConfigForm
             $configValues['type'] = $configValues['backend'];
             $configValues['name'] = $authBackend;
             $this->populate($configValues);
+        } elseif (empty($this->resources)) {
+            $autologinBackends = array_filter(
+                $this->config->toArray(),
+                function ($authBackendCfg) {
+                    return isset($authBackendCfg['backend']) && $authBackendCfg['backend'] === 'autologin';
+                }
+            );
+
+            if (false === empty($autologinBackends)) {
+                throw new ConfigurationError(t('Could not find any resources for authentication'));
+            }
         }
     }
 
@@ -280,7 +286,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
     public function createElements(array $formData)
     {
         $backendTypes = array();
-        $backendType = isset($formData['type']) ? $formData['type'] : 'db';
+        $backendType = isset($formData['type']) ? $formData['type'] : null;
 
         if (isset($this->resources['db'])) {
             $backendTypes['db'] = t('Database');
@@ -299,6 +305,10 @@ class AuthenticationBackendConfigForm extends ConfigForm
             $backendTypes['autologin'] = t('Autologin');
         }
 
+        if ($backendType === null) {
+            $backendType = key($backendTypes);
+        }
+
         $this->addElement(
             'select',
             'type',
@@ -307,7 +317,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
                 'required'          => true,
                 'autosubmit'        => true,
                 'label'             => t('Backend Type'),
-                'description'       => t('The type of the resource to use for this authenticaton backend'),
+                'description'       => t('The type of the resource to use for this authenticaton provider'),
                 'multiOptions'      => $backendTypes
             )
         );
@@ -318,5 +328,15 @@ class AuthenticationBackendConfigForm extends ConfigForm
         }
 
         $this->addElements($this->getBackendForm($backendType)->createElements($formData)->getElements());
+    }
+
+    /**
+     * Return the configuration for the chosen resource
+     *
+     * @return  Config
+     */
+    public function getResourceConfig()
+    {
+        return ResourceFactory::getResourceConfig($this->getValue('resource'));
     }
 }

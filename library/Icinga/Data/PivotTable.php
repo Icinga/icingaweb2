@@ -69,11 +69,13 @@ class PivotTable
     protected function prepareQueries()
     {
         $this->xAxisQuery = clone $this->baseQuery;
-        $this->xAxisQuery->distinct();
+        $this->xAxisQuery->group($this->xAxisColumn);
         $this->xAxisQuery->columns(array($this->xAxisColumn));
+        $this->xAxisQuery->setUseSubqueryCount();
         $this->yAxisQuery = clone $this->baseQuery;
-        $this->yAxisQuery->distinct();
+        $this->yAxisQuery->group($this->yAxisColumn);
         $this->yAxisQuery->columns(array($this->yAxisColumn));
+        $this->yAxisQuery->setUseSubqueryCount();
 
         return $this;
     }
@@ -85,24 +87,14 @@ class PivotTable
      */
     protected function adjustSorting()
     {
-        $currentOrderColumns = $this->baseQuery->getOrder();
-        $xAxisOrderColumns = array(array($this->baseQuery->getMappedField($this->xAxisColumn), SimpleQuery::SORT_ASC));
-        $yAxisOrderColumns = array(array($this->baseQuery->getMappedField($this->yAxisColumn), SimpleQuery::SORT_ASC));
-
-        foreach ($currentOrderColumns as $orderInfo) {
-            if ($orderInfo[0] === $xAxisOrderColumns[0][0]) {
-                $xAxisOrderColumns[0] = $orderInfo;
-            } elseif ($orderInfo[0] === $yAxisOrderColumns[0][0]) {
-                $yAxisOrderColumns[0] = $orderInfo;
-            } else {
-                $xAxisOrderColumns[] = $orderInfo;
-                $yAxisOrderColumns[] = $orderInfo;
-            }
+        if (false === $this->xAxisQuery->hasOrder($this->xAxisColumn)) {
+            $this->xAxisQuery->order($this->xAxisColumn, 'ASC');
         }
-//TODO: simplify this whole function. No need to care about mapping
-//        foreach ($xAxisOrderColumns as 
-//        $this->xAxisQuery->setOrder($xAxisOrderColumns);
-//        $this->yAxisQuery->setOrder($yAxisOrderColumns);
+
+        if (false === $this->yAxisQuery->hasOrder($this->yAxisColumn)) {
+            $this->yAxisQuery->order($this->yAxisColumn, 'ASC');
+        }
+
         return $this;
     }
 

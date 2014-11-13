@@ -5,10 +5,10 @@
 namespace Tests\Icinga\User\Preferences\Store;
 
 use Mockery;
-use Zend_Config;
+use Icinga\Application\Config;
+use Icinga\Exception\NotWritableError;
 use Icinga\Test\BaseTestCase;
 use Icinga\User\Preferences\Store\DbStore;
-use Icinga\Exception\NotWritableError;
 
 class DatabaseMock
 {
@@ -165,7 +165,7 @@ class DbStoreTest extends BaseTestCase
     protected function getStore($dbMock)
     {
         return new DbStoreWithSetPreferences(
-            new Zend_Config(
+            new Config(
                 array(
                     'connection' => Mockery::mock(array('getDbAdapter' => $dbMock))
                 )

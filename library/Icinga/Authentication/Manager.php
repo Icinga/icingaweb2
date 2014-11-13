@@ -5,7 +5,6 @@
 namespace Icinga\Authentication;
 
 use Exception;
-use Zend_Config;
 use Icinga\Application\Config;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
@@ -62,7 +61,7 @@ class Manager
                     $e
                 )
             );
-            $config = new Zend_Config(array());
+            $config = new Config();
         }
         if (($preferencesConfig = $config->preferences) !== null) {
             try {
@@ -120,10 +119,7 @@ class Manager
      */
     public function persistCurrentUser()
     {
-        $session = Session::getSession();
-        $session->set('user', $this->user);
-        $session->write();
-        $session->refreshId();
+        Session::getSession()->set('user', $this->user)->refreshId();
     }
 
     /**

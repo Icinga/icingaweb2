@@ -3,6 +3,9 @@
   <?= $this->tabs->render($this); ?>
   <div style="margin: 1em" class="dontprint">
     <?= $this->translate('Sort by'); ?> <?= $this->sortControl->render($this); ?>
+    <?php if (! $this->filterEditor): ?>
+        <?= $this->filterPreview ?>
+    <?php endif; ?>
   </div>
   <?= $this->widget('limiter', array('url' => $this->url, 'max' => $downtimes->count())); ?>
   <?= $this->paginationControl($downtimes, null, null, array('preserve' => $this->preserve)); ?>
@@ -10,8 +13,9 @@
 <?php endif ?>
 
 <div class="content">
-<?php if (empty($downtimes)): ?>
-  <?= $this->translate('No downtimes matching the filter'); ?>
+<?= $this->filterEditor ?>
+<?php if (count($downtimes) === 0): ?>
+  <?= $this->translate('No active downtimes'); ?>
 </div>
 <?php return; endif ?>
 

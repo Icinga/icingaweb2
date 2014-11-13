@@ -470,7 +470,23 @@
          * (when only a single row was selected) or Null when nothing was selected.
          */
         loadSelectionData: function() {
+            this.provideSelectionCount();
             return selectionData;
+        },
+
+        /**
+         * Set the selections row count hint info
+         */
+        provideSelectionCount: function() {
+            var $count = $('.selection-info-count');
+
+            if (typeof selectionData === 'string') {
+                $count.text(1);
+            } else if (selectionData.length > 1) {
+                $count.text(selectionData.length);
+            } else {
+                $count.text(0);
+            }
         },
 
         /**
