@@ -17,9 +17,9 @@ class Apache extends Webserver
     protected function getTemplate()
     {
             return  <<<'EOD'
-Alias {webPath} "{publicPath}"
+Alias {webPath} "{documentRoot}"
 
-<Directory "{publicPath}">
+<Directory "{documentRoot}">
     Options SymLinksIfOwnerMatch
     AllowOverride None
 
@@ -54,7 +54,6 @@ Alias {webPath} "{publicPath}"
         DirectoryIndex error_norewrite.html
         ErrorDocument 404 /error_norewrite.html
     </IfModule>
-
 </Directory>
 EOD;
 

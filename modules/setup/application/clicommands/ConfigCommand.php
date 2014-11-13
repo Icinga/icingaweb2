@@ -100,15 +100,14 @@ class ConfigCommand extends Command
         } catch (ProgrammingError $e) {
             $this->fail($this->translate('Unknown type') . ': ' . $type);
         }
-        $webserver->setApp($this->app);
         if (($path = $this->params->get('path', '/icingaweb')) === null) {
             $this->fail($this->translate('argument --path is mandatory.'));
         }
-        if (($publicPath = $this->params->get('publicPath', $webserver->getPublicPath())) === null) {
+        if (($documentRoot = $this->params->get('documentRoot', $webserver->getDocumentRoot())) === null) {
             $this->fail($this->translate('argument --publicPath is mandatory.'));
         }
         $webserver->setWebPath($path);
-        $webserver->setPublicPath($publicPath);
+        $webserver->setDocumentRoot($documentRoot);
         $config = $webserver->generate() . "\n";
         if (($file = $this->params->get('file')) !== null) {
             if (file_exists($file) === true) {

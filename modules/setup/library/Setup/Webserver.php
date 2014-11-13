@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Setup;
 
-use Icinga\Application\ApplicationBootstrap;
+use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
 
 /**
@@ -13,25 +13,18 @@ use Icinga\Exception\ProgrammingError;
 abstract class Webserver
 {
     /**
+     * Document root
+     *
+     * @var string
+     */
+    protected $documentRoot;
+
+    /**
      * Web path
      *
      * @var string
      */
     protected $webPath;
-
-    /**
-     * System path to public documents
-     *
-     * @var string
-     */
-    protected $publicPath;
-
-    /**
-     * Application
-     *
-     * @var ApplicationBootstrap
-     */
-    protected $app;
 
     /**
      * Create instance by type name
@@ -62,13 +55,13 @@ abstract class Webserver
 
         $searchTokens = array(
             '{webPath}',
-            '{publicPath}',
+            '{documentRoot}',
             '{configPath}',
         );
         $replaceTokens = array(
             $this->getWebPath(),
-            $this->getPublicPath(),
-            $this->getApp()->getConfigDir()
+            $this->getDocumentRoot(),
+            Icinga::app()->getConfigDir()
         );
         $template = str_replace($searchTokens, $replaceTokens, $template);
         return $template;
@@ -102,58 +95,38 @@ abstract class Webserver
     }
 
     /**
-     * @param string $publicPath
+     * Set the document root
+     *
+     * @param   string $documentRoot
+     *
+     * @return  $this
      */
-    public function setPublicPath($publicPath)
+    public function setDocumentRoot($documentRoot)
     {
-        $this->publicPath = $publicPath;
+        $this->documentRoot = (string) $documentRoot;
+        return $this;
     }
 
     /**
-     * Detect public root
+     * Detect the document root
      *
      * @return string
      */
-    public function detectPublicPath()
+    public function detectDocumentRoot()
     {
-        $applicationPath = $this->getApp()->getApplicationDir();
-        $applicationPath = dirname($applicationPath) . DIRECTORY_SEPARATOR . 'public';
-        if (is_dir($applicationPath) === true) {
-            return $applicationPath;
-        }
-        return null;
+        return Icinga::app()->getBaseDir('public');
     }
 
     /**
-     * Getter for public root
+     * Get the document root
      *
      * @return string
      */
-    public function getPublicPath()
+    public function getDocumentRoot()
     {
-        if ($this->publicPath === null) {
-            $this->publicPath = $this->detectPublicPath();
+        if ($this->documentRoot === null) {
+            $this->documentRoot = $this->detectDocumentRoot();
         }
-        return $this->publicPath;
-    }
-
-    /**
-     * Setter for application bootstrap
-     *
-     * @param ApplicationBootstrap $app
-     */
-    public function setApp(ApplicationBootstrap $app)
-    {
-        $this->app = $app;
-    }
-
-    /**
-     * Getter for application bootstrap
-     *
-     * @return ApplicationBootstrap
-     */
-    public function getApp()
-    {
-        return $this->app;
+        return $this->documentRoot;
     }
 }

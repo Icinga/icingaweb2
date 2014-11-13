@@ -24,11 +24,11 @@ location ~ ^{webPath}/index\.php(.*)$ {
   fastcgi_pass unix:/var/run/php5-fpm.sock;
   fastcgi_index index.php;
   include fastcgi_params;
-  fastcgi_param SCRIPT_FILENAME {publicPath}/index.php;
+  fastcgi_param SCRIPT_FILENAME {documentRoot}/index.php;
 }
 
 location ~ ^{webPath}(.+)? {
-  alias {publicPath};
+  alias {documentRoot};
   index index.php;
   try_files $1 $uri $uri/ {webPath}/index.php$is_args$args;
 }
