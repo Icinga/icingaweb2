@@ -5,7 +5,6 @@
 namespace Icinga\Module\Setup;
 
 use PDOException;
-use Zend_Version;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
 use Icinga\Web\Request;
@@ -384,20 +383,6 @@ class WebWizard extends Wizard implements SetupWizard
             sprintf(mt('setup', 'You are running PHP version %s.'), $phpVersion)
         );
 
-        // The only reason for requiring 1.12.2 is a bug in Zend_Form_Decorator_ViewHelper in older versions causing a
-        // Zend_Form_Element_Button's value not being rendered. Feel free to adjust this in case we require an earlier
-        // version!
-        $zendVersion = Zend_Version::VERSION;
-        $requirements->addMandatory(
-            mt('setup', 'Zend Framework 1'),
-            mt(
-                'setup',
-                'Icinga Web 2 requires at least Zend Framework 1.12.2 to work properly.'
-            ),
-            Zend_Version::compareVersion('1.12.2') !== 1,
-            sprintf(mt('setup', 'You have got Zend Framwork %s installed.'), $zendVersion)
-        );
-
         $defaultTimezone = Platform::getPhpConfig('date.timezone');
         $requirements->addMandatory(
             mt('setup', 'Default Timezone'),
@@ -507,8 +492,7 @@ class WebWizard extends Wizard implements SetupWizard
             )
         );
 
-        // TODO(7464): Re-enable or remove this entirely once a decision has been made regarding shipping Zend with Iw2
-        /*$mysqlAdapterFound = Platform::zendClassExists('Zend_Db_Adapter_Pdo_Mysql');
+        $mysqlAdapterFound = Platform::zendClassExists('Zend_Db_Adapter_Pdo_Mysql');
         $requirements->addOptional(
             mt('setup', 'Zend Database Adapter For MySQL'),
             mt('setup', 'The Zend database adapter for MySQL is required to access a MySQL database.'),
@@ -526,7 +510,7 @@ class WebWizard extends Wizard implements SetupWizard
             $pgsqlAdapterFound ? mt('setup', 'The Zend database adapter for PostgreSQL is available.') : (
                 mt('setup', 'The Zend database adapter for PostgreSQL is missing.')
             )
-        );*/
+        );
 
         $configDir = $this->getConfigDir();
         $requirements->addMandatory(
