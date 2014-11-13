@@ -358,7 +358,6 @@ AS_IF([test "x$ldap_authentication" != xno],
 
 internal_auth_disabled="disabled    = \"1\""
 AS_IF([test "x$internal_authentication" != xno],
-    AC_CHECK_PHP_MODULE([ldap])
     internal_auth_disabled=""
 )
 
