@@ -25,6 +25,7 @@ class StyleSheet
         'css/icinga/monitoring-colors.less',
         'css/icinga/selection-toolbar.less',
         'css/icinga/login.less',
+        '../application/fonts/fontanello-ifont/css/ifont-embedded.css',
         'css/vendor/tipsy.css'
     );
 
