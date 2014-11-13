@@ -14,8 +14,8 @@
 
 <div class="content">
 <?= $this->filterEditor ?>
-<?php if (empty($downtimes)): ?>
-  <?= $this->translate('No downtimes matching the filter'); ?>
+<?php if (count($downtimes) === 0): ?>
+  <?= $this->translate('No active downtimes'); ?>
 </div>
 <?php return; endif ?>
 
