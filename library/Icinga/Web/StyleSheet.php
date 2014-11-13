@@ -31,6 +31,7 @@ class StyleSheet
 
     public static function compileForPdf()
     {
+        self::checkPhp();
         $less = new LessCompiler();
         $basedir = Icinga::app()->getBootstrapDirectory();
         foreach (self::$lessFiles as $file) {
@@ -55,8 +56,17 @@ class StyleSheet
         );
     }
 
+    protected static function checkPhp()
+    {
+        // PHP had a rather conservative PCRE backtrack limit unless 5.3.7
+        if (version_compare(PHP_VERSION, '5.3.7') <= 0) {
+            ini_set('pcre.backtrack_limit', 1000000);
+        }
+    }
+
     public static function send($minified = false)
     {
+        self::checkPhp();
         $app = Icinga::app();
         $basedir = $app->getBootstrapDirectory();
         foreach (self::$lessFiles as $file) {
