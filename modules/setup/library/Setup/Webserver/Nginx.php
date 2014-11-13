@@ -25,6 +25,7 @@ location ~ ^{webPath}/index\.php(.*)$ {
   fastcgi_index index.php;
   include fastcgi_params;
   fastcgi_param SCRIPT_FILENAME {documentRoot}/index.php;
+  fastcgi_param ICINGAWEB_CONFIGDIR {configDir};
 }
 
 location ~ ^{webPath}(.+)? {

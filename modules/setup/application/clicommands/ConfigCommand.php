@@ -73,18 +73,20 @@ class ConfigCommand extends Command
      *
      * OPTIONS:
      *
-     *  --path=<urlpath>                    The URL path to Icinga Web 2
+     *  --path=<urlpath>                    The URL path to Icinga Web 2 [/icingaweb]
      *
-     *  --root/--document-root=<directory>  The directory from which the webserver will serve files
+     *  --root/--document-root=<directory>  The directory from which the webserver will serve files [./public]
      *
-     *  --file=<filename>                   Write configuration to file
+     *  --config=<directory>                Path to Icinga Web 2's configuration files [/etc/icingaweb]
+     *
+     *  --file=<filename>                   Write configuration to file [stdout]
      *
      *
      * EXAMPLES:
      *
      * icingacli setup config webserver apache
      *
-     * icingacli setup config webserver apache --path /icingaweb --document-root /usr/share/icingaweb/public
+     * icingacli setup config webserver apache --path /icingaweb --document-root /usr/share/icingaweb/public --config=/etc/icingaweb
      *
      * icingacli setup config webserver apache --file /etc/apache2/conf.d/icingaweb.conf
      *
@@ -100,7 +102,7 @@ class ConfigCommand extends Command
         } catch (ProgrammingError $e) {
             $this->fail($this->translate('Unknown type') . ': ' . $type);
         }
-        $path = $this->params->get('path', '/icingaweb');
+        $path = $this->params->get('path', $webserver->getWebPath());
         if (! is_string($path) || strlen(trim($path)) === 0) {
             $this->fail($this->translate('The argument --path expects a URL path'));
         }
@@ -110,8 +112,15 @@ class ConfigCommand extends Command
                 'The argument --root/--document-root expects a directory from which the webserver will serve files'
             ));
         }
+        $configDir = $this->params->get('config', $webserver->getConfigDir());
+        if (! is_string($documentRoot) || strlen(trim($documentRoot)) === 0) {
+            $this->fail($this->translate(
+                'The argument --config expects a path to Icinga Web 2\'s configuration files'
+            ));
+        }
         $webserver
             ->setDocumentRoot($documentRoot)
+            ->setConfigDir($configDir)
             ->setWebPath($path);
         $config = $webserver->generate() . "\n";
         if (($file = $this->params->get('file')) !== null) {

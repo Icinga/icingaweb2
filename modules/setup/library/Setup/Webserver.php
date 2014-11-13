@@ -24,7 +24,14 @@ abstract class Webserver
      *
      * @var string
      */
-    protected $webPath;
+    protected $webPath = '/icingaweb';
+
+    /**
+     * Path to Icinga Web 2's configuration files
+     *
+     * @var string
+     */
+    protected $configDir;
 
     /**
      * Create instance by type name
@@ -56,12 +63,12 @@ abstract class Webserver
         $searchTokens = array(
             '{webPath}',
             '{documentRoot}',
-            '{configPath}',
+            '{configDir}',
         );
         $replaceTokens = array(
             $this->getWebPath(),
             $this->getDocumentRoot(),
-            Icinga::app()->getConfigDir()
+            $this->getConfigDir()
         );
         $template = str_replace($searchTokens, $replaceTokens, $template);
         return $template;
@@ -131,5 +138,31 @@ abstract class Webserver
             $this->documentRoot = $this->detectDocumentRoot();
         }
         return $this->documentRoot;
+    }
+
+    /**
+     * Set the configuration directory
+     *
+     * @param   string  $configDir
+     *
+     * @return  $this
+     */
+    public function setConfigDir($configDir)
+    {
+        $this->configDir = (string) $configDir;
+        return $this;
+    }
+
+    /**
+     * Get the configuration directory
+     *
+     * @return string
+     */
+    public function getConfigDir()
+    {
+        if ($this->configDir === null) {
+            return Icinga::app()->getConfigDir();
+        }
+        return $this->configDir;
     }
 }

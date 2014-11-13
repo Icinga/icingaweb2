@@ -36,7 +36,7 @@ Alias {webPath} "{documentRoot}"
         Allow from all
     </IfModule>
 
-    SetEnv ICINGAWEB_CONFIGDIR /etc/icingaweb/
+    SetEnv ICINGAWEB_CONFIGDIR "{configDir}"
 
     EnableSendfile Off
 
