@@ -14,6 +14,15 @@ use Icinga\Data\Filter\Filter;
 class StatehistoryForm extends Form
 {
     /**
+     * Initialize this form
+     */
+    public function init()
+    {
+        $this->setName('form_event_overview');
+        $this->setSubmitLabel(mt('monitoring', 'Apply'));
+    }
+
+    /**
      * Return the corresponding filter-object
      *
      * @returns Filter
@@ -135,16 +144,5 @@ class StatehistoryForm extends Form
                 )
             );
         }
-        $this->addElement(
-            'button',
-            'btn_submit',
-            array(
-                'type'      => 'submit',
-                'escape'    => false,
-                'value'     => '1',
-                'class'     => 'btn btn-cta btn-common',
-                'label'     => mt('monitoring', 'Apply')
-            )
-        );
     }
 }
