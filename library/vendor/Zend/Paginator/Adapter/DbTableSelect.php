@@ -22,7 +22,6 @@
 /**
  * @see Zend_Paginator_Adapter_DbSelect
  */
-require_once 'Zend/Paginator/Adapter/DbSelect.php';
 
 /**
  * @category   Zend

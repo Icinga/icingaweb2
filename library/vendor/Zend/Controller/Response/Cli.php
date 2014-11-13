@@ -21,7 +21,6 @@
 
 
 /** Zend_Controller_Response_Abstract */
-require_once 'Zend/Controller/Response/Abstract.php';
 
 
 /**

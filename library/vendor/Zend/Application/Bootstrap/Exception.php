@@ -22,7 +22,6 @@
 /**
  * @see Zend_Application_Exception
  */
-require_once 'Zend/Application/Exception.php';
 
 /**
  * Exception class for Zend_Application

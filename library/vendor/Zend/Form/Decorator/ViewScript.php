@@ -20,7 +20,6 @@
  */
 
 /** Zend_Form_Decorator_Abstract */
-require_once 'Zend/Form/Decorator/Abstract.php';
 
 /**
  * Zend_Form_Decorator_ViewScript
@@ -158,7 +157,6 @@ class Zend_Form_Decorator_ViewScript extends Zend_Form_Decorator_Abstract
 
         $viewScript = $this->getViewScript();
         if (empty($viewScript)) {
-            require_once 'Zend/Form/Exception.php';
             throw new Zend_Form_Exception('No view script registered with ViewScript decorator');
         }
 

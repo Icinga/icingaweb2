@@ -21,7 +21,6 @@
  */
 
 /** Zend_Mobile_Push_Exception */
-require_once 'Zend/Mobile/Push/Exception.php';
 
 /**
  * @category   Zend

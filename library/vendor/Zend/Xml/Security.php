@@ -39,7 +39,6 @@ class Zend_Xml_Security
     protected static function heuristicScan($xml)
     {
         if (strpos($xml, '<!ENTITY') !== false) {
-            require_once 'Exception.php';
             throw new Zend_Xml_Exception(self::ENTITY_DETECT);
         }
     }
@@ -108,7 +107,6 @@ class Zend_Xml_Security
             foreach ($dom->childNodes as $child) {
                 if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
                     if ($child->entities->length > 0) {
-                        require_once 'Exception.php';
                         throw new Zend_Xml_Exception(self::ENTITY_DETECT);
                     }
                 }
@@ -136,7 +134,6 @@ class Zend_Xml_Security
     public static function scanFile($file, DOMDocument $dom = null)
     {
         if (!file_exists($file)) {
-            require_once 'Exception.php';
             throw new Zend_Xml_Exception(
                 "The file $file specified doesn't exist"
             );

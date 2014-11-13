@@ -22,7 +22,6 @@
 /**
  * @see Zend_Validate_File_MimeType
  */
-require_once 'Zend/Validate/File/MimeType.php';
 
 /**
  * Validator which checks if the file already exists in the directory

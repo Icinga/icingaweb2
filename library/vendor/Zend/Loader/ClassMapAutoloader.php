@@ -19,7 +19,6 @@
  */
 
 // Grab SplAutoloader interface
-require_once dirname(__FILE__) . '/SplAutoloader.php';
 
 /**
  * Class-map autoloader
@@ -95,7 +94,6 @@ class Zend_Loader_ClassMapAutoloader implements Zend_Loader_SplAutoloader
         }
 
         if (!is_array($map)) {
-            require_once dirname(__FILE__) . '/Exception/InvalidArgumentException.php';
             throw new Zend_Loader_Exception_InvalidArgumentException('Map file provided does not return a map');
         }
 
@@ -117,7 +115,6 @@ class Zend_Loader_ClassMapAutoloader implements Zend_Loader_SplAutoloader
     public function registerAutoloadMaps($locations)
     {
         if (!is_array($locations) && !($locations instanceof Traversable)) {
-            require_once dirname(__FILE__) . '/Exception/InvalidArgumentException.php';
             throw new Zend_Loader_Exception_InvalidArgumentException('Map list must be an array or implement Traversable');
         }
         foreach ($locations as $location) {
@@ -145,7 +142,6 @@ class Zend_Loader_ClassMapAutoloader implements Zend_Loader_SplAutoloader
     public function autoload($class)
     {
         if (isset($this->map[$class])) {
-            require_once $this->map[$class];
         }
     }
 
@@ -177,7 +173,6 @@ class Zend_Loader_ClassMapAutoloader implements Zend_Loader_SplAutoloader
     protected function loadMapFromFile($location)
     {
         if (!file_exists($location)) {
-            require_once dirname(__FILE__) . '/Exception/InvalidArgumentException.php';
             throw new Zend_Loader_Exception_InvalidArgumentException('Map file provided does not exist');
         }
 

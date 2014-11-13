@@ -22,7 +22,6 @@
 /**
  * Zend_TimeSync_Protocol
  */
-require_once 'Zend/TimeSync/Protocol.php';
 
 /**
  * SNTP Protocol handling class

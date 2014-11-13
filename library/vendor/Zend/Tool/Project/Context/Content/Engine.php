@@ -23,12 +23,10 @@
 /**
  * @see Zend_Tool_Project_Context_Content_Engine_CodeGenerator
  */
-require_once 'Zend/Tool/Project/Context/Content/Engine/CodeGenerator.php';
 
 /**
  * @see Zend_Tool_Project_Context_Content_Engine_Phtml
  */
-require_once 'Zend/Tool/Project/Context/Content/Engine/Phtml.php';
 
 /**
  * This class is the front most class for utilizing Zend_Tool_Project

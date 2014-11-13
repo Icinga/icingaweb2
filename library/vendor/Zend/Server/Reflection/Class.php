@@ -21,7 +21,6 @@
 /**
  * Zend_Server_Reflection_Method
  */
-require_once 'Zend/Server/Reflection/Method.php';
 
 /**
  * Class/Object reflection
@@ -105,7 +104,6 @@ class Zend_Server_Reflection_Class
             return call_user_func_array(array($this->_reflection, $method), $args);
         }
 
-        require_once 'Zend/Server/Reflection/Exception.php';
         throw new Zend_Server_Reflection_Exception('Invalid reflection method');
     }
 
@@ -176,7 +174,6 @@ class Zend_Server_Reflection_Class
         }
 
         if (!is_string($namespace) || !preg_match('/[a-z0-9_\.]+/i', $namespace)) {
-            require_once 'Zend/Server/Reflection/Exception.php';
             throw new Zend_Server_Reflection_Exception('Invalid namespace');
         }
 

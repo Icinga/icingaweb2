@@ -25,7 +25,6 @@
 /**
  * Zend_Gdata_App_Exception
  */
-require_once 'Zend/Gdata/App/Exception.php';
 
 /**
  * Gdata App IO exceptions.

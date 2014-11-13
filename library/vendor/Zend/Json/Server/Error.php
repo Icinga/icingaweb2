@@ -181,7 +181,6 @@ class Zend_Json_Server_Error
      */
     public function toJson()
     {
-        require_once 'Zend/Json.php';
         return Zend_Json::encode($this->toArray());
     }
 

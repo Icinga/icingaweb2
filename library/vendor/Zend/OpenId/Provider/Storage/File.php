@@ -24,7 +24,6 @@
 /**
  * @see Zend_OpenId_Provider_Storage
  */
-require_once "Zend/OpenId/Provider/Storage.php";
 
 /**
  * External storage implemmentation using serialized files

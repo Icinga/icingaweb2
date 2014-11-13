@@ -23,12 +23,10 @@
 /**
  * @see Zend_Tool_Project_Provider_Abstract
  */
-require_once 'Zend/Tool/Project/Provider/Abstract.php';
 
 /**
  * @see Zend_Tool_Project_Provider_Exception
  */
-require_once 'Zend/Tool/Project/Provider/Exception.php';
 
 /**
  * @category   Zend

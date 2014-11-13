@@ -22,7 +22,6 @@
 /**
  * @see Zend_Text_Table_Decorator_Interface
  */
-require_once 'Zend/Text/Table/Decorator/Interface.php';
 
 /**
  * Unicode Decorator for Zend_Text_Table

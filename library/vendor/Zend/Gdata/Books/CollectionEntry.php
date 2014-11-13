@@ -24,7 +24,6 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
 
 /**
  * Describes an entry in a feed of collections

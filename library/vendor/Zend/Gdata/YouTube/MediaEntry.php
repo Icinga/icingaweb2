@@ -24,17 +24,14 @@
 /**
  * @see Zend_Gdata_Media
  */
-require_once 'Zend/Gdata/Media.php';
 
 /**
  * @see Zend_Gdata_Media_Entry
  */
-require_once 'Zend/Gdata/Media/Entry.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_MediaGroup
  */
-require_once 'Zend/Gdata/YouTube/Extension/MediaGroup.php';
 
 /**
  * Represents the YouTube flavor of a Gdata Media Entry

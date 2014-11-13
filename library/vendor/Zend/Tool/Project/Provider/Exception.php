@@ -23,7 +23,6 @@
 /**
  * @see Zend_Tool_Project_Exception
  */
-require_once 'Zend/Tool/Project/Exception.php';
 
 /**
  * @category   Zend

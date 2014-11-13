@@ -23,7 +23,6 @@
 /**
  * @see Zend_Db_Adapter_Exception
  */
-require_once 'Zend/Db/Adapter/Exception.php';
 
 /**
  * Zend_Db_Adapter_Sqlsrv_Exception

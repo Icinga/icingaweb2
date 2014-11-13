@@ -19,7 +19,6 @@
  */
 
 /** Zend_Form */
-require_once 'Zend/Form.php';
 
 /**
  * Zend_Form_SubForm

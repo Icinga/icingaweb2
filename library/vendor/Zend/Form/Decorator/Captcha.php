@@ -20,7 +20,6 @@
  */
 
 /** @see Zend_Form_Decorator_Abstract */
-require_once 'Zend/Form/Decorator/Abstract.php';
 
 /**
  * Captcha generic decorator

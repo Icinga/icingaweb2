@@ -20,7 +20,6 @@
  */
 
 /** Zend_View_Helper_Abstract */
-require_once 'Zend/View/Helper/Abstract.php';
 
 /**
  * Helper for interacting with UserAgent instance
@@ -75,7 +74,6 @@ class Zend_View_Helper_UserAgent extends Zend_View_Helper_Abstract
     public function getUserAgent()
     {
         if (null === $this->_userAgent) {
-            require_once 'Zend/Http/UserAgent.php';
             $this->setUserAgent(new Zend_Http_UserAgent());
         }
         return $this->_userAgent;

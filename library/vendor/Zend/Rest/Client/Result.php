@@ -20,7 +20,6 @@
  * @version    $Id$
  */
 
-require_once 'Zend/Xml/Security.php';
 
 /**
  * @category   Zend
@@ -59,7 +58,6 @@ class Zend_Rest_Client_Result implements IteratorAggregate {
                 $message = "REST Response Error: " . $this->_errstr;
                 $this->_errstr = null;
             }
-            require_once "Zend/Rest/Client/Result/Exception.php";
             throw new Zend_Rest_Client_Result_Exception($message);
         }
     }

@@ -24,7 +24,6 @@
 /**
  * @see Zend_Gdata_Feed
  */
-require_once 'Zend/Gdata/Feed.php';
 
 /**
  * Describes a Book Search collection feed

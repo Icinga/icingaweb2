@@ -23,12 +23,10 @@
 /**
  * @see Zend_Tool_Project_Provider_Abstract
  */
-require_once 'Zend/Tool/Project/Provider/Abstract.php';
 
 /**
  * @see Zend_Tool_Framework_Provider_Interactable
  */
-require_once 'Zend/Tool/Framework/Provider/Interactable.php';
 
 /**
  * @category   Zend

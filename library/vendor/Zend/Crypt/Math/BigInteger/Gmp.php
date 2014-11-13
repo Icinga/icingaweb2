@@ -23,7 +23,6 @@
 /**
  * @see Zend_Crypt_Math_BigInteger_Interface
  */
-require_once 'Zend/Crypt/Math/BigInteger/Interface.php';
 
 /**
  * Support for arbitrary precision mathematics in PHP.

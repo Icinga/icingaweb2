@@ -23,7 +23,6 @@
 /**
  * @see Zend_Markup_Renderer_Html_HtmlAbstract
  */
-require_once 'Zend/Markup/Renderer/Html/HtmlAbstract.php';
 
 /**
  * Tag interface

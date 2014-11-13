@@ -17,9 +17,6 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/StorageService/Adapter.php';
-require_once 'Zend/Service/WindowsAzure/Storage/Blob.php';
-require_once 'Zend/Cloud/StorageService/Exception.php';
 
 /**
  *

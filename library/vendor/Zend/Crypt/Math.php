@@ -23,7 +23,6 @@
 /**
  * @see Zend_Crypt_Math_BigInteger
  */
-require_once 'Zend/Crypt/Math/BigInteger.php';
 
 /**
  * @category   Zend

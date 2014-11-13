@@ -24,7 +24,6 @@
 /**
  * Zend_XmlRpc_Exception
  */
-require_once 'Zend/XmlRpc/Client/Exception.php';
 
 
 /**

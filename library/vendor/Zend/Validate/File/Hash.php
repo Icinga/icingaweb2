@@ -22,7 +22,6 @@
 /**
  * @see Zend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
 
 /**
  * Validator for the hash of given files
@@ -70,7 +69,6 @@ class Zend_Validate_File_Hash extends Zend_Validate_Abstract
         } elseif (is_scalar($options)) {
             $options = array('hash1' => $options);
         } elseif (!is_array($options)) {
-            require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception('Invalid options to validator provided');
         }
 
@@ -116,7 +114,6 @@ class Zend_Validate_File_Hash extends Zend_Validate_Abstract
         if (is_string($options)) {
             $options = array($options);
         } else if (!is_array($options)) {
-            require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception("False parameter given");
         }
 
@@ -129,7 +126,6 @@ class Zend_Validate_File_Hash extends Zend_Validate_Abstract
         }
 
         if (!in_array($algorithm, $known)) {
-            require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception("Unknown algorithm '{$algorithm}'");
         }
 
@@ -152,7 +148,6 @@ class Zend_Validate_File_Hash extends Zend_Validate_Abstract
     public function isValid($value, $file = null)
     {
         // Is file readable ?
-        require_once 'Zend/Loader.php';
         if (!Zend_Loader::isReadable($value)) {
             return $this->_throw($file, self::NOT_FOUND);
         }

@@ -22,7 +22,6 @@
 /**
  * @see Zend_Controller_Response_Http
  */
-require_once 'Zend/Controller/Response/Http.php';
 
 /**
  * Zend_Controller_Response_HttpTestCase

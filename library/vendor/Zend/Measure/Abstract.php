@@ -22,17 +22,14 @@
 /**
  * @see Zend_Locale
  */
-require_once 'Zend/Locale.php';
 
 /**
  * @see Zend_Locale_Math
  */
-require_once 'Zend/Locale/Math.php';
 
 /**
  * @see Zend_Locale_Format
  */
-require_once 'Zend/Locale/Format.php';
 
 /**
  * Abstract class for all measurements
@@ -92,7 +89,6 @@ abstract class Zend_Measure_Abstract
         }
 
         if (isset($this->_units[$type]) === false) {
-            require_once 'Zend/Measure/Exception.php';
             throw new Zend_Measure_Exception("Type ($type) is unknown");
         }
 
@@ -119,7 +115,6 @@ abstract class Zend_Measure_Abstract
     public function setLocale($locale = null, $check = false)
     {
         if (empty($locale)) {
-            require_once 'Zend/Registry.php';
             if (Zend_Registry::isRegistered('Zend_Locale') === true) {
                 $locale = Zend_Registry::get('Zend_Locale');
             }
@@ -131,7 +126,6 @@ abstract class Zend_Measure_Abstract
 
         if (!Zend_Locale::isLocale($locale, true, false)) {
             if (!Zend_Locale::isLocale($locale, false, false)) {
-                require_once 'Zend/Measure/Exception.php';
                 throw new Zend_Measure_Exception("Language (" . (string) $locale . ") is unknown");
             }
 
@@ -194,14 +188,12 @@ abstract class Zend_Measure_Abstract
         }
 
         if (empty($this->_units[$type])) {
-            require_once 'Zend/Measure/Exception.php';
             throw new Zend_Measure_Exception("Type ($type) is unknown");
         }
 
         try {
             $value = Zend_Locale_Format::getNumber($value, array('locale' => $locale));
         } catch(Exception $e) {
-            require_once 'Zend/Measure/Exception.php';
             throw new Zend_Measure_Exception($e->getMessage(), $e->getCode(), $e);
         }
 
@@ -230,7 +222,6 @@ abstract class Zend_Measure_Abstract
     public function setType($type)
     {
         if (empty($this->_units[$type])) {
-            require_once 'Zend/Measure/Exception.php';
             throw new Zend_Measure_Exception("Type ($type) is unknown");
         }
 

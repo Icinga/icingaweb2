@@ -20,12 +20,10 @@
 /**
  * @see Zend_ProgressBar_Adapter
  */
-require_once 'Zend/ProgressBar/Adapter.php';
 
 /**
  * @see Zend_Text_MultiByte
  */
-require_once 'Zend/Text/MultiByte.php';
 
 /**
  * Zend_ProgressBar_Adapter_Console offers a text-based progressbar for console
@@ -190,7 +188,6 @@ class Zend_ProgressBar_Adapter_Console extends Zend_ProgressBar_Adapter
        $stream = @fopen($resource, 'w');
 
        if ($stream === false) {
-            require_once 'Zend/ProgressBar/Adapter/Exception.php';
             throw new Zend_ProgressBar_Adapter_Exception('Unable to open stream');
        }
 
@@ -269,7 +266,6 @@ class Zend_ProgressBar_Adapter_Console extends Zend_ProgressBar_Adapter
                                  self::ELEMENT_TEXT);
 
         if (count(array_diff($elements, $allowedElements)) > 0) {
-            require_once 'Zend/ProgressBar/Adapter/Exception.php';
             throw new Zend_ProgressBar_Adapter_Exception('Invalid element found in $elements array');
         }
 
@@ -290,7 +286,6 @@ class Zend_ProgressBar_Adapter_Console extends Zend_ProgressBar_Adapter
     public function setBarLeftChar($char)
     {
         if (empty($char)) {
-            require_once 'Zend/ProgressBar/Adapter/Exception.php';
             throw new Zend_ProgressBar_Adapter_Exception('Character may not be empty');
         }
 
@@ -309,7 +304,6 @@ class Zend_ProgressBar_Adapter_Console extends Zend_ProgressBar_Adapter
     public function setBarRightChar($char)
     {
         if (empty($char)) {
-            require_once 'Zend/ProgressBar/Adapter/Exception.php';
             throw new Zend_ProgressBar_Adapter_Exception('Character may not be empty');
         }
 
@@ -370,7 +364,6 @@ class Zend_ProgressBar_Adapter_Console extends Zend_ProgressBar_Adapter
                                 self::FINISH_ACTION_NONE);
 
         if (!in_array($action, $allowedActions)) {
-            require_once 'Zend/ProgressBar/Adapter/Exception.php';
             throw new Zend_ProgressBar_Adapter_Exception('Invalid finish action specified');
         }
 

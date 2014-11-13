@@ -21,7 +21,6 @@
  */
 
 /** @see Zend_Barcode_Object_ObjectAbstract */
-require_once 'Zend/Barcode/Object/ObjectAbstract.php';
 
 /**
  * Class for generate Barcode

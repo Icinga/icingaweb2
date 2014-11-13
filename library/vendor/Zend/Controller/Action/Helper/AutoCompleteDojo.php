@@ -23,7 +23,6 @@
 /**
  * @see Zend_Controller_Action_Helper_AutoComplete_Abstract
  */
-require_once 'Zend/Controller/Action/Helper/AutoComplete/Abstract.php';
 
 /**
  * Create and send Dojo-compatible autocompletion lists
@@ -60,7 +59,6 @@ class Zend_Controller_Action_Helper_AutoCompleteDojo extends Zend_Controller_Act
     public function prepareAutoCompletion($data, $keepLayouts = false)
     {
         if (!$data instanceof Zend_Dojo_Data) {
-            require_once 'Zend/Dojo/Data.php';
             $items = array();
             foreach ($data as $key => $value) {
                 $items[] = array('label' => $value, 'name' => $value);
@@ -69,10 +67,8 @@ class Zend_Controller_Action_Helper_AutoCompleteDojo extends Zend_Controller_Act
         }
 
         if (!$keepLayouts) {
-            require_once 'Zend/Controller/Action/HelperBroker.php';
             Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer')->setNoRender(true);
 
-            require_once 'Zend/Layout.php';
             $layout = Zend_Layout::getMvcInstance();
             if ($layout instanceof Zend_Layout) {
                 $layout->disableLayout();

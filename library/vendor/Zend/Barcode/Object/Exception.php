@@ -20,7 +20,6 @@
  */
 
 /** @see Zend_Barcode_Exception */
-require_once 'Zend/Barcode/Exception.php';
 
 /**
  * Zend_Barcode_Renderer_Exception

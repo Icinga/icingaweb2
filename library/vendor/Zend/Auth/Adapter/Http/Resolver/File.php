@@ -24,7 +24,6 @@
 /**
  * @see Zend_Auth_Adapter_Http_Resolver_Interface
  */
-require_once 'Zend/Auth/Adapter/Http/Resolver/Interface.php';
 
 
 /**
@@ -70,7 +69,6 @@ class Zend_Auth_Adapter_Http_Resolver_File implements Zend_Auth_Adapter_Http_Res
             /**
              * @see Zend_Auth_Adapter_Http_Resolver_Exception
              */
-            require_once 'Zend/Auth/Adapter/Http/Resolver/Exception.php';
             throw new Zend_Auth_Adapter_Http_Resolver_Exception('Path not readable: ' . $path);
         }
         $this->_file = $path;
@@ -115,13 +113,11 @@ class Zend_Auth_Adapter_Http_Resolver_File implements Zend_Auth_Adapter_Http_Res
             /**
              * @see Zend_Auth_Adapter_Http_Resolver_Exception
              */
-            require_once 'Zend/Auth/Adapter/Http/Resolver/Exception.php';
             throw new Zend_Auth_Adapter_Http_Resolver_Exception('Username is required');
         } else if (!ctype_print($username) || strpos($username, ':') !== false) {
             /**
              * @see Zend_Auth_Adapter_Http_Resolver_Exception
              */
-            require_once 'Zend/Auth/Adapter/Http/Resolver/Exception.php';
             throw new Zend_Auth_Adapter_Http_Resolver_Exception('Username must consist only of printable characters, '
                                                               . 'excluding the colon');
         }
@@ -129,13 +125,11 @@ class Zend_Auth_Adapter_Http_Resolver_File implements Zend_Auth_Adapter_Http_Res
             /**
              * @see Zend_Auth_Adapter_Http_Resolver_Exception
              */
-            require_once 'Zend/Auth/Adapter/Http/Resolver/Exception.php';
             throw new Zend_Auth_Adapter_Http_Resolver_Exception('Realm is required');
         } else if (!ctype_print($realm) || strpos($realm, ':') !== false) {
             /**
              * @see Zend_Auth_Adapter_Http_Resolver_Exception
              */
-            require_once 'Zend/Auth/Adapter/Http/Resolver/Exception.php';
             throw new Zend_Auth_Adapter_Http_Resolver_Exception('Realm must consist only of printable characters, '
                                                               . 'excluding the colon.');
         }
@@ -146,7 +140,6 @@ class Zend_Auth_Adapter_Http_Resolver_File implements Zend_Auth_Adapter_Http_Res
             /**
              * @see Zend_Auth_Adapter_Http_Resolver_Exception
              */
-            require_once 'Zend/Auth/Adapter/Http/Resolver/Exception.php';
             throw new Zend_Auth_Adapter_Http_Resolver_Exception('Unable to open password file: ' . $this->_file);
         }
 

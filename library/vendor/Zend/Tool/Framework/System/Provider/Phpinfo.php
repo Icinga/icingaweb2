@@ -19,7 +19,6 @@
  * @version    $Id$
  */
 
-require_once 'Zend/Tool/Framework/Provider/Interface.php';
 
 /**
  * @category   Zend

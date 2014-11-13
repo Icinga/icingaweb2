@@ -18,8 +18,6 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Stdlib/CallbackHandler.php';
-require_once 'Zend/Stdlib/PriorityQueue.php';
 
 /**
  * Event manager: notification system

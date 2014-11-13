@@ -20,7 +20,6 @@
  */
 
 /** Zend_Form_Decorator_FormElements */
-require_once 'Zend/Form/Decorator/FormElements.php';
 
 /**
  * Zend_Form_Decorator_PrepareElements

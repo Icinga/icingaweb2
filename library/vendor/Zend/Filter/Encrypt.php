@@ -22,12 +22,10 @@
 /**
  * @see Zend_Filter_Interface
  */
-require_once 'Zend/Filter/Interface.php';
 
 /**
  * @see Zend_Loader
  */
-require_once 'Zend/Loader.php';
 
 /**
  * Encrypts a given string
@@ -99,7 +97,6 @@ class Zend_Filter_Encrypt implements Zend_Filter_Interface
 
         $this->_adapter = new $adapter($options);
         if (!$this->_adapter instanceof Zend_Filter_Encrypt_Interface) {
-            require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception("Encoding adapter '" . $adapter . "' does not implement Zend_Filter_Encrypt_Interface");
         }
 
@@ -116,7 +113,6 @@ class Zend_Filter_Encrypt implements Zend_Filter_Interface
     {
         $part = substr($method, 0, 3);
         if ((($part != 'get') and ($part != 'set')) or !method_exists($this->_adapter, $method)) {
-            require_once 'Zend/Filter/Exception.php';
             throw new Zend_Filter_Exception("Unknown method '{$method}'");
         }
 

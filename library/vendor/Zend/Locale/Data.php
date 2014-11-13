@@ -23,10 +23,8 @@
 /**
  * include needed classes
  */
-require_once 'Zend/Locale.php';
 
 /** @see Zend_Xml_Security */
-require_once 'Zend/Xml/Security.php';
 
 /**
  * Locale data reader, handles the CLDR
@@ -157,7 +155,6 @@ class Zend_Locale_Data
         if (empty(self::$_ldml[(string) $locale])) {
             $filename = dirname(__FILE__) . '/Data/' . $locale . '.xml';
             if (!file_exists($filename)) {
-                require_once 'Zend/Locale/Exception.php';
                 throw new Zend_Locale_Exception("Missing locale file '$filename' for '$locale' locale.");
             }
 
@@ -288,7 +285,6 @@ class Zend_Locale_Data
         }
 
         if (!(Zend_Locale::isLocale((string) $locale, null, false))) {
-            require_once 'Zend/Locale/Exception.php';
             throw new Zend_Locale_Exception("Locale (" . (string) $locale . ") is a unknown locale");
         }
 
@@ -313,7 +309,6 @@ class Zend_Locale_Data
         $locale = self::_checkLocale($locale);
 
         if (!isset(self::$_cache) && !self::$_cacheDisabled) {
-            require_once 'Zend/Cache.php';
             self::$_cache = Zend_Cache::factory(
                 'Core',
                 'File',
@@ -933,7 +928,6 @@ class Zend_Locale_Data
                 break;
 
             default :
-                require_once 'Zend/Locale/Exception.php';
                 throw new Zend_Locale_Exception("Unknown list ($path) for parsing locale data.");
                 break;
         }
@@ -963,7 +957,6 @@ class Zend_Locale_Data
         $locale = self::_checkLocale($locale);
 
         if (!isset(self::$_cache) && !self::$_cacheDisabled) {
-            require_once 'Zend/Cache.php';
             self::$_cache = Zend_Cache::factory(
                 'Core',
                 'File',
@@ -1476,7 +1469,6 @@ class Zend_Locale_Data
                 break;
 
             default :
-                require_once 'Zend/Locale/Exception.php';
                 throw new Zend_Locale_Exception("Unknown detail ($path) for parsing locale data.");
                 break;
         }

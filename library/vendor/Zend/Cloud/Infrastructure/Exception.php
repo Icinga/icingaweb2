@@ -12,7 +12,6 @@
 /**
  * Zend_Cloud_Exception
  */
-require_once 'Zend/Cloud/Exception.php';
 
 /**
  * @category   Zend

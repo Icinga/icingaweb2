@@ -23,12 +23,10 @@
 /**
  * @see Zend_Test_PHPUnit_Db_DataSet_QueryTable
  */
-require_once "Zend/Test/PHPUnit/Db/DataSet/QueryTable.php";
 
 /**
  * @see Zend_Test_PHPUnit_Db_Metadata_Generic
  */
-require_once "Zend/Test/PHPUnit/Db/Metadata/Generic.php";
 
 /**
  * Generic Abstraction of Zend_Db Connections in the PHPUnit Database Extension context.

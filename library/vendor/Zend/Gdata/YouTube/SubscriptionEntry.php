@@ -24,47 +24,38 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Extension_FeedLink
  */
-require_once 'Zend/Gdata/Extension/FeedLink.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Description
  */
-require_once 'Zend/Gdata/YouTube/Extension/Description.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_PlaylistTitle
  */
-require_once 'Zend/Gdata/YouTube/Extension/PlaylistTitle.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_PlaylistId
  */
-require_once 'Zend/Gdata/YouTube/Extension/PlaylistId.php';
 
 /**
  * @see Zend_Gdata_Media_Extension_MediaThumbnail
  */
-require_once 'Zend/Gdata/Media/Extension/MediaThumbnail.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Username
  */
-require_once 'Zend/Gdata/YouTube/Extension/Username.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_CountHint
  */
-require_once 'Zend/Gdata/YouTube/Extension/CountHint.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_QueryString
  */
-require_once 'Zend/Gdata/YouTube/Extension/QueryString.php';
 
 /**
  * Represents the YouTube video subscription flavor of an Atom entry
@@ -287,7 +278,6 @@ class Zend_Gdata_YouTube_SubscriptionEntry extends Zend_Gdata_Entry
     {
         if (($this->getMajorProtocolVersion() == null) ||
            ($this->getMajorProtocolVersion() == 1)) {
-            require_once 'Zend/Gdata/App/VersionException.php';
             throw new Zend_Gdata_App_VersionException('The getPlaylistId ' .
                 ' method is only supported as of version 2 of the YouTube ' .
                 'API.');
@@ -308,7 +298,6 @@ class Zend_Gdata_YouTube_SubscriptionEntry extends Zend_Gdata_Entry
     {
         if (($this->getMajorProtocolVersion() == null) ||
            ($this->getMajorProtocolVersion() == 1)) {
-            require_once 'Zend/Gdata/App/VersionException.php';
             throw new Zend_Gdata_App_VersionException('The setPlaylistTitle ' .
                 ' method is only supported as of version 2 of the YouTube ' .
                 'API.');
@@ -351,7 +340,6 @@ class Zend_Gdata_YouTube_SubscriptionEntry extends Zend_Gdata_Entry
     {
         if (($this->getMajorProtocolVersion() == null) ||
            ($this->getMajorProtocolVersion() == 1)) {
-            require_once 'Zend/Gdata/App/VersionException.php';
             throw new Zend_Gdata_App_VersionException('The getPlaylistTitle ' .
                 ' method is only supported as of version 2 of the YouTube ' .
                 'API.');
@@ -372,7 +360,6 @@ class Zend_Gdata_YouTube_SubscriptionEntry extends Zend_Gdata_Entry
     {
         if (($this->getMajorProtocolVersion() == null) ||
            ($this->getMajorProtocolVersion() == 1)) {
-            require_once 'Zend/Gdata/App/VersionException.php';
             throw new Zend_Gdata_App_VersionException('The setPlaylistTitle ' .
                 ' method is only supported as of version 2 of the YouTube ' .
                 'API.');
@@ -392,7 +379,6 @@ class Zend_Gdata_YouTube_SubscriptionEntry extends Zend_Gdata_Entry
     {
         if (($this->getMajorProtocolVersion() == null) ||
            ($this->getMajorProtocolVersion() == 1)) {
-            require_once 'Zend/Gdata/App/VersionException.php';
             throw new Zend_Gdata_App_VersionException('The getCountHint ' .
                 ' method is only supported as of version 2 of the YouTube ' .
                 'API.');
@@ -411,7 +397,6 @@ class Zend_Gdata_YouTube_SubscriptionEntry extends Zend_Gdata_Entry
     {
         if (($this->getMajorProtocolVersion() == null) ||
            ($this->getMajorProtocolVersion() == 1)) {
-            require_once 'Zend/Gdata/App/VersionException.php';
             throw new Zend_Gdata_App_VersionException('The getMediaThumbnail ' .
                 ' method is only supported as of version 2 of the YouTube ' .
                 'API.');

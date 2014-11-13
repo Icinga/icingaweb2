@@ -19,7 +19,6 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/EventManager/SharedEventCollection.php';
 
 /**
  * Interface to automate setter injection for a SharedEventCollection instance

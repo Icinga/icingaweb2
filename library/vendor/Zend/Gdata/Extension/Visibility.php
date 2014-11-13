@@ -24,7 +24,6 @@
 /**
  * @see Zend_Gdata_Extension
  */
-require_once 'Zend/Gdata/Extension.php';
 
 /**
  * Data model class to represent an entry's visibility

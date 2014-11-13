@@ -24,12 +24,10 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Spreadsheets_Extension_Cell
  */
-require_once 'Zend/Gdata/Spreadsheets/Extension/Cell.php';
 
 /**
  * Concrete class for working with Cell entries.

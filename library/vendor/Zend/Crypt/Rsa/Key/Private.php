@@ -23,7 +23,6 @@
 /**
  * @see Zend_Crypt_Rsa_Key
  */
-require_once 'Zend/Crypt/Rsa/Key.php';
 
 /**
  * @category   Zend
@@ -53,7 +52,6 @@ class Zend_Crypt_Rsa_Key_Private extends Zend_Crypt_Rsa_Key
             /**
              * @see Zend_Crypt_Exception
              */
-            require_once 'Zend/Crypt/Exception.php';
             throw new Zend_Crypt_Exception('Unable to load private key');
         }
         $this->_opensslKeyResource = $result;
@@ -66,7 +64,6 @@ class Zend_Crypt_Rsa_Key_Private extends Zend_Crypt_Rsa_Key
             /**
              * @see Zend_Crypt_Rsa_Key_Public
              */
-            require_once 'Zend/Crypt/Rsa/Key/Public.php';
             $this->_publicKey = new Zend_Crypt_Rsa_Key_Public($this->_details['key']);
         }
         return $this->_publicKey;

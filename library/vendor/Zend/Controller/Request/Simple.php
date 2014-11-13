@@ -21,7 +21,6 @@
  */
 
 /** Zend_Controller_Request_Abstract */
-require_once 'Zend/Controller/Request/Abstract.php';
 
 /**
  * @category   Zend

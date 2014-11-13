@@ -24,27 +24,22 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Id
  */
-require_once 'Zend/Gdata/Photos/Extension/Id.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_PhotoId
  */
-require_once 'Zend/Gdata/Photos/Extension/PhotoId.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Weight
  */
-require_once 'Zend/Gdata/Photos/Extension/Weight.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Category
  */
-require_once 'Zend/Gdata/App/Extension/Category.php';
 
 /**
  * Data model class for a Comment Entry.

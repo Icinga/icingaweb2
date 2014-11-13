@@ -21,12 +21,10 @@
 /**
  * @see Zend_Exception
  */
-require_once 'Zend/Exception.php';
 
 /**
  * @see Zend_EventManager_Exception
  */
-require_once 'Zend/EventManager/Exception.php';
 
 /**
  * Invalid argument exception

@@ -23,7 +23,6 @@
 /**
  * @see Zend_Tool_Project_Provider_Abstract
  */
-require_once 'Zend/Tool/Project/Provider/Abstract.php';
 
 /**
  * @category   Zend

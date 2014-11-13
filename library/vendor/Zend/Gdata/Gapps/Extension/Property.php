@@ -24,12 +24,10 @@
 /**
  * @see Zend_Gdata_Extension
  */
-require_once 'Zend/Gdata/Extension.php';
 
 /**
  * @see Zend_Gdata_Gapps
  */
-require_once 'Zend/Gdata/Gapps.php';
 
 /**
  * Represents the apps:Property element used by the Apps data API.

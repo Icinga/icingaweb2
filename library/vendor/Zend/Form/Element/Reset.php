@@ -20,7 +20,6 @@
  */
 
 /** Zend_Form_Element_Submit */
-require_once 'Zend/Form/Element/Submit.php';
 
 /**
  * Reset form element

@@ -22,7 +22,6 @@
 /**
  * @see Zend_Json_Server_Request
  */
-require_once 'Zend/Json/Server/Request.php';
 
 /**
  * @category   Zend

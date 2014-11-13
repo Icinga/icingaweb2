@@ -21,7 +21,6 @@
  */
 
 /** @see Zend_Amf_Value_Messaging_AcknowledgeMessage */
-require_once 'Zend/Amf/Value/Messaging/AcknowledgeMessage.php';
 
 /**
  * Creates the error message to report to flex the issue with the call

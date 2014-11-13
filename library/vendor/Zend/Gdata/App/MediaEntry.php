@@ -24,17 +24,14 @@
 /**
  * @see Zend_Gdata_App_Entry
  */
-require_once 'Zend/Gdata/App/Entry.php';
 
 /**
  * @see Zend_Gdata_App_MediaSource
  */
-require_once 'Zend/Gdata/App/MediaSource.php';
 
 /**
  * @see Zend_Gdata_MediaMimeStream
  */
-require_once 'Zend/Gdata/MediaMimeStream.php';
 
 /**
  * Concrete class for working with Atom entries containing multi-part data.
@@ -109,7 +106,6 @@ class Zend_Gdata_App_MediaEntry extends Zend_Gdata_App_Entry
         if ($value instanceof Zend_Gdata_App_MediaSource) {
             $this->_mediaSource = $value;
         } else {
-            require_once 'Zend/Gdata/App/InvalidArgumentException.php';
             throw new Zend_Gdata_App_InvalidArgumentException(
                     'You must specify the media data as a class that conforms to Zend_Gdata_App_MediaSource.');
         }

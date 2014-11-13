@@ -20,7 +20,6 @@
  */
 
 /** Zend_Form_Element_Multi */
-require_once 'Zend/Form/Element/Multi.php';
 
 /**
  * MultiCheckbox form element

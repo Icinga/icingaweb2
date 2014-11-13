@@ -21,7 +21,6 @@
 /**
  * Zend_Exception
  */
-require_once 'Zend/Exception.php';
 
 /**
  * Zend_Barcode_Exception

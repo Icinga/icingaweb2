@@ -20,10 +20,8 @@
  */
 
 /** Zend_Oauth_Signature_SignatureAbstract */
-require_once 'Zend/Oauth/Signature/SignatureAbstract.php';
 
 /** Zend_Crypt_Hmac */
-require_once 'Zend/Crypt/Hmac.php';
 
 /**
  * @category   Zend

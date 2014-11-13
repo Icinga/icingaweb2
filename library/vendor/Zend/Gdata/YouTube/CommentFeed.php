@@ -24,12 +24,10 @@
 /**
  * @see Zend_Gdata_feed
  */
-require_once 'Zend/Gdata/Feed.php';
 
 /**
  * @see Zend_Gdata_YouTube_CommentEntry
  */
-require_once 'Zend/Gdata/YouTube/CommentEntry.php';
 
 /**
  * The YouTube comments flavor of an Atom Feed

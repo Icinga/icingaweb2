@@ -18,7 +18,6 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Stdlib/CallbackHandler.php';
 
 /**
  * Interface for intercepting filter chains

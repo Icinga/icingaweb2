@@ -24,17 +24,14 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Gapps_Extension_Login
  */
-require_once 'Zend/Gdata/Gapps/Extension/Login.php';
 
 /**
  * @see Zend_Gdata_Gapps_Extension_Nickname
  */
-require_once 'Zend/Gdata/Gapps/Extension/Nickname.php';
 
 /**
  * Data model class for a Google Apps Nickname Entry.

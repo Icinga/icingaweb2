@@ -20,7 +20,6 @@
  */
 
 /** Zend_Form_Element */
-require_once 'Zend/Form/Element.php';
 
 /**
  * Base element for XHTML elements

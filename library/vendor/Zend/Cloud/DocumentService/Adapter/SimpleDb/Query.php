@@ -20,7 +20,6 @@
 /*
  * @see Zend_Cloud_DocumentService_Query
  */
-require_once 'Zend/Cloud/DocumentService/Query.php';
 
 /**
  * Class implementing Query adapter for working with SimpleDb queries in a
@@ -130,7 +129,6 @@ class Zend_Cloud_DocumentService_Adapter_SimpleDb_Query
         }
         if (empty($from)) {
             if (null === $collectionName) {
-                require_once 'Zend/Cloud/DocumentService/Exception.php';
                 throw new Zend_Cloud_DocumentService_Exception("Query requires a FROM clause");
             }
             $from = $adapter->quoteName($collectionName);

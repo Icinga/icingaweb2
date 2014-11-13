@@ -23,7 +23,6 @@
 /**
  * @see Zend_Tool_Framework_Action_Base
  */
-require_once 'Zend/Tool/Framework/Action/Base.php';
 
 
 /**

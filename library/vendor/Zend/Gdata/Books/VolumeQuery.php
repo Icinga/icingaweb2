@@ -24,12 +24,10 @@
 /**
  * Zend_Gdata_Books
  */
-require_once('Zend/Gdata/Books.php');
 
 /**
  * Zend_Gdata_Query
  */
-require_once('Zend/Gdata/Query.php');
 
 /**
  * Assists in constructing queries for Books volumes

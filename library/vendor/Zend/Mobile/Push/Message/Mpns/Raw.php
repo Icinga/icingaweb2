@@ -20,10 +20,8 @@
  */
 
 /** Zend_Mobile_Push_Message_Mpns **/
-require_once 'Zend/Mobile/Push/Message/Mpns.php';
 
 /** Zend_Xml_Security */
-require_once 'Zend/Xml/Security.php';
 
 /**
  * Mpns Raw Message

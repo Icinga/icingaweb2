@@ -21,7 +21,6 @@
  */
 
 /** Zend_Amf_Exception */
-require_once 'Zend/Amf/Exception.php';
 
 /**
  * Zend_Amf_Server_Exception

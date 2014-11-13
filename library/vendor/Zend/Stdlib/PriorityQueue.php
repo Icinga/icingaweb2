@@ -18,7 +18,6 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Stdlib/SplPriorityQueue.php';
 
 /**
  * Re-usable, serializable priority queue implementation

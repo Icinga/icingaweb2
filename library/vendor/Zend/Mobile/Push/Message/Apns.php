@@ -21,7 +21,6 @@
  */
 
 /** Zend_Mobile_Push_Message_Abstract **/
-require_once 'Zend/Mobile/Push/Message/Abstract.php';
 
 /**
  * Apns Message

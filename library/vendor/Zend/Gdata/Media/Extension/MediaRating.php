@@ -24,7 +24,6 @@
 /**
  * @see Zend_Gdata_App_Extension
  */
-require_once 'Zend/Gdata/App/Extension.php';
 
 /**
  * Represents the media:rating element

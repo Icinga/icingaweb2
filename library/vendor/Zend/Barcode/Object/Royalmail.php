@@ -23,12 +23,10 @@
 /**
  * @see Zend_Barcode_Object_ObjectAbstract
  */
-require_once 'Zend/Barcode/Object/ObjectAbstract.php';
 
 /**
  * @see Zend_Validate_Barcode
  */
-require_once 'Zend/Validate/Barcode.php';
 
 /**
  * Class for generate Royal maim barcode

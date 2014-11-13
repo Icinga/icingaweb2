@@ -7,7 +7,6 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/Infrastructure/Instance.php';
 
 /**
  * List of instances
@@ -44,11 +43,9 @@ class Zend_Cloud_Infrastructure_InstanceList implements Countable, Iterator, Arr
     public function __construct($adapter, array $instances = null)
     {
         if (!($adapter instanceof Zend_Cloud_Infrastructure_Adapter)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('You must pass a Zend_Cloud_Infrastructure_Adapter');
         }
         if (empty($instances)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('You must pass an array of Instances');
         }
 
@@ -182,7 +179,6 @@ class Zend_Cloud_Infrastructure_InstanceList implements Countable, Iterator, Arr
     public function offsetGet($offset)
     {
         if (!$this->offsetExists($offset)) {
-            require_once 'Zend/Cloud/Infrastructure/Exception.php';
             throw new Zend_Cloud_Infrastructure_Exception('Illegal index');
         }
         return $this->instances[$offset];
@@ -199,7 +195,6 @@ class Zend_Cloud_Infrastructure_InstanceList implements Countable, Iterator, Arr
      */
     public function offsetSet($offset, $value)
     {
-        require_once 'Zend/Cloud/Infrastructure/Exception.php';
         throw new Zend_Cloud_Infrastructure_Exception('You are trying to set read-only property');
     }
 
@@ -213,7 +208,6 @@ class Zend_Cloud_Infrastructure_InstanceList implements Countable, Iterator, Arr
      */
     public function offsetUnset($offset)
     {
-        require_once 'Zend/Cloud/Infrastructure/Exception.php';
         throw new Zend_Cloud_Infrastructure_Exception('You are trying to unset read-only property');
     }
 }

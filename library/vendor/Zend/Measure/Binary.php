@@ -22,8 +22,6 @@
 /**
  * Implement needed classes
  */
-require_once 'Zend/Measure/Abstract.php';
-require_once 'Zend/Locale.php';
 
 /**
  * Class for handling binary conversions

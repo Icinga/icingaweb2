@@ -17,9 +17,6 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Cloud/QueueService/Adapter/AbstractAdapter.php';
-require_once 'Zend/Cloud/QueueService/Exception.php';
-require_once 'Zend/Queue.php';
 
 /**
  * WindowsAzure adapter for simple queue service.
@@ -286,7 +283,6 @@ class Zend_Cloud_QueueService_Adapter_ZendQueue
      */
     public function peekMessages($queueId, $num = 1, $options = null)
     {
-        require_once 'Zend/Cloud/OperationNotAvailableException.php';
         throw new Zend_Cloud_OperationNotAvailableException('ZendQueue doesn\'t currently support message peeking');
     }
 

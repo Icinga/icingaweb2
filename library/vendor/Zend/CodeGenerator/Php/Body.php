@@ -23,7 +23,6 @@
 /**
  * @see Zend_CodeGenerator_Abstract
  */
-require_once 'Zend/CodeGenerator/Abstract.php';
 
 /**
  * @category   Zend

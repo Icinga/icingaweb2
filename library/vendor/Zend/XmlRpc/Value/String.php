@@ -24,7 +24,6 @@
 /**
  * Zend_XmlRpc_Value_Scalar
  */
-require_once 'Zend/XmlRpc/Value/Scalar.php';
 
 /**
  * @package    Zend_XmlRpc

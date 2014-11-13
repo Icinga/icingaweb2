@@ -20,7 +20,6 @@
  */
 
 /** Zend_Oauth_Http_Utility */
-require_once 'Zend/Oauth/Http/Utility.php';
 
 /**
  * @category   Zend

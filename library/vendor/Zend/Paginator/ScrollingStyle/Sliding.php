@@ -22,7 +22,6 @@
 /**
  * @see Zend_Paginator_ScrollingStyle_Interface
  */
-require_once 'Zend/Paginator/ScrollingStyle/Interface.php';
 
 /**
  * A Yahoo! Search-like scrolling style.  The cursor will advance to

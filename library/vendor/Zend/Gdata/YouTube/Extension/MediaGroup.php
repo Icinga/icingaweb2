@@ -24,42 +24,34 @@
 /**
  * @see Zend_Gdata_Media_Extension_MediaGroup
  */
-require_once 'Zend/Gdata/Media/Extension/MediaGroup.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_MediaContent
  */
-require_once 'Zend/Gdata/YouTube/Extension/MediaContent.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Duration
  */
-require_once 'Zend/Gdata/YouTube/Extension/Duration.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_MediaRating
  */
-require_once 'Zend/Gdata/YouTube/Extension/MediaRating.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_MediaCredit
  */
-require_once 'Zend/Gdata/YouTube/Extension/MediaCredit.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Private
  */
-require_once 'Zend/Gdata/YouTube/Extension/Private.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_VideoId
  */
-require_once 'Zend/Gdata/YouTube/Extension/VideoId.php';
 
 /**
  * @see Zend_Gdata_YouTube_Extension_Uploaded
  */
-require_once 'Zend/Gdata/YouTube/Extension/Uploaded.php';
 
 /**
  * This class represents the media:group element of Media RSS.

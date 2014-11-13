@@ -20,7 +20,6 @@
  */
 
 /** Zend_Form_Decorator_Abstract */
-require_once 'Zend/Form/Decorator/Abstract.php';
 
 /**
  * Zend_Form_Decorator_Description
@@ -182,7 +181,6 @@ class Zend_Form_Decorator_Description extends Zend_Form_Decorator_Abstract
         }
 
         if (!empty($tag)) {
-            require_once 'Zend/Form/Decorator/HtmlTag.php';
             $options['tag'] = $tag;
             $decorator = new Zend_Form_Decorator_HtmlTag($options);
             $description = $decorator->render($description);

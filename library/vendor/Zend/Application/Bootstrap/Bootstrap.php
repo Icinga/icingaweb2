@@ -23,7 +23,6 @@
 /**
  * @see Zend_Application_Bootstrap_BootstrapAbstract
  */
-require_once 'Zend/Application/Bootstrap/BootstrapAbstract.php';
 
 /**
  * Concrete base class for bootstrap classes

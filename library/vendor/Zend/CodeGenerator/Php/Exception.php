@@ -23,7 +23,6 @@
 /**
  * @see Zend_CodeGenerator_Exception
  */
-require_once 'Zend/CodeGenerator/Exception.php';
 
 /**
  * @category   Zend

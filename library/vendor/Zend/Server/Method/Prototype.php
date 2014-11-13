@@ -95,7 +95,6 @@ class Zend_Server_Method_Prototype
                 $this->_parameterNameMap[$name] = count($this->_parameters) - 1;
             }
         } else {
-            require_once 'Zend/Server/Method/Parameter.php';
             $parameter = new Zend_Server_Method_Parameter(array(
                 'type' => (string) $parameter,
             ));

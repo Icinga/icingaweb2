@@ -21,13 +21,10 @@
  */
 
 /** Zend_Log_Writer_Abstract */
-require_once 'Zend/Log/Writer/Abstract.php';
 
 /** Zend_Log_Exception */
-require_once 'Zend/Log/Exception.php';
 
 /** Zend_Log_Formatter_Simple*/
-require_once 'Zend/Log/Formatter/Simple.php';
 
 /**
  * Class used for writing log messages to email via Zend_Mail.
@@ -172,7 +169,6 @@ class Zend_Log_Writer_Mail extends Zend_Log_Writer_Abstract
         }
 
         if (!$layout instanceof Zend_Layout) {
-            require_once 'Zend/Log/Exception.php';
             throw new Zend_Log_Exception('Mail must be an instance of Zend_Layout or an array');
         }
         $this->_layout = $layout;

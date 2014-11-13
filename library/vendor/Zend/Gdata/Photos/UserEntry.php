@@ -24,47 +24,38 @@
 /**
  * @see Zend_Gdata_Entry
  */
-require_once 'Zend/Gdata/Entry.php';
 
 /**
  * @see Zend_Gdata_Gapps
  */
-require_once 'Zend/Gdata/Gapps.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Nickname
  */
-require_once 'Zend/Gdata/Photos/Extension/Nickname.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_Thumbnail
  */
-require_once 'Zend/Gdata/Photos/Extension/Thumbnail.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_QuotaCurrent
  */
-require_once 'Zend/Gdata/Photos/Extension/QuotaCurrent.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_QuotaLimit
  */
-require_once 'Zend/Gdata/Photos/Extension/QuotaLimit.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_MaxPhotosPerAlbum
  */
-require_once 'Zend/Gdata/Photos/Extension/MaxPhotosPerAlbum.php';
 
 /**
  * @see Zend_Gdata_Photos_Extension_User
  */
-require_once 'Zend/Gdata/Photos/Extension/User.php';
 
 /**
  * @see Zend_Gdata_App_Extension_Category
  */
-require_once 'Zend/Gdata/App/Extension/Category.php';
 
 /**
  * Data model class for a User Entry.

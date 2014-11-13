@@ -21,7 +21,6 @@
  */
 
 /** Zend_Amf_Util_BinaryStream */
-require_once 'Zend/Amf/Util/BinaryStream.php';
 
 /**
  * InputStream is used to iterate at a binary level through the AMF request.

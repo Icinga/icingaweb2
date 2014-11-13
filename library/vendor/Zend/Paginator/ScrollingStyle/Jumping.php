@@ -22,7 +22,6 @@
 /**
  * @see Zend_Paginator_ScrollingStyle_Interface
  */
-require_once 'Zend/Paginator/ScrollingStyle/Interface.php';
 
 /**
  * A scrolling style in which the cursor advances to the upper bound

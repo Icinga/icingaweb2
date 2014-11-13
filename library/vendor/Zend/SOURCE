@@ -4,3 +4,4 @@ rm -r Auth/Adapter/Ldap.php Cache/Backend/{Apc.php,Libmemcached.php,Memcached.ph
 Db/{Adapter,Statement}/{Db2*,Mysqli*,Oracle*} Db/Adapter/Pdo/{Ibm*,Mssql.php,Oci.php} \
 Db/Statement/Pdo/{Ibm.php,Oci.php} Dojo* Feed* Ldap* Pdf* Search/ \
 Serializer/Adapter/Igbinary.php Service/ Soap/
+find . -type f -name \*.php -execdir sed -i '' '/require_once/d' "{}" \;

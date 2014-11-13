@@ -18,13 +18,6 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/EventManager/Event.php';
-require_once 'Zend/EventManager/EventCollection.php';
-require_once 'Zend/EventManager/ResponseCollection.php';
-require_once 'Zend/EventManager/SharedEventCollectionAware.php';
-require_once 'Zend/EventManager/StaticEventManager.php';
-require_once 'Zend/Stdlib/CallbackHandler.php';
-require_once 'Zend/Stdlib/PriorityQueue.php';
 
 /**
  * Event manager: notification system
@@ -201,7 +194,6 @@ class Zend_EventManager_EventManager implements Zend_EventManager_EventCollectio
         }
 
         if ($callback && !is_callable($callback)) {
-            require_once 'Zend/Stdlib/Exception/InvalidCallbackException.php';
             throw new Zend_Stdlib_Exception_InvalidCallbackException('Invalid callback provided');
         }
 
@@ -243,7 +235,6 @@ class Zend_EventManager_EventManager implements Zend_EventManager_EventCollectio
         }
 
         if (!is_callable($callback)) {
-            require_once 'Zend/Stdlib/Exception/InvalidCallbackException.php';
             throw new Zend_Stdlib_Exception_InvalidCallbackException('Invalid callback provided');
         }
 
@@ -278,7 +269,6 @@ class Zend_EventManager_EventManager implements Zend_EventManager_EventCollectio
 
         // Null callback is invalid
         if (null === $callback) {
-            require_once 'Zend/EventManager/Exception/InvalidArgumentException.php';
             throw new Zend_EventManager_Exception_InvalidArgumentException(sprintf(
                 '%s: expects a callback; none provided',
                 __METHOD__
@@ -337,7 +327,6 @@ class Zend_EventManager_EventManager implements Zend_EventManager_EventCollectio
         }
 
         if (!$listener instanceof Zend_Stdlib_CallbackHandler) {
-            require_once 'Zend/EventManager/Exception/InvalidArgumentException.php';
             throw new Zend_EventManager_Exception_InvalidArgumentException(sprintf(
                 '%s: expected a Zend_EventManager_ListenerAggregate or Zend_Stdlib_CallbackHandler; received "%s"',
                 __METHOD__,
