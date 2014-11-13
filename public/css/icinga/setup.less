@@ -94,6 +94,13 @@
 
   .setup-content {
     margin: 1.5em 1.8em 0 1.8em;
+
+    form {
+      h2 {
+        font-size: 1.5em;
+        color: #444;
+      }
+    }
   }
 }
 
@@ -131,8 +138,8 @@
       }
     }
 
-    &.install, &.login {
-      width: 25em;
+    &.finish, &.login {
+      min-width: 25em;
       color: #fffafa;
       background: #aaa;
 
@@ -174,6 +181,24 @@
 
       &.missing {
         background-color: #fd7770;
+      }
+    }
+
+    &.btn-update {
+      padding-top: 0.3em;
+      text-align: center;
+
+      div.buttons {
+        margin: 0;
+
+        a.button-like {
+          padding: 0.2em 0.5em;
+          background-color: #888;
+
+          &:hover, &:focus {
+            background-color: #666;
+          }
+        }
       }
     }
   }
@@ -250,7 +275,7 @@
   border-radius: 1em;
 }
 
-#installer {
+#setup-finish {
   div.report {
     padding: 1em;
     border-radius: 2em;

@@ -4,15 +4,15 @@
 
 namespace Tests\Icinga\Protocol\Ldap;
 
-use Zend_Config;
 use Icinga\Test\BaseTestCase;
+use Icinga\Application\Config;
 use Icinga\Protocol\Ldap\Connection;
 
 class QueryTest extends BaseTestCase
 {
     private function emptySelect()
     {
-        $config = new Zend_Config(
+        $config = new Config(
             array(
                 'hostname' => 'localhost',
                 'root_dn'  => 'dc=example,dc=com',

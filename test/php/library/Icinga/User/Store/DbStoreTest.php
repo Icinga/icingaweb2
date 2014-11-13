@@ -6,8 +6,8 @@ namespace Tests\Icinga\User\Preferences\Store;
 
 use Mockery;
 use Exception;
-use Zend_Config;
 use Icinga\Test\BaseTestCase;
+use Icinga\Application\Config;
 use Icinga\User\Preferences\Store\DbStore;
 
 class DatabaseMock
@@ -165,7 +165,7 @@ class DbStoreTest extends BaseTestCase
     protected function getStore($dbMock)
     {
         return new DbStoreWithSetPreferences(
-            new Zend_Config(
+            new Config(
                 array(
                     'connection' => Mockery::mock(array('getDbAdapter' => $dbMock))
                 )

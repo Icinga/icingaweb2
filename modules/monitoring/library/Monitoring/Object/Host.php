@@ -5,7 +5,7 @@
 namespace Icinga\Module\Monitoring\Object;
 
 use InvalidArgumentException;
-use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
 /**
  * A Icinga host
@@ -63,10 +63,10 @@ class Host extends MonitoredObject
     /**
      * Create a new host
      *
-     * @param Backend   $backend    Backend to fetch host information from
+     * @param MonitoringBackend   $backend    Backend to fetch host information from
      * @param string    $host       Host name
      */
-    public function __construct(Backend $backend, $host)
+    public function __construct(MonitoringBackend $backend, $host)
     {
         parent::__construct($backend);
         $this->host = $host;

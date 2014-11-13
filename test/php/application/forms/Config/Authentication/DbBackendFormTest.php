@@ -9,7 +9,7 @@ namespace Tests\Icinga\Form\Config\Authentication;
 require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
 
 use Mockery;
-use Zend_Config;
+use Icinga\Application\Config;
 use Icinga\Test\BaseTestCase;
 use Icinga\Form\Config\Authentication\DbBackendForm;
 
@@ -71,6 +71,6 @@ class DbBackendFormTest extends BaseTestCase
             ->shouldReceive('createResource')
             ->andReturn(Mockery::mock('Icinga\Data\Db\DbConnection'))
             ->shouldReceive('getResourceConfig')
-            ->andReturn(new Zend_Config(array()));
+            ->andReturn(new Config());
     }
 }

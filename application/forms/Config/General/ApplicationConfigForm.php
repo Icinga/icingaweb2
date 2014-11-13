@@ -5,11 +5,11 @@
 namespace Icinga\Form\Config\General;
 
 use DateTimeZone;
-use Icinga\Web\Form;
-use Icinga\Util\Translator;
+use Icinga\Application\Icinga;
 use Icinga\Data\ResourceFactory;
-use Icinga\Web\Form\Element\Number;
-use Icinga\File\Ini\IniWriter;
+use Icinga\Util\Translator;
+use Icinga\Web\Form;
+
 
 /**
  * Form class to modify the general application configuration
@@ -68,31 +68,17 @@ class ApplicationConfigForm extends Form
         );
 
         $this->addElement(
-            new Number(
-                'global_filemode',
-                array(
-                    'required'      => true,
-                    'label'         => t('Default File Mode'),
-                    'description'   => t(
-                        'This is the global default file mode for new configuration files created by Icinga Web 2.'
-                    ),
-                    'value'         => decoct(IniWriter::$fileMode)
-                )
-            )
-        );
-
-        $this->addElement(
             'text',
             'global_modulePath',
             array(
                 'label'         => t('Module Path'),
                 'required'      => true,
+                'value'         => implode(':', Icinga::app()->getModuleManager()->getModuleDirs()),
                 'description'   => t(
                     'Contains the directories that will be searched for available modules, separated by '
                     . 'colons. Modules that don\'t exist in these directories can still be symlinked in '
                     . 'the module folder, but won\'t show up in the list of disabled modules.'
-                ),
-                'value'     => realpath(ICINGAWEB_APPDIR . '/../modules')
+                )
             )
         );
 

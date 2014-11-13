@@ -4,7 +4,7 @@
 
 namespace Icinga\Authentication;
 
-use Zend_Config;
+use Icinga\Application\Config;
 use Icinga\Authentication\Backend\DbUserGroupBackend;
 use Icinga\Authentication\Backend\IniUserGroupBackend;
 use Icinga\Data\ResourceFactory;
@@ -50,13 +50,13 @@ abstract class UserGroupBackend
     /**
      * Create a user group backend
      *
-     * @param   string      $name
-     * @param   Zend_Config $backendConfig
+     * @param   string  $name
+     * @param   Config  $backendConfig
      *
      * @return DbUserGroupBackend|IniUserGroupBackend
      * @throws ConfigurationError If the backend configuration is invalid
      */
-    public static function create($name, Zend_Config $backendConfig)
+    public static function create($name, Config $backendConfig)
     {
         if ($backendConfig->name !== null) {
             $name = $backendConfig->name;

@@ -104,30 +104,30 @@ class AuthenticationController extends ActionController
                     }
                 }
                 if ($backendsTried === 0) {
-                    throw new ConfigurationError(
+                    $this->view->form->addError(
                         $this->translate(
                             'No authentication methods available. Did you create'
-                          . ' authentication.ini when installing Icinga Web 2?'
+                          . ' authentication.ini when setting up Icinga Web 2?'
                          )
                     );
-                }
-                if ($backendsTried === $backendsWithError) {
-                    throw new ConfigurationError(
+                } else if ($backendsTried === $backendsWithError) {
+                    $this->view->form->addError(
                         $this->translate(
                             'All configured authentication methods failed.'
                           . ' Please check the system log or Icinga Web 2 log for more information.'
                         )
                     );
-                }
-                if ($backendsWithError) {
-                    $this->view->form->getElement('username')->addError(
+                } elseif ($backendsWithError) {
+                    $this->view->form->addError(
                         $this->translate(
                             'Please note that not all authentication methods were available.'
                           . ' Check the system log or Icinga Web 2 log for more information.'
                         )
                     );
                 }
-                $this->view->form->getElement('password')->addError($this->translate('Incorrect username or password'));
+                if ($backendsTried > 0 && $backendsTried !== $backendsWithError) {
+                    $this->view->form->getElement('password')->addError($this->translate('Incorrect username or password'));
+                }
             } elseif ($request->isGet()) {
                 $user = new User('');
                 foreach ($chain as $backend) {
@@ -146,7 +146,7 @@ class AuthenticationController extends ActionController
             $this->view->errorInfo = $e->getMessage();
         }
 
-        $this->view->configMissing = count($config->toArray()) === 0 && false === is_dir(Config::$configDir);
+        $this->view->configMissing = is_dir(Config::$configDir) === false;
     }
 
     /**

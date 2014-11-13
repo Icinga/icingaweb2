@@ -5,6 +5,7 @@
 namespace Icinga\Form\Config\Authentication;
 
 use Exception;
+use Icinga\Application\Config;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
 use Icinga\Data\ResourceFactory;
@@ -121,7 +122,7 @@ class DbBackendForm extends Form
     /**
      * Return the configuration for the chosen resource
      *
-     * @return  Zend_Config
+     * @return  Config
      */
     public function getResourceConfig()
     {

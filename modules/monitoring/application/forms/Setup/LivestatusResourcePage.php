@@ -27,6 +27,18 @@ class LivestatusResourcePage extends Form
         );
         $this->addElement(
             new Note(
+                'title',
+                array(
+                    'value'         => mt('monitoring', 'Monitoring Livestatus Resource', 'setup.page.title'),
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array('HtmlTag', array('tag' => 'h2'))
+                    )
+                )
+            )
+        );
+        $this->addElement(
+            new Note(
                 'description',
                 array(
                     'value' => mt(
@@ -53,6 +65,7 @@ class LivestatusResourcePage extends Form
 
         $livestatusResourceForm = new LivestatusResourceForm();
         $this->addElements($livestatusResourceForm->createElements($formData)->getElements());
+        $this->getElement('name')->setValue('icinga_livestatus');
     }
 
     public function isValid($data)

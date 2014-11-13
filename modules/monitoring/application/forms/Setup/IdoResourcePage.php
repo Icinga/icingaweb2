@@ -27,6 +27,18 @@ class IdoResourcePage extends Form
         );
         $this->addElement(
             new Note(
+                'title',
+                array(
+                    'value'         => mt('monitoring', 'Monitoring IDO Resource', 'setup.page.title'),
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array('HtmlTag', array('tag' => 'h2'))
+                    )
+                )
+            )
+        );
+        $this->addElement(
+            new Note(
                 'description',
                 array(
                     'value' => mt(
@@ -53,6 +65,7 @@ class IdoResourcePage extends Form
 
         $livestatusResourceForm = new DbResourceForm();
         $this->addElements($livestatusResourceForm->createElements($formData)->getElements());
+        $this->getElement('name')->setValue('icinga_ido');
     }
 
     public function isValid($data)

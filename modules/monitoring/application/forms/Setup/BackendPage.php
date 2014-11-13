@@ -19,6 +19,18 @@ class BackendPage extends Form
     {
         $this->addElement(
             new Note(
+                'title',
+                array(
+                    'value'         => mt('monitoring', 'Monitoring Backend', 'setup.page.title'),
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array('HtmlTag', array('tag' => 'h2'))
+                    )
+                )
+            )
+        );
+        $this->addElement(
+            new Note(
                 'description',
                 array(
                     'value' => mt(
@@ -34,20 +46,17 @@ class BackendPage extends Form
             'name',
             array(
                 'required'      => true,
+                'value'         => 'icinga',
                 'label'         => mt('monitoring', 'Backend Name'),
                 'description'   => mt('monitoring', 'The identifier of this backend')
             )
         );
 
-        $resourceTypes = array('livestatus' => 'Livestatus');
-        if (
-            Platform::extensionLoaded('pdo') && (
-            Platform::zendClassExists('Zend_Db_Adapter_Pdo_Mysql')
-            || Platform::zendClassExists('Zend_Db_Adapter_Pdo_Pgsql')
-            )
-        ) {
+        $resourceTypes = array();
+        if (Platform::extensionLoaded('mysql') || Platform::extensionLoaded('pgsql')) {
             $resourceTypes['ido'] = 'IDO';
         }
+        $resourceTypes['livestatus'] = 'Livestatus';
 
         $this->addElement(
             'select',
