@@ -20,6 +20,7 @@ if (!$this->compact): ?>
 <?= $this->paginationControl($services, null, null, array('preserve' => $this->preserve)) ?>
 <?php endif ?>
 <?= $this->selectionToolbar('multi', $this->href('monitoring/services/show?' . $this->filter->toQueryString())) ?>
+<?= $this->render('list/components/selectioninfo.phtml') ?>
 </div>
 
 <div class="content">

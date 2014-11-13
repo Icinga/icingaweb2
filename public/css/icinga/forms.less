@@ -101,7 +101,7 @@ form.inline {
   display: inline;
 }
 
-form.link-like input[type="submit"] {
+form.link-like input[type="submit"], form.link-like button[type="submit"] {
   color: @colorLinkDefault;
   font-weight: normal;
   border: none;
@@ -111,7 +111,7 @@ form.link-like input[type="submit"] {
   cursor: pointer;
 }
 
-form.link-like input[type="submit"]:hover, form.link-like input[type="submit"]:focus {
+form.link-like input[type="submit"]:hover, form.link-like input[type="submit"]:focus, form.link-like button[type="submit"]:hover, orm.link-like button[type="submit"]:focus {
   text-decoration: underline;
   background: none;
   color: @colorLinkDefault;

@@ -8,6 +8,7 @@ use LogicException;
 use InvalidArgumentException;
 use Icinga\Web\Session\SessionNamespace;
 use Icinga\Web\Form\Decorator\ElementDoubler;
+use Icinga\Web\Form\Element\Button;
 
 /**
  * Container and controller for form based wizards
@@ -426,55 +427,60 @@ class Wizard
         $index = array_search($page, $pages, true);
         if ($index === 0) {
             $page->addElement(
-                'button',
-                static::BTN_NEXT,
-                array(
-                    'type'          => 'submit',
-                    'value'         => $pages[1]->getName(),
-                    'label'         => t('Next'),
-                    'decorators'    => array('ViewHelper')
+                new Button(
+                    static::BTN_NEXT,
+                    array(
+                        'type'          => 'submit',
+                        'value'         => $pages[1]->getName(),
+                        'label'         => t('Next'),
+                        'decorators'    => array('ViewHelper')
+                    )
                 )
             );
         } elseif ($index < count($pages) - 1) {
             $page->addElement(
-                'button',
-                static::BTN_PREV,
-                array(
-                    'type'          => 'submit',
-                    'value'         => $pages[$index - 1]->getName(),
-                    'label'         => t('Back'),
-                    'decorators'    => array('ViewHelper')
+                new Button(
+                    static::BTN_PREV,
+                    array(
+                        'type'          => 'submit',
+                        'value'         => $pages[$index - 1]->getName(),
+                        'label'         => t('Back'),
+                        'decorators'    => array('ViewHelper')
+                    )
                 )
             );
             $page->addElement(
-                'button',
-                static::BTN_NEXT,
-                array(
-                    'type'          => 'submit',
-                    'value'         => $pages[$index + 1]->getName(),
-                    'label'         => t('Next'),
-                    'decorators'    => array('ViewHelper')
+                new Button(
+                    static::BTN_NEXT,
+                    array(
+                        'type'          => 'submit',
+                        'value'         => $pages[$index + 1]->getName(),
+                        'label'         => t('Next'),
+                        'decorators'    => array('ViewHelper')
+                    )
                 )
             );
         } else {
             $page->addElement(
-                'button',
-                static::BTN_PREV,
-                array(
-                    'type'          => 'submit',
-                    'value'         => $pages[$index - 1]->getName(),
-                    'label'         => t('Back'),
-                    'decorators'    => array('ViewHelper')
+                new Button(
+                    static::BTN_PREV,
+                    array(
+                        'type'          => 'submit',
+                        'value'         => $pages[$index - 1]->getName(),
+                        'label'         => t('Back'),
+                        'decorators'    => array('ViewHelper')
+                    )
                 )
             );
             $page->addElement(
-                'button',
-                static::BTN_NEXT,
-                array(
-                    'type'          => 'submit',
-                    'value'         => $page->getName(),
-                    'label'         => t('Finish'),
-                    'decorators'    => array('ViewHelper')
+                new Button(
+                    static::BTN_NEXT,
+                    array(
+                        'type'          => 'submit',
+                        'value'         => $page->getName(),
+                        'label'         => t('Finish'),
+                        'decorators'    => array('ViewHelper')
+                    )
                 )
             );
         }
