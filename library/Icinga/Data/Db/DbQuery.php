@@ -72,6 +72,12 @@ class DbQuery extends SimpleQuery
         parent::init();
     }
 
+    public function setUseSubqueryCount($useSubqueryCount = true)
+    {
+        $this->useSubqueryCount = $useSubqueryCount;
+        return $this;
+    }
+
     public function where($condition, $value = null)
     {
         // $this->count = $this->select = null;
@@ -259,7 +265,7 @@ class DbQuery extends SimpleQuery
      */
     public function getCountQuery()
     {
-		// TODO: there may be situations where we should clone the "select"
+        // TODO: there may be situations where we should clone the "select"
         $count = $this->dbSelect();
 
         $this->applyFilterSql($count);
