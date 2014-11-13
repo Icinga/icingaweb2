@@ -25,9 +25,9 @@ class PreferenceController extends BasePreferenceController
     public static function createProvidedTabs()
     {
         return array(
-            'general' => new Tab(
+            'preferences' => new Tab(
                 array(
-                    'title'     => 'General settings',
+                    'title'     => t('Preferences'),
                     'url'       => Url::fromPath('/preference')
                 )
             )
@@ -51,6 +51,6 @@ class PreferenceController extends BasePreferenceController
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->getTabs()->activate('general');
+        $this->getTabs()->activate('preferences');
     }
 }
