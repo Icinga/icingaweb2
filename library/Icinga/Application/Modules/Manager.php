@@ -559,4 +559,14 @@ class Manager
         ksort($this->installedBaseDirs);
         return $this;
     }
+
+    /**
+     * Get the directories where to look for installed modules
+     *
+     * @return array
+     */
+    public function getModuleDirs()
+    {
+        return $this->modulePaths;
+    }
 }

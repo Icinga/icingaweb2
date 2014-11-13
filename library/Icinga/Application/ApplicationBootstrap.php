@@ -50,6 +50,13 @@ abstract class ApplicationBootstrap
     protected $baseDir;
 
     /**
+     * Application directory
+     *
+     * @var string
+     */
+    protected $appDir;
+
+    /**
      * Icinga auto loader
      *
      * @var Loader
@@ -76,13 +83,6 @@ abstract class ApplicationBootstrap
      * @var string
      */
     private $configDir;
-
-    /**
-     * Application directory
-     *
-     * @var string
-     */
-    private $appDir;
 
     /**
      * Module manager
@@ -117,11 +117,10 @@ abstract class ApplicationBootstrap
             $baseDir = dirname($this->getBootstrapDirectory());
         }
         $this->baseDir = $baseDir;
+        $this->appDir = $baseDir . '/application';
 
         define('ICINGAWEB_VENDORS', $baseDir . '/library/vendor');
-        define('ICINGAWEB_APPDIR', $baseDir . '/application');
 
-        $this->appDir = ICINGAWEB_APPDIR;
         $this->libDir = realpath(__DIR__ . '/../..');
 
         if ($configDir === null) {
@@ -227,21 +226,19 @@ abstract class ApplicationBootstrap
      */
     public function getBaseDir($subDir = null)
     {
-        return $this->getDirWithSubDir($subDir);
+        return $this->getDirWithSubDir($this->baseDir, $subDir);
     }
 
     /**
-     * Getter for application dir
+     * Get the application directory
      *
-     * Optional append sub directory
-     *
-     * @param   string $subdir optional subdir
+     * @param   string $subDir Optional sub directory to get
      *
      * @return  string
      */
-    public function getApplicationDir($subdir = null)
+    public function getApplicationDir($subDir = null)
     {
-        return $this->getDirWithSubDir($this->appDir, $subdir);
+        return $this->getDirWithSubDir($this->appDir, $subDir);
     }
 
     /**
@@ -331,7 +328,7 @@ abstract class ApplicationBootstrap
         $this->moduleManager = new ModuleManager(
             $this,
             $this->configDir . '/enabledModules',
-            explode(':', $this->config->fromSection('global', 'modulePath', ICINGAWEB_APPDIR . '/../modules'))
+            explode(':', $this->config->fromSection('global', 'modulePath', $this->baseDir . '/modules'))
         );
         return $this;
     }
