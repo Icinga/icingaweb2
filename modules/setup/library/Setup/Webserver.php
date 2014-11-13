@@ -20,13 +20,6 @@ abstract class Webserver
     protected $webPath;
 
     /**
-     * SAPI name (e.g for cgi config generation)
-     *
-     * @var string
-     */
-    protected $sapi;
-
-    /**
      * System path to public documents
      *
      * @var string
@@ -87,26 +80,6 @@ abstract class Webserver
      * @return string
      */
     abstract protected function getTemplate();
-
-    /**
-     * Setter for SAPI name
-     *
-     * @param string $sapi
-     */
-    public function setSapi($sapi)
-    {
-        $this->sapi = $sapi;
-    }
-
-    /**
-     * Getter for SAPI name
-     *
-     * @return string
-     */
-    public function getSapi()
-    {
-        return $this->sapi;
-    }
 
     /**
      * Setter for web path

@@ -101,9 +101,6 @@ class ConfigCommand extends Command
             $this->fail($this->translate('Unknown type') . ': ' . $type);
         }
         $webserver->setApp($this->app);
-        if (($sapi = $this->params->get('sapi', 'server')) === null) {
-            $this->fail($this->translate('argument --sapi is mandatory.'));
-        }
         if (($path = $this->params->get('path', '/icingaweb')) === null) {
             $this->fail($this->translate('argument --path is mandatory.'));
         }
@@ -112,7 +109,6 @@ class ConfigCommand extends Command
         }
         $webserver->setWebPath($path);
         $webserver->setPublicPath($publicPath);
-        $webserver->setSapi($sapi);
         $config = $webserver->generate() . "\n";
         if (($file = $this->params->get('file')) !== null) {
             if (file_exists($file) === true) {
