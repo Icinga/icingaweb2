@@ -32,7 +32,7 @@ class LoginForm extends Form
             array(
                 'required'      => true,
                 'label'         => t('Username'),
-                'placeholder'   => t('Please enter your username...'),
+                'placeholder'   => t(''),
                 'class'         => false === isset($formData['username']) ? 'autofocus' : ''
             )
         );
@@ -42,7 +42,7 @@ class LoginForm extends Form
             array(
                 'required'      => true,
                 'label'         => t('Password'),
-                'placeholder'   => t('...and your password'),
+                'placeholder'   => t(''),
                 'class'         => isset($formData['username']) ? 'autofocus' : ''
             )
         );
