@@ -6,6 +6,7 @@ namespace Icinga\Module\Monitoring\Form\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\ScheduleHostCheckCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceCheckCommand;
+use Icinga\Web\Form\Element\Button;
 use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
@@ -30,23 +31,19 @@ class CheckNowCommandForm extends ObjectsCommandForm
      */
     public function addSubmitButton()
     {
+        $iconUrl = $this->getView()->href('img/icons/refresh_petrol.png');
+
         $this->addElements(array(
-            new Note(
-                'icon', // Bogus
-                array(
-                    'decorators' => array(array(
-                        'HtmlTag',
-                        array('tag' => 'img', 'src' => $this->getView()->href('img/icons/refresh_petrol.png'))
-                    ))
-                )
-            ),
-            array(
-                'submit',
+            new Button(
                 'btn_submit',
                 array(
                     'ignore'        => true,
-                    'label'         => mt('monitoring', 'Check now'),
-                    'decorators'    => array('ViewHelper')
+                    'type'          => 'submit',
+                    'value'         => mt('monitoring', 'Check now'),
+                    'label'         => '<img src="'.$iconUrl.'"> ' . mt('monitoring', 'Check now'),
+                    'decorators'    => array('ViewHelper'),
+                    'escape'        => false,
+                    'class'         => 'link-like'
                 )
             )
         ));
