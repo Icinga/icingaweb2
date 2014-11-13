@@ -102,8 +102,8 @@ class ConfigCommand extends Command
         } catch (ProgrammingError $e) {
             $this->fail($this->translate('Unknown type') . ': ' . $type);
         }
-        $path = $this->params->get('path', $webserver->getWebPath());
-        if (! is_string($path) || strlen(trim($path)) === 0) {
+        $urlPath = $this->params->get('path', $webserver->getUrlPath());
+        if (! is_string($urlPath) || strlen(trim($urlPath)) === 0) {
             $this->fail($this->translate('The argument --path expects a URL path'));
         }
         $documentRoot = $this->params->get('root', $this->params->get('document-root', $webserver->getDocumentRoot()));
@@ -121,7 +121,7 @@ class ConfigCommand extends Command
         $webserver
             ->setDocumentRoot($documentRoot)
             ->setConfigDir($configDir)
-            ->setWebPath($path);
+            ->setUrlPath($urlPath);
         $config = $webserver->generate() . "\n";
         if (($file = $this->params->get('file')) !== null) {
             if (file_exists($file) === true) {

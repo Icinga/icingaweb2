@@ -17,7 +17,7 @@ class Apache extends Webserver
     protected function getTemplate()
     {
             return  <<<'EOD'
-Alias {webPath} "{documentRoot}"
+Alias {urlPath} "{documentRoot}"
 
 <Directory "{documentRoot}">
     Options SymLinksIfOwnerMatch
@@ -42,7 +42,7 @@ Alias {webPath} "{documentRoot}"
 
     <IfModule mod_rewrite.c>
         RewriteEngine on
-        RewriteBase {webPath}/
+        RewriteBase {urlPath}/
         RewriteCond %{REQUEST_FILENAME} -s [OR]
         RewriteCond %{REQUEST_FILENAME} -l [OR]
         RewriteCond %{REQUEST_FILENAME} -d

@@ -20,11 +20,11 @@ abstract class Webserver
     protected $documentRoot;
 
     /**
-     * Web path
+     * URL path of Icinga Web 2
      *
      * @var string
      */
-    protected $webPath = '/icingaweb';
+    protected $urlPath = '/icingaweb';
 
     /**
      * Path to Icinga Web 2's configuration files
@@ -61,12 +61,12 @@ abstract class Webserver
         $template = $this->getTemplate();
 
         $searchTokens = array(
-            '{webPath}',
+            '{urlPath}',
             '{documentRoot}',
             '{configDir}',
         );
         $replaceTokens = array(
-            $this->getWebPath(),
+            $this->getUrlPath(),
             $this->getDocumentRoot(),
             $this->getConfigDir()
         );
@@ -88,9 +88,9 @@ abstract class Webserver
      *
      * @return  $this
      */
-    public function setWebPath($urlPath)
+    public function setUrlPath($urlPath)
     {
-        $this->webPath = '/' . ltrim(trim((string) $urlPath), '/');
+        $this->urlPath = '/' . ltrim(trim((string) $urlPath), '/');
         return $this;
     }
 
@@ -99,9 +99,9 @@ abstract class Webserver
      *
      * @return string
      */
-    public function getWebPath()
+    public function getUrlPath()
     {
-        return $this->webPath;
+        return $this->urlPath;
     }
 
     /**

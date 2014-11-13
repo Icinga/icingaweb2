@@ -19,7 +19,7 @@ class Nginx extends Webserver
     protected function getTemplate()
     {
         return <<<'EOD'
-location ~ ^{webPath}/index\.php(.*)$ {
+location ~ ^{urlPath}/index\.php(.*)$ {
   # fastcgi_pass 127.0.0.1:9000;
   fastcgi_pass unix:/var/run/php5-fpm.sock;
   fastcgi_index index.php;
@@ -28,10 +28,10 @@ location ~ ^{webPath}/index\.php(.*)$ {
   fastcgi_param ICINGAWEB_CONFIGDIR {configDir};
 }
 
-location ~ ^{webPath}(.+)? {
+location ~ ^{urlPath}(.+)? {
   alias {documentRoot};
   index index.php;
-  try_files $1 $uri $uri/ {webPath}/index.php$is_args$args;
+  try_files $1 $uri $uri/ {urlPath}/index.php$is_args$args;
 }
 EOD;
     }
