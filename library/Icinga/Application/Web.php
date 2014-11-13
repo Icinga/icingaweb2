@@ -313,25 +313,16 @@ class Web extends ApplicationBootstrap
      *
      * @return  self
      */
-    protected function setupInternationalization()
+    protected function detectLocale()
     {
-        parent::setupInternationalization();
-
         $auth = Manager::getInstance();
-
-        if ($auth->isAuthenticated() &&
-            ($locale = $auth->getUser()->getPreferences()->getValue('icingaweb', 'language')) !== null
+        if (! $auth->isAuthenticated()
+            || ($locale = $auth->getUser()->getPreferences()->getValue('icingaweb', 'language')) === null
+            && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
         ) {
-            try {
-                Translator::setupLocale($locale);
-            } catch (Exception $error) {
-                Logger::warning(
-                    'Cannot set locale "' . $locale . '" configured in ' .
-                    'preferences of user "' . $this->user->getUsername() . '"'
-                );
-            }
+            $locale = Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
         }
-        return $this;
+        return $locale;
     }
 
     /**

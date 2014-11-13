@@ -507,24 +507,33 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Setup internationalization using gettext
+     * Detect the locale
      *
-     * Uses the preferred language sent by the browser or the default one
-     *
-     * @return  self
+     * @return null|string
      */
-    protected function setupInternationalization()
+    protected function detectLocale()
+    {
+        return null;
+    }
+
+    /**
+     * Set up internationalization using gettext
+     *
+     * @return $this
+     */
+    protected final function setupInternationalization()
     {
         if ($this->hasLocales()) {
             Translator::registerDomain(Translator::DEFAULT_DOMAIN, $this->getLocaleDir());
         }
 
+        $locale = $this->detectLocale();
+        if ($locale === null) {
+            $locale = Translator::DEFAULT_LOCALE;
+        }
+
         try {
-            Translator::setupLocale(
-                isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
-                    ? Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE'])
-                    : Translator::DEFAULT_LOCALE
-            );
+            Translator::setupLocale($locale);
         } catch (Exception $error) {
             Logger::error($error);
         }
