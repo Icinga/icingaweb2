@@ -117,11 +117,9 @@ abstract class ApplicationBootstrap
             $baseDir = dirname($this->getBootstrapDirectory());
         }
         $this->baseDir = $baseDir;
-        if (! defined('ICINGAWEB_BASEDIR')) {
-            define('ICINGAWEB_BASEDIR', dirname($this->getBootstrapDirectory()));
-        }
-        define('ICINGAWEB_VENDORS', ICINGAWEB_BASEDIR . '/library/vendor');
-        define('ICINGAWEB_APPDIR', ICINGAWEB_BASEDIR . '/application');
+
+        define('ICINGAWEB_VENDORS', $baseDir . '/library/vendor');
+        define('ICINGAWEB_APPDIR', $baseDir . '/application');
 
         $this->appDir = ICINGAWEB_APPDIR;
         $this->libDir = realpath(__DIR__ . '/../..');
