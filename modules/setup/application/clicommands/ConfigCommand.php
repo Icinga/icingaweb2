@@ -73,18 +73,18 @@ class ConfigCommand extends Command
      *
      * OPTIONS:
      *
-     *  --path=<webpath>        Path for the web server, default /icingaweb
+     *  --path=<urlpath>                    The URL path to Icinga Web 2
      *
-     *  --publicPath=<wwwroot>  Path to htdocs system path
+     *  --root/--document-root=<directory>  The directory from which the webserver will serve files
      *
-     *  --file=<filename>       Write configuration to file
+     *  --file=<filename>                   Write configuration to file
      *
      *
      * EXAMPLES:
      *
      * icingacli setup config webserver apache
      *
-     * icingacli setup config webserver apache --path /icingaweb --publicPath /usr/share/icingaweb/public
+     * icingacli setup config webserver apache --path /icingaweb --document-root /usr/share/icingaweb/public
      *
      * icingacli setup config webserver apache --file /etc/apache2/conf.d/icingaweb.conf
      *
@@ -104,10 +104,10 @@ class ConfigCommand extends Command
         if (! is_string($path) || strlen(trim($path)) === 0) {
             $this->fail($this->translate('The argument --path expects a URL path'));
         }
-        $documentRoot = $this->params->get('documentRoot', $webserver->getDocumentRoot());
+        $documentRoot = $this->params->get('root', $this->params->get('document-root', $webserver->getDocumentRoot()));
         if (! is_string($documentRoot) || strlen(trim($documentRoot)) === 0) {
             $this->fail($this->translate(
-                'The argument --documentRoot expects a directory from which the webserver will serve files'
+                'The argument --root/--document-root expects a directory from which the webserver will serve files'
             ));
         }
         $webserver->setWebPath($path);
