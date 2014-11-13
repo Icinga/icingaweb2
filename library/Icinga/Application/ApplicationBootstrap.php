@@ -50,6 +50,34 @@ abstract class ApplicationBootstrap
     protected $baseDir;
 
     /**
+     * Application directory
+     *
+     * @var string
+     */
+    protected $appDir;
+
+    /**
+     * Vendor library directory
+     *
+     * @var string
+     */
+    protected $vendorDir;
+
+    /**
+     * Library directory
+     *
+     * @var string
+     */
+    protected $libDir;
+
+    /**
+     * Configuration directory
+     *
+     * @var string
+     */
+    protected $configDir;
+
+    /**
      * Icinga auto loader
      *
      * @var Loader
@@ -57,32 +85,11 @@ abstract class ApplicationBootstrap
     private $loader;
 
     /**
-     * Library directory
-     *
-     * @var string
-     */
-    private $libDir;
-
-    /**
      * Config object
      *
      * @var Config
      */
     protected $config;
-
-    /**
-     * Configuration directory
-     *
-     * @var string
-     */
-    private $configDir;
-
-    /**
-     * Application directory
-     *
-     * @var string
-     */
-    private $appDir;
 
     /**
      * Module manager
@@ -117,13 +124,8 @@ abstract class ApplicationBootstrap
             $baseDir = dirname($this->getBootstrapDirectory());
         }
         $this->baseDir = $baseDir;
-        if (! defined('ICINGAWEB_BASEDIR')) {
-            define('ICINGAWEB_BASEDIR', dirname($this->getBootstrapDirectory()));
-        }
-        define('ICINGAWEB_VENDORS', ICINGAWEB_BASEDIR . '/library/vendor');
-        define('ICINGAWEB_APPDIR', ICINGAWEB_BASEDIR . '/application');
-
-        $this->appDir = ICINGAWEB_APPDIR;
+        $this->appDir = $baseDir . '/application';
+        $this->vendorDir = $baseDir . '/library/vendor';
         $this->libDir = realpath(__DIR__ . '/../..');
 
         if ($configDir === null) {
@@ -229,33 +231,43 @@ abstract class ApplicationBootstrap
      */
     public function getBaseDir($subDir = null)
     {
-        return $this->getDirWithSubDir($subDir);
+        return $this->getDirWithSubDir($this->baseDir, $subDir);
     }
 
     /**
-     * Getter for application dir
+     * Get the application directory
      *
-     * Optional append sub directory
-     *
-     * @param   string $subdir optional subdir
+     * @param   string $subDir Optional sub directory to get
      *
      * @return  string
      */
-    public function getApplicationDir($subdir = null)
+    public function getApplicationDir($subDir = null)
     {
-        return $this->getDirWithSubDir($this->appDir, $subdir);
+        return $this->getDirWithSubDir($this->appDir, $subDir);
     }
 
     /**
-     * Getter for config dir
+     * Get the vendor library directory
      *
-     * @param   string $subdir
+     * @param   string $subDir Optional sub directory to get
      *
      * @return  string
      */
-    public function getConfigDir($subdir = null)
+    public function getVendorDir($subDir = null)
     {
-        return $this->getDirWithSubDir($this->configDir, $subdir);
+        return $this->getDirWithSubDir($this->vendorDir, $subDir);
+    }
+
+    /**
+     * Get the configuration directory
+     *
+     * @param   string $subDir Optional sub directory to get
+     *
+     * @return  string
+     */
+    public function getConfigDir($subDir = null)
+    {
+        return $this->getDirWithSubDir($this->configDir, $subDir);
     }
 
     /**
@@ -333,7 +345,7 @@ abstract class ApplicationBootstrap
         $this->moduleManager = new ModuleManager(
             $this,
             $this->configDir . '/enabledModules',
-            explode(':', $this->config->fromSection('global', 'modulePath', ICINGAWEB_APPDIR . '/../modules'))
+            explode(':', $this->config->fromSection('global', 'modulePath', $this->baseDir . '/modules'))
         );
         return $this;
     }

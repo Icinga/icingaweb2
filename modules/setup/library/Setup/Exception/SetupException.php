@@ -4,6 +4,8 @@
 
 namespace Icinga\Module\Setup\Exception;
 
+use Icinga\Exception\IcingaException;
+
 /**
  * Class SetupException
  *
