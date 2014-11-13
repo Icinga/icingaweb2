@@ -6,7 +6,7 @@ namespace Icinga\Module\Monitoring\Command\Transport;
 
 use Exception;
 use LogicException;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Module\Monitoring\Command\Exception\TransportException;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
 use Icinga\Module\Monitoring\Command\Renderer\IcingaCommandFileCommandRenderer;

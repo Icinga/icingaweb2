@@ -4,6 +4,7 @@
 
 namespace Icinga\Authentication\Backend;
 
+use PDO;
 use Icinga\Authentication\UserBackend;
 use Icinga\Data\Db\DbConnection;
 use Icinga\User;
@@ -11,16 +12,29 @@ use Icinga\Exception\AuthenticationException;
 use Exception;
 use Zend_Db_Expr;
 use Zend_Db_Select;
-use Icinga\Exception\IcingaException;
 
 class DbUserBackend extends UserBackend
 {
+    /**
+     * The algorithm to use when hashing passwords
+     *
+     * @var string
+     */
+    const HASH_ALGORITHM = '$1$'; // MD5
+
+    /**
+     * The length of the salt to use when hashing a password
+     *
+     * @var int
+     */
+    const SALT_LENGTH = 12; // 12 is required by MD5
+
     /**
      * Connection to the database
      *
      * @var DbConnection
      */
-    private $conn;
+    protected $conn;
 
     public function __construct(DbConnection $conn)
     {
@@ -36,45 +50,69 @@ class DbUserBackend extends UserBackend
      */
     public function hasUser(User $user)
     {
-        $select = new Zend_Db_Select($this->conn->getConnection());
-        $row = $select->from('account', array(new Zend_Db_Expr(1)))
-            ->where('username = ?', $user->getUsername())
+        $select = new Zend_Db_Select($this->conn->getDbAdapter());
+        $row = $select->from('icingaweb_user', array(new Zend_Db_Expr(1)))
+            ->where('name = ?', $user->getUsername())
             ->query()->fetchObject();
 
         return ($row !== false) ? true : false;
     }
 
     /**
-     * Authenticate the given user and return true on success, false on failure and null on error
+     * Add a new user
+     *
+     * @param   string  $username   The name of the new user
+     * @param   string  $password   The new user's password
+     * @param   bool    $active     Whether the user is active
+     */
+    public function addUser($username, $password, $active = true)
+    {
+        $passwordHash = $this->hashPassword($password);
+
+        $stmt = $this->conn->getDbAdapter()->prepare(
+            'INSERT INTO icingaweb_user VALUES (:name, :active, :password_hash, now(), DEFAULT);'
+        );
+        $stmt->bindParam(':name', $username, PDO::PARAM_STR);
+        $stmt->bindParam(':active', $active, PDO::PARAM_INT);
+        $stmt->bindParam(':password_hash', $passwordHash, PDO::PARAM_LOB);
+        $stmt->execute();
+    }
+
+    /**
+     * Fetch the hashed password for the given user
+     *
+     * @param   string  $username   The name of the user
+     *
+     * @return  string
+     */
+    protected function getPasswordHash($username)
+    {
+        $stmt = $this->conn->getDbAdapter()->prepare(
+            'SELECT password_hash FROM icingaweb_user WHERE name = :name AND active = 1'
+        );
+        $stmt->execute(array(':name' => $username));
+        $stmt->bindColumn(1, $lob, PDO::PARAM_LOB);
+        $stmt->fetch(PDO::FETCH_BOUND);
+        return is_resource($lob) ? stream_get_contents($lob) : $lob;
+    }
+
+    /**
+     * Authenticate the given user and return true on success, false on failure and throw an exception on error
      *
      * @param   User        $user
      * @param   string      $password
      *
-     * @return  bool|null
+     * @return  bool
+     *
      * @throws  AuthenticationException
      */
     public function authenticate(User $user, $password)
     {
         try {
-            $salt = $this->getSalt($user->getUsername());
-            if ($salt === null) {
-                return false;
-            }
-            if ($salt === '') {
-                throw new IcingaException(
-                    'Cannot find salt for user %s',
-                    $user->getUsername()
-                );
-            }
-
-            $select = new Zend_Db_Select($this->conn->getConnection());
-            $row = $select->from('account', array(new Zend_Db_Expr(1)))
-                ->where('username = ?', $user->getUsername())
-                ->where('active = ?', true)
-                ->where('password = ?', $this->hashPassword($password, $salt))
-                ->query()->fetchObject();
-
-            return ($row !== false) ? true : false;
+            $passwordHash = $this->getPasswordHash($user->getUsername());
+            $passwordSalt = $this->getSalt($passwordHash);
+            $hashToCompare = $this->hashPassword($password, $passwordSalt);
+            return $hashToCompare === $passwordHash;
         } catch (Exception $e) {
             throw new AuthenticationException(
                 'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
@@ -86,29 +124,40 @@ class DbUserBackend extends UserBackend
     }
 
     /**
-     * Get salt by username
+     * Extract salt from the given password hash
      *
-     * @param   string $username
+     * @param   string  $hash   The hashed password
      *
-     * @return  string|null
+     * @return  string
      */
-    private function getSalt($username)
+    protected function getSalt($hash)
     {
-        $select = new Zend_Db_Select($this->conn->getConnection());
-        $row = $select->from('account', array('salt'))->where('username = ?', $username)->query()->fetchObject();
-        return ($row !== false) ? $row->salt : null;
+        return substr($hash, strlen(self::HASH_ALGORITHM), self::SALT_LENGTH);
+    }
+
+    /**
+     * Return a random salt
+     *
+     * The returned salt is safe to be used for hashing a user's password
+     *
+     * @return  string
+     */
+    protected function generateSalt()
+    {
+        return openssl_random_pseudo_bytes(self::SALT_LENGTH);
     }
 
     /**
      * Hash a password
      *
-     * @param   string $password
-     * @param   string $salt
+     * @param   string  $password
+     * @param   string  $salt
      *
      * @return  string
      */
-    private function hashPassword($password, $salt) {
-        return hash_hmac('sha256', $password, $salt);
+    protected function hashPassword($password, $salt = null)
+    {
+        return crypt($password, self::HASH_ALGORITHM . ($salt !== null ? $salt : $this->generateSalt()));
     }
 
     /**
@@ -118,12 +167,29 @@ class DbUserBackend extends UserBackend
      */
     public function count()
     {
-        $select = new Zend_Db_Select($this->conn->getConnection());
+        $select = new Zend_Db_Select($this->conn->getDbAdapter());
         $row = $select->from(
-            'account',
+            'icingaweb_user',
             array('count' => 'COUNT(*)')
         )->query()->fetchObject();
 
         return ($row !== false) ? $row->count : 0;
+    }
+
+    /**
+     * Return the names of all available users
+     *
+     * @return  array
+     */
+    public function listUsers()
+    {
+        $query = $this->conn->select()->from('icingaweb_user', array('name'));
+
+        $users = array();
+        foreach ($query->fetchAll() as $row) {
+            $users[] = $row->name;
+        }
+
+        return $users;
     }
 }

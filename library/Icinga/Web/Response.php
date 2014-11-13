@@ -21,6 +21,12 @@ class Response extends Zend_Controller_Response_Http
         } else {
             $this->setRedirect($url->getAbsoluteUrl());
         }
+
+        $session = Session::getSession();
+        if ($session->hasChanged()) {
+            $session->write();
+        }
+
         $this->sendHeaders();
         exit;
     }

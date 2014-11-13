@@ -4,16 +4,13 @@
 
 use \DateTime;
 use \DateInterval;
-use \Zend_Config;
 use Icinga\Web\Url;
 use Icinga\Util\Format;
-use Icinga\Application\Config;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Timeline\TimeLine;
 use Icinga\Module\Monitoring\Timeline\TimeRange;
 use Icinga\Module\Monitoring\Web\Widget\SelectBox;
-use Icinga\Module\Monitoring\DataView\EventHistory as EventHistoryView;
 
 class Monitoring_TimelineController extends Controller
 {
@@ -255,22 +252,6 @@ class Monitoring_TimelineController extends Controller
             new TimeRange($startTime, $endTime, $timelineInterval),
             new TimeRange($forecastStart, $forecastEnd, $timelineInterval)
         );
-    }
-
-    /**
-     * Get the application's global configuration or an empty one
-     *
-     * @return  Zend_Config
-     */
-    private function getGlobalConfiguration()
-    {
-        $globalConfig = Config::app()->global;
-
-        if ($globalConfig === null) {
-            $globalConfig = new Zend_Config(array());
-        }
-
-        return $globalConfig;
     }
 
     /**

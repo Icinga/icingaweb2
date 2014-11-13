@@ -2,16 +2,16 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Web\Url;
-use Icinga\Logger\Logger;
-use Icinga\Config\PreservingIniWriter;
-use Icinga\Application\Config as IcingaConfig;
-use Icinga\Web\Widget\Dashboard;
-use Icinga\Form\Dashboard\AddUrlForm;
-use Icinga\Exception\NotReadableError;
+use Icinga\Application\Config;
+use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Web\Controller\ActionController;
 use Icinga\Exception\IcingaException;
+use Icinga\Exception\NotReadableError;
+use Icinga\File\Ini\IniWriter;
+use Icinga\Form\Dashboard\AddUrlForm;
+use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Url;
+use Icinga\Web\Widget\Dashboard;
 
 /**
  * Handle creation, removal and displaying of dashboards, panes and components
@@ -36,7 +36,7 @@ class DashboardController extends ActionController
     {
         $dashboard = new Dashboard();
         try {
-            $dashboardConfig = IcingaConfig::app($config);
+            $dashboardConfig = Config::app($config);
             if (count($dashboardConfig) === 0) {
                 return null;
             }
@@ -92,8 +92,8 @@ class DashboardController extends ActionController
                     ltrim($form->getValue('url'), '/')
                 );
 
-                $configFile = IcingaConfig::app('dashboard/dashboard')->getConfigFile();
-                if ($this->writeConfiguration(new Zend_Config($dashboard->toArray()), $configFile)) {
+                $configFile = Config::app('dashboard/dashboard')->getConfigFile();
+                if ($this->writeConfiguration(new Config($dashboard->toArray()), $configFile)) {
                     $this->redirectNow(Url::fromPath('dashboard', array('pane' => $form->getValue('pane'))));
                 } else {
                     $this->render('showConfiguration');
@@ -125,7 +125,7 @@ class DashboardController extends ActionController
                 $dashboard->activate($pane);
             }
 
-            $this->view->configPath = IcingaConfig::resolvePath(self::DEFAULT_CONFIG);
+            $this->view->configPath = Config::resolvePath(self::DEFAULT_CONFIG);
 
             if ($dashboard === null) {
                 $this->view->title = 'Dashboard';
@@ -151,14 +151,14 @@ class DashboardController extends ActionController
     /**
      * Store the given configuration as INI file
      *
-     * @param   Zend_Config     $config     The configuration to store
-     * @param   string          $target     The path where to store the configuration
+     * @param   Config  $config     The configuration to store
+     * @param   string  $target     The path where to store the configuration
      *
      * @return  bool                        Whether the configuartion has been successfully stored
      */
-    protected function writeConfiguration(Zend_Config $config, $target)
+    protected function writeConfiguration(Config $config, $target)
     {
-        $writer = new PreservingIniWriter(array('config' => $config, 'filename' => $target));
+        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
 
         try {
             $writer->write();

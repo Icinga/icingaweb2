@@ -4,16 +4,12 @@
 
 namespace Icinga\Web\Widget\Dashboard;
 
-use Icinga\Exception\IcingaException;
-use Icinga\Util\Dimension;
+use Zend_Form_Element_Button;
+use Icinga\Application\Config;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\AbstractWidget;
-use Icinga\Web\View;
-use Zend_Config;
-use Zend_Form_Element_Submit;
-use Zend_Form_Element_Button;
-use Exception;
+use Icinga\Exception\IcingaException;
 
 /**
  * A dashboard pane component
@@ -218,13 +214,13 @@ EOD;
     /**
      * Create a @see Component instance from the given Zend config, using the provided title
      *
-     * @param $title                    The title for this component
-     * @param Zend_Config $config       The configuration defining url, parameters, height, width, etc.
-     * @param Pane $pane                The pane this component belongs to
+     * @param $title            The title for this component
+     * @param Config $config    The configuration defining url, parameters, height, width, etc.
+     * @param Pane $pane        The pane this component belongs to
      *
-     * @return Component                A newly created Component for use in the Dashboard
+     * @return Component        A newly created Component for use in the Dashboard
      */
-    public static function fromIni($title, Zend_Config $config, Pane $pane)
+    public static function fromIni($title, Config $config, Pane $pane)
     {
         $height = null;
         $width = null;

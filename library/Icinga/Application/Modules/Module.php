@@ -5,19 +5,19 @@
 namespace Icinga\Application\Modules;
 
 use Exception;
-use Zend_Config;
 use Zend_Controller_Router_Route_Abstract;
 use Zend_Controller_Router_Route as Route;
 use Zend_Controller_Router_Route_Regex as RegexRoute;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Util\Translator;
 use Icinga\Web\Hook;
 use Icinga\Web\Menu;
 use Icinga\Web\Widget;
 use Icinga\Web\Widget\Dashboard\Pane;
+use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\IcingaException;
@@ -135,6 +135,13 @@ class Module
     private $configTabs = array();
 
     /**
+     * Provided setup wizard
+     *
+     * @var string
+     */
+    private $setupWizard;
+
+    /**
      * Icinga application
      *
      * @var \Icinga\Application\Web
@@ -235,7 +242,7 @@ class Module
         if (array_key_exists($name, $this->menuItems)) {
             $this->menuItems[$name]->setProperties($properties);
         } else {
-            $this->menuItems[$name] = new Menu($name, new Zend_Config($properties));
+            $this->menuItems[$name] = new Menu($name, new Config($properties));
         }
 
         return $this->menuItems[$name];
@@ -642,6 +649,31 @@ class Module
         return $tabs;
     }
 
+    /**
+     * Whether this module provides a setup wizard
+     *
+     * @return  bool
+     */
+    public function providesSetupWizard()
+    {
+        $this->launchConfigScript();
+        if (class_exists($this->setupWizard)) {
+            $wizard = new $this->setupWizard;
+            return $wizard instanceof SetupWizard;
+        }
+
+        return false;
+    }
+
+    /**
+     * Return this module's setup wizard
+     *
+     * @return  SetupWizard
+     */
+    public function getSetupWizard()
+    {
+        return new $this->setupWizard;
+    }
 
     /**
      * Provide a named permission
@@ -702,6 +734,19 @@ class Module
         }
         $config['url'] = $this->getName() . '/' . ltrim($config['url'], '/');
         $this->configTabs[$name] = $config;
+        return $this;
+    }
+
+    /**
+     * Provide a setup wizard
+     *
+     * @param   string  $className      The name of the class
+     *
+     * @return  self
+     */
+    protected function provideSetupWizard($className)
+    {
+        $this->setupWizard = $className;
         return $this;
     }
 

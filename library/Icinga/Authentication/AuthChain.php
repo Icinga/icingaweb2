@@ -5,8 +5,8 @@
 namespace Icinga\Authentication;
 
 use Iterator;
-use Zend_Config;
-use Icinga\Logger\Logger;
+use Icinga\Application\Config;
+use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
 
 /**
@@ -17,7 +17,7 @@ class AuthChain implements Iterator
     /**
      * User backends configuration
      *
-     * @var Zend_Config
+     * @var Config
      */
     private $config;
 
@@ -31,9 +31,9 @@ class AuthChain implements Iterator
     /**
      * Create a new authentication chain from config
      *
-     * @param Zend_Config $config User backends configuration
+     * @param Config $config User backends configuration
      */
-    public function __construct(Zend_Config $config)
+    public function __construct(Config $config)
     {
         $this->config = $config;
     }

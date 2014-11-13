@@ -6,14 +6,14 @@ namespace Icinga\Application;
 
 use ErrorException;
 use Exception;
-use Zend_Config;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
+use Icinga\File\Ini\IniWriter;
 use Icinga\Exception\IcingaException;
 
 /**
@@ -41,6 +41,43 @@ use Icinga\Exception\IcingaException;
 abstract class ApplicationBootstrap
 {
     /**
+     * Base directory
+     *
+     * Parent folder for at least application, bin, modules, library/vendor and public
+     *
+     * @var string
+     */
+    protected $baseDir;
+
+    /**
+     * Application directory
+     *
+     * @var string
+     */
+    protected $appDir;
+
+    /**
+     * Vendor library directory
+     *
+     * @var string
+     */
+    protected $vendorDir;
+
+    /**
+     * Library directory
+     *
+     * @var string
+     */
+    protected $libDir;
+
+    /**
+     * Configuration directory
+     *
+     * @var string
+     */
+    protected $configDir;
+
+    /**
      * Icinga auto loader
      *
      * @var Loader
@@ -48,32 +85,11 @@ abstract class ApplicationBootstrap
     private $loader;
 
     /**
-     * Library directory
-     *
-     * @var string
-     */
-    private $libDir;
-
-    /**
      * Config object
      *
-     * @var Zend_Config
+     * @var Config
      */
     protected $config;
-
-    /**
-     * Configuration directory
-     *
-     * @var string
-     */
-    private $configDir;
-
-    /**
-     * Application directory
-     *
-     * @var string
-     */
-    private $appDir;
 
     /**
      * Module manager
@@ -98,26 +114,19 @@ abstract class ApplicationBootstrap
 
     /**
      * Constructor
+     *
+     * @param string $baseDir   Icinga Web 2 base directory
+     * @param string $configDir Path to Icinga Web 2's configuration files
      */
-    protected function __construct($configDir = null)
+    protected function __construct($baseDir = null, $configDir = null)
     {
+        if ($baseDir === null) {
+            $baseDir = dirname($this->getBootstrapDirectory());
+        }
+        $this->baseDir = $baseDir;
+        $this->appDir = $baseDir . '/application';
+        $this->vendorDir = $baseDir . '/library/vendor';
         $this->libDir = realpath(__DIR__ . '/../..');
-
-        if (!defined('ICINGA_LIBDIR')) {
-            define('ICINGA_LIBDIR', $this->libDir);
-        }
-
-        if (defined('ICINGAWEB_APPDIR')) {
-            $this->appDir = ICINGAWEB_APPDIR;
-        } elseif (array_key_exists('ICINGAWEB_APPDIR', $_SERVER)) {
-            $this->appDir = $_SERVER['ICINGAWEB_APPDIR'];
-        } else {
-            $this->appDir = realpath($this->libDir. '/../application');
-        }
-
-        if (!defined('ICINGAWEB_APPDIR')) {
-            define('ICINGAWEB_APPDIR', $this->appDir);
-        }
 
         if ($configDir === null) {
             if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
@@ -197,44 +206,6 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Getter for application dir
-     *
-     * Optional append sub directory
-     *
-     * @param   string $subdir optional subdir
-     *
-     * @return  string
-     */
-    public function getApplicationDir($subdir = null)
-    {
-        return $this->getDirWithSubDir($this->appDir, $subdir);
-    }
-
-    /**
-     * Getter for config dir
-     *
-     * @param   string $subdir
-     *
-     * @return  string
-     */
-    public function getConfigDir($subdir = null)
-    {
-        return $this->getDirWithSubDir($this->configDir, $subdir);
-    }
-
-    /**
-     * Get the path to the bootstrapping directory.
-     *
-     * This is usually /public for Web and EmbeddedWeb
-     *
-     * @return string
-     */
-    public function getBootstrapDirecory()
-    {
-        return dirname($_SERVER['SCRIPT_FILENAME']);
-    }
-
-    /**
      * Helper to glue directories together
      *
      * @param   string $dir
@@ -252,15 +223,76 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Starting concrete bootstrap classes
+     * Get the base directory
      *
-     * @param   string $configDir
+     * @param   string $subDir Optional sub directory to get
      *
-     * @return  ApplicationBootstrap
+     * @return  string
      */
-    public static function start($configDir = null)
+    public function getBaseDir($subDir = null)
     {
-        $application = new static($configDir);
+        return $this->getDirWithSubDir($this->baseDir, $subDir);
+    }
+
+    /**
+     * Get the application directory
+     *
+     * @param   string $subDir Optional sub directory to get
+     *
+     * @return  string
+     */
+    public function getApplicationDir($subDir = null)
+    {
+        return $this->getDirWithSubDir($this->appDir, $subDir);
+    }
+
+    /**
+     * Get the vendor library directory
+     *
+     * @param   string $subDir Optional sub directory to get
+     *
+     * @return  string
+     */
+    public function getVendorDir($subDir = null)
+    {
+        return $this->getDirWithSubDir($this->vendorDir, $subDir);
+    }
+
+    /**
+     * Get the configuration directory
+     *
+     * @param   string $subDir Optional sub directory to get
+     *
+     * @return  string
+     */
+    public function getConfigDir($subDir = null)
+    {
+        return $this->getDirWithSubDir($this->configDir, $subDir);
+    }
+
+    /**
+     * Get the path to the bootstrapping directory
+     *
+     * This is usually /public for Web and EmbeddedWeb and /bin for the CLI
+     *
+     * @return string
+     */
+    public function getBootstrapDirectory()
+    {
+        return dirname(realpath($_SERVER['SCRIPT_FILENAME']));
+    }
+
+    /**
+     * Start the bootstrap
+     *
+     * @param   string $baseDir     Icinga Web 2 base directory
+     * @param   string $configDir   Path to Icinga Web 2's configuration files
+     *
+     * @return  static
+     */
+    public static function start($baseDir = null, $configDir = null)
+    {
+        $application = new static($baseDir, $configDir);
         $application->bootstrap();
         return $application;
     }
@@ -313,13 +345,23 @@ abstract class ApplicationBootstrap
         $this->moduleManager = new ModuleManager(
             $this,
             $this->configDir . '/enabledModules',
-            explode(
-                ':',
-                $this->config->global !== null
-                    ? $this->config->global->get('modulePath', ICINGAWEB_APPDIR . '/../modules')
-                    : ICINGAWEB_APPDIR . '/../modules'
-            )
+            explode(':', $this->config->fromSection('global', 'modulePath', $this->baseDir . '/modules'))
         );
+        return $this;
+    }
+
+    /**
+     * Load all core modules
+     *
+     * @return self
+     */
+    protected function loadCoreModules()
+    {
+        try {
+            $this->moduleManager->loadCoreModules();
+        } catch (NotReadableError $e) {
+            Logger::error(new IcingaException('Cannot load core modules. An exception was thrown:', $e));
+        }
         return $this;
     }
 
@@ -346,7 +388,7 @@ abstract class ApplicationBootstrap
     protected function setupLogging()
     {
         Logger::create(
-            new Zend_Config(
+            new Config(
                 array(
                     'log' => 'syslog'
                 )
@@ -363,12 +405,14 @@ abstract class ApplicationBootstrap
     protected function loadConfig()
     {
         Config::$configDir = $this->configDir;
+
         try {
             $this->config = Config::app();
         } catch (NotReadableError $e) {
             Logger::error(new IcingaException('Cannot load application configuration. An exception was thrown:', $e));
-            $this->config = new Zend_Config(array());
+            $this->config = new Config();
         }
+
         return $this;
     }
 
@@ -388,6 +432,7 @@ abstract class ApplicationBootstrap
                 return false; // Continue with the normal error handler
             }
             switch($errno) {
+                case E_WARNING:
                 case E_STRICT:
                     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
             }
@@ -403,9 +448,9 @@ abstract class ApplicationBootstrap
      */
     protected function setupLogger()
     {
-        if ($this->config->logging !== null) {
+        if (($loggingConfig = $this->config->logging) !== null) {
             try {
-                Logger::create($this->config->logging);
+                Logger::create($loggingConfig);
             } catch (ConfigurationError $e) {
                 Logger::error($e);
             }
@@ -444,7 +489,7 @@ abstract class ApplicationBootstrap
         if (! $default) {
             $default = 'UTC';
         }
-        $timeZoneString = $this->config->global !== null ? $this->config->global->get('timezone', $default) : $default;
+        $timeZoneString = $this->config->fromSection('global', 'timezone', $default);
         date_default_timezone_set($timeZoneString);
         DateTimeFactory::setConfig(array('timezone' => $timeZoneString));
         return $this;

@@ -6,7 +6,7 @@ namespace Icinga\Web;
 
 use Icinga\Exception\ProgrammingError;
 use Icinga\Application\Platform;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Web\Session;
 
 /**
@@ -75,35 +75,28 @@ class Notification
             return;
         }
 
-        $mo = (object) array(
+        $messages = & Session::getSession()->getByRef('messages');
+        $messages[] = (object) array(
             'type'    => $type,
             'message' => $message,
         );
-
-        // Get, change, set - just to be on the safe side:
-        $session = Session::getSession();
-        $msgs = $session->messages;
-        $msgs[] = $mo;
-        $session->messages = $msgs;
-        $session->write();
     }
 
     public function hasMessages()
     {
         $session = Session::getSession();
-        return !empty($session->messages);
+        return false === empty($session->messages);
     }
 
     public function getMessages()
     {
         $session = Session::getSession();
-        $msgs = $session->messages;
-        if (false === empty($msgs)) {
+        $messages = $session->messages;
+        if (false === empty($messages)) {
             $session->messages = array();
-            $session->write();
         }
 
-        return $msgs;
+        return $messages;
     }
 
     final private function __construct()

@@ -6,10 +6,9 @@ namespace Icinga\Web;
 
 use Icinga\Web\Menu\MenuItemRenderer;
 use RecursiveIterator;
-use Zend_Config;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Url;
@@ -79,10 +78,10 @@ class Menu implements RecursiveIterator
     /**
      * Create a new menu
      *
-     * @param   int             $id         The id of this menu
-     * @param   Zend_Config     $config     The configuration for this menu
+     * @param   int        $id         The id of this menu
+     * @param   Config     $config     The configuration for this menu
      */
-    public function __construct($id, Zend_Config $config = null, Menu $parent = null)
+    public function __construct($id, Config $config = null, Menu $parent = null)
     {
         $this->id = $id;
         if ($parent !== null) {
@@ -94,7 +93,7 @@ class Menu implements RecursiveIterator
     /**
      * Set all given properties
      *
-     * @param   array|Zend_Config   $props Property list
+     * @param   array|Config   $props Property list
      */
     public function setProperties($props = null)
     {
@@ -415,11 +414,11 @@ class Menu implements RecursiveIterator
      * Add a sub menu to this menu
      *
      * @param   string          $id             The id of the menu to add
-     * @param   Zend_Config     $itemConfig     The config with which to initialize the menu
+     * @param   Config     $itemConfig     The config with which to initialize the menu
      *
      * @return  self
      */
-    public function addSubMenu($id, Zend_Config $menuConfig = null)
+    public function addSubMenu($id, Config $menuConfig = null)
     {
         if (false === ($pos = strpos($id, '.'))) {
             $subMenu = new self($id, $menuConfig, $this);
@@ -509,7 +508,7 @@ class Menu implements RecursiveIterator
      */
     public function add($name, $config = array())
     {
-        return $this->addSubMenu($name, new Zend_Config($config));
+        return $this->addSubMenu($name, new Config($config));
     }
 
     /**

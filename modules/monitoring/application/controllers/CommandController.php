@@ -4,22 +4,19 @@
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Module\Monitoring\Form\Command\DisableNotificationWithExpireForm;
 use Icinga\Module\Monitoring\Form\Command\SingleArgumentCommandForm;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
-use Icinga\Data\Filter\Filter;
 use Icinga\Web\Notification;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Protocol\Commandpipe\CommandPipe;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\MissingParameterException;
-use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Form\Command\AcknowledgeForm;
 use Icinga\Module\Monitoring\Form\Command\CommentForm;
 use Icinga\Module\Monitoring\Form\Command\CommandForm;
-use Icinga\Module\Monitoring\Form\Command\CommandWithIdentifierForm;
 use Icinga\Module\Monitoring\Form\Command\CustomNotificationForm;
 use Icinga\Module\Monitoring\Form\Command\DelayNotificationForm;
 use Icinga\Module\Monitoring\Form\Command\RescheduleNextCheckForm;

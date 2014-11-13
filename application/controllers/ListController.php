@@ -3,11 +3,9 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Web\Hook;
 use Icinga\Web\Url;
-use Icinga\Data\ResourceFactory;
-use Icinga\Logger\Logger;
-use Icinga\Logger\Writer\FileWriter;
+use Icinga\Application\Logger;
+use Icinga\Application\Config;
 use Icinga\Protocol\File\FileReader;
 use \Zend_Controller_Action_Exception as ActionError;
 
@@ -50,7 +48,7 @@ class ListController extends Controller
                  . ' - (?<message>.*)$/';                                 // message
 
         $loggerWriter = Logger::getInstance()->getWriter();
-        $resource = new FileReader(new Zend_Config(array(
+        $resource = new FileReader(new Config(array(
             'filename'  => $loggerWriter->getPath(),
             'fields'    => $pattern
         )));

@@ -6,7 +6,7 @@ namespace Icinga\Form;
 
 use Exception;
 use DateTimeZone;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Util\TimezoneDetect;
@@ -100,10 +100,7 @@ class PreferenceForm extends Form
         }
         $this->preferences->icingaweb = $webPreferences;
 
-        // TODO: Is this even necessary in case the session is written on response?
-        $session = Session::getSession();
-        $session->user->setPreferences($this->preferences);
-        $session->write();
+        Session::getSession()->user->setPreferences($this->preferences);
 
         try {
             $this->save();

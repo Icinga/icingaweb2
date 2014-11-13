@@ -5,7 +5,7 @@
 namespace Icinga\Web;
 
 use Exception;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Exception\ProgrammingError;
 
 /**

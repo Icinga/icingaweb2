@@ -197,6 +197,13 @@
             var $target;
             var data;
 
+            if ($button.length === 0) {
+                var $el = $(event.currentTarget);
+                if ($el.is('input[type=submit]') || $el.is('button[type=submit]')) {
+                    $button = $el;
+                }
+            }
+
             if (typeof method === 'undefined') {
                 method = 'POST';
             } else {
@@ -204,7 +211,7 @@
             }
 
             if ($button.length === 0) {
-                $button = $('input[type=submit]', $form).first();
+                $button = $('input[type=submit]', $form).add('button[type=submit]', $form).first();
             }
 
             event.stopPropagation();
