@@ -57,6 +57,27 @@ abstract class ApplicationBootstrap
     protected $appDir;
 
     /**
+     * Vendor library directory
+     *
+     * @var string
+     */
+    protected $vendorDir;
+
+    /**
+     * Library directory
+     *
+     * @var string
+     */
+    protected $libDir;
+
+    /**
+     * Configuration directory
+     *
+     * @var string
+     */
+    protected $configDir;
+
+    /**
      * Icinga auto loader
      *
      * @var Loader
@@ -64,25 +85,11 @@ abstract class ApplicationBootstrap
     private $loader;
 
     /**
-     * Library directory
-     *
-     * @var string
-     */
-    private $libDir;
-
-    /**
      * Config object
      *
      * @var Config
      */
     protected $config;
-
-    /**
-     * Configuration directory
-     *
-     * @var string
-     */
-    private $configDir;
 
     /**
      * Module manager
@@ -118,9 +125,7 @@ abstract class ApplicationBootstrap
         }
         $this->baseDir = $baseDir;
         $this->appDir = $baseDir . '/application';
-
-        define('ICINGAWEB_VENDORS', $baseDir . '/library/vendor');
-
+        $this->vendorDir = $baseDir . '/library/vendor';
         $this->libDir = realpath(__DIR__ . '/../..');
 
         if ($configDir === null) {
@@ -242,15 +247,27 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Getter for config dir
+     * Get the vendor library directory
      *
-     * @param   string $subdir
+     * @param   string $subDir Optional sub directory to get
      *
      * @return  string
      */
-    public function getConfigDir($subdir = null)
+    public function getVendorDir($subDir = null)
     {
-        return $this->getDirWithSubDir($this->configDir, $subdir);
+        return $this->getDirWithSubDir($this->vendorDir, $subDir);
+    }
+
+    /**
+     * Get the configuration directory
+     *
+     * @param   string $subDir Optional sub directory to get
+     *
+     * @return  string
+     */
+    public function getConfigDir($subDir = null)
+    {
+        return $this->getDirWithSubDir($this->configDir, $subDir);
     }
 
     /**
