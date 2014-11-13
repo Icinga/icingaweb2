@@ -95,7 +95,7 @@ class FilterEditor extends AbstractWidget
         $removeUrl->setParam('removeFilter', $idx);
         $removeLink = ' <a href="' . $removeUrl . '" title="'
              . $view->escape(t('Click to remove this part of your filter'))
-             . '">' . $view->icon('minus .  '</a>';
+             . '">' . $view->icon('cancel') .  '</a>';
 
         /*
         // Temporarilly removed, not implemented yet

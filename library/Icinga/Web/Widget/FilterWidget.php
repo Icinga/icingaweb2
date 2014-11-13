@@ -98,7 +98,7 @@ class FilterWidget extends AbstractWidget
                 . '" title="'
                 . t('Remove this filter')
                 . '">'
-                . $view->icon('minus')
+                . $view->icon('cancel')
                 . '</a>';
         }
         $filter = $this->filter->isEmpty() ? '' : ': ' . $this->filter;
