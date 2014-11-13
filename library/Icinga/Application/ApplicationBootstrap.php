@@ -141,6 +141,13 @@ abstract class ApplicationBootstrap
         $this->setupAutoloader();
         $this->setupZendAutoloader();
 
+        set_include_path(
+            implode(
+                PATH_SEPARATOR,
+                array($this->vendorDir, get_include_path())
+            )
+        );
+
         Benchmark::measure('Bootstrap, autoloader registered');
 
         Icinga::setApp($this);
