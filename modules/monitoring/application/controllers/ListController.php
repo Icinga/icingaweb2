@@ -377,12 +377,12 @@ class Monitoring_ListController extends Controller
         ));
     }
 
-    public function statehistorysummaryAction()
+    public function eventgridAction()
     {
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
-        $this->addTitleTab('statehistorysummary', 'State Summary');
+        $this->addTitleTab('eventgrid', t('Event Grid'));
 
         $form = new StatehistoryForm();
         $form->setEnctype(Zend_Form::ENCTYPE_URLENCODED);
@@ -406,7 +406,7 @@ class Monitoring_ListController extends Controller
         $orientationBox->applyRequest($this->getRequest());
 
         $query = $this->backend->select()->from(
-            'stateHistorySummary',
+            'eventgrid',
             array('day', $form->getValue('state'))
         );
         $this->params->remove(array('objecttype', 'from', 'to', 'state', 'btn_submit'));
@@ -549,8 +549,8 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+        $this->addTitleTab('eventhistory', $this->translate('Event Overview'));
 
-        $this->addTitleTab('eventhistory');
         $query = $this->backend->select()->from('eventHistory', array(
             'host_name',
             'service_description',
@@ -710,7 +710,7 @@ class Monitoring_ListController extends Controller
             'hosts',
             'services',
             'eventhistory',
-            'statehistorysummary',
+            'eventgrid',
             'notifications'
         ))) {
             $tabs->extend(new OutputFormat())->extend(new DashboardAction());

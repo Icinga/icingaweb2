@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
-class StateHistorySummary extends DataView
+class Eventgrid extends DataView
 {
     /**
      * Retrieve columns provided by this view

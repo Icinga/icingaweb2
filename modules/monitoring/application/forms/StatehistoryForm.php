@@ -9,7 +9,7 @@ use Icinga\Web\Form;
 use Icinga\Data\Filter\Filter;
 
 /**
- * Configure the filter for the statehistorysummary
+ * Configure the filter for the event grid
  */
 class StatehistoryForm extends Form
 {

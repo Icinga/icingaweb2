@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-class StateHistorySummaryQuery extends IdoQuery
+class EventgridQuery extends IdoQuery
 {
     protected $columnMap = array(
         'statehistory' => array(
