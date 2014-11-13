@@ -2,20 +2,22 @@
   overflow: auto; // TODO: Shouldn't be necessary, here, IMHO
 }
 
+
 #setup {
   .header {
     width: 100%;
     height: 5.4em;
-    background-color: #555;
-    background-image: -moz-linear-gradient(top, #777, #555);
-    background-image: -webkit-linear-gradient(top, #777, #555);
-    background-image: -o-linear-gradient(top, #777, #555);
-    background-image: -ms-linear-gradient(top, #777, #555);
-    background-image: linear-gradient(top, #777, #555);
+    background-color: @colorPetrol;
+    border-bottom: 1px solid #d9d9d9d;
+    text-align: center;
+    -webkit-box-shadow: 0 3px 7px -3px #000;
+    -moz-box-shadow: 0 3px 7px -3px #000;
+    box-shadow: 0 3px 7px -3px #000;
+
 
     img {
-      width: 12.5em;
-      margin: 0.5em;
+      width: 7.5em;
+      margin: 1.5em;
       float: left;
     }
 
@@ -29,7 +31,7 @@
         h1 {
           margin: 0;
           color: white;
-          font-size: 1em;
+          font-size: 0.9em;
           text-align: center;
         }
 
@@ -49,7 +51,7 @@
           background-color: lightgrey;
 
           &.line {
-            height: 0.5em;
+            height: 0.4em;
 
             &.left {
               margin-left: 0.1em;
@@ -67,9 +69,9 @@
           }
 
           &.bubble {
-            width: 1.5em;
-            height: 1.5em;
-            border-radius: 1.5em;
+            width: 1.2em;
+            height: 1.2em;
+            border-radius: 1.2em;
 
             // Make sure that such a bubble overlays lines
             position: relative;
@@ -81,11 +83,11 @@
           }
 
           &.complete {
-            background-color: #2e8b57;
+            background-color: @colorOk ;
           }
 
           &.visited {
-              background-color: #77bf97;
+            background-color: #eee;
           }
         }
       }
@@ -93,12 +95,13 @@
   }
 
   .setup-content {
-    margin: 1.5em 1.8em 0 1.8em;
+    margin: 1.5em 10em 0 10em;
 
     form {
       h2 {
-        font-size: 1.5em;
-        color: #444;
+        font-size: 2.0em;
+        color: @colorTextDefault;
+        border-bottom: 2px solid @colorPetrol;
       }
     }
   }
@@ -114,24 +117,30 @@
 
   #btn_prev {
     margin-right: 1em;
+    font-size: 0.9em;
+  }
+
+  #btn_next {
+    font-size: 0.9em;
   }
 
   button, .button-like {
-    padding: 0.5em 1em;
+    font-size: 0.9em;
     font-weight: bold;
     outline: 0;
-    border: 1px solid black;
-    border-radius: 0.2em;
-    background: #666;
-    color: #eee;
+    color: #fff;
+    border: 2px solid;
+    border-color: @colorPetrol;
+    background: @colorPetrol;
 
     &[disabled="1"] {
       background-color: #aaa;
-      border: 1px dotted black;
+      border: 1px solid black;
     }
 
     &:hover, &:focus, &:active {
-      background-color: #333;
+      background-color: #666;
+      border-color: #666;
 
       &[disabled="1"] {
         background-color: #aaa;
@@ -141,10 +150,10 @@
     &.finish, &.login {
       min-width: 25em;
       color: #fffafa;
-      background: #aaa;
+      background: @colorPetrol;
 
       &:hover, &:focus, &:active {
-        background: #888;
+        background: #666;
       }
     }
   }
@@ -156,9 +165,11 @@
 }
 
 #setup table.requirements {
-  margin: -1em -1em 0;
+  font-size: 0.9em;
+  margin: -1em -1em 2em;
   border-spacing: 1em;
   border-collapse: separate;
+  border-bottom: 2px solid @colorPetrol;
 
   td {
     h2 {
@@ -168,10 +179,9 @@
     &.state {
       color: white;
       padding: 0.4em;
-      border-radius: 0.2em;
 
       &.fulfilled {
-        background-color: #4fad4b;
+        background-color: @colorOk;
       }
 
       &.not-available {
@@ -180,7 +190,7 @@
       }
 
       &.missing {
-        background-color: #fd7770;
+        background-color: @colorCritical;
       }
     }
 
@@ -193,7 +203,7 @@
 
         a.button-like {
           padding: 0.2em 0.5em;
-          background-color: #888;
+          background-color: @colorPetro;
 
           &:hover, &:focus {
             background-color: #666;
@@ -229,11 +239,10 @@
 
     div.page {
       float: left;
-      width: 25em;
+      width: 20em;
       min-height: 25em;
       padding: 0 1em 1em;
       margin: 1em 1.5em 1.5em;
-      border-radius: 0.5em;
       border: 1px dashed lightgrey;
 
       h2 {
@@ -272,14 +281,13 @@
   padding: 0.5em;
   color: white;
   font-weight: bold;
-  border-radius: 1em;
 }
 
 #setup-finish {
   div.report {
     padding: 1em;
+    border: 1px solid lightgrey;
     border-radius: 0em;
-    background-color: #eee;
 
     div.line-separator {
       width: 50%;
@@ -319,14 +327,15 @@
   text-align: center;
 
   h2 {
-    font-size: 1.5em;
+    font-size: 2.0em;
+    color: @colorTextDefault;
+    border-bottom: 2px solid @colorPetrol;
+    margin-bottom: 2em;
+
   }
 
   div.info {
-    display: inline-block;
-    max-width: 66%;
     padding: 0 1em;
-    border-radius: 1em;
     background-color: #eee;
     border: 1px solid lightgrey;
   }
@@ -337,20 +346,20 @@
   }
 
   div.note {
-    width: 40%;
     padding: 1em 1em 0;
     margin: 3em auto 0;
     text-align: left;
-    border-radius: 0.5em;
-    border: 1px solid #eee;
+    font-size: 0.9em;
+    border: 1px solid lightgrey;
 
     div.title {
+      color: white;
       padding: 0.2em;
       margin: -1em -1em 1em;
       text-align: center;
-      background-color: #eee;
-      border-top-left-radius: 0.5em;
-      border-top-right-radius: 0.5em;
+      color: @colorTextDefault;
+      border-bottom: 2px solid @colorPetrol;
+
     }
 
     img {
@@ -391,16 +400,16 @@
     width: auto;
     padding: 1em;
     overflow: hidden;
-    border-radius: 1em;
-    background-color: #f4f4f4;
+    border: solid 1px lightgrey;
 
     div.buttons {
       margin: 1.5em 0 0;
+      float: right;
 
       button[type=submit] {
         padding: 0.5em;
         line-height: 0.5em;
-        background-color: #888;
+	background-color: @colorPetrol;
 
         &:hover, &:focus, &:active {
           background-color: #666;
@@ -410,6 +419,7 @@
   }
 
   div.module-menu {
+    font-size: 0.9em;
     width: 25%;
     float: right;
     margin-left: 1.5em;
