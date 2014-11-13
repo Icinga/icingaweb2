@@ -11,9 +11,9 @@
     <tr>
       <td>
       <?php if ($module->enabled): ?>
-      <?= $this->icon('success.png', $this->translate('Module is enabled')) ?>
+      <?= $this->icon('thumbs-up', $this->translate('Module is enabled')) ?>
       <?php else: ?>
-      <?= $this->icon('remove.png', $this->translate('Module is disabled')) ?>
+      <?= $this->icon('thumbs-down', $this->translate('Module is disabled')) ?>
       <?php endif ?>
         <a href="<?= $this->url(
             'config/module/',

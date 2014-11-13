@@ -45,11 +45,11 @@ $helper = $this->getHelper('MonitoringState');
 
             <span>
                 <?php if ($this->trend->trend === 'up'): ?>
-                    <?= $this->icon('up.png'); ?>
+                    <?= $this->icon('up-open'); ?>
                 <?php elseif ($this->trend->trend === 'unchanged'): ?>
-                    <?= $this->icon('next.png'); ?>
+                    <?= $this->icon('right-open'); ?>
                 <?php else: ?>
-                    <?= $this->icon('down.png'); ?>
+                    <?= $this->icon('down-open'); ?>
                 <?php endif; ?>
             </span>
         </div>

@@ -6,7 +6,7 @@
 
 $section = $this->menuSection($this->translate('Documentation'), array(
     'title'    => 'Documentation',
-    'icon'     => 'img/icons/comment.png',
+    'icon'     => 'book',
     'url'      => 'doc',
     'priority' => 190
 ));

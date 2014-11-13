@@ -187,7 +187,7 @@ abstract class MonitoredObjectController extends Controller
             'host',
             array(
                 'title'     => 'Host',
-                'icon'      => 'img/icons/host.png',
+                'icon'      => 'host',
                 'url'       => 'monitoring/host/show',
                 'urlParams' => $params
             )
@@ -197,7 +197,7 @@ abstract class MonitoredObjectController extends Controller
                 'service',
                 array(
                     'title'     => 'Service',
-                    'icon'      => 'img/icons/service.png',
+                    'icon'      => 'service',
                     'url'       => 'monitoring/service/show',
                     'urlParams' => $params
                 )
@@ -207,7 +207,7 @@ abstract class MonitoredObjectController extends Controller
             'services',
             array(
                 'title'     => 'Services',
-                'icon'      => 'img/icons/service.png',
+                'icon'      => 'service',
                 'url'       => 'monitoring/show/services',
                 'urlParams' => $params
             )
@@ -216,7 +216,7 @@ abstract class MonitoredObjectController extends Controller
             'history',
             array(
                 'title'     => 'History',
-                'icon'      => 'img/icons/history.png',
+                'icon'      => 'rewind',
                 'url'       => 'monitoring/show/history',
                 'urlParams' => $params
             )
