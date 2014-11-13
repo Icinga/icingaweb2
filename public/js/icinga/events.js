@@ -306,17 +306,20 @@
                 var query = icinga.ui.selectionDataToQuery(selectionData);
                 icinga.loader.loadUrl(url + '?' + query, $target);
                 icinga.ui.storeSelectionData(selectionData);
+                icinga.ui.provideSelectionCount();
             } else if ($trs.length === 1) {
                 // display a single row
                 $tr = $trs.first();
                 icinga.loader.loadUrl($tr.attr('href'), $target);
                 icinga.ui.storeSelectionData($tr.attr('href'));
+                icinga.ui.provideSelectionCount();
             } else {
                 // display nothing
                 if ($target.attr('id') === 'col2') {
                     icinga.ui.layout1col();
                 }
                 icinga.ui.storeSelectionData(null);
+                icinga.ui.provideSelectionCount();
             }
 
             return false;
