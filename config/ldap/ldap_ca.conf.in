@@ -1,4 +1,0 @@
-# Use given CA file
-TLS_REQCERT demand
-TLS_CACERT @prefix@/config/ssl/cacerts/trusted.crt
-

@@ -110,15 +110,12 @@ $section->add($this->translate('Contacts'), array(
 $section = $this->menuSection($this->translate('History'), array(
     'icon'      => 'rewind'
 ));
-$section->add($this->translate('Critical Events'), array(
-    'url'      => 'monitoring/list/statehistorysummary',
+$section->add($this->translate('Event Grid'), array(
+    'url'      => 'monitoring/list/eventgrid',
     'priority' => 50
 ));
-$section->add($this->translate('Notifications'), array(
-    'url'      => 'monitoring/list/notifications'
-));
 $section->add($this->translate('Events'), array(
-    'title'    => $this->translate('All Events'),
+    'title'    => $this->translate('Event Overview'),
     'url'      => 'monitoring/list/eventhistory?timestamp>=-7%20days'
 ));
 $section->add($this->translate('Timeline'))->setUrl('monitoring/timeline');

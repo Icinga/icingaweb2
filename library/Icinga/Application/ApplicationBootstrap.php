@@ -13,7 +13,7 @@ use Icinga\Exception\NotReadableError;
 use Icinga\Application\Logger;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
-use Icinga\File\Ini\IniWriter;
+use Icinga\Util\TimezoneDetect;
 use Icinga\Exception\IcingaException;
 
 /**
@@ -140,6 +140,13 @@ abstract class ApplicationBootstrap
 
         $this->setupAutoloader();
         $this->setupZendAutoloader();
+
+        set_include_path(
+            implode(
+                PATH_SEPARATOR,
+                array($this->vendorDir, get_include_path())
+            )
+        );
 
         Benchmark::measure('Bootstrap, autoloader registered');
 
@@ -478,42 +485,62 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Setup default timezone
+     * Detect the timezone
      *
-     * @return  self
-     * @throws  ConfigurationError if the timezone in config.ini isn't valid
+     * @return null|string
      */
-    protected function setupTimezone()
+    protected function detectTimezone()
     {
-        $default = @date_default_timezone_get();
-        if (! $default) {
-            $default = 'UTC';
+        return null;
+    }
+
+    /**
+     * Set up the timezone
+     *
+     * @return $this
+     */
+    protected final function setupTimezone()
+    {
+        $timezone = $this->detectTimeZone();
+        if ($timezone === null || @date_default_timezone_set($timezone) === false) {
+            $timezone = @date_default_timezone_get();
+            if ($timezone === false) {
+                $timezone = 'UTC';
+                date_default_timezone_set($timezone);
+            }
         }
-        $timeZoneString = $this->config->fromSection('global', 'timezone', $default);
-        date_default_timezone_set($timeZoneString);
-        DateTimeFactory::setConfig(array('timezone' => $timeZoneString));
+        DateTimeFactory::setConfig(array('timezone' => $timezone));
         return $this;
     }
 
     /**
-     * Setup internationalization using gettext
+     * Detect the locale
      *
-     * Uses the preferred language sent by the browser or the default one
-     *
-     * @return  self
+     * @return null|string
      */
-    protected function setupInternationalization()
+    protected function detectLocale()
+    {
+        return null;
+    }
+
+    /**
+     * Set up internationalization using gettext
+     *
+     * @return $this
+     */
+    protected final function setupInternationalization()
     {
         if ($this->hasLocales()) {
             Translator::registerDomain(Translator::DEFAULT_DOMAIN, $this->getLocaleDir());
         }
 
+        $locale = $this->detectLocale();
+        if ($locale === null) {
+            $locale = Translator::DEFAULT_LOCALE;
+        }
+
         try {
-            Translator::setupLocale(
-                isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
-                    ? Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE'])
-                    : Translator::DEFAULT_LOCALE
-            );
+            Translator::setupLocale($locale);
         } catch (Exception $error) {
             Logger::error($error);
         }

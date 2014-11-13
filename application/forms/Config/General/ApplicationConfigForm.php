@@ -29,44 +29,6 @@ class ApplicationConfigForm extends Form
      */
     public function createElements(array $formData)
     {
-        $languages = array();
-        foreach (Translator::getAvailableLocaleCodes() as $language) {
-            $languages[$language] = $language;
-        }
-
-        $this->addElement(
-            'select',
-            'global_language',
-            array(
-                'label'         => t('Default Language'),
-                'required'      => true,
-                'multiOptions'  => $languages,
-                'description'   => t(
-                    'Select the language to use by default. Can be overwritten by a user in his preferences.'
-                )
-            )
-        );
-
-        $tzList = array();
-        foreach (DateTimeZone::listIdentifiers() as $tz) {
-            $tzList[$tz] = $tz;
-        }
-
-        $this->addElement(
-            'select',
-            'global_timezone',
-            array(
-                'label'         => t('Default Application Timezone'),
-                'required'      => true,
-                'multiOptions'  => $tzList,
-                'description'   => t(
-                    'Select the timezone to be used as the default. User\'s can set their own timezone if'
-                    . ' they like to, but this is the timezone to be used as the default setting .'
-                ),
-                'value'         => date_default_timezone_get()
-            )
-        );
-
         $this->addElement(
             'text',
             'global_modulePath',

@@ -14,8 +14,20 @@ use Icinga\Module\Monitoring\Web\Widget\SelectBox;
 
 class Monitoring_TimelineController extends Controller
 {
+    protected function addTitleTab($action, $title = false)
+    {
+        $title = $title ? : ucfirst($action);
+        $this->getTabs()->add($action, array(
+            'title' => $title,
+            'url' => Url::fromRequest()
+        ))->activate($action);
+        $this->view->title = $title;
+    }
+
     public function indexAction()
     {
+        $this->addTitleTab('index', t('Timeline'));
+
         // TODO: filter for hard_states (precedence adjustments necessary!)
         $this->setupIntervalBox();
         list($displayRange, $forecastRange) = $this->buildTimeRanges();
