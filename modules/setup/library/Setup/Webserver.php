@@ -75,17 +75,20 @@ abstract class Webserver
     abstract protected function getTemplate();
 
     /**
-     * Setter for web path
+     * Set the URL path of Icinga Web 2
      *
-     * @param string $webPath
+     * @param   string $urlPath
+     *
+     * @return  $this
      */
-    public function setWebPath($webPath)
+    public function setWebPath($urlPath)
     {
-        $this->webPath = $webPath;
+        $this->webPath = '/' . ltrim(trim((string) $urlPath), '/');
+        return $this;
     }
 
     /**
-     * Getter for web path
+     * Get the URL path of Icinga Web 2
      *
      * @return string
      */
@@ -103,7 +106,7 @@ abstract class Webserver
      */
     public function setDocumentRoot($documentRoot)
     {
-        $this->documentRoot = (string) $documentRoot;
+        $this->documentRoot = trim((string) $documentRoot);
         return $this;
     }
 

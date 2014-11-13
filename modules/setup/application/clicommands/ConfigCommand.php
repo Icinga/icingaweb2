@@ -110,8 +110,9 @@ class ConfigCommand extends Command
                 'The argument --root/--document-root expects a directory from which the webserver will serve files'
             ));
         }
-        $webserver->setWebPath($path);
-        $webserver->setDocumentRoot($documentRoot);
+        $webserver
+            ->setDocumentRoot($documentRoot)
+            ->setWebPath($path);
         $config = $webserver->generate() . "\n";
         if (($file = $this->params->get('file')) !== null) {
             if (file_exists($file) === true) {
