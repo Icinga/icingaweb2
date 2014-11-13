@@ -125,7 +125,6 @@ class ConfigCommand extends Command
             Logger::info($this->translate('Successfully written %d bytes to file'), $re);
             return true;
         }
-        printf("# Your %s configuration:\n", $type);
         echo $config;
         return true;
     }
