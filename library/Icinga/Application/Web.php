@@ -291,31 +291,19 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Setup user timezone if set and valid, otherwise global default timezone
-     *
-     * @return  self
-     * @see     ApplicationBootstrap::setupTimezone
+     * (non-PHPDoc)
+     * @see ApplicationBootstrap::detectTimezone() For the method documentation.
      */
-    protected function setupTimezone()
+    protected function detectTimezone()
     {
         $auth = Manager::getInstance();
-
-        if ($auth->isAuthenticated() &&
-            ($timezone = $auth->getUser()->getPreferences()->getValue('icingaweb', 'timezone')) !== null
+        if (! $auth->isAuthenticated()
+            || ($timezone = $auth->getUser()->getPreferences()->getValue('icingaweb', 'timezone')) === null
         ) {
-            $userTimezone = $timezone;
-        } else {
-            $userTimezone = null;
+            $detect = new TimezoneDetect();
+            $timezone = $detect->getTimezoneName();
         }
-
-        try {
-            DateTimeFactory::setConfig(array('timezone' => $userTimezone));
-            date_default_timezone_set($userTimezone);
-        } catch (ConfigurationError $e) {
-            return parent::setupTimezone();
-        }
-
-        return $this;
+        return $timezone;
     }
 
     /**

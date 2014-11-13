@@ -478,27 +478,31 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Setup default timezone
+     * Detect the timezone
      *
-     * @return  self
-     * @throws  ConfigurationError if the timezone in config.ini isn't valid
+     * @return null|string
      */
-    protected function setupTimezone()
+    protected function detectTimezone()
     {
-        $detect = new TimezoneDetect();
+        return null;
+    }
 
-        if ($detect->success()) {
-            $default = $detect->getTimezoneName();
-        } else {
-            $default = @date_default_timezone_get();
+    /**
+     * Set up the timezone
+     *
+     * @return $this
+     */
+    protected final function setupTimezone()
+    {
+        $timezone = $this->detectTimeZone();
+        if ($timezone === null || @date_default_timezone_set($timezone) === false) {
+            $timezone = @date_default_timezone_get();
+            if ($timezone === false) {
+                $timezone = 'UTC';
+                date_default_timezone_set($timezone);
+            }
         }
-
-        if (! $default) {
-            $default = 'UTC';
-        }
-        $timeZoneString = $this->config->fromSection('global', 'timezone', $default);
-        date_default_timezone_set($timeZoneString);
-        DateTimeFactory::setConfig(array('timezone' => $timeZoneString));
+        DateTimeFactory::setConfig(array('timezone' => $timezone));
         return $this;
     }
 
