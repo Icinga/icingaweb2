@@ -269,7 +269,7 @@ class DbQuery extends SimpleQuery
         $count = $this->dbSelect();
 
         $this->applyFilterSql($count);
-        if ($this->useSubqueryCount) {
+        if ($this->useSubqueryCount || $this->group) {
             $count->columns($this->columns);
             $columns = array('cnt' => 'COUNT(*)');
             return $this->db->select()->from($count, $columns);
