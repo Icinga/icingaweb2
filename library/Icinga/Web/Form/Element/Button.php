@@ -4,14 +4,14 @@
 
 namespace Icinga\Web\Form\Element;
 
-use Zend_Form_Element;
 use Icinga\Web\Request;
 use Icinga\Application\Icinga;
+use Icinga\Web\Form\FormElement;
 
 /**
  * A button
  */
-class Button extends Zend_Form_Element
+class Button extends FormElement
 {
     /**
      * Use formButton view helper by default

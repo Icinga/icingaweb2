@@ -5,7 +5,6 @@
 namespace Icinga\Module\Monitoring\Form\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\AddCommentCommand;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
 
@@ -32,7 +31,8 @@ class AddCommentCommandForm extends ObjectsCommandForm
     public function createElements(array $formData = array())
     {
         $this->addElements(array(
-            new Note(
+            array(
+                'note',
                 'command-info',
                 array(
                     'value' => mt(

@@ -8,8 +8,6 @@ use DateTime;
 use DateInterval;
 use Icinga\Module\Monitoring\Command\Instance\DisableNotificationsExpireCommand;
 use Icinga\Module\Monitoring\Form\Command\CommandForm;
-use Icinga\Web\Form\Element\DateTimePicker;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
 
@@ -34,27 +32,25 @@ class DisableNotificationsExpireCommandForm extends CommandForm
     public function createElements(array $formData = array())
     {
         $this->addElement(
-            new Note(
-                'command-info',
-                array(
-                    'value' => mt(
-                        'monitoring',
-                        'This command is used to disable host and service notifications for a specific time.'
-                    )
+            'note',
+            'command-info',
+            array(
+                'value' => mt(
+                    'monitoring',
+                    'This command is used to disable host and service notifications for a specific time.'
                 )
             )
         );
         $expireTime = new DateTime();
         $expireTime->add(new DateInterval('PT1H'));
         $this->addElement(
-            new DateTimePicker(
-                'expire_time',
-                array(
-                    'required'      => true,
-                    'label'         => mt('monitoring', 'Expire Time'),
-                    'description'   => mt('monitoring', 'Set the expire time.'),
-                    'value'         => $expireTime
-                )
+            'dateTimePicker',
+            'expire_time',
+            array(
+                'required'      => true,
+                'label'         => mt('monitoring', 'Expire Time'),
+                'description'   => mt('monitoring', 'Set the expire time.'),
+                'value'         => $expireTime
             )
         );
         return $this;

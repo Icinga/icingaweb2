@@ -5,7 +5,6 @@
 namespace Icinga\Module\Monitoring\Form\Setup;
 
 use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Module\Monitoring\Form\Config\SecurityConfigForm;
 
 class SecurityPage extends Form
@@ -18,25 +17,23 @@ class SecurityPage extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
-            new Note(
-                'title',
-                array(
-                    'value'         => mt('monitoring', 'Monitoring Security', 'setup.page.title'),
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array('HtmlTag', array('tag' => 'h2'))
-                    )
+            'note',
+            'title',
+            array(
+                'value'         => mt('monitoring', 'Monitoring Security', 'setup.page.title'),
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'h2'))
                 )
             )
         );
         $this->addElement(
-            new Note(
-                'description',
-                array(
-                    'value' => mt(
-                        'monitoring',
-                        'To protect your monitoring environment against prying eyes please fill out the settings below.'
-                    )
+            'note',
+            'description',
+            array(
+                'value' => mt(
+                    'monitoring',
+                    'To protect your monitoring environment against prying eyes please fill out the settings below.'
                 )
             )
         );

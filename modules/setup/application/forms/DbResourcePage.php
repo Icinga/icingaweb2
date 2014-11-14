@@ -6,7 +6,6 @@ namespace Icinga\Module\Setup\Form;
 
 use PDOException;
 use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Form\Config\Resource\DbResourceForm;
 use Icinga\Module\Setup\Utils\DbTool;
 
@@ -37,26 +36,24 @@ class DbResourcePage extends Form
             )
         );
         $this->addElement(
-            new Note(
-                'title',
-                array(
-                    'value'         => mt('setup', 'Database Resource', 'setup.page.title'),
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array('HtmlTag', array('tag' => 'h2'))
-                    )
+            'note',
+            'title',
+            array(
+                'value'         => mt('setup', 'Database Resource', 'setup.page.title'),
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'h2'))
                 )
             )
         );
         $this->addElement(
-            new Note(
-                'description',
-                array(
-                    'value' => mt(
-                        'setup',
-                        'Now please configure your database resource. Note that the database itself does not need to'
-                        . ' exist at this time as it is going to be created once the wizard is about to be finished.'
-                    )
+            'note',
+            'description',
+            array(
+                'value' => mt(
+                    'setup',
+                    'Now please configure your database resource. Note that the database itself does not need to'
+                    . ' exist at this time as it is going to be created once the wizard is about to be finished.'
                 )
             )
         );

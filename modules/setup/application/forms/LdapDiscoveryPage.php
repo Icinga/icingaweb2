@@ -5,7 +5,6 @@
 namespace Icinga\Module\Setup\Form;
 
 use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Form\LdapDiscoveryForm;
 
 /**
@@ -32,26 +31,24 @@ class LdapDiscoveryPage extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
-            new Note(
-                'title',
-                array(
-                    'value'         => mt('setup', 'LDAP Discovery', 'setup.page.title'),
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array('HtmlTag', array('tag' => 'h2'))
-                    )
+            'note',
+            'title',
+            array(
+                'value'         => mt('setup', 'LDAP Discovery', 'setup.page.title'),
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'h2'))
                 )
             )
         );
         $this->addElement(
-            new Note(
-                'description',
-                array(
-                    'value' => mt(
-                        'setup',
-                        'You can use this page to discover LDAP or ActiveDirectory servers ' .
-                        ' for authentication. If you don\' want to execute a discovery, just skip this step.'
-                    )
+            'note',
+            'description',
+            array(
+                'value' => mt(
+                    'setup',
+                    'You can use this page to discover LDAP or ActiveDirectory servers ' .
+                    ' for authentication. If you don\' want to execute a discovery, just skip this step.'
                 )
             )
         );

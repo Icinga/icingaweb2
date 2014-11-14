@@ -5,7 +5,6 @@
 namespace Icinga\Module\Monitoring\Form\Setup;
 
 use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Form\Config\Resource\DbResourceForm;
 
 class IdoResourcePage extends Form
@@ -26,26 +25,24 @@ class IdoResourcePage extends Form
             )
         );
         $this->addElement(
-            new Note(
-                'title',
-                array(
-                    'value'         => mt('monitoring', 'Monitoring IDO Resource', 'setup.page.title'),
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array('HtmlTag', array('tag' => 'h2'))
-                    )
+            'note',
+            'title',
+            array(
+                'value'         => mt('monitoring', 'Monitoring IDO Resource', 'setup.page.title'),
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'h2'))
                 )
             )
         );
         $this->addElement(
-            new Note(
-                'description',
-                array(
-                    'value' => mt(
-                        'monitoring',
-                        'Please fill out the connection details below to access'
-                        . ' the IDO database of your monitoring environment.'
-                    )
+            'note',
+            'description',
+            array(
+                'value' => mt(
+                    'monitoring',
+                    'Please fill out the connection details below to access'
+                    . ' the IDO database of your monitoring environment.'
                 )
             )
         );

@@ -4,12 +4,12 @@
 
 namespace Icinga\Web\Form\Element;
 
-use Zend_Form_Element;
+use Icinga\Web\Form\FormElement;
 
 /**
  * A note
  */
-class Note extends Zend_Form_Element
+class Note extends FormElement
 {
     /**
      * Form view helper to use for rendering

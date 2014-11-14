@@ -7,8 +7,6 @@ namespace Icinga\Module\Monitoring\Form\Command\Object;
 use DateTime;
 use DateInterval;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceCheckCommand;
-use Icinga\Web\Form\Element\DateTimePicker;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
 
@@ -37,7 +35,8 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
         $checkTime = new DateTime();
         $checkTime->add(new DateInterval('PT1H'));
         $this->addElements(array(
-            new Note(
+            array(
+                'note',
                 'command-info',
                 array(
                     'value' => mt(
@@ -47,7 +46,8 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
                     )
                 )
             ),
-            new DateTimePicker(
+            array(
+                'dateTimePicker',
                 'check_time',
                 array(
                     'required'      => true,

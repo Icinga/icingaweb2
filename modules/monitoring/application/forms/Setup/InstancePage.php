@@ -5,7 +5,6 @@
 namespace Icinga\Module\Monitoring\Form\Setup;
 
 use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Module\Monitoring\Form\Config\InstanceConfigForm;
 
 class InstancePage extends Form
@@ -18,25 +17,23 @@ class InstancePage extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
-            new Note(
-                'title',
-                array(
-                    'value'         => mt('monitoring', 'Monitoring Instance', 'setup.page.title'),
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array('HtmlTag', array('tag' => 'h2'))
-                    )
+            'note',
+            'title',
+            array(
+                'value'         => mt('monitoring', 'Monitoring Instance', 'setup.page.title'),
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'h2'))
                 )
             )
         );
         $this->addElement(
-            new Note(
-                'description',
-                array(
-                    'value' => mt(
-                        'monitoring',
-                        'Please define the settings specific to your monitoring instance below.'
-                    )
+            'note',
+            'description',
+            array(
+                'value' => mt(
+                    'monitoring',
+                    'Please define the settings specific to your monitoring instance below.'
                 )
             )
         );

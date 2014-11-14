@@ -6,7 +6,6 @@ namespace Icinga\Module\Setup\Form;
 
 use Icinga\Application\Config;
 use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Form\Config\Authentication\DbBackendForm;
 use Icinga\Form\Config\Authentication\LdapBackendForm;
 use Icinga\Form\Config\Authentication\AutologinBackendForm;
@@ -60,14 +59,13 @@ class AuthBackendPage extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
-            new Note(
-                'title',
-                array(
-                    'value'         => mt('setup', 'Authentication Backend', 'setup.page.title'),
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array('HtmlTag', array('tag' => 'h2'))
-                    )
+            'note',
+            'title',
+            array(
+                'value'         => mt('setup', 'Authentication Backend', 'setup.page.title'),
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'h2'))
                 )
             )
         );
@@ -93,10 +91,9 @@ class AuthBackendPage extends Form
         }
 
         $this->addElement(
-            new Note(
-                'description',
-                array('value' => $note)
-            )
+            'note',
+            'description',
+            array('value' => $note)
         );
 
         if (isset($formData['skip_validation']) && $formData['skip_validation']) {

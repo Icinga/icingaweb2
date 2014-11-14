@@ -7,8 +7,6 @@ namespace Icinga\Module\Monitoring\Form\Command\Object;
 use DateTime;
 use DateInterval;
 use Icinga\Module\Monitoring\Command\Object\AcknowledgeProblemCommand;
-use Icinga\Web\Form\Element\DateTimePicker;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
 
@@ -35,7 +33,8 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
     public function createElements(array $formData = array())
     {
         $this->addElements(array(
-            new Note(
+            array(
+                'note',
                 'command-info',
                 array(
                     'value' => mt(
@@ -86,16 +85,15 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
             $expireTime = new DateTime();
             $expireTime->add(new DateInterval('PT1H'));
             $this->addElement(
-                new DateTimePicker(
-                    'expire_time',
-                    array(
-                        'label'         => mt('monitoring', 'Expire Time'),
-                        'value'         => $expireTime,
-                        'description'   => mt(
-                            'monitoring',
-                            'Enter the expire date and time for this acknowledgement here. Icinga will delete the'
-                            . ' acknowledgement after this time expired.'
-                        )
+                'dateTimePicker',
+                'expire_time',
+                array(
+                    'label'         => mt('monitoring', 'Expire Time'),
+                    'value'         => $expireTime,
+                    'description'   => mt(
+                        'monitoring',
+                        'Enter the expire date and time for this acknowledgement here. Icinga will delete the'
+                        . ' acknowledgement after this time expired.'
                     )
                 )
             );

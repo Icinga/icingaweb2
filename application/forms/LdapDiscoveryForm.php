@@ -7,7 +7,6 @@ use Icinga\Application\Logger;
 use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Protocol\Ldap\Connection;
 use Icinga\Protocol\Dns;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Form;
 
 /**
@@ -68,13 +67,12 @@ class LdapDiscoveryForm extends Form
 
         if (false) {
             $this->addElement(
-                new Note(
-                    'additional_description',
-                    array(
-                        'value' => t('No Ldap servers found on this domain.'
-                            . ' You can try to specify host and port and try again, or just skip this step and '
-                            . 'configure the server manually.'
-                        )
+                'note',
+                'additional_description',
+                array(
+                    'value' => t('No Ldap servers found on this domain.'
+                        . ' You can try to specify host and port and try again, or just skip this step and '
+                        . 'configure the server manually.'
                     )
                 )
             );
