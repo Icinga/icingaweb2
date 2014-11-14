@@ -90,6 +90,7 @@ class Web extends ApplicationBootstrap
     protected function bootstrap()
     {
         return $this
+            ->setupZendAutoloader()
             ->setupLogging()
             ->setupErrorHandling()
             ->loadConfig()

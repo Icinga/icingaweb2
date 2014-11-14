@@ -27,7 +27,9 @@ class EmbeddedWeb extends ApplicationBootstrap
      */
     protected function bootstrap()
     {
-        return $this->loadConfig()
+        return $this
+            ->setupZendAutoloader()
+            ->loadConfig()
             ->setupErrorHandling()
             ->setupTimezone()
             ->setupModuleManager()
