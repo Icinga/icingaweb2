@@ -51,7 +51,7 @@ foreach ($modules as $module) {
 
     $moduleFormPath = $modulePath . '/' . $module . '/application/forms';
     if (is_dir($moduleFormPath)) {
-        $loader->registerNamespace($moduleNamespace . '\\Form', $moduleFormPath);
+        $loader->registerNamespace($moduleNamespace . '\\Forms', $moduleFormPath);
     }
 }
 
