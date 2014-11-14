@@ -22,6 +22,10 @@ abstract class Filter
         return $this;
     }
 
+    abstract public function isExpression();
+
+    abstract public function isChain();
+
     abstract function toQueryString();
 
     public function getUrlParams()

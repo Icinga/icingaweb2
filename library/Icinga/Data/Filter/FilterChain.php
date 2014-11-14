@@ -166,6 +166,16 @@ abstract class FilterChain extends Filter
         }
     }
 
+    public function isExpression()
+    {
+        return false;
+    }
+
+    public function isChain()
+    {
+        return true;
+    }
+
     public function isEmpty()
     {
         return empty($this->filters);

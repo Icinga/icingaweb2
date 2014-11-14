@@ -19,6 +19,16 @@ class FilterExpression extends Filter
         $this->expression = $expression;
     }
 
+    public function isExpression()
+    {
+        return true;
+    }
+
+    public function isChain()
+    {
+        return false;
+    }
+
     public function isEmpty()
     {
         return false;
