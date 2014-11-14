@@ -102,7 +102,7 @@ abstract class Filter
 
     public function getParentId()
     {
-        if ($self->isRootNode()) {
+        if ($this->isRootNode()) {
             throw new ProgrammingError('Filter root nodes have no parent');
         }
         return substr($this->id, 0, strrpos($this->id, '-'));
