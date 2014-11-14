@@ -28,7 +28,7 @@ abstract class Filter
 
     abstract public function isEmpty();
 
-    abstract function toQueryString();
+    abstract public function toQueryString();
 
     public function getUrlParams()
     {
