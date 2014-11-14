@@ -2,10 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Setup;
+namespace Icinga\Module\Monitoring\Forms\Setup;
 
 use Icinga\Web\Form;
-use Icinga\Module\Monitoring\Form\Config\SecurityConfigForm;
+use Icinga\Module\Monitoring\Forms\Config\SecurityConfigForm;
 
 class SecurityPage extends Form
 {

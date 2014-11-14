@@ -2,10 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Command\Instance;
+namespace Icinga\Module\Monitoring\Forms\Command\Instance;
 
 use Icinga\Module\Monitoring\Command\Instance\ToggleInstanceFeatureCommand;
-use Icinga\Module\Monitoring\Form\Command\CommandForm;
+use Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
 

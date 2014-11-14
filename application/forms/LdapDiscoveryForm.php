@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Form;
+namespace Icinga\Forms;
 
 use Icinga\Application\Config;
 use Icinga\Application\Logger;

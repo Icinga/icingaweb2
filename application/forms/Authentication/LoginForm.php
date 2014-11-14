@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Authentication;
+namespace Icinga\Forms\Authentication;
 
 use Icinga\Web\Form;
 use Icinga\Web\Url;

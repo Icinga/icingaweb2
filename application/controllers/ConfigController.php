@@ -8,11 +8,11 @@ use Icinga\Application\Modules\Module;
 use Icinga\Web\Widget;
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
-use Icinga\Form\Config\GeneralConfigForm;
-use Icinga\Form\Config\AuthenticationBackendReorderForm;
-use Icinga\Form\Config\AuthenticationBackendConfigForm;
-use Icinga\Form\Config\ResourceConfigForm;
-use Icinga\Form\ConfirmRemovalForm;
+use Icinga\Forms\Config\GeneralConfigForm;
+use Icinga\Forms\Config\AuthenticationBackendReorderForm;
+use Icinga\Forms\Config\AuthenticationBackendConfigForm;
+use Icinga\Forms\Config\ResourceConfigForm;
+use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Data\ResourceFactory;
 
 

@@ -2,10 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Setup;
+namespace Icinga\Module\Monitoring\Forms\Setup;
 
 use Icinga\Web\Form;
-use Icinga\Form\Config\Resource\DbResourceForm;
+use Icinga\Forms\Config\Resource\DbResourceForm;
 
 class IdoResourcePage extends Form
 {

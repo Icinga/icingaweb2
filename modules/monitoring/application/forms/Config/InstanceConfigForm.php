@@ -2,15 +2,15 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Config;
+namespace Icinga\Module\Monitoring\Forms\Config;
 
 use InvalidArgumentException;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Form\ConfigForm;
+use Icinga\Forms\ConfigForm;
 use Icinga\Module\Monitoring\Command\Transport\LocalCommandFile;
 use Icinga\Module\Monitoring\Command\Transport\RemoteCommandFile;
-use Icinga\Module\Monitoring\Form\Config\Instance\LocalInstanceForm;
-use Icinga\Module\Monitoring\Form\Config\Instance\RemoteInstanceForm;
+use Icinga\Module\Monitoring\Forms\Config\Instance\LocalInstanceForm;
+use Icinga\Module\Monitoring\Forms\Config\Instance\RemoteInstanceForm;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
 

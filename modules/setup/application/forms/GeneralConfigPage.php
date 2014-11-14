@@ -2,10 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Setup\Form;
+namespace Icinga\Module\Setup\Forms;
 
 use Icinga\Web\Form;
-use Icinga\Form\Config\General\LoggingConfigForm;
+use Icinga\Forms\Config\General\LoggingConfigForm;
 
 /**
  * Wizard page to define the application and logging configuration

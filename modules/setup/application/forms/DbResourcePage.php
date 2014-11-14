@@ -2,11 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Setup\Form;
+namespace Icinga\Module\Setup\Forms;
 
 use PDOException;
 use Icinga\Web\Form;
-use Icinga\Form\Config\Resource\DbResourceForm;
+use Icinga\Forms\Config\Resource\DbResourceForm;
 use Icinga\Module\Setup\Utils\DbTool;
 
 /**
