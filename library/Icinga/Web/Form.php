@@ -11,6 +11,7 @@ use Zend_View_Interface;
 use Icinga\Application\Icinga;
 use Icinga\Web\Form\Decorator\NoScriptApply;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
+use Icinga\Web\Form\FormElement;
 
 /**
  * Base class for forms providing CSRF protection, confirmation logic and auto submission
@@ -437,8 +438,8 @@ class Form extends Zend_Form
      * `disableLoadDefaultDecorators' option to any other value than `true'. For loading custom element decorators use
      * the 'decorators' option.
      *
-     * @param   string  $type       String element type
-     * @param   string  $name       The name of the element to add
+     * @param   string  $type       The type of the element
+     * @param   string  $name       The name of the element
      * @param   mixed   $options    The options for the element
      *
      * @return  Zend_Form_Element
@@ -460,7 +461,9 @@ class Form extends Zend_Form
             $options = array('decorators' => static::$defaultElementDecorators);
         }
 
-        $el = parent::createElement($type, $name, $options);
+        if (($el = $this->createIcingaFormElement($type, $name, $options)) === null) {
+            $el = parent::createElement($type, $name, $options);
+        }
 
         if ($el && $el->getAttrib('autosubmit')) {
             $noScript = new NoScriptApply(); // Non-JS environments
@@ -724,6 +727,25 @@ class Form extends Zend_Form
     public function getResponse()
     {
         return Icinga::app()->getFrontController()->getResponse();
+    }
+
+    /**
+     * Create a new element located in the Icinga Web 2 library
+     *
+     * @param   string  $type       The type of the element
+     * @param   string  $name       The name of the element
+     * @param   mixed   $options    The options for the element
+     *
+     * @return  NULL|FormElement    NULL in case the element is not found in the Icinga Web 2 library
+     *
+     * @see     Form::$defaultElementDecorators For Icinga Web 2's default element decorators.
+     */
+    protected function createIcingaFormElement($type, $name, $options = null)
+    {
+        $className = 'Icinga\\Web\\Form\\Element\\' . ucfirst($type);
+        if (class_exists($className)) {
+            return new $className($name, $options);
+        }
     }
 
     /**
