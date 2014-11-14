@@ -73,28 +73,28 @@ EOD;
      *
      * @var int The value in px
      */
-    private $width = 28;
+    private $width = 16;
 
     /**
      * The height of the rendered chart
      *
      * @var int The value in px
      */
-    private $height = 28;
+    private $height = 16;
 
     /**
      * PieChart border width
      *
      * @var float
      */
-    private $borderWidth = 0;
+    private $borderWidth = 1;
 
     /**
      * The color of the border
      *
      * @var string
      */
-    private $borderColor = '#888';
+    private $borderColor = '#fff';
 
     /**
      * The title of the chart
