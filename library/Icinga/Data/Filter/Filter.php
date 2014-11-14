@@ -26,6 +26,8 @@ abstract class Filter
 
     abstract public function isChain();
 
+    abstract public function isEmpty();
+
     abstract function toQueryString();
 
     public function getUrlParams()
