@@ -276,6 +276,18 @@ abstract class ApplicationBootstrap
     }
 
     /**
+     * Get the Icinga library directory
+     *
+     * @param   string $subDir Optional sub directory to get
+     *
+     * @return  string
+     */
+    public function getLibraryDir($subDir = null)
+    {
+        return $this->getDirWithSubDir($this->libDir, $subDir);
+    }
+
+    /**
      * Get the path to the bootstrapping directory
      *
      * This is usually /public for Web and EmbeddedWeb and /bin for the CLI
