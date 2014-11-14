@@ -3,8 +3,8 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Form\Command\Instance\DisableNotificationsExpireCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Instance\ToggleInstanceFeaturesCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Instance\DisableNotificationsExpireCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Instance\ToggleInstanceFeaturesCommandForm;
 
 /**
  * Display process and performance information of the monitoring host and program-wide commands

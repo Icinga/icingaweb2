@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Setup;
+namespace Icinga\Module\Monitoring\Forms\Setup;
 
 use Icinga\Web\Form;
 

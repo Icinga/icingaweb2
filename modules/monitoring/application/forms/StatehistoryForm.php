@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form;
+namespace Icinga\Module\Monitoring\Forms;
 
 use \Zend_Form;
 use Icinga\Web\Form;

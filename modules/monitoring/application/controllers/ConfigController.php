@@ -6,9 +6,9 @@ use Icinga\Web\Notification;
 use Icinga\Data\ResourceFactory;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Web\Controller\ModuleActionController;
-use Icinga\Module\Monitoring\Form\Config\BackendConfigForm;
-use Icinga\Module\Monitoring\Form\Config\InstanceConfigForm;
-use Icinga\Module\Monitoring\Form\Config\SecurityConfigForm;
+use Icinga\Module\Monitoring\Forms\Config\BackendConfigForm;
+use Icinga\Module\Monitoring\Forms\Config\InstanceConfigForm;
+use Icinga\Module\Monitoring\Forms\Config\SecurityConfigForm;
 
 /**
  * Configuration controller for editing monitoring resources

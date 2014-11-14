@@ -4,8 +4,8 @@
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Backend;
-use Icinga\Module\Monitoring\Form\Command\Object\DeleteCommentCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\DeleteDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Web\Url;
 use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -17,8 +17,8 @@ use Icinga\Web\Widget\Chart\HistoryColorGrid;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget;
 use Icinga\Module\Monitoring\Web\Widget\SelectBox;
-use Icinga\Module\Monitoring\Form\StatehistoryForm;
-use Icinga\Module\Monitoring\Form\EventOverviewForm;
+use Icinga\Module\Monitoring\Forms\StatehistoryForm;
+use Icinga\Module\Monitoring\Forms\EventOverviewForm;
 
 class Monitoring_ListController extends Controller
 {
