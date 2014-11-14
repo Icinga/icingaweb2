@@ -235,7 +235,7 @@ class PreferenceForm extends Form
         if ($detect->success()) {
             return $detect->getTimezoneName();
         } else {
-            return date_default_timezone_get();
+            return @date_default_timezone_get();
         }
     }
 
