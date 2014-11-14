@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Setup\Form;
+namespace Icinga\Module\Setup\Forms;
 
 use Icinga\Web\Form;
 use Icinga\Forms\LdapDiscoveryForm;

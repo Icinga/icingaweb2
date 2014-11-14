@@ -12,7 +12,7 @@ use Icinga\Module\Setup\SetupWizard;
 use Icinga\Module\Setup\Requirements;
 use Icinga\Module\Setup\Utils\MakeDirStep;
 use Icinga\Module\Setup\Utils\EnableModuleStep;
-use Icinga\Module\Setup\Form\SummaryPage;
+use Icinga\Module\Setup\Forms\SummaryPage;
 use Icinga\Module\Monitoring\Form\Setup\WelcomePage;
 use Icinga\Module\Monitoring\Form\Setup\BackendPage;
 use Icinga\Module\Monitoring\Form\Setup\InstancePage;
