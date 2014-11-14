@@ -480,8 +480,6 @@
         provideSelectionCount: function() {
             var $count = $('.selection-info-count');
 
-            console.log(selectionData);
-
             if (typeof selectionData === 'undefined' || selectionData === null) {
                 $count.text(0);
                 return;
