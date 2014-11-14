@@ -107,4 +107,14 @@ class FilterExpression extends Filter
             return (bool) preg_match($pattern, $row->{$this->column});
         }
     }
+
+    public function andFilter(Filter $filter)
+    {
+        return Filter::matchAll($this, $filter);
+    }
+
+    public function orFilter(Filter $filter)
+    {
+        return Filter::matchAny($this, $filter);
+    }
 }

@@ -19,4 +19,14 @@ class FilterOr extends FilterChain
         }
         return false;
     }
+
+    public function andFilter(Filter $filter)
+    {
+        return Filter::matchAll($this, $filter);
+    }
+
+    public function orFilter(Filter $filter)
+    {
+        return $this->addFilter($filter);
+    }
 }

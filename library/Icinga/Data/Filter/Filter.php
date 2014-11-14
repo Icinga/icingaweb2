@@ -30,6 +30,10 @@ abstract class Filter
 
     abstract public function toQueryString();
 
+    abstract public function andFilter(Filter $filter);
+
+    abstract public function orFilter(Filter $filter);
+
     public function getUrlParams()
     {
         return UrlParams::fromQueryString($this->toQueryString());

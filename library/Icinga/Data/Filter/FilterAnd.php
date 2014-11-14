@@ -30,4 +30,14 @@ class FilterAnd extends FilterChain
         }
         return true;
     }
+
+    public function andFilter(Filter $filter)
+    {
+        return $this->addFilter($filter);
+    }
+
+    public function orFilter(Filter $filter)
+    {
+        return Filter::matchAny($this, $filter);
+    }
 }
