@@ -156,6 +156,18 @@ class Monitoring_ListController extends Controller
             'host_state'        => $this->translate('Hard State')
         ));
         $this->view->hosts = $query->paginate();
+
+        $this->view->stats = $this->backend->select()->from('statusSummary', array(
+            'hosts_total',
+            'hosts_up',
+            'hosts_down',
+            'hosts_down_handled',
+            'hosts_down_unhandled',
+            'hosts_unreachable',
+            'hosts_unreachable_handled',
+            'hosts_unreachable_unhandled',
+            'hosts_pending',
+        ))->getQuery()->fetchRow();
     }
 
     /**

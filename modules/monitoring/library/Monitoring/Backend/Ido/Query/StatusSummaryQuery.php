@@ -18,6 +18,7 @@ class StatusSummaryQuery extends IdoQuery
             'service_description' => 'so.name2',
         ),
         'hoststatussummary' => array(
+            'hosts_total'                           => 'SUM(CASE WHEN object_type = \'host\' THEN 1 ELSE 0 END)',
             'hosts_up'                              => 'SUM(CASE WHEN object_type = \'host\' AND state = 0 THEN 1 ELSE 0 END)',
             'hosts_up_not_checked'                  => 'SUM(CASE WHEN object_type = \'host\' AND state = 0 AND is_active_checked = 0 AND is_passive_checked = 0 THEN 1 ELSE 0 END)',
             'hosts_pending'                         => 'SUM(CASE WHEN object_type = \'host\' AND state = 99 THEN 1 ELSE 0 END)',
