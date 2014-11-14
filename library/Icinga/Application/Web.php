@@ -90,6 +90,7 @@ class Web extends ApplicationBootstrap
     protected function bootstrap()
     {
         return $this
+            ->setupZendAutoloader()
             ->setupLogging()
             ->setupErrorHandling()
             ->loadConfig()
@@ -326,14 +327,14 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Setup an autoloader namespace for Icinga\Form
+     * Setup an autoloader namespace for Icinga\Forms
      *
      * @return  self
      */
     private function setupFormNamespace()
     {
         $this->getLoader()->registerNamespace(
-            'Icinga\\Form',
+            'Icinga\\Forms',
             $this->getApplicationDir('forms')
         );
         return $this;

@@ -2,12 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Config;
+namespace Icinga\Module\Monitoring\Forms\Config;
 
 use InvalidArgumentException;
-use Icinga\Web\Request;
 use Icinga\Web\Notification;
-use Icinga\Form\ConfigForm;
+use Icinga\Forms\ConfigForm;
 use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
 
@@ -135,9 +134,9 @@ class BackendConfigForm extends ConfigForm
      *
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
-        $monitoringBackend = $request->getQuery('backend');
+        $monitoringBackend = $this->request->getQuery('backend');
         try {
             if ($monitoringBackend === null) { // create new backend
                 $this->add($this->getValues());
@@ -165,9 +164,9 @@ class BackendConfigForm extends ConfigForm
      *
      * @throws  ConfigurationError      In case the backend name is missing in the request or is invalid
      */
-    public function onRequest(Request $request)
+    public function onRequest()
     {
-        $monitoringBackend = $request->getQuery('backend');
+        $monitoringBackend = $this->request->getQuery('backend');
         if ($monitoringBackend !== null) {
             if ($monitoringBackend === '') {
                 throw new ConfigurationError(mt('monitoring', 'Monitoring backend name missing'));

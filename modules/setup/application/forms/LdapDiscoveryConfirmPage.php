@@ -2,11 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Setup\Form;
+namespace Icinga\Module\Setup\Forms;
 
 use Icinga\Application\Config;
 use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Note;
 
 /**
  * Wizard page to define the connection details for a LDAP resource
@@ -80,39 +79,36 @@ EOT;
         $html = str_replace('{user_class}', $backend['user_class'], $html);
 
         $this->addElement(
-            new Note(
-                'title',
-                array(
-                    'value'         => mt('setup', 'LDAP Discovery Results', 'setup.page.title'),
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array('HtmlTag', array('tag' => 'h2'))
-                    )
+            'note',
+            'title',
+            array(
+                'value'         => mt('setup', 'LDAP Discovery Results', 'setup.page.title'),
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'h2'))
                 )
             )
         );
         $this->addElement(
-            new Note(
-                'description',
-                array(
-                    'value' => sprintf(
-                        mt('setup', 'The following directory service has been found on domain "%s":'),
-                        $this->config['domain']
-                    )
+            'note',
+            'description',
+            array(
+                'value' => sprintf(
+                    mt('setup', 'The following directory service has been found on domain "%s":'),
+                    $this->config['domain']
                 )
             )
         );
 
         $this->addElement(
-            new Note(
-                'suggestion',
-                array(
-                    'value'         => $html,
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array(
-                            'HtmlTag', array('tag' => 'div')
-                        )
+            'note',
+            'suggestion',
+            array(
+                'value'         => $html,
+                'decorators'    => array(
+                    'ViewHelper',
+                    array(
+                        'HtmlTag', array('tag' => 'div')
                     )
                 )
             )

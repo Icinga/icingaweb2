@@ -2,12 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config\Resource;
+namespace Icinga\Forms\Config\Resource;
 
 use Exception;
 use Icinga\Application\Config;
 use Icinga\Web\Form;
-use Icinga\Web\Request;
 use Icinga\Application\Icinga;
 use Icinga\Data\ResourceFactory;
 
@@ -57,7 +56,7 @@ class LivestatusResourceForm extends Form
      *
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         if (false === static::isValidResource($this)) {
             return false;

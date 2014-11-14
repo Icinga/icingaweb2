@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form;
+namespace Icinga\Forms;
 
 use Exception;
 use DateTimeZone;
@@ -12,10 +12,8 @@ use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Util\Translator;
-use Icinga\Web\Controller\ControllerTabCollector;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 use Icinga\Web\Session;
 
 /**
@@ -86,7 +84,7 @@ class PreferenceForm extends Form
      *
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         $this->preferences = new Preferences($this->store->load());
 
@@ -122,7 +120,7 @@ class PreferenceForm extends Form
      *
      * @see Form::onRequest()
      */
-    public function onRequest(Request $request)
+    public function onRequest()
     {
         $auth = Manager::getInstance();
         $values = $auth->getUser()->getPreferences()->get('icingaweb');
@@ -237,7 +235,7 @@ class PreferenceForm extends Form
         if ($detect->success()) {
             return $detect->getTimezoneName();
         } else {
-            return date_default_timezone_get();
+            return @date_default_timezone_get();
         }
     }
 

@@ -2,14 +2,13 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Setup\Form;
+namespace Icinga\Module\Setup\Forms;
 
 use Exception;
 use LogicException;
 use Icinga\Application\Config;
 use Icinga\Web\Form;
 use Icinga\Data\ResourceFactory;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Authentication\Backend\DbUserBackend;
 use Icinga\Authentication\Backend\LdapUserBackend;
 
@@ -177,28 +176,26 @@ class AdminAccountPage extends Form
         }
 
         $this->addElement(
-            new Note(
-                'title',
-                array(
-                    'value'         => mt('setup', 'Administration', 'setup.page.title'),
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array('HtmlTag', array('tag' => 'h2'))
-                    )
+            'note',
+            'title',
+            array(
+                'value'         => mt('setup', 'Administration', 'setup.page.title'),
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'h2'))
                 )
             )
         );
         $this->addElement(
-            new Note(
-                'description',
-                array(
-                    'value' => tp(
-                        'Now it\'s time to configure your first administrative account for Icinga Web 2.'
-                        . ' Please follow the instructions below:',
-                        'Now it\'s time to configure your first administrative account for Icinga Web 2.'
-                        . ' Below are several options you can choose from. Select one and follow its instructions:',
-                        count($choices)
-                    )
+            'note',
+            'description',
+            array(
+                'value' => tp(
+                    'Now it\'s time to configure your first administrative account for Icinga Web 2.'
+                    . ' Please follow the instructions below:',
+                    'Now it\'s time to configure your first administrative account for Icinga Web 2.'
+                    . ' Below are several options you can choose from. Select one and follow its instructions:',
+                    count($choices)
                 )
             )
         );

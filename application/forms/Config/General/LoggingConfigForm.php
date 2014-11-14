@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config\General;
+namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;

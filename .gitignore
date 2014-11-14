@@ -5,8 +5,8 @@
 !.git*
 !.vagrant-puppet/*
 
-# Exclude enabled modules
-config/enabledModules/
-
 # Exclude application log files
 var/log/*
+
+# Exclude symlink you need for packaging
+/debian

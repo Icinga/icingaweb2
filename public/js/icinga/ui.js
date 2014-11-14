@@ -480,6 +480,11 @@
         provideSelectionCount: function() {
             var $count = $('.selection-info-count');
 
+            if (typeof selectionData === 'undefined' || selectionData === null) {
+                $count.text(0);
+                return;
+            }
+
             if (typeof selectionData === 'string') {
                 $count.text(1);
             } else if (selectionData.length > 1) {

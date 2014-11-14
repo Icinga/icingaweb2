@@ -2,10 +2,9 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Setup;
+namespace Icinga\Module\Monitoring\Forms\Setup;
 
 use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Application\Platform;
 
 class BackendPage extends Form
@@ -18,25 +17,23 @@ class BackendPage extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
-            new Note(
-                'title',
-                array(
-                    'value'         => mt('monitoring', 'Monitoring Backend', 'setup.page.title'),
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array('HtmlTag', array('tag' => 'h2'))
-                    )
+            'note',
+            'title',
+            array(
+                'value'         => mt('monitoring', 'Monitoring Backend', 'setup.page.title'),
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'h2'))
                 )
             )
         );
         $this->addElement(
-            new Note(
-                'description',
-                array(
-                    'value' => mt(
-                        'monitoring',
-                        'Please configure below how Icinga Web 2 should retrieve monitoring information.'
-                    )
+            'note',
+            'description',
+            array(
+                'value' => mt(
+                    'monitoring',
+                    'Please configure below how Icinga Web 2 should retrieve monitoring information.'
                 )
             )
         );

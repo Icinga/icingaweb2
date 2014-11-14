@@ -5,13 +5,13 @@
 namespace Icinga\Module\Monitoring\Web\Controller;
 
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Form\Command\Object\AcknowledgeProblemCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\CheckNowCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\DeleteCommentCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\DeleteDowntimeCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\ObjectsCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\RemoveAcknowledgementCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\ToggleObjectFeaturesCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\ObjectsCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;

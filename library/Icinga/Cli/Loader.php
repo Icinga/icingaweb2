@@ -66,7 +66,7 @@ class Loader
     public function __construct(App $app)
     {
         $this->app = $app;
-        $this->coreAppDir = $app->getBaseDir('clicommands');
+        $this->coreAppDir = $app->getApplicationDir('clicommands');
     }
 
     /**

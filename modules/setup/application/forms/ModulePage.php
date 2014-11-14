@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Setup\Form;
+namespace Icinga\Module\Setup\Forms;
 
 use InvalidArgumentException;
 use Icinga\Application\Icinga;
@@ -45,7 +45,8 @@ class ModulePage extends Form
 
     public function handleRequest(Request $request = null)
     {
-        if ($this->wasSent($this->getRequestData($request))) {
+        $isPost = strtolower($request->getMethod()) === 'post';
+        if ($isPost && $this->wasSent($request->getPost())) {
             if (($newModule = $request->getPost('module')) !== null) {
                 $this->setCurrentModule($newModule);
                 $this->getResponse()->redirectAndExit($this->getRedirectUrl());
@@ -58,7 +59,7 @@ class ModulePage extends Form
             $wizardPage = $wizard->getCurrentPage();
 
             $wizard->handleRequest($request);
-            if ($wizard->isFinished() && $wizardPage->wasSent($wizardPage->getRequestData($request))) {
+            if ($isPost && $wizard->isFinished() && $wizardPage->wasSent($request->getPost())) {
                 $wizards = $this->getWizards();
 
                 $newModule = null;

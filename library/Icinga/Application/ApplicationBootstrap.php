@@ -13,7 +13,6 @@ use Icinga\Exception\NotReadableError;
 use Icinga\Application\Logger;
 use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
-use Icinga\Util\TimezoneDetect;
 use Icinga\Exception\IcingaException;
 
 /**
@@ -139,7 +138,6 @@ abstract class ApplicationBootstrap
         $this->configDir = $canonical ? $canonical : $configDir;
 
         $this->setupAutoloader();
-        $this->setupZendAutoloader();
 
         set_include_path(
             implode(
@@ -278,6 +276,18 @@ abstract class ApplicationBootstrap
     }
 
     /**
+     * Get the Icinga library directory
+     *
+     * @param   string $subDir Optional sub directory to get
+     *
+     * @return  string
+     */
+    public function getLibraryDir($subDir = null)
+    {
+        return $this->getDirWithSubDir($this->libDir, $subDir);
+    }
+
+    /**
      * Get the path to the bootstrapping directory
      *
      * This is usually /public for Web and EmbeddedWeb and /bin for the CLI
@@ -323,7 +333,7 @@ abstract class ApplicationBootstrap
     /**
      * Register the Zend Autoloader
      *
-     * @return self
+     * @return $this
      */
     protected function setupZendAutoloader()
     {
@@ -331,17 +341,12 @@ abstract class ApplicationBootstrap
 
         \Zend_Loader_Autoloader::getInstance();
 
-        // Unfortunately this is needed to get the Zend Plugin loader working:
-        set_include_path(
-            implode(
-                PATH_SEPARATOR,
-                array($this->libDir, get_include_path())
-            )
+        \Zend_Paginator::addScrollingStylePrefixPath(
+            'Icinga_Web_Paginator_ScrollingStyle_', $this->libDir . '/Icinga/Web/Paginator/ScrollingStyle'
         );
 
         return $this;
     }
-
     /**
      * Setup module manager
      *

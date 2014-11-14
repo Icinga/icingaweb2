@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Command;
+namespace Icinga\Module\Monitoring\Forms\Command;
 
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Module\Monitoring\Command\Transport\CommandTransport;

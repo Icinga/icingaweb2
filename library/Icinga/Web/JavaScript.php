@@ -118,7 +118,7 @@ class JavaScript
         }
 
         if ($minified) {
-            require_once 'IcingaVendor/JShrink/Minifier.php';
+            require_once 'JShrink/Minifier.php';
             $out .= Minifier::minify($js, array('flaggedComments' => false));
         } else {
             $out .= $js;

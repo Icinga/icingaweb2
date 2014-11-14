@@ -2,12 +2,12 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Form\Config;
+namespace Tests\Icinga\Forms\Config;
 
 use Icinga\Test\BaseTestCase;
 use Icinga\Application\Config;
-use Icinga\Form\Config\AuthenticationBackendConfigForm;
-use Icinga\Form\Config\AuthenticationBackendReorderForm;
+use Icinga\Forms\Config\AuthenticationBackendConfigForm;
+use Icinga\Forms\Config\AuthenticationBackendReorderForm;
 
 class AuthenticationBackendConfigFormWithoutSave extends AuthenticationBackendConfigForm
 {

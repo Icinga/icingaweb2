@@ -2,13 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Command\Object;
+namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use DateTime;
 use DateInterval;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceCheckCommand;
-use Icinga\Web\Form\Element\DateTimePicker;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
 
@@ -37,7 +35,8 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
         $checkTime = new DateTime();
         $checkTime->add(new DateInterval('PT1H'));
         $this->addElements(array(
-            new Note(
+            array(
+                'note',
                 'command-info',
                 array(
                     'value' => mt(
@@ -47,7 +46,8 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
                     )
                 )
             ),
-            new DateTimePicker(
+            array(
+                'dateTimePicker',
                 'check_time',
                 array(
                     'required'      => true,
@@ -90,13 +90,13 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $check = new ScheduleServiceCheckCommand();
             $check->setObject($object);
-            $this->scheduleCheck($check, $request);
+            $this->scheduleCheck($check, $this->request);
         }
         Notification::success(mtp(
             'monitoring',

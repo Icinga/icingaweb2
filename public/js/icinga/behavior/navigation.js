@@ -26,7 +26,7 @@
         var el = evt.target;
         if (activeMenuId) {
             // restore old menu state
-            $('[role="navigation"] li.active', el).removeClass('active');
+            $('#menu li.active', el).removeClass('active');
             var $selectedMenu = $('#' + activeMenuId).addClass('active');
             var $outerMenu = $selectedMenu.parent().closest('li');
             if ($outerMenu.size()) {
@@ -34,7 +34,7 @@
             }
         } else {
             // store menu state
-            var $menus = $('[role="navigation"] li.active', el);
+            var $menus = $('#menu li.active', el);
             if ($menus.size()) {
                 activeMenuId = $menus[0].id;
                 $menus.find('li.active').first().each(function () {

@@ -2,11 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Setup\Form;
+namespace Icinga\Module\Setup\Forms;
 
 use Icinga\Web\Form;
 use Icinga\Application\Platform;
-use Icinga\Web\Form\Element\Note;
 
 /**
  * Wizard page to choose an authentication backend
@@ -27,26 +26,24 @@ class AuthenticationPage extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
-            new Note(
-                'title',
-                array(
-                    'value'         => mt('setup', 'Authentication', 'setup.page.title'),
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array('HtmlTag', array('tag' => 'h2'))
-                    )
+            'note',
+            'title',
+            array(
+                'value'         => mt('setup', 'Authentication', 'setup.page.title'),
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'h2'))
                 )
             )
         );
         $this->addElement(
-            new Note(
-                'description',
-                array(
-                    'value' => mt(
-                        'setup',
-                        'Please choose how you want to authenticate when accessing Icinga Web 2.'
-                        . ' Configuring backend specific details follows in a later step.'
-                    )
+            'note',
+            'description',
+            array(
+                'value' => mt(
+                    'setup',
+                    'Please choose how you want to authenticate when accessing Icinga Web 2.'
+                    . ' Configuring backend specific details follows in a later step.'
                 )
             )
         );

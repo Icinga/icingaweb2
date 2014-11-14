@@ -47,7 +47,7 @@ class WebCommand extends Command
             readlink('/proc/self/exe'),
             $socket,
             $basedir,
-            ICINGA_LIBDIR . '/Icinga/Application/webrouter.php'
+            Icinga::app()->getLibraryDir('/Icinga/Application/webrouter.php')
         );
 
         // TODO: Store webserver log, switch uid, log index.php includes, pid file
