@@ -9,7 +9,6 @@ use DateInterval;
 use Icinga\Module\Monitoring\Command\Instance\DisableNotificationsExpireCommand;
 use Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 
 /**
  * Form for disabling host and service notifications w/ an optional expire date and time on an Icinga instance
@@ -60,12 +59,12 @@ class DisableNotificationsExpireCommandForm extends CommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         $disableNotifications = new DisableNotificationsExpireCommand();
         $disableNotifications
             ->setExpireTime($this->getElement('expire_time')->getValue()->getTimestamp());
-        $this->getTransport($request)->send($disableNotifications);
+        $this->getTransport($this->request)->send($disableNotifications);
         Notification::success(mt('monitoring', 'Disabling host and service notifications..'));
         return true;
     }

@@ -207,7 +207,7 @@ class Wizard
         }
 
         $this->setupPage($page, $request);
-        $requestData = $page->getRequestData($request);
+        $requestData = $this->getRequestData($page, $request);
         if ($page->wasSent($requestData)) {
             if (($requestedPage = $this->getRequestedPage($requestData)) !== null) {
                 $isValid = false;
@@ -236,6 +236,23 @@ class Wizard
         }
 
         return $request;
+    }
+
+    /**
+     * Return the request data based on given form's request method
+     *
+     * @param   Form        $page       The page to fetch the data for
+     * @param   Request     $request    The request to fetch the data from
+     *
+     * @return  array
+     */
+    protected function getRequestData(Form $page, Request $request)
+    {
+        if (strtolower($request->getMethod()) === $page->getMethod()) {
+            return $request->{'get' . ($request->isPost() ? 'Post' : 'Query')}();
+        }
+
+        return array();
     }
 
     /**
@@ -269,7 +286,7 @@ class Wizard
             $request = $currentPage->getRequest();
         }
 
-        $requestData = $currentPage->getRequestData($request);
+        $requestData = $this->getRequestData($currentPage, $request);
         if (isset($requestData[static::BTN_NEXT])) {
             return static::FORWARD;
         } elseif (isset($requestData[static::BTN_PREV])) {

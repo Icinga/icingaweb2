@@ -38,6 +38,13 @@ class Form extends Zend_Form
     protected $created = false;
 
     /**
+     * The request associated with this form
+     *
+     * @var Request
+     */
+    protected $request;
+
+    /**
      * The callback to call instead of Form::onSuccess()
      *
      * @var Callback
@@ -112,7 +119,7 @@ class Form extends Zend_Form
      * Create a new form
      *
      * Accepts an additional option `onSuccess' which is a callback that is called instead of this
-     * form's method. It is called using the following signature: (Request $request, Form $form).
+     * form's method. It is called using the following signature: (Form $form).
      *
      * @see Zend_Form::__construct()
      *
@@ -356,11 +363,9 @@ class Form extends Zend_Form
      *
      * Intended to be implemented by concrete form classes. The base implementation returns always FALSE.
      *
-     * @param   Request     $request    The valid request used to process this form
-     *
      * @return  null|bool               Return FALSE in case no redirect should take place
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         return false;
     }
@@ -369,10 +374,8 @@ class Form extends Zend_Form
      * Perform actions when no form dependent data was sent
      *
      * Intended to be implemented by concrete form classes.
-     *
-     * @param   Request     $request    The current request
      */
-    public function onRequest(Request $request)
+    public function onRequest()
     {
 
     }
@@ -552,15 +555,17 @@ class Form extends Zend_Form
     {
         if ($request === null) {
             $request = $this->getRequest();
+        } else {
+            $this->request = $request;
         }
 
-        $formData = $this->getRequestData($request);
+        $formData = $this->getRequestData();
         if ($this->getUidDisabled() || $this->wasSent($formData)) {
             $this->populate($formData); // Necessary to get isSubmitted() to work
             if (! $this->getSubmitLabel() || $this->isSubmitted()) {
                 if ($this->isValid($formData)
-                    && (($this->onSuccess !== null && false !== call_user_func($this->onSuccess, $request, $this))
-                        || ($this->onSuccess === null && false !== $this->onSuccess($request)))) {
+                    && (($this->onSuccess !== null && false !== call_user_func($this->onSuccess, $this))
+                        || ($this->onSuccess === null && false !== $this->onSuccess()))) {
                     $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                 }
             } else {
@@ -568,7 +573,7 @@ class Form extends Zend_Form
                 $this->isValidPartial($formData);
             }
         } else {
-            $this->onRequest($request);
+            $this->onRequest();
         }
 
         return $request;
@@ -694,29 +699,19 @@ class Form extends Zend_Form
     }
 
     /**
-     * Return the request data based on this form's request method
+     * Return the request associated with this form
      *
-     * @param   Request     $request    The request to fetch the data from
-     *
-     * @return  array
-     */
-    public function getRequestData(Request $request)
-    {
-        if (strtolower($request->getMethod()) === $this->getMethod()) {
-            return $request->{'get' . ($request->isPost() ? 'Post' : 'Query')}();
-        }
-
-        return array();
-    }
-
-    /**
-     * Return the current request
+     * Returns the global request if none has been set for this form yet.
      *
      * @return  Request
      */
     public function getRequest()
     {
-        return Icinga::app()->getFrontController()->getRequest();
+        if ($this->request === null) {
+            $this->request = Icinga::app()->getFrontController()->getRequest();
+        }
+
+        return $this->request;
     }
 
     /**
@@ -727,6 +722,20 @@ class Form extends Zend_Form
     public function getResponse()
     {
         return Icinga::app()->getFrontController()->getResponse();
+    }
+
+    /**
+     * Return the request data based on this form's request method
+     *
+     * @return  array
+     */
+    protected function getRequestData()
+    {
+        if (strtolower($this->request->getMethod()) === $this->getMethod()) {
+            return $this->request->{'get' . ($this->request->isPost() ? 'Post' : 'Query')}();
+        }
+
+        return array();
     }
 
     /**

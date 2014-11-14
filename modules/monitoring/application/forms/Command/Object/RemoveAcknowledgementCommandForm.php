@@ -6,7 +6,6 @@ namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\RemoveAcknowledgementCommand;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 
 /**
  * Form for removing host or service problem acknowledgements
@@ -37,13 +36,13 @@ class RemoveAcknowledgementCommandForm extends ObjectsCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             $removeAck = new RemoveAcknowledgementCommand();
             $removeAck->setObject($object);
-            $this->getTransport($request)->send($removeAck);
+            $this->getTransport($this->request)->send($removeAck);
         }
         Notification::success(mtp(
             'monitoring',

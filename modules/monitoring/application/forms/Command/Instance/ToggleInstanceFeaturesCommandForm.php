@@ -7,7 +7,6 @@ namespace Icinga\Module\Monitoring\Forms\Command\Instance;
 use Icinga\Module\Monitoring\Command\Instance\ToggleInstanceFeatureCommand;
 use Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 
 /**
  * Form for enabling or disabling features of Icinga objects, i.e. hosts or services
@@ -190,14 +189,14 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->getValues() as $feature => $enabled) {
             $toggleFeature = new ToggleInstanceFeatureCommand();
             $toggleFeature
                 ->setFeature($feature)
                 ->setEnabled($enabled);
-            $this->getTransport($request)->send($toggleFeature);
+            $this->getTransport($this->request)->send($toggleFeature);
         }
         Notification::success(mt('monitoring', 'Toggling feature..'));
         return true;

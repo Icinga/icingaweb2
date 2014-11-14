@@ -7,7 +7,6 @@ namespace Icinga\Forms\Config\Resource;
 use Exception;
 use Icinga\Application\Config;
 use Icinga\Web\Form;
-use Icinga\Web\Request;
 use Icinga\Data\ResourceFactory;
 use Icinga\Application\Platform;
 
@@ -113,7 +112,7 @@ class DbResourceForm extends Form
      *
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         if (false === static::isValidResource($this)) {
             return false;

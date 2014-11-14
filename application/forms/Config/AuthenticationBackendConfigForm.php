@@ -5,7 +5,6 @@
 namespace Icinga\Forms\Config;
 
 use InvalidArgumentException;
-use Icinga\Web\Request;
 use Icinga\Forms\ConfigForm;
 use Icinga\Web\Notification;
 use Icinga\Application\Config;
@@ -192,7 +191,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
      *
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
             $backendForm = $this->getBackendForm($this->getElement('type')->getValue());
@@ -202,7 +201,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
             }
         }
 
-        $authBackend = $request->getQuery('auth_backend');
+        $authBackend = $this->request->getQuery('auth_backend');
         try {
             if ($authBackend === null) { // create new backend
                 $this->add($this->getValues());
@@ -230,9 +229,9 @@ class AuthenticationBackendConfigForm extends ConfigForm
      *
      * @throws  ConfigurationError      In case the backend name is missing in the request or is invalid
      */
-    public function onRequest(Request $request)
+    public function onRequest()
     {
-        $authBackend = $request->getQuery('auth_backend');
+        $authBackend = $this->request->getQuery('auth_backend');
         if ($authBackend !== null) {
             if ($authBackend === '') {
                 throw new ConfigurationError(t('Authentication backend name missing'));

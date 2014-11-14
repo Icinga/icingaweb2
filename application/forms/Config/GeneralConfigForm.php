@@ -4,7 +4,6 @@
 
 namespace Icinga\Forms\Config;
 
-use Icinga\Web\Request;
 use Icinga\Web\Notification;
 use Icinga\Forms\ConfigForm;
 use Icinga\Forms\Config\General\LoggingConfigForm;
@@ -38,7 +37,7 @@ class GeneralConfigForm extends ConfigForm
     /**
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         $sections = array();
         foreach ($this->getValues() as $sectionAndPropertyName => $value) {
@@ -62,7 +61,7 @@ class GeneralConfigForm extends ConfigForm
     /**
      * @see Form::onRequest()
      */
-    public function onRequest(Request $request)
+    public function onRequest()
     {
         $values = array();
         foreach ($this->config as $section => $properties) {

@@ -12,7 +12,6 @@ use Icinga\Module\Monitoring\Command\Transport\RemoteCommandFile;
 use Icinga\Module\Monitoring\Forms\Config\Instance\LocalInstanceForm;
 use Icinga\Module\Monitoring\Forms\Config\Instance\RemoteInstanceForm;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 
 /**
  * Form for modifying/creating monitoring instances
@@ -132,9 +131,9 @@ class InstanceConfigForm extends ConfigForm
      * @see     Form::onRequest()   For the method documentation.
      * @throws  ConfigurationError  In case the instance name is missing or invalid
      */
-    public function onRequest(Request $request)
+    public function onRequest()
     {
-        $instanceName = $request->getQuery('instance');
+        $instanceName = $this->request->getQuery('instance');
         if ($instanceName !== null) {
             if (! $instanceName) {
                 throw new ConfigurationError(mt('monitoring', 'Instance name missing'));
@@ -153,9 +152,9 @@ class InstanceConfigForm extends ConfigForm
      * (non-PHPDoc)
      * @see Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
-        $instanceName = $request->getQuery('instance');
+        $instanceName = $this->request->getQuery('instance');
         try {
             if ($instanceName === null) { // create new instance
                 $this->add($this->getValues());

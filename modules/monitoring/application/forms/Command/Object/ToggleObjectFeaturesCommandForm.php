@@ -7,7 +7,6 @@ namespace Icinga\Module\Monitoring\Forms\Command\Object;
 use Icinga\Module\Monitoring\Command\Object\ToggleObjectFeatureCommand;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 
 /**
  * Form for enabling or disabling features of Icinga objects, i.e. hosts or services
@@ -106,7 +105,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
@@ -117,7 +116,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                         ->setFeature($feature)
                         ->setObject($object)
                         ->setEnabled($enabled);
-                    $this->getTransport($request)->send($toggleFeature);
+                    $this->getTransport($this->request)->send($toggleFeature);
                 }
             }
         }

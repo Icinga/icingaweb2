@@ -201,13 +201,13 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $downtime = new ScheduleServiceDowntimeCommand();
             $downtime->setObject($object);
-            $this->scheduleDowntime($downtime, $request);
+            $this->scheduleDowntime($downtime, $this->request);
         }
         Notification::success(mtp(
             'monitoring',

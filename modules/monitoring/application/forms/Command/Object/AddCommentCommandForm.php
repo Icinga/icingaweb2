@@ -6,7 +6,6 @@ namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\AddCommentCommand;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 
 /**
  * Form for adding host or service comments
@@ -76,16 +75,16 @@ class AddCommentCommandForm extends ObjectsCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             $comment = new AddCommentCommand();
             $comment->setObject($object);
             $comment->setComment($this->getElement('comment')->getValue());
-            $comment->setAuthor($request->getUser()->getUsername());
+            $comment->setAuthor($this->request->getUser()->getUsername());
             $comment->setPersistent($this->getElement('persistent')->isChecked());
-            $this->getTransport($request)->send($comment);
+            $this->getTransport($this->request)->send($comment);
         }
         Notification::success(mtp(
             'monitoring',

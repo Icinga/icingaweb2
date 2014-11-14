@@ -7,7 +7,6 @@ namespace Icinga\Module\Monitoring\Forms\Command\Object;
 use Icinga\Module\Monitoring\Command\Object\ScheduleHostCheckCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceCheckCommand;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 
 /**
  * Form for immediately checking hosts or services
@@ -54,7 +53,7 @@ class CheckNowCommandForm extends ObjectsCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
@@ -67,7 +66,7 @@ class CheckNowCommandForm extends ObjectsCommandForm
                 ->setObject($object)
                 ->setForced()
                 ->setCheckTime(time());
-            $this->getTransport($request)->send($check);
+            $this->getTransport($this->request)->send($check);
         }
         Notification::success(mtp(
             'monitoring',

@@ -5,7 +5,6 @@
 namespace Icinga\Forms\Config;
 
 use InvalidArgumentException;
-use Icinga\Web\Request;
 use Icinga\Web\Notification;
 use Icinga\Forms\ConfigForm;
 use Icinga\Forms\Config\Resource\DbResourceForm;
@@ -128,7 +127,7 @@ class ResourceConfigForm extends ConfigForm
      *
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
             $resourceForm = $this->getResourceForm($this->getElement('type')->getValue());
@@ -138,7 +137,7 @@ class ResourceConfigForm extends ConfigForm
             }
         }
 
-        $resource = $request->getQuery('resource');
+        $resource = $this->request->getQuery('resource');
         try {
             if ($resource === null) { // create new resource
                 $this->add($this->getValues());
@@ -166,9 +165,9 @@ class ResourceConfigForm extends ConfigForm
      *
      * @throws  ConfigurationError      In case the backend name is missing in the request or is invalid
      */
-    public function onRequest(Request $request)
+    public function onRequest()
     {
-        $resource = $request->getQuery('resource');
+        $resource = $this->request->getQuery('resource');
         if ($resource !== null) {
             if ($resource === '') {
                 throw new ConfigurationError(t('Resource name missing'));

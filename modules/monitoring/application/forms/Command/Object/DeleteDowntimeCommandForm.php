@@ -6,7 +6,6 @@ namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\DeleteDowntimeCommand;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 
 /**
  * Form for deleting host or service downtimes
@@ -67,7 +66,7 @@ class DeleteDowntimeCommandForm extends ObjectsCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
@@ -75,7 +74,7 @@ class DeleteDowntimeCommandForm extends ObjectsCommandForm
             $delDowntime
                 ->setObject($object)
                 ->setDowntimeId($this->getElement('downtime_id')->getValue());
-            $this->getTransport($request)->send($delDowntime);
+            $this->getTransport($this->request)->send($delDowntime);
         }
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {

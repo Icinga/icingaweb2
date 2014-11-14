@@ -7,7 +7,6 @@ namespace Icinga\Forms\Config\Authentication;
 use Exception;
 use Icinga\Application\Config;
 use Icinga\Web\Form;
-use Icinga\Web\Request;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Authentication\Backend\LdapUserBackend;
@@ -119,7 +118,7 @@ class LdapBackendForm extends Form
      *
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         if (false === static::isValidAuthenticationBackend($this)) {
             return false;

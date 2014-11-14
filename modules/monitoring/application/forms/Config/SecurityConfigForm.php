@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Monitoring\Forms\Config;
 
-use Icinga\Web\Request;
 use Icinga\Web\Notification;
 use Icinga\Forms\ConfigForm;
 
@@ -25,7 +24,7 @@ class SecurityConfigForm extends ConfigForm
     /**
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         $this->config->security = $this->getValues();
 
@@ -39,7 +38,7 @@ class SecurityConfigForm extends ConfigForm
     /**
      * @see Form::onRequest()
      */
-    public function onRequest(Request $request)
+    public function onRequest()
     {
         if (isset($this->config->security)) {
             $this->populate($this->config->security->toArray());

@@ -8,7 +8,6 @@ use DateTime;
 use DateInterval;
 use Icinga\Module\Monitoring\Command\Object\AcknowledgeProblemCommand;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 
 /**
  * Form for acknowledging host or service problems
@@ -143,7 +142,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
@@ -151,14 +150,14 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
             $ack
                 ->setObject($object)
                 ->setComment($this->getElement('comment')->getValue())
-                ->setAuthor($request->getUser()->getUsername())
+                ->setAuthor($this->request->getUser()->getUsername())
                 ->setPersistent($this->getElement('persistent')->isChecked())
                 ->setSticky($this->getElement('sticky')->isChecked())
                 ->setNotify($this->getElement('notify')->isChecked());
             if ($this->getElement('expire')->isChecked()) {
                 $ack->setExpireTime($this->getElement('expire_time')->getValue()->getTimestamp());
             }
-            $this->getTransport($request)->send($ack);
+            $this->getTransport($this->request)->send($ack);
         }
         Notification::success(mtp(
             'monitoring',

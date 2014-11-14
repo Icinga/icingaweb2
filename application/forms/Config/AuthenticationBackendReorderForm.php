@@ -5,7 +5,6 @@
 namespace Icinga\Forms\Config;
 
 use InvalidArgumentException;
-use Icinga\Web\Request;
 use Icinga\Web\Notification;
 use Icinga\Forms\ConfigForm;
 
@@ -31,16 +30,25 @@ class AuthenticationBackendReorderForm extends ConfigForm
     }
 
     /**
+     * @see Form::createElements()
+     */
+    public function createElements(array $formData)
+    {
+        // This adds just a dummy element to be able to utilize Form::getValue as part of onSuccess()
+        $this->addElement('hidden', 'backend_newpos');
+    }
+
+    /**
      * Update the authentication backend order and save the configuration
      *
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
-        $formData = $this->getRequestData($request);
-        if (isset($formData['backend_newpos'])) {
+        $newPosData = $this->getValue('backend_newpos');
+        if ($newPosData) {
             $configForm = $this->getConfigForm();
-            list($backendName, $position) = explode('|', $formData['backend_newpos'], 2);
+            list($backendName, $position) = explode('|', $newPosData, 2);
 
             try {
                 if ($configForm->move($backendName, $position)->save()) {

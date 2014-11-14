@@ -90,13 +90,13 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $check = new ScheduleServiceCheckCommand();
             $check->setObject($object);
-            $this->scheduleCheck($check, $request);
+            $this->scheduleCheck($check, $this->request);
         }
         Notification::success(mtp(
             'monitoring',
