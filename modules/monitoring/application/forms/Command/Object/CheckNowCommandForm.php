@@ -32,18 +32,21 @@ class CheckNowCommandForm extends ObjectsCommandForm
         $iconUrl = $this->getView()->href('img/icons/refresh_petrol.png');
 
         $this->addElements(array(
-            'button',
-            'btn_submit',
             array(
-                'ignore'        => true,
-                'type'          => 'submit',
-                'value'         => mt('monitoring', 'Check now'),
-                'label'         => '<img src="'.$iconUrl.'"> ' . mt('monitoring', 'Check now'),
-                'decorators'    => array('ViewHelper'),
-                'escape'        => false,
-                'class'         => 'link-like'
+                'button',
+                'btn_submit',
+                array(
+                    'ignore'        => true,
+                    'type'          => 'submit',
+                    'value'         => mt('monitoring', 'Check now'),
+                    'label'         => '<img src="' . $iconUrl . '"> ' . mt('monitoring', 'Check now'),
+                    'decorators'    => array('ViewHelper'),
+                    'escape'        => false,
+                    'class'         => 'link-like'
+                )
             )
         ));
+
         return $this;
     }
 
