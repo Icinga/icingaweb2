@@ -6,9 +6,9 @@ namespace Icinga\Module\Setup\Form;
 
 use Icinga\Application\Config;
 use Icinga\Web\Form;
-use Icinga\Form\Config\Authentication\DbBackendForm;
-use Icinga\Form\Config\Authentication\LdapBackendForm;
-use Icinga\Form\Config\Authentication\AutologinBackendForm;
+use Icinga\Forms\Config\Authentication\DbBackendForm;
+use Icinga\Forms\Config\Authentication\LdapBackendForm;
+use Icinga\Forms\Config\Authentication\AutologinBackendForm;
 
 /**
  * Wizard page to define authentication backend specific details

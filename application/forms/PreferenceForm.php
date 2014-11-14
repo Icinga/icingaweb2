@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form;
+namespace Icinga\Forms;
 
 use Exception;
 use DateTimeZone;

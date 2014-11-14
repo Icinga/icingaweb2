@@ -8,7 +8,7 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
 use Icinga\File\Ini\IniWriter;
-use Icinga\Form\Dashboard\AddUrlForm;
+use Icinga\Forms\Dashboard\AddUrlForm;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Dashboard;

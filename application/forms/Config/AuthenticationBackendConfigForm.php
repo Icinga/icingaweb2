@@ -2,19 +2,19 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config;
+namespace Icinga\Forms\Config;
 
 use InvalidArgumentException;
 use Icinga\Web\Request;
-use Icinga\Form\ConfigForm;
+use Icinga\Forms\ConfigForm;
 use Icinga\Web\Notification;
 use Icinga\Application\Config;
 use Icinga\Application\Platform;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Form\Config\Authentication\DbBackendForm;
-use Icinga\Form\Config\Authentication\LdapBackendForm;
-use Icinga\Form\Config\Authentication\AutologinBackendForm;
+use Icinga\Forms\Config\Authentication\DbBackendForm;
+use Icinga\Forms\Config\Authentication\LdapBackendForm;
+use Icinga\Forms\Config\Authentication\AutologinBackendForm;
 
 class AuthenticationBackendConfigForm extends ConfigForm
 {

@@ -6,7 +6,7 @@ use Icinga\Web\Controller\BasePreferenceController;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tab;
 use Icinga\Application\Config;
-use Icinga\Form\PreferenceForm;
+use Icinga\Forms\PreferenceForm;
 use Icinga\Exception\ConfigurationError;
 use Icinga\User\Preferences\PreferencesStore;
 

@@ -6,7 +6,7 @@ namespace Icinga\Module\Setup\Form;
 
 use PDOException;
 use Icinga\Web\Form;
-use Icinga\Form\Config\Resource\DbResourceForm;
+use Icinga\Forms\Config\Resource\DbResourceForm;
 use Icinga\Module\Setup\Utils\DbTool;
 
 /**

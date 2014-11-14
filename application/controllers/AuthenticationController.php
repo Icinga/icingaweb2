@@ -6,7 +6,7 @@
 
 use Icinga\Authentication\Backend\AutoLoginBackend;
 use Icinga\Web\Controller\ActionController;
-use Icinga\Form\Authentication\LoginForm;
+use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Authentication\AuthChain;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;

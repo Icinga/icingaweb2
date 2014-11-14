@@ -29,7 +29,7 @@ require_once($libraryPath . '/Icinga/Application/Loader.php');
 $loader = new Icinga\Application\Loader();
 $loader->registerNamespace('Tests', $testLibraryPath);
 $loader->registerNamespace('Icinga', $libraryPath . '/Icinga');
-$loader->registerNamespace('Icinga\\Form', $applicationPath . '/forms');
+$loader->registerNamespace('Icinga\\Forms', $applicationPath . '/forms');
 
 $modules = scandir($modulePath);
 foreach ($modules as $module) {

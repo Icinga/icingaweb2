@@ -5,7 +5,7 @@
 namespace Icinga\Module\Monitoring\Form\Setup;
 
 use Icinga\Web\Form;
-use Icinga\Form\Config\Resource\LivestatusResourceForm;
+use Icinga\Forms\Config\Resource\LivestatusResourceForm;
 
 class LivestatusResourcePage extends Form
 {

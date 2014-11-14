@@ -7,7 +7,7 @@ namespace Icinga\Module\Monitoring\Form\Config;
 use InvalidArgumentException;
 use Icinga\Web\Request;
 use Icinga\Web\Notification;
-use Icinga\Form\ConfigForm;
+use Icinga\Forms\ConfigForm;
 use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
 

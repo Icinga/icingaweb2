@@ -5,7 +5,7 @@
 namespace Icinga\Module\Setup\Form;
 
 use Icinga\Web\Form;
-use Icinga\Form\Config\General\LoggingConfigForm;
+use Icinga\Forms\Config\General\LoggingConfigForm;
 
 /**
  * Wizard page to define the application and logging configuration

@@ -2,16 +2,16 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config;
+namespace Icinga\Forms\Config;
 
 use InvalidArgumentException;
 use Icinga\Web\Request;
 use Icinga\Web\Notification;
-use Icinga\Form\ConfigForm;
-use Icinga\Form\Config\Resource\DbResourceForm;
-use Icinga\Form\Config\Resource\FileResourceForm;
-use Icinga\Form\Config\Resource\LdapResourceForm;
-use Icinga\Form\Config\Resource\LivestatusResourceForm;
+use Icinga\Forms\ConfigForm;
+use Icinga\Forms\Config\Resource\DbResourceForm;
+use Icinga\Forms\Config\Resource\FileResourceForm;
+use Icinga\Forms\Config\Resource\LdapResourceForm;
+use Icinga\Forms\Config\Resource\LivestatusResourceForm;
 use Icinga\Application\Platform;
 use Icinga\Exception\ConfigurationError;
 

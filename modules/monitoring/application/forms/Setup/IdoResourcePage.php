@@ -5,7 +5,7 @@
 namespace Icinga\Module\Monitoring\Form\Setup;
 
 use Icinga\Web\Form;
-use Icinga\Form\Config\Resource\DbResourceForm;
+use Icinga\Forms\Config\Resource\DbResourceForm;
 
 class IdoResourcePage extends Form
 {

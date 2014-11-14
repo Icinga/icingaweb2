@@ -4,7 +4,7 @@
 
 use Icinga\Web\Notification;
 use Icinga\Data\ResourceFactory;
-use Icinga\Form\ConfirmRemovalForm;
+use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Module\Monitoring\Form\Config\BackendConfigForm;
 use Icinga\Module\Monitoring\Form\Config\InstanceConfigForm;

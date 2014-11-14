@@ -5,7 +5,7 @@
 namespace Icinga\Module\Setup\Form;
 
 use Icinga\Web\Form;
-use Icinga\Form\LdapDiscoveryForm;
+use Icinga\Forms\LdapDiscoveryForm;
 
 /**
  * Wizard page to define the connection details for a LDAP resource

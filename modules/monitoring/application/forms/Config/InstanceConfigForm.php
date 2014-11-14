@@ -6,7 +6,7 @@ namespace Icinga\Module\Monitoring\Form\Config;
 
 use InvalidArgumentException;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Form\ConfigForm;
+use Icinga\Forms\ConfigForm;
 use Icinga\Module\Monitoring\Command\Transport\LocalCommandFile;
 use Icinga\Module\Monitoring\Command\Transport\RemoteCommandFile;
 use Icinga\Module\Monitoring\Form\Config\Instance\LocalInstanceForm;

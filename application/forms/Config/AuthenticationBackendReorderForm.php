@@ -2,12 +2,12 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config;
+namespace Icinga\Forms\Config;
 
 use InvalidArgumentException;
 use Icinga\Web\Request;
 use Icinga\Web\Notification;
-use Icinga\Form\ConfigForm;
+use Icinga\Forms\ConfigForm;
 
 class AuthenticationBackendReorderForm extends ConfigForm
 {

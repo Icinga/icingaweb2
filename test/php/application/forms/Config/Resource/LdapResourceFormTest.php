@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Form\Config\Resource;
+namespace Tests\Icinga\Forms\Config\Resource;
 
 // Necessary as some of these tests disable phpunit's preservation
 // of the global state (e.g. autoloaders are in the global state)
@@ -10,7 +10,7 @@ require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
 
 use Mockery;
 use Icinga\Test\BaseTestCase;
-use Icinga\Form\Config\Resource\LdapResourceForm;
+use Icinga\Forms\Config\Resource\LdapResourceForm;
 
 class LdapResourceFormTest extends BaseTestCase
 {
