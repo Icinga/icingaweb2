@@ -79,6 +79,16 @@ class MonitoringMenuItemRenderer implements MenuItemRenderer {
                 $count
             );
         }
+        if ($menu->getIcon() && strpos($menu->getIcon(), '.') === false) {
+            return sprintf(
+                '<a href="%s" class="icon-%s">%s%s</a>',
+                $menu->getUrl() ?: '#',
+                $menu->getIcon(),
+                htmlspecialchars($menu->getTitle()),
+                $badge
+            );
+        }
+
         return sprintf(
             '<a href="%s">%s%s%s</a>',
             $menu->getUrl() ?: '#',

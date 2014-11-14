@@ -7,6 +7,7 @@ namespace Icinga\Application;
 require_once __DIR__ . '/ApplicationBootstrap.php';
 
 use Icinga\Authentication\Manager as AuthenticationManager;
+use Icinga\Authentication\Manager;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Application\Logger;
@@ -14,6 +15,8 @@ use Icinga\Util\TimezoneDetect;
 use Icinga\Web\Request;
 use Icinga\Web\Response;
 use Icinga\Web\View;
+use Icinga\Web\Session\Session as BaseSession;
+use Icinga\Web\Session;
 use Icinga\User;
 use Icinga\Util\Translator;
 use Icinga\Util\DateTimeFactory;
@@ -59,6 +62,13 @@ class Web extends ApplicationBootstrap
     private $request;
 
     /**
+     * Session object
+     *
+     * @var BaseSession
+     */
+    private $session;
+
+    /**
      * User object
      *
      * @var User
@@ -84,6 +94,7 @@ class Web extends ApplicationBootstrap
             ->setupErrorHandling()
             ->loadConfig()
             ->setupResourceFactory()
+            ->setupSession()
             ->setupUser()
             ->setupTimezone()
             ->setupLogger()
@@ -164,6 +175,7 @@ class Web extends ApplicationBootstrap
 
         $this->setupFrontController();
         $this->setupViewRenderer();
+
         return $this;
     }
 
@@ -180,6 +192,17 @@ class Web extends ApplicationBootstrap
             $this->user = $authenticationManager->getUser();
         }
 
+        return $this;
+    }
+
+    /**
+     * Initialize a session provider
+     *
+     * @return  self
+     */
+    private function setupSession()
+    {
+        $this->session = Session::create();
         return $this;
     }
 
@@ -268,29 +291,19 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Setup user timezone if set and valid, otherwise global default timezone
-     *
-     * @return  self
-     * @see     ApplicationBootstrap::setupTimezone
+     * (non-PHPDoc)
+     * @see ApplicationBootstrap::detectTimezone() For the method documentation.
      */
-    protected function setupTimezone()
+    protected function detectTimezone()
     {
-        $userTimezone = null;
-
-        if ($this->user !== null && $this->user->getPreferences() !== null) {
+        $auth = Manager::getInstance();
+        if (! $auth->isAuthenticated()
+            || ($timezone = $auth->getUser()->getPreferences()->getValue('icingaweb', 'timezone')) === null
+        ) {
             $detect = new TimezoneDetect();
-            $userTimezone = $this->user->getPreferences()
-                ->getValue('icingaweb', 'timezone', $detect->getTimezoneName());
+            $timezone = $detect->getTimezoneName();
         }
-
-        try {
-            DateTimeFactory::setConfig(array('timezone' => $userTimezone));
-            date_default_timezone_set($userTimezone);
-        } catch (ConfigurationError $e) {
-            return parent::setupTimezone();
-        }
-
-        return $this;
+        return $timezone;
     }
 
     /**
@@ -300,35 +313,30 @@ class Web extends ApplicationBootstrap
      *
      * @return  self
      */
-    protected function setupInternationalization()
+    protected function detectLocale()
     {
-        parent::setupInternationalization();
-        if ($this->user !== null && $this->user->getPreferences() !== null
-            && (($locale = $this->user->getPreferences()->getValue('icingaweb', 'language')) !== null)
+        $auth = Manager::getInstance();
+        if (! $auth->isAuthenticated()
+            || ($locale = $auth->getUser()->getPreferences()->getValue('icingaweb', 'language')) === null
+            && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
         ) {
-            try {
-                Translator::setupLocale($locale);
-            } catch (Exception $error) {
-                Logger::warning(
-                    'Cannot set locale "' . $locale . '" configured in ' .
-                    'preferences of user "' . $this->user->getUsername() . '"'
-                );
-            }
+            $locale = Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
         }
-        return $this;
+        return $locale;
     }
 
     /**
-     * Setup an autoloader namespace for Icinga\Form
+     * Setup an autoloader namespace for Icinga\Forms
      *
      * @return  self
      */
     private function setupFormNamespace()
     {
         $this->getLoader()->registerNamespace(
-            'Icinga\\Form',
+            'Icinga\\Forms',
             $this->getApplicationDir('forms')
         );
         return $this;
     }
 }
+// @codeCoverageIgnoreEnd

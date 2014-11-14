@@ -2,11 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Setup\Form;
+namespace Icinga\Module\Setup\Forms;
 
 use Icinga\Web\Form;
 use Icinga\Application\Platform;
-use Icinga\Web\Form\Element\Note;
 
 /**
  * Wizard page to choose a preference backend
@@ -45,23 +44,21 @@ class PreferencesPage extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
-            new Note(
-                'title',
-                array(
-                    'value'         => mt('setup', 'Preferences', 'setup.page.title'),
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array('HtmlTag', array('tag' => 'h2'))
-                    )
+            'note',
+            'title',
+            array(
+                'value'         => mt('setup', 'Preferences', 'setup.page.title'),
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'h2'))
                 )
             )
         );
         $this->addElement(
-            new Note(
-                'description',
-                array(
-                    'value' => mt('setup', 'Please choose how Icinga Web 2 should store user preferences.')
-                )
+            'note',
+            'description',
+            array(
+                'value' => mt('setup', 'Please choose how Icinga Web 2 should store user preferences.')
             )
         );
 

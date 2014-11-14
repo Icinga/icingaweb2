@@ -2,13 +2,12 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config\Resource;
+namespace Icinga\Forms\Config\Resource;
 
 use Exception;
 use Icinga\Application\Config;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
-use Icinga\Web\Form\Element\Number;
 use Icinga\Data\ResourceFactory;
 
 /**
@@ -49,14 +48,13 @@ class LdapResourceForm extends Form
             )
         );
         $this->addElement(
-            new Number(
-                array(
-                    'required'      => true,
-                    'name'          => 'port',
-                    'label'         => t('Port'),
-                    'description'   => t('The port of the LDAP server to use for authentication'),
-                    'value'         => 389
-                )
+            'number',
+            'port',
+            array(
+                'required'      => true,
+                'label'         => t('Port'),
+                'description'   => t('The port of the LDAP server to use for authentication'),
+                'value'         => 389
             )
         );
         $this->addElement(

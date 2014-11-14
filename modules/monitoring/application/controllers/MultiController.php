@@ -4,7 +4,7 @@
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Web\Widget\Chart\InlinePie;
-use Icinga\Module\Monitoring\Form\Command\MultiCommandFlagForm;
+use Icinga\Module\Monitoring\Forms\Command\MultiCommandFlagForm;
 use Icinga\Web\Widget;
 use Icinga\Data\Filter\Filter;
 

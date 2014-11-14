@@ -13,9 +13,8 @@ use Icinga\Web\StyleSheet;
 use Icinga\Web\Url;
 use Icinga\Exception\ProgrammingError;
 
-require_once 'IcingaVendor/dompdf/dompdf_config.inc.php';
-
-spl_autoload_register('DOMPDF_autoload');
+require_once 'dompdf/dompdf_config.inc.php';
+require_once 'dompdf/include/autoload.inc.php';
 
 class Pdf extends DOMPDF
 {

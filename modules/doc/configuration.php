@@ -8,5 +8,16 @@ $section = $this->menuSection($this->translate('Documentation'), array(
     'title'    => 'Documentation',
     'icon'     => 'img/icons/comment.png',
     'url'      => 'doc',
-    'priority' => 80
+    'priority' => 190
+));
+
+$section->add('Icinga Web 2', array(
+    'url' => 'doc/icingaweb/toc',
+));
+$section->add('Module documentations', array(
+    'url' => 'doc/module',
+));
+$section->add($this->translate('Fonts'), array(
+    'url' => 'doc/style/font',
+    'priority' => 200,
 ));

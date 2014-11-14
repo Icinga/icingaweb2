@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Dashboard;
+namespace Icinga\Forms\Dashboard;
 
 use Icinga\Application\Config;
 use Icinga\Web\Widget\Dashboard;

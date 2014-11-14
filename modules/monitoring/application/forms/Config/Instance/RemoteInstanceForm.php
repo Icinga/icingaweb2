@@ -2,10 +2,9 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Config\Instance;
+namespace Icinga\Module\Monitoring\Forms\Config\Instance;
 
 use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Number;
 
 class RemoteInstanceForm extends Form
 {
@@ -36,10 +35,11 @@ class RemoteInstanceForm extends Form
                     )
                 )
             ),
-            new Number(
+            array(
+                'number',
+                'port',
                 array(
                     'required'      => true,
-                    'name'          => 'port',
                     'label'         => mt('monitoring', 'Port'),
                     'description'   => mt('monitoring', 'SSH port to connect to on the remote Icinga instance'),
                     'value'         => 22

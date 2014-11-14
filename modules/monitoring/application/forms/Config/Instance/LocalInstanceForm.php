@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Config\Instance;
+namespace Icinga\Module\Monitoring\Forms\Config\Instance;
 
 use Icinga\Web\Form;
 

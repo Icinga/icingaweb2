@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config\Authentication;
+namespace Icinga\Forms\Config\Authentication;
 
 use Exception;
 use Icinga\Application\Config;

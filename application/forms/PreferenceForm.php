@@ -2,15 +2,17 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form;
+namespace Icinga\Forms;
 
 use Exception;
 use DateTimeZone;
 use Icinga\Application\Logger;
+use Icinga\Authentication\Manager;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Util\Translator;
+use Icinga\Web\Controller\ControllerTabCollector;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
@@ -41,7 +43,6 @@ class PreferenceForm extends Form
     public function init()
     {
         $this->setName('form_config_preferences');
-        $this->setSubmitLabel(t('Save Changes'));
     }
 
     /**
@@ -76,7 +77,6 @@ class PreferenceForm extends Form
      */
     public function save()
     {
-        $this->store->load(); // Necessary for patching existing preferences
         $this->store->save($this->preferences);
         return $this;
     }
@@ -88,9 +88,11 @@ class PreferenceForm extends Form
      */
     public function onSuccess(Request $request)
     {
+        $this->preferences = new Preferences($this->store->load());
+
         $webPreferences = $this->preferences->get('icingaweb', array());
         foreach ($this->getValues() as $key => $value) {
-            if ($value === null) {
+            if ($value === null || $value === 'autodetect') {
                 if (isset($webPreferences[$key])) {
                     unset($webPreferences[$key]);
                 }
@@ -103,8 +105,12 @@ class PreferenceForm extends Form
         Session::getSession()->user->setPreferences($this->preferences);
 
         try {
-            $this->save();
-            Notification::success(t('Preferences successfully saved'));
+            if ($this->getElement('btn_submit_preferences')->isChecked()) {
+                $this->save();
+                Notification::success(t('Preferences successfully saved'));
+            } else {
+                Notification::success(t('Preferences successfully saved for the current session'));
+            }
         } catch (Exception $e) {
             Logger::error($e);
             Notification::error($e->getMessage());
@@ -118,9 +124,17 @@ class PreferenceForm extends Form
      */
     public function onRequest(Request $request)
     {
-        $values = $this->preferences->get('icingaweb', array());
-        $values['browser_language'] = false === isset($values['language']);
-        $values['local_timezone'] = false === isset($values['timezone']);
+        $auth = Manager::getInstance();
+        $values = $auth->getUser()->getPreferences()->get('icingaweb');
+
+        if (! isset($values['language'])) {
+            $values['language'] = 'autodetect';
+        }
+
+        if (! isset($values['timezone'])) {
+            $values['timezone'] = 'autodetect';
+        }
+
         $this->populate($values);
     }
 
@@ -130,72 +144,40 @@ class PreferenceForm extends Form
     public function createElements(array $formData)
     {
         $languages = array();
+        $languages['autodetect'] = sprintf(t('Browser (%s)', 'preferences.form'), $this->getLocale());
         foreach (Translator::getAvailableLocaleCodes() as $language) {
             $languages[$language] = $language;
         }
 
         $tzList = array();
+        $tzList['autodetect'] = sprintf(t('Browser (%s)', 'preferences.form'), $this->getDefaultTimezone());
         foreach (DateTimeZone::listIdentifiers() as $tz) {
             $tzList[$tz] = $tz;
         }
 
         $this->addElement(
-            'checkbox',
-            'browser_language',
-            array(
-                'ignore'        => true,
-                'required'      => true,
-                'autosubmit'    => true,
-                'value'         => true,
-                'label'         => t('Use your browser\'s language suggestions')
-            )
-        );
-
-        $useBrowserLanguage = isset($formData['browser_language']) ? $formData['browser_language'] == 1 : true;
-        $languageSelection = $this->createElement(
             'select',
             'language',
             array(
-                'required'      => false === $useBrowserLanguage,
+                'required'      => true,
                 'label'         => t('Your Current Language'),
                 'description'   => t('Use the following language to display texts and messages'),
                 'multiOptions'  => $languages,
                 'value'         => substr(setlocale(LC_ALL, 0), 0, 5)
             )
         );
-        if ($useBrowserLanguage) {
-            $languageSelection->setAttrib('disabled', 'disabled');
-        }
-        $this->addElement($languageSelection);
 
         $this->addElement(
-            'checkbox',
-            'local_timezone',
-            array(
-                'ignore'        => true,
-                'required'      => true,
-                'autosubmit'    => true,
-                'value'         => true,
-                'label'         => t('Use your local timezone')
-            )
-        );
-
-        $useLocalTimezone = isset($formData['local_timezone']) ? $formData['local_timezone'] == 1 : true;
-        $timezoneSelection = $this->createElement(
             'select',
             'timezone',
             array(
-                'required'      => false === $useLocalTimezone,
+                'required'      => true,
                 'label'         => t('Your Current Timezone'),
                 'description'   => t('Use the following timezone for dates and times'),
                 'multiOptions'  => $tzList,
                 'value'         => $this->getDefaultTimezone()
             )
         );
-        if ($useLocalTimezone) {
-            $timezoneSelection->setAttrib('disabled', 'disabled');
-        }
-        $this->addElement($timezoneSelection);
 
         $this->addElement(
             'checkbox',
@@ -203,6 +185,43 @@ class PreferenceForm extends Form
             array(
                 'required'  => true,
                 'label'     => t('Use benchmark')
+            )
+        );
+
+        $this->addElement(
+            'submit',
+            'btn_submit_preferences',
+            array(
+                'ignore'        => true,
+                'label'         => t('Save to the Preferences'),
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'div'))
+                )
+            )
+        );
+
+        $this->addElement(
+            'submit',
+            'btn_submit_session',
+            array(
+                'ignore'        => true,
+                'label'         => t('Save for the current Session'),
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'div'))
+                )
+            )
+        );
+
+        $this->addDisplayGroup(
+            array('btn_submit_preferences', 'btn_submit_session'),
+            'submit_buttons',
+            array(
+                'decorators' => array(
+                    'FormElements',
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
+                )
             )
         );
     }
@@ -220,5 +239,16 @@ class PreferenceForm extends Form
         } else {
             return date_default_timezone_get();
         }
+    }
+
+    /**
+     * Return the preferred locale based on the given HTTP header and the available translations
+     *
+     * @return string
+     */
+    protected function getLocale()
+    {
+        $locale = Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+        return $locale;
     }
 }

@@ -2,11 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Setup\Form;
+namespace Icinga\Module\Setup\Forms;
 
 use PDOException;
 use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Module\Setup\Utils\DbTool;
 
 /**
@@ -88,27 +87,25 @@ class DatabaseCreationPage extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
-            new Note(
-                'title',
-                array(
-                    'value'         => mt('setup', 'Database Setup', 'setup.page.title'),
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array('HtmlTag', array('tag' => 'h2'))
-                    )
+            'note',
+            'title',
+            array(
+                'value'         => mt('setup', 'Database Setup', 'setup.page.title'),
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'h2'))
                 )
             )
         );
         $this->addElement(
-            new Note(
-                'description',
-                array(
-                    'value' => mt(
-                        'setup',
-                        'It seems that either the database you defined earlier does not yet exist and cannot be created'
-                        . ' using the provided access credentials or the database does not have the required schema to '
-                        . 'be operated by Icinga Web 2. Please provide appropriate access credentials to solve this.'
-                    )
+            'note',
+            'description',
+            array(
+                'value' => mt(
+                    'setup',
+                    'It seems that either the database you defined earlier does not yet exist and cannot be created'
+                    . ' using the provided access credentials or the database does not have the required schema to '
+                    . 'be operated by Icinga Web 2. Please provide appropriate access credentials to solve this.'
                 )
             )
         );

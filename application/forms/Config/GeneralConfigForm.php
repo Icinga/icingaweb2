@@ -2,13 +2,13 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config;
+namespace Icinga\Forms\Config;
 
 use Icinga\Web\Request;
 use Icinga\Web\Notification;
-use Icinga\Form\ConfigForm;
-use Icinga\Form\Config\General\LoggingConfigForm;
-use Icinga\Form\Config\General\ApplicationConfigForm;
+use Icinga\Forms\ConfigForm;
+use Icinga\Forms\Config\General\LoggingConfigForm;
+use Icinga\Forms\Config\General\ApplicationConfigForm;
 
 /**
  * Form class for application-wide and logging specific settings
