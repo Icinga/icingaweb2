@@ -21,6 +21,7 @@
  */
 
 /** Zend_Loader */
+require_once 'Zend/Loader.php';
 
 /**
  * Autoloader stack and namespace autoloader
