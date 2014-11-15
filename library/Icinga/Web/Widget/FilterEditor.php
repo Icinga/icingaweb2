@@ -299,6 +299,15 @@ class FilterEditor extends AbstractWidget
         return $res;
     }
 
+    protected function elementId($prefix, Filter $filter = null)
+    {
+        if ($filter === null) {
+            return $prefix . '_new_' . ($this->addTo ?: '0');
+        } else {
+            return $prefix . '_' . $filter->getId();
+        }
+    }
+
     protected function selectSign($filter)
     {
         $name = 'sign_' . $filter->getId();
