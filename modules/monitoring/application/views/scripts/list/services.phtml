@@ -11,9 +11,6 @@ if (!$this->compact): ?>
 <div style="float: right">
 <?= $this->translate('Sort by') ?> <?= $this->sortControl ?>
 </div>
-<?php if (! $this->filterEditor): ?>
-<?= $this->filterPreview ?>
-<?php endif ?>
 </div>
 <?php if ($this->limit === 0): ?>
 <?= $this->widget('limiter') ?>
