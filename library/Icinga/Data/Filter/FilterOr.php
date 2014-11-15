@@ -20,6 +20,14 @@ class FilterOr extends FilterChain
         return false;
     }
 
+    public function setOperatorName($name)
+    {
+        if ($this->count() > 1 && $name === 'NOT') {
+            return Filter::not(clone $this);
+        }
+        return parent::setOperatorName($name);
+    }
+
     public function andFilter(Filter $filter)
     {
         return Filter::matchAll($this, $filter);
