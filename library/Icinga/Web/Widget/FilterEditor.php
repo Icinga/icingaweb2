@@ -286,6 +286,19 @@ class FilterEditor extends AbstractWidget
         return $html;
     }
 
+    protected function text(Filter $filter = null)
+    {
+        $value = $filter === null ? '' : $filter->getExpression();
+        if (is_array($value)) {
+            $value = '(' . implode('|', $value) . ')';
+        }
+        return sprintf(
+            '<input type="text" name="%s" value="%s" />',
+            $this->elementId('value', $filter),
+            $value
+        );
+    }
+
     protected function renderNewFilter()
     {
         $html = $this->selectColumn()
