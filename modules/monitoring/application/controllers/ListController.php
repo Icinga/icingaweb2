@@ -235,7 +235,7 @@ class Monitoring_ListController extends Controller
         ), $this->extraColumns());
         $query = $this->backend->select()->from('serviceStatus', $columns);
 
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->setupSortControl(array(
             'service_last_check'    => $this->translate('Last Service Check'),
             'service_severity'      => $this->translate('Severity'),
