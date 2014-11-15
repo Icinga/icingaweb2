@@ -108,6 +108,63 @@ class FilterEditor extends AbstractWidget
         $response->redirectAndExit($url);
     }
 
+    public function handleRequest($request)
+    {
+        $this->setUrl($request->getUrl());
+        $params = $this->url()->getParams();
+
+        $preserve = array();
+        foreach ($this->preserveParams as $key) {
+            if (null !== ($value = $params->shift($key))) {
+                $preserve[$key] = $value;
+            }
+        }
+
+        $add    = $params->shift('addFilter');
+        $remove = $params->shift('removeFilter');
+        $strip  = $params->shift('stripFilter');
+        $modify = $params->shift('modifyFilter');
+        $filter = $this->getFilter();   
+
+        if ($remove) {
+            $redirect = $this->url();
+            if ($filter->getById($remove)->isRootNode()) {
+                $redirect->setQueryString('');
+            } else {
+                $filter->removeId($remove);
+                $redirect->setQueryString($filter->toQueryString())->getParams()->add('modifyFilter');
+            }
+            $this->redirectNow($redirect->addParams($preserve));
+        }
+
+        if ($strip) {
+            $redirect = $this->url();
+            $filter->replaceById($strip, $filter->getById($strip . '-1'));
+            $redirect->setQueryString($filter->toQueryString())->getParams()->add('modifyFilter');
+            $this->redirectNow($redirect->addParams($preserve));
+        }
+
+
+        if ($modify) {
+            if ($request->isPost()) {
+                if ($request->get('cancel') === 'Cancel') {
+                    $this->redirectNow($this->url()->without('modifyFilter'));
+                }
+
+                $filter = $this->applyChanges($request->getPost());
+                $url = $this->url()->setQueryString($filter->toQueryString())->addParams($preserve);
+                $url->getParams()->add('modifyFilter');
+                $this->redirectNow($url);
+            }
+            $this->url()->getParams()->add('modifyFilter');
+        }
+
+        if ($add) {
+            $this->addFilterToId($add);
+        }
+        return $this;
+    }
+
     protected function select($name, $list, $selected, $attributes = null)
     {
         $view = $this->view();
