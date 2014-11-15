@@ -323,16 +323,17 @@ class FilterEditor extends AbstractWidget
         if (! $this->url()->getParam('modifyFilter')) {
             return $this->renderSearch() . $this->shorten($this->filter, 50);
         }
-
-        return '<h3>'
-              . t('Modify this filter')
-              . '</h3>'
+        return  $this->renderSearch()
               . '<form action="'
               . Url::fromRequest()
               . '" class="filterEditor" method="POST">'
               . '<ul class="tree"><li>'
               . $this->renderFilter($this->filter)
-              . '</li></ul><br /><input type="submit" name="submit" value="Apply" />'
+              . '</li></ul>'
+              . '<div style="float: right">'
+              . '<input type="submit" name="submit" value="Apply" />'
+              . '<input type="submit" name="cancel" value="Cancel" />'
+              . '</div>'
               . '</form>';
     }
 
