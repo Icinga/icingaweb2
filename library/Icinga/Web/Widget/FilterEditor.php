@@ -28,6 +28,8 @@ class FilterEditor extends AbstractWidget
 
     protected $url;
 
+    protected $addTo;
+
     protected $preserveParams = array();
 
     protected $ignoreParams = array();
@@ -131,9 +133,9 @@ class FilterEditor extends AbstractWidget
         return $html;
     }
 
-    public function markIndex($idx)
+    protected function addFilterToId($id)
     {
-        $this->selectedIdx = $idx;
+        $this->addTo = $id;
         return $this;
     }
 
