@@ -42,6 +42,20 @@ class FilterEditor extends AbstractWidget
         }
     }
 
+    public function setFilter(Filter $filter)
+    {
+        $this->filter = $filter;
+        return $this;
+    }
+
+    public function getFilter()
+    {
+        if ($this->filter === null) {
+            $this->filter = Filter::fromQueryString((string) $this->url()->getParams()); 
+        }
+        return $this->filter;
+    }
+
     protected function select($name, $list, $selected, $attributes = null)
     {
         $view = $this->view();
