@@ -149,6 +149,58 @@ class FilterEditor extends AbstractWidget
         return $this;
     }
 
+    protected function removeLink(Filter $filter)
+    {
+        return $this->view()->qlink(
+            '',
+            $this->url()->with('removeFilter', $filter->getId()),
+            null,
+            array(
+                'title' => t('Click to remove this part of your filter'),
+                'class' => 'icon-cancel'
+            )
+        );
+    }
+
+    protected function addLink(Filter $filter)
+    {
+        return $this->view()->qlink(
+            '',
+            $this->url()->with('addFilter', $filter->getId()),
+            null,
+            array(
+                'title' => t('Click to add another filter'),
+                'class' => 'icon-plus'
+            )
+        );
+    }
+
+    protected function stripLink(Filter $filter)
+    {
+        return $this->view()->qlink(
+            '',
+            $this->url()->with('stripFilter', $filter->getId()),
+            null,
+            array(
+                'title' => t('Strip this filter'),
+                'class' => 'icon-minus'
+            )
+        );
+    }
+
+    protected function cancelLink()
+    {
+        return $this->view()->qlink(
+            '',
+            $this->url()->without('addFilter'),
+            null,
+            array(
+                'title' => t('Cancel this operation'),
+                'class' => 'icon-cancel'
+            )
+        );
+    }
+
     protected function renderFilter($filter, $level = 0)
     {
         $html = '';
