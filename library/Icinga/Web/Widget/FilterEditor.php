@@ -114,7 +114,11 @@ class FilterEditor extends AbstractWidget
         } else {
             $attributes = $view->propertiesToString($attributes);
         }
-        $html = '<select name="' . $view->escape($name) . '"' . $attributes . ' class="autosubmit">' . "\n";
+        $html = sprintf(
+            '<select name="%s"%s class="autosubmit">' . "\n",
+            $view->escape($name),
+            $attributes
+        );
 
         asort($list);
         foreach ($list as $k => $v) {
