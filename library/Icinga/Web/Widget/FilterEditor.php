@@ -8,7 +8,9 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Filter\FilterChain;
 use Icinga\Web\Url;
+use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
+use Exception;
 
 /**
  * Filter
@@ -94,6 +96,12 @@ class FilterEditor extends AbstractWidget
     {
         $this->preserveParams = func_get_args();
         return $this;
+    }
+
+    protected function redirectNow($url)
+    {
+        $response = Icinga::app()->getFrontController()->getResponse();
+        $response->redirectAndExit($url);
     }
 
     protected function select($name, $list, $selected, $attributes = null)
