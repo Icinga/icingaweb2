@@ -285,6 +285,19 @@ class FilterEditor extends AbstractWidget
         return $html;
     }
 
+    protected function renderNewFilter()
+    {
+        $html = $this->selectColumn()
+              . $this->selectSign()
+              . $this->text();
+
+        return preg_replace(
+            '/ class="autosubmit"/',
+            '',
+            $html
+        );
+    }
+
     protected function arrayForSelect($array)
     {
         $res = array();
