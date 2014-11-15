@@ -459,6 +459,7 @@ abstract class ApplicationBootstrap
                 return false; // Continue with the normal error handler
             }
             switch($errno) {
+                case E_NOTICE:
                 case E_WARNING:
                 case E_STRICT:
                     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
