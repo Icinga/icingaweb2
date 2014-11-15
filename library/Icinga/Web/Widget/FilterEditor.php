@@ -450,6 +450,107 @@ class FilterEditor extends AbstractWidget
         return $this->select($this->elementId('column', $filter), $cols, $active); 
     }
 
+    protected function applyChanges($changes)
+    {
+        $filter = $this->filter;
+        $pairs = array();
+        $addTo = null;
+        $add = array();
+        foreach ($changes as $k => $v) {
+            if (preg_match('/^(column|value|sign|operator)((?:_new)?)_([\d-]+)$/', $k, $m)) {
+                if ($m[2] === '_new') {
+                    if ($addTo !== null && $addTo !== $m[3]) {
+                        throw new \Exception('F...U');
+                    }
+                    $addTo = $m[3];
+                    $add[$m[1]] = $v;
+                } else {
+                    $pairs[$m[3]][$m[1]] = $v;
+                }
+            }
+        }
+
+        $operators = array();
+        foreach ($pairs as $id => $fs) {
+            if (array_key_exists('operator', $fs)) {
+                $operators[$id] = $fs['operator'];
+            } else {
+                $f = $filter->getById($id);
+                $f->setColumn($fs['column']);
+                if ($f->getSign() !== $fs['sign']) {
+                    if ($f->isRootNode()) {
+                        $filter = $f->setSign($fs['sign']);
+                    } else {
+                        $filter->replaceById($id, $f->setSign($fs['sign']));
+                    }
+                }
+                $f->setExpression($fs['value']);
+            }
+        }
+
+        krsort($operators, version_compare(PHP_VERSION, '5.4.0') >= 0 ? SORT_NATURAL : SORT_REGULAR);
+        foreach ($operators as $id => $operator) {
+            $f = $filter->getById($id);
+            if ($f->getOperatorName() !== $operator) {
+                if ($f->isRootNode()) {
+                    $filter = $f->setOperatorName($operator);
+                } else {
+                    $filter->replaceById($id, $f->setOperatorName($operator));
+                }
+            }
+        }
+
+        if ($addTo !== null) {
+            if ($addTo === '0') {
+                $filter = Filter::expression($add['column'], $add['sign'], $add['value']);
+            } else {
+                $parent = $filter->getById($addTo);
+                $f = Filter::expression($add['column'], $add['sign'], $add['value']);
+                if ($add['operator']) {
+                    switch($add['operator']) {
+                        case 'AND':
+                            if ($parent->isExpression()) {
+                                if ($parent->isRootNode()) {
+                                    $filter = Filter::matchAll(clone $parent, $f);
+                                } else {
+                                    $filter = $filter->replaceById($addTo, Filter::matchAll(clone $parent, $f));
+                                }
+                            } else {
+                                $parent->addFilter(Filter::matchAll($f));
+                            }
+                            break;
+                        case 'OR':
+                            if ($parent->isExpression()) {
+                                if ($parent->isRootNode()) {
+                                    $filter = Filter::matchAny(clone $parent, $f);
+                                } else {
+                                    $filter = $filter->replaceById($addTo, Filter::matchAny(clone $parent, $f));
+                                }
+                            } else {
+                                $parent->addFilter(Filter::matchAny($f));
+                            }
+                            break;
+                        case 'NOT':
+                            if ($parent->isExpression()) {
+                                if ($parent->isRootNode()) {
+                                    $filter = Filter::not(Filter::matchAll($parent, $f));
+                                } else {
+                                    $filter = $filter->replaceById($addTo, Filter::not(Filter::matchAll($parent, $f)));
+                                }
+                            } else {
+                                $parent->addFilter(Filter::not($f));
+                            }
+                            break;
+                    }
+                } else {
+                    $parent->addFilter($f);
+                }
+            }
+        }
+
+        return $filter;
+    }
+
     public function renderSearch()
     {
         $html = ' <form method="post" class="inline" action="'
