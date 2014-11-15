@@ -19,8 +19,10 @@ if (!$this->compact): ?>
 <?= $this->widget('limiter')->setCurrentPageCount($this->services->count()) ?>
 <?= $this->paginationControl($services, null, null, array('preserve' => $this->preserve)) ?>
 <?php endif ?>
-<?= $this->selectionToolbar('multi', $this->href('monitoring/services/show?' . $this->filter->toQueryString())) ?>
+<!--
+<?= $this->selectionToolbar('multi', $this->href('monitoring/services/show?' . $this->filterEditor->getFilter()->toQueryString())) ?>
 <?= $this->render('list/components/selectioninfo.phtml') ?>
+-->
 </div>
 
 <div class="content">
