@@ -30,6 +30,8 @@ class FilterEditor extends AbstractWidget
 
     protected $addTo;
 
+    protected $cachedColumnSelect;
+
     protected $preserveParams = array();
 
     protected $ignoreParams = array();
@@ -368,8 +370,11 @@ class FilterEditor extends AbstractWidget
             );
         }
 
-        $cols = $this->arrayForSelect($this->query->getColumns());
-        $active = $filter->getColumn();
+        if ($this->cachedColumnSelect === null) {
+            $this->cachedColumnSelect = $this->arrayForSelect($this->query->getColumns());
+            asort($this->cachedColumnSelect);
+        }
+        $cols = $this->cachedColumnSelect;
         $seen = false;
         foreach ($cols as $k => & $v) {
             $v = str_replace('_', ' ', ucfirst($v));
