@@ -19,6 +19,16 @@ class Request extends Zend_Controller_Request_Http
      */
     private $user;
 
+    private $url;
+
+    public function getUrl()
+    {
+        if ($this->url === null) {
+            $this->url = Url::fromRequest($this);
+        }
+        return $this->url;
+    }
+
     /**
      * Setter for user
      *
