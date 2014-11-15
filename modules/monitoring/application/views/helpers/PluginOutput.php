@@ -19,8 +19,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             );
         } elseif (preg_match('~\\\n~', $output)) {
             // Plaintext
-            $output = '<pre style="font-family: monospace; font-size: 1em;'
-                    . ' width: 100%; overflow: auto; white-space: pre-wrap;">'
+            $output = '<pre class="pluginoutput">'
                . preg_replace(
               '~\\\n~', "\n", preg_replace(
                 '~\\\n\\\n~', "\n",
@@ -33,8 +32,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
               )
             ) . '</pre>';
         } else {
-            $output = '<pre style="font-family: monospace; font-size: 1em;'
-                    . ' width: 100%; overflow: auto; white-space: pre-wrap;">'
+            $output = '<pre class="pluginoutput">'
                . preg_replace('~\@{6,}~', '@@@@@@',
                 $this->view->escape($output)
             ) . '</pre>';

@@ -27,7 +27,7 @@ if ($object->getType() === $object::TYPE_HOST) {
   <th><?= $this->translate('Next check') ?></th>
   <td>
       <a href="<?= $reschedule ?>">
-          <?= $this->icon('reschedule_petrol.png') ?> <?= $this->translate('Reschedule') ?>
+          <?= $this->icon('reschedule') ?> <?= $this->translate('Reschedule') ?>
       </a>
       <?= $this->timeUntil($object->next_check) ?>
   </td>

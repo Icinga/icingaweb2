@@ -12,7 +12,7 @@ if (! empty($object->contacts)) {
     printf(
         "<tr><th>%s</th><td>%s %s</td></tr>\n",
         $this->translate('Contacts'),
-        $this->img('img/icons/user_petrol.png'),
+	$this->icon('user'),
         implode(', ', $list)
     );
 
@@ -31,7 +31,7 @@ if (! empty($object->contactgroups)) {
     printf(
         "<tr><th>%s</th><td>%s %s</td></tr>\n",
         $this->translate('Contactgroups'),
-        $this->img('img/icons/user_petrol.png'),
+	$this->icon('users'),
         implode(', ', $list)
     );
 

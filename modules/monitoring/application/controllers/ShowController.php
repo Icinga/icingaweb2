@@ -202,7 +202,7 @@ class Monitoring_ShowController extends Controller
             'host',
             array(
                 'title'     => 'Host',
-                'icon'      => 'img/icons/host.png',
+                'icon'      => 'host',
                 'url'       => 'monitoring/show/host',
                 'urlParams' => $params,
             )
@@ -212,7 +212,7 @@ class Monitoring_ShowController extends Controller
                 'service',
                 array(
                     'title'     => 'Service',
-                    'icon'      => 'img/icons/service.png',
+                    'icon'      => 'service',
                     'url'       => 'monitoring/show/service',
                     'urlParams' => $params,
                 )
@@ -222,7 +222,7 @@ class Monitoring_ShowController extends Controller
             'services',
             array(
                 'title'     => 'Services',
-                'icon'      => 'img/icons/service.png',
+                'icon'      => 'service',
                 'url'       => 'monitoring/show/services',
                 'urlParams' => $params,
             )
@@ -231,7 +231,7 @@ class Monitoring_ShowController extends Controller
             'history',
             array(
                 'title'     => 'History',
-                'icon'      => 'img/icons/history.png',
+                'icon'      => 'rewind',
                 'url'       => 'monitoring/show/history',
                 'urlParams' => $params,
             )

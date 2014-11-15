@@ -19,7 +19,7 @@ use Icinga\Web\Wizard;
           <?= $isActive ? '<strong>' : '' ?><?= $module->getTitle(); ?><?= $isActive ? '</strong>' : '' ?>
         </button>
        <?php if ($module->getSetupWizard()->isFinished()): ?>
-        <?= $this->icon('acknowledgement.png', mt('setup', 'Completed', 'setup.modules.wizard.state')); ?>
+        <?= $this->icon('ok', mt('setup', 'Completed', 'setup.modules.wizard.state')); ?>
        <?php else: ?>
         <?php $allFinished = false; ?>
        <?php endif ?>

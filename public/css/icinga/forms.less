@@ -31,8 +31,10 @@ input, select {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   border: 1px solid #ddd;
+  font-size: 0.9em;
   padding: 0.2em;
   background: #fff;
+  font-family: Calibri, Helvetica, sans-serif;
 }
 
 input:focus, select:focus {
@@ -42,9 +44,10 @@ input:focus, select:focus {
 input[type=submit] {
   font-weight: bold;
   text-align: center;
-  color: #eee;
-  border-color: #777;
-  background: #777;
+  color: #fff;
+  border: 2px solid #ddd;
+  border-color: @colorPetrol;
+  background: @colorPetrol;
   outline: 0;
 }
 
@@ -142,7 +145,6 @@ form ul.form-errors {
   .non-list-like-list;
   display: inline-block;
   margin-bottom: 1em;
-  border-radius: 1em;
   background-color: @colorCritical;
 
   ul.errors {

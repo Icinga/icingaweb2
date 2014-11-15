@@ -14,6 +14,24 @@ table.action.comments td a, table.action.downtimes td a {
   width: 16em;
 }
 
+p.pluginoutput {
+  font-size: 0.9em;
+  width: 100%;
+  white-space: pre-wrap;
+}
+
+pre.pluginoutput {
+  font-family: Courier;
+  background: #eee;
+  font-size: 0.7em;
+  overflow: auto; 
+  white-space: pre-wrap;
+  margin: 0em;
+  padding: 1em;
+  margin-bottom: 0.5em;
+  color: black;
+}
+
 table.objecthistory td {
   font-size: 0.8em;
 }
@@ -34,18 +52,21 @@ table.objectstate td.state {
 }
 
 div.contacts div.contact {
-  background-color: lightgray;
+  background-color: #eee;
   padding: 0.5em;
-  border-radius: 0.5em;
+  border: 1px solid #d9d9d9;
   overflow: hidden;
   margin: 0.125em;
   float: left;
 }
 
+div.contacts div.contact a{
+  color: @colorTextDefault;
+}
+
 div.contacts div.contact > img {
-  width: 60px;
-  border: 4px solid white;
-  border-radius: 8px;
+  width: 80px;
+  height: 80px;
   margin-right: 8px;
   float: left;
 }
@@ -55,16 +76,10 @@ div.contacts div.notification-periods {
 }
 
 h3.tinystatesummary {
-    line-height: 2em;
-    font-size: 1em;
-    font-weight: bold;
-    padding-left: 1em;
-    background-color: #555;
-    color: white;
-    border: none;
-    border-radius: 0.2em;
-    -moz-border-radius: 0.2em;
-    -webkit-border-radius: 0.2em;
+  line-height: 2em;
+  font-size: 0.95em;
+  margin-right: 1em;
+  border-bottom: 2px solid @colorPetrol;
 }
 
 h3.tinystatesummary a {
@@ -79,15 +94,13 @@ h3.tinystatesummary a:hover {
 
 /* State badges */
 span.state {
-    font-size: 0.8em;
+    font-size: 1em;
+    font-weight: 700;
     color: white;
     font-weight: bold;
     padding: 1px 2px;
     margin-right: 5px;
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border: 2px solid transparent;
+
 }
 
 span.state.active {

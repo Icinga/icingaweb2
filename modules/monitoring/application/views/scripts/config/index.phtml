@@ -1,12 +1,12 @@
 <div class="controls">
   <?= $tabs; ?>
+  <h1><?= $this->translate('Monitoring Backends') ?></h1>
 </div>
 
 <div class="content" data-base-target="_next">
-  <h1><?= $this->translate('Monitoring Backends') ?></h1>
   <p>
     <a href="<?= $this->href('/monitoring/config/createbackend'); ?>">
-      <?= $this->icon('create.png'); ?> <?= $this->translate('Create New Monitoring Backend'); ?>
+      <?= $this->icon('plus'); ?> <?= $this->translate('Create New Monitoring Backend'); ?>
     </a>
   </p>
   <table class="action">
@@ -19,7 +19,7 @@
       <tr>
         <td>
           <a href="<?= $this->href('/monitoring/config/editbackend', array('backend' => $backendName)); ?>">
-            <?= $this->icon('edit.png'); ?> <?= $this->escape($backendName); ?>
+            <?= $this->icon('edit'); ?> <?= $this->escape($backendName); ?>
           </a>
           <small>(<?= sprintf(
             $this->translate('Type: %s'),
@@ -28,7 +28,7 @@
         </td>
         <td>
           <a href="<?= $this->href('/monitoring/config/removebackend', array('backend' => $backendName)); ?>">
-            <?= $this->icon('remove.png'); ?>
+            <?= $this->icon('minus'); ?>
           </a>
         </td>
       </tr>
@@ -38,7 +38,7 @@
   <h1><?= $this->translate('Monitoring Instances') ?></h1>
   <p>
     <a href="<?= $this->href('/monitoring/config/createinstance'); ?>">
-      <?= $this->icon('create.png'); ?> <?= $this->translate('Create New Instance'); ?>
+      <?= $this->icon('plus'); ?> <?= $this->translate('Create New Instance'); ?>
     </a>
   </p>
   <table class="action">
@@ -51,7 +51,7 @@
       <tr>
         <td>
           <a href="<?= $this->href('/monitoring/config/editinstance', array('instance' => $instanceName)); ?>">
-            <?= $this->icon('edit.png'); ?> <?= $this->escape($instanceName); ?>
+            <?= $this->icon('edit'); ?> <?= $this->escape($instanceName); ?>
           </a>
           <small>(<?= sprintf(
             $this->translate('Type: %s'),
@@ -60,7 +60,7 @@
         </td>
         <td>
           <a href="<?= $this->href('/monitoring/config/removeinstance', array('instance' => $instanceName)); ?>">
-            <?= $this->icon('remove.png'); ?>
+            <?= $this->icon('minus'); ?>
           </a>
         </td>
       </tr>

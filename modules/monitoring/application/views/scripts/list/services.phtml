@@ -70,36 +70,36 @@ foreach ($services as $service):
         <?= $this->perfdata($service->service_perfdata, true, true) ?>
 
         <?php if (!$service->service_handled && $service->service_state > 0): ?>
-        <?= $this->icon('unhandled.png', $this->translate('Unhandled')) ?>
+        <?= $this->icon('flash', $this->translate('Unhandled')) ?>
         <?php endif ?>
 
         <?php if ($service->service_acknowledged && !$service->service_in_downtime): ?>
-        <?= $this->icon('acknowledgement.png', $this->translate('Acknowledged') . (
+        <?= $this->icon('ok', $this->translate('Acknowledged') . (
             $service->service_last_ack ? ': ' . $service->service_last_ack : ''
         )) ?>
         <?php endif ?>
 
         <?php if ($service->service_is_flapping): ?>
-        <?= $this->icon('flapping.png', $this->translate('Flapping')) ?>
+        <?= $this->icon('flapping', $this->translate('Flapping')) ?>
         <?php endif ?>
 
         <?php if (!$service->service_notifications_enabled): ?>
-        <?= $this->icon('notification_disabled.png', $this->translate('Notifications Disabled')) ?>
+        <?= $this->icon('bell-off-empty', $this->translate('Notifications Disabled')) ?>
         <?php endif ?>
 
         <?php if ($service->service_in_downtime): ?>
-        <?= $this->icon('in_downtime.png', $this->translate('In Downtime')) ?>
+        <?= $this->icon('plug', $this->translate('In Downtime')) ?>
         <?php endif ?>
 
         <?php if (isset($service->service_last_comment) && $service->service_last_comment !== null): ?>
-        <?= $this->icon('comment.png', $this->translate('Comment: ') . $service->service_last_comment) ?>
+        <?= $this->icon('comment', $this->translate('Comment: ') . $service->service_last_comment) ?>
         <?php endif ?>
 
         <?php if (!$service->service_active_checks_enabled): ?>
           <?php if (!$service->service_passive_checks_enabled): ?>
-            <?= $this->icon('active_passive_checks_disabled.png', $this->translate('Active And Passive Checks Disabled')) ?>
+            <?= $this->icon('eye-off', $this->translate('Active And Passive Checks Disabled')) ?>
           <?php else: ?>
-            <?= $this->icon('active_checks_disabled.png', $this->translate('Active Checks Disabled')) ?>
+            <?= $this->icon('eye-off', $this->translate('Active Checks Disabled')) ?>
           <?php endif ?>
         <?php endif ?>
 

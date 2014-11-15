@@ -36,9 +36,9 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
           ($prevYAxisPage - 1) * $yAxisPages->itemCountPerPage + 1,
           $prevYAxisPage * $yAxisPages->itemCountPerPage,
           $yAxisPages->totalItemCount
-        ); ?>"><?= $this->icon('up_petrol.png'); ?></a>
+        ); ?>"><?= $this->icon('up-open'); ?></a>
       <?php else: ?>
-        <?= $this->icon('up.png'); ?>
+        <?= $this->icon('up-open'); ?>
       <?php endif ?>
       </td>
       <td>&nbsp;</td>
@@ -54,9 +54,9 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
           ($prevXAxisPage - 1) * $xAxisPages->itemCountPerPage + 1,
           $prevXAxisPage * $xAxisPages->itemCountPerPage,
           $xAxisPages->totalItemCount
-        ); ?>"><?= $this->icon('prev_petrol.png'); ?></a>
+        ); ?>"><?= $this->icon('left-open'); ?></a>
       <?php else: ?>
-        <?= $this->icon('prev.png'); ?>
+        <?= $this->icon('left-open'); ?>
       <?php endif ?>
       </td>
       <td>&nbsp;</td>
@@ -70,9 +70,9 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
           $currentXAxisPage * $xAxisPages->itemCountPerPage + 1,
           $nextXAxisPage === $xAxisPages->last ? $xAxisPages->totalItemCount : $nextXAxisPage * $xAxisPages->itemCountPerPage,
           $xAxisPages->totalItemCount
-        ); ?>"><?= $this->icon('next_petrol.png'); ?></a>
+        ); ?>"><?= $this->icon('right-open'); ?></a>
       <?php else: ?>
-        <?= $this->icon('next.png'); ?>
+        <?= $this->icon('right-open'); ?>
       <?php endif ?>
       </td>
     </tr>
@@ -88,9 +88,9 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
           $currentYAxisPage * $yAxisPages->itemCountPerPage + 1,
           $nextYAxisPage === $yAxisPages->last ? $yAxisPages->totalItemCount : $nextYAxisPage * $yAxisPages->itemCountPerPage,
           $yAxisPages->totalItemCount
-        ); ?>"><?= $this->icon('down_petrol.png'); ?></a>
+        ); ?>"><?= $this->icon('down-open'); ?></a>
       <?php else: ?>
-        <?= $this->icon('down.png'); ?>
+        <?= $this->icon('down-open'); ?>
       <?php endif ?>
       </td>
       <td>&nbsp;</td>

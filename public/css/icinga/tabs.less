@@ -2,12 +2,12 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 ul.tabs {
-  margin: 0;
   padding: 1em 0 0 0;
   list-style-type: inside;
 }
 
 .controls ul.tabs {
+  margin-left: 0em;
   margin-top: -3.6em;
   height: 2.6em;
   overflow: hidden;
@@ -33,19 +33,17 @@ ul.tabs li a {
 }
 
 ul.tabs > li > a {
-  border-radius: 3px 3px 0 0;
-  -moz-border-radius: 3px 3px 0 0;
-  -webkit-border-radius: 3px 3px 0 0;
+  color: white;
 }
 
 ul.tabs > li > a:focus {
-  color: #eee;
-  text-shadow: 1px 1px 1px #ddd;
+  color: @colorTextDefault;
+  text-shadow: none;
 }
 
 ul.tabs > li.active > a:focus {
-  text-shadow: 1px 1px 2px #555;
-  color: #555;
+  text-shadow: none;
+  color: @colorTextDefault;
 }
 
 ul.tabs li.dropdown > a{
@@ -54,7 +52,7 @@ ul.tabs li.dropdown > a{
 
 ul.tabs li.active a, ul.tabs li.dropdown:hover a, ul.tabs li.dropdown.hover a {
   background-color: white;
-  color: #333;
+  color: black;
 }
 
 .impact ul.tabs li.active a, .impact ul.tabs li.dropdown:hover, .impact ul.tabs li.dropdown.hover a {
@@ -72,11 +70,11 @@ ul.tabs li a:hover {
 ul.dropdown-menu {
   margin: 0;
   padding: 0;
-  background-color: #555;
+  background-color: #eee;
   position: absolute;
   overflow: hidden;
   z-index: 1000;
-  border: 1px solid #555;
+  border: 1px solid #d9d9d9;
   border-top: none;
   margin-left: -1px;
 }
@@ -109,8 +107,8 @@ ul.tabs ul.dropdown-menu {
 }
 
 ul.tabs ul.dropdown-menu li a {
-  color: #555;
-  margin: 0;
+  color: @colorTextDarkDefault;
+  margin: 0em;
 }
 
 ul.tabs ul.dropdown-menu li a:focus {
@@ -124,7 +122,7 @@ ul.tabs ul.dropdown-menu li a:hover, ul.tabs ul.dropdown-menu li a:focus {
 
 ul.tabs li.dropdown:hover a {
   text-decoration: none;
-  color: #555;
+  color: @colorTextDarkDefault;
 }
 
 li.dropdown:hover ul.dropdown-menu, li.dropdown.hover ul.dropdown-menu {

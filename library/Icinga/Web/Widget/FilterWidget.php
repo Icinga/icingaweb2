@@ -88,7 +88,7 @@ class FilterWidget extends AbstractWidget
         $editorUrl->setParam('modifyFilter', true);
         if  ($this->filter->isEmpty()) {
             $title = t('Filter this list');
-            $txt = $view->icon('create.png');
+            $txt = $view->icon('plus');
             $remove = '';
         } else {
             $txt = t('Filtered');
@@ -98,7 +98,7 @@ class FilterWidget extends AbstractWidget
                 . '" title="'
                 . t('Remove this filter')
                 . '">'
-                . $view->icon('remove.png')
+                . $view->icon('cancel')
                 . '</a>';
         }
         $filter = $this->filter->isEmpty() ? '' : ': ' . $this->filter;

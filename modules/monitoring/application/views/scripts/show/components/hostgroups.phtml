@@ -11,7 +11,7 @@ foreach ($object->hostgroups as $name => $alias) {
 printf(
     "<tr><th>%s</th><td>%s %s</td></tr>\n",
     $this->translate('Hostgroups'),
-    $this->img('img/icons/hostgroup_petrol.png'),
+    $this->icon('host'),
     implode(', ', $list)
 );
 

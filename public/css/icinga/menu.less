@@ -25,16 +25,12 @@
 }
 
 #menu li {
-  margin-left: 0.5em;
+  margin-left: 0.0em;
 }
-
-#menu > ul > li {
-  border-bottom: 2em solid #888;
-}
-
 
 #menu > ul > li > ul {
   display: none;
+  padding-left: 6px;
 }
 
 .no-js #menu > ul > li > ul {
@@ -47,30 +43,31 @@
 
 #menu > ul > li.active {
   background-color: white;
-  padding-left: 0.5em;
+  padding-left: 0.0em;
   margin-left: 0;
   margin-right: 0;
 }
 
 #menu > ul > li > a {
-  text-shadow: #555 -1px 1px 0px;
+  font-size: 0.9em;
+  text-shadow: none;
 }
 
 #menu > ul > li.active > a {
-  color: #121212;
+  color: @colorTextDefault;
   text-shadow: none;
 }
 
 #menu > ul > li.active li.active a {
-  color: #121212;
+  color: @colorPetrol;
 }
 
 #menu > ul > li.active li a:focus {
-  color: #121212;
+  color: @colorTextDefault;
 }
 
 #menu > ul > li > a:focus {
-  color: #121212;
+  color: @colorTextDefault;
   text-shadow: none;
 }
 
@@ -79,23 +76,22 @@
 }
 
 #menu > ul > li {
-  border-bottom: 1px solid #888;
+  border-bottom: 1px solid #d9d9d9;
 }
 
 #menu > ul > li li {
   font-size: 0.8em;
-  padding-left: 1.875em;
+  padding-left: 1.6em;
 }
-
 
 /* Collapsed menu item color */
 #menu > ul > li > a {
-  color: #f5f5f5;
+  color: @colorTextDefault;
 }
 
 /* Sub item color */
 #menu .active ul li a {
-  color: #a6a6a6;
+  color: @colorTextDefault;
 }
 
 #menu ul {
@@ -105,7 +101,7 @@
 
 #menu ul li a {
   display: block;
-  line-height: 2.5em;
+  line-height: 2.2em;
   padding-left: 0.7em;
   text-decoration: none;
   overflow: hidden;
@@ -125,39 +121,41 @@
 }
 
 #menu > ul > li {
-  margin: 0 0 0 0.5em;
+  margin-left: 5px;
 }
 
 #menu > ul > li.active {
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
+  border-left: solid 5px @colorPetrol;
 }
 
 /* BEGIN OF Hoverable menu */
 
 #menu li.hover {
   width: 26em;
-  padding-left: 0.5em;
-  margin-left: 0;
-  margin-right: 0;
+  padding-left: 0.0em;
+  margin-left: 5px;
+  margin-right: 5;
   position: relative;
 }
 
 #menu li.hover > ul {
   position: absolute;
   display: block;
-  left: 13em;
+  left: 11.5em;
   right: 0;
   top: -0.5em;
   padding-top: 1em;
+  padding-left: 1em;
   padding-bottom: 0.5em;
   height: auto;
-  background-color: #333;
+  background-color: #222222;
 }
 
 #menu li.hover > a {
-  color: white;
+  color: black;
   overflow: visible;
 }
 
@@ -172,7 +170,7 @@
 }
 
 #menu li.hover > ul a:focus {
-  text-shadow: 1px 1px 0 #ddd;
+  text-shadow: none;
 }
 
 #menu li.hover > ul > li.active > a {
@@ -212,21 +210,21 @@
 }
 
 #menu input.search {
+  font-size: 0.9em;
   margin: 0;
-  padding: 0 0.5em 0 3em;
+  padding: 0 0.5em 0 2.8em;
   border: none;
   width: 100%;
   border-radius: 0;
-  height: 2.5em;
+  height: 2.2em;
   display: block;
   outline: none;
   background-color: transparent;
   background-image: url('../img/icons/search.png');
   background-repeat: no-repeat;
   background-position: 1.2em center;
-  color: #f5f5f5;
-  text-shadow: -1px 1px 0 #555555;
-  border-bottom: 1px solid #888;
+  color: @colorTextDefault;
+  border-bottom: 1px solid #d9d9d9;
 }
 
 html.ie8 #menu input.search {
@@ -234,15 +232,15 @@ html.ie8 #menu input.search {
 }
 
 #menu input.search:-ms-input-placeholder {
-  color: #f5f5f5;
+  color: @colorTextDefault;
 }
 
 #menu input.search::-webkit-input-placeholder {
-  color: #f5f5f5;
+  color: @colorTextDefault;
 }
 
 #menu input.search::-moz-placeholder {
-  color: #f5f5f5;
+  color: @colorTextDefault;
   opacity: 1;
 }
 

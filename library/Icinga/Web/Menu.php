@@ -207,12 +207,12 @@ class Menu implements RecursiveIterator
 
             $this->add(t('Dashboard'), array(
                 'url'      => 'dashboard',
-                'icon'     => 'img/icons/dashboard.png',
+                'icon'     => 'dashboard',
                 'priority' => 10
             ));
 
             $section = $this->add(t('System'), array(
-                'icon'     => 'img/icons/configuration.png',
+                'icon'     => 'conf-alt',
                 'priority' => 200
             ));
             $section->add(t('Configuration'), array(
@@ -232,7 +232,7 @@ class Menu implements RecursiveIterator
             }
 
             $section = $this->add($auth->getUser()->getUsername(), array(
-                'icon'     => 'img/icons/user.png',
+                'icon'     => 'user',
                 'priority' => 600
             ));
             $section->add(t('Preferences'), array(
