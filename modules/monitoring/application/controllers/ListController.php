@@ -145,7 +145,7 @@ class Monitoring_ListController extends Controller
             'host_max_check_attempts'
         ), $this->extraColumns()));
 
-        $this->applyFilters($query);
+        $this->filterQuery($query);
 
         $this->setupSortControl(array(
             'host_last_check'   => $this->translate('Last Check'),
@@ -308,7 +308,7 @@ class Monitoring_ListController extends Controller
         ))->order('downtime_is_in_effect', 'DESC')
           ->order('downtime_scheduled_start', 'DESC');
 
-        $this->applyFilters($query);
+        $this->filterQuery($query);
 
         $this->setupSortControl(array(
             'downtime_is_in_effect'    => $this->translate('Is In Effect'),
@@ -344,7 +344,7 @@ class Monitoring_ListController extends Controller
             'notification_start_time',
             'notification_state'
         ));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->view->notifications = $query->paginate();
         $this->setupSortControl(array(
             'notification_start_time' => $this->translate('Notification Start')
@@ -377,7 +377,7 @@ class Monitoring_ListController extends Controller
             'contact_notify_host_flapping',
             'contact_notify_host_downtime',
         ));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->view->contacts = $query->paginate();
 
         $this->setupSortControl(array(
@@ -423,7 +423,7 @@ class Monitoring_ListController extends Controller
             array('day', $form->getValue('state'))
         );
         $this->params->remove(array('objecttype', 'from', 'to', 'state', 'btn_submit'));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->view->summary = $query->getQuery()->fetchAll();
         $this->view->column = $form->getValue('state');
         $this->view->orientationBox = $orientationBox;
@@ -444,7 +444,7 @@ class Monitoring_ListController extends Controller
             'contact_email',
             'contact_pager',
         ))->order('contactgroup_alias');
-        $this->applyFilters($query);
+        $this->filterQuery($query);
 
         // Fetch and prepare all contact groups:
         $contactgroups = $query->getQuery()->fetchAll();
@@ -481,7 +481,7 @@ class Monitoring_ListController extends Controller
             'host'       => 'comment_host',
             'service'    => 'comment_service'
         ));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->view->comments = $query->paginate();
 
         $this->setupSortControl(
@@ -519,7 +519,7 @@ class Monitoring_ListController extends Controller
             'services_warning_unhandled',
             'services_pending'
         ));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->view->servicegroups = $query->paginate();
         $this->setupSortControl(array(
             'servicegroup_name' => $this->translate('Servicegroup Name')
@@ -550,7 +550,7 @@ class Monitoring_ListController extends Controller
             'services_warning_unhandled',
             'services_pending'
         ));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->view->hostgroups = $query->paginate();
         $this->setupSortControl(array(
             'hostgroup_name' => $this->translate('Hostgroup Name')
@@ -581,7 +581,7 @@ class Monitoring_ListController extends Controller
         $this->setupSortControl(array(
             'timestamp' => 'Occurence'
         ));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->view->history = $query->paginate();
     }
 
@@ -599,7 +599,7 @@ class Monitoring_ListController extends Controller
             'service_output',
             'service_handled'
         ));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->setupSortControl(array(
             'host_name'           => $this->translate('Hostname'),
             'service_description' => $this->translate('Service description')
@@ -620,6 +620,7 @@ class Monitoring_ListController extends Controller
         $query->applyFilter($editor->getFilter());
 
         $this->view->filterEditor = $editor;
+        $this->view->filter = $editor->getFilter();
 
         if ($sort = $this->params->get('sort')) {
             $query->order($sort, $this->params->get('dir'));
