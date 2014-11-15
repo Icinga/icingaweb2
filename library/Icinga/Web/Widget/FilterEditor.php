@@ -139,7 +139,7 @@ class FilterEditor extends AbstractWidget
         return $this;
     }
 
-    public function removeIndex($idx)
+    protected function removeIndex($idx)
     {
         $this->selectedIdx = $idx;
         return $this;
