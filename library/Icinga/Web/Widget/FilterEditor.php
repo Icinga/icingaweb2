@@ -337,9 +337,8 @@ class FilterEditor extends AbstractWidget
         );
     }
 
-    protected function selectSign($filter)
+    protected function selectSign(Filter $filter = null)
     {
-        $name = 'sign_' . $filter->getId();
         $signs = array(
             '='  => '=',
             '!=' => '!=',
@@ -350,9 +349,9 @@ class FilterEditor extends AbstractWidget
         );
 
         return $this->select(
-            $name,
+            $this->elementId('sign', $filter),
             $signs,
-            $filter->getSign(),
+            $filter === null ? null : $filter->getSign(),
             array('style' => 'width: 4em')
         );
     }
