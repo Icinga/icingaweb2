@@ -56,6 +56,20 @@ class FilterEditor extends AbstractWidget
         return $this->filter;
     }
 
+    public function setUrl($url)
+    {
+        $this->url = $url;
+        return $this;
+    }
+
+    protected function url()
+    {
+        if ($this->url === null) {
+            $this->url = Url::fromRequest();
+        }
+        return $this->url;
+    }
+
     protected function select($name, $list, $selected, $attributes = null)
     {
         $view = $this->view();
