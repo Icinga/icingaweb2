@@ -321,6 +321,22 @@ class FilterEditor extends AbstractWidget
         }
     }
 
+    protected function selectOperator(Filter $filter = null)
+    {
+        $ops = array(
+            'AND' => 'AND',
+            'OR'  => 'OR',
+            'NOT' => 'NOT'
+        );
+
+        return $this->select(
+            $this->elementId('operator', $filter),
+            $ops,
+            $filter === null ? null : $filter->getOperatorName(),
+            array('style' => 'width: 5em')
+        );
+    }
+
     protected function selectSign($filter)
     {
         $name = 'sign_' . $filter->getId();
