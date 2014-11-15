@@ -6,6 +6,7 @@ namespace Icinga\Application;
 
 use ErrorException;
 use Exception;
+use LogicException;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
@@ -292,11 +293,25 @@ abstract class ApplicationBootstrap
      *
      * This is usually /public for Web and EmbeddedWeb and /bin for the CLI
      *
-     * @return string
+     * @return  string
+     *
+     * @throws  LogicException If the base directory can not be detected
      */
     public function getBootstrapDirectory()
     {
-        return dirname(realpath($_SERVER['SCRIPT_FILENAME']));
+        $script = $_SERVER['SCRIPT_FILENAME'];
+        $canonical = realpath($script);
+        if ($canonical !== false) {
+            $dir = dirname($canonical);
+        } elseif (substr($script, -14) === '/webrouter.php') {
+            // If Icinga Web 2 is served using PHP's built-in webserver with our webrouter.php script, the $_SERVER
+            // variable SCRIPT_FILENAME is set to DOCUMENT_ROOT/webrouter.php which is not a valid path to
+            // realpath but DOCUMENT_ROOT here still is the bootstrapping directory
+            $dir = dirname($script);
+        } else {
+            throw new LogicException('Can\'t detected base directory');
+        }
+        return $dir;
     }
 
     /**
