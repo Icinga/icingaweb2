@@ -122,7 +122,6 @@ class FilterEditor extends AbstractWidget
             $attributes
         );
 
-        asort($list);
         foreach ($list as $k => $v) {
             $active = '';
             if ($k === $selected) {
