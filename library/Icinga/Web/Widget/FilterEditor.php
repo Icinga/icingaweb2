@@ -70,6 +70,12 @@ class FilterEditor extends AbstractWidget
         return $this->url;
     }
 
+    public function setQuery($query)
+    {
+        $this->query = $query;
+        return $this;
+    }
+
     protected function select($name, $list, $selected, $attributes = null)
     {
         $view = $this->view();
