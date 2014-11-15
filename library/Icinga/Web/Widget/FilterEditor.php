@@ -243,4 +243,13 @@ class FilterEditor extends AbstractWidget
               . '</li></ul><br /><input type="submit" name="submit" value="Apply" />'
               . '</form>';
     }
+
+    public function __toString()
+    {
+        try {
+            return $this->render();
+        } catch (Exception $e) {
+            return 'ERROR in FilterEditor: ' . $e->getMessage();
+        }
+    }
 }
