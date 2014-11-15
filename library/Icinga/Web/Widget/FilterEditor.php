@@ -42,9 +42,11 @@ class FilterEditor extends AbstractWidget
      */
     public function __construct($props)
     {
-        $this->filter = $props['filter'];
+        if (array_key_exists('filter', $props)) {
+            $this->setFilter($props['filter']);
+        }
         if (array_key_exists('query', $props)) {
-            $this->query = $props['query'];
+            $this->setQuery($props['query']);
         }
     }
 
