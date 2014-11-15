@@ -355,9 +355,19 @@ class FilterEditor extends AbstractWidget
             array('style' => 'width: 4em')
         );
     }
-    protected function selectColumn($filter)
+
+    protected function selectColumn(Filter $filter = null)
     {
-        $name = 'column_' . $filter->getId();
+        $active = $filter === null ? null : $filter->getColumn();
+
+        if ($this->query === null) {
+            return sprintf(
+                '<input type="text" name="%s" value="%s" />',
+                $this->elementId('column', $filter),
+                $this->view()->escape($active) // Escape attribute?
+            );
+        }
+
         $cols = $this->arrayForSelect($this->query->getColumns());
         $active = $filter->getColumn();
         $seen = false;
@@ -372,19 +382,7 @@ class FilterEditor extends AbstractWidget
             $cols[$active] = str_replace('_', ' ', ucfirst(ltrim($active, '_')));
         }
 
-        if ($this->query === null) {
-            return sprintf(
-                '<input type="text" name="%s" value="%s" />',
-                $name,
-                $filter->getColumn()
-            );
-        } else {
-            return $this->select(
-                $name,
-                $cols,
-                $active
-            ); 
-        }
+        return $this->select($this->elementId('column', $filter), $cols, $active); 
     }
 
     public function renderSearch()
