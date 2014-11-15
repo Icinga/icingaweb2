@@ -630,58 +630,6 @@ class Monitoring_ListController extends Controller
         return $query;
     }
 
-    protected function applyFilters($query)
-    {
-        $params = clone $this->params;
-        $request = $this->getRequest();
-
-        $limit   = $params->shift('limit');
-        $sort    = $params->shift('sort');
-        $dir     = $params->shift('dir');
-        $page    = $params->shift('page');
-        $format  = $params->shift('format');
-        $view    = $params->shift('view');
-        $backend = $params->shift('backend');
-        $modifyFilter = $params->shift('modifyFilter', false);
-        $removeFilter = $params->shift('removeFilter', false);
-
-        $filter = Filter::fromQueryString((string) $params);
-        $this->view->filterPreview = Widget::create('filterWidget', $filter);
-
-        if ($removeFilter) {
-            $redirect = $this->url->without('page');
-            if ($filter->getById($removeFilter)->isRootNode()) {
-                $redirect->setQueryString('');
-            } else {
-                $filter->removeId($removeFilter);
-                $redirect->setQueryString($filter->toQueryString())
-                    ->getParams()->add('modifyFilter');
-            }
-            $this->redirectNow($redirect);
-        }
-
-        if ($modifyFilter) {
-            if ($this->_request->isPost()) {
-                $filter = $filter->applyChanges($this->_request->getPost());
-                $this->redirectNow($this->url->without('page')->setQueryString($filter->toQueryString()));
-            }
-            $this->view->filterEditor = Widget::create('filterEditor', array(
-                'filter' => $filter,
-                'query'  => $query
-            ));
-        }
-        if (! $filter->isEmpty()) {
-            $query->applyFilter($filter);
-        }
-        $this->view->filter = $filter;
-        if ($sort) {
-            $query->order($sort, $dir);
-        }
-        $this->applyRestrictions($query);
-        $this->handleFormatRequest($query);
-        return $query;
-    }
-
     /**
      * Apply current user's `monitoring/filter' restrictions on the given data view
      */
