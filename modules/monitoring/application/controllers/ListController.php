@@ -610,6 +610,25 @@ class Monitoring_ListController extends Controller
         $this->view->verticalPaginator   = $pivot->paginateYAxis();
     }
 
+    protected function filterQuery($query)
+    {
+        $editor = Widget::create('filterEditor')
+            ->setQuery($query)
+            ->preserveParams('limit', 'sort', 'dir', 'format', 'view', 'backend')
+            ->ignoreParams('page')
+            ->handleRequest($this->getRequest());
+        $query->applyFilter($editor->getFilter());
+
+        $this->view->filterEditor = $editor;
+
+        if ($sort = $this->params->get('sort')) {
+            $query->order($sort, $this->params->get('dir'));
+        }
+        $this->applyRestrictions($query);
+        $this->handleFormatRequest($query);
+        return $query;
+    }
+
     protected function applyFilters($query)
     {
         $params = clone $this->params;
