@@ -24,6 +24,12 @@ class FilterEditor extends AbstractWidget
 
     protected $query;
 
+    protected $url;
+
+    protected $preserveParams = array();
+
+    protected $ignoreParams = array();
+
     /**
      * @var string
      */
@@ -73,6 +79,18 @@ class FilterEditor extends AbstractWidget
     public function setQuery($query)
     {
         $this->query = $query;
+        return $this;
+    }
+
+    public function ignoreParams()
+    {
+        $this->ignoreParams = func_get_args();
+        return $this;
+    }
+
+    public function preserveParams()
+    {
+        $this->preserveParams = func_get_args();
         return $this;
     }
 
