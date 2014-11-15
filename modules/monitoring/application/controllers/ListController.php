@@ -406,7 +406,7 @@ class Monitoring_ListController extends Controller
         $this->view->form = $form;
 
         $orientation = $this->params->shift('vertical', 0) ? 'vertical' : 'horizontal';
-
+/*
         $orientationBox = new SelectBox(
             'orientation',
             array(
@@ -417,7 +417,7 @@ class Monitoring_ListController extends Controller
             'horizontal'
         );
         $orientationBox->applyRequest($this->getRequest());
-
+*/
         $query = $this->backend->select()->from(
             'eventgrid',
             array('day', $form->getValue('state'))
@@ -426,7 +426,7 @@ class Monitoring_ListController extends Controller
         $this->filterQuery($query);
         $this->view->summary = $query->getQuery()->fetchAll();
         $this->view->column = $form->getValue('state');
-        $this->view->orientationBox = $orientationBox;
+//        $this->view->orientationBox = $orientationBox;
         $this->view->orientation = $orientation;
     }
 
@@ -615,7 +615,7 @@ class Monitoring_ListController extends Controller
         $editor = Widget::create('filterEditor')
             ->setQuery($query)
             ->preserveParams('limit', 'sort', 'dir', 'format', 'view', 'backend')
-            ->ignoreParams('page')
+            ->ignoreParams('page', 'objecttype', 'from', 'to', 'state', 'btn_submit')
             ->handleRequest($this->getRequest());
         $query->applyFilter($editor->getFilter());
 
