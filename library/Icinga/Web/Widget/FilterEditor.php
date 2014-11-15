@@ -284,8 +284,38 @@ class FilterEditor extends AbstractWidget
         }
     }
 
+    public function renderSearch()
+    {
+        $html = ' <form method="post" class="inline" action="'
+              . $this->url()
+              . '"><input type="text" name="q" style="width: 8em" class="search" value="" placeholder="'
+              . t('Search...')
+              . '" /></form>';
+
+        if  ($this->filter->isEmpty()) {
+            $title = t('Filter this list');
+        } else {
+            $title = t('Modify this filter');
+            if (! $this->filter->isEmpty()) {
+                $title .= ': ' . $this->filter;
+            }
+        }
+        return $html
+            . '<a href="'
+            . $this->url()->with('modifyFilter', true)
+            . '" title="'
+            . $title
+            . '">'
+            . '<i class="icon-filter"></i>'
+            . '</a>';
+    }
+
     public function render()
     {
+        if (! $this->url()->getParam('modifyFilter')) {
+            return $this->renderSearch() . $this->shorten($this->filter, 50);
+        }
+
         return '<h3>'
               . t('Modify this filter')
               . '</h3>'
@@ -296,6 +326,14 @@ class FilterEditor extends AbstractWidget
               . $this->renderFilter($this->filter)
               . '</li></ul><br /><input type="submit" name="submit" value="Apply" />'
               . '</form>';
+    }
+
+    protected function shorten($string, $length)
+    {
+        if (strlen($string) > $length) {
+            return substr($string, 0, $length) . '...';
+        }
+        return $string;
     }
 
     public function __toString()
