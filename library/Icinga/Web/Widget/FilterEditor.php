@@ -110,7 +110,7 @@ class FilterEditor extends AbstractWidget
 
     public function handleRequest($request)
     {
-        $this->setUrl($request->getUrl());
+        $this->setUrl($request->getUrl()->without($this->ignoreParams));
         $params = $this->url()->getParams();
 
         $preserve = array();
