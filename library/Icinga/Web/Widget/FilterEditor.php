@@ -204,86 +204,77 @@ class FilterEditor extends AbstractWidget
 
     protected function renderFilter($filter, $level = 0)
     {
-        $html = '';
-        $url = Url::fromRequest();
-
-        $view = $this->view();
-        $idx = $filter->getId();
-        $markUrl = clone($url);
-        $markUrl->setParam('fIdx', $idx);
-
-        $removeUrl = clone $url;
-        $removeUrl->setParam('removeFilter', $idx);
-        $removeLink = ' <a href="' . $removeUrl . '" title="'
-             . $view->escape(t('Click to remove this part of your filter'))
-             . '">' . $view->icon('cancel') .  '</a>';
-
-        /*
-        // Temporarilly removed, not implemented yet
-        $addUrl = clone($url);
-        $addUrl->setParam('addToId', $idx);
-        $addLink = ' <a href="' . $addUrl . '" title="'
-             . $view->escape(t('Click to add another operator below this one'))
-             . '">' . t('Operator') .  ' (&, !, |)</a>';
-        $addLink .= ' <a href="' . $addUrl . '" title="'
-             . $view->escape(t('Click to add a filter expression to this operator'))
-             . '">' . t('Expression') .  ' (=, &lt;, &gt;, &lt;=, &gt;=)</a>';
-        */
-        $selectedIndex = ($idx === $this->selectedIdx ? ' -&lt;--' : '');
-        $selectIndex = ' <a href="' . $markUrl . '">o</a>';
+        if ($level === 0 && $filter->isChain() && $filter->isEmpty()) {
+            return '<ul class="datafilter"><li style="background-color: #ffb">' . $this->renderNewFilter() . '</li></ul>';
+        }
 
         if ($filter instanceof FilterChain) {
-            $parts = array();
-            $i = 0;
+            return $this->renderFilterChain($filter, $level);
+        } elseif ($filter instanceof FilterExpression) {
+            return $this->renderFilterExpression($filter);
+        } else {
+            throw new ProgrammingError('Got a Filter being neither expression nor chain');
+        }
+    }
 
-            foreach ($filter->filters() as $f) {
-                $i++;
-                $parts[] = $this->renderFilter($f, $level + 1);
-            }
+    protected function renderFilterChain(FilterChain $filter, $level)
+    {
+        $html = '<span class="handle"> </span>'
+              . $this->selectOperator($filter)
+              . $this->removeLink($filter)
+              . ($filter->count() === 1 ? $this->stripLink($filter) : '')
+              . $this->addLink($filter);
 
-            $op = $this->select(
-                'operator_' . $filter->getId(),
-                array(
-                    'OR'  => 'OR',
-                    'AND' => 'AND',
-                    'NOT' => 'NOT'
-                ),
-                $filter->getOperatorName(),
-                array('style' => 'width: 5em')
-            ) . $removeLink; // Disabled: . ' ' . t('Add') . ': ' . $addLink;
-            $html .= '<span class="handle"> </span>';
-
-            if ($level === 0) {
-                $html .= $op;
-                 if (! empty($parts)) {
-                     $html .= '<ul class="datafilter"><li>'
-                         . implode('</li><li>', $parts)
-                         . '</li></ul>';
-                 }
-            } else {
-                $html .= $op . "<ul>\n <li>\n" . implode("</li>\n <li>", $parts) . "</li>\n</ul>\n";
-            }
+        if ($filter->isEmpty() && ! $this->addTo) {
             return $html;
         }
 
-        if ($filter instanceof FilterExpression) {
-            $u = $url->without($filter->getColumn());
-        } else {
-           throw new ProgrammingError('Got a Filter being neither expression nor chain');
+        $parts = array();
+        foreach ($filter->filters() as $f) {
+            $parts[] = '<li>' . $this->renderFilter($f, $level + 1) . '</li>';
         }
-        $value = $filter->getExpression();
-        if (is_array($value)) {
-            $value = '(' . implode('|', $value) . ')';
-        }
-        $html .=  $this->selectColumn($filter) . ' '
-               . $this->selectSign($filter)
-               . ' <input type="text" name="'
-               . 'value_' . $idx
-               . '" value="'
-               . $value
-               . '" /> ' . $removeLink;
 
+        if ($this->addTo && $this->addTo == $filter->getId()) {
+            $parts[] = '<li style="background: #ffb">' . $this->renderNewFilter() .$this->cancelLink(). '</li>';
+        }
+
+        $class = $level === 0 ? ' class="datafilter"' : '';
+        $html .= sprintf(
+            "<ul%s>\n%s</ul>\n",
+            $class,
+            implode("", $parts)
+        );
         return $html;
+    }
+
+    protected function renderFilterExpression(FilterExpression $filter)
+    {
+        if ($this->addTo && $this->addTo === $filter->getId()) {
+            return 
+                   preg_replace(
+            '/ class="autosubmit"/',
+            ' class="autofocus"',
+        $this->selectOperator()
+                )
+                  . '<ul><li>'
+                  . $this->selectColumn($filter)
+                  . $this->selectSign($filter)
+                  . $this->text($filter)
+                  . $this->removeLink($filter)
+                  . $this->addLink($filter)
+                  . '</li><li style="background-color: #ffb">'
+                  . $this->renderNewFilter() .$this->cancelLink()
+                  . '</li></ul>'
+                  ;
+        } else {
+            return $this->selectColumn($filter)
+                 . $this->selectSign($filter)
+                 . $this->text($filter)
+                 . $this->removeLink($filter)
+                 . $this->addLink($filter)
+                 ;
+
+        }
     }
 
     protected function text(Filter $filter = null)
