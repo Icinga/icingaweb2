@@ -141,7 +141,21 @@ abstract class MonitoredObject
     public function fetch()
     {
         $this->properties = $this->getDataView()->getQuery()->fetchRow();
-        return $this->properties !== false;
+        if ($this->properties === false) {
+            return false;
+        }
+        if (isset($this->properties->host_contacts)) {
+            $this->contacts = array();
+            foreach (preg_split('~,~', $this->properties->host_contacts) as $contact) {
+                $this->contacts[] = (object) array(
+                    'contact_name'  => $contact,
+                    'contact_alias' => $contact,
+                    'contact_email' => null,
+                    'contact_pager' => null,
+                );
+            }
+        }
+        return true;
     }
 
     /**
