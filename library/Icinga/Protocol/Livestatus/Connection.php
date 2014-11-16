@@ -257,6 +257,20 @@ class Connection
         return true;
     }
 
+    /**
+     * Raise an exception showing given message string and last socket error
+     *
+     * TODO: Find a better exception type for such errors
+     *
+     * @throws IcingaException
+     */
+    protected function socketError($msg)
+    {
+        throw new IcingaException(
+            $msg . ': ' . socket_strerror(socket_last_error($this->connection))
+        );
+    }
+
     protected function assertPhpExtensionLoaded($name)
     {
         if (! extension_loaded($name)) {
