@@ -33,7 +33,6 @@ class EmbeddedWeb extends ApplicationBootstrap
             ->setupErrorHandling()
             ->setupTimezone()
             ->setupModuleManager()
-            ->loadCoreModules()
             ->loadEnabledModules();
     }
 }

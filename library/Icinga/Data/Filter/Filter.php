@@ -22,7 +22,17 @@ abstract class Filter
         return $this;
     }
 
-    abstract function toQueryString();
+    abstract public function isExpression();
+
+    abstract public function isChain();
+
+    abstract public function isEmpty();
+
+    abstract public function toQueryString();
+
+    abstract public function andFilter(Filter $filter);
+
+    abstract public function orFilter(Filter $filter);
 
     public function getUrlParams()
     {
@@ -96,7 +106,7 @@ abstract class Filter
 
     public function getParentId()
     {
-        if ($self->isRootNode()) {
+        if ($this->isRootNode()) {
             throw new ProgrammingError('Filter root nodes have no parent');
         }
         return substr($this->id, 0, strrpos($this->id, '-'));

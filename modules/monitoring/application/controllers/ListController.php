@@ -46,7 +46,6 @@ class Monitoring_ListController extends Controller
         $url = clone($this->url);
 
         if ($this->getRequest()->isPost()) {
-
             if ($request->getPost('sort')) {
                 $url->setParam('sort', $request->getPost('sort'));
                 if ($request->getPost('dir')) {
@@ -55,32 +54,6 @@ class Monitoring_ListController extends Controller
                     $url->removeParam('dir');
                 }
                 return $url;
-            }
-
-            $q = $this->getRequest()->getPost('q');
-            if ($q) {
-                list($k, $v) = preg_split('/=/', $q);
-                $url->addParams(array($k => $v));
-                return $url;
-            }
-        } else {
-            $q = $url->shift('q');
-            if ($q !== null) {
-                $action = $this->_request->getActionName();
-                switch($action) {
-                    case 'services':
-                        $this->params->remove('q')->set('service_description', '*' . $q . '*');
-                        break;
-                    case 'hosts':
-                        $this->params->remove('q')->set('host_name', '*' . $q . '*');
-                        break;
-                    case 'hostgroups':
-                        $this->params->remove('q')->set('hostgroup', '*' . $q . '*');
-                        break;
-                    case 'servicegroups':
-                        $this->params->remove('q')->set('servicegroup', '*' . $q . '*');
-                        break;
-                }
             }
         }
         return false;
@@ -145,7 +118,7 @@ class Monitoring_ListController extends Controller
             'host_max_check_attempts'
         ), $this->extraColumns()));
 
-        $this->applyFilters($query);
+        $this->filterQuery($query);
 
         $this->setupSortControl(array(
             'host_last_check'   => $this->translate('Last Check'),
@@ -235,7 +208,7 @@ class Monitoring_ListController extends Controller
         ), $this->extraColumns());
         $query = $this->backend->select()->from('serviceStatus', $columns);
 
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->setupSortControl(array(
             'service_last_check'    => $this->translate('Last Service Check'),
             'service_severity'      => $this->translate('Severity'),
@@ -308,7 +281,7 @@ class Monitoring_ListController extends Controller
         ))->order('downtime_is_in_effect', 'DESC')
           ->order('downtime_scheduled_start', 'DESC');
 
-        $this->applyFilters($query);
+        $this->filterQuery($query);
 
         $this->setupSortControl(array(
             'downtime_is_in_effect'    => $this->translate('Is In Effect'),
@@ -344,7 +317,7 @@ class Monitoring_ListController extends Controller
             'notification_start_time',
             'notification_state'
         ));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->view->notifications = $query->paginate();
         $this->setupSortControl(array(
             'notification_start_time' => $this->translate('Notification Start')
@@ -377,7 +350,7 @@ class Monitoring_ListController extends Controller
             'contact_notify_host_flapping',
             'contact_notify_host_downtime',
         ));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->view->contacts = $query->paginate();
 
         $this->setupSortControl(array(
@@ -406,7 +379,7 @@ class Monitoring_ListController extends Controller
         $this->view->form = $form;
 
         $orientation = $this->params->shift('vertical', 0) ? 'vertical' : 'horizontal';
-
+/*
         $orientationBox = new SelectBox(
             'orientation',
             array(
@@ -417,16 +390,16 @@ class Monitoring_ListController extends Controller
             'horizontal'
         );
         $orientationBox->applyRequest($this->getRequest());
-
+*/
         $query = $this->backend->select()->from(
             'eventgrid',
             array('day', $form->getValue('state'))
         );
         $this->params->remove(array('objecttype', 'from', 'to', 'state', 'btn_submit'));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->view->summary = $query->getQuery()->fetchAll();
         $this->view->column = $form->getValue('state');
-        $this->view->orientationBox = $orientationBox;
+//        $this->view->orientationBox = $orientationBox;
         $this->view->orientation = $orientation;
     }
 
@@ -444,7 +417,7 @@ class Monitoring_ListController extends Controller
             'contact_email',
             'contact_pager',
         ))->order('contactgroup_alias');
-        $this->applyFilters($query);
+        $this->filterQuery($query);
 
         // Fetch and prepare all contact groups:
         $contactgroups = $query->getQuery()->fetchAll();
@@ -481,7 +454,7 @@ class Monitoring_ListController extends Controller
             'host'       => 'comment_host',
             'service'    => 'comment_service'
         ));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->view->comments = $query->paginate();
 
         $this->setupSortControl(
@@ -519,7 +492,7 @@ class Monitoring_ListController extends Controller
             'services_warning_unhandled',
             'services_pending'
         ));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->view->servicegroups = $query->paginate();
         $this->setupSortControl(array(
             'servicegroup_name' => $this->translate('Servicegroup Name')
@@ -550,7 +523,7 @@ class Monitoring_ListController extends Controller
             'services_warning_unhandled',
             'services_pending'
         ));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->view->hostgroups = $query->paginate();
         $this->setupSortControl(array(
             'hostgroup_name' => $this->translate('Hostgroup Name')
@@ -581,7 +554,7 @@ class Monitoring_ListController extends Controller
         $this->setupSortControl(array(
             'timestamp' => 'Occurence'
         ));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->view->history = $query->paginate();
     }
 
@@ -599,7 +572,7 @@ class Monitoring_ListController extends Controller
             'service_output',
             'service_handled'
         ));
-        $this->applyFilters($query);
+        $this->filterQuery($query);
         $this->setupSortControl(array(
             'host_name'           => $this->translate('Hostname'),
             'service_description' => $this->translate('Service description')
@@ -610,52 +583,20 @@ class Monitoring_ListController extends Controller
         $this->view->verticalPaginator   = $pivot->paginateYAxis();
     }
 
-    protected function applyFilters($query)
+    protected function filterQuery($query)
     {
-        $params = clone $this->params;
-        $request = $this->getRequest();
+        $editor = Widget::create('filterEditor')
+            ->setQuery($query)
+            ->preserveParams('limit', 'sort', 'dir', 'format', 'view', 'backend')
+            ->ignoreParams('page', 'objecttype', 'from', 'to', 'state', 'btn_submit')
+            ->handleRequest($this->getRequest());
+        $query->applyFilter($editor->getFilter());
 
-        $limit   = $params->shift('limit');
-        $sort    = $params->shift('sort');
-        $dir     = $params->shift('dir');
-        $page    = $params->shift('page');
-        $format  = $params->shift('format');
-        $view    = $params->shift('view');
-        $backend = $params->shift('backend');
-        $modifyFilter = $params->shift('modifyFilter', false);
-        $removeFilter = $params->shift('removeFilter', false);
+        $this->view->filterEditor = $editor;
+        $this->view->filter = $editor->getFilter();
 
-        $filter = Filter::fromQueryString((string) $params);
-        $this->view->filterPreview = Widget::create('filterWidget', $filter);
-
-        if ($removeFilter) {
-            $redirect = $this->url->without('page');
-            if ($filter->getById($removeFilter)->isRootNode()) {
-                $redirect->setQueryString('');
-            } else {
-                $filter->removeId($removeFilter);
-                $redirect->setQueryString($filter->toQueryString())
-                    ->getParams()->add('modifyFilter');
-            }
-            $this->redirectNow($redirect);
-        }
-
-        if ($modifyFilter) {
-            if ($this->_request->isPost()) {
-                $filter = $filter->applyChanges($this->_request->getPost());
-                $this->redirectNow($this->url->without('page')->setQueryString($filter->toQueryString()));
-            }
-            $this->view->filterEditor = Widget::create('filterEditor', array(
-                'filter' => $filter,
-                'query'  => $query
-            ));
-        }
-        if (! $filter->isEmpty()) {
-            $query->applyFilter($filter);
-        }
-        $this->view->filter = $filter;
-        if ($sort) {
-            $query->order($sort, $dir);
+        if ($sort = $this->params->get('sort')) {
+            $query->order($sort, $this->params->get('dir'));
         }
         $this->applyRestrictions($query);
         $this->handleFormatRequest($query);

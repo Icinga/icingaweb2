@@ -9,9 +9,6 @@ if ($this->compact): ?>
   <div style="margin: 1em;" class="dontprint">
     <?= $this->render('list/components/hostssummary.phtml') ?>
     <?= $this->translate('Sort by') ?> <?= $this->sortControl->render($this) ?>
-    <?php if (! $this->filterEditor): ?>
-    <?= $this->filterPreview ?>
-    <?php endif; ?>
   </div>
 
 <?= $this->widget('limiter')->setMaxLimit($this->hosts->count()) ?>

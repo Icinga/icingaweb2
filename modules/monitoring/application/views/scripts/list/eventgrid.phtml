@@ -4,18 +4,12 @@ use Icinga\Web\Widget\Chart\HistoryColorGrid;
 ?>
 
 
-<? if (!$compact): ?>
+<? if (! $compact): ?>
     <div class="controls">
         <?= $this->tabs->render($this); ?>
         <div class="fake-controls">
-            <br />
             <?= $form ?>
         </div>
-        <br />
-        <?php if (! $this->filterEditor): ?>
-            <?= $this->filterPreview ?>
-        <?php endif ?>
-        <?= $this->filterEditor ?>
     </div>
 <? endif; ?>
 
