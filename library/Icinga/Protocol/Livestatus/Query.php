@@ -160,6 +160,16 @@ class Query extends SimpleQuery
         return $lql;
     }
 
+    /**
+     * Get all available columns
+     *
+     * @return array
+     */
+    public function getAvailableColumns()
+    {
+        return $this->available_columns;
+    }
+
     protected function columnsToString()
     {
         $columns = array();
