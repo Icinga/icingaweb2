@@ -31,6 +31,8 @@ class StatusQuery extends Query
         $this->mode = $mode;
     }
 
+    protected $table = 'services';
+
     protected $available_columns = array(
         'host_name',
         'host_display_name',
