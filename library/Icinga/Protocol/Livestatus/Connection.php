@@ -76,6 +76,13 @@ class Connection
     protected $socket_type;
     protected $connection;
 
+    /**
+     * Whether the given table name is valid
+     *
+     * @param string $name table name
+     *
+     * @return bool
+     */
     public function hasTable($name)
     {
         return in_array($name, $this->available_tables);
