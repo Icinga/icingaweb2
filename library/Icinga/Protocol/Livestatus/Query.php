@@ -32,13 +32,13 @@ class Query extends SimpleQuery
         }
         return $aliases;
     }
-
+/*
     public function count()
     {
         $this->count = true;
         return $this;
     }
-
+*/
     public function __toString()
     {
         if ($this->table === null) {
