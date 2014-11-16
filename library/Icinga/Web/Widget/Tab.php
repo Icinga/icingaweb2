@@ -206,7 +206,7 @@ class Tab extends AbstractWidget
 
         if ($this->icon !== null) {
             if (strpos($this->icon, '.') === false) {
-                if (array_key_exists('class', $tagParams)) {
+                if ($tagParams && array_key_exists('class', $tagParams)) {
                     $tagParams['class'] .= ' icon-' . $this->icon;
                 } else {
                     $tagParams['class'] = 'icon-' . $this->icon;
