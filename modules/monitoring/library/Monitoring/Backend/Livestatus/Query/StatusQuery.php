@@ -8,6 +8,29 @@ use Icinga\Protocol\Livestatus\Query;
 
 class StatusQuery extends Query
 {
+    /**
+     * This mode represents whether we are in HostStatus or ServiceStatus
+     *
+     * Implemented for `distinct as workaround
+     *
+     * @TODO Subject to change, see #7344
+     *
+     * @var string
+     */
+    protected $mode;
+
+    /**
+     * Sets the mode of the current query
+     *
+     * @TODO Subject to change, see #7344
+     *
+     * @param string $mode
+     */
+    public function setMode($mode)
+    {
+        $this->mode = $mode;
+    }
+
     protected $available_columns = array(
         'host_name',
         'host_display_name',
