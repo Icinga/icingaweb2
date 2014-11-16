@@ -8,6 +8,8 @@ use Icinga\Application\Benchmark;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\SystemPermissionException;
 use Icinga\Exception\IcingaException;
+use Exception;
+use SplFixedArray;
 
 /**
  * Backend class managing handling MKI Livestatus connections
