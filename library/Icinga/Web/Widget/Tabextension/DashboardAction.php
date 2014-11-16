@@ -24,7 +24,7 @@ class DashboardAction implements Tabextension
         $tabs->addAsDropdown(
             'dashboard',
             array(
-                'icon'      => 'img/icons/dashboard.png',
+                'icon'      => 'dashboard',
                 'title'     => 'Add To Dashboard',
                 'url'       => Url::fromPath('dashboard/addurl'),
                 'urlParams' => array(
