@@ -17,6 +17,18 @@ use Exception;
 class Query extends SimpleQuery
 {
 
+    /**
+     * All available columns. To be overridden by specific query implementations
+     */
+    protected $available_columns = array();
+
+    protected $count = false;
+
+    /**
+     * Headers for columns sent to Livestatus socket
+     */
+    protected $preparedHeaders = array();
+
     public function hasColumns()
     {
         return $this->columns !== null;
@@ -79,7 +91,15 @@ class Query extends SimpleQuery
         try {
             return $this->toString();
         } catch (Exception $e) {
-            trigger_error('Exception: ' . $e->getMessage(), E_USER_ERROR);
+            trigger_error(
+                sprintf(
+                    '%s in %s on line %d',
+                    $e->getMessage(),
+                    $e->getFile(),
+                    $e->getLine()
+                ),
+                E_USER_ERROR
+            );
         }
     }
 
@@ -140,6 +160,47 @@ class Query extends SimpleQuery
              . "\n\n";
         return $lql;
     }
+
+    protected function columnsToString()
+    {
+        $columns = array();
+        $this->preparedHeaders = array();
+
+
+        $usedColumns = $this->columns;
+        if (! $this->filterIsSupported()) {
+            foreach ($this->filter->listFilteredColumns() as $col) {
+                if (! in_array($col, $usedColumns)) {
+                    $usedColumns[] = $col;
+                }
+            }
+        }
+        foreach ($usedColumns as $col) {
+// TODO: No alias if filter???
+           if (array_key_exists($col, $this->available_columns)) {
+              // Alias if such
+              $col = $this->available_columns[$col];
+           }
+           if ($col[0] === '_') {
+               $columns['custom_variables'] = true;
+           } elseif (is_array($col)) {
+               foreach ($col as $k) {
+                   $columns[$k] = true;
+               }    
+           } else {
+               $columns[$col] = true;
+           }
+        }
+
+        $this->preparedHeaders = array_keys($columns);
+
+        if ($this->count === false && $this->columns !== null) {
+            return 'Columns: ' . implode(' ', array_keys($columns));
+        } else {
+            return ''; // TODO: 'Stats: state >= 0'; when count
+        }
+    }
+
     /**
      * Whether Livestatus is able to apply the current filter
      *
