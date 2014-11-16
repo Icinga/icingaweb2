@@ -20,6 +20,28 @@ class Query extends SimpleQuery
         return $this->columns;
     }
 
+    /**
+     * Parse the given encoded array
+     *
+     * @param string $str the encoded array string
+     *
+     * @return array
+     */
+    public function parseArray($str)
+    {
+        if (empty($str)) {
+            return array();
+        }
+
+        $result = array();
+        $entries = preg_split('/,/', $str);
+        foreach ($entries as $e) {
+            $result[] = preg_split('/;/', $e);
+        }
+
+        return $result;
+    }
+
     public function getColumnAliases()
     {
         $aliases = array();
