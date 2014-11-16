@@ -257,6 +257,15 @@ class Connection
         }
     }
 
+    public function fetchRowFromSocket()
+    {
+        $line = $this->readLineFromSocket();
+        if (! $line) {
+            return false;
+        }
+        return $this->splitLine($line);
+    }
+
     protected function readLineFromSocket()
     {
         if ($this->bytesRead === $this->responseSize) {
