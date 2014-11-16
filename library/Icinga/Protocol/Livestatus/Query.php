@@ -170,7 +170,7 @@ class Query extends SimpleQuery
 
     public function getColumnAliases()
     {
-       $this->columnsToString();
+        $this->columnsToString();
         return $this->preparedHeaders;
 
         // TODO: Remove once no longer needed:
