@@ -40,13 +40,13 @@ class OutputFormat implements Tabextension
         self::TYPE_PDF => array(
             'name'      => 'pdf',
             'title'     => 'PDF',
-            'icon'      => 'img/icons/pdf.png',
+            'icon'      => 'file-pdf',
             'urlParams' => array('format' => 'pdf'),
         ),
         self::TYPE_CSV => array(
             'name'      => 'csv',
             'title'     => 'CSV',
-            'icon'      => 'img/icons/csv.png',
+            'icon'      => 'file-excel',
             'urlParams' => array('format' => 'csv')
         ),
         self::TYPE_JSON => array(
