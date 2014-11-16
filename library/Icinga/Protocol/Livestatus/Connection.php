@@ -248,6 +248,28 @@ class Connection
         return $buffer;
     }
 
+    protected function readLineFromSocket()
+    {
+        if ($this->bytesRead === $this->responseSize) {
+            return false;
+        }
+        $maxRowLength = 100 * 1024;
+        $row = socket_read($this->getConnection(), $maxRowLength, PHP_NORMAL_READ);
+        $this->bytesRead += strlen($row);
+
+        if ($row === false) {
+            $this->socketError('Failed to read next row from livestatus socket');
+        }
+        return $row;
+    }
+
+    /**
+     * Write given string to livestatus socket
+     *
+     * @param  string $data Data string to write to the socket
+     *
+     * @return boolean
+     */
     protected function writeToSocket($data)
     {
         $res = @socket_write($this->getConnection(), $data);
