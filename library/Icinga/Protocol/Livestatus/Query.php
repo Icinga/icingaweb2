@@ -4,10 +4,10 @@
 
 namespace Icinga\Protocol\Livestatus;
 
-use Icinga\Protocol\AbstractQuery;
+use Icinga\Data\SimpleQuery;
 use Icinga\Exception\IcingaException;
 
-class Query extends AbstractQuery
+class Query extends SimpleQuery
 {
 
     protected $connection;
