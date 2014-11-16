@@ -69,6 +69,11 @@ class FilterExpression extends Filter
         return $this;
     }
 
+    public function listFilteredColumns()
+    {
+        return array($this->getColumn());
+    }
+
     public function __toString()
     {
         $expression = is_array($this->expression) ?

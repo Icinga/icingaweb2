@@ -89,7 +89,7 @@ class Host extends MonitoredObject
      */
     protected function getDataView()
     {
-        return $this->backend->select()->from('hostStatus', array(
+        $columns = array(
             'host_name',
             'host_alias',
             'host_address',
@@ -132,7 +132,11 @@ class Host extends MonitoredObject
             'host_problem',
             'host_process_performance_data',
             'process_perfdata' => 'host_process_performance_data'
-        ))
+        );
+        if ($this->backend->getType() === 'livestatus') {
+            $columns[] = 'host_contacts';
+        }
+        return $this->backend->select()->from('hostStatus', $columns)
             ->where('host_name', $this->host);
     }
 

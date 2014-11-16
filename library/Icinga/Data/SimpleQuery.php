@@ -210,7 +210,7 @@ class SimpleQuery implements QueryInterface, Queryable
         $dir = $this->order[$col_num][1];
 // TODO: throw Exception if column is missing
         //$res = strnatcmp(strtolower($a->$col), strtolower($b->$col));
-        $res = strcmp(strtolower($a->$col), strtolower($b->$col));
+        $res = @strcmp(strtolower($a->$col), strtolower($b->$col));
         if ($res === 0) {
 //            return $this->compare($a, $b, $col_num++);
 
