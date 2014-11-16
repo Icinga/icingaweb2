@@ -190,6 +190,10 @@ abstract class MonitoredObject
      */
     public function fetchComments()
     {
+        if ($this->backend->is('livestatus')) {
+            $this->comments = array();
+            return $this;
+        }
         $comments = $this->backend->select()->from('comment', array(
             'id'        => 'comment_internal_id',
             'timestamp' => 'comment_timestamp',
@@ -264,6 +268,11 @@ abstract class MonitoredObject
      */
     public function fetchCustomvars()
     {
+        if ($this->backend->is('livestatus')) {
+            $this->customvars = array();
+            return $this;
+        }
+
         $blacklist = array();
         $blacklistPattern = '/^(.*pw.*|.*pass.*|community)$/i';
 
@@ -316,6 +325,11 @@ abstract class MonitoredObject
      */
     public function fetchContacts()
     {
+        if ($this->backend->is('livestatus')) {
+            $this->contacts = array();
+            return $this;
+        }
+
         $contacts = $this->backend->select()->from('contact', array(
                 'contact_name',
                 'contact_alias',
@@ -356,6 +370,11 @@ abstract class MonitoredObject
      */
     public function fetchContactgroups()
     {
+        if ($this->backend->is('livestatus')) {
+            $this->contactgroups = array();
+            return $this;
+        }
+
         $contactsGroups = $this->backend->select()->from('contactgroup', array(
                 'contactgroup_name',
                 'contactgroup_alias'
