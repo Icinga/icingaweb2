@@ -39,7 +39,23 @@ class Query extends SimpleQuery
         return $this;
     }
 */
+
+    /**
+     * Automagic string casting
+     *
+     * @return string
+     */
     public function __toString()
+    {
+        return $this->toString();
+    }
+
+    /**
+     * Render query string
+     *
+     * @return string
+     */
+    public function toString()
     {
         if ($this->table === null) {
             throw new IcingaException('Table is required');
