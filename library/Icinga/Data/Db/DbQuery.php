@@ -134,11 +134,11 @@ class DbQuery extends SimpleQuery
         return $select;
     }
 
-    public function applyFilterSql($query)
+    protected function applyFilterSql($select)
     {
         $where = $this->renderFilter($this->filter);
         if ($where !== '') {
-            $query->where($where);
+            $select->where($where);
         }
     }
 
