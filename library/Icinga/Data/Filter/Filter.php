@@ -62,6 +62,8 @@ abstract class Filter
         return false === strpos($this->id, '-');
     }
 
+    abstract public function listFilteredColumns();
+
     public function applyChanges($changes)
     {
         $filter = $this;

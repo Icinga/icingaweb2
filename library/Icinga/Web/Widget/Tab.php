@@ -85,7 +85,7 @@ class Tab extends AbstractWidget
      */
     public function setIcon($icon)
     {
-        if (is_string($icon)) {
+        if (is_string($icon) && strpos($icon, '.') !== false) {
             $icon = Url::fromPath($icon);
         }
         $this->icon = $icon;
@@ -202,24 +202,30 @@ class Tab extends AbstractWidget
             $classes[] = 'active';
         }
         $caption = $view->escape($this->title);
+        $tagParams = $this->tagParams;
 
         if ($this->icon !== null) {
             if (strpos($this->icon, '.') === false) {
-                $classes[] = 'icon-' . $this->icon;
+                if ($tagParams && array_key_exists('class', $tagParams)) {
+                    $tagParams['class'] .= ' icon-' . $this->icon;
+                } else {
+                    $tagParams['class'] = 'icon-' . $this->icon;
+                }
             } else {
                 $caption = $view->img($this->icon, array('class' => 'icon')) . $caption;
             }
         }
         if ($this->url !== null) {
             $this->url->overwriteParams($this->urlParams);
-            $tagParams = '';
-            if ($this->tagParams !== null) {
-                $tagParams = $view->propertiesToString($this->tagParams);
+            if ($tagParams !== null) {
+                $params = $view->propertiesToString($tagParams);
+            } else {
+                $params = '';
             }
             $tab = sprintf(
                 '<a href="%s"%s>%s</a>',
                 $this->url,
-                $tagParams,
+                $params,
                 $caption
             );
         } else {

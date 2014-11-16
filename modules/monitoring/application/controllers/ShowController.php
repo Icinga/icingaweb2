@@ -227,15 +227,17 @@ class Monitoring_ShowController extends Controller
                 'urlParams' => $params,
             )
         );
-        $tabs->add(
-            'history',
-            array(
-                'title'     => 'History',
-                'icon'      => 'rewind',
-                'url'       => 'monitoring/show/history',
-                'urlParams' => $params,
-            )
-        );
+        if ($this->backend->hasQuery('eventHistory')) {
+            $tabs->add(
+                'history',
+                array(
+                    'title'     => 'History',
+                    'icon'      => 'rewind',
+                    'url'       => 'monitoring/show/history',
+                    'urlParams' => $params,
+                )
+            );
+        }
         $tabs->extend(new OutputFormat())
             ->extend(new DashboardAction());
     }
