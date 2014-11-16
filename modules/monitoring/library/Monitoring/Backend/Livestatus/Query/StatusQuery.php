@@ -201,4 +201,60 @@ class StatusQuery extends Query
 'service_flap_detection_enabled' => 'flap_detection_enabled',
 'service_process_performance_data' => 'process_performance_data',
     );
+
+    public function mungeResult_custom_variables($val, & $row)
+    {
+        $notseen = $this->customvars;
+        foreach ($val as $cv) {
+            $name = '_service_' . $cv[0];
+            $row->$name = $cv[1];
+            unset($notseen[$name]);
+        }
+        foreach ($notseen as $k => $v) {
+            $row->$k = $v;
+        }
+    }
+
+    public function mungeResult_service_last_comment($val, & $row)
+    {
+        $this->mungeResult_comments_with_info($val, $row);
+    }
+
+    public function mungeResult_service_last_ack($val, & $row)
+    {
+        $this->mungeResult_comments_with_info($val, $row);
+    }
+
+    public function mungeResult_service_last_downtime($val, & $row)
+    {
+        $this->mungeResult_comments_with_info($val, $row);
+    }
+
+    public function mungeResult_comments_with_info($val, & $row)
+    {
+        if (empty($val)) {
+            $row->service_last_comment = $row->service_last_ack
+                = $row->service_last_downtime = null;
+        } else {
+            $row->service_last_comment = $row->service_last_ack
+                = $row->service_last_downtime = preg_replace('/\n/', ' ', print_r($val, 1));
+        }
+    }
+
+    public function mungeResult_host_unhandled_services($val, & $row)
+    {
+        $cnt = 0;
+        foreach ($this->parseArray($val) as $service) {
+            if (! isset($service[1])) {
+                continue;
+                // TODO: More research is required here, on Icinga2 I got
+                //       array(1) { [0]=> array(1) { [0]=> string(1) "2" } }
+                var_dump($this->parseArray($val));
+            }
+            if ($service[1] > 0) {
+                $cnt++;
+            }
+        }
+        $row->host_unhandled_services = $cnt;
+    }
 }
