@@ -431,6 +431,9 @@ if ($col > $size - 1) return $res;
         return $this;
     }
 
+    /**
+     * Try to cleanly close the socket on shutdown
+     */
     public function __destruct()
     {
         $this->disconnect();
