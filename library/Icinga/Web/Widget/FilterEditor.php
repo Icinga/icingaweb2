@@ -196,7 +196,6 @@ class FilterEditor extends AbstractWidget
                 $filter = $this->mergeRootExpression($filter, $k, '=', $v);
             }
 
-
             $url = $this->url()->setQueryString(
                 $filter->toQueryString()
             )->addParams($preserve);

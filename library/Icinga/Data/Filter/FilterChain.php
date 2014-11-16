@@ -185,6 +185,7 @@ abstract class FilterChain extends Filter
     {
         $this->filters[] = $filter;
         $filter->setId($this->getId() . '-' . $this->count());
+        return $this;
     }
 
     public function &filters()
