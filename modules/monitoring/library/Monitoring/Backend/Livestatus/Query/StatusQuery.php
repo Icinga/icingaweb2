@@ -2,11 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace \Icinga\Module\Monitoring\Backend\Livestatus\Query;
+namespace Icinga\Module\Monitoring\Backend\Livestatus\Query;
 
-use Icinga\Data\SimpleQuery;
+use Icinga\Protocol\Livestatus\Query;
 
-class StatusQuery extends SimpleQuery implements Filterable
+class StatusQuery extends Query
 {
     protected $available_columns = array(
         'host_name',
