@@ -354,15 +354,22 @@ if ($col > $size - 1) return $res;
     protected function getConnection()
     {
         if ($this->connection === null) {
+            Benchmark::measure('Establishing livestatus connection...');
+
             if ($this->socket_type === self::TYPE_TCP) {
                 $this->establishTcpConnection();
+                Benchmark::measure('...got TCP socket');
             } else {
                 $this->establishSocketConnection();
+                Benchmark::measure('...got local socket');
             }
         }
         return $this->connection;
     }
 
+    /**
+     * Establish a TCP socket connection
+     */
     protected function establishTcpConnection()
     {
         $this->connection = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -377,6 +384,9 @@ if ($col > $size - 1) return $res;
         socket_set_option($this->connection, SOL_TCP, TCP_NODELAY, 1);
     }
 
+    /**
+     * Establish a UNIX socket connection
+     */
     protected function establishSocketConnection()
     {
         $this->connection = socket_create(AF_UNIX, SOCK_STREAM, 0);
