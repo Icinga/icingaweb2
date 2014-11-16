@@ -257,6 +257,29 @@ class Connection
         }
     }
 
+    protected function splitLine(& $line)
+    {
+        if ($this->headers === null) {
+            $res = array();
+        } else {
+            $res = new SplFixedArray(count($this->headers));
+            $size = count($res);
+        }
+        $start = 0;
+        $col = 0;
+        while (false !== ($pos = strpos($line, self::FIELD_SEPARATOR, $start))) {
+// TODO: safety measure for not killing the SPL. To be removed once code is clean
+if ($col > $size -1 ) return $res;  // ???
+            $res[$col] = substr($line, $start, $pos - $start);
+            $start = $pos + 1;
+            $col++;
+        }
+// TODO: safety measure for not killing the SPL. To be removed once code is clean
+if ($col > $size - 1) return $res;
+        $res[$col] = rtrim(substr($line, $start), "\r\n");
+        return $res;
+    }
+
     public function fetchRowFromSocket()
     {
         $line = $this->readLineFromSocket();
