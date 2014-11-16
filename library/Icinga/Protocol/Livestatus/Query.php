@@ -10,15 +10,6 @@ use Icinga\Exception\IcingaException;
 class Query extends SimpleQuery
 {
 
-    protected $connection;
-    protected $table;
-    protected $filters = array();
-    protected $limit_count;
-    protected $limit_offset;
-    protected $columns;
-    protected $order_columns = array();
-    protected $count = false;
-
     public function hasColumns()
     {
         return $this->columns !== null;
