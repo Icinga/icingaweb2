@@ -180,6 +180,16 @@ abstract class FilterChain extends Filter
         }
     }
 
+    public function isExpression()
+    {
+        return false;
+    }
+
+    public function isChain()
+    {
+        return true;
+    }
+
     public function isEmpty()
     {
         return empty($this->filters);
@@ -188,12 +198,18 @@ abstract class FilterChain extends Filter
     public function addFilter(Filter $filter)
     {
         $this->filters[] = $filter;
-        $filter->setId($this->getId() . '-' . (count($this->filters)));
+        $filter->setId($this->getId() . '-' . $this->count());
+        return $this;
     }
 
     public function &filters()
     {
         return $this->filters;
+    }
+
+    public function count()
+    {
+        return count($this->filters);
     }
 
     public function __clone()

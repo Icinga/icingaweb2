@@ -67,7 +67,7 @@ class JavaScript
     public static function send($minified = false)
     {
         header('Content-Type: application/javascript');
-        $basedir = Icinga::app()->getBootstrapDirecory();
+        $basedir = Icinga::app()->getBootstrapDirectory();
 
         $js = $out = '';
         $min = $minified ? '.min' : '';
@@ -118,7 +118,7 @@ class JavaScript
         }
 
         if ($minified) {
-            require_once 'IcingaVendor/JShrink/Minifier.php';
+            require_once 'JShrink/Minifier.php';
             $out .= Minifier::minify($js, array('flaggedComments' => false));
         } else {
             $out .= $js;

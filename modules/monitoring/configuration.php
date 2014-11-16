@@ -18,6 +18,7 @@ $this->provideConfigTab('security', array(
     'title' => 'Security',
     'url' => 'config/security'
 ));
+$this->provideSetupWizard('Icinga\Module\Monitoring\MonitoringWizard');
 
 /*
  * Available Search Urls
@@ -32,7 +33,7 @@ $this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/serv
  */
 $section = $this->menuSection($this->translate('Problems'), array(
     'renderer' => 'ProblemMenuItemRenderer',
-    'icon'     => 'img/icons/error.png',
+    'icon'     => 'block',
     'priority' => 20
 ));
 $section->add($this->translate('Unhandled Hosts'), array(
@@ -59,7 +60,7 @@ $section->add($this->translate('Current Downtimes'))->setUrl('monitoring/list/do
  * Overview Section
  */
 $section = $this->menuSection($this->translate('Overview'), array(
-    'icon'      => 'img/icons/hostgroup.png',
+    'icon'      => 'sitemap',
     'priority'  => 30
 ));
 $section->add($this->translate('Tactical Overview'), array(
@@ -74,8 +75,8 @@ $section->add($this->translate('Services'), array(
     'url'      => 'monitoring/list/services',
     'priority' => 50
 ));
-$section->add($this->translate('Servicematrix'), array(
-    'url'      => 'monitoring/list/servicematrix?service_problem=1',
+$section->add($this->translate('Service Grid'), array(
+    'url'      => 'monitoring/list/servicegrid?service_problem=1',
     'priority' => 51
 ));
 $section->add($this->translate('Servicegroups'), array(
@@ -107,17 +108,14 @@ $section->add($this->translate('Contacts'), array(
  * History Section
  */
 $section = $this->menuSection($this->translate('History'), array(
-    'icon'      => 'img/icons/history.png'
+    'icon'      => 'rewind'
 ));
-$section->add($this->translate('Critical Events'), array(
-    'url'      => 'monitoring/list/statehistorysummary',
+$section->add($this->translate('Event Grid'), array(
+    'url'      => 'monitoring/list/eventgrid',
     'priority' => 50
 ));
-$section->add($this->translate('Notifications'), array(
-    'url'      => 'monitoring/list/notifications'
-));
 $section->add($this->translate('Events'), array(
-    'title'    => $this->translate('All Events'),
+    'title'    => $this->translate('Event Overview'),
     'url'      => 'monitoring/list/eventhistory?timestamp>=-7%20days'
 ));
 $section->add($this->translate('Timeline'))->setUrl('monitoring/timeline');
@@ -126,7 +124,7 @@ $section->add($this->translate('Timeline'))->setUrl('monitoring/timeline');
  * Reporting Section
  */
 $section = $this->menuSection($this->translate('Reporting'), array(
-    'icon'      => 'img/icons/hostgroup.png',
+    'icon'      => 'chart-line',
     'priority'  => 100
 ));
 

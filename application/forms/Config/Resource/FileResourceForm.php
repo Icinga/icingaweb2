@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config\Resource;
+namespace Icinga\Forms\Config\Resource;
 
 use Icinga\Web\Form;
 use Icinga\Web\Form\Validator\ReadablePathValidator;
@@ -25,6 +25,15 @@ class FileResourceForm extends Form
      */
     public function createElements(array $formData)
     {
+        $this->addElement(
+            'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => t('Resource Name'),
+                'description'   => t('The unique name of this resource')
+            )
+        );
         $this->addElement(
             'text',
             'filename',

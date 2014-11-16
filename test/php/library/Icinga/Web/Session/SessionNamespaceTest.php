@@ -4,7 +4,6 @@
 
 namespace Tests\Icinga\Web\Session;
 
-use Mockery;
 use Icinga\Test\BaseTestCase;
 use Icinga\Web\Session\SessionNamespace;
 
@@ -86,25 +85,39 @@ class SessionNamespaceTest extends BaseTestCase
         }
     }
 
-    /**
-     * @expectedException Icinga\Exception\IcingaException
-     * @expectedExceptionMessage Cannot save, session not set
-     */
-    public function testInvalidParentWrite()
+    public function testRetrievingValuesByReferenceWorks()
     {
         $ns = new SessionNamespace();
-        $ns->write();
+        $ns->array = array(1, 2);
+        $array = & $ns->getByRef('array');
+        $array[0] = 11;
+
+        $this->assertEquals(
+            array(11, 2),
+            $ns->array,
+            'Values retrieved with getByRef() seem not be affected by external changes'
+        );
     }
 
-    /**
-     * Check whether it is possible to write a namespace's parent
-     */
-    public function testValidParentWrite()
+    public function testSettingValuesByReferenceWorks()
     {
-        $sessionMock = Mockery::mock('Icinga\Web\Session\Session');
-        $sessionMock->shouldReceive('write')->atLeast()->times(1);
+        $ns = new SessionNamespace();
+        $array = array(1, 2);
+        $ns->setByRef('array', $array);
+        $array[0] = 11;
 
-        $ns = new SessionNamespace($sessionMock);
-        $ns->write();
+        $this->assertEquals(
+            array(11, 2),
+            $ns->array,
+            'Values set with setByRef() seem not to receive external changes'
+        );
+    }
+
+    public function testTrackingChangesWorks()
+    {
+        $ns = new SessionNamespace();
+        $this->assertFalse($ns->hasChanged(), 'A new empty session namespace seems to have changes');
+        $ns->test = 1;
+        $this->assertTrue($ns->hasChanged(), 'A new session namespace with values seems not to have changes');
     }
 }

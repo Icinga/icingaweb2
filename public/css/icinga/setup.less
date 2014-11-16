@@ -1,0 +1,465 @@
+#layout {
+  overflow: auto; // TODO: Shouldn't be necessary, here, IMHO
+}
+
+
+#setup {
+  .header {
+    width: 100%;
+    height: 5.4em;
+    background-color: @colorPetrol;
+    border-bottom: 1px solid #d9d9d9d;
+    text-align: center;
+    -webkit-box-shadow: 0 3px 7px -3px #000;
+    -moz-box-shadow: 0 3px 7px -3px #000;
+    box-shadow: 0 3px 7px -3px #000;
+
+
+    img {
+      width: 7.5em;
+      margin: 1.5em;
+      float: left;
+    }
+
+    .progress-bar {
+      overflow: hidden;
+      padding-top: 1em;
+
+      .step {
+        float: left;
+
+        h1 {
+          margin: 0;
+          color: white;
+          font-size: 0.9em;
+          text-align: center;
+        }
+
+        table {
+          margin-top: 0.7em;
+
+          td {
+            padding: 0;
+
+            &.left, &.right {
+              width: 50%;
+            }
+          }
+        }
+
+        div {
+          background-color: lightgrey;
+
+          &.line {
+            height: 0.4em;
+
+            &.left {
+              margin-left: 0.1em;
+              margin-right: -0.1em;
+              border-top-left-radius: 0.5em;
+              border-bottom-left-radius: 0.5em;
+            }
+
+            &.right {
+              margin-left: -0.1em;
+              margin-right: 0.1em;
+              border-top-right-radius: 0.5em;
+              border-bottom-right-radius: 0.5em;
+            }
+          }
+
+          &.bubble {
+            width: 1.2em;
+            height: 1.2em;
+            border-radius: 1.2em;
+
+            // Make sure that such a bubble overlays lines
+            position: relative;
+            z-index: 1337;
+          }
+
+          &.active {
+            background-color: white;
+          }
+
+          &.complete {
+            background-color: @colorOk ;
+          }
+
+          &.visited {
+            background-color: #eee;
+          }
+        }
+      }
+    }
+  }
+
+  .setup-content {
+    margin: 1.5em 10em 0 10em;
+
+    form {
+      h2 {
+        font-size: 2.0em;
+        color: @colorTextDefault;
+        border-bottom: 2px solid @colorPetrol;
+      }
+    }
+  }
+}
+
+#setup div.buttons {
+  margin: 1.5em 0;
+
+  .double {
+    position: absolute;
+    left: -1337px;
+  }
+
+  #btn_prev {
+    margin-right: 1em;
+    font-size: 0.9em;
+  }
+
+  #btn_next {
+    font-size: 0.9em;
+  }
+
+  button, .button-like {
+    font-size: 0.9em;
+    font-weight: bold;
+    outline: 0;
+    color: #fff;
+    border: 2px solid;
+    border-color: @colorPetrol;
+    background: @colorPetrol;
+
+    &[disabled="1"] {
+      background-color: #aaa;
+      border: 1px solid black;
+    }
+
+    &:hover, &:focus, &:active {
+      background-color: #666;
+      border-color: #666;
+
+      &[disabled="1"] {
+        background-color: #aaa;
+      }
+    }
+
+    &.finish, &.login {
+      min-width: 25em;
+      color: #fffafa;
+      background: @colorPetrol;
+
+      &:hover, &:focus, &:active {
+        background: #666;
+      }
+    }
+  }
+
+  a.button-like {
+    cursor: default;
+    text-decoration: none;
+  }
+}
+
+#setup table.requirements {
+  font-size: 0.9em;
+  margin: -1em -1em 2em;
+  border-spacing: 1em;
+  border-collapse: separate;
+  border-bottom: 2px solid @colorPetrol;
+
+  td {
+    h2 {
+      margin: 0 1em 0 0;
+    }
+
+    &.state {
+      color: white;
+      padding: 0.4em;
+
+      &.fulfilled {
+        background-color: @colorOk;
+      }
+
+      &.not-available {
+        color: black;
+        background-color: #e8ec70;
+      }
+
+      &.missing {
+        background-color: @colorCritical;
+      }
+    }
+
+    &.btn-update {
+      padding-top: 0.3em;
+      text-align: center;
+
+      div.buttons {
+        margin: 0;
+
+        a.button-like {
+          padding: 0.2em 0.5em;
+          background-color: @colorPetro;
+
+          &:hover, &:focus {
+            background-color: #666;
+          }
+        }
+      }
+    }
+  }
+}
+
+#setup_ldap_discovery_confirm table {
+  margin: 1em 0;
+  border-collapse: separate;
+  border-spacing: 1em 0.2em;
+}
+
+#setup_admin_account {
+  div.instructions {
+    width: 30.2em;
+    display: inline-block;
+  }
+
+  div.radiobox {
+    vertical-align: top;
+    display: inline-block;
+    padding: 0.9em 0.2em 0;
+  }
+}
+
+#setup {
+  div.summary {
+    font-size: 90%;
+
+    div.page {
+      float: left;
+      width: 20em;
+      min-height: 25em;
+      padding: 0 1em 1em;
+      margin: 1em 1.5em 1.5em;
+      border: 1px dashed lightgrey;
+
+      h2 {
+        font-size: 1.2em;
+      }
+
+      div.topic {
+        margin-left: 2em;
+
+        h3 {
+          font-size: 1em;
+        }
+
+        ul {
+          list-style-type: circle;
+        }
+
+        table {
+          border-spacing: 0.5em;
+          border-collapse: separate;
+          font-size: 0.9em;
+          margin-left: 2em;
+        }
+      }
+    }
+  }
+
+  form#setup_summary {
+    clear: left;
+  }
+}
+
+.conspicuous-state-notification {
+  width: 66%;
+  margin: 0 auto;
+  padding: 0.5em;
+  color: white;
+  font-weight: bold;
+}
+
+#setup-finish {
+  div.report {
+    padding: 1em;
+    border: 1px solid lightgrey;
+    border-radius: 0em;
+
+    div.line-separator {
+      width: 50%;
+      height: 1px;
+      margin: 0 auto;
+      background-color: white;
+    }
+
+    p {
+      margin: 1em;
+      color: #444;
+      text-align: center;
+
+      &.error {
+        color: red;
+      }
+
+      &.failure {
+        .conspicuous-state-notification;
+        background-color: @colorCritical;
+      }
+
+      &.success {
+        .conspicuous-state-notification;
+        background-color: @colorOk;
+      }
+    }
+  }
+
+  div.buttons {
+    text-align: center;
+  }
+}
+
+.welcome-page {
+  margin-top: 3em;
+  text-align: center;
+
+  h2 {
+    font-size: 2.0em;
+    color: @colorTextDefault;
+    border-bottom: 2px solid @colorPetrol;
+    margin-bottom: 2em;
+
+  }
+
+  div.info {
+    padding: 0 1em;
+    background-color: #eee;
+    border: 1px solid lightgrey;
+  }
+
+  p.restart-warning {
+    color: coral;
+    font-weight: bold;
+  }
+
+  div.note {
+    padding: 1em 1em 0;
+    margin: 3em auto 0;
+    text-align: left;
+    font-size: 0.9em;
+    border: 1px solid lightgrey;
+
+    div.title {
+      color: white;
+      padding: 0.2em;
+      margin: -1em -1em 1em;
+      text-align: center;
+      color: @colorTextDefault;
+      border-bottom: 2px solid @colorPetrol;
+
+    }
+
+    img {
+      float: right;
+    }
+
+    p {
+      margin: 2em 0 1em 0;
+
+      &:first-child {
+        margin-top: 1em;
+      }
+    }
+
+    div.code {
+      margin: 0 2em;
+
+      span {
+        display: block;
+        font-family: monospace;
+      }
+    }
+  }
+}
+
+#setup_monitoring_welcome {
+  .welcome-page;
+  margin-top: 0;
+  padding: 1em;
+
+  h2 {
+    margin-top: 0;
+  }
+}
+
+#setup {
+  div.module-wizard {
+    width: auto;
+    padding: 1em;
+    overflow: hidden;
+    border: solid 1px lightgrey;
+
+    div.buttons {
+      margin: 1.5em 0 0;
+      float: right;
+
+      button[type=submit] {
+        padding: 0.5em;
+        line-height: 0.5em;
+	background-color: @colorPetrol;
+
+        &:hover, &:focus, &:active {
+          background-color: #666;
+        }
+      }
+    }
+  }
+
+  div.module-menu {
+    font-size: 0.9em;
+    width: 25%;
+    float: right;
+    margin-left: 1.5em;
+
+    p {
+      margin-top: 0;
+
+      &.all-completed {
+        .conspicuous-state-notification;
+        text-align: center;
+        font-size: 90%;
+        background-color: @colorOk;
+      }
+    }
+
+    ul {
+      padding-left: 1.2em;
+
+      button {
+        margin: 0 0 0.8em;
+        padding: 0;
+        color: black;
+        border: none;
+        outline: none;
+        font-size: 90%;
+        background-color: white;
+
+        &:hover {
+          color: #666;
+          cursor: pointer;
+        }
+
+        &:focus, &:active {
+          color: #666;
+        }
+      }
+
+      img {
+        margin: 0 0.5em 0.2em;
+      }
+    }
+  }
+}

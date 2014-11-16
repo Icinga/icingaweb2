@@ -11,7 +11,7 @@ use Icinga\Test\BaseTestCase;
 
 class SuccessfulForm extends Form
 {
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         return true;
     }
@@ -238,24 +238,6 @@ class FormTest extends BaseTestCase
         );
     }
 
-    public function testWhetherGetRequestDataOnlyReturnsFormRelevantData()
-    {
-        $form = new Form();
-        $form->setMethod('POST');
-
-        $expectedResult = array('expected_key' => 'expected_value');
-        $request = $this->getRequestMock();
-        $request->shouldReceive('getMethod')->andReturn('POST')
-            ->shouldReceive('isPost')->andReturn(true)
-            ->shouldReceive('getPost')->andReturn($expectedResult);
-
-        $this->assertEquals(
-            $expectedResult,
-            $form->getRequestData($request),
-            'Form::getRequestData() does not (only) return form relevant data'
-        );
-    }
-
     /**
      * @expectedException   LogicException
      */
@@ -273,7 +255,7 @@ class FormTest extends BaseTestCase
     {
         $request = new Request();
         $form = new Form(array(
-            'onSuccess' => function ($req) { $req->setParam('test', 'tset'); return false; }
+            'onSuccess' => function ($form) { $form->getRequest()->setParam('test', 'tset'); return false; }
         ));
         $form->setTokenDisabled();
         $form->setUidDisabled();

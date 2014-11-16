@@ -6,6 +6,7 @@ namespace Icinga\Application;
 
 use ErrorException;
 use Exception;
+use LogicException;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
@@ -40,6 +41,43 @@ use Icinga\Exception\IcingaException;
 abstract class ApplicationBootstrap
 {
     /**
+     * Base directory
+     *
+     * Parent folder for at least application, bin, modules, library/vendor and public
+     *
+     * @var string
+     */
+    protected $baseDir;
+
+    /**
+     * Application directory
+     *
+     * @var string
+     */
+    protected $appDir;
+
+    /**
+     * Vendor library directory
+     *
+     * @var string
+     */
+    protected $vendorDir;
+
+    /**
+     * Library directory
+     *
+     * @var string
+     */
+    protected $libDir;
+
+    /**
+     * Configuration directory
+     *
+     * @var string
+     */
+    protected $configDir;
+
+    /**
      * Icinga auto loader
      *
      * @var Loader
@@ -47,32 +85,11 @@ abstract class ApplicationBootstrap
     private $loader;
 
     /**
-     * Library directory
-     *
-     * @var string
-     */
-    private $libDir;
-
-    /**
      * Config object
      *
      * @var Config
      */
     protected $config;
-
-    /**
-     * Configuration directory
-     *
-     * @var string
-     */
-    private $configDir;
-
-    /**
-     * Application directory
-     *
-     * @var string
-     */
-    private $appDir;
 
     /**
      * Module manager
@@ -97,26 +114,19 @@ abstract class ApplicationBootstrap
 
     /**
      * Constructor
+     *
+     * @param string $baseDir   Icinga Web 2 base directory
+     * @param string $configDir Path to Icinga Web 2's configuration files
      */
-    protected function __construct($configDir = null)
+    protected function __construct($baseDir = null, $configDir = null)
     {
+        if ($baseDir === null) {
+            $baseDir = dirname($this->getBootstrapDirectory());
+        }
+        $this->baseDir = $baseDir;
+        $this->appDir = $baseDir . '/application';
+        $this->vendorDir = $baseDir . '/library/vendor';
         $this->libDir = realpath(__DIR__ . '/../..');
-
-        if (!defined('ICINGA_LIBDIR')) {
-            define('ICINGA_LIBDIR', $this->libDir);
-        }
-
-        if (defined('ICINGAWEB_APPDIR')) {
-            $this->appDir = ICINGAWEB_APPDIR;
-        } elseif (array_key_exists('ICINGAWEB_APPDIR', $_SERVER)) {
-            $this->appDir = $_SERVER['ICINGAWEB_APPDIR'];
-        } else {
-            $this->appDir = realpath($this->libDir. '/../application');
-        }
-
-        if (!defined('ICINGAWEB_APPDIR')) {
-            define('ICINGAWEB_APPDIR', $this->appDir);
-        }
 
         if ($configDir === null) {
             if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
@@ -129,7 +139,13 @@ abstract class ApplicationBootstrap
         $this->configDir = $canonical ? $canonical : $configDir;
 
         $this->setupAutoloader();
-        $this->setupZendAutoloader();
+
+        set_include_path(
+            implode(
+                PATH_SEPARATOR,
+                array($this->vendorDir, get_include_path())
+            )
+        );
 
         Benchmark::measure('Bootstrap, autoloader registered');
 
@@ -196,44 +212,6 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Getter for application dir
-     *
-     * Optional append sub directory
-     *
-     * @param   string $subdir optional subdir
-     *
-     * @return  string
-     */
-    public function getApplicationDir($subdir = null)
-    {
-        return $this->getDirWithSubDir($this->appDir, $subdir);
-    }
-
-    /**
-     * Getter for config dir
-     *
-     * @param   string $subdir
-     *
-     * @return  string
-     */
-    public function getConfigDir($subdir = null)
-    {
-        return $this->getDirWithSubDir($this->configDir, $subdir);
-    }
-
-    /**
-     * Get the path to the bootstrapping directory.
-     *
-     * This is usually /public for Web and EmbeddedWeb
-     *
-     * @return string
-     */
-    public function getBootstrapDirecory()
-    {
-        return dirname($_SERVER['SCRIPT_FILENAME']);
-    }
-
-    /**
      * Helper to glue directories together
      *
      * @param   string $dir
@@ -251,15 +229,102 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Starting concrete bootstrap classes
+     * Get the base directory
      *
-     * @param   string $configDir
+     * @param   string $subDir Optional sub directory to get
      *
-     * @return  ApplicationBootstrap
+     * @return  string
      */
-    public static function start($configDir = null)
+    public function getBaseDir($subDir = null)
     {
-        $application = new static($configDir);
+        return $this->getDirWithSubDir($this->baseDir, $subDir);
+    }
+
+    /**
+     * Get the application directory
+     *
+     * @param   string $subDir Optional sub directory to get
+     *
+     * @return  string
+     */
+    public function getApplicationDir($subDir = null)
+    {
+        return $this->getDirWithSubDir($this->appDir, $subDir);
+    }
+
+    /**
+     * Get the vendor library directory
+     *
+     * @param   string $subDir Optional sub directory to get
+     *
+     * @return  string
+     */
+    public function getVendorDir($subDir = null)
+    {
+        return $this->getDirWithSubDir($this->vendorDir, $subDir);
+    }
+
+    /**
+     * Get the configuration directory
+     *
+     * @param   string $subDir Optional sub directory to get
+     *
+     * @return  string
+     */
+    public function getConfigDir($subDir = null)
+    {
+        return $this->getDirWithSubDir($this->configDir, $subDir);
+    }
+
+    /**
+     * Get the Icinga library directory
+     *
+     * @param   string $subDir Optional sub directory to get
+     *
+     * @return  string
+     */
+    public function getLibraryDir($subDir = null)
+    {
+        return $this->getDirWithSubDir($this->libDir, $subDir);
+    }
+
+    /**
+     * Get the path to the bootstrapping directory
+     *
+     * This is usually /public for Web and EmbeddedWeb and /bin for the CLI
+     *
+     * @return  string
+     *
+     * @throws  LogicException If the base directory can not be detected
+     */
+    public function getBootstrapDirectory()
+    {
+        $script = $_SERVER['SCRIPT_FILENAME'];
+        $canonical = realpath($script);
+        if ($canonical !== false) {
+            $dir = dirname($canonical);
+        } elseif (substr($script, -14) === '/webrouter.php') {
+            // If Icinga Web 2 is served using PHP's built-in webserver with our webrouter.php script, the $_SERVER
+            // variable SCRIPT_FILENAME is set to DOCUMENT_ROOT/webrouter.php which is not a valid path to
+            // realpath but DOCUMENT_ROOT here still is the bootstrapping directory
+            $dir = dirname($script);
+        } else {
+            throw new LogicException('Can\'t detected base directory');
+        }
+        return $dir;
+    }
+
+    /**
+     * Start the bootstrap
+     *
+     * @param   string $baseDir     Icinga Web 2 base directory
+     * @param   string $configDir   Path to Icinga Web 2's configuration files
+     *
+     * @return  static
+     */
+    public static function start($baseDir = null, $configDir = null)
+    {
+        $application = new static($baseDir, $configDir);
         $application->bootstrap();
         return $application;
     }
@@ -283,7 +348,7 @@ abstract class ApplicationBootstrap
     /**
      * Register the Zend Autoloader
      *
-     * @return self
+     * @return $this
      */
     protected function setupZendAutoloader()
     {
@@ -291,17 +356,12 @@ abstract class ApplicationBootstrap
 
         \Zend_Loader_Autoloader::getInstance();
 
-        // Unfortunately this is needed to get the Zend Plugin loader working:
-        set_include_path(
-            implode(
-                PATH_SEPARATOR,
-                array($this->libDir, get_include_path())
-            )
+        \Zend_Paginator::addScrollingStylePrefixPath(
+            'Icinga_Web_Paginator_ScrollingStyle_', $this->libDir . '/Icinga/Web/Paginator/ScrollingStyle'
         );
 
         return $this;
     }
-
     /**
      * Setup module manager
      *
@@ -312,8 +372,23 @@ abstract class ApplicationBootstrap
         $this->moduleManager = new ModuleManager(
             $this,
             $this->configDir . '/enabledModules',
-            explode(':', $this->config->fromSection('global', 'modulePath', ICINGAWEB_APPDIR . '/../modules'))
+            explode(':', $this->config->fromSection('global', 'modulePath', $this->baseDir . '/modules'))
         );
+        return $this;
+    }
+
+    /**
+     * Load all core modules
+     *
+     * @return self
+     */
+    protected function loadCoreModules()
+    {
+        try {
+            $this->moduleManager->loadCoreModules();
+        } catch (NotReadableError $e) {
+            Logger::error(new IcingaException('Cannot load core modules. An exception was thrown:', $e));
+        }
         return $this;
     }
 
@@ -357,12 +432,14 @@ abstract class ApplicationBootstrap
     protected function loadConfig()
     {
         Config::$configDir = $this->configDir;
+
         try {
             $this->config = Config::app();
         } catch (NotReadableError $e) {
             Logger::error(new IcingaException('Cannot load application configuration. An exception was thrown:', $e));
             $this->config = new Config();
         }
+
         return $this;
     }
 
@@ -382,6 +459,7 @@ abstract class ApplicationBootstrap
                 return false; // Continue with the normal error handler
             }
             switch($errno) {
+                case E_NOTICE:
                 case E_WARNING:
                 case E_STRICT:
                     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
@@ -398,7 +476,7 @@ abstract class ApplicationBootstrap
      */
     protected function setupLogger()
     {
-        if (($loggingConfig = $this->config->get('logging')) !== null) {
+        if (($loggingConfig = $this->config->logging) !== null) {
             try {
                 Logger::create($loggingConfig);
             } catch (ConfigurationError $e) {
@@ -428,42 +506,62 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Setup default timezone
+     * Detect the timezone
      *
-     * @return  self
-     * @throws  ConfigurationError if the timezone in config.ini isn't valid
+     * @return null|string
      */
-    protected function setupTimezone()
+    protected function detectTimezone()
     {
-        $default = @date_default_timezone_get();
-        if (! $default) {
-            $default = 'UTC';
+        return null;
+    }
+
+    /**
+     * Set up the timezone
+     *
+     * @return $this
+     */
+    protected final function setupTimezone()
+    {
+        $timezone = $this->detectTimeZone();
+        if ($timezone === null || @date_default_timezone_set($timezone) === false) {
+            $timezone = @date_default_timezone_get();
+            if ($timezone === false) {
+                $timezone = 'UTC';
+                date_default_timezone_set($timezone);
+            }
         }
-        $timeZoneString = $this->config->fromSection('global', 'timezone', $default);
-        date_default_timezone_set($timeZoneString);
-        DateTimeFactory::setConfig(array('timezone' => $timeZoneString));
+        DateTimeFactory::setConfig(array('timezone' => $timezone));
         return $this;
     }
 
     /**
-     * Setup internationalization using gettext
+     * Detect the locale
      *
-     * Uses the preferred language sent by the browser or the default one
-     *
-     * @return  self
+     * @return null|string
      */
-    protected function setupInternationalization()
+    protected function detectLocale()
+    {
+        return null;
+    }
+
+    /**
+     * Set up internationalization using gettext
+     *
+     * @return $this
+     */
+    protected final function setupInternationalization()
     {
         if ($this->hasLocales()) {
             Translator::registerDomain(Translator::DEFAULT_DOMAIN, $this->getLocaleDir());
         }
 
+        $locale = $this->detectLocale();
+        if ($locale === null) {
+            $locale = Translator::DEFAULT_LOCALE;
+        }
+
         try {
-            Translator::setupLocale(
-                isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
-                    ? Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE'])
-                    : Translator::DEFAULT_LOCALE
-            );
+            Translator::setupLocale($locale);
         } catch (Exception $error) {
             Logger::error($error);
         }

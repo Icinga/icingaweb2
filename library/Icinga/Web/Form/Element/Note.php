@@ -4,13 +4,12 @@
 
 namespace Icinga\Web\Form\Element;
 
-use Zend_Form_Element;
-use Icinga\Web\Form;
+use Icinga\Web\Form\FormElement;
 
 /**
  * A note
  */
-class Note extends Zend_Form_Element
+class Note extends FormElement
 {
     /**
      * Form view helper to use for rendering
@@ -32,7 +31,15 @@ class Note extends Zend_Form_Element
      */
     public function init()
     {
-        $this->setDecorators(Form::$defaultElementDecorators);
+        if (count($this->getDecorators()) === 0) {
+            $this->setDecorators(array(
+                'ViewHelper',
+                array(
+                    'HtmlTag',
+                    array('tag' => 'p')
+                )
+            ));
+        }
     }
 
     /**

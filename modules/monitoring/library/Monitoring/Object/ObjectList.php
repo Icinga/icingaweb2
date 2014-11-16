@@ -5,7 +5,7 @@ namespace Icinga\Module\Monitoring\Object;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
 abstract class ObjectList implements Countable, IteratorAggregate
 {
@@ -21,7 +21,7 @@ abstract class ObjectList implements Countable, IteratorAggregate
 
     protected $count;
 
-    public function __construct(Backend $backend)
+    public function __construct(MonitoringBackend $backend)
     {
         $this->backend = $backend;
     }

@@ -1,5 +1,6 @@
 <div class="controls">
 <?= $this->tabs ?>
+<h1><?= $this->escape($module->getTitle()) ?></h1>
 </div>
 <div class="content">
 <?php if (! $module): ?>
@@ -12,7 +13,6 @@ $permissions = $module->getProvidedPermissions();
 $state = $moduleData->enabled ? ($moduleData->loaded ? 'enabled' : 'failed') : 'disabled'
 
 ?>
-<h1><?= $this->escape($module->getTitle()) ?></h1>
 <table class="avp">
 <tr>
   <th><?= $this->escape('Name') ?></th>

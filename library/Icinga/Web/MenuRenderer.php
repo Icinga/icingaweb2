@@ -114,6 +114,14 @@ class MenuRenderer extends RecursiveIteratorIterator
                 Logger::error('Could not invoke custom renderer. Exception: '. $e->getMessage());
             }
         }
+        if ($child->getIcon() && strpos($child->getIcon(), '.') === false) {
+            return sprintf(
+                '<a href="%s" class="icon-%s">%s</a>',
+                $child->getUrl() ?: '#',
+                $child->getIcon(),
+                htmlspecialchars($child->getTitle())
+            );
+        }
         return sprintf(
             '<a href="%s">%s%s</a>',
             $child->getUrl() ?: '#',

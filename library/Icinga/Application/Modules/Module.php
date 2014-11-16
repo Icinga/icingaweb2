@@ -17,6 +17,7 @@ use Icinga\Web\Hook;
 use Icinga\Web\Menu;
 use Icinga\Web\Widget;
 use Icinga\Web\Widget\Dashboard\Pane;
+use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\IcingaException;
@@ -132,6 +133,13 @@ class Module
      * @var array
      */
     private $configTabs = array();
+
+    /**
+     * Provided setup wizard
+     *
+     * @var string
+     */
+    private $setupWizard;
 
     /**
      * Icinga application
@@ -641,6 +649,31 @@ class Module
         return $tabs;
     }
 
+    /**
+     * Whether this module provides a setup wizard
+     *
+     * @return  bool
+     */
+    public function providesSetupWizard()
+    {
+        $this->launchConfigScript();
+        if (class_exists($this->setupWizard)) {
+            $wizard = new $this->setupWizard;
+            return $wizard instanceof SetupWizard;
+        }
+
+        return false;
+    }
+
+    /**
+     * Return this module's setup wizard
+     *
+     * @return  SetupWizard
+     */
+    public function getSetupWizard()
+    {
+        return new $this->setupWizard;
+    }
 
     /**
      * Provide a named permission
@@ -705,6 +738,19 @@ class Module
     }
 
     /**
+     * Provide a setup wizard
+     *
+     * @param   string  $className      The name of the class
+     *
+     * @return  self
+     */
+    protected function provideSetupWizard($className)
+    {
+        $this->setupWizard = $className;
+        return $this;
+    }
+
+    /**
      * Register new namespaces on the autoloader
      *
      * @return self
@@ -717,7 +763,7 @@ class Module
             $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName, $moduleLibraryDir);
             if (is_dir($this->getFormDir())) {
                 $this->app->getLoader()->registerNamespace(
-                    'Icinga\\Module\\' . $moduleName. '\\Form',
+                    'Icinga\\Module\\' . $moduleName. '\\Forms',
                     $this->getFormDir()
                 );
             }

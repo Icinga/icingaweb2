@@ -11,6 +11,7 @@ use Zend_View_Interface;
 use Icinga\Application\Icinga;
 use Icinga\Web\Form\Decorator\NoScriptApply;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
+use Icinga\Web\Form\FormElement;
 
 /**
  * Base class for forms providing CSRF protection, confirmation logic and auto submission
@@ -35,6 +36,13 @@ class Form extends Zend_Form
      * @var bool
      */
     protected $created = false;
+
+    /**
+     * The request associated with this form
+     *
+     * @var Request
+     */
+    protected $request;
 
     /**
      * The callback to call instead of Form::onSuccess()
@@ -100,18 +108,18 @@ class Form extends Zend_Form
      * @var array
      */
     public static $defaultElementDecorators = array(
-        'ViewHelper',
-        'Errors',
-        array('Description', array('tag' => 'span', 'class' => 'description')),
-        'Label',
-        array('HtmlTag', array('tag' => 'div'))
+        array('ViewHelper', array('separator' => '')),
+        array('Errors', array('separator' => '')),
+        array('Description', array('tag' => 'span', 'class' => 'description', 'separator' => '')),
+        array('Label', array('separator' => '')),
+        array('HtmlTag', array('tag' => 'div', 'class' => 'element'))
     );
 
     /**
      * Create a new form
      *
      * Accepts an additional option `onSuccess' which is a callback that is called instead of this
-     * form's method. It is called using the following signature: (Request $request, Form $form).
+     * form's method. It is called using the following signature: (Form $form).
      *
      * @see Zend_Form::__construct()
      *
@@ -355,11 +363,9 @@ class Form extends Zend_Form
      *
      * Intended to be implemented by concrete form classes. The base implementation returns always FALSE.
      *
-     * @param   Request     $request    The valid request used to process this form
-     *
      * @return  null|bool               Return FALSE in case no redirect should take place
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         return false;
     }
@@ -368,10 +374,8 @@ class Form extends Zend_Form
      * Perform actions when no form dependent data was sent
      *
      * Intended to be implemented by concrete form classes.
-     *
-     * @param   Request     $request    The current request
      */
-    public function onRequest(Request $request)
+    public function onRequest()
     {
 
     }
@@ -437,8 +441,8 @@ class Form extends Zend_Form
      * `disableLoadDefaultDecorators' option to any other value than `true'. For loading custom element decorators use
      * the 'decorators' option.
      *
-     * @param   string  $type       String element type
-     * @param   string  $name       The name of the element to add
+     * @param   string  $type       The type of the element
+     * @param   string  $name       The name of the element
      * @param   mixed   $options    The options for the element
      *
      * @return  Zend_Form_Element
@@ -460,10 +464,20 @@ class Form extends Zend_Form
             $options = array('decorators' => static::$defaultElementDecorators);
         }
 
-        $el = parent::createElement($type, $name, $options);
+        if (($el = $this->createIcingaFormElement($type, $name, $options)) === null) {
+            $el = parent::createElement($type, $name, $options);
+        }
 
         if ($el && $el->getAttrib('autosubmit')) {
-            $el->addDecorator(new NoScriptApply()); // Non-JS environments
+            $noScript = new NoScriptApply(); // Non-JS environments
+            $decorators = $el->getDecorators();
+            $pos = array_search('Zend_Form_Decorator_ViewHelper', array_keys($decorators)) + 1;
+            $el->setDecorators(
+                array_slice($decorators, 0, $pos, true)
+                + array(get_class($noScript) => $noScript)
+                + array_slice($decorators, $pos, count($decorators) - $pos, true)
+            );
+
             $class = $el->getAttrib('class');
             if (is_array($class)) {
                 $class[] = 'autosubmit';
@@ -473,6 +487,7 @@ class Form extends Zend_Form
                 $class .= ' autosubmit';
             }
             $el->setAttrib('class', $class); // JS environments
+
             unset($el->autosubmit);
         }
 
@@ -540,15 +555,17 @@ class Form extends Zend_Form
     {
         if ($request === null) {
             $request = $this->getRequest();
+        } else {
+            $this->request = $request;
         }
 
-        $formData = $this->getRequestData($request);
+        $formData = $this->getRequestData();
         if ($this->getUidDisabled() || $this->wasSent($formData)) {
             $this->populate($formData); // Necessary to get isSubmitted() to work
             if (! $this->getSubmitLabel() || $this->isSubmitted()) {
                 if ($this->isValid($formData)
-                    && (($this->onSuccess !== null && false !== call_user_func($this->onSuccess, $request, $this))
-                        || ($this->onSuccess === null && false !== $this->onSuccess($request)))) {
+                    && (($this->onSuccess !== null && false !== call_user_func($this->onSuccess, $this))
+                        || ($this->onSuccess === null && false !== $this->onSuccess()))) {
                     $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                 }
             } else {
@@ -556,7 +573,7 @@ class Form extends Zend_Form
                 $this->isValidPartial($formData);
             }
         } else {
-            $this->onRequest($request);
+            $this->onRequest();
         }
 
         return $request;
@@ -682,29 +699,19 @@ class Form extends Zend_Form
     }
 
     /**
-     * Return the request data based on this form's request method
+     * Return the request associated with this form
      *
-     * @param   Request     $request    The request to fetch the data from
-     *
-     * @return  array
-     */
-    public function getRequestData(Request $request)
-    {
-        if (strtolower($request->getMethod()) === $this->getMethod()) {
-            return $request->{'get' . ($request->isPost() ? 'Post' : 'Query')}();
-        }
-
-        return array();
-    }
-
-    /**
-     * Return the current request
+     * Returns the global request if none has been set for this form yet.
      *
      * @return  Request
      */
     public function getRequest()
     {
-        return Icinga::app()->getFrontController()->getRequest();
+        if ($this->request === null) {
+            $this->request = Icinga::app()->getFrontController()->getRequest();
+        }
+
+        return $this->request;
     }
 
     /**
@@ -715,6 +722,39 @@ class Form extends Zend_Form
     public function getResponse()
     {
         return Icinga::app()->getFrontController()->getResponse();
+    }
+
+    /**
+     * Return the request data based on this form's request method
+     *
+     * @return  array
+     */
+    protected function getRequestData()
+    {
+        if (strtolower($this->request->getMethod()) === $this->getMethod()) {
+            return $this->request->{'get' . ($this->request->isPost() ? 'Post' : 'Query')}();
+        }
+
+        return array();
+    }
+
+    /**
+     * Create a new element located in the Icinga Web 2 library
+     *
+     * @param   string  $type       The type of the element
+     * @param   string  $name       The name of the element
+     * @param   mixed   $options    The options for the element
+     *
+     * @return  NULL|FormElement    NULL in case the element is not found in the Icinga Web 2 library
+     *
+     * @see     Form::$defaultElementDecorators For Icinga Web 2's default element decorators.
+     */
+    protected function createIcingaFormElement($type, $name, $options = null)
+    {
+        $className = 'Icinga\\Web\\Form\\Element\\' . ucfirst($type);
+        if (class_exists($className)) {
+            return new $className($name, $options);
+        }
     }
 
     /**

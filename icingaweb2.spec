@@ -31,7 +31,7 @@
 %define prefixdir %{_datadir}/%{name}
 %define usermodparam -a -G
 %define logdir %{_localstatedir}/log/%{name}
-%define docdir %{sharedir}/log
+%define docdir %{sharedir}/doc
 
 %if "%{_vendor}" == "suse"
 %define phpname php5
@@ -179,7 +179,8 @@ install -D -m0644 packages/rpm/etc/httpd/conf.d/icingaweb.conf %{buildroot}/%{ap
 %{__mkdir} -p %{buildroot}/%{_sysconfdir}/%{name}/modules/monitoring
 %{__mkdir} -p %{buildroot}/%{_sysconfdir}/%{name}/enabledModules
 
-%{__cp} -r application doc library modules public %{buildroot}/%{sharedir}/
+# make sure to install local icingacli for setup wizard token generation & webserver config
+%{__cp} -r application doc library modules public bin %{buildroot}/%{sharedir}/
 
 ## config
 # authentication is db only
@@ -194,8 +195,8 @@ install -D -m0644 packages/rpm/etc/%{name}/modules/monitoring/instances.ini %{bu
 ln -s %{sharedir}/modules/monitoring %{buildroot}/%{_sysconfdir}/%{name}/enabledModules/monitoring
 ## config
 
-# install icingacli
-install -D -m0755 packages/rpm/usr/bin/icingacli %{buildroot}/usr/bin/icingacli
+# symlink icingacli
+ln -sf %{buildroot}/%{sharedir}/bin/icingacli %{buildroot}/usr/bin/icingacli
 
 %pre
 # Add apacheuser in the icingacmd group

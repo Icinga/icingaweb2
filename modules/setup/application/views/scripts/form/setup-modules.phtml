@@ -1,0 +1,47 @@
+<?php
+
+use Icinga\Web\Wizard;
+
+?>
+<div class="module-menu">
+  <p><?= mt('setup', 'The following modules can be set up by using a web-based wizard as well. To setup a module, just complete its wizard and advance to the summary!'); ?></p>
+  <p><?= mt('setup', 'You can freely switch to a module\'s wizard by clicking its name below. The wizard you are currently looking at is written in bold. A small tick is shown on the right once a wizard has been completed.'); ?></p>
+  <form name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
+    <?= $form->getElement($form->getTokenElementName()); ?>
+    <?= $form->getElement($form->getUidElementName()); ?>
+    <ul>
+    <?php $allFinished = true; ?>
+    <?php foreach ($form->getModules() as $module): ?>
+     <?php if ($module->providesSetupWizard()): ?>
+      <li>
+        <?php $isActive = $module->getName() === $form->getCurrentModule(); ?>
+        <button type="submit" name="module" value="<?= $module->getName(); ?>">
+          <?= $isActive ? '<strong>' : '' ?><?= $module->getTitle(); ?><?= $isActive ? '</strong>' : '' ?>
+        </button>
+       <?php if ($module->getSetupWizard()->isFinished()): ?>
+        <?= $this->icon('ok', mt('setup', 'Completed', 'setup.modules.wizard.state')); ?>
+       <?php else: ?>
+        <?php $allFinished = false; ?>
+       <?php endif ?>
+      </li>
+     <?php endif ?>
+    <?php endforeach ?>
+    </ul>
+  </form>
+ <?php if ($allFinished): ?>
+  <p class="all-completed"><?= mt('setup', 'You\'ve completed all module wizards!'); ?></p>
+ <?php else: ?>
+  <p style="font-size: 80%;"><?= mt('setup', 'Note that you can skip a specific module by just not completing its wizard.'); ?></p>
+ <?php endif ?>
+</div>
+<div class="module-wizard">
+  <?= $form->getCurrentWizard()->getForm()->render(); ?>
+</div>
+<form name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
+  <?= $form->getElement($form->getTokenElementName()); ?>
+  <?= $form->getElement($form->getUidElementName()); ?>
+  <div class="buttons">
+    <?= $form->getElement(Wizard::BTN_PREV); ?>
+    <?= $form->getElement(Wizard::BTN_NEXT); ?>
+  </div>
+</form>

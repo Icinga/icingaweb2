@@ -655,7 +655,6 @@ abstract class IdoQuery extends DbQuery
             );
             if ($session !== null) {
                 $session->version = self::$idoVersion;
-                $session->write(); // <- WHY? I don't want to care about this!
             }
         }
         return self::$idoVersion;

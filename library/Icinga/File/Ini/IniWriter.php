@@ -6,6 +6,7 @@ namespace Icinga\File\Ini;
 
 use Zend_Config;
 use Zend_Config_Ini;
+use Zend_Config_Exception;
 use Zend_Config_Writer_FileAbstract;
 use Icinga\Application\Config;
 
@@ -22,10 +23,17 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
     protected $options;
 
     /**
+     * The mode to set on new files
+     *
+     * @var int
+     */
+    public static $fileMode = 0664;
+
+    /**
      * Create a new INI writer
      *
-     * @param array $options   Supports all options of Zend_Config_Writer and additional
-     *                         options for the internal IniEditor:
+     * @param array $options   Supports all options of Zend_Config_Writer and additional options:
+     *                          * filemode:             The mode to set on new files
      *                          * valueIndentation:     The indentation level of the values
      *                          * commentIndentation:   The indentation level of the comments
      *                          * sectionSeparators:    The amount of newlines between sections
@@ -58,10 +66,34 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
         }
 
         $newconfig = $this->_config;
-        $editor = new IniEditor(file_get_contents($this->_filename), $this->options);
+        $editor = new IniEditor(@file_get_contents($this->_filename), $this->options);
         $this->diffConfigs($oldconfig, $newconfig, $editor);
         $this->updateSectionOrder($newconfig, $editor);
         return $editor->getText();
+    }
+
+    /**
+     * Write configuration to file and set file mode in case it does not exist yet
+     *
+     * @param string $filename
+     * @param Zend_Config $config
+     * @param bool $exclusiveLock
+     */
+    public function write($filename = null, Zend_Config $config = null, $exclusiveLock = null)
+    {
+        $filePath = $filename !== null ? $filename : $this->_filename;
+        $setMode = false === file_exists($filePath);
+
+        parent::write($filename, $config, $exclusiveLock);
+
+        if ($setMode) {
+            $mode = isset($this->options['filemode']) ? $this->options['filemode'] : static::$fileMode;
+            $old = umask(0); // Make sure that the mode we're going to set doesn't get mangled
+            if (is_int($mode) && false === @chmod($filePath, $mode)) {
+                throw new Zend_Config_Exception(sprintf('Failed to set file mode "%o" on file "%s"', $mode, $filePath));
+            }
+            umask($old);
+        }
     }
 
     /**

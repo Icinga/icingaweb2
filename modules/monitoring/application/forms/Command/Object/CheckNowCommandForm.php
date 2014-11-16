@@ -2,13 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Command\Object;
+namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\ScheduleHostCheckCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceCheckCommand;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 
 /**
  * Form for immediately checking hosts or services
@@ -30,26 +28,24 @@ class CheckNowCommandForm extends ObjectsCommandForm
      */
     public function addSubmitButton()
     {
+        $iconUrl = $this->getView()->href('img/icons/refresh_petrol.png');
+
         $this->addElements(array(
-            new Note(
-                'icon', // Bogus
-                array(
-                    'decorators' => array(array(
-                        'HtmlTag',
-                        array('tag' => 'img', 'src' => $this->getView()->href('img/icons/refresh_petrol.png'))
-                    ))
-                )
-            ),
             array(
-                'submit',
+                'button',
                 'btn_submit',
                 array(
                     'ignore'        => true,
-                    'label'         => mt('monitoring', 'Check now'),
-                    'decorators'    => array('ViewHelper')
+                    'type'          => 'submit',
+                    'value'         => mt('monitoring', 'Check now'),
+                    'label'         => '<img src="' . $iconUrl . '"> ' . mt('monitoring', 'Check now'),
+                    'decorators'    => array('ViewHelper'),
+                    'escape'        => false,
+                    'class'         => 'link-like'
                 )
             )
         ));
+
         return $this;
     }
 
@@ -57,7 +53,7 @@ class CheckNowCommandForm extends ObjectsCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
@@ -70,7 +66,7 @@ class CheckNowCommandForm extends ObjectsCommandForm
                 ->setObject($object)
                 ->setForced()
                 ->setCheckTime(time());
-            $this->getTransport($request)->send($check);
+            $this->getTransport($this->request)->send($check);
         }
         Notification::success(mtp(
             'monitoring',

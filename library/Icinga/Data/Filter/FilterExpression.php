@@ -19,6 +19,16 @@ class FilterExpression extends Filter
         $this->expression = $expression;
     }
 
+    public function isExpression()
+    {
+        return true;
+    }
+
+    public function isChain()
+    {
+        return false;
+    }
+
     public function isEmpty()
     {
         return false;
@@ -101,5 +111,15 @@ class FilterExpression extends Filter
             $pattern = '/^' . implode('.*', $parts) . '$/';
             return (bool) preg_match($pattern, $row->{$this->column});
         }
+    }
+
+    public function andFilter(Filter $filter)
+    {
+        return Filter::matchAll($this, $filter);
+    }
+
+    public function orFilter(Filter $filter)
+    {
+        return Filter::matchAny($this, $filter);
     }
 }

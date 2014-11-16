@@ -4,6 +4,7 @@
 
 namespace Icinga\Clicommands;
 
+use Icinga\Application\Icinga;
 use Icinga\Cli\Command;
 use Icinga\Exception\IcingaException;
 
@@ -30,7 +31,7 @@ class WebCommand extends Command
             // throw new IcingaException('Socket is required');
         }
         if ($basedir === null) {
-            $basedir = dirname(ICINGAWEB_APPDIR) . '/public';
+            $basedir = Icinga::app()->getBaseDir('public');
             if (! file_exists($basedir) || ! is_dir($basedir)) {
                 throw new IcingaException('Basedir is required');
             }
@@ -46,7 +47,7 @@ class WebCommand extends Command
             readlink('/proc/self/exe'),
             $socket,
             $basedir,
-            ICINGA_LIBDIR . '/Icinga/Application/webrouter.php'
+            Icinga::app()->getLibraryDir('/Icinga/Application/webrouter.php')
         );
 
         // TODO: Store webserver log, switch uid, log index.php includes, pid file

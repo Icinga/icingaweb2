@@ -15,13 +15,6 @@ use IteratorAggregate;
 class SessionNamespace implements IteratorAggregate
 {
     /**
-     * The session this namespace is associated to
-     *
-     * @var Session
-     */
-    protected $session;
-
-    /**
      * The actual values stored in this container
      *
      * @var array
@@ -34,16 +27,6 @@ class SessionNamespace implements IteratorAggregate
      * @var array
      */
     protected $removed = array();
-
-    /**
-     * Create a new session namespace
-     *
-     * @param   Session     $session    The session this namespace is associated to
-     */
-    public function __construct(Session $session = null)
-    {
-        $this->session = $session;
-    }
 
     /**
      * Return an iterator for all values in this namespace
@@ -120,7 +103,18 @@ class SessionNamespace implements IteratorAggregate
         $this->values[$key] = $value;
 
         if (in_array($key, $this->removed)) {
-            unset($this->removed[array_search($key, $this->values)]);
+            unset($this->removed[array_search($key, $this->removed)]);
+        }
+
+        return $this;
+    }
+
+    public function setByRef($key, &$value)
+    {
+        $this->values[$key] = & $value;
+
+        if (in_array($key, $this->removed)) {
+            unset($this->removed[array_search($key, $this->removed)]);
         }
 
         return $this;
@@ -137,6 +131,16 @@ class SessionNamespace implements IteratorAggregate
     public function get($key, $default = null)
     {
         return isset($this->values[$key]) ? $this->values[$key] : $default;
+    }
+
+    public function & getByRef($key, $default = null)
+    {
+        $value = $default;
+        if (isset($this->values[$key])) {
+            $value = & $this->values[$key];
+        }
+
+        return $value;
     }
 
     /**
@@ -177,14 +181,21 @@ class SessionNamespace implements IteratorAggregate
     }
 
     /**
-     * Save the session this namespace is associated to
+     * Return whether the session namespace has been changed
+     *
+     * @return  bool
      */
-    public function write()
+    public function hasChanged()
     {
-        if (!$this->session) {
-            throw new IcingaException('Cannot save, session not set');
-        }
+        return false === empty($this->values) || false === empty($this->removed);
+    }
 
-        $this->session->write();
+    /**
+     * Clear all values from the session namespace
+     */
+    public function clear()
+    {
+        $this->values = array();
+        $this->removed = array();
     }
 }
