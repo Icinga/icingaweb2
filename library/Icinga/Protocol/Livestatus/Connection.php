@@ -103,6 +103,7 @@ class Connection
 
     public function count(Query $query)
     {
+    return 100;
         $count = clone($query);
         $count->count();
         Benchmark::measure('Sending Livestatus Count Query');
