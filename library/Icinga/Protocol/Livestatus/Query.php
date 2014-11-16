@@ -16,6 +16,7 @@ use Exception;
 
 class Query extends SimpleQuery
 {
+    protected $customvars = array();
 
     /**
      * Columns that return arrays. Will be decoded.
@@ -71,7 +72,16 @@ class Query extends SimpleQuery
     public function getColumnAliases()
     {
         $aliases = array();
+        $hasCustom = false;
         foreach ($this->getColumns() as $key => $val) {
+            if ($val[0] === '_') {
+                $this->customvars[$val] = null;
+                if (! $hasCustom) {
+                    $aliases[] = 'custom_variables';
+                    $hasCustom = true;
+                }
+                continue;
+            }
             if (is_int($key)) {
                 $aliases[] = $val;
             } else {
