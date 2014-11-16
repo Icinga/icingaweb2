@@ -6,6 +6,12 @@ namespace Icinga\Protocol\Livestatus;
 
 use Icinga\Data\SimpleQuery;
 use Icinga\Exception\IcingaException;
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterChain;
+use Icinga\Data\Filter\FilterExpression;
+use Icinga\Data\Filter\FilterOr;
+use Icinga\Data\Filter\FilterAnd;
+use Icinga\Data\Filter\FilterNot;
 
 class Query extends SimpleQuery
 {
@@ -128,6 +134,141 @@ class Query extends SimpleQuery
              . implode("\n", $default_headers)
              . "\n\n";
         return $lql;
+    }
+    /**
+     * Whether Livestatus is able to apply the current filter
+     *
+     * TODO: find a better method name
+     * TODO: more granular checks, also render filter-flag columns with lql
+     *
+     * @return bool
+     */
+    public function filterIsSupported()
+    {
+        foreach ($this->filter->listFilteredColumns() as $column) {
+            if (is_array($this->available_columns[$column])) {
+                // Combined column, hardly filterable. Is it? May work!
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Create a Filter object for a given URL-like filter string. We allow
+     * for spaces as we do not search for custom string values here. This is
+     * internal voodoo.
+     *
+     * @param string $string Filter string
+     *
+     * @return Filter
+     */
+    protected function filterStringToFilter($string)
+    {
+        return Filter::fromQueryString(str_replace(' ', '', $string));
+    }
+
+    /**
+     * Render the current filter to LQL
+     *
+     * @return string
+     */
+    protected function filterToString()
+    {
+        return $this->renderFilter($this->filter);
+    }
+
+    /**
+     * Filter rendering
+     *
+     * Happens recursively, useful for filters and for Stats expressions
+     *
+     * @param Filter $filter    The filter that should be rendered
+     * @param string $type      Filter type. Usually "Filter" or "Stats"
+     * @param int    $level     Nesting level during recursion. Don't touch
+     * @param bool   $keylookup Whether to resolve alias names
+     *
+     * @return string
+     */
+    protected function renderFilter(Filter $filter, $type = 'Filter', $level = 0, $keylookup = true)
+    {
+        $str = '';
+        if ($filter instanceof FilterChain) {
+            if ($filter instanceof FilterAnd) {
+                $op = 'And';
+            } elseif ($filter instanceof FilterOr) {
+                $op = 'Or';
+            } elseif ($filter instanceof FilterNot) {
+                $op = 'Negate';
+            } else {
+                throw new IcingaException(
+                    'Cannot render filter: %s',
+                    $filter
+                );
+            }
+            $parts = array();
+            if (! $filter->isEmpty()) {
+                foreach ($filter->filters() as $f) {
+                    $parts[] = $this->renderFilter($f, $type, $level + 1, $keylookup);
+                }
+                $str .= implode("\n", $parts);
+                if ($type === 'Filter') {
+                    if (count($parts) > 1) {
+                        $str .= "\n" . $op . ': ' . count($parts);
+                    }
+                } else {
+                    $str .= "\n" . $type . $op . ': ' . count($parts);
+                }
+            }
+        } else {
+            $str .= $type . ': ' . $this->renderFilterExpression($filter, $keylookup);
+        }
+
+        return $str;
+    }
+
+    /**
+     * Produce a safe regex string as required by LQL
+     *
+     * @param string $expression search expression
+     *
+     * @return string
+     */
+    protected function safeRegex($expression)
+    {
+        return '^' . preg_replace('/\*/', '.*', $expression) . '$';
+    }
+
+    /**
+     * Render a single filter expression
+     *
+     * @param FilterExpression $filter    the filter expression
+     * @param bool             $keylookup whether to resolve alias names
+     *
+     * @return string
+     */
+    public function renderFilterExpression(FilterExpression $filter, $keylookup = true)
+    {
+        if ($keylookup) {
+            $col = $this->available_columns[$filter->getColumn()];
+        } else {
+            $col = $filter->getColumn();
+        }
+
+        $isArray = array_key_exists($col, $this->arrayColumns);
+
+        $sign = $filter->getSign();
+        if ($isArray && $sign === '=') {
+            $sign = '>=';
+        }
+        $expression = $filter->getExpression();
+        if ($sign === '=' && strpos($expression, '*') !== false) {
+            return $col . ' ~~ ' . $this->safeRegex($expression);
+        } elseif ($sign === '!=' && strpos($expression, '*') !== false) {
+            return $col . ' !~~ ' . $this->safeRegex($expression);
+        } else {
+            return $col . ' ' . $sign . ' ' . $expression;
+        }
     }
 
     public function __destruct()
