@@ -33,6 +33,7 @@ class StatusQuery extends Query
 
     protected $table = 'services';
 
+
     protected $available_columns = array(
         'host_name',
         'host_display_name',
@@ -67,9 +68,4 @@ class StatusQuery extends Query
         'comments_with_info',
         'downtimes_with_info',
     );
-
-    protected function createQuery()
-    {
-        return $this->connection->getConnection()->select()->from('services', $this->available_columns);
-    }
 }
