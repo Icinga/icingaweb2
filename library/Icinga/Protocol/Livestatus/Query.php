@@ -18,6 +18,13 @@ class Query extends SimpleQuery
 {
 
     /**
+     * Columns that return arrays. Will be decoded.
+     */
+    protected $arrayColumns = array(
+        'members' => true,
+    );
+
+    /**
      * All available columns. To be overridden by specific query implementations
      */
     protected $available_columns = array();
@@ -130,24 +137,16 @@ class Query extends SimpleQuery
         $parts = array(
             sprintf('GET %s', $this->table)
         );
-        if ($this->count === false && $this->columns !== null) {
-            $parts[] = 'Columns: ' . implode(' ', $this->columns);
+
+        // Fetch all required columns
+        $parts[] =  $this->columnsToString();
+
+        // In case we need to apply a userspace filter as of Livestatus lacking
+        // support for some of them we also need to fetch all filtered columns
+        if ($this->filterIsSupported() && $filter = $this->filterToString()) {
+            $parts[] =  $filter;
         }
-        foreach ($this->filters as $key => $val) {
-            if ($key === 'search') {
-                $parts[] = 'Filter: host_name ~~ ' . $val;
-                $parts[] = 'Filter: description ~~ ' . $val;
-                $parts[] = 'Or: 2';
-                continue;
-            }
-            if ($val === null) {
-                $parts[] = 'Filter: ' . $key;
-            } elseif (strpos($key, '?') === false) {
-                $parts[] = sprintf('Filter: %s = %s', $key, $val);
-            } else {
-                $parts[] = sprintf('Filter: %s', str_replace('?', $val, $key));
-            }
-        }
+
         if ($this->count === true) {
             $parts[] = 'Stats: state >= 0';
         }
