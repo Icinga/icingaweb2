@@ -5,7 +5,8 @@
 namespace Icinga\Protocol\Livestatus;
 
 use Icinga\Application\Benchmark;
-use Exception;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\SystemPermissionException;
 use Icinga\Exception\IcingaException;
 
 /**
@@ -74,7 +75,7 @@ class Connection
         $this->assertPhpExtensionLoaded('sockets');
         if ($socket[0] === '/') {
             if (! is_writable($socket)) {
-                throw new IcingaException(
+                throw new SystemPermissionException(
                     'Cannot write to livestatus socket "%s"',
                     $socket
                 );
@@ -83,22 +84,16 @@ class Connection
             $this->socket_path = $socket;
         } else {
             if (! preg_match('~^tcp://([^:]+):(\d+)~', $socket, $m)) {
-                throw new IcingaException(
+                throw new ConfigurationError(
                     'Invalid TCP socket syntax: "%s"',
                     $socket
                 );
             }
-            // TODO: Better syntax checks
+            // TODO: Better config syntax checks
             $this->socket_host = $m[1];
             $this->socket_port = (int) $m[2];
             $this->socket_type = self::TYPE_TCP;
         }
-    }
-
-    public function select()
-    {
-        $select = new Query($this);
-        return $select;
     }
 
     public function count(Query $query)
