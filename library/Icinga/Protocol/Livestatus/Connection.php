@@ -34,6 +34,8 @@ class Connection
     const TYPE_UNIX = 1;
     const TYPE_TCP  = 2;
 
+    const FIELD_SEPARATOR = '`';
+
     protected $bytesRead = 0;
     protected $responseSize;
     protected $status;
