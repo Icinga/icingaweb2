@@ -96,6 +96,16 @@ class Connection
         }
     }
 
+    /**
+     * Count unlimited rows matching the query filter
+     *
+     * TODO: Currently hardcoded value, as the old variant was stupid
+     *       Create a working variant doing this->execute(query->renderCount())...
+     *
+     * @param Query $query the query object
+     *
+     * @return int
+     */
     public function count(Query $query)
     {
     return 100;
