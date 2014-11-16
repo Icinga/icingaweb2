@@ -82,9 +82,18 @@ class Query extends SimpleQuery
         if ($this->table === null) {
             throw new IcingaException('Table is required');
         }
+
+        // Headers we always send
         $default_headers = array(
-            'OutputFormat: json',
+            // Our preferred output format is CSV as it allows us to fetch and
+            // process the result row by row
+            'OutputFormat: csv',
             'ResponseHeader: fixed16',
+            // Tried to find a save list of separators, this might be subject to
+            // change and eventually be transforment into constants
+            'Separators: ' . implode(' ', array(ord("\n"), ord('`'), ord(','), ord(';'))),
+            // We always use the keepalive feature, connection teardown happens
+            // in the connection destructor
             'KeepAlive: on'
         );
         $parts = array(
