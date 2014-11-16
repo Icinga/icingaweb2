@@ -251,10 +251,12 @@ class DbQuery extends SimpleQuery
         if (is_array($expression) && $sign === '=') {
             // TODO: Should we support this? Doesn't work for blub*
             return $col . ' IN (' . $this->escapeForSql($expression) . ')';
-        } elseif (strpos($expression, '*') === false) {
-            return $col . ' ' . $sign . ' ' . $this->escapeForSql($expression);
-        } else {
+        } elseif ($sign === '=' && strpos($expression, '*') !== false) {
             return $col . ' LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
+        } elseif ($sign === '!=' && strpos($expression, '*') !== false) {
+            return $col . ' NOT LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
+        } else {
+            return $col . ' ' . $sign . ' ' . $this->escapeForSql($expression);
         }
     }
 
