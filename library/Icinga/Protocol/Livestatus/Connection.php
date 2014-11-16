@@ -248,6 +248,15 @@ class Connection
         return $buffer;
     }
 
+    protected function discoverColumnHeaders($query)
+    {
+        if ($query->hasColumns()) {
+            $this->headers = $query->getColumnAliases();
+        } else {
+            $this->headers = $this->splitLine($this->readLineFromSocket());
+        }
+    }
+
     protected function readLineFromSocket()
     {
         if ($this->bytesRead === $this->responseSize) {
