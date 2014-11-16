@@ -313,6 +313,13 @@ class DbQuery extends SimpleQuery
         . "\n\n";
     }
 
+    public function __clone()
+    {
+        if ($this->select) {
+            $this->select = clone $this->select;
+        }
+    }
+
     /**
      * @return string
      */
