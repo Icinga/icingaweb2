@@ -250,9 +250,9 @@ class Connection
 
     protected function writeToSocket($data)
     {
-        $res = socket_write($this->connection, $data);
+        $res = @socket_write($this->getConnection(), $data);
         if ($res === false) {
-            throw new IcingaException('Writing to livestatus socket failed');
+            $this->socketError('Writing to livestatus socket failed');
         }
         return true;
     }
