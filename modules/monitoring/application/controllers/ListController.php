@@ -46,7 +46,6 @@ class Monitoring_ListController extends Controller
         $url = clone($this->url);
 
         if ($this->getRequest()->isPost()) {
-
             if ($request->getPost('sort')) {
                 $url->setParam('sort', $request->getPost('sort'));
                 if ($request->getPost('dir')) {
@@ -55,32 +54,6 @@ class Monitoring_ListController extends Controller
                     $url->removeParam('dir');
                 }
                 return $url;
-            }
-
-            $q = $this->getRequest()->getPost('q');
-            if ($q) {
-                list($k, $v) = preg_split('/=/', $q);
-                $url->addParams(array($k => $v));
-                return $url;
-            }
-        } else {
-            $q = $url->shift('q');
-            if ($q !== null) {
-                $action = $this->_request->getActionName();
-                switch($action) {
-                    case 'services':
-                        $this->params->remove('q')->set('service_description', '*' . $q . '*');
-                        break;
-                    case 'hosts':
-                        $this->params->remove('q')->set('host_name', '*' . $q . '*');
-                        break;
-                    case 'hostgroups':
-                        $this->params->remove('q')->set('hostgroup', '*' . $q . '*');
-                        break;
-                    case 'servicegroups':
-                        $this->params->remove('q')->set('servicegroup', '*' . $q . '*');
-                        break;
-                }
             }
         }
         return false;

@@ -108,6 +108,34 @@ class FilterEditor extends AbstractWidget
         $response->redirectAndExit($url);
     }
 
+    protected function mergeRootExpression($filter, $column, $sign, $expression)
+    {
+        $found = false;
+        if ($filter->isChain() && $filter->getOperatorName() === 'AND') {
+            foreach ($filter->filters() as $f) {
+                if ($f->isExpression()
+                    && $f->getColumn() === $column
+                    && $f->getSign() === $sign
+                ) {
+                    $f->setExpression($expression);
+                    $found = true;
+                    break;
+                }
+            }
+        } elseif ($filter->isExpression()) {
+            if ($filter->getColumn() === $column && $filter->getSign() === $sign) {
+                $filter->setExpression($expression);
+                $found = true;
+            }
+        }
+        if (! $found) {
+            $filter = $filter->andFilter(
+                Filter::expression($column, $sign, $expression)
+            );
+        }
+        return $filter;
+    }
+
     public function handleRequest($request)
     {
         $this->setUrl($request->getUrl()->without($this->ignoreParams));
@@ -124,7 +152,59 @@ class FilterEditor extends AbstractWidget
         $remove = $params->shift('removeFilter');
         $strip  = $params->shift('stripFilter');
         $modify = $params->shift('modifyFilter');
-        $filter = $this->getFilter();   
+
+
+
+        $search = null;
+        if ($request->isPost()) {
+            $search = $request->getPost('q');
+        }
+
+        if ($search === null) {
+            $search = $params->shift('q');
+        }
+
+        $filter = $this->getFilter();
+
+        if ($search !== null) {
+            if (strpos($search, '=') === false) {
+                // TODO: Ask the view for (multiple) search columns
+                switch($request->getActionName()) {
+                    case 'services':
+                        $searchCol = 'service_description';
+                        break;
+                    case 'hosts':
+                        $searchCol = 'host_name';
+                        break;
+                    case 'hostgroups':
+                        $searchCol = 'hostgroup';
+                        break;
+                    case 'servicegroups':
+                        $searchCol = 'servicegroup';
+                        break;
+                    default:
+                        $searchCol = null;
+                }
+
+                if ($searchCol === null) {
+                    throw new Exception('Cannot search here');
+                }
+                $filter = $this->mergeRootExpression($filter, $searchCol, '=', "*$search*");
+
+            } else {
+                list($k, $v) = preg_split('/=/', $search);
+                $filter = $this->mergeRootExpression($filter, $k, '=', $v);
+            }
+
+
+            $url = $this->url()->setQueryString(
+                $filter->toQueryString()
+            )->addParams($preserve);
+            if ($modify) {
+                $url->getParams()->add('modifyFilter');
+            }
+            $this->redirectNow($url);
+        }
 
         if ($remove) {
             $redirect = $this->url();
