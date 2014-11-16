@@ -365,11 +365,6 @@ if ($col > $size - 1) return $res;
 
     protected function establishTcpConnection()
     {
-        // TODO: find a bedder place for this
-        if (! defined('TCP_NODELAY')) {
-            define('TCP_NODELAY', 1);
-        }
-
         $this->connection = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         if (! @socket_connect($this->connection, $this->socket_host, $this->socket_port)) {
             throw new IcingaException(
