@@ -407,11 +407,21 @@ if ($col > $size - 1) return $res;
         return $this;
     }
 
+    /**
+     * Disconnect in case we are connected to a Livestatus socket
+     *
+     * @return self
+     */
     public function disconnect()
     {
-        if ($this->connection) {
+        if (is_resource($this->connection)
+            && get_resource_type($this->connection) === 'Socket')
+        {
+            Benchmark::measure('Disconnecting livestatus...');
             socket_close($this->connection);
+            Benchmark::measure('...socket closed');
         }
+        return $this;
     }
 
     public function __destruct()
