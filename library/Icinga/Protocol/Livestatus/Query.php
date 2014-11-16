@@ -147,16 +147,21 @@ class Query extends SimpleQuery
             $parts[] =  $filter;
         }
 
+        // TODO: Old way of rendering a count query, this should definitively be
+        // improved
         if ($this->count === true) {
             $parts[] = 'Stats: state >= 0';
         }
+
+        // TODO: Well... ordering is still missing
         if (! $this->count && $this->hasLimit() && ! $this->hasOrder()) {
-            $parts[] = 'Limit: ' . ($this->limit_count + $this->limit_offset);
+            $parts[] = 'Limit: ' . ($this->getLimit() + $this->getOffset());
         }
         $lql = implode("\n", $parts)
              . "\n"
              . implode("\n", $default_headers)
              . "\n\n";
+
         return $lql;
     }
 
