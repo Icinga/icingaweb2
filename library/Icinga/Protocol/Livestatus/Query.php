@@ -12,6 +12,7 @@ use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Filter\FilterOr;
 use Icinga\Data\Filter\FilterAnd;
 use Icinga\Data\Filter\FilterNot;
+use Exception;
 
 class Query extends SimpleQuery
 {
@@ -75,7 +76,11 @@ class Query extends SimpleQuery
      */
     public function __toString()
     {
-        return $this->toString();
+        try {
+            return $this->toString();
+        } catch (Exception $e) {
+            trigger_error('Exception: ' . $e->getMessage(), E_USER_ERROR);
+        }
     }
 
     /**
