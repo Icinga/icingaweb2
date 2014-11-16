@@ -112,6 +112,49 @@ class Connection
         return $data[0][0];
     }
 
+    /**
+     * Fetch a single row
+     *
+     * TODO: Currently based on fetchAll, that's bullshit
+     *
+     * @param Query $query the query object
+     *
+     * @return object the first result row
+     */
+    public function fetchRow(Query $query)
+    {
+        $all = $this->fetchAll($query);
+        return array_shift($all);
+    }
+
+    /**
+     * Fetch key/value pairs
+     *
+     * TODO: Currently slow, needs improvement
+     *
+     * @param Query $query the query object
+     *
+     * @return array
+     */
+    public function fetchPairs(Query $query)
+    {
+        $res = array();
+        $all = $this->fetchAll($query);
+        foreach ($all as $row) {
+            // slow
+            $keys = array_keys((array) $row);
+            $res[$row->{$keys[0]}] = $row->{$keys[1]};
+        }
+        return $res;
+    }
+
+    /**
+     * Fetch all result rows
+     *
+     * @param Query $query the query object
+     *
+     * @return array
+     */
     public function fetchAll(Query $query)
     {
         Benchmark::measure('Sending Livestatus Query');
