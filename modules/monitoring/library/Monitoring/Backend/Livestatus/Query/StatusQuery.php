@@ -33,6 +33,13 @@ class StatusQuery extends Query
 
     protected $table = 'services';
 
+    protected $filter_flags = array(
+        'host_handled'      => 'host_state > 0 & (host_acknowledged | host_in_downtime)',
+        'host_problem'      => 'host_state > 0',
+        'service_problem'   => 'service_state > 0',
+        'service_handled'   => 'service_state > 0 & (host_state > 0 | service_acknowledged | service_in_downtime)',
+        'service_unhandled' => 'service_state > 0 & host_state = 0 & !service_acknowledged & !service_in_downtime',
+    );
 
     protected $available_columns = array(
         'host'              => 'host_name',
