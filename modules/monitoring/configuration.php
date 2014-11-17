@@ -124,7 +124,7 @@ $section->add($this->translate('Timeline'))->setUrl('monitoring/timeline');
  * Reporting Section
  */
 $section = $this->menuSection($this->translate('Reporting'), array(
-    'icon'      => 'chart-line',
+    'icon'      => 'service',
     'priority'  => 100
 ));
 
