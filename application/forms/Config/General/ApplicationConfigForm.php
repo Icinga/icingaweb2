@@ -31,7 +31,7 @@ class ApplicationConfigForm extends Form
     {
         $this->addElement(
             'text',
-            'global_modulePath',
+            'global_module_path',
             array(
                 'label'         => t('Module Path'),
                 'required'      => true,
