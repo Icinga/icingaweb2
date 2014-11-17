@@ -20,16 +20,21 @@ p.pluginoutput {
   white-space: pre-wrap;
 }
 
-pre.pluginoutput {
-  font-family: Courier;
-  background: #eee;
-  font-size: 0.7em;
+div.pluginoutput {
+  border-right: solid 5px @colorPetrol;
   overflow: auto; 
-  white-space: pre-wrap;
-  margin: 0em;
-  padding: 1em;
-  margin-bottom: 0.5em;
   color: black;
+  margin-bottom: 1em;
+  padding: 0.2em;
+}
+
+div.pluginoutput h4 {
+  font-size: 0.875em;
+  margin: 0em;
+}
+
+div.pluginoutput pre{
+  white-space: pre-wrap;
 }
 
 table.objecthistory td {
@@ -156,5 +161,6 @@ table.avp .customvar ul {
 }
 
 div.selection-info {
-  padding-top:1em;
+  padding-top:0.5em;
+  float: right;
 }

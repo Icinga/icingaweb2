@@ -7,6 +7,7 @@ if ($this->compact): ?>
 <div class="controls">
   <?= $this->tabs ?>
   <div style="margin: 1em;" class="dontprint">
+    <?= $this->render('list/components/selectioninfo.phtml') ?>
     <?= $this->render('list/components/hostssummary.phtml') ?>
     <?= $this->translate('Sort by') ?> <?= $this->sortControl->render($this) ?>
   </div>
@@ -14,7 +15,6 @@ if ($this->compact): ?>
 <?= $this->widget('limiter')->setMaxLimit($this->hosts->count()) ?>
 <?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)) ?>
 <?= $this->selectionToolbar('multi', $this->href('monitoring/hosts/show?' . $this->filter->toQueryString())) ?>
-<?= $this->render('list/components/selectioninfo.phtml') ?>
 </div>
 
 <div class="content">
