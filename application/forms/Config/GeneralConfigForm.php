@@ -41,7 +41,7 @@ class GeneralConfigForm extends ConfigForm
     {
         $sections = array();
         foreach ($this->getValues() as $sectionAndPropertyName => $value) {
-            list($section, $property) = explode('_', $sectionAndPropertyName);
+            list($section, $property) = explode('_', $sectionAndPropertyName, 2);
             if (! isset($sections[$section])) {
                 $sections[$section] = array();
             }

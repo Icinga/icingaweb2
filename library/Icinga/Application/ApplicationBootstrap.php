@@ -372,7 +372,7 @@ abstract class ApplicationBootstrap
         $this->moduleManager = new ModuleManager(
             $this,
             $this->configDir . '/enabledModules',
-            explode(':', $this->config->fromSection('global', 'modulePath', $this->baseDir . '/modules'))
+            explode(':', $this->config->fromSection('global', 'module_path', $this->baseDir . '/modules'))
         );
         return $this;
     }
