@@ -46,7 +46,7 @@ if ($hosts->count() === 0) {
 
     $icons = array();
     if (! $host->host_handled && $host->host_state > 0){
-        $icons[] = $this->icon('flash', $this->translate('Unhandled'));
+        $icons[] = $this->icon('attention-alt', $this->translate('Unhandled'));
     }
 
     if ($host->host_acknowledged) {

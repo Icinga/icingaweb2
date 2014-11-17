@@ -197,7 +197,7 @@ abstract class MonitoredObjectController extends Controller
                 'service',
                 array(
                     'title'     => 'Service',
-                    'icon'      => 'conf',
+                    'icon'      => 'service',
                     'url'       => 'monitoring/service/show',
                     'urlParams' => $params
                 )
@@ -207,7 +207,7 @@ abstract class MonitoredObjectController extends Controller
             'services',
             array(
                 'title'     => 'Services',
-                'icon'      => 'conf-alt',
+                'icon'      => 'services',
                 'url'       => 'monitoring/show/services',
                 'urlParams' => $params
             )

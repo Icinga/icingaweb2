@@ -212,7 +212,7 @@ class Monitoring_ShowController extends Controller
                 'service',
                 array(
                     'title'     => 'Service',
-                    'icon'      => 'conf',
+                    'icon'      => 'service',
                     'url'       => 'monitoring/show/service',
                     'urlParams' => $params,
                 )
@@ -222,7 +222,7 @@ class Monitoring_ShowController extends Controller
             'services',
             array(
                 'title'     => 'Services',
-                'icon'      => 'conf-alt',
+                'icon'      => 'services',
                 'url'       => 'monitoring/show/services',
                 'urlParams' => $params,
             )

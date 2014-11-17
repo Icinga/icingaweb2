@@ -71,7 +71,7 @@ foreach ($services as $service):
         <?= $this->perfdata($service->service_perfdata, true, true) ?>
 
         <?php if (!$service->service_handled && $service->service_state > 0): ?>
-        <?= $this->icon('flash', $this->translate('Unhandled')) ?>
+        <?= $this->icon('attention-alt', $this->translate('Unhandled')) ?>
         <?php endif ?>
 
         <?php if ($service->service_acknowledged && !$service->service_in_downtime): ?>
