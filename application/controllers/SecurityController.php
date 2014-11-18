@@ -3,9 +3,9 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Application\Config;
-use Icinga\Form\ConfirmRemovalForm;
-use Icinga\Form\Security\PermissionForm;
-use Icinga\Form\Security\RestrictionForm;
+use Icinga\Forms\ConfirmRemovalForm;
+use Icinga\Forms\Security\PermissionForm;
+use Icinga\Forms\Security\RestrictionForm;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;

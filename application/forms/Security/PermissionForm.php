@@ -2,12 +2,12 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Security;
+namespace Icinga\Forms\Security;
 
 use InvalidArgumentException;
 use LogicException;
 use Icinga\Application\Icinga;
-use Icinga\Form\ConfigForm;
+use Icinga\Forms\ConfigForm;
 use Icinga\Util\String;
 
 /**
