@@ -158,11 +158,17 @@ namespace Icinga\Test {
                 ->andReturnUsing(function ($name, $default) { return $default; })->byDefault();
 
             $responseMock = Mockery::mock('Icinga\Web\Response')->shouldDeferMissing();
-
             // Can't express this as demeter chains. See: https://github.com/padraic/mockery/issues/59
             $bootstrapMock = Mockery::mock('Icinga\Application\ApplicationBootstrap')->shouldDeferMissing();
+            $libDir = dirname(self::$libDir);
             $bootstrapMock->shouldReceive('getFrontController')->andReturn($bootstrapMock)
                 ->shouldReceive('getApplicationDir')->andReturn(self::$appDir)
+                ->shouldReceive('getLibraryDir')->andReturnUsing(function ($subdir = null) use ($libDir) {
+                    if ($subdir !== null) {
+                        $libDir .= '/' . ltrim($subdir, '/');
+                    }
+                    return $libDir;
+                })
                 ->shouldReceive('getRequest')->andReturn($requestMock)
                 ->shouldReceive('getResponse')->andReturn($responseMock);
 
