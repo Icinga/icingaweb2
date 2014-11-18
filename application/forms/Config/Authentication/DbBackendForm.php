@@ -75,7 +75,7 @@ class DbBackendForm extends Form
             'hidden',
             'backend',
             array(
-                'required'  => true,
+                'disabled'  => true,
                 'value'     => 'db'
             )
         );

@@ -665,6 +665,14 @@ class Form extends Zend_Form
     public function isValidPartial(array $formData)
     {
         $this->create($formData);
+
+        // Ensure that disabled elements are not overwritten (http://www.zendframework.com/issues/browse/ZF-6909)
+        foreach ($this->getElements() as $name => $element) {
+            if ($element->getAttrib('disabled')) {
+                $formData[$name] = $element->getValue();
+            }
+        }
+
         return parent::isValidPartial($formData);
     }
 
@@ -678,6 +686,14 @@ class Form extends Zend_Form
     public function isValid($formData)
     {
         $this->create($formData);
+
+        // Ensure that disabled elements are not overwritten (http://www.zendframework.com/issues/browse/ZF-6909)
+        foreach ($this->getElements() as $name => $element) {
+            if ($element->getAttrib('disabled')) {
+                $formData[$name] = $element->getValue();
+            }
+        }
+
         return parent::isValid($formData);
     }
 

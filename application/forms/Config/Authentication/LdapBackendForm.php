@@ -96,7 +96,7 @@ class LdapBackendForm extends Form
             'hidden',
             'backend',
             array(
-                'required'  => true,
+                'disabled'  => true,
                 'value'     => 'ldap'
             )
         );

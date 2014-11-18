@@ -66,7 +66,7 @@ class AutologinBackendForm extends Form
             'hidden',
             'backend',
             array(
-                'required'  => true,
+                'disabled'  => true,
                 'value'     => 'autologin'
             )
         );
