@@ -37,7 +37,7 @@ class DashboardController extends ActionController
         $dashboard = new Dashboard();
         try {
             $dashboardConfig = Config::app($config);
-            if (count($dashboardConfig) === 0) {
+            if ($dashboardConfig->isEmpty()) {
                 return null;
             }
             $dashboard->readConfig($dashboardConfig);
@@ -93,7 +93,7 @@ class DashboardController extends ActionController
                 );
 
                 $configFile = Config::app('dashboard/dashboard')->getConfigFile();
-                if ($this->writeConfiguration(new Config($dashboard->toArray()), $configFile)) {
+                if ($this->writeConfiguration(Config::fromArray($dashboard->toArray()), $configFile)) {
                     $this->redirectNow(Url::fromPath('dashboard', array('pane' => $form->getValue('pane'))));
                 } else {
                     $this->render('showConfiguration');

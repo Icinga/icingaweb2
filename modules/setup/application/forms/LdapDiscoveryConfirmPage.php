@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Setup\Forms;
 
-use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Web\Form;
 
 /**
@@ -56,11 +56,11 @@ EOT;
     /**
      * Return the resource configuration as Config object
      *
-     * @return  Config
+     * @return  ConfigObject
      */
     public function getResourceConfig()
     {
-        return new Config($this->config);
+        return new ConfigObject($this->config);
     }
 
     /**

@@ -26,8 +26,8 @@ namespace Icinga\Test {
     use Mockery;
     use PHPUnit_Framework_TestCase;
     use Icinga\Application\Icinga;
-    use Icinga\Application\Config;
     use Icinga\Util\DateTimeFactory;
+    use Icinga\Data\ConfigObject;
     use Icinga\Data\ResourceFactory;
     use Icinga\Data\Db\DbConnection;
 
@@ -195,13 +195,13 @@ namespace Icinga\Test {
          *
          * @param   string $name
          *
-         * @return  Config
+         * @return  ConfigObject
          * @throws  RuntimeException
          */
         protected function createDbConfigFor($name)
         {
             if (array_key_exists($name, self::$dbConfiguration)) {
-                return new Config(self::$dbConfiguration[$name]);
+                return new ConfigObject(self::$dbConfiguration[$name]);
             }
 
             throw new RuntimeException('Configuration for database type not available: ' . $name);

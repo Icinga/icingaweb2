@@ -2,8 +2,8 @@
 
 namespace Icinga\Forms;
 
-use Icinga\Application\Config;
 use Icinga\Application\Logger;
+use Icinga\Data\ConfigObject;
 use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Protocol\Ldap\Connection;
 use Icinga\Protocol\Dns;
@@ -143,7 +143,7 @@ class LdapDiscoveryForm extends Form
 
     private function discoverCapabilities($config)
     {
-        $conn = new Connection(new Config($config));
+        $conn = new Connection(new ConfigObject($config));
         try {
             $conn->connect();
             $this->capabilities = $conn->getCapabilities();

@@ -12,6 +12,7 @@ use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Data\ConfigObject;
 use Icinga\Util\Translator;
 use Icinga\Web\Hook;
 use Icinga\Web\Menu;
@@ -242,7 +243,7 @@ class Module
         if (array_key_exists($name, $this->menuItems)) {
             $this->menuItems[$name]->setProperties($properties);
         } else {
-            $this->menuItems[$name] = new Menu($name, new Config($properties));
+            $this->menuItems[$name] = new Menu($name, new ConfigObject($properties));
         }
 
         return $this->menuItems[$name];
