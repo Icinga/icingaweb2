@@ -76,6 +76,7 @@ CREATE UNIQUE INDEX idx_icingaweb_user
 CREATE TABLE "icingaweb_user_preference" (
   "username" character varying(64) NOT NULL,
   "name"     character varying(64) NOT NULL,
+  "section"  character varying(64) NOT NULL,
   "value"    character varying(255) NOT NULL,
   "ctime"    timestamp NULL DEFAULT NULL,
   "mtime"    timestamp NULL DEFAULT NULL
@@ -85,6 +86,7 @@ ALTER TABLE ONLY "icingaweb_user_preference"
   ADD CONSTRAINT pk_icingaweb_user_preference
   PRIMARY KEY (
     "username",
+    "section",
     "name"
 );
 
@@ -92,5 +94,6 @@ CREATE UNIQUE INDEX idx_icingaweb_user_preference
   ON "icingaweb_user_preference"
   USING btree (
     lower((username)::text),
+    lower((section)::text),
     lower((name)::text)
 );

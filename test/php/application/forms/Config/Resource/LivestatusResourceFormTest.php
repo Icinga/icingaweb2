@@ -57,7 +57,7 @@ class LivestatusResourceFormTest extends BaseTestCase
     {
         Mockery::mock('alias:Icinga\Data\ResourceFactory')
             ->shouldReceive('createResource')
-            ->with(Mockery::type('Icinga\Application\Config'))
+            ->with(Mockery::type('Icinga\Data\ConfigObject'))
             ->andReturn($resourceMock);
     }
 }

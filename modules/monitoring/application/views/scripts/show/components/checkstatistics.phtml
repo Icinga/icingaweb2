@@ -7,11 +7,15 @@ if ($object->getType() === $object::TYPE_HOST) {
         'monitoring/host/reschedule-check',
         array('host' => $object->getName())
     );
+    $checkAttempts = $object->host_current_check_attempt . '/' . $object->host_max_check_attempts;
+    $stateType = (int) $object->host_state_type;
 } else {
     $reschedule = $this->href(
         'monitoring/service/reschedule-check',
         array('host' => $object->getHost()->getName(), 'service' => $object->getName())
     );
+    $checkAttempts = $object->service_attempt;
+    $stateType = (int) $object->service_state_type;
 }
 
 ?>
@@ -31,6 +35,14 @@ if ($object->getType() === $object::TYPE_HOST) {
       </a>
       <?= $this->timeUntil($object->next_check) ?>
   </td>
+</tr>
+<tr>
+    <th><?= $this->translate('Check attempts') ?></th>
+    <?php if ($stateType === 0): ?>
+    <td><?= $checkAttempts ?> <?= $this->translate('(soft state)') ?></td>
+    <?php else: ?>
+    <td><?= $checkAttempts ?> <?= $this->translate('(hard state)') ?></td>
+    <?php endif; ?>
 </tr>
 <?php if ($object->check_execution_time): ?>
 <tr>

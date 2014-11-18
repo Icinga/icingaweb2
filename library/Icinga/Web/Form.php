@@ -11,7 +11,6 @@ use Zend_View_Interface;
 use Icinga\Application\Icinga;
 use Icinga\Web\Form\Decorator\NoScriptApply;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
-use Icinga\Web\Form\FormElement;
 
 /**
  * Base class for forms providing CSRF protection, confirmation logic and auto submission
@@ -103,6 +102,13 @@ class Form extends Zend_Form
     protected $uidElementName = 'formUID';
 
     /**
+     * Whether the form should validate the sent data when being automatically submitted
+     *
+     * @var bool
+     */
+    protected $validatePartial = false;
+
+    /**
      * Default element decorators
      *
      * @var array
@@ -110,7 +116,7 @@ class Form extends Zend_Form
     public static $defaultElementDecorators = array(
         array('ViewHelper', array('separator' => '')),
         array('Errors', array('separator' => '')),
-        array('Description', array('tag' => 'span', 'class' => 'description', 'separator' => '')),
+        array('Help'),
         array('Label', array('separator' => '')),
         array('HtmlTag', array('tag' => 'div', 'class' => 'element'))
     );
@@ -138,6 +144,21 @@ class Form extends Zend_Form
         if ($this->onSuccess !== null && false === is_callable($this->onSuccess)) {
             throw new LogicException('The option `onSuccess\' is not callable');
         }
+
+        // Zend's plugin loader reverses the order of added prefix paths thus trying our paths first before trying
+        // Zend paths
+        $this->addPrefixPaths(array(
+            array(
+                'prefix'    => 'Icinga\\Web\\Form\\Element\\',
+                'path'      => Icinga::app()->getLibraryDir('Icinga/Web/Form/Element'),
+                'type'      => static::ELEMENT
+            ),
+            array(
+                'prefix'    => 'Icinga\\Web\\Form\\Decorator\\',
+                'path'      => Icinga::app()->getLibraryDir('Icinga/Web/Form/Decorator'),
+                'type'      => static::DECORATOR
+            )
+        ));
 
         parent::__construct($options);
     }
@@ -320,6 +341,29 @@ class Form extends Zend_Form
     }
 
     /**
+     * Set whether this form should validate the sent data when being automatically submitted
+     *
+     * @param   bool    $state
+     *
+     * @return  self
+     */
+    public function setValidatePartial($state)
+    {
+        $this->validatePartial = $state;
+        return $this;
+    }
+
+    /**
+     * Return whether this form should validate the sent data when being automatically submitted
+     *
+     * @return  bool
+     */
+    public function getValidatePartial()
+    {
+        return $this->validatePartial;
+    }
+
+    /**
      * Create this form
      *
      * @param   array   $formData   The data sent by the user
@@ -464,9 +508,7 @@ class Form extends Zend_Form
             $options = array('decorators' => static::$defaultElementDecorators);
         }
 
-        if (($el = $this->createIcingaFormElement($type, $name, $options)) === null) {
-            $el = parent::createElement($type, $name, $options);
-        }
+        $el = parent::createElement($type, $name, $options);
 
         if ($el && $el->getAttrib('autosubmit')) {
             $noScript = new NoScriptApply(); // Non-JS environments
@@ -568,8 +610,8 @@ class Form extends Zend_Form
                         || ($this->onSuccess === null && false !== $this->onSuccess()))) {
                     $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                 }
-            } else {
-                // The form can't be processed but we want to show validation errors though
+            } elseif ($this->getValidatePartial()) {
+                // The form can't be processed but we may want to show validation errors though
                 $this->isValidPartial($formData);
             }
         } else {
@@ -623,6 +665,14 @@ class Form extends Zend_Form
     public function isValidPartial(array $formData)
     {
         $this->create($formData);
+
+        // Ensure that disabled elements are not overwritten (http://www.zendframework.com/issues/browse/ZF-6909)
+        foreach ($this->getElements() as $name => $element) {
+            if ($element->getAttrib('disabled')) {
+                $formData[$name] = $element->getValue();
+            }
+        }
+
         return parent::isValidPartial($formData);
     }
 
@@ -636,6 +686,14 @@ class Form extends Zend_Form
     public function isValid($formData)
     {
         $this->create($formData);
+
+        // Ensure that disabled elements are not overwritten (http://www.zendframework.com/issues/browse/ZF-6909)
+        foreach ($this->getElements() as $name => $element) {
+            if ($element->getAttrib('disabled')) {
+                $formData[$name] = $element->getValue();
+            }
+        }
+
         return parent::isValid($formData);
     }
 
@@ -736,25 +794,6 @@ class Form extends Zend_Form
         }
 
         return array();
-    }
-
-    /**
-     * Create a new element located in the Icinga Web 2 library
-     *
-     * @param   string  $type       The type of the element
-     * @param   string  $name       The name of the element
-     * @param   mixed   $options    The options for the element
-     *
-     * @return  NULL|FormElement    NULL in case the element is not found in the Icinga Web 2 library
-     *
-     * @see     Form::$defaultElementDecorators For Icinga Web 2's default element decorators.
-     */
-    protected function createIcingaFormElement($type, $name, $options = null)
-    {
-        $className = 'Icinga\\Web\\Form\\Element\\' . ucfirst($type);
-        if (class_exists($className)) {
-            return new $className($name, $options);
-        }
     }
 
     /**

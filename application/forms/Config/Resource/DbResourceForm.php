@@ -5,8 +5,8 @@
 namespace Icinga\Forms\Config\Resource;
 
 use Exception;
-use Icinga\Application\Config;
 use Icinga\Web\Form;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Application\Platform;
 
@@ -129,7 +129,7 @@ class DbResourceForm extends Form
     public static function isValidResource(Form $form)
     {
         try {
-            $resource = ResourceFactory::createResource(new Config($form->getValues()));
+            $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
             $resource->getConnection()->getConnection();
         } catch (Exception $e) {
             $form->addError(t('Connectivity validation failed, connection to the given resource not possible.'));

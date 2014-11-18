@@ -9,6 +9,7 @@ use Icinga\Forms\ConfigForm;
 use Icinga\Web\Notification;
 use Icinga\Application\Config;
 use Icinga\Application\Platform;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Forms\Config\Authentication\DbBackendForm;
@@ -91,12 +92,12 @@ class AuthenticationBackendConfigForm extends ConfigForm
         $name = isset($values['name']) ? $values['name'] : '';
         if (! $name) {
             throw new InvalidArgumentException(t('Authentication backend name missing'));
-        } elseif ($this->config->get($name) !== null) {
+        } elseif ($this->config->hasSection($name)) {
             throw new InvalidArgumentException(t('Authentication backend already exists'));
         }
 
         unset($values['name']);
-        $this->config->{$name} = $values;
+        $this->config->setSection($name, $values);
         return $this;
     }
 
@@ -116,18 +117,19 @@ class AuthenticationBackendConfigForm extends ConfigForm
             throw new InvalidArgumentException(t('Old authentication backend name missing'));
         } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
             throw new InvalidArgumentException(t('New authentication backend name missing'));
-        } elseif (($backendConfig = $this->config->get($name)) === null) {
+        } elseif (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(t('Unknown authentication backend provided'));
         }
 
+        $backendConfig = $this->config->getSection($name);
         if ($newName !== $name) {
             // Only remove the old entry if it has changed as the order gets screwed when editing backend names
-            unset($this->config->{$name});
+            $this->config->removeSection($name);
         }
 
         unset($values['name']);
-        $this->config->{$newName} = array_merge($backendConfig->toArray(), $values);
-        return $this->config->{$newName};
+        $this->config->setSection($newName, $backendConfig->merge($values));
+        return $backendConfig;
     }
 
     /**
@@ -143,11 +145,12 @@ class AuthenticationBackendConfigForm extends ConfigForm
     {
         if (! $name) {
             throw new InvalidArgumentException(t('Authentication backend name missing'));
-        } elseif (($backendConfig = $this->config->get($name)) === null) {
+        } elseif (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(t('Unknown authentication backend provided'));
         }
 
-        unset($this->config->{$name});
+        $backendConfig = $this->config->getSection($name);
+        $this->config->removeSection($name);
         return $backendConfig;
     }
 
@@ -165,7 +168,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
     {
         if (! $name) {
             throw new InvalidArgumentException(t('Authentication backend name missing'));
-        } elseif ($this->config->get($name) === null) {
+        } elseif (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(t('Unknown authentication backend provided'));
         }
 
@@ -175,10 +178,10 @@ class AuthenticationBackendConfigForm extends ConfigForm
 
         $newConfig = array();
         foreach ($backendOrder as $backendName) {
-            $newConfig[$backendName] = $this->config->get($backendName);
+            $newConfig[$backendName] = $this->config->getSection($backendName);
         }
 
-        $config = new Config($newConfig);
+        $config = Config::fromArray($newConfig);
         $this->config = $config->setConfigFile($this->config->getConfigFile());
         return $this;
     }
@@ -235,13 +238,13 @@ class AuthenticationBackendConfigForm extends ConfigForm
         if ($authBackend !== null) {
             if ($authBackend === '') {
                 throw new ConfigurationError(t('Authentication backend name missing'));
-            } elseif (false === isset($this->config->{$authBackend})) {
+            } elseif (! $this->config->hasSection($authBackend)) {
                 throw new ConfigurationError(t('Unknown authentication backend provided'));
-            } elseif (false === isset($this->config->{$authBackend}->backend)) {
+            } elseif ($this->config->getSection($authBackend)->backend === null) {
                 throw new ConfigurationError(sprintf(t('Backend "%s" has no `backend\' setting'), $authBackend));
             }
 
-            $configValues = $this->config->{$authBackend}->toArray();
+            $configValues = $this->config->getSection($authBackend)->toArray();
             $configValues['type'] = $configValues['backend'];
             $configValues['name'] = $authBackend;
             $this->populate($configValues);
@@ -332,7 +335,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
     /**
      * Return the configuration for the chosen resource
      *
-     * @return  Config
+     * @return  ConfigObject
      */
     public function getResourceConfig()
     {

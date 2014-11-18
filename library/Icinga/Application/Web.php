@@ -259,9 +259,7 @@ class Web extends ApplicationBootstrap
         $view->view->addHelperPath($this->getApplicationDir('/views/helpers'));
 
         $view->view->setEncoding('UTF-8');
-        $view->view->headTitle()->prepend(
-            $this->config->global !== null ? $this->config->global->get('project', 'Icinga') : 'Icinga'
-        );
+        $view->view->headTitle()->prepend($this->config->get('global', 'project', 'Icinga'));
 
         $view->view->headTitle()->setSeparator(' :: ');
 

@@ -428,7 +428,7 @@ class ActionController extends Zend_Controller_Action
         }
 
         if ($this->autorefreshInterval !== null) {
-    //        $resp->setHeader('X-Icinga-Refresh', $this->autorefreshInterval);
+            $resp->setHeader('X-Icinga-Refresh', $this->autorefreshInterval);
         }
     }
 

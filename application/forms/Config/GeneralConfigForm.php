@@ -48,7 +48,7 @@ class GeneralConfigForm extends ConfigForm
             $sections[$section][$property] = $value;
         }
         foreach ($sections as $section => $config) {
-            $this->config->{$section} = $config;
+            $this->config->setSection($section, $config);
         }
 
         if ($this->save()) {

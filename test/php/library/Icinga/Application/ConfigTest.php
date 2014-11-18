@@ -28,259 +28,171 @@ class ConfigTest extends BaseTestCase
         Config::$configDir = $this->oldConfigDir;
     }
 
-    public function testWhetherInitializingAConfigWithAssociativeArraysCreatesHierarchicalConfigObjects()
+    public function testWhetherConfigIsCountable()
     {
-        $config = new Config(array(
-            'a' => 'b',
-            'c' => 'd',
-            'e' => array(
-                'f' => 'g',
-                'h' => 'i',
-                'j' => array(
-                    'k' => 'l',
-                    'm' => 'n'
-                )
-            )
-        ));
+        $config = Config::fromArray(array('a' => 'b', 'c' => array('d' => 'e')));
 
-        $this->assertInstanceOf(
-            get_class($config),
-            $config->e,
-            'Config::__construct() does not accept two dimensional arrays'
-        );
-        $this->assertInstanceOf(
-            get_class($config),
-            $config->e->j,
-            'Config::__construct() does not accept multi dimensional arrays'
-        );
+        $this->assertInstanceOf('Countable', $config, 'Config does not implement interface `Countable\'');
+        $this->assertEquals(2, count($config), 'Config does not count sections correctly');
     }
 
-    /**
-     * @depends testWhetherInitializingAConfigWithAssociativeArraysCreatesHierarchicalConfigObjects
-     */
-    public function testWhetherItIsPossibleToCloneConfigObjects()
+    public function testWhetherConfigIsTraversable()
     {
-        $config = new Config(array(
-            'a' => 'b',
-            'c' => array(
-                'd' => 'e'
-            )
-        ));
-        $newConfig = clone $config;
+        $config = Config::fromArray(array('a' => array(), 'c' => array()));
+        $config->setSection('e');
 
-        $this->assertNotSame(
-            $config,
-            $newConfig,
-            'Shallow cloning objects of type Config does not seem to work properly'
-        );
-        $this->assertNotSame(
-            $config->c,
-            $newConfig->c,
-            'Deep cloning objects of type Config does not seem to work properly'
-        );
-    }
-
-    public function testWhetherConfigObjectsAreCountable()
-    {
-        $config = new Config(array('a' => 'b', 'c' => array('d' => 'e')));
-
-        $this->assertInstanceOf('Countable', $config, 'Config objects do not implement interface `Countable\'');
-        $this->assertEquals(2, count($config), 'Config objects do not count properties and sections correctly');
-    }
-
-    public function testWhetherConfigObjectsAreTraversable()
-    {
-        $config = new Config(array('a' => 'b', 'c' => 'd'));
-        $config->e = 'f';
-
-        $this->assertInstanceOf('Iterator', $config, 'Config objects do not implement interface `Iterator\'');
+        $this->assertInstanceOf('Iterator', $config, 'Config does not implement interface `Iterator\'');
 
         $actual = array();
-        foreach ($config as $key => $value) {
-            $actual[$key] = $value;
+        foreach ($config as $key => $_) {
+            $actual[] = $key;
         }
 
         $this->assertEquals(
-            array('a' => 'b', 'c' => 'd', 'e' => 'f'),
+            array('a', 'c', 'e'),
             $actual,
-            'Config objects do not iterate properly in the order their values were inserted'
+            'Config does not iterate properly in the order its sections were inserted'
         );
     }
 
-    public function testWhetherOneCanCheckWhetherConfigObjectsHaveACertainPropertyOrSection()
-    {
-        $config = new Config(array('a' => 'b', 'c' => array('d' => 'e')));
-
-        $this->assertTrue(isset($config->a), 'Config objects do not seem to implement __isset() properly');
-        $this->assertTrue(isset($config->c->d), 'Config objects do not seem to implement __isset() properly');
-        $this->assertFalse(isset($config->d), 'Config objects do not seem to implement __isset() properly');
-        $this->assertFalse(isset($config->c->e), 'Config objects do not seem to implement __isset() properly');
-        $this->assertTrue(isset($config['a']), 'Config object do not seem to implement offsetExists() properly');
-        $this->assertFalse(isset($config['d']), 'Config object do not seem to implement offsetExists() properly');
-    }
-
-    public function testWhetherItIsPossibleToAccessProperties()
-    {
-        $config = new Config(array('a' => 'b', 'c' => null));
-
-        $this->assertEquals('b', $config->a, 'Config objects do not allow property access');
-        $this->assertNull($config['c'], 'Config objects do not allow offset access');
-        $this->assertNull($config->d, 'Config objects do not return NULL as default');
-    }
-
-    public function testWhetherItIsPossibleToSetPropertiesAndSections()
+    public function testWhetherOneCanCheckIfAConfigHasAnySections()
     {
         $config = new Config();
-        $config->a = 'b';
-        $config['c'] = array('d' => 'e');
+        $this->assertTrue($config->isEmpty(), 'Config does not report that it is empty');
 
-        $this->assertTrue(isset($config->a), 'Config objects do not allow to set properties');
-        $this->assertTrue(isset($config->c), 'Config objects do not allow to set offsets');
-        $this->assertInstanceOf(
-            get_class($config),
-            $config->c,
-            'Config objects do not convert arrays to config objects when set'
-        );
+        $config->setSection('test');
+        $this->assertFalse($config->isEmpty(), 'Config does report that it is empty although it is not');
     }
 
-    /**
-     * @expectedException LogicException
-     */
-    public function testWhetherItIsNotPossibleToAppendProperties()
+    public function testWhetherItIsPossibleToRetrieveAllSectionNames()
     {
-        $config = new Config();
-        $config[] = 'test';
-    }
-
-    public function testWhetherItIsPossibleToUnsetPropertiesAndSections()
-    {
-        $config = new Config(array('a' => 'b', 'c' => array('d' => 'e')));
-        unset($config->a);
-        unset($config['c']);
-
-        $this->assertFalse(isset($config->a), 'Config objects do not allow to unset properties');
-        $this->assertFalse(isset($config->c), 'Config objects do not allow to unset sections');
-    }
-
-    /**
-     * @depends testWhetherConfigObjectsAreCountable
-     */
-    public function testWhetherOneCanCheckIfAConfigObjectHasAnyPropertiesOrSections()
-    {
-        $config = new Config();
-        $this->assertTrue($config->isEmpty(), 'Config objects do not report that they are empty');
-
-        $config->test = 'test';
-        $this->assertFalse($config->isEmpty(), 'Config objects do report that they are empty although they are not');
-    }
-
-    /**
-     * @depends testWhetherItIsPossibleToAccessProperties
-     */
-    public function testWhetherItIsPossibleToRetrieveDefaultValuesForNonExistentPropertiesOrSections()
-    {
-        $config = new Config(array('a' => 'b'));
+        $config = Config::fromArray(array('a' => array('b' => 'c'), 'd' => array('e' => 'f')));
 
         $this->assertEquals(
-            'b',
-            $config->get('a'),
-            'Config objects do not return the actual value of existing properties'
-        );
-        $this->assertNull(
-            $config->get('b'),
-            'Config objects do not return NULL as default for non-existent properties'
-        );
-        $this->assertEquals(
-            'test',
-            $config->get('test', 'test'),
-            'Config objects do not allow to define the default value to return for non-existent properties'
-        );
-    }
-
-    public function testWhetherItIsPossibleToRetrieveAllPropertyAndSectionNames()
-    {
-        $config = new Config(array('a' => 'b', 'c' => array('d' => 'e')));
-
-        $this->assertEquals(
-            array('a', 'c'),
+            array('a', 'd'),
             $config->keys(),
-            'Config objects do not list property and section names correctly'
+            'Config::keys does not list section names correctly'
         );
     }
 
-    public function testWhetherConfigObjectsCanBeConvertedToArrays()
+    public function testWhetherConfigCanBeConvertedToAnArray()
     {
-        $config = new Config(array('a' => 'b', 'c' => array('d' => 'e')));
+        $config = Config::fromArray(array('a' => 'b', 'c' => array('d' => 'e')));
 
         $this->assertEquals(
             array('a' => 'b', 'c' => array('d' => 'e')),
             $config->toArray(),
-            'Config objects cannot be correctly converted to arrays'
+            'Config::toArray does not return the correct array'
         );
     }
 
-    /**
-     * @depends testWhetherConfigObjectsCanBeConvertedToArrays
-     */
-    public function testWhetherItIsPossibleToMergeConfigObjects()
-    {
-        $config = new Config(array('a' => 'b'));
-
-        $config->merge(array('a' => 'bb', 'c' => 'd', 'e' => array('f' => 'g')));
-        $this->assertEquals(
-            array('a' => 'bb', 'c' => 'd', 'e' => array('f' => 'g')),
-            $config->toArray(),
-            'Config objects cannot be extended with arrays'
-        );
-
-        $config->merge(new Config(array('c' => array('d' => 'ee'), 'e' => array('h' => 'i'))));
-        $this->assertEquals(
-            array('a' => 'bb', 'c' => array('d' => 'ee'), 'e' => array('f' => 'g', 'h' => 'i')),
-            $config->toArray(),
-            'Config objects cannot be extended with other Config objects'
-        );
-    }
-
-    /**
-     * @depends testWhetherItIsPossibleToAccessProperties
-     */
     public function testWhetherItIsPossibleToDirectlyRetrieveASectionProperty()
     {
-        $config = new Config(array('a' => array('b' => 'c')));
+        $config = Config::fromArray(array('a' => array('b' => 'c')));
 
         $this->assertEquals(
             'c',
-            $config->fromSection('a', 'b'),
-            'Config::fromSection does not return the actual value of a section\'s property'
+            $config->get('a', 'b'),
+            'Config::get does not return the actual value of a section\'s property'
         );
         $this->assertNull(
-            $config->fromSection('a', 'c'),
-            'Config::fromSection does not return NULL as default for non-existent section properties'
+            $config->get('a', 'c'),
+            'Config::get does not return NULL as default for non-existent section properties'
         );
         $this->assertNull(
-            $config->fromSection('b', 'c'),
-            'Config::fromSection does not return NULL as default for non-existent sections'
+            $config->get('b', 'c'),
+            'Config::get does not return NULL as default for non-existent sections'
         );
         $this->assertEquals(
             'test',
-            $config->fromSection('a', 'c', 'test'),
-            'Config::fromSection does not return the given default value for non-existent section properties'
+            $config->get('a', 'c', 'test'),
+            'Config::get does not return the given default value for non-existent section properties'
         );
         $this->assertEquals(
             'c',
-            $config->fromSection('a', 'b', 'test'),
-            'Config::fromSection does not return the actual value of a section\'s property in case a default is given'
+            $config->get('a', 'b', 'test'),
+            'Config::get does not return the actual value of a section\'s property in case a default is given'
+        );
+    }
+
+    public function testWhetherConfigReturnsSingleSections()
+    {
+        $config = Config::fromArray(array('a' => array('b' => 'c')));
+
+        $this->assertInstanceOf(
+            'Icinga\Data\ConfigObject',
+            $config->getSection('a'),
+            'Config::getSection does not return a known section'
+        );
+    }
+
+    /**
+     * @depends testWhetherConfigReturnsSingleSections
+     */
+    public function testWhetherConfigSetsSingleSections()
+    {
+        $config = new Config();
+        $config->setSection('a', array('b' => 'c'));
+
+        $this->assertInstanceOf(
+            'Icinga\Data\ConfigObject',
+            $config->getSection('a'),
+            'Config::setSection does not set a new section'
+        );
+
+        $config->setSection('a', array('bb' => 'cc'));
+
+        $this->assertNull(
+            $config->getSection('a')->b,
+            'Config::setSection does not overwrite existing sections'
+        );
+        $this->assertEquals(
+            'cc',
+            $config->getSection('a')->bb,
+            'Config::setSection does not overwrite existing sections'
+        );
+    }
+
+    /**
+     * @depends testWhetherConfigIsCountable
+     */
+    public function testWhetherConfigRemovesSingleSections()
+    {
+        $config = Config::fromArray(array('a' => array('b' => 'c'), 'd' => array('e' => 'f')));
+        $config->removeSection('a');
+
+        $this->assertEquals(
+            1,
+            $config->count(),
+            'Config::removeSection does not remove a known section'
+        );
+    }
+
+    /**
+     * @depends testWhetherConfigSetsSingleSections
+     */
+    public function testWhetherConfigKnowsWhichSectionsItHas()
+    {
+        $config = new Config();
+        $config->setSection('a');
+
+        $this->assertTrue(
+            $config->hasSection('a'),
+            'Config::hasSection does not know anything about its sections'
+        );
+        $this->assertFalse(
+            $config->hasSection('b'),
+            'Config::hasSection does not know anything about its sections'
         );
     }
 
     /**
      * @expectedException UnexpectedValueException
-     * @depends testWhetherItIsPossibleToAccessProperties
      */
     public function testWhetherAnExceptionIsThrownWhenTryingToAccessASectionPropertyOnANonSection()
     {
-        $config = new Config(array('a' => 'b'));
-        $config->fromSection('a', 'b');
+        $config = Config::fromArray(array('a' => 'b'));
+        $config->get('a', 'b');
     }
 
     public function testWhetherConfigResolvePathReturnsValidAbsolutePaths()
@@ -293,10 +205,10 @@ class ConfigTest extends BaseTestCase
     }
 
     /**
-     * @depends testWhetherConfigObjectsCanBeConvertedToArrays
+     * @depends testWhetherConfigCanBeConvertedToAnArray
      * @depends testWhetherConfigResolvePathReturnsValidAbsolutePaths
      */
-    public function testWhetherItIsPossibleToInitializeAConfigObjectFromAIniFile()
+    public function testWhetherItIsPossibleToInitializeAConfigFromAIniFile()
     {
         $config = Config::fromIni(Config::resolvePath('config.ini'));
 
@@ -332,7 +244,7 @@ class ConfigTest extends BaseTestCase
     }
 
     /**
-     * @depends testWhetherItIsPossibleToInitializeAConfigObjectFromAIniFile
+     * @depends testWhetherItIsPossibleToInitializeAConfigFromAIniFile
      */
     public function testWhetherItIsPossibleToRetrieveApplicationConfiguration()
     {
@@ -356,7 +268,7 @@ class ConfigTest extends BaseTestCase
     }
 
     /**
-     * @depends testWhetherItIsPossibleToInitializeAConfigObjectFromAIniFile
+     * @depends testWhetherItIsPossibleToInitializeAConfigFromAIniFile
      */
     public function testWhetherItIsPossibleToRetrieveModuleConfiguration()
     {

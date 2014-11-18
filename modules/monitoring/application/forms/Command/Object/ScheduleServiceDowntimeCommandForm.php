@@ -38,6 +38,22 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
 
     /**
      * (non-PHPDoc)
+     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
+     */
+    public function getHelp()
+    {
+        return mt(
+            'monitoring',
+            'This command is used to schedule host and service downtimes. During the specified downtime,'
+            . ' Icinga will not send notifications out about the hosts and services. When the scheduled'
+            . ' downtime expires, Icinga will send out notifications for the hosts and services as it'
+            . ' normally would. Scheduled downtimes are preserved across program shutdowns and'
+            . ' restarts.'
+        );
+    }
+
+    /**
+     * (non-PHPDoc)
      * @see \Icinga\Web\Form::createElements() For the method documentation.
      */
     public function createElements(array $formData = array())
@@ -46,20 +62,6 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
         $end = clone $start;
         $end->add(new DateInterval('PT1H'));
         $this->addElements(array(
-            array(
-                'note',
-                'command-info',
-                array(
-                    'value' => mt(
-                        'monitoring',
-                        'This command is used to schedule host and service downtimes. During the specified downtime,'
-                        . ' Icinga will not send notifications out about the hosts and services. When the scheduled'
-                        . ' downtime expires, Icinga will send out notifications for the hosts and services as it'
-                        . ' normally would. Scheduled downtimes are preserved across program shutdowns and'
-                        . ' restarts.'
-                    )
-                )
-            ),
             array(
                 'textarea',
                 'comment',

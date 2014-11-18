@@ -4,7 +4,6 @@
 
 namespace Icinga\Application;
 
-use Icinga\Application\Config;
 use Icinga\Application\Platform;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Cli\Params;
@@ -12,6 +11,7 @@ use Icinga\Cli\Loader;
 use Icinga\Cli\Screen;
 use Icinga\Application\Logger;
 use Icinga\Application\Benchmark;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\ProgrammingError;
 
 require_once __DIR__ . '/ApplicationBootstrap.php';
@@ -50,7 +50,7 @@ class Cli extends ApplicationBootstrap
     protected function setupLogging()
     {
         Logger::create(
-            new Config(
+            new ConfigObject(
                 array(
                     'level' => Logger::INFO,
                     'log'   => 'stdout',

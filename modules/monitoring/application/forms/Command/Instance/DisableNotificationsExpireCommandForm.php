@@ -26,20 +26,22 @@ class DisableNotificationsExpireCommandForm extends CommandForm
 
     /**
      * (non-PHPDoc)
+     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
+     */
+    public function getHelp()
+    {
+        return mt(
+            'monitoring',
+            'This command is used to disable host and service notifications for a specific time.'
+        );
+    }
+
+    /**
+     * (non-PHPDoc)
      * @see \Icinga\Web\Form::createElements() For the method documentation.
      */
     public function createElements(array $formData = array())
     {
-        $this->addElement(
-            'note',
-            'command-info',
-            array(
-                'value' => mt(
-                    'monitoring',
-                    'This command is used to disable host and service notifications for a specific time.'
-                )
-            )
-        );
         $expireTime = new DateTime();
         $expireTime->add(new DateInterval('PT1H'));
         $this->addElement(

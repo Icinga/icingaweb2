@@ -177,10 +177,10 @@ class ConfigController extends ActionController
     public function removeauthenticationbackendAction()
     {
         $form = new ConfirmRemovalForm(array(
-            'onSuccess' => function ($request) {
+            'onSuccess' => function ($form) {
                 $configForm = new AuthenticationBackendConfigForm();
                 $configForm->setIniConfig(Config::app('authentication'));
-                $authBackend = $request->getQuery('auth_backend');
+                $authBackend = $form->getRequest()->getQuery('auth_backend');
 
                 try {
                     $configForm->remove($authBackend);
@@ -212,7 +212,7 @@ class ConfigController extends ActionController
      */
     public function resourceAction()
     {
-        $this->view->resources = Config::app('resources', true)->toArray();
+        $this->view->resources = Config::app('resources', true)->keys();
         $this->view->tabs->activate('resources');
     }
 
@@ -250,10 +250,10 @@ class ConfigController extends ActionController
     public function removeresourceAction()
     {
         $form = new ConfirmRemovalForm(array(
-            'onSuccess' => function ($request) {
+            'onSuccess' => function ($form) {
                 $configForm = new ResourceConfigForm();
                 $configForm->setIniConfig(Config::app('resources'));
-                $resource = $request->getQuery('resource');
+                $resource = $form->getRequest()->getQuery('resource');
 
                 try {
                     $configForm->remove($resource);
@@ -274,9 +274,9 @@ class ConfigController extends ActionController
 
         // Check if selected resource is currently used for authentication
         $resource = $this->getRequest()->getQuery('resource');
-        $authConfig = Config::app('authentication')->toArray();
+        $authConfig = Config::app('authentication');
         foreach ($authConfig as $backendName => $config) {
-            if (array_key_exists('resource', $config) && $config['resource'] === $resource) {
+            if ($config->get('resource') === $resource) {
                 $form->addError(sprintf(
                     $this->translate(
                         'The resource "%s" is currently in use by the authentication backend "%s". ' .

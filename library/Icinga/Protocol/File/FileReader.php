@@ -5,8 +5,8 @@
 namespace Icinga\Protocol\File;
 
 use Countable;
-use Icinga\Application\Config;
 use Icinga\Data\Selectable;
+use Icinga\Data\ConfigObject;
 
 /**
  * Read file line by line
@@ -30,11 +30,11 @@ class FileReader implements Selectable, Countable
     /**
      * Create a new reader
      *
-     * @param   Config $config
+     * @param   ConfigObject $config
      *
      * @throws  FileReaderException If a required $config directive (filename or fields) is missing
      */
-    public function __construct(Config $config)
+    public function __construct(ConfigObject $config)
     {
         foreach (array('filename', 'fields') as $key) {
             if (isset($config->{$key})) {

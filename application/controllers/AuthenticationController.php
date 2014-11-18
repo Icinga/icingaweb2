@@ -33,15 +33,8 @@ class AuthenticationController extends ActionController
      */
     public function loginAction()
     {
-        if (@file_exists(Config::$configDir . '/setup.token')) {
-            try {
-                $config = Config::app()->toArray();
-                if (empty($config)) {
-                    $this->redirectNow(Url::fromPath('setup'));
-                }
-            } catch (NotReadableError $e) {
-                // Gets thrown in case of insufficient permission only
-            }
+        if (@file_exists(Config::resolvePath('setup.token')) && !@file_exists(Config::resolvePath('config.ini'))) {
+            $this->redirectNow(Url::fromPath('setup'));
         }
 
         $auth = $this->Auth();
