@@ -102,6 +102,13 @@ class Form extends Zend_Form
     protected $uidElementName = 'formUID';
 
     /**
+     * Whether the form should validate the sent data when being automatically submitted
+     *
+     * @var bool
+     */
+    protected $validatePartial = false;
+
+    /**
      * Default element decorators
      *
      * @var array
@@ -331,6 +338,29 @@ class Form extends Zend_Form
     public function getUidElementName()
     {
         return $this->uidElementName;
+    }
+
+    /**
+     * Set whether this form should validate the sent data when being automatically submitted
+     *
+     * @param   bool    $state
+     *
+     * @return  self
+     */
+    public function setValidatePartial($state)
+    {
+        $this->validatePartial = $state;
+        return $this;
+    }
+
+    /**
+     * Return whether this form should validate the sent data when being automatically submitted
+     *
+     * @return  bool
+     */
+    public function getValidatePartial()
+    {
+        return $this->validatePartial;
     }
 
     /**
@@ -580,8 +610,8 @@ class Form extends Zend_Form
                         || ($this->onSuccess === null && false !== $this->onSuccess()))) {
                     $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                 }
-            } else {
-                // The form can't be processed but we want to show validation errors though
+            } elseif ($this->getValidatePartial()) {
+                // The form can't be processed but we may want to show validation errors though
                 $this->isValidPartial($formData);
             }
         } else {
