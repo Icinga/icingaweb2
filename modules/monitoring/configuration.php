@@ -136,13 +136,9 @@ $section->add($this->translate('Alert Summary'), array(
  * System Section
  */
 $section = $this->menuSection($this->translate('System'));
-$section->add($this->translate('Process Info'), array(
+$section->add($this->translate('Monitoring Health'), array(
     'url'      => 'monitoring/process/info',
     'priority' => 120
-));
-$section->add($this->translate('Performance Info'), array(
-    'url'      => 'monitoring/process/performance',
-    'priority' => 130
 ));
 
 /*
