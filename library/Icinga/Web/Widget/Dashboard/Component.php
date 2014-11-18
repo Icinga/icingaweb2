@@ -211,7 +211,10 @@ EOD;
     {
         return sprintf(
             '<a data-base-target="main" href="%s">%s</a>',
-            Url::fromRequest(array('remove' => $this->getTitle())),
+            Url::fromPath('dashboard/remove-component', array(
+                'component' => $this->getTitle(),
+                'pane'      => $this->pane->getTitle()
+            )),
             t('Remove')
         );
     }

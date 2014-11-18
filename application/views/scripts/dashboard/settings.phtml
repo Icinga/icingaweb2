@@ -24,23 +24,32 @@
                         <?= $pane->getName(); ?>
                     </th>
                 </tr>
-                <?php foreach ($pane->getComponents() as $component): ?>
+                <?php $components = $pane->getComponents(); ?>
+                <?php if(empty($components)): ?>
                     <tr>
-                        <td>
-                            <a href="<?= $this->href('dashboard/update-component', array('pane' => $pane->getName(), 'component' => $component->getTitle()));  ?>">
-                                <?= $component->getTitle(); ?>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="<?= $this->href($component->getUrl()); ?>"><?= $component->getUrl(); ?></a>
-                        </td>
-                        <td>
-                            <a href="<?= $this->href('dashboard/remove', array('pane' => $pane->getName(), 'component' => $component->getTitle()));  ?>">
-                            <?= $this->icon('remove.png'); ?>
-                            </a>
+                        <td colspan="3">
+                            <?= $this->translate('No compoments added to dashboard') ?>.
                         </td>
                     </tr>
-                <?php endforeach; ?>
+                <?php else: ?>
+                    <?php foreach ($components as $component): ?>
+                        <tr>
+                            <td>
+                                <a href="<?= $this->href('dashboard/update-component', array('pane' => $pane->getName(), 'component' => $component->getTitle()));  ?>">
+                                    <?= $component->getTitle(); ?>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="<?= $this->href($component->getUrl()); ?>"><?= $component->getUrl(); ?></a>
+                            </td>
+                            <td>
+                                <a href="<?= $this->href('dashboard/remove-component', array('pane' => $pane->getName(), 'component' => $component->getTitle()));  ?>">
+                                <?= $this->icon('remove.png'); ?>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             <?php endforeach; ?>
         </tbody>
     </table>

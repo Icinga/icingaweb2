@@ -4,10 +4,6 @@
 
 namespace Icinga\Forms\Dashboard;
 
-use Icinga\Application\Config;
-use Icinga\Exception\ProgrammingError;
-use Icinga\File\Ini\IniWriter;
-use Icinga\Web\Url;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Form;
 use Icinga\Web\Request;

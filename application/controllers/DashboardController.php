@@ -3,9 +3,13 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Application\Logger;
-use Icinga\Form\Dashboard\ComponentForm;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Forms\ConfirmRemovalForm;
+use Icinga\Forms\Dashboard\ComponentForm;
+use Icinga\Web\Form;
 use Icinga\Web\Notification;
 use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Request;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Widget\Tabextension\DashboardSettings;
@@ -33,10 +37,29 @@ class DashboardController extends ActionController
     {
         $form = new ComponentForm();
         $this->createTabs();
-        $dashboard = new Dashboard();
-        $dashboard->setUser($this->getRequest()->getUser());
-        $dashboard->load();
+        $dashboard = $this->dashboard;
         $form->setDashboard($dashboard);
+        if ($this->_request->getParam('url')) {
+            $params = $this->_request->getParams();
+            $params['url'] = rawurldecode($this->_request->getParam('url'));
+            $form->populate($params);
+        }
+        $form->setOnSuccess(function (Request $request, Form $form) use ($dashboard) {
+            try {
+                $pane = $dashboard->getPane($form->getValue('pane'));
+            } catch (ProgrammingError $e) {
+                $pane = new Dashboard\Pane($form->getValue('pane'));
+                $pane->setUserWidget();
+                $dashboard->addPane($pane);
+            }
+            $component = new Dashboard\Component($form->getValue('component'), $form->getValue('url'), $pane);
+            $component->setUserWidget();
+            $pane->addComponent($component);
+            $dashboard->write();
+            Notification::success(t('Component created'));
+            return true;
+        });
+        $form->setRedirectUrl('dashboard');
         $form->handleRequest();
         $this->view->form = $form;
     }
@@ -60,12 +83,12 @@ class DashboardController extends ActionController
                 400
             );
         }
-        $form->setOnSuccess(function (\Icinga\Web\Request $request, \Icinga\Web\Form $form) use ($dashboard) {
+        $form->setOnSuccess(function (Request $request, Form $form) use ($dashboard) {
             $pane = $dashboard->getPane($form->getValue('pane'));
             try {
                 $component = $pane->getComponent($form->getValue('component'));
                 $component->setUrl($form->getValue('url'));
-            } catch (\Icinga\Exception\ProgrammingError $e) {
+            } catch (ProgrammingError $e) {
                 $component = new Dashboard\Component($form->getValue('component'), $form->getValue('url'), $pane);
                 $pane->addComponent($component);
             }
@@ -74,6 +97,7 @@ class DashboardController extends ActionController
             if ($form->getValue('org_component') && $form->getValue('org_component') !== $component->getTitle()) {
                 $pane->removeComponent($form->getValue('org_component'));
             }
+            $dashboard->write();
             $dashboard->write();
             Notification::success(t('Component updated'));
             return true;
@@ -87,31 +111,42 @@ class DashboardController extends ActionController
         $this->view->form = $form;
     }
 
-    public function deleteComponentAction()
+    public function removeComponentAction()
     {
-        $form = new ComponentForm();
-
+        $form = new ConfirmRemovalForm();
         $this->createTabs();
-        $dashboard = new Dashboard();
-        $dashboard->setUser($this->getRequest()->getUser());
-        $dashboard->load();
-        $form->setDashboard($dashboard);
+        $dashboard = $this->dashboard;
+        if (! $this->_request->getParam('pane')) {
+            throw new Zend_Controller_Action_Exception(
+                'Missing parameter "pane"',
+                400
+            );
+        }
+        if (! $this->_request->getParam('component')) {
+            throw new Zend_Controller_Action_Exception(
+                'Missing parameter "component"',
+                400
+            );
+        }
+        $pane = $this->_request->getParam('pane');
+        $component = $this->_request->getParam('component');
+        $form->setOnSuccess(function (Request $request, Form $form) use ($dashboard, $component, $pane) {
+            try {
+                $pane = $dashboard->getPane($pane);
+                $pane->removeComponent($component);
+                $dashboard->write();
+                Notification::success(t('Component has been removed from') . ' ' . $pane->getTitle());
+                return true;
+            } catch (ProgrammingError $e) {
+                Notification::error($e->getMessage());
+                return false;
+            }
+            return false;
+        });
+        $form->setRedirectUrl('dashboard/settings');
         $form->handleRequest();
-        $this->view->form = $form;
-    }
-
-    /**
-     * Display the form for adding new components or add the new component if submitted
-     */
-    public function addurlAction()
-    {
-        $form = new AddUrlForm();
-
-        $dashboard = new Dashboard();
-        $dashboard->setUser($this->getRequest()->getUser());
-        $dashboard->load();
-        $form->setDashboard($dashboard);
-        $form->handleRequest();
+        $this->view->pane = $pane;
+        $this->view->component = $component;
         $this->view->form = $form;
     }
 
@@ -140,14 +175,13 @@ class DashboardController extends ActionController
                     $this->dashboard->write();
                     $this->redirectNow(URL::fromRequest()->remove('remove'));
                 }
-                
-                /* $this->view->tabs->add(
+                $this->view->tabs->add(
                     'Add',
                     array(
                         'title' => '+',
-                        'url' => Url::fromPath('dashboard/addurl')
+                        'url' => Url::fromPath('dashboard/new-component')
                     )
-                ); */
+                );
                 $this->view->dashboard = $this->dashboard;
             }
         }

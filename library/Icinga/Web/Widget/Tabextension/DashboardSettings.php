@@ -24,7 +24,7 @@ class DashboardSettings implements Tabextension
             array(
                 'icon'      => 'img/icons/dashboard.png',
                 'title'     => t('Add To Dashboard'),
-                'url'       => Url::fromPath('dashboard/addurl')
+                'url'       => Url::fromPath('dashboard/new-component')
             )
         );
 
