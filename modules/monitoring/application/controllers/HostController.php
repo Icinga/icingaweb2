@@ -2,10 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Module\Monitoring\Form\Command\Object\AcknowledgeProblemCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\AddCommentCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\ScheduleHostCheckCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\ScheduleHostDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostCheckCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Web\Controller\MonitoredObjectController;
 

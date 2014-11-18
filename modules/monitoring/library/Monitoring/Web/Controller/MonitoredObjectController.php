@@ -5,13 +5,13 @@
 namespace Icinga\Module\Monitoring\Web\Controller;
 
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Form\Command\Object\AcknowledgeProblemCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\CheckNowCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\DeleteCommentCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\DeleteDowntimeCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\ObjectsCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\RemoveAcknowledgementCommandForm;
-use Icinga\Module\Monitoring\Form\Command\Object\ToggleObjectFeaturesCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\ObjectsCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -187,7 +187,7 @@ abstract class MonitoredObjectController extends Controller
             'host',
             array(
                 'title'     => 'Host',
-                'icon'      => 'img/icons/host.png',
+                'icon'      => 'host',
                 'url'       => 'monitoring/host/show',
                 'urlParams' => $params
             )
@@ -197,7 +197,7 @@ abstract class MonitoredObjectController extends Controller
                 'service',
                 array(
                     'title'     => 'Service',
-                    'icon'      => 'img/icons/service.png',
+                    'icon'      => 'service',
                     'url'       => 'monitoring/service/show',
                     'urlParams' => $params
                 )
@@ -207,20 +207,22 @@ abstract class MonitoredObjectController extends Controller
             'services',
             array(
                 'title'     => 'Services',
-                'icon'      => 'img/icons/service.png',
+                'icon'      => 'service',
                 'url'       => 'monitoring/show/services',
                 'urlParams' => $params
             )
         );
-        $tabs->add(
-            'history',
-            array(
-                'title'     => 'History',
-                'icon'      => 'img/icons/history.png',
-                'url'       => 'monitoring/show/history',
-                'urlParams' => $params
-            )
-        );
+        if ($this->backend->hasQuery('eventHistory')) {
+            $tabs->add(
+                'history',
+                array(
+                    'title'     => 'History',
+                    'icon'      => 'rewind',
+                    'url'       => 'monitoring/show/history',
+                    'urlParams' => $params
+                )
+            );
+        }
         $tabs
             ->extend(new OutputFormat())
             ->extend(new DashboardAction());

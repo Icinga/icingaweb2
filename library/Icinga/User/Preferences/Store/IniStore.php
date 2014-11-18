@@ -4,7 +4,7 @@
 
 namespace Icinga\User\Preferences\Store;
 
-use Zend_Config;
+use Icinga\Application\Config;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\NotWritableError;
 use Icinga\File\Ini\IniWriter;
@@ -67,7 +67,7 @@ class IniStore extends PreferencesStore
                     $this->getUser()->getUsername()
                 );
             } else {
-                $this->preferences = parse_ini_file($this->preferencesFile);
+                $this->preferences = parse_ini_file($this->preferencesFile, true);
             }
         }
 
@@ -81,9 +81,13 @@ class IniStore extends PreferencesStore
      */
     public function save(Preferences $preferences)
     {
-        $preferences = $preferences->toArray();
-        $this->update(array_diff_assoc($preferences, $this->preferences));
-        $this->delete(array_keys(array_diff_key($this->preferences, $preferences)));
+        $this->preferences = $preferences->toArray();
+
+        // TODO: Elaborate whether we need to patch the contents
+        // $preferences = $preferences->toArray();
+        // $this->update(array_diff_assoc($preferences, $this->preferences));
+        // $this->delete(array_keys(array_diff_key($this->preferences, $preferences)));
+
         $this->write();
     }
 
@@ -116,7 +120,7 @@ class IniStore extends PreferencesStore
 
             $this->writer = new IniWriter(
                 array(
-                    'config'    => new Zend_Config($this->preferences),
+                    'config'    => Config::fromArray($this->preferences),
                     'filename'  => $this->preferencesFile
                 )
             );

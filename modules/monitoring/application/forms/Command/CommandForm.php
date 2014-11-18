@@ -2,9 +2,9 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Command;
+namespace Icinga\Module\Monitoring\Forms\Command;
 
-use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Module\Monitoring\Command\Transport\CommandTransport;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
@@ -24,11 +24,11 @@ abstract class CommandForm extends Form
     /**
      * Set the monitoring backend
      *
-     * @param   Backend $backend
+     * @param   MonitoringBackend $backend
      *
      * @return  $this
      */
-    public function setBackend(Backend $backend)
+    public function setBackend(MonitoringBackend $backend)
     {
         $this->backend = $backend;
         return $this;
@@ -42,6 +42,16 @@ abstract class CommandForm extends Form
     public function getBackend()
     {
         return $this->backend;
+    }
+
+    /**
+     * Get the command help description
+     *
+     * @return string|null
+     */
+    public function getHelp()
+    {
+        return null;
     }
 
     /**

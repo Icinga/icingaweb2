@@ -2,9 +2,9 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Dashboard;
+namespace Icinga\Forms\Dashboard;
 
-use Icinga\Application\Config as IcingaConfig;
+use Icinga\Application\Config;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Form;
 
@@ -110,7 +110,7 @@ class AddUrlForm extends Form
     protected function getDashboardPaneSelectionValues()
     {
         $dashboard = new Dashboard();
-        $dashboard->readConfig(IcingaConfig::app('dashboard/dashboard'));
+        $dashboard->readConfig(Config::app('dashboard/dashboard'));
         return $dashboard->getPaneKeyTitleArray();
     }
 }

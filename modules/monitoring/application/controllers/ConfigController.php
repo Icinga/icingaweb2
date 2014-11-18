@@ -4,11 +4,11 @@
 
 use Icinga\Web\Notification;
 use Icinga\Data\ResourceFactory;
-use Icinga\Form\ConfirmRemovalForm;
+use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Web\Controller\ModuleActionController;
-use Icinga\Module\Monitoring\Form\Config\BackendConfigForm;
-use Icinga\Module\Monitoring\Form\Config\InstanceConfigForm;
-use Icinga\Module\Monitoring\Form\Config\SecurityConfigForm;
+use Icinga\Module\Monitoring\Forms\Config\BackendConfigForm;
+use Icinga\Module\Monitoring\Forms\Config\InstanceConfigForm;
+use Icinga\Module\Monitoring\Forms\Config\SecurityConfigForm;
 
 /**
  * Configuration controller for editing monitoring resources
@@ -60,8 +60,8 @@ class Monitoring_ConfigController extends ModuleActionController
     {
         $config = $this->Config('backends');
         $form = new ConfirmRemovalForm(array(
-            'onSuccess' => function ($request) use ($config) {
-                $backendName = $request->getQuery('backend');
+            'onSuccess' => function ($form) use ($config) {
+                $backendName = $form->getRequest()->getQuery('backend');
                 $configForm = new BackendConfigForm();
                 $configForm->setIniConfig($config);
 
@@ -92,8 +92,8 @@ class Monitoring_ConfigController extends ModuleActionController
     {
         $config = $this->Config('instances');
         $form = new ConfirmRemovalForm(array(
-            'onSuccess' => function ($request) use ($config) {
-                $instanceName = $request->getQuery('instance');
+            'onSuccess' => function ($form) use ($config) {
+                $instanceName = $form->getRequest()->getQuery('instance');
                 $configForm = new InstanceConfigForm();
                 $configForm->setIniConfig($config);
 

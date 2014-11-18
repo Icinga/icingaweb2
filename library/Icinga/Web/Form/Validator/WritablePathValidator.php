@@ -5,7 +5,6 @@
 namespace Icinga\Web\Form\Validator;
 
 use Zend_Validate_Abstract;
-use Icinga\Application\Config as IcingaConfig;
 
 /**
  * Validator that interprets the value as a path and checks if it's writable

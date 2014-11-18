@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Command\Object;
+namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\PropagateHostDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleHostDowntimeCommand;
@@ -59,7 +59,7 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\Host $object */
@@ -79,12 +79,12 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
                     foreach ($object->services as $service) {
                         $serviceDowntime = new ScheduleServiceDowntimeCommand();
                         $serviceDowntime->setObject($service);
-                        $this->scheduleDowntime($serviceDowntime, $request);
+                        $this->scheduleDowntime($serviceDowntime, $this->request);
                     }
                 }
             }
             $hostDowntime->setObject($object);
-            $this->scheduleDowntime($hostDowntime, $request);
+            $this->scheduleDowntime($hostDowntime, $this->request);
         }
         Notification::success(mtp(
             'monitoring',

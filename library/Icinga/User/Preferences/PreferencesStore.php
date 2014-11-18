@@ -4,13 +4,13 @@
 
 namespace Icinga\User\Preferences;
 
-use Zend_Config;
+use Icinga\Application\Config;
 use Icinga\User;
 use Icinga\User\Preferences;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Data\Db\DbConnection;
-use Icinga\Application\Config as IcingaConfig;
 
 /**
  * Preferences store factory
@@ -19,14 +19,14 @@ use Icinga\Application\Config as IcingaConfig;
  * <code>
  * <?php
  *
- * use Zend_Config;
+ * use Icinga\Data\ConfigObject;
  * use Icinga\User\Preferences;
  * use Icinga\User\Preferences\PreferencesStore;
  *
  * // Create a INI store
  * $store = PreferencesStore::create(
- *     new Zend_Config(
- *         'type'       => 'ini',
+ *     new ConfigObject(
+ *         'type'        => 'ini',
  *         'config_path' => '/path/to/preferences'
  *     ),
  *     $user // Instance of \Icinga\User
@@ -42,7 +42,7 @@ abstract class PreferencesStore
     /**
      * Store config
      *
-     * @var Zend_Config
+     * @var ConfigObject
      */
     protected $config;
 
@@ -56,10 +56,10 @@ abstract class PreferencesStore
     /**
      * Create a new store
      *
-     * @param   Zend_Config     $config     The config for this adapter
+     * @param   ConfigObject    $config     The config for this adapter
      * @param   User            $user       The user to which these preferences belong
      */
-    public function __construct(Zend_Config $config, User $user)
+    public function __construct(ConfigObject $config, User $user)
     {
         $this->config = $config;
         $this->user = $user;
@@ -69,7 +69,7 @@ abstract class PreferencesStore
     /**
      * Getter for the store config
      *
-     * @return  Zend_Config
+     * @return  ConfigObject
      */
     public function getStoreConfig()
     {
@@ -108,14 +108,14 @@ abstract class PreferencesStore
     /**
      * Create preferences storage adapter from config
      *
-     * @param   Zend_Config     $config     The config for the adapter
+     * @param   ConfigObject    $config     The config for the adapter
      * @param   User            $user       The user to which these preferences belong
      *
      * @return  self
      *
      * @throws  ConfigurationError          When the configuration defines an invalid storage type
      */
-    public static function create(Zend_Config $config, User $user)
+    public static function create(ConfigObject $config, User $user)
     {
         if (($type = $config->type) === null) {
             throw new ConfigurationError(
@@ -133,7 +133,7 @@ abstract class PreferencesStore
         }
 
         if ($type === 'Ini') {
-            $config->location = IcingaConfig::resolvePath('preferences');
+            $config->location = Config::resolvePath('preferences');
         } elseif ($type === 'Db') {
             $config->connection = new DbConnection(ResourceFactory::getResourceConfig($config->resource));
         }

@@ -23,7 +23,7 @@
       $isService = isset($event->service);
       switch ($event->type) {
         case 'notify':
-          $icon = 'notification';
+          $icon = 'bell';
           $title = $this->translate('Notification');
           $msg = $event->output;
           break;
@@ -33,12 +33,12 @@
           $msg = $event->output;
           break;
         case 'ack':
-          $icon = 'acknowledgement';
+          $icon = 'ok';
           $title = $this->translate('Acknowledgement');
           $msg = $event->output;
           break;
         case 'dt_comment':
-          $icon = 'in_downtime';
+          $icon = 'plug';
           $title = $this->translate('In Downtime');
           $msg = $event->output;
           break;
@@ -58,7 +58,7 @@
           $title = strtoupper($stateName); // TODO: Should be translatable!
           break;
         case 'soft_state':
-          $icon = 'softstate';
+          $icon = 'lightbulb';
           $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $event->output;
           $stateName = (
             $isService
@@ -68,12 +68,12 @@
           $title = strtoupper($stateName); // TODO: Should be translatable!
           break;
         case 'dt_start':
-          $icon = 'downtime_start';
+          $icon = 'starttime';
           $title = $this->translate('Downtime Start');
           $msg = $event->output;
           break;
         case 'dt_end':
-          $icon = 'downtime_end';
+          $icon = 'endtime';
           $title = $this->translate('Downtime End');
           $msg = $event->output;
           break;
@@ -105,7 +105,7 @@
         <?php endif ?>
           <br>
           <div>
-            <?= $this->icon($icon . '.png', $title); ?> <?= empty($msg) ? '' : $msg; ?>
+            <?= $this->icon($icon, $title); ?> <?= empty($msg) ? '' : $msg; ?>
           </div>
         </td>
       </tr>

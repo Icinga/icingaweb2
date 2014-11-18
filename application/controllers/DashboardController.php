@@ -8,7 +8,7 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
 use Icinga\File\Ini\IniWriter;
-use Icinga\Form\Dashboard\AddUrlForm;
+use Icinga\Forms\Dashboard\AddUrlForm;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Dashboard;
@@ -37,7 +37,7 @@ class DashboardController extends ActionController
         $dashboard = new Dashboard();
         try {
             $dashboardConfig = Config::app($config);
-            if (count($dashboardConfig) === 0) {
+            if ($dashboardConfig->isEmpty()) {
                 return null;
             }
             $dashboard->readConfig($dashboardConfig);
@@ -93,7 +93,7 @@ class DashboardController extends ActionController
                 );
 
                 $configFile = Config::app('dashboard/dashboard')->getConfigFile();
-                if ($this->writeConfiguration(new Zend_Config($dashboard->toArray()), $configFile)) {
+                if ($this->writeConfiguration(Config::fromArray($dashboard->toArray()), $configFile)) {
                     $this->redirectNow(Url::fromPath('dashboard', array('pane' => $form->getValue('pane'))));
                 } else {
                     $this->render('showConfiguration');
@@ -151,12 +151,12 @@ class DashboardController extends ActionController
     /**
      * Store the given configuration as INI file
      *
-     * @param   Zend_Config     $config     The configuration to store
-     * @param   string          $target     The path where to store the configuration
+     * @param   Config  $config     The configuration to store
+     * @param   string  $target     The path where to store the configuration
      *
      * @return  bool                        Whether the configuartion has been successfully stored
      */
-    protected function writeConfiguration(Zend_Config $config, $target)
+    protected function writeConfiguration(Config $config, $target)
     {
         $writer = new IniWriter(array('config' => $config, 'filename' => $target));
 

@@ -22,7 +22,17 @@ abstract class Filter
         return $this;
     }
 
-    abstract function toQueryString();
+    abstract public function isExpression();
+
+    abstract public function isChain();
+
+    abstract public function isEmpty();
+
+    abstract public function toQueryString();
+
+    abstract public function andFilter(Filter $filter);
+
+    abstract public function orFilter(Filter $filter);
 
     public function getUrlParams()
     {
@@ -52,6 +62,8 @@ abstract class Filter
         return false === strpos($this->id, '-');
     }
 
+    abstract public function listFilteredColumns();
+
     public function applyChanges($changes)
     {
         $filter = $this;
@@ -79,7 +91,7 @@ abstract class Filter
             }
         }
 
-        krsort($operators, SORT_NATURAL);
+        krsort($operators, version_compare(PHP_VERSION, '5.4.0') >= 0 ? SORT_NATURAL : SORT_REGULAR);
         foreach ($operators as $id => $operator) {
             $f = $filter->getById($id);
             if ($f->getOperatorName() !== $operator) {
@@ -96,7 +108,7 @@ abstract class Filter
 
     public function getParentId()
     {
-        if ($self->isRootNode()) {
+        if ($this->isRootNode()) {
             throw new ProgrammingError('Filter root nodes have no parent');
         }
         return substr($this->id, 0, strrpos($this->id, '-'));

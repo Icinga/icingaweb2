@@ -4,7 +4,6 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Icinga\Application\Logger;
 use Icinga\User;
 use Icinga\Authentication\UserBackend;
 use Icinga\Protocol\Ldap\Connection;
@@ -20,18 +19,34 @@ class LdapUserBackend extends UserBackend
      **/
     protected $conn;
 
+    protected $baseDn;
+
     protected $userClass;
 
     protected $userNameAttribute;
 
     protected $groupOptions;
 
-    public function __construct(Connection $conn, $userClass, $userNameAttribute, $groupOptions = null)
+    public function __construct(Connection $conn, $userClass, $userNameAttribute, $baseDn, $groupOptions = null)
     {
         $this->conn = $conn;
+        $this->baseDn = trim($baseDn) !== '' ? $baseDn : $conn->getDN();
         $this->userClass = $userClass;
         $this->userNameAttribute = $userNameAttribute;
         $this->groupOptions = $groupOptions;
+    }
+
+    /**
+     * @return \Icinga\Protocol\Ldap\Query
+     */
+    protected function selectUsers()
+    {
+        return $this->conn->select()->setBase($this->baseDn)->from(
+            $this->userClass,
+            array(
+                $this->userNameAttribute
+            )
+        );
     }
 
     /**
@@ -41,14 +56,9 @@ class LdapUserBackend extends UserBackend
      *
      * @return  \Icinga\Protocol\Ldap\Query
      **/
-    protected function createQuery($username)
+    protected function selectUser($username)
     {
-        return $this->conn->select()
-            ->from(
-                $this->userClass,
-                array($this->userNameAttribute)
-            )
-            ->where(
+        return $this->selectUsers()->where(
                 $this->userNameAttribute,
                 str_replace('*', '', $username)
             );
@@ -68,13 +78,18 @@ class LdapUserBackend extends UserBackend
      */
     public function assertAuthenticationPossible()
     {
-        $q = $this->conn->select()->from($this->userClass);
-        $result = $q->fetchRow();
+        try {
+            $q = $this->conn->select()->setBase($this->baseDn)->from($this->userClass);
+            $result = $q->fetchRow();
+        } catch (LdapException $e) {
+            throw new AuthenticationException('Connection not possible.', $e);
+        }
+
         if (! isset($result)) {
             throw new AuthenticationException(
                 'No objects with objectClass="%s" in DN="%s" found.',
                 $this->userClass,
-                $this->conn->getDN()
+                $this->baseDn
             );
         }
 
@@ -94,12 +109,12 @@ class LdapUserBackend extends UserBackend
      *
      * @param string $dn
      *
-     * @return array|null
+     * @return array
      */
     public function getGroups($dn)
     {
         if (empty($this->groupOptions) || ! isset($this->groupOptions['group_base_dn'])) {
-            return null;
+            return array();
         }
 
         $q = $this->conn->select()
@@ -135,7 +150,7 @@ class LdapUserBackend extends UserBackend
     public function hasUser(User $user)
     {
         $username = $user->getUsername();
-        return $this->conn->fetchOne($this->createQuery($username)) === $username;
+        return $this->conn->fetchOne($this->selectUser($username)) === $username;
     }
 
     /**
@@ -158,7 +173,7 @@ class LdapUserBackend extends UserBackend
             } catch (AuthenticationException $e) {
                 // Authentication not possible
                 throw new AuthenticationException(
-                    'Authentication against backend "%s" not possible: ',
+                    'Authentication against backend "%s" not possible.',
                     $this->getName(),
                     $e
                 );
@@ -168,7 +183,7 @@ class LdapUserBackend extends UserBackend
             return false;
         }
         try {
-            $userDn = $this->conn->fetchDN($this->createQuery($user->getUsername()));
+            $userDn = $this->conn->fetchDN($this->selectUser($user->getUsername()));
             $authenticated = $this->conn->testCredentials(
                 $userDn,
                 $password
@@ -198,14 +213,20 @@ class LdapUserBackend extends UserBackend
      */
     public function count()
     {
+        return $this->conn->count($this->selectUsers());
+    }
 
-        return $this->conn->count(
-            $this->conn->select()->from(
-                $this->userClass,
-                array(
-                    $this->userNameAttribute
-                )
-            )
-        );
+    /**
+     * Return the names of all available users
+     *
+     * @return  array
+     */
+    public function listUsers()
+    {
+        $users = array();
+        foreach ($this->selectUsers()->fetchAll() as $row) {
+            $users[] = $row->{$this->userNameAttribute};
+        }
+        return $users;
     }
 }

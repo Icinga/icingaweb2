@@ -2,12 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Command\Object;
+namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\AddCommentCommand;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 
 /**
  * Form for adding host or service comments
@@ -27,20 +25,23 @@ class AddCommentCommandForm extends ObjectsCommandForm
 
     /**
      * (non-PHPDoc)
+     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
+     */
+    public function getHelp()
+    {
+        return mt(
+            'monitoring',
+            'This command is used to add host or service comments.'
+        );
+    }
+
+    /**
+     * (non-PHPDoc)
      * @see \Icinga\Web\Form::createElements() For the method documentation.
      */
     public function createElements(array $formData = array())
     {
         $this->addElements(array(
-            new Note(
-                'command-info',
-                array(
-                    'value' => mt(
-                        'monitoring',
-                        'This command is used to add host or service comments.'
-                    )
-                )
-            ),
             array(
                 'textarea',
                 'comment',
@@ -76,16 +77,16 @@ class AddCommentCommandForm extends ObjectsCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             $comment = new AddCommentCommand();
             $comment->setObject($object);
             $comment->setComment($this->getElement('comment')->getValue());
-            $comment->setAuthor($request->getUser()->getUsername());
+            $comment->setAuthor($this->request->getUser()->getUsername());
             $comment->setPersistent($this->getElement('persistent')->isChecked());
-            $this->getTransport($request)->send($comment);
+            $this->getTransport($this->request)->send($comment);
         }
         Notification::success(mtp(
             'monitoring',

@@ -288,7 +288,6 @@ class TimeLine implements IteratorAggregate
 
                     if ($this->session !== null) {
                         $this->session->calculationBase = $new;
-                        $this->session->write();
                     }
                 } else {
                     $this->calculationBase = $calculationBase;

@@ -4,7 +4,7 @@
 
 namespace Icinga\Module\Doc;
 
-require_once 'IcingaVendor/Parsedown/Parsedown.php';
+require_once 'Parsedown/Parsedown.php';
 
 use DOMDocument;
 use DOMXPath;

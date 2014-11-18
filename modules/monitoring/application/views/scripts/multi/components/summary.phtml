@@ -21,10 +21,10 @@ if (array_key_exists('service', $this->target)) {
   <td>
     <a href="<?=
       $this->href('monitoring/command/reschedulenextcheck', $params) ?>"><?=
-        $this->icon('refresh_petrol.png')
+        $this->icon('rescheduel')
       ?> Recheck</a><br />
     <a href="<?= $this->href('monitoring/command/reschedulenextcheck', $this->target) ?>"><?=
-       $this->icon('reschedule_petrol.png')
+       $this->icon('reschedule')
     ?> Reschedule</a><br />
   </td>
   <td>Perform actions on <?=  count($objects) . ' ' . $objectName ?>.</td>
@@ -35,7 +35,7 @@ if (array_key_exists('service', $this->target)) {
   <td>
     <a title="Schedule downtimes for all selected hosts" href="<?=
       $this->href('monitoring/command/scheduledowntime', $this->target) ?>"><?=
-      $this->icon('in_downtime_petrol.png')
+      $this->icon('plug')
       ?> Schedule Downtimes</a>
   </td>
   <td><?= sprintf(
@@ -50,7 +50,7 @@ if (array_key_exists('service', $this->target)) {
   <td colspan="2">
     <a title="Acknowledge all problems on the selected hosts or services" href="<?=
       $this->href('monitoring/command/acknowledgeproblem', $this->target) ?>"><?=
-      $this->icon('acknowledgement_petrol.png')
+      $this->icon('ok')
       ?> Acknowledge</a><br />
     <a title="Remove all acknowledgements from all selected hosts or services" href="<?=
       $this->href('monitoring/command/removeacknowledgement', $target) ?>"><?=

@@ -11,8 +11,8 @@ use Icinga\Cli\Loader;
 use Icinga\Cli\Screen;
 use Icinga\Application\Logger;
 use Icinga\Application\Benchmark;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\ProgrammingError;
-use Zend_Config;
 
 require_once __DIR__ . '/ApplicationBootstrap.php';
 
@@ -43,17 +43,17 @@ class Cli extends ApplicationBootstrap
             ->parseBasicParams()
             ->setupLogger()
             ->setupResourceFactory()
-            ->setupModuleManager();
+            ->setupModuleManager()
+            ->loadCoreModules();
     }
 
     protected function setupLogging()
     {
         Logger::create(
-            new Zend_Config(
+            new ConfigObject(
                 array(
                     'level' => Logger::INFO,
-                    'log'   => 'file',
-                    'file'  => 'php://stderr'
+                    'log'   => 'stdout',
                 )
             )
         );

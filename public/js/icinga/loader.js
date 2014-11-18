@@ -269,15 +269,24 @@
                 }
 
             } else {
-                if (req.$target.attr('id') === 'col2') { // TODO: multicol
-                    if ($('#col1').data('icingaUrl') === redirect) {
-                        icinga.ui.layout1col();
-                        req.$target = $('#col1');
-                        delete(this.requests['col2']);
-                    }
-                }
 
-                this.loadUrl(redirect, req.$target);
+                if (redirect.match(/#!/)) {
+                    var parts = redirect.split(/#!/);
+                    icinga.ui.layout2col();
+                    this.loadUrl(parts.shift(), $('#col1'));
+                    this.loadUrl(parts.shift(), $('#col2'));
+                } else {
+
+                    if (req.$target.attr('id') === 'col2') { // TODO: multicol
+                        if ($('#col1').data('icingaUrl') === redirect) {
+                            icinga.ui.layout1col();
+                            req.$target = $('#col1');
+                            delete(this.requests['col2']);
+                        }
+                    }
+
+                    this.loadUrl(redirect, req.$target);
+                }
             }
             return true;
         },
@@ -672,6 +681,8 @@
                 }
             }
 
+            $container.trigger('beforerender');
+
             var discard = false;
             $.each(self.icinga.behaviors, function(name, behavior) {
                 if (behavior.renderHook) {
@@ -691,11 +702,12 @@
             var $content = $('<div>' + content + '</div>');
 
             // Disable all click events while rendering
-            $('*').click(function (event) {
-                event.stopImmediatePropagation();
-                event.stopPropagation();
-                event.preventDefault();
-            });
+            // (Disabling disabled, was ways too slow)
+            // $('*').click(function (event) {
+            //     event.stopImmediatePropagation();
+            //     event.stopPropagation();
+            //     event.preventDefault();
+            // });
 
             $('.container', $container).each(function() {
                 self.stopPendingRequestsFor($(this));
@@ -738,8 +750,8 @@
             icinga.ui.initializeControls($container);
             icinga.ui.fixControls();
 
-            // Re-enable all click events
-            $('*').off('click');
+            // Re-enable all click events (disabled as of performance reasons)
+            // $('*').off('click');
         },
 
         /**

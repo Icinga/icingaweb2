@@ -5,7 +5,7 @@
 namespace Icinga\Application;
 
 use Exception;
-use Zend_Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Application\Logger\Writer\FileWriter;
 use Icinga\Application\Logger\Writer\SyslogWriter;
 use Icinga\Exception\ConfigurationError;
@@ -71,12 +71,12 @@ class Logger
     /**
      * Create a new logger object
      *
-     * @param   Zend_Config $config
+     * @param   ConfigObject  $config
      *
      * @throws  ConfigurationError  If the logging configuration directive 'log' is missing or if the logging level is
      *                              not defined
      */
-    public function __construct(Zend_Config $config)
+    public function __construct(ConfigObject $config)
     {
         if ($config->log === null) {
             throw new ConfigurationError('Required logging configuration directive \'log\' missing');
@@ -118,11 +118,11 @@ class Logger
     /**
      * Create a new logger object
      *
-     * @param   Zend_Config     $config
+     * @param   ConfigObject     $config
      *
      * @return  static
      */
-    public static function create(Zend_Config $config)
+    public static function create(ConfigObject $config)
     {
         static::$instance = new static($config);
         return static::$instance;
@@ -131,12 +131,12 @@ class Logger
     /**
      * Create a log writer
      *
-     * @param   Zend_Config     $config     The configuration to initialize the writer with
+     * @param   ConfigObject     $config     The configuration to initialize the writer with
      *
      * @return  \Icinga\Application\Logger\LogWriter    The requested log writer
      * @throws  ConfigurationError                      If the requested writer cannot be found
      */
-    protected function createWriter(Zend_Config $config)
+    protected function createWriter(ConfigObject $config)
     {
         $class = 'Icinga\\Application\\Logger\\Writer\\' . ucfirst(strtolower($config->log)) . 'Writer';
         if (! class_exists($class)) {

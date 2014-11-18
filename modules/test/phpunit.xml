@@ -36,7 +36,6 @@
                 <file>../../application/forms/Config/LoggingForm.php</file>
                 <file>../../application/forms/Config/ConfirmRemovalForm.php</file>
                 <directory suffix=".php">../../application/forms/Authentication</directory>
-                <directory suffix=".php">../../application/forms/Install</directory>
                 <directory suffix=".php">../../application/forms/Dashboard</directory>
                 <directory suffix=".php">../../application/forms/Preference</directory>
                 <!-- application/views -->

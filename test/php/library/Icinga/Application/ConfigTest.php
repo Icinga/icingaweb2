@@ -5,7 +5,7 @@
 namespace Tests\Icinga\Application;
 
 use Icinga\Test\BaseTestCase;
-use Icinga\Application\Config as IcingaConfig;
+use Icinga\Application\Config;
 
 class ConfigTest extends BaseTestCase
 {
@@ -15,8 +15,8 @@ class ConfigTest extends BaseTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->configDir = IcingaConfig::$configDir;
-        IcingaConfig::$configDir = dirname(__FILE__) . '/ConfigTest/files';
+        $this->oldConfigDir = Config::$configDir;
+        Config::$configDir = dirname(__FILE__) . '/ConfigTest/files';
     }
 
     /**
@@ -25,77 +25,263 @@ class ConfigTest extends BaseTestCase
     public function tearDown()
     {
         parent::tearDown();
-        IcingaConfig::$configDir = $this->configDir;
+        Config::$configDir = $this->oldConfigDir;
     }
 
-    public function testAppConfig()
+    public function testWhetherConfigIsCountable()
     {
-        $config = IcingaConfig::app('config', true);
-        $this->assertEquals(1, $config->logging->enable, 'Unexpected value retrieved from config file');
-        // Test non-existent property where null is the default value
+        $config = Config::fromArray(array('a' => 'b', 'c' => array('d' => 'e')));
+
+        $this->assertInstanceOf('Countable', $config, 'Config does not implement interface `Countable\'');
+        $this->assertEquals(2, count($config), 'Config does not count sections correctly');
+    }
+
+    public function testWhetherConfigIsTraversable()
+    {
+        $config = Config::fromArray(array('a' => array(), 'c' => array()));
+        $config->setSection('e');
+
+        $this->assertInstanceOf('Iterator', $config, 'Config does not implement interface `Iterator\'');
+
+        $actual = array();
+        foreach ($config as $key => $_) {
+            $actual[] = $key;
+        }
+
         $this->assertEquals(
-            null,
-            $config->logging->get('disable'),
-            'Unexpected default value for non-existent properties'
+            array('a', 'c', 'e'),
+            $actual,
+            'Config does not iterate properly in the order its sections were inserted'
         );
-        // Test non-existent property using zero as the default value
-        $this->assertEquals(0, $config->logging->get('disable', 0));
-        // Test retrieve full section
+    }
+
+    public function testWhetherOneCanCheckIfAConfigHasAnySections()
+    {
+        $config = new Config();
+        $this->assertTrue($config->isEmpty(), 'Config does not report that it is empty');
+
+        $config->setSection('test');
+        $this->assertFalse($config->isEmpty(), 'Config does report that it is empty although it is not');
+    }
+
+    public function testWhetherItIsPossibleToRetrieveAllSectionNames()
+    {
+        $config = Config::fromArray(array('a' => array('b' => 'c'), 'd' => array('e' => 'f')));
+
+        $this->assertEquals(
+            array('a', 'd'),
+            $config->keys(),
+            'Config::keys does not list section names correctly'
+        );
+    }
+
+    public function testWhetherConfigCanBeConvertedToAnArray()
+    {
+        $config = Config::fromArray(array('a' => 'b', 'c' => array('d' => 'e')));
+
+        $this->assertEquals(
+            array('a' => 'b', 'c' => array('d' => 'e')),
+            $config->toArray(),
+            'Config::toArray does not return the correct array'
+        );
+    }
+
+    public function testWhetherItIsPossibleToDirectlyRetrieveASectionProperty()
+    {
+        $config = Config::fromArray(array('a' => array('b' => 'c')));
+
+        $this->assertEquals(
+            'c',
+            $config->get('a', 'b'),
+            'Config::get does not return the actual value of a section\'s property'
+        );
+        $this->assertNull(
+            $config->get('a', 'c'),
+            'Config::get does not return NULL as default for non-existent section properties'
+        );
+        $this->assertNull(
+            $config->get('b', 'c'),
+            'Config::get does not return NULL as default for non-existent sections'
+        );
+        $this->assertEquals(
+            'test',
+            $config->get('a', 'c', 'test'),
+            'Config::get does not return the given default value for non-existent section properties'
+        );
+        $this->assertEquals(
+            'c',
+            $config->get('a', 'b', 'test'),
+            'Config::get does not return the actual value of a section\'s property in case a default is given'
+        );
+    }
+
+    public function testWhetherConfigReturnsSingleSections()
+    {
+        $config = Config::fromArray(array('a' => array('b' => 'c')));
+
+        $this->assertInstanceOf(
+            'Icinga\Data\ConfigObject',
+            $config->getSection('a'),
+            'Config::getSection does not return a known section'
+        );
+    }
+
+    /**
+     * @depends testWhetherConfigReturnsSingleSections
+     */
+    public function testWhetherConfigSetsSingleSections()
+    {
+        $config = new Config();
+        $config->setSection('a', array('b' => 'c'));
+
+        $this->assertInstanceOf(
+            'Icinga\Data\ConfigObject',
+            $config->getSection('a'),
+            'Config::setSection does not set a new section'
+        );
+
+        $config->setSection('a', array('bb' => 'cc'));
+
+        $this->assertNull(
+            $config->getSection('a')->b,
+            'Config::setSection does not overwrite existing sections'
+        );
+        $this->assertEquals(
+            'cc',
+            $config->getSection('a')->bb,
+            'Config::setSection does not overwrite existing sections'
+        );
+    }
+
+    /**
+     * @depends testWhetherConfigIsCountable
+     */
+    public function testWhetherConfigRemovesSingleSections()
+    {
+        $config = Config::fromArray(array('a' => array('b' => 'c'), 'd' => array('e' => 'f')));
+        $config->removeSection('a');
+
+        $this->assertEquals(
+            1,
+            $config->count(),
+            'Config::removeSection does not remove a known section'
+        );
+    }
+
+    /**
+     * @depends testWhetherConfigSetsSingleSections
+     */
+    public function testWhetherConfigKnowsWhichSectionsItHas()
+    {
+        $config = new Config();
+        $config->setSection('a');
+
+        $this->assertTrue(
+            $config->hasSection('a'),
+            'Config::hasSection does not know anything about its sections'
+        );
+        $this->assertFalse(
+            $config->hasSection('b'),
+            'Config::hasSection does not know anything about its sections'
+        );
+    }
+
+    /**
+     * @expectedException UnexpectedValueException
+     */
+    public function testWhetherAnExceptionIsThrownWhenTryingToAccessASectionPropertyOnANonSection()
+    {
+        $config = Config::fromArray(array('a' => 'b'));
+        $config->get('a', 'b');
+    }
+
+    public function testWhetherConfigResolvePathReturnsValidAbsolutePaths()
+    {
+        $this->assertEquals(
+            Config::$configDir . DIRECTORY_SEPARATOR . 'a' . DIRECTORY_SEPARATOR . 'b.ini',
+            Config::resolvePath(DIRECTORY_SEPARATOR . 'a' . DIRECTORY_SEPARATOR . 'b.ini'),
+            'Config::resolvePath does not produce valid absolute paths'
+        );
+    }
+
+    /**
+     * @depends testWhetherConfigCanBeConvertedToAnArray
+     * @depends testWhetherConfigResolvePathReturnsValidAbsolutePaths
+     */
+    public function testWhetherItIsPossibleToInitializeAConfigFromAIniFile()
+    {
+        $config = Config::fromIni(Config::resolvePath('config.ini'));
+
         $this->assertEquals(
             array(
-                'disable' => 1,
-                'db' => array(
-                    'user' => 'user',
-                    'password' => 'password'
+                'logging' => array(
+                    'enable'    => 1
+                ),
+                'backend' => array(
+                    'type'      => 'db',
+                    'user'      => 'user',
+                    'password'  => 'password',
+                    'disable'   => 1
                 )
             ),
-            $config->backend->toArray()
+            $config->toArray(),
+            'Config::fromIni does not load INI files correctly'
         );
-        // Test non-existent section using 'default' as default value
-        $this->assertEquals('default', $config->get('magic', 'default'));
-        // Test sub-properties
-        $this->assertEquals('user', $config->backend->db->user);
-        // Test non-existent sub-property using 'UTF-8' as the default value
-        $this->assertEquals('UTF-8', $config->backend->db->get('encoding', 'UTF-8'));
-        // Test invalid property names using false as default value
-        $this->assertEquals(false, $config->backend->get('.', false));
-        $this->assertEquals(false, $config->backend->get('db.', false));
-        $this->assertEquals(false, $config->backend->get('.user', false));
-        // Test retrieve array of sub-properties
+
+        $this->assertInstanceOf(
+            get_class($config),
+            Config::fromIni('nichda'),
+            'Config::fromIni does not return empty configs for non-existent configuration files'
+        );
+    }
+
+    /**
+     * @expectedException Icinga\Exception\NotReadableError
+     */
+    public function testWhetherFromIniThrowsAnExceptionOnInsufficientPermission()
+    {
+        Config::fromIni('/etc/shadow');
+    }
+
+    /**
+     * @depends testWhetherItIsPossibleToInitializeAConfigFromAIniFile
+     */
+    public function testWhetherItIsPossibleToRetrieveApplicationConfiguration()
+    {
+        $config = Config::app();
+
         $this->assertEquals(
             array(
-                'user' => 'user',
-                'password' => 'password'
+                'logging' => array(
+                    'enable'    => 1
+                ),
+                'backend' => array(
+                    'type'      => 'db',
+                    'user'      => 'user',
+                    'password'  => 'password',
+                    'disable'   => 1
+                )
             ),
-            $config->backend->db->toArray()
+            $config->toArray(),
+            'Config::app does not load INI files correctly'
         );
-        // Test singleton
-        $this->assertEquals($config, IcingaConfig::app('config'));
-        $this->assertEquals(array('logging', 'backend'), $config->keys());
-        $this->assertEquals(array('enable'), $config->keys('logging'));
     }
 
-    public function testAppExtraConfig()
+    /**
+     * @depends testWhetherItIsPossibleToInitializeAConfigFromAIniFile
+     */
+    public function testWhetherItIsPossibleToRetrieveModuleConfiguration()
     {
-        $extraConfig = IcingaConfig::app('extra', true);
-        $this->assertEquals(1, $extraConfig->meta->version);
-        $this->assertEquals($extraConfig, IcingaConfig::app('extra'));
-    }
+        $config = Config::module('amodule');
 
-    public function testModuleConfig()
-    {
-        $moduleConfig = IcingaConfig::module('amodule', 'config', true);
-        $this->assertEquals(1, $moduleConfig->menu->get('breadcrumb'));
-        $this->assertEquals($moduleConfig, IcingaConfig::module('amodule'));
-    }
-
-    public function testModuleExtraConfig()
-    {
-        $moduleExtraConfig = IcingaConfig::module('amodule', 'extra', true);
         $this->assertEquals(
-            'inetOrgPerson',
-            $moduleExtraConfig->ldap->user->get('ldap_object_class')
+            array(
+                'menu' => array(
+                    'breadcrumb' => 1
+                )
+            ),
+            $config->toArray(),
+            'Config::module does not load INI files correctly'
         );
-        $this->assertEquals($moduleExtraConfig, IcingaConfig::module('amodule', 'extra'));
     }
 }

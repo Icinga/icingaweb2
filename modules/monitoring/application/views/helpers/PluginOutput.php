@@ -19,8 +19,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             );
         } elseif (preg_match('~\\\n~', $output)) {
             // Plaintext
-            $output = '<pre style="font-family: monospace; font-size: 1em;'
-                    . ' width: 100%; overflow: auto; white-space: pre-wrap;">'
+            $output = '<pre class="pluginoutput">'
                . preg_replace(
               '~\\\n~', "\n", preg_replace(
                 '~\\\n\\\n~', "\n",
@@ -33,8 +32,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
               )
             ) . '</pre>';
         } else {
-            $output = '<pre style="font-family: monospace; font-size: 1em;'
-                    . ' width: 100%; overflow: auto; white-space: pre-wrap;">'
+            $output = '<pre class="pluginoutput">'
                . preg_replace('~\@{6,}~', '@@@@@@',
                 $this->view->escape($output)
             ) . '</pre>';
@@ -72,7 +70,10 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
     protected function getPurifier()
     {
         if (self::$purifier === null) {
-            require_once 'IcingaVendor/htmlpurifier-4.6.0-lite/library/HTMLPurifier.auto.php';
+            require_once 'HTMLPurifier/Bootstrap.php';
+            require_once 'HTMLPurifier/HTMLPurifier.php';
+            require_once 'HTMLPurifier/HTMLPurifier.autoload.php';
+
             $config = HTMLPurifier_Config::createDefault();
             $config->set('Core.EscapeNonASCIICharacters', true);
             $config->set('HTML.Allowed', 'p,br,b,a[href],i,table,tr,td[colspan],div[class]');

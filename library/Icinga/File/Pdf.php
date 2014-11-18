@@ -13,9 +13,8 @@ use Icinga\Web\StyleSheet;
 use Icinga\Web\Url;
 use Icinga\Exception\ProgrammingError;
 
-require_once 'IcingaVendor/dompdf/dompdf_config.inc.php';
-
-spl_autoload_register('DOMPDF_autoload');
+require_once 'dompdf/dompdf_config.inc.php';
+require_once 'dompdf/include/autoload.inc.php';
 
 class Pdf extends DOMPDF
 {
@@ -49,7 +48,7 @@ class Pdf extends DOMPDF
         $layout->content = $controller->getResponse();
         $html = $layout->render();
         $imgDir = Url::fromPath('img');
-        $html = preg_replace('~src="' . $imgDir . '/~', 'src="' . Icinga::app()->getBootstrapDirecory() . '/img/', $html);
+        $html = preg_replace('~src="' . $imgDir . '/~', 'src="' . Icinga::app()->getBootstrapDirectory() . '/img/', $html);
         $html = preg_replace('~src="/svg/chart.php(.*)"~', 'class="icon" src="http://master1.com/png/chart.php$1"', $html);
         $this->load_html($html);
         $this->render();

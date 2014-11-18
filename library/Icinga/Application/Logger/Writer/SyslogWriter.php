@@ -4,7 +4,7 @@
 
 namespace Icinga\Application\Logger\Writer;
 
-use Zend_Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Application\Logger;
 use Icinga\Application\Logger\LogWriter;
 
@@ -51,9 +51,9 @@ class SyslogWriter extends LogWriter
     /**
      * Create a new syslog log writer
      *
-     * @param Zend_Config $config
+     * @param   ConfigObject    $config
      */
-    public function __construct(Zend_Config $config)
+    public function __construct(ConfigObject $config)
     {
         $this->ident = $config->get('application', 'icingaweb');
         $this->facility = static::$facilities['user'];

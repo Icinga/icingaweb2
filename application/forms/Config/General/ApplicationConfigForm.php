@@ -2,12 +2,14 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config\General;
+namespace Icinga\Forms\Config\General;
 
 use DateTimeZone;
-use Icinga\Web\Form;
-use Icinga\Util\Translator;
+use Icinga\Application\Icinga;
 use Icinga\Data\ResourceFactory;
+use Icinga\Util\Translator;
+use Icinga\Web\Form;
+
 
 /**
  * Form class to modify the general application configuration
@@ -27,56 +29,18 @@ class ApplicationConfigForm extends Form
      */
     public function createElements(array $formData)
     {
-        $languages = array();
-        foreach (Translator::getAvailableLocaleCodes() as $language) {
-            $languages[$language] = $language;
-        }
-
-        $this->addElement(
-            'select',
-            'global_language',
-            array(
-                'label'         => t('Default Language'),
-                'required'      => true,
-                'multiOptions'  => $languages,
-                'description'   => t(
-                    'Select the language to use by default. Can be overwritten by a user in his preferences.'
-                )
-            )
-        );
-
-        $tzList = array();
-        foreach (DateTimeZone::listIdentifiers() as $tz) {
-            $tzList[$tz] = $tz;
-        }
-
-        $this->addElement(
-            'select',
-            'global_timezone',
-            array(
-                'label'         => t('Default Application Timezone'),
-                'required'      => true,
-                'multiOptions'  => $tzList,
-                'description'   => t(
-                    'Select the timezone to be used as the default. User\'s can set their own timezone if'
-                    . ' they like to, but this is the timezone to be used as the default setting .'
-                ),
-                'value'         => date_default_timezone_get()
-            )
-        );
-
         $this->addElement(
             'text',
-            'global_modulePath',
+            'global_module_path',
             array(
                 'label'         => t('Module Path'),
                 'required'      => true,
+                'value'         => implode(':', Icinga::app()->getModuleManager()->getModuleDirs()),
                 'description'   => t(
                     'Contains the directories that will be searched for available modules, separated by '
                     . 'colons. Modules that don\'t exist in these directories can still be symlinked in '
                     . 'the module folder, but won\'t show up in the list of disabled modules.'
-                ),
-                'value'     => realpath(ICINGAWEB_APPDIR . '/../modules')
+                )
             )
         );
 

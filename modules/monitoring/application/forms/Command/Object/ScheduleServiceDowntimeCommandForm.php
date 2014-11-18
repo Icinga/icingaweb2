@@ -2,14 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Command\Object;
+namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use DateTime;
 use DateInterval;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceDowntimeCommand;
-use Icinga\Web\Form\Element\DateTimePicker;
-use Icinga\Web\Form\Element\Note;
-use Icinga\Web\Form\Element\Number;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
 
@@ -41,6 +38,22 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
 
     /**
      * (non-PHPDoc)
+     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
+     */
+    public function getHelp()
+    {
+        return mt(
+            'monitoring',
+            'This command is used to schedule host and service downtimes. During the specified downtime,'
+            . ' Icinga will not send notifications out about the hosts and services. When the scheduled'
+            . ' downtime expires, Icinga will send out notifications for the hosts and services as it'
+            . ' normally would. Scheduled downtimes are preserved across program shutdowns and'
+            . ' restarts.'
+        );
+    }
+
+    /**
+     * (non-PHPDoc)
      * @see \Icinga\Web\Form::createElements() For the method documentation.
      */
     public function createElements(array $formData = array())
@@ -49,19 +62,6 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
         $end = clone $start;
         $end->add(new DateInterval('PT1H'));
         $this->addElements(array(
-            new Note(
-                'command-info',
-                array(
-                    'value' => mt(
-                        'monitoring',
-                        'This command is used to schedule host and service downtimes. During the specified downtime,'
-                        . ' Icinga will not send notifications out about the hosts and services. When the scheduled'
-                        . ' downtime expires, Icinga will send out notifications for the hosts and services as it'
-                        . ' normally would. Scheduled downtimes are preserved across program shutdowns and'
-                        . ' restarts.'
-                    )
-                )
-            ),
             array(
                 'textarea',
                 'comment',
@@ -76,7 +76,8 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                     )
                 )
             ),
-            new DateTimePicker(
+            array(
+                'dateTimePicker',
                 'start',
                 array(
                     'required'      => true,
@@ -85,7 +86,8 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                     'value'         => $start
                 )
             ),
-            new DateTimePicker(
+            array(
+                'dateTimePicker',
                 'end',
                 array(
                     'required'      => true,
@@ -134,7 +136,8 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
         );
         if (isset($formData['type']) && $formData['type'] === self::FLEXIBLE) {
             $this->addElements(array(
-                new Number(
+                array(
+                    'number',
                     'hours',
                     array(
                         'required'  => true,
@@ -143,7 +146,8 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                         'min'       => -1
                     )
                 ),
-                new Number(
+                array(
+                    'number',
                     'minutes',
                     array(
                         'required'  => true,
@@ -199,13 +203,13 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $downtime = new ScheduleServiceDowntimeCommand();
             $downtime->setObject($object);
-            $this->scheduleDowntime($downtime, $request);
+            $this->scheduleDowntime($downtime, $this->request);
         }
         Notification::success(mtp(
             'monitoring',

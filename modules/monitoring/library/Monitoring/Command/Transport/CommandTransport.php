@@ -4,8 +4,8 @@
 
 namespace Icinga\Module\Monitoring\Command\Transport;
 
-use Zend_Config;
 use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 
 /**
@@ -32,7 +32,7 @@ abstract class CommandTransport
     {
         if (! isset(self::$config)) {
             self::$config = Config::module('monitoring', 'instances');
-            if (self::$config->count() === 0) {
+            if (self::$config->isEmpty()) {
                 throw new ConfigurationError(
                     'No instances have been configured in \'%s\'.',
                     self::$config->getConfigFile()
@@ -45,12 +45,12 @@ abstract class CommandTransport
     /**
      * Create a transport from config
      *
-     * @param   Zend_Config $config
+     * @param   ConfigObject  $config
      *
      * @return  LocalCommandFile|RemoteCommandFile
      * @throws  ConfigurationError
      */
-    public static function fromConfig(Zend_Config $config)
+    public static function fromConfig(ConfigObject $config)
     {
         switch (strtolower($config->transport)) {
             case RemoteCommandFile::TRANSPORT:
@@ -91,8 +91,8 @@ abstract class CommandTransport
      */
     public static function create($name)
     {
-        $config = self::getConfig()->get($name);
-        if ($config === null) {
+        $config = self::getConfig()->getSection($name);
+        if ($config->isEmpty()) {
             throw new ConfigurationError();
         }
         return self::fromConfig($config);

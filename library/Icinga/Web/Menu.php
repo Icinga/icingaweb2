@@ -4,12 +4,13 @@
 
 namespace Icinga\Web;
 
+use Icinga\Authentication\Manager;
 use Icinga\Web\Menu\MenuItemRenderer;
 use RecursiveIterator;
-use Zend_Config;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Url;
@@ -68,7 +69,7 @@ class Menu implements RecursiveIterator
      * @var MenuItemRenderer
      */
     protected $itemRenderer = null;
-
+    
     /*
      * Parent menu
      *
@@ -80,9 +81,9 @@ class Menu implements RecursiveIterator
      * Create a new menu
      *
      * @param   int             $id         The id of this menu
-     * @param   Zend_Config     $config     The configuration for this menu
+     * @param   ConfigObject    $config     The configuration for this menu
      */
-    public function __construct($id, Zend_Config $config = null, Menu $parent = null)
+    public function __construct($id, ConfigObject $config = null, Menu $parent = null)
     {
         $this->id = $id;
         if ($parent !== null) {
@@ -94,7 +95,7 @@ class Menu implements RecursiveIterator
     /**
      * Set all given properties
      *
-     * @param   array|Zend_Config   $props Property list
+     * @param   array|ConfigObject   $props Property list
      */
     public function setProperties($props = null)
     {
@@ -170,7 +171,7 @@ class Menu implements RecursiveIterator
 
         foreach ($modules as $moduleName) {
             $moduleMenuConfig = Config::module($moduleName, 'menu');
-            if (false === empty($moduleMenuConfig)) {
+            if (! $moduleMenuConfig->isEmpty()) {
                 $menuConfigs[] = $moduleMenuConfig;
             }
         }
@@ -201,45 +202,50 @@ class Menu implements RecursiveIterator
      */
     protected function addMainMenuItems()
     {
-        $this->add(t('Dashboard'), array(
-            'url'      => 'dashboard',
-            'icon'     => 'img/icons/dashboard.png',
-            'priority' => 10
-        ));
+        $auth = Manager::getInstance();
 
-        $section = $this->add(t('System'), array(
-            'icon'     => 'img/icons/configuration.png',
-            'priority' => 200
-        ));
-        $section->add(t('Preferences'), array(
-            'url'      => 'preference',
-            'priority' => 200
-        ));
-        $section->add(t('Configuration'), array(
-            'url'      => 'config',
-            'priority' => 300
-        ));
-        $section->add(t('Modules'), array(
-            'url'      => 'config/modules',
-            'priority' => 400
-        ));
-        $section->add(t('Security'), array(
-            'url'      => 'security',
-            'priority' => 500
-        ));
+        if ($auth->isAuthenticated()) {
 
-        if (Logger::writesToFile()) {
-            $section->add(t('Application Log'), array(
-                'url'      => 'list/applicationlog',
-                'priority' => 500
+            $this->add(t('Dashboard'), array(
+                'url'      => 'dashboard',
+                'icon'     => 'dashboard',
+                'priority' => 10
+            ));
+
+            $section = $this->add(t('System'), array(
+                'icon'     => 'conf-alt',
+                'priority' => 200
+            ));
+            $section->add(t('Configuration'), array(
+                'url'      => 'config',
+                'priority' => 300
+            ));
+            $section->add(t('Modules'), array(
+                'url'      => 'config/modules',
+                'priority' => 400
+            ));
+
+            if (Logger::writesToFile()) {
+                $section->add(t('Application Log'), array(
+                    'url'      => 'list/applicationlog',
+                    'priority' => 500
+                ));
+            }
+
+            $section = $this->add($auth->getUser()->getUsername(), array(
+                'icon'     => 'user',
+                'priority' => 600
+            ));
+            $section->add(t('Preferences'), array(
+                'url'      => 'preference',
+                'priority' => 601
+            ));
+
+            $section->add(t('Logout'), array(
+                'url'      => 'authentication/logout',
+                'priority' => 700
             ));
         }
-
-        $this->add(t('Logout'), array(
-            'url'      => 'authentication/logout',
-            'icon'     => 'img/icons/logout.png',
-            'priority' => 300
-        ));
     }
 
     /**
@@ -419,11 +425,11 @@ class Menu implements RecursiveIterator
      * Add a sub menu to this menu
      *
      * @param   string          $id             The id of the menu to add
-     * @param   Zend_Config     $itemConfig     The config with which to initialize the menu
+     * @param   ConfigObject    $itemConfig     The config with which to initialize the menu
      *
      * @return  self
      */
-    public function addSubMenu($id, Zend_Config $menuConfig = null)
+    public function addSubMenu($id, ConfigObject $menuConfig = null)
     {
         if (false === ($pos = strpos($id, '.'))) {
             $subMenu = new self($id, $menuConfig, $this);
@@ -513,7 +519,7 @@ class Menu implements RecursiveIterator
      */
     public function add($name, $config = array())
     {
-        return $this->addSubMenu($name, new Zend_Config($config));
+        return $this->addSubMenu($name, new ConfigObject($config));
     }
 
     /**
@@ -695,7 +701,7 @@ class Menu implements RecursiveIterator
     }
 
     /**
-     * PHP 5.3 GC should not leak, but just to be on the safe side...
+     * PHP 5.3 GC should not leak, but just to be on the safe side... 
      */
     public function __destruct()
     {

@@ -224,6 +224,7 @@ class Translator
                 }
             }
         }
+        sort($codes);
 
         return $codes;
     }

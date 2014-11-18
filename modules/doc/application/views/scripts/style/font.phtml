@@ -1,0 +1,15 @@
+<div class="controls">
+<?= $this->tabs ?>
+<h1>Icinga Web 2 Icons</h1>
+</div>
+
+<div class="content">
+<?php foreach ($this->font->glyphs as $icon): ?>
+<!-- TODO: move CSS away //-->
+<div style="width: 33%; font-size: 1.5em; height: 2em; float: left;" class="<?=
+    $this->font->css_prefix_text . $icon->css
+?>">
+<?= $this->escape($icon->css) ?> <span style="font-size: 0.6em">(0x<?= dechex($icon->code) ?>)</span>
+</div>
+<?php endforeach ?>
+</div>

@@ -72,6 +72,12 @@ class DbQuery extends SimpleQuery
         parent::init();
     }
 
+    public function setUseSubqueryCount($useSubqueryCount = true)
+    {
+        $this->useSubqueryCount = $useSubqueryCount;
+        return $this;
+    }
+
     public function where($condition, $value = null)
     {
         // $this->count = $this->select = null;
@@ -128,11 +134,11 @@ class DbQuery extends SimpleQuery
         return $select;
     }
 
-    public function applyFilterSql($query)
+    protected function applyFilterSql($select)
     {
         $where = $this->renderFilter($this->filter);
         if ($where !== '') {
-            $query->where($where);
+            $select->where($where);
         }
     }
 
@@ -245,10 +251,12 @@ class DbQuery extends SimpleQuery
         if (is_array($expression) && $sign === '=') {
             // TODO: Should we support this? Doesn't work for blub*
             return $col . ' IN (' . $this->escapeForSql($expression) . ')';
-        } elseif (strpos($expression, '*') === false) {
-            return $col . ' ' . $sign . ' ' . $this->escapeForSql($expression);
-        } else {
+        } elseif ($sign === '=' && strpos($expression, '*') !== false) {
             return $col . ' LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
+        } elseif ($sign === '!=' && strpos($expression, '*') !== false) {
+            return $col . ' NOT LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
+        } else {
+            return $col . ' ' . $sign . ' ' . $this->escapeForSql($expression);
         }
     }
 
@@ -259,11 +267,13 @@ class DbQuery extends SimpleQuery
      */
     public function getCountQuery()
     {
-		// TODO: there may be situations where we should clone the "select"
+        // TODO: there may be situations where we should clone the "select"
         $count = $this->dbSelect();
-
+        if ($this->group) {
+            $count->group($this->group);
+        }
         $this->applyFilterSql($count);
-        if ($this->useSubqueryCount) {
+        if ($this->useSubqueryCount || $this->group) {
             $count->columns($this->columns);
             $columns = array('cnt' => 'COUNT(*)');
             return $this->db->select()->from($count, $columns);
@@ -303,6 +313,13 @@ class DbQuery extends SimpleQuery
         . "\n\nCOUNT\n=====\n"
         . $this->getCountQuery()
         . "\n\n";
+    }
+
+    public function __clone()
+    {
+        if ($this->select) {
+            $this->select = clone $this->select;
+        }
     }
 
     /**

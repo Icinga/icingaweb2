@@ -6,7 +6,7 @@
 
 use Icinga\Authentication\Backend\AutoLoginBackend;
 use Icinga\Web\Controller\ActionController;
-use Icinga\Form\Authentication\LoginForm;
+use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Authentication\AuthChain;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
@@ -33,6 +33,10 @@ class AuthenticationController extends ActionController
      */
     public function loginAction()
     {
+        if (@file_exists(Config::resolvePath('setup.token')) && !@file_exists(Config::resolvePath('config.ini'))) {
+            $this->redirectNow(Url::fromPath('setup'));
+        }
+
         $auth = $this->Auth();
         $this->view->form = $form = new LoginForm();
         $this->view->title = $this->translate('Icingaweb Login');
@@ -53,7 +57,7 @@ class AuthenticationController extends ActionController
                 $config = Config::app('authentication');
             } catch (NotReadableError $e) {
                 throw new ConfigurationError(
-                    $this->translate('Could not read your authentiction.ini, no authentication methods are available.'),
+                    $this->translate('Could not read your authentication.ini, no authentication methods are available.'),
                     0,
                     $e
                 );
@@ -93,30 +97,30 @@ class AuthenticationController extends ActionController
                     }
                 }
                 if ($backendsTried === 0) {
-                    throw new ConfigurationError(
+                    $this->view->form->addError(
                         $this->translate(
                             'No authentication methods available. Did you create'
-                          . ' authentication.ini when installing Icinga Web 2?'
+                          . ' authentication.ini when setting up Icinga Web 2?'
                          )
                     );
-                }
-                if ($backendsTried === $backendsWithError) {
-                    throw new ConfigurationError(
+                } else if ($backendsTried === $backendsWithError) {
+                    $this->view->form->addError(
                         $this->translate(
                             'All configured authentication methods failed.'
                           . ' Please check the system log or Icinga Web 2 log for more information.'
                         )
                     );
-                }
-                if ($backendsWithError) {
-                    $this->view->form->getElement('username')->addError(
+                } elseif ($backendsWithError) {
+                    $this->view->form->addError(
                         $this->translate(
                             'Please note that not all authentication methods were available.'
                           . ' Check the system log or Icinga Web 2 log for more information.'
                         )
                     );
                 }
-                $this->view->form->getElement('password')->addError($this->translate('Incorrect username or password'));
+                if ($backendsTried > 0 && $backendsTried !== $backendsWithError) {
+                    $this->view->form->getElement('password')->addError($this->translate('Incorrect username or password'));
+                }
             } elseif ($request->isGet()) {
                 $user = new User('');
                 foreach ($chain as $backend) {
@@ -134,6 +138,8 @@ class AuthenticationController extends ActionController
         } catch (Exception $e) {
             $this->view->errorInfo = $e->getMessage();
         }
+
+        $this->view->configMissing = is_dir(Config::$configDir) === false;
     }
 
     /**

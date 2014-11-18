@@ -2,17 +2,16 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Config;
+namespace Icinga\Module\Monitoring\Forms\Config;
 
 use InvalidArgumentException;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Form\ConfigForm;
+use Icinga\Forms\ConfigForm;
 use Icinga\Module\Monitoring\Command\Transport\LocalCommandFile;
 use Icinga\Module\Monitoring\Command\Transport\RemoteCommandFile;
-use Icinga\Module\Monitoring\Form\Config\Instance\LocalInstanceForm;
-use Icinga\Module\Monitoring\Form\Config\Instance\RemoteInstanceForm;
+use Icinga\Module\Monitoring\Forms\Config\Instance\LocalInstanceForm;
+use Icinga\Module\Monitoring\Forms\Config\Instance\RemoteInstanceForm;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 
 /**
  * Form for modifying/creating monitoring instances
@@ -72,12 +71,12 @@ class InstanceConfigForm extends ConfigForm
         if (! $name) {
             throw new InvalidArgumentException(mt('monitoring', 'Instance name missing'));
         }
-        if (isset($this->config->{$name})) {
+        if ($this->config->hasSection($name)) {
             throw new InvalidArgumentException(mt('monitoring', 'Instance already exists'));
         }
 
         unset($values['name']);
-        $this->config->{$name} = $values;
+        $this->config->setSection($name, $values);
         return $this;
     }
 
@@ -97,14 +96,13 @@ class InstanceConfigForm extends ConfigForm
             throw new InvalidArgumentException(mt('monitoring', 'Old instance name missing'));
         } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
             throw new InvalidArgumentException(mt('monitoring', 'New instance name missing'));
-        } elseif (! ($instanceConfig = $this->config->get($name))) {
+        } elseif (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(mt('monitoring', 'Unknown instance name provided'));
         }
 
         unset($values['name']);
-        unset($this->config->{$name});
-        $this->config->{$newName} = $values;
-        return $this->config->{$newName};
+        $this->config->setSection($name, $values);
+        return $this->config->getSection($name);
     }
 
     /**
@@ -120,11 +118,12 @@ class InstanceConfigForm extends ConfigForm
     {
         if (! $name) {
             throw new InvalidArgumentException(mt('monitoring', 'Instance name missing'));
-        } elseif (! ($instanceConfig = $this->config->get($name))) {
+        } elseif (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(mt('monitoring', 'Unknown instance name provided'));
         }
 
-        unset($this->config->{$name});
+        $instanceConfig = $this->config->getSection($name);
+        $this->config->removeSection($name);
         return $instanceConfig;
     }
 
@@ -132,18 +131,18 @@ class InstanceConfigForm extends ConfigForm
      * @see     Form::onRequest()   For the method documentation.
      * @throws  ConfigurationError  In case the instance name is missing or invalid
      */
-    public function onRequest(Request $request)
+    public function onRequest()
     {
-        $instanceName = $request->getQuery('instance');
+        $instanceName = $this->request->getQuery('instance');
         if ($instanceName !== null) {
             if (! $instanceName) {
                 throw new ConfigurationError(mt('monitoring', 'Instance name missing'));
             }
-            if (! isset($this->config->{$instanceName})) {
+            if (! $this->config->hasSection($instanceName)) {
                 throw new ConfigurationError(mt('monitoring', 'Unknown instance name given'));
             }
 
-            $instanceConfig = $this->config->{$instanceName}->toArray();
+            $instanceConfig = $this->config->getSection($instanceName)->toArray();
             $instanceConfig['name'] = $instanceName;
             $this->populate($instanceConfig);
         }
@@ -153,9 +152,9 @@ class InstanceConfigForm extends ConfigForm
      * (non-PHPDoc)
      * @see Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
-        $instanceName = $request->getQuery('instance');
+        $instanceName = $this->request->getQuery('instance');
         try {
             if ($instanceName === null) { // create new instance
                 $this->add($this->getValues());

@@ -1,5 +1,5 @@
 Source: icingaweb
-Section: upstream
+Section: admin
 Maintainer: Icinga Development Team <info@icinga.org>
 Priority: optional
 Build-Depends: debhelper (>=9)
@@ -28,7 +28,7 @@ Description: Icinga PHP common libraries
 
 Package: icingacli
 Architecture: any
-Depends: libicinga-common-php (>= 2.0.0~alpha1)
+Depends: libicinga-common-php (>= 2.0.0~alpha1), php5-cli (>= 5.3.2)
 Description: Icinga CLI tool
  The Icinga CLI allows one to access it's Icinga monitoring
  system from a terminal. 

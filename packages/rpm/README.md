@@ -19,21 +19,32 @@ provided by Icinga (2) Core.
 
     setenforce 0
 
-## Webinterface Login
+## Webserver Configuration
 
-The default credentials using the internal MySQL database are
-`icingaadmin:icinga`
+Can be generated using the following local icingacli command:
+
+    /usr/share/icingaweb2/bin/icingacli setup config webserver apache
+
+Pipe the output into `/etc/httpd/conf.d/icingaweb2.conf` or similar,
+if not already existing.
+
+## Setup Wizard
+
+Navigate to `/icingaweb/setup` and follow the on-screen instructions.
+
 
 ## Support
 
 Please use one of the listed support channels at https://support.icinga.org
 
 
-## Internal DB Setup
+## Manual Setup
+
+### Internal DB Setup
 
 Decide whether to use MySQL or PostgreSQL.
 
-### MySQL
+#### MySQL
 
     mysql -u root -p
         CREATE USER `icingaweb`@`localhost` IDENTIFIED BY 'icingaweb';
@@ -42,10 +53,9 @@ Decide whether to use MySQL or PostgreSQL.
         FLUSH PRIVILEGES;
         quit
 
-    mysql -u root -p icingaweb < /usr/share/doc/icingaweb2*/schema/accounts.mysql.sql
-    mysql -u root -p icingaweb < /usr/share/doc/icingaweb2*/schema/preferences.mysql.sql
+    mysql -u root -p icingaweb < /usr/share/doc/icingaweb2*/schema/mysql.schema..sql
 
-### PostgreSQL
+#### PostgreSQL
 
     sudo su postgres
     psql
@@ -62,17 +72,16 @@ in `/var/lib/pgsql/data/pg_hba.conf` and restart the PostgreSQL server.
 
 Now install the `icingaweb` schema
 
-    bash$  psql -U icingaweb -a -f /usr/share/doc/icingaweb2*/schema/accounts.pgsql.sql
-    bash$  psql -U icingaweb -a -f /usr/share/doc/icingaweb2*/schema/preferences.pgsql.sql
+    bash$  psql -U icingaweb -a -f /usr/share/doc/icingaweb2*/schema/pgsql.schema.sql
 
 
-## Configuration
+### Configuration
 
-### Module Configuration
+#### Module Configuration
 
 The monitoring module is enabled by default.
 
-### Backend configuration
+#### Backend configuration
 
 `/etc/icingaweb2/resources.ini` contains the database backend information.
 By default the Icinga 2 DB IDO is used by the monitoring module in
@@ -82,8 +91,20 @@ The external command pipe is required for sending commands
 and configured for Icinga 2 in
 `/etc/icingaweb2/modules/monitoring/instances.ini`
 
-### Authentication configuration
+#### Authentication configuration
 
 The `/etc/icingaweb2/authentication.ini` file uses the internal database as
 default. This requires the database being installed properly before
 allowing users to login via web console.
+
+#### Default User
+
+When not using the default setup wizard, you can generate a secure password hash with openssl
+and insert that manually like so:
+
+    openssl passwd -1 "yoursecurepassword"
+
+    mysql -uicingaweb -p icingaweb
+
+    mysql> INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 1, '$yoursecurepassword_hash');
+

@@ -6,12 +6,15 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
 
 ?><h3 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
 <?= $this->qlink(sprintf($this->translate('%s services:'), $this->stats->services_total), $selfUrl) ?>
+<?php if ($this->stats->services_ok): ?>
  <span class="state ok<?= $currentUrl === Url::fromPath($selfUrl, array('service_state' => 0))->getRelativeUrl() ? ' active' : '' ?>"><?= $this->qlink(
     $this->stats->services_ok,
     $selfUrl,
     array('service_state' => 0),
     array('title' => sprintf($this->translate('Services with state %s'), strtoupper($this->translate('ok'))))
 )  ?></span>
+<?php endif ?>
+
 <?php
 
 foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $state) {

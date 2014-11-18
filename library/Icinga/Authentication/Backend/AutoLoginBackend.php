@@ -4,8 +4,8 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Zend_Config;
 use Icinga\Authentication\UserBackend;
+use Icinga\Data\ConfigObject;
 use Icinga\User;
 
 /**
@@ -23,9 +23,9 @@ class AutoLoginBackend extends UserBackend
     /**
      * Create new autologin backend
      *
-     * @param Zend_Config $config
+     * @param ConfigObject $config
      */
-    public function __construct(Zend_Config $config)
+    public function __construct(ConfigObject $config)
     {
         $this->stripUsernameRegexp = $config->get('strip_username_regexp');
     }
@@ -54,7 +54,7 @@ class AutoLoginBackend extends UserBackend
         if (isset($_SERVER['REMOTE_USER'])) {
             $username = $_SERVER['REMOTE_USER'];
             $user->setRemoteUserInformation($username, 'REMOTE_USER');
-            if ($this->stripUsernameRegexp !== null) {
+            if ($this->stripUsernameRegexp) {
                 $stripped = preg_replace($this->stripUsernameRegexp, '', $username);
                 if ($stripped !== false) {
                     // TODO(el): PHP issues a warning when PHP cannot compile the regular expression. Should we log an

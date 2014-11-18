@@ -31,18 +31,18 @@
           $tooltip = $this->translate('Comment was created by an user.');
           break;
         case 'downtime':
-          $icon = 'down';
+          $icon = 'plug';
           $title = $this->translate('Downtime');
           $tooltip = $this->translate('Comment was caused by a downtime.');
         case 'ack':
-          $icon = 'acknowledgement';
+          $icon = 'ok';
           $title = $this->translate('Acknowledgement');
           $tooltip = $this->translate('Comment was caused by an acknowledgement.');
       }
     ?>
       <tr class="state invalid">
         <td class="state" style="width: 12em;">
-          <?= $this->icon($icon . '.png', $tooltip) ?>
+          <?= $this->icon($icon, $tooltip) ?>
           <br>
           <strong><?= $this->escape($title); ?></strong>
           <br>
@@ -50,7 +50,7 @@
         </td>
         <td>
         <?php if ($comment->objecttype === 'service'): ?>
-          <?= $this->icon('service.png'); ?> <a href="<?= $this->href('monitoring/service/show', array(
+          <?= $this->icon('service'); ?> <a href="<?= $this->href('monitoring/service/show', array(
             'host'    => $comment->host,
             'service' => $comment->service,
           )); ?>">
@@ -60,14 +60,14 @@
             <?= $this->translate('on') . ' ' . $comment->host; ?>
           </small>
         <?php else: ?>
-          <?= $this->icon('host.png'); ?> <a href="<?= $this->href('monitoring/host/show', array(
+          <?= $this->icon('host'); ?> <a href="<?= $this->href('monitoring/host/show', array(
             'host' => $comment->host
           )); ?>">
             <?= $comment->host; ?>
           </a>
         <?php endif ?>
           <br>
-          <?= $this->icon('comment.png'); ?> <?= isset($comment->author)
+          <?= $this->icon('comment'); ?> <?= isset($comment->author)
             ? '[' . $comment->author . '] '
             : '';
           ?><?= $this->escape($comment->comment); ?>

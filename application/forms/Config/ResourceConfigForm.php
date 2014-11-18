@@ -2,16 +2,15 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config;
+namespace Icinga\Forms\Config;
 
 use InvalidArgumentException;
-use Icinga\Web\Request;
 use Icinga\Web\Notification;
-use Icinga\Form\ConfigForm;
-use Icinga\Form\Config\Resource\DbResourceForm;
-use Icinga\Form\Config\Resource\FileResourceForm;
-use Icinga\Form\Config\Resource\LdapResourceForm;
-use Icinga\Form\Config\Resource\LivestatusResourceForm;
+use Icinga\Forms\ConfigForm;
+use Icinga\Forms\Config\Resource\DbResourceForm;
+use Icinga\Forms\Config\Resource\FileResourceForm;
+use Icinga\Forms\Config\Resource\LdapResourceForm;
+use Icinga\Forms\Config\Resource\LivestatusResourceForm;
 use Icinga\Application\Platform;
 use Icinga\Exception\ConfigurationError;
 
@@ -64,12 +63,12 @@ class ResourceConfigForm extends ConfigForm
         $name = isset($values['name']) ? $values['name'] : '';
         if (! $name) {
             throw new InvalidArgumentException(t('Resource name missing'));
-        } elseif ($this->config->{$name} !== null) {
+        } elseif ($this->config->hasSection($name)) {
             throw new InvalidArgumentException(t('Resource already exists'));
         }
 
         unset($values['name']);
-        $this->config->{$name} = $values;
+        $this->config->setSection($name, $values);
         return $this;
     }
 
@@ -89,14 +88,15 @@ class ResourceConfigForm extends ConfigForm
             throw new InvalidArgumentException(t('Old resource name missing'));
         } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
             throw new InvalidArgumentException(t('New resource name missing'));
-        } elseif (($resourceConfig = $this->config->get($name)) === null) {
+        } elseif (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(t('Unknown resource provided'));
         }
 
+        $resourceConfig = $this->config->getSection($name);
+        $this->config->removeSection($name);
         unset($values['name']);
-        unset($this->config->{$name});
-        $this->config->{$newName} = array_merge($resourceConfig->toArray(), $values);
-        return $this->config->{$newName};
+        $this->config->setSection($newName, $resourceConfig->merge($values));
+        return $resourceConfig;
     }
 
     /**
@@ -112,11 +112,12 @@ class ResourceConfigForm extends ConfigForm
     {
         if (! $name) {
             throw new InvalidArgumentException(t('Resource name missing'));
-        } elseif (($resourceConfig = $this->config->get($name)) === null) {
+        } elseif (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(t('Unknown resource provided'));
         }
 
-        unset($this->config->{$name});
+        $resourceConfig = $this->config->getSection($name);
+        $this->config->removeSection($name);
         return $resourceConfig;
     }
 
@@ -128,17 +129,17 @@ class ResourceConfigForm extends ConfigForm
      *
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
             $resourceForm = $this->getResourceForm($this->getElement('type')->getValue());
-            if (method_exists($resourceForm, 'isValidResource') && false === $resourceForm->isValidResource($this)) {
+            if (method_exists($resourceForm, 'isValidResource') && false === $resourceForm::isValidResource($this)) {
                 $this->addElement($this->getForceCreationCheckbox());
                 return false;
             }
         }
 
-        $resource = $request->getQuery('resource');
+        $resource = $this->request->getQuery('resource');
         try {
             if ($resource === null) { // create new resource
                 $this->add($this->getValues());
@@ -166,17 +167,17 @@ class ResourceConfigForm extends ConfigForm
      *
      * @throws  ConfigurationError      In case the backend name is missing in the request or is invalid
      */
-    public function onRequest(Request $request)
+    public function onRequest()
     {
-        $resource = $request->getQuery('resource');
+        $resource = $this->request->getQuery('resource');
         if ($resource !== null) {
             if ($resource === '') {
                 throw new ConfigurationError(t('Resource name missing'));
-            } elseif (false === isset($this->config->{$resource})) {
+            } elseif (! $this->config->hasSection($resource)) {
                 throw new ConfigurationError(t('Unknown resource provided'));
             }
 
-            $configValues = $this->config->{$resource}->toArray();
+            $configValues = $this->config->getSection($resource)->toArray();
             $configValues['name'] = $resource;
             $this->populate($configValues);
         }
@@ -220,15 +221,6 @@ class ResourceConfigForm extends ConfigForm
             $resourceTypes['db'] = t('SQL Database');
         }
 
-        $this->addElement(
-            'text',
-            'name',
-            array(
-                'required'      => true,
-                'label'         => t('Resource Name'),
-                'description'   => t('The unique name of this resource')
-            )
-        );
         $this->addElement(
             'select',
             'type',

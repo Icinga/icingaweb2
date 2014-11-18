@@ -4,14 +4,16 @@
 
 namespace Icinga\Application;
 
-use Zend_Config;
-use Zend_Config_Ini;
+use Iterator;
+use Countable;
+use UnexpectedValueException;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\NotReadableError;
 
 /**
- * Global registry of application and module configuration.
+ * Container for INI like configuration and global registry of application and module related configuration.
  */
-class Config extends Zend_Config
+class Config implements Countable, Iterator
 {
     /**
      * Configuration directory where ALL (application and module) configuration is located
@@ -19,13 +21,6 @@ class Config extends Zend_Config
      * @var string
      */
     public static $configDir;
-
-    /**
-     * The INI file this configuration has been loaded from or should be written to
-     *
-     * @var string
-     */
-    protected $configFile;
 
     /**
      * Application config instances per file
@@ -42,96 +37,27 @@ class Config extends Zend_Config
     protected static $modules = array();
 
     /**
-     * Load configuration from the given INI file
+     * The internal ConfigObject
      *
-     * @param   string      $file   The file to parse
-     *
-     * @throws  NotReadableError    When the file does not exist or cannot be read
+     * @var ConfigObject
      */
-    public static function fromIni($file)
-    {
-        $config = new static(array(), true);
-        $filepath = realpath($file);
-
-        if ($filepath === false) {
-            $config->setConfigFile($file);
-        } elseif (is_readable($filepath)) {
-            $config->setConfigFile($filepath);
-            $config->merge(new Zend_Config_Ini($filepath));
-        } else {
-            throw new NotReadableError('Cannot read config file "%s". Permission denied', $filepath);
-        }
-
-        return $config;
-    }
+    protected $config;
 
     /**
-     * Retrieve a application config instance
+     * The INI file this config has been loaded from or should be written to
      *
-     * @param   string  $configname     The configuration name (without ini suffix) to read and return
-     * @param   bool    $fromDisk       When set true, the configuration will be read from the disk, even
-     *                                  if it already has been read
-     *
-     * @return  Config                  The configuration object that has been requested
+     * @var string
      */
-    public static function app($configname = 'config', $fromDisk = false)
-    {
-        if (!isset(self::$app[$configname]) || $fromDisk) {
-            self::$app[$configname] = Config::fromIni(self::resolvePath($configname . '.ini'));
-        }
-        return self::$app[$configname];
-    }
+    protected $configFile;
 
     /**
-     * Set module config
+     * Create a new config
      *
-     * @param string        $moduleName
-     * @param string        $configName
-     * @param Zend_Config   $config
+     * @param   ConfigObject    $config     The config object to handle
      */
-    public static function setModuleConfig($moduleName, $configName, Zend_Config $config)
+    public function __construct(ConfigObject $config = null)
     {
-        self::$modules[$moduleName][$configName] = $config;
-    }
-
-    /**
-     * Retrieve a module config instance
-     *
-     * @param   string  $modulename     The name of the module to look for configurations
-     * @param   string  $configname     The configuration name (without ini suffix) to read and return
-     * @param   string  $fromDisk       Whether to read the configuration from disk
-     *
-     * @return  Config                  The configuration object that has been requested
-     */
-    public static function module($modulename, $configname = 'config', $fromDisk = false)
-    {
-        if (!isset(self::$modules[$modulename])) {
-            self::$modules[$modulename] = array();
-        }
-        $moduleConfigs = self::$modules[$modulename];
-        if (!isset($moduleConfigs[$configname]) || $fromDisk) {
-            $moduleConfigs[$configname] = Config::fromIni(
-                self::resolvePath('modules/' . $modulename . '/' . $configname . '.ini')
-            );
-        }
-        return $moduleConfigs[$configname];
-    }
-
-    /**
-     * Retrieve names of accessible sections or properties
-     *
-     * @param   $name
-     * @return  array
-     */
-    public function keys($name = null)
-    {
-        if ($name === null) {
-            return array_keys($this->toArray());
-        } elseif ($this->$name === null) {
-            return array();
-        } else {
-            return array_keys($this->$name->toArray());
-        }
+        $this->config = $config !== null ? $config : new ConfigObject();
     }
 
     /**
@@ -147,7 +73,7 @@ class Config extends Zend_Config
     /**
      * Set this config's file path
      *
-     * @param   string      $filepath   The path to the config file
+     * @param   string      $filepath   The path to the ini file
      *
      * @return  self
      */
@@ -158,10 +84,227 @@ class Config extends Zend_Config
     }
 
     /**
-     * Prepend configuration base dir if input is relative
+     * Return the count of available sections
      *
-     * @param   string  $path   Input path
-     * @return  string          Absolute path
+     * @return  int
+     */
+    public function count()
+    {
+        return $this->config->count();
+    }
+
+    /**
+     * Reset the current position of the internal config object
+     *
+     * @return  ConfigObject
+     */
+    public function rewind()
+    {
+        return $this->config->rewind();
+    }
+
+    /**
+     * Return the section of the current iteration
+     *
+     * @return  ConfigObject
+     */
+    public function current()
+    {
+        return $this->config->current();
+    }
+
+    /**
+     * Return whether the position of the current iteration is valid
+     *
+     * @return  bool
+     */
+    public function valid()
+    {
+        return $this->config->valid();
+    }
+
+    /**
+     * Return the section's name of the current iteration
+     *
+     * @return  string
+     */
+    public function key()
+    {
+        return $this->config->key();
+    }
+
+    /**
+     * Advance the position of the current iteration and return the new section
+     *
+     * @return  ConfigObject
+     */
+    public function next()
+    {
+        return $this->config->next();
+    }
+
+    /**
+     * Return whether this config has any sections
+     *
+     * @return  bool
+     */
+    public function isEmpty()
+    {
+        return $this->config->isEmpty();
+    }
+
+    /**
+     * Return this config's section names
+     *
+     * @return  array
+     */
+    public function keys()
+    {
+        return $this->config->keys();
+    }
+
+    /**
+     * Return this config's data as associative array
+     *
+     * @return  array
+     */
+    public function toArray()
+    {
+        return $this->config->toArray();
+    }
+
+    /**
+     * Return the value from a section's property
+     *
+     * @param   string  $section    The section where the given property can be found
+     * @param   string  $key        The section's property to fetch the value from
+     * @param   mixed   $default    The value to return in case the section or the property is missing
+     *
+     * @return  mixed
+     *
+     * @throws  UnexpectedValueException    In case the given section does not hold any configuration
+     */
+    public function get($section, $key, $default = null)
+    {
+        $value = $this->config->$section;
+        if ($value instanceof ConfigObject) {
+            $value = $value->$key;
+        } elseif ($value !== null) {
+            throw new UnexpectedValueException(
+                sprintf('Value "%s" is not of type "%s" or a sub-type of it', $value, get_class($this->config))
+            );
+        }
+
+        if ($value === null && $default !== null) {
+            $value = $default;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Return the given section
+     *
+     * @param   string  $name   The section's name
+     *
+     * @return  ConfigObject
+     */
+    public function getSection($name)
+    {
+        $section = $this->config->get($name);
+        return $section !== null ? $section : new ConfigObject();
+    }
+
+    /**
+     * Set or replace a section
+     *
+     * @param   string              $name
+     * @param   array|ConfigObject  $config
+     *
+     * @return  self
+     */
+    public function setSection($name, $config = null)
+    {
+        if ($config === null) {
+            $config = new ConfigObject();
+        } elseif (! $config instanceof ConfigObject) {
+            $config = new ConfigObject($config);
+        }
+
+        $this->config->$name = $config;
+        return $this;
+    }
+
+    /**
+     * Remove a section
+     *
+     * @param   string  $name
+     *
+     * @return  self
+     */
+    public function removeSection($name)
+    {
+        unset($this->config->$name);
+        return $this;
+    }
+
+    /**
+     * Return whether the given section exists
+     *
+     * @param   string  $name
+     *
+     * @return  bool
+     */
+    public function hasSection($name)
+    {
+        return isset($this->config->$name);
+    }
+
+    /**
+     * Initialize a new config using the given array
+     *
+     * The returned config has no file associated to it.
+     *
+     * @param   array   $array      The array to initialize the config with
+     *
+     * @return  Config
+     */
+    public static function fromArray(array $array)
+    {
+        return new static(new ConfigObject($array));
+    }
+
+    /**
+     * Load configuration from the given INI file
+     *
+     * @param   string      $file   The file to parse
+     *
+     * @throws  NotReadableError    When the file does not exist or cannot be read
+     */
+    public static function fromIni($file)
+    {
+        $emptyConfig = new static();
+
+        $filepath = realpath($file);
+        if ($filepath === false) {
+            $emptyConfig->setConfigFile($file);
+        } elseif (is_readable($filepath)) {
+            $config = new static(new ConfigObject(parse_ini_file($filepath, true)));
+            $config->setConfigFile($filepath);
+            return $config;
+        } else {
+            throw new NotReadableError(t('Cannot read config file "%s". Permission denied'), $filepath);
+        }
+
+        return $emptyConfig;
+    }
+
+    /**
+     * Prepend configuration base dir to the given relative path
+     *
+     * @param   string  $path   A relative path
+     *
+     * @return  string
      */
     public static function resolvePath($path)
     {
@@ -169,12 +312,46 @@ class Config extends Zend_Config
     }
 
     /**
-     * Is the configuration empty?
+     * Retrieve a application config
      *
-     * @return bool
+     * @param   string  $configname     The configuration name (without ini suffix) to read and return
+     * @param   bool    $fromDisk       When set true, the configuration will be read from disk, even
+     *                                  if it already has been read
+     *
+     * @return  Config                  The requested configuration
      */
-    public function isEmpty()
+    public static function app($configname = 'config', $fromDisk = false)
     {
-        return empty($this->_data);
+        if (!isset(self::$app[$configname]) || $fromDisk) {
+            self::$app[$configname] = static::fromIni(static::resolvePath($configname . '.ini'));
+        }
+
+        return self::$app[$configname];
+    }
+
+    /**
+     * Retrieve a module config
+     *
+     * @param   string  $modulename     The name of the module where to look for the requested configuration
+     * @param   string  $configname     The configuration name (without ini suffix) to read and return
+     * @param   string  $fromDisk       When set true, the configuration will be read from disk, even
+     *                                  if it already has been read
+     *
+     * @return  Config                  The requested configuration
+     */
+    public static function module($modulename, $configname = 'config', $fromDisk = false)
+    {
+        if (!isset(self::$modules[$modulename])) {
+            self::$modules[$modulename] = array();
+        }
+
+        $moduleConfigs = self::$modules[$modulename];
+        if (!isset($moduleConfigs[$configname]) || $fromDisk) {
+            $moduleConfigs[$configname] = static::fromIni(
+                static::resolvePath('modules/' . $modulename . '/' . $configname . '.ini')
+            );
+        }
+
+        return $moduleConfigs[$configname];
     }
 }

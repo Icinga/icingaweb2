@@ -2,11 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Config;
+namespace Icinga\Module\Monitoring\Forms\Config;
 
-use Icinga\Web\Request;
 use Icinga\Web\Notification;
-use Icinga\Form\ConfigForm;
+use Icinga\Forms\ConfigForm;
 
 /**
  * Form for modifying security relevant settings
@@ -25,9 +24,9 @@ class SecurityConfigForm extends ConfigForm
     /**
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
-        $this->config->security = $this->getValues();
+        $this->config->setSection('security', $this->getValues());
 
         if ($this->save()) {
             Notification::success(mt('monitoring', 'New security configuration has successfully been stored'));
@@ -39,11 +38,9 @@ class SecurityConfigForm extends ConfigForm
     /**
      * @see Form::onRequest()
      */
-    public function onRequest(Request $request)
+    public function onRequest()
     {
-        if (isset($this->config->security)) {
-            $this->populate($this->config->security->toArray());
-        }
+        $this->populate($this->config->getSection('security')->toArray());
     }
 
     /**
@@ -55,7 +52,8 @@ class SecurityConfigForm extends ConfigForm
             'text',
             'protected_customvars',
             array(
-                'required'      => true,
+                'allowEmpty'    => true,
+                'value'         => '*pw*,*pass*,community',
                 'label'         => mt('monitoring', 'Protected Custom Variables'),
                 'description'   => mt('monitoring',
                     'Comma separated case insensitive list of protected custom variables.'

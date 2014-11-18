@@ -2,12 +2,11 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Config;
+namespace Icinga\Module\Monitoring\Forms\Config;
 
 use InvalidArgumentException;
-use Icinga\Web\Request;
 use Icinga\Web\Notification;
-use Icinga\Form\ConfigForm;
+use Icinga\Forms\ConfigForm;
 use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
 
@@ -74,12 +73,12 @@ class BackendConfigForm extends ConfigForm
         $name = isset($values['name']) ? $values['name'] : '';
         if (! $name) {
             throw new InvalidArgumentException(mt('monitoring', 'Monitoring backend name missing'));
-        } elseif ($this->config->get($name) !== null) {
+        } elseif ($this->config->hasSection($name)) {
             throw new InvalidArgumentException(mt('monitoring', 'Monitoring backend already exists'));
         }
 
         unset($values['name']);
-        $this->config->{$name} = $values;
+        $this->config->setSection($name, $values);
         return $this;
     }
 
@@ -99,14 +98,13 @@ class BackendConfigForm extends ConfigForm
             throw new InvalidArgumentException(mt('monitoring', 'Old monitoring backend name missing'));
         } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
             throw new InvalidArgumentException(mt('monitoring', 'New monitoring backend name missing'));
-        } elseif (($backendConfig = $this->config->get($name)) === null) {
+        } elseif (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(mt('monitoring', 'Unknown monitoring backend provided'));
         }
 
         unset($values['name']);
-        unset($this->config->{$name});
-        $this->config->{$newName} = $values;
-        return $this->config->{$newName};
+        $this->config->setSection($name, $values);
+        return $this->config->getSection($name);
     }
 
     /**
@@ -122,11 +120,12 @@ class BackendConfigForm extends ConfigForm
     {
         if (! $name) {
             throw new InvalidArgumentException(mt('monitoring', 'Monitoring backend name missing'));
-        } elseif (($backendConfig = $this->config->get($name)) === null) {
+        } elseif (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(mt('monitoring', 'Unknown monitoring backend provided'));
         }
 
-        unset($this->config->{$name});
+        $backendConfig = $this->config->getSection($name);
+        $this->config->removeSection($name);
         return $backendConfig;
     }
 
@@ -135,9 +134,9 @@ class BackendConfigForm extends ConfigForm
      *
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
-        $monitoringBackend = $request->getQuery('backend');
+        $monitoringBackend = $this->request->getQuery('backend');
         try {
             if ($monitoringBackend === null) { // create new backend
                 $this->add($this->getValues());
@@ -165,17 +164,17 @@ class BackendConfigForm extends ConfigForm
      *
      * @throws  ConfigurationError      In case the backend name is missing in the request or is invalid
      */
-    public function onRequest(Request $request)
+    public function onRequest()
     {
-        $monitoringBackend = $request->getQuery('backend');
+        $monitoringBackend = $this->request->getQuery('backend');
         if ($monitoringBackend !== null) {
             if ($monitoringBackend === '') {
                 throw new ConfigurationError(mt('monitoring', 'Monitoring backend name missing'));
-            } elseif (false === isset($this->config->{$monitoringBackend})) {
+            } elseif (! $this->config->hasSection($monitoringBackend)) {
                 throw new ConfigurationError(mt('monitoring', 'Unknown monitoring backend provided'));
             }
 
-            $backendConfig = $this->config->{$monitoringBackend}->toArray();
+            $backendConfig = $this->config->getSection($monitoringBackend)->toArray();
             $backendConfig['name'] = $monitoringBackend;
             $this->populate($backendConfig);
         }
@@ -225,15 +224,31 @@ class BackendConfigForm extends ConfigForm
                 'value'         => $resourceType
             )
         );
-        $this->addElement(
+
+        $resourceElement = $this->createElement(
             'select',
             'resource',
             array(
                 'required'      => true,
                 'label'         => mt('monitoring', 'Resource'),
                 'description'   => mt('monitoring', 'The resource to use'),
-                'multiOptions'  => $this->resources[$resourceType]
+                'multiOptions'  => $this->resources[$resourceType],
+                'autosubmit'    => true
             )
         );
+
+        $resourceName = (isset($formData['resource'])) ? $formData['resource'] : $this->getValue('resource');
+        if ($resourceElement) {
+            $resourceElement->getDecorator('Description')->setEscape(false);
+            $link = sprintf(
+                '<a href="%s" data-base-target="_main">%s</a>',
+                $this->getView()->href('/icingaweb/config/editresource', array('resource' => $resourceName)),
+                mt('monitoring', 'Show resource configuration')
+            );
+            $resourceElement->setDescription($resourceElement->getDescription() . ' (' . $link . ')');
+        }
+
+        $this->addElement($resourceElement);
+
     }
 }
