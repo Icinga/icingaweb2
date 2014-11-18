@@ -27,23 +27,25 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
 
     /**
      * (non-PHPDoc)
+     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
+     */
+    public function getHelp()
+    {
+        return mt(
+            'monitoring',
+            'This command is used to acknowledge host or service problems. When a problem is acknowledged,'
+            . ' future notifications about problems are temporarily disabled until the host or service'
+            . ' recovers.'
+        );
+    }
+
+    /**
+     * (non-PHPDoc)
      * @see \Icinga\Web\Form::createElements() For the method documentation.
      */
     public function createElements(array $formData = array())
     {
         $this->addElements(array(
-            array(
-                'note',
-                'command-info',
-                array(
-                    'value' => mt(
-                        'monitoring',
-                        'This command is used to acknowledge host or service problems. When a problem is acknowledged,'
-                        . ' future notifications about problems are temporarily disabled until the host or service'
-                        . ' recovers.'
-                    )
-                )
-            ),
             array(
                 'textarea',
                 'comment',

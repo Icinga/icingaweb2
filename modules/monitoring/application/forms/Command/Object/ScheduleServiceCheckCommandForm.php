@@ -28,6 +28,19 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
 
     /**
      * (non-PHPDoc)
+     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
+     */
+    public function getHelp()
+    {
+        return mt(
+            'monitoring',
+            'This command is used to schedule the next check of hosts or services. Icinga will re-queue the'
+            . ' hosts or services to be checked at the time you specify.'
+        );
+    }
+
+    /**
+     * (non-PHPDoc)
      * @see \Icinga\Web\Form::createElements() For the method documentation.
      */
     public function createElements(array $formData = array())
