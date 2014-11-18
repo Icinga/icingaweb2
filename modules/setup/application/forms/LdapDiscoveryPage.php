@@ -6,6 +6,8 @@ namespace Icinga\Module\Setup\Forms;
 
 use Icinga\Web\Form;
 use Icinga\Forms\LdapDiscoveryForm;
+use Icinga\Protocol\Ldap\Discovery;
+use Icinga\Module\Setup\Forms\LdapDiscoveryConfirmPage;
 
 /**
  * Wizard page to define the connection details for a LDAP resource
@@ -13,9 +15,9 @@ use Icinga\Forms\LdapDiscoveryForm;
 class LdapDiscoveryPage extends Form
 {
     /**
-     * @var LdapDiscoveryForm
+     * @var Discovery
      */
-    private $discoveryForm;
+    private $discovery;
 
     /**
      * Initialize this page
@@ -53,8 +55,8 @@ class LdapDiscoveryPage extends Form
             )
         );
 
-        $this->discoveryForm = new LdapDiscoveryForm();
-        $this->addElements($this->discoveryForm->createElements($formData)->getElements());
+        $discoveryForm = new LdapDiscoveryForm();
+        $this->addElements($discoveryForm->createElements($formData)->getElements());
         $this->getElement('domain')->setRequired(
             isset($formData['skip_validation']) === false || ! $formData['skip_validation']
         );
@@ -82,25 +84,38 @@ class LdapDiscoveryPage extends Form
         if (false === parent::isValid($data)) {
             return false;
         }
-
-        if (! $data['skip_validation'] && false === $this->discoveryForm->isValid($data)) {
-            return false;
+        if ($data['skip_validation']) {
+            return true;
         }
 
-        return true;
+        if (isset($data['domain'])) {
+            $this->discovery = Discovery::discoverDomain($data['domain']);
+            if ($this->discovery->isSuccess()) {
+                return true;
+            }
+        }
+        $this->addError(sprintf(t('Could not find any LDAP servers on the domain "%s".'), $data['domain']));
+        return false;
     }
 
+    /**
+     * Suggest settings based on the underlying discovery
+     *
+     * @param bool $suppressArrayNotation
+     *
+     * @return array|null
+     */
     public function getValues($suppressArrayNotation = false)
     {
-        if (! isset($this->discoveryForm) || ! $this->discoveryForm->hasSuggestion()) {
+        if (! isset($this->discovery) || ! $this->discovery->isSuccess()) {
             return null;
         }
+        $disc = $this->discovery;
         return array(
             'domain' => $this->getValue('domain'),
-            'type' => $this->discoveryForm->isAd() ?
-                    LdapDiscoveryConfirmPage::TYPE_AD : LdapDiscoveryConfirmPage::TYPE_MISC,
-            'resource' => $this->discoveryForm->suggestResourceSettings(),
-            'backend' => $this->discoveryForm->suggestBackendSettings()
+            'type' => $disc->isAd() ? LdapDiscoveryConfirmPage::TYPE_AD : LdapDiscoveryConfirmPage::TYPE_MISC,
+            'resource' => $disc->suggestResourceSettings(),
+            'backend' => $disc->suggestBackendSettings()
         );
     }
 }

@@ -95,6 +95,7 @@ class Connection
 
     protected $capabilities;
     protected $namingContexts;
+    protected $discoverySuccess = false;
 
     /**
      * Constructor
@@ -110,6 +111,16 @@ class Connection
         $this->bind_pw  = $config->bind_pw;
         $this->root_dn  = $config->root_dn;
         $this->port = $config->get('port', $this->port);
+    }
+
+    public function getHostname()
+    {
+        return $this->hostname;
+    }
+
+    public function getPort()
+    {
+        return $this->port;
     }
 
     public function getDN()
@@ -391,6 +402,7 @@ class Connection
         try {
             $capabilities = $this->discoverCapabilities($ds);
             list($cap, $namingContexts) = $capabilities;
+            $this->discoverySuccess = true;
         } catch (LdapException $e) {
 
             // discovery failed, guess defaults
@@ -600,6 +612,17 @@ class Connection
             return array($this->namingContexts);
         }
         return $this->namingContexts;
+    }
+
+    /**
+     * Whether service discovery was successful
+     *
+     * @return boolean  True when ldap settings were discovered, false when
+     *                   settings were guessed
+     */
+    public function discoverySuccessful()
+    {
+        return $this->discoverySuccess;
     }
 
     /**
