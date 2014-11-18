@@ -141,9 +141,11 @@ class Pane extends UserWidget
             if ($component->isUserWidget() === true) {
                 unset($this->components[$title]);
             } else {
-                $component->setUserWidget();
                 $component->setDisabled(true);
+                $component->setUserWidget();
             }
+        } else {
+            throw new ProgrammingError('Component does not exist: ' . $title);
         }
         return $this;
     }

@@ -25,7 +25,7 @@
                     </th>
                     <th>
                         <a href="<?= $this->href('dashboard/remove-pane', array('pane' => $pane->getName()));  ?>">
-                            <?= $this->icon('remove.png'); ?>
+                            <?= $this->icon('cancel'); ?>
                         </a>
                     </th>
                 </tr>
@@ -49,7 +49,7 @@
                             </td>
                             <td>
                                 <a href="<?= $this->href('dashboard/remove-component', array('pane' => $pane->getName(), 'component' => $component->getTitle()));  ?>">
-                                <?= $this->icon('remove.png'); ?>
+                                <?= $this->icon('cancel'); ?>
                                 </a>
                             </td>
                         </tr>
