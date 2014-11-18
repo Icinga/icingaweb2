@@ -177,10 +177,10 @@ class ConfigController extends ActionController
     public function removeauthenticationbackendAction()
     {
         $form = new ConfirmRemovalForm(array(
-            'onSuccess' => function ($request) {
+            'onSuccess' => function ($form) {
                 $configForm = new AuthenticationBackendConfigForm();
                 $configForm->setIniConfig(Config::app('authentication'));
-                $authBackend = $request->getQuery('auth_backend');
+                $authBackend = $form->getRequest()->getQuery('auth_backend');
 
                 try {
                     $configForm->remove($authBackend);
@@ -250,10 +250,10 @@ class ConfigController extends ActionController
     public function removeresourceAction()
     {
         $form = new ConfirmRemovalForm(array(
-            'onSuccess' => function ($request) {
+            'onSuccess' => function ($form) {
                 $configForm = new ResourceConfigForm();
                 $configForm->setIniConfig(Config::app('resources'));
-                $resource = $request->getQuery('resource');
+                $resource = $form->getRequest()->getQuery('resource');
 
                 try {
                     $configForm->remove($resource);

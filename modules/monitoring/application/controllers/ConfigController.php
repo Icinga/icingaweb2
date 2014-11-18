@@ -60,8 +60,8 @@ class Monitoring_ConfigController extends ModuleActionController
     {
         $config = $this->Config('backends');
         $form = new ConfirmRemovalForm(array(
-            'onSuccess' => function ($request) use ($config) {
-                $backendName = $request->getQuery('backend');
+            'onSuccess' => function ($form) use ($config) {
+                $backendName = $form->getRequest()->getQuery('backend');
                 $configForm = new BackendConfigForm();
                 $configForm->setIniConfig($config);
 
@@ -92,8 +92,8 @@ class Monitoring_ConfigController extends ModuleActionController
     {
         $config = $this->Config('instances');
         $form = new ConfirmRemovalForm(array(
-            'onSuccess' => function ($request) use ($config) {
-                $instanceName = $request->getQuery('instance');
+            'onSuccess' => function ($form) use ($config) {
+                $instanceName = $form->getRequest()->getQuery('instance');
                 $configForm = new InstanceConfigForm();
                 $configForm->setIniConfig($config);
 
