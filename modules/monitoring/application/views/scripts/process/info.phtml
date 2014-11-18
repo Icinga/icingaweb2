@@ -70,19 +70,19 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
         <div class="box left">
             <h2><?= $this->translate('Performance Info') ?></h2>
 
-            <h3>Object summaries</h3>
+            <h3><?= $this->translate('Object summaries') ?></h3>
             <table class="avp">
                 <thead>
                 <tr>
                     <th></th>
-                    <th>overall</th>
-                    <th>scheduled</th>
+                    <th><?= $this->translate('overall') ?></th>
+                    <th><?= $this->translate('scheduled') ?></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td>
-                        <strong>Hosts</strong>
+                        <strong><?= $this->translate('Hosts') ?></strong>
                     </td>
                     <td>
                         <?= $rv->total_hosts; ?>
@@ -94,7 +94,7 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
 
                 <tr>
                     <td>
-                        <strong>Services</strong>
+                        <strong><?= $this->translate('Services') ?></strong>
                     </td>
                     <td>
                         <?= $rv->total_services; ?>
@@ -106,7 +106,7 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
 
                 <tr>
                     <td>
-                        <strong>Average services per host</strong>
+                        <strong><?= $this->translate('Average services per host') ?></strong>
                     </td>
                     <td>
                         <?= sprintf('%.2f', $rv->average_services_per_host); ?>
@@ -118,20 +118,20 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
                 </tbody>
             </table>
 
-            <h3>Active checks</h3>
+            <h3><?= $this->translate('Active checks') ?></h3>
             <table class="avp">
                 <thead>
                 <tr>
                     <th></th>
                     <th></th>
-                    <th>Latency</th>
-                    <th>Execution time</th>
+                    <th><?= $this->translate('Latency') ?></th>
+                    <th><?= $this->translate('Execution time') ?></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td>
-                        <strong>Host Checks</strong>
+                        <strong><?= $this->translate('Host Checks') ?></strong>
                     </td>
                     <td><?= $cp->host_active_count; ?></td>
                     <td><?= sprintf('%.3f', $cp->host_active_latency_avg); ?>s</td>
@@ -139,7 +139,7 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
                 </tr>
                 <tr>
                     <td>
-                        <strong>Service Checks</strong>
+                        <strong><?= $this->translate('Service Checks') ?></strong>
                     </td>
                     <td><?= $cp->service_active_count; ?></td>
                     <td><?= sprintf('%.3f', $cp->service_active_latency_avg); ?>s</td>
@@ -148,18 +148,18 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
                 </tbody>
             </table>
 
-            <h3>Passive checks</h3>
+            <h3><?= $this->translate('Passive checks') ?></h3>
             <table class="avp">
                 <tbody>
                 <tr>
                     <td>
-                        <strong>Host Checks</strong>
+                        <strong><?= $this->translate('Host Checks') ?></strong>
                     </td>
                     <td><?= $cp->host_passive_count; ?></td>
                 </tr>
                 <tr>
                     <td>
-                        <strong>Service Checks</strong>
+                        <strong><?= $this->translate('Service Checks') ?></strong>
                     </td>
                     <td><?= $cp->service_passive_count; ?></td>
                 </tr>
