@@ -1,7 +1,7 @@
 # <a id="installation"></a> Installation
 
 The preferred way of installing Icinga Web 2 is to use the official package repositories depending on which operating
-system and distribution you are running. But it is also possible to install Icinga Web 2 directly from source too.
+system and distribution you are running. But it is also possible to install Icinga Web 2 directly from source.
 
 ## <a id="installation-requirements"></a> Installing Requirements
 
