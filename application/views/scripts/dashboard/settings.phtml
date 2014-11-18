@@ -23,6 +23,11 @@
                     <th colspan="2" style="text-align: left; padding: 0.5em;">
                         <?= $pane->getName(); ?>
                     </th>
+                    <th>
+                        <a href="<?= $this->href('dashboard/remove-pane', array('pane' => $pane->getName()));  ?>">
+                            <?= $this->icon('remove.png'); ?>
+                        </a>
+                    </th>
                 </tr>
                 <?php $components = $pane->getComponents(); ?>
                 <?php if(empty($components)): ?>

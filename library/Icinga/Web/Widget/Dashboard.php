@@ -7,7 +7,9 @@ namespace Icinga\Web\Widget;
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\SystemPermissionException;
 use Icinga\File\Ini\IniWriter;
 use Icinga\User;
 use Icinga\Web\Widget\Dashboard\Pane;
@@ -78,6 +80,7 @@ class Dashboard extends AbstractWidget
         if ($this->user !== null) {
             $this->loadUserDashboards();
         }
+
         return $this;
     }
 
@@ -117,9 +120,16 @@ class Dashboard extends AbstractWidget
         $components = array();
         foreach ($config as $key => $part) {
             if (strpos($key, '.') === false) {
-                $panes[$key] = new Pane($key);
-                $panes[$key]->setTitle($part->title);
+                if ($this->hasPane($part->title)) {
+                    $panes[$key] = $this->getPane($part->title);
+                } else {
+                    $panes[$key] = new Pane($key);
+                    $panes[$key]->setTitle($part->title);
+                }
                 $panes[$key]->setUserWidget();
+                if ((bool) $part->get('disabled', false) === true) {
+                    $panes[$key]->setDisabled();
+                }
 
             } else {
                 list($paneName, $componentName) = explode('.', $key, 2);
@@ -168,7 +178,13 @@ class Dashboard extends AbstractWidget
     {
         /** @var $pane Pane  */
         foreach ($panes as $pane) {
-            if (array_key_exists($pane->getName(), $this->panes)) {
+            if ($pane->getDisabled()) {
+                if ($this->hasPane($pane->getTitle()) === true) {
+                    $this->removePane($pane->getTitle());
+                }
+                continue;
+            }
+            if ($this->hasPane($pane->getTitle()) === true) {
                 /** @var $current Pane */
                 $current = $this->panes[$pane->getName()];
                 $current->addComponents($pane->getComponents());
@@ -243,6 +259,17 @@ class Dashboard extends AbstractWidget
     }
 
     /**
+     * Check if a panel exist
+     *
+     * @param   string  $pane
+     * @return  bool
+     */
+    public function hasPane($pane)
+    {
+        return $pane && array_key_exists($pane, $this->panes);
+    }
+
+    /**
      * Add a pane object to this dashboard
      *
      * @param Pane $pane        The pane to add
@@ -253,6 +280,21 @@ class Dashboard extends AbstractWidget
     {
         $this->panes[$pane->getName()] = $pane;
         return $this;
+    }
+
+    public function removePane($title)
+    {
+        if ($this->hasPane($title) === true) {
+            $pane = $this->getPane($title);
+            if ($pane->isUserWidget() === true) {
+                unset($this->panes[$pane->getName()]);
+            } else {
+                $pane->setDisabled();
+                $pane->setUserWidget();
+            }
+        } else {
+            throw new ProgrammingError('Pane not found: ' . $title);
+        }
     }
 
     /**
@@ -296,6 +338,7 @@ class Dashboard extends AbstractWidget
         if (empty($this->panes)) {
             return '';
         }
+
         return $this->determineActivePane()->render();
     }
 
@@ -382,6 +425,26 @@ class Dashboard extends AbstractWidget
         if ($this->user === null) {
             return '';
         }
-        return '/var/lib/icingaweb/' . $this->user->getUsername() . '/dashboard.ini';
+
+        $baseDir = '/var/lib/icingaweb';
+
+        if (! file_exists($baseDir)) {
+            throw new NotReadableError('Could not read: ' . $baseDir);
+        }
+
+        $userDir = $baseDir . '/' . $this->user->getUsername();
+
+        if (! file_exists($userDir)) {
+            $success = @mkdir($userDir);
+            if (!$success) {
+                throw new SystemPermissionException('Could not create: ' . $userDir);
+            }
+        }
+
+        if (! file_exists($userDir)) {
+            throw new NotReadableError('Could not read: ' . $userDir);
+        }
+
+        return $userDir . '/dashboard.ini';
     }
 }

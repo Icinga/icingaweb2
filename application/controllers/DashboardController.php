@@ -150,6 +150,37 @@ class DashboardController extends ActionController
         $this->view->form = $form;
     }
 
+    public function removePaneAction()
+    {
+        $form = new ConfirmRemovalForm();
+        $this->createTabs();
+        $dashboard = $this->dashboard;
+        if (! $this->_request->getParam('pane')) {
+            throw new Zend_Controller_Action_Exception(
+                'Missing parameter "pane"',
+                400
+            );
+        }
+        $pane = $this->_request->getParam('pane');
+        $form->setOnSuccess(function (Request $request, Form $form) use ($dashboard, $pane) {
+            try {
+                $pane = $dashboard->getPane($pane);
+                $dashboard->removePane($pane->getTitle());
+                $dashboard->write();
+                Notification::success(t('Pane has been removed') . ': ' . $pane->getTitle());
+                return true;
+            } catch (ProgrammingError $e) {
+                Notification::error($e->getMessage());
+                return false;
+            }
+            return false;
+        });
+        $form->setRedirectUrl('dashboard/settings');
+        $form->handleRequest();
+        $this->view->pane = $pane;
+        $this->view->form = $form;
+    }
+
     /**
      * Display the dashboard with the pane set in the 'pane' request parameter
      *

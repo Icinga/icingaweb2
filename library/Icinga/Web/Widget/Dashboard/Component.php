@@ -53,7 +53,7 @@ class Component extends UserWidget
     private $template =<<<'EOD'
 
     <div class="container" data-icinga-url="{URL}">
-        <h1><a href="{FULL_URL}" data-base-target="col1">{TITLE}</a> ({REMOVE})</h1>
+        <h1><a href="{FULL_URL}" data-base-target="col1">{TITLE}</a></h1>
         <noscript>
             <iframe src="{IFRAME_URL}" style="height:100%; width:99%" frameborder="no"></iframe>
         </noscript>

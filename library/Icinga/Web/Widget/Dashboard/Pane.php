@@ -37,6 +37,13 @@ class Pane extends UserWidget
     private $components = array();
 
     /**
+     * Disabled flag of a pane
+     *
+     * @var bool
+     */
+    private $disabled;
+
+    /**
      * Create a new pane
      *
      * @param string $name         The pane to create
@@ -253,9 +260,15 @@ class Pane extends UserWidget
      */
     public function toArray()
     {
-        return array(
-            'title' => $this->getTitle()
+        $pane =  array(
+            'title'     => $this->getTitle(),
         );
+
+        if ($this->getDisabled() === true) {
+            $pane['disabled'] = 1;
+        }
+
+        return $pane;
     }
 
     /**
@@ -274,4 +287,26 @@ class Pane extends UserWidget
         }
         return $pane;
     }
+
+    /**
+     * Setter for disabled
+     *
+     * @param boolean $disabled
+     */
+    public function setDisabled($disabled = true)
+    {
+        $this->disabled = (bool) $disabled;
+    }
+
+    /**
+     * Getter for disabled
+     *
+     * @return boolean
+     */
+    public function getDisabled()
+    {
+        return $this->disabled;
+    }
+
+
 }
