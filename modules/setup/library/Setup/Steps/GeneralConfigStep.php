@@ -36,7 +36,7 @@ class GeneralConfigStep extends Step
 
         try {
             $writer = new IniWriter(array(
-                'config'    => new Config($config),
+                'config'    => Config::fromArray($config),
                 'filename'  => Config::resolvePath('config.ini')
             ));
             $writer->write();

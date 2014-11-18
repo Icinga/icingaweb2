@@ -3,6 +3,7 @@
 namespace Icinga\Module\Monitoring\Backend;
 
 use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Data\ConnectionInterface;
 use Icinga\Data\Queryable;
@@ -16,7 +17,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
     /**
      * Backend configuration
      *
-     * @var Config
+     * @var ConfigObject
      */
     protected $config;
 
@@ -51,10 +52,10 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
     /**
      * Create a new backend
      *
-     * @param   string  $name
-     * @param   mixed   $config
+     * @param   string          $name
+     * @param   ConfigObject    $config
      */
-    protected function __construct($name, $config)
+    protected function __construct($name, ConfigObject $config)
     {
         $this->name   = $name;
         $this->config = $config;
@@ -180,9 +181,9 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
 
         } else {
 
-            $config = $backends->get($name);
+            $config = $backends->getSection($name);
 
-            if ($config === null) {
+            if ($config->isEmpty()) {
                 throw new ConfigurationError(
                     mt('monitoring', 'No configuration for backend %s'),
                     $name

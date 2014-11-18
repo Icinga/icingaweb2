@@ -26,7 +26,7 @@ class SecurityConfigForm extends ConfigForm
      */
     public function onSuccess()
     {
-        $this->config->security = $this->getValues();
+        $this->config->setSection('security', $this->getValues());
 
         if ($this->save()) {
             Notification::success(mt('monitoring', 'New security configuration has successfully been stored'));
@@ -40,9 +40,7 @@ class SecurityConfigForm extends ConfigForm
      */
     public function onRequest()
     {
-        if (isset($this->config->security)) {
-            $this->populate($this->config->security->toArray());
-        }
+        $this->populate($this->config->getSection('security')->toArray());
     }
 
     /**

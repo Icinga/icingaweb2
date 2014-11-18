@@ -4,11 +4,6 @@
 
 namespace Icinga\Forms;
 
-use Icinga\Application\Config;
-use Icinga\Application\Logger;
-use Icinga\Protocol\Ldap\Exception as LdapException;
-use Icinga\Protocol\Ldap\Connection;
-use Icinga\Protocol\Dns;
 use Icinga\Web\Form;
 
 class LdapDiscoveryForm extends Form

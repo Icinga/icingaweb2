@@ -6,15 +6,14 @@ namespace Icinga\Application;
 
 use Iterator;
 use Countable;
-use ArrayAccess;
-use LogicException;
 use UnexpectedValueException;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\NotReadableError;
 
 /**
- * Container for configuration values and global registry of application and module related configuration.
+ * Container for INI like configuration and global registry of application and module related configuration.
  */
-class Config implements Countable, Iterator, ArrayAccess
+class Config implements Countable, Iterator
 {
     /**
      * Configuration directory where ALL (application and module) configuration is located
@@ -38,14 +37,14 @@ class Config implements Countable, Iterator, ArrayAccess
     protected static $modules = array();
 
     /**
-     * This config's data
+     * The internal ConfigObject
      *
-     * @var array
+     * @var ConfigObject
      */
-    protected $data;
+    protected $config;
 
     /**
-     * The INI file this configuration has been loaded from or should be written to
+     * The INI file this config has been loaded from or should be written to
      *
      * @var string
      */
@@ -54,19 +53,11 @@ class Config implements Countable, Iterator, ArrayAccess
     /**
      * Create a new config
      *
-     * @param   array   $data   The data to initialize the new config with
+     * @param   ConfigObject    $config     The config object to handle
      */
-    public function __construct(array $data = array())
+    public function __construct(ConfigObject $config = null)
     {
-        $this->data = array();
-
-        foreach ($data as $key => $value) {
-            if (is_array($value)) {
-                $this->data[$key] = new static($value);
-            } else {
-                $this->data[$key] = $value;
-            }
-        }
+        $this->config = $config !== null ? $config : new ConfigObject();
     }
 
     /**
@@ -82,7 +73,7 @@ class Config implements Countable, Iterator, ArrayAccess
     /**
      * Set this config's file path
      *
-     * @param   string      $filepath   The path to the config file
+     * @param   string      $filepath   The path to the ini file
      *
      * @return  self
      */
@@ -93,50 +84,33 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
-     * Deep clone this config
-     */
-    public function __clone()
-    {
-        $array = array();
-        foreach ($this->data as $key => $value) {
-            if ($value instanceof self) {
-                $array[$key] = clone $value;
-            } else {
-                $array[$key] = $value;
-            }
-        }
-
-        $this->data = $array;
-    }
-
-    /**
-     * Return the count of available sections and properties
+     * Return the count of available sections
      *
      * @return  int
      */
     public function count()
     {
-        return count($this->data);
+        return $this->config->count();
     }
 
     /**
-     * Reset the current position of $this->data
+     * Reset the current position of the internal config object
      *
-     * @return  mixed
+     * @return  ConfigObject
      */
     public function rewind()
     {
-        return reset($this->data);
+        return $this->config->rewind();
     }
 
     /**
-     * Return the section's or property's value of the current iteration
+     * Return the section of the current iteration
      *
-     * @return  mixed
+     * @return  ConfigObject
      */
     public function current()
     {
-        return current($this->data);
+        return $this->config->current();
     }
 
     /**
@@ -146,165 +120,47 @@ class Config implements Countable, Iterator, ArrayAccess
      */
     public function valid()
     {
-        return key($this->data) !== null;
+        return $this->config->valid();
     }
 
     /**
-     * Return the section's or property's name of the current iteration
+     * Return the section's name of the current iteration
      *
-     * @return  mixed
+     * @return  string
      */
     public function key()
     {
-        return key($this->data);
+        return $this->config->key();
     }
 
     /**
-     * Advance the position of the current iteration and return the new section's or property's value
+     * Advance the position of the current iteration and return the new section
      *
-     * @return  mixed
+     * @return  ConfigObject
      */
     public function next()
     {
-        return next($this->data);
+        return $this->config->next();
     }
 
     /**
-     * Return whether the given section or property is set
-     *
-     * @param   string  $key    The name of the section or property
-     *
-     * @return  bool
-     */
-    public function __isset($key)
-    {
-        return isset($this->data[$key]);
-    }
-
-    /**
-     * Return the value for the given property or the config for the given section
-     *
-     * @param   string  $key    The name of the property or section
-     *
-     * @return  mixed|NULL      The value or NULL in case $key does not exist
-     */
-    public function __get($key)
-    {
-        if (array_key_exists($key, $this->data)) {
-            return $this->data[$key];
-        }
-    }
-
-    /**
-     * Add a new property or section
-     *
-     * @param   string  $key    The name of the new property or section
-     * @param   mixed   $value  The value to set for the new property or section
-     */
-    public function __set($key, $value)
-    {
-        if (is_array($value)) {
-            $this->data[$key] = new static($value);
-        } else {
-            $this->data[$key] = $value;
-        }
-    }
-
-    /**
-     * Remove the given property or section
-     *
-     * @param   string  $key    The property or section to remove
-     */
-    public function __unset($key)
-    {
-        unset($this->data[$key]);
-    }
-
-    /**
-     * Return whether the given section or property is set
-     *
-     * @param   string  $key    The name of the section or property
-     *
-     * @return  bool
-     */
-    public function offsetExists($key)
-    {
-        return isset($this->$key);
-    }
-
-    /**
-     * Return the value for the given property or the config for the given section
-     *
-     * @param   string  $key    The name of the property or section
-     *
-     * @return  mixed|NULL      The value or NULL in case $key does not exist
-     */
-    public function offsetGet($key)
-    {
-        return $this->$key;
-    }
-
-    /**
-     * Add a new property or section
-     *
-     * @param   string  $key    The name of the new property or section
-     * @param   mixed   $value  The value to set for the new property or section
-     */
-    public function offsetSet($key, $value)
-    {
-        if ($key === null) {
-            throw new LogicException('Appending values without an explicit key is not supported');
-        }
-
-        $this->$key = $value;
-    }
-
-    /**
-     * Remove the given property or section
-     *
-     * @param   string  $key    The property or section to remove
-     */
-    public function offsetUnset($key)
-    {
-        unset($this->$key);
-    }
-
-    /**
-     * Return whether this config has any data
+     * Return whether this config has any sections
      *
      * @return  bool
      */
     public function isEmpty()
     {
-        return $this->count() === 0;
+        return $this->config->isEmpty();
     }
 
     /**
-     * Return the value for the given property or the config for the given section
-     *
-     * @param   string  $key        The name of the property or section
-     * @param   mixed   $default    The value to return in case the property or section is missing
-     *
-     * @return  mixed
-     */
-    public function get($key, $default = null)
-    {
-        $value = $this->$key;
-        if ($default !== null && $value === null) {
-            $value = $default;
-        }
-
-        return $value;
-    }
-
-    /**
-     * Return all section and property names
+     * Return this config's section names
      *
      * @return  array
      */
     public function keys()
     {
-        return array_keys($this->data);
+        return $this->config->keys();
     }
 
     /**
@@ -314,46 +170,7 @@ class Config implements Countable, Iterator, ArrayAccess
      */
     public function toArray()
     {
-        $array = array();
-        foreach ($this->data as $key => $value) {
-            if ($value instanceof self) {
-                $array[$key] = $value->toArray();
-            } else {
-                $array[$key] = $value;
-            }
-        }
-
-        return $array;
-    }
-
-    /**
-     * Merge the given data with this config
-     *
-     * @param   array|Config    $data   An array or a config
-     *
-     * @return  self
-     */
-    public function merge($data)
-    {
-        if ($data instanceof self) {
-            $data = $data->toArray();
-        }
-
-        foreach ($data as $key => $value) {
-            if (array_key_exists($key, $this->data)) {
-                if (is_array($value)) {
-                    if ($this->data[$key] instanceof self) {
-                        $this->data[$key]->merge($value);
-                    } else {
-                        $this->data[$key] = new static($value);
-                    }
-                } else {
-                    $this->data[$key] = $value;
-                }
-            } else {
-                $this->data[$key] = is_array($value) ? new static($value) : $value;
-            }
-        }
+        return $this->config->toArray();
     }
 
     /**
@@ -367,14 +184,14 @@ class Config implements Countable, Iterator, ArrayAccess
      *
      * @throws  UnexpectedValueException    In case the given section does not hold any configuration
      */
-    public function fromSection($section, $key, $default = null)
+    public function get($section, $key, $default = null)
     {
-        $value = $this->$section;
-        if ($value instanceof self) {
+        $value = $this->config->$section;
+        if ($value instanceof ConfigObject) {
             $value = $value->$key;
         } elseif ($value !== null) {
             throw new UnexpectedValueException(
-                sprintf('Value "%s" is not of type "Config" or a sub-type of it', $value)
+                sprintf('Value "%s" is not of type "%s" or a sub-type of it', $value, get_class($this->config))
             );
         }
 
@@ -386,6 +203,78 @@ class Config implements Countable, Iterator, ArrayAccess
     }
 
     /**
+     * Return the given section
+     *
+     * @param   string  $name   The section's name
+     *
+     * @return  ConfigObject
+     */
+    public function getSection($name)
+    {
+        $section = $this->config->get($name);
+        return $section !== null ? $section : new ConfigObject();
+    }
+
+    /**
+     * Set or replace a section
+     *
+     * @param   string              $name
+     * @param   array|ConfigObject  $config
+     *
+     * @return  self
+     */
+    public function setSection($name, $config = null)
+    {
+        if ($config === null) {
+            $config = new ConfigObject();
+        } elseif (! $config instanceof ConfigObject) {
+            $config = new ConfigObject($config);
+        }
+
+        $this->config->$name = $config;
+        return $this;
+    }
+
+    /**
+     * Remove a section
+     *
+     * @param   string  $name
+     *
+     * @return  self
+     */
+    public function removeSection($name)
+    {
+        unset($this->config->$name);
+        return $this;
+    }
+
+    /**
+     * Return whether the given section exists
+     *
+     * @param   string  $name
+     *
+     * @return  bool
+     */
+    public function hasSection($name)
+    {
+        return isset($this->config->$name);
+    }
+
+    /**
+     * Initialize a new config using the given array
+     *
+     * The returned config has no file associated to it.
+     *
+     * @param   array   $array      The array to initialize the config with
+     *
+     * @return  Config
+     */
+    public static function fromArray(array $array)
+    {
+        return new static(new ConfigObject($array));
+    }
+
+    /**
      * Load configuration from the given INI file
      *
      * @param   string      $file   The file to parse
@@ -394,19 +283,20 @@ class Config implements Countable, Iterator, ArrayAccess
      */
     public static function fromIni($file)
     {
-        $config = new static();
+        $emptyConfig = new static();
 
         $filepath = realpath($file);
         if ($filepath === false) {
-            $config->setConfigFile($file);
+            $emptyConfig->setConfigFile($file);
         } elseif (is_readable($filepath)) {
+            $config = new static(new ConfigObject(parse_ini_file($filepath, true)));
             $config->setConfigFile($filepath);
-            $config->merge(parse_ini_file($filepath, true));
+            return $config;
         } else {
             throw new NotReadableError(t('Cannot read config file "%s". Permission denied'), $filepath);
         }
 
-        return $config;
+        return $emptyConfig;
     }
 
     /**

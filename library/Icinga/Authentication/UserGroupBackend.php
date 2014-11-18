@@ -4,9 +4,9 @@
 
 namespace Icinga\Authentication;
 
-use Icinga\Application\Config;
 use Icinga\Authentication\Backend\DbUserGroupBackend;
 use Icinga\Authentication\Backend\IniUserGroupBackend;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\IcingaException;
@@ -50,13 +50,13 @@ abstract class UserGroupBackend
     /**
      * Create a user group backend
      *
-     * @param   string  $name
-     * @param   Config  $backendConfig
+     * @param   string          $name
+     * @param   ConfigObject    $backendConfig
      *
      * @return DbUserGroupBackend|IniUserGroupBackend
      * @throws ConfigurationError If the backend configuration is invalid
      */
-    public static function create($name, Config $backendConfig)
+    public static function create($name, ConfigObject $backendConfig)
     {
         if ($backendConfig->name !== null) {
             $name = $backendConfig->name;

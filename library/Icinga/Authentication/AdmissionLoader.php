@@ -6,6 +6,7 @@ namespace Icinga\Authentication;
 
 use Icinga\Application\Config;
 use Icinga\Exception\NotReadableError;
+use Icinga\Data\ConfigObject;
 use Icinga\User;
 use Icinga\Util\String;
 
@@ -15,13 +16,13 @@ use Icinga\Util\String;
 class AdmissionLoader
 {
     /**
-     * @param   string  $username
-     * @param   array   $userGroups
-     * @param   mixed   $section
+     * @param   string          $username
+     * @param   array           $userGroups
+     * @param   ConfigObject    $section
      *
      * @return  bool
      */
-    protected function match($username, $userGroups, $section)
+    protected function match($username, $userGroups, ConfigObject $section)
     {
         $username = strtolower($username);
         if (! empty($section->users)) {

@@ -9,8 +9,8 @@ namespace Tests\Icinga\Forms\Config\Authentication;
 require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
 
 use Mockery;
+use Icinga\Data\ConfigObject;
 use Icinga\Test\BaseTestCase;
-use Icinga\Application\Config;
 use Icinga\Forms\Config\Authentication\LdapBackendForm;
 use Icinga\Exception\AuthenticationException;
 
@@ -70,6 +70,6 @@ class LdapBackendFormTest extends BaseTestCase
             ->shouldReceive('createResource')
             ->andReturn(Mockery::mock('Icinga\Protocol\Ldap\Connection'))
             ->shouldReceive('getResourceConfig')
-            ->andReturn(new Config());
+            ->andReturn(new ConfigObject());
     }
 }

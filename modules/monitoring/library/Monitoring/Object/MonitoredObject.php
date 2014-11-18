@@ -290,10 +290,7 @@ abstract class MonitoredObject
         $blacklist = array();
         $blacklistPattern = '/^(.*pw.*|.*pass.*|community)$/i';
 
-        if ($security = Config::module('monitoring')->get('security')) {
-
-            $blacklistConfig = $security->get('protected_customvars', '');
-
+        if (($blacklistConfig = Config::module('monitoring')->get('security', 'protected_customvars', '')) !== '') {
             foreach (explode(',', $blacklistConfig) as $customvar) {
                 $nonWildcards = array();
                 foreach (explode('*', $customvar) as $nonWildcard) {

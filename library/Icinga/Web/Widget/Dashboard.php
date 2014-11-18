@@ -366,9 +366,7 @@ class Dashboard extends AbstractWidget
      */
     private function loadConfigPanes()
     {
-        $items = $this->config;
-        foreach ($items->keys() as $key) {
-            $item = $this->config->get($key, false);
+        foreach ($this->config as $key => $item) {
             if (false === strstr($key, '.')) {
                 $this->addPane(Pane::fromIni($key, $item));
             } else {

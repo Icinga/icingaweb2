@@ -34,7 +34,7 @@ class AuthenticationBackendReorderFormTest extends BaseTestCase
 {
     public function testMoveBackend()
     {
-        $config = new Config(
+        $config = Config::fromArray(
             array(
                 'test1' => '',
                 'test2' => '',
