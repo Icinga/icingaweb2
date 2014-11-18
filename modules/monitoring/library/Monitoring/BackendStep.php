@@ -39,7 +39,7 @@ class BackendStep extends Step
 
         try {
             $writer = new IniWriter(array(
-                'config'    => new Config($config),
+                'config'    => Config::fromArray($config),
                 'filename'  => Config::resolvePath('modules/monitoring/backends.ini')
             ));
             $writer->write();
@@ -60,7 +60,7 @@ class BackendStep extends Step
 
         try {
             $config = Config::app('resources', true);
-            $config->merge(new Config(array($resourceName => $resourceConfig)));
+            $config->setSection($resourceName, $resourceConfig);
 
             $writer = new IniWriter(array(
                 'config'    => $config,

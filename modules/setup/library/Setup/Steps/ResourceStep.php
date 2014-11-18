@@ -39,7 +39,7 @@ class ResourceStep extends Step
 
         try {
             $writer = new IniWriter(array(
-                'config'    => new Config($resourceConfig),
+                'config'    => Config::fromArray($resourceConfig),
                 'filename'  => Config::resolvePath('resources.ini'),
                 'filemode'  => 0660
             ));

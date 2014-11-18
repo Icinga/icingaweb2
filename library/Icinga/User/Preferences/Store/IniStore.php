@@ -120,7 +120,7 @@ class IniStore extends PreferencesStore
 
             $this->writer = new IniWriter(
                 array(
-                    'config'    => new Config($this->preferences),
+                    'config'    => Config::fromArray($this->preferences),
                     'filename'  => $this->preferencesFile
                 )
             );

@@ -5,8 +5,8 @@
 namespace Tests\Icinga\User\Preferences\Store;
 
 use Mockery;
+use Icinga\Data\ConfigObject;
 use Icinga\Test\BaseTestCase;
-use Icinga\Application\Config;
 use Icinga\User\Preferences\Store\IniStore;
 
 class IniStoreWithSetGetPreferencesAndEmptyWrite extends IniStore
@@ -61,7 +61,7 @@ class IniStoreTest extends BaseTestCase
     protected function getStore()
     {
         return new IniStoreWithSetGetPreferencesAndEmptyWrite(
-            new Config(
+            new ConfigObject(
                 array(
                     'location' => 'some/Path/To/Some/Directory'
                 )

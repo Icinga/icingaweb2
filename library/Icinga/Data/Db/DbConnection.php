@@ -6,8 +6,8 @@ namespace Icinga\Data\Db;
 
 use PDO;
 use Zend_Db;
-use Icinga\Application\Config;
 use Icinga\Application\Benchmark;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\Db\DbQuery;
 use Icinga\Data\ResourceFactory;
 use Icinga\Data\Selectable;
@@ -21,7 +21,7 @@ class DbConnection implements Selectable
     /**
      * Connection config
      *
-     * @var Config
+     * @var ConfigObject
      */
     private $config;
 
@@ -59,9 +59,9 @@ class DbConnection implements Selectable
     /**
      * Create a new connection object
      *
-     * @param Config $config
+     * @param ConfigObject $config
      */
-    public function __construct(Config $config = null)
+    public function __construct(ConfigObject $config = null)
     {
         $this->config = $config;
         if (isset($config->prefix)) {

@@ -5,8 +5,8 @@
 namespace Icinga\Forms\Config\Authentication;
 
 use Exception;
-use Icinga\Application\Config;
 use Icinga\Web\Form;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Authentication\Backend\LdapUserBackend;
@@ -96,7 +96,7 @@ class LdapBackendForm extends Form
             'hidden',
             'backend',
             array(
-                'required'  => true,
+                'disabled'  => true,
                 'value'     => 'ldap'
             )
         );
@@ -156,7 +156,7 @@ class LdapBackendForm extends Form
     /**
      * Return the configuration for the chosen resource
      *
-     * @return  Config
+     * @return  ConfigObject
      */
     public function getResourceConfig()
     {

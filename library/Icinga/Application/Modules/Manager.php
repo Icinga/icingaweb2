@@ -13,6 +13,7 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\SystemPermissionException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\NotReadableError;
+use Icinga\Exception\NotFoundError;
 
 /**
  * Module manager that handles detecting, enabling and disabling of modules
@@ -228,6 +229,7 @@ class Manager
      *
      * @return  self
      * @throws  ConfigurationError          When trying to enable a module that is not installed
+     * @throws  NotFoundError               In case the "enabledModules" directory does not exist
      * @throws  SystemPermissionException   When insufficient permissions for the application exist
      */
     public function enableModule($name)
@@ -245,9 +247,11 @@ class Manager
         $target = $this->installedBaseDirs[$name];
         $link = $this->enableDir . '/' . $name;
 
-        if (!is_writable($this->enableDir)) {
+        if (! is_dir($this->enableDir)) {
+            throw new NotFoundError('Cannot enable module "%s". Path "%s" not found.', $name, $this->enableDir);
+        } elseif (!is_writable($this->enableDir)) {
             throw new SystemPermissionException(
-                'Can not enable module "%s". Insufficient system permissions for enabling modules.',
+                'Cannot enable module "%s". Insufficient system permissions for enabling modules.',
                 $name
             );
         }

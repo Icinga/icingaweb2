@@ -8,6 +8,7 @@ use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Application\Platform;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
+use Icinga\Data\ConfigObject;
 
 /**
  * Backend class managing all the LDAP stuff for you.
@@ -101,9 +102,9 @@ class Connection
      *
      * TODO: Allow to pass port and SSL options
      *
-     * @param Config $config
+     * @param ConfigObject $config
      */
-    public function __construct(Config $config)
+    public function __construct(ConfigObject $config)
     {
         $this->hostname = $config->hostname;
         $this->bind_dn  = $config->bind_dn;

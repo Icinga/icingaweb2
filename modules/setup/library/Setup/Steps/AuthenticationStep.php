@@ -7,6 +7,7 @@ namespace Icinga\Module\Setup\Steps;
 use Exception;
 use Icinga\Application\Config;
 use Icinga\File\Ini\IniWriter;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Authentication\Backend\DbUserBackend;
 use Icinga\Module\Setup\Step;
@@ -50,7 +51,7 @@ class AuthenticationStep extends Step
 
         try {
             $writer = new IniWriter(array(
-                'config'    => new Config($config),
+                'config'    => Config::fromArray($config),
                 'filename'  => Config::resolvePath('authentication.ini')
             ));
             $writer->write();
@@ -73,7 +74,7 @@ class AuthenticationStep extends Step
 
         try {
             $writer = new IniWriter(array(
-                'config'    => new Config($config),
+                'config'    => Config::fromArray($config),
                 'filename'  => Config::resolvePath('permissions.ini')
             ));
             $writer->write();
@@ -90,7 +91,7 @@ class AuthenticationStep extends Step
     {
         try {
             $backend = new DbUserBackend(
-                ResourceFactory::createResource(new Config($this->data['adminAccountData']['resourceConfig']))
+                ResourceFactory::createResource(new ConfigObject($this->data['adminAccountData']['resourceConfig']))
             );
 
             if (array_search($this->data['adminAccountData']['username'], $backend->listUsers()) === false) {

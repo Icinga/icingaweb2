@@ -7,6 +7,7 @@ namespace Icinga\User\Preferences;
 use Icinga\Application\Config;
 use Icinga\User;
 use Icinga\User\Preferences;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Data\Db\DbConnection;
@@ -18,14 +19,14 @@ use Icinga\Data\Db\DbConnection;
  * <code>
  * <?php
  *
- * use Icinga\Application\Config;
+ * use Icinga\Data\ConfigObject;
  * use Icinga\User\Preferences;
  * use Icinga\User\Preferences\PreferencesStore;
  *
  * // Create a INI store
  * $store = PreferencesStore::create(
- *     new Config(
- *         'type'       => 'ini',
+ *     new ConfigObject(
+ *         'type'        => 'ini',
  *         'config_path' => '/path/to/preferences'
  *     ),
  *     $user // Instance of \Icinga\User
@@ -41,7 +42,7 @@ abstract class PreferencesStore
     /**
      * Store config
      *
-     * @var Config
+     * @var ConfigObject
      */
     protected $config;
 
@@ -55,10 +56,10 @@ abstract class PreferencesStore
     /**
      * Create a new store
      *
-     * @param   Config     $config     The config for this adapter
-     * @param   User       $user       The user to which these preferences belong
+     * @param   ConfigObject    $config     The config for this adapter
+     * @param   User            $user       The user to which these preferences belong
      */
-    public function __construct(Config $config, User $user)
+    public function __construct(ConfigObject $config, User $user)
     {
         $this->config = $config;
         $this->user = $user;
@@ -68,7 +69,7 @@ abstract class PreferencesStore
     /**
      * Getter for the store config
      *
-     * @return  Config
+     * @return  ConfigObject
      */
     public function getStoreConfig()
     {
@@ -107,14 +108,14 @@ abstract class PreferencesStore
     /**
      * Create preferences storage adapter from config
      *
-     * @param   Config     $config     The config for the adapter
-     * @param   User       $user       The user to which these preferences belong
+     * @param   ConfigObject    $config     The config for the adapter
+     * @param   User            $user       The user to which these preferences belong
      *
      * @return  self
      *
      * @throws  ConfigurationError          When the configuration defines an invalid storage type
      */
-    public static function create(Config $config, User $user)
+    public static function create(ConfigObject $config, User $user)
     {
         if (($type = $config->type) === null) {
             throw new ConfigurationError(

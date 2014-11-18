@@ -39,8 +39,8 @@ class PreferenceController extends BasePreferenceController
      */
     public function indexAction()
     {
-        $storeConfig = Config::app()->preferences;
-        if ($storeConfig === null) {
+        $storeConfig = Config::app()->getSection('preferences');
+        if ($storeConfig->isEmpty()) {
             throw new ConfigurationError(t('You need to configure how to store preferences first.'));
         }
 

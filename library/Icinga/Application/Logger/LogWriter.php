@@ -4,7 +4,7 @@
 
 namespace Icinga\Application\Logger;
 
-use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
 
 /**
  * Abstract class for writers that write messages to a log
@@ -12,14 +12,14 @@ use Icinga\Application\Config;
 abstract class LogWriter
 {
     /**
-     * @var Zend_Config
+     * @var ConfigObject
      */
     protected $config;
 
     /**
      * Create a new log writer initialized with the given configuration
      */
-    public function __construct(Config $config)
+    public function __construct(ConfigObject $config)
     {
         $this->config = $config;
     }

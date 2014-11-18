@@ -4,7 +4,7 @@
 
 namespace Icinga\Web\Widget\Dashboard;
 
-use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\ConfigurationError;
@@ -275,11 +275,11 @@ class Pane extends UserWidget
      * Create a new pane with the title $title from the given configuration
      *
      * @param $title                The title for this pane
-     * @param Config    $config     The configuration to use for setup
+     * @param ConfigObject  $config The configuration to use for setup
      *
      * @return Pane
      */
-    public static function fromIni($title, Config $config)
+    public static function fromIni($title, ConfigObject $config)
     {
         $pane = new Pane($title);
         if ($config->get('title', false)) {
