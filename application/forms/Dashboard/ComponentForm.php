@@ -11,19 +11,13 @@ use Icinga\Web\Url;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
+use Icinga\Web\Widget\Dashboard\Component;
 
 /**
  * Form to add an url a dashboard pane
  */
-class AddUrlForm extends Form
+class ComponentForm extends Form
 {
-    /**
-     * Config file name
-     *
-     * @var string
-     */
-    private $configFile = 'dashboard/dashboard';
-
     /**
      * @var Dashboard
      */
@@ -35,7 +29,9 @@ class AddUrlForm extends Form
     public function init()
     {
         $this->setName('form_dashboard_addurl');
-        $this->setSubmitLabel(t('Add To Dashboard'));
+        if (! $this->getSubmitLabel()) {
+            $this->setSubmitLabel(t('Add To Dashboard'));
+        }
     }
 
     /**
@@ -45,13 +41,28 @@ class AddUrlForm extends Form
      */
     public function createElements(array $formData)
     {
-        $paneSelectionValues = array();
+        $groupElements  = array();
+        $panes          = array();
 
-        if ($this->dashboard !== null) {
-            $paneSelectionValues = $this->dashboard->getPaneKeyTitleArray();
+        if ($this->dashboard) {
+            $panes = $this->dashboard->getPaneKeyTitleArray();
         }
 
-        $groupElements = array();
+        $this->addElement(
+            'hidden',
+            'org_pane',
+            array(
+                'required' => false
+            )
+        );
+
+        $this->addElement(
+            'hidden',
+            'org_component',
+            array(
+                'required' => false
+            )
+        );
 
         $this->addElement(
             'text',
@@ -72,7 +83,7 @@ class AddUrlForm extends Form
                 'description'  => t('Enter a title for the dashlet.')
             )
         );
-        if (empty($paneSelectionValues) ||
+        if (empty($panes) ||
             ((isset($formData['create_new_pane']) && $formData['create_new_pane'] != false) &&
              (false === isset($formData['use_existing_dashboard']) || $formData['use_existing_dashboard'] != true))
         ) {
@@ -93,7 +104,7 @@ class AddUrlForm extends Form
                     'value' => 1
                 )
             );
-            if (false === empty($paneSelectionValues)) {
+            if (false === empty($panes)) {
                 $buttonExistingPane = $this->createElement(
                     'submit',
                     'use_existing_dashboard',
@@ -114,7 +125,7 @@ class AddUrlForm extends Form
                 array(
                     'required'      => true,
                     'label'         => t('Pane'),
-                    'multiOptions'  => $paneSelectionValues,
+                    'multiOptions'  => $panes,
                     'description'   =>
                         t('Select a pane you want to add the dashlet.')
                 )
@@ -161,33 +172,6 @@ class AddUrlForm extends Form
      */
     public function onSuccess(Request $request)
     {
-        $pane = null;
-
-        if ($this->dashboard === null) {
-            throw new ProgrammingError('Dashboard is not set, can not write values');
-        }
-
-        try {
-            $pane = $this->dashboard->getPane($this->getValue('pane'));
-        } catch (ProgrammingError $e) {
-            $pane = new Dashboard\Pane($this->getValue('pane'));
-            $pane->setUserWidget();
-            $this->dashboard->addPane($pane);
-        }
-
-        $component = new Dashboard\Component(
-            $this->getValue('component'),
-            $this->getValue('url'),
-            $pane
-        );
-
-        $component->setUserWidget();
-
-        $pane->addComponent($component);
-
-        $this->dashboard->write();
-
-
         return true;
     }
 
@@ -198,25 +182,11 @@ class AddUrlForm extends Form
      */
     public function onRequest(Request $request)
     {
-        // TODO(mh): Im not sure if this is the right place for that
-        $url = $this->getValue('url');
-        if (! $url) {
-            $url = $request->getParam('url');
-        }
-
-        if (! $url) {
-            return;
-        }
-
-        $data = array(
-            'url' => urldecode(Url::fromPath($url)->getPath())
-        );
-
-        $this->populate($data);
+        return true;
     }
 
     /**
-     * @param Dashboard $dashboard
+     * @param \Icinga\Web\Widget\Dashboard $dashboard
      */
     public function setDashboard(Dashboard $dashboard)
     {
@@ -224,10 +194,24 @@ class AddUrlForm extends Form
     }
 
     /**
-     * @return Dashboard
+     * @return \Icinga\Web\Widget\Dashboard
      */
     public function getDashboard()
     {
         return $this->dashboard;
+    }
+
+    /**
+     * @param Component $component
+     */
+    public function load(Component $component)
+    {
+        $this->populate(array(
+            'pane'          => $component->getPane()->getName(),
+            'org_pane'      => $component->getPane()->getName(),
+            'component'     => $component->getTitle(),
+            'org_component' => $component->getTitle(),
+            'url'           => $component->getUrl()
+        ));
     }
 }

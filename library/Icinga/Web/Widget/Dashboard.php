@@ -187,7 +187,7 @@ class Dashboard extends AbstractWidget
      */
     public function getTabs()
     {
-        $url = Url::fromRequest()->getUrlWithout($this->tabParam);
+        $url = Url::fromPath('dashboard')->getUrlWithout($this->tabParam);
         if ($this->tabs === null) {
             $this->tabs = new Tabs();
 
@@ -212,7 +212,6 @@ class Dashboard extends AbstractWidget
      */
     public function getPanes()
     {
-        return '';
         return $this->panes;
     }
 

@@ -94,6 +94,14 @@ EOD;
     }
 
     /**
+     * @param string $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
+    /**
      * Retrieve the components url
      *
      * @return Url
@@ -227,5 +235,21 @@ EOD;
 
         $cmp = new Component($title, Url::fromPath($url, $parameters), $pane);
         return $cmp;
+    }
+
+    /**
+     * @param \Icinga\Web\Widget\Dashboard\Pane $pane
+     */
+    public function setPane(Panel $pane)
+    {
+        $this->pane = $pane;
+    }
+
+    /**
+     * @return \Icinga\Web\Widget\Dashboard\Pane
+     */
+    public function getPane()
+    {
+        return $this->pane;
     }
 }
