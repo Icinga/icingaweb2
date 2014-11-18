@@ -541,7 +541,7 @@ class Monitoring_ListController extends Controller
         $form->handleRequest($this->getRequest());
         $this->view->form = $form;
 
-        if ($this->getRequest()->isPost()) {
+        if ($this->getRequest()->isPost() && !$this->getParam('modifyFilter')) {
             // update filter string
             $filters = $form->getFilter();
             $url = $this->_request->getUrl();
