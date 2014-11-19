@@ -86,9 +86,11 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * Write user specific dashboards to disk
+     * Create a writer object
+     *
+     * @return IniWriter
      */
-    public function write()
+    public function createWriter()
     {
         $configFile = $this->getConfigFile();
         $output = array();
@@ -105,8 +107,15 @@ class Dashboard extends AbstractWidget
 
         $co = new ConfigObject($output);
         $config = new Config($co);
-        $writer = new IniWriter(array('config' => $config, 'filename' => $configFile));
-        $writer->write();
+        return new IniWriter(array('config' => $config, 'filename' => $configFile));
+    }
+
+    /**
+     * Write user specific dashboards to disk
+     */
+    public function write()
+    {
+        $this->createWriter()->write();
     }
 
     /**

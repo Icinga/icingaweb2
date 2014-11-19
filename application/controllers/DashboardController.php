@@ -44,7 +44,8 @@ class DashboardController extends ActionController
             $params['url'] = rawurldecode($this->_request->getParam('url'));
             $form->populate($params);
         }
-        $form->setOnSuccess(function (Form $form) use ($dashboard) {
+        $action = $this;
+        $form->setOnSuccess(function (Form $form) use ($dashboard, $action) {
             try {
                 $pane = $dashboard->getPane($form->getValue('pane'));
             } catch (ProgrammingError $e) {
@@ -55,7 +56,14 @@ class DashboardController extends ActionController
             $component = new Dashboard\Component($form->getValue('component'), $form->getValue('url'), $pane);
             $component->setUserWidget();
             $pane->addComponent($component);
-            $dashboard->write();
+            try {
+                $dashboard->write();
+            } catch (\Zend_Config_Exception $e) {
+                $action->view->error = $e;
+                $action->view->config = $dashboard->createWriter();
+                $action->render('error');
+                return false;
+            }
             Notification::success(t('Component created'));
             return true;
         });
@@ -83,7 +91,8 @@ class DashboardController extends ActionController
                 400
             );
         }
-        $form->setOnSuccess(function (Form $form) use ($dashboard) {
+        $action = $this;
+        $form->setOnSuccess(function (Form $form) use ($dashboard, $action) {
             try {
                 $pane = $dashboard->getPane($form->getValue('pane'));
             } catch (ProgrammingError $e) {
@@ -108,7 +117,14 @@ class DashboardController extends ActionController
                 $oldPane = $dashboard->getPane($form->getValue('org_pane'));
                 $oldPane->removeComponent($component->getTitle());
             }
-            $dashboard->write();
+            try {
+                $dashboard->write();
+            } catch (\Zend_Config_Exception $e) {
+                $action->view->error = $e;
+                $action->view->config = $dashboard->createWriter();
+                $action->render('error');
+                return false;
+            }
             Notification::success(t('Component updated'));
             return true;
         });
@@ -140,13 +156,19 @@ class DashboardController extends ActionController
         }
         $pane = $this->_request->getParam('pane');
         $component = $this->_request->getParam('component');
-        $form->setOnSuccess(function (Form $form) use ($dashboard, $component, $pane) {
+        $action = $this;
+        $form->setOnSuccess(function (Form $form) use ($dashboard, $component, $pane, $action) {
             try {
                 $pane = $dashboard->getPane($pane);
                 $pane->removeComponent($component);
                 $dashboard->write();
                 Notification::success(t('Component has been removed from') . ' ' . $pane->getTitle());
                 return true;
+            }  catch (\Zend_Config_Exception $e) {
+                $action->view->error = $e;
+                $action->view->config = $dashboard->createWriter();
+                $action->render('error');
+                return false;
             } catch (ProgrammingError $e) {
                 Notification::error($e->getMessage());
                 return false;
@@ -172,13 +194,19 @@ class DashboardController extends ActionController
             );
         }
         $pane = $this->_request->getParam('pane');
-        $form->setOnSuccess(function (Form $form) use ($dashboard, $pane) {
+        $action = $this;
+        $form->setOnSuccess(function (Form $form) use ($dashboard, $pane, $action) {
             try {
                 $pane = $dashboard->getPane($pane);
                 $dashboard->removePane($pane->getTitle());
                 $dashboard->write();
                 Notification::success(t('Pane has been removed') . ': ' . $pane->getTitle());
                 return true;
+            }  catch (\Zend_Config_Exception $e) {
+                $action->view->error = $e;
+                $action->view->config = $dashboard->createWriter();
+                $action->render('error');
+                return false;
             } catch (ProgrammingError $e) {
                 Notification::error($e->getMessage());
                 return false;
