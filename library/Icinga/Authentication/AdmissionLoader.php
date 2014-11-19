@@ -5,6 +5,7 @@
 namespace Icinga\Authentication;
 
 use Icinga\Application\Config;
+use Icinga\Application\Logger;
 use Icinga\Exception\NotReadableError;
 use Icinga\Data\ConfigObject;
 use Icinga\User;
@@ -40,6 +41,50 @@ class AdmissionLoader
             }
         }
         return false;
+    }
+
+    /**
+     * Get user permissions and restrictions
+     *
+     * @param   User $user
+     *
+     * @return  array
+     */
+    public function getPermissionsAndRestrictions(User $user)
+    {
+        $permissions = array();
+        $restrictions = array();
+        $username = $user->getUsername();
+        try {
+            $roles = Config::app('roles');
+        } catch (NotReadableError $e) {
+            Logger::error(
+                'Can\'t get permissions and restrictions for user \'%s\'. An exception was thrown:',
+                $username,
+                $e
+            );
+            return array($permissions, $restrictions);
+        }
+        $userGroups = $user->getGroups();
+        foreach ($roles as $role) {
+            if ($this->match($username, $userGroups, $role)) {
+                $permissions = array_merge(
+                    $permissions,
+                    array_diff(String::trimSplit($role->permissions), $permissions)
+                );
+                $restrictionsFromRole = $role->toArray();
+                unset($restrictionsFromRole['users']);
+                unset($restrictionsFromRole['groups']);
+                unset($restrictionsFromRole['permissions']);
+                foreach ($restrictionsFromRole as $name => $restriction) {
+                    if (! isset($restrictions[$name])) {
+                        $restrictions[$name] = array();
+                    }
+                    $restrictions[$name][] = $restriction;
+                }
+            }
+        }
+        return array($permissions, $restrictions);
     }
 
     /**
