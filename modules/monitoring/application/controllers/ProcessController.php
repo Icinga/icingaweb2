@@ -23,15 +23,8 @@ class Monitoring_ProcessController extends Controller
             ->add(
                 'info',
                 array(
-                    'title' => $this->translate('Process Info'),
+                    'title' => $this->translate('Monitoring Health'),
                     'url'   =>'monitoring/process/info'
-                )
-            )
-            ->add(
-                'performance',
-                array(
-                    'title' => $this->translate('Performance Info'),
-                    'url'   => 'monitoring/process/performance'
                 )
             );
     }
@@ -41,7 +34,7 @@ class Monitoring_ProcessController extends Controller
      */
     public function infoAction()
     {
-        $this->view->title = $this->translate('Process Info');
+        $this->view->title = $this->translate('Monitoring Health');
         $this->getTabs()->activate('info');
         $this->setAutorefreshInterval(10);
         $this->view->backendName = $this->backend->getName();
@@ -80,6 +73,14 @@ class Monitoring_ProcessController extends Controller
             ->load($programStatus)
             ->handleRequest();
         $this->view->toggleFeaturesForm = $toggleFeaturesForm;
+
+        $this->view->runtimevariables = (object) $this->backend->select()
+            ->from('runtimevariables', array('varname', 'varvalue'))
+            ->getQuery()->fetchPairs();
+
+        $this->view->checkperformance = $this->backend->select()
+            ->from('runtimesummary')
+            ->getQuery()->fetchAll();
     }
 
     /**
@@ -111,6 +112,9 @@ class Monitoring_ProcessController extends Controller
         }
     }
 
+    /**
+     * @todo should be dropped later
+     */
     public function performanceAction()
     {
         $this->getTabs()->activate('performance');

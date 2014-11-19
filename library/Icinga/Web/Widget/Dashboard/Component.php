@@ -17,7 +17,7 @@ use Icinga\Exception\IcingaException;
  * This is the element displaying a specific view in icinga2web
  *
  */
-class Component extends AbstractWidget
+class Component extends UserWidget
 {
     /**
      * The url of this Component
@@ -53,7 +53,7 @@ class Component extends AbstractWidget
     private $template =<<<'EOD'
 
     <div class="container" data-icinga-url="{URL}">
-        <h1>{REMOVE}<a href="{FULL_URL}" data-base-target="col1">{TITLE}</a></h1>
+        <h1><a href="{FULL_URL}" data-base-target="col1">{TITLE}</a></h1>
         <noscript>
             <iframe src="{IFRAME_URL}" style="height:100%; width:99%" frameborder="no"></iframe>
         </noscript>
@@ -91,6 +91,14 @@ EOD;
     public function getTitle()
     {
         return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
     }
 
     /**
@@ -147,7 +155,13 @@ EOD;
      */
     public function toArray()
     {
-        $array = array('url' => $this->url->getPath());
+        $array = array(
+            'url'   => $this->url->getPath(),
+            'title' => $this->getTitle()
+        );
+        if ($this->getDisabled() === true) {
+            $array['disabled'] = 1;
+        }
         foreach ($this->url->getParams()->toArray() as $param) {
             $array[$param[0]] = $param[1];
         }
@@ -169,13 +183,23 @@ EOD;
         $iframeUrl = clone($url);
         $iframeUrl->setParam('isIframe');
 
-        $html = str_replace('{URL}', $url, $this->template);
-        $html = str_replace('{IFRAME_URL}', $iframeUrl, $html);
-        $html = str_replace('{FULL_URL}', $url->getUrlWithout(array('view', 'limit')), $html);
-        $html = str_replace('{REMOVE_BTN}', $this->getRemoveForm($view), $html);
-        $html = str_replace('{TITLE}', $view->escape($this->getTitle()), $html);
-        $html = str_replace('{REMOVE}', $this->getRemoveForm(), $html);
-        return $html;
+        $searchTokens = array(
+            '{URL}',
+            '{IFRAME_URL}',
+            '{FULL_URL}',
+            '{TITLE}',
+            '{REMOVE}'
+        );
+
+        $replaceTokens = array(
+            $url,
+            $iframeUrl,
+            $url->getUrlWithout(array('view', 'limit')),
+            $view->escape($this->getTitle()),
+            $this->getRemoveLink()
+        );
+
+        return str_replace($searchTokens, $replaceTokens, $this->template);
     }
 
     /**
@@ -183,32 +207,16 @@ EOD;
      *
      * @return string                       The html representation of the form
      */
-    protected function getRemoveForm()
+    protected function getRemoveLink()
     {
-        // TODO: temporarily disabled, should point to a form asking for confirmal
-        return '';
-        $removeUrl = Url::fromPath(
-            '/dashboard/removecomponent',
-            array(
-                'pane' => $this->pane->getName(),
-                'component' => $this->getTitle()
-            )
+        return sprintf(
+            '<a data-base-target="main" href="%s">%s</a>',
+            Url::fromPath('dashboard/remove-component', array(
+                'component' => $this->getTitle(),
+                'pane'      => $this->pane->getTitle()
+            )),
+            t('Remove')
         );
-        $form = new Form();
-        $form->setMethod('POST');
-        $form->setAttrib('class', 'inline');
-        $form->setAction($removeUrl);
-        $form->addElement(
-            new Zend_Form_Element_Button(
-                'remove_pane_btn',
-                array(
-                    'class'=> 'link-like pull-right',
-                    'type' => 'submit',
-                    'label' => 'x'
-                )
-            )
-        );
-        return $form;
     }
 
     /**
@@ -230,5 +238,21 @@ EOD;
 
         $cmp = new Component($title, Url::fromPath($url, $parameters), $pane);
         return $cmp;
+    }
+
+    /**
+     * @param \Icinga\Web\Widget\Dashboard\Pane $pane
+     */
+    public function setPane(Panel $pane)
+    {
+        $this->pane = $pane;
+    }
+
+    /**
+     * @return \Icinga\Web\Widget\Dashboard\Pane
+     */
+    public function getPane()
+    {
+        return $this->pane;
     }
 }

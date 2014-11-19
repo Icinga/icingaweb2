@@ -28,8 +28,6 @@ class CheckNowCommandForm extends ObjectsCommandForm
      */
     public function addSubmitButton()
     {
-        $iconUrl = $this->getView()->href('img/icons/refresh_petrol.png');
-
         $this->addElements(array(
             array(
                 'button',
@@ -38,7 +36,7 @@ class CheckNowCommandForm extends ObjectsCommandForm
                     'ignore'        => true,
                     'type'          => 'submit',
                     'value'         => mt('monitoring', 'Check now'),
-                    'label'         => '<img src="' . $iconUrl . '"> ' . mt('monitoring', 'Check now'),
+                    'label'         => '<i class="icon-reschedule"></i> ' . mt('monitoring', 'Check now'),
                     'decorators'    => array('ViewHelper'),
                     'escape'        => false,
                     'class'         => 'link-like'

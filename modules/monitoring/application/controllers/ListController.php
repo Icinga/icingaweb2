@@ -396,7 +396,8 @@ class Monitoring_ListController extends Controller
             array('day', $form->getValue('state'))
         );
         $this->params->remove(array('objecttype', 'from', 'to', 'state', 'btn_submit'));
-        $this->filterQuery($query);
+        $this->view->filter = Filter::fromQuerystring((string) $this->params);
+        $query->applyFilter($this->view->filter);
         $this->view->summary = $query->getQuery()->fetchAll();
         $this->view->column = $form->getValue('state');
 //        $this->view->orientationBox = $orientationBox;
@@ -490,7 +491,16 @@ class Monitoring_ListController extends Controller
             'services_critical_unhandled',
             'services_warning_handled',
             'services_warning_unhandled',
-            'services_pending'
+            'services_pending',
+            'services_ok_last_state_change',
+            'services_pending_last_state_change',
+            'services_warning_last_state_change_handled',
+            'services_critical_last_state_change_handled',
+            'services_unknown_last_state_change_handled',
+            'services_warning_last_state_change_unhandled',
+            'services_critical_last_state_change_unhandled',
+            'services_unknown_last_state_change_unhandled',
+            'services_total'
         ));
         $this->filterQuery($query);
         $this->view->servicegroups = $query->paginate();
@@ -521,7 +531,16 @@ class Monitoring_ListController extends Controller
             'services_critical_unhandled',
             'services_warning_handled',
             'services_warning_unhandled',
-            'services_pending'
+            'services_pending',
+            'services_ok_last_state_change',
+            'services_pending_last_state_change',
+            'services_warning_last_state_change_handled',
+            'services_critical_last_state_change_handled',
+            'services_unknown_last_state_change_handled',
+            'services_warning_last_state_change_unhandled',
+            'services_critical_last_state_change_unhandled',
+            'services_unknown_last_state_change_unhandled',
+            'services_total'
         ));
         $this->filterQuery($query);
         $this->view->hostgroups = $query->paginate();
@@ -537,6 +556,24 @@ class Monitoring_ListController extends Controller
         }
         $this->addTitleTab('eventhistory', $this->translate('Event Overview'));
 
+        $form = new EventOverviewForm();
+        $form->handleRequest($this->getRequest());
+        $this->view->form = $form;
+
+        if ($this->getRequest()->isPost() && !$this->getParam('modifyFilter')) {
+            // update filter string
+            $filters = $form->getFilter();
+            $url = $this->_request->getUrl();
+            $url->setQueryString($filters->toQueryString());
+            if ($this->getParam('sort') !== null) {
+                $url->setParam('sort', $this->getParam('sort'));
+            }
+            if ($this->getParam('dir') !== null) {
+                $url->setParam('dir', $this->getParam('dir'));
+            }
+            return $this->redirectNow($url);
+        }
+
         $query = $this->backend->select()->from('eventHistory', array(
             'host_name',
             'service_description',
@@ -550,6 +587,9 @@ class Monitoring_ListController extends Controller
             'host',
             'service'
         ));
+        if ($this->getParam('state')) {
+            $query->applyFilter(Filter::expression('state', '=', $this->getParam('state')));
+        }
 
         $this->setupSortControl(array(
             'timestamp' => 'Occurence'
@@ -587,8 +627,8 @@ class Monitoring_ListController extends Controller
     {
         $editor = Widget::create('filterEditor')
             ->setQuery($query)
-            ->preserveParams('limit', 'sort', 'dir', 'format', 'view', 'backend')
-            ->ignoreParams('page', 'objecttype', 'from', 'to', 'state', 'btn_submit')
+            ->preserveParams('limit', 'sort', 'dir', 'format', 'view', 'backend', 'renderLayout', 'stateType', 'addColumns')
+            ->ignoreParams('page', 'objecttype', 'from', 'to', 'btn_submit')
             ->handleRequest($this->getRequest());
         $query->applyFilter($editor->getFilter());
 

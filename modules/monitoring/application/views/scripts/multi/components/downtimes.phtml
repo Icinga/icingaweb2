@@ -7,7 +7,7 @@ $objectName = $this->is_service ? 'Services' : 'Hosts';
   <th><?= count($downtimes) ?> Downtimes</th>
   <td>
     <a href="<?=$this->href('monitoring/command/removedowntime', $this->target); ?>"><?=
-      $this->icon('minus') ?>Remove Downtimes</a><br />
+      $this->icon('cancel') ?>Remove Downtimes</a><br />
     <a title="Schedule downtimes for all selected <?= $objectName ?>" href="<?=
       $this->href('monitoring/command/scheduledowntime', $this->target) ?>"><?=
       $this->icon('plug')
