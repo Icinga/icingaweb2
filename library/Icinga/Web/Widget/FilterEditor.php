@@ -585,7 +585,7 @@ class FilterEditor extends AbstractWidget
             } else {
                 $parent = $filter->getById($addTo);
                 $f = Filter::expression($add['column'], $add['sign'], $add['value']);
-                if ($add['operator']) {
+                if (isset($add['operator'])) {
                     switch($add['operator']) {
                         case 'AND':
                             if ($parent->isExpression()) {
