@@ -490,7 +490,16 @@ class Monitoring_ListController extends Controller
             'services_critical_unhandled',
             'services_warning_handled',
             'services_warning_unhandled',
-            'services_pending'
+            'services_pending',
+            'services_ok_last_state_change',
+            'services_pending_last_state_change',
+            'services_warning_last_state_change_handled',
+            'services_critical_last_state_change_handled',
+            'services_unknown_last_state_change_handled',
+            'services_warning_last_state_change_unhandled',
+            'services_critical_last_state_change_unhandled',
+            'services_unknown_last_state_change_unhandled',
+            'services_total'
         ));
         $this->filterQuery($query);
         $this->view->servicegroups = $query->paginate();
@@ -521,7 +530,16 @@ class Monitoring_ListController extends Controller
             'services_critical_unhandled',
             'services_warning_handled',
             'services_warning_unhandled',
-            'services_pending'
+            'services_pending',
+            'services_ok_last_state_change',
+            'services_pending_last_state_change',
+            'services_warning_last_state_change_handled',
+            'services_critical_last_state_change_handled',
+            'services_unknown_last_state_change_handled',
+            'services_warning_last_state_change_unhandled',
+            'services_critical_last_state_change_unhandled',
+            'services_unknown_last_state_change_unhandled',
+            'services_total'
         ));
         $this->filterQuery($query);
         $this->view->hostgroups = $query->paginate();
