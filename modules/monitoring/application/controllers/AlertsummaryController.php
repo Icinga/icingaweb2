@@ -64,7 +64,7 @@ class Monitoring_AlertsummaryController extends Controller
      */
     public function indexAction()
     {
-        $this->addTitleTab('alertsummary');
+        $this->addTitleTab('alertsummary', t('Alert Summary'));
         $this->view->intervalBox = $this->createIntervalBox();
         $this->view->recentAlerts = $this->createRecentAlerts();
         $this->view->interval = $this->getInterval();
@@ -433,7 +433,7 @@ class Monitoring_AlertsummaryController extends Controller
         $gridChart->drawBars(
             array(
                 'label' => $this->translate('Notifications'),
-                'color' => 'blue',
+                'color' => '#049baf',
                 'data'  =>  $notifications,
                 'showPoints' => true
             )
@@ -442,7 +442,7 @@ class Monitoring_AlertsummaryController extends Controller
         $gridChart->drawLines(
             array(
                 'label' => $this->translate('Avg (min)'),
-                'color' => 'orange',
+                'color' => '#ffaa44',
                 'data'  =>  $dAvg,
                 'showPoints' => true
             )
@@ -451,7 +451,7 @@ class Monitoring_AlertsummaryController extends Controller
         $gridChart->drawLines(
             array(
                 'label' => $this->translate('Max (min)'),
-                'color' => 'red',
+                'color' => '#ff5566',
                 'data'  =>  $dMax,
                 'showPoints' => true
             )
@@ -478,7 +478,7 @@ class Monitoring_AlertsummaryController extends Controller
         $gridChart->drawBars(
             array(
                 'label' => $this->translate('Notifications'),
-                'color' => 'green',
+                'color' => '#049baf',
                 'data'  =>  $this->notificationData,
                 'showPoints' => true
             )
@@ -487,7 +487,7 @@ class Monitoring_AlertsummaryController extends Controller
         $gridChart->drawLines(
             array(
                 'label' => $this->translate('Defects'),
-                'color' => 'red',
+                'color' => '#ff5566',
                 'data'  =>  $this->problemData,
                 'showPoints' => true
             )
