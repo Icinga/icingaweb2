@@ -1,6 +1,18 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
+h1 {
+    font-size: 1em;
+}
+
+h2 {
+    font-size: 1em;
+}
+
+h3 {
+    font-size: 1em;
+}
+
 table.action.comments td p, table.action.downtimes td p {
   margin: 0;
   font-size: 0.8em;
@@ -20,16 +32,21 @@ p.pluginoutput {
   white-space: pre-wrap;
 }
 
-pre.pluginoutput {
-  font-family: Courier;
-  background: #eee;
-  font-size: 0.7em;
+div.pluginoutput {
+  border-right: solid 5px @colorPetrol;
   overflow: auto; 
-  white-space: pre-wrap;
-  margin: 0em;
-  padding: 1em;
-  margin-bottom: 0.5em;
   color: black;
+  margin-bottom: 1em;
+  padding: 0.2em;
+}
+
+div.pluginoutput h4 {
+  font-size: 0.875em;
+  margin: 0em;
+}
+
+div.pluginoutput pre{
+  white-space: pre-wrap;
 }
 
 table.objecthistory td {
@@ -75,36 +92,36 @@ div.contacts div.notification-periods {
   margin-top: 0.5em;
 }
 
-h3.tinystatesummary {
-  line-height: 2em;
-  font-size: 0.95em;
-  margin-right: 1em;
-  border-bottom: 2px solid @colorPetrol;
+h1.tinystatesummary .badges {
+    display: inline-block;
+    margin-bottom: 4px;
+    margin-left: 1em;
 }
 
-h3.tinystatesummary a {
-    color: inherit;
-    text-decoration: none;
-    padding: 1px 3px;
+h1.tinystatesummary .state {
+    border-radius: 0.3em;
 }
 
-h3.tinystatesummary a:hover {
-    text-decoration: underline;
+h1.tinystatesummary .state > a {
+    color: white;
+    font-size: 0.7em;
+    padding: 2px 5px;
+}
+
+h1.tinystatesummary .state.handled a {
 }
 
 /* State badges */
 span.state {
-    font-size: 1em;
-    font-weight: 700;
+    font-weight: bold;
     color: white;
     font-weight: bold;
     padding: 1px 2px;
     margin-right: 5px;
-
 }
 
 span.state.active {
-    border: 2px solid white;
+    border: 2px solid #555;
 }
 
 span.state span.state {
@@ -156,7 +173,8 @@ table.avp .customvar ul {
 }
 
 div.selection-info {
-  padding-top:1em;
+  padding-top: 3px;
+  float: right;
 }
 
 .optionbox {

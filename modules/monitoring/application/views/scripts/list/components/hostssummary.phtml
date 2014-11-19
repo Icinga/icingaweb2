@@ -6,9 +6,9 @@ $selfUrl = 'monitoring/list/hosts';
 $currentUrl = Url::fromRequest()->getRelativeUrl();
 
 ?>
-<h3 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
+<h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
     <?= $this->qlink(sprintf($this->translate('%s hosts:'), $this->stats->hosts_total), $selfUrl); ?>
-
+  <span class="badges">
     <?php if($this->stats->hosts_up): ?>
     <span class="state ok<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 0))->getRelativeUrl() ? ' active' : '' ?>">
         <?= $this->qlink(
@@ -80,4 +80,5 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
         ) ?>
     </span>
     <?php endif; ?>
-</h3>
+  </span>
+</h1>

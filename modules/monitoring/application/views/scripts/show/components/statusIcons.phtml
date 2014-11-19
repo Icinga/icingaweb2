@@ -23,7 +23,7 @@ $obj->passive_checks_enabled =
 
 $i = array();
 if (! $obj->handled && $obj->state > 0) {
-    $i[] = $this->icon('flash', $this->translate('Unhandled'));
+    $i[] = $this->icon('attention-alt', $this->translate('Unhandled'));
 }
 
 if ($obj->acknowledged && ! $obj->in_downtime) {
