@@ -4,9 +4,16 @@
   <div style="margin: 1em" class="dontprint">
     <?= $this->translate('Sort by'); ?> <?= $this->sortControl->render($this); ?>
   </div>
+
   <?= $this->widget('limiter', array('url' => $this->url, 'max' => $this->history->count())); ?>
   <?= $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
-</div>
+
+  <br> <br>
+  <?= $form ?>
+
+  <div class="content">
+      <?= $this->filterEditor ?>
+  </div>
 <?php endif ?>
 
 <div class="content">
