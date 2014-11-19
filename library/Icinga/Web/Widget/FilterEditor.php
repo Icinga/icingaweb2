@@ -346,7 +346,7 @@ class FilterEditor extends AbstractWidget
     protected function renderFilter($filter, $level = 0)
     {
         if ($level === 0 && $filter->isChain() && $filter->isEmpty()) {
-            return '<ul class="datafilter"><li style="background-color: #ffb">' . $this->renderNewFilter() . '</li></ul>';
+            return '<ul class="datafilter"><li class="active">' . $this->renderNewFilter() . '</li></ul>';
         }
 
         if ($filter instanceof FilterChain) {
@@ -403,7 +403,7 @@ class FilterEditor extends AbstractWidget
                   . $this->text($filter)
                   . $this->removeLink($filter)
                   . $this->addLink($filter)
-                  . '</li><li style="background-color: #ffb">'
+                  . '</li><li class="active">'
                   . $this->renderNewFilter() .$this->cancelLink()
                   . '</li></ul>'
                   ;
@@ -670,7 +670,7 @@ class FilterEditor extends AbstractWidget
               . '<form action="'
               . Url::fromRequest()
               . '" class="filterEditor" method="POST">'
-              . '<ul class="tree"><li>'
+              . '<ul class="tree widgetFilter"><li>'
               . $this->renderFilter($this->filter)
               . '</li></ul>'
               . '<div style="float: right">'
