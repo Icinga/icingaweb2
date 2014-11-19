@@ -45,45 +45,20 @@ class SecurityController extends ActionController
         $this->view->form = $role;
     }
 
-    public function newPermissionAction()
+    public function updateRoleAction()
     {
-        $permission = new PermissionForm(array(
-            'onSuccess' => function (Request $request, PermissionForm $permission) {
-                $name = $permission->getElement('name')->getValue();
-                $values = $permission->getValues();
-                try {
-                    $permission->add($name, $values);
-                } catch (InvalidArgumentException $e) {
-                    $permission->addError($e->getMessage());
-                    return false;
-                }
-                if ($permission->save()) {
-                    Notification::success(t('Permissions granted'));
-                    return true;
-                }
-                return false;
-            }
-        ));
-        $permission
-            ->setIniConfig(Config::app('permissions', true))
-            ->setRedirectUrl('security')
-            ->handleRequest();
-        $this->view->form = $permission;
-    }
-
-    public function updatePermissionAction()
-    {
-        $name = $this->_request->getParam('permission');
+        $name = $this->_request->getParam('role');
         if (empty($name)) {
             throw new Zend_Controller_Action_Exception(
-                sprintf($this->translate('Required parameter \'%s\' missing'), 'permission'),
+                sprintf($this->translate('Required parameter \'%s\' missing'), 'role'),
                 400
             );
         }
-        $permission = new PermissionForm();
+        $role = new RoleForm();
+        $role->setSubmitLabel($this->translate('Update Role'));
         try {
-            $permission
-                ->setIniConfig(Config::app('permissions', true))
+            $role
+                ->setIniConfig(Config::app('roles', true))
                 ->load($name);
         } catch (InvalidArgumentException $e) {
             throw new Zend_Controller_Action_Exception(
@@ -91,19 +66,19 @@ class SecurityController extends ActionController
                 400
             );
         }
-        $permission
-            ->setOnSuccess(function (Request $request, PermissionForm $permission) use ($name) {
+        $role
+            ->setOnSuccess(function (RoleForm $role) use ($name) {
                 $oldName = $name;
-                $name = $permission->getElement('name')->getValue();
-                $values = $permission->getValues();
+                $name = $role->getElement('name')->getValue();
+                $values = $role->getValues();
                 try {
-                    $permission->update($name, $values, $oldName);
+                    $role->update($name, $values, $oldName);
                 } catch (InvalidArgumentException $e) {
-                    $permission->addError($e->getMessage());
+                    $role->addError($e->getMessage());
                     return false;
                 }
-                if ($permission->save()) {
-                    Notification::success(t('Permissions granted'));
+                if ($role->save()) {
+                    Notification::success(t('Role updated'));
                     return true;
                 }
                 return false;
@@ -111,7 +86,7 @@ class SecurityController extends ActionController
             ->setRedirectUrl('security')
             ->handleRequest();
         $this->view->name = $name;
-        $this->view->form = $permission;
+        $this->view->form = $role;
     }
 
     public function removePermissionAction()
