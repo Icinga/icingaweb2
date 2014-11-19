@@ -8,7 +8,7 @@ use Icinga\Forms\Security\RoleForm;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Notification;
 
-class SecurityController extends ActionController
+class PermissionsController extends ActionController
 {
     public function indexAction()
     {

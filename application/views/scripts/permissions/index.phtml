@@ -1,8 +1,8 @@
 <div class="content">
     <div>
-        <h1><?= $this->translate('Roles') ?></h1>
+        <h1><?= $this->translate('Permissions') ?></h1>
         <?php /** @var \Icinga\Application\Config $roles */ if ($roles->isEmpty()): ?>
-            <?= $this->translate('No roles found.') ?>
+            <?= $this->translate('No permissions found.') ?>
         <?php else: ?>
             <table class="action" data-base-target="_next">
                 <thead>
