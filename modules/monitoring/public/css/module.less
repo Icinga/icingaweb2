@@ -92,36 +92,36 @@ div.contacts div.notification-periods {
   margin-top: 0.5em;
 }
 
-h3.tinystatesummary {
-  line-height: 2em;
-  font-size: 0.95em;
-  margin-right: 1em;
-  border-bottom: 2px solid @colorPetrol;
+h1.tinystatesummary .badges {
+    display: inline-block;
+    margin-bottom: 4px;
+    margin-left: 1em;
 }
 
-h3.tinystatesummary a {
-    color: inherit;
-    text-decoration: none;
-    padding: 1px 3px;
+h1.tinystatesummary .state {
+    border-radius: 0.3em;
 }
 
-h3.tinystatesummary a:hover {
-    text-decoration: underline;
+h1.tinystatesummary .state > a {
+    color: white;
+    font-size: 0.7em;
+    padding: 2px 5px;
+}
+
+h1.tinystatesummary .state.handled a {
 }
 
 /* State badges */
 span.state {
-    font-size: 1em;
-    font-weight: 700;
+    font-weight: bold;
     color: white;
     font-weight: bold;
     padding: 1px 2px;
     margin-right: 5px;
-
 }
 
 span.state.active {
-    border: 2px solid white;
+    border: 2px solid #555;
 }
 
 span.state span.state {
