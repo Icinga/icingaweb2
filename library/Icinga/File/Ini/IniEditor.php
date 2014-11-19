@@ -493,7 +493,7 @@ class IniEditor
     private function isPropertyDeclaration($lineContent, array $key)
     {
         return preg_match(
-            '/^\s*' . $this->formatKey($key) . '\s*=\s*/',
+            '/^\s*' . preg_quote($this->formatKey($key)) . '\s*=\s*/',
             $lineContent
         ) === 1;
     }

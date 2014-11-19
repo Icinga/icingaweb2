@@ -156,14 +156,11 @@ EOD;
     public function toArray()
     {
         $array = array(
-            'url'   => $this->url->getPath(),
+            'url'   => $this->url->getRelativeUrl(),
             'title' => $this->getTitle()
         );
         if ($this->getDisabled() === true) {
             $array['disabled'] = 1;
-        }
-        foreach ($this->url->getParams()->toArray() as $param) {
-            $array[$param[0]] = $param[1];
         }
         return $array;
     }
