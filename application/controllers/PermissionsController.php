@@ -56,7 +56,7 @@ class PermissionsController extends ActionController
         $role
             ->setSubmitLabel($this->translate('Create Role'))
             ->setIniConfig(Config::app('roles', true))
-            ->setRedirectUrl('security')
+            ->setRedirectUrl('permissions')
             ->handleRequest();
         $this->view->form = $role;
     }
@@ -99,7 +99,7 @@ class PermissionsController extends ActionController
                 }
                 return false;
             })
-            ->setRedirectUrl('security')
+            ->setRedirectUrl('permissions')
             ->handleRequest();
         $this->view->name = $name;
         $this->view->form = $role;
@@ -142,7 +142,7 @@ class PermissionsController extends ActionController
         ));
         $confirmation
             ->setSubmitLabel($this->translate('Remove Role'))
-            ->setRedirectUrl('security')
+            ->setRedirectUrl('permissions')
             ->handleRequest();
         $this->view->name = $name;
         $this->view->form = $confirmation;
