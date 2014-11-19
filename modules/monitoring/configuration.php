@@ -2,14 +2,54 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-/* @var $this \Icinga\Application\Modules\Module */
+/** @var $this \Icinga\Application\Modules\Module */
 
-// TODO: We need to define a useful permission set for this module, the
-//       list provided here is just an example
-$this->providePermission('commands/all', 'Allow to send all commands');
-$this->providePermission('commands/safe', 'Allow to to send a subset of "safe" commands');
-$this->providePermission('log', 'Allow full log access');
-$this->provideRestriction('filter', 'Filter accessible object');
+$this->providePermission(
+    'monitoring/command/*',
+    $this->translate('Allow all commands')
+);
+$this->providePermission(
+    'monitoring/command/schedule*',
+    $this->translate('Allow all scheduling checks and downtimes')
+);
+$this->providePermission(
+    'monitoring/command/schedule-check',
+    $this->translate('Allow scheduling host and service checks')
+);
+$this->providePermission(
+    'monitoring/command/schedule-downtime',
+    $this->translate('Allow scheduling host and service downtimes')
+);
+$this->providePermission(
+    'monitoring/command/acknowledge-problem',
+    $this->translate('Allow acknowledging host and service problems')
+);
+$this->providePermission(
+    'monitoring/command/add-comment',
+    $this->translate('Allow commenting on hosts and services')
+);
+$this->providePermission(
+    'monitoring/command/remove*',
+    $this->translate('Allow removing problem acknowledgements, host and service comments and downtimes')
+);
+$this->providePermission(
+    'monitoring/command/remove-acknowledgement',
+    $this->translate('Allow removing problem acknowledgements')
+);
+$this->providePermission(
+    'monitoring/command/remove-comment',
+    $this->translate('Allow removing host and service comments')
+);
+$this->providePermission(
+    'monitoring/command/remove-downtime',
+    $this->translate('Allow removing host and service downtimes')
+);
+
+$this->provideRestriction(
+    'monitoring/filter',
+    $this->translate('Restrict views to the hosts and services that match the filter')
+);
+
 $this->provideConfigTab('backends', array(
     'title' => 'Backends',
     'url' => 'config'

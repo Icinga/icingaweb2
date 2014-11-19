@@ -5,6 +5,7 @@
 namespace Icinga\Forms;
 
 use Exception;
+use Zend_Form_Decorator_Abstract;
 use Icinga\Web\Form;
 use Icinga\Application\Config;
 use Icinga\File\Ini\IniWriter;
@@ -58,7 +59,8 @@ class ConfigForm extends Form
                 'viewScript'    => 'showConfiguration.phtml',
                 'errorMessage'  => $e->getMessage(),
                 'configString'  => $writer->render(),
-                'filePath'      => $this->config->getConfigFile()
+                'filePath'      => $this->config->getConfigFile(),
+                'placement'     => Zend_Form_Decorator_Abstract::PREPEND
             ));
             return false;
         }

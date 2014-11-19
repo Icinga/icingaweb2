@@ -24,14 +24,17 @@ class ConfigController extends ActionController
     public function init()
     {
         $this->view->tabs = Widget::create('tabs')->add('index', array(
-            'title' => 'Application',
+            'title' => $this->translate('Application'),
             'url'   => 'config'
         ))->add('authentication', array(
-            'title' => 'Authentication',
+            'title' => $this->translate('Authentication'),
             'url'   => 'config/authentication'
         ))->add('resources', array(
-            'title' => 'Resources',
+            'title' => $this->translate('Resources'),
             'url'   => 'config/resource'
+        ))->add('permissions', array(
+            'title' => $this->translate('Permissions'),
+            'url'   => 'permissions'
         ));
     }
 

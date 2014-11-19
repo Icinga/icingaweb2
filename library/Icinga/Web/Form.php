@@ -46,7 +46,7 @@ class Form extends Zend_Form
     /**
      * The callback to call instead of Form::onSuccess()
      *
-     * @var Callback
+     * @var callable
      */
     protected $onSuccess;
 
@@ -122,29 +122,11 @@ class Form extends Zend_Form
     );
 
     /**
-     * Create a new form
-     *
-     * Accepts an additional option `onSuccess' which is a callback that is called instead of this
-     * form's method. It is called using the following signature: (Form $form).
-     *
-     * @see Zend_Form::__construct()
-     *
-     * @throws  LogicException      In case `onSuccess' is not callable
+     * (non-PHPDoc)
+     * @see \Zend_Form::construct() For the method documentation.
      */
     public function __construct($options = null)
     {
-        if (is_array($options) && isset($options['onSuccess'])) {
-            $this->onSuccess = $options['onSuccess'];
-            unset($options['onSuccess']);
-        } elseif (isset($options->onSuccess)) {
-            $this->onSuccess = $options->onSuccess;
-            unset($options->onSuccess);
-        }
-
-        if ($this->onSuccess !== null && false === is_callable($this->onSuccess)) {
-            throw new LogicException('The option `onSuccess\' is not callable');
-        }
-
         // Zend's plugin loader reverses the order of added prefix paths thus trying our paths first before trying
         // Zend paths
         $this->addPrefixPaths(array(
