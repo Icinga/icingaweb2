@@ -81,20 +81,20 @@ class MonitoringMenuItemRenderer implements MenuItemRenderer {
         }
         if ($menu->getIcon() && strpos($menu->getIcon(), '.') === false) {
             return sprintf(
-                '<a href="%s" class="icon-%s">%s%s</a>',
+                '%s <a href="%s" class="icon-%s">%s</a>',
+                $badge,
                 $menu->getUrl() ?: '#',
                 $menu->getIcon(),
-                htmlspecialchars($menu->getTitle()),
-                $badge
+                htmlspecialchars($menu->getTitle())
             );
         }
 
         return sprintf(
-            '<a href="%s">%s%s%s</a>',
+            '%s<a href="%s">%s%s<span></span></a>',
+            $badge,
             $menu->getUrl() ?: '#',
             $menu->getIcon() ? '<img src="' . Url::fromPath($menu->getIcon()) . '" class="icon" /> ' : '',
-            htmlspecialchars($menu->getTitle()),
-            $badge
+            htmlspecialchars($menu->getTitle())
         );
     }
 }

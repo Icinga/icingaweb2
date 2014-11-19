@@ -204,17 +204,20 @@ li li .badge-container {
   margin-right: 0.75em;
 }
 
-#menu > ul > li.active > a > .badge-container {
+/*
+#layout.hoveredmenu .active > .badge-container {
   display: none;
 }
 
-#layout.hoveredmenu .hover > a > .badge-container {
-  margin-right: 14.15em;
+#layout.hoveredmenu .hover > .badge-container {
+  //margin-right: 14.15em;
+  display: none;
 }
+*/
 
 .badge {
   position: relative;
-  top: -0.1em;
+  top: 0.3em;
   display: inline-block;
   min-width: 1em;
   padding: 3px 7px;
@@ -226,6 +229,31 @@ li li .badge-container {
   white-space: nowrap;
   vertical-align: baseline;
   background-color: @colorInvalid;
+}
+
+#menu > ul > li.active > .badge-container {
+  display: none;
+}
+
+#menu > ul > li.hover > .badge-container {
+  display: none;
+}
+
+#menu > ul > li.active > ul > li .badge-container {
+  position: relative;
+  top: -0.5em;
+}
+
+#menu > ul > li.hover > ul > li .badge-container {
+  display: inline-block;
+  float: right;
+  position: relative;
+  top: -0.5em;
+}
+
+#menu > ul > li.hover > ul > li  {
+  // prevent floating badges from resizing list items in webkit
+  //max-height: 2em;
 }
 
 li li .badge {
