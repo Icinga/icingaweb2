@@ -89,19 +89,19 @@ class SecurityController extends ActionController
         $this->view->form = $role;
     }
 
-    public function removePermissionAction()
+    public function removeRoleAction()
     {
-        $name = $this->_request->getParam('permission');
+        $name = $this->_request->getParam('role');
         if (empty($name)) {
             throw new Zend_Controller_Action_Exception(
-                sprintf($this->translate('Required parameter \'%s\' missing'), 'permission'),
+                sprintf($this->translate('Required parameter \'%s\' missing'), 'role'),
                 400
             );
         }
-        $permission = new PermissionForm();
+        $role = new RoleForm();
         try {
-            $permission
-                ->setIniConfig(Config::app('permissions', true))
+            $role
+                ->setIniConfig(Config::app('roles', true))
                 ->load($name);
         } catch (InvalidArgumentException $e) {
             throw new Zend_Controller_Action_Exception(
@@ -110,21 +110,22 @@ class SecurityController extends ActionController
             );
         }
         $confirmation = new ConfirmRemovalForm(array(
-            'onSuccess' => function (Request $request, ConfirmRemovalForm $confirmation) use ($name, $permission) {
+            'onSuccess' => function (ConfirmRemovalForm $confirmation) use ($name, $role) {
                 try {
-                    $permission->remove($name);
+                    $role->remove($name);
                 } catch (InvalidArgumentException $e) {
                     Notification::error($e->getMessage());
                     return false;
                 }
-                if ($permission->save()) {
-                    Notification::success(sprintf(t('Permission \'%s\' has been successfully removed'), $name));
+                if ($role->save()) {
+                    Notification::success(t('Role removed'));
                     return true;
                 }
                 return false;
             }
         ));
         $confirmation
+            ->setSubmitLabel($this->translate('Remove Role'))
             ->setRedirectUrl('security')
             ->handleRequest();
         $this->view->name = $name;
