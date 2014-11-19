@@ -83,17 +83,17 @@ class ComponentForm extends Form
             ((isset($formData['create_new_pane']) && $formData['create_new_pane'] != false) &&
              (false === isset($formData['use_existing_dashboard']) || $formData['use_existing_dashboard'] != true))
         ) {
-            $groupElements[] = $this->createElement(
+            $this->addElement(
                 'text',
                 'pane',
                 array(
                     'required'      => true,
-                    'label'         => t("New Pane Title"),
+                    'label'         => t("New Dashboard Title"),
                     'description'   =>
                         t('Enter a title for the new pane.')
                 )
             );
-            $groupElements[] = $this->createElement( // Prevent the button from being displayed again on validation errors
+            $this->addElement( // Prevent the button from being displayed again on validation errors
                 'hidden',
                 'create_new_pane',
                 array(
@@ -106,21 +106,20 @@ class ComponentForm extends Form
                     'use_existing_dashboard',
                     array(
                         'ignore'        => true,
-                        'label'         => t('Use An Existing Pane'),
-                        'description'   =>
-                            t('Click on the button to add the dashlet to an existing pane on your dashboard.')
+                        'label'         => t('Use An Existing Dashboard'),
+                        'class'         => 'link-like'
                     )
                 );
                 $buttonExistingPane->removeDecorator('Label');
-                $groupElements[] = $buttonExistingPane;
+                $this->addElement($buttonExistingPane);
             }
         } else {
-            $groupElements[] = $this->createElement(
+            $this->addElement(
                 'select',
                 'pane',
                 array(
                     'required'      => true,
-                    'label'         => t('Pane'),
+                    'label'         => t('Dashboard'),
                     'multiOptions'  => $panes,
                     'description'   =>
                         t('Select a pane you want to add the dashlet.')
@@ -131,34 +130,13 @@ class ComponentForm extends Form
                 'create_new_pane',
                 array(
                     'ignore'        => true,
-                    'label'         => t('Create A New Pane'),
-                    'description'   =>
-                        t('Click on the button if you want to add the dashlet to a new pane on the dashboard.')
+                    'label'         => t('Create A New Dashboard'),
+                    'class'         => 'link-like',
                 )
             );
             $buttonNewPane->removeDecorator('Label');
-            $groupElements[] = $buttonNewPane;
+            $this->addElement($buttonNewPane);
         }
-        $this->addDisplayGroup(
-            $groupElements,
-            'pane_group',
-            array(
-                'legend'        => t('Pane'),
-                'description'   => t(
-                    'Decide if you want add the dashlet to an existing pane'
-                    . ' or create a new pane. Have a look on the button below.'
-                ),
-                'decorators' => array(
-                    'FormElements',
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group')),
-                    array(
-                        'Description',
-                        array('tag' => 'span', 'class' => 'description', 'placement' => 'prepend')
-                    ),
-                    'Fieldset'
-                )
-            )
-        );
     }
 
     /**

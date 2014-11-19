@@ -46,7 +46,7 @@ class IniStore extends PreferencesStore
         $this->preferencesFile = sprintf(
             '%s/%s.ini',
             $this->getStoreConfig()->location,
-            $this->getUser()->getUsername()
+            strtolower($this->getUser()->getUsername())
         );
     }
 
@@ -60,7 +60,7 @@ class IniStore extends PreferencesStore
     public function load()
     {
         if (file_exists($this->preferencesFile)) {
-            if (!is_readable($this->preferencesFile)) {
+            if (! is_readable($this->preferencesFile)) {
                 throw new NotReadableError(
                     'Preferences INI file %s for user %s is not readable',
                     $this->preferencesFile,
@@ -99,8 +99,8 @@ class IniStore extends PreferencesStore
     public function write()
     {
         if ($this->writer === null) {
-            if (!file_exists($this->preferencesFile)) {
-                if (!is_writable($this->getStoreConfig()->location)) {
+            if (! file_exists($this->preferencesFile)) {
+                if (! is_writable($this->getStoreConfig()->location)) {
                     throw new NotWritableError(
                         'Path to the preferences INI files %s is not writable',
                         $this->getStoreConfig()->location
@@ -110,7 +110,7 @@ class IniStore extends PreferencesStore
                 File::create($this->preferencesFile, 0664);
             }
 
-            if (!is_writable($this->preferencesFile)) {
+            if (! is_writable($this->preferencesFile)) {
                 throw new NotWritableError(
                     'Preferences INI file %s for user %s is not writable',
                     $this->preferencesFile,

@@ -38,7 +38,7 @@ git clone git://git.icinga.org/icingaweb2.git
 Choose a target directory and move Icinga Web 2 there.
 
 ````
-mv icingaweb2 /usr/share/icingaweb2
+mv icingaweb2 /usr/share/icingaweb
 ````
 
 **Step 3: Configuring the Web Server**
@@ -48,13 +48,13 @@ Use `icingacli` to generate web server configuration for either Apache or nginx.
 *Apache*
 
 ````
-./bin/icingacli setup config webserver apache
+./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb/public
 ````
 
 *nginx*
 
 ````
-./bin/icingacli setup config webserver nginx
+./bin/icingacli setup config webserver nginx --document-root /usr/share/icingaweb/public
 ````
 
 **Step 4: Web Setup**
