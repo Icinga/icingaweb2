@@ -7,4 +7,4 @@ application/fonts         usr/share/icingaweb/application
 application/layouts       usr/share/icingaweb/application
 application/views         usr/share/icingaweb/application
 packages/files/public/index.php  usr/share/icingaweb/public
-packages/files/icingaweb-apache2.conf etc/apache2/conf.d
+packages/files/apache/icingaweb.conf etc/apache2/conf.d
