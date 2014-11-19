@@ -218,7 +218,12 @@ class FilterEditor extends AbstractWidget
 
         if ($strip) {
             $redirect = $this->url();
-            $filter->replaceById($strip, $filter->getById($strip . '-1'));
+            $subId = $strip . '-1';
+            if ($filter->getId() === $strip) {
+                $filter = $filter->getById($strip . '-1');
+            } else {
+                $filter->replaceById($strip, $filter->getById($strip . '-1'));
+            }
             $redirect->setQueryString($filter->toQueryString())->getParams()->add('modifyFilter');
             $this->redirectNow($redirect->addParams($preserve));
         }
