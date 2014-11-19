@@ -194,8 +194,12 @@ tr.state.handled td.state {
 }
 
 /* HOVER colors */
+tr[href]:hover {
+  color: black;
+  background-color: #eee;
+}
 
-tr[href]:hover, tr.state[href]:hover td.state {
+tr.state[href]:hover td.state {
   color: white;
   background-color: #eee;
 }
@@ -309,6 +313,13 @@ a.critical {
 }
 
 .boxview div.box h2:first-child > a:hover {
+}
+
+.boxview div.box h3 {
+  line-height: 1.5em;
+  font-size: 0.9em;
+  color: #555;
+  border-bottom: 1px solid #d9d9d9;
 }
 
 /* Box body of contents */
@@ -810,9 +821,125 @@ div.timeline {
 
 /* End of monitoring timeline styles */
 
-.controls {
-  font-size: 0.9em;
+/* Monitoring groupsummary styles */
+
+table.groupview {
+  width: 100%;
+  margin-top: 1em;
+  border-collapse: separate;
+  border-spacing: 0.1em;
+
+  thead th {
+    font-size: 0.9em;
+  }
+
+  tbody {
+    tr {
+      &:hover {
+        color: #333;
+      }
+
+      a {
+        color: #333;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    td.services-total {
+      width: 10%;
+      text-align: center;
+    }
+
+    td.state {
+      width: 10%;
+      color: white;
+      text-align: center;
+
+      &.change {
+        width: 10%;
+        white-space: nowrap;
+        padding: 0.3em 0.5em 0.3em 0.5em;
+
+        strong {
+          font-size: 0.8em;
+        }
+
+        span.timesince {
+          font-size: 0.8em;
+        }
+      }
+
+      &.ok {
+        color: #333;
+        border-left-style: solid;
+        border-left-width: 1.5em;
+        border-color: @colorOk;
+      }
+
+      &.pending {
+        color: #333;
+        border-left-style: solid;
+        border-left-width: 1.5em;
+        border-color: @colorPending;
+      }
+
+      &.warning {
+        background-color: @colorWarning;
+
+        &.handled {
+          background-color: inherit;
+          color: #333;
+          border-left-style: solid;
+          border-left-width: 1.5em;
+          border-color: @colorWarningHandled;
+        }
+      }
+
+      &.unknown {
+        background-color: @colorUnknown;
+
+        &.handled {
+          color: #333;
+          background-color: inherit;
+          border-left-style: solid;
+          border-left-width: 1.5em;
+          border-color: @colorUnknownHandled;
+        }
+      }
+
+      &.critical {
+        background-color: @colorCritical;
+
+        &.handled {
+          color: #333;
+          background-color: inherit;
+          border-left-style: solid;
+          border-left-width: 1.5em;
+          border-color: @colorCriticalHandled;
+        }
+      }
+
+      span {
+        &.no-state {
+          color: #333;
+        }
+
+        &.state {
+          &.handled {
+            margin-right: 2px;
+          }
+
+          a {
+            color: white;
+          }
+        }
+      }
+    }
+  }
 }
-.controls a {
-  color: black;
-}
+
+/* End of monitoring groupsummary styles */

@@ -1,0 +1,160 @@
+<?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
+
+namespace Icinga\Module\Monitoring\Forms;
+
+use Icinga\Data\Filter\FilterNot;
+use Icinga\Web\Url;
+use \Zend_Form;
+use Icinga\Web\Form;
+use Icinga\Data\Filter\Filter;
+
+/**
+ * Configure the filter for the event overview
+ */
+class EventOverviewForm extends Form
+{
+    /**
+     * Initialize this form
+     */
+    public function init()
+    {
+        $this->setName('form_event_overview');
+        $this->setDecorators(array(
+            'FormElements',
+            array('HtmlTag', array('tag' => 'div', 'class' => 'hbox')),
+            'Form'
+        ));
+    }
+
+    /**
+     * @see Form::createElements()
+     */
+    public function createElements(array $formData)
+    {
+        $decorators = array(
+            array('Label', array('class' => 'optional')),
+            'ViewHelper',
+            array('HtmlTag', array('tag' => 'div', 'class' => 'hbox-item optionbox')),
+        );
+
+        $url = Url::fromRequest()->getAbsoluteUrl();
+        $this->addElement(
+            'checkbox',
+            'statechange',
+            array(
+                'label' => t('State Changes'),
+                'class' => 'autosubmit',
+                'decorators' => $decorators,
+                'value' => strpos($url, $this->stateChangeFilter()->toQueryString()) === false ? 0 : 1
+            )
+        );
+        $this->addElement(
+            'checkbox',
+            'downtime',
+            array(
+                'label' => t('Downtimes'),
+                'class' => 'autosubmit',
+                'decorators' => $decorators,
+                'value' => strpos($url, $this->downtimeFilter()->toQueryString()) === false ? 0 : 1
+            )
+        );
+        $this->addElement(
+            'checkbox',
+            'comment',
+            array(
+                'label' => t('Comments'),
+                'class' => 'autosubmit',
+                'decorators' => $decorators,
+                'value' => strpos($url, $this->commentFilter()->toQueryString()) === false ? 0 : 1
+            )
+        );
+        $this->addElement(
+            'checkbox',
+            'notification',
+            array(
+                'label' => t('Notifications'),
+                'class' => 'autosubmit',
+                'decorators' => $decorators,
+                'value' => strpos($url, $this->notificationFilter()->toQueryString()) === false ? 0 : 1
+            )
+        );
+        $this->addElement(
+            'checkbox',
+            'flapping',
+            array(
+                'label' => t('Flapping'),
+                'class' => 'autosubmit',
+                'decorators' => $decorators,
+                'value' => strpos($url, $this->flappingFilter()->toQueryString()) === false ? 0 : 1
+            )
+        );
+    }
+
+    /**
+     * Return the corresponding filter-object
+     *
+     * @returns Filter
+     */
+    public function getFilter()
+    {
+        $filters = array();
+        if ($this->getValue('statechange', 1)) {
+            $filters[] = $this->stateChangeFilter();
+        }
+        if ($this->getValue('comment', 1)) {
+            $filters[] = $this->commentFilter();
+        }
+        if ($this->getValue('notification', 1)) {
+            $filters[] = $this->notificationFilter();
+        }
+        if ($this->getValue('downtime', 1)) {
+            $filters[] = $this->downtimeFilter();
+        }
+        if ($this->getValue('flapping', 1)) {
+            $filters[] = $this->flappingFilter();
+        }
+        return Filter::matchAny($filters);
+    }
+
+    public function stateChangeFilter()
+    {
+        return Filter::matchAny(
+            Filter::expression('type', '=', 'hard_state'),
+            Filter::expression('type', '=', 'soft_state')
+        );
+    }
+
+    public function commentFilter()
+    {
+        return Filter::matchAny(
+            Filter::expression('type', '=', 'comment'),
+            Filter::expression('type', '=', 'comment_deleted'),
+            Filter::expression('type', '=', 'dt_comment'),
+            Filter::expression('type', '=', 'dt_comment_deleted'),
+            Filter::expression('type', '=', 'ack')
+        );
+    }
+
+    public function notificationFilter()
+    {
+        return Filter::expression('type', '=', 'notify');
+    }
+
+    public function downtimeFilter()
+    {
+        return Filter::matchAny(
+            Filter::expression('type', '=', 'downtime_start'),
+            Filter::expression('type', '=', 'downtime_end')
+        );
+    }
+
+    public function flappingFilter()
+    {
+        return Filter::matchAny(
+            Filter::expression('type', '=', 'flapping'),
+            Filter::expression('type', '=', 'flapping_deleted')
+        );
+    }
+}

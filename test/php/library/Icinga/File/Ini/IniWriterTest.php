@@ -33,7 +33,7 @@ class IniWriterTest extends BaseTestCase
     {
         $writer = new IniWriter(
             array(
-                'config' => new Config(
+                'config' => Config::fromArray(
                         array(
                             'section' => array(
                                 'foo.bar' => 1337
@@ -57,7 +57,7 @@ class IniWriterTest extends BaseTestCase
     {
         $this->markTestSkipped('Implementation has changed. Section-less properties are not supported anymore');
         $target = $this->writeConfigToTemporaryFile('');
-        $config = new Config(array('key' => 'value'));
+        $config = Config::fromArray(array('key' => 'value'));
         $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
@@ -69,7 +69,7 @@ class IniWriterTest extends BaseTestCase
     {
         $this->markTestSkipped('Implementation has changed. Section-less properties are not supported anymore');
         $target = $this->writeConfigToTemporaryFile('key1 = "1"');
-        $config = new Config(array('key2' => '2'));
+        $config = Config::fromArray(array('key2' => '2'));
         $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
@@ -84,7 +84,7 @@ class IniWriterTest extends BaseTestCase
     {
         $this->markTestSkipped('Implementation has changed. Section-less properties are not supported anymore');
         $target = $this->writeConfigToTemporaryFile('key = "value"');
-        $config = new Config(array('key' => 'eulav'));
+        $config = Config::fromArray(array('key' => 'eulav'));
         $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
@@ -99,7 +99,7 @@ class IniWriterTest extends BaseTestCase
     {
         $this->markTestSkipped('Implementation has changed. Section-less properties are not supported anymore');
         $target = $this->writeConfigToTemporaryFile('key = "value"');
-        $config = new Config(array());
+        $config = new Config();
         $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
@@ -110,19 +110,19 @@ class IniWriterTest extends BaseTestCase
     public function testWhetherNestedPropertiesAreInserted()
     {
         $target = $this->writeConfigToTemporaryFile('');
-        $config = new Config(array('a' => array('b' => 'c')));
+        $config = Config::fromArray(array('a' => array('b' => 'c')));
         $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = Config::fromIni($target);
         $this->assertInstanceOf(
-            get_class($newConfig),
-            $newConfig->get('a'),
+            'Icinga\Data\ConfigObject',
+            $newConfig->getSection('a'),
             'IniWriter does not insert nested properties'
         );
         $this->assertEquals(
             'c',
-            $newConfig->get('a')->get('b'),
+            $newConfig->getSection('a')->get('b'),
             'IniWriter does not insert nested properties'
         );
     }
@@ -134,7 +134,7 @@ class IniWriterTest extends BaseTestCase
     {
         $this->markTestSkipped('Implementation has changed. Section-less properties are not supported anymore');
         $target = $this->writeConfigToTemporaryFile('a.b = "c"');
-        $config = new Config(array('a' => array('b' => 'cc')));
+        $config = Config::fromArray(array('a' => array('b' => 'cc')));
         $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
@@ -158,7 +158,7 @@ class IniWriterTest extends BaseTestCase
     {
         $this->markTestSkipped('Implementation has changed. Section-less properties are not supported anymore');
         $target = $this->writeConfigToTemporaryFile('a.b = "c"');
-        $config = new Config(array());
+        $config = new Config();
         $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
@@ -172,19 +172,19 @@ class IniWriterTest extends BaseTestCase
     public function testWhetherSimpleSectionPropertiesAreInserted()
     {
         $target = $this->writeConfigToTemporaryFile('');
-        $config = new Config(array('section' => array('key' => 'value')));
+        $config = Config::fromArray(array('section' => array('key' => 'value')));
         $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = Config::fromIni($target);
         $this->assertInstanceOf(
-            get_class($newConfig),
-            $newConfig->get('section'),
+            'Icinga\Data\ConfigObject',
+            $newConfig->getSection('section'),
             'IniWriter does not insert sections'
         );
         $this->assertEquals(
             'value',
-            $newConfig->get('section')->get('key'),
+            $newConfig->getSection('section')->get('key'),
             'IniWriter does not insert simple section properties'
         );
     }
@@ -199,14 +199,14 @@ class IniWriterTest extends BaseTestCase
 key = "value"
 EOD
         );
-        $config = new Config(array('section' => array('key' => 'eulav')));
+        $config = Config::fromArray(array('section' => array('key' => 'eulav')));
         $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = Config::fromIni($target);
         $this->assertEquals(
             'eulav',
-            $newConfig->get('section')->get('key'),
+            $newConfig->getSection('section')->get('key'),
             'IniWriter does not update simple section properties'
         );
     }
@@ -221,13 +221,13 @@ EOD
 key = "value"
 EOD
         );
-        $config = new Config(array('section' => array()));
+        $config = Config::fromArray(array('section' => array()));
         $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
         $newConfig = Config::fromIni($target);
         $this->assertNull(
-            $newConfig->get('section')->get('key'),
+            $newConfig->getSection('section')->get('key'),
             'IniWriter does not delete simple section properties'
         );
     }
@@ -236,7 +236,7 @@ EOD
     {
         $this->markTestSkipped('Implementation has changed. Config::fromIni cannot handle nested properties anymore');
         $target = $this->writeConfigToTemporaryFile('');
-        $config = new Config(array('section' => array('a' => array('b' => 'c'))));
+        $config = Config::fromArray(array('section' => array('a' => array('b' => 'c'))));
         $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
@@ -268,7 +268,7 @@ EOD
 a.b = "c"
 EOD
         );
-        $config = new Config(array('section' => array('a' => array('b' => 'cc'))));
+        $config = Config::fromArray(array('section' => array('a' => array('b' => 'cc'))));
         $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
@@ -290,7 +290,7 @@ EOD
 a.b = "c"
 EOD
         );
-        $config = new Config(array('section' => array()));
+        $config = Config::fromArray(array('section' => array()));
         $writer = new IniWriter(array('config' => $config, 'filename' => $target));
         $writer->write();
 
@@ -307,7 +307,7 @@ EOD
             'Implementation has changed. There is no "Extend" functionality anymore in our Config object'
         );
         $target = $this->writeConfigToTemporaryFile('');
-        $config = new Config(
+        $config = Config::fromArray(
             array(
                 'foo' => array('key1' => '1'),
                 'bar' => array('key2' => '2')
@@ -356,7 +356,7 @@ key1 = "1"
 key2 = "2"
 EOD
         );
-        $config = new Config(
+        $config = Config::fromArray(
             array(
                 'foo' => array('key1' => '1'),
                 'bar' => array('key2' => '22')
@@ -390,7 +390,7 @@ key1 = "1"
 key2 = "2"
 EOD
         );
-        $config = new Config(
+        $config = Config::fromArray(
             array(
                 'foo' => array('key1' => '1'),
                 'bar' => array()
@@ -413,7 +413,7 @@ EOD
             'Implementation has changed. There is no "Extend" functionality anymore in our Config object'
         );
         $target = $this->writeConfigToTemporaryFile('');
-        $config = new Config(
+        $config = Config::fromArray(
             array(
                 'foo' => array('a' => array('b' => 'c')),
                 'bar' => array('d' => array('e' => 'f'))
@@ -464,7 +464,7 @@ a.b = "c"
 d.e = "f"
 EOD
         );
-        $config = new Config(
+        $config = Config::fromArray(
             array(
                 'foo' => array('a' => array('b' => 'c')),
                 'bar' => array('d' => array('e' => 'ff'))
@@ -498,7 +498,7 @@ a.b = "c"
 d.e = "f"
 EOD
         );
-        $config = new Config(
+        $config = Config::fromArray(
             array(
                 'foo' => array('a' => array('b' => 'c')),
                 'bar' => array()
@@ -551,7 +551,7 @@ EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
             array(
-                'config'    => new Config(
+                'config'    => Config::fromArray(
                     array(
                         'three' => array(
                             'foo' => array(
@@ -606,7 +606,7 @@ EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
             array(
-                'config' => new Config(
+                'config' => Config::fromArray(
                     array(
                         'two' => array(),
                         'one' => array()
@@ -634,7 +634,7 @@ key                 = "value"
 EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
-            array('config' => new Config(array('key' => 'value')), 'filename' => $target)
+            array('config' => Config::fromArray(array('key' => 'value')), 'filename' => $target)
         );
 
         $this->assertEquals(
@@ -655,7 +655,7 @@ EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
             array(
-                'config' => new Config(
+                'config' => Config::fromArray(
                     array(
                         'foo' => 1337,
                         'bar' => 7331,
@@ -683,7 +683,7 @@ key                 = "value"
 EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
-            array('config' => new Config(array('section' => array('key' => 'value'))), 'filename' => $target)
+            array('config' => Config::fromArray(array('section' => array('key' => 'value'))), 'filename' => $target)
         );
 
         $this->assertEquals(
@@ -705,7 +705,7 @@ EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
             array(
-                'config' => new Config(
+                'config' => Config::fromArray(
                     array(
                         'section' => array(
                             'foo' => 1337,

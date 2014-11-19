@@ -4,7 +4,7 @@
 
 namespace Icinga\Protocol\Ldap;
 
-use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Protocol\Dns;
 
 class Discovery {
@@ -149,7 +149,7 @@ class Discovery {
      */
     public static function discover($host, $port)
     {
-        $conn = new Connection(new Config(array(
+        $conn = new Connection(new ConfigObject(array(
             'hostname' => $host,
             'port'     => $port
         )));

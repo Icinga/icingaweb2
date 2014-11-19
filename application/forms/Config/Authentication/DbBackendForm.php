@@ -5,8 +5,8 @@
 namespace Icinga\Forms\Config\Authentication;
 
 use Exception;
-use Icinga\Application\Config;
 use Icinga\Web\Form;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Authentication\Backend\DbUserBackend;
 
@@ -75,7 +75,7 @@ class DbBackendForm extends Form
             'hidden',
             'backend',
             array(
-                'required'  => true,
+                'disabled'  => true,
                 'value'     => 'db'
             )
         );
@@ -121,7 +121,7 @@ class DbBackendForm extends Form
     /**
      * Return the configuration for the chosen resource
      *
-     * @return  Config
+     * @return  ConfigObject
      */
     public function getResourceConfig()
     {

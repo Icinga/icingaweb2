@@ -63,7 +63,8 @@ class Manager
             );
             $config = new Config();
         }
-        if (($preferencesConfig = $config->preferences) !== null) {
+        if ($config->hasSection('preferences')) {
+            $preferencesConfig = $config->getSection('preferences');
             try {
                 $preferencesStore = PreferencesStore::create(
                     $preferencesConfig,

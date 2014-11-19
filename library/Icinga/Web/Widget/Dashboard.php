@@ -6,8 +6,13 @@ namespace Icinga\Web\Widget;
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\SystemPermissionException;
+use Icinga\File\Ini\IniWriter;
+use Icinga\User;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
 use Icinga\Web\Url;
@@ -23,13 +28,6 @@ use Icinga\Web\Url;
  */
 class Dashboard extends AbstractWidget
 {
-    /**
-     * The configuration containing information about this dashboard
-     *
-     * @var Config;
-     */
-    private $config;
-
     /**
      * An array containing all panes of this dashboard
      *
@@ -52,6 +50,11 @@ class Dashboard extends AbstractWidget
     private $tabParam = 'pane';
 
     /**
+     * @var User
+     */
+    private $user;
+
+    /**
      * Set the given tab name as active.
      *
      * @param string $name      The tab name to activate
@@ -67,30 +70,136 @@ class Dashboard extends AbstractWidget
      *
      * @return  self
      */
-    public static function load()
+    public function load()
     {
-        /** @var $dashboard Dashboard */
-        $dashboard = new static('dashboard');
         $manager = Icinga::app()->getModuleManager();
         foreach ($manager->getLoadedModules() as $module) {
             /** @var $module \Icinga\Application\Modules\Module */
-            $dashboard->mergePanes($module->getPaneItems());
+            $this->mergePanes($module->getPaneItems());
 
         }
-        return $dashboard;
+        if ($this->user !== null) {
+            $this->loadUserDashboards();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Create a writer object
+     *
+     * @return IniWriter
+     */
+    public function createWriter()
+    {
+        $configFile = $this->getConfigFile();
+        $output = array();
+        foreach ($this->panes as $pane) {
+            if ($pane->isUserWidget() === true) {
+                $output[$pane->getName()] = $pane->toArray();
+            }
+            foreach ($pane->getComponents() as $component) {
+                if ($component->isUserWidget() === true) {
+                    $output[$pane->getName() . '.' . $component->getTitle()] = $component->toArray();
+                }
+            }
+        }
+
+        $co = new ConfigObject($output);
+        $config = new Config($co);
+        return new IniWriter(array('config' => $config, 'filename' => $configFile));
+    }
+
+    /**
+     * Write user specific dashboards to disk
+     */
+    public function write()
+    {
+        $this->createWriter()->write();
+    }
+
+    /**
+     * @return bool
+     */
+    private function loadUserDashboards()
+    {
+        try {
+            $config = Config::fromIni($this->getConfigFile());
+        } catch (NotReadableError $e) {
+            return;
+        }
+        if (! count($config)) {
+            return false;
+        }
+        $panes = array();
+        $components = array();
+        foreach ($config as $key => $part) {
+            if (strpos($key, '.') === false) {
+                if ($this->hasPane($part->title)) {
+                    $panes[$key] = $this->getPane($part->title);
+                } else {
+                    $panes[$key] = new Pane($key);
+                    $panes[$key]->setTitle($part->title);
+                }
+                $panes[$key]->setUserWidget();
+                if ((bool) $part->get('disabled', false) === true) {
+                    $panes[$key]->setDisabled();
+                }
+
+            } else {
+                list($paneName, $componentName) = explode('.', $key, 2);
+                $part->pane = $paneName;
+                $part->component = $componentName;
+                $components[] = $part;
+            }
+        }
+        foreach ($components as $componentData) {
+            $pane = null;
+
+            if (array_key_exists($componentData->pane, $panes) === true) {
+                $pane = $panes[$componentData->pane];
+            } elseif (array_key_exists($componentData->pane, $this->panes) === true) {
+                $pane = $this->panes[$componentData->pane];
+            } else {
+                continue;
+            }
+            $component = new DashboardComponent(
+                $componentData->title,
+                $componentData->url,
+                $pane
+            );
+
+            if ((bool) $componentData->get('disabled', false) === true) {
+                $component->setDisabled(true);
+            }
+
+            $component->setUserWidget();
+            $pane->addComponent($component);
+        }
+
+        $this->mergePanes($panes);
+
+        return true;
     }
 
     /**
      * Merge panes with existing panes
      *
-     * @param array $panes
-     * @return $this
+     * @param   array $panes
+     *
+     * @return  $this
      */
     public function mergePanes(array $panes)
     {
         /** @var $pane Pane  */
         foreach ($panes as $pane) {
-            if (array_key_exists($pane->getName(), $this->panes)) {
+            if ($pane->getDisabled()) {
+                if ($this->hasPane($pane->getTitle()) === true) {
+                    $this->removePane($pane->getTitle());
+                }
+                continue;
+            }
+            if ($this->hasPane($pane->getTitle()) === true) {
                 /** @var $current Pane */
                 $current = $this->panes[$pane->getName()];
                 $current->addComponents($pane->getComponents());
@@ -109,7 +218,7 @@ class Dashboard extends AbstractWidget
      */
     public function getTabs()
     {
-        $url = Url::fromRequest()->getUrlWithout($this->tabParam);
+        $url = Url::fromPath('dashboard')->getUrlWithout($this->tabParam);
         if ($this->tabs === null) {
             $this->tabs = new Tabs();
 
@@ -137,20 +246,6 @@ class Dashboard extends AbstractWidget
         return $this->panes;
     }
 
-    /**
-     * Populate this dashboard via the given configuration file
-     *
-     * @param Config    $config      The configuration file to populate this dashboard with
-     *
-     * @return self
-     */
-    public function readConfig(Config $config)
-    {
-        $this->config = $config;
-        $this->panes = array();
-        $this->loadConfigPanes();
-        return $this;
-    }
 
     /**
      * Creates a new empty pane with the given title
@@ -169,34 +264,6 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * Update or adds a new component with the given url to a pane
-     *
-     * @TODO:   Should only allow component objects to be added directly as soon as we store more information
-     *
-     * @param   string              $pane       The pane to add the component to
-     * @param   Component|string    $component  The component to add or the title of the newly created component
-     * @param   string|null         $url        The url to use for the component
-     *
-     * @return self
-     */
-    public function setComponentUrl($pane, $component, $url)
-    {
-        if ($component === null && strpos($pane, '.')) {
-            list($pane, $component) = preg_split('~\.~', $pane, 2);
-        }
-        if (!isset($this->panes[$pane])) {
-            $this->createPane($pane);
-        }
-        $pane = $this->getPane($pane);
-        if ($pane->hasComponent($component)) {
-            $pane->getComponent($component)->setUrl($url);
-        } else {
-            $pane->addComponent($component, $url);
-        }
-        return $this;
-    }
-
-    /**
      * Checks if the current dashboard has any panes
      *
      * @return bool
@@ -207,49 +274,14 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * Check if this dashboard has a specific pane
+     * Check if a panel exist
      *
-     * @param $pane string  The name of the pane
-     * @return bool
+     * @param   string  $pane
+     * @return  bool
      */
     public function hasPane($pane)
     {
-        return array_key_exists($pane, $this->panes);
-    }
-
-    /**
-     * Remove a component $component from the given pane
-     *
-     * @param string $pane                      The pane to remove the component from
-     * @param Component|string $component       The component to remove or it's name
-     *
-     * @return self
-     */
-    public function removeComponent($pane, $component)
-    {
-        if ($component === null && strpos($pane, '.')) {
-            list($pane, $component) = preg_split('~\.~', $pane, 2);
-        }
-        $pane = $this->getPane($pane);
-        if ($pane !== null) {
-            $pane->removeComponent($component);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Return an array with pane name=>title format used for comboboxes
-     *
-     * @return array
-     */
-    public function getPaneKeyTitleArray()
-    {
-        $list = array();
-        foreach ($this->panes as $name => $pane) {
-            $list[$name] = $pane->getTitle();
-        }
-        return $list;
+        return $pane && array_key_exists($pane, $this->panes);
     }
 
     /**
@@ -263,6 +295,21 @@ class Dashboard extends AbstractWidget
     {
         $this->panes[$pane->getName()] = $pane;
         return $this;
+    }
+
+    public function removePane($title)
+    {
+        if ($this->hasPane($title) === true) {
+            $pane = $this->getPane($title);
+            if ($pane->isUserWidget() === true) {
+                unset($this->panes[$pane->getName()]);
+            } else {
+                $pane->setDisabled();
+                $pane->setUserWidget();
+            }
+        } else {
+            throw new ProgrammingError('Pane not found: ' . $title);
+        }
     }
 
     /**
@@ -285,6 +332,20 @@ class Dashboard extends AbstractWidget
     }
 
     /**
+     * Return an array with pane name=>title format used for comboboxes
+     *
+     * @return array
+     */
+    public function getPaneKeyTitleArray()
+    {
+        $list = array();
+        foreach ($this->panes as $name => $pane) {
+            $list[$name] = $pane->getTitle();
+        }
+        return $list;
+    }
+
+    /**
      * @see Icinga\Web\Widget::render
      */
     public function render()
@@ -292,6 +353,7 @@ class Dashboard extends AbstractWidget
         if (empty($this->panes)) {
             return '';
         }
+
         return $this->determineActivePane()->render();
     }
 
@@ -319,7 +381,10 @@ class Dashboard extends AbstractWidget
     /**
      * Determine the active pane either by the selected tab or the current request
      *
-     * @return Pane         The currently active pane
+     * @throws \Icinga\Exception\ConfigurationError
+     * @throws \Icinga\Exception\ProgrammingError
+     *
+     * @return Pane The currently active pane
      */
     public function determineActivePane()
     {
@@ -346,36 +411,55 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * Return this dashboard's structure as array
+     * Setter for user object
      *
-     * @return  array
+     * @param User $user
      */
-    public function toArray()
+    public function setUser(User $user)
     {
-        $array = array();
-        foreach ($this->panes as $pane) {
-            $array += $pane->toArray();
-        }
-
-        return $array;
+        $this->user = $user;
     }
 
     /**
-     * Load all config panes from @see Dashboard::$config
+     * Getter for user object
      *
+     * @return User
      */
-    private function loadConfigPanes()
+    public function getUser()
     {
-        $items = $this->config;
-        foreach ($items->keys() as $key) {
-            $item = $this->config->get($key, false);
-            if (false === strstr($key, '.')) {
-                $this->addPane(Pane::fromIni($key, $item));
-            } else {
-                list($paneName, $title) = explode('.', $key, 2);
-                $pane = $this->getPane($paneName);
-                $pane->addComponent(DashboardComponent::fromIni($title, $item, $pane));
+        return $this->user;
+    }
+
+    /**
+     * Get config file
+     *
+     * @return string
+     */
+    public function getConfigFile()
+    {
+        if ($this->user === null) {
+            return '';
+        }
+
+        $baseDir = '/var/lib/icingaweb';
+
+        if (! file_exists($baseDir)) {
+            throw new NotReadableError('Could not read: ' . $baseDir);
+        }
+
+        $userDir = $baseDir . '/' . $this->user->getUsername();
+
+        if (! file_exists($userDir)) {
+            $success = @mkdir($userDir);
+            if (!$success) {
+                throw new SystemPermissionException('Could not create: ' . $userDir);
             }
         }
+
+        if (! file_exists($userDir)) {
+            throw new NotReadableError('Could not read: ' . $userDir);
+        }
+
+        return $userDir . '/dashboard.ini';
     }
 }

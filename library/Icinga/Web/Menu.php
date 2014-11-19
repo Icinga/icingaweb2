@@ -10,6 +10,7 @@ use RecursiveIterator;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Url;
@@ -79,10 +80,10 @@ class Menu implements RecursiveIterator
     /**
      * Create a new menu
      *
-     * @param   int        $id         The id of this menu
-     * @param   Config     $config     The configuration for this menu
+     * @param   int             $id         The id of this menu
+     * @param   ConfigObject    $config     The configuration for this menu
      */
-    public function __construct($id, Config $config = null, Menu $parent = null)
+    public function __construct($id, ConfigObject $config = null, Menu $parent = null)
     {
         $this->id = $id;
         if ($parent !== null) {
@@ -94,7 +95,7 @@ class Menu implements RecursiveIterator
     /**
      * Set all given properties
      *
-     * @param   array|Config   $props Property list
+     * @param   array|ConfigObject   $props Property list
      */
     public function setProperties($props = null)
     {
@@ -170,7 +171,7 @@ class Menu implements RecursiveIterator
 
         foreach ($modules as $moduleName) {
             $moduleMenuConfig = Config::module($moduleName, 'menu');
-            if (false === empty($moduleMenuConfig)) {
+            if (! $moduleMenuConfig->isEmpty()) {
                 $menuConfigs[] = $moduleMenuConfig;
             }
         }
@@ -212,7 +213,7 @@ class Menu implements RecursiveIterator
             ));
 
             $section = $this->add(t('System'), array(
-                'icon'     => 'conf-alt',
+                'icon'     => 'wrench',
                 'priority' => 200
             ));
             $section->add(t('Configuration'), array(
@@ -424,11 +425,11 @@ class Menu implements RecursiveIterator
      * Add a sub menu to this menu
      *
      * @param   string          $id             The id of the menu to add
-     * @param   Config     $itemConfig     The config with which to initialize the menu
+     * @param   ConfigObject    $itemConfig     The config with which to initialize the menu
      *
      * @return  self
      */
-    public function addSubMenu($id, Config $menuConfig = null)
+    public function addSubMenu($id, ConfigObject $menuConfig = null)
     {
         if (false === ($pos = strpos($id, '.'))) {
             $subMenu = new self($id, $menuConfig, $this);
@@ -518,7 +519,7 @@ class Menu implements RecursiveIterator
      */
     public function add($name, $config = array())
     {
-        return $this->addSubMenu($name, new Config($config));
+        return $this->addSubMenu($name, new ConfigObject($config));
     }
 
     /**

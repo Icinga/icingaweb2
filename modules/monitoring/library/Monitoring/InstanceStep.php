@@ -28,7 +28,7 @@ class InstanceStep extends Step
 
         try {
             $writer = new IniWriter(array(
-                'config'    => new Config(array($instanceName => $instanceConfig)),
+                'config'    => Config::fromArray(array($instanceName => $instanceConfig)),
                 'filename'  => Config::resolvePath('modules/monitoring/instances.ini')
             ));
             $writer->write();

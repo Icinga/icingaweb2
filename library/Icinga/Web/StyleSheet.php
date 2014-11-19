@@ -11,6 +11,8 @@ use Icinga\Web\LessCompiler;
 class StyleSheet
 {
     protected static $lessFiles = array(
+        '../application/fonts/fontello-ifont/css/ifont-embedded.css',
+        'css/vendor/tipsy.css',
         'css/icinga/defaults.less',
         'css/icinga/layout-colors.less',
         'css/icinga/layout-structure.less',
@@ -24,9 +26,7 @@ class StyleSheet
         'css/icinga/pagination.less',
         'css/icinga/monitoring-colors.less',
         'css/icinga/selection-toolbar.less',
-        'css/icinga/login.less',
-        '../application/fonts/fontanello-ifont/css/ifont-embedded.css',
-        'css/vendor/tipsy.css'
+        'css/icinga/login.less'
     );
 
     public static function compileForPdf()

@@ -26,8 +26,8 @@ namespace Icinga\Test {
     use Mockery;
     use PHPUnit_Framework_TestCase;
     use Icinga\Application\Icinga;
-    use Icinga\Application\Config;
     use Icinga\Util\DateTimeFactory;
+    use Icinga\Data\ConfigObject;
     use Icinga\Data\ResourceFactory;
     use Icinga\Data\Db\DbConnection;
 
@@ -158,11 +158,17 @@ namespace Icinga\Test {
                 ->andReturnUsing(function ($name, $default) { return $default; })->byDefault();
 
             $responseMock = Mockery::mock('Icinga\Web\Response')->shouldDeferMissing();
-
             // Can't express this as demeter chains. See: https://github.com/padraic/mockery/issues/59
             $bootstrapMock = Mockery::mock('Icinga\Application\ApplicationBootstrap')->shouldDeferMissing();
+            $libDir = dirname(self::$libDir);
             $bootstrapMock->shouldReceive('getFrontController')->andReturn($bootstrapMock)
                 ->shouldReceive('getApplicationDir')->andReturn(self::$appDir)
+                ->shouldReceive('getLibraryDir')->andReturnUsing(function ($subdir = null) use ($libDir) {
+                    if ($subdir !== null) {
+                        $libDir .= '/' . ltrim($subdir, '/');
+                    }
+                    return $libDir;
+                })
                 ->shouldReceive('getRequest')->andReturn($requestMock)
                 ->shouldReceive('getResponse')->andReturn($responseMock);
 
@@ -195,13 +201,13 @@ namespace Icinga\Test {
          *
          * @param   string $name
          *
-         * @return  Config
+         * @return  ConfigObject
          * @throws  RuntimeException
          */
         protected function createDbConfigFor($name)
         {
             if (array_key_exists($name, self::$dbConfiguration)) {
-                return new Config(self::$dbConfiguration[$name]);
+                return new ConfigObject(self::$dbConfiguration[$name]);
             }
 
             throw new RuntimeException('Configuration for database type not available: ' . $name);

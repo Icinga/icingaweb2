@@ -2,4 +2,4 @@
 <?= $this->render('show/components/header.phtml') ?>
 <?= $this->render('show/components/hostservicesummary.phtml') ?>
 </div>
-<?= preg_replace('~<table data-base-target="_next"~', '<table data-base-target="_self"', $services) /* TODO: find an elegant solution for this */ ?>
+<?= $services ?>

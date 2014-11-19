@@ -73,12 +73,12 @@ class BackendConfigForm extends ConfigForm
         $name = isset($values['name']) ? $values['name'] : '';
         if (! $name) {
             throw new InvalidArgumentException(mt('monitoring', 'Monitoring backend name missing'));
-        } elseif ($this->config->get($name) !== null) {
+        } elseif ($this->config->hasSection($name)) {
             throw new InvalidArgumentException(mt('monitoring', 'Monitoring backend already exists'));
         }
 
         unset($values['name']);
-        $this->config->{$name} = $values;
+        $this->config->setSection($name, $values);
         return $this;
     }
 
@@ -98,14 +98,13 @@ class BackendConfigForm extends ConfigForm
             throw new InvalidArgumentException(mt('monitoring', 'Old monitoring backend name missing'));
         } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
             throw new InvalidArgumentException(mt('monitoring', 'New monitoring backend name missing'));
-        } elseif (($backendConfig = $this->config->get($name)) === null) {
+        } elseif (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(mt('monitoring', 'Unknown monitoring backend provided'));
         }
 
         unset($values['name']);
-        unset($this->config->{$name});
-        $this->config->{$newName} = $values;
-        return $this->config->{$newName};
+        $this->config->setSection($name, $values);
+        return $this->config->getSection($name);
     }
 
     /**
@@ -121,11 +120,12 @@ class BackendConfigForm extends ConfigForm
     {
         if (! $name) {
             throw new InvalidArgumentException(mt('monitoring', 'Monitoring backend name missing'));
-        } elseif (($backendConfig = $this->config->get($name)) === null) {
+        } elseif (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(mt('monitoring', 'Unknown monitoring backend provided'));
         }
 
-        unset($this->config->{$name});
+        $backendConfig = $this->config->getSection($name);
+        $this->config->removeSection($name);
         return $backendConfig;
     }
 
@@ -170,11 +170,11 @@ class BackendConfigForm extends ConfigForm
         if ($monitoringBackend !== null) {
             if ($monitoringBackend === '') {
                 throw new ConfigurationError(mt('monitoring', 'Monitoring backend name missing'));
-            } elseif (false === isset($this->config->{$monitoringBackend})) {
+            } elseif (! $this->config->hasSection($monitoringBackend)) {
                 throw new ConfigurationError(mt('monitoring', 'Unknown monitoring backend provided'));
             }
 
-            $backendConfig = $this->config->{$monitoringBackend}->toArray();
+            $backendConfig = $this->config->getSection($monitoringBackend)->toArray();
             $backendConfig['name'] = $monitoringBackend;
             $this->populate($backendConfig);
         }
@@ -237,18 +237,28 @@ class BackendConfigForm extends ConfigForm
             )
         );
 
-        $resourceName = (isset($formData['resource'])) ? $formData['resource'] : $this->getValue('resource');
-        if ($resourceElement) {
-            $resourceElement->getDecorator('Description')->setEscape(false);
-            $link = sprintf(
-                '<a href="%s" data-base-target="_main">%s</a>',
-                $this->getView()->href('/icingaweb/config/editresource', array('resource' => $resourceName)),
-                mt('monitoring', 'Show resource configuration')
-            );
-            $resourceElement->setDescription($resourceElement->getDescription() . ' (' . $link . ')');
+        if (empty($formData)) {
+            $options = $resourceElement->options;
+            $resourceName = array_shift($options);
+        } else {
+            $resourceName = (isset($formData['resource'])) ? $formData['resource'] : $this->getValue('resource');
         }
 
         $this->addElement($resourceElement);
 
+        if ($resourceElement) {
+            $this->addElement(
+                'note',
+                'resource_note',
+                array(
+                    'value' => sprintf(
+                        '<a href="%s" data-base-target="_main">%s</a>',
+                        $this->getView()->href('/icingaweb/config/editresource', array('resource' => $resourceName)),
+                        mt('monitoring', 'Show resource configuration')
+                    ),
+                    'escape' => false
+                )
+            );
+        }
     }
 }

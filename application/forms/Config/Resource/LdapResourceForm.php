@@ -5,8 +5,8 @@
 namespace Icinga\Forms\Config\Resource;
 
 use Exception;
-use Icinga\Application\Config;
 use Icinga\Web\Form;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 
 /**
@@ -110,7 +110,7 @@ class LdapResourceForm extends Form
     public static function isValidResource(Form $form)
     {
         try {
-            $resource = ResourceFactory::createResource(new Config($form->getValues()));
+            $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
             if (false === $resource->testCredentials(
                 $form->getElement('bind_dn')->getValue(),
                 $form->getElement('bind_pw')->getValue()

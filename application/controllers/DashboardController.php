@@ -2,16 +2,17 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Application\Config;
 use Icinga\Application\Logger;
-use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\IcingaException;
-use Icinga\Exception\NotReadableError;
-use Icinga\File\Ini\IniWriter;
-use Icinga\Forms\Dashboard\AddUrlForm;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Forms\ConfirmRemovalForm;
+use Icinga\Forms\Dashboard\ComponentForm;
+use Icinga\Web\Form;
+use Icinga\Web\Notification;
 use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Request;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Dashboard;
+use Icinga\Web\Widget\Tabextension\DashboardSettings;
 
 /**
  * Handle creation, removal and displaying of dashboards, panes and components
@@ -21,89 +22,200 @@ use Icinga\Web\Widget\Dashboard;
 class DashboardController extends ActionController
 {
     /**
-     * Default configuration
+     * @var Dashboard;
      */
-    const DEFAULT_CONFIG = 'dashboard/dashboard';
-
-    /**
-     * Retrieve a dashboard from the provided config
-     *
-     * @param   string $config The config to read the dashboard from, or 'dashboard/dashboard' if none is given
-     *
-     * @return  \Icinga\Web\Widget\Dashboard
-     */
-    private function getDashboard($config = self::DEFAULT_CONFIG)
+    private $dashboard;
+    
+    public function init()
     {
-        $dashboard = new Dashboard();
-        try {
-            $dashboardConfig = Config::app($config);
-            if (count($dashboardConfig) === 0) {
-                return null;
-            }
-            $dashboard->readConfig($dashboardConfig);
-        } catch (NotReadableError $e) {
-            Logger::error(new IcingaException('Cannot load dashboard configuration. An exception was thrown:', $e));
-            return null;
-        }
-        return $dashboard;
+        $this->dashboard = new Dashboard();
+        $this->dashboard->setUser($this->getRequest()->getUser());
+        $this->dashboard->load();
     }
 
-    /**
-     * Remove a component from the pane identified by the 'pane' parameter
-     */
-    public function removecomponentAction()
+    public function newComponentAction()
     {
-        $pane =  $this->_getParam('pane');
-        $dashboard = $this->getDashboard();
-        try {
-            $dashboard->removeComponent(
-                $pane,
-                $this->_getParam('component')
-            )->store();
-            $this->redirectNow(Url::fromPath('dashboard', array('pane' => $pane)));
-        } catch (ConfigurationError $exc ) {
-            $this->_helper->viewRenderer('show_configuration');
-            $this->view->exceptionMessage = $exc->getMessage();
-            $this->view->iniConfigurationString = $dashboard->toIni();
+        $form = new ComponentForm();
+        $this->createTabs();
+        $dashboard = $this->dashboard;
+        $form->setDashboard($dashboard);
+        if ($this->_request->getParam('url')) {
+            $params = $this->_request->getParams();
+            $params['url'] = rawurldecode($this->_request->getParam('url'));
+            $form->populate($params);
         }
+        $action = $this;
+        $form->setOnSuccess(function (Form $form) use ($dashboard, $action) {
+            try {
+                $pane = $dashboard->getPane($form->getValue('pane'));
+            } catch (ProgrammingError $e) {
+                $pane = new Dashboard\Pane($form->getValue('pane'));
+                $pane->setUserWidget();
+                $dashboard->addPane($pane);
+            }
+            $component = new Dashboard\Component($form->getValue('component'), $form->getValue('url'), $pane);
+            $component->setUserWidget();
+            $pane->addComponent($component);
+            try {
+                $dashboard->write();
+            } catch (\Zend_Config_Exception $e) {
+                $action->view->error = $e;
+                $action->view->config = $dashboard->createWriter();
+                $action->render('error');
+                return false;
+            }
+            Notification::success(t('Component created'));
+            return true;
+        });
+        $form->setRedirectUrl('dashboard');
+        $form->handleRequest();
+        $this->view->form = $form;
     }
 
-    /**
-     * Display the form for adding new components or add the new component if submitted
-     */
-    public function addurlAction()
+    public function updateComponentAction()
     {
-        $this->getTabs()->add(
-            'addurl',
-            array(
-                'title' => 'Add Dashboard URL',
-                'url' => Url::fromRequest()
-            )
-        )->activate('addurl');
-
-        $form = new AddUrlForm();
-        $request = $this->getRequest();
-        if ($request->isPost()) {
-            if ($form->isValid($request->getPost()) && $form->isSubmitted()) {
-                $dashboard = $this->getDashboard();
-                $dashboard->setComponentUrl(
-                    $form->getValue('pane'),
-                    $form->getValue('component'),
-                    ltrim($form->getValue('url'), '/')
-                );
-
-                $configFile = Config::app('dashboard/dashboard')->getConfigFile();
-                if ($this->writeConfiguration(new Config($dashboard->toArray()), $configFile)) {
-                    $this->redirectNow(Url::fromPath('dashboard', array('pane' => $form->getValue('pane'))));
-                } else {
-                    $this->render('showConfiguration');
-                    return;
-                }
-            }
-        } else {
-            $form->create()->setDefault('url', htmlspecialchars_decode($request->getParam('url', '')));
+        $this->createTabs();
+        $dashboard = $this->dashboard;
+        $form = new ComponentForm();
+        $form->setDashboard($dashboard);
+        $form->setSubmitLabel(t('Update Component'));
+        if (! $this->_request->getParam('pane')) {
+            throw new Zend_Controller_Action_Exception(
+                'Missing parameter "pane"',
+                400
+            );
         }
+        if (! $this->_request->getParam('component')) {
+            throw new Zend_Controller_Action_Exception(
+                'Missing parameter "component"',
+                400
+            );
+        }
+        $action = $this;
+        $form->setOnSuccess(function (Form $form) use ($dashboard, $action) {
+            try {
+                $pane = $dashboard->getPane($form->getValue('pane'));
+            } catch (ProgrammingError $e) {
+                $pane = new Dashboard\Pane($form->getValue('pane'));
+                $pane->setUserWidget();
+                $dashboard->addPane($pane);
+            }
+            try {
+                $component = $pane->getComponent($form->getValue('component'));
+                $component->setUrl($form->getValue('url'));
+            } catch (ProgrammingError $e) {
+                $component = new Dashboard\Component($form->getValue('component'), $form->getValue('url'), $pane);
+                $pane->addComponent($component);
+            }
+            $component->setUserWidget();
+            // Rename component
+            if ($form->getValue('org_component') && $form->getValue('org_component') !== $component->getTitle()) {
+                $pane->removeComponent($form->getValue('org_component'));
+            }
+            // Move
+            if ($form->getValue('org_pane') && $form->getValue('org_pane') !== $pane->getTitle()) {
+                $oldPane = $dashboard->getPane($form->getValue('org_pane'));
+                $oldPane->removeComponent($component->getTitle());
+            }
+            try {
+                $dashboard->write();
+            } catch (\Zend_Config_Exception $e) {
+                $action->view->error = $e;
+                $action->view->config = $dashboard->createWriter();
+                $action->render('error');
+                return false;
+            }
+            Notification::success(t('Component updated'));
+            return true;
+        });
+        $form->setRedirectUrl('dashboard/settings');
+        $form->handleRequest();
+        $pane = $dashboard->getPane($this->getParam('pane'));
+        $component = $pane->getComponent($this->getParam('component'));
+        $form->load($component);
 
+        $this->view->form = $form;
+    }
+
+    public function removeComponentAction()
+    {
+        $form = new ConfirmRemovalForm();
+        $this->createTabs();
+        $dashboard = $this->dashboard;
+        if (! $this->_request->getParam('pane')) {
+            throw new Zend_Controller_Action_Exception(
+                'Missing parameter "pane"',
+                400
+            );
+        }
+        if (! $this->_request->getParam('component')) {
+            throw new Zend_Controller_Action_Exception(
+                'Missing parameter "component"',
+                400
+            );
+        }
+        $pane = $this->_request->getParam('pane');
+        $component = $this->_request->getParam('component');
+        $action = $this;
+        $form->setOnSuccess(function (Form $form) use ($dashboard, $component, $pane, $action) {
+            try {
+                $pane = $dashboard->getPane($pane);
+                $pane->removeComponent($component);
+                $dashboard->write();
+                Notification::success(t('Component has been removed from') . ' ' . $pane->getTitle());
+                return true;
+            }  catch (\Zend_Config_Exception $e) {
+                $action->view->error = $e;
+                $action->view->config = $dashboard->createWriter();
+                $action->render('error');
+                return false;
+            } catch (ProgrammingError $e) {
+                Notification::error($e->getMessage());
+                return false;
+            }
+            return false;
+        });
+        $form->setRedirectUrl('dashboard/settings');
+        $form->handleRequest();
+        $this->view->pane = $pane;
+        $this->view->component = $component;
+        $this->view->form = $form;
+    }
+
+    public function removePaneAction()
+    {
+        $form = new ConfirmRemovalForm();
+        $this->createTabs();
+        $dashboard = $this->dashboard;
+        if (! $this->_request->getParam('pane')) {
+            throw new Zend_Controller_Action_Exception(
+                'Missing parameter "pane"',
+                400
+            );
+        }
+        $pane = $this->_request->getParam('pane');
+        $action = $this;
+        $form->setOnSuccess(function (Form $form) use ($dashboard, $pane, $action) {
+            try {
+                $pane = $dashboard->getPane($pane);
+                $dashboard->removePane($pane->getTitle());
+                $dashboard->write();
+                Notification::success(t('Pane has been removed') . ': ' . $pane->getTitle());
+                return true;
+            }  catch (\Zend_Config_Exception $e) {
+                $action->view->error = $e;
+                $action->view->config = $dashboard->createWriter();
+                $action->render('error');
+                return false;
+            } catch (ProgrammingError $e) {
+                Notification::error($e->getMessage());
+                return false;
+            }
+            return false;
+        });
+        $form->setRedirectUrl('dashboard/settings');
+        $form->handleRequest();
+        $this->view->pane = $pane;
         $this->view->form = $form;
     }
 
@@ -115,61 +227,49 @@ class DashboardController extends ActionController
      */
     public function indexAction()
     {
-        $dashboard = Dashboard::load();
-
-        if (! $dashboard->hasPanes()) {
+        $this->createTabs();
+        if (! $this->dashboard->hasPanes()) {
             $this->view->title = 'Dashboard';
         } else {
             if ($this->_getParam('pane')) {
                 $pane = $this->_getParam('pane');
-                $dashboard->activate($pane);
+                $this->dashboard->activate($pane);
             }
-
-            $this->view->configPath = Config::resolvePath(self::DEFAULT_CONFIG);
-
-            if ($dashboard === null) {
+            if ($this->dashboard === null) {
                 $this->view->title = 'Dashboard';
             } else {
-                $this->view->title = $dashboard->getActivePane()->getTitle() . ' :: Dashboard';
-                $this->view->tabs = $dashboard->getTabs();
-
-                /* Temporarily removed
+                $this->view->title = $this->dashboard->getActivePane()->getTitle() . ' :: Dashboard';
+                if ($this->hasParam('remove')) {
+                    $this->dashboard->getActivePane()->removeComponent($this->getParam('remove'));
+                    $this->dashboard->write();
+                    $this->redirectNow(URL::fromRequest()->remove('remove'));
+                }
                 $this->view->tabs->add(
                     'Add',
                     array(
                         'title' => '+',
-                        'url' => Url::fromPath('dashboard/addurl')
+                        'url' => Url::fromPath('dashboard/new-component')
                     )
                 );
-                */
-
-                $this->view->dashboard = $dashboard;
+                $this->view->dashboard = $this->dashboard;
             }
         }
     }
 
     /**
-     * Store the given configuration as INI file
-     *
-     * @param   Config  $config     The configuration to store
-     * @param   string  $target     The path where to store the configuration
-     *
-     * @return  bool                        Whether the configuartion has been successfully stored
+     * Setting dialog
      */
-    protected function writeConfiguration(Config $config, $target)
+    public function settingsAction()
     {
-        $writer = new IniWriter(array('config' => $config, 'filename' => $target));
+        $this->createTabs();
+        $this->view->dashboard = $this->dashboard;
+    }
 
-        try {
-            $writer->write();
-        } catch (Exception $e) {
-            Logger::error(new ConfiguationError("Cannot write dashboard to $target", 0, $e));
-            $this->view->configString = $writer->render();
-            $this->view->errorMessage = $e->getMessage();
-            $this->view->filePath = $target;
-            return false;
-        }
-
-        return true;
+    /**
+     * Create tab aggregation
+     */
+    private function createTabs()
+    {
+        $this->view->tabs = $this->dashboard->getTabs()->extend(new DashboardSettings());
     }
 }

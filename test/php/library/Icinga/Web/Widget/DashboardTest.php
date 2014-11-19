@@ -131,7 +131,8 @@ class DashboardTest extends BaseTestCase
      */
     public function testLoadPaneItemsProvidedByEnabledModules()
     {
-        $dashboard = Dashboard::load();
+        $dashboard = new Dashboard();
+        $dashboard->load();
 
         $this->assertCount(
             1,
@@ -270,68 +271,12 @@ class DashboardTest extends BaseTestCase
         $component2 = new Component('test2', 'test2', $pane);
         $pane->addComponent($component2);
 
-        $dashboard->removeComponent('test1', 'test');
-
+        $dashboard->getPane('test1')->removeComponent('test');
         $result = $dashboard->getPane('test1')->hasComponent('test');
 
-        $this->assertFalse(
+        $this->assertTrue(
             $result,
             'Dashboard::removeComponent() could not remove component from the pane'
-        );
-    }
-
-    /**
-     * @depends testWhetherGetPaneReturnsAPaneByName
-     */
-    public function testWhetherRemoveComponentRemovesComponentByConcatenation()
-    {
-        $dashboard = new Dashboard();
-        $dashboard->createPane('test1');
-        $pane = $dashboard->getPane('test1');
-
-        $component = new Component('test', 'test', $pane);
-        $pane->addComponent($component);
-
-        $component2 = new Component('test2', 'test2', $pane);
-        $pane->addComponent($component2);
-
-        $dashboard->removeComponent('test1.test', null);
-
-        $result = $dashboard->getPane('test1')->hasComponent('test');
-
-        $this->assertFalse(
-            $result,
-            'Dashboard::removeComponent() could not remove component from the pane'
-        );
-    }
-
-    /**
-     * @depends testWhetherGetPaneReturnsAPaneByName
-     */
-    public function testWhetherToArrayReturnsDashboardStructureAsArray()
-    {
-        $dashboard = new Dashboard();
-        $dashboard->createPane('test1');
-        $pane = $dashboard->getPane('test1');
-
-        $component = new Component('test', 'test', $pane);
-        $pane->addComponent($component);
-
-        $result = $dashboard->toArray();
-
-        $expected = array(
-            'test1' => array(
-                'title' => 'test1'
-            ),
-            'test1.test' => array(
-                'url' => 'test'
-            )
-        );
-
-        $this->assertEquals(
-            $expected,
-            $result,
-            'Dashboard::toArray() could not return valid expectation'
         );
     }
 
@@ -346,53 +291,11 @@ class DashboardTest extends BaseTestCase
         $component = new Component('test', 'test', $pane);
         $pane->addComponent($component);
 
-        $dashboard->setComponentUrl('test1', 'test', 'new');
+        $dashboard->getPane('test1')->getComponent('test')->setUrl('new');
 
         $this->assertEquals(
             'new',
             $component->getUrl()->getPath(),
-            'Dashboard::setComponentUrl() could not return valid expectation'
-        );
-    }
-
-    /**
-     * @depends testWhetherGetPaneReturnsAPaneByName
-     */
-    public function testWhetherSetComponentUrlUpdatesTheComponentUrlConcatenation()
-    {
-        $dashboard = new Dashboard();
-        $dashboard->createPane('test1');
-        $pane = $dashboard->getPane('test1');
-        $component = new Component('test', 'test', $pane);
-        $pane->addComponent($component);
-
-        $dashboard->setComponentUrl('test1.test', null, 'new');
-
-        $this->assertEquals(
-            'new',
-            $component->getUrl()->getPath(),
-            'Dashboard::setComponentUrl() could not return valid expectation'
-        );
-    }
-
-    /**
-     * @depends testWhetherGetPaneReturnsAPaneByName
-     */
-    public function testWhetherSetComponentUrlUpdatesTheComponentUrlNotExistentPane()
-    {
-        $dashboard = new Dashboard();
-        $dashboard->createPane('test1');
-        $pane = $dashboard->getPane('test1');
-        $component = new Component('test', 'test', $pane);
-        $pane->addComponent($component);
-
-        $dashboard->setComponentUrl('test3.test', null, 'new');
-
-        $result = $dashboard->getPane('test3')->getComponent('test');
-
-        $this->assertEquals(
-            'new',
-            $result->getUrl()->getPath(),
             'Dashboard::setComponentUrl() could not return valid expectation'
         );
     }

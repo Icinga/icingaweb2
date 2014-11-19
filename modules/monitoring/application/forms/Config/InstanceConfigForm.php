@@ -71,12 +71,12 @@ class InstanceConfigForm extends ConfigForm
         if (! $name) {
             throw new InvalidArgumentException(mt('monitoring', 'Instance name missing'));
         }
-        if (isset($this->config->{$name})) {
+        if ($this->config->hasSection($name)) {
             throw new InvalidArgumentException(mt('monitoring', 'Instance already exists'));
         }
 
         unset($values['name']);
-        $this->config->{$name} = $values;
+        $this->config->setSection($name, $values);
         return $this;
     }
 
@@ -96,14 +96,13 @@ class InstanceConfigForm extends ConfigForm
             throw new InvalidArgumentException(mt('monitoring', 'Old instance name missing'));
         } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
             throw new InvalidArgumentException(mt('monitoring', 'New instance name missing'));
-        } elseif (! ($instanceConfig = $this->config->get($name))) {
+        } elseif (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(mt('monitoring', 'Unknown instance name provided'));
         }
 
         unset($values['name']);
-        unset($this->config->{$name});
-        $this->config->{$newName} = $values;
-        return $this->config->{$newName};
+        $this->config->setSection($name, $values);
+        return $this->config->getSection($name);
     }
 
     /**
@@ -119,11 +118,12 @@ class InstanceConfigForm extends ConfigForm
     {
         if (! $name) {
             throw new InvalidArgumentException(mt('monitoring', 'Instance name missing'));
-        } elseif (! ($instanceConfig = $this->config->get($name))) {
+        } elseif (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(mt('monitoring', 'Unknown instance name provided'));
         }
 
-        unset($this->config->{$name});
+        $instanceConfig = $this->config->getSection($name);
+        $this->config->removeSection($name);
         return $instanceConfig;
     }
 
@@ -138,11 +138,11 @@ class InstanceConfigForm extends ConfigForm
             if (! $instanceName) {
                 throw new ConfigurationError(mt('monitoring', 'Instance name missing'));
             }
-            if (! isset($this->config->{$instanceName})) {
+            if (! $this->config->hasSection($instanceName)) {
                 throw new ConfigurationError(mt('monitoring', 'Unknown instance name given'));
             }
 
-            $instanceConfig = $this->config->{$instanceName}->toArray();
+            $instanceConfig = $this->config->getSection($instanceName)->toArray();
             $instanceConfig['name'] = $instanceName;
             $this->populate($instanceConfig);
         }

@@ -218,7 +218,12 @@ class FilterEditor extends AbstractWidget
 
         if ($strip) {
             $redirect = $this->url();
-            $filter->replaceById($strip, $filter->getById($strip . '-1'));
+            $subId = $strip . '-1';
+            if ($filter->getId() === $strip) {
+                $filter = $filter->getById($strip . '-1');
+            } else {
+                $filter->replaceById($strip, $filter->getById($strip . '-1'));
+            }
             $redirect->setQueryString($filter->toQueryString())->getParams()->add('modifyFilter');
             $this->redirectNow($redirect->addParams($preserve));
         }
@@ -341,7 +346,7 @@ class FilterEditor extends AbstractWidget
     protected function renderFilter($filter, $level = 0)
     {
         if ($level === 0 && $filter->isChain() && $filter->isEmpty()) {
-            return '<ul class="datafilter"><li style="background-color: #ffb">' . $this->renderNewFilter() . '</li></ul>';
+            return '<ul class="datafilter"><li class="active">' . $this->renderNewFilter() . '</li></ul>';
         }
 
         if ($filter instanceof FilterChain) {
@@ -398,7 +403,7 @@ class FilterEditor extends AbstractWidget
                   . $this->text($filter)
                   . $this->removeLink($filter)
                   . $this->addLink($filter)
-                  . '</li><li style="background-color: #ffb">'
+                  . '</li><li class="active">'
                   . $this->renderNewFilter() .$this->cancelLink()
                   . '</li></ul>'
                   ;
@@ -585,7 +590,7 @@ class FilterEditor extends AbstractWidget
             } else {
                 $parent = $filter->getById($addTo);
                 $f = Filter::expression($add['column'], $add['sign'], $add['value']);
-                if ($add['operator']) {
+                if (isset($add['operator'])) {
                     switch($add['operator']) {
                         case 'AND':
                             if ($parent->isExpression()) {
@@ -665,7 +670,7 @@ class FilterEditor extends AbstractWidget
               . '<form action="'
               . Url::fromRequest()
               . '" class="filterEditor" method="POST">'
-              . '<ul class="tree"><li>'
+              . '<ul class="tree widgetFilter"><li>'
               . $this->renderFilter($this->filter)
               . '</li></ul>'
               . '<div style="float: right">'

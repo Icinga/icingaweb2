@@ -8,6 +8,7 @@ use ErrorException;
 use Exception;
 use LogicException;
 use Icinga\Application\Modules\Manager as ModuleManager;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
@@ -372,7 +373,7 @@ abstract class ApplicationBootstrap
         $this->moduleManager = new ModuleManager(
             $this,
             $this->configDir . '/enabledModules',
-            explode(':', $this->config->fromSection('global', 'module_path', $this->baseDir . '/modules'))
+            explode(':', $this->config->get('global', 'module_path', $this->baseDir . '/modules'))
         );
         return $this;
     }
@@ -415,7 +416,7 @@ abstract class ApplicationBootstrap
     protected function setupLogging()
     {
         Logger::create(
-            new Config(
+            new ConfigObject(
                 array(
                     'log' => 'syslog'
                 )
@@ -476,9 +477,9 @@ abstract class ApplicationBootstrap
      */
     protected function setupLogger()
     {
-        if (($loggingConfig = $this->config->logging) !== null) {
+        if ($this->config->hasSection('logging')) {
             try {
-                Logger::create($loggingConfig);
+                Logger::create($this->config->getSection('logging'));
             } catch (ConfigurationError $e) {
                 Logger::error($e);
             }

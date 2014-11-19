@@ -6,8 +6,8 @@ namespace Icinga\Module\Setup\Forms;
 
 use Exception;
 use LogicException;
-use Icinga\Application\Config;
 use Icinga\Web\Form;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Authentication\Backend\DbUserBackend;
 use Icinga\Authentication\Backend\LdapUserBackend;
@@ -253,10 +253,10 @@ class AdminAccountPage extends Form
     protected function fetchUsers()
     {
         if ($this->backendConfig['backend'] === 'db') {
-            $backend = new DbUserBackend(ResourceFactory::createResource(new Config($this->resourceConfig)));
+            $backend = new DbUserBackend(ResourceFactory::createResource(new ConfigObject($this->resourceConfig)));
         } elseif ($this->backendConfig['backend'] === 'ldap') {
             $backend = new LdapUserBackend(
-                ResourceFactory::createResource(new Config($this->resourceConfig)),
+                ResourceFactory::createResource(new ConfigObject($this->resourceConfig)),
                 $this->backendConfig['user_class'],
                 $this->backendConfig['user_name_attribute'],
                 $this->backendConfig['base_dn']

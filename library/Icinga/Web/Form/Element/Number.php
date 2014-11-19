@@ -47,7 +47,6 @@ class Number extends FormElement
      */
     public function init()
     {
-        $this->addValidator('Float', true);  // true for breaking the validator chain on failure
         if ($this->min !== null) {
             $this->addValidator('GreaterThan', true, array('min' => $this->min));
         }
@@ -126,5 +125,20 @@ class Number extends FormElement
     public function getStep()
     {
         return $this->step;
+    }
+
+    /**
+     * (non-PHPDoc)
+     * @see \Zend_Form_Element::isValid() For the method documentation.
+     */
+    public function isValid($value, $context = null)
+    {
+        $this->setValue($value);
+        $value = $this->getValue();
+        if (! is_numeric($value)) {
+            $this->addError(sprintf($this->translate('\'%s\' is not a valid number'), $value));
+            return false;
+        }
+        return parent::isValid($value, $context);
     }
 }

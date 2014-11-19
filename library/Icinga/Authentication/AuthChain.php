@@ -5,6 +5,7 @@
 namespace Icinga\Authentication;
 
 use Iterator;
+use Icinga\Data\ConfigObject;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
@@ -40,11 +41,13 @@ class AuthChain implements Iterator
 
     /**
      * Rewind the chain
+     *
+     * @return  ConfigObject
      */
     public function rewind()
     {
-        $this->config->rewind();
         $this->currentBackend = null;
+        return $this->config->rewind();
     }
 
     /**
@@ -60,7 +63,7 @@ class AuthChain implements Iterator
     /**
      * Return the key of the current user backend config
      *
-     * @return string
+     * @return  string
      */
     public function key()
     {
@@ -69,16 +72,18 @@ class AuthChain implements Iterator
 
     /**
      * Move forward to the next user backend config
+     *
+     * @return  ConfigObject
      */
     public function next()
     {
-        $this->config->next();
+        return $this->config->next();
     }
 
     /**
-     * Check if the current user backend is valid, i.e. it's enabled and the config's valid
+     * Check if the current user backend is valid, i.e. it's enabled and the config is valid
      *
-     * @return bool
+     * @return  bool
      */
     public function valid()
     {
@@ -86,13 +91,15 @@ class AuthChain implements Iterator
             // Stop when there are no more backends to check
             return false;
         }
+
         $backendConfig = $this->config->current();
         if ((bool) $backendConfig->get('disabled', false) === true) {
             $this->next();
             return $this->valid();
         }
+
+        $name = $this->key();
         try {
-            $name = $this->key();
             $backend = UserBackend::create($name, $backendConfig);
         } catch (ConfigurationError $e) {
             Logger::error(
@@ -105,6 +112,7 @@ class AuthChain implements Iterator
             $this->next();
             return $this->valid();
         }
+
         $this->currentBackend = $backend;
         return true;
     }

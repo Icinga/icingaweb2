@@ -6,7 +6,7 @@ $objectName = $this->is_service ? 'Services' : 'Hosts';
   <th><a href=<?= count($comments) ?> <?= $this->translate('Comments') ?></th>
   <td>
     <a href="<?= $this->href('monitoring/command/removecomment', $this->target) ?>"><?=
-        $this->icon('minus')
+        $this->icon('cancel')
     ?> <?= $this->translate('Remove Comments') ?></a><br />
     <a href="<?= $this->href('monitoring/command/delaynotifications', $this->target); ?>"><?=
         $this->icon('bell-off-empty')
