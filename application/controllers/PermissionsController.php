@@ -15,7 +15,7 @@ class SecurityController extends ActionController
         $this->view->roles = Config::app('roles', true);
     }
 
-    public function newRoleAction()
+    public function newAction()
     {
         $role = new RoleForm(array(
             'onSuccess' => function (RoleForm $role) {
@@ -42,7 +42,7 @@ class SecurityController extends ActionController
         $this->view->form = $role;
     }
 
-    public function updateRoleAction()
+    public function updateAction()
     {
         $name = $this->_request->getParam('role');
         if (empty($name)) {
@@ -86,7 +86,7 @@ class SecurityController extends ActionController
         $this->view->form = $role;
     }
 
-    public function removeRoleAction()
+    public function removeAction()
     {
         $name = $this->_request->getParam('role');
         if (empty($name)) {

@@ -19,14 +19,14 @@
                         <td>
                             <?= $this->escape($name) ?>
                             <div class="hidden">
-                                <a href="<?= $this->url('security/update-role', array('role' => $name)) ?>"></a>
+                                <a href="<?= $this->url('permissions/update', array('role' => $name)) ?>"></a>
                             </div>
                         </td>
                         <td><?= $this->escape($role->permissions) ?></td>
                         <td><?= $this->escape($role->users) ?></td>
                         <td><?= $this->escape($role->groups) ?></td>
                         <td>
-                            <a href="<?= $this->url('security/remove-role', array('role' => $name)) ?>">
+                            <a href="<?= $this->url('permissions/remove', array('role' => $name)) ?>">
                                 <?= $this->translate('Remove role') ?>
                             </a>
                         </td>
@@ -35,7 +35,7 @@
                 </tbody>
             </table>
         <?php endif ?>
-        <a data-base-target="_next" href="<?= $this->href('security/new-role') ?>">
+        <a data-base-target="_next" href="<?= $this->href('permissions/new') ?>">
             <?= $this->translate('New Role') ?>
         </a>
     </div>
