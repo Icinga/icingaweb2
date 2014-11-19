@@ -194,8 +194,12 @@ tr.state.handled td.state {
 }
 
 /* HOVER colors */
+tr[href]:hover {
+  color: black;
+  background-color: #eee;
+}
 
-tr[href]:hover, tr.state[href]:hover td.state {
+tr.state[href]:hover td.state {
   color: white;
   background-color: #eee;
 }
