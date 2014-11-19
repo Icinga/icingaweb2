@@ -64,7 +64,7 @@ class Monitoring_AlertsummaryController extends Controller
      */
     public function indexAction()
     {
-        $this->addTitleTab('alertsummary');
+        $this->addTitleTab('alertsummary', t('Alert Summary'));
         $this->view->intervalBox = $this->createIntervalBox();
         $this->view->recentAlerts = $this->createRecentAlerts();
         $this->view->interval = $this->getInterval();
