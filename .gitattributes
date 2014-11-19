@@ -3,3 +3,7 @@
 
 # Normalize puppet manifests' line endings to LF on checkin and prevent conversion to CRLF when the files are checked out
 .vagrant-puppet/* eol=lf
+
+# Ignore packaging related files when generating and archive
+icingaweb2.spec export-ignore
+packages export-ignore
