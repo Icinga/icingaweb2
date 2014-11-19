@@ -113,7 +113,7 @@ class RoleForm extends ConfigForm
                 $name
             ));
         }
-        $role = $this->config->{$name}->toArray();
+        $role = $this->config->getSection($name)->toArray();
         $role['permissions'] = ! empty($role['permissions'])
             ? String::trimSplit($role['permissions'])
             : null;
