@@ -6,6 +6,7 @@ use Icinga\Application\Config;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Security\PermissionForm;
 use Icinga\Forms\Security\RestrictionForm;
+use Icinga\Forms\Security\RoleForm;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
@@ -14,8 +15,34 @@ class SecurityController extends ActionController
 {
     public function indexAction()
     {
-        $this->view->permissions = Config::app('permissions', true);
-        $this->view->restrictions = Config::app('restrictions', true);
+        $this->view->roles = Config::app('roles', true);
+    }
+
+    public function newRoleAction()
+    {
+        $role = new RoleForm(array(
+            'onSuccess' => function (RoleForm $role) {
+                $name = $role->getElement('name')->getValue();
+                $values = $role->getValues();
+                try {
+                    $role->add($name, $values);
+                } catch (InvalidArgumentException $e) {
+                    $role->addError($e->getMessage());
+                    return false;
+                }
+                if ($role->save()) {
+                    Notification::success(t('Role created'));
+                    return true;
+                }
+                return false;
+            }
+        ));
+        $role
+            ->setSubmitLabel($this->translate('Create Role'))
+            ->setIniConfig(Config::app('roles', true))
+            ->setRedirectUrl('security')
+            ->handleRequest();
+        $this->view->form = $role;
     }
 
     public function newPermissionAction()
