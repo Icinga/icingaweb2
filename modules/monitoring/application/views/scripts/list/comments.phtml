@@ -50,7 +50,7 @@
         </td>
         <td>
         <?php if ($comment->objecttype === 'service'): ?>
-          <?= $this->icon('service'); ?> <a href="<?= $this->href('monitoring/service/show', array(
+          <?= $this->icon('conf'); ?> <a href="<?= $this->href('monitoring/service/show', array(
             'host'    => $comment->host,
             'service' => $comment->service,
           )); ?>">

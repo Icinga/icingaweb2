@@ -194,8 +194,12 @@ tr.state.handled td.state {
 }
 
 /* HOVER colors */
+tr[href]:hover {
+  color: black;
+  background-color: #eee;
+}
 
-tr[href]:hover, tr.state[href]:hover td.state {
+tr.state[href]:hover td.state {
   color: white;
   background-color: #eee;
 }
@@ -309,6 +313,13 @@ a.critical {
 }
 
 .boxview div.box h2:first-child > a:hover {
+}
+
+.boxview div.box h3 {
+  line-height: 1.5em;
+  font-size: 0.9em;
+  color: #555;
+  border-bottom: 1px solid #d9d9d9;
 }
 
 /* Box body of contents */
@@ -809,10 +820,3 @@ div.timeline {
 }
 
 /* End of monitoring timeline styles */
-
-.controls {
-  font-size: 0.9em;
-}
-.controls a {
-  color: black;
-}

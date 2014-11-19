@@ -213,7 +213,7 @@ class Menu implements RecursiveIterator
             ));
 
             $section = $this->add(t('System'), array(
-                'icon'     => 'conf-alt',
+                'icon'     => 'wrench',
                 'priority' => 200
             ));
             $section->add(t('Configuration'), array(

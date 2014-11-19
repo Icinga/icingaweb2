@@ -237,18 +237,28 @@ class BackendConfigForm extends ConfigForm
             )
         );
 
-        $resourceName = (isset($formData['resource'])) ? $formData['resource'] : $this->getValue('resource');
-        if ($resourceElement) {
-            $resourceElement->getDecorator('Description')->setEscape(false);
-            $link = sprintf(
-                '<a href="%s" data-base-target="_main">%s</a>',
-                $this->getView()->href('/icingaweb/config/editresource', array('resource' => $resourceName)),
-                mt('monitoring', 'Show resource configuration')
-            );
-            $resourceElement->setDescription($resourceElement->getDescription() . ' (' . $link . ')');
+        if (empty($formData)) {
+            $options = $resourceElement->options;
+            $resourceName = array_shift($options);
+        } else {
+            $resourceName = (isset($formData['resource'])) ? $formData['resource'] : $this->getValue('resource');
         }
 
         $this->addElement($resourceElement);
 
+        if ($resourceElement) {
+            $this->addElement(
+                'note',
+                'resource_note',
+                array(
+                    'value' => sprintf(
+                        '<a href="%s" data-base-target="_main">%s</a>',
+                        $this->getView()->href('/icingaweb/config/editresource', array('resource' => $resourceName)),
+                        mt('monitoring', 'Show resource configuration')
+                    ),
+                    'escape' => false
+                )
+            );
+        }
     }
 }
