@@ -114,7 +114,11 @@ class Dashboard extends AbstractWidget
      */
     private function loadUserDashboards()
     {
-        $config = Config::fromIni($this->getConfigFile());
+        try {
+            $config = Config::fromIni($this->getConfigFile());
+        } catch (NotReadableError $e) {
+            return;
+        }
         if (! count($config)) {
             return false;
         }

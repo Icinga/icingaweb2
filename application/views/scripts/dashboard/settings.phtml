@@ -38,6 +38,7 @@
                     </tr>
                 <?php else: ?>
                     <?php foreach ($components as $component): ?>
+                    <?php if ($component->getDisabled() === true) continue; ?>
                         <tr>
                             <td>
                                 <a href="<?= $this->href('dashboard/update-component', array('pane' => $pane->getName(), 'component' => $component->getTitle()));  ?>">
