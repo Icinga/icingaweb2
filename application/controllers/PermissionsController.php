@@ -7,11 +7,30 @@ use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Security\RoleForm;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Notification;
+use Icinga\Web\Widget;
 
 class PermissionsController extends ActionController
 {
+    public function init()
+    {
+        $this->view->tabs = Widget::create('tabs')->add('index', array(
+            'title' => $this->translate('Application'),
+            'url'   => 'config'
+        ))->add('authentication', array(
+            'title' => $this->translate('Authentication'),
+            'url'   => 'config/authentication'
+        ))->add('resources', array(
+            'title' => $this->translate('Resources'),
+            'url'   => 'config/resource'
+        ))->add('permissions', array(
+            'title' => $this->translate('Permissions'),
+            'url'   => 'permissions'
+        ));
+    }
+
     public function indexAction()
     {
+        $this->view->tabs->activate('permissions');
         $this->view->roles = Config::app('roles', true);
     }
 
