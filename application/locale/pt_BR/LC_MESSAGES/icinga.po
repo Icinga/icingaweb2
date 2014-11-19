@@ -1,67 +1,179 @@
-# Icinga Web 2 - Head for multiple monitoring backends.
-# Copyright (C) 2014 Icinga Development Team
-# This file is distributed under the same license as Icinga Web 2.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (0.1)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
 "POT-Creation-Date: 2014-06-03 15:23+0200\n"
-"PO-Revision-Date: 2014-06-03 12:09-0300\n"
+"PO-Revision-Date: 2014-11-18 16:11-0300\n"
 "Last-Translator: Carlos Cesario <carloscesario@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pt_BR\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: /usr/local/icingaweb/application/views/scripts/mixedPagination.phtml:15
+#: /usr/local/icingaweb/library/Icinga/Web/Menu/MonitoringMenuItemRenderer.php:41
 #, php-format
-msgid "%d to %d of %d"
-msgstr "%d para %d de %d"
+msgid "%d unhandled hosts down"
+msgstr "%d hosts não tratados down"
 
+#: /usr/local/icingaweb/library/Icinga/Web/Menu/MonitoringMenuItemRenderer.php:42
+#, php-format
+msgid "%d unhandled services critical"
+msgstr "%d serviços não tratados críticos"
+
+#: /usr/local/icingaweb/library/Icinga/Web/View/DateTimeRenderer.php:186
+msgctxt "timespan"
+msgid "%im %ss"
+msgstr "%im %ss"
+
+#: /usr/local/icingaweb/application/views/scripts/joystickPagination.phtml:9
 #: /usr/local/icingaweb/application/views/scripts/pivottablePagination.phtml:9
 #, php-format
 msgid "%s: %d to %d of %d"
-msgstr "%s: %d para %d de %d"
+msgstr "%s: %d até %d de %d"
 
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:117
+#: /usr/local/icingaweb/library/Icinga/Web/Form/Element/Number.php:139
+#, php-format
+msgid "'%s' is not a valid number"
+msgstr "'%s' não é um número válido"
+
+#: /usr/local/icingaweb/application/forms/Dashboard/AddUrlForm.php:22
+msgid "Add To Dashboard"
+msgstr "Adicionar ao dashboard"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterWidget.php:81
+msgid "Add filter..."
+msgstr "Adicionar filtro..."
+
+#: /usr/local/icingaweb/application/controllers/AuthenticationController.php:109
+msgid ""
+"All configured authentication methods failed. Please check the system log or "
+"Icinga Web 2 log for more information."
+msgstr ""
+"Todos os métodos de autenticação configurados falharam. Por favor, verifique "
+"o log de sistema ou o log do Icinga Web 2 para obter mais informações."
+
+#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:229
+msgid "Application Log"
+msgstr "Log da aplicação"
+
+#: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:68
 msgid "Application Prefix"
 msgstr "Prefixo da aplicação"
 
-#: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:78
-#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:80
+#: /usr/local/icingaweb/library/Icinga/Web/Form/Decorator/NoScriptApply.php:29
+msgid "Apply"
+msgstr "Aplicar"
+
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:214
+#, php-format
+msgid "Authentication backend \"%s\" has been successfully changed"
+msgstr "Backend de autenticação \"%s\" foi alterado com sucesso"
+
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:211
+#, php-format
+msgid "Authentication backend \"%s\" has been successfully created"
+msgstr "Backend de autenticação \"%s\" foi criado com sucesso"
+
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:194
+#, php-format
+msgid "Authentication backend \"%s\" has been successfully removed"
+msgstr "Backend de autenticação \"%s\" foi removido com sucesso"
+
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:96
+msgid "Authentication backend already exists"
+msgstr "Backend de autenticação já existe"
+
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:94
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:147
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:170
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:240
+msgid "Authentication backend name missing"
+msgstr "Falta o nome do backend de autenticação"
+
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendReorderForm.php:55
+msgid "Authentication order updated!"
+msgstr "Ordem da autenticação atualizada!"
+
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:307
+msgid "Autologin"
+msgstr "Login automático"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Wizard.php:462
+#: /usr/local/icingaweb/library/Icinga/Web/Wizard.php:483
+msgid "Back"
+msgstr "Voltar"
+
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:244
+#, php-format
+msgid "Backend \"%s\" has no `backend' setting"
+msgstr "Backend \"%s\" não tem nenhuma configuração de `backend'"
+
+#: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:56
+#: /usr/local/icingaweb/application/forms/Config/Authentication/AutologinBackendForm.php:33
+#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:57
 msgid "Backend Name"
 msgstr "Nome do backend"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:282
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:282
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:321
+msgid "Backend Type"
+msgstr "Tipo do backend"
+
+#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:108
+msgid "Base DN"
+msgstr "Base DN"
+
+#: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:73
 msgid "Bind DN"
 msgstr "Bind DN"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:294
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:294
+#: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:83
 msgid "Bind Password"
 msgstr "Senha Bind"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:358
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:358
-#: /usr/local/icingaweb/application/forms/Config/Authentication/BaseBackendForm.php:139
+#: /usr/local/icingaweb/application/forms/PreferenceForm.php:145
+#: /usr/local/icingaweb/application/forms/PreferenceForm.php:151
+#, php-format
+msgctxt "preferences.form"
+msgid "Browser (%s)"
+msgstr "Navegador (%s)"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:335
+msgid "Cancel this operation"
+msgstr "Cancelar esta operação"
+
+#: /usr/local/icingaweb/library/Icinga/Application/Config.php:296
+#, php-format
+msgid "Cannot read config file \"%s\". Permission denied"
+msgstr "Não é possível ler arquivo de configuração \"%s\". Permissão negada"
+
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:280
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:201
 msgid "Check this box to enforce changes without connectivity validation"
-msgstr "Marque esta caixa para aplicar as mudanças sem validação conectividade"
+msgstr ""
+"Marque esta caixa para forçar as alterações sem validação conectividade"
 
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:73
-msgid "Check this to enable logging."
-msgstr "Marque esta opção para ativar o registro log."
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:309
+msgid "Click to add another filter"
+msgstr "Clique para adicionar outro filtro"
 
-#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:187
-msgid "Connection Validation Failed: "
-msgstr "Validação de conexão falhou:"
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterWidget.php:69
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:296
+msgid "Click to remove this part of your filter"
+msgstr "Clique para remover esta parte do seu filtro"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:477
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:457
+#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:219
+msgid "Configuration"
+msgstr "Configuração"
+
+#: /usr/local/icingaweb/application/forms/ConfirmRemovalForm.php:20
+msgid "Confirm Removal"
+msgstr "Confirmar a remoção"
+
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:135
+#: /usr/local/icingaweb/application/forms/Config/Resource/LivestatusResourceForm.php:79
+#: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:122
 msgid ""
 "Connectivity validation failed, connection to the given resource not "
 "possible."
@@ -69,189 +181,317 @@ msgstr ""
 "A validação de conectividade falhou, a conexão com o recurso selecionado não "
 "é possível."
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:454
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:470
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:434
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:450
-msgid "Connectivity validation failed, the provided file does not exist."
-msgstr "A validação de conectividade falhou, o arquivo fornecido não existe."
+#: /usr/local/icingaweb/application/forms/Config/General/ApplicationConfigForm.php:40
+msgid ""
+"Contains the directories that will be searched for available modules, "
+"separated by colons. Modules that don't exist in these directories can still "
+"be symlinked in the module folder, but won't show up in the list of disabled "
+"modules."
+msgstr ""
+"Contém os diretórios que serão pesquisados para os módulos disponíveis, "
+"separados por dois pontos.  Módulos que não estão nestes diretórios podem "
+"ainda serem linkados simbolicamente para a pasta dos módulos,  mas não "
+"aparecerão na lista de módulos desabilitados. "
 
-#: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:90
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:260
+msgid "Could not find any resources for authentication"
+msgstr "Não foi possível encontrar os recursos para autenticação"
+
+#: /usr/local/icingaweb/application/controllers/AuthenticationController.php:60
+msgid ""
+"Could not read your authentication.ini, no authentication methods are "
+"available."
+msgstr ""
+"Não foi possível ler o arquivo authentication.ini, não há métodos de "
+"autenticação disponíveis."
+
+#: /usr/local/icingaweb/application/views/scripts/config/authentication/reorder.phtml:7
+msgid "Create A New Authentication Backend"
+msgstr "Criar um novo backend de autenticação"
+
+#: /usr/local/icingaweb/application/forms/Dashboard/AddUrlForm.php:88
+msgid "Create A New Pane"
+msgstr "Criar um novo painel"
+
+#: /usr/local/icingaweb/application/views/scripts/config/resource.phtml:7
+#: /usr/local/icingaweb/application/views/scripts/config/resource/create.phtml:4
+msgid "Create A New Resource"
+msgstr "Criar um novo recurso"
+
+#: /usr/local/icingaweb/application/views/scripts/config/authentication/create.phtml:4
+msgid "Create New Authentication Backend"
+msgstr "Criar um novo backend de autenticação"
+
+#: /usr/local/icingaweb/application/views/scripts/config/authentication/create.phtml:7
+msgid ""
+"Create a new backend for authenticating your users. This backend will be "
+"added at the end of your authentication order."
+msgstr ""
+"Criar um novo backend para autenticar os usuários. Este backend será "
+"adicionado por último."
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/index.phtml:12
+#, php-format
+msgid ""
+"Currently there is no dashlet available. This might change once you enabled "
+"some of the available %s."
+msgstr ""
+"Atualmente não há nenhum dashlet disponível. Isso pode mudar, uma vez que "
+"você habilite algum dos disponíveis %s."
+
+#: /usr/local/icingaweb/application/layouts/scripts/body.phtml:31
+#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:209
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:294
+#: /usr/local/icingaweb/application/forms/Config/General/ApplicationConfigForm.php:56
+msgid "Database"
+msgstr "Banco de dados"
+
+#: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:67
+#: /usr/local/icingaweb/application/forms/Config/General/ApplicationConfigForm.php:75
 msgid "Database Connection"
 msgstr "Conexão com o banco de dados"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:183
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:183
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:83
 msgid "Database Name"
 msgstr "Nome do banco de dados"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:144
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:144
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:53
 msgid "Database Type"
 msgstr "Tipo do banco de dados"
 
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:89
+#: /usr/local/icingaweb/library/Icinga/Web/Form/Validator/DateTimeValidator.php:49
+#, php-format
+msgid "Date/time string not in the expected format %s"
+msgstr "String Data/Hora não está no formato esperado %s"
+
+#: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:56
+msgctxt "app.config.logging.level"
 msgid "Debug"
 msgstr "Depurar"
 
-#: /usr/local/icingaweb/application/forms/Config/GeneralForm.php:185
-msgid "Default Language"
-msgstr "Idioma padrão"
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:20
+msgid ""
+"Details can be found in the application log. (If you don't have access to "
+"this log, call your administrator in this case)"
+msgstr ""
+"Detalhes podem ser encontrados no log da aplicação. (Se você não tem acesso "
+"a este registro, neste caso entre em contato com o seu administrador)"
 
-#: /usr/local/icingaweb/application/controllers/ErrorController.php:62
+#: /usr/local/icingaweb/application/forms/Config/General/ApplicationConfigForm.php:57
+msgid "Don't Store Preferences"
+msgstr "Não salvar as preferências"
+
+#: /usr/local/icingaweb/application/views/scripts/config/authentication/modify.phtml:4
+msgid "Edit Backend"
+msgstr "Editar backend"
+
+#: /usr/local/icingaweb/application/views/scripts/config/resource/modify.phtml:4
+msgid "Edit Existing Resource"
+msgstr "Editar o recurso existente"
+
+#: /usr/local/icingaweb/application/controllers/ErrorController.php:41
 #, php-format
 msgid "Enabling the \"%s\" module might help!"
 msgstr "Habilitando o módulo \"%s\" pode ajudar!"
 
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:86
+#: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:53
+msgctxt "app.config.logging.level"
 msgid "Error"
 msgstr "Erro"
 
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:139
-msgid "Facility"
-msgstr "Facilidade"
-
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:102
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:383
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:383
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:214
 msgid "File"
 msgstr "Arquivo"
 
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:155
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:220
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:231
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:308
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:220
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:231
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:308
+#: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:38
+msgctxt "app.config.logging.type"
+msgid "File"
+msgstr "Arquivo"
+
+#: /usr/local/icingaweb/application/forms/Config/General/ApplicationConfigForm.php:55
+msgid "File System (INI Files)"
+msgstr "Sistema de arquivos (Arquivos INI)"
+
+#: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:107
+msgid "File path"
+msgstr "Caminho do arquivo"
+
+#: /usr/local/icingaweb/application/forms/Config/Resource/FileResourceForm.php:42
 msgid "Filepath"
 msgstr "Caminho do arquivo"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:357
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:357
-#: /usr/local/icingaweb/application/forms/Config/Authentication/BaseBackendForm.php:138
-msgid "Force Changes"
-msgstr "Forçar mudanças"
+#: /usr/local/icingaweb/application/forms/Config/Authentication/AutologinBackendForm.php:55
+msgid "Filter Pattern"
+msgstr "Padrão do filtro"
 
-#: /usr/local/icingaweb/application/views/scripts/search/hint.phtml:7
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterWidget.php:90
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:642
+msgid "Filter this list"
+msgstr "Filtrar esta lista"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterWidget.php:94
+msgid "Filtered"
+msgstr "Filtrado"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Wizard.php:493
+msgid "Finish"
+msgstr "Finalizar"
+
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:279
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:200
+msgid "Force Changes"
+msgstr "Forçar as alterações"
+
+#: /usr/local/icingaweb/application/views/scripts/search/hint.phtml:3
 msgid "Hint"
 msgstr "Sugestão"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:160
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:260
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:160
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:260
+#: /usr/local/icingaweb/application/forms/LdapDiscoveryForm.php:50
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:63
+#: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:44
 msgid "Host"
 msgstr "Host"
 
+#: /usr/local/icingaweb/application/views/scripts/joystickPagination.phtml:35
+#: /usr/local/icingaweb/application/views/scripts/joystickPagination.phtml:87
 #: /usr/local/icingaweb/application/views/scripts/pivottablePagination.phtml:28
-#: /usr/local/icingaweb/application/controllers/SearchController.php:33
 msgid "Hosts"
 msgstr "Hosts"
 
-#: /usr/local/icingaweb/application/views/scripts/search/hint.phtml:6
+#: /usr/local/icingaweb/application/views/scripts/search/hint.phtml:2
 msgid "I'm ready to search, waiting for your input"
 msgstr "Estou pronto para pesquisar, aguardando sua entrada"
 
-#: /usr/local/icingaweb/application/views/scripts/authentication/login.phtml:8
-#: /usr/local/icingaweb/application/controllers/AuthenticationController.php:63
+#: /usr/local/icingaweb/application/forms/LdapDiscoveryForm.php:51
+msgid "IP or host name to search."
+msgstr "IP ou nome do host para pesquisa."
+
+#: /usr/local/icingaweb/application/controllers/AuthenticationController.php:42
 msgid "Icingaweb Login"
 msgstr "Login no Icingaweb"
 
-#: /usr/local/icingaweb/application/views/scripts/authentication/logout.phtml:17
+#: /usr/local/icingaweb/application/views/scripts/authentication/logout.phtml:14
 msgid ""
 "If this message does not disappear, it might be necessary to quit the "
 "current session manually by clearing the cache, or by closing the current "
 "browser session."
 msgstr ""
 "Se esta mensagem não desaparecer, pode ser necessário sair da sessão atual "
-"manualmente, limpando o cache ou fechando a sessão atual do navegador. "
+"manualmente limpando o cache ou fechando a sessão atual do navegador. "
 
-#: /usr/local/icingaweb/application/controllers/AuthenticationController.php:118
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:22
+msgid ""
+"In case you can access the file by yourself, you can open it and insert the "
+"config manually:"
+msgstr ""
+"Caso você mesmo possa acessar o arquivo, você pode abri-lo e inserir a "
+"configuração manualmente:"
+
+#: /usr/local/icingaweb/application/controllers/AuthenticationController.php:122
 msgid "Incorrect username or password"
-msgstr "Usuário ou senha inválido"
+msgstr "Usuário ou senha inválida"
 
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:88
+#: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:55
+msgctxt "app.config.logging.level"
 msgid "Information"
 msgstr "Informação"
 
-#: /usr/local/icingaweb/library/Icinga/Web/Wizard/Wizard.php:337
-#: /usr/local/icingaweb/library/Icinga/Web/Wizard/Wizard.php:380
-msgid "Install"
-msgstr "Instalar"
+#: /usr/local/icingaweb/application/views/scripts/config/modules.phtml:3
+msgid "Installed Modules"
+msgstr "Módulos instalados"
 
-#: /usr/local/icingaweb/application/views/scripts/install/index.phtml:29
-msgid "Installation"
-msgstr "Instalação"
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:73
+#, php-format
+msgid "Invalid backend type \"%s\" provided"
+msgstr "Tipo \"%s\" inválido de backend fornecido"
 
-#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:92
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:46
+#, php-format
+msgid "Invalid resource type \"%s\" provided"
+msgstr "Tipo \"%s\" inválido de recurso fornecido"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Form/Validator/DateTimeValidator.php:42
+msgid "Invalid type given. Instance of DateTime or date/time string expected"
+msgstr ""
+"Tipo fornecido inválido. Esperado uma string do tipo DataHora ou data/hora"
+
+#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:68
 msgid "LDAP Resource"
 msgstr "Recurso LDAP"
 
-#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:115
+#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:90
 msgid "LDAP User Name Attribute"
 msgstr "Atributo LDAP Nome de usuário"
 
-#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:104
+#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:80
 msgid "LDAP User Object Class"
 msgstr "Classe LDAP Objeto de usuário"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:232
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:232
-msgid "Location of your icinga objects.cache file"
-msgstr "Localização do arquivo objects.cache do seu icinga"
-
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:221
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:221
-msgid "Location of your icinga status.dat file"
-msgstr "Localização do arquivo status.dat do seu icinga"
-
-#: /usr/local/icingaweb/application/controllers/InstallController.php:69
-msgid "Logging"
-msgstr "Registro de log"
-
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:72
-msgid "Logging Enabled"
-msgstr "Registro de log habilitado"
-
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:82
+#: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:50
 msgid "Logging Level"
 msgstr "Nível do registro de log"
 
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:98
+#: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:34
 msgid "Logging Type"
 msgstr "Tipo do registro de log"
 
-#: /usr/local/icingaweb/application/views/scripts/authentication/logout.phtml:15
+#: /usr/local/icingaweb/application/views/scripts/authentication/logout.phtml:12
 msgid "Logging out..."
 msgstr "Saída do registro de log..."
 
-#: /usr/local/icingaweb/application/views/scripts/authentication/logout.phtml:28
+#: /usr/local/icingaweb/application/views/scripts/authentication/logout.phtml:21
+#: /usr/local/icingaweb/application/forms/Authentication/LoginForm.php:21
 msgid "Login"
 msgstr "Login"
 
-#: /usr/local/icingaweb/application/layouts/scripts/body.phtml:39
 #: /usr/local/icingaweb/application/layouts/scripts/parts/topbar.phtml:35
+#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:244
 msgid "Logout"
-msgstr "Sair"
+msgstr "Logout"
 
-#: /usr/local/icingaweb/application/views/scripts/authentication/logout.phtml:64
-msgid ""
-"Logout not possible, it may be necessary to quit the session manually by "
-"clearing the cache, or closing the current browser session. Error: "
-msgstr ""
-"Não foi possível, é necessário sair da sessão manualmente, limpando o cache "
-"ou fechando a sessão atual do navegador. Erro:"
-
-#: /usr/local/icingaweb/application/views/scripts/authentication/logout.phtml:69
+#: /usr/local/icingaweb/application/views/scripts/authentication/logout.phtml:43
 msgid "Logout successful!"
-msgstr "Sucesso na saída!"
+msgstr "Sucesso ao realizar o logout!"
 
-#: /usr/local/icingaweb/application/forms/Config/Authentication/ReorderForm.php:137
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterWidget.php:95
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:644
+msgid "Modify this filter"
+msgstr "Modificar este filtro"
+
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:118
+#, php-format
+msgid "Module \"%s\" disabled"
+msgstr "Módulo \"%s\" desabilitado"
+
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:99
+#, php-format
+msgid "Module \"%s\" enabled"
+msgstr "Módulo \"%s\" habilitado"
+
+#: /usr/local/icingaweb/application/forms/Config/General/ApplicationConfigForm.php:36
+msgid "Module Path"
+msgstr "Caminho dos módulos"
+
+#: /usr/local/icingaweb/application/views/scripts/config/modules.phtml:16
+msgid "Module is disabled"
+msgstr "Módulo está desabilitado"
+
+#: /usr/local/icingaweb/application/views/scripts/config/modules.phtml:14
+msgid "Module is enabled"
+msgstr "Módulo está habilitado"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:223
+msgid "Modules"
+msgstr "Módulos"
+
+#: /usr/local/icingaweb/application/views/scripts/form/reorder-authbackend.phtml:30
 msgid "Move down in authentication order"
 msgstr "Mover para baixo na ordem de autenticação"
 
-#: /usr/local/icingaweb/application/forms/Config/Authentication/ReorderForm.php:111
+#: /usr/local/icingaweb/application/views/scripts/form/reorder-authbackend.phtml:25
 msgid "Move up in authentication order"
 msgstr "Mover para cima na ordem de autenticação"
 
@@ -259,301 +499,604 @@ msgstr "Mover para cima na ordem de autenticação"
 msgid "Navigation"
 msgstr "Navegação"
 
-#: /usr/local/icingaweb/application/views/scripts/mixedPagination.phtml:83
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:119
+msgid "New authentication backend name missing"
+msgstr "Falta o nome do novo backend de autenticação"
+
+#: /usr/local/icingaweb/application/forms/Config/GeneralConfigForm.php:55
+msgid "New configuration has successfully been stored"
+msgstr "A nova configuração foi salva com sucesso"
+
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:90
+msgid "New resource name missing"
+msgstr "Falta o nome do novo rescurso"
+
 #: /usr/local/icingaweb/application/views/scripts/mixedPagination.phtml:86
-#: /usr/local/icingaweb/library/Icinga/Web/Wizard/Wizard.php:337
-#: /usr/local/icingaweb/library/Icinga/Web/Wizard/Wizard.php:380
+#: /usr/local/icingaweb/application/views/scripts/mixedPagination.phtml:89
+#: /usr/local/icingaweb/library/Icinga/Web/Wizard.php:451
+#: /usr/local/icingaweb/library/Icinga/Web/Wizard.php:472
 msgid "Next"
 msgstr "Próximo"
 
-#: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:144
+#: /usr/local/icingaweb/application/forms/LdapDiscoveryForm.php:39
+msgid ""
+"No Ldap servers found on this domain. You can try to specify host and port "
+"and try again, or just skip this step and configure the server manually."
+msgstr ""
+"Nenhum servidor LDAP encontrado neste domínio. Você pode tentar especificar "
+"host e porta e tentar novamente, ou simplesmente pular esta etapa e "
+"configurar o servidor manualmente."
+
+#: /usr/local/icingaweb/application/controllers/AuthenticationController.php:102
+msgid ""
+"No authentication methods available. Did you create authentication.ini when "
+"setting up Icinga Web 2?"
+msgstr ""
+"Não há métodos de autenticação disponíveis. Você criou o arquivo "
+"authentication.ini ao configurar Icinga Web 2?"
+
+#: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:110
 msgid "No users found under the specified database backend"
 msgstr "Nenhum usuário encontrado no backend do banco de dados especificado"
 
-#: /usr/local/icingaweb/application/controllers/ErrorController.php:59
+#: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:39
+msgctxt "app.config.logging.type"
+msgid "None"
+msgstr "Nenhum"
+
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:117
+msgid "Old authentication backend name missing"
+msgstr "Falta o nome antigo do backend de autenticação"
+
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:88
+msgid "Old resource name missing"
+msgstr "Falta o nome do recurso antigo"
+
+#: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:65
+msgid "Only the root and its child nodes will be accessible on this resource."
+msgstr "Somente a raiz e seus nós filhos estarão acessíveis neste recurso."
+
+#: /usr/local/icingaweb/application/views/scripts/form/reorder-authbackend.phtml:6
+msgid "Order"
+msgstr "Ordenar"
+
+#: /usr/local/icingaweb/application/views/scripts/mixedPagination.phtml:33
+msgid "Page"
+msgstr "Página"
+
+#: /usr/local/icingaweb/application/controllers/ErrorController.php:38
 msgid "Page not found."
 msgstr "Página não encontrada."
 
-#: /usr/local/icingaweb/application/forms/Authentication/LoginForm.php:65
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:206
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:206
+#: /usr/local/icingaweb/application/views/scripts/mixedPagination.phtml:12
+msgid "Pagination"
+msgstr "Paginação"
+
+#: /usr/local/icingaweb/application/forms/Dashboard/AddUrlForm.php:78
+msgid "Pane"
+msgstr "Painel"
+
+#: /usr/local/icingaweb/application/forms/Authentication/LoginForm.php:44
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:102
 msgid "Password"
 msgstr "Senha"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:319
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:319
+#: /usr/local/icingaweb/library/Icinga/Web/Form/Validator/ReadablePathValidator.php:33
+msgid "Path does not exist"
+msgstr "Caminho não existe"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Form/Validator/ReadablePathValidator.php:32
+msgid "Path is not readable"
+msgstr "Caminho não tem permissão de leitura"
+
+#: /usr/local/icingaweb/application/forms/Config/Resource/FileResourceForm.php:52
 msgid "Pattern"
 msgstr "Padrão"
 
-#: /usr/local/icingaweb/library/Icinga/Web/Form/Element/Number.php:61
-msgid "Please enter a number."
-msgstr "Por favor entre com um número."
+#: /usr/local/icingaweb/application/views/scripts/dashboard/addurl.phtml:9
+msgid ""
+"Please have a little patience, we are hard working on it, take a look at "
+"icingaweb2 issues."
+msgstr ""
+"Por favor, tenha um pouco de paciência, estamos trabalhando duro nisso, dê "
+"uma olhada nos problemas do icingaweb2."
 
-#: /usr/local/icingaweb/application/views/scripts/search/hint.phtml:8
+#: /usr/local/icingaweb/application/controllers/AuthenticationController.php:116
+msgid ""
+"Please note that not all authentication methods were available. Check the "
+"system log or Icinga Web 2 log for more information."
+msgstr ""
+"Por favor, note que nem todos os métodos de autenticação estavam "
+"disponíveis. Verifique o log do sistema ou o log do Icinga Web 2 para obter "
+"mais informações."
+
+#: /usr/local/icingaweb/application/views/scripts/search/hint.phtml:4
 msgid ""
 "Please use the asterisk (*) as a placeholder for wildcard searches. For "
-"convenience I'll always add a wildcard after the last character you typed."
+"convenience I'll always add a wildcard in front and after your search string."
 msgstr ""
 "Por favor utilize o asterisco (*) como caractere curinga nas pesquisas. Para "
-"maior comodidade vou sempre adicionar um curinga após o último caractere "
+"maior comodidade será sempre adicionado um curinga após o último caractere "
 "digitado."
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:171
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:171
+#: /usr/local/icingaweb/application/forms/LdapDiscoveryForm.php:60
+#: /usr/local/icingaweb/application/forms/LdapDiscoveryForm.php:61
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:73
+#: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:54
 msgid "Port"
 msgstr "Porta"
 
-#: /usr/local/icingaweb/application/layouts/scripts/body.phtml:38
 #: /usr/local/icingaweb/application/layouts/scripts/parts/topbar.phtml:32
+#: /usr/local/icingaweb/application/controllers/PreferenceController.php:30
+#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:239
 msgid "Preferences"
 msgstr "Preferências"
 
-#: /usr/local/icingaweb/application/views/scripts/mixedPagination.phtml:45
+#: /usr/local/icingaweb/application/forms/PreferenceForm.php:108
+msgid "Preferences successfully saved"
+msgstr "Preferências salvas com sucesso"
+
+#: /usr/local/icingaweb/application/forms/PreferenceForm.php:110
+msgid "Preferences successfully saved for the current session"
+msgstr "Preferências salvas com sucesso para a sessão atual"
+
 #: /usr/local/icingaweb/application/views/scripts/mixedPagination.phtml:48
+#: /usr/local/icingaweb/application/views/scripts/mixedPagination.phtml:51
 msgid "Prev"
 msgstr "Ant"
 
-#: /usr/local/icingaweb/library/Icinga/Web/Wizard/Wizard.php:326
-#: /usr/local/icingaweb/library/Icinga/Web/Wizard/Wizard.php:367
-msgid "Previous"
-msgstr "Anterior"
+#: /usr/local/icingaweb/application/views/scripts/config/resource.phtml:13
+#: /usr/local/icingaweb/application/views/scripts/form/reorder-authbackend.phtml:5
+#: /usr/local/icingaweb/application/views/scripts/form/reorder-authbackend.phtml:19
+msgid "Remove"
+msgstr "Remover"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:333
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:333
+#: /usr/local/icingaweb/application/views/scripts/config/authentication/remove.phtml:4
+msgid "Remove Backend"
+msgstr "Remover backend"
+
+#: /usr/local/icingaweb/application/views/scripts/config/resource/remove.phtml:4
+msgid "Remove Existing Resource"
+msgstr "Remover recurso existente"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterWidget.php:99
+msgid "Remove this filter"
+msgstr "Remover este filtro"
+
+#: /usr/local/icingaweb/application/views/scripts/config/resource.phtml:12
+msgid "Resource"
+msgstr "Recurso"
+
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:149
+#, php-format
+msgid "Resource \"%s\" has been successfully changed"
+msgstr "Recurso \"%s\" foi alterado com sucesso"
+
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:146
+#, php-format
+msgid "Resource \"%s\" has been successfully created"
+msgstr "Recurso \"%s\" foi criado com sucesso"
+
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:266
+#, php-format
+msgid "Resource \"%s\" has been successfully removed"
+msgstr "Recurso \"%s\" foi removido com sucesso"
+
+#: /usr/local/icingaweb/application/forms/Config/Resource/FileResourceForm.php:33
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:44
+#: /usr/local/icingaweb/application/forms/Config/Resource/LivestatusResourceForm.php:36
+#: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:35
 msgid "Resource Name"
 msgstr "Nome do recurso"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:375
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:375
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:230
 msgid "Resource Type"
 msgstr "Tipo do recurso"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:271
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:271
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:67
+msgid "Resource already exists"
+msgstr "Recurso já existe"
+
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:65
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:114
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:175
+msgid "Resource name missing"
+msgstr "Falta o nome do recurso"
+
+#: /usr/local/icingaweb/application/views/scripts/config/resource/create.phtml:5
+msgid "Resources are entities that provide data to Icinga Web 2."
+msgstr "Os recursos são entidades que fornecem dados para Icinga Web 2."
+
+#: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:64
 msgid "Root DN"
 msgstr "DN Root"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:379
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:379
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:221
 msgid "SQL Database"
 msgstr "Banco de dados SQL"
 
-#: /usr/local/icingaweb/application/controllers/SearchController.php:22
-#: /usr/local/icingaweb/application/controllers/SearchController.php:29
-#: /usr/local/icingaweb/application/controllers/SearchController.php:30
-#: /usr/local/icingaweb/application/controllers/SearchController.php:56
+#: /usr/local/icingaweb/application/forms/Config/GeneralConfigForm.php:23
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:34
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:25
+msgid "Save Changes"
+msgstr "Salvar alterações"
+
+#: /usr/local/icingaweb/application/forms/PreferenceForm.php:207
+msgid "Save for the current Session"
+msgstr "Salvar para a sessão atual"
+
+#: /usr/local/icingaweb/application/forms/PreferenceForm.php:194
+msgid "Save to the Preferences"
+msgstr "Salvar as preferências"
+
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:2
+msgid "Saving Configuration Failed"
+msgstr "Falha ao salvar a configuração"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/SearchDashboard.php:64
 msgid "Search"
 msgstr "Pesquisar"
 
-#: /usr/local/icingaweb/application/layouts/scripts/parts/navigation.phtml:17
+#: /usr/local/icingaweb/application/forms/LdapDiscoveryForm.php:29
+msgid "Search Domain"
+msgstr "Pesquisar domínio"
+
+#: /usr/local/icingaweb/application/forms/LdapDiscoveryForm.php:30
+msgid "Search this domain for records of available servers."
+msgstr "Pesquisar este  domínio para os registros de servidores disponíveis."
+
+#: /usr/local/icingaweb/application/views/scripts/layout/menu.phtml:8
+#: /usr/local/icingaweb/application/layouts/scripts/parts/navigation.phtml:20
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:638
 msgid "Search..."
 msgstr "Pesquisar..."
 
-#: /usr/local/icingaweb/application/forms/Config/GeneralForm.php:189
-msgid ""
-"Select the language to use by default. Can be overwritten by a user in his "
-"preferences."
-msgstr ""
-"Selecione o idioma padrão a ser utilizado. Pode ser substituído por um "
-"usuário em suas preferências."
-
+#: /usr/local/icingaweb/application/views/scripts/joystickPagination.phtml:53
+#: /usr/local/icingaweb/application/views/scripts/joystickPagination.phtml:69
 #: /usr/local/icingaweb/application/views/scripts/pivottablePagination.phtml:34
-#: /usr/local/icingaweb/application/controllers/SearchController.php:41
 msgid "Services"
 msgstr "Serviços"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:245
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:245
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/Limiter.php:84
+#, php-format
+msgid "Show %s rows on one page"
+msgstr "Mostrar %s linhas em uma página"
+
+#: /usr/local/icingaweb/application/views/scripts/mixedPagination.phtml:16
+#, php-format
+msgid "Show rows %d to %d of %d"
+msgstr "Mostrar linhas %d até %d de %d"
+
+#: /usr/local/icingaweb/application/forms/Config/Resource/LivestatusResourceForm.php:45
 msgid "Socket"
 msgstr "Soquete"
 
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:140
-msgid "The Syslog facility to utilize."
-msgstr "A facilidade do SysLog a ser utilizada"
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:15
+msgid "Something went wrong while writing the file"
+msgstr "Algo deu errado ao gravar o arquivo"
 
-#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:116
+#: /usr/local/icingaweb/application/views/scripts/config/module.phtml:22
+msgid "State"
+msgstr "Estado"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:322
+msgid "Strip this filter"
+msgstr "Retirar esse filtro"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:215
+msgid "System"
+msgstr "Sistema"
+
+#: /usr/local/icingaweb/application/views/scripts/authentication/login.phtml:4
+msgid "The Icinga logo"
+msgstr "O logotipo Icinga"
+
+#: /usr/local/icingaweb/application/forms/Dashboard/AddUrlForm.php:50
+msgid "The New Pane's Title"
+msgstr "O título do novo painel"
+
+#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:91
 msgid "The attribute name used for storing the user name on the ldap server"
 msgstr ""
 "O nome do atributo utilizado para armazenar o nome do usuário no servidor "
 "ldap"
 
-#: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:91
+#: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:68
 msgid "The database connection to use for authenticating with this provider"
 msgstr ""
-"A conexão com o banco a ser utilizada para autenticar com este provedor"
+"A conexão com o banco de dados a ser utilizada para autenticar com este "
+"provedor"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:309
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:309
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:6
+#, php-format
+msgid "The file %s couldn't be stored. (Error: \"%s\")"
+msgstr "O arquivo %s não pode ser gravado. (Erro: \"%s\")"
+
+#: /usr/local/icingaweb/application/forms/Config/Resource/FileResourceForm.php:43
 msgid "The filename to fetch information from"
 msgstr "O nome do arquivo a ser consultado"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:161
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:161
-msgid "The hostname of the database."
-msgstr "O nome do host do banco de dados."
+#: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:108
+msgid "The full path to the log file to write messages to."
+msgstr "O caminho completo do arquivo de log para gravar as mensagens."
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:261
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:261
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:64
+msgid "The hostname of the database"
+msgstr "O nome do host do banco de dados"
+
+#: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:45
 msgid "The hostname or address of the LDAP server to use for authentication"
 msgstr ""
 "O nome do host ou endereço do servidor LDAP a ser utilizado para a "
 "autenticação"
 
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:156
-msgid "The logfile to write messages to."
-msgstr "O arquivo de log para salvar as mensagens."
-
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:83
-msgid "The maximum loglevel to emit."
+#: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:51
+msgid "The maximum logging level to emit."
 msgstr "O nível máximo de log a ser emitido."
 
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:118
+#: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:69
 msgid "The name of the application by which to prefix syslog messages."
 msgstr ""
-"O nome da aplicação que será adicionado como prefixo nas mensagens do syslog."
+"O nome da aplicação que será adicionada como prefixo nas mensagens do syslog."
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:184
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:184
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:84
 msgid "The name of the database to use"
 msgstr "O nome do banco de dados a ser utilizado"
 
+#: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:58
+#: /usr/local/icingaweb/application/forms/Config/Authentication/AutologinBackendForm.php:35
+#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:59
+msgid ""
+"The name of this authentication provider that is used to differentiate it "
+"from others"
+msgstr ""
+"O nome deste provedor de autenticação que será utilizado para diferenciá-lo "
+"de outros"
+
 #: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:81
-msgid "The name of this authentication backend"
-msgstr "O nome deste backend de autenticação"
-
-#: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:79
-msgid "The name of this authentication provider"
-msgstr "O nome deste provedor de autenticação"
-
-#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:105
 msgid "The object class used for storing users on the ldap server"
 msgstr ""
 "A classe de objeto a ser utilizada para armazenar os usuários no servidor "
 "ldap"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:207
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:207
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:103
 msgid "The password to use for authentication"
 msgstr "A senha a ser utilizada para a autenticação"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:295
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:295
+#: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:84
 msgid "The password to use for querying the ldap server"
 msgstr "A senha a ser utilizada para consultar o servidor ldap"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:246
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:246
+#: /usr/local/icingaweb/application/forms/Config/Resource/LivestatusResourceForm.php:46
 msgid "The path to your livestatus socket used for querying monitoring data"
 msgstr ""
-"O caminho para o socket do livestatus utilizado para consultar os dados de "
+"O caminho para o soquete livestatus utilizado para consultar os dados de "
 "monitoramento"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:272
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:272
-msgid "The path where users can be found on the ldap server"
-msgstr "O caminho onde os usuários possam ser encontrados no servidor ldap"
+#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:109
+msgid ""
+"The path where users can be found on the ldap server.  Leave empty to select "
+"all users available on the specified resource."
+msgstr ""
+"O caminho onde os usuários serão encontrados no servidor LDAP. Deixe em "
+"branco para selecionar todos os usuários disponíveis no recurso especificado."
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:172
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:172
-msgid "The port to use."
-msgstr "A porta utilizada."
+#: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:55
+msgid "The port of the LDAP server to use for authentication"
+msgstr "A porta do servidor LDAP utilizado para autenticação"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:320
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:320
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:74
+msgid "The port to use"
+msgstr "Porta utilizada"
+
+#: /usr/local/icingaweb/application/forms/Config/Resource/FileResourceForm.php:53
 msgid "The regular expression by which to identify columns"
 msgstr "A expressão regular para identificar as colunas"
 
-#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:93
+#: /usr/local/icingaweb/application/forms/Config/Authentication/AutologinBackendForm.php:56
+msgid ""
+"The regular expression to use to strip specific parts off from usernames. "
+"Leave empty if you do not want to strip off anything"
+msgstr ""
+"A expressão regular usada para retirar partes específicas dos nomes de "
+"usuário. Deixe em branco se você não quiser retirar nada"
+
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:282
+#, php-format
+msgid ""
+"The resource \"%s\" is currently in use by the authentication backend \"%s"
+"\". Removing the resource can result in noone being able to log in any "
+"longer."
+msgstr ""
+"O recurso \"%s\" está atualmente em uso pelo backend de autenticação \"%s\". "
+"Removendo o recurso poderá tornar o login indisponível por mais tempo."
+
+#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:69
 msgid "The resource to use for authenticating with this provider"
 msgstr "O recurso a ser utilizado para autenticação com este provedor"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:145
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:145
-msgid "The type of SQL database you want to create."
-msgstr "O tipo do banco de dados SQL que você quer criar."
+#: /usr/local/icingaweb/application/forms/Dashboard/AddUrlForm.php:100
+msgid "The title for the dashlet"
+msgstr "O título para o dashlet"
 
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:99
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:54
+msgid "The type of SQL database"
+msgstr "Tipo do banco de dados SQL"
+
+#: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:35
 msgid "The type of logging to utilize."
 msgstr "O tipo do registro de log a ser utilizado."
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:376
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:376
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:231
 msgid "The type of resource"
 msgstr "O tipo do recurso"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:334
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:334
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:322
+msgid "The type of the resource to use for this authenticaton provider"
+msgstr "Tipo do recurso a ser utilizado para este provedor de autenticação"
+
+#: /usr/local/icingaweb/application/forms/Config/Resource/FileResourceForm.php:34
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:45
+#: /usr/local/icingaweb/application/forms/Config/Resource/LivestatusResourceForm.php:37
+#: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:36
 msgid "The unique name of this resource"
 msgstr "O nome único deste recurso"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:283
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:283
+#: /usr/local/icingaweb/application/forms/Dashboard/AddUrlForm.php:36
+msgid "The url being loaded in the dashlet"
+msgstr "A url que a ser carregada no dashlet"
+
+#: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:74
 msgid "The user dn to use for querying the ldap server"
 msgstr "O usuário DN a ser utilizado para consultar o servidor ldap."
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:195
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:195
-msgid "The user name to use for authentication."
-msgstr "O nome do usuário a ser utilizado para a autenticação."
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:93
+msgid "The user name to use for authentication"
+msgstr "O nome do usuário a ser utilizado para a autenticação"
 
-#: /usr/local/icingaweb/application/views/scripts/config/module.phtml:6
+#: /usr/local/icingaweb/application/views/scripts/config/module.phtml:7
 msgid "There is no such module installed."
 msgstr "Não existe nenhum módulo instalado."
 
-#: /usr/local/icingaweb/application/views/scripts/config/module.phtml:32
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:16
+msgid ""
+"There's an application error preventing you from persisting the configuration"
+msgstr "Há um erro na aplicação impedindo você de salvar a configuração"
+
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:11
+msgid "This could have one or more of the following reasons:"
+msgstr "Isto pode ter uma ou mais das seguintes razões:"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/addurl.phtml:6
+msgid "This feature is deactivated at the moment."
+msgstr "Esta funcionalidade está desabilitada no momento."
+
+#: /usr/local/icingaweb/application/views/scripts/config/module.phtml:46
 msgid "This module has no dependencies"
 msgstr "Este módulo não tem dependências"
 
-#: /usr/local/icingaweb/library/Icinga/Application/Modules/Module.php:383
+#: /usr/local/icingaweb/library/Icinga/Application/Modules/Module.php:501
 msgid "This module has no description"
 msgstr "Este módulo não tem descrição"
 
-#: /usr/local/icingaweb/application/forms/Preference/GeneralForm.php:100
-msgid "Use Default Language"
-msgstr "Utilizar idioma padrão"
+#: /usr/local/icingaweb/application/forms/Dashboard/AddUrlForm.php:99
+msgid "Title"
+msgstr "Título"
 
-#: /usr/local/icingaweb/application/forms/Preference/GeneralForm.php:109
+#: /usr/local/icingaweb/application/views/scripts/config/devtools.phtml:5
+msgid "UI Debug"
+msgstr "Interface de depuração"
+
+#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:149
+#, php-format
+msgid "Unable to validate authentication: %s"
+msgstr "Não é possível validar a autenticação: %s"
+
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:121
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:149
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:172
+#: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:242
+msgid "Unknown authentication backend provided"
+msgstr "Backend de autenticação fornecido desconhecido"
+
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:92
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:116
+#: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:177
+msgid "Unknown resource provided"
+msgstr "Recurso fornecido desconhecido"
+
+#: /usr/local/icingaweb/application/forms/Dashboard/AddUrlForm.php:35
+msgid "Url"
+msgstr "Url"
+
+#: /usr/local/icingaweb/application/forms/Dashboard/AddUrlForm.php:67
+msgid "Use An Existing Pane"
+msgstr "Usar um painel existente"
+
+#: /usr/local/icingaweb/application/forms/PreferenceForm.php:185
+msgid "Use benchmark"
+msgstr "Utilizar benchmark"
+
+#: /usr/local/icingaweb/application/forms/PreferenceForm.php:162
 msgid "Use the following language to display texts and messages"
 msgstr "Utilizar o seguinte idioma para exibir textos e mensagens"
 
-#: /usr/local/icingaweb/application/forms/Authentication/LoginForm.php:57
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:194
-#: /usr/local/icingaweb/application/forms/Config/Resource/ResourceForm.php:194
+#: /usr/local/icingaweb/application/forms/PreferenceForm.php:174
+msgid "Use the following timezone for dates and times"
+msgstr "Utilizar o seguinte fuso horário para as datas e horários"
+
+#: /usr/local/icingaweb/application/forms/Config/General/ApplicationConfigForm.php:53
+msgid "User Preference Storage Type"
+msgstr "Tipo de armazenamento para as preferências do usuário"
+
+#: /usr/local/icingaweb/application/forms/Authentication/LoginForm.php:34
+#: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:92
 msgid "Username"
 msgstr "Nome do usuário"
 
-#: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:169
-msgid ""
-"Using ldap is not possible, the php extension \"ldap\" is not installed."
-msgstr ""
-"A utilização do ldap não é possível, a extensão php \"ldap\" não está "
-"instalada."
-
-#: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:148
+#: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:114
 #, php-format
 msgid "Using the specified backend failed: %s"
 msgstr "A utilização do backend especificado falhou: %s"
 
-#: /usr/local/icingaweb/application/forms/Config/LoggingForm.php:87
+#: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:54
+msgctxt "app.config.logging.level"
 msgid "Warning"
 msgstr "Atenção"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:435
-msgid ""
-"You need to install the php extension \"mysql\" and the Zend_Pdo_Mysql "
-"classes to use  MySQL database resources."
-msgstr ""
-"Você precisa instalar a extensão php \"mysql\" e as classes Zend_Pdo_Mysql "
-"para usar o recurso de banco de dados  MySQL."
+#: /usr/local/icingaweb/application/views/scripts/dashboard/index.phtml:10
+msgid "Welcome to Icinga Web!"
+msgstr "Bem vindo ao Icinga Web"
 
-#: /usr/local/icingaweb/application/forms/Config/ResourceForm.php:442
-msgid ""
-"You need to install the php extension \"pgsql\" and the Zend_Pdo_Pgsql "
-"classes to use  PostgreSQL database resources."
-msgstr ""
-"Você precisa instalar a extensão php \"pgsql\" e as classes Zend_Pdo_Pgsql "
-"para usar o recurso de banco de dados  PostgreSQL."
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:14
+msgid "You don't have file-system permissions to write to the file"
+msgstr "Você não tem permissão no sistema de arquivos para gravar o arquivo"
 
-#: /usr/local/icingaweb/application/forms/Preference/GeneralForm.php:106
+#: /usr/local/icingaweb/application/controllers/PreferenceController.php:44
+msgid "You need to configure how to store preferences first."
+msgstr ""
+"Você precisa em primeiro lugar configurar as preferências de armazenamento."
+
+#: /usr/local/icingaweb/application/views/scripts/authentication/login.phtml:20
+#, php-format
+msgid ""
+"You seem not to have Icinga Web 2 configured yet so it's not possible to log "
+"in without any defined authentication method. Please define a authentication "
+"method by following the instructions in the %1$sdocumentation%3$s or by "
+"using our %2$sweb-based setup-wizard%3$s."
+msgstr ""
+"Você parece não ter configurado o Icinga Web 2. Deste modo não é possível "
+"efetuar o login sem nenhum método de autenticação definido. Por favor, "
+"defina um método de autenticação seguindo as instruções na %1$sdocumentação"
+"%3$s ou usando nosso  %2$sassistente de configuração web%3$s."
+
+#: /usr/local/icingaweb/application/forms/PreferenceForm.php:161
 msgid "Your Current Language"
 msgstr "Seu idioma atual"
+
+#: /usr/local/icingaweb/application/forms/PreferenceForm.php:173
+msgid "Your Current Timezone"
+msgstr "Seu fuso horário atual"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/Limiter.php:58
+msgid "all"
+msgstr "todas"
+
+#: /usr/local/icingaweb/library/Icinga/Util/Format.php:83
+#: /usr/local/icingaweb/library/Icinga/Util/Format.php:89
+msgid "for"
+msgstr "até"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/index.phtml:13
+msgid "modules"
+msgstr "módulos"
+
+#: /usr/local/icingaweb/library/Icinga/Util/Format.php:87
+#: /usr/local/icingaweb/library/Icinga/Util/Format.php:109
+#: /usr/local/icingaweb/library/Icinga/Util/Format.php:111
+msgid "since"
+msgstr "desde"
+
+#: /usr/local/icingaweb/application/views/scripts/config/devtools.phtml:5
+msgid "toggle"
+msgstr "alternar"
