@@ -229,4 +229,14 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
 
         return $combinations;
     }
+
+    /**
+     * Getter for filename
+     * 
+     * @return string
+     */
+    public function getFilename()
+    {
+        return $this->_filename;
+    }
 }

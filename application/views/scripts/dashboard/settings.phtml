@@ -1,0 +1,62 @@
+<?php
+?>
+<div class="controls">
+    <?= $this->tabs ?>
+</div>
+<div class="content">
+    <h1><?= t('Dashboard Settings'); ?></h1>
+
+    <table class="avp" data-base-target="_next">
+        <thead>
+            <tr>
+                <th>
+                    <strong><?= t('Component Name') ?></strong>
+                </th>
+                <th>
+                    <strong><?= t('Url') ?></strong>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($this->dashboard->getPanes() as $pane): ?>
+                <tr style="background-color: #f1f1f1;">
+                    <th colspan="2" style="text-align: left; padding: 0.5em;">
+                        <?= $pane->getName(); ?>
+                    </th>
+                    <th>
+                        <a href="<?= $this->href('dashboard/remove-pane', array('pane' => $pane->getName()));  ?>">
+                            <?= $this->icon('cancel'); ?>
+                        </a>
+                    </th>
+                </tr>
+                <?php $components = $pane->getComponents(); ?>
+                <?php if(empty($components)): ?>
+                    <tr>
+                        <td colspan="3">
+                            <?= $this->translate('No compoments added to dashboard') ?>.
+                        </td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($components as $component): ?>
+                    <?php if ($component->getDisabled() === true) continue; ?>
+                        <tr>
+                            <td>
+                                <a href="<?= $this->href('dashboard/update-component', array('pane' => $pane->getName(), 'component' => $component->getTitle()));  ?>">
+                                    <?= $component->getTitle(); ?>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="<?= $this->href($component->getUrl()); ?>"><?= $component->getUrl(); ?></a>
+                            </td>
+                            <td>
+                                <a href="<?= $this->href('dashboard/remove-component', array('pane' => $pane->getName(), 'component' => $component->getTitle()));  ?>">
+                                <?= $this->icon('cancel'); ?>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>

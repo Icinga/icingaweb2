@@ -12,7 +12,7 @@ use Icinga\Exception\ConfigurationError;
 /**
  * A pane, displaying different Dashboard components
  */
-class Pane extends AbstractWidget
+class Pane extends UserWidget
 {
     /**
      * The name of this pane, as defined in the ini file
@@ -35,6 +35,13 @@ class Pane extends AbstractWidget
      * @var array
      */
     private $components = array();
+
+    /**
+     * Disabled flag of a pane
+     *
+     * @var bool
+     */
+    private $disabled;
 
     /**
      * Create a new pane
@@ -130,7 +137,15 @@ class Pane extends AbstractWidget
     public function removeComponent($title)
     {
         if ($this->hasComponent($title)) {
-            unset($this->components[$title]);
+            $component = $this->getComponent($title);
+            if ($component->isUserWidget() === true) {
+                unset($this->components[$title]);
+            } else {
+                $component->setDisabled(true);
+                $component->setUserWidget();
+            }
+        } else {
+            throw new ProgrammingError('Component does not exist: ' . $title);
         }
         return $this;
     }
@@ -168,7 +183,13 @@ class Pane extends AbstractWidget
      */
     public function render()
     {
-        return implode("\n", $this->components) . "\n";
+        $components = array_filter(
+            $this->components,
+            function ($e) {
+                return ! $e->getDisabled();
+            }
+        );
+        return implode("\n", $components) . "\n";
     }
 
     /**
@@ -241,12 +262,15 @@ class Pane extends AbstractWidget
      */
     public function toArray()
     {
-        $array = array($this->getName() => array('title' => $this->getTitle()));
-        foreach ($this->components as $title => $component) {
-            $array[$this->getName() . ".$title"] = $component->toArray();
+        $pane =  array(
+            'title'     => $this->getTitle(),
+        );
+
+        if ($this->getDisabled() === true) {
+            $pane['disabled'] = 1;
         }
 
-        return $array;
+        return $pane;
     }
 
     /**
@@ -265,4 +289,26 @@ class Pane extends AbstractWidget
         }
         return $pane;
     }
+
+    /**
+     * Setter for disabled
+     *
+     * @param boolean $disabled
+     */
+    public function setDisabled($disabled = true)
+    {
+        $this->disabled = (bool) $disabled;
+    }
+
+    /**
+     * Getter for disabled
+     *
+     * @return boolean
+     */
+    public function getDisabled()
+    {
+        return $this->disabled;
+    }
+
+
 }
