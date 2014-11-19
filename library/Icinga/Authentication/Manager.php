@@ -107,8 +107,9 @@ class Manager
         }
         $user->setGroups($groups);
         $admissionLoader = new AdmissionLoader();
-        $user->setPermissions($admissionLoader->getPermissions($user));
-        $user->setRestrictions($admissionLoader->getRestrictions($user));
+        list($permissions, $restrictions) = $admissionLoader->getPermissionsAndRestrictions($user);
+        $user->setPermissions($permissions);
+        $user->setRestrictions($restrictions);
         $this->user = $user;
         if ($persist) {
             $this->persistCurrentUser();
