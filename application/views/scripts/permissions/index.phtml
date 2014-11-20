@@ -7,7 +7,7 @@
         <?php /** @var \Icinga\Application\Config $roles */ if ($roles->isEmpty()): ?>
             <?= $this->translate('No permissions found.') ?>
         <?php else: ?>
-            <table class="action" data-base-target="_next">
+            <table class="avp action" data-base-target="_next">
                 <thead>
                 <tr>
                     <th><?= $this->translate('Name') ?></th>
