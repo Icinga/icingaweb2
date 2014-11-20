@@ -829,18 +829,18 @@ table.groupview {
   border-collapse: separate;
   border-spacing: 0.1em;
 
-  thead th {
+  th {
     font-size: 0.9em;
+    text-align: left;
+    white-space: nowrap;
   }
 
-  tbody {
-    tr {
-      &:hover {
-        color: #333;
-      }
+  td {
+    &.groupname {
+      width: 60%;
 
       a {
-        color: #333;
+        color: inherit;
         text-decoration: none;
 
         &:hover {
@@ -849,19 +849,19 @@ table.groupview {
       }
     }
 
-    td.services-total {
+    &.total {
       width: 10%;
-      text-align: center;
     }
 
-    td.state {
-      width: 10%;
-      color: white;
-      text-align: center;
+    &.state {
+      width: 20%;
+      white-space: nowrap;
 
       &.change {
         width: 10%;
-        white-space: nowrap;
+        text-align: center;
+        border-left-width: 1.5em;
+        border-left-style: solid;
         padding: 0.3em 0.5em 0.3em 0.5em;
 
         strong {
@@ -871,70 +871,58 @@ table.groupview {
         span.timesince {
           font-size: 0.8em;
         }
-      }
+        
+        &.ok {
+          border-color: @colorOk;
+        }
 
-      &.ok {
-        color: #333;
-        border-left-style: solid;
-        border-left-width: 1.5em;
-        border-color: @colorOk;
-      }
+        &.pending {
+          border-color: @colorPending;
+        }
 
-      &.pending {
-        color: #333;
-        border-left-style: solid;
-        border-left-width: 1.5em;
-        border-color: @colorPending;
-      }
-
-      &.warning {
-        background-color: @colorWarning;
-
-        &.handled {
-          background-color: inherit;
-          color: #333;
-          border-left-style: solid;
-          border-left-width: 1.5em;
+        &.warning {
           border-color: @colorWarningHandled;
-        }
-      }
 
-      &.unknown {
-        background-color: @colorUnknown;
-
-        &.handled {
-          color: #333;
-          background-color: inherit;
-          border-left-style: solid;
-          border-left-width: 1.5em;
-          border-color: @colorUnknownHandled;
-        }
-      }
-
-      &.critical {
-        background-color: @colorCritical;
-
-        &.handled {
-          color: #333;
-          background-color: inherit;
-          border-left-style: solid;
-          border-left-width: 1.5em;
-          border-color: @colorCriticalHandled;
-        }
-      }
-
-      span {
-        &.no-state {
-          color: #333;
-        }
-
-        &.state {
-          &.handled {
-            margin-right: 2px;
-          }
-
-          a {
+          &.unhandled {
             color: white;
+            border-left-width: 0;
+            background-color: @colorWarning;
+          }
+        }
+
+        &.unknown {
+          border-color: @colorUnknownHandled;
+
+          &.unhandled {
+            color: white;
+            border-left-width: 0;
+            background-color: @colorUnknown;
+          }
+        }
+
+        &.critical {
+          border-color: @colorCriticalHandled;
+
+          &.unhandled {
+            color: white;
+            border-left-width: 0;
+            background-color: @colorCritical;
+          }
+        }
+      }
+
+      span.state {
+        &.handled {
+          margin-right: 2px;
+        }
+
+        a {
+          font-size: 0.9em;
+          color: white;
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
           }
         }
       }
