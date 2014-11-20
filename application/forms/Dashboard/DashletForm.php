@@ -7,12 +7,12 @@ namespace Icinga\Forms\Dashboard;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
-use Icinga\Web\Widget\Dashboard\Component;
+use Icinga\Web\Widget\Dashboard\Dashlet;
 
 /**
  * Form to add an url a dashboard pane
  */
-class ComponentForm extends Form
+class DashletForm extends Form
 {
     /**
      * @var Dashboard
@@ -54,7 +54,7 @@ class ComponentForm extends Form
 
         $this->addElement(
             'hidden',
-            'org_component',
+            'org_dashlet',
             array(
                 'required' => false
             )
@@ -72,7 +72,7 @@ class ComponentForm extends Form
         );
         $this->addElement(
             'text',
-            'component',
+            'dashlet',
             array(
                 'required'      => true,
                 'label'         => t('Dashlet Title'),
@@ -142,16 +142,16 @@ class ComponentForm extends Form
     }
 
     /**
-     * @param Component $component
+     * @param Dashlet $dashlet
      */
-    public function load(Component $component)
+    public function load(Dashlet $dashlet)
     {
         $this->populate(array(
-            'pane'          => $component->getPane()->getName(),
-            'org_pane'      => $component->getPane()->getName(),
-            'component'     => $component->getTitle(),
-            'org_component' => $component->getTitle(),
-            'url'           => $component->getUrl()
+            'pane'          => $dashlet->getPane()->getName(),
+            'org_pane'      => $dashlet->getPane()->getName(),
+            'dashlet'     => $dashlet->getTitle(),
+            'org_dashlet' => $dashlet->getTitle(),
+            'url'           => $dashlet->getUrl()
         ));
     }
 }

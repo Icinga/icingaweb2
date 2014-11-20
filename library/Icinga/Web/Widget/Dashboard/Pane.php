@@ -10,7 +10,7 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\ConfigurationError;
 
 /**
- * A pane, displaying different Dashboard components
+ * A pane, displaying different Dashboard dashlets
  */
 class Pane extends UserWidget
 {
@@ -30,11 +30,11 @@ class Pane extends UserWidget
     private $title;
 
     /**
-     * An array of @see Components that are displayed in this pane
+     * An array of @see Dashlets that are displayed in this pane
      *
      * @var array
      */
-    private $components = array();
+    private $dashlets = array();
 
     /**
      * Disabled flag of a pane
@@ -88,94 +88,94 @@ class Pane extends UserWidget
     }
 
     /**
-     * Return true if a component with the given title exists in this pane
+     * Return true if a dashlet with the given title exists in this pane
      *
-     * @param string $title     The title of the component to check for existence
-     *
-     * @return bool
-     */
-    public function hasComponent($title)
-    {
-        return array_key_exists($title, $this->components);
-    }
-
-    /**
-     * Checks if the current pane has any components
+     * @param string $title     The title of the dashlet to check for existence
      *
      * @return bool
      */
-    public function hasComponents()
+    public function hasDashlet($title)
     {
-        return ! empty($this->components);
+        return array_key_exists($title, $this->dashlets);
     }
 
     /**
-     * Return a component with the given name if existing
+     * Checks if the current pane has any dashlets
      *
-     * @param string $title         The title of the component to return
-     *
-     * @return Component            The component with the given title
-     * @throws ProgrammingError     If the component doesn't exist
+     * @return bool
      */
-    public function getComponent($title)
+    public function hasDashlets()
     {
-        if ($this->hasComponent($title)) {
-            return $this->components[$title];
+        return ! empty($this->dashlets);
+    }
+
+    /**
+     * Return a dashlet with the given name if existing
+     *
+     * @param string $title         The title of the dashlet to return
+     *
+     * @return Dashlet            The dashlet with the given title
+     * @throws ProgrammingError     If the dashlet doesn't exist
+     */
+    public function getDashlet($title)
+    {
+        if ($this->hasDashlet($title)) {
+            return $this->dashlets[$title];
         }
         throw new ProgrammingError(
-            'Trying to access invalid component: %s',
+            'Trying to access invalid dashlet: %s',
             $title
         );
     }
 
     /**
-     * Removes the component with the given title if it exists in this pane
+     * Removes the dashlet with the given title if it exists in this pane
      *
      * @param string $title         The pane
      * @return Pane $this
      */
-    public function removeComponent($title)
+    public function removeDashlet($title)
     {
-        if ($this->hasComponent($title)) {
-            $component = $this->getComponent($title);
-            if ($component->isUserWidget() === true) {
-                unset($this->components[$title]);
+        if ($this->hasDashlet($title)) {
+            $dashlet = $this->getDashlet($title);
+            if ($dashlet->isUserWidget() === true) {
+                unset($this->dashlets[$title]);
             } else {
-                $component->setDisabled(true);
-                $component->setUserWidget();
+                $dashlet->setDisabled(true);
+                $dashlet->setUserWidget();
             }
         } else {
-            throw new ProgrammingError('Component does not exist: ' . $title);
+            throw new ProgrammingError('Dashlet does not exist: ' . $title);
         }
         return $this;
     }
 
     /**
-     * Removes all or a given list of components from this pane
+     * Removes all or a given list of dashlets from this pane
      *
-     * @param array $components Optional list of component titles
+     * @param array $dashlets Optional list of dashlet titles
      * @return Pane $this
      */
-    public function removeComponents(array $components = null)
+    public function removeDashlets(array $dashlets = null)
     {
-        if ($components === null) {
-            $this->components = array();
+        if ($dashlets === null) {
+            $this->dashlets = array();
         } else {
-            foreach ($components as $component) {
-                $this->removeComponent($component);
+            foreach ($dashlets as $dashlet) {
+                $this->removeDashlet($dashlet);
             }
         }
         return $this;
     }
 
     /**
-     * Return all components added at this pane
+     * Return all dashlets added at this pane
      *
      * @return array
      */
-    public function getComponents()
+    public function getDashlets()
     {
-        return $this->components;
+        return $this->dashlets;
     }
 
     /**
@@ -183,56 +183,56 @@ class Pane extends UserWidget
      */
     public function render()
     {
-        $components = array_filter(
-            $this->components,
+        $dashlets = array_filter(
+            $this->dashlets,
             function ($e) {
                 return ! $e->getDisabled();
             }
         );
-        return implode("\n", $components) . "\n";
+        return implode("\n", $dashlets) . "\n";
     }
 
     /**
-     * Add a component to this pane, optionally creating it if $component is a string
+     * Add a dashlet to this pane, optionally creating it if $dashlet is a string
      *
-     * @param string|Component $component               The component object or title
-     *                                                  (if a new component will be created)
-     * @param string|null $url                          An Url to be used when component is a string
+     * @param string|Dashlet $dashlet               The dashlet object or title
+     *                                                  (if a new dashlet will be created)
+     * @param string|null $url                          An Url to be used when dashlet is a string
      *
      * @return self
      * @throws \Icinga\Exception\ConfigurationError
      */
-    public function addComponent($component, $url = null)
+    public function addDashlet($dashlet, $url = null)
     {
-        if ($component instanceof Component) {
-            $this->components[$component->getTitle()] = $component;
-        } elseif (is_string($component) && $url !== null) {
-             $this->components[$component] = new Component($component, $url, $this);
+        if ($dashlet instanceof Dashlet) {
+            $this->dashlets[$dashlet->getTitle()] = $dashlet;
+        } elseif (is_string($dashlet) && $url !== null) {
+             $this->dashlets[$dashlet] = new Dashlet($dashlet, $url, $this);
         } else {
-            throw new ConfigurationError('Invalid component added: %s', $component);
+            throw new ConfigurationError('Invalid dashlet added: %s', $dashlet);
         }
         return $this;
     }
 
     /**
-     * Add new components to existing components
+     * Add new dashlets to existing dashlets
      *
-     * @param array $components
+     * @param array $dashlets
      * @return $this
      */
-    public function addComponents(array $components)
+    public function addDashlets(array $dashlets)
     {
-        /* @var $component Component */
-        foreach ($components as $component) {
-            if (array_key_exists($component->getTitle(), $this->components)) {
-                if (preg_match('/_(\d+)$/', $component->getTitle(), $m)) {
-                    $name = preg_replace('/_\d+$/', $m[1]++, $component->getTitle());
+        /* @var $dashlet Dashlet */
+        foreach ($dashlets as $dashlet) {
+            if (array_key_exists($dashlet->getTitle(), $this->dashlets)) {
+                if (preg_match('/_(\d+)$/', $dashlet->getTitle(), $m)) {
+                    $name = preg_replace('/_\d+$/', $m[1]++, $dashlet->getTitle());
                 } else {
-                    $name = $component->getTitle() . '_2';
+                    $name = $dashlet->getTitle() . '_2';
                 }
-                $this->components[$name] = $component;
+                $this->dashlets[$name] = $dashlet;
             } else {
-                $this->components[$component->getTitle()] = $component;
+                $this->dashlets[$dashlet->getTitle()] = $dashlet;
             }
         }
 
@@ -240,19 +240,19 @@ class Pane extends UserWidget
     }
 
     /**
-     * Add a component to the current pane
+     * Add a dashlet to the current pane
      *
      * @param $title
      * @param $url
-     * @return Component
+     * @return Dashlet
      *
-     * @see addComponent()
+     * @see addDashlet()
      */
     public function add($title, $url = null)
     {
-        $this->addComponent($title, $url);
+        $this->addDashlet($title, $url);
 
-        return $this->components[$title];
+        return $this->dashlets[$title];
     }
 
     /**
