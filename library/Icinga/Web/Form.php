@@ -116,7 +116,6 @@ class Form extends Zend_Form
     public static $defaultElementDecorators = array(
         array('ViewHelper', array('separator' => '')),
         array('Errors', array('separator' => '')),
-        array('Help'),
         array('Label', array('separator' => '')),
         array('HtmlTag', array('tag' => 'div', 'class' => 'element'))
     );
@@ -512,7 +511,14 @@ class Form extends Zend_Form
 
         $el = parent::createElement($type, $name, $options);
 
-        if ($el && $el->getAttrib('autosubmit')) {
+        if (($description = $el->getDescription()) !== null && ($label = $el->getDecorator('label')) !== null) {
+            $label->setOptions(array(
+                'title' => $description,
+                'class' => 'has-feedback'
+            ));
+        }
+
+        if ($el->getAttrib('autosubmit')) {
             $noScript = new NoScriptApply(); // Non-JS environments
             $decorators = $el->getDecorators();
             $pos = array_search('Zend_Form_Decorator_ViewHelper', array_keys($decorators)) + 1;
