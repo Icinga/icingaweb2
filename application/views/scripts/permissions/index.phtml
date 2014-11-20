@@ -12,6 +12,7 @@
                 <tr>
                     <th><?= $this->translate('Name') ?></th>
                     <th><?= $this->translate('Permissions') ?></th>
+                    <th><?= $this->translate('Restrictions') ?></th>
                     <th><?= $this->translate('Users') ?></th>
                     <th><?= $this->translate('Groups') ?></th>
                 </tr>
@@ -25,7 +26,28 @@
                                 <a href="<?= $this->url('permissions/update', array('role' => $name)) ?>"></a>
                             </div>
                         </td>
-                        <td><?= $this->escape($role->permissions) ?></td>
+                        <td><?= $this->escape($role->permissions, 0, 50) ?></td>
+                        <td>
+                            <?php
+                            // TODO(el): $role->without(...) or $role->shift(...) would be nice!
+                            $restrictions = $role;
+                            unset($restrictions['users']);
+                            unset($restrictions['groups']);
+                            unset($restrictions['permissions']);
+                            ?>
+                            <?php if (! empty($restrictions)): ?>
+                            <table>
+                                <tbody>
+                                <?php foreach ($restrictions as $restrictionName => $restriction): ?>
+                                    <tr>
+                                        <th><?= $this->escape($restrictionName) ?></th>
+                                        <td><?= $this->escape($restriction) ?></td>
+                                    </tr>
+                                <?php endforeach ?>
+                                </tbody>
+                            </table>
+                            <?php endif ?>
+                        </td>
                         <td><?= $this->escape($role->users) ?></td>
                         <td><?= $this->escape($role->groups) ?></td>
                         <td>
