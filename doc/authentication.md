@@ -1,62 +1,95 @@
-# Authentication
+# <a id="authentication"></a> Authentication
 
-The authentication manager can use different backend types like LDAP or Databases as data sources. During
-the application bootstrap the different available resources are checked for availability and
-the resource with the highest priority will be used for authentication. This behaviour is useful for setting
-up fallback accounts, that are available when the regular authentication backend is not available.
+**Choosing the Authentication Method**
+
+With Icinga Web 2 you can authenticate against Active Directory, LDAP, a MySQL or PostgreSQL database or delegate
+authentication to the web server. Authentication methods can be chained to set up fallback authentication methods
+or if users are spread over multiple places.
 
 ## Configuration
 
-The internal authentication is configured in *config/authentication.ini*.
+Authentication methods are configured in the INI file **config/authentication.ini**.
 
-Each section listed in this configuration represents a single backend
-that can be used to authenticate users or groups.
+Each section in the authentication configuration represents a single authentication method.
 
-The order of entries in this configuration is used to determine the fallback
-priority in case of an error. If the resource referenced in the first entry (the one at the top if the file)
-is not reachable, the next lower entry will be used for authentication.
-Please be aware that this behaviour is not valid for the authentication itself.
-The authentication will only be done against the one available resource with the highest
-priority. When an account is only present in a backend with lower priority, it will not
-be able to authenticate when a backend with higher priority is active that does not contain
-this account.
+The order of entries in the authentication configuration determines the order of the authentication methods.
+If the current authentication method errors or the current authentication method does not know the account being
+authenticated, the next authentication method will be used.
 
-### Backend
+## External Authentication
 
-The value of the configuration key *backend* will determine which UserBackend class to
-load. To use the internal backend you need to specifiy the value "Db"
-which will cause the class "DbUserBackend" to be loaded.
+For delegating authentication to the web server simply add `autologin` to your authentication configuration:
 
-Currently these types of backends are allowed:
-    * ldap
-    * db
+````
+[autologin]
+backend = autologin
+````
 
-#### db
+If your web server is not configured for authentication though the `autologin` section has no effect.
 
-The authentication source is a SQL database and points to a resource defined in *resources.ini*, which
-contains all the connection information. Every entry should therefore contain a property *resource*
-with the name of the assigned resource. For a more detailed description about how to set up resources,
-please read the chapter *Resources*.
+## Active Directory or LDAP Authentication
 
-The authentication currently supports the databases MySQL and PostgreSQL.
+If you want to authenticate against Active Directory or LDAP, you have to define a
+[LDAP resource](#resources-configuration-ldap) first which will be referenced as data source for the Active Directory
+or LDAP configuration method.
 
-#### ldap
+### LDAP
 
-The authentication source is an ldap server. The connection information should be directly present
-in the *authentication.ini*, like described in the example configuration.
+Directive               | Description
+------------------------|------------
+**backend**             | `ldap`
+**resource**            | The name of the LDAP resource defined in [resources.ini](resources).
+**user_class**          | LDAP user class.
+**user_name_attribute** | LDAP attribute which contains the username.
 
+**Example:**
 
-### target
+```
+[auth_ldap]
+backend             = ldap
+resource            = my_ldap
+user_class          = inetOrgPerson
+user_name_attribute = uid
+```
 
-The value of the configuration key *target* defines the type of authentication the described backend provides.
-The allowed values are *user* for a backend that provides user authentication or *group* for group authentication.
+### Active Directory
 
+Directive               | Description
+------------------------|------------
+**backend**             | `ad`
+**resource**            | The name of the LDAP resource defined in [resources.ini](resources).
 
-## Technical description
+**Example:**
 
-If an ldap-backend is used, the standard ldap bind will be executed and all user credentials will be managed
-directly by the ldap server.
+```
+[auth_ad]
+backend  = ad
+resource = my_ad
+```
 
-In case of an SQL-backend, the backend will store the salted hash of the password in the column "password" and the salt in the column "salt".
-When a password is checked, the hash is calculated with the function hash_hmac("sha256",salt,password) and compared
-to the stored value.
+## Database Authentication
+
+If you want to authenticate against a MySQL or PostgreSQL database, you have to define a
+[database resource](#resources-configuration-database) first which will be referenced as data source for the database
+authentication method.
+
+Directive               | Description
+------------------------|------------
+**backend**             | `db`
+**resource**            | The name of the database resource defined in [resources.ini](resources).
+
+**Example:**
+
+```
+[auth_ad]
+backend  = ad
+resource = my_db
+```
+
+**Manually Creating Users**
+
+````
+openssl passwd -1 "password"
+
+INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 1, 'hash from openssl');
+````
