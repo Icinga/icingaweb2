@@ -27,7 +27,7 @@ class Doc_StyleController extends Controller
                 'url' => 'doc/style/guide'
             )
         )->add(
-            'fonts',
+            'font',
             array(
                 'title' => $this->translate('Icons'),
                 'url' => 'doc/style/font'
