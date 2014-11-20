@@ -182,21 +182,13 @@ install -D -m0644 packages/files/apache/icingaweb.conf %{buildroot}/%{apacheconf
 # make sure to install local icingacli for setup wizard token generation & webserver config
 %{__cp} -r application doc library modules public bin %{buildroot}/%{sharedir}/
 
-## config
-# authentication is db only
-install -D -m0644 packages/rpm/etc/%{name}/authentication.ini %{buildroot}/%{_sysconfdir}/%{name}/authentication.ini
-# custom resource paths
-install -D -m0644 packages/rpm/etc/%{name}/resources.ini %{buildroot}/%{_sysconfdir}/%{name}/resources.ini
-# monitoring module (icinga2)
-install -D -m0644 packages/rpm/etc/%{name}/modules/monitoring/backends.ini %{buildroot}/%{_sysconfdir}/%{name}/modules/monitoring/backends.ini
-install -D -m0644 packages/rpm/etc/%{name}/modules/monitoring/instances.ini %{buildroot}/%{_sysconfdir}/%{name}/modules/monitoring/instances.ini
-
 # enable the monitoring module by default
 ln -s %{sharedir}/modules/monitoring %{buildroot}/%{_sysconfdir}/%{name}/enabledModules/monitoring
 ## config
 
 # symlink icingacli
-ln -sf %{buildroot}/%{sharedir}/bin/icingacli %{buildroot}/usr/bin/icingacli
+mkdir -p %{buildroot}/usr/bin
+ln -sf %{sharedir}/bin/icingacli %{buildroot}/usr/bin/icingacli
 
 %pre
 # Add apacheuser in the icingacmd group
@@ -221,7 +213,7 @@ fi
 %files
 # main dirs
 %defattr(-,root,root)
-%doc etc/schema doc packages/rpm/README.md
+%doc etc/schema doc packages/RPM.md
 %attr(755,%{apacheuser},%{apachegroup}) %{sharedir}/public
 %attr(755,%{apacheuser},%{apachegroup}) %{sharedir}/modules
 # configs
@@ -239,5 +231,7 @@ fi
 
 %files -n icingacli
 %attr(0755,root,root) /usr/bin/icingacli
+%attr(0755,root,root) %{sharedir}/bin/icingacli
+%attr(0755,root,root) %{sharedir}/bin/license_writer.py
 
 %changelog
