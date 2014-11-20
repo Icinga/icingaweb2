@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-use Icinga\Application\Logger;
 use Zend_Db_Select;
 
 class GroupSummaryQuery extends IdoQuery
@@ -36,6 +35,7 @@ class GroupSummaryQuery extends IdoQuery
             'services_warning_unhandled'    => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 AND acknowledged + in_downtime + host_state = 0 THEN 1 ELSE 0 END)',
             'services_critical_unhandled'   => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 AND acknowledged + in_downtime + host_state = 0 THEN 1 ELSE 0 END)',
             'services_unknown_unhandled'    => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 AND acknowledged + in_downtime + host_state = 0 THEN 1 ELSE 0 END)',
+            'services_highest_severity'                     => 'MAX(CASE WHEN object_type = \'service\' THEN severity ELSE 0 END)',
             'services_ok_last_state_change'                 => 'MAX(CASE WHEN object_type = \'service\' AND state = 0 THEN state_change ELSE 0 END)',
             'services_pending_last_state_change'            => 'MAX(CASE WHEN object_type = \'service\' AND state = 99 THEN state_change ELSE 0 END)',
             'services_warning_last_state_change_handled'    => 'MAX(CASE WHEN object_type = \'service\' AND state = 1 AND acknowledged + in_downtime + host_state > 0 THEN state_change ELSE 0 END)',
@@ -67,7 +67,8 @@ class GroupSummaryQuery extends IdoQuery
                 'state'        => 'host_state',
                 'acknowledged' => 'host_acknowledged',
                 'in_downtime'  => 'host_in_downtime',
-                'state_change' => 'host_last_state_change'
+                'state_change' => 'host_last_state_change',
+                'severity'     => 'host_severity'
             )
         );
         if (in_array('servicegroup', $this->desiredColumns)) {
@@ -79,7 +80,8 @@ class GroupSummaryQuery extends IdoQuery
                 'state'        => 'service_state',
                 'acknowledged' => 'service_acknowledged',
                 'in_downtime'  => 'service_in_downtime',
-                'state_change' => 'service_last_state_change'
+                'state_change' => 'service_last_state_change',
+                'severity'     => 'service_severity'
             )
         );
 
