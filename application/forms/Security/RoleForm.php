@@ -42,7 +42,7 @@ class RoleForm extends ConfigForm
             }
             foreach ($module->getProvidedRestrictions() as $restriction) {
                 /** @var object $restriction */
-                $this->providedRestrictions[$restriction->name] = $restriction->name . ': ' . $restriction->description;
+                $this->providedRestrictions[$restriction->name] = $restriction->description;
             }
         }
     }
@@ -60,7 +60,8 @@ class RoleForm extends ConfigForm
                 array(
                     'required'      => true,
                     'label'         => t('Role Name'),
-                    'description'   => t('The name of the role')
+                    'description'   => t('The name of the role'),
+                    'ignore'        => true
                 ),
             ),
             array(
@@ -89,6 +90,16 @@ class RoleForm extends ConfigForm
                 )
             )
         ));
+        foreach ($this->providedRestrictions as $name => $description) {
+            $this->addElement(
+                'text',
+                $name,
+                array(
+                    'label'         => $name,
+                    'description'   => $description
+                )
+            );
+        }
         return $this;
     }
 
@@ -215,11 +226,10 @@ class RoleForm extends ConfigForm
      */
     public function getValues($suppressArrayNotation = false)
     {
-        $permissions = $this->getElement('permissions')->getValue();
-        return array(
-            'users'         => $this->getElement('users')->getValue(),
-            'groups'        => $this->getElement('groups')->getValue(),
-            'permissions'   => ! empty($permissions) ? implode(', ', $permissions) : null
-        );
+        $values = array_filter(parent::getValues($suppressArrayNotation));
+        if (isset($values['permissions'])) {
+            $values['permissions'] = implode(', ', $values['permissions']);
+        }
+        return $values;
     }
 }
