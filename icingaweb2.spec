@@ -167,7 +167,7 @@ Icinga Web 2 PHP Libraries required by the web frontend and cli tool.
 # prepare configuration for sub packages
 
 # install rhel apache config
-install -D -m0644 packages/rpm/etc/httpd/conf.d/icingaweb.conf %{buildroot}/%{apacheconfdir}/icingaweb.conf
+install -D -m0644 packages/files/apache/icingaweb.conf %{buildroot}/%{apacheconfdir}/icingaweb.conf
 
 # install public, library, modules
 %{__mkdir} -p %{buildroot}/%{sharedir}
