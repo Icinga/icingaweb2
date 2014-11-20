@@ -26,7 +26,7 @@ class Monitoring_ServicesController extends Controller
     public function init()
     {
         $serviceList = new ServiceList($this->backend);
-        $serviceList->setFilter(Filter::fromQueryString((string) $this->params));
+        $serviceList->setFilter(Filter::fromQueryString((string) $this->params->without('service_problem', 'service_handled')));
         $this->serviceList = $serviceList;
     }
 
