@@ -21,6 +21,8 @@
     <tbody>
     <?php foreach ($history as $event): ?>
     <?php
+      $icon = 'help';
+      $title = $event->type;
       $stateName = 'invalid';
       $isService = isset($event->service);
       switch ($event->type) {
@@ -47,6 +49,11 @@
         case 'flapping':
           $icon = 'flapping';
           $title = $this->translate('Flapping');
+          $msg = $event->output;
+          break;
+        case 'flapping_deleted':
+          $icon = 'ok';
+          $title = $this->translate('Flapping Stopped');
           $msg = $event->output;
           break;
         case 'hard_state':
