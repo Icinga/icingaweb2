@@ -78,7 +78,7 @@ class DashboardController extends ActionController
         $dashboard = $this->dashboard;
         $form = new ComponentForm();
         $form->setDashboard($dashboard);
-        $form->setSubmitLabel(t('Update Component'));
+        $form->setSubmitLabel(t('Update Dashlet'));
         if (! $this->_request->getParam('pane')) {
             throw new Zend_Controller_Action_Exception(
                 'Missing parameter "pane"',
@@ -125,7 +125,7 @@ class DashboardController extends ActionController
                 $action->render('error');
                 return false;
             }
-            Notification::success(t('Component updated'));
+            Notification::success(t('Dashlet updated'));
             return true;
         });
         $form->setRedirectUrl('dashboard/settings');
@@ -162,7 +162,7 @@ class DashboardController extends ActionController
                 $pane = $dashboard->getPane($pane);
                 $pane->removeComponent($component);
                 $dashboard->write();
-                Notification::success(t('Component has been removed from') . ' ' . $pane->getTitle());
+                Notification::success(t('Dashlet has been removed from') . ' ' . $pane->getTitle());
                 return true;
             }  catch (\Zend_Config_Exception $e) {
                 $action->view->error = $e;
@@ -200,7 +200,7 @@ class DashboardController extends ActionController
                 $pane = $dashboard->getPane($pane);
                 $dashboard->removePane($pane->getTitle());
                 $dashboard->write();
-                Notification::success(t('Pane has been removed') . ': ' . $pane->getTitle());
+                Notification::success(t('Dashboard has been removed') . ': ' . $pane->getTitle());
                 return true;
             }  catch (\Zend_Config_Exception $e) {
                 $action->view->error = $e;
