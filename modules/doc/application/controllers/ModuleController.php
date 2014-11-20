@@ -65,9 +65,10 @@ class Doc_ModuleController extends DocController
     {
         $moduleName = $this->getParam('moduleName');
         $this->assertModuleEnabled($moduleName);
+        $this->view->moduleName = $moduleName;
         $moduleManager = Icinga::app()->getModuleManager();
         try {
-            $this->renderToc(
+            return $this->renderToc(
                 $moduleManager->getModuleDir($moduleName, '/doc'),
                 $moduleName,
                 'doc/module/chapter',
@@ -76,7 +77,6 @@ class Doc_ModuleController extends DocController
         } catch (DocException $e) {
             throw new Zend_Controller_Action_Exception($e->getMessage(), 404);
         }
-        $this->view->moduleName = $moduleName;
     }
 
     /**
@@ -97,9 +97,10 @@ class Doc_ModuleController extends DocController
                 404
             );
         }
+        $this->view->moduleName = $moduleName;
         $moduleManager = Icinga::app()->getModuleManager();
         try {
-            $this->renderChapter(
+            return $this->renderChapter(
                 $moduleManager->getModuleDir($moduleName, '/doc'),
                 $chapterId,
                 $this->_helper->url->url(array('moduleName' => $moduleName), 'doc/module/toc'),
@@ -109,7 +110,6 @@ class Doc_ModuleController extends DocController
         } catch (DocException $e) {
             throw new Zend_Controller_Action_Exception($e->getMessage(), 404);
         }
-        $this->view->moduleName = $moduleName;
     }
 
     /**
@@ -122,7 +122,7 @@ class Doc_ModuleController extends DocController
         $moduleName = $this->getParam('moduleName');
         $this->assertModuleEnabled($moduleName);
         $moduleManager = Icinga::app()->getModuleManager();
-        $this->renderPdf(
+        return $this->renderPdf(
             $moduleManager->getModuleDir($moduleName, '/doc'),
             $moduleName,
             'doc/module/chapter',

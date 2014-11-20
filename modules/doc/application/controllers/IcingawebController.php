@@ -13,7 +13,7 @@ class Doc_IcingawebController extends DocController
      */
     public function tocAction()
     {
-        $this->renderToc(Icinga::app()->getApplicationDir('/../doc'), 'Icinga Web 2', 'doc/icingaweb/chapter');
+        return $this->renderToc(Icinga::app()->getApplicationDir('/../doc'), 'Icinga Web 2', 'doc/icingaweb/chapter');
     }
 
     /**
@@ -30,7 +30,7 @@ class Doc_IcingawebController extends DocController
                 404
             );
         }
-        $this->renderChapter(
+        return $this->renderChapter(
             Icinga::app()->getApplicationDir('/../doc'),
             $chapterId,
             'doc/icingaweb/toc',
@@ -43,6 +43,6 @@ class Doc_IcingawebController extends DocController
      */
     public function pdfAction()
     {
-        $this->renderPdf(Icinga::app()->getApplicationDir('/../doc'), 'Icinga Web 2', 'doc/icingaweb/chapter');
+        return $this->renderPdf(Icinga::app()->getApplicationDir('/../doc'), 'Icinga Web 2', 'doc/icingaweb/chapter');
     }
 }

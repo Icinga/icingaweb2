@@ -181,6 +181,19 @@ class SectionRenderer extends Renderer
         return substr_replace($doc->saveXML($img), '', -2, 1);  // Replace '/>' with '>'
     }
 
+    protected function blubb($match)
+    {
+        $doc = new DOMDocument();
+        $doc->loadHTML($match[0]);
+        $xpath = new DOMXPath($doc);
+        $blockquote = $xpath->query('//blockquote[1]')->item(0);
+        /* @var $blockquote \DOMElement */
+        if (strtolower(substr(trim($blockquote->nodeValue), 0, 5)) === 'note:') {
+            $blockquote->setAttribute('class', 'note');
+        }
+        return $doc->saveXML($blockquote);
+    }
+
     /**
      * Render the section
      *
@@ -211,6 +224,11 @@ class SectionRenderer extends Renderer
             $html = preg_replace_callback(
                 '/<img[^>]+>/',
                 array($this, 'replaceImg'),
+                $html
+            );
+            $html = preg_replace_callback(
+                '#<blockquote>.+</blockquote>#ms',
+                array($this, 'blubb'),
                 $html
             );
             $content[] = preg_replace_callback(
