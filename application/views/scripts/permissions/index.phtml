@@ -29,8 +29,9 @@
                         <td><?= $this->escape($role->users) ?></td>
                         <td><?= $this->escape($role->groups) ?></td>
                         <td>
-                            <a href="<?= $this->url('permissions/remove', array('role' => $name)) ?>">
-                                <?= $this->translate('Remove role') ?>
+                            <a href="<?= $this->url('permissions/remove', array('role' => $name)) ?>"
+                               title="<?= $this->translate('Remove role') ?>">
+                                <?= $this->icon('cancel') ?>
                             </a>
                         </td>
                     </tr>
