@@ -57,6 +57,7 @@ The allowed values are *user* for a backend that provides user authentication or
 If an ldap-backend is used, the standard ldap bind will be executed and all user credentials will be managed
 directly by the ldap server.
 
-In case of an SQL-backend, the backend will store the salted hash of the password in the column "password" and the salt in the column "salt".
-When a password is checked, the hash is calculated with the function hash_hmac("sha256",salt,password) and compared
-to the stored value.
+In case of an SQL-backend, the backend will store the salted hash of the password in the column "password" and the salt in the column "salt". 
+
+When a password is checked, the hash is calculated with the function hash_hmac("sha256",password,salt) and compared
+to the stored values
