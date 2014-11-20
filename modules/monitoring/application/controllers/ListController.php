@@ -505,14 +505,14 @@ class Monitoring_ListController extends Controller
         $this->filterQuery($query);
         $this->view->servicegroups = $query->paginate();
         $this->setupSortControl(array(
-            'services_highest_severity' => $this->translate('Highest Severity'),
-            'servicegroup'              => $this->translate('Service Group Name'),
-            'services_total'            => $this->translate('Total Services'),
-            'services_ok'               => $this->translate('Services OK'),
-            'services_unknown'          => $this->translate('Services UNKNOWN'),
-            'services_critical'         => $this->translate('Services CRITICAL'),
-            'services_warning'          => $this->translate('Services WARNING'),
-            'services_pending'          => $this->translate('Services PENDING')
+            'services_severity' => $this->translate('Severity'),
+            'servicegroup'      => $this->translate('Service Group Name'),
+            'services_total'    => $this->translate('Total Services'),
+            'services_ok'       => $this->translate('Services OK'),
+            'services_unknown'  => $this->translate('Services UNKNOWN'),
+            'services_critical' => $this->translate('Services CRITICAL'),
+            'services_warning'  => $this->translate('Services WARNING'),
+            'services_pending'  => $this->translate('Services PENDING')
         ));
     }
 
@@ -552,14 +552,14 @@ class Monitoring_ListController extends Controller
         $this->filterQuery($query);
         $this->view->hostgroups = $query->paginate();
         $this->setupSortControl(array(
-            'services_highest_severity' => $this->translate('Highest Severity'),
-            'hostgroup'                 => $this->translate('Host Group Name'),
-            'services_total'            => $this->translate('Total Services'),
-            'services_ok'               => $this->translate('Services OK'),
-            'services_unknown'          => $this->translate('Services UNKNOWN'),
-            'services_critical'         => $this->translate('Services CRITICAL'),
-            'services_warning'          => $this->translate('Services WARNING'),
-            'services_pending'          => $this->translate('Services PENDING')
+            'services_severity' => $this->translate('Severity'),
+            'hostgroup'         => $this->translate('Host Group Name'),
+            'services_total'    => $this->translate('Total Services'),
+            'services_ok'       => $this->translate('Services OK'),
+            'services_unknown'  => $this->translate('Services UNKNOWN'),
+            'services_critical' => $this->translate('Services CRITICAL'),
+            'services_warning'  => $this->translate('Services WARNING'),
+            'services_pending'  => $this->translate('Services PENDING')
         ));
     }
 

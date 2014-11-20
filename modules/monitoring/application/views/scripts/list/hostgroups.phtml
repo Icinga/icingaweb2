@@ -21,46 +21,46 @@
   ?>
   <table class="groupview" data-base-target="_next">
     <thead>
-      <th style="text-align: left;"><?= $this->translate('Last Problem'); ?></th>
-      <th style="text-align: left;"><?= $this->translate('Host Group'); ?></th>
+      <th><?= $this->translate('Last Problem'); ?></th>
+      <th><?= $this->translate('Host Group'); ?></th>
       <th><?= $this->translate('Total Services'); ?></th>
-      <th colspan="5"><?= $this->translate('Service States'); ?></th>
+      <th><?= $this->translate('Service States'); ?></th>
     </thead>
     <tbody>
     <?php foreach ($hostgroups as $h): ?>
       <tr href="<?= $this->href('monitoring/list/services', array('hostgroup' => $h->hostgroup)); ?>">
        <?php if ($h->services_critical_last_state_change_unhandled): ?>
-        <td class="state change critical">
+        <td class="state change critical unhandled">
           <strong><?= $this->translate('CRITICAL'); ?></strong>
           <br>
           <?= $this->prefixedTimeSince($h->services_critical_last_state_change_unhandled); ?>
         </td>
        <?php elseif ($h->services_unknown_last_state_change_unhandled): ?>
-        <td class="state change unknown">
+        <td class="state change unknown unhandled">
           <strong><?= $this->translate('UNKNOWN'); ?></strong>
           <br>
           <?= $this->prefixedTimeSince($h->services_unknown_last_state_change_unhandled); ?>
         </td>
        <?php elseif ($h->services_warning_last_state_change_unhandled): ?>
-        <td class="state change warning">
+        <td class="state change warning unhandled">
           <strong><?= $this->translate('WARNING'); ?></strong>
           <br>
           <?= $this->prefixedTimeSince($h->services_warning_last_state_change_unhandled); ?>
         </td>
        <?php elseif ($h->services_critical_last_state_change_handled): ?>
-        <td class="state change critical handled">
+        <td class="state change critical">
           <strong><?= $this->translate('CRITICAL'); ?></strong>
           <br>
           <?= $this->prefixedTimeSince($h->services_critical_last_state_change_handled); ?>
         </td>
        <?php elseif ($h->services_unknown_last_state_change_handled): ?>
-        <td class="state change unknown handled">
+        <td class="state change unknown">
           <strong><?= $this->translate('UNKNOWN'); ?></strong>
           <br>
           <?= $this->prefixedTimeSince($h->services_unknown_last_state_change_handled); ?>
         </td>
        <?php elseif ($h->services_warning_last_state_change_handled): ?>
-        <td class="state change warning handled">
+        <td class="state change warning">
           <strong><?= $this->translate('WARNING'); ?></strong>
           <br>
           <?= $this->prefixedTimeSince($h->services_warning_last_state_change_handled); ?>
@@ -78,12 +78,12 @@
           <?= $this->prefixedTimeSince($h->services_pending_last_state_change); ?>
         </td>
        <?php endif ?>
-        <td>
+        <td class="groupname">
           <a href="<?= $this->href('monitoring/list/services', array('hostgroup' => $h->hostgroup)); ?>">
             <?= $h->hostgroup; ?>
           </a>
         </td>
-        <td class="services-total">
+        <td class="total">
           <?= $h->services_total; ?>
         </td>
         <td class="state">
@@ -100,13 +100,7 @@
               <?= $h->services_ok; ?>
             </a>
           </span>
-        <?php else: ?>
-          <span class="no-state">
-            -
-          </span>
         <?php endif ?>
-        </td>
-        <td class="state">
         <?php if ($h->services_critical_unhandled): ?>
           <span class="state critical">
             <a href="<?= $this->href(
@@ -141,13 +135,6 @@
         <?php if ($h->services_critical_unhandled): ?>
           </span>
         <?php endif ?>
-        <?php if (! $h->services_critical_unhandled && !$h->services_critical_handled): ?>
-          <span class="no-state">
-            -
-          </span>
-        <?php endif ?>
-        </td>
-        <td class="state">
         <?php if ($h->services_unknown_unhandled): ?>
           <span class="state unknown">
             <a href="<?= $this->href(
@@ -182,13 +169,6 @@
         <?php if ($h->services_unknown_unhandled): ?>
           </span>
         <?php endif ?>
-        <?php if (! $h->services_unknown_unhandled && !$h->services_unknown_handled): ?>
-          <span class="no-state">
-            -
-          </span>
-        <?php endif ?>
-        </td>
-        <td class="state">
         <?php if ($h->services_warning_unhandled): ?>
           <span class="state warning">
             <a href="<?= $this->href(
@@ -223,13 +203,6 @@
         <?php if ($h->services_warning_unhandled): ?>
           </span>
         <?php endif ?>
-        <?php if (! $h->services_warning_unhandled && !$h->services_warning_handled): ?>
-          <span class="no-state">
-            -
-          </span>
-        <?php endif ?>
-        </td>
-        <td class="state">
         <?php if ($h->services_pending): ?>
           <span class="state pending">
             <a href="<?= $this->href(
@@ -242,10 +215,6 @@
             ); ?>" title="<?= $this->translate('Services PENDING'); ?>">
               <?= $h->services_pending; ?>
             </a>
-          </span>
-        <?php else: ?>
-          <span class="no-state">
-            -
           </span>
         <?php endif ?>
         </td>
