@@ -12,28 +12,28 @@ use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
 
 /**
- * A dashboard pane component
+ * A dashboard pane dashlet
  *
  * This is the element displaying a specific view in icinga2web
  *
  */
-class Component extends UserWidget
+class Dashlet extends UserWidget
 {
     /**
-     * The url of this Component
+     * The url of this Dashlet
      *
      * @var \Icinga\Web\Url
      */
     private $url;
 
     /**
-     * The title being displayed on top of the component
+     * The title being displayed on top of the dashlet
      * @var
      */
     private $title;
 
     /**
-     * The pane containing this component, needed for the 'remove button'
+     * The pane containing this dashlet, needed for the 'remove button'
      * @var Pane
      */
     private $pane;
@@ -61,11 +61,11 @@ class Component extends UserWidget
 EOD;
 
     /**
-     * Create a new component displaying the given url in the provided pane
+     * Create a new dashlet displaying the given url in the provided pane
      *
-     * @param string $title     The title to use for this component
-     * @param Url|string $url   The url this component uses for displaying information
-     * @param Pane $pane        The pane this Component will be added to
+     * @param string $title     The title to use for this dashlet
+     * @param Url|string $url   The url this dashlet uses for displaying information
+     * @param Pane $pane        The pane this Dashlet will be added to
      */
     public function __construct($title, $url, Pane $pane)
     {
@@ -77,14 +77,14 @@ EOD;
             $this->url = Url::fromPath($url);
         } else {
             throw new IcingaException(
-                'Cannot create dashboard component "%s" without valid URL',
+                'Cannot create dashboard dashlet "%s" without valid URL',
                 $title
             );
         }
     }
 
     /**
-     * Retrieve the components title
+     * Retrieve the dashlets title
      *
      * @return string
      */
@@ -102,7 +102,7 @@ EOD;
     }
 
     /**
-     * Retrieve the components url
+     * Retrieve the dashlets url
      *
      * @return Url
      */
@@ -112,7 +112,7 @@ EOD;
     }
 
     /**
-     * Set the components URL
+     * Set the dashlets URL
      *
      * @param  string|Url $url  The url to use, either as an Url object or as a path
      *
@@ -149,7 +149,7 @@ EOD;
     }
 
     /**
-     * Return this component's structure as array
+     * Return this dashlet's structure as array
      *
      * @return  array
      */
@@ -208,8 +208,8 @@ EOD;
     {
         return sprintf(
             '<a data-base-target="main" href="%s">%s</a>',
-            Url::fromPath('dashboard/remove-component', array(
-                'component' => $this->getTitle(),
+            Url::fromPath('dashboard/remove-dashlet', array(
+                'dashlet' => $this->getTitle(),
                 'pane'      => $this->pane->getTitle()
             )),
             t('Remove')
@@ -217,13 +217,13 @@ EOD;
     }
 
     /**
-     * Create a @see Component instance from the given Zend config, using the provided title
+     * Create a @see Dashlet instance from the given Zend config, using the provided title
      *
-     * @param $title                The title for this component
+     * @param $title                The title for this dashlet
      * @param ConfigObject $config  The configuration defining url, parameters, height, width, etc.
-     * @param Pane $pane            The pane this component belongs to
+     * @param Pane $pane            The pane this dashlet belongs to
      *
-     * @return Component        A newly created Component for use in the Dashboard
+     * @return Dashlet        A newly created Dashlet for use in the Dashboard
      */
     public static function fromIni($title, ConfigObject $config, Pane $pane)
     {
@@ -233,14 +233,14 @@ EOD;
         $parameters = $config->toArray();
         unset($parameters['url']); // otherwise there's an url = parameter in the Url
 
-        $cmp = new Component($title, Url::fromPath($url, $parameters), $pane);
+        $cmp = new Dashlet($title, Url::fromPath($url, $parameters), $pane);
         return $cmp;
     }
 
     /**
      * @param \Icinga\Web\Widget\Dashboard\Pane $pane
      */
-    public function setPane(Panel $pane)
+    public function setPane(Pane $pane)
     {
         $this->pane = $pane;
     }

@@ -6,15 +6,16 @@
 <div class="content">
     <h1><?= t('Dashboard Settings'); ?></h1>
 
-    <table class="avp" data-base-target="_next">
+    <table class="avp action" data-base-target="_next">
         <thead>
             <tr>
-                <th>
-                    <strong><?= t('Component Name') ?></strong>
+                <th style="width: 18em;">
+                    <strong><?= t('Dashlet Name') ?></strong>
                 </th>
                 <th>
                     <strong><?= t('Url') ?></strong>
                 </th>
+                <th style="width: 1.4em;">&nbsp;</th>
             </tr>
         </thead>
         <tbody>
@@ -29,27 +30,27 @@
                         </a>
                     </th>
                 </tr>
-                <?php $components = $pane->getComponents(); ?>
-                <?php if(empty($components)): ?>
+                <?php $dashlets = $pane->getDashlets(); ?>
+                <?php if(empty($dashlets)): ?>
                     <tr>
                         <td colspan="3">
-                            <?= $this->translate('No compoments added to dashboard') ?>.
+                            <?= $this->translate('No dashlets added to dashboard') ?>.
                         </td>
                     </tr>
                 <?php else: ?>
-                    <?php foreach ($components as $component): ?>
-                    <?php if ($component->getDisabled() === true) continue; ?>
+                    <?php foreach ($dashlets as $dashlet): ?>
+                    <?php if ($dashlet->getDisabled() === true) continue; ?>
                         <tr>
                             <td>
-                                <a href="<?= $this->href('dashboard/update-component', array('pane' => $pane->getName(), 'component' => $component->getTitle()));  ?>">
-                                    <?= $component->getTitle(); ?>
+                                <a href="<?= $this->href('dashboard/update-dashlet', array('pane' => $pane->getName(), 'dashlet' => $dashlet->getTitle()));  ?>">
+                                    <?= $dashlet->getTitle(); ?>
                                 </a>
                             </td>
-                            <td>
-                                <a href="<?= $this->href($component->getUrl()); ?>"><?= $component->getUrl(); ?></a>
+                            <td style="table-layout: fixed; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <a href="<?= $this->href($dashlet->getUrl()); ?>"><?= $dashlet->getUrl(); ?></a>
                             </td>
                             <td>
-                                <a href="<?= $this->href('dashboard/remove-component', array('pane' => $pane->getName(), 'component' => $component->getTitle()));  ?>">
+                                <a href="<?= $this->href('dashboard/remove-dashlet', array('pane' => $pane->getName(), 'dashlet' => $dashlet->getTitle()));  ?>">
                                 <?= $this->icon('cancel'); ?>
                                 </a>
                             </td>

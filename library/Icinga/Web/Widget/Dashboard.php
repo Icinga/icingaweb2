@@ -14,15 +14,15 @@ use Icinga\Exception\SystemPermissionException;
 use Icinga\File\Ini\IniWriter;
 use Icinga\User;
 use Icinga\Web\Widget\Dashboard\Pane;
-use Icinga\Web\Widget\Dashboard\Component as DashboardComponent;
+use Icinga\Web\Widget\Dashboard\Dashlet as DashboardDashlet;
 use Icinga\Web\Url;
 
 /**
  * Dashboards display multiple views on a single page
  *
  * The terminology is as follows:
- * - Component:     A single view showing a specific url
- * - Pane:          Aggregates one or more components on one page, displays it's title as a tab
+ * - Dashlet:     A single view showing a specific url
+ * - Pane:          Aggregates one or more dashlets on one page, displays it's title as a tab
  * - Dashboard:     Shows all panes
  *
  */
@@ -98,9 +98,9 @@ class Dashboard extends AbstractWidget
             if ($pane->isUserWidget() === true) {
                 $output[$pane->getName()] = $pane->toArray();
             }
-            foreach ($pane->getComponents() as $component) {
-                if ($component->isUserWidget() === true) {
-                    $output[$pane->getName() . '.' . $component->getTitle()] = $component->toArray();
+            foreach ($pane->getDashlets() as $dashlet) {
+                if ($dashlet->isUserWidget() === true) {
+                    $output[$pane->getName() . '.' . $dashlet->getTitle()] = $dashlet->toArray();
                 }
             }
         }
@@ -132,7 +132,7 @@ class Dashboard extends AbstractWidget
             return false;
         }
         $panes = array();
-        $components = array();
+        $dashlets = array();
         foreach ($config as $key => $part) {
             if (strpos($key, '.') === false) {
                 if ($this->hasPane($part->title)) {
@@ -147,34 +147,34 @@ class Dashboard extends AbstractWidget
                 }
 
             } else {
-                list($paneName, $componentName) = explode('.', $key, 2);
+                list($paneName, $dashletName) = explode('.', $key, 2);
                 $part->pane = $paneName;
-                $part->component = $componentName;
-                $components[] = $part;
+                $part->dashlet = $dashletName;
+                $dashlets[] = $part;
             }
         }
-        foreach ($components as $componentData) {
+        foreach ($dashlets as $dashletData) {
             $pane = null;
 
-            if (array_key_exists($componentData->pane, $panes) === true) {
-                $pane = $panes[$componentData->pane];
-            } elseif (array_key_exists($componentData->pane, $this->panes) === true) {
-                $pane = $this->panes[$componentData->pane];
+            if (array_key_exists($dashletData->pane, $panes) === true) {
+                $pane = $panes[$dashletData->pane];
+            } elseif (array_key_exists($dashletData->pane, $this->panes) === true) {
+                $pane = $this->panes[$dashletData->pane];
             } else {
                 continue;
             }
-            $component = new DashboardComponent(
-                $componentData->title,
-                $componentData->url,
+            $dashlet = new DashboardDashlet(
+                $dashletData->title,
+                $dashletData->url,
                 $pane
             );
 
-            if ((bool) $componentData->get('disabled', false) === true) {
-                $component->setDisabled(true);
+            if ((bool) $dashletData->get('disabled', false) === true) {
+                $dashlet->setDisabled(true);
             }
 
-            $component->setUserWidget();
-            $pane->addComponent($component);
+            $dashlet->setUserWidget();
+            $pane->addDashlet($dashlet);
         }
 
         $this->mergePanes($panes);
@@ -202,7 +202,7 @@ class Dashboard extends AbstractWidget
             if ($this->hasPane($pane->getTitle()) === true) {
                 /** @var $current Pane */
                 $current = $this->panes[$pane->getName()];
-                $current->addComponents($pane->getComponents());
+                $current->addDashlets($pane->getDashlets());
             } else {
                 $this->panes[$pane->getName()] = $pane;
             }

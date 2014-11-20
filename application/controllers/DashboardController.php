@@ -5,7 +5,7 @@
 use Icinga\Application\Logger;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Forms\ConfirmRemovalForm;
-use Icinga\Forms\Dashboard\ComponentForm;
+use Icinga\Forms\Dashboard\DashletForm;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 use Icinga\Web\Controller\ActionController;
@@ -15,7 +15,7 @@ use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Widget\Tabextension\DashboardSettings;
 
 /**
- * Handle creation, removal and displaying of dashboards, panes and components
+ * Handle creation, removal and displaying of dashboards, panes and dashlets
  *
  * @see Icinga\Web\Widget\Dashboard for more information about dashboards
  */
@@ -33,9 +33,9 @@ class DashboardController extends ActionController
         $this->dashboard->load();
     }
 
-    public function newComponentAction()
+    public function newDashletAction()
     {
-        $form = new ComponentForm();
+        $form = new DashletForm();
         $this->createTabs();
         $dashboard = $this->dashboard;
         $form->setDashboard($dashboard);
@@ -53,9 +53,9 @@ class DashboardController extends ActionController
                 $pane->setUserWidget();
                 $dashboard->addPane($pane);
             }
-            $component = new Dashboard\Component($form->getValue('component'), $form->getValue('url'), $pane);
-            $component->setUserWidget();
-            $pane->addComponent($component);
+            $dashlet = new Dashboard\Dashlet($form->getValue('dashlet'), $form->getValue('url'), $pane);
+            $dashlet->setUserWidget();
+            $pane->addDashlet($dashlet);
             try {
                 $dashboard->write();
             } catch (\Zend_Config_Exception $e) {
@@ -64,7 +64,7 @@ class DashboardController extends ActionController
                 $action->render('error');
                 return false;
             }
-            Notification::success(t('Component created'));
+            Notification::success(t('Dashlet created'));
             return true;
         });
         $form->setRedirectUrl('dashboard');
@@ -72,22 +72,22 @@ class DashboardController extends ActionController
         $this->view->form = $form;
     }
 
-    public function updateComponentAction()
+    public function updateDashletAction()
     {
         $this->createTabs();
         $dashboard = $this->dashboard;
-        $form = new ComponentForm();
+        $form = new DashletForm();
         $form->setDashboard($dashboard);
-        $form->setSubmitLabel(t('Update Component'));
+        $form->setSubmitLabel(t('Update Dashlet'));
         if (! $this->_request->getParam('pane')) {
             throw new Zend_Controller_Action_Exception(
                 'Missing parameter "pane"',
                 400
             );
         }
-        if (! $this->_request->getParam('component')) {
+        if (! $this->_request->getParam('dashlet')) {
             throw new Zend_Controller_Action_Exception(
-                'Missing parameter "component"',
+                'Missing parameter "dashlet"',
                 400
             );
         }
@@ -101,21 +101,21 @@ class DashboardController extends ActionController
                 $dashboard->addPane($pane);
             }
             try {
-                $component = $pane->getComponent($form->getValue('component'));
-                $component->setUrl($form->getValue('url'));
+                $dashlet = $pane->getDashlet($form->getValue('dashlet'));
+                $dashlet->setUrl($form->getValue('url'));
             } catch (ProgrammingError $e) {
-                $component = new Dashboard\Component($form->getValue('component'), $form->getValue('url'), $pane);
-                $pane->addComponent($component);
+                $dashlet = new Dashboard\Dashlet($form->getValue('dashlet'), $form->getValue('url'), $pane);
+                $pane->addDashlet($dashlet);
             }
-            $component->setUserWidget();
-            // Rename component
-            if ($form->getValue('org_component') && $form->getValue('org_component') !== $component->getTitle()) {
-                $pane->removeComponent($form->getValue('org_component'));
+            $dashlet->setUserWidget();
+            // Rename dashlet
+            if ($form->getValue('org_dashlet') && $form->getValue('org_dashlet') !== $dashlet->getTitle()) {
+                $pane->removeDashlet($form->getValue('org_dashlet'));
             }
             // Move
             if ($form->getValue('org_pane') && $form->getValue('org_pane') !== $pane->getTitle()) {
                 $oldPane = $dashboard->getPane($form->getValue('org_pane'));
-                $oldPane->removeComponent($component->getTitle());
+                $oldPane->removeDashlet($dashlet->getTitle());
             }
             try {
                 $dashboard->write();
@@ -125,19 +125,19 @@ class DashboardController extends ActionController
                 $action->render('error');
                 return false;
             }
-            Notification::success(t('Component updated'));
+            Notification::success(t('Dashlet updated'));
             return true;
         });
         $form->setRedirectUrl('dashboard/settings');
         $form->handleRequest();
         $pane = $dashboard->getPane($this->getParam('pane'));
-        $component = $pane->getComponent($this->getParam('component'));
-        $form->load($component);
+        $dashlet = $pane->getDashlet($this->getParam('dashlet'));
+        $form->load($dashlet);
 
         $this->view->form = $form;
     }
 
-    public function removeComponentAction()
+    public function removeDashletAction()
     {
         $form = new ConfirmRemovalForm();
         $this->createTabs();
@@ -148,21 +148,21 @@ class DashboardController extends ActionController
                 400
             );
         }
-        if (! $this->_request->getParam('component')) {
+        if (! $this->_request->getParam('dashlet')) {
             throw new Zend_Controller_Action_Exception(
-                'Missing parameter "component"',
+                'Missing parameter "dashlet"',
                 400
             );
         }
         $pane = $this->_request->getParam('pane');
-        $component = $this->_request->getParam('component');
+        $dashlet = $this->_request->getParam('dashlet');
         $action = $this;
-        $form->setOnSuccess(function (Form $form) use ($dashboard, $component, $pane, $action) {
+        $form->setOnSuccess(function (Form $form) use ($dashboard, $dashlet, $pane, $action) {
             try {
                 $pane = $dashboard->getPane($pane);
-                $pane->removeComponent($component);
+                $pane->removeDashlet($dashlet);
                 $dashboard->write();
-                Notification::success(t('Component has been removed from') . ' ' . $pane->getTitle());
+                Notification::success(t('Dashlet has been removed from') . ' ' . $pane->getTitle());
                 return true;
             }  catch (\Zend_Config_Exception $e) {
                 $action->view->error = $e;
@@ -178,7 +178,7 @@ class DashboardController extends ActionController
         $form->setRedirectUrl('dashboard/settings');
         $form->handleRequest();
         $this->view->pane = $pane;
-        $this->view->component = $component;
+        $this->view->dashlet = $dashlet;
         $this->view->form = $form;
     }
 
@@ -200,7 +200,7 @@ class DashboardController extends ActionController
                 $pane = $dashboard->getPane($pane);
                 $dashboard->removePane($pane->getTitle());
                 $dashboard->write();
-                Notification::success(t('Pane has been removed') . ': ' . $pane->getTitle());
+                Notification::success(t('Dashboard has been removed') . ': ' . $pane->getTitle());
                 return true;
             }  catch (\Zend_Config_Exception $e) {
                 $action->view->error = $e;
@@ -240,7 +240,7 @@ class DashboardController extends ActionController
             } else {
                 $this->view->title = $this->dashboard->getActivePane()->getTitle() . ' :: Dashboard';
                 if ($this->hasParam('remove')) {
-                    $this->dashboard->getActivePane()->removeComponent($this->getParam('remove'));
+                    $this->dashboard->getActivePane()->removeDashlet($this->getParam('remove'));
                     $this->dashboard->write();
                     $this->redirectNow(URL::fromRequest()->remove('remove'));
                 }
@@ -248,7 +248,7 @@ class DashboardController extends ActionController
                     'Add',
                     array(
                         'title' => '+',
-                        'url' => Url::fromPath('dashboard/new-component')
+                        'url' => Url::fromPath('dashboard/new-dashlet')
                     )
                 );
                 $this->view->dashboard = $this->dashboard;

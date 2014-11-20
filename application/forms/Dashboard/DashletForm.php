@@ -7,12 +7,12 @@ namespace Icinga\Forms\Dashboard;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
-use Icinga\Web\Widget\Dashboard\Component;
+use Icinga\Web\Widget\Dashboard\Dashlet;
 
 /**
  * Form to add an url a dashboard pane
  */
-class ComponentForm extends Form
+class DashletForm extends Form
 {
     /**
      * @var Dashboard
@@ -54,7 +54,7 @@ class ComponentForm extends Form
 
         $this->addElement(
             'hidden',
-            'org_component',
+            'org_dashlet',
             array(
                 'required' => false
             )
@@ -72,17 +72,23 @@ class ComponentForm extends Form
         );
         $this->addElement(
             'text',
-            'component',
+            'dashlet',
             array(
-                'required'  => true,
-                'label'     => t('Dashlet Title'),
-                'description'  => t('Enter a title for the dashlet.')
+                'required'      => true,
+                'label'         => t('Dashlet Title'),
+                'description'   => t('Enter a title for the dashlet.')
             )
         );
-        if (empty($panes) ||
-            ((isset($formData['create_new_pane']) && $formData['create_new_pane'] != false) &&
-             (false === isset($formData['use_existing_dashboard']) || $formData['use_existing_dashboard'] != true))
-        ) {
+        $this->addElement(
+            'note',
+            'note',
+            array(
+                'decorators' => array(
+                    array('HtmlTag', array('tag' => 'hr'))
+                )
+            )
+        );
+        if (empty($panes) || ((isset($formData['create_new_pane']) && $formData['create_new_pane'] != false))) {
             $this->addElement(
                 'text',
                 'pane',
@@ -93,26 +99,6 @@ class ComponentForm extends Form
                         t('Enter a title for the new pane.')
                 )
             );
-            $this->addElement( // Prevent the button from being displayed again on validation errors
-                'hidden',
-                'create_new_pane',
-                array(
-                    'value' => 1
-                )
-            );
-            if (false === empty($panes)) {
-                $buttonExistingPane = $this->createElement(
-                    'submit',
-                    'use_existing_dashboard',
-                    array(
-                        'ignore'        => true,
-                        'label'         => t('Use An Existing Dashboard'),
-                        'class'         => 'link-like'
-                    )
-                );
-                $buttonExistingPane->removeDecorator('Label');
-                $this->addElement($buttonExistingPane);
-            }
         } else {
             $this->addElement(
                 'select',
@@ -125,18 +111,18 @@ class ComponentForm extends Form
                         t('Select a pane you want to add the dashlet.')
                 )
             );
-            $buttonNewPane = $this->createElement(
-                'submit',
-                'create_new_pane',
-                array(
-                    'ignore'        => true,
-                    'label'         => t('Create A New Dashboard'),
-                    'class'         => 'link-like',
-                )
-            );
-            $buttonNewPane->removeDecorator('Label');
-            $this->addElement($buttonNewPane);
         }
+
+        $this->addElement(
+            'checkbox',
+            'create_new_pane',
+            array(
+                'required'      => false,
+                'label'         => t('New dashboard'),
+                'class'         => 'autosubmit',
+                'description'   => t('Check this box if you want to add the dashlet to a new dashboard')
+            )
+        );
     }
 
     /**
@@ -156,16 +142,16 @@ class ComponentForm extends Form
     }
 
     /**
-     * @param Component $component
+     * @param Dashlet $dashlet
      */
-    public function load(Component $component)
+    public function load(Dashlet $dashlet)
     {
         $this->populate(array(
-            'pane'          => $component->getPane()->getName(),
-            'org_pane'      => $component->getPane()->getName(),
-            'component'     => $component->getTitle(),
-            'org_component' => $component->getTitle(),
-            'url'           => $component->getUrl()
+            'pane'          => $dashlet->getPane()->getName(),
+            'org_pane'      => $dashlet->getPane()->getName(),
+            'dashlet'     => $dashlet->getTitle(),
+            'org_dashlet' => $dashlet->getTitle(),
+            'url'           => $dashlet->getUrl()
         ));
     }
 }
