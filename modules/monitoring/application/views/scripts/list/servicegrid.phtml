@@ -11,7 +11,7 @@
 <?php
 $hasHeader = false;
 $pivotData = $this->pivot->toArray();
-$hostFilter = '(' . implode('|', array_keys($pivotData)) . ')';
+$hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . ')';
 ?>
 
 <?php if (count($pivotData) === 0): ?>
@@ -37,10 +37,9 @@ $hostFilter = '(' . implode('|', array_keys($pivotData)) . ')';
               <a href="<?= $this->href(
                 'monitoring/list/services',
                 array(
-                  'service_description'   => $service_description,
-                  'host_name'             => $hostFilter
+                  'service_description' => $service_description
                 )
-              ); ?>">
+              ) . '&' . $hostFilter; ?>">
                 <abbr title="<?= $service_description; ?>">
                   <?= strlen($service_description) > 18 ? substr($service_description, 0, 18) . '...' : $service_description; ?>
                 </abbr>
