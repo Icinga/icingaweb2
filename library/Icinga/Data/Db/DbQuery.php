@@ -162,7 +162,10 @@ class DbQuery extends SimpleQuery
             $parts = array();
             if (! $filter->isEmpty()) {
                 foreach ($filter->filters() as $f) {
-                    $parts[] = $this->renderFilter($f, $level + 1);
+                    $filterPart = $this->renderFilter($f, $level + 1);
+                    if ($filterPart !== '') {
+                        $parts[] = $filterPart;
+                    }
                 }
                 if ($level > 0) {
                     $str .= ' (' . implode($op, $parts) . ') ';
