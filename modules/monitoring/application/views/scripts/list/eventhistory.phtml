@@ -8,12 +8,6 @@
   <?= $this->widget('limiter', array('url' => $this->url, 'max' => $this->history->count())); ?>
   <?= $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
 
-  <br> <br>
-  <?= $form ?>
-
-  <div class="content">
-      <?= $this->filterEditor ?>
-  </div>
 </div>
 <?php endif ?>
 

@@ -40,6 +40,24 @@ class Monitoring_ListController extends Controller
         $this->url = Url::fromRequest();
     }
 
+    /**
+     * @deprecated DO NOT USE. THIS IS A HACK. This is removed once we fix the eventhistory action w/ filters.
+     */
+    protected function applyFilter($query)
+    {
+        $params = clone $this->params;
+        $params->shift('format');
+        $params->shift('limit');
+        $params->shift('page');
+        $params->shift('view');
+        if ($sort = $params->shift('sort')) {
+            $query->order($sort, $params->shift('dir'));
+        }
+        $query->applyFilter(Filter::fromQuerystring((string) $params));
+        $this->handleFormatRequest($query);
+        return $query;
+    }
+
     protected function hasBetterUrl()
     {
         $request = $this->getRequest();
@@ -570,24 +588,6 @@ class Monitoring_ListController extends Controller
         }
         $this->addTitleTab('eventhistory', $this->translate('Event Overview'));
 
-        $form = new EventOverviewForm();
-        $form->handleRequest($this->getRequest());
-        $this->view->form = $form;
-
-        if ($this->getRequest()->isPost() && !$this->getParam('modifyFilter')) {
-            // update filter string
-            $filters = $form->getFilter();
-            $url = $this->_request->getUrl();
-            $url->setQueryString($filters->toQueryString());
-            if ($this->getParam('sort') !== null) {
-                $url->setParam('sort', $this->getParam('sort'));
-            }
-            if ($this->getParam('dir') !== null) {
-                $url->setParam('dir', $this->getParam('dir'));
-            }
-            return $this->redirectNow($url);
-        }
-
         $query = $this->backend->select()->from('eventHistory', array(
             'host_name',
             'service_description',
@@ -601,14 +601,12 @@ class Monitoring_ListController extends Controller
             'host',
             'service'
         ));
-        if ($this->getParam('state')) {
-            $query->applyFilter(Filter::expression('state', '=', $this->getParam('state')));
-        }
+
+        $this->applyFilter($query);
 
         $this->setupSortControl(array(
             'timestamp' => 'Occurence'
         ));
-        $this->filterQuery($query);
         $this->view->history = $query->paginate();
     }
 
