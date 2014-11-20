@@ -66,6 +66,9 @@ class Monitoring_ProcessController extends Controller
             )
             ->getQuery()
             ->fetchRow();
+        if ($programStatus === false) {
+            return $this->render('not-running', true, null);
+        }
         $this->view->programStatus = $programStatus;
         $toggleFeaturesForm = new ToggleInstanceFeaturesCommandForm();
         $toggleFeaturesForm
