@@ -39,7 +39,6 @@ password  = icingaweb
 dbname    = icingaweb
 ```
 
-
 ### <a id="resources-configuration-ldap"></a> LDAP
 
 A LDAP resource represents a tree in a LDAP directory. LDAP is usually used for authentication and authorization.
@@ -64,7 +63,6 @@ root_dn   = "ou=people,dc=icinga,dc=org"
 bind_dn   = "cn=admin,ou=people,dc=icinga,dc=org"
 bind_pw   = admin`
 ````
-
 
 ### <a id="resources-configuration-livestatus"></a> Livestatus
 
