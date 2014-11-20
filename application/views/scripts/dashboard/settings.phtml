@@ -6,15 +6,16 @@
 <div class="content">
     <h1><?= t('Dashboard Settings'); ?></h1>
 
-    <table class="avp" data-base-target="_next">
+    <table class="avp action" data-base-target="_next">
         <thead>
             <tr>
-                <th>
+                <th style="width: 18em;">
                     <strong><?= t('Dashlet Name') ?></strong>
                 </th>
                 <th>
                     <strong><?= t('Url') ?></strong>
                 </th>
+                <th style="width: 1.4em;">&nbsp;</th>
             </tr>
         </thead>
         <tbody>
@@ -45,7 +46,7 @@
                                     <?= $dashlet->getTitle(); ?>
                                 </a>
                             </td>
-                            <td>
+                            <td style="table-layout: fixed; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                 <a href="<?= $this->href($dashlet->getUrl()); ?>"><?= $dashlet->getUrl(); ?></a>
                             </td>
                             <td>
