@@ -6,7 +6,7 @@ namespace Icinga\Forms\Dashboard;
 
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Form;
-use Icinga\Web\Request;
+use Icinga\Web\Url;
 use Icinga\Web\Widget\Dashboard\Dashlet;
 
 /**
@@ -28,6 +28,7 @@ class DashletForm extends Form
         if (! $this->getSubmitLabel()) {
             $this->setSubmitLabel(t('Add To Dashboard'));
         }
+        $this->setAction(URL::fromRequest());
     }
 
     /**
