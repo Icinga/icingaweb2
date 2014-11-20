@@ -186,6 +186,7 @@
          *
          */
         submitForm: function (event, autosubmit) {
+            //return false;
             var self   = event.data.self;
             var icinga = self.icinga;
             // .closest is not required unless subelements to trigger this
@@ -198,9 +199,23 @@
             var data;
 
             if ($button.length === 0) {
-                var $el = $(event.currentTarget);
-                if ($el.is('input[type=submit]') || $el.is('button[type=submit]')) {
+                var $el;
+
+                if (typeof event.originalEvent !== 'undefined'
+                    && typeof event.originalEvent.explicitOriginalTarget === 'object') { // Firefox
+                    $el = $(event.originalEvent.explicitOriginalTarget);
+                    icinga.logger.info('events/submitForm: Button is event.originalEvent.explicitOriginalTarget');
+                } else {
+                    $el = $(event.currentTarget);
+                    icinga.logger.info('events/submitForm: Button is event.currentTarget');
+                }
+
+                if ($el && ($el.is('input[type=submit]') || $el.is('button[type=submit]'))) {
                     $button = $el;
+                } else {
+                    icinga.logger.error(
+                        'events/submitForm: Can not determine submit button, using the first one in form'
+                    );
                 }
             }
 
