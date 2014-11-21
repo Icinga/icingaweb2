@@ -66,14 +66,14 @@ class Menu implements RecursiveIterator
     /**
      * A custom item renderer used instead of the default rendering logic
      *
-     * @var MenuItemRenderer
+     * @type MenuItemRenderer
      */
     protected $itemRenderer = null;
-    
+
     /*
      * Parent menu
      *
-     * @var Menu
+     * @type Menu
      */
     protected $parent;
 
@@ -82,6 +82,7 @@ class Menu implements RecursiveIterator
      *
      * @param   int             $id         The id of this menu
      * @param   ConfigObject    $config     The configuration for this menu
+     * @param   Menu            $parent     Parent menu
      */
     public function __construct($id, ConfigObject $config = null, Menu $parent = null)
     {
@@ -95,7 +96,11 @@ class Menu implements RecursiveIterator
     /**
      * Set all given properties
      *
-     * @param   array|ConfigObject   $props Property list
+     * @param   array|ConfigObject  $props Property list
+     *
+     * @return  $this
+     *
+     * @throws  ConfigurationError  If a property is invalid
      */
     public function setProperties($props = null)
     {
@@ -144,8 +149,9 @@ class Menu implements RecursiveIterator
     /**
      * Whether this Menu conflicts with the given Menu object
      *
-     * @param Menu $menu
-     * @return bool
+     * @param   Menu $menu
+     *
+     * @return  bool
      */
     public function conflictsWith(Menu $menu)
     {
@@ -158,9 +164,9 @@ class Menu implements RecursiveIterator
     /**
      * Create menu from the application's menu config file plus the config files from all enabled modules
      *
-     * THIS IS OBSOLATE. LEFT HERE FOR FUTURE USE WITH USER-SPECIFIC MODULES
+     * @return      static
      *
-     * @return  self
+     * @deprecated  THIS IS OBSOLETE. LEFT HERE FOR FUTURE USE WITH USER-SPECIFIC MODULES
      */
     public static function fromConfig()
     {
@@ -182,7 +188,7 @@ class Menu implements RecursiveIterator
     /**
      * Create menu from the application's menu config plus menu entries provided by all enabled modules
      *
-     * @return  self
+     * @return static
      */
     public static function load()
     {
@@ -253,7 +259,7 @@ class Menu implements RecursiveIterator
      *
      * @param   string  $id     The id to set for this menu
      *
-     * @return  self
+     * @return  $this
      */
     public function setId($id)
     {
@@ -300,7 +306,7 @@ class Menu implements RecursiveIterator
      *
      * @param   string  $title  The title to set for this menu
      *
-     * @return  self
+     * @return  $this
      */
     public function setTitle($title)
     {
@@ -323,7 +329,7 @@ class Menu implements RecursiveIterator
      *
      * @param   int     $priority   The priority to set for this menu
      *
-     * @return  self
+     * @return  $this
      */
     public function setPriority($priority)
     {
@@ -346,7 +352,7 @@ class Menu implements RecursiveIterator
      *
      * @param   Url|string  $url    The url to set for this menu
      *
-     * @return  self
+     * @return  $this
      */
     public function setUrl($url)
     {
@@ -373,7 +379,7 @@ class Menu implements RecursiveIterator
      *
      * @param   string  $path   The path to the icon for this menu
      *
-     * @return  self
+     * @return  $this
      */
     public function setIcon($path)
     {
@@ -425,14 +431,14 @@ class Menu implements RecursiveIterator
      * Add a sub menu to this menu
      *
      * @param   string          $id             The id of the menu to add
-     * @param   ConfigObject    $itemConfig     The config with which to initialize the menu
+     * @param   ConfigObject    $menuConfig     The config with which to initialize the menu
      *
-     * @return  self
+     * @return  static
      */
     public function addSubMenu($id, ConfigObject $menuConfig = null)
     {
         if (false === ($pos = strpos($id, '.'))) {
-            $subMenu = new self($id, $menuConfig, $this);
+            $subMenu = new static($id, $menuConfig, $this);
             $this->subMenus[$id] = $subMenu;
         } else {
             list($parentId, $id) = explode('.', $id, 2);
@@ -452,8 +458,9 @@ class Menu implements RecursiveIterator
     /**
      * Set required Permissions
      *
-     * @param $permission
-     * @return $this
+     * @param   $permission
+     *
+     * @return  $this
      */
     public function requirePermission($permission)
     {
@@ -464,8 +471,9 @@ class Menu implements RecursiveIterator
     /**
      * Merge Sub Menus
      *
-     * @param array $submenus
-     * @return $this
+     * @param   array $submenus
+     *
+     * @return  $this
      */
     public function mergeSubMenus(array $submenus)
     {
@@ -478,8 +486,9 @@ class Menu implements RecursiveIterator
     /**
      * Merge Sub Menu
      *
-     * @param Menu $menu
-     * @return mixed
+     * @param   Menu $menu
+     *
+     * @return  static
      */
     public function mergeSubMenu(Menu $menu)
     {
@@ -513,9 +522,10 @@ class Menu implements RecursiveIterator
     /**
      * Add a Menu
      *
-     * @param $name
-     * @param array $config
-     * @return Menu
+     * @param   $name
+     * @param   array $config
+     *
+     * @return  static
      */
     public function add($name, $config = array())
     {
@@ -539,7 +549,7 @@ class Menu implements RecursiveIterator
      *
      * @param   string      $id     The id of the sub menu
      *
-     * @return  Menu                The found sub menu
+     * @return  static              The found sub menu
      *
      * @throws  ProgrammingError    In case there is no sub menu with the given id to be found
      */
@@ -558,7 +568,7 @@ class Menu implements RecursiveIterator
     /**
      * Order this menu's sub menus based on their priority
      *
-     * @return  self
+     * @return  $this
      */
     public function order()
     {
@@ -618,7 +628,7 @@ class Menu implements RecursiveIterator
      *
      * @param   array   $menus  The menus to load, as key-value array
      *
-     * @return  self
+     * @return  static
      */
     protected function loadSubMenus(array $menus)
     {
@@ -675,7 +685,7 @@ class Menu implements RecursiveIterator
     /**
      * Return the current menu node
      *
-     * @return Menu
+     * @return static
      */
     public function current()
     {
@@ -701,7 +711,7 @@ class Menu implements RecursiveIterator
     }
 
     /**
-     * PHP 5.3 GC should not leak, but just to be on the safe side... 
+     * PHP 5.3 GC should not leak, but just to be on the safe side...
      */
     public function __destruct()
     {
