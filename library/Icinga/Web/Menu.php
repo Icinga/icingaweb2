@@ -437,21 +437,8 @@ class Menu implements RecursiveIterator
      */
     public function addSubMenu($id, ConfigObject $menuConfig = null)
     {
-        if (false === ($pos = strpos($id, '.'))) {
-            $subMenu = new static($id, $menuConfig, $this);
-            $this->subMenus[$id] = $subMenu;
-        } else {
-            list($parentId, $id) = explode('.', $id, 2);
-
-            if ($this->hasSubMenu($parentId)) {
-                $parent = $this->getSubMenu($parentId);
-            } else {
-                $parent = $this->addSubMenu($parentId);
-            }
-
-            $subMenu = $parent->addSubMenu($id, $menuConfig);
-        }
-
+        $subMenu = new static($id, $menuConfig, $this);
+        $this->subMenus[$id] = $subMenu;
         return $subMenu;
     }
 
