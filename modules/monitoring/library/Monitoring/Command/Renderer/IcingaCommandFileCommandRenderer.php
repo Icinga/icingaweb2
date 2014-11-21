@@ -247,7 +247,7 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
         $commandString = sprintf(
             '%s;%u;%u;%u',
             $commandString,
-            $command->getSticky(),
+            $command->getSticky() ? 2 : 0,
             $command->getNotify(),
             $command->getPersistent()
         );
