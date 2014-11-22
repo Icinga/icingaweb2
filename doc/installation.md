@@ -57,6 +57,40 @@ Use `icingacli` to generate web server configuration for either Apache or nginx.
 ./bin/icingacli setup config webserver nginx --document-root /usr/share/icingaweb/public
 ````
 
-**Step 4: Web Setup**
+make sure user running webserver has correct permissions:
+
+```
+chown -R www-data:www-data /usr/share/icingaweb
+```
+
+**Step 4: Icinga config files**
+
+Create config directory for Icinga Web 2, last argument specifies `group` of created files:
+
+```
+bin/icingacli setup config createDirectory www-data
+```
+
+config files will placed in `/etc/icingaweb`.
+
+Now, create token for web installation:
+
+```
+bin/icingacli setup token create
+```
+
+
+**Step 5: Web Setup**
 
 Visit Icinga Web 2 in your browser and complete installation using the web setup.
+
+In case you forgot your token, you can display from command line
+
+```
+bin/icingacli setup token show
+```
+
+or directly from file:
+```
+cat /etc/icingaweb/setup.token
+```
