@@ -73,10 +73,10 @@ class ActionController extends Zend_Controller_Action
 
         $this->handlerBrowserWindows();
         $this->view->translationDomain = 'icinga';
-        $this->_helper->layout()->isIframe = $this->params->shift('isIframe');
+        $this->_helper->layout()->isIframe = $request->getUrl()->shift('isIframe');
         $this->_helper->layout()->moduleName = false;
 
-        if ($this->rerenderLayout = $this->params->shift('renderLayout')) {
+        if ($this->rerenderLayout = $request->getUrl()->shift('renderLayout')) {
             $this->xhrLayout = 'body';
         }
 

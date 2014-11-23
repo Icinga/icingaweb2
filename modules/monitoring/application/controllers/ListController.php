@@ -639,8 +639,8 @@ class Monitoring_ListController extends Controller
     {
         $editor = Widget::create('filterEditor')
             ->setQuery($query)
-            ->preserveParams('limit', 'sort', 'dir', 'format', 'view', 'backend', 'renderLayout', 'stateType', 'addColumns')
-            ->ignoreParams('page', 'objecttype', 'from', 'to', 'btn_submit', 'icon')
+            ->preserveParams('limit', 'sort', 'dir', 'format', 'view', 'backend', 'stateType', 'addColumns')
+            ->ignoreParams('page')
             ->handleRequest($this->getRequest());
         $query->applyFilter($editor->getFilter());
 
