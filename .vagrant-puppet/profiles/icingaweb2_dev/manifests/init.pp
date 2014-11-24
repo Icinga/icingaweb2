@@ -3,6 +3,7 @@ class icingaweb2_dev {
   include php
   include icingaweb2
   include icingacli
+  include icinga_packages
 
   class { 'zend_framework':
     notify => Service['apache'],
@@ -11,6 +12,7 @@ class icingaweb2_dev {
   package { [ 'php-pdo', 'php-ldap', 'php-phpunit-PHPUnit', 'icinga-gui' ]:
     ensure => latest,
     notify => Service['apache'],
+    require => Class['icinga_packages'],
   }
 
   Exec { path => '/usr/local/bin:/usr/bin:/bin' }
