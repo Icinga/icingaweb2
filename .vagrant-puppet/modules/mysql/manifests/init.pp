@@ -16,11 +16,10 @@ class mysql {
 
   Exec { path => '/usr/bin' }
 
-  package {
-    'mysql':
-      ensure => installed;
-    'mysql-server':
-      ensure => installed;
+  package { [
+    'mysql', 'mysql-server'
+  ]:
+      ensure => latest,
   }
 
   service { 'mysqld':

@@ -8,6 +8,6 @@
 #
 class tar {
   package { 'tar':
-    ensure => installed,
+    ensure => latest,
   }
 }

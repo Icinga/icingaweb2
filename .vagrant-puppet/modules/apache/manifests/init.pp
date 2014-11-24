@@ -24,7 +24,7 @@ class apache {
   }
 
   package { $apache:
-    ensure => installed,
+    ensure => latest,
     alias  => 'apache',
   }
 

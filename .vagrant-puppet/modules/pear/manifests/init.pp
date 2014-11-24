@@ -21,7 +21,7 @@ class pear {
   include php
 
   package { 'php-pear':
-    ensure  => installed,
+    ensure  => latest,
     require => Class['php']
   }
 

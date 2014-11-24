@@ -15,7 +15,7 @@
 class openldap {
 
   package { ['openldap-servers', 'openldap-clients']:
-    ensure => installed
+    ensure => latest,
   }
 
   service { 'slapd':

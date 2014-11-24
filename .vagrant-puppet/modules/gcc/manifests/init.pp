@@ -8,6 +8,6 @@
 #
 class gcc {
   package { 'gcc':
-    ensure => installed,
+    ensure => latest,
   }
 }

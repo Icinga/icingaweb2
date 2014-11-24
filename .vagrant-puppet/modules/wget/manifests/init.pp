@@ -15,6 +15,6 @@
 class wget {
 
   package { 'wget':
-    ensure  => installed,
+    ensure  => latest,
   }
 }

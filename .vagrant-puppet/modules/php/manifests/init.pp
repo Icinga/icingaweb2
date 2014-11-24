@@ -19,7 +19,7 @@ class php {
   include apache
 
   package { 'php':
-    ensure  => installed,
+    ensure  => latest,
     require => Package['apache'],
     notify  => Service['apache']
   }

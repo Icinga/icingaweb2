@@ -17,11 +17,10 @@ class pgsql {
 
   Exec { path => '/sbin:/bin:/usr/bin' }
 
-  package {
-    'postgresql':
-      ensure => installed;
-    'postgresql-server':
-      ensure => installed;
+  package { [
+    'postgresql', 'postgresql-server'
+  ]:
+      ensure => latest,
   }
 
   exec { 'initdb':
