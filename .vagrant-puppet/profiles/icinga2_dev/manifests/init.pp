@@ -13,6 +13,7 @@
 #
 class icinga2_dev {
   include icinga2_mysql
+  include icinga2_pgsql
   include monitoring_plugins
   include monitoring_test_config
 
