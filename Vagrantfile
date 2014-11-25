@@ -99,7 +99,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #   puppet.manifest_file  = "init.pp"
   # end
   config.vm.provision :puppet do |puppet|
-    puppet.module_path = ".vagrant-puppet/modules"
+    puppet.module_path = [ ".vagrant-puppet/modules", ".vagrant-puppet/profiles" ]
     puppet.manifests_path = ".vagrant-puppet/manifests"
     # puppet.options = "-v -d"
   end
