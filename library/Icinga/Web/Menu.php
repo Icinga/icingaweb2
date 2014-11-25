@@ -4,16 +4,15 @@
 
 namespace Icinga\Web;
 
-use Icinga\Authentication\Manager;
-use Icinga\Web\Menu\MenuItemRenderer;
 use RecursiveIterator;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Authentication\Manager;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Web\Url;
+use Icinga\Web\Menu\MenuItemRenderer;
 
 class Menu implements RecursiveIterator
 {
