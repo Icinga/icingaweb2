@@ -4,6 +4,7 @@ class icingaweb2_dev {
   include icingaweb2
   include icingacli
   include icinga_packages
+  include openldap
 
   class { 'zend_framework':
     notify => Service['apache'],
@@ -93,5 +94,30 @@ class icingaweb2_dev {
   -> exec { 'iptables-allow-http':
     unless  => 'grep -Fxqe "-A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT" /etc/sysconfig/iptables',
     command => '/sbin/iptables -I INPUT 1 -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT && /sbin/iptables-save > /etc/sysconfig/iptables'
+  }
+
+  define openldap_file {
+    file { "openldap/${name}.ldif":
+      path    => "/usr/share/openldap-servers/${name}.ldif",
+      source  => "puppet:///modules/icingaweb2_dev/openldap/${name}.ldif",
+      require => Class['openldap'],
+    }
+  }
+
+  openldap_file { [ 'db', 'dit', 'users' ]: }
+
+  exec { 'populate-openldap':
+    # TODO: Split the command and use unless instead of trying to populate openldap everytime
+    command => 'sudo ldapadd -c -Y EXTERNAL -H ldapi:/// -f /usr/share/openldap-servers/db.ldif || true && \
+                sudo ldapadd -c -D cn=admin,dc=icinga,dc=org -x -w admin -f /usr/share/openldap-servers/dit.ldif || true && \
+                sudo ldapadd -c -D cn=admin,dc=icinga,dc=org -x -w admin -f /usr/share/openldap-servers/users.ldif || true',
+    require => [
+      Service['slapd'],
+      File[[
+        'openldap/db.ldif',
+        'openldap/dit.ldif',
+        'openldap/users.ldif'
+      ]]
+    ],
   }
 }
