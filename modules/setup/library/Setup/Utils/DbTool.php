@@ -246,6 +246,8 @@ class DbTool
 
         $config = array(
             'dbname'    => $dbname,
+            'host'      => $this->config['host'],
+            'port'      => $this->config['port'],
             'username'  => $this->config['username'],
             'password'  => $this->config['password']
         );
