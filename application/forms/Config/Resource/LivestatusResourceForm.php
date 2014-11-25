@@ -2,13 +2,12 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config\Resource;
+namespace Icinga\Forms\Config\Resource;
 
 use Exception;
-use Zend_Config;
 use Icinga\Web\Form;
-use Icinga\Web\Request;
 use Icinga\Application\Icinga;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 
 /**
@@ -31,6 +30,15 @@ class LivestatusResourceForm extends Form
     {
         $this->addElement(
             'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => t('Resource Name'),
+                'description'   => t('The unique name of this resource')
+            )
+        );
+        $this->addElement(
+            'text',
             'socket',
             array(
                 'required'      => true,
@@ -48,9 +56,9 @@ class LivestatusResourceForm extends Form
      *
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
-        if (false === $this->isValidResource($this)) {
+        if (false === static::isValidResource($this)) {
             return false;
         }
     }
@@ -62,10 +70,10 @@ class LivestatusResourceForm extends Form
      *
      * @return  bool            Whether validation succeeded or not
      */
-    public function isValidResource(Form $form)
+    public static function isValidResource(Form $form)
     {
         try {
-            $resource = ResourceFactory::createResource(new Zend_Config($form->getValues()));
+            $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
             $resource->connect()->disconnect();
         } catch (Exception $e) {
             $form->addError(t('Connectivity validation failed, connection to the given resource not possible.'));

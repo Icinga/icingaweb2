@@ -2,12 +2,12 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Form\Config;
+namespace Tests\Icinga\Forms\Config;
 
 use Icinga\Test\BaseTestCase;
 use Icinga\Application\Config;
-use Icinga\Form\Config\AuthenticationBackendConfigForm;
-use Icinga\Form\Config\AuthenticationBackendReorderForm;
+use Icinga\Forms\Config\AuthenticationBackendConfigForm;
+use Icinga\Forms\Config\AuthenticationBackendReorderForm;
 
 class AuthenticationBackendConfigFormWithoutSave extends AuthenticationBackendConfigForm
 {
@@ -34,7 +34,7 @@ class AuthenticationBackendReorderFormTest extends BaseTestCase
 {
     public function testMoveBackend()
     {
-        $config = new Config(
+        $config = Config::fromArray(
             array(
                 'test1' => '',
                 'test2' => '',

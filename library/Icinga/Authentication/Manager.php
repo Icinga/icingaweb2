@@ -5,11 +5,10 @@
 namespace Icinga\Authentication;
 
 use Exception;
-use Zend_Config;
 use Icinga\Application\Config;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
@@ -62,9 +61,10 @@ class Manager
                     $e
                 )
             );
-            $config = new Zend_Config(array());
+            $config = new Config();
         }
-        if (($preferencesConfig = $config->preferences) !== null) {
+        if ($config->hasSection('preferences')) {
+            $preferencesConfig = $config->getSection('preferences');
             try {
                 $preferencesStore = PreferencesStore::create(
                     $preferencesConfig,
@@ -107,8 +107,9 @@ class Manager
         }
         $user->setGroups($groups);
         $admissionLoader = new AdmissionLoader();
-        $user->setPermissions($admissionLoader->getPermissions($user));
-        $user->setRestrictions($admissionLoader->getRestrictions($user));
+        list($permissions, $restrictions) = $admissionLoader->getPermissionsAndRestrictions($user);
+        $user->setPermissions($permissions);
+        $user->setRestrictions($restrictions);
         $this->user = $user;
         if ($persist) {
             $this->persistCurrentUser();
@@ -120,10 +121,7 @@ class Manager
      */
     public function persistCurrentUser()
     {
-        $session = Session::getSession();
-        $session->set('user', $this->user);
-        $session->write();
-        $session->refreshId();
+        Session::getSession()->set('user', $this->user)->refreshId();
     }
 
     /**

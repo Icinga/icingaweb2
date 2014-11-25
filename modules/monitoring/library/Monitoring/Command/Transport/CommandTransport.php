@@ -4,8 +4,8 @@
 
 namespace Icinga\Module\Monitoring\Command\Transport;
 
-use Zend_Config;
 use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 
 /**
@@ -32,7 +32,7 @@ abstract class CommandTransport
     {
         if (! isset(self::$config)) {
             self::$config = Config::module('monitoring', 'instances');
-            if (self::$config->count() === 0) {
+            if (self::$config->isEmpty()) {
                 throw new ConfigurationError(
                     'No instances have been configured in \'%s\'.',
                     self::$config->getConfigFile()
@@ -45,27 +45,29 @@ abstract class CommandTransport
     /**
      * Create a transport from config
      *
-     * @param   Zend_Config $config
+     * @param   ConfigObject  $config
      *
      * @return  LocalCommandFile|RemoteCommandFile
      * @throws  ConfigurationError
      */
-    public static function fromConfig(Zend_Config $config)
+    public static function fromConfig(ConfigObject $config)
     {
         switch (strtolower($config->transport)) {
-            case 'remote':
+            case RemoteCommandFile::TRANSPORT:
                 $transport = new RemoteCommandFile();
                 break;
-            case 'local':
+            case LocalCommandFile::TRANSPORT:
             case '':  // Casting null to string is the empty string
                 $transport = new LocalCommandFile();
                 break;
             default:
                 throw new ConfigurationError(
                     'Can\'t create command transport \'%s\'. Invalid transport defined in \'%s\'.'
-                    . ' Use one of \'local\' or \'remote\'.',
+                    . ' Use one of \'%s\' or \'%s\'.',
                     $config->transport,
-                    self::$config->getConfigFile()
+                    self::$config->getConfigFile(),
+                    LocalCommandFile::TRANSPORT,
+                    RemoteCommandFile::TRANSPORT
                 );
         }
         unset($config->transport);
@@ -89,8 +91,8 @@ abstract class CommandTransport
      */
     public static function create($name)
     {
-        $config = self::getConfig()->get($name);
-        if ($config === null) {
+        $config = self::getConfig()->getSection($name);
+        if ($config->isEmpty()) {
             throw new ConfigurationError();
         }
         return self::fromConfig($config);

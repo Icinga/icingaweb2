@@ -2,15 +2,12 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Command\Object;
+namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use DateTime;
 use DateInterval;
 use Icinga\Module\Monitoring\Command\Object\AcknowledgeProblemCommand;
-use Icinga\Web\Form\Element\DateTimePicker;
-use Icinga\Web\Form\Element\Note;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 
 /**
  * Form for acknowledging host or service problems
@@ -30,22 +27,25 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
 
     /**
      * (non-PHPDoc)
+     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
+     */
+    public function getHelp()
+    {
+        return mt(
+            'monitoring',
+            'This command is used to acknowledge host or service problems. When a problem is acknowledged,'
+            . ' future notifications about problems are temporarily disabled until the host or service'
+            . ' recovers.'
+        );
+    }
+
+    /**
+     * (non-PHPDoc)
      * @see \Icinga\Web\Form::createElements() For the method documentation.
      */
     public function createElements(array $formData = array())
     {
         $this->addElements(array(
-            new Note(
-                'command-info',
-                array(
-                    'value' => mt(
-                        'monitoring',
-                        'This command is used to acknowledge host or service problems. When a problem is acknowledged,'
-                        . ' future notifications about problems are temporarily disabled until the host or service'
-                        . ' recovers.'
-                    )
-                )
-            ),
             array(
                 'textarea',
                 'comment',
@@ -86,16 +86,15 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
             $expireTime = new DateTime();
             $expireTime->add(new DateInterval('PT1H'));
             $this->addElement(
-                new DateTimePicker(
-                    'expire_time',
-                    array(
-                        'label'         => mt('monitoring', 'Expire Time'),
-                        'value'         => $expireTime,
-                        'description'   => mt(
-                            'monitoring',
-                            'Enter the expire date and time for this acknowledgement here. Icinga will delete the'
-                            . ' acknowledgement after this time expired.'
-                        )
+                'dateTimePicker',
+                'expire_time',
+                array(
+                    'label'         => mt('monitoring', 'Expire Time'),
+                    'value'         => $expireTime,
+                    'description'   => mt(
+                        'monitoring',
+                        'Enter the expire date and time for this acknowledgement here. Icinga will delete the'
+                        . ' acknowledgement after this time expired.'
                     )
                 )
             );
@@ -145,7 +144,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
@@ -153,14 +152,14 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
             $ack
                 ->setObject($object)
                 ->setComment($this->getElement('comment')->getValue())
-                ->setAuthor($request->getUser()->getUsername())
+                ->setAuthor($this->request->getUser()->getUsername())
                 ->setPersistent($this->getElement('persistent')->isChecked())
                 ->setSticky($this->getElement('sticky')->isChecked())
                 ->setNotify($this->getElement('notify')->isChecked());
             if ($this->getElement('expire')->isChecked()) {
                 $ack->setExpireTime($this->getElement('expire_time')->getValue()->getTimestamp());
             }
-            $this->getTransport($request)->send($ack);
+            $this->getTransport($this->request)->send($ack);
         }
         Notification::success(mtp(
             'monitoring',

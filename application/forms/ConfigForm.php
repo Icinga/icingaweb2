@@ -2,12 +2,13 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form;
+namespace Icinga\Forms;
 
 use Exception;
+use Zend_Form_Decorator_Abstract;
 use Icinga\Web\Form;
 use Icinga\Application\Config;
-use Icinga\Config\PreservingIniWriter;
+use Icinga\File\Ini\IniWriter;
 
 /**
  * Form base-class providing standard functionality for configuration forms
@@ -43,7 +44,7 @@ class ConfigForm extends Form
      */
     public function save()
     {
-        $writer = new PreservingIniWriter(
+        $writer = new IniWriter(
             array(
                 'config'    => $this->config,
                 'filename'  => $this->config->getConfigFile()
@@ -58,7 +59,8 @@ class ConfigForm extends Form
                 'viewScript'    => 'showConfiguration.phtml',
                 'errorMessage'  => $e->getMessage(),
                 'configString'  => $writer->render(),
-                'filePath'      => $this->config->getConfigFile()
+                'filePath'      => $this->config->getConfigFile(),
+                'placement'     => Zend_Form_Decorator_Abstract::PREPEND
             ));
             return false;
         }

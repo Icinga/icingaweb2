@@ -5,7 +5,7 @@
 namespace Icinga\Module\Monitoring\Object;
 
 use InvalidArgumentException;
-use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
 /**
  * A Icinga host
@@ -63,10 +63,10 @@ class Host extends MonitoredObject
     /**
      * Create a new host
      *
-     * @param Backend   $backend    Backend to fetch host information from
+     * @param MonitoringBackend   $backend    Backend to fetch host information from
      * @param string    $host       Host name
      */
-    public function __construct(Backend $backend, $host)
+    public function __construct(MonitoringBackend $backend, $host)
     {
         parent::__construct($backend);
         $this->host = $host;
@@ -89,7 +89,7 @@ class Host extends MonitoredObject
      */
     protected function getDataView()
     {
-        return $this->backend->select()->from('hostStatus', array(
+        $columns = array(
             'host_name',
             'host_alias',
             'host_address',
@@ -130,8 +130,13 @@ class Host extends MonitoredObject
             'host_notes_url',
             'host_modified_host_attributes',
             'host_problem',
-            'host_process_performance_data'
-        ))
+            'host_process_performance_data',
+            'process_perfdata' => 'host_process_performance_data'
+        );
+        if ($this->backend->getType() === 'livestatus') {
+            $columns[] = 'host_contacts';
+        }
+        return $this->backend->select()->from('hostStatus', $columns)
             ->where('host_name', $this->host);
     }
 

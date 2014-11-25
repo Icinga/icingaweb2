@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Tests\Icinga\Form\Config\Resource;
+namespace Tests\Icinga\Forms\Config\Resource;
 
 // Necessary as some of these tests disable phpunit's preservation
 // of the global state (e.g. autoloaders are in the global state)
@@ -10,7 +10,7 @@ require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
 
 use Mockery;
 use Icinga\Test\BaseTestCase;
-use Icinga\Form\Config\Resource\DbResourceForm;
+use Icinga\Forms\Config\Resource\DbResourceForm;
 
 class DbResourceFormTest extends BaseTestCase
 {
@@ -30,10 +30,8 @@ class DbResourceFormTest extends BaseTestCase
             Mockery::mock()->shouldReceive('getConnection')->atMost()->twice()->andReturn(Mockery::self())->getMock()
         );
 
-        $form = new DbResourceForm();
-
         $this->assertTrue(
-            $form->isValidResource($form),
+            DbResourceForm::isValidResource(new DbResourceForm()),
             'ResourceForm claims that a valid db resource is not valid'
         );
     }
@@ -48,10 +46,8 @@ class DbResourceFormTest extends BaseTestCase
             Mockery::mock()->shouldReceive('getConnection')->once()->andThrow('\Exception')->getMock()
         );
 
-        $form = new DbResourceForm();
-
         $this->assertFalse(
-            $form->isValidResource($form),
+            DbResourceForm::isValidResource(new DbResourceForm()),
             'ResourceForm claims that an invalid db resource is valid'
         );
     }
@@ -60,7 +56,7 @@ class DbResourceFormTest extends BaseTestCase
     {
         Mockery::mock('alias:Icinga\Data\ResourceFactory')
             ->shouldReceive('createResource')
-            ->with(Mockery::type('\Zend_Config'))
+            ->with(Mockery::type('Icinga\Data\ConfigObject'))
             ->andReturn($resourceMock);
     }
 }

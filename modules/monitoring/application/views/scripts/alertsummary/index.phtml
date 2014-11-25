@@ -11,19 +11,19 @@ $helper = $this->getHelper('MonitoringState');
 </div>
 
 <div class="content alertsummary">
-    <h1><?= $this->translate('Alert summary'); ?></h1>
+    <!-- <h1><?= $this->translate('Alert summary'); ?></h1> -->
 
-    <div class="alertsummary-flex-container">
-        <div class="alertsummary-flex">
-            <h2><?= $this->translate('Notifications and problems'); ?></h2>
-            <div>
+    <div class="hbox">
+        <div class="hbox-item">
+            <h2><?= $this->translate('Notifications and Problems'); ?></h2>
+            <div style="width: 400px; height: 400px;">
                 <?= $defectChart->render(); ?>
             </div>
         </div>
 
-        <div class="alertsummary-flex">
-            <h2><?= $this->translate('Time to reaction (Ack, Recover)'); ?></h2>
-            <div>
+        <div class="hbox-item">
+            <h2><?= $this->translate('Time to Reaction (Ack, Recover)'); ?></h2>
+            <div style="width: 400px; height: 400px;">
                 <?= $healingChart->render(); ?>
             </div>
         </div>
@@ -45,18 +45,18 @@ $helper = $this->getHelper('MonitoringState');
 
             <span>
                 <?php if ($this->trend->trend === 'up'): ?>
-                    <?= $this->icon('up.png'); ?>
+                    <?= $this->icon('up-open'); ?>
                 <?php elseif ($this->trend->trend === 'unchanged'): ?>
-                    <?= $this->icon('next.png'); ?>
+                    <?= $this->icon('right-open'); ?>
                 <?php else: ?>
-                    <?= $this->icon('down.png'); ?>
+                    <?= $this->icon('down-open'); ?>
                 <?php endif; ?>
             </span>
         </div>
     </div>
 
     <?php if ($this->recentAlerts): ?>
-        <h2><?= $this->translate('Top 5 recent alerts'); ?></h2>
+        <h1><?= $this->translate('Top 5 Recent Alerts'); ?></h1>
 
         <div class="alertsummary-flex-container">
             <div class="alertsummary-flex">
@@ -69,7 +69,7 @@ $helper = $this->getHelper('MonitoringState');
         </div>
     <?php endif; ?>
 
-    <h2><?= $this->translate('History'); ?></h2>
+    <h1><?= $this->translate('History'); ?></h1>
     <div class="alertsummary-flex-container">
         <div class="alertsummary-flex">
             <?= $this->partial('list/notifications.phtml', array(

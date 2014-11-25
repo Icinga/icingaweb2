@@ -1,46 +1,14 @@
 # Exclude all hidden files
 .*
-# But not .gitignore, .gitattributes, .vagrant-puppet, .htaccess and .gitkeep
-!.gitignore
-!.gitattributes
-!.vagrant-puppet
-!public/.htaccess
-!packages/rhel/usr/share/icingaweb/public/.htaccess
-!public/.htaccess.in
-!.gitkeep
 
-build/
+# Except those related to git and vagrant
+!.git*
+!.vagrant-puppet/*
 
-development/
+# Exclude application log files
+var/log/*
 
-# ./configure output
-config.log
-autom4te.cache
-autoscan*
-config.status
-Makefile
-
-# cmd tester
-modules/test/bin/extcmd_test
-
-# misc test output
-test/php/library/Icinga/Protocol/Statusdat/.cache
-
-# Generated API documentation
-doc/api
-
-# Enabled modules
-config/enabledModules/
-
-# User preferences
-config/preferences/*.ini
-
-# Application logfiles
-var/log/*.log
-
-# Packaging
+# Exclude symlink you need for packaging
 /debian
-*.tar.gz
-*.komodoproject
 
-
+build/*

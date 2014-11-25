@@ -7,10 +7,9 @@ if ($this->compact): ?>
 <div class="controls">
   <?= $this->tabs ?>
   <div style="margin: 1em;" class="dontprint">
+    <?= $this->render('list/components/selectioninfo.phtml') ?>
+    <?= $this->render('list/components/hostssummary.phtml') ?>
     <?= $this->translate('Sort by') ?> <?= $this->sortControl->render($this) ?>
-    <?php if (! $this->filterEditor): ?>
-    <?= $this->filterPreview ?>
-    <?php endif; ?>
   </div>
 
 <?= $this->widget('limiter')->setMaxLimit($this->hosts->count()) ?>
@@ -47,35 +46,35 @@ if ($hosts->count() === 0) {
 
     $icons = array();
     if (! $host->host_handled && $host->host_state > 0){
-        $icons[] = $this->icon('unhandled.png', $this->translate('Unhandled'));
+        $icons[] = $this->icon('attention-alt', $this->translate('Unhandled'));
     }
 
     if ($host->host_acknowledged) {
-        $icons[] = $this->icon('acknowledgement.png', $this->translate('Acknowledged'));
+        $icons[] = $this->icon('ok', $this->translate('Acknowledged'));
     }
 
     if ($host->host_is_flapping) {
-        $icons[] = $this->icon('flapping.png', $this->translate('Flapping'));
+        $icons[] = $this->icon('flapping', $this->translate('Flapping'));
     }
 
     if (! $host->host_notifications_enabled) {
-        $icons[] = $this->icon('notification_disabled.png', $this->translate('Notifications Disabled'));
+        $icons[] = $this->icon('bell-off-empty', $this->translate('Notifications Disabled'));
     }
 
     if ($host->host_in_downtime) {
-        $icons[] = $this->icon('in_downtime.png', $this->translate('In Downtime'));
+        $icons[] = $this->icon('plug', $this->translate('In Downtime'));
     }
 
     if (! $host->host_active_checks_enabled) {
         if (! $host->host_passive_checks_enabled) {
-            $icons[] = $this->icon('active_passive_checks_disabled.png', $this->translate('Active And Passive Checks Disabled'));
+            $icons[] = $this->icon('eye-off', $this->translate('Active And Passive Checks Disabled'));
         } else {
-            $icons[] = $this->icon('active_checks_disabled.png', $this->translate('Active Checks Disabled'));
+            $icons[] = $this->icon('eye-off', $this->translate('Active Checks Disabled'));
         }
     }
 
     if (isset($host->host_last_comment) && $host->host_last_comment !== null) {
-        $icons[] = $this->icon('comment.png', $this->translate('Comment: ') . $host->host_last_comment);
+        $icons[] = $this->icon('comment', $this->translate('Comment: ') . $host->host_last_comment);
     }
     ?>
     <tr class="state <?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">

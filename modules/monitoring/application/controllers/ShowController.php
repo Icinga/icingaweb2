@@ -166,7 +166,7 @@ class Monitoring_ShowController extends Controller
                 'notification_contact',
                 'notification_start_time',
                 'notification_state'
-            ));
+            ))->order('notification_start_time');
 
             $notifications->where('contact_object_id', $contact->contact_object_id);
 
@@ -202,7 +202,7 @@ class Monitoring_ShowController extends Controller
             'host',
             array(
                 'title'     => 'Host',
-                'icon'      => 'img/icons/host.png',
+                'icon'      => 'host',
                 'url'       => 'monitoring/show/host',
                 'urlParams' => $params,
             )
@@ -212,7 +212,7 @@ class Monitoring_ShowController extends Controller
                 'service',
                 array(
                     'title'     => 'Service',
-                    'icon'      => 'img/icons/service.png',
+                    'icon'      => 'service',
                     'url'       => 'monitoring/show/service',
                     'urlParams' => $params,
                 )
@@ -222,20 +222,22 @@ class Monitoring_ShowController extends Controller
             'services',
             array(
                 'title'     => 'Services',
-                'icon'      => 'img/icons/service.png',
+                'icon'      => 'services',
                 'url'       => 'monitoring/show/services',
                 'urlParams' => $params,
             )
         );
-        $tabs->add(
-            'history',
-            array(
-                'title'     => 'History',
-                'icon'      => 'img/icons/history.png',
-                'url'       => 'monitoring/show/history',
-                'urlParams' => $params,
-            )
-        );
+        if ($this->backend->hasQuery('eventHistory')) {
+            $tabs->add(
+                'history',
+                array(
+                    'title'     => 'History',
+                    'icon'      => 'rewind',
+                    'url'       => 'monitoring/show/history',
+                    'urlParams' => $params,
+                )
+            );
+        }
         $tabs->extend(new OutputFormat())
             ->extend(new DashboardAction());
     }

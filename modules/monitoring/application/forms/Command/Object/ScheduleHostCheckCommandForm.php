@@ -2,11 +2,10 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Module\Monitoring\Form\Command\Object;
+namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\ScheduleHostCheckCommand;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
 
 /**
  * Form for scheduling host checks
@@ -40,7 +39,7 @@ class ScheduleHostCheckCommandForm extends ScheduleServiceCheckCommandForm
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\Host $object */
@@ -48,7 +47,7 @@ class ScheduleHostCheckCommandForm extends ScheduleServiceCheckCommandForm
             $check
                 ->setObject($object)
                 ->setOfAllServices($this->getElement('all_services')->isChecked());
-            $this->scheduleCheck($check, $request);
+            $this->scheduleCheck($check, $this->request);
         }
         Notification::success(mtp(
             'monitoring',

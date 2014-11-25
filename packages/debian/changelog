@@ -1,5 +1,5 @@
-icingaweb (2.0.0~alpha1) unstable; urgency=low
+icingaweb (2.0.0) stable; urgency=low
 
-  * First beta release (Closes: #0000)
+  * First stable release (Closes: #0001)
 
  -- Thomas Gelf <thomas@gelf.net>  Fri, 28 Mar 2014 23:37:31 +0100

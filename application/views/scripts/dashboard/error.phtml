@@ -1,0 +1,13 @@
+<div class="content">
+    <h1><?= t('Could not persist dashboard'); ?></h1>
+    <p>
+        <?= t('Please copy the following dashboard snippet to '); ?>
+        <strong><?= $this->config->getFilename(); ?>;</strong>.
+        <br>
+        <?= t('Make sure that the webserver can write to this file.'); ?>
+    </p>
+    <pre><?= (string) $this->config->render(); ?></pre>
+    <hr>
+    <h2><?= t('Error details') ?></h2>
+    <p><?= $this->error->getMessage(); ?></p>
+</div>

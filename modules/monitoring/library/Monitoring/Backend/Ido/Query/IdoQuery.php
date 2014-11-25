@@ -5,7 +5,7 @@
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 use Icinga\Exception\IcingaException;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Data\Db\DbQuery;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Application\Icinga;
@@ -655,7 +655,6 @@ abstract class IdoQuery extends DbQuery
             );
             if ($session !== null) {
                 $session->version = self::$idoVersion;
-                $session->write(); // <- WHY? I don't want to care about this!
             }
         }
         return self::$idoVersion;

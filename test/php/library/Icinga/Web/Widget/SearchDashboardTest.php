@@ -33,10 +33,10 @@ class SearchDashboardTest extends BaseTestCase
     /**
      * @expectedException Zend_Controller_Action_Exception
      */
-    public function testWhetherRenderThrowsAnExceptionWhenHasNoComponents()
+    public function testWhetherRenderThrowsAnExceptionWhenHasNoDashlets()
     {
         $dashboard = SearchDashboard::search('pending');
-        $dashboard->getPane('search')->removeComponents();
+        $dashboard->getPane('search')->removeDashlets();
         $dashboard->render();
     }
 
@@ -44,7 +44,7 @@ class SearchDashboardTest extends BaseTestCase
     {
         $dashboard = SearchDashboard::search('pending');
 
-        $result = $dashboard->getPane('search')->hasComponent('Hosts: pending');
+        $result = $dashboard->getPane('search')->hasDashlet('Hosts: pending');
 
         $this->assertTrue($result, 'Dashboard::search() could not load search dashlets from modules');
     }
@@ -53,7 +53,7 @@ class SearchDashboardTest extends BaseTestCase
     {
         $dashboard = SearchDashboard::search();
 
-        $result = $dashboard->getPane('search')->hasComponent('Ready to search');
+        $result = $dashboard->getPane('search')->hasDashlet('Ready to search');
 
         $this->assertTrue($result, 'Dashboard::search() could not get hint for search');
     }

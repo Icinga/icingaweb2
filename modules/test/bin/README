@@ -1,7 +1,0 @@
-#
-# Tools for testing icinga2
-#
-
-extcmd_test just receives an icinga external command from stdin and returns whether it's a recognized command
-or if there are any errors. To build it, just type gcc -o extcmd_test ./extcmd_test.c, there shouldn't be any
-dependencies that need linker flags

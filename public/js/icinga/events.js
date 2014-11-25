@@ -186,6 +186,7 @@
          *
          */
         submitForm: function (event, autosubmit) {
+            //return false;
             var self   = event.data.self;
             var icinga = self.icinga;
             // .closest is not required unless subelements to trigger this
@@ -197,6 +198,27 @@
             var $target;
             var data;
 
+            if ($button.length === 0) {
+                var $el;
+
+                if (typeof event.originalEvent !== 'undefined'
+                    && typeof event.originalEvent.explicitOriginalTarget === 'object') { // Firefox
+                    $el = $(event.originalEvent.explicitOriginalTarget);
+                    icinga.logger.info('events/submitForm: Button is event.originalEvent.explicitOriginalTarget');
+                } else {
+                    $el = $(event.currentTarget);
+                    icinga.logger.info('events/submitForm: Button is event.currentTarget');
+                }
+
+                if ($el && ($el.is('input[type=submit]') || $el.is('button[type=submit]'))) {
+                    $button = $el;
+                } else {
+                    icinga.logger.error(
+                        'events/submitForm: Can not determine submit button, using the first one in form'
+                    );
+                }
+            }
+
             if (typeof method === 'undefined') {
                 method = 'POST';
             } else {
@@ -204,7 +226,7 @@
             }
 
             if ($button.length === 0) {
-                $button = $('input[type=submit]', $form).first();
+                $button = $('input[type=submit]', $form).add('button[type=submit]', $form).first();
             }
 
             event.stopPropagation();
@@ -299,17 +321,20 @@
                 var query = icinga.ui.selectionDataToQuery(selectionData);
                 icinga.loader.loadUrl(url + '?' + query, $target);
                 icinga.ui.storeSelectionData(selectionData);
+                icinga.ui.provideSelectionCount();
             } else if ($trs.length === 1) {
                 // display a single row
                 $tr = $trs.first();
                 icinga.loader.loadUrl($tr.attr('href'), $target);
                 icinga.ui.storeSelectionData($tr.attr('href'));
+                icinga.ui.provideSelectionCount();
             } else {
                 // display nothing
                 if ($target.attr('id') === 'col2') {
                     icinga.ui.layout1col();
                 }
                 icinga.ui.storeSelectionData(null);
+                icinga.ui.provideSelectionCount();
             }
 
             return false;

@@ -2,12 +2,13 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config\Authentication;
+namespace Icinga\Forms\Config\Authentication;
 
 use Exception;
 use Icinga\Web\Form;
-use Icinga\Web\Request;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
+use Icinga\Exception\AuthenticationException;
 use Icinga\Authentication\Backend\LdapUserBackend;
 
 /**
@@ -54,7 +55,9 @@ class LdapBackendForm extends Form
             array(
                 'required'      => true,
                 'label'         => t('Backend Name'),
-                'description'   => t('The name of this authentication backend')
+                'description'   => t(
+                    'The name of this authentication provider that is used to differentiate it from others'
+                )
             )
         );
         $this->addElement(
@@ -93,11 +96,20 @@ class LdapBackendForm extends Form
             'hidden',
             'backend',
             array(
-                'required'  => true,
+                'disabled'  => true,
                 'value'     => 'ldap'
             )
         );
-
+        $this->addElement(
+            'text',
+            'base_dn',
+            array(
+                'required'      => false,
+                'label'         => t('Base DN'),
+                'description'   => t('The path where users can be found on the ldap server. ' .
+                    ' Leave empty to select all users available on the specified resource.')
+            )
+        );
         return $this;
     }
 
@@ -106,9 +118,9 @@ class LdapBackendForm extends Form
      *
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
-        if (false === $this->isValidAuthenticationBackend($this)) {
+        if (false === static::isValidAuthenticationBackend($this)) {
             return false;
         }
     }
@@ -120,22 +132,34 @@ class LdapBackendForm extends Form
      *
      * @return  bool            Whether validation succeeded or not
      */
-    public function isValidAuthenticationBackend(Form $form)
+    public static function isValidAuthenticationBackend(Form $form)
     {
-        $element = $form->getElement('resource');
-
         try {
             $ldapUserBackend = new LdapUserBackend(
-                ResourceFactory::create($element->getValue()),
+                ResourceFactory::createResource($form->getResourceConfig()),
                 $form->getElement('user_class')->getValue(),
-                $form->getElement('user_name_attribute')->getValue()
+                $form->getElement('user_name_attribute')->getValue(),
+                $form->getElement('base_dn')->getValue()
             );
             $ldapUserBackend->assertAuthenticationPossible();
+        } catch (AuthenticationException $e) {
+            $form->addError($e->getMessage());
+            return false;
         } catch (Exception $e) {
-            $element->addError(sprintf(t('Connection validation failed: %s'), $e->getMessage()));
+            $form->addError(sprintf(t('Unable to validate authentication: %s'), $e->getMessage()));
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Return the configuration for the chosen resource
+     *
+     * @return  ConfigObject
+     */
+    public function getResourceConfig()
+    {
+        return ResourceFactory::getResourceConfig($this->getValue('resource'));
     }
 }

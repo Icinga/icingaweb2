@@ -18,7 +18,7 @@ $contactHelper = $this->getHelper('ContactFlags');
     }
     foreach ($contacts as $contact): ?>
         <div class="contact">
-            <img style="width: 60px; height: 60px;" src="<?= $this->href('/static/gravatar', array('email' => $contact->contact_email )) ?>" />
+            <img src="<?= $this->href('/static/gravatar', array('email' => $contact->contact_email )) ?>" />
             <a href="<?= $this->href(
                 'monitoring/show/contact',
                 array('contact' => $contact->contact_name)

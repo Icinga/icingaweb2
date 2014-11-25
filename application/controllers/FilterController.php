@@ -4,7 +4,7 @@
 
 use Icinga\Web\Controller\ActionController;
 use Icinga\Filter\Filter;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 
 /**
  * Application wide interface for filtering

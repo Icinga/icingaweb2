@@ -2,14 +2,54 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-/* @var $this \Icinga\Application\Modules\Module */
+/** @var $this \Icinga\Application\Modules\Module */
 
-// TODO: We need to define a useful permission set for this module, the
-//       list provided here is just an example
-$this->providePermission('commands/all', 'Allow to send all commands');
-$this->providePermission('commands/safe', 'Allow to to send a subset of "safe" commands');
-$this->providePermission('log', 'Allow full log access');
-$this->provideRestriction('filter', 'Filter accessible object');
+$this->providePermission(
+    'monitoring/command/*',
+    $this->translate('Allow all commands')
+);
+$this->providePermission(
+    'monitoring/command/schedule*',
+    $this->translate('Allow all scheduling checks and downtimes')
+);
+$this->providePermission(
+    'monitoring/command/schedule-check',
+    $this->translate('Allow scheduling host and service checks')
+);
+$this->providePermission(
+    'monitoring/command/schedule-downtime',
+    $this->translate('Allow scheduling host and service downtimes')
+);
+$this->providePermission(
+    'monitoring/command/acknowledge-problem',
+    $this->translate('Allow acknowledging host and service problems')
+);
+$this->providePermission(
+    'monitoring/command/add-comment',
+    $this->translate('Allow commenting on hosts and services')
+);
+$this->providePermission(
+    'monitoring/command/remove*',
+    $this->translate('Allow removing problem acknowledgements, host and service comments and downtimes')
+);
+$this->providePermission(
+    'monitoring/command/remove-acknowledgement',
+    $this->translate('Allow removing problem acknowledgements')
+);
+$this->providePermission(
+    'monitoring/command/remove-comment',
+    $this->translate('Allow removing host and service comments')
+);
+$this->providePermission(
+    'monitoring/command/remove-downtime',
+    $this->translate('Allow removing host and service downtimes')
+);
+
+$this->provideRestriction(
+    'monitoring/filter',
+    $this->translate('Restrict views to the hosts and services that match the filter')
+);
+
 $this->provideConfigTab('backends', array(
     'title' => 'Backends',
     'url' => 'config'
@@ -18,6 +58,7 @@ $this->provideConfigTab('security', array(
     'title' => 'Security',
     'url' => 'config/security'
 ));
+$this->provideSetupWizard('Icinga\Module\Monitoring\MonitoringWizard');
 
 /*
  * Available Search Urls
@@ -32,7 +73,7 @@ $this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/serv
  */
 $section = $this->menuSection($this->translate('Problems'), array(
     'renderer' => 'ProblemMenuItemRenderer',
-    'icon'     => 'img/icons/error.png',
+    'icon'     => 'block',
     'priority' => 20
 ));
 $section->add($this->translate('Unhandled Hosts'), array(
@@ -59,7 +100,7 @@ $section->add($this->translate('Current Downtimes'))->setUrl('monitoring/list/do
  * Overview Section
  */
 $section = $this->menuSection($this->translate('Overview'), array(
-    'icon'      => 'img/icons/hostgroup.png',
+    'icon'      => 'sitemap',
     'priority'  => 30
 ));
 $section->add($this->translate('Tactical Overview'), array(
@@ -74,8 +115,8 @@ $section->add($this->translate('Services'), array(
     'url'      => 'monitoring/list/services',
     'priority' => 50
 ));
-$section->add($this->translate('Servicematrix'), array(
-    'url'      => 'monitoring/list/servicematrix?service_problem=1',
+$section->add($this->translate('Service Grid'), array(
+    'url'      => 'monitoring/list/servicegrid?service_problem=1',
     'priority' => 51
 ));
 $section->add($this->translate('Servicegroups'), array(
@@ -107,17 +148,14 @@ $section->add($this->translate('Contacts'), array(
  * History Section
  */
 $section = $this->menuSection($this->translate('History'), array(
-    'icon'      => 'img/icons/history.png'
+    'icon'      => 'rewind'
 ));
-$section->add($this->translate('Critical Events'), array(
-    'url'      => 'monitoring/list/statehistorysummary',
+$section->add($this->translate('Event Grid'), array(
+    'url'      => 'monitoring/list/eventgrid',
     'priority' => 50
 ));
-$section->add($this->translate('Notifications'), array(
-    'url'      => 'monitoring/list/notifications'
-));
 $section->add($this->translate('Events'), array(
-    'title'    => $this->translate('All Events'),
+    'title'    => $this->translate('Event Overview'),
     'url'      => 'monitoring/list/eventhistory?timestamp>=-7%20days'
 ));
 $section->add($this->translate('Timeline'))->setUrl('monitoring/timeline');
@@ -126,7 +164,7 @@ $section->add($this->translate('Timeline'))->setUrl('monitoring/timeline');
  * Reporting Section
  */
 $section = $this->menuSection($this->translate('Reporting'), array(
-    'icon'      => 'img/icons/hostgroup.png',
+    'icon'      => 'barchart',
     'priority'  => 100
 ));
 
@@ -138,13 +176,9 @@ $section->add($this->translate('Alert Summary'), array(
  * System Section
  */
 $section = $this->menuSection($this->translate('System'));
-$section->add($this->translate('Process Info'), array(
+$section->add($this->translate('Monitoring Health'), array(
     'url'      => 'monitoring/process/info',
     'priority' => 120
-));
-$section->add($this->translate('Performance Info'), array(
-    'url'      => 'monitoring/process/performance',
-    'priority' => 130
 ));
 
 /*

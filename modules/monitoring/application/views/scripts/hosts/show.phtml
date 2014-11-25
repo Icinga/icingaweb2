@@ -35,14 +35,14 @@
 
         <div>
             <a href="<?= $rescheduleAllLink ?>">
-                <?= $this->icon('reschedule_petrol.png') ?>
+                <?= $this->icon('reschedule') ?>
                 <?= $this->translate('Reschedule host checks') ?>
             </a>
         </div>
 
         <div>
             <a href="<?= $downtimeAllLink ?>">
-                <?= $this->icon('in_downtime_petrol.png') ?>
+                <?= $this->icon('plug') ?>
                 <?= $this->translate('Schedule host downtimes') ?>
             </a>
         </div>
@@ -61,14 +61,14 @@
         <div>
             <a href="<?= $downtimeUnhandledLink ?>"
                title="<?= $this->translate('Schedule downtimes for unhandled problem hosts') ?>">
-                <?= $this->icon('in_downtime_petrol.png') ?>
+                <?= $this->icon('plug') ?>
                 <?= $this->translate('Schedule downtimes for unhandled problem hosts') ?>
             </a>
         </div>
         <div>
             <a href="<?= $acknowledgeUnhandledLink ?>"
                title="<?= $this->translate('Acknowledge unhandled problem hosts') ?>">
-                <?= $this->icon('acknowledgement_petrol.png') ?>
+                <?= $this->icon('ok') ?>
                 <?= $this->translate('Acknowledge unhandled problem hosts') ?>
             </a>
         </div>
@@ -94,7 +94,7 @@
             <h2>
                 <a href="<?= $inDowntimeLink ?>"
                    title="<?= $this->translate('Hosts in downtime') ?>">
-                    <?= $this->icon('in_downtime_petrol.png') ?>
+                    <?= $this->icon('plug') ?>
                     <?= $this->translate(sprintf('%u hosts are in downtime', count($objectsInDowntime))) ?>
                 </a>
             </h2>
@@ -104,7 +104,7 @@
             <h2>
                 <a href="<?= $havingCommentsLink ?>"
                    title="<?= $this->translate('Comments') ?>">
-                    <?= $this->icon('comment.png') ?>
+                    <?= $this->icon('comment') ?>
                     <?= $this->translate(sprintf('%u comments', count($objects->getComments()))) ?>
                 </a>
             </h2>

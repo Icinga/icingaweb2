@@ -48,7 +48,7 @@ class SearchDashboard extends Dashboard
      */
     public function render()
     {
-        if (! $this->getPane(self::SEARCH_PANE)->hasComponents()) {
+        if (! $this->getPane(self::SEARCH_PANE)->hasDashlets()) {
             throw new ActionError('Site not found', 404);
         }
         return parent::render();
@@ -70,8 +70,8 @@ class SearchDashboard extends Dashboard
             $this->addSearchDashletsFromModule($searchString, $module, $pane);
         }
 
-        if ($searchString === '' && $pane->hasComponents()) {
-            $pane->removeComponents();
+        if ($searchString === '' && $pane->hasDashlets()) {
+            $pane->removeDashlets();
             $pane->add('Ready to search', 'search/hint');
             return;
         }
@@ -91,7 +91,7 @@ class SearchDashboard extends Dashboard
         if (! empty($searchUrls)) {
             $this->searchUrls[] = $module->getSearchUrls();
             foreach ($searchUrls as $search) {
-                $pane->addComponent(
+                $pane->addDashlet(
                     $search->title . ': ' . $searchString,
                     Url::fromPath($search->url, array('q' => $searchString))
                 );

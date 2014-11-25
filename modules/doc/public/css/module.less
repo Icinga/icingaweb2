@@ -1,35 +1,106 @@
-// W3C Recommendation <http://www.w3.org/TR/CSS21/sample.html> (except h4)
-h1 { font-size:    2em !important; }
-h2 { font-size:  1.5em !important; }
-h3 { font-size: 1.17em !important; }
-h4 { font-size:    1em !important; }
-h5 { font-size:  .83em !important; }
-h6 { font-size:  .75em !important; }
-
 div.chapter {
   padding-left: 5px;
 }
 
-table th {
-  text-align: left;
+.uppercase {
+  text-transform: uppercase;
 }
 
-table th,
-table td {
-  border: solid 1px lightgray;
-  padding-left: 5px;
-  padding-right: 5px;
+.bold {
+  font-weight: bold;
+}
+
+.gradient(@a: #f9f9f9; @b: #f5f5f5) {
+  background: @a;
+  background: -moz-linear-gradient(top, @a, 0%, @b, 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, @a), color-stop(100%, @b));
+  background: -webkit-linear-gradient(top, @a 0%, @b 100%);
+  background: -o-linear-gradient(top, @a 0%, @b 100%);
+  background: -ms-linear-gradient(top, @a 0%, @b 100%);
+  background: linear-gradient(to bottom, @a 0%, @b 100%);
+}
+
+.box-shadow(@x: 3px; @y: 3px; @blur: 2px; @spread: 0px; @color: rgba(45, 45, 45, 0.75)) {
+  -webkit-box-shadow: @arguments;
+  -moz-box-shadow: @arguments;
+  box-shadow: @arguments;
+}
+
+.round-corners {
+  -moz-border-radius: 0.2em;
+  -webkit-border-radius: 0.2em;
+  border-radius: 0.2em;
+}
+
+table {
+  // Reset
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+th, td {
+  padding: 0.25rem;
+  text-align: left;
+  line-height: 1.25rem;
+  color: #666;
+}
+
+td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+tbody tr:nth-child(odd) {
+  .gradient;
+}
+
+tbody tr:nth-child(even) {
+  background: #fff;
+}
+
+tbody tr:hover {
+  background: #666;
+  td {
+    color: #fff;
+  }
+}
+
+@icinga: #049baf;
+
+thead {
+  th {
+    color: @icinga;
+    .uppercase;
+    .bold;
+  }
+  position: sticky;
+  border-bottom: 0.25rem solid @icinga;
 }
 
 code {
-  width: 100%;
-  overflow-x: auto;
-  padding: 0.2em;
+  // Reset
+  background-color: inherit;
+  border: none;
+  padding: 0;
   display: inline;
 }
 
+code {
+  color: @icinga;
+  .bold;
+}
+
 pre > code {
-  display: inline-block;
+  color: #fff;
+  font-weight: normal;
+
+  width: 100%;
+  background-color: #666;
+  display: block;
+  padding: 1em;
+  .box-shadow;
 }
 
 div.chapter > ul.navigation {

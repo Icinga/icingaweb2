@@ -7,7 +7,7 @@ namespace Icinga\Module\Monitoring\Object;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Exception\InvalidPropertyException;
-use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Web\UrlParams;
 
 /**
@@ -28,7 +28,7 @@ abstract class MonitoredObject
     /**
      * Backend to fetch object information from
      *
-     * @var Backend
+     * @var MonitoringBackend
      */
     protected $backend;
 
@@ -119,9 +119,9 @@ abstract class MonitoredObject
     /**
      * Create a monitored object, i.e. host or service
      *
-     * @param Backend $backend Backend to fetch object information from
+     * @param MonitoringBackend $backend Backend to fetch object information from
      */
-    public function __construct(Backend $backend)
+    public function __construct(MonitoringBackend $backend)
     {
         $this->backend = $backend;
     }
@@ -141,7 +141,21 @@ abstract class MonitoredObject
     public function fetch()
     {
         $this->properties = $this->getDataView()->getQuery()->fetchRow();
-        return $this->properties !== false;
+        if ($this->properties === false) {
+            return false;
+        }
+        if (isset($this->properties->host_contacts)) {
+            $this->contacts = array();
+            foreach (preg_split('~,~', $this->properties->host_contacts) as $contact) {
+                $this->contacts[] = (object) array(
+                    'contact_name'  => $contact,
+                    'contact_alias' => $contact,
+                    'contact_email' => null,
+                    'contact_pager' => null,
+                );
+            }
+        }
+        return true;
     }
 
     /**
@@ -190,6 +204,10 @@ abstract class MonitoredObject
      */
     public function fetchComments()
     {
+        if ($this->backend->is('livestatus')) {
+            $this->comments = array();
+            return $this;
+        }
         $comments = $this->backend->select()->from('comment', array(
             'id'        => 'comment_internal_id',
             'timestamp' => 'comment_timestamp',
@@ -264,13 +282,15 @@ abstract class MonitoredObject
      */
     public function fetchCustomvars()
     {
+        if ($this->backend->is('livestatus')) {
+            $this->customvars = array();
+            return $this;
+        }
+
         $blacklist = array();
         $blacklistPattern = '/^(.*pw.*|.*pass.*|community)$/i';
 
-        if ($security = Config::module('monitoring')->get('security')) {
-
-            $blacklistConfig = $security->get('protected_customvars', '');
-
+        if (($blacklistConfig = Config::module('monitoring')->get('security', 'protected_customvars', '')) !== '') {
             foreach (explode(',', $blacklistConfig) as $customvar) {
                 $nonWildcards = array();
                 foreach (explode('*', $customvar) as $nonWildcard) {
@@ -283,7 +303,8 @@ abstract class MonitoredObject
 
         $query = $this->backend->select()->from('customvar', array(
             'varname',
-            'varvalue'
+            'varvalue',
+            'is_json'
         ))
             ->where('object_type', $this->type)
             ->where('host_name', $this->host_name);
@@ -293,13 +314,16 @@ abstract class MonitoredObject
 
         $this->customvars = array();
 
-        $customvars = $query->getQuery()->fetchPairs();
-        foreach ($customvars as $name => $value) {
-            $name = ucwords(str_replace('_', ' ', strtolower($name)));
-            if ($blacklistPattern && preg_match($blacklistPattern, $name)) {
-                $value = '***';
+        $customvars = $query->getQuery()->fetchAll();
+        foreach ($customvars as $name => $cv) {
+            $name = ucwords(str_replace('_', ' ', strtolower($cv->varname)));
+            if ($blacklistPattern && preg_match($blacklistPattern, $cv->varname)) {
+                $this->customvars[$name] = '***';
+            } elseif ($cv->is_json) {
+                $this->customvars[$name] = json_decode($cv->varvalue);
+            } else {
+                $this->customvars[$name] = $cv->varvalue;
             }
-            $this->customvars[$name] = $value;
         }
 
         return $this;
@@ -312,15 +336,22 @@ abstract class MonitoredObject
      */
     public function fetchContacts()
     {
+        if ($this->backend->is('livestatus')) {
+            $this->contacts = array();
+            return $this;
+        }
+
         $contacts = $this->backend->select()->from('contact', array(
                 'contact_name',
                 'contact_alias',
                 'contact_email',
                 'contact_pager',
-        ))
-            ->where('host_name', $this->host_name);
+        ));
         if ($this->type === self::TYPE_SERVICE) {
+            $contacts->where('service_host_name', $this->host_name);
             $contacts->where('service_description', $this->service_description);
+        } else {
+            $contacts->where('host_name', $this->host_name);
         }
         $this->contacts = $contacts->getQuery()->fetchAll();
         return $this;
@@ -350,6 +381,11 @@ abstract class MonitoredObject
      */
     public function fetchContactgroups()
     {
+        if ($this->backend->is('livestatus')) {
+            $this->contactgroups = array();
+            return $this;
+        }
+
         $contactsGroups = $this->backend->select()->from('contactgroup', array(
                 'contactgroup_name',
                 'contactgroup_alias'
@@ -474,9 +510,9 @@ abstract class MonitoredObject
     public static function fromParams(UrlParams $params)
     {
         if ($params->has('service') && $params->has('host')) {
-            return new Service(Backend::createBackend(), $params->get('host'), $params->get('service'));
+            return new Service(MonitoringBackend::instance(), $params->get('host'), $params->get('service'));
         } elseif ($params->has('host')) {
-            return new Host(Backend::createBackend(), $params->get('host'));
+            return new Host(MonitoringBackend::instance(), $params->get('host'));
         }
         return null;
     }

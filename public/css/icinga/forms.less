@@ -24,7 +24,6 @@ td.configTable {
 label {
   display: block;
   font-weight: bold;
-  margin-bottom: 0.3em;
 }
 
 input, select {
@@ -32,8 +31,10 @@ input, select {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   border: 1px solid #ddd;
+  font-size: 0.9em;
   padding: 0.2em;
   background: #fff;
+  font-family: Calibri, Helvetica, sans-serif;
 }
 
 input:focus, select:focus {
@@ -43,9 +44,10 @@ input:focus, select:focus {
 input[type=submit] {
   font-weight: bold;
   text-align: center;
-  color: #eee;
-  border-color: #777;
-  background: #777;
+  color: #fff;
+  border: 2px solid #ddd;
+  border-color: @colorPetrol;
+  background: @colorPetrol;
   outline: 0;
 }
 
@@ -81,6 +83,11 @@ input::-moz-focus-inner {
   outline: 0;
 }
 
+button::-moz-focus-inner {
+  border: 0;
+  outline: 0;
+}
+
 select::-moz-focus-inner {
   border: 0;
   outline: 0;
@@ -97,7 +104,7 @@ form.inline {
   display: inline;
 }
 
-form.link-like input[type="submit"] {
+form.link-like input[type="submit"], form.link-like button[type="submit"], input.link-like, button.link-like {
   color: @colorLinkDefault;
   font-weight: normal;
   border: none;
@@ -107,72 +114,110 @@ form.link-like input[type="submit"] {
   cursor: pointer;
 }
 
-form.link-like input[type="submit"]:hover, form.link-like input[type="submit"]:focus {
+form.link-like input[type="submit"]:hover,
+form.link-like input[type="submit"]:focus,
+form.link-like button[type="submit"]:hover,
+form.link-like button[type="submit"]:focus,
+input.link-like:hover, button.link-like:focus {
   text-decoration: underline;
   background: none;
   color: @colorLinkDefault;
 }
 
-form ul.errors {
+.non-list-like-list {
   list-style-type: none;
   margin: 0;
   padding: 0;
+
+  li {
+    margin: 0.5em;
+  }
 }
 
-form ul.errors li {
-  color: @colorCritical;
-  font-weight: bold;
-  line-height: 1.5em;
+form div.element ul.errors {
+  .non-list-like-list;
+  margin: 0.3em 0 0 0.6em;
+
+  li {
+    color: @colorCritical;
+    font-weight: bold;
+    line-height: 1.5em;
+  }
 }
 
-#main form label {
+form ul.form-errors {
+  .non-list-like-list;
+  display: inline-block;
+  margin-bottom: 1em;
+  background-color: @colorCritical;
+
+  ul.errors {
+    .non-list-like-list;
+  }
+
+  li {
+    color: white;
+    font-weight: bold;
+    line-height: 1.5em;
+  }
+}
+
+form div.element {
+  margin: 0.5em 0;
+}
+
+form label {
   display: inline-block;
   margin-right: 1em;
   font-size: 0.9em;
   width: 10em;
 }
 
-#main select, #main input[type=text] {
+select, input[type=text], textarea {
   width: 20em;
+  display: inline-block;
 }
 
-#main form .help-block, #main form .description {
+textarea {
+  height: 4em;
+}
+
+form .description {
   font-size: 0.8em;
+  margin: 0.3em 0 0 0.6em;
 }
 
 .description {
   display: block;
 }
 
-textarea {
-  height: 4em;
+form label.has-feedback:after {
+  content: '\e85b';
+  font-family: "ifont";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
 
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
 
-  width: 100%;
-}
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
 
-input, select, textarea {
-  display: inline;
-}
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
 
-.control-group {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-flow: row wrap;
-  flex-flow: row wrap;
-}
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
 
-.control-group > div {
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-}
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
 
-@media (min-width: 480px) {
-  .control-group > div {
-    width: auto;
-  }
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
 }

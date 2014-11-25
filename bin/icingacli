@@ -1,6 +1,8 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Application\Cli;
 require_once dirname(__DIR__) . '/library/Icinga/Application/Cli.php';
-Cli::start()->dispatch();
+
+Icinga\Application\Cli::start()->dispatch();

@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config\Authentication;
+namespace Icinga\Forms\Config\Authentication;
 
 use Zend_Validate_Callback;
 use Icinga\Web\Form;
@@ -31,7 +31,9 @@ class AutologinBackendForm extends Form
             array(
                 'required'      => true,
                 'label'         => t('Backend Name'),
-                'description'   => t('The name of this authentication backend'),
+                'description'   => t(
+                    'The name of this authentication provider that is used to differentiate it from others'
+                ),
                 'validators'    => array(
                     array(
                         'Regex',
@@ -50,9 +52,8 @@ class AutologinBackendForm extends Form
             'text',
             'strip_username_regexp',
             array(
-                'required'      => true,
-                'label'         => t('Backend Domain Pattern'),
-                'description'   => t('The domain pattern of this authentication backend'),
+                'label'         => t('Filter Pattern'),
+                'description'   => t('The regular expression to use to strip specific parts off from usernames. Leave empty if you do not want to strip off anything'),
                 'value'         => '/\@[^$]+$/',
                 'validators'    => array(
                     new Zend_Validate_Callback(function ($value) {
@@ -65,7 +66,7 @@ class AutologinBackendForm extends Form
             'hidden',
             'backend',
             array(
-                'required'  => true,
+                'disabled'  => true,
                 'value'     => 'autologin'
             )
         );
@@ -82,7 +83,7 @@ class AutologinBackendForm extends Form
      *
      * @return  bool            Whether validation succeeded or not
      */
-    public function isValidAuthenticationBackend(Form $form)
+    public static function isValidAuthenticationBackend(Form $form)
     {
         return true;
     }

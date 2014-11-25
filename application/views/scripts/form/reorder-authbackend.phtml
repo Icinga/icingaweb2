@@ -11,23 +11,23 @@
       <tr>
         <td class="action">
           <a href="<?= $this->href('config/editAuthenticationBackend', array('auth_backend' => $backendNames[$i])); ?>">
-            <?= $this->icon('edit.png'); ?> <?= $this->escape($backendNames[$i]); ?>
+            <?= $this->icon('edit'); ?> <?= $this->escape($backendNames[$i]); ?>
           </a>
         </td>
         <td>
           <a href="<?= $this->href('config/removeAuthenticationBackend', array('auth_backend' => $backendNames[$i])); ?>">
-            <?= $this->icon('remove.png', $this->translate('Remove')); ?>
+            <?= $this->icon('cancel', $this->translate('Remove')); ?>
           </a>
         </td>
         <td>
 <?php if ($i > 0): ?>
           <button type="submit" name="backend_newpos" value="<?= sprintf('%s|%s', $backendNames[$i], $i - 1); ?>">
-            <?= $this->icon('up.png', $this->translate('Move up in authentication order')); ?>
+            <?= $this->icon('up-big', $this->translate('Move up in authentication order')); ?>
           </button>
 <?php endif; ?>
 <?php if ($i + 1 < count($backendNames)): ?>
           <button type="submit" name="backend_newpos" value="<?= sprintf('%s|%s', $backendNames[$i], $i + 1); ?>">
-            <?= $this->icon('down.png', $this->translate('Move down in authentication order')); ?>
+            <?= $this->icon('down-big', $this->translate('Move down in authentication order')); ?>
           </button>
 <?php endif; ?>
         </td>

@@ -1,0 +1,84 @@
+<?php
+
+use Icinga\Web\Url;
+
+$selfUrl = 'monitoring/list/hosts';
+$currentUrl = Url::fromRequest()->getRelativeUrl();
+
+?>
+<h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
+    <?= $this->qlink(sprintf($this->translate('%s hosts:'), $this->stats->hosts_total), $selfUrl); ?>
+  <span class="badges">
+    <?php if($this->stats->hosts_up): ?>
+    <span class="state ok<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 0))->getRelativeUrl() ? ' active' : '' ?>">
+        <?= $this->qlink(
+            $this->stats->hosts_up,
+            $selfUrl,
+            array('host_state' => 0),
+            array('title' => $this->translate('Hosts with state UP'))
+        ) ?>
+    </span>
+    <?php endif; ?>
+
+    <?php if($this->stats->hosts_down_unhandled): ?>
+    <span class="state critical<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 1, 'host_unhandled' => 1))->getRelativeUrl() ? ' active' : '' ?>">
+        <?= $this->qlink(
+            $this->stats->hosts_down_unhandled,
+            $selfUrl,
+            array('host_state' => 1, 'host_unhandled' => 1),
+            array('title' => $this->translate('Unhandled hosts with state DOWN'))
+        ) ?>
+    <?php endif; ?>
+
+        <?php if($this->stats->hosts_down_handled > 0): ?>
+        <span class="state handled critical<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 1, 'host_unhandled' =>0))->getRelativeUrl() ? ' active' : '' ?>">
+            <?= $this->qlink(
+                $this->stats->hosts_down_handled,
+                $selfUrl,
+                array('host_state' => 1, 'host_unhandled' => 0),
+                array('title' => $this->translate('Handled hosts with state DOWN'))
+            ) ?>
+        </span>
+        <?php endif; ?>
+
+    <?php if($this->stats->hosts_down): ?>
+    </span>
+    <?php endif; ?>
+
+    <?php if($this->stats->hosts_unreachable_unhandled): ?>
+    <span class="state unknown<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 2, 'host_unhandled' => 1))->getRelativeUrl() ? ' active' : '' ?>">
+        <?= $this->qlink(
+            $this->stats->hosts_unreachable_unhandled,
+            $selfUrl,
+            array('host_state' => 2, 'host_unhandled' => 1),
+            array('title' => $this->translate('Unhandled hosts with state UNREACHABLE'))
+        ) ?>
+    <?php endif; ?>
+
+        <?php if($this->stats->hosts_unreachable_handled > 0): ?>
+        <span class="state handled unknown<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 2, 'host_unhandled' => 0))->getRelativeUrl() ? ' active' : '' ?>">
+            <?= $this->qlink(
+                $this->stats->hosts_unreachable_handled,
+                $selfUrl,
+                array('host_state' => 2, 'host_unhandled' => 0),
+                array('title' => $this->translate('Handled hosts with state UNREACHABLE'))
+            ) ?>
+        </span>
+        <?php endif; ?>
+
+    <?php if($this->stats->hosts_unreachable): ?>
+    </span>
+    <?php endif; ?>
+
+    <?php if($this->stats->hosts_pending): ?>
+    <span class="state pending<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 99))->getRelativeUrl() ? ' active' : '' ?>">
+        <?= $this->qlink(
+            $this->stats->hosts_pending,
+            $selfUrl,
+            array('host_state' => 99),
+            array('title' => $this->translate('Hosts with state PENDING'))
+        ) ?>
+    </span>
+    <?php endif; ?>
+  </span>
+</h1>

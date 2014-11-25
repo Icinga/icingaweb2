@@ -7,7 +7,7 @@ namespace Icinga\Web\Widget\Chart;
 use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Url;
 use Icinga\Util\Format;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 
 /**
  * A SVG-PieChart intended to be displayed as a small icon next to labels, to offer a better visualization of the
@@ -73,28 +73,28 @@ EOD;
      *
      * @var int The value in px
      */
-    private $width = 28;
+    private $width = 16;
 
     /**
      * The height of the rendered chart
      *
      * @var int The value in px
      */
-    private $height = 28;
+    private $height = 16;
 
     /**
      * PieChart border width
      *
      * @var float
      */
-    private $borderWidth = 0;
+    private $borderWidth = 1;
 
     /**
      * The color of the border
      *
      * @var string
      */
-    private $borderColor = '#888';
+    private $borderColor = '#fff';
 
     /**
      * The title of the chart

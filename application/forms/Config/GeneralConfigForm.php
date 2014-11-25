@@ -2,13 +2,12 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-namespace Icinga\Form\Config;
+namespace Icinga\Forms\Config;
 
-use Icinga\Web\Request;
 use Icinga\Web\Notification;
-use Icinga\Form\ConfigForm;
-use Icinga\Form\Config\General\LoggingConfigForm;
-use Icinga\Form\Config\General\ApplicationConfigForm;
+use Icinga\Forms\ConfigForm;
+use Icinga\Forms\Config\General\LoggingConfigForm;
+use Icinga\Forms\Config\General\ApplicationConfigForm;
 
 /**
  * Form class for application-wide and logging specific settings
@@ -38,18 +37,18 @@ class GeneralConfigForm extends ConfigForm
     /**
      * @see Form::onSuccess()
      */
-    public function onSuccess(Request $request)
+    public function onSuccess()
     {
         $sections = array();
         foreach ($this->getValues() as $sectionAndPropertyName => $value) {
-            list($section, $property) = explode('_', $sectionAndPropertyName);
+            list($section, $property) = explode('_', $sectionAndPropertyName, 2);
             if (! isset($sections[$section])) {
                 $sections[$section] = array();
             }
             $sections[$section][$property] = $value;
         }
         foreach ($sections as $section => $config) {
-            $this->config->{$section} = $config;
+            $this->config->setSection($section, $config);
         }
 
         if ($this->save()) {
@@ -62,7 +61,7 @@ class GeneralConfigForm extends ConfigForm
     /**
      * @see Form::onRequest()
      */
-    public function onRequest(Request $request)
+    public function onRequest()
     {
         $values = array();
         foreach ($this->config as $section => $properties) {

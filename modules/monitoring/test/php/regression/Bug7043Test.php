@@ -7,10 +7,20 @@ namespace Tests\Icinga\Module\Monitoring\Regression;
 require_once realpath(dirname(__FILE__) . '/../../../../../test/php/bootstrap.php');
 
 use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Test\BaseTestCase;
 use Mockery;
-use Zend_Config;
+
+
+class ConfigWithSetModuleConfig extends Config
+{
+    public static function setModuleConfig($moduleName, $configName, $config)
+    {
+        static::$modules[$moduleName][$configName] = $config;
+    }
+}
+
 
 class Bug7043Test extends BaseTestCase
 {
@@ -36,7 +46,7 @@ class Bug7043Test extends BaseTestCase
                     ->getMock()
             );
 
-        Config::setModuleConfig('monitoring', 'backends', new Zend_Config(array(
+        ConfigWithSetModuleConfig::setModuleConfig('monitoring', 'backends', new ConfigObject(array(
             'backendName' => array(
                 'type'      => 'ido',
                 'resource'  => 'ido'

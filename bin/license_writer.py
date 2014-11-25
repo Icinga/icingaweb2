@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # {{{ICINGA_LICENSE_HEADER}}}
 # {{{ICINGA_LICENSE_HEADER}}}

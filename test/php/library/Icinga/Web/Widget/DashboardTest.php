@@ -12,10 +12,10 @@ use Mockery;
 use Icinga\Application\Icinga;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Widget\Dashboard\Pane;
-use Icinga\Web\Widget\Dashboard\Component;
+use Icinga\Web\Widget\Dashboard\Dashlet;
 use Icinga\Test\BaseTestCase;
 
-class ComponentWithMockedView extends Component
+class DashletWithMockedView extends Dashlet
 {
     public function view()
     {
@@ -131,7 +131,8 @@ class DashboardTest extends BaseTestCase
      */
     public function testLoadPaneItemsProvidedByEnabledModules()
     {
-        $dashboard = Dashboard::load();
+        $dashboard = new Dashboard();
+        $dashboard->load();
 
         $this->assertCount(
             1,
@@ -155,14 +156,14 @@ class DashboardTest extends BaseTestCase
     /**
      * @depends testWhetherGetPaneReturnsAPaneByName
      */
-    public function testWhetherRenderNotRendersPanesDisabledComponent()
+    public function testWhetherRenderNotRendersPanesDisabledDashlet()
     {
         $dashboard = new Dashboard();
         $dashboard->createPane('test1');
         $pane = $dashboard->getPane('test1');
-        $component = new ComponentWithMockedView('test', 'test', $pane);
-        $component->setDisabled(true);
-        $pane->addComponent($component);
+        $dashlet = new DashletWithMockedView('test', 'test', $pane);
+        $dashlet->setDisabled(true);
+        $pane->addDashlet($dashlet);
 
         $rendered = $dashboard->render();
 
@@ -170,20 +171,20 @@ class DashboardTest extends BaseTestCase
 
         $this->assertFalse(
             $greaterThanOne,
-            'Dashboard::render() disabled component is rendered, but should not'
+            'Dashboard::render() disabled dashlet is rendered, but should not'
         );
     }
 
     /**
      * @depends testWhetherGetPaneReturnsAPaneByName
      */
-    public function testWhetherRenderRendersPanesEnabledComponent()
+    public function testWhetherRenderRendersPanesEnabledDashlet()
     {
         $dashboard = new Dashboard();
         $dashboard->createPane('test1');
         $pane = $dashboard->getPane('test1');
-        $component = new ComponentWithMockedView('test', 'test', $pane);
-        $pane->addComponent($component);
+        $dashlet = new DashletWithMockedView('test', 'test', $pane);
+        $pane->addDashlet($dashlet);
 
         $rendered = $dashboard->render();
 
@@ -191,7 +192,7 @@ class DashboardTest extends BaseTestCase
 
         $this->assertTrue(
             $greaterThanOne,
-            'Dashboard::render() could not render enabled component'
+            'Dashboard::render() could not render enabled dashlet'
         );
     }
 
@@ -258,142 +259,44 @@ class DashboardTest extends BaseTestCase
     /**
      * @depends testWhetherGetPaneReturnsAPaneByName
      */
-    public function testWhetherRemoveComponentRemovesComponent()
+    public function testWhetherRemoveDashletRemovesDashlet()
     {
         $dashboard = new Dashboard();
         $dashboard->createPane('test1');
         $pane = $dashboard->getPane('test1');
 
-        $component = new Component('test', 'test', $pane);
-        $pane->addComponent($component);
+        $dashlet = new Dashlet('test', 'test', $pane);
+        $pane->addDashlet($dashlet);
 
-        $component2 = new Component('test2', 'test2', $pane);
-        $pane->addComponent($component2);
+        $dashlet2 = new Dashlet('test2', 'test2', $pane);
+        $pane->addDashlet($dashlet2);
 
-        $dashboard->removeComponent('test1', 'test');
+        $dashboard->getPane('test1')->removeDashlet('test');
+        $result = $dashboard->getPane('test1')->hasDashlet('test');
 
-        $result = $dashboard->getPane('test1')->hasComponent('test');
-
-        $this->assertFalse(
+        $this->assertTrue(
             $result,
-            'Dashboard::removeComponent() could not remove component from the pane'
+            'Dashboard::removeDashlet() could not remove dashlet from the pane'
         );
     }
 
     /**
      * @depends testWhetherGetPaneReturnsAPaneByName
      */
-    public function testWhetherRemoveComponentRemovesComponentByConcatenation()
+    public function testWhetherSetDashletUrlUpdatesTheDashletUrl()
     {
         $dashboard = new Dashboard();
         $dashboard->createPane('test1');
         $pane = $dashboard->getPane('test1');
+        $dashlet = new Dashlet('test', 'test', $pane);
+        $pane->addDashlet($dashlet);
 
-        $component = new Component('test', 'test', $pane);
-        $pane->addComponent($component);
-
-        $component2 = new Component('test2', 'test2', $pane);
-        $pane->addComponent($component2);
-
-        $dashboard->removeComponent('test1.test', null);
-
-        $result = $dashboard->getPane('test1')->hasComponent('test');
-
-        $this->assertFalse(
-            $result,
-            'Dashboard::removeComponent() could not remove component from the pane'
-        );
-    }
-
-    /**
-     * @depends testWhetherGetPaneReturnsAPaneByName
-     */
-    public function testWhetherToArrayReturnsDashboardStructureAsArray()
-    {
-        $dashboard = new Dashboard();
-        $dashboard->createPane('test1');
-        $pane = $dashboard->getPane('test1');
-
-        $component = new Component('test', 'test', $pane);
-        $pane->addComponent($component);
-
-        $result = $dashboard->toArray();
-
-        $expected = array(
-            'test1' => array(
-                'title' => 'test1'
-            ),
-            'test1.test' => array(
-                'url' => 'test'
-            )
-        );
-
-        $this->assertEquals(
-            $expected,
-            $result,
-            'Dashboard::toArray() could not return valid expectation'
-        );
-    }
-
-    /**
-     * @depends testWhetherGetPaneReturnsAPaneByName
-     */
-    public function testWhetherSetComponentUrlUpdatesTheComponentUrl()
-    {
-        $dashboard = new Dashboard();
-        $dashboard->createPane('test1');
-        $pane = $dashboard->getPane('test1');
-        $component = new Component('test', 'test', $pane);
-        $pane->addComponent($component);
-
-        $dashboard->setComponentUrl('test1', 'test', 'new');
+        $dashboard->getPane('test1')->getDashlet('test')->setUrl('new');
 
         $this->assertEquals(
             'new',
-            $component->getUrl()->getPath(),
-            'Dashboard::setComponentUrl() could not return valid expectation'
-        );
-    }
-
-    /**
-     * @depends testWhetherGetPaneReturnsAPaneByName
-     */
-    public function testWhetherSetComponentUrlUpdatesTheComponentUrlConcatenation()
-    {
-        $dashboard = new Dashboard();
-        $dashboard->createPane('test1');
-        $pane = $dashboard->getPane('test1');
-        $component = new Component('test', 'test', $pane);
-        $pane->addComponent($component);
-
-        $dashboard->setComponentUrl('test1.test', null, 'new');
-
-        $this->assertEquals(
-            'new',
-            $component->getUrl()->getPath(),
-            'Dashboard::setComponentUrl() could not return valid expectation'
-        );
-    }
-
-    /**
-     * @depends testWhetherGetPaneReturnsAPaneByName
-     */
-    public function testWhetherSetComponentUrlUpdatesTheComponentUrlNotExistentPane()
-    {
-        $dashboard = new Dashboard();
-        $dashboard->createPane('test1');
-        $pane = $dashboard->getPane('test1');
-        $component = new Component('test', 'test', $pane);
-        $pane->addComponent($component);
-
-        $dashboard->setComponentUrl('test3.test', null, 'new');
-
-        $result = $dashboard->getPane('test3')->getComponent('test');
-
-        $this->assertEquals(
-            'new',
-            $result->getUrl()->getPath(),
-            'Dashboard::setComponentUrl() could not return valid expectation'
+            $dashlet->getUrl()->getPath(),
+            'Dashboard::setDashletUrl() could not return valid expectation'
         );
     }
 

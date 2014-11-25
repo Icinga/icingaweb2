@@ -22,6 +22,16 @@ class FilterNot extends FilterChain
         return true;
     }
 
+    public function andFilter(Filter $filter)
+    {
+        return Filter::matchAll($this, $filter);
+    }
+
+    public function orFilter(Filter $filter)
+    {
+        return Filter::matchAny($filter);
+    }
+
     public function toQueryString()
     {
         $parts = array();

@@ -6,13 +6,14 @@ namespace Icinga\Application\Modules;
 
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Icinga;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\SimpleQuery;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\SystemPermissionException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\NotReadableError;
+use Icinga\Exception\NotFoundError;
 
 /**
  * Module manager that handles detecting, enabling and disabling of modules
@@ -66,6 +67,18 @@ class Manager
      * @var array
      */
     private $modulePaths        = array();
+
+    /**
+     * The core modules
+     *
+     * Core modules do not need to be enabled to load and cannot be disabled
+     * by the user. This must not be writable programmatically!
+     *
+     * @var array
+     */
+    private $coreModules = array(
+        'setup'
+    );
 
     /**
      *  Create a new instance of the module manager
@@ -157,7 +170,21 @@ class Manager
     }
 
     /**
-     * Try to set all enabled modules in loaded sate
+     * Try to set all core modules in loaded state
+     *
+     * @return  self
+     * @see     Manager::loadModule()
+     */
+    public function loadCoreModules()
+    {
+        foreach ($this->coreModules as $name) {
+            $this->loadModule($name);
+        }
+        return $this;
+    }
+
+    /**
+     * Try to set all enabled modules in loaded state
      *
      * @return  self
      * @see     Manager::loadModule()
@@ -202,6 +229,7 @@ class Manager
      *
      * @return  self
      * @throws  ConfigurationError          When trying to enable a module that is not installed
+     * @throws  NotFoundError               In case the "enabledModules" directory does not exist
      * @throws  SystemPermissionException   When insufficient permissions for the application exist
      */
     public function enableModule($name)
@@ -211,15 +239,19 @@ class Manager
                 'Cannot enable module "%s". Module is not installed.',
                 $name
             );
+        } elseif (in_array($name, $this->coreModules)) {
+            return $this;
         }
 
         clearstatcache(true);
         $target = $this->installedBaseDirs[$name];
         $link = $this->enableDir . '/' . $name;
 
-        if (!is_writable($this->enableDir)) {
+        if (! is_dir($this->enableDir)) {
+            throw new NotFoundError('Cannot enable module "%s". Path "%s" not found.', $name, $this->enableDir);
+        } elseif (!is_writable($this->enableDir)) {
             throw new SystemPermissionException(
-                'Can not enable module "%s". Insufficient system permissions for enabling modules.',
+                'Cannot enable module "%s". Insufficient system permissions for enabling modules.',
                 $name
             );
         }
@@ -372,10 +404,9 @@ class Manager
     }
 
     /**
-     * Return an array containing all loaded modules
+     * Get the currently loaded modules
      *
-     * @return  array
-     * @see     Module
+     * @return  Module[]
      */
     public function getLoadedModules()
     {
@@ -427,7 +458,7 @@ class Manager
         }
 
         $installed = $this->listInstalledModules();
-        foreach ($installed as $name) {
+        foreach (array_diff($installed, $this->coreModules) as $name) {
             $info[$name] = (object) array(
                 'name'    => $name,
                 'path'    => $this->installedBaseDirs[$name],
@@ -487,11 +518,14 @@ class Manager
     /**
      * Detect installed modules from every path provided in modulePaths
      *
+     * @param   array   $availableDirs      Installed modules location
+     *
      * @return self
      */
-    public function detectInstalledModules()
+    public function detectInstalledModules(array $availableDirs = null)
     {
-        foreach ($this->modulePaths as $basedir) {
+        $modulePaths = $availableDirs !== null ? $availableDirs : $this->modulePaths;
+        foreach ($modulePaths as $basedir) {
             $canonical = realpath($basedir);
             if ($canonical === false) {
                 Logger::warning('Module path "%s" does not exist', $basedir);
@@ -527,5 +561,15 @@ class Manager
         }
         ksort($this->installedBaseDirs);
         return $this;
+    }
+
+    /**
+     * Get the directories where to look for installed modules
+     *
+     * @return array
+     */
+    public function getModuleDirs()
+    {
+        return $this->modulePaths;
     }
 }

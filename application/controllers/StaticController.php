@@ -4,7 +4,7 @@
 
 use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Icinga;
-use Icinga\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Web\FileCache;
 use Zend_Controller_Action_Exception as ActionException;
 

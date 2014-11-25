@@ -56,7 +56,7 @@ class PhpCommand extends Command
 
         $options = array();
         if ($this->isVerbose) {
-            $options[] = '--verbose';
+            $options[] = '--verbose --testdox';
         }
         if ($build) {
             $reportPath = $this->setupAndReturnReportDirectory();
@@ -71,7 +71,23 @@ class PhpCommand extends Command
         }
 
         chdir(realpath(__DIR__ . '/../..'));
-        passthru($phpUnit . ' ' . join(' ', array_merge($options, $this->params->getAllStandalone())));
+        $command = $phpUnit . ' ' . join(' ', array_merge($options, $this->params->getAllStandalone()));
+        if ($this->isVerbose) {
+            $res = `$command`;
+            foreach (preg_split('/\n/', $res) as $line) {
+                if (preg_match('~\s+\[([x\s])\]\s~', $line, $m)) {
+                    if ($m[1] === 'x') {
+                        echo $this->screen->colorize($line, 'green') . "\n";
+                    } else {
+                        echo $this->screen->colorize($line, 'red') . "\n";
+                    }
+                } else {
+                    echo $line . "\n";
+                }
+            }
+        } else {
+            passthru($command);
+        }
     }
 
     /**

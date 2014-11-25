@@ -15,7 +15,7 @@ use Icinga\Data\Filterable;
 use Icinga\Exception\QueryException;
 use Icinga\Web\Request;
 use Icinga\Web\Url;
-use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
 /**
  * A read-only view of an underlying query
@@ -44,8 +44,7 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
     public function __construct(ConnectionInterface $connection, array $columns = null)
     {
         $this->connection = $connection;
-        $queryClass = $connection->getQueryClass($this->getQueryName());
-        $this->query = new $queryClass($this->connection->getResource(), $columns);
+        $this->query = $connection->query($this->getQueryName(), $columns);
         $this->filter = Filter::matchAll();
         $this->init();
     }
@@ -105,7 +104,7 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
      */
     public static function fromRequest($request, array $columns = null)
     {
-        $view = new static(Backend::createBackend($request->getParam('backend')), $columns);
+        $view = new static(MonitoringBackend::instance($request->getParam('backend')), $columns);
         $view->applyUrlFilter($request);
 
         return $view;
@@ -141,7 +140,7 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
      */
     public static function fromParams(array $params, array $columns = null)
     {
-        $view = new static(Backend::createBackend($params['backend']), $columns);
+        $view = new static(MonitoringBackend::instance($params['backend']), $columns);
 
         foreach ($params as $key => $value) {
             if ($view->isValidFilterTarget($key)) {

@@ -5,8 +5,13 @@ $selfUrl = Url::fromPath('monitoring/show/services', array('host' => $this->obje
 $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
 
 ?>
-<h3 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
+<h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
+<?php if ($object->stats->services_total > 0): ?>
 <?= $this->qlink(sprintf($this->translate('%s configured services:'), $object->stats->services_total), $selfUrl) ?>
+<?php else: ?>
+<?= $this->translate('No services configured on this host'); ?>
+<?php endif; ?>
+<span class="badges">
 <?php if ($object->stats->services_ok > 0): ?>
  <span class="state ok<?= $currentUrl === $selfUrl->with('service_state', 0)->getRelativeUrl() ? ' active' : '' ?>"><?= $this->qlink(
     $object->stats->services_ok,
@@ -79,5 +84,6 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
     array('title' => sprintf($this->translate('Services with state %s'), strtoupper($this->translate('pending'))))
 )  ?></span>
 <?php endif ?>
-</h3>
+</span>
+</h1>
 

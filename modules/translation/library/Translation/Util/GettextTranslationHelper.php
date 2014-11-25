@@ -101,7 +101,7 @@ class GettextTranslationHelper
      */
     public function __construct(ApplicationBootstrap $bootstrap, $locale)
     {
-        $this->moduleMgr = $bootstrap->getModuleManager()->loadEnabledModules();
+        $this->moduleMgr = $bootstrap->getModuleManager()->loadCoreModules()->loadEnabledModules();
         $this->appDir = $bootstrap->getApplicationDir();
         $this->locale = $locale;
     }

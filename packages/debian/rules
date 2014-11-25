@@ -23,7 +23,7 @@ binary:
 	dh_installdebconf
 	dh_installinfo
 	dh_installinit
-	dpkg-statoverride --force --add root www-data 2775 /etc/icingaweb
+	dpkg-statoverride --force --add root www-data 2770 /etc/icingaweb
 	dh_compress
 	dh_fixperms
 	dh_strip

@@ -85,17 +85,17 @@ function contactsLink($match, $view) {
           $msg = $this->escape($event->output);
           break;
         case 'hard_state':
-          $icon = $isService ? 'service' : 'host';
           $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $this->escape($event->output);
           $stateClass = (
             $isService
               ? strtolower($this->util()->getServiceStateName($event->state))
               : strtolower($this->util()->getHostStateName($event->state))
           );
+          $icon = 'attention-alt';
           $title = strtoupper($stateClass); // TODO: Should be translatable!
           break;
         case 'soft_state':
-          $icon = 'softstate';
+          $icon = 'spinner';
           $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $this->escape($event->output);
           $stateClass = (
             $isService
@@ -138,7 +138,7 @@ $output = $this->tickets ? preg_replace_callback(
         <?php endif ?>
           <br>
           <div>
-            <?= $this->icon($icon . '.png', $title); ?> <?= empty($msg) ? '' : $msg; ?>
+            <?= $this->icon($icon, $title); ?> <?= empty($msg) ? '' : $msg; ?>
           </div>
         </td>
       </tr>

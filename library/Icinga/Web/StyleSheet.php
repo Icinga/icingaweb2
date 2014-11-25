@@ -11,6 +11,8 @@ use Icinga\Web\LessCompiler;
 class StyleSheet
 {
     protected static $lessFiles = array(
+        '../application/fonts/fontello-ifont/css/ifont-embedded.css',
+        'css/vendor/tipsy.css',
         'css/icinga/defaults.less',
         'css/icinga/layout-colors.less',
         'css/icinga/layout-structure.less',
@@ -19,18 +21,19 @@ class StyleSheet
         'css/icinga/main-content.less',
         'css/icinga/tabs.less',
         'css/icinga/forms.less',
+        'css/icinga/setup.less',
         'css/icinga/widgets.less',
         'css/icinga/pagination.less',
         'css/icinga/monitoring-colors.less',
         'css/icinga/selection-toolbar.less',
-        'css/icinga/login.less',
-        'css/vendor/tipsy.css'
+        'css/icinga/login.less'
     );
 
     public static function compileForPdf()
     {
+        self::checkPhp();
         $less = new LessCompiler();
-        $basedir = Icinga::app()->getBootstrapDirecory();
+        $basedir = Icinga::app()->getBootstrapDirectory();
         foreach (self::$lessFiles as $file) {
             $less->addFile($basedir . '/' . $file);
         }
@@ -53,10 +56,19 @@ class StyleSheet
         );
     }
 
+    protected static function checkPhp()
+    {
+        // PHP had a rather conservative PCRE backtrack limit unless 5.3.7
+        if (version_compare(PHP_VERSION, '5.3.7') <= 0) {
+            ini_set('pcre.backtrack_limit', 1000000);
+        }
+    }
+
     public static function send($minified = false)
     {
+        self::checkPhp();
         $app = Icinga::app();
-        $basedir = $app->getBootstrapDirecory();
+        $basedir = $app->getBootstrapDirectory();
         foreach (self::$lessFiles as $file) {
             $lessFiles[] = $basedir . '/' . $file;
         }

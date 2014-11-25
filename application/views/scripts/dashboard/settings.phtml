@@ -1,0 +1,63 @@
+<?php
+?>
+<div class="controls">
+    <?= $this->tabs ?>
+</div>
+<div class="content">
+    <h1><?= t('Dashboard Settings'); ?></h1>
+
+    <table class="avp action" data-base-target="_next">
+        <thead>
+            <tr>
+                <th style="width: 18em;">
+                    <strong><?= t('Dashlet Name') ?></strong>
+                </th>
+                <th>
+                    <strong><?= t('Url') ?></strong>
+                </th>
+                <th style="width: 1.4em;">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($this->dashboard->getPanes() as $pane): ?>
+                <tr style="background-color: #f1f1f1;">
+                    <th colspan="2" style="text-align: left; padding: 0.5em;">
+                        <?= $pane->getName(); ?>
+                    </th>
+                    <th>
+                        <a href="<?= $this->href('dashboard/remove-pane', array('pane' => $pane->getName()));  ?>">
+                            <?= $this->icon('cancel'); ?>
+                        </a>
+                    </th>
+                </tr>
+                <?php $dashlets = $pane->getDashlets(); ?>
+                <?php if(empty($dashlets)): ?>
+                    <tr>
+                        <td colspan="3">
+                            <?= $this->translate('No dashlets added to dashboard') ?>.
+                        </td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($dashlets as $dashlet): ?>
+                    <?php if ($dashlet->getDisabled() === true) continue; ?>
+                        <tr>
+                            <td>
+                                <a href="<?= $this->href('dashboard/update-dashlet', array('pane' => $pane->getName(), 'dashlet' => $dashlet->getTitle()));  ?>">
+                                    <?= $dashlet->getTitle(); ?>
+                                </a>
+                            </td>
+                            <td style="table-layout: fixed; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <a href="<?= $this->href($dashlet->getUrl()); ?>"><?= $dashlet->getUrl(); ?></a>
+                            </td>
+                            <td>
+                                <a href="<?= $this->href('dashboard/remove-dashlet', array('pane' => $pane->getName(), 'dashlet' => $dashlet->getTitle()));  ?>">
+                                <?= $this->icon('cancel'); ?>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>

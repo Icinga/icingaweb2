@@ -11,7 +11,6 @@ html, body {
 }
 
 html {
-  color: #000;
   background: #fff;
 }
 
@@ -35,8 +34,8 @@ table {
 }
 
 body {
-  font-family: Ubuntu, Calibri, Trebuchet MS, Helvetica, sans-serif;
-  color: black;
+  font-family: Calibri, Helvetica, sans-serif;
+  color: #666;
   background-color: white;
 }
 
@@ -50,7 +49,54 @@ a:hover {
   text-decoration: underline;
 }
 
+/* W3C Recommendation <http://www.w3.org/TR/CSS21/sample.html> (except h4) */
+h1 {
+    font-size:    2em;
+    color: @colorTextDefault;
+    border-bottom: 2px solid @colorPetrol;
+}
+
+h2 {
+    font-size:  1.5em;
+    color: @colorPetrol;
+}
+
+h3 {
+    font-size: 1.17em;
+    color: @colorTextDefault;
+    border-bottom: 1px solid @colorPetrol;
+}
+
+h4 {
+    font-size:    1em;
+    color: @colorPetrol;
+}
+
+h5 {
+    font-size:  .83em;
+    border-bottom: 1px solid @colorPetrol;
+}
+
+h6 {
+    font-size:  .75em;
+    color: @colorPetrol;
+}
+
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+  text-decoration: none;
+  color: inherit;
+}
+
+h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover {
+  text-decoration: underline;
+}
+
+button {
+    font-family: inherit;
+}
+
 #fontsize-calc {
+  display: none;
   width: 1000em;
   height: 1em;
   font-size: 1em;

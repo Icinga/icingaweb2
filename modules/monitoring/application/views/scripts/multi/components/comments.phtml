@@ -6,14 +6,14 @@ $objectName = $this->is_service ? 'Services' : 'Hosts';
   <th><a href=<?= count($comments) ?> <?= $this->translate('Comments') ?></th>
   <td>
     <a href="<?= $this->href('monitoring/command/removecomment', $this->target) ?>"><?=
-        $this->icon('remove_petrol.png')
+        $this->icon('cancel')
     ?> <?= $this->translate('Remove Comments') ?></a><br />
     <a href="<?= $this->href('monitoring/command/delaynotifications', $this->target); ?>"><?=
-        $this->icon('notification_disabled_petrol.png')
+        $this->icon('bell-off-empty')
     ?> <?= $this->translate('Delay Notifications') ?></a><br />
     <a title="<?= $this->translate('Acknowledge all problems on the selected hosts or services') ?>"
         href="<?= $this->href('monitoring/command/acknowledgeproblem') ?>, $this->target); ?>">
-        <?= $this->icon('acknowledgement_petrol.png') ?> Acknowledge
+        <?= $this->icon('ok') ?> Acknowledge
     </a>
   </td>
   <td><a href=" <?= $this->href(
