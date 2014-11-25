@@ -60,26 +60,13 @@ class icingaweb2_dev {
     username   => 'icingaweb',
     password   => 'icingaweb',
     privileges => 'ALL',
-    schemafile => '/vagrant/etc/schema/accounts.mysql.sql',
+    schemafile => '/vagrant/etc/schema/mysql.schema.sql',
   }
 
   pgsql::database::populate { 'icingaweb':
     username => 'icingaweb',
     password => 'icingaweb',
-    schemafile => '/vagrant/etc/schema/accounts.pgsql.sql',
-  }
-
-  exec { 'populate-icingaweb-mysql-db-preferences':
-    unless  => 'mysql -uicingaweb -picingaweb icingaweb -e "SELECT * FROM preference;" &> /dev/null',
-    command => 'mysql -uicingaweb -picingaweb icingaweb < /vagrant/etc/schema/preferences.mysql.sql',
-    require => Mysql::Database::Populate['icingaweb'],
-  }
-
-  exec { 'populate-icingweb-pgsql-db-preferences':
-    unless  => 'psql -U icingaweb -d icingaweb -c "SELECT * FROM preference;" &> /dev/null',
-    command => 'psql -U icingaweb -d icingaweb -f /vagrant/etc/schema/preferences.pgsql.sql',
-    user    => 'postgres',
-    require => Pgsql::Database::Populate['icingaweb'],
+    schemafile => '/vagrant/etc/schema/pgsql.schema.sql',
   }
 
   file { '/etc/httpd/conf.d/icingaweb.conf':
