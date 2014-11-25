@@ -1,9 +1,9 @@
 <div class="controls">
     <?= $tabs ?>
+    <h1><?= $this->translate('Roles') ?></h1>
 </div>
 <div class="content">
     <div>
-        <h1><?= $this->translate('Roles') ?></h1>
         <?php /** @var \Icinga\Application\Config $roles */ if ($roles->isEmpty()): ?>
             <?= $this->translate('No roles found.') ?>
         <?php else: ?>
