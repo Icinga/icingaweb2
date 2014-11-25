@@ -30,7 +30,7 @@ class RolesController extends ActionController
 
     public function indexAction()
     {
-        $this->view->tabs->activate('permissions');
+        $this->view->tabs->activate('roles');
         $this->view->roles = Config::app('roles', true);
     }
 
