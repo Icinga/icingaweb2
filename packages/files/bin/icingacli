@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/usr/bin/php
 <?php
 
 require_once '/usr/share/php/Icinga/Application/Cli.php';
