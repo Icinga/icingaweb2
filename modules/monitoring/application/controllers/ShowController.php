@@ -82,6 +82,7 @@ class Monitoring_ShowController extends Controller
 
     public function servicesAction()
     {
+        $this->setAutorefreshInterval(15);
         $this->getTabs()->activate('services');
         $this->_setParam('service', '');
         // TODO: This used to be a hack and still is. Modifying query string here.
