@@ -5,9 +5,12 @@ define git_cmmi (
 ) {
   include git
 
+  $srcDir = '/usr/local/src'
+
   exec { "git-clone-${name}":
-    cwd     => '/usr/local/src',
+    cwd     => $srcDir,
     path    => '/usr/bin:/bin',
+    unless  => "test -d '${srcDir}/${name}/.git'",
     command => "git clone '${url}' '${name}'",
     require => Class['git'],
   } -> cmmi_dir { $name:
