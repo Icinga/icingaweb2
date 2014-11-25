@@ -2,14 +2,6 @@
 
 set -e
 
-installJquery () {
-    # The npm module jquery won't install via puppet because of an mysterious error
-    # when node-gyp rebuilding the dependent contextify module
-    if [ ! -d /usr/lib/node_modules/jquery ]; then
-        npm install --silent -g jquery
-    fi
-}
-
 startServicesWithNonLSBCompliantExitStatusCodes () {
     # Unfortunately the ido2db init script is not LSB compliant and hence not started via puppet
     service ido2db-mysql start || true
@@ -26,7 +18,6 @@ mountIcinga2webVarLog () {
     fi
 }
 
-installJquery
 startServicesWithNonLSBCompliantExitStatusCodes
 mountIcinga2webVarLog
 
