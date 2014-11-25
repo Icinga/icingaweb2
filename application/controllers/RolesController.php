@@ -22,9 +22,9 @@ class RolesController extends ActionController
         ))->add('resources', array(
             'title' => $this->translate('Resources'),
             'url'   => 'config/resource'
-        ))->add('permissions', array(
-            'title' => $this->translate('Permissions'),
-            'url'   => 'permissions'
+        ))->add('roles', array(
+            'title' => $this->translate('Roles'),
+            'url'   => 'roles'
         ));
     }
 
