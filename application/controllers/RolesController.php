@@ -9,7 +9,7 @@ use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Notification;
 use Icinga\Web\Widget;
 
-class PermissionsController extends ActionController
+class RolesController extends ActionController
 {
     public function init()
     {
