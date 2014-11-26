@@ -132,4 +132,8 @@ class icingaweb2_dev {
       ]]
     ],
   }
+
+  package { 'php-deepend-Mockery':
+    ensure => latest,
+  }
 }
