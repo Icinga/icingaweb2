@@ -21,7 +21,8 @@ $cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
  <?php else: ?>
   <p><?= mt(
     'setup',
-    ''
+    'This wizard will guide you through the configuration of Icinga Web 2. Once completed and successfully'
+    . ' finished you are able to log in and to explore all the new and stunning features!'
   ); ?></p>
  <?php endif ?>
   <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
