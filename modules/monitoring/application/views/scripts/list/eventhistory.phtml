@@ -1,8 +1,10 @@
 <?php if (false === $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs->render($this); ?>
+  <?= $this->tabs ?>
   <div style="margin: 1em" class="dontprint">
-    <?= $this->translate('Sort by'); ?> <?= $this->sortControl->render($this); ?>
+    <div style="float: right">
+      <?= $this->translate('Sort by') ?> <?= $this->sortControl ?>
+    </div>
   </div>
 
   <?= $this->widget('limiter', array('url' => $this->url, 'max' => $this->history->count())); ?>
@@ -12,6 +14,7 @@
 <?php endif ?>
 
 <div class="content">
+<?= $this->filterEditor ?>
 <?php if (empty($history)): ?>
   <?= $this->translate('No history events matching the filter') ?>
 </div>
