@@ -5,7 +5,8 @@ use Icinga\Application\Config;
 use Icinga\Application\Platform;
 use Icinga\Web\Wizard;
 
-$setupTokenPath = rtrim(Icinga::app()->getConfigDir(), '/') . '/setup.token';
+$configDir = Icinga::app()->getConfigDir();
+$setupTokenPath = rtrim($configDir, '/') . '/setup.token';
 $cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
 
 ?>
@@ -20,7 +21,8 @@ $cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
  <?php else: ?>
   <p><?= mt(
     'setup',
-    ''
+    'This wizard will guide you through the configuration of Icinga Web 2. Once completed and successfully'
+    . ' finished you are able to log in and to explore all the new and stunning features!'
   ); ?></p>
  <?php endif ?>
   <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
@@ -44,7 +46,7 @@ $cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
       ); ?></p>
       <p><?= mt('setup', 'If you\'ve got the IcingaCLI installed you can do the following:'); ?></p>
       <div class="code">
-        <span><?= $cliPath ? $cliPath : 'icingacli'; ?> setup config createDirectory <?= ($user = Platform::getPhpUser()) !== null ? $user : 'your_webserver_group'; ?>;</span>
+        <span><?= $cliPath ? $cliPath : 'icingacli'; ?> setup config createDirectory <?= ($user = Platform::getPhpUser()) !== null ? $user : 'your_webserver_group'; ?><?= $configDir !== '/etc/icingaweb' ? ' --path ' . $configDir : ''; ?>;</span>
         <span><?= $cliPath ? $cliPath : 'icingacli'; ?> setup token create;</span>
       </div>
       <p><?= mt('setup', 'In case the IcingaCLI is missing you can create the token manually:'); ?></p>

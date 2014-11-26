@@ -32,6 +32,9 @@ class ConfigController extends ActionController
         ))->add('resources', array(
             'title' => $this->translate('Resources'),
             'url'   => 'config/resource'
+        ))->add('roles', array(
+            'title' => $this->translate('Roles'),
+            'url'   => 'roles'
         ));
     }
 

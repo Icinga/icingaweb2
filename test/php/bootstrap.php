@@ -20,7 +20,6 @@ if (!defined('ICINGA_LIBDIR')) {
 set_include_path(implode(PATH_SEPARATOR, array($libraryPath, get_include_path())));
 
 require_once 'Mockery/Loader.php';
-require_once 'Hamcrest/Hamcrest.php';
 $mockeryLoader = new \Mockery\Loader;
 $mockeryLoader->register();
 
