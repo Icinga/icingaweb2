@@ -386,7 +386,10 @@ class WebWizard extends Wizard implements SetupWizard
         $defaultTimezone = Platform::getPhpConfig('date.timezone');
         $requirements->addMandatory(
             mt('setup', 'Default Timezone'),
-            mt('setup', 'It is required that a default timezone has been set using date.timezone in php.ini.'),
+            sprintf(
+                mt('setup', 'It is required that a default timezone has been set using date.timezone in %s.'),
+                php_ini_loaded_file() ?: 'php.ini'
+            ),
             $defaultTimezone,
             $defaultTimezone ? sprintf(mt('setup', 'Your default timezone is: %s'), $defaultTimezone) : (
                 mt('setup', 'You did not define a default timezone.')
