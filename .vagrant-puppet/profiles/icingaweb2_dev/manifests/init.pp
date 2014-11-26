@@ -57,17 +57,29 @@ class icingaweb2_dev {
     require => Class['apache'],
   }
 
+  $icingaadminSelect = "as CNT from icingaweb_user where name = \'icingaadmin\'\" |grep -qwe \'cnt=0\'"
+  $icingaadminInsert = "\"INSERT INTO icingaweb_user (name, active, password_hash) VALUES (\'icingaadmin\', 1, \'\\\$1\\\$JMdnEc9M\\\$FW7yapAjv0atS43NkapGo/\');\""
+
   mysql::database::populate { 'icingaweb':
     username   => 'icingaweb',
     password   => 'icingaweb',
     privileges => 'ALL',
     schemafile => '/vagrant/etc/schema/mysql.schema.sql',
   }
+  -> exec { 'mysql-icingaadmin':
+    onlyif  => "mysql -uicingaweb -picingaweb icingaweb -e \"select CONCAT(\'cnt=\', COUNT(name)) ${icingaadminSelect}",
+    command => "mysql -uicingaweb -picingaweb icingaweb -e ${icingaadminInsert}",
+  }
 
   pgsql::database::populate { 'icingaweb':
     username => 'icingaweb',
     password => 'icingaweb',
     schemafile => '/vagrant/etc/schema/pgsql.schema.sql',
+  }
+  -> exec { 'pgsql-icingaadmin':
+    onlyif      => "psql -U icingaweb -w -d icingaweb -c \"select 'cnt=' || COUNT(name) ${icingaadminSelect}",
+    command     => "psql -U icingaweb -w -d icingaweb -c ${icingaadminInsert}",
+    environment => 'PGPASSWORD=icingaweb',
   }
 
   file { '/etc/httpd/conf.d/icingaweb.conf':
