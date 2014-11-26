@@ -12,6 +12,7 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Application\Logger;
 use Icinga\Util\TimezoneDetect;
+use Icinga\Web\Cookie;
 use Icinga\Web\Request;
 use Icinga\Web\Response;
 use Icinga\Web\View;
@@ -91,6 +92,7 @@ class Web extends ApplicationBootstrap
     {
         return $this
             ->setupZendAutoloader()
+            ->detectCookieSupport()
             ->setupLogging()
             ->setupErrorHandling()
             ->loadConfig()
@@ -335,6 +337,21 @@ class Web extends ApplicationBootstrap
             'Icinga\\Forms',
             $this->getApplicationDir('forms')
         );
+        return $this;
+    }
+
+    /**
+     * Check cookie support
+     *
+     * @return $this
+     */
+    protected function detectCookieSupport()
+    {
+        if (! Cookie::isSupported()) {
+            echo 'Cookies must be enabled to run this application.';
+            exit(1);
+        }
+
         return $this;
     }
 }
