@@ -56,6 +56,13 @@ foreach ($modules as $module) {
 
 $loader->register();
 
+set_include_path(
+    implode(
+        PATH_SEPARATOR,
+        array($libraryPath . '/vendor', get_include_path())
+    )
+);
+
 require_once 'Zend/Loader/Autoloader.php';
 \Zend_Loader_Autoloader::getInstance();
 
