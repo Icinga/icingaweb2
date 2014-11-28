@@ -150,7 +150,7 @@ class LdapUserBackend extends UserBackend
     public function hasUser(User $user)
     {
         $username = $user->getUsername();
-        return $this->conn->fetchOne($this->selectUser($username)) === $username;
+        return strtolower($this->conn->fetchOne($this->selectUser($username))) === strtolower($username);
     }
 
     /**
