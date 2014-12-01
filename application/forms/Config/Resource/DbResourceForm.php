@@ -29,10 +29,10 @@ class DbResourceForm extends Form
     public function createElements(array $formData)
     {
         $dbChoices = array();
-        if (Platform::zendClassExists('Zend_Db_Adapter_Pdo_Mysql')) {
+        if (Platform::hasMysqlSupport()) {
             $dbChoices['mysql'] = 'MySQL';
         }
-        if (Platform::zendClassExists('Zend_Db_Adapter_Pdo_Pgsql')) {
+        if (Platform::hasPostgresqlSupport()) {
             $dbChoices['pgsql'] = 'PostgreSQL';
         }
 

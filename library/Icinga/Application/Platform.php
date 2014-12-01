@@ -197,4 +197,28 @@ class Platform
 
         return (@include str_replace('_', '/', $name) . '.php') !== false;
     }
+
+    /**
+     * Return whether it's possible to connect to a MySQL database
+     *
+     * Checks whether the mysql pdo extension has been loaded and the Zend framework adapter for MySQL is available
+     *
+     * @return  bool
+     */
+    public static function hasMysqlSupport()
+    {
+        return static::extensionLoaded('mysql') && static::zendClassExists('Zend_Db_Adapter_Pdo_Mysql');
+    }
+
+    /**
+     * Return whether it's possible to connect to a PostgreSQL database
+     *
+     * Checks whether the pgsql pdo extension has been loaded and the Zend framework adapter for PostgreSQL is available
+     *
+     * @return  bool
+     */
+    public static function hasPostgresqlSupport()
+    {
+        return static::extensionLoaded('pgsql') && static::zendClassExists('Zend_Db_Adapter_Pdo_Pgsql');
+    }
 }

@@ -49,7 +49,7 @@ class AuthenticationPage extends Form
         );
 
         $backendTypes = array();
-        if (Platform::extensionLoaded('mysql') || Platform::extensionLoaded('pgsql')) {
+        if (Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
             $backendTypes['db'] = t('Database');
         }
         if (Platform::extensionLoaded('ldap')) {
