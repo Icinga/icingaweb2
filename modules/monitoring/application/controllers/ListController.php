@@ -602,9 +602,8 @@ class Monitoring_ListController extends Controller
             'service'
         ));
 
-        $this->applyFilter($query);
-
         $this->filterQuery($query);
+
         $this->setupSortControl(array(
             'timestamp' => 'Occurence'
         ));
