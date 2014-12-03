@@ -1,3 +1,0 @@
-pdo_oci has a Bug that shall be fixed with PHP 5.4.5, it segfaults when
-fetching more than a single LOB value. The patch works also for older
-pdo_oci versions and can be found here: https://bugs.php.net/bug.php?id=57702
