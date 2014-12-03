@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Monitoring Module (0.0.0)\n"
+"Project-Id-Version: Monitoring Module (2.0.0~alpha4)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2014-11-18 16:04-0200\n"
-"PO-Revision-Date: 2014-11-18 16:29-0300\n"
+"POT-Creation-Date: 2014-12-03 09:10-0200\n"
+"PO-Revision-Date: 2014-12-03 09:13-0300\n"
 "Last-Translator: Carlos Cesario <carloscesario@gmail.com>\n"
 "Language: pt_BR\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -206,7 +206,7 @@ msgstr "%s atrás"
 msgid "%s configured services:"
 msgstr "%s serviço(s) configurado(s):"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:9
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:58
 #, php-format
 msgid "%s has been up and running with PID %d since %s"
 msgstr "%s está up e rodando com o PID %d desde %s"
@@ -216,7 +216,12 @@ msgstr "%s está up e rodando com o PID %d desde %s"
 msgid "%s hosts:"
 msgstr "%s hosts:"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:16
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/not-running.phtml:5
+#, php-format
+msgid "%s is currently not up and running"
+msgstr "%s atualmente não está up e nem rodando"
+
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:65
 #, php-format
 msgid "%s is not running"
 msgstr "%s não está rodando"
@@ -357,24 +362,14 @@ msgstr "Reconhecer problema dos serviços não tratados"
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:24
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/statusIcons.phtml:30
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hosts.phtml:53
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:78
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:56
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:86
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:152
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:186
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:220
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:59
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:89
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:155
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:189
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:223
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:75
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:16
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:86
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:156
 msgid "Acknowledged"
 msgstr "Reconhecido(s)"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:40
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:44
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/comments.phtml:39
 msgid "Acknowledgement"
 msgstr "Reconhecimento"
@@ -404,7 +399,7 @@ msgstr "Ativo(s)"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/statusIcons.phtml:45
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hosts.phtml:70
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:101
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:98
 msgid "Active And Passive Checks Disabled"
 msgstr "Checagens ativas e passivas desabilitadas"
 
@@ -416,7 +411,7 @@ msgstr "Checagens ativas"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/statusIcons.phtml:43
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hosts.phtml:72
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:103
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:100
 msgid "Active Checks Disabled"
 msgstr "Checagens ativas desabilitadas"
 
@@ -427,6 +422,10 @@ msgstr "Checagens ativas de host sendo executadas"
 #: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:89
 msgid "Active Service Checks Being Executed"
 msgstr "Checagens ativas de serviço sendo executadas"
+
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:121
+msgid "Active checks"
+msgstr "Checagens ativas"
 
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/HostController.php:58
 msgid "Add Host Comment"
@@ -457,11 +456,12 @@ msgid_plural "Adding comments.."
 msgstr[0] "Adicionando comentário.."
 msgstr[1] "Adicionando comentários.."
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:127
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:145
 msgid "Address"
 msgstr "Endereço"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:131
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:171
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/AlertsummaryController.php:67
 msgid "Alert Summary"
 msgstr "Resumo de alertas"
 
@@ -469,7 +469,7 @@ msgstr "Resumo de alertas"
 msgid "Alert summary"
 msgstr "Resumo de alertas"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:358
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:376
 msgid "Alias"
 msgstr "Apelido"
 
@@ -494,6 +494,50 @@ msgstr "Todos os hosts habilitados"
 msgid "All services enabled"
 msgstr "Todos os serviços habilitados"
 
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:25
+msgid "Allow acknowledging host and service problems"
+msgstr "Permitir o reconhecimento de problemas de hosts e de serviços"
+
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:9
+msgid "Allow all commands"
+msgstr "Permitir todos os comandos"
+
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:13
+msgid "Allow all scheduling checks and downtimes"
+msgstr "Permitir todos os agendamentos de checagens e paradas"
+
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:29
+msgid "Allow commenting on hosts and services"
+msgstr "Permitir comentários nos hosts e serviços"
+
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:41
+msgid "Allow removing host and service comments"
+msgstr "Permitir a remoção de comentários de hosts e de serviços"
+
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:45
+msgid "Allow removing host and service downtimes"
+msgstr "Permitir a remoção de paradas de hosts e de serviços"
+
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:37
+msgid "Allow removing problem acknowledgements"
+msgstr "Permitir a remoção de reconhecimento de problemas"
+
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:33
+msgid ""
+"Allow removing problem acknowledgements, host and service comments and "
+"downtimes"
+msgstr ""
+"Permitir a remoção de reconhecimento de problemas, comentários de hosts e de "
+"serviços e paradas"
+
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:17
+msgid "Allow scheduling host and service checks"
+msgstr "Permitir o agendamento de checagens de hosts e serviços"
+
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:21
+msgid "Allow scheduling host and service downtimes"
+msgstr "Permitir o agendamento de paradas de hosts e serviços"
+
 #: /usr/local/icingaweb/modules/monitoring/application/forms/StatehistoryForm.php:22
 msgid "Apply"
 msgstr "Aplicar"
@@ -502,13 +546,17 @@ msgstr "Aplicar"
 msgid "Are you sure you want to remove this instance?"
 msgstr "Tem certeza de que deseja remover esta instância?"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:290
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:308
 msgid "Author"
 msgstr "Autor"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/alertsummary/index.phtml:36
 msgid "Average"
 msgstr "Média"
+
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:109
+msgid "Average services per host"
+msgstr "Média de serviços por host"
 
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/AlertsummaryController.php:444
 msgid "Avg (min)"
@@ -529,9 +577,13 @@ msgstr "Nome do backend"
 msgid "Backend Type"
 msgstr "Tipo do backend"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:139
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:152
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:142
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:34
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:52
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:34
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:52
+msgid "CRITICAL"
+msgstr "CRÍTICO(S)"
+
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:8
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:16
 msgctxt "icinga.state"
@@ -558,8 +610,8 @@ msgstr "Tempo de execução da checagem"
 msgid "Check latency"
 msgstr "Latência da checagem"
 
-#: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:40
-#: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:41
+#: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:38
+#: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:39
 msgid "Check now"
 msgstr "Checar agora"
 
@@ -685,18 +737,18 @@ msgid "Commands"
 msgstr "Comandos"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/history.phtml:49
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:35
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:39
 #: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:54
 #: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:50
 #: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:70
 msgid "Comment"
 msgstr "Comentário"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:462
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:481
 msgid "Comment Timestamp"
 msgstr "Data e hora do comentário"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:464
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:483
 msgid "Comment Type"
 msgstr "Tipo do comentário"
 
@@ -725,17 +777,18 @@ msgid "Comment was created by an user."
 msgstr "O comentário foi criado por um usuário."
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hosts.phtml:77
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:96
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:93
 msgid "Comment: "
 msgstr "Comentário:"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:98
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:138
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/comments.phtml:2
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/hosts/show.phtml:106
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/multi/components/comments.phtml:6
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/services/show.phtml:118
 #: /usr/local/icingaweb/modules/monitoring/application/forms/EventOverviewForm.php:67
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/TimelineController.php:57
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:462
 msgid "Comments"
 msgstr "Comentários"
 
@@ -744,17 +797,22 @@ msgstr "Comentários"
 msgid "Configuration for backend %s is disabled"
 msgstr "A configuração para o backend %s está desabilitada"
 
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:430
+msgid "Contact Groups"
+msgstr "Grupos de contatos"
+
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/contact.phtml:4
 msgid "Contact details"
 msgstr "Detalhes do contato"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:90
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:130
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/contacts.phtml:33
 msgid "Contactgroups"
-msgstr "Grupo de contatos"
+msgstr "Grupos de contatos"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:102
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:142
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/contacts.phtml:14
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:350
 msgid "Contacts"
 msgstr "Contatos"
 
@@ -776,36 +834,29 @@ msgstr "Criar um novo backend de monitoramento"
 msgid "Critical"
 msgstr "Crítico"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:57
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:97
 msgid "Current Downtimes"
 msgstr "Paradas atuais"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:219
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:237
 msgid "Current Host State"
 msgstr "Estado atual do host"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:151
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:187
 msgid "Current Incidents"
 msgstr "Incidentes atuais"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:215
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:233
 msgid "Current Service State"
 msgstr "Estado atual do serviço"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:128
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:146
 msgid "Current State"
 msgstr "Estado atual"
 
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/CommandController.php:588
 msgid "Custom notification has been sent"
 msgstr "A notificação personalizada foi enviada"
-
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:44
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:56
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:47
-msgctxt "icinga.state"
-msgid "DOWN"
-msgstr "DOWN"
 
 #: /usr/local/icingaweb/modules/monitoring/library/Monitoring/BackendStep.php:114
 msgid "Database Name"
@@ -869,7 +920,7 @@ msgid "Disable Flapping Detection"
 msgstr "Desabilitar detecção de oscilação"
 
 #: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Instance/DisableNotificationsExpireCommandForm.php:24
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ProcessController.php:90
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ProcessController.php:94
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/CommandController.php:527
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/CommandController.php:656
 msgid "Disable Notifications"
@@ -961,12 +1012,12 @@ msgid "Downtime"
 msgstr "Parada"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/history.phtml:114
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:80
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:89
 msgid "Downtime End"
 msgstr "Término da parada"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/history.phtml:109
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:75
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:84
 msgid "Downtime Start"
 msgstr "Início da parada"
 
@@ -987,13 +1038,14 @@ msgstr "Parada removida"
 msgid "Downtime scheduling requested"
 msgstr "Agendamento de parada solicitado"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:94
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:134
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/downtime.phtml:2
 #: /usr/local/icingaweb/modules/monitoring/application/forms/EventOverviewForm.php:57
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:279
 msgid "Downtimes"
 msgstr "Paradas"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:295
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:313
 msgid "Duration"
 msgstr "Duração"
 
@@ -1007,7 +1059,7 @@ msgstr "Editar instância existente"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/contact.phtml:22
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/contacts.phtml:28
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:359
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:377
 msgid "Email"
 msgstr "Email"
 
@@ -1079,7 +1131,7 @@ msgstr ""
 "Habilitar processamento de dados de performance na base de todo o programa."
 
 #: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:94
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:292
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:310
 msgid "End Time"
 msgstr "Horário de término"
 
@@ -1103,12 +1155,12 @@ msgstr ""
 "Entre com a data e hora para este reconhecimento. O Icinga excluirá o "
 "reconhecimento após esse período terminar."
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:289
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:307
 msgid "Entry Time"
-msgstr "Entre com o período"
+msgstr "Período"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:113
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:371
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:153
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:389
 msgid "Event Grid"
 msgstr "Grade de eventos"
 
@@ -1122,8 +1174,8 @@ msgstr "Manipulador de evento"
 msgid "Event Handlers Enabled"
 msgstr "Manipulador de eventos habilitado"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:118
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:538
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:158
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:589
 msgid "Event Overview"
 msgstr "Visão geral dos eventos"
 
@@ -1132,11 +1184,15 @@ msgstr "Visão geral dos eventos"
 msgid "Event handlers"
 msgstr "Manipulador de eventos"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:117
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:157
 msgid "Events"
 msgstr "Eventos"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:465
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:128
+msgid "Execution time"
+msgstr "Tempo de execução"
+
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:484
 msgid "Expiration"
 msgstr "Validade"
 
@@ -1148,6 +1204,10 @@ msgstr "Tempo de validade"
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/downtimes.phtml:34
 msgid "Expires"
 msgstr "Expira"
+
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:15
+msgid "Feature Commands"
+msgstr "Comandos dos recursos"
 
 #: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:114
 msgid "Fixed"
@@ -1170,12 +1230,16 @@ msgstr "Detecção de oscilação"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/history.phtml:79
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hosts.phtml:57
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:50
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:84
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:54
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:81
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/comments.phtml:25
 #: /usr/local/icingaweb/modules/monitoring/application/forms/EventOverviewForm.php:87
 msgid "Flapping"
 msgstr "Oscilando"
+
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:59
+msgid "Flapping Stopped"
+msgstr "Oscilação parada"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/history.phtml:84
 msgid "Flapping stopped"
@@ -1197,11 +1261,11 @@ msgstr "Forçar checagem"
 msgid "From"
 msgstr "De"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:46
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:48
 msgid "Global Host Event Handler"
 msgstr "Manipulador de eventos de host global"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:40
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:42
 msgid "Global Service Event Handler"
 msgstr "Manipulador de eventos de serviço global"
 
@@ -1214,13 +1278,13 @@ msgid "Handled hosts with state UNREACHABLE"
 msgstr "Hosts tratados com o estado INACESSÍVEL "
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/hostservicesummary.phtml:68
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:63
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:64
 #, php-format
 msgid "Handled services with state %s"
 msgstr "Serviços tratados com o estado %s"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:129
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:217
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:147
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:235
 msgid "Hard State"
 msgstr "Estado hard"
 
@@ -1228,40 +1292,61 @@ msgstr "Estado hard"
 msgid "Hard state changes"
 msgstr "Alterações no estado hard"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:110
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:150
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/alertsummary/index.phtml:72
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ShowController.php:235
+#: /usr/local/icingaweb/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:219
 msgid "History"
 msgstr "Histórico"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/partials/command-form.phtml:9
 #: /usr/local/icingaweb/modules/monitoring/application/forms/Config/Instance/RemoteInstanceForm.php:32
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ShowController.php:205
 #: /usr/local/icingaweb/modules/monitoring/library/Monitoring/BackendStep.php:106
+#: /usr/local/icingaweb/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:189
 msgid "Host"
 msgstr "Host"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:288
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:463
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:306
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:482
 msgid "Host / Service"
 msgstr "Host / Serviço"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:221
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:239
 msgid "Host Address"
 msgstr "Endereço do host"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:220
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:134
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:156
+msgid "Host Checks"
+msgstr "Checagens de hosts"
+
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:25
+msgid "Host Group"
+msgstr "Grupos de hosts"
+
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:574
+msgid "Host Group Name"
+msgstr "Nome do grupo de hosts"
+
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:542
+msgid "Host Groups"
+msgstr "Grupos de hosts"
+
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:238
 msgid "Host Name"
 msgstr "Nome do host"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:362
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:380
 msgid "Host Notification Timeperiod"
 msgstr "Período de notificação do host"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:49
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:161
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:89
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:197
 msgid "Host Problems"
 msgstr "Hosts com problemas"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:218
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:236
 msgid "Host Severity"
 msgstr "Gravidade do host"
 
@@ -1292,18 +1377,14 @@ msgstr "Host ou serviço não encontrado"
 msgid "Host- and Servicechecks"
 msgstr "Checagem de hosts e serviços"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:529
-msgid "Hostgroup Name"
-msgstr "Nome do grupo de hosts"
-
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:28
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:86
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:68
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:126
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/hostgroups.phtml:13
 msgid "Hostgroups"
 msgstr "Grupos de hosts"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:126
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:598
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:144
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:629
 msgid "Hostname"
 msgstr "Nome do host"
 
@@ -1311,16 +1392,16 @@ msgstr "Nome do host"
 msgid "Hostname or address of the remote Icinga instance"
 msgstr "Nome ou o endereço da instância remota do Icinga"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:26
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:70
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:66
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:110
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/contact.phtml:33
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:25
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:28
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:85
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/multi/components/objectlist.phtml:37
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/multi/components/summary.phtml:5
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:7
 #: /usr/local/icingaweb/modules/monitoring/application/forms/StatehistoryForm.php:102
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/ChartController.php:205
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:110
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/HostsController.php:49
 msgid "Hosts"
 msgstr "Hosts"
@@ -1331,16 +1412,6 @@ msgstr "Hosts"
 msgid "Hosts (%u)"
 msgstr "Hosts (%u)"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:55
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:58
-msgid "Hosts DOWN Handled"
-msgstr "Hosts DOWN tratados"
-
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:43
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:46
-msgid "Hosts DOWN Unhandled"
-msgstr "Hosts DOWN não tratados"
-
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/layout/topbar.phtml:11
 msgid "Hosts Down Handled"
 msgstr "Hosts down tratados"
@@ -1349,29 +1420,9 @@ msgstr "Hosts down tratados"
 msgid "Hosts Down Unhandled"
 msgstr "Hosts down não tratados"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:116
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:119
-msgid "Hosts PENDING"
-msgstr "Hosts PENDENTES"
-
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/layout/topbar.phtml:24
 msgid "Hosts Pending"
 msgstr "Hosts pendentes"
-
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:85
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:88
-msgid "Hosts UNREACHABLE Handled"
-msgstr "Hosts INACESSÍVEIS tratados"
-
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:73
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:76
-msgid "Hosts UNREACHABLE Unhandled"
-msgstr "Hosts INACESSÍVEIS não tratados"
-
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:101
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:104
-msgid "Hosts UP"
-msgstr "Hosts UP"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/layout/topbar.phtml:19
 msgid "Hosts Unreachable Handled"
@@ -1520,8 +1571,8 @@ msgstr ""
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/history.phtml:69
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/statusIcons.phtml:38
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hosts.phtml:65
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:45
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:92
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:49
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:89
 msgid "In Downtime"
 msgstr "em parada"
 
@@ -1572,7 +1623,7 @@ msgstr "Está faltando o nome da instância"
 msgid "Invalid instance type \"%s\" given"
 msgstr "Tipo de instância \"%s\" inválida"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:287
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:305
 msgid "Is In Effect"
 msgstr "Está em vigor"
 
@@ -1586,33 +1637,42 @@ msgstr ""
 "filtros poderosos que permitem que você mantenha o controle dos eventos mais "
 "importantes no seu ambiente de monitoramento."
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:124
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:142
 msgid "Last Check"
 msgstr "Última checagem"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:30
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:32
 msgid "Last External Command Check"
 msgstr "Última checagem de comando externo"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:222
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:240
 msgid "Last Host Check"
 msgstr "Última checagem do host"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:34
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:36
 msgid "Last Log File Rotation"
 msgstr "Última rotação do arquivo de log"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:213
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:24
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:24
+msgid "Last Problem"
+msgstr "Último problema"
+
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:231
 msgid "Last Service Check"
 msgstr "Última checagem do serviço"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:26
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:28
 msgid "Last Status Update"
 msgstr "Última atualização do status"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:24
 msgid "Last check"
 msgstr "Última checagem"
+
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:127
+msgid "Latency"
+msgstr "Latência"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/timeline/index.phtml:16
 msgid "Legend"
@@ -1667,6 +1727,12 @@ msgstr "Backends de monitoramento"
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:2
 msgid "Monitoring Features"
 msgstr "Recursos de monitoramento"
+
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:179
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ProcessController.php:26
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ProcessController.php:37
+msgid "Monitoring Health"
+msgstr "Saúde do monitoramento"
 
 #: /usr/local/icingaweb/modules/monitoring/application/forms/Setup/IdoResourcePage.php:31
 msgid "Monitoring IDO Resource"
@@ -1752,13 +1818,13 @@ msgstr ""
 msgid "Monitoring security configuration has been successfully created: %s"
 msgstr "Configuração de segurança do monitoramento criada com sucesso: %s"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:37
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:43
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:49
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:39
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:45
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:51
 msgid "N/A"
 msgstr "N/D"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:357
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:375
 msgid "Name"
 msgstr "Nome"
 
@@ -1808,11 +1874,11 @@ msgstr "Nenhum contato correspondente ao filtro"
 msgid "No history available for this object"
 msgstr "Nenhum histórico disponível para este objeto"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:17
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:19
 msgid "No history events matching the filter"
 msgstr "Nenhum histórico de eventos correspondente ao filtro"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:11
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:17
 msgid "No host groups matching the filter"
 msgstr "Nenhum grupo de hosts correspondente ao filtro"
 
@@ -1838,7 +1904,7 @@ msgstr "Nenhuma notificação foi enviada para este contato"
 msgid "No notifications matching the filter"
 msgstr "Nenhuma notificação correspondente ao filtro"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:11
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:17
 msgid "No service groups matching the filter"
 msgstr "Nenhum grupo de serviços correspondente ao filtro"
 
@@ -1846,7 +1912,7 @@ msgstr "Nenhum grupo de serviços correspondente ao filtro"
 msgid "No services configured on this host"
 msgstr "Nenhum serviço configurado neste host"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:41
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:38
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/multi/service.phtml:17
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/services/show.phtml:6
 msgid "No services matching the filter"
@@ -1869,11 +1935,11 @@ msgid "Not acknowledged"
 msgstr "Não reconhecido"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/history.phtml:34
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:30
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:34
 msgid "Notification"
 msgstr "Notificação"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:323
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:341
 msgid "Notification Start"
 msgstr "Iniciar notificação"
 
@@ -1891,6 +1957,7 @@ msgstr "Atraso da notificação foi solicitada"
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/AlertsummaryController.php:473
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/AlertsummaryController.php:480
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/TimelineController.php:47
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:328
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/MultiController.php:64
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/MultiController.php:132
 msgid "Notifications"
@@ -1898,7 +1965,7 @@ msgstr "Notificações"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/statusIcons.phtml:34
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hosts.phtml:61
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:88
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:85
 msgid "Notifications Disabled"
 msgstr "Notificações desativadas"
 
@@ -1907,7 +1974,7 @@ msgid "Notifications Enabled"
 msgstr "Notificações habilitadas"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/alertsummary/index.phtml:18
-msgid "Notifications and problems"
+msgid "Notifications and Problems"
 msgstr "Notificações e problemas"
 
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/CommandController.php:657
@@ -1940,12 +2007,19 @@ msgstr "As notificações serão reativadas em <strong>%s</strong>"
 msgid "Notifications will be re-enabled in <strong>%s</strong>."
 msgstr "As notificações serão reativadas em <strong>%s</strong>."
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:237
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:240
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:70
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:70
+msgid "OK"
+msgstr "OK"
+
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:217
 msgctxt "icinga.state"
 msgid "OK"
 msgstr "OK"
+
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:73
+msgid "Object summaries"
+msgstr "Resumo dos objetos"
 
 #: /usr/local/icingaweb/modules/monitoring/application/forms/StatehistoryForm.php:98
 msgid "Object type"
@@ -1998,14 +2072,15 @@ msgstr "Uma semana"
 msgid "One year"
 msgstr "Um ano"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:62
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:102
 msgid "Overview"
 msgstr "Visão geral"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:117
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:253
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:120
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:256
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:76
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:76
+msgid "PENDING"
+msgstr "PENDENTE(S)"
+
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:252
 msgctxt "icinga.state"
 msgid "PENDING"
@@ -2016,7 +2091,7 @@ msgstr "PENDENTE"
 msgid "Pager"
 msgstr "Pager"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:360
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:378
 msgid "Pager Address / Number"
 msgstr "Endereço / Número do pager"
 
@@ -2043,6 +2118,10 @@ msgstr "Checagens passivas de serviços sendo aceitas"
 msgid "Passive check result has been submitted"
 msgstr "O resultado da checagem passiva foi enviado"
 
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:151
+msgid "Passive checks"
+msgstr "Checagens passivas"
+
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/CommandController.php:480
 msgid "Passive checks for this object will be accepted."
 msgstr "Checagens passivas serão aceitas para este objeto."
@@ -2067,8 +2146,7 @@ msgstr "Caminho para o arquivo de comando local do icinga"
 msgid "Performance Data Being Processed"
 msgstr "Dados de performance sendo processados"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:143
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ProcessController.php:33
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:71
 msgid "Performance Info"
 msgstr "Informação de performance"
 
@@ -2114,6 +2192,10 @@ msgstr ""
 "Por favor, preencha os detalhes da conexão abaixo para acessar a interface "
 "do soquete Livestatus do seu ambiente de monitoramento."
 
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/output.phtml:2
+msgid "Plugin Output"
+msgstr "Saída do plugin"
+
 #: /usr/local/icingaweb/modules/monitoring/application/forms/Config/Instance/RemoteInstanceForm.php:43
 #: /usr/local/icingaweb/modules/monitoring/library/Monitoring/BackendStep.php:110
 msgid "Port"
@@ -2129,17 +2211,15 @@ msgstr ""
 "várias linhas ou pressione e segure a tecla Shift para selecionar um "
 "intervalo de linhas."
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:34
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:74
 msgid "Problems"
 msgstr "Problemas"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:139
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ProcessController.php:26
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ProcessController.php:44
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:20
 msgid "Process Info"
 msgstr "Informação do processo"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:22
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:24
 msgid "Program Start Time"
 msgstr "Horário de início"
 
@@ -2148,7 +2228,7 @@ msgstr "Horário de início"
 msgid "Protected Custom Variables"
 msgstr "Variáveis personalizadas protegidas"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:157
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:193
 msgid "Recently Recovered Services"
 msgstr "Serviços recuperados recentemente"
 
@@ -2225,7 +2305,7 @@ msgstr[1] "Removendo reconhecimento dos problemas.."
 msgid "Report interval"
 msgstr "Intervalo de relatório"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:126
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:166
 msgid "Reporting"
 msgstr "Relatórios"
 
@@ -2292,6 +2372,11 @@ msgstr "Reiniciar o processo de monitoramento"
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/CommandController.php:1044
 msgid "Restart the monitoring process."
 msgstr "Reiniciar o processo de monitoramento."
+
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:50
+msgid "Restrict views to the hosts and services that match the filter"
+msgstr ""
+"Restringir a visualização para os hosts e serviços que correspondam ao filtro"
 
 #: /usr/local/icingaweb/modules/monitoring/application/forms/Config/Instance/RemoteInstanceForm.php:44
 msgid "SSH port to connect to on the remote Icinga instance"
@@ -2371,15 +2456,15 @@ msgstr "Agendar parada para serviços"
 msgid "Schedule triggered downtime for all child hosts"
 msgstr "Agendar parada acionada para todos os hosts filhos"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:294
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:312
 msgid "Scheduled End"
 msgstr "Término do agendamento"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:293
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:311
 msgid "Scheduled Start"
 msgstr "Início do agendamento"
 
-#: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:73
+#: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:71
 msgid "Scheduling check.."
 msgid_plural "Scheduling checks.."
 msgstr[0] "Agendando checagem.."
@@ -2415,24 +2500,43 @@ msgstr "Enviar notificação"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/header.phtml:23
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/partials/command-form.phtml:10
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ShowController.php:215
+#: /usr/local/icingaweb/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:199
 msgid "Service"
 msgstr "Serviço"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:78
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:587
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:142
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:162
+msgid "Service Checks"
+msgstr "Checagem de serviços"
+
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:118
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:618
 msgid "Service Grid"
 msgstr "Grade de serviços"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:216
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:25
+msgid "Service Group"
+msgstr "Grupos de serviços"
+
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:527
+msgid "Service Group Name"
+msgstr "Nome do grupo de serviços"
+
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:495
+msgid "Service Groups"
+msgstr "Grupos de serviços"
+
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:234
 msgid "Service Name"
 msgstr "Nome do serviço"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:361
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:379
 msgid "Service Notification Timeperiod"
 msgstr "Período de notificação do serviço"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:53
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:153
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:93
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:189
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:55
 msgid "Service Problems"
 msgstr "Serviços com problemas"
@@ -2446,7 +2550,12 @@ msgstr "Serviços com problemas no host"
 msgid "Service State"
 msgstr "Estado do serviço"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:599
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:27
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:27
+msgid "Service States"
+msgstr "Estado dos serviços"
+
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:630
 msgid "Service description"
 msgstr "Descrição do serviço"
 
@@ -2463,21 +2572,16 @@ msgstr "Serviço não encontrado"
 msgid "Service notification period"
 msgstr "Período de notificação de serviço"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:498
-msgid "Servicegroup Name"
-msgstr "Nome do grupo de serviços"
-
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:29
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:82
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:69
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:122
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/servicegroups.phtml:14
 msgid "Servicegroups"
 msgstr "Grupos de serviços"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:27
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:74
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:67
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:114
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/contact.phtml:38
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:26
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:29
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:97
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/multi/components/objectlist.phtml:30
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/multi/components/summary.phtml:5
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:8
@@ -2485,7 +2589,10 @@ msgstr "Grupos de serviços"
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:28
 #: /usr/local/icingaweb/modules/monitoring/application/forms/StatehistoryForm.php:101
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/ChartController.php:146
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ShowController.php:225
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:184
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/ServicesController.php:49
+#: /usr/local/icingaweb/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:209
 msgid "Services"
 msgstr "Serviços"
 
@@ -2494,13 +2601,18 @@ msgstr "Serviços"
 msgid "Services (%u)"
 msgstr "Serviços (%u)"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:151
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:154
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:531
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:578
+msgid "Services CRITICAL"
+msgstr "Serviços CRÍTICOS"
+
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:130
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:130
 msgid "Services CRITICAL Handled"
 msgstr "Serviços CRÍTICOS tratados"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:138
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:141
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:116
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:116
 msgid "Services CRITICAL Unhandled"
 msgstr "Serviços CRÍTICOS não tratados"
 
@@ -2512,8 +2624,10 @@ msgstr "Serviços críticos tratados"
 msgid "Services Critical Unhandled"
 msgstr "Serviços críticos não tratados"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:236
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:239
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:99
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:99
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:529
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:576
 msgid "Services OK"
 msgstr "Serviços OK"
 
@@ -2521,8 +2635,10 @@ msgstr "Serviços OK"
 msgid "Services Ok"
 msgstr "Serviços Ok"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:252
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:255
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:215
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:215
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:533
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:580
 msgid "Services PENDING"
 msgstr "Serviços PENDENTES"
 
@@ -2530,13 +2646,18 @@ msgstr "Serviços PENDENTES"
 msgid "Services Pending"
 msgstr "Serviços pendentes"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:219
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:222
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:530
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:577
+msgid "Services UNKNOWN"
+msgstr "Serviços DESCONHECIDOS"
+
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:164
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:164
 msgid "Services UNKNOWN Handled"
 msgstr "Serviços DESCONHECIDOS tratados"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:206
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:209
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:150
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:150
 msgid "Services UNKNOWN Unhandled"
 msgstr "Serviços DESCONHECIDOS não tratados"
 
@@ -2548,13 +2669,18 @@ msgstr "Serviços desconhecidos tratados"
 msgid "Services Unknown Unhandled"
 msgstr "Serviços desconhecidos não tratados"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:185
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:188
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:532
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:579
+msgid "Services WARNING"
+msgstr "Serviços em ATENÇÃO"
+
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:198
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:198
 msgid "Services WARNING Handled"
 msgstr "Serviços em ATENÇÃO tratados"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:172
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:175
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:184
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:184
 msgid "Services WARNING Unhandled"
 msgstr "Serviços em ATENÇÃO não tratados"
 
@@ -2572,8 +2698,8 @@ msgstr "Serviços em parada"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/hostservicesummary.phtml:20
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/hostservicesummary.phtml:84
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:14
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:79
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:15
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:80
 #, php-format
 msgid "Services with state %s"
 msgstr "Serviços com o estado %s"
@@ -2598,8 +2724,10 @@ msgstr "Defina a data e hora de início da parada."
 msgid "Setup the monitoring module for Icinga Web 2"
 msgstr "Configuração do módulo de monitoramento para Icinga Web 2"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:125
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:214
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:143
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:232
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:526
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:573
 msgid "Severity"
 msgstr "Gravidade"
 
@@ -2620,13 +2748,15 @@ msgstr "Pular validação"
 msgid "Socket"
 msgstr "Soquete"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hosts.phtml:11
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hosts.phtml:12
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/notifications.phtml:5
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:5
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:12
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:6
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:13
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/downtimes.phtml:5
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegrid.phtml:5
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:7
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/comments.phtml:5
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:7
 msgid "Sort by"
 msgstr "Ordenar por"
 
@@ -2640,7 +2770,7 @@ msgid "Start Accepting Passive Checks"
 msgstr "Iniciar a receber checagens passivas"
 
 #: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:84
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:291
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:309
 msgid "Start Time"
 msgstr "Horário de início"
 
@@ -2654,7 +2784,7 @@ msgstr "Iniciar obsessão sob este objeto."
 
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/TimelineController.php:67
 msgid "Started downtimes"
-msgstr "Parada(s) iniciada(s)"
+msgstr "Paradas iniciadas"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/downtimes.phtml:34
 msgid "Starts"
@@ -2691,11 +2821,11 @@ msgstr "Parar o modo obsessão"
 msgid "Stop obsessing over this object."
 msgstr "Parar obsessão sob este objeto."
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:138
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:178
 msgid "System"
 msgstr "Sistema"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:66
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:106
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/TacticalController.php:15
 msgid "Tactical Overview"
 msgstr "Visão tática"
@@ -2725,7 +2855,7 @@ msgstr "O identificador deste backend"
 msgid "The last one occured %s ago"
 msgstr "O último ocorreu %s atrás"
 
-#: /usr/local/icingaweb/modules/monitoring/application/controllers/ShowController.php:123
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ShowController.php:124
 msgid "The parameter `contact' is required"
 msgstr "O parâmetro `contact' é requerido"
 
@@ -2847,14 +2977,14 @@ msgid "This is the core module for Icinga Web 2."
 msgstr "Este é o módulo central para o Icinga Web 2."
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/alertsummary/index.phtml:25
-msgid "Time to reaction (Ack, Recover)"
+msgid "Time to Reaction (Ack, Recover)"
 msgstr "Tempo de reação (Ack, Recuperar)"
 
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/TimelineController.php:106
 msgid "TimeLine interval"
 msgstr "Intervalo da linha do tempo"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:121
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:161
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/TimelineController.php:29
 msgid "Timeline"
 msgstr "Linha do tempo"
@@ -2881,8 +3011,15 @@ msgid "Toggling feature.."
 msgstr "Alternando funcionalidade.."
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/alertsummary/index.phtml:59
-msgid "Top 5 recent alerts"
+msgid "Top 5 Recent Alerts"
 msgstr "Top 5 de alertas recentes"
+
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:26
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:26
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:528
+#: /usr/local/icingaweb/modules/monitoring/application/controllers/ListController.php:575
+msgid "Total Services"
+msgstr "Total de serviços"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/alertsummary/index.phtml:32
 msgid "Trend"
@@ -2902,39 +3039,30 @@ msgstr "Tipo"
 msgid "Type: %s"
 msgstr "Tipo: %s"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:207
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:220
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:210
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:40
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:58
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:40
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:58
+msgid "UNKNOWN"
+msgstr "DESCONHECIDO(S)"
+
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:148
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:156
 msgctxt "icinga.state"
 msgid "UNKNOWN"
-msgstr "DESCONHECIDO"
-
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:74
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:86
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:77
-msgctxt "icinga.state"
-msgid "UNREACHABLE"
-msgstr "INACESSÍVEL"
-
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:102
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:105
-msgctxt "icinga.state"
-msgid "UP"
-msgstr "UP"
+msgstr "DESCONHECIDO(S)"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/statusIcons.phtml:26
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hosts.phtml:49
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:74
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/services.phtml:71
 msgid "Unhandled"
 msgstr "Não tratado(s)"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:39
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:79
 msgid "Unhandled Hosts"
 msgstr "Hosts não tradados"
 
-#: /usr/local/icingaweb/modules/monitoring/configuration.php:44
+#: /usr/local/icingaweb/modules/monitoring/configuration.php:84
 msgid "Unhandled Services"
 msgstr "Serviços não tratados"
 
@@ -2947,7 +3075,7 @@ msgid "Unhandled hosts with state UNREACHABLE"
 msgstr "Hosts não tratados com o estado INACESSÍVEL"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/hostservicesummary.phtml:51
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:46
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:47
 #, php-format
 msgid "Unhandled services with state %s"
 msgstr "Serviços não tratados com o estado %s"
@@ -3011,9 +3139,13 @@ msgstr "Nome do usuario"
 msgid "Value for interval not valid"
 msgstr "Valor para o intervalo não é válido"
 
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:173
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:186
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:176
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:46
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/hostgroups.phtml:64
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:46
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/servicegroups.phtml:64
+msgid "WARNING"
+msgstr "ATENÇÃO"
+
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:78
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:86
 msgctxt "icinga.state"
@@ -3072,13 +3204,13 @@ msgid "notifications per hour"
 msgstr "notificações por hora"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/hostservicesummary.phtml:20
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:14
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:15
 #: /usr/local/icingaweb/modules/monitoring/library/Monitoring/Object/Service.php:216
 msgid "ok"
 msgstr "ok"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/history.phtml:135
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:100
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/eventhistory.phtml:109
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/downtimes.phtml:56
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/comments.phtml:60
 msgid "on"
@@ -3091,8 +3223,12 @@ msgctxt "datetime"
 msgid "on %s"
 msgstr "em %s"
 
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:78
+msgid "overall"
+msgstr "global"
+
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/hostservicesummary.phtml:84
-#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:79
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:80
 #: /usr/local/icingaweb/modules/monitoring/library/Monitoring/Object/Host.php:184
 #: /usr/local/icingaweb/modules/monitoring/library/Monitoring/Object/Service.php:228
 msgid "pending"
@@ -3102,6 +3238,10 @@ msgstr "pendente(s)"
 msgctxt "multiselection"
 msgid "row(s) selected"
 msgstr "linha(s) selecionada(s)"
+
+#: /usr/local/icingaweb/modules/monitoring/application/views/scripts/process/info.phtml:79
+msgid "scheduled"
+msgstr "agendado"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/helpers/MonitoringState.php:101
 msgid "since"
@@ -3126,3 +3266,33 @@ msgstr "up"
 #: /usr/local/icingaweb/modules/monitoring/library/Monitoring/Object/Service.php:219
 msgid "warning"
 msgstr "atenção"
+
+#~ msgctxt "icinga.state"
+#~ msgid "DOWN"
+#~ msgstr "DOWN"
+
+#~ msgid "Hosts DOWN Handled"
+#~ msgstr "Hosts DOWN tratados"
+
+#~ msgid "Hosts DOWN Unhandled"
+#~ msgstr "Hosts DOWN não tratados"
+
+#~ msgid "Hosts PENDING"
+#~ msgstr "Hosts PENDENTES"
+
+#~ msgid "Hosts UNREACHABLE Handled"
+#~ msgstr "Hosts INACESSÍVEIS tratados"
+
+#~ msgid "Hosts UNREACHABLE Unhandled"
+#~ msgstr "Hosts INACESSÍVEIS não tratados"
+
+#~ msgid "Hosts UP"
+#~ msgstr "Hosts UP"
+
+#~ msgctxt "icinga.state"
+#~ msgid "UNREACHABLE"
+#~ msgstr "INACESSÍVEL"
+
+#~ msgctxt "icinga.state"
+#~ msgid "UP"
+#~ msgstr "UP"
