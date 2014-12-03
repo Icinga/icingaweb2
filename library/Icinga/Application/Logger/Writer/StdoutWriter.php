@@ -3,7 +3,7 @@
 namespace Icinga\Application\Logger\Writer;
 
 use Icinga\Cli\Screen;
-use Icinga\Application\Logger\Logger;
+use Icinga\Application\Logger;
 use Icinga\Application\Logger\LogWriter;
 use Zend_Config;
 
@@ -32,16 +32,16 @@ class StdoutWriter extends LogWriter
     {
         $color = 'black';
         switch ($severity) {
-            case Logger::$ERROR:
+            case Logger::ERROR:
                 $color = 'red';
                 break;
-            case Logger::$WARNING:
+            case Logger::WARNING:
                 $color = 'orange';
                 break;
-            case Logger::$INFO:
+            case Logger::INFO:
                 $color = 'green';
                 break;
-            case Logger::$DEBUG:
+            case Logger::DEBUG:
                 $color = 'blue';
                 break;
         }
