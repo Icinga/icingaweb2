@@ -264,7 +264,7 @@ class Module
         $this->cssdir         = $basedir . '/public/css';
         $this->jsdir          = $basedir . '/public/js';
         $this->libdir         = $basedir . '/library';
-        $this->configdir      = $basedir . '/config';
+        $this->configdir      = $app->getConfigDir('modules/' . $name);
         $this->localedir      = $basedir . '/application/locale';
         $this->formdir        = $basedir . '/application/forms';
         $this->controllerdir  = $basedir . '/application/controllers';
