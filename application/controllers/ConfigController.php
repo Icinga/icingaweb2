@@ -62,7 +62,7 @@ class ConfigController extends ActionController
     public function modulesAction()
     {
         $this->view->tabs = Widget::create('tabs')->add('modules', array(
-            'title' => 'Modules',
+            'title' => $this->translate('Modules'),
             'url'   => 'config/modules'
         ));
 

@@ -15,31 +15,31 @@ $state = $moduleData->enabled ? ($moduleData->loaded ? 'enabled' : 'failed') : '
 ?>
 <table class="avp">
 <tr>
-  <th><?= $this->escape('Name') ?></th>
+  <th><?= $this->escape($this->translate('Name')) ?></th>
   <td><?= $this->escape($module->getName()) ?></td>
 </tr>
 <tr>
   <th><?= $this->translate('State') ?></th>
   <td><?= $state ?><?php if ($state === 'enabled'): ?>
-  <?= $this->qlink('disable', 'config/moduledisable', array(
+  <?= $this->qlink($this->translate('disable'), 'config/moduledisable', array(
       'name' => $module->getName()
   )) ?>
   <?php endif ?>
   <?php if ($state === 'disabled'): ?>
-  <?= $this->qlink('enable', 'config/moduleenable', array(
+  <?= $this->qlink($this->translate('enable'), 'config/moduleenable', array(
       'name' => $module->getName()
   )) ?>
   <?php endif ?>
   </td>
 <tr>
-  <th><?= $this->escape('Version') ?></th>
+  <th><?= $this->escape($this->translate('Version')) ?></th>
   <td><?= $this->escape($module->getVersion()) ?></td></tr>
 <tr>
-  <th><?= $this->escape('Description') ?></th>
+  <th><?= $this->escape($this->translate('Description')) ?></th>
   <td><?= nl2br($this->escape($module->getDescription())) ?></td>
 </tr>
 <tr>
-  <th><?= $this->escape('Dependencies') ?></th>
+  <th><?= $this->escape($this->translate('Dependencies')) ?></th>
   <td><?php
   
 if (empty($dependencies)):
@@ -51,7 +51,7 @@ else: foreach ($dependencies as $name => $versionString): ?>
 </tr>
 <?php if (! empty($permissions)): ?>
 <tr>
-  <th><?= $this->escape('Permissions') ?></th>
+  <th><?= $this->escape($this->translate('Permissions')) ?></th>
   <td><?php foreach ($permissions as $permission): ?>
 <strong><?= $this->escape($permission->name) ?></strong>: <?= $this->escape($permission->description) ?><br />
 <?php endforeach ?></td>
@@ -59,7 +59,7 @@ else: foreach ($dependencies as $name => $versionString): ?>
 <?php endif ?>
 <?php if (! empty($restrictions)): ?>
 <tr>
-  <th><?= $this->escape('Restrictions') ?></th>
+  <th><?= $this->escape($this->translate('Restrictions')) ?></th>
   <td><?php foreach ($restrictions as $restriction): ?>
 <strong><?= $this->escape($restriction->name) ?></strong>: <?= $this->escape($restriction->description) ?><br />
 <?php endforeach ?></td>

@@ -202,7 +202,7 @@ class Monitoring_ShowController extends Controller
         $tabs->add(
             'host',
             array(
-                'title'     => 'Host',
+                'title'     => $this->translate('Host'),
                 'icon'      => 'host',
                 'url'       => 'monitoring/show/host',
                 'urlParams' => $params,
@@ -212,7 +212,7 @@ class Monitoring_ShowController extends Controller
             $tabs->add(
                 'service',
                 array(
-                    'title'     => 'Service',
+                    'title'     => $this->translate('Service'),
                     'icon'      => 'service',
                     'url'       => 'monitoring/show/service',
                     'urlParams' => $params,
@@ -222,7 +222,7 @@ class Monitoring_ShowController extends Controller
         $tabs->add(
             'services',
             array(
-                'title'     => 'Services',
+                'title'     => $this->translate('Services'),
                 'icon'      => 'services',
                 'url'       => 'monitoring/show/services',
                 'urlParams' => $params,
@@ -232,7 +232,7 @@ class Monitoring_ShowController extends Controller
             $tabs->add(
                 'history',
                 array(
-                    'title'     => 'History',
+                    'title'     => $this->translate('History'),
                     'icon'      => 'rewind',
                     'url'       => 'monitoring/show/history',
                     'urlParams' => $params,
