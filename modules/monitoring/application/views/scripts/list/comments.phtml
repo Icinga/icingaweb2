@@ -10,8 +10,8 @@
 <?php endif ?>
 
 <div class="content">
-<?php if (empty($comments)): ?>
-  <?= $this->translate('No comments matching the filter') ?>
+<?php if (count($comments) === 0): ?>
+  <?= $this->translate('No comments matching the filter'); ?>
 </div>
 <?php return; endif ?>
 
