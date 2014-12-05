@@ -7,7 +7,7 @@ $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
 ?>
 <h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
 <?php if ($object->stats->services_total > 0): ?>
-<?= $this->qlink(sprintf($this->translate('%s configured services:'), $object->stats->services_total), $selfUrl) ?>
+<?= $this->qlink(sprintf($this->translatePlural('%d configured service:', '%d configured services:', $object->stats->services_total), $object->stats->services_total), $selfUrl) ?>
 <?php else: ?>
 <?= $this->translate('No services configured on this host'); ?>
 <?php endif; ?>
