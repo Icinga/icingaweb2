@@ -12,14 +12,14 @@ $service_problems = (
 <?php if ($this->statusSummary->hosts_up): ?>
     <h2>
         <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 0)); ?>">
-            <?= sprintf($this->translate('%d Hosts UP'), $this->statusSummary->hosts_up); ?>
+            <?= sprintf($this->translatePlural('%d Host UP', '%d Hosts UP', $this->statusSummary->hosts_up), $this->statusSummary->hosts_up); ?>
         </a>
     </h2>
 <?php endif ?>
 <?php if ($this->statusSummary->hosts_pending): ?>
     <h2>
         <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 99)); ?>">
-            <?= sprintf($this->translate('%d Hosts PENDING'), $this->statusSummary->hosts_pending); ?>
+            <?= sprintf($this->translatePlural('%d Host PENDING', '%d Hosts PENDING', $this->statusSummary->hosts_pending), $this->statusSummary->hosts_pending); ?>
         </a>
     </h2>
 <?php endif ?>

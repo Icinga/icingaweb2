@@ -7,14 +7,14 @@
 <?php if ($this->statusSummary->hosts_down): ?>
     <h2>
         <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 1)); ?>">
-            <?= sprintf($this->translate('%d Hosts DOWN'), $this->statusSummary->hosts_down); ?>
+            <?= sprintf($this->translatePlural('%d Host DOWN', '%d Hosts DOWN', $this->statusSummary->hosts_down), $this->statusSummary->hosts_down); ?>
         </a>
     </h2>
 <?php endif ?>
 <?php if ($this->statusSummary->hosts_unreachable): ?>
     <h2>
         <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 2)); ?>">
-            <?= sprintf($this->translate('%d Hosts UNREACHABLE'), $this->statusSummary->hosts_unreachable); ?>
+            <?= sprintf($this->translatePlural('%d Host UNREACHABLE', '%d Hosts UNREACHABLE', $this->statusSummary->hosts_unreachable), $this->statusSummary->hosts_unreachable); ?>
         </a>
     </h2>
 <?php endif ?>

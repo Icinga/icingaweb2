@@ -5,7 +5,7 @@
         'monitoring/list/services',
         array('host_problem' => $host_problem, 'service_state' => 2, 'service_acknowledged' => 0, 'service_in_downtime' => 0)
     ); ?>">
-        <?= $services_critical_unhandled; ?> <?= $this->translate('CRITICAL', 'icinga.state') ?>
+        <?= sprintf($this->translatePlural('%d CRITICAL', '%d CRITICAL', $services_critical_unhandled, 'icinga.state'), $services_critical_unhandled); ?>
     </a>
 <?php endif ?>
 <?php if ($services_critical_handled): ?>
@@ -145,7 +145,7 @@
         'monitoring/list/services',
         array('host_problem' => $host_problem, 'service_state' => 3, 'service_acknowledged' => 0, 'service_in_downtime' => 0)
     ); ?>">
-        <?= $services_unknown_unhandled; ?> <?= $this->translate('UNKNOWN', 'icinga.state') ?>
+        <?= sprintf($this->translatePlural('%d UNKNOWN', '%d UNKNOWN', $services_unknown_unhandled, 'icinga.state'), $services_unknown_unhandled) ?>
     </a>
 <?php endif ?>
 <?php if ($services_unknown_handled): ?>
@@ -249,7 +249,7 @@
         'monitoring/list/services',
         array('host_problem' => $host_problem, 'service_state' => 99)
     ); ?>">
-        <?= $services_pending; ?> <?= $this->translate('PENDING', 'icinga.state') ?>
+        <?= sprintf($this->translatePlural('%d PENDING', '%d PENDING', $services_pending, 'icinga.state'), $services_pending); ?>
     </a>
 <?php if ($services_pending_not_checked): ?>
     <a href="<?= $this->href(
