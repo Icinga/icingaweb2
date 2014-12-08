@@ -60,3 +60,5 @@ Use `icingacli` to generate web server configuration for either Apache or nginx.
 **Step 4: Web Setup**
 
 Visit Icinga Web 2 in your browser and complete installation using the web setup.
+http://localhost/icingaweb/setup
+Try to follow different steps in installation wizard, then you can have access to icinga web 2 dashboard.
