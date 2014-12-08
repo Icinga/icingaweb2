@@ -1,5 +1,5 @@
 <div class="box hostservicechecks">
-    <h2><?= $this->translate('Host- and Servicechecks'); ?></h2>
+    <h2><?= $this->translate('Host and Service Checks'); ?></h2>
     <div class="box contents">
         <table>
             <thead>
@@ -59,7 +59,7 @@
                                 'monitoring/list/services',
                                 array('service_active_checks_enabled' => 0, 'service_passive_checks_enabled' => 1)
                             ); ?>">
-                                <?= $this->statusSummary->services_passive . ' ' . $this->translatePlural('Passive', 'Passive', $this->statusSummary->services_passive); ?>
+                                <?=  sprintf($this->translatePlural('%d Passive', '%d Passive', $this->statusSummary->services_passive), $this->statusSummary->services_passive); ?>
                             </a>
                         </div>
 <?php endif ?>
