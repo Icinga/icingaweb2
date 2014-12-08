@@ -3,9 +3,9 @@
     <div class="box contents">
 <?php if ($this->statusSummary->hosts_without_flap_detection || $this->statusSummary->services_without_flap_detection ||
     $this->statusSummary->hosts_flapping || $this->statusSummary->services_flapping): ?>
-        <div class="box-separator feature-highlight"><?= $this->translate('Flap detection'); ?></div>
+        <div class="box-separator feature-highlight"><?= $this->translate('Flap Detection'); ?></div>
 <?php else: ?>
-        <div class="box-separator"><?= $this->translate('Flap detection'); ?></div>
+        <div class="box-separator"><?= $this->translate('Flap Detection'); ?></div>
 <?php endif ?>
         <table>
             <tbody>
@@ -121,9 +121,9 @@
             </tbody>
         </table>
 <?php if ($this->statusSummary->hosts_not_processing_event_handlers || $this->statusSummary->services_not_processing_event_handlers): ?>
-        <div class="box-separator feature-highlight"><?= $this->translate('Event handlers'); ?></div>
+        <div class="box-separator feature-highlight"><?= $this->translate('Event Handlers'); ?></div>
 <?php else: ?>
-        <div class="box-separator"><?= $this->translate('Event handlers'); ?></div>
+        <div class="box-separator"><?= $this->translate('Event Handlers'); ?></div>
 <?php endif ?>
         <table>
             <tbody>
