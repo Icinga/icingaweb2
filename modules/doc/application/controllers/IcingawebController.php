@@ -50,7 +50,7 @@ class Doc_IcingawebController extends DocController
         $chapterId = $this->getParam('chapterId');
         if ($chapterId === null) {
             throw new Zend_Controller_Action_Exception(
-                $this->translate('Missing parameter \'chapterId\''),
+                sprintf($this->translate('Missing parameter \'%s\''), 'chapterId'),
                 404
             );
         }
