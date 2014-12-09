@@ -101,7 +101,7 @@ class Doc_ModuleController extends DocController
         $this->assertModuleEnabled($module);
         $this->view->moduleName = $module;
         try {
-            return $this->renderToc(
+            $this->renderToc(
                 $this->getPath($module, Icinga::app()->getModuleManager()->getModuleDir($module, '/doc')),
                 $module,
                 'doc/module/chapter',
@@ -132,7 +132,7 @@ class Doc_ModuleController extends DocController
         }
         $this->view->moduleName = $module;
         try {
-            return $this->renderChapter(
+            $this->renderChapter(
                 $this->getPath($module, Icinga::app()->getModuleManager()->getModuleDir($module, '/doc')),
                 $chapterId,
                 $this->_helper->url->url(array('moduleName' => $module), 'doc/module/toc'),
@@ -153,7 +153,7 @@ class Doc_ModuleController extends DocController
     {
         $module = $this->getParam('moduleName');
         $this->assertModuleEnabled($module);
-        return $this->renderPdf(
+        $this->renderPdf(
             $this->getPath($module, Icinga::app()->getModuleManager()->getModuleDir($module, '/doc')),
             $module,
             'doc/module/chapter',
