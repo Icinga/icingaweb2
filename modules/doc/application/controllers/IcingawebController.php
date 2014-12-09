@@ -9,11 +9,19 @@ use Icinga\Module\Doc\DocController;
 class Doc_IcingawebController extends DocController
 {
     /**
+     * Get the path to Icinga Web 2's documentation
+     */
+    protected function getDocPath()
+    {
+        return $this->Config()->get('documentation', 'path', Icinga::app()->getBaseDir('doc'));
+    }
+
+    /**
      * View the toc of Icinga Web 2's documentation
      */
     public function tocAction()
     {
-        return $this->renderToc(Icinga::app()->getApplicationDir('/../doc'), 'Icinga Web 2', 'doc/icingaweb/chapter');
+        return $this->renderToc($this->getDocPath(), 'Icinga Web 2', 'doc/icingaweb/chapter');
     }
 
     /**
@@ -31,7 +39,7 @@ class Doc_IcingawebController extends DocController
             );
         }
         return $this->renderChapter(
-            Icinga::app()->getApplicationDir('/../doc'),
+            $this->getDocPath(),
             $chapterId,
             'doc/icingaweb/toc',
             'doc/icingaweb/chapter'
@@ -43,6 +51,6 @@ class Doc_IcingawebController extends DocController
      */
     public function pdfAction()
     {
-        return $this->renderPdf(Icinga::app()->getApplicationDir('/../doc'), 'Icinga Web 2', 'doc/icingaweb/chapter');
+        return $this->renderPdf($this->getDocPath(), 'Icinga Web 2', 'doc/icingaweb/chapter');
     }
 }
