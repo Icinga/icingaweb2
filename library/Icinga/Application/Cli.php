@@ -43,8 +43,7 @@ class Cli extends ApplicationBootstrap
             ->parseBasicParams()
             ->setupLogger()
             ->setupResourceFactory()
-            ->setupModuleManager()
-            ->loadCoreModules();
+            ->setupModuleManager();
     }
 
     protected function setupLogging()
