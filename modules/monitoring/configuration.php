@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-/** @var $this \Icinga\Application\Modules\Module */
+/** @type $this \Icinga\Application\Modules\Module */
 
 $this->providePermission(
     'monitoring/command/*',
