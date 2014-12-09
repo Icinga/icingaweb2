@@ -37,7 +37,7 @@ class Doc_IcingawebController extends DocController
      */
     public function tocAction()
     {
-        return $this->renderToc($this->getPath(), 'Icinga Web 2', 'doc/icingaweb/chapter');
+        $this->renderToc($this->getPath(), 'Icinga Web 2', 'doc/icingaweb/chapter');
     }
 
     /**
@@ -54,7 +54,7 @@ class Doc_IcingawebController extends DocController
                 404
             );
         }
-        return $this->renderChapter(
+        $this->renderChapter(
             $this->getPath(),
             $chapterId,
             'doc/icingaweb/toc',
@@ -67,6 +67,6 @@ class Doc_IcingawebController extends DocController
      */
     public function pdfAction()
     {
-        return $this->renderPdf($this->getPath(), 'Icinga Web 2', 'doc/icingaweb/chapter');
+        $this->renderPdf($this->getPath(), 'Icinga Web 2', 'doc/icingaweb/chapter');
     }
 }
