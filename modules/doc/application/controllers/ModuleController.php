@@ -25,14 +25,14 @@ class Doc_ModuleController extends DocController
      */
     protected function getPath($module, $default, $suppressErrors = false)
     {
+        if (is_dir($default)) {
+            return $default;
+        }
         if (($path = $this->Config()->get('documentation', 'modules')) !== null) {
             $path = str_replace('{module}', $module, $path);
             if (is_dir($path)) {
                 return $path;
             }
-        }
-        if (is_dir($default)) {
-            return $default;
         }
         if ($suppressErrors) {
             return null;

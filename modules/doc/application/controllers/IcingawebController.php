@@ -17,14 +17,14 @@ class Doc_IcingawebController extends DocController
      */
     protected function getPath()
     {
+        $path = Icinga::app()->getBaseDir('doc');
+        if (is_dir($path)) {
+            return $path;
+        }
         if (($path = $this->Config()->get('documentation', 'icingaweb2')) !== null) {
             if (is_dir($path)) {
                 return $path;
             }
-        }
-        $path = Icinga::app()->getBaseDir('doc');
-        if (is_dir($path)) {
-            return $path;
         }
         throw new Zend_Controller_Action_Exception(
             $this->translate('Documentation for Icinga Web 2 is not available'),
