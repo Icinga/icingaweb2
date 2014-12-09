@@ -37,7 +37,7 @@ class Doc_ModuleController extends DocController
     {
         if (empty($moduleName)) {
             throw new Zend_Controller_Action_Exception(
-                $this->translate('Missing parameter \'moduleName\''),
+                sprintf($this->translate('Missing parameter \'%s\''), 'moduleName'),
                 404
             );
         }
