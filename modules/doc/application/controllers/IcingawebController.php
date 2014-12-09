@@ -10,10 +10,26 @@ class Doc_IcingawebController extends DocController
 {
     /**
      * Get the path to Icinga Web 2's documentation
+     *
+     * @return  string
+     *
+     * @throws  Zend_Controller_Action_Exception    If Icinga Web 2's documentation is not available
      */
-    protected function getDocPath()
+    protected function getPath()
     {
-        return $this->Config()->get('documentation', 'path', Icinga::app()->getBaseDir('doc'));
+        if (($path = $this->Config()->get('documentation', 'icingaweb2')) !== null) {
+            if (is_dir($path)) {
+                return $path;
+            }
+        }
+        $path = Icinga::app()->getBaseDir('doc');
+        if (is_dir($path)) {
+            return $path;
+        }
+        throw new Zend_Controller_Action_Exception(
+            $this->translate('Documentation for Icinga Web 2 is not available'),
+            404
+        );
     }
 
     /**
@@ -21,7 +37,7 @@ class Doc_IcingawebController extends DocController
      */
     public function tocAction()
     {
-        return $this->renderToc($this->getDocPath(), 'Icinga Web 2', 'doc/icingaweb/chapter');
+        return $this->renderToc($this->getPath(), 'Icinga Web 2', 'doc/icingaweb/chapter');
     }
 
     /**
@@ -39,7 +55,7 @@ class Doc_IcingawebController extends DocController
             );
         }
         return $this->renderChapter(
-            $this->getDocPath(),
+            $this->getPath(),
             $chapterId,
             'doc/icingaweb/toc',
             'doc/icingaweb/chapter'
@@ -51,6 +67,6 @@ class Doc_IcingawebController extends DocController
      */
     public function pdfAction()
     {
-        return $this->renderPdf($this->getDocPath(), 'Icinga Web 2', 'doc/icingaweb/chapter');
+        return $this->renderPdf($this->getPath(), 'Icinga Web 2', 'doc/icingaweb/chapter');
     }
 }
