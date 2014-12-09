@@ -31,7 +31,7 @@ class DocParser
     /**
      * Create a new documentation parser for the given path
      *
-     * @param   string $path Path to the documentation
+     * @param   string $path        Path to the documentation
      *
      * @throws  DocException        If the documentation directory does not exist
      * @throws  NotReadableError    If the documentation directory is not readable
