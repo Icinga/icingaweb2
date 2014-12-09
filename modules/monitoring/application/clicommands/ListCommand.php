@@ -25,6 +25,7 @@ class ListCommand extends Command
 
     public function init()
     {
+        $this->app->setupZendAutoloader();
         $this->backend = Backend::createBackend($this->params->shift('backend'));
         $this->dumpSql = $this->params->shift('showsql');
     }
