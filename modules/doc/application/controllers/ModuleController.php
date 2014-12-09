@@ -10,16 +10,50 @@ use Icinga\Module\Doc\Exception\DocException;
 class Doc_ModuleController extends DocController
 {
     /**
+     * Get the path to a module documentation
+     *
+     * @param   string  $module                     The name of the module
+     * @param   string  $default                    The default path
+     * @param   bool    $suppressErrors             Whether to not throw an exception if the module documentation is not
+     *                                              available
+     *
+     * @return  string|null                         Path to the documentation or null if the module documentation is not
+     *                                              available and errors are suppressed
+     *
+     * @throws  Zend_Controller_Action_Exception    If the module documentation is not available and errors are not
+     *                                              suppressed
+     */
+    protected function getPath($module, $default, $suppressErrors = false)
+    {
+        if (($path = $this->Config()->get('documentation', 'modules')) !== null) {
+            $path = str_replace('{module}', $module, $path);
+            if (is_dir($path)) {
+                return $path;
+            }
+        }
+        if (is_dir($default)) {
+            return $default;
+        }
+        if ($suppressErrors) {
+            return null;
+        }
+        throw new Zend_Controller_Action_Exception(
+            sprintf($this->translate('Documentation for module \'%s\' is not available'), $module),
+            404
+        );
+    }
+
+    /**
      * List modules which are enabled and having the 'doc' directory
      */
     public function indexAction()
     {
         $moduleManager = Icinga::app()->getModuleManager();
         $modules = array();
-        foreach (Icinga::app()->getModuleManager()->listEnabledModules() as $enabledModule) {
-            $docDir = $moduleManager->getModuleDir($enabledModule, '/doc');
-            if (is_dir($docDir)) {
-                $modules[] = $enabledModule;
+        foreach (Icinga::app()->getModuleManager()->listEnabledModules() as $module) {
+            $path = $this->getPath($module, $moduleManager->getModuleDir($module, '/doc'), true);
+            if ($path !== null) {
+                $modules[] = $module;
             }
         }
         $this->view->modules = $modules;
@@ -63,16 +97,15 @@ class Doc_ModuleController extends DocController
      */
     public function tocAction()
     {
-        $moduleName = $this->getParam('moduleName');
-        $this->assertModuleEnabled($moduleName);
-        $this->view->moduleName = $moduleName;
-        $moduleManager = Icinga::app()->getModuleManager();
+        $module = $this->getParam('moduleName');
+        $this->assertModuleEnabled($module);
+        $this->view->moduleName = $module;
         try {
             return $this->renderToc(
-                $moduleManager->getModuleDir($moduleName, '/doc'),
-                $moduleName,
+                $this->getPath($module, Icinga::app()->getModuleManager()->getModuleDir($module, '/doc')),
+                $module,
                 'doc/module/chapter',
-                array('moduleName' => $moduleName)
+                array('moduleName' => $module)
             );
         } catch (DocException $e) {
             throw new Zend_Controller_Action_Exception($e->getMessage(), 404);
@@ -88,24 +121,23 @@ class Doc_ModuleController extends DocController
      */
     public function chapterAction()
     {
-        $moduleName = $this->getParam('moduleName');
-        $this->assertModuleEnabled($moduleName);
+        $module = $this->getParam('moduleName');
+        $this->assertModuleEnabled($module);
         $chapterId = $this->getParam('chapterId');
         if ($chapterId === null) {
             throw new Zend_Controller_Action_Exception(
-                $this->translate('Missing parameter \'chapterId\''),
+                sprintf($this->translate('Missing parameter \'%s\''), 'chapterId'),
                 404
             );
         }
-        $this->view->moduleName = $moduleName;
-        $moduleManager = Icinga::app()->getModuleManager();
+        $this->view->moduleName = $module;
         try {
             return $this->renderChapter(
-                $moduleManager->getModuleDir($moduleName, '/doc'),
+                $this->getPath($module, Icinga::app()->getModuleManager()->getModuleDir($module, '/doc')),
                 $chapterId,
-                $this->_helper->url->url(array('moduleName' => $moduleName), 'doc/module/toc'),
+                $this->_helper->url->url(array('moduleName' => $module), 'doc/module/toc'),
                 'doc/module/chapter',
-                array('moduleName' => $moduleName)
+                array('moduleName' => $module)
             );
         } catch (DocException $e) {
             throw new Zend_Controller_Action_Exception($e->getMessage(), 404);
@@ -119,14 +151,13 @@ class Doc_ModuleController extends DocController
      */
     public function pdfAction()
     {
-        $moduleName = $this->getParam('moduleName');
-        $this->assertModuleEnabled($moduleName);
-        $moduleManager = Icinga::app()->getModuleManager();
+        $module = $this->getParam('moduleName');
+        $this->assertModuleEnabled($module);
         return $this->renderPdf(
-            $moduleManager->getModuleDir($moduleName, '/doc'),
-            $moduleName,
+            $this->getPath($module, Icinga::app()->getModuleManager()->getModuleDir($module, '/doc')),
+            $module,
             'doc/module/chapter',
-            array('moduleName' => $moduleName)
+            array('moduleName' => $module)
         );
     }
 }
