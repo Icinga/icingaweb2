@@ -379,21 +379,6 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Load all core modules
-     *
-     * @return self
-     */
-    protected function loadCoreModules()
-    {
-        try {
-            $this->moduleManager->loadCoreModules();
-        } catch (NotReadableError $e) {
-            Logger::error(new IcingaException('Cannot load core modules. An exception was thrown:', $e));
-        }
-        return $this;
-    }
-
-    /**
      * Load all enabled modules
      *
      * @return self
