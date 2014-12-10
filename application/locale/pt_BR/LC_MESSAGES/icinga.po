@@ -1,15 +1,21 @@
+# Icinga Web 2 - Head for multiple monitoring backends.
+# Copyright (C) 2014 Icinga Development Team
+# This file is distributed under the same license as Icinga Web 2.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Icinga Web 2 (0.1)\n"
+"Project-Id-Version: Icinga Web 2 (None)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2014-06-03 15:23+0200\n"
-"PO-Revision-Date: 2014-11-18 16:11-0300\n"
+"POT-Creation-Date: 2014-12-03 09:11-0200\n"
+"PO-Revision-Date: 2014-12-03 09:19-0300\n"
 "Last-Translator: Carlos Cesario <carloscesario@gmail.com>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: pt_BR\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.5.4\n"
 
 #: /usr/local/icingaweb/library/Icinga/Web/Menu/MonitoringMenuItemRenderer.php:41
@@ -38,9 +44,28 @@ msgstr "%s: %d até %d de %d"
 msgid "'%s' is not a valid number"
 msgstr "'%s' não é um número válido"
 
+#: /usr/local/icingaweb/application/forms/Authentication/LoginForm.php:45
+msgid "...and your password"
+msgstr "... e sua senha"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/new-component.phtml:5
+msgid "Add Component To Dashboard"
+msgstr "Adicionar componente ao dashboard"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/new-dashlet.phtml:5
+msgid "Add Dashlet To Dashboard"
+msgstr "Adicionar dashlet ao dashboard"
+
+#: /usr/local/icingaweb/application/forms/Dashboard/ComponentForm.php:29
+#: /usr/local/icingaweb/application/forms/Dashboard/DashletForm.php:29
 #: /usr/local/icingaweb/application/forms/Dashboard/AddUrlForm.php:22
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/Tabextension/DashboardSettings.php:26
 msgid "Add To Dashboard"
 msgstr "Adicionar ao dashboard"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/addurl.phtml:6
+msgid "Add URL to Dashboard"
+msgstr "Adicionar URL ao dashboard"
 
 #: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterWidget.php:81
 msgid "Add filter..."
@@ -54,7 +79,13 @@ msgstr ""
 "Todos os métodos de autenticação configurados falharam. Por favor, verifique "
 "o log de sistema ou o log do Icinga Web 2 para obter mais informações."
 
-#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:229
+#: /usr/local/icingaweb/application/controllers/RolesController.php:17
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:27
+#: /usr/local/icingaweb/application/controllers/PermissionsController.php:17
+msgid "Application"
+msgstr "Aplicação"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:234
 msgid "Application Log"
 msgstr "Log da aplicação"
 
@@ -66,6 +97,12 @@ msgstr "Prefixo da aplicação"
 msgid "Apply"
 msgstr "Aplicar"
 
+#: /usr/local/icingaweb/application/controllers/RolesController.php:20
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:30
+#: /usr/local/icingaweb/application/controllers/PermissionsController.php:20
+msgid "Authentication"
+msgstr "Autenticação"
+
 #: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:214
 #, php-format
 msgid "Authentication backend \"%s\" has been successfully changed"
@@ -76,7 +113,7 @@ msgstr "Backend de autenticação \"%s\" foi alterado com sucesso"
 msgid "Authentication backend \"%s\" has been successfully created"
 msgstr "Backend de autenticação \"%s\" foi criado com sucesso"
 
-#: /usr/local/icingaweb/application/controllers/ConfigController.php:194
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:197
 #, php-format
 msgid "Authentication backend \"%s\" has been successfully removed"
 msgstr "Backend de autenticação \"%s\" foi removido com sucesso"
@@ -139,7 +176,27 @@ msgctxt "preferences.form"
 msgid "Browser (%s)"
 msgstr "Navegador (%s)"
 
-#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:335
+#: /usr/local/icingaweb/application/forms/Security/RoleForm.php:155
+#, php-format
+msgid "Can't add role '%s'. Role already exists"
+msgstr "Não foi possível adicionar a função '%s'. A função já existe"
+
+#: /usr/local/icingaweb/application/forms/Security/RoleForm.php:123
+#, php-format
+msgid "Can't load role '%s'. Role does not exist"
+msgstr "Não é possível carregar a função '%s'. A função não existe"
+
+#: /usr/local/icingaweb/application/forms/Security/RoleForm.php:181
+#, php-format
+msgid "Can't remove role '%s'. Role does not exist"
+msgstr "Não é possível remover a função '%s'. A função não existe"
+
+#: /usr/local/icingaweb/application/forms/Security/RoleForm.php:214
+#, php-format
+msgid "Can't update role '%s'. Role does not exist"
+msgstr "Não é possível atulizar a função '%s'. A função não existe"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:340
 msgid "Cancel this operation"
 msgstr "Cancelar esta operação"
 
@@ -148,22 +205,35 @@ msgstr "Cancelar esta operação"
 msgid "Cannot read config file \"%s\". Permission denied"
 msgstr "Não é possível ler arquivo de configuração \"%s\". Permissão negada"
 
+#: /usr/local/icingaweb/application/forms/Dashboard/DashletForm.php:124
+msgid "Check this box if you want to add the dashlet to a new dashboard"
+msgstr ""
+"Marque esta caixa se você deseja adicionar o dashlet a um novo dashboard"
+
 #: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:280
 #: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:201
 msgid "Check this box to enforce changes without connectivity validation"
 msgstr ""
 "Marque esta caixa para forçar as alterações sem validação conectividade"
 
-#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:309
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:314
 msgid "Click to add another filter"
 msgstr "Clique para adicionar outro filtro"
 
 #: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterWidget.php:69
-#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:296
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:301
 msgid "Click to remove this part of your filter"
 msgstr "Clique para remover esta parte do seu filtro"
 
-#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:219
+#: /usr/local/icingaweb/application/forms/Security/RoleForm.php:80
+msgid "Comma-separated list of groups that are assigned to the role"
+msgstr "Lista separada por vírgulas dos grupos que são atribuídos à função"
+
+#: /usr/local/icingaweb/application/forms/Security/RoleForm.php:72
+msgid "Comma-separated list of users that are assigned to the role"
+msgstr "Lista separada por vírgulas dos usuários que são atribuídos à função"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:224
 msgid "Configuration"
 msgstr "Configuração"
 
@@ -197,6 +267,10 @@ msgstr ""
 msgid "Could not find any resources for authentication"
 msgstr "Não foi possível encontrar os recursos para autenticação"
 
+#: /usr/local/icingaweb/application/views/scripts/dashboard/error.phtml:2
+msgid "Could not persist dashboard"
+msgstr "Não foi possível salvar o dashboard"
+
 #: /usr/local/icingaweb/application/controllers/AuthenticationController.php:60
 msgid ""
 "Could not read your authentication.ini, no authentication methods are "
@@ -208,6 +282,10 @@ msgstr ""
 #: /usr/local/icingaweb/application/views/scripts/config/authentication/reorder.phtml:7
 msgid "Create A New Authentication Backend"
 msgstr "Criar um novo backend de autenticação"
+
+#: /usr/local/icingaweb/application/forms/Dashboard/ComponentForm.php:133
+msgid "Create A New Dashboard"
+msgstr "Criar um novo dashboard"
 
 #: /usr/local/icingaweb/application/forms/Dashboard/AddUrlForm.php:88
 msgid "Create A New Pane"
@@ -222,6 +300,11 @@ msgstr "Criar um novo recurso"
 msgid "Create New Authentication Backend"
 msgstr "Criar um novo backend de autenticação"
 
+#: /usr/local/icingaweb/application/controllers/RolesController.php:57
+#: /usr/local/icingaweb/application/controllers/PermissionsController.php:57
+msgid "Create Role"
+msgstr "Criar função"
+
 #: /usr/local/icingaweb/application/views/scripts/config/authentication/create.phtml:7
 msgid ""
 "Create a new backend for authenticating your users. This backend will be "
@@ -230,7 +313,7 @@ msgstr ""
 "Criar um novo backend para autenticar os usuários. Este backend será "
 "adicionado por último."
 
-#: /usr/local/icingaweb/application/views/scripts/dashboard/index.phtml:12
+#: /usr/local/icingaweb/application/views/scripts/dashboard/index.phtml:13
 #, php-format
 msgid ""
 "Currently there is no dashlet available. This might change once you enabled "
@@ -240,9 +323,40 @@ msgstr ""
 "você habilite algum dos disponíveis %s."
 
 #: /usr/local/icingaweb/application/layouts/scripts/body.phtml:31
-#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:209
+#: /usr/local/icingaweb/application/forms/Dashboard/ComponentForm.php:122
+#: /usr/local/icingaweb/application/forms/Dashboard/DashletForm.php:109
+#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:214
 msgid "Dashboard"
 msgstr "Dashboard"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/settings.phtml:7
+msgid "Dashboard Settings"
+msgstr "Configurações do dashboard"
+
+#: /usr/local/icingaweb/application/controllers/DashboardController.php:203
+msgid "Dashboard has been removed"
+msgstr "O dashboard foi removido"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/settings.phtml:13
+msgid "Dashlet Name"
+msgstr "Nome do dashlet"
+
+#: /usr/local/icingaweb/application/forms/Dashboard/ComponentForm.php:78
+#: /usr/local/icingaweb/application/forms/Dashboard/DashletForm.php:79
+msgid "Dashlet Title"
+msgstr "Título do dashlet"
+
+#: /usr/local/icingaweb/application/controllers/DashboardController.php:67
+msgid "Dashlet created"
+msgstr "Dashlet criado"
+
+#: /usr/local/icingaweb/application/controllers/DashboardController.php:165
+msgid "Dashlet has been removed from"
+msgstr "O dashlet foi removido do"
+
+#: /usr/local/icingaweb/application/controllers/DashboardController.php:128
+msgid "Dashlet updated"
+msgstr "Dashlet atualizado"
 
 #: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:294
 #: /usr/local/icingaweb/application/forms/Config/General/ApplicationConfigForm.php:56
@@ -272,7 +386,15 @@ msgctxt "app.config.logging.level"
 msgid "Debug"
 msgstr "Depurar"
 
-#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:20
+#: /usr/local/icingaweb/application/views/scripts/config/module.phtml:42
+msgid "Dependencies"
+msgstr "Dependências"
+
+#: /usr/local/icingaweb/application/views/scripts/config/module.phtml:38
+msgid "Description"
+msgstr "Descrição"
+
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:19
 msgid ""
 "Details can be found in the application log. (If you don't have access to "
 "this log, call your administrator in this case)"
@@ -288,6 +410,14 @@ msgstr "Não salvar as preferências"
 msgid "Edit Backend"
 msgstr "Editar backend"
 
+#: /usr/local/icingaweb/application/views/scripts/dashboard/update-component.phtml:6
+msgid "Edit Component"
+msgstr "Editar componente"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/update-dashlet.phtml:6
+msgid "Edit Dashlet"
+msgstr "Editar dashlet"
+
 #: /usr/local/icingaweb/application/views/scripts/config/resource/modify.phtml:4
 msgid "Edit Existing Resource"
 msgstr "Editar o recurso existente"
@@ -297,10 +427,33 @@ msgstr "Editar o recurso existente"
 msgid "Enabling the \"%s\" module might help!"
 msgstr "Habilitando o módulo \"%s\" pode ajudar!"
 
+#: /usr/local/icingaweb/application/forms/Dashboard/ComponentForm.php:79
+#: /usr/local/icingaweb/application/forms/Dashboard/DashletForm.php:80
+msgid "Enter a title for the dashlet."
+msgstr "Entre com o título para o dashlet."
+
+#: /usr/local/icingaweb/application/forms/Dashboard/ComponentForm.php:93
+#: /usr/local/icingaweb/application/forms/Dashboard/DashletForm.php:100
+msgid "Enter a title for the new pane."
+msgstr "Entre com o título para o novo painel."
+
+#: /usr/local/icingaweb/application/forms/Dashboard/ComponentForm.php:70
+#: /usr/local/icingaweb/application/forms/Dashboard/DashletForm.php:71
+msgid ""
+"Enter url being loaded in the dashlet. You can paste the full URL, including "
+"filters."
+msgstr ""
+"Digite url a ser carregada no dashlet. Você pode colar a URL completa, "
+"incluindo os filtros."
+
 #: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:53
 msgctxt "app.config.logging.level"
 msgid "Error"
 msgstr "Erro"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/error.phtml:11
+msgid "Error details"
+msgstr "Detalhes do erro"
 
 #: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:214
 msgid "File"
@@ -328,7 +481,7 @@ msgid "Filter Pattern"
 msgstr "Padrão do filtro"
 
 #: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterWidget.php:90
-#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:642
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:647
 msgid "Filter this list"
 msgstr "Filtrar esta lista"
 
@@ -344,6 +497,12 @@ msgstr "Finalizar"
 #: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:200
 msgid "Force Changes"
 msgstr "Forçar as alterações"
+
+#: /usr/local/icingaweb/application/views/scripts/roles/index.phtml:17
+#: /usr/local/icingaweb/application/views/scripts/permissions/index.phtml:16
+#: /usr/local/icingaweb/application/forms/Security/RoleForm.php:79
+msgid "Groups"
+msgstr "Grupos"
 
 #: /usr/local/icingaweb/application/views/scripts/search/hint.phtml:3
 msgid "Hint"
@@ -382,7 +541,7 @@ msgstr ""
 "Se esta mensagem não desaparecer, pode ser necessário sair da sessão atual "
 "manualmente limpando o cache ou fechando a sessão atual do navegador. "
 
-#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:22
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:21
 msgid ""
 "In case you can access the file by yourself, you can open it and insert the "
 "config manually:"
@@ -448,7 +607,7 @@ msgid "Login"
 msgstr "Login"
 
 #: /usr/local/icingaweb/application/layouts/scripts/parts/topbar.phtml:35
-#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:244
+#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:249
 msgid "Logout"
 msgstr "Logout"
 
@@ -456,17 +615,22 @@ msgstr "Logout"
 msgid "Logout successful!"
 msgstr "Sucesso ao realizar o logout!"
 
+#: /usr/local/icingaweb/application/views/scripts/dashboard/error.phtml:7
+msgid "Make sure that the webserver can write to this file."
+msgstr ""
+"Certifique-se de que o servidor web tenha permissão para gravar este arquivo."
+
 #: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterWidget.php:95
-#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:644
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:649
 msgid "Modify this filter"
 msgstr "Modificar este filtro"
 
-#: /usr/local/icingaweb/application/controllers/ConfigController.php:118
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:121
 #, php-format
 msgid "Module \"%s\" disabled"
 msgstr "Módulo \"%s\" desabilitado"
 
-#: /usr/local/icingaweb/application/controllers/ConfigController.php:99
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:102
 #, php-format
 msgid "Module \"%s\" enabled"
 msgstr "Módulo \"%s\" habilitado"
@@ -483,7 +647,8 @@ msgstr "Módulo está desabilitado"
 msgid "Module is enabled"
 msgstr "Módulo está habilitado"
 
-#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:223
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:65
+#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:228
 msgid "Modules"
 msgstr "Módulos"
 
@@ -495,9 +660,27 @@ msgstr "Mover para baixo na ordem de autenticação"
 msgid "Move up in authentication order"
 msgstr "Mover para cima na ordem de autenticação"
 
+#: /usr/local/icingaweb/application/views/scripts/config/module.phtml:18
+#: /usr/local/icingaweb/application/views/scripts/roles/index.phtml:13
+#: /usr/local/icingaweb/application/views/scripts/permissions/index.phtml:13
+msgid "Name"
+msgstr "Nome"
+
 #: /usr/local/icingaweb/application/views/scripts/pivottablePagination.phtml:16
 msgid "Navigation"
 msgstr "Navegação"
+
+#: /usr/local/icingaweb/application/forms/Dashboard/ComponentForm.php:91
+#: /usr/local/icingaweb/application/forms/Dashboard/DashletForm.php:98
+msgid "New Dashboard Title"
+msgstr "Novo título do bashboard"
+
+#: /usr/local/icingaweb/application/views/scripts/roles/new.phtml:2
+#: /usr/local/icingaweb/application/views/scripts/roles/index.phtml:65
+#: /usr/local/icingaweb/application/views/scripts/permissions/new.phtml:2
+#: /usr/local/icingaweb/application/views/scripts/permissions/index.phtml:43
+msgid "New Role"
+msgstr "Nova função"
 
 #: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:119
 msgid "New authentication backend name missing"
@@ -506,6 +689,10 @@ msgstr "Falta o nome do novo backend de autenticação"
 #: /usr/local/icingaweb/application/forms/Config/GeneralConfigForm.php:55
 msgid "New configuration has successfully been stored"
 msgstr "A nova configuração foi salva com sucesso"
+
+#: /usr/local/icingaweb/application/forms/Dashboard/DashletForm.php:122
+msgid "New dashboard"
+msgstr "Novo dashboard"
 
 #: /usr/local/icingaweb/application/forms/Config/ResourceConfigForm.php:90
 msgid "New resource name missing"
@@ -534,6 +721,18 @@ msgid ""
 msgstr ""
 "Não há métodos de autenticação disponíveis. Você criou o arquivo "
 "authentication.ini ao configurar Icinga Web 2?"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/settings.phtml:37
+msgid "No dashlets added to dashboard"
+msgstr "Nenhum dashlet adicionado ao dashboard"
+
+#: /usr/local/icingaweb/application/views/scripts/permissions/index.phtml:8
+msgid "No permissions found."
+msgstr "Não há nenhuma permissão."
+
+#: /usr/local/icingaweb/application/views/scripts/roles/index.phtml:8
+msgid "No roles found."
+msgstr "Não há nenhuma função."
 
 #: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:110
 msgid "No users found under the specified database backend"
@@ -593,13 +792,34 @@ msgstr "Caminho não tem permissão de leitura"
 msgid "Pattern"
 msgstr "Padrão"
 
-#: /usr/local/icingaweb/application/views/scripts/dashboard/addurl.phtml:9
-msgid ""
-"Please have a little patience, we are hard working on it, take a look at "
-"icingaweb2 issues."
-msgstr ""
-"Por favor, tenha um pouco de paciência, estamos trabalhando duro nisso, dê "
-"uma olhada nos problemas do icingaweb2."
+#: /usr/local/icingaweb/application/views/scripts/config/module.phtml:54
+#: /usr/local/icingaweb/application/views/scripts/roles/index.phtml:14
+#: /usr/local/icingaweb/application/views/scripts/permissions/index.phtml:6
+#: /usr/local/icingaweb/application/views/scripts/permissions/index.phtml:14
+#: /usr/local/icingaweb/application/controllers/PermissionsController.php:26
+msgid "Permissions"
+msgstr "Permissões"
+
+#: /usr/local/icingaweb/application/forms/Security/RoleForm.php:87
+msgid "Permissions Set"
+msgstr "Definir permissões"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/remove-component.phtml:9
+#: /usr/local/icingaweb/application/views/scripts/dashboard/remove-dashlet.phtml:9
+msgid "Please confirm the removal"
+msgstr "Por favor, confirme a remoção"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/remove-pane.phtml:9
+msgid "Please confirm the removal of"
+msgstr "Por favor, confirme a remoção do"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/error.phtml:4
+msgid "Please copy the following dashboard snippet to "
+msgstr "Por favor, copie o seguinte trecho do dashboard para"
+
+#: /usr/local/icingaweb/application/forms/Authentication/LoginForm.php:35
+msgid "Please enter your username..."
+msgstr "Por favor, entre com seu usuário..."
 
 #: /usr/local/icingaweb/application/controllers/AuthenticationController.php:116
 msgid ""
@@ -628,7 +848,7 @@ msgstr "Porta"
 
 #: /usr/local/icingaweb/application/layouts/scripts/parts/topbar.phtml:32
 #: /usr/local/icingaweb/application/controllers/PreferenceController.php:30
-#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:239
+#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:244
 msgid "Preferences"
 msgstr "Preferências"
 
@@ -655,13 +875,49 @@ msgstr "Remover"
 msgid "Remove Backend"
 msgstr "Remover backend"
 
+#: /usr/local/icingaweb/application/views/scripts/dashboard/remove-component.phtml:6
+msgid "Remove Component From Dashboard"
+msgstr "Remover componente do dashboard"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/remove-pane.phtml:6
+msgid "Remove Dashboard"
+msgstr "Remover dashboard"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/remove-dashlet.phtml:6
+msgid "Remove Dashlet From Dashboard"
+msgstr "Remover dashlet do dashboard"
+
 #: /usr/local/icingaweb/application/views/scripts/config/resource/remove.phtml:4
 msgid "Remove Existing Resource"
 msgstr "Remover recurso existente"
 
+#: /usr/local/icingaweb/application/controllers/RolesController.php:144
+#: /usr/local/icingaweb/application/controllers/PermissionsController.php:144
+msgid "Remove Role"
+msgstr "Remover função"
+
+#: /usr/local/icingaweb/application/views/scripts/roles/remove.phtml:2
+#: /usr/local/icingaweb/application/views/scripts/permissions/remove.phtml:2
+#, php-format
+msgid "Remove Role %s"
+msgstr "Remover função %s"
+
+#: /usr/local/icingaweb/application/views/scripts/roles/index.phtml:55
+#: /usr/local/icingaweb/application/views/scripts/permissions/index.phtml:33
+msgid "Remove role"
+msgstr "Remover função"
+
 #: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterWidget.php:99
 msgid "Remove this filter"
 msgstr "Remover este filtro"
+
+#: /usr/local/icingaweb/application/controllers/RolesController.php:69
+#: /usr/local/icingaweb/application/controllers/RolesController.php:113
+#: /usr/local/icingaweb/application/controllers/PermissionsController.php:69
+#: /usr/local/icingaweb/application/controllers/PermissionsController.php:113
+#, php-format
+msgid "Required parameter '%s' missing"
+msgstr "Está faltando o paramento requerido \"%s'"
 
 #: /usr/local/icingaweb/application/views/scripts/config/resource.phtml:12
 msgid "Resource"
@@ -677,7 +933,7 @@ msgstr "Recurso \"%s\" foi alterado com sucesso"
 msgid "Resource \"%s\" has been successfully created"
 msgstr "Recurso \"%s\" foi criado com sucesso"
 
-#: /usr/local/icingaweb/application/controllers/ConfigController.php:266
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:269
 #, php-format
 msgid "Resource \"%s\" has been successfully removed"
 msgstr "Recurso \"%s\" foi removido com sucesso"
@@ -703,9 +959,45 @@ msgstr "Recurso já existe"
 msgid "Resource name missing"
 msgstr "Falta o nome do recurso"
 
+#: /usr/local/icingaweb/application/controllers/RolesController.php:23
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:33
+#: /usr/local/icingaweb/application/controllers/PermissionsController.php:23
+msgid "Resources"
+msgstr "Recursos"
+
 #: /usr/local/icingaweb/application/views/scripts/config/resource/create.phtml:5
 msgid "Resources are entities that provide data to Icinga Web 2."
 msgstr "Os recursos são entidades que fornecem dados para Icinga Web 2."
+
+#: /usr/local/icingaweb/application/views/scripts/config/module.phtml:62
+#: /usr/local/icingaweb/application/views/scripts/roles/index.phtml:15
+msgid "Restrictions"
+msgstr "Restrições"
+
+#: /usr/local/icingaweb/application/forms/Security/RoleForm.php:62
+msgid "Role Name"
+msgstr "Nome da função"
+
+#: /usr/local/icingaweb/application/controllers/RolesController.php:50
+#: /usr/local/icingaweb/application/controllers/PermissionsController.php:50
+msgid "Role created"
+msgstr "Função criada"
+
+#: /usr/local/icingaweb/application/controllers/RolesController.php:137
+#: /usr/local/icingaweb/application/controllers/PermissionsController.php:137
+msgid "Role removed"
+msgstr "Função removida"
+
+#: /usr/local/icingaweb/application/controllers/RolesController.php:97
+#: /usr/local/icingaweb/application/controllers/PermissionsController.php:97
+msgid "Role updated"
+msgstr "Função atualizada"
+
+#: /usr/local/icingaweb/application/views/scripts/roles/index.phtml:3
+#: /usr/local/icingaweb/application/controllers/RolesController.php:26
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:36
+msgid "Roles"
+msgstr "Funções"
 
 #: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:64
 msgid "Root DN"
@@ -727,7 +1019,7 @@ msgstr "Salvar para a sessão atual"
 
 #: /usr/local/icingaweb/application/forms/PreferenceForm.php:194
 msgid "Save to the Preferences"
-msgstr "Salvar as preferências"
+msgstr "Salvar preferências"
 
 #: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:2
 msgid "Saving Configuration Failed"
@@ -747,15 +1039,24 @@ msgstr "Pesquisar este  domínio para os registros de servidores disponíveis."
 
 #: /usr/local/icingaweb/application/views/scripts/layout/menu.phtml:8
 #: /usr/local/icingaweb/application/layouts/scripts/parts/navigation.phtml:20
-#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:638
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:643
 msgid "Search..."
 msgstr "Pesquisar..."
+
+#: /usr/local/icingaweb/application/forms/Dashboard/ComponentForm.php:125
+#: /usr/local/icingaweb/application/forms/Dashboard/DashletForm.php:112
+msgid "Select a pane you want to add the dashlet."
+msgstr "Selecione o painel que você deseja adicionar ao dashlet."
 
 #: /usr/local/icingaweb/application/views/scripts/joystickPagination.phtml:53
 #: /usr/local/icingaweb/application/views/scripts/joystickPagination.phtml:69
 #: /usr/local/icingaweb/application/views/scripts/pivottablePagination.phtml:34
 msgid "Services"
 msgstr "Serviços"
+
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/Tabextension/DashboardSettings.php:35
+msgid "Settings"
+msgstr "Configurações"
 
 #: /usr/local/icingaweb/library/Icinga/Web/Widget/Limiter.php:84
 #, php-format
@@ -771,7 +1072,7 @@ msgstr "Mostrar linhas %d até %d de %d"
 msgid "Socket"
 msgstr "Soquete"
 
-#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:15
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:14
 msgid "Something went wrong while writing the file"
 msgstr "Algo deu errado ao gravar o arquivo"
 
@@ -779,11 +1080,11 @@ msgstr "Algo deu errado ao gravar o arquivo"
 msgid "State"
 msgstr "Estado"
 
-#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:322
+#: /usr/local/icingaweb/library/Icinga/Web/Widget/FilterEditor.php:327
 msgid "Strip this filter"
 msgstr "Retirar esse filtro"
 
-#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:215
+#: /usr/local/icingaweb/library/Icinga/Web/Menu.php:220
 msgid "System"
 msgstr "Sistema"
 
@@ -807,7 +1108,7 @@ msgstr ""
 "A conexão com o banco de dados a ser utilizada para autenticar com este "
 "provedor"
 
-#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:6
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:5
 #, php-format
 msgid "The file %s couldn't be stored. (Error: \"%s\")"
 msgstr "O arquivo %s não pode ser gravado. (Erro: \"%s\")"
@@ -842,6 +1143,10 @@ msgstr ""
 #: /usr/local/icingaweb/application/forms/Config/Resource/DbResourceForm.php:84
 msgid "The name of the database to use"
 msgstr "O nome do banco de dados a ser utilizado"
+
+#: /usr/local/icingaweb/application/forms/Security/RoleForm.php:63
+msgid "The name of the role"
+msgstr "O nome da função"
 
 #: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:58
 #: /usr/local/icingaweb/application/forms/Config/Authentication/AutologinBackendForm.php:35
@@ -881,6 +1186,11 @@ msgstr ""
 "O caminho onde os usuários serão encontrados no servidor LDAP. Deixe em "
 "branco para selecionar todos os usuários disponíveis no recurso especificado."
 
+#: /usr/local/icingaweb/application/forms/Security/RoleForm.php:88
+msgid "The permissions to grant. You may select more than one permission"
+msgstr ""
+"Permissões a serem concedidas. Você pode selecionar mais de uma permissão"
+
 #: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:55
 msgid "The port of the LDAP server to use for authentication"
 msgstr "A porta do servidor LDAP utilizado para autenticação"
@@ -901,7 +1211,7 @@ msgstr ""
 "A expressão regular usada para retirar partes específicas dos nomes de "
 "usuário. Deixe em branco se você não quiser retirar nada"
 
-#: /usr/local/icingaweb/application/controllers/ConfigController.php:282
+#: /usr/local/icingaweb/application/controllers/ConfigController.php:285
 #, php-format
 msgid ""
 "The resource \"%s\" is currently in use by the authentication backend \"%s"
@@ -958,18 +1268,14 @@ msgstr "O nome do usuário a ser utilizado para a autenticação"
 msgid "There is no such module installed."
 msgstr "Não existe nenhum módulo instalado."
 
-#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:16
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:15
 msgid ""
 "There's an application error preventing you from persisting the configuration"
 msgstr "Há um erro na aplicação impedindo você de salvar a configuração"
 
-#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:11
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:10
 msgid "This could have one or more of the following reasons:"
 msgstr "Isto pode ter uma ou mais das seguintes razões:"
-
-#: /usr/local/icingaweb/application/views/scripts/dashboard/addurl.phtml:6
-msgid "This feature is deactivated at the moment."
-msgstr "Esta funcionalidade está desabilitada no momento."
 
 #: /usr/local/icingaweb/application/views/scripts/config/module.phtml:46
 msgid "This module has no dependencies"
@@ -1005,9 +1311,31 @@ msgstr "Backend de autenticação fornecido desconhecido"
 msgid "Unknown resource provided"
 msgstr "Recurso fornecido desconhecido"
 
+#: /usr/local/icingaweb/application/controllers/DashboardController.php:81
+msgid "Update Dashlet"
+msgstr "Atualizar dashlet"
+
+#: /usr/local/icingaweb/application/controllers/RolesController.php:74
+#: /usr/local/icingaweb/application/controllers/PermissionsController.php:74
+msgid "Update Role"
+msgstr "Atualizar função"
+
+#: /usr/local/icingaweb/application/views/scripts/roles/update.phtml:2
+#: /usr/local/icingaweb/application/views/scripts/permissions/update.phtml:2
+#, php-format
+msgid "Update Role %s"
+msgstr "Atualizar função %s"
+
+#: /usr/local/icingaweb/application/views/scripts/dashboard/settings.phtml:16
+#: /usr/local/icingaweb/application/forms/Dashboard/ComponentForm.php:68
+#: /usr/local/icingaweb/application/forms/Dashboard/DashletForm.php:69
 #: /usr/local/icingaweb/application/forms/Dashboard/AddUrlForm.php:35
 msgid "Url"
 msgstr "Url"
+
+#: /usr/local/icingaweb/application/forms/Dashboard/ComponentForm.php:109
+msgid "Use An Existing Dashboard"
+msgstr "Usar um dashboard existente"
 
 #: /usr/local/icingaweb/application/forms/Dashboard/AddUrlForm.php:67
 msgid "Use An Existing Pane"
@@ -1034,10 +1362,20 @@ msgstr "Tipo de armazenamento para as preferências do usuário"
 msgid "Username"
 msgstr "Nome do usuário"
 
+#: /usr/local/icingaweb/application/views/scripts/roles/index.phtml:16
+#: /usr/local/icingaweb/application/views/scripts/permissions/index.phtml:15
+#: /usr/local/icingaweb/application/forms/Security/RoleForm.php:71
+msgid "Users"
+msgstr "Usuários"
+
 #: /usr/local/icingaweb/application/forms/Config/Authentication/DbBackendForm.php:114
 #, php-format
 msgid "Using the specified backend failed: %s"
 msgstr "A utilização do backend especificado falhou: %s"
+
+#: /usr/local/icingaweb/application/views/scripts/config/module.phtml:35
+msgid "Version"
+msgstr "Versão"
 
 #: /usr/local/icingaweb/application/forms/Config/General/LoggingConfigForm.php:54
 msgctxt "app.config.logging.level"
@@ -1048,7 +1386,7 @@ msgstr "Atenção"
 msgid "Welcome to Icinga Web!"
 msgstr "Bem vindo ao Icinga Web"
 
-#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:14
+#: /usr/local/icingaweb/application/views/scripts/showConfiguration.phtml:13
 msgid "You don't have file-system permissions to write to the file"
 msgstr "Você não tem permissão no sistema de arquivos para gravar o arquivo"
 
@@ -1057,7 +1395,7 @@ msgid "You need to configure how to store preferences first."
 msgstr ""
 "Você precisa em primeiro lugar configurar as preferências de armazenamento."
 
-#: /usr/local/icingaweb/application/views/scripts/authentication/login.phtml:20
+#: /usr/local/icingaweb/application/views/scripts/authentication/login.phtml:21
 #, php-format
 msgid ""
 "You seem not to have Icinga Web 2 configured yet so it's not possible to log "
@@ -1082,12 +1420,32 @@ msgstr "Seu fuso horário atual"
 msgid "all"
 msgstr "todas"
 
+#: /usr/local/icingaweb/application/views/scripts/config/module.phtml:24
+msgid "disable"
+msgstr "desabilitar"
+
+#: /usr/local/icingaweb/application/views/scripts/config/modules.phtml:22
+msgid "disabled"
+msgstr "desabilitado"
+
+#: /usr/local/icingaweb/application/views/scripts/config/module.phtml:29
+msgid "enable"
+msgstr "habilitar"
+
+#: /usr/local/icingaweb/application/views/scripts/config/modules.phtml:22
+msgid "enabled"
+msgstr "habilitado"
+
+#: /usr/local/icingaweb/application/views/scripts/config/modules.phtml:22
+msgid "failed"
+msgstr "falhou"
+
 #: /usr/local/icingaweb/library/Icinga/Util/Format.php:83
 #: /usr/local/icingaweb/library/Icinga/Util/Format.php:89
 msgid "for"
-msgstr "até"
+msgstr "por"
 
-#: /usr/local/icingaweb/application/views/scripts/dashboard/index.phtml:13
+#: /usr/local/icingaweb/application/views/scripts/dashboard/index.phtml:14
 msgid "modules"
 msgstr "módulos"
 
@@ -1100,3 +1458,42 @@ msgstr "desde"
 #: /usr/local/icingaweb/application/views/scripts/config/devtools.phtml:5
 msgid "toggle"
 msgstr "alternar"
+
+#~ msgid "Component Name"
+#~ msgstr "Nome do componente"
+
+#~ msgid "Component created"
+#~ msgstr "Componente criado"
+
+#~ msgid "Component updated"
+#~ msgstr "Componente atualizado"
+
+#~ msgid "Remove Pane"
+#~ msgstr "Remover o painel"
+
+#~ msgid "Update Component"
+#~ msgstr "Atualizar componente"
+
+#~ msgid ""
+#~ "Click on the button to add the dashlet to an existing pane on your "
+#~ "dashboard."
+#~ msgstr ""
+#~ "Clique no botão para adicionar o dashlet a um painel existente no "
+#~ "dashboard."
+
+#~ msgid ""
+#~ "Decide if you want add the dashlet to an existing pane or create a new "
+#~ "pane. Have a look on the button below."
+#~ msgstr ""
+#~ "Decida se você quer adicionar o dashlet a um painel existente ou criar um "
+#~ "novo painel. Dê uma olhada no botão abaixo."
+
+#~ msgid ""
+#~ "Please have a little patience, we are hard working on it, take a look at "
+#~ "icingaweb2 issues."
+#~ msgstr ""
+#~ "Por favor, tenha um pouco de paciência, estamos trabalhando duro nisso, "
+#~ "dê uma olhada nos problemas do icingaweb2."
+
+#~ msgid "This feature is deactivated at the moment."
+#~ msgstr "Esta funcionalidade está desabilitada no momento."

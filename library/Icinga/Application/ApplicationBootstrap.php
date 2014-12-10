@@ -351,7 +351,7 @@ abstract class ApplicationBootstrap
      *
      * @return $this
      */
-    protected function setupZendAutoloader()
+    public function setupZendAutoloader()
     {
         require_once 'Zend/Loader/Autoloader.php';
 

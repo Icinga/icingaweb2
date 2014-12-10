@@ -19,7 +19,7 @@
             'config/module/',
             array('name' => $module->name)
         ) ?>"><?= $this->escape($module->name); ?></a> (<?=
-            $module->enabled ? ($module->loaded ? 'enabled' : 'failed') : 'disabled'
+            $module->enabled ? ($module->loaded ? $this->translate('enabled') : $this->translate('failed')) : $this->translate('disabled')
         ?>)
       </td>
     </tr>

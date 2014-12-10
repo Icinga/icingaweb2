@@ -217,7 +217,7 @@ class ResourceConfigForm extends ConfigForm
         if ($resourceType === 'ldap' || Platform::extensionLoaded('ldap')) {
             $resourceTypes['ldap'] = 'LDAP';
         }
-        if ($resourceType === 'db' || Platform::extensionLoaded('mysql') || Platform::extensionLoaded('pgsql')) {
+        if ($resourceType === 'db' || Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
             $resourceTypes['db'] = t('SQL Database');
         }
 

@@ -486,7 +486,7 @@ class DbTool
                 'GRANT %%s ON %s.%%s TO %s@%s',
                 $this->quoteIdentifier($this->config['dbname']),
                 $this->quoteIdentifier($username),
-                $this->quoteIdentifier($host)
+                str_replace('%', '%%', $this->quoteIdentifier($host))
             );
 
             $dbPrivileges = array();

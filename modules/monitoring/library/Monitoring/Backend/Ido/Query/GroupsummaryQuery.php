@@ -72,7 +72,15 @@ class GroupSummaryQuery extends IdoQuery
             )
         );
         if (in_array('servicegroup', $this->desiredColumns)) {
-            $hosts->group(array('sgo.name1', 'ho.object_id', 'state', 'acknowledged', 'in_downtime'));
+            $hosts->group(array(
+                'sgo.name1',
+                'ho.object_id',
+                'state',
+                'acknowledged',
+                'in_downtime',
+                'state_change',
+                'severity'
+            ));
         }
         $services = $this->createSubQuery(
             'Status',

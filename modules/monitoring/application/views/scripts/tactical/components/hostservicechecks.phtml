@@ -1,5 +1,5 @@
 <div class="box hostservicechecks">
-    <h2><?= $this->translate('Host- and Servicechecks'); ?></h2>
+    <h2><?= $this->translate('Host and Service Checks'); ?></h2>
     <div class="box contents">
         <table>
             <thead>
@@ -17,7 +17,7 @@
                                 'monitoring/list/hosts',
                                 array('host_active_checks_enabled' => 1)
                             ); ?>">
-                                <?= $this->statusSummary->hosts_active . ' ' . $this->translate('Active'); ?>
+                                <?= sprintf($this->translatePlural('%d Active', '%d Active', $this->statusSummary->hosts_active), $this->statusSummary->hosts_active); ?>
                             </a>
                         </div>
 <?php endif ?>
@@ -27,7 +27,7 @@
                                 'monitoring/list/hosts',
                                 array('host_active_checks_enabled' => 0, 'host_passive_checks_enabled' => 1)
                             ); ?>">
-                                <?= $this->statusSummary->hosts_passive . ' ' . $this->translate('Passive'); ?>
+                                <?= sprintf($this->translatePlural('%d Passive', '%d Passive', $this->statusSummary->hosts_passive), $this->statusSummary->hosts_passive); ?>
                             </a>
                         </div>
 <?php endif ?>
@@ -37,7 +37,7 @@
                                 'monitoring/list/hosts',
                                 array('host_active_checks_enabled' => 0, 'host_passive_checks_enabled' => 0)
                             ); ?>" style="color: red;">
-                                <?= $this->statusSummary->hosts_not_checked . ' ' . $this->translate('Disabled'); ?>
+                                <?= sprintf($this->translatePlural('%d Disabled', '%d Disabled', $this->statusSummary->hosts_not_checked), $this->statusSummary->hosts_not_checked); ?>
                             </a>
                         </div>
 <?php endif ?>
@@ -49,7 +49,7 @@
                                 'monitoring/list/services',
                                 array('service_active_checks_enabled' => 1)
                             ); ?>">
-                                <?= $this->statusSummary->services_active . ' ' . $this->translate('Active'); ?>
+                                <?= sprintf($this->translatePlural('%d Active', '%d Active', $this->statusSummary->services_active), $this->statusSummary->services_active); ?>
                             </a>
                         </div>
 <?php endif ?>
@@ -59,7 +59,7 @@
                                 'monitoring/list/services',
                                 array('service_active_checks_enabled' => 0, 'service_passive_checks_enabled' => 1)
                             ); ?>">
-                                <?= $this->statusSummary->services_passive . ' ' . $this->translate('Passive'); ?>
+                                <?=  sprintf($this->translatePlural('%d Passive', '%d Passive', $this->statusSummary->services_passive), $this->statusSummary->services_passive); ?>
                             </a>
                         </div>
 <?php endif ?>
@@ -69,7 +69,7 @@
                                 'monitoring/list/services',
                                 array('service_active_checks_enabled' => 0, 'service_passive_checks_enabled' => 0)
                             ); ?>" style="color: red;">
-                                <?= $this->statusSummary->services_not_checked . ' ' . $this->translate('Disabled'); ?>
+                                <?= sprintf($this->translatePlural('%d Disabled', '%d Disabled', $this->statusSummary->services_not_checked), $this->statusSummary->services_not_checked); ?>
                             </a>
                         </div>
 <?php endif ?>

@@ -50,7 +50,7 @@ class BackendPage extends Form
         );
 
         $resourceTypes = array();
-        if (Platform::extensionLoaded('mysql') || Platform::extensionLoaded('pgsql')) {
+        if (Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
             $resourceTypes['ido'] = 'IDO';
         }
         $resourceTypes['livestatus'] = 'Livestatus';

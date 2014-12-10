@@ -1,0 +1,27 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "parallels/centos-6.5"
+
+  config.vm.network "forwarded_port", guest: 80, host: 8080,
+    auto_correct: true
+
+  config.vm.provider "parallels" do |v|
+    v.name = "Icinga Web 2 Development"
+    # Update Parallels Tools automatically
+    v.update_guest_tools = true
+    # Set power consumption mode to "Better Performance"
+    v.optimize_power_consumption = false
+    v.memory = 1024
+    v.cpus = 2
+  end
+
+  config.puppet_install.puppet_version = :latest
+
+  config.vm.provision :puppet do |puppet|
+    puppet.module_path = ".vagrant-puppet/modules"
+    puppet.manifests_path = ".vagrant-puppet/manifests"
+    # puppet.options = "-v -d"
+  end
+end

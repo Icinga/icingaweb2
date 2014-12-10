@@ -64,7 +64,7 @@ class PreferencesPage extends Form
 
         $storageTypes = array();
         $storageTypes['ini'] = t('File System (INI Files)');
-        if (Platform::extensionLoaded('mysql') || Platform::extensionLoaded('pgsql')) {
+        if (Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
             $storageTypes['db'] = t('Database');
         }
         $storageTypes['null'] = t('Don\'t Store Preferences');
