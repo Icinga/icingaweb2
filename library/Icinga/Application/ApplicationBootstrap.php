@@ -133,7 +133,7 @@ abstract class ApplicationBootstrap
             if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
                 $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
             } else {
-                $configDir = '/etc/icingaweb';
+                $configDir = '/etc/icingaweb2';
             }
         }
         $canonical = realpath($configDir);
