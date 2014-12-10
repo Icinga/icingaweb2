@@ -56,7 +56,7 @@ foreach ($notifications as $notification):
     </td>
     <td style="font-size: 0.8em">
       <?php if ($isService): ?>
-        <a href="<?= $href ?>"><?= $notification->service ?></a> on <?= $notification->host ?>
+        <?= sprintf($this->translate('%s on %s'), "<a href=\"$href\">$notification->service</a>", $notification->host); ?>
       <?php else: ?>
         <a href="<?= $href ?>"><?= $notification->host ?></a>
       <?php endif; ?>
@@ -65,10 +65,10 @@ foreach ($notifications as $notification):
       <br />
       <?php if (!$this->contact): ?>
       <small>
-          Sent to <a href="<?= $this->href(
+          <?= sprintf($this->translate('Sent to %s'), "<a href=\"$this->href(
               'monitoring/show/contact',
               array('contact' => $notification->notification_contact)
-          ) ?>"><?= $this->escape($notification->notification_contact) ?></a>
+          )\">$this->escape($notification->notification_contact)</a>"); ?>
       </small>
       <?php endif ?>
     </td>
