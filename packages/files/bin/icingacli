@@ -3,4 +3,4 @@
 
 require_once '/usr/share/php/Icinga/Application/Cli.php';
 
-Icinga\Application\Cli::start('/usr/share/icingaweb')->dispatch();
+Icinga\Application\Cli::start('/usr/share/icingaweb2')->dispatch();
