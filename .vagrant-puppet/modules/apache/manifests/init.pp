@@ -35,7 +35,9 @@ class apache {
     require => Package['apache'],
   }
 
-  user { $user:
+  @user { $user:
     alias => 'apache',
   }
+
+  User <| alias == apache |>
 }
