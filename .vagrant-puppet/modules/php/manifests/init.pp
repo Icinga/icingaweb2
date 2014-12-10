@@ -23,6 +23,7 @@ class php {
     require => Package['apache'],
     notify  => Service['apache']
   }
+  # TODO(el): Always executed. Should be a resource
   -> exec { 'php-timezone':
     command => 'sed -re $\'s#^;?(date\\.timezone =).*$#\\1 "UTC"#\' -i /etc/php.ini',
     notify  => Service['apache'],
