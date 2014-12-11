@@ -2,6 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
+use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostCheckCommandForm;
@@ -75,5 +76,14 @@ class Monitoring_HostController extends MonitoredObjectController
     {
         $this->view->title = $this->translate('Schedule Host Downtime');
         $this->handleCommandForm(new ScheduleHostDowntimeCommandForm());
+    }
+
+    /**
+     * Submit a passive host check result
+     */
+    public function processCheckResultAction()
+    {
+        $this->view->title = $this->translate('Submit Passive Host Check Result');
+        $this->handleCommandForm(new ProcessCheckResultCommandForm());
     }
 }

@@ -5,7 +5,21 @@ $command = array_shift($parts);
 
 ?><tr class="newsection">
   <th><?= $this->translate('Command') ?></th>
-  <td><?= $this->escape($command) ?>
+  <td>
+    <?= $this->escape($command) ?>
+  <?php if ($object->passive_checks_enabled): ?>
+   <?php if ($object->getType() === $object::TYPE_HOST): ?>
+    <a href="<?= $this->href(
+      'monitoring/host/process-check-result',
+      array('host' => $object->getName())
+    ); ?>"><?= $this->icon('reply'); ?> <?= $this->translate('Process check result'); ?></a>
+   <?php else: ?>
+    <a href="<?= $this->href(
+      'monitoring/service/process-check-result',
+      array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+    ); ?>"><?= $this->icon('reply'); ?> <?= $this->translate('Process check result'); ?></a>
+   <?php endif ?>
+  <?php endif ?>
 </tr>
 <?php
 

@@ -4,6 +4,7 @@
 
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Controller;
+use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ObjectsCommandForm;
@@ -117,6 +118,9 @@ class Monitoring_ServicesController extends Controller
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/services');
         $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/services/reschedule-check');
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/services/schedule-downtime');
+        $this->view->processCheckResultAllLink = Url::fromRequest()->setPath(
+            'monitoring/services/process-check-result'
+        );
         $this->view->hostStates = $hostStates;
         $this->view->serviceStates = $serviceStates;
         $this->view->objects = $this->serviceList;
@@ -180,5 +184,14 @@ class Monitoring_ServicesController extends Controller
     {
         $this->view->title = $this->translate('Schedule Service Downtimes');
         $this->handleCommandForm(new ScheduleServiceDowntimeCommandForm());
+    }
+
+    /**
+     * Submit passive service check results
+     */
+    public function processCheckResultAction()
+    {
+        $this->view->title = $this->translate('Submit Passive Service Check Results');
+        $this->handleCommandForm(new ProcessCheckResultCommandForm());
     }
 }

@@ -59,6 +59,13 @@
             </a>
         </div>
 
+        <div>
+            <a href="<?= $processCheckResultAllLink; ?>">
+                <?= $this->icon('reply'); ?>
+                <?= $this->translate('Submit passive check results'); ?>
+            </a>
+        </div>
+
         <?php if (! empty($unhandledObjects)): ?>
         <h3>
             <?= sprintf(

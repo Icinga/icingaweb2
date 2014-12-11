@@ -2,6 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
+use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceCheckCommandForm;
@@ -75,5 +76,14 @@ class Monitoring_ServiceController extends MonitoredObjectController
     {
         $this->view->title = $this->translate('Schedule Service Downtime');
         $this->handleCommandForm(new ScheduleServiceDowntimeCommandForm());
+    }
+
+    /**
+     * Submit a passive service check result
+     */
+    public function processCheckResultAction()
+    {
+        $this->view->title = $this->translate('Submit Passive Service Check Result');
+        $this->handleCommandForm(new ProcessCheckResultCommandForm());
     }
 }
