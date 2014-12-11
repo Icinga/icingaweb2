@@ -13,6 +13,7 @@
 
 <?php
 $self = $this;
+$hostContext = $object->getType() === 'host';
 function contactsLink($match, $view) {
     $links = array();
     foreach (preg_split('/,\s/', $match[1]) as $contact) {
@@ -132,7 +133,13 @@ $output = $this->tickets ? preg_replace_callback(
 
 ?>
         <?php if ($isService): ?>
-          <?= $this->escape($event->service_description) . ' ' . $this->translate('on') . ' ' . $this->escape($event->host_name); ?>
+          <?= $hostContext ? $this->qlink(
+            $this->escape($event->service_description),
+            'monitoring/show/service',
+            array(
+              'host' => $event->host_name,
+              'service' => $event->service_description)
+            ) : $this->escape($event->service_description); ?> <?= $this->translate('on') . ' ' . $this->escape($event->host_name); ?>
         <?php else: ?>
           <?= $this->escape($event->host_name); ?>
         <?php endif ?>
