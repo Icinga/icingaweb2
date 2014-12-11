@@ -34,7 +34,7 @@ class ProcessCheckResultCommand extends ObjectCommand
     /**
      * Host unreachable
      */
-    const HOST_UNREACHABLE = 2;
+    const HOST_UNREACHABLE = 2; // TODO: Icinga 2.x does not support submitting results with this state, yet
 
     /**
      * Service ok
