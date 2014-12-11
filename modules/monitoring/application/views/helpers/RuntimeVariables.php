@@ -27,12 +27,24 @@ class Zend_View_Helper_RuntimeVariables extends Zend_View_Helper_Abstract
     public function create(stdClass $result)
     {
         $out = new stdClass();
-        $out->total_hosts = $result->total_hosts;
-        $out->total_scheduled_hosts = $result->total_scheduled_hosts;
-        $out->total_services = $result->total_services;
-        $out->total_scheduled_services = $result->total_scheduled_services;
-        $out->average_services_per_host = $result->total_services / $result->total_hosts;
-        $out->average_scheduled_services_per_host = $result->total_scheduled_services / $result->total_scheduled_hosts;
+        $out->total_hosts = isset($result->total_hosts)
+            ? $result->total_hosts
+            : 0;
+        $out->total_scheduled_hosts = isset($result->total_scheduled_hosts)
+            ? $result->total_scheduled_hosts
+            : 0;
+        $out->total_services = isset($result->total_services)
+            ? $result->total_services
+            : 0;
+        $out->total_scheduled_services = isset($result->total_scheduled_services)
+            ? $result->total_scheduled_services
+            : 0;
+        $out->average_services_per_host = $out->total_hosts > 0
+            ? $out->total_services / $out->total_hosts
+            : 0;
+        $out->average_scheduled_services_per_host = $out->total_scheduled_hosts > 0
+            ? $out->total_scheduled_services / $out->total_scheduled_hosts
+            : 0;
 
         return $out;
     }
