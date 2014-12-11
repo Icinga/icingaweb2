@@ -126,7 +126,7 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
         } else {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $commandString = sprintf(
-                'PROCESS_SVC_CHECK_RESULT;%s;%s',
+                'PROCESS_SERVICE_CHECK_RESULT;%s;%s',
                 $object->getHost()->getName(),
                 $object->getName()
             );
