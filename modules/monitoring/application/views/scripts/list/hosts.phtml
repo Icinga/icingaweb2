@@ -43,7 +43,7 @@ if ($hosts->count() === 0) {
   <tbody>
   <?php foreach($hosts as $host):
 
-    $hostStateName = strtolower($this->util()->getHostStateName($host->host_state));
+    $hostStateName = Host::getStateText($host->host_state);
     $hostLink = $this->href('monitoring/host/show', array('host' => $host->host_name));
 
     $icons = array();

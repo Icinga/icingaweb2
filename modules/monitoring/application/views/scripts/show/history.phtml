@@ -1,3 +1,10 @@
+<?php
+
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Object\Service;
+
+?>
+
 <div class="controls">
   <?= $this->render('show/components/header.phtml'); ?>
   <h1><?= $this->translate('This Object\'s Event History'); ?></h1>
@@ -33,11 +40,7 @@ function contactsLink($match, $view) {
         case 'notify':
           $icon = 'notification';
           $title = $this->translate('Notification');
-          $stateClass = (
-            $isService
-              ? strtolower($this->util()->getServiceStateName($event->state))
-              : strtolower($this->util()->getHostStateName($event->state))
-          );
+          $stateClass = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
 
           $msg = preg_replace_callback(
               '/^\[([^\]]+)\]/',
@@ -87,23 +90,23 @@ function contactsLink($match, $view) {
           break;
         case 'hard_state':
           $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $this->escape($event->output);
-          $stateClass = (
-            $isService
-              ? strtolower($this->util()->getServiceStateName($event->state))
-              : strtolower($this->util()->getHostStateName($event->state))
-          );
+          $stateClass = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
           $icon = 'attention-alt';
-          $title = strtoupper($stateClass); // TODO: Should be translatable!
+          $title = strtoupper(
+            $isService
+              ? Service::getStateText($event->state)
+              : Host::getStateText($event->state)
+          );
           break;
         case 'soft_state':
           $icon = 'spinner';
           $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $this->escape($event->output);
-          $stateClass = (
+          $stateClass = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
+          $title = strtoupper(
             $isService
-              ? strtolower($this->util()->getServiceStateName($event->state))
-              : strtolower($this->util()->getHostStateName($event->state))
+              ? Service::getStateText($event->state)
+              : Host::getStateText($event->state)
           );
-          $title = strtoupper($stateClass); // TODO: Should be translatable!
           break;
         case 'dt_start':
           $icon = 'downtime_start';

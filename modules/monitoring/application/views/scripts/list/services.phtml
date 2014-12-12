@@ -54,7 +54,7 @@ foreach ($services as $service):
         'host' => $service->host_name,
       )
     );
-    $serviceStateName = strtolower($this->util()->getServiceStateName($service->service_state));
+    $serviceStateName = Service::getStateText($service->service_state);
 ?>
     <tr class="state <?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
       <td class="state">

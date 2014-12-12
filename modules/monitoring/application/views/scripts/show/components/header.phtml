@@ -12,7 +12,7 @@ $showService = $object->getType() === $object::TYPE_SERVICE;
 <table class="objectstate">
     <tr class="state <?= Host::getStateText($object->host_state); ?><?= $object->host_handled ? ' handled' : '' ?>">
     <td class="state"<?= $showService ? '' : ' rowspan="2"' ?>>
-      <strong><?= $this->translate($this->util()->getHostStateName($object->host_state)) ?></strong><br />
+        <strong><?= strtoupper(Host::getStateText($object->host_state, true)); ?></strong><br />
       <?= $this->prefixedTimeSince($object->host_last_state_change, true) ?>
     </td>
     <td><b><?= $this->escape($object->host_name) ?></b><?php
@@ -24,7 +24,7 @@ $showService = $object->getType() === $object::TYPE_SERVICE;
 <?php if ($showService): ?>
   <tr class="state <?= Service::getStateText($object->service_state); ?><?= $object->service_handled ? ' handled' : '' ?>">
     <td class="state">
-      <strong><?= $this->translate($this->util()->getServiceStateName($object->service_state)) ?></strong><br />
+      <strong><?= strtoupper(Service::getStateText($object->service_state, true)); ?></strong><br />
       <?= $this->prefixedTimeSince($object->service_last_state_change, true) ?>
     </td>
     <td><b><?= $this->translate('Service') ?>: <?= $this->escape($object->service_description) ?></b>
