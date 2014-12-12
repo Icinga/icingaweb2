@@ -1,3 +1,10 @@
+<?php
+
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Object\Service;
+
+?>
+
 <?php if (false === $this->compact): ?>
 <div class="controls">
   <?= $this->tabs->render($this); ?>
@@ -24,9 +31,9 @@
     <?php foreach ($downtimes as $downtime): ?>
     <?php
       if (isset($downtime->service)) {
-          $stateName = strtolower($this->util()->getServiceStateName($downtime->service_state));
+          $stateName = Service::getStateText($downtime->service_state);
       } else {
-          $stateName = strtolower($this->util()->getHostStateName($downtime->host_state));
+          $stateName = Host::getStateText($downtime->host_state);
       }
     ?>
       <tr class="state <?= $stateName; ?><?= $downtime->is_in_effect ? ' handled' : ''; ?>">
