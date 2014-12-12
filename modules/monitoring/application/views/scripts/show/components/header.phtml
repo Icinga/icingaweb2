@@ -1,9 +1,16 @@
-<?php $showService = $object->getType() === $object::TYPE_SERVICE ?>
+<?php
+
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Object\Service;
+
+$showService = $object->getType() === $object::TYPE_SERVICE;
+
+?>
 <?php if (!$this->compact): ?>
 <?= $tabs ?>
 <?php endif ?>
 <table class="objectstate">
-  <tr class="state <?= $this->monitoringState($object, 'host') ?><?= $object->host_handled ? ' handled' : '' ?>">
+    <tr class="state <?= Host::getStateText($object->host_state); ?><?= $object->host_handled ? ' handled' : '' ?>">
     <td class="state"<?= $showService ? '' : ' rowspan="2"' ?>>
       <strong><?= $this->translate($this->util()->getHostStateName($object->host_state)) ?></strong><br />
       <?= $this->prefixedTimeSince($object->host_last_state_change, true) ?>
@@ -15,7 +22,7 @@
     </td>
   </tr>
 <?php if ($showService): ?>
-  <tr class="state <?= $this->monitoringState($object, 'service') ?><?= $object->service_handled ? ' handled' : '' ?>">
+  <tr class="state <?= Service::getStateText($object->service_state); ?><?= $object->service_handled ? ' handled' : '' ?>">
     <td class="state">
       <strong><?= $this->translate($this->util()->getServiceStateName($object->service_state)) ?></strong><br />
       <?= $this->prefixedTimeSince($object->service_last_state_change, true) ?>
