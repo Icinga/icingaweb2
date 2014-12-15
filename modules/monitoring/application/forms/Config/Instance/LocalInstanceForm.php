@@ -29,7 +29,7 @@ class LocalInstanceForm extends Form
             array(
                 'required'      => true,
                 'label'         => mt('monitoring', 'Command File'),
-                'value'         => '/usr/local/icinga/var/rw/icinga.cmd',
+                'value'         => '/var/run/icinga2/cmd/icinga2.cmd',
                 'description'   => mt('monitoring', 'Path to the local Icinga command file')
             )
         );

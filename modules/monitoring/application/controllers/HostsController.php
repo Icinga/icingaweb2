@@ -7,6 +7,7 @@ use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ObjectsCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandForm;
@@ -103,6 +104,7 @@ class Monitoring_HostsController extends Controller
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/hosts');
         $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/hosts/reschedule-check');
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/hosts/schedule-downtime');
+        $this->view->processCheckResultAllLink = Url::fromRequest()->setPath('monitoring/hosts/process-check-result');
         $this->view->hostStates = $hostStates;
         $this->view->objects = $this->hostList;
         $this->view->unhandledObjects = $unhandledObjects;
@@ -160,5 +162,14 @@ class Monitoring_HostsController extends Controller
     {
         $this->view->title = $this->translate('Schedule Host Downtimes');
         $this->handleCommandForm(new ScheduleHostDowntimeCommandForm());
+    }
+
+    /**
+     * Submit passive host check results
+     */
+    public function processCheckResultAction()
+    {
+        $this->view->title = $this->translate('Submit Passive Host Check Results');
+        $this->handleCommandForm(new ProcessCheckResultCommandForm());
     }
 }

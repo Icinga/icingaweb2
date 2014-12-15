@@ -1,3 +1,10 @@
+<?php
+
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Object\Service;
+
+?>
+
 <?php if (false === $this->compact): ?>
 <div class="controls">
   <?= $this->tabs ?>
@@ -62,22 +69,22 @@
         case 'hard_state':
           $icon = $isService ? 'service' : 'host';
           $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $event->output;
-          $stateName = (
+          $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
+          $title = strtoupper(
             $isService
-              ? strtolower($this->util()->getServiceStateName($event->state))
-              : strtolower($this->util()->getHostStateName($event->state))
+              ? Service::getStateText($event->state, true)
+              : Host::getStateText($event->state, true)
           );
-          $title = strtoupper($stateName); // TODO: Should be translatable!
           break;
         case 'soft_state':
           $icon = 'lightbulb';
           $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $event->output;
-          $stateName = (
+          $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
+          $title = strtoupper(
             $isService
-              ? strtolower($this->util()->getServiceStateName($event->state))
-              : strtolower($this->util()->getHostStateName($event->state))
+              ? Service::getStateText($event->state, true)
+              : Host::getStateText($event->state, true)
           );
-          $title = strtoupper($stateName); // TODO: Should be translatable!
           break;
         case 'dt_start':
           $icon = 'starttime';

@@ -1,4 +1,6 @@
 <?php
+use Icinga\Module\Monitoring\Object\Host;
+
 $helper = $this->getHelper('MonitoringState');
 
 if ($this->compact): ?>
@@ -41,7 +43,7 @@ if ($hosts->count() === 0) {
   <tbody>
   <?php foreach($hosts as $host):
 
-    $hostStateName = strtolower($this->util()->getHostStateName($host->host_state));
+    $hostStateName = Host::getStateText($host->host_state);
     $hostLink = $this->href('monitoring/host/show', array('host' => $host->host_name));
 
     $icons = array();
@@ -79,8 +81,8 @@ if ($hosts->count() === 0) {
     ?>
     <tr class="state <?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
       <!-- State -->
-      <td class="state" title="<?= $helper->getStateTitle($host, 'host') ?>">
-        <strong><?= ucfirst($helper->monitoringState($host, 'host')) ?></strong><br />
+      <td class="state">
+        <strong><?= strtoupper(Host::getStateText($host->host_state, true)); ?></strong><br />
         <?php if ((int) $host->host_state !== 99): ?>
         <?= $this->prefixedTimeSince($host->host_last_state_change, true) ?>
         <?php if ($host->host_state > 0 && (int) $host->host_state_type === 0): ?>

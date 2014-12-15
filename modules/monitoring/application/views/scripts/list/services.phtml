@@ -1,4 +1,7 @@
 <?php
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Object\Service;
+
 $helper = $this->getHelper('MonitoringState');
 
 $selfUrl = 'monitoring/list/services';
@@ -51,12 +54,11 @@ foreach ($services as $service):
         'host' => $service->host_name,
       )
     );
-    $serviceStateName = strtolower($this->util()->getServiceStateName($service->service_state));
+    $serviceStateName = Service::getStateText($service->service_state);
 ?>
     <tr class="state <?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
-      <td class="state" title="<?= $helper->getStateTitle($service, 'service'); ?>">
-        <strong><?= $this->translate(strtoupper($helper->monitoringState($service, 'service'))) ?></strong><br />
-
+      <td class="state">
+        <strong><?= strtoupper(Service::getStateText($service->service_state, true)); ?></strong><br />
             <?php if (!$this->compact): ?><?= $this->prefixedTimeSince($service->service_last_state_change); ?><?php else: ?><?= $this->timeSince($service->service_last_state_change); ?><?php endif ?>
             <?php if ($service->service_state > 0 && (int) $service->service_state_type === 0): ?>
               <br />
@@ -106,7 +108,7 @@ foreach ($services as $service):
       <?php endif ?>
 <a href="<?= $serviceLink ?>"><?= $service->service_display_name ?></a><?php if ($this->showHost): ?> on <a href="<?= $hostLink ?>"><?= $service->host_name; ?>
 <?php if ($service->host_state != 0): ?>
- (<?= ucfirst($helper->monitoringState($service, 'host')); ?>)
+  (<?= strtoupper(Host::getStateText($service->host_state, true)); ?>)
 <?php endif ?>
 </a><?php endif ?><br />
         <p class="pluginoutput"><?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?></p>
