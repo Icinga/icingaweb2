@@ -18,3 +18,5 @@ Fix steps that are always provisioned:
 ==> default: Notice: /Stage[main]/Icinga2_mysql/Icinga2::Feature[ido-mysql]/Icinga2::Config[features-available/ido-mysql]/Parent_dirs[/etc/icinga2/features-available/ido-mysql.conf]/Exec[parent_dirs-/etc/icinga2/features-available/ido-mysql.conf]/returns: executed successfully
 ==> default: Notice: /Stage[main]/Icinga2_pgsql/Icinga2::Feature[ido-pgsql]/Icinga2::Config[features-available/ido-pgsql]/Parent_dirs[/etc/icinga2/features-available/ido-pgsql.conf]/Exec[parent_dirs-/etc/icinga2/features-available/ido-pgsql.conf]/returns: executed successfully
 ==> default: Notice: /Stage[main]/Icinga2_pgsql/Icinga2::Feature[ido-pgsql]/Parent_dirs[/etc/icinga2/features-enabled/ido-pgsql.conf]/Exec[parent_dirs-/etc/icinga2/features-enabled/ido-pgsql.conf]/returns: executed successfully
+
+Fix provisioning for CentOS 7
