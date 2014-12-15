@@ -1,5 +1,7 @@
 class icingaweb2_dev (
+  $config   = hiera('icingaweb2::config'),
   $log      = hiera('icingaweb2::log'),
+  $web_path = hiera('icingaweb2::web_path'),
   $db_user  = hiera('icingaweb2::db_user'),
   $db_pass  = hiera('icingaweb2::db_pass'),
   $db_name  = hiera('icingaweb2::db_name'),
@@ -77,7 +79,7 @@ class icingaweb2_dev (
   }
 
   file { '/etc/httpd/conf.d/icingaweb.conf':
-    source    => 'puppet:////vagrant/.vagrant-puppet/files/etc/httpd/conf.d/icingaweb.conf',
+    content   => template("$name/icingaweb.conf.erb"),
     notify    => Service['apache'],
   }
 
