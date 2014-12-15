@@ -5,7 +5,7 @@ class icingaweb2::config (
       ensure => present,
   }
 
-  file { [ "${config}", "${config}/enabledModules", "${config}/modules" ]:
+  file { [ "${config}", "${config}/enabledModules", "${config}/modules", "${config}/preferences" ]:
     ensure  => directory,
     owner   => 'root',
     group   => 'icingaweb',
