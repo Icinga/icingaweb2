@@ -46,7 +46,8 @@ class icingaweb2_dev (
 
   User <| alias == apache |> { groups +> 'icingacmd' }
 
-  file { "${log}":
+  $log_dir = inline_template('<%= File.dirname(@log) %>')
+  file { $log_dir:
     ensure  => directory,
     owner   => 'root',
     group   => 'icingaweb',
