@@ -1,8 +1,5 @@
 [autologin]
 backend = autologin
-;
-; If you want to strip the domain
-; strip_username_regexp   = /\@[^$]+$/
 
 [icingaweb-mysql]
 backend  = db
@@ -12,8 +9,8 @@ resource = icingaweb-mysql
 backend  = db
 resource = icingaweb-pgsql
 
-[internal_ldap_authentication]
-backend  = ldap
-resource = internal_ldap
-user_class = inetOrgPerson
+[local-ldap]
+backend             = ldap
+resource            = local-ldap
+user_class          = inetOrgPerson
 user_name_attribute = uid
