@@ -6,7 +6,7 @@ define icingaweb2::config::general (
   include icingaweb2::config
 
   file { "${config}/${name}.ini":
-     source  => "${source}/${name}.ini",
+     content => template("${source}/${name}.ini.erb"),
      owner   => 'root',
      group   => 'icingaweb',
      mode    => 0660,
