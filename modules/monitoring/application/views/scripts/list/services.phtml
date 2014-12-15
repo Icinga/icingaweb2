@@ -67,7 +67,7 @@ foreach ($services as $service):
       </td>
 
       <td>
-        <?= $this->perfdata($service->service_perfdata, true, true) ?>
+        <?= $this->perfdata($service->service_perfdata, true) ?>
 
         <?php if (!$service->service_handled && $service->service_state > 0): ?>
         <?= $this->icon('attention-alt', $this->translate('Unhandled')) ?>

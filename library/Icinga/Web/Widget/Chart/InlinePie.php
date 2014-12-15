@@ -387,7 +387,7 @@ EOD;
 
             try {
                 $png = $pie->toPng($this->width, $this->height);
-                return '<img src="data:image/png;base64,' . base64_encode($png) . '" />';
+                return '<img class="inlinepie" src="data:image/png;base64,' . base64_encode($png) . '" />';
             } catch (IcingaException $_) {
                 return '';
             }
