@@ -4,7 +4,7 @@
 
 namespace Icinga\Chart;
 
-use Exception;
+use Imagick;
 use Icinga\Chart\Legend;
 use Icinga\Chart\Palette;
 use Icinga\Chart\Primitive\Drawable;
@@ -111,11 +111,34 @@ abstract class Chart implements Drawable
     }
 
     /**
+     * Return this graph rendered as PNG
+     *
+     * @param   int     $width      The width of the PNG in pixel
+     * @param   int     $height     The height of the PNG in pixel
+     *
+     * @return  string              A PNG binary string
+     *
+     * @throws  IcingaException     In case ImageMagick is not available
+     */
+    public function toPng($width, $height)
+    {
+        if (! class_exists('Imagick')) {
+            throw new IcingaException('Cannot render PNGs without ImageMagick');
+        }
+
+        $image = new Imagick();
+        $image->readImageBlob($this->render());
+        $image->setImageFormat('png24');
+        $image->resizeImage($width, $height, imagick::FILTER_LANCZOS, 1);
+        return $image;
+    }
+
+    /**
      * Align the chart to the top left corner instead of centering it
      *
      * @param bool $align
      */
-    public function alignTopLeft ($align = true)
+    public function alignTopLeft($align = true)
     {
         $this->align = $align;
     }

@@ -9,7 +9,7 @@ use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 
 class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 {
-    public function perfdata($perfdataStr, $compact = false, $float = false)
+    public function perfdata($perfdataStr, $compact = false)
     {
         $pset = PerfdataSet::fromString($perfdataStr)->asArray();
         $onlyPieChartData = array_filter($pset, function ($e) { return $e->getPercentage() > 0; });
@@ -24,11 +24,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         foreach ($onlyPieChartData as $perfdata) {
             $pieChart = $this->createInlinePie($perfdata);
             if ($compact) {
-                if (! $float) {
-                    $result .= $pieChart->render();
-                } else {
-                    $result .= '<div style="float: right;">' . $pieChart->render() . '</div>';
-                }
+                $result .= $pieChart->render();
             } else {
                 if (! $perfdata->isPercentage()) {
                     // TODO: Should we trust sprintf-style placeholders in perfdata titles?
