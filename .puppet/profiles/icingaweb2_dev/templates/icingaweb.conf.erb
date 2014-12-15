@@ -1,4 +1,4 @@
-Alias /icingaweb    /vagrant/public
+Alias /<%= @web_path %> /vagrant/public
 
 <Directory "/vagrant/public/">
     Options FollowSymLinks
@@ -6,12 +6,12 @@ Alias /icingaweb    /vagrant/public
     Order allow,deny
     Allow from all
 
-    # SetEnv ICINGAWEB_CONFIGDIR /etc/icingaweb
+    # SetEnv ICINGAWEB_CONFIGDIR <%= @config %>
 
     EnableSendfile Off
 
     RewriteEngine on
-    RewriteBase /icingaweb/
+    RewriteBase /<%= @web_path %>/
     RewriteCond %{REQUEST_FILENAME} -s [OR]
     RewriteCond %{REQUEST_FILENAME} -l [OR]
     RewriteCond %{REQUEST_FILENAME} -d
