@@ -1,4 +1,11 @@
+stage { 'repositories':
+  before => Stage['main'],
+}
+
 node 'localhost' {
+  class { 'epel':
+    stage => repositories,
+  }
   include icinga2_dev
   include icingaweb2_dev
   include motd
