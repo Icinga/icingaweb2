@@ -82,11 +82,11 @@ class icingaweb2_dev (
   }
 
   icingaweb2::config::general { 'authentication':
-    source  => 'puppet:///modules/icingaweb2_dev',
+    source => $name,
   }
 
-  icingaweb2::config::general { [ 'resources', 'config' ]:
-    source  => 'puppet:///modules/icingaweb2_dev',
+  icingaweb2::config::general { [ 'config', 'resources' ]:
+    source  => $name,
     replace => false,
   }
 
