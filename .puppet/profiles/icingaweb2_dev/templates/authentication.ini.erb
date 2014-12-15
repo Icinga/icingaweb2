@@ -1,0 +1,16 @@
+[autologin]
+backend = autologin
+
+[icingaweb-mysql]
+backend  = db
+resource = icingaweb-mysql
+
+[icingaweb-pgsql]
+backend  = db
+resource = icingaweb-pgsql
+
+[local-ldap]
+backend             = ldap
+resource            = local-ldap
+user_class          = inetOrgPerson
+user_name_attribute = uid
