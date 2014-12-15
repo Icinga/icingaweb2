@@ -2,7 +2,7 @@ stage { 'repositories':
   before => Stage['main'],
 }
 
-node 'localhost' {
+node default {
   class { 'epel':
     stage => repositories,
   }
