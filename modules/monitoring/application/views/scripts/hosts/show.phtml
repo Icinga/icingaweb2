@@ -6,7 +6,7 @@
         <?= $this->translate('No hosts matching the filter') ?>
     <?php else: ?>
         <div class="hbox-item">
-            <b><?= sprintf($this->translate('Hosts (%u)'), array_sum(array_values($hostStates)))  ?></b>
+            <b><?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', array_sum(array_values($hostStates))), array_sum(array_values($hostStates))) ?></b>
         </div>
         <div class="hbox-item">
             <?= $this->hostStatesPieChart ?>
@@ -18,9 +18,14 @@
         </div>
 
         <h3>
-            <?= sprintf($this->translate('%u Hosts'),
-                count($objects))
-            ?>
+            <?= sprintf(
+                $this->translatePlural(
+                    '%u Host',
+                    '%u Hosts',
+                     count($objects)
+                ), 
+                count($objects)
+            ) ?>
         </h3>
 
         <div>
@@ -102,7 +107,7 @@
                 <a href="<?= $inDowntimeLink ?>"
                    title="<?= $this->translate('Hosts in downtime') ?>">
                     <?= $this->icon('plug') ?>
-                    <?= $this->translate(sprintf('%u hosts are in downtime', count($objectsInDowntime))) ?>
+                    <?= sprintf($this->translatePlural('%u host is in downtime', '%u hosts are in downtime', count($objectsInDowntime)),count($objectsInDowntime)) ?>
                 </a>
             </h2>
         <?php endif ?>
@@ -112,7 +117,7 @@
                 <a href="<?= $havingCommentsLink ?>"
                    title="<?= $this->translate('Comments') ?>">
                     <?= $this->icon('comment') ?>
-                    <?= $this->translate(sprintf('%u comments', count($objects->getComments()))) ?>
+                    <?= sprintf($this->translatePlural('%u comment', '%u comments', count($objects->getComments())), count($objects->getComments())) ?>
                 </a>
             </h2>
         <?php endif ?>

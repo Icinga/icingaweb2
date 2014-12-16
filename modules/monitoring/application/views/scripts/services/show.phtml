@@ -8,7 +8,7 @@
 
         <div class="hbox">
             <div class="hbox-item" style="width: 6em;">
-                <b><?= sprintf($this->translate('Services (%u)'), array_sum(array_values($serviceStates))) ?></b>
+                <b><?= sprintf($this->translatePlural('Service (%u)', 'Services (%u)', array_sum(array_values($serviceStates))), array_sum(array_values($serviceStates))) ?></b>
             </div>
             <div class="hbox-item">
                 <?= $this->serviceStatesPieChart ?>
@@ -22,7 +22,7 @@
 
         <div class="hbox">
             <div class="hbox-item" style="width: 6em;">
-                <b><?= sprintf($this->translate('Hosts (%u)'), array_sum(array_values($hostStates)))  ?></b>
+                <b><?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', array_sum(array_values($hostStates))), array_sum(array_values($hostStates))) ?></b>
             </div>
             <div class="hbox-item">
                 <?= $this->hostStatesPieChart ?>
@@ -114,7 +114,7 @@
                 <a href="<?= $inDowntimeLink ?>"
                    title="<?= $this->translate('Services in downtime') ?>">
                     <?= $this->icon('plug') ?>
-                    <?= $this->translate(sprintf('%u services are in downtime', count($objectsInDowntime))) ?>
+                    <?= sprintf($this->translatePlural('%u service is in downtime', '%u services are in downtime', count($objectsInDowntime)), count($objectsInDowntime)) ?>
                 </a>
             </h2>
         <?php endif ?>
@@ -124,7 +124,7 @@
                 <a href="<?= $havingCommentsLink ?>"
                    title="<?= $this->translate('Comments') ?>">
                     <?= $this->icon('comment') ?>
-                    <?= $this->translate(sprintf('%u comments', count($objects->getComments()))) ?>
+                    <?= sprintf($this->translatePlural('%u comment', '%u comments', count($objects->getComments())), count($objects->getComments())) ?>
                 </a>
             </h2>
         <?php endif ?>
