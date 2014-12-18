@@ -1,3 +1,4 @@
+# TODO(el): This module is not reuseable because it relies on vagrant paths
 class icingacli {
   file { '/usr/local/bin/icingacli':
     ensure  => link,
