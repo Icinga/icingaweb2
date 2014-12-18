@@ -147,7 +147,7 @@ class Form extends Zend_Form
     /**
      * Set a callback that is called instead of this form's onSuccess method
      *
-     * It is called using the following signature: (Request $request, Form $form).
+     * It is called using the following signature: (Form $this).
      *
      * @param   callable    $onSuccess  Callback
      *
