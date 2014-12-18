@@ -12,6 +12,7 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Application\Logger;
 use Icinga\Util\TimezoneDetect;
+use Icinga\Web\Controller\Dispatcher;
 use Icinga\Web\Request;
 use Icinga\Web\Response;
 use Icinga\Web\View;
@@ -232,6 +233,8 @@ class Web extends ApplicationBootstrap
     {
         $this->frontController = Zend_Controller_Front::getInstance();
 
+        $this->frontController->setDispatcher(new Dispatcher());
+
         $this->frontController->setRequest($this->request);
 
         $this->frontController->setControllerDirectory($this->getApplicationDir('/controllers'));
@@ -334,6 +337,10 @@ class Web extends ApplicationBootstrap
         $this->getLoader()->registerNamespace(
             'Icinga\\Forms',
             $this->getApplicationDir('forms')
+        );
+        $this->getLoader()->registerNamespace(
+            'Icinga\\Controllers',
+            $this->getApplicationDir('controllers')
         );
         return $this;
     }
