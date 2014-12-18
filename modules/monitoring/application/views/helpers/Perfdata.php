@@ -84,21 +84,19 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 
     protected function createInlinePie(Perfdata $perfdata)
     {
-        $pieChart = new InlinePie($this->calculatePieChartData($perfdata), $perfdata->getLabel());
-        $pieChart->setLabel(htmlspecialchars($perfdata->getLabel()));
-        $pieChart->setHideEmptyLabel();
+        $pieChart = new InlinePie($this->calculatePieChartData($perfdata),
+            $perfdata->getLabel() . ' ' . (int)$perfdata->getPercentage() . '%');
+        $pieChart->setDisableTooltip();
+        if (Zend_Controller_Front::getInstance()->getRequest()->isXmlHttpRequest()) {
+            $pieChart->disableNoScript();
+        }
 
-        //$pieChart->setHeight(32)->setWidth(32);
         if ($perfdata->isBytes()) {
-            $pieChart->setTooltipFormat('{{label}}: {{formatted}} ({{percent}}%)');
             $pieChart->setNumberFormat(InlinePie::NUMBER_FORMAT_BYTES);
         } else if ($perfdata->isSeconds()) {
-            $pieChart->setTooltipFormat('{{label}}: {{formatted}} ({{percent}}%)');
             $pieChart->setNumberFormat(InlinePie::NUMBER_FORMAT_TIME);
         } else {
-            $pieChart->setTooltipFormat('{{label}}: {{formatted}}%');
             $pieChart->setNumberFormat(InlinePie::NUMBER_FORMAT_RATIO);
-            $pieChart->setHideEmptyLabel();
         }
         return $pieChart;
     }

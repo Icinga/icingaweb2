@@ -34,29 +34,19 @@ class InlinePie extends AbstractWidget
      * @var string
      */
     private $template =<<<'EOD'
-    <span
-        class="sparkline"
-        sparkTitle="{title}"
-        sparkWidth="{width}"
-        sparkHeight="{height}"
-        sparkBorderWidth="{borderWidth}"
-        sparkBorderColor="{borderColor}"
-        sparkTooltipChartTitle="{title}"
-        style="{style}"
-        labels="{labels}"
-        formatted="{formatted}"
-        hideEmptyLabel={hideEmptyLabel}
-        values="{data}"
-        tooltipFormat="{tooltipFormat}"
-        sparkSliceColors="[{colors}]"
-        sparkType="pie"></span>
-    <noscript>
-    <img class="inlinepie"
-        title="{title}" src="{url}" style="position: relative; top: 10px; width: {width}px; height: {height}px; {style}"
-        data-icinga-colors="{colors}" data-icinga-values="{data}"
-    />
-    </noscript>
+<span sparkType="pie" class="sparkline" {title} {disableTooltips} {size}
+    sparkSliceColors="[{colors}]" labels="{labels}" formatted="{formatted}" values="{data}"
+    tooltipFormat="{tooltipFormat}">
+</span>
+{noscript}
 EOD;
+
+    private $noscript =<<<'EOD'
+<noscript>
+  <img class="inlinepie {class}" {title} src="{url}" data-icinga-colors="{colors}" data-icinga-values="{data}"/>
+</noscript>
+EOD;
+
 
     /**
      * @var Url
@@ -71,34 +61,6 @@ EOD;
     private $colors = array('#44bb77', '#ffaa44', '#ff5566', '#ddccdd');
 
     /**
-     * The width of the rendered chart
-     *
-     * @var int The value in px
-     */
-    private $width = 16;
-
-    /**
-     * The height of the rendered chart
-     *
-     * @var int The value in px
-     */
-    private $height = 16;
-
-    /**
-     * PieChart border width
-     *
-     * @var float
-     */
-    private $borderWidth = 1;
-
-    /**
-     * The color of the border
-     *
-     * @var string
-     */
-    private $borderColor = '#fff';
-
-    /**
      * The title of the chart
      *
      * @var string
@@ -106,11 +68,9 @@ EOD;
     private $title;
 
     /**
-     * The style for the HtmlElement
-     *
-     * @var string
+     * @var
      */
-    private $style = '';
+    private $size;
 
     /**
      * The data displayed by the pie-chart
@@ -127,18 +87,16 @@ EOD;
     private $labels = array();
 
     /**
-     * If the tooltip for the "empty" area should be hidden
-     *
-     * @var bool
-     */
-    private $hideEmptyLabel = false;
-
-    /**
      * The format string used to display tooltips
      *
      * @var string
      */
-    private $tooltipFormat = '<b>{{title}}</b></br> {{label}}: {{formatted}} ({{percent}}%)';
+    private $tooltipFormat = '<b>{{title}}</b></br> {{label}} {{formatted}} ({{percent}}%)';
+
+    /**
+     * @var string
+     */
+    private $disableTooltips = '';
 
     /**
      * The number format used to render numeric values in tooltips
@@ -146,19 +104,6 @@ EOD;
      * @var array
      */
     private $format = self::NUMBER_FORMAT_NONE;
-
-    /**
-     * Set if the tooltip for the empty area should be hidden
-     *
-     * @param   bool $hide    Whether to hide the empty area
-     *
-     * @return  $this
-     */
-    public function setHideEmptyLabel($hide = true)
-    {
-        $this->hideEmptyLabel = $hide;
-        return $this;
-    }
 
     /**
      * Set the data to be displayed.
@@ -175,6 +120,27 @@ EOD;
     }
 
     /**
+     * Set the size of the inline pie
+     *
+     * @param int $size     Sets both, the height and width
+     *
+     * @return $this
+     */
+    public function setSize($size = null)
+    {
+        $this->size = $size;
+        return $this;
+    }
+
+    /**
+     * Do not display the NoScript fallback html
+     */
+    public function disableNoScript()
+    {
+        $this->noscript = '';
+    }
+
+    /**
      * The labels to be displayed in the pie-chart
      *
      * @param   mixed $label     The label of the displayed value, or null for no labels
@@ -186,7 +152,7 @@ EOD;
         if (is_array($label)) {
             $this->url->setParam('labels', implode(',', array_keys($label)));
         } elseif ($label != null) {
-            $labelArr =  array($label, $label, $label, '');
+            $labelArr =  array($label, $label, $label, $label);
             $this->url->setParam('labels', implode(',', $labelArr));
             $label = $labelArr;
         } else {
@@ -251,69 +217,6 @@ EOD;
     }
 
     /**
-     * Set the height
-     *
-     * @param   $height
-     *
-     * @return  $this
-     */
-    public function setHeight($height)
-    {
-        $this->height = $height;
-        return $this;
-    }
-
-    /**
-     * Set the border width of the pie chart
-     *
-     * @param   float $width    Width in px
-     *
-     * @return  $this
-     */
-    public function setBorderWidth($width)
-    {
-        $this->borderWidth = $width;
-        return $this;
-    }
-
-    /**
-     * Set the color of the pie chart border
-     *
-     * @param   string $col   The color string
-     *
-     * @return  $this
-     */
-    public function setBorderColor($col)
-    {
-        $this->borderColor = $col;
-    }
-
-    /**
-     * Set the width
-     *
-     * @param   $width
-     *
-     * @return  $this
-     */
-    public function setWidth($width)
-    {
-        $this->width = $width;
-        return $this;
-    }
-
-    /**
-     * Set the styling of the created HtmlElement
-     *
-     * @param   string $style
-     *
-     * @return  $this
-     */
-    public function setStyle($style)
-    {
-        $this->style = $style;
-    }
-
-    /**
      * Set the title of the displayed Data
      *
      * @param   string $title
@@ -322,8 +225,18 @@ EOD;
      */
     public function setTitle($title)
     {
-        $this->title = $title;
+        $this->title = 'title="' .  htmlspecialchars($title) . '"';
         return $this;
+    }
+
+    /**
+     * Whether to display tooltips for the InlinePie
+     *
+     * @param bool $val
+     */
+    public function setDisableTooltip($val = true)
+    {
+        $this->disableTooltips = $val !== true ? '' : 'sparkDisableTooltips="true"';
     }
 
     /**
@@ -335,7 +248,7 @@ EOD;
      */
     public function __construct(array $data, $title, $colors = null)
     {
-        $this->title = $title;
+        $this->setTitle($title);
         $this->url = Url::fromPath('svg/chart.php');
         if (array_key_exists('data', $data)) {
             $this->data = $data['data'];
@@ -386,7 +299,7 @@ EOD;
             ));
 
             try {
-                $png = $pie->toPng($this->width, $this->height);
+                $png = $pie->toPng($this->size, $this->size);
                 return '<img class="inlinepie" src="data:image/png;base64,' . base64_encode($png) . '" />';
             } catch (IcingaException $_) {
                 return '';
@@ -394,17 +307,15 @@ EOD;
         }
 
         $template = $this->template;
+        // TODO: Check whether we are XHR and don't send
+        $template = str_replace('{noscript}', $this->noscript, $template);
         $template = str_replace('{url}', $this->url, $template);
 
         // style
-        $template = str_replace('{width}', $this->width, $template);
-        $template = str_replace('{height}', $this->height, $template);
-        $template = str_replace('{title}', htmlspecialchars($this->title), $template);
-        $template = str_replace('{style}', $this->style, $template);
+        $template = str_replace('{size}',
+            isset($this->size) ? 'sparkWidth="' . $this->size . '" sparkHeight="' . $this->size . '" ' : '', $template);
+        $template = str_replace('{title}', $this->title, $template);
         $template = str_replace('{colors}', implode(',', $this->colors), $template);
-        $template = str_replace('{borderWidth}', $this->borderWidth, $template);
-        $template = str_replace('{borderColor}', $this->borderColor, $template);
-        $template = str_replace('{hideEmptyLabel}', $this->hideEmptyLabel ? 'true' : 'false', $template);
 
         // Locale-ignorant string cast. Please. Do. NOT. Remove. This. Again.
         // Problem is that implode respects locales when casting floats. This means
@@ -423,6 +334,7 @@ EOD;
         $template = str_replace('{formatted}', htmlspecialchars(implode('|', $formatted)), $template);
         $template = str_replace('{labels}', htmlspecialchars($this->createLabelString()), $template);
         $template = str_replace('{tooltipFormat}', $this->tooltipFormat, $template);
+        $template = str_replace('{disableTooltips}', $this->disableTooltips, $template);
         return $template;
     }
 

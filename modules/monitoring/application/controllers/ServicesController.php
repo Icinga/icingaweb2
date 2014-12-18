@@ -160,8 +160,7 @@ class Monitoring_ServicesController extends Controller
         $chart = new InlinePie(array_values($states), $title, $colors);
         return $chart
             ->setLabel(array_map('strtoupper', array_keys($states)))
-            ->setHeight(100)
-            ->setWidth(100)
+            ->setSize(100)
             ->setTitle($title);
     }
 

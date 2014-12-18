@@ -21,31 +21,32 @@
             var $spark            = $(element);
             var labels            = $spark.attr('labels').split('|');
             var formatted         = $spark.attr('formatted').split('|');
-            var tooltipChartTitle = $spark.attr('sparkTooltipChartTitle') || '';
-            var format            = $spark.attr('tooltipformat');
-            var hideEmpty         = $spark.attr('hideEmptyLabel') === 'true';
-            $spark.sparkline(
-                'html',
-                {
-                    enableTagOptions: true,
-                    tooltipFormatter: function (sparkline, options, fields) {
-                        var out       = format;
-                        if (hideEmpty && fields.offset === 3) {
-                            return '';
-                        }
-                        var replace   = {
-                            title:     tooltipChartTitle,
-                            label:     labels[fields.offset] ? labels[fields.offset] : fields.offset,
-                            formatted: formatted[fields.offset] ? formatted[fields.offset] : '',
-                            value:     fields.value,
-                            percent:   Math.round(fields.percent * 100) / 100
-                        };
-                        $.each(replace, function(key, value) {
-                            out = out.replace('{{' + key + '}}', value);
-                        });
-                        return out;
-                    }
-            });
+            var title             = $spark.attr('title');
+            var format            = $spark.attr('tooltipFormat');
+
+            if ($spark.attr('labels')) {
+                $spark.removeAttr('original-title');
+            }
+            var options = {
+                enableTagOptions: true,
+                width: $spark.attr('sparkWidth') || 12,
+                height: $spark.attr('sparkHeight') || 12,
+                tooltipFormatter: function (sparkline, options, fields) {
+                    var out       = format;
+                    var replace   = {
+                        title:     title,
+                        label:     labels[fields.offset] ? labels[fields.offset] : fields.offset,
+                        formatted: formatted[fields.offset] ? formatted[fields.offset] : '',
+                        value:     fields.value,
+                        percent:   Math.round(fields.percent * 100) / 100
+                    };
+                    $.each(replace, function(key, value) {
+                        out = out.replace('{{' + key + '}}', value);
+                    });
+                    return out;
+                }
+            };
+            $spark.sparkline('html', options);
         });
     };
 
