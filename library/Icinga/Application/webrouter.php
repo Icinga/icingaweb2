@@ -92,7 +92,7 @@ if (in_array($path, $special)) {
     header('Content-Type: image/svg+xml');
     $pie = new PieChart();
     $pie->initFromRequest();
-    echo $pie->render();
+    $pie->toSvg();
 
 } elseif ($path === 'png/chart.php') {
     if (!array_key_exists('data', $_GET)) {

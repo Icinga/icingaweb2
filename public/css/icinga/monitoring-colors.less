@@ -65,11 +65,12 @@ table.action td a:hover {
   text-decoration: underline;
 }
 
-table.action div.inlinepie {
+table.action span.sparkline, table.action img.inlinepie {
   margin: 0.5em 0.25em 0.5em 0.25em;
+  float:right;
 }
 
-.dashboard table.action div.inlinepie {
+.dashboard table.action span.sparkline, .dashboard table.action img.inlinepie {
   margin: 0em 0.25em 0em 0.25em;
 }
 
@@ -194,7 +195,7 @@ tr.state.handled td.state {
 }
 
 /* HOVER colors */
-tr[href]:hover {
+tr.state:hover, tr[href]:hover {
   color: black;
   background-color: #eee;
 }

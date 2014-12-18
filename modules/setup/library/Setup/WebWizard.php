@@ -461,12 +461,25 @@ class WebWizard extends Wizard implements SetupWizard
             mt('setup', 'PHP Module: GD'),
             mt(
                 'setup',
-                'In case you want icons and graphs being exported to PDF'
-                . ' as well, you\'ll need the GD extension for PHP.'
+                'In case you want icons being exported to PDF as'
+                . ' well, you\'ll need the GD extension for PHP.'
             ),
             Platform::extensionLoaded('gd'),
             Platform::extensionLoaded('gd') ? mt('setup', 'The PHP module GD is available') : (
                 mt('setup', 'The PHP module GD is missing')
+            )
+        );
+
+        $requirements->addOptional(
+            mt('setup', 'PHP Module: Imagick'),
+            mt(
+                'setup',
+                'In case you want graphs being exported to PDF as well'
+                . ', you\'ll need the ImageMagick extension for PHP.'
+            ),
+            Platform::extensionLoaded('imagick'),
+            Platform::extensionLoaded('imagick') ? mt('setup', 'The PHP module Imagick is available') : (
+                mt('setup', 'The PHP module Imagick is missing')
             )
         );
 

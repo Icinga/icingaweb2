@@ -1,0 +1,43 @@
+[icingaweb-mysql]
+type        = db
+db          = mysql
+host        = localhost
+port        = 3306
+username    = <%= @db_user %>
+password    = <%= @db_pass %>
+dbname      = <%= @db_name %>
+
+[icingaweb-pgsql]
+type        = db
+db          = pgsql
+host        = localhost
+port        = 5432
+username    = <%= @db_user %>
+password    = <%= @db_pass %>
+dbname      = <%= @db_name %>
+
+[ido-mysql]
+type        = db
+db          = mysql
+host        = localhost
+port        = 3306
+password    = icinga2
+username    = icinga2
+dbname      = icinga2
+
+[ido-pgsql]
+type        = db
+db          = pgsql
+host        = localhost
+port        = 5432
+password    = icinga2
+username    = icinga2
+dbname      = icinga2
+
+[local-ldap]
+type        = ldap
+hostname    = localhost
+port        = 389
+root_dn     = "ou=people,dc=icinga,dc=org"
+bind_dn     = "cn=admin,cn=config"
+bind_pw     = admin

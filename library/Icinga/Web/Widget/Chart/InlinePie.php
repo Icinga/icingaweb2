@@ -4,10 +4,12 @@
 
 namespace Icinga\Web\Widget\Chart;
 
+use Icinga\Chart\PieChart;
 use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Url;
 use Icinga\Util\Format;
 use Icinga\Application\Logger;
+use Icinga\Exception\IcingaException;
 
 /**
  * A SVG-PieChart intended to be displayed as a small icon next to labels, to offer a better visualization of the
@@ -375,6 +377,22 @@ EOD;
      */
     public function render()
     {
+        if ($this->view()->layout()->getLayout() === 'pdf') {
+            $pie = new PieChart();
+            $pie->alignTopLeft();
+            $pie->disableLegend();
+            $pie->drawPie(array(
+                'data' => $this->data, 'colors' => $this->colors, 'labels' => $this->labels
+            ));
+
+            try {
+                $png = $pie->toPng($this->width, $this->height);
+                return '<img class="inlinepie" src="data:image/png;base64,' . base64_encode($png) . '" />';
+            } catch (IcingaException $_) {
+                return '';
+            }
+        }
+
         $template = $this->template;
         $template = str_replace('{url}', $this->url, $template);
 
