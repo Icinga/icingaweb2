@@ -85,13 +85,31 @@ Directive               | Description
 ```
 [auth_ad]
 backend  = ad
-resource = my_db
+resource = icingaweb-mysql
 ```
+
+#### <a id="authentication-configuration-db-setup"></a> Database Setup
+
+For authenticating against a database, you have to import one of the following database schemas:
+
+* **etc/schema/preferences.mysql.sql** (for **MySQL** database)
+* **etc/schema/preferences.pgsql.sql** (for **PostgreSQL** databases)
+
+After that you have to define the [database resource](#resources-configuration-database).
 
 **Manually Creating Users**
 
+Icinga Web 2 uses the MD5 based BSD password algorithm. For generating a password hash, please use the following
+command:
+
 ````
 openssl passwd -1 "password"
+````
 
+> Note: The switch to `openssl passwd` is the **number one** (`-1`) for using the MD5 based BSD password algorithm.
+
+Insert the user into the database using the generated password hash:
+
+````
 INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 1, 'hash from openssl');
 ````
