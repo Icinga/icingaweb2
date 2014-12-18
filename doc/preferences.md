@@ -1,101 +1,53 @@
-# Preferences
+# <a id="preferences"></a> Preferences
 
-Preferences are user based configuration for Icinga Web 2. For example max page
-items, languages or date time settings can controlled by users.
+Preferences are settings a user can set for his account only, for example his language and time zone.
 
-# Architecture
+**Choosing Where to Store Preferences**
 
-Preferences are initially loaded from a provider (ini files or database) and
-stored into session at login time. After this step preferences are only
-persisted to the configured backend, but never reloaded from them.
+Preferences can be stored either in INI files or in a MySQL or in a PostgreSQL database. By default, Icinga Web 2 stores
+preferences in INI files beneath Icinga Web 2's configuration directory.
 
-# Configuration
+## <a id="preferences-configuration"></a> Configuration
 
-Preferences can be configured in config.ini in **preferences** section, default
-settings are this:
+Where to store preferences is defined in the INI file **config/config.ini** in the *preferences* section.
 
-    [preferences]
-    type=ini
+### <a id="preferences-configuration-ini"></a> Store Preferences in INI Files
 
-The ini provider uses the directory **config/preferences** to create one ini
-file per user and persists the data into a single file. If you want to drop your
-preferences just drop the file from disk and you'll start with a new profile.
+If preferences are stored in INI Files, Icinga Web 2 automatically creates one file per user using the username as
+file name for storing preferences. A INI file is created once a user saves changed preferences the first time.
+The files are located beneath the `preferences` directory beneath Icinga Web 2's configuration directory.
 
-## Database Provider
+For storing preferences in INI files you have to add the following section to the INI file **config/config.ini**:
 
-To be more flexible in distributed setups you can store preferences in a
-database (pgsql or mysql), a typical configuration looks like the following
-example:
+```
+[preferences]
+type = ini
+````
 
-    [preferences]
-    type=db
-    resource=icingaweb-pgsql
+### <a id="preferences-configuration-db"></a> Store Preferences in a Database
 
-## Null Provider
+In order to be more flexible in distributed setups you can store preferences in a MySQL or in a PostgreSQL database.
+For storing preferences in a database, you have to define a [database resource](#resources-configuration-database)
+which will be referenced as resource for the preferences storage.
 
-The Null Provider discards all preferences and is mainly used as a fallback when no provider could be
-created (due to permission errors, database outtakes, etc.).
+Directive               | Description
+------------------------|------------
+**type**                | `db`
+**resource**            | The name of the database resource defined in [resources.ini](resources).
 
-    [preferences]
-    type=null
+**Example:**
 
-If your preferences aren't stored it's best to take a look into the logfiles - errors during the preference setup
-are displayed as warnings here.
+```
+[preferences]
+type     = db
+resource = icingaweb-mysql
+```
 
-### Settings
+#### <a id="preferences-configuration-db-setup"></a> Database Setup
 
-* **resource**: A reference to a database declared in *resources.ini*. Please read the chapter about
- resources for a detailed description about how to set up resources.
+For storing preferences in a database, you have to import one of the following database schemas:
 
-### Preparation
+* **etc/schema/preferences.mysql.sql** (for **MySQL** database)
+* **etc/schema/preferences.pgsql.sql** (for **PostgreSQL** databases)
 
-To use this feature you need a running database environment. After creating a
-database and a writable user you need to import the initial table file:
-
-* etc/schema/preferences.mysql.sql (for mysql database)
-* etc/schema/preferemces.pgsql.sql (for postgres databases)
-
-#### Example for mysql
-
-    # mysql -u root -p
-    mysql> create database icingaweb;
-    mysql> GRANT SELECT,INSERT,UPDATE,DELETE ON icingaweb.* TO \
-        'icingaweb'@'localhost' IDENTIFIED BY 'icingaweb';
-    mysql> exit
-    # mysql -u root -p icingaweb < /path/to/icingaweb/etc/schema/preferences.mysql.sql
-
-After following these steps above you can configure your preferences provider.
-
-## Coding API
-
-You can set, update or remove preferences using the Preference data object
-which is bound to the user. Here are some simple examples how to work with
-that:
-
-    $preferences = $user->getPreferences();
-    // Get language with en_US as fallback
-    $preferences->get('app.language', 'en_US');
-    $preferences->set('app.language', 'de_DE');
-    $preferences->remove('app.language');
-
-    // Using transactional mode
-    $preferences->startTransaction();
-    $preferences->set('test.pref1', 'pref1');
-    $preferences->set('test.pref2', 'pref2');
-    $preferences->remove('test.pref3');
-    $preferemces->commit(); // Stores 3 changes in one operation
-
-More information can be found in the api docs.
-
-## Namespaces and behaviour
-
-If you are using this API please obey the following rules:
-
-* Use dotted notation for preferences
-* Namespaces starting with one context identifier
-    * **app** as global identified (e.g. app.language)
-    * **mymodule** for your module
-    * **monitoring** for the monitoring module
-* Use preferences wisely (set only when needed and write small settings)
-* Use only simple data types, e.g. strings or numbers
-    * If you need complex types you have to do it your self (e.g. serialization)
+After that you have to define the [database resource](#resources-configuration-database).
