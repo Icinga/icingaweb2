@@ -2,21 +2,23 @@
 
 **Choosing the Authentication Method**
 
-With Icinga Web 2 you can authenticate against Active Directory, LDAP, a MySQL or PostgreSQL database or delegate
-authentication to the web server. Authentication methods can be chained to set up fallback authentication methods
+With Icinga Web 2 you can authenticate against Active Directory, LDAP, a MySQL or a PostgreSQL database or delegate
+authentication to the web server.
+
+Authentication methods can be chained to set up fallback authentication methods
 or if users are spread over multiple places.
 
-## Configuration
+## <a id="authentication-configuration"></a> Configuration
 
 Authentication methods are configured in the INI file **config/authentication.ini**.
 
 Each section in the authentication configuration represents a single authentication method.
 
 The order of entries in the authentication configuration determines the order of the authentication methods.
-If the current authentication method errors or the current authentication method does not know the account being
+If the current authentication method errors or if the current authentication method does not know the account being
 authenticated, the next authentication method will be used.
 
-## External Authentication
+### <a id="authentication-configuration-external-authentication"></a> External Authentication
 
 For delegating authentication to the web server simply add `autologin` to your authentication configuration:
 
@@ -27,13 +29,13 @@ backend = autologin
 
 If your web server is not configured for authentication though the `autologin` section has no effect.
 
-## Active Directory or LDAP Authentication
+### <a id="authentication-configuration-ad-or-ldap-authentication"></a> Active Directory or LDAP Authentication
 
 If you want to authenticate against Active Directory or LDAP, you have to define a
-[LDAP resource](#resources-configuration-ldap) first which will be referenced as data source for the Active Directory
+[LDAP resource](#resources-configuration-ldap) which will be referenced as data source for the Active Directory
 or LDAP configuration method.
 
-### LDAP
+#### <a id="authentication-configuration-ldap-authentication"></a> LDAP
 
 Directive               | Description
 ------------------------|------------
@@ -52,7 +54,7 @@ user_class          = inetOrgPerson
 user_name_attribute = uid
 ```
 
-### Active Directory
+#### <a id="authentication-configuration-ad-authentication"></a> Active Directory
 
 Directive               | Description
 ------------------------|------------
@@ -67,10 +69,10 @@ backend  = ad
 resource = my_ad
 ```
 
-## Database Authentication
+### <a id="authentication-configuration-db-authentication"></a> Database Authentication
 
-If you want to authenticate against a MySQL or PostgreSQL database, you have to define a
-[database resource](#resources-configuration-database) first which will be referenced as data source for the database
+If you want to authenticate against a MySQL or a PostgreSQL database, you have to define a
+[database resource](#resources-configuration-database) which will be referenced as data source for the database
 authentication method.
 
 Directive               | Description
