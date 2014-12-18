@@ -4,6 +4,7 @@
 
 namespace Icinga\Web\Widget\Tabextension;
 
+use Icinga\Application\Platform;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tab;
 use Icinga\Web\Widget\Tabs;
@@ -29,35 +30,6 @@ class OutputFormat implements Tabextension
     const TYPE_CSV = 'csv';
 
     /**
-     * An array containing the tab definitions for all supported types
-     *
-     * Using array_keys on this array or isset allows to check whether a
-     * requested type is supported
-     *
-     * @var array
-     */
-    private $supportedTypes = array(
-        self::TYPE_PDF => array(
-            'name'      => 'pdf',
-            'title'     => 'PDF',
-            'icon'      => 'file-pdf',
-            'urlParams' => array('format' => 'pdf'),
-        ),
-        self::TYPE_CSV => array(
-            'name'      => 'csv',
-            'title'     => 'CSV',
-            'icon'      => 'file-excel',
-            'urlParams' => array('format' => 'csv')
-        ),
-        self::TYPE_JSON => array(
-            'name'      => 'json',
-            'title'     => 'JSON',
-            'icon'      => 'img/icons/json.png',
-            'urlParams' => array('format' => 'json')
-        )
-    );
-
-    /**
      * An array of tabs to be added to the dropdown area
      *
      * @var array
@@ -74,7 +46,7 @@ class OutputFormat implements Tabextension
      */
     public function __construct(array $disabled = array())
     {
-        foreach ($this->supportedTypes as $type => $tabConfig) {
+        foreach ($this->getSupportedTypes() as $type => $tabConfig) {
             if (!in_array($type, $disabled)) {
                 $tabConfig['url'] = Url::fromRequest();
                 $tabConfig['tagParams'] = array(
@@ -97,5 +69,45 @@ class OutputFormat implements Tabextension
         foreach ($this->tabs as $tab) {
             $tabs->addAsDropdown($tab->getName(), $tab);
         }
+    }
+
+    /**
+     * Return an array containing the tab definitions for all supported types
+     *
+     * Using array_keys on this array or isset allows to check whether a
+     * requested type is supported
+     *
+     * @return  array
+     */
+    public function getSupportedTypes()
+    {
+        $supportedTypes = array();
+
+        if (Platform::extensionLoaded('gd')) {
+            $supportedTypes[self::TYPE_PDF] = array(
+                'name'      => 'pdf',
+                'title'     => 'PDF',
+                'icon'      => 'file-pdf',
+                'urlParams' => array('format' => 'pdf'),
+            );
+        }
+
+        $supportedTypes[self::TYPE_CSV] = array(
+            'name'      => 'csv',
+            'title'     => 'CSV',
+            'icon'      => 'file-excel',
+            'urlParams' => array('format' => 'csv')
+        );
+
+        if (Platform::extensionLoaded('json')) {
+            $supportedTypes[self::TYPE_JSON] = array(
+                'name'      => 'json',
+                'title'     => 'JSON',
+                'icon'      => 'img/icons/json.png',
+                'urlParams' => array('format' => 'json')
+            );
+        }
+
+        return $supportedTypes;
     }
 }

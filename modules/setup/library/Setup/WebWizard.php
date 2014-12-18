@@ -461,8 +461,8 @@ class WebWizard extends Wizard implements SetupWizard
             mt('setup', 'PHP Module: GD'),
             mt(
                 'setup',
-                'In case you want icons being exported to PDF as'
-                . ' well, you\'ll need the GD extension for PHP.'
+                'In case you want views being exported to PDF,'
+                . ' you\'ll need the GD extension for PHP.'
             ),
             Platform::extensionLoaded('gd'),
             Platform::extensionLoaded('gd') ? mt('setup', 'The PHP module GD is available') : (
