@@ -96,7 +96,15 @@
                 'servicegroup'  => $s->servicegroup,
                 'sort'          => 'service_severity'
               )
-            ); ?>" title="<?= $this->translate('Services OK'); ?>">
+            ); ?>" title="<?php printf(
+              $this->translatePlural(
+                '%s Service OK in servicegroup `%s\'',
+                '%s Services OK in servicegroup `%s\'',
+                $s->services_ok
+              ),
+              $s->services_ok,
+              $s->servicegroup
+            ); ?>">
               <?= $s->services_ok; ?>
             </a>
           </span>
@@ -113,7 +121,15 @@
                 'servicegroup'          => $s->servicegroup,
                 'sort'                  => 'service_severity'
               )
-            ); ?>" title="<?= $this->translate('Services CRITICAL Unhandled'); ?>">
+            ); ?>" title="<?php printf(
+              $this->translatePlural(
+                '%s Service CRITICAL Unhandled in servicegroup `%s\'',
+                '%s Services CRITICAL Unhandled in servicegroup `%s\'',
+                $s->services_critical_unhandled
+              ),
+              $s->services_critical_unhandled,
+              $s->servicegroup
+            ); ?>">
               <?= $s->services_critical_unhandled; ?>
             </a>
         <?php endif ?>
@@ -127,7 +143,15 @@
                   'servicegroup'      => $s->servicegroup,
                   'sort'              => 'service_severity'
                 )
-              ); ?>" title="<?= $this->translate('Services CRITICAL Handled'); ?>">
+              ); ?>" title="<?php printf(
+                $this->translatePlural(
+                  '%s Service CRITICAL Handled in servicegroup `%s\'',
+                  '%s Services CRITICAL Handled in servicegroup `%s\'',
+                  $s->services_critical_handled
+                ),
+                $s->services_critical_handled,
+                $s->servicegroup
+              ); ?>">
                 <?= $s->services_critical_handled; ?>
               </a>
             </span>
@@ -147,7 +171,15 @@
                 'servicegroup'          => $s->servicegroup,
                 'sort'                  => 'service_severity'
               )
-            ); ?>" title="<?= $this->translate('Services UNKNOWN Unhandled'); ?>">
+            ); ?>" title="<?php printf(
+              $this->translatePlural(
+                '%s Service UNKNOWN Unhandled in servicegroup `%s\'',
+                '%s Services UNKNOWN Unhandled in servicegroup `%s\'',
+                $s->services_unknown_unhandled
+              ),
+              $s->services_unknown_unhandled,
+              $s->servicegroup
+            ); ?>">
               <?= $s->services_unknown_unhandled; ?>
             </a>
         <?php endif ?>
@@ -161,7 +193,15 @@
                   'servicegroup'      => $s->servicegroup,
                   'sort'              => 'service_severity'
                 )
-              ); ?>" title="<?= $this->translate('Services UNKNOWN Handled'); ?>">
+              ); ?>" title="<?php printf(
+                $this->translatePlural(
+                  '%s Service UNKNOWN Handled in servicegroup `%s\'',
+                  '%s Services UNKNOWN Handled in servicegroup `%s\'',
+                  $s->services_unknown_handled
+                ),
+                $s->services_unknown_handled,
+                $s->servicegroup
+              ); ?>">
                 <?= $s->services_unknown_handled; ?>
               </a>
             </span>
@@ -181,7 +221,15 @@
                 'servicegroup'          => $s->servicegroup,
                 'sort'                  => 'service_severity'
               )
-            ); ?>" title="<?= $this->translate('Services WARNING Unhandled'); ?>">
+            ); ?>" title="<?php printf(
+              $this->translatePlural(
+                '%s Service WARNING Unhandled in servicegroup `%s\'',
+                '%s Services WARNING Unhandled in servicegroup `%s\'',
+                $s->services_warning_unhandled
+              ),
+              $s->services_warning_unhandled,
+              $s->servicegroup
+            ); ?>">
               <?= $s->services_warning_unhandled; ?>
             </a>
         <?php endif ?>
@@ -195,7 +243,15 @@
                     'servicegroup'      => $s->servicegroup,
                     'sort'              => 'service_severity'
                 )
-              ); ?>" title="<?= $this->translate('Services WARNING Handled'); ?>">
+              ); ?>" title="<?php printf(
+                $this->translatePlural(
+                  '%s Service WARNING Handled in servicegroup `%s\'',
+                  '%s Services WARNING Handled in servicegroup `%s\'',
+                  $s->services_warning_handled
+                ),
+                $s->services_warning_handled,
+                $s->servicegroup
+              ); ?>">
                 <?= $s->services_warning_handled; ?>
               </a>
             </span>
@@ -212,7 +268,15 @@
                 'servicegroup'  => $s->servicegroup,
                 'sort'          => 'service_severity'
               )
-            ); ?>" title="<?= $this->translate('Services PENDING'); ?>">
+            ); ?>" title="<?php printf(
+              $this->translatePlural(
+                '%s Service PENDING in servicegroup `%s\'',
+                '%s Services PENDING in servicegroup `%s\'',
+                $s->services_pending
+              ),
+              $s->services_pending,
+              $s->servicegroup
+            ); ?>">
               <?= $s->services_pending; ?>
             </a>
           </span>
