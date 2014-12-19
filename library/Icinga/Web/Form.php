@@ -808,6 +808,9 @@ class Form extends Zend_Form
     /**
      * Return the translation domain for this form
      *
+     * The returned translation domain is either determined based on
+     * this form's class path or it is the default `icinga' domain
+     *
      * @return  string
      */
     protected function getTranslationDomain()
@@ -816,7 +819,7 @@ class Form extends Zend_Form
             return strtolower($matches[0]);
         }
 
-        return $this->getRequest()->getModuleName();
+        return 'icinga';
     }
 
     /**
