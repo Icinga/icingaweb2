@@ -96,7 +96,15 @@
                 'hostgroup'     => $h->hostgroup,
                 'sort'          => 'service_severity'
               )
-            ); ?>" title="<?= $this->translate('Services OK'); ?>">
+            ); ?>" title="<?php printf(
+              $this->translatePlural(
+                '%s Service OK in hostgroup `%s\'',
+                '%s Services OK in hostgroup `%s\'',
+                $h->services_ok
+              ),
+              $h->services_ok,
+              $h->hostgroup
+            ); ?>">
               <?= $h->services_ok; ?>
             </a>
           </span>
@@ -113,7 +121,15 @@
                 'hostgroup'             => $h->hostgroup,
                 'sort'                  => 'service_severity'
               )
-            ); ?>" title="<?= $this->translate('Services CRITICAL Unhandled'); ?>">
+            ); ?>" title="<?php printf(
+              $this->translatePlural(
+                '%s Service CRITICAL Unhandled in hostgroup `%s\'',
+                '%s Services CRITICAL Unhandled in hostgroup `%s\'',
+                $h->services_critical_unhandled
+              ),
+              $h->services_critical_unhandled,
+              $h->hostgroup
+            ); ?>">
               <?= $h->services_critical_unhandled; ?>
             </a>
         <?php endif ?>
@@ -127,7 +143,15 @@
                   'hostgroup'         => $h->hostgroup,
                   'sort'              => 'service_severity'
                 )
-              ); ?>" title="<?= $this->translate('Services CRITICAL Handled'); ?>">
+              ); ?>" title="<?php printf(
+                $this->translatePlural(
+                  '%s Service CRITICAL Handled in hostgroup `%s\'',
+                  '%s Services CRITICAL Handled in hostgroup `%s\'',
+                  $h->services_critical_handled
+                ),
+                $h->services_critical_handled,
+                $h->hostgroup
+              ); ?>">
                 <?= $h->services_critical_handled; ?>
               </a>
             </span>
@@ -147,7 +171,15 @@
                 'hostgroup'             => $h->hostgroup,
                 'sort'                  => 'service_severity'
               )
-            ); ?>" title="<?= $this->translate('Services UNKNOWN Unhandled'); ?>">
+            ); ?>" title="<?php printf(
+              $this->translatePlural(
+                '%s Service UNKNOWN Unhandled in hostgroup `%s\'',
+                '%s Services UNKNOWN Unhandled in hostgroup `%s\'',
+                $h->services_unknown_unhandled
+              ),
+              $h->services_unknown_unhandled,
+              $h->hostgroup
+            ); ?>">
               <?= $h->services_unknown_unhandled; ?>
             </a>
         <?php endif ?>
@@ -161,7 +193,15 @@
                   'hostgroup'         => $h->hostgroup,
                   'sort'              => 'service_severity'
                 )
-              ); ?>" title="<?= $this->translate('Services UNKNOWN Handled'); ?>">
+              ); ?>" title="<?php printf(
+                $this->translatePlural(
+                  '%s Service UNKNOWN Handled in hostgroup `%s\'',
+                  '%s Services UNKNOWN Handled in hostgroup `%s\'',
+                  $h->services_unknown_handled
+                ),
+                $h->services_unknown_handled,
+                $h->hostgroup
+              ); ?>">
                 <?= $h->services_unknown_handled; ?>
               </a>
             </span>
@@ -181,7 +221,15 @@
                 'hostgroup'             => $h->hostgroup,
                 'sort'                  => 'service_severity'
               )
-            ); ?>" title="<?= $this->translate('Services WARNING Unhandled'); ?>">
+            ); ?>" title="<?php printf(
+              $this->translatePlural(
+                '%s Service WARNING Unhandled in hostgroup `%s\'',
+                '%s Services WARNING Unhandled in hostgroup `%s\'',
+                $h->services_warning_unhandled
+              ),
+              $h->services_warning_unhandled,
+              $h->hostgroup
+            ); ?>">
               <?= $h->services_warning_unhandled; ?>
             </a>
         <?php endif ?>
@@ -195,7 +243,15 @@
                     'hostgroup'         => $h->hostgroup,
                     'sort'              => 'service_severity'
                 )
-              ); ?>" title="<?= $this->translate('Services WARNING Handled'); ?>">
+              ); ?>" title="<?php printf(
+                $this->translatePlural(
+                  '%s Service WARNING Handled in hostgroup `%s\'',
+                  '%s Services WARNING Handled in hostgroup `%s\'',
+                  $h->services_warning_handled
+                ),
+                $h->services_warning_handled,
+                $h->hostgroup
+              ); ?>">
                 <?= $h->services_warning_handled; ?>
               </a>
             </span>
@@ -212,7 +268,15 @@
                 'hostgroup'     => $h->hostgroup,
                 'sort'          => 'service_severity'
               )
-            ); ?>" title="<?= $this->translate('Services PENDING'); ?>">
+            ); ?>" title="<?php printf(
+              $this->translatePlural(
+                '%s Service PENDING in hostgroup `%s\'',
+                '%s Services PENDING in hostgroup `%s\'',
+                $h->services_pending
+              ),
+              $h->services_pending,
+              $h->hostgroup
+            ); ?>">
               <?= $h->services_pending; ?>
             </a>
           </span>
