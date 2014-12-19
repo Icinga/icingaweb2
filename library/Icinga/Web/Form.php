@@ -9,6 +9,7 @@ use Zend_Config;
 use Zend_Form;
 use Zend_View_Interface;
 use Icinga\Application\Icinga;
+use Icinga\Util\Translator;
 use Icinga\Web\Form\Decorator\NoScriptApply;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
 
@@ -802,6 +803,40 @@ class Form extends Zend_Form
         }
 
         return array();
+    }
+
+    /**
+     * Translate a string
+     *
+     * @param   string      $text       The string to translate
+     * @param   string|null $context    Optional parameter for context based translation
+     *
+     * @return  string                  The translated string
+     */
+    protected function translate($text, $context = null)
+    {
+        return Translator::translate($text, $this->request->getModuleName(), $context);
+    }
+
+    /**
+     * Translate a plural string
+     *
+     * @param   string      $textSingular   The string in singular form to translate
+     * @param   string      $textPlural     The string in plural form to translate
+     * @param   integer     $number         The amount to determine from whether to return singular or plural
+     * @param   string|null $context        Optional parameter for context based translation
+     *
+     * @return  string                      The translated string
+     */
+    protected function translatePlural($textSingular, $textPlural, $number, $context = null)
+    {
+        return Translator::translatePlural(
+            $textSingular,
+            $textPlural,
+            $number,
+            $this->request->getModuleName(),
+            $context
+        );
     }
 
     /**
