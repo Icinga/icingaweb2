@@ -806,6 +806,20 @@ class Form extends Zend_Form
     }
 
     /**
+     * Return the translation domain for this form
+     *
+     * @return  string
+     */
+    protected function getTranslationDomain()
+    {
+        if (preg_match('@^Icinga\\\\Module\\\\([A-z]+)\\\\.*$@', get_called_class(), $matches) === 1) {
+            return strtolower($matches[0]);
+        }
+
+        return $this->getRequest()->getModuleName();
+    }
+
+    /**
      * Translate a string
      *
      * @param   string      $text       The string to translate
@@ -815,7 +829,7 @@ class Form extends Zend_Form
      */
     protected function translate($text, $context = null)
     {
-        return Translator::translate($text, $this->request->getModuleName(), $context);
+        return Translator::translate($text, $this->getTranslationDomain(), $context);
     }
 
     /**
@@ -834,7 +848,7 @@ class Form extends Zend_Form
             $textSingular,
             $textPlural,
             $number,
-            $this->request->getModuleName(),
+            $this->getTranslationDomain(),
             $context
         );
     }
