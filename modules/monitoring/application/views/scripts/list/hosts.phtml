@@ -108,10 +108,9 @@ if ($hosts->count() === 0) {
                $host->host_unhandled_services),
            'monitoring/show/services',
            array(
-               'host'                 => $host->host_name,
-               'service_problem'      => 1,
-               'service_acknowledged' => 0,
-               'service_in_downtime'  => 0
+               'host'               => $host->host_name,
+               'service_problem'    => 1,
+               'service_handled'    => 0
            ),
            array('style' => 'font-weight: normal')
         ) ?>)</span>
