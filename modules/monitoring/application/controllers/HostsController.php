@@ -108,12 +108,12 @@ class Monitoring_HostsController extends Controller
         $this->view->hostStates = $hostStates;
         $this->view->objects = $this->hostList;
         $this->view->unhandledObjects = $unhandledObjects;
-        $this->view->acknowledgeUnhandledLink = Url::fromRequest()
-            ->setPath('monitoring/hosts/acknowledge-problem')
-            ->addParams(array('host_problem' => 1, 'host_handled' => 0));
-        $this->view->downtimeUnhandledLink = Url::fromRequest()
-            ->setPath('monitoring/hosts/schedule-downtime')
-            ->addParams(array('host_problem' => 1, 'host_handled' => 0));
+        $this->view->acknowledgeUnhandledLink = Url::fromPath('monitoring/hosts/acknowledge-problem')->setQueryString(
+            Filter::where('host', array_map(function ($h) { return $h->host; }, $unhandledObjects))->toQueryString()
+        );
+        $this->view->downtimeUnhandledLink = Url::fromPath('monitoring/hosts/schedule-downtime')->setQueryString(
+            Filter::where('host', array_map(function ($h) { return $h->host; }, $unhandledObjects))->toQueryString()
+        );
         $this->view->acknowledgedObjects = $acknowledgedObjects;
         $this->view->objectsInDowntime = $objectsInDowntime;
         $this->view->inDowntimeLink = Url::fromRequest()

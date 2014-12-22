@@ -125,12 +125,18 @@ class Monitoring_ServicesController extends Controller
         $this->view->serviceStates = $serviceStates;
         $this->view->objects = $this->serviceList;
         $this->view->unhandledObjects = $unhandledObjects;
-        $this->view->acknowledgeUnhandledLink = Url::fromRequest()
-            ->setPath('monitoring/services/acknowledge-problem')
-            ->addParams(array('service_problem' => 1, 'service_handled' => 0));
-        $this->view->downtimeUnhandledLink = Url::fromRequest()
-            ->setPath('monitoring/services/schedule-downtime')
-            ->addParams(array('service_problem' => 1, 'service_handled' => 0));
+        $unhandledFilterExpressions = array();
+        foreach ($unhandledObjects as $service) {
+            $unhandledFilterExpressions[] = Filter::matchAll(
+                Filter::expression('host', '=', $service->getHost()->getName()),
+                Filter::expression('service', '=', $service->getName())
+            );
+        }
+        $queryString = Filter::matchAny($unhandledFilterExpressions)->toQueryString();
+        $this->view->acknowledgeUnhandledLink = Url::fromPath('monitoring/services/acknowledge-problem');
+        $this->view->acknowledgeUnhandledLink->setQueryString($queryString);
+        $this->view->downtimeUnhandledLink = Url::fromPath('monitoring/services/schedule-downtime');
+        $this->view->downtimeUnhandledLink->setQueryString($queryString);
         $this->view->acknowledgedObjects = $acknowledgedObjects;
         $this->view->objectsInDowntime = $objectsInDowntime;
         $this->view->inDowntimeLink = Url::fromRequest()
