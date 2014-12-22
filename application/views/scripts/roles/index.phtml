@@ -30,7 +30,7 @@
                         <td>
                             <?php
                             // TODO(el): $role->without(...) or $role->shift(...) would be nice!
-                            $restrictions = $role;
+                            $restrictions = clone $role;
                             unset($restrictions['users']);
                             unset($restrictions['groups']);
                             unset($restrictions['permissions']);
