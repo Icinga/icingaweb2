@@ -159,9 +159,10 @@ class Monitoring_ServicesController extends Controller
     {
         $chart = new InlinePie(array_values($states), $title, $colors);
         return $chart
-            ->setLabel(array_map('strtoupper', array_keys($states)))
-            ->setSize(100)
-            ->setTitle($title);
+            // ->setLabel(array_map('strtoupper', array_keys($states)))
+            ->setSize(50)
+            ->setTitle($title)
+            ->setSparklineClass('sparkline-multi');
     }
 
     /**

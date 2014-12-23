@@ -5,6 +5,7 @@
 namespace Icinga\Web\Widget\Chart;
 
 use Icinga\Chart\PieChart;
+use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Url;
 use Icinga\Util\Format;
@@ -29,14 +30,11 @@ class InlinePie extends AbstractWidget
 
     /**
      * The template string used for rendering this widget
-     * The template string used for rendering this widget
      *
      * @var string
      */
     private $template =<<<'EOD'
-<span sparkType="pie" class="sparkline" {title} {disableTooltips} {size}
-    sparkSliceColors="[{colors}]" labels="{labels}" formatted="{formatted}" values="{data}"
-    tooltipFormat="{tooltipFormat}">
+<span sparkType="pie" class="sparkline {class}" {title} {size} sparkSliceColors="[{colors}]" values="{data}">
 </span>
 {noscript}
 EOD;
@@ -80,30 +78,9 @@ EOD;
     private $data;
 
     /**
-     * The labels to display for each data set
-     *
-     * @var array
+     * @var
      */
-    private $labels = array();
-
-    /**
-     * The format string used to display tooltips
-     *
-     * @var string
-     */
-    private $tooltipFormat = '<b>{{title}}</b></br> {{label}} {{formatted}} ({{percent}}%)';
-
-    /**
-     * @var string
-     */
-    private $disableTooltips = '';
-
-    /**
-     * The number format used to render numeric values in tooltips
-     *
-     * @var array
-     */
-    private $format = self::NUMBER_FORMAT_NONE;
+    private $class = '';
 
     /**
      * Set the data to be displayed.
@@ -141,24 +118,15 @@ EOD;
     }
 
     /**
-     * The labels to be displayed in the pie-chart
+     * Set the class to define the
      *
-     * @param   mixed $label     The label of the displayed value, or null for no labels
+     * @param  $class
      *
-     * @return  $this
+     * @return $this
      */
-    public function setLabel($label)
+    public function setSparklineClass($class)
     {
-        if (is_array($label)) {
-            $this->url->setParam('labels', implode(',', array_keys($label)));
-        } elseif ($label != null) {
-            $labelArr =  array($label, $label, $label, $label);
-            $this->url->setParam('labels', implode(',', $labelArr));
-            $label = $labelArr;
-        } else {
-            $this->url->removeKey('labels');
-        }
-        $this->labels = $label;
+        $this->class = $class;
         return $this;
     }
 
@@ -181,42 +149,6 @@ EOD;
     }
 
     /**
-     * Set the used number format
-     *
-     * @param   $format   string  'bytes' or 'time'
-     *
-     * @return  $this
-     */
-    public function setNumberFormat($format)
-    {
-        $this->format = $format;
-        return $this;
-    }
-
-    /**
-     * A format string used to render the content of the piechart tooltips
-     *
-     * Placeholders using curly braces '{FOO}' are replace with their specific values. The format
-     * String may contain HTML-Markup. The available replaceable values are:
-     * <ul>
-     *      <li><b>label</b>:     The description for the current value </li>
-     *      <li><b>formatted</b>: A string representing the formatted value </li>
-     *      <li><b>value</b>:     The raw (non-formatted) value used to render the piechart </li>
-     *      <li><b>percent</b>:   The percentage of the current value </li>
-     * </ul>
-     * Note: Changes will only affect JavaScript sparklines and not the SVG charts used for fallback
-     *
-     * @param   $format
-     *
-     * @return  $this
-     */
-    public function setTooltipFormat($format)
-    {
-        $this->tooltipFormat = $format;
-        return $this;
-    }
-
-    /**
      * Set the title of the displayed Data
      *
      * @param   string $title
@@ -227,16 +159,6 @@ EOD;
     {
         $this->title = 'title="' .  htmlspecialchars($title) . '"';
         return $this;
-    }
-
-    /**
-     * Whether to display tooltips for the InlinePie
-     *
-     * @param bool $val
-     */
-    public function setDisableTooltip($val = true)
-    {
-        $this->disableTooltips = $val !== true ? '' : 'sparkDisableTooltips="true"';
     }
 
     /**
@@ -252,9 +174,6 @@ EOD;
         $this->url = Url::fromPath('svg/chart.php');
         if (array_key_exists('data', $data)) {
             $this->data = $data['data'];
-            if (array_key_exists('labels', $data)) {
-                $this->labels = $data['labels'];
-            }
             if (array_key_exists('colors', $data)) {
                 $this->colors = $data['colors'];
             }
@@ -267,21 +186,6 @@ EOD;
             $this->setColors($this->colors);
         }
     }
-
-    /**
-     * Create a serialization containing the current label array
-     *
-     * @return string   A serialized array of labels
-     */
-    private function createLabelString ()
-    {
-        $labels = $this->labels;
-        foreach ($labels as $key => $label) {
-            $labels[$key] = str_replace('|', '', $label);
-        }
-        return isset($this->labels) && is_array($this->labels) ? implode('|', $this->labels) : '';
-    }
-
     /**
      * Renders this widget via the given view and returns the
      * HTML as a string
@@ -295,7 +199,7 @@ EOD;
             $pie->alignTopLeft();
             $pie->disableLegend();
             $pie->drawPie(array(
-                'data' => $this->data, 'colors' => $this->colors, 'labels' => $this->labels
+                'data' => $this->data, 'colors' => $this->colors
             ));
 
             try {
@@ -310,11 +214,13 @@ EOD;
         // TODO: Check whether we are XHR and don't send
         $template = str_replace('{noscript}', $this->noscript, $template);
         $template = str_replace('{url}', $this->url, $template);
+        $template = str_replace('{class}', $this->class, $template);
 
         // style
         $template = str_replace('{size}',
             isset($this->size) ? 'sparkWidth="' . $this->size . '" sparkHeight="' . $this->size . '" ' : '', $template);
         $template = str_replace('{title}', $this->title, $template);
+
         $template = str_replace('{colors}', implode(',', $this->colors), $template);
 
         // Locale-ignorant string cast. Please. Do. NOT. Remove. This. Again.
@@ -325,39 +231,7 @@ EOD;
             $data[] = sprintf('%F', $dat);
         }
 
-        // values
-        $formatted = array();
-        foreach ($this->data as $key => $value) {
-            $formatted[$key] = $this->formatValue($value);
-        }
         $template = str_replace('{data}', htmlspecialchars(implode(',', $data)), $template);
-        $template = str_replace('{formatted}', htmlspecialchars(implode('|', $formatted)), $template);
-        $template = str_replace('{labels}', htmlspecialchars($this->createLabelString()), $template);
-        $template = str_replace('{tooltipFormat}', $this->tooltipFormat, $template);
-        $template = str_replace('{disableTooltips}', $this->disableTooltips, $template);
         return $template;
-    }
-
-    /**
-     * Format the given value depending on the current value of numberFormat
-     *
-     * @param   float   $value  The value to format
-     *
-     * @return  string          The formatted value
-     */
-    private function formatValue($value)
-    {
-        if ($this->format === self::NUMBER_FORMAT_NONE) {
-            return (string)$value;
-        } elseif ($this->format === self::NUMBER_FORMAT_BYTES) {
-            return Format::bytes($value);
-        } elseif ($this->format === self::NUMBER_FORMAT_TIME) {
-            return Format::duration($value);
-        } elseif ($this->format === self::NUMBER_FORMAT_RATIO) {
-            return $value;
-        } else {
-            Logger::warning('Unknown format string "' . $this->format . '" for InlinePie, value not formatted.');
-            return $value;
-        }
     }
 }
