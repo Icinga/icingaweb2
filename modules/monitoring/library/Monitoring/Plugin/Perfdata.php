@@ -11,8 +11,7 @@ use Zend_Controller_Front;
 
 class Perfdata
 {
-    const PERFDATA_GREEN = 'green';
-    const PERFDATA_ORANGE = 'orange';
+    const PERFDATA_DEFAULT = 'green';
     const PERFDATA_RED = 'red';
 
     /**
@@ -346,7 +345,7 @@ class Perfdata
         $green = $orange = $red = 0;
 
         switch ($color) {
-            case self::PERFDATA_GREEN:
+            case self::PERFDATA_DEFAULT:
                 $green = $usedValue;
                 break;
 
