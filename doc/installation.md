@@ -26,7 +26,7 @@ repository either via git or http protocol using the following URLs:
   * http://git.icinga.org/icingaweb2.git
 
 There is also a browsable version available at
-[gi.icinga.org](https://git.icinga.org/?p=icingaweb2.git;a=summary "Icinga Web 2 Git Repository").
+[git.icinga.org](https://git.icinga.org/?p=icingaweb2.git;a=summary "Icinga Web 2 Git Repository").
 This version also offers snapshots for easy download which you can use if you do not have git present on your system.
 
 ````
