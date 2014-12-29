@@ -93,7 +93,7 @@ class RoleForm extends ConfigForm
         foreach ($this->providedRestrictions as $name => $description) {
             $this->addElement(
                 'text',
-                str_replace('/', '_', $name),
+                $name,
                 array(
                     'label'         => $name,
                     'description'   => $description
@@ -129,12 +129,6 @@ class RoleForm extends ConfigForm
             ? String::trimSplit($role['permissions'])
             : null;
         $role['name'] = $name;
-        foreach (array_keys($role) as $key) {
-            // Slashes are not allowed in a form's element name
-            $value = $role[$key];
-            unset($role[$key]);
-            $role[str_replace('/', '_', $key)] = $value;
-        }
         $this->populate($role);
         return $this;
     }
@@ -235,12 +229,6 @@ class RoleForm extends ConfigForm
         $values = array_filter(parent::getValues($suppressArrayNotation));
         if (isset($values['permissions'])) {
             $values['permissions'] = implode(', ', $values['permissions']);
-        }
-        foreach (array_keys($values) as $key) {
-            // Slashes are not allowed in a form's element name
-            $value = $values[$key];
-            unset($values[$key]);
-            $values[str_replace('/', '_', $key)] = $value;
         }
         return $values;
     }
