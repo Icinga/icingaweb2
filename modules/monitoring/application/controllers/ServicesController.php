@@ -77,6 +77,7 @@ class Monitoring_ServicesController extends Controller
         $unhandledFilterExpressions = array();
         $acknowledgedObjects = array();
         $objectsInDowntime = array();
+        $downtimeFilterExpressions = array();
         $serviceStates = array(
             Service::getStateText(Service::STATE_OK) => 0,
             Service::getStateText(Service::STATE_WARNING) => 0,
@@ -105,6 +106,10 @@ class Monitoring_ServicesController extends Controller
             }
             if ((bool) $service->in_downtime === true) {
                 $objectsInDowntime[] = $service;
+                $downtimeFilterExpressions[] = Filter::matchAll(
+                    Filter::where('downtime_host', $service->getHost()->getName()),
+                    Filter::where('downtime_service', $service->getName())
+                );
             }
             ++$serviceStates[$service::getStateText($service->state)];
             if (! isset($knownHostStates[$service->getHost()->getName()])) {
@@ -137,8 +142,8 @@ class Monitoring_ServicesController extends Controller
             ->setQueryString($unhandledFilterQueryString);
         $this->view->acknowledgedObjects = $acknowledgedObjects;
         $this->view->objectsInDowntime = $objectsInDowntime;
-        $this->view->inDowntimeLink = Url::fromRequest()
-            ->setPath('monitoring/list/downtimes');
+        $this->view->inDowntimeLink = Url::fromPath('monitoring/list/downtimes')
+            ->setQueryString(Filter::matchAny($downtimeFilterExpressions)->toQueryString());
         $this->view->havingCommentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
         $this->view->serviceStatesPieChart = $this->createPieChart(
