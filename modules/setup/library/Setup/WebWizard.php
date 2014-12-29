@@ -534,7 +534,7 @@ class WebWizard extends Wizard implements SetupWizard
             mt('setup', 'Writable Config Directory'),
             mt(
                 'setup',
-                'The Icinga Web 2 configuration directory defaults to "/etc/icingaweb", if' .
+                'The Icinga Web 2 configuration directory defaults to "/etc/icingaweb2", if' .
                 ' not explicitly set in the environment variable "ICINGAWEB_CONFIGDIR".'
             ),
             is_writable($configDir),
