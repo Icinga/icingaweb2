@@ -1,7 +1,7 @@
 ---
-icingaweb2::config:   /etc/icingaweb
-icingaweb2::log:      /var/log/icingaweb/icingaweb.log
-icingaweb2::web_path: icingaweb
-icingaweb2::db_user:  icingaweb
-icingaweb2::db_pass:  icingaweb
-icingaweb2::db_name:  icingaweb
+icingaweb2::config:   /etc/icingaweb2
+icingaweb2::log:      /var/log/icingaweb2/icingaweb2.log
+icingaweb2::web_path: icingaweb2
+icingaweb2::db_user:  icingaweb2
+icingaweb2::db_pass:  icingaweb2
+icingaweb2::db_name:  icingaweb2
