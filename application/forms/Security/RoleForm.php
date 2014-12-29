@@ -21,7 +21,7 @@ class RoleForm extends ConfigForm
      *
      * @type array
      */
-    protected $providedPermissions = array();
+    protected $providedPermissions = array('*' => '*');
 
     /**
      * Provided restrictions by currently loaded modules
