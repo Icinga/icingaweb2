@@ -114,6 +114,13 @@ abstract class ApplicationBootstrap
     protected $isWeb = false;
 
     /**
+     * Whether Icinga Web 2 requires setup
+     *
+     * @type bool
+     */
+    protected $requiresSetup = false;
+
+    /**
      * Constructor
      *
      * @param string $baseDir   Icinga Web 2 base directory
@@ -391,6 +398,40 @@ abstract class ApplicationBootstrap
             Logger::error(new IcingaException('Cannot load enabled modules. An exception was thrown:', $e));
         }
         return $this;
+    }
+
+    /**
+     * Load the setup module if Icinga Web 2 requires setup
+     *
+     * @return $this
+     */
+    protected function loadSetupModuleIfNecessary()
+    {
+        if (! @file_exists($this->config->resolvePath('config.ini'))) {
+            $this->requiresSetup = true;
+            $this->moduleManager->loadModule('setup');
+        }
+        return $this;
+    }
+
+    /**
+     * Get whether Icinga Web 2 requires setup
+     *
+     * @return bool
+     */
+    public function requiresSetup()
+    {
+        return $this->requiresSetup;
+    }
+
+    /**
+     * Get whether the setup token exists
+     *
+     * @return bool
+     */
+    public function setupTokenExists()
+    {
+        return @file_exists($this->config->resolvePath('setup.token'));
     }
 
     /**
