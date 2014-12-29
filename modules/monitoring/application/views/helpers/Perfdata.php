@@ -9,33 +9,36 @@ use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 
 class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 {
-    public function perfdata($perfdataStr, $compact = false)
+
+    /**
+     * Display the given perfdata string to the user
+     *
+     * @param      $perfdataStr The perfdata string
+     * @param bool $compact     Whether to display the perfdata in compact mode
+     * @param      $color       The color indicating the perfdata state
+     *
+     * @return string
+     */
+    public function perfdata($perfdataStr, $compact = false, $color = Perfdata::PERFDATA_DEFAULT)
     {
-        $pset = PerfdataSet::fromString($perfdataStr)->asArray();
-        $onlyPieChartData = array_filter($pset, function ($e) { return $e->getPercentage() > 0; });
-        if ($compact) {
-            $onlyPieChartData = array_slice($onlyPieChartData, 0, 5);
-        } else {
-            $nonPieChartData = array_filter($pset, function ($e) { return $e->getPercentage() == 0; });
-        }
+        $pieChartData = PerfdataSet::fromString($perfdataStr)->asArray();
 
         $result = '';
         $table = array();
-        foreach ($onlyPieChartData as $perfdata) {
-            $pieChart = $this->createInlinePie($perfdata);
-            if ($compact) {
-                $result .= $pieChart->render();
-            } else {
-                if (! $perfdata->isPercentage()) {
-                    // TODO: Should we trust sprintf-style placeholders in perfdata titles?
-                    $pieChart->setTooltipFormat('{{label}}: {{formatted}} ({{percent}}%)');
+        foreach ($pieChartData as $perfdata) {
+            if ($perfdata->isVisualizable()) {
+                $pieChart = $perfdata->asInlinePie($color);
+                if ($compact) {
+                    $result .= $pieChart->render();
+                } else {
+                    $table[] = '<tr><th>' . $pieChart->render()
+                        . htmlspecialchars($perfdata->getLabel())
+                        . '</th><td> '
+                        . htmlspecialchars($this->formatPerfdataValue($perfdata)) .
+                        ' </td></tr>';
                 }
-                // $pieChart->setStyle('margin: 0.2em 0.5em 0.2em 0.5em;');
-                $table[] = '<tr><th>' . $pieChart->render()
-                    . htmlspecialchars($perfdata->getLabel())
-                    . '</th><td> '
-                    . htmlspecialchars($this->formatPerfdataValue($perfdata)) .
-                    ' </td></tr>';
+            } else {
+                $table[] = (string)$perfdata;
             }
         }
 
@@ -43,30 +46,8 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
             return $result;
         } else {
             $pieCharts = empty($table) ? '' : '<table class="perfdata">' . implode("\n", $table) . '</table>';
-            return $pieCharts . "\n" . implode("<br>\n", $nonPieChartData);
+            return $pieCharts;
         }
-    }
-
-    protected function calculatePieChartData(Perfdata $perfdata)
-    {
-        $rawValue = $perfdata->getValue();
-        $minValue = $perfdata->getMinimumValue() !== null ? $perfdata->getMinimumValue() : 0;
-        $maxValue = $perfdata->getMaximumValue();
-        $usedValue = ($rawValue - $minValue);
-        $unusedValue = ($maxValue - $minValue) - $usedValue;
-
-        $gray = $unusedValue;
-        $green = $orange = $red = 0;
-        // TODO(#6122): Add proper treshold parsing.
-        if ($perfdata->getCriticalThreshold() && $perfdata->getValue() > $perfdata->getCriticalThreshold()) {
-            $red = $usedValue;
-        } elseif ($perfdata->getWarningThreshold() && $perfdata->getValue() > $perfdata->getWarningThreshold()) {
-            $orange = $usedValue;
-        } else {
-            $green = $usedValue;
-        }
-
-        return array($green, $orange, $red, $gray);
     }
 
     protected function formatPerfdataValue(Perfdata $perfdata)
@@ -82,24 +63,4 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         return $perfdata->getValue();
     }
 
-    protected function createInlinePie(Perfdata $perfdata)
-    {
-        $pieChart = new InlinePie($this->calculatePieChartData($perfdata), $perfdata->getLabel());
-        $pieChart->setLabel(htmlspecialchars($perfdata->getLabel()));
-        $pieChart->setHideEmptyLabel();
-
-        //$pieChart->setHeight(32)->setWidth(32);
-        if ($perfdata->isBytes()) {
-            $pieChart->setTooltipFormat('{{label}}: {{formatted}} ({{percent}}%)');
-            $pieChart->setNumberFormat(InlinePie::NUMBER_FORMAT_BYTES);
-        } else if ($perfdata->isSeconds()) {
-            $pieChart->setTooltipFormat('{{label}}: {{formatted}} ({{percent}}%)');
-            $pieChart->setNumberFormat(InlinePie::NUMBER_FORMAT_TIME);
-        } else {
-            $pieChart->setTooltipFormat('{{label}}: {{formatted}}%');
-            $pieChart->setNumberFormat(InlinePie::NUMBER_FORMAT_RATIO);
-            $pieChart->setHideEmptyLabel();
-        }
-        return $pieChart;
-    }
 }

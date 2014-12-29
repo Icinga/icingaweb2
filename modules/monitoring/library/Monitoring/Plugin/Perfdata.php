@@ -5,9 +5,15 @@
 namespace Icinga\Module\Monitoring\Plugin;
 
 use InvalidArgumentException;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Widget\Chart\InlinePie;
+use Zend_Controller_Front;
 
 class Perfdata
 {
+    const PERFDATA_DEFAULT = 'green';
+    const PERFDATA_RED = 'red';
+
     /**
      * The performance data value being parsed
      *
@@ -157,6 +163,16 @@ class Perfdata
     public function isCounter()
     {
         return $this->unit === 'c';
+    }
+
+    /**
+     * Returns whether it is possible to display a visual representation
+     *
+     * @return  bool    True when the perfdata is visualizable
+     */
+    public function isVisualizable()
+    {
+        return isset($this->minValue) && isset($this->maxValue) && isset($this->value);
     }
 
     /**
@@ -315,5 +331,51 @@ class Perfdata
                     return (float) $value;
             }
         }
+    }
+
+    protected function calculatePieChartData( $color)
+    {
+        $rawValue = $this->getValue();
+        $minValue = $this->getMinimumValue() !== null ? $this->getMinimumValue() : 0;
+        $maxValue = $this->getMaximumValue();
+        $usedValue = ($rawValue - $minValue);
+        $unusedValue = ($maxValue - $minValue) - $usedValue;
+
+        $gray = $unusedValue;
+        $green = $orange = $red = 0;
+
+        switch ($color) {
+            case self::PERFDATA_DEFAULT:
+                $green = $usedValue;
+                break;
+
+            case self::PERFDATA_RED:
+                $red = $usedValue;
+                break;
+
+            case self::PERFDATA_ORANGE:
+                $orange = $usedValue;
+                break;
+        }
+        // TODO(#6122): Add proper treshold parsing.
+
+        return array($green, $orange, $red, $gray);
+    }
+
+
+    public function asInlinePie($color)
+    {
+        if (! $this->isVisualizable()) {
+            throw new ProgrammingError('Cannot calculate piechart data for unvisualizable perfdata entry.');
+        }
+
+        $data = $this->calculatePieChartData($color);
+        $pieChart = new InlinePie($data, $this->getLabel() . ' ' . number_format($this->getPercentage(), 2) . '%');
+        $pieChart->setSparklineClass('sparkline-perfdata');
+
+        if (Zend_Controller_Front::getInstance()->getRequest()->isXmlHttpRequest()) {
+            $pieChart->disableNoScript();
+        }
+        return $pieChart;
     }
 }

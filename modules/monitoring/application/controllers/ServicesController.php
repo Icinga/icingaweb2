@@ -74,8 +74,10 @@ class Monitoring_ServicesController extends Controller
             'service_obsessing'*/
         ));
         $unhandledObjects = array();
+        $unhandledFilterExpressions = array();
         $acknowledgedObjects = array();
         $objectsInDowntime = array();
+        $downtimeFilterExpressions = array();
         $serviceStates = array(
             Service::getStateText(Service::STATE_OK) => 0,
             Service::getStateText(Service::STATE_WARNING) => 0,
@@ -94,12 +96,20 @@ class Monitoring_ServicesController extends Controller
             /** @var Service $service */
             if ((bool) $service->problem === true && (bool) $service->handled === false) {
                 $unhandledObjects[] = $service;
+                $unhandledFilterExpressions[] = Filter::matchAll(
+                    Filter::where('host', $service->getHost()->getName()),
+                    Filter::where('service', $service->getName())
+                );
             }
             if ((bool) $service->acknowledged === true) {
                 $acknowledgedObjects[] = $service;
             }
             if ((bool) $service->in_downtime === true) {
                 $objectsInDowntime[] = $service;
+                $downtimeFilterExpressions[] = Filter::matchAll(
+                    Filter::where('downtime_host', $service->getHost()->getName()),
+                    Filter::where('downtime_service', $service->getName())
+                );
             }
             ++$serviceStates[$service::getStateText($service->state)];
             if (! isset($knownHostStates[$service->getHost()->getName()])) {
@@ -125,16 +135,15 @@ class Monitoring_ServicesController extends Controller
         $this->view->serviceStates = $serviceStates;
         $this->view->objects = $this->serviceList;
         $this->view->unhandledObjects = $unhandledObjects;
-        $this->view->acknowledgeUnhandledLink = Url::fromRequest()
-            ->setPath('monitoring/services/acknowledge-problem')
-            ->addParams(array('service_problem' => 1, 'service_handled' => 0));
-        $this->view->downtimeUnhandledLink = Url::fromRequest()
-            ->setPath('monitoring/services/schedule-downtime')
-            ->addParams(array('service_problem' => 1, 'service_handled' => 0));
+        $unhandledFilterQueryString = Filter::matchAny($unhandledFilterExpressions)->toQueryString();
+        $this->view->acknowledgeUnhandledLink = Url::fromPath('monitoring/services/acknowledge-problem')
+            ->setQueryString($unhandledFilterQueryString);
+        $this->view->downtimeUnhandledLink = Url::fromPath('monitoring/services/schedule-downtime')
+            ->setQueryString($unhandledFilterQueryString);
         $this->view->acknowledgedObjects = $acknowledgedObjects;
         $this->view->objectsInDowntime = $objectsInDowntime;
-        $this->view->inDowntimeLink = Url::fromRequest()
-            ->setPath('monitoring/list/downtimes');
+        $this->view->inDowntimeLink = Url::fromPath('monitoring/list/downtimes')
+            ->setQueryString(Filter::matchAny($downtimeFilterExpressions)->toQueryString());
         $this->view->havingCommentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
         $this->view->serviceStatesPieChart = $this->createPieChart(
@@ -153,10 +162,10 @@ class Monitoring_ServicesController extends Controller
     {
         $chart = new InlinePie(array_values($states), $title, $colors);
         return $chart
-            ->setLabel(array_map('strtoupper', array_keys($states)))
-            ->setHeight(100)
-            ->setWidth(100)
-            ->setTitle($title);
+            // ->setLabel(array_map('strtoupper', array_keys($states)))
+            ->setSize(50)
+            ->setTitle($title)
+            ->setSparklineClass('sparkline-multi');
     }
 
     /**

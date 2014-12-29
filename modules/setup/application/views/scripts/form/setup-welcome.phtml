@@ -51,9 +51,7 @@ $cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
       </div>
       <p><?= mt('setup', 'In case the IcingaCLI is missing you can create the token manually:'); ?></p>
       <div class="code">
-        <span>su <?= ($user = Platform::getPhpUser()) !== null ? $user : 'your_webserver_group'; ?> && mkdir -m 2770 <?= dirname($setupTokenPath); ?>;</span>
-        <span>head -c 12 /dev/urandom | base64 | tee <?= $setupTokenPath; ?>;</span>
-        <span>chmod 0660 <?= $setupTokenPath; ?>;</span>
+        <span>su <?= ($user = Platform::getPhpUser()) !== null ? $user : 'your_webserver_user'; ?> -c "mkdir -m 2770 <?= dirname($setupTokenPath); ?>; head -c 12 /dev/urandom | base64 | tee <?= $setupTokenPath; ?>; chmod 0660 <?= $setupTokenPath; ?>;";</span>
       </div>
       <p><?= sprintf(
         mt('setup', 'Please see the %s for an extensive description on how to access and use this wizard.'),
