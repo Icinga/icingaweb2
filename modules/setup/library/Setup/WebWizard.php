@@ -9,6 +9,7 @@ use Icinga\Web\Form;
 use Icinga\Web\Wizard;
 use Icinga\Web\Request;
 use Icinga\Application\Config;
+use Icinga\Application\Icinga;
 use Icinga\Application\Platform;
 use Icinga\Module\Setup\Forms\ModulePage;
 use Icinga\Module\Setup\Forms\WelcomePage;
@@ -343,7 +344,7 @@ class WebWizard extends Wizard implements SetupWizard
             );
         }
 
-        $configDir = $this->getConfigDir();
+        $configDir = Icinga::app()->getConfigDir();
         $setup->addStep(
             new MakeDirStep(
                 array(
@@ -528,12 +529,12 @@ class WebWizard extends Wizard implements SetupWizard
             )
         );
 
-        $configDir = $this->getConfigDir();
+        $configDir = Icinga::app()->getConfigDir();
         $requirements->addMandatory(
             mt('setup', 'Writable Config Directory'),
             mt(
                 'setup',
-                'The Icinga Web 2 configuration directory defaults to "/etc/icingaweb", if' .
+                'The Icinga Web 2 configuration directory defaults to "/etc/icingaweb2", if' .
                 ' not explicitly set in the environment variable "ICINGAWEB_CONFIGDIR".'
             ),
             is_writable($configDir),
@@ -550,22 +551,5 @@ class WebWizard extends Wizard implements SetupWizard
         }
 
         return $requirements;
-    }
-
-    /**
-     * Return the configuration directory of Icinga Web 2
-     *
-     * @return  string
-     */
-    protected function getConfigDir()
-    {
-        if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
-            $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
-        } else {
-            $configDir = '/etc/icingaweb';
-        }
-
-        $canonical = realpath($configDir);
-        return $canonical ? $canonical : $configDir;
     }
 }

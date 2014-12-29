@@ -67,7 +67,7 @@ class LoggingConfigForm extends Form
                     'required'      => true,
                     'label'         => t('Application Prefix'),
                     'description'   => t('The name of the application by which to prefix syslog messages.'),
-                    'value'         => 'icingaweb',
+                    'value'         => 'icingaweb2',
                     'validators'    => array(
                         array(
                             'Regex',
@@ -106,22 +106,12 @@ class LoggingConfigForm extends Form
                     'required'      => true,
                     'label'         => t('File path'),
                     'description'   => t('The full path to the log file to write messages to.'),
-                    'value'         => $this->getDefaultLogDir(),
+                    'value'         => '/var/log/icingaweb2/icingaweb2.log',
                     'validators'    => array(new WritablePathValidator())
                 )
             );
         }
 
         return $this;
-    }
-
-    /**
-     * Return the default logging directory for type 'file'
-     *
-     * @return string
-     */
-    protected function getDefaultLogDir()
-    {
-        return realpath(Icinga::app()->getApplicationDir('../var/log/icingaweb.log'));
     }
 }

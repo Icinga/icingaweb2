@@ -15,7 +15,7 @@
    <?php endif ?>
    <?= $this->form ?>
    <div class="footer">Icinga Web 2 &copy; 2013-2014<br><a href="https://www.icinga.org">The Icinga Project</a></div>
-   <?php if ($configMissing): ?>
+   <?php if ($requiresSetup): ?>
    <div class="config-note"><?= sprintf(
      t(
        'It appears that you did not configure Icinga Web 2 yet so it\'s not possible to log in without any defined '
