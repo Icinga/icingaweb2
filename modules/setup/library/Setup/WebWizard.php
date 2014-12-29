@@ -352,7 +352,7 @@ class WebWizard extends Wizard implements SetupWizard
                     $configDir . '/preferences',
                     $configDir . '/enabledModules'
                 ),
-                0775
+                2770
             )
         );
 
