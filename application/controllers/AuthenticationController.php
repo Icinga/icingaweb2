@@ -15,6 +15,7 @@ use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ConfigurationError;
 use Icinga\User;
 use Icinga\Web\Url;
+use Icinga\Application\Icinga;
 
 /**
  * Application wide controller for authentication
@@ -33,7 +34,8 @@ class AuthenticationController extends ActionController
      */
     public function loginAction()
     {
-        if (@file_exists(Config::resolvePath('setup.token')) && !@file_exists(Config::resolvePath('config.ini'))) {
+        $icinga = Icinga::app();
+        if ($icinga->setupTokenExists() && $icinga->requiresSetup()) {
             $this->redirectNow(Url::fromPath('setup'));
         }
 
@@ -139,7 +141,7 @@ class AuthenticationController extends ActionController
             $this->view->errorInfo = $e->getMessage();
         }
 
-        $this->view->configMissing = is_dir(Config::$configDir) === false;
+        $this->view->requiresSetup = Icinga::app()->requiresSetup();
     }
 
     /**
