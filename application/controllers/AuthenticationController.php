@@ -4,18 +4,18 @@
 
 # namespace Icinga\Application\Controllers;
 
-use Icinga\Authentication\Backend\AutoLoginBackend;
-use Icinga\Web\Controller\ActionController;
-use Icinga\Forms\Authentication\LoginForm;
-use Icinga\Authentication\AuthChain;
 use Icinga\Application\Config;
-use Icinga\Application\Logger;
-use Icinga\Exception\AuthenticationException;
-use Icinga\Exception\NotReadableError;
-use Icinga\Exception\ConfigurationError;
-use Icinga\User;
-use Icinga\Web\Url;
 use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
+use Icinga\Authentication\AuthChain;
+use Icinga\Authentication\Backend\AutoLoginBackend;
+use Icinga\Exception\AuthenticationException;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotReadableError;
+use Icinga\Forms\Authentication\LoginForm;
+use Icinga\User;
+use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Url;
 
 /**
  * Application wide controller for authentication
