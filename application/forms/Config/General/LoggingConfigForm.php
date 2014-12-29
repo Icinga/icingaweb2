@@ -67,7 +67,7 @@ class LoggingConfigForm extends Form
                     'required'      => true,
                     'label'         => t('Application Prefix'),
                     'description'   => t('The name of the application by which to prefix syslog messages.'),
-                    'value'         => 'icingaweb',
+                    'value'         => 'icingaweb2',
                     'validators'    => array(
                         array(
                             'Regex',
