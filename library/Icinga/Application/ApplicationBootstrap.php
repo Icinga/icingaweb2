@@ -333,7 +333,7 @@ abstract class ApplicationBootstrap
     /**
      * Setup Icinga auto loader
      *
-     * @return self
+     * @return $this
      */
     public function setupAutoloader()
     {
@@ -366,7 +366,7 @@ abstract class ApplicationBootstrap
     /**
      * Setup module manager
      *
-     * @return self
+     * @return $this
      */
     protected function setupModuleManager()
     {
@@ -381,7 +381,7 @@ abstract class ApplicationBootstrap
     /**
      * Load all enabled modules
      *
-     * @return self
+     * @return $this
      */
     protected function loadEnabledModules()
     {
@@ -396,7 +396,7 @@ abstract class ApplicationBootstrap
     /**
      * Setup default logging
      *
-     * @return  self
+     * @return $this
      */
     protected function setupLogging()
     {
@@ -413,7 +413,7 @@ abstract class ApplicationBootstrap
     /**
      * Load Configuration
      *
-     * @return self
+     * @return $this
      */
     protected function loadConfig()
     {
@@ -432,7 +432,7 @@ abstract class ApplicationBootstrap
     /**
      * Error handling configuration
      *
-     * @return self
+     * @return $this
      */
     protected function setupErrorHandling()
     {
@@ -458,7 +458,7 @@ abstract class ApplicationBootstrap
     /**
      * Set up logger
      *
-     * @return self
+     * @return $this
      */
     protected function setupLogger()
     {
@@ -475,7 +475,7 @@ abstract class ApplicationBootstrap
     /**
      * Set up the resource factory
      *
-     * @return self
+     * @return $this
      */
     protected function setupResourceFactory()
     {
