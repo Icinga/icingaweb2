@@ -78,7 +78,7 @@ class PhpSession extends Session
             }
         }
 
-        if (ini_get('session.save_handler') === 'files' && !is_writable(session_save_path())) {
+        if (!is_writable(session_save_path())) {
             throw new ConfigurationError('Can\'t save session');
         }
 
