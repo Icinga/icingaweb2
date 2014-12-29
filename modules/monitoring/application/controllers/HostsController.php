@@ -72,6 +72,7 @@ class Monitoring_HostsController extends Controller
             'host_obsessing'*/
         ));
         $unhandledObjects = array();
+        $unhandledFilterExpressions = array();
         $acknowledgedObjects = array();
         $objectsInDowntime = array();
         $hostStates = array(
@@ -81,9 +82,10 @@ class Monitoring_HostsController extends Controller
             Host::getStateText(Host::STATE_PENDING) => 0,
         );
         foreach ($this->hostList as $host) {
-            /** @var Service $host */
+            /** @var Host $host */
             if ((bool) $host->problem === true && (bool) $host->handled === false) {
                 $unhandledObjects[] = $host;
+                $unhandledFilterExpressions[] = Filter::where('host', $host->getName());
             }
             if ((bool) $host->acknowledged === true) {
                 $acknowledgedObjects[] = $host;
@@ -108,12 +110,11 @@ class Monitoring_HostsController extends Controller
         $this->view->hostStates = $hostStates;
         $this->view->objects = $this->hostList;
         $this->view->unhandledObjects = $unhandledObjects;
-        $this->view->acknowledgeUnhandledLink = Url::fromPath('monitoring/hosts/acknowledge-problem')->setQueryString(
-            Filter::where('host', array_map(function ($h) { return $h->host; }, $unhandledObjects))->toQueryString()
-        );
-        $this->view->downtimeUnhandledLink = Url::fromPath('monitoring/hosts/schedule-downtime')->setQueryString(
-            Filter::where('host', array_map(function ($h) { return $h->host; }, $unhandledObjects))->toQueryString()
-        );
+        $unhandledFilterQueryString = Filter::matchAny($unhandledFilterExpressions)->toQueryString();
+        $this->view->acknowledgeUnhandledLink = Url::fromPath('monitoring/hosts/acknowledge-problem')
+            ->setQueryString($unhandledFilterQueryString);
+        $this->view->downtimeUnhandledLink = Url::fromPath('monitoring/hosts/schedule-downtime')
+            ->setQueryString($unhandledFilterQueryString);
         $this->view->acknowledgedObjects = $acknowledgedObjects;
         $this->view->objectsInDowntime = $objectsInDowntime;
         $this->view->inDowntimeLink = Url::fromRequest()
