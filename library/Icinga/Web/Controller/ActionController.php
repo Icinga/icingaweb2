@@ -270,7 +270,7 @@ class ActionController extends Zend_Controller_Action
     /**
      * Redirect to the login path
      *
-     * @param   string      $afterLogin   The action to call when the login was successful. Defaults to '/index/welcome'
+     * @param   Url         $afterLogin   The action to call when the login was successful. Defaults to '/index/welcome'
      *
      * @throws  \Exception
      */

@@ -367,7 +367,7 @@ class Menu implements RecursiveIterator
     /**
      * Return the url of this menu
      *
-     * @return  string
+     * @return  Url
      */
     public function getUrl()
     {
