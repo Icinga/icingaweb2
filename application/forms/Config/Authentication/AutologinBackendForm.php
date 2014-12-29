@@ -53,8 +53,10 @@ class AutologinBackendForm extends Form
             'strip_username_regexp',
             array(
                 'label'         => t('Filter Pattern'),
-                'description'   => t('The regular expression to use to strip specific parts off from usernames. Leave empty if you do not want to strip off anything'),
-                'value'         => '/\@[^$]+$/',
+                'description'   => t(
+                    'The regular expression to use to strip specific parts off from usernames.'
+                    . ' Leave empty if you do not want to strip off anything'
+                ),
                 'validators'    => array(
                     new Zend_Validate_Callback(function ($value) {
                         return @preg_match($value, '') !== false;
