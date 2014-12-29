@@ -223,8 +223,6 @@ abstract class MonitoredObjectController extends Controller
                 )
             );
         }
-        $tabs
-            ->extend(new OutputFormat())
-            ->extend(new DashboardAction());
+        $tabs->extend(new DashboardAction());
     }
 }
