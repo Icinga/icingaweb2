@@ -75,6 +75,7 @@ class Monitoring_HostsController extends Controller
         $unhandledFilterExpressions = array();
         $acknowledgedObjects = array();
         $objectsInDowntime = array();
+        $downtimeFilterExpressions = array();
         $hostStates = array(
             Host::getStateText(Host::STATE_UP) => 0,
             Host::getStateText(Host::STATE_DOWN) => 0,
@@ -92,6 +93,7 @@ class Monitoring_HostsController extends Controller
             }
             if ((bool) $host->in_downtime === true) {
                 $objectsInDowntime[] = $host;
+                $downtimeFilterExpressions[] = Filter::where('downtime_host', $host->getName());
             }
             ++$hostStates[$host::getStateText($host->state)];
         }
@@ -117,8 +119,8 @@ class Monitoring_HostsController extends Controller
             ->setQueryString($unhandledFilterQueryString);
         $this->view->acknowledgedObjects = $acknowledgedObjects;
         $this->view->objectsInDowntime = $objectsInDowntime;
-        $this->view->inDowntimeLink = Url::fromRequest()
-            ->setPath('monitoring/list/downtimes');
+        $this->view->inDowntimeLink = Url::fromPath('monitoring/list/downtimes')
+            ->setQueryString(Filter::matchAny($downtimeFilterExpressions)->toQueryString());
         $this->view->havingCommentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
         $this->view->hostStatesPieChart = $this->createPieChart(
