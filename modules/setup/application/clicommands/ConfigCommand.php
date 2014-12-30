@@ -123,18 +123,20 @@ class ConfigCommand extends Command
         } catch (ProgrammingError $e) {
             $this->fail($this->translate('Unknown type') . ': ' . $type);
         }
-        $urlPath = $this->params->get('path', $webserver->getUrlPath());
-        if (! is_string($urlPath) || strlen(trim($urlPath)) === 0) {
+        $urlPath = trim($this->params->get('path', $webserver->getUrlPath()));
+        if (strlen($urlPath) === 0) {
             $this->fail($this->translate('The argument --path expects a URL path'));
         }
-        $documentRoot = $this->params->get('root', $this->params->get('document-root', $webserver->getDocumentRoot()));
-        if (! is_string($documentRoot) || strlen(trim($documentRoot)) === 0) {
+        $documentRoot = trim(
+            $this->params->get('root', $this->params->get('document-root', $webserver->getDocumentRoot()))
+        );
+        if (strlen($documentRoot) === 0) {
             $this->fail($this->translate(
                 'The argument --root/--document-root expects a directory from which the webserver will serve files'
             ));
         }
-        $configDir = $this->params->get('config', $webserver->getConfigDir());
-        if (! is_string($configDir) || strlen(trim($configDir)) === 0) {
+        $configDir = trim($this->params->get('config', $webserver->getConfigDir()));
+        if (strlen($configDir) === 0) {
             $this->fail($this->translate(
                 'The argument --config expects a path to Icinga Web 2\'s configuration files'
             ));
