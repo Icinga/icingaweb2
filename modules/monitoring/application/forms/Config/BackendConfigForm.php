@@ -5,10 +5,10 @@
 namespace Icinga\Module\Monitoring\Forms\Config;
 
 use InvalidArgumentException;
-use Icinga\Web\Notification;
-use Icinga\Forms\ConfigForm;
 use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Forms\ConfigForm;
+use Icinga\Web\Notification;
 
 /**
  * Form class for creating/modifying monitoring backends
