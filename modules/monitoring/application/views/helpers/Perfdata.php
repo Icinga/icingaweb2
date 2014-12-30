@@ -24,21 +24,36 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         $pieChartData = PerfdataSet::fromString($perfdataStr)->asArray();
 
         $result = '';
-        $table = array();
+        $table = array(
+            '<td><b>' . implode(
+                '</b></td><td><b>',
+                array('', t('Label'), t('Value'), t('Min'), t('Max'), t('Warning'), t('Critical'))
+            ) . '<b></td>'
+        );
         foreach ($pieChartData as $perfdata) {
-            if ($perfdata->isVisualizable()) {
-                $pieChart = $perfdata->asInlinePie($color);
-                if ($compact) {
-                    $result .= $pieChart->render();
-                } else {
-                    $table[] = '<tr><th>' . $pieChart->render()
-                        . htmlspecialchars($perfdata->getLabel())
-                        . '</th><td> '
-                        . htmlspecialchars($this->formatPerfdataValue($perfdata)) .
-                        ' </td></tr>';
-                }
+
+            if ($compact && $perfdata->isVisualizable()) {
+                $result .= $perfdata->asInlinePie($color)->render();
             } else {
-                $table[] = (string)$perfdata;
+                $row = '<tr>';
+
+                $row .= '<td>';
+                if ($perfdata->isVisualizable()) {
+                    $row .= $perfdata->asInlinePie($color)->render() . '&nbsp;';
+                }
+                $row .= '</td>';
+
+                if (!$compact) {
+                    foreach ($perfdata->toArray() as $value) {
+                        if ($value === '') {
+                            $value = '-';
+                        }
+                        $row .= '<td>' . (string)$value  . '</td>';
+                    }
+                }
+
+                $row .= '</tr>';
+                $table[] = $row;
             }
         }
 
@@ -49,18 +64,4 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
             return $pieCharts;
         }
     }
-
-    protected function formatPerfdataValue(Perfdata $perfdata)
-    {
-        if ($perfdata->isBytes()) {
-            return Format::bytes($perfdata->getValue());
-        } elseif ($perfdata->isSeconds()) {
-            return Format::seconds($perfdata->getValue());
-        } elseif ($perfdata->isPercentage()) {
-            return $perfdata->getValue() . '%';
-        }
-
-        return $perfdata->getValue();
-    }
-
 }

@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Monitoring\Plugin;
 
+use Icinga\Util\Format;
 use InvalidArgumentException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Widget\Chart\InlinePie;
@@ -263,7 +264,7 @@ class Perfdata
      */
     public function __toString()
     {
-        return sprintf(strpos($this->label, ' ') === false ? '%s=%s' : "'%s'=%s", $this->label, $this->perfdataValue);
+        return $this->formatLabel();
     }
 
     /**
@@ -294,11 +295,9 @@ class Perfdata
                     $this->minValue = self::convert($parts[3], $this->unit);
                 }
             case 3:
-                // TODO(#6123): Tresholds have the same UOM and need to be converted as well!
-                $this->criticalThreshold = trim($parts[2]) ? trim($parts[2]) : null;
+                $this->criticalThreshold = trim($parts[2]) ? self::convert(trim($parts[2]), $this->unit) : null;
             case 2:
-                // TODO(#6123): Tresholds have the same UOM and need to be converted as well!
-                $this->warningThreshold = trim($parts[1]) ? trim($parts[1]) : null;
+                $this->warningThreshold = trim($parts[1]) ? self::convert(trim($parts[1]), $this->unit) : null;
         }
     }
 
@@ -370,12 +369,59 @@ class Perfdata
         }
 
         $data = $this->calculatePieChartData($color);
-        $pieChart = new InlinePie($data, $this->getLabel() . ' ' . number_format($this->getPercentage(), 2) . '%');
+        $pieChart = new InlinePie($data, $this);
         $pieChart->setSparklineClass('sparkline-perfdata');
 
         if (Zend_Controller_Front::getInstance()->getRequest()->isXmlHttpRequest()) {
             $pieChart->disableNoScript();
         }
         return $pieChart;
+    }
+
+    /**
+     * Format the given value depending on the currently used unit
+     */
+    protected function format($value)
+    {
+        if ($this->isPercentage()) {
+            return (string)$value . '%';
+        }
+        if ($this->isBytes()) {
+            return Format::bytes($value);
+        }
+        if ($this->isSeconds()) {
+            return Format::seconds($value);
+        }
+        return number_format($value, 2);
+    }
+
+    /**
+     * Format the title string that represents this perfdata set
+     *
+     * @param bool $html
+     *
+     * @return stringS
+     */
+    public function formatLabel($html = false)
+    {
+        return sprintf(
+            $html ? t('<b>%s %s</b> (%s%%)') : t('%s %s (%s%%)'),
+            htmlspecialchars($this->getLabel()),
+            $this->format($this->value),
+            number_format($this->getPercentage(), 2)
+        );
+    }
+
+    public function toArray()
+    {
+        $parts = array(
+            $this->getLabel(),
+            'value' => $this->format($this->getvalue()),
+            'min' => isset($this->minValue) && !$this->isPercentage() ? $this->format($this->minValue) : '',
+            'max' => isset($this->maxValue) && !$this->isPercentage() ? $this->format($this->maxValue) : '',
+            'warn' => isset($this->warningThreshold) ? $this->format($this->warningThreshold) : '',
+            'crit' => isset($this->criticalThreshold) ? $this->format($this->criticalThreshold) : ''
+        );
+        return $parts;
     }
 }
