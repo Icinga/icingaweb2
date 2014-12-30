@@ -160,9 +160,7 @@ class BackendConfigForm extends ConfigForm
     /**
      * Populate the form in case a monitoring backend is being edited
      *
-     * @see Form::onRequest()
-     *
-     * @throws  ConfigurationError      In case the backend name is missing in the request or is invalid
+     * @throws  ConfigurationError  In case the backend name is missing in the request or is invalid
      */
     public function onRequest()
     {
@@ -181,7 +179,8 @@ class BackendConfigForm extends ConfigForm
     }
 
     /**
-     * @see Form::createElements()
+     * (non-PHPDoc)
+     * @see Form::createElements() For the method documentation.
      */
     public function createElements(array $formData)
     {
