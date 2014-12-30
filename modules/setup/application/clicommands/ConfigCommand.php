@@ -41,11 +41,6 @@ class ConfigCommand extends Command
             ));
         }
 
-        if (file_exists($configDir)) {
-            printf($this->translate('Configuration directory already exists at: %s') . PHP_EOL, $configDir);
-            return true;
-        }
-
         $group = trim($this->params->get('group', 'icingaweb2'));
         if (strlen($group) === 0) {
             $this->fail($this->translate(
