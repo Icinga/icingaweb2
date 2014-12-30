@@ -14,30 +14,31 @@ class ConfigCommand extends Command
     /**
      * Create Icinga Web 2's configuration directory
      *
-     * This command creates the configuration directory for Icinga Web 2. The `group' argument
-     * is mandatory and should be the groupname of the user your web server is running as.
-     *
      * USAGE:
      *
-     *   icingacli setup config directory <group> [options]
+     *  icingacli setup config directory [options]
      *
      * OPTIONS:
      *
-     *   --mode  The access mode to use. Default is: 2770
-     *   --path  The path to the configuration directory. If omitted the default is used.
+     *  --mode=<mode>           The access mode to use [2770]
+     *
+     *  --path=<directory>      Path to Icinga Web 2's configuration files [/etc/icingaweb2]
+     *
+     *  --group=<group>         Owner group for the configuration directory [icingaweb2]
      *
      * EXAMPLES:
      *
-     *   icingacli setup config directory apache
-     *   icingacli setup config directory apache --mode 2775
-     *   icingacli setup config directory apache --path /some/path
+     *  icingacli setup config directory
+     *
+     *  icingacli setup config directory --mode 2775 --config /opt/icingaweb2/etc
      */
     public function directoryAction()
     {
-        $group = $this->params->getStandalone();
-        if ($group === null) {
-            $this->fail($this->translate('The `group\' argument is mandatory.'));
-            return false;
+        $group = trim($this->params->get('group', 'icingaweb2'));
+        if (strlen($group) === 0) {
+            $this->fail($this->translate(
+                'The argument --group expects a owner group for the configuration directory'
+            ));
         }
 
         $path = $this->params->get('path', $this->app->getConfigDir());
@@ -81,16 +82,15 @@ class ConfigCommand extends Command
      *
      *  --file=<filename>                   Write configuration to file [stdout]
      *
-     *
      * EXAMPLES:
      *
-     * icingacli setup config webserver apache
+     *  icingacli setup config webserver apache
      *
-     * icingacli setup config webserver apache --path /icingaweb2 --document-root /usr/share/icingaweb2/public --config=/etc/icingaweb2
+     *  icingacli setup config webserver apache --path /icingaweb2 --document-root /usr/share/icingaweb2/public --config=/etc/icingaweb2
      *
-     * icingacli setup config webserver apache --file /etc/apache2/conf.d/icingaweb2.conf
+     *  icingacli setup config webserver apache --file /etc/apache2/conf.d/icingaweb2.conf
      *
-     * icingacli setup config webserver nginx
+     *  icingacli setup config webserver nginx
      */
     public function webserverAction()
     {
