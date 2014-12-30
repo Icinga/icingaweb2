@@ -23,7 +23,8 @@
 
         <div class="hbox">
             <div class="hbox-item" style="width: 6em;">
-                <b><?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', array_sum(array_values($hostStates))), array_sum(array_values($hostStates))) ?></b>
+                <?php $hostCount = array_sum(array_values($hostStates)) ?>
+                <b><?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', $hostCount), $hostCount) ?></b>
             </div>
             <div class="hbox-item">
                 <?= $this->hostStatesPieChart ?>
