@@ -193,11 +193,11 @@ class Monitoring_AlertsummaryController extends Controller
 
         $out = new stdClass();
         if ($yesterday === $today) {
-            $out->trend = 'unchanged';
+            $out->trend = $this->translate('unchanged');
         } elseif ($yesterday > $today) {
-            $out->trend = 'down';
+            $out->trend = $this->translate('down');
         } else {
-            $out->trend = 'up';
+            $out->trend = $this->translate('up');
         }
 
         if ($yesterday <= 0) {

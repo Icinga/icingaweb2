@@ -5,85 +5,75 @@ use Icinga\Module\Monitoring\Object\Service;
 
 ?>
 
-<?php if (!$this->compact): ?>
+<?php if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs ?>
-  <div class="dontprint" style="margin: 1em;">
-    <?= $this->translate('Sort by') ?> <?=  $this->sortControl->render($this) ?>
-  </div>
-  <?= $this->widget('limiter') ?>
-  <?=  $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)) ?>
- </div>
+    <?= $this->tabs ?>
+    <div class="dontprint" style="margin: 1em;">
+        <?= $this->translate('Sort by') ?> <?= $this->sortControl->render($this) ?>
+    </div>
+    <?= $this->widget('limiter') ?>
+    <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)) ?>
+</div>
 <?php endif ?>
 
-<?php if (! $this->inline): ?>
 <div class="content">
-<?php endif; ?>
+    <?php if (count($notifications) === 0): ?>
+    <?= $this->translate('No notifications matching the filter') ?>
+    <?php return; endif ?>
 
-<?php
-
-if (empty($this->notifications)) {
-    echo 'No notifications yet</div>';
-    return;
-}
-?>
-
-<table data-base-target="_next" class="action">
-<tbody>
-<?php
-
-if (count($notifications) === 0) {
-    echo mt('monitoring', 'No notifications matching the filter');
-}
-foreach ($notifications as $notification):
-
-  if (isset($notification->service)) {
-      $isService = true;
-      $href = $this->href('monitoring/show/service', array(
-          'host'    => $notification->host,
-          'service' => $notification->service
-      ));
-      $stateName = Service::getStateText($notification->notification_state);
-  } else {
-      $isService = false;
-      $href = $this->href('monitoring/show/host', array(
-          'host'    => $notification->host
-      ));
-      $stateName = Host::getStateText($notification->notification_state);
-  }
-?>
-  <tr class="state <?= $stateName ?>">
-    <td class="state">
-        <?= $this->dateTimeRenderer($notification->notification_start_time)->render(
-                $this->translate('on %s', 'datetime'),
-                $this->translate('at %s', 'time'),
-                $this->translate('%s ago', 'timespan')
-            );
+    <table data-base-target="_next" class="action">
+    <tbody>
+    <?php foreach ($notifications as $notification):
+        if (isset($notification->service)) {
+        $isService = true;
+        $href = $this->href('monitoring/show/service', array(
+            'host'    => $notification->host,
+            'service' => $notification->service
+        ));
+        $stateName = Service::getStateText($notification->notification_state);
+        } else {
+            $isService = false;
+            $href = $this->href('monitoring/show/host', array(
+                'host' => $notification->host
+            ));
+            $stateName = Host::getStateText($notification->notification_state);
+        }
         ?>
-    </td>
-    <td style="font-size: 0.8em">
-      <?php if ($isService): ?>
-        <a href="<?= $href ?>"><?= $notification->service ?></a> on <?= $notification->host ?>
-      <?php else: ?>
-        <a href="<?= $href ?>"><?= $notification->host ?></a>
-      <?php endif; ?>
-      <br />
-      <?= $this->escape(substr(strip_tags($notification->notification_output), 0, 10000)); ?>
-      <br />
-      <?php if (!$this->contact): ?>
-      <small>
-          Sent to <a href="<?= $this->href(
-              'monitoring/show/contact',
-              array('contact' => $notification->notification_contact)
-          ) ?>"><?= $this->escape($notification->notification_contact) ?></a>
-      </small>
-      <?php endif ?>
-    </td>
-  </tr>
-<?php endforeach ?>
-</tbody>
-</table>
-
-<?php if (!$this->inline): ?>
+        <tr class="state <?= $stateName ?>">
+            <td class="state">
+                <?= $this->dateTimeRenderer($notification->notification_start_time)->render(
+                    $this->translate('on %s', 'datetime'),
+                    $this->translate('at %s', 'time'),
+                    $this->translate('%s ago', 'timespan')
+                ) ?>
+            </td>
+            <td style="font-size: 0.8em">
+                <?php if ($isService): ?>
+                    <?= sprintf(
+                        $this->translate('%s on %s'),
+                        $this->qlink($notification->service, $href), $notification->host
+                    ) ?>
+                <?php else: ?>
+                    <?= $this->qlink($notification->host, $href) ?>
+                <?php endif ?>
+                <br>
+                <?= $this->escape(substr(strip_tags($notification->notification_output), 0, 10000)); ?>
+                <br>
+                <?php if (! $this->contact): ?>
+                    <small>
+                        <?= sprintf(
+                            $this->translate('Sent to %s'),
+                            $this->qlink(
+                                $notification->notification_contact,
+                                'monitoring/show/contact',
+                                array('contact' => $notification->notification_contact)
+                            )
+                        ) ?>
+                    </small>
+                <?php endif ?>
+            </td>
+        </tr>
+    <?php endforeach ?>
+    </tbody>
+    </table>
 </div>
-<?php endif; ?>

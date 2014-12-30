@@ -127,22 +127,27 @@ $section->add($this->translate('Hostgroups'), array(
     'url'      => 'monitoring/list/hostgroups',
     'priority' => 60
 ));
-$section->add($this->translate('Contactgroups'), array(
-    'url'      => 'monitoring/list/contactgroups',
-    'priority' => 61
-));
-$section->add($this->translate('Downtimes'), array(
-    'url'      => 'monitoring/list/downtimes',
-    'priority' => 71
-));
-$section->add($this->translate('Comments'), array(
-    'url'      => 'monitoring/list/comments?comment_type=(comment|ack)',
-    'priority' => 70
-));
 $section->add($this->translate('Contacts'), array(
     'url'      => 'monitoring/list/contacts',
     'priority' => 70
 ));
+$section->add($this->translate('Contactgroups'), array(
+    'url'      => 'monitoring/list/contactgroups',
+    'priority' => 70
+));
+$section->add($this->translate('Comments'), array(
+    'url'      => 'monitoring/list/comments?comment_type=(comment|ack)',
+    'priority' => 80
+));
+$section->add($this->translate('Downtimes'), array(
+    'url'      => 'monitoring/list/downtimes',
+    'priority' => 80
+));
+$section->add($this->translate('Notifications'), array(
+    'url'      => 'monitoring/list/notifications',
+    'priority' => 80
+));
+
 
 /*
  * History Section

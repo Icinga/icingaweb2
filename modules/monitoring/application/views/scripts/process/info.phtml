@@ -26,11 +26,11 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
                 </tr>
                 <tr>
                     <th><?= $this->translate('Last Status Update'); ?></th>
-                    <td><?= $this->timeSince($this->programStatus->status_update_time) ?> ago</td>
+                    <td><?= sprintf($this->translate('%s ago'), $this->timeSince($this->programStatus->status_update_time)); ?></td>
                 </tr>
                 <tr>
                     <th><?= $this->translate('Last External Command Check'); ?></th>
-                    <td><?= $this->timeSince($this->programStatus->last_command_check) ?> ago</td>
+                    <td><?= sprintf($this->translate('%s ago'), $this->timeSince($this->programStatus->last_command_check)); ?></td>
                 </tr>
                 <tr>
                     <th><?= $this->translate('Last Log File Rotation'); ?></th>
