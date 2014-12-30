@@ -55,22 +55,31 @@ class ConfigCommand extends Command
             ));
         }
 
-        if (! mkdir($configDir)) {
-            $this->fail(sprintf($this->translate('Can\'t create configuration directory %s'), $configDir));
-        }
-
-        if (! chmod($configDir, octdec($mode))) {
+        if (! file_exists($configDir) && ! @mkdir($configDir)) {
+            $e = error_get_last();
             $this->fail(sprintf(
-                $this->translate('Can\'t change the mode of the configuration directory to %s'),
-                $mode
+                $this->translate('Can\'t create configuration directory %s: %s'),
+                $configDir,
+                $e['message']
             ));
         }
 
-        if (! chgrp($configDir, $group)) {
+        if (! @chmod($configDir, octdec($mode))) {
+            $e = error_get_last();
             $this->fail(sprintf(
-                $this->translate('Can\'t change the  to change the group of %s to %s'),
+                $this->translate('Can\'t change the mode of the configuration directory to %s: %s'),
+                $mode,
+                $e['message']
+            ));
+        }
+
+        if (! @chgrp($configDir, $group)) {
+            $e = error_get_last();
+            $this->fail(sprintf(
+                $this->translate('Can\'t change the group of %s to %s: %s'),
                 $configDir,
-                $group
+                $group,
+                $e['message']
             ));
         }
 
