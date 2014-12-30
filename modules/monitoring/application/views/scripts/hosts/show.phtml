@@ -123,12 +123,20 @@
             </h2>
         <?php endif ?>
 
-        <?php if (count($objects->getComments())): ?>
+        <?php $havingCommentsCount = count($objects->getComments()) ?>
+        <?php if ($havingCommentsCount): ?>
             <h2>
                 <a href="<?= $havingCommentsLink ?>"
                    title="<?= $this->translate('Comments') ?>">
                     <?= $this->icon('comment') ?>
-                    <?= sprintf($this->translatePlural('%u comment', '%u comments', count($objects->getComments())), count($objects->getComments())) ?>
+                    <?= sprintf(
+                        $this->translatePlural(
+                            '%u comment',
+                            '%u comments',
+                            $havingCommentsCount
+                        ),
+                        $havingCommentsCount
+                    ) ?>
                 </a>
             </h2>
         <?php endif ?>
