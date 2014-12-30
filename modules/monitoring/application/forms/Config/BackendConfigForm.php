@@ -253,7 +253,7 @@ class BackendConfigForm extends ConfigForm
                 array(
                     'value' => sprintf(
                         '<a href="%s" data-base-target="_main">%s</a>',
-                        $this->getView()->href('/icingaweb/config/editresource', array('resource' => $resourceName)),
+                        $this->getView()->url('config/editresource', array('resource' => $resourceName)),
                         mt('monitoring', 'Show resource configuration')
                     ),
                     'escape' => false
