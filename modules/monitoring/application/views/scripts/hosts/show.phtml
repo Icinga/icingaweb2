@@ -90,13 +90,14 @@
 
         <?php if (! empty($acknowledgedObjects)): ?>
             <h2>
+                <?php $acknowledgedCount = count($acknowledgedObjects) ?>
                 <?= sprintf(
                     $this->translatePlural(
                         '%u Acknowledged Host Problem',
                         '%u Acknowledged Host Problems',
-                        count($acknowledgedObjects)
+                        $acknowledgedCount
                     ),
-                    count($acknowledgedObjects)
+                    $acknowledgedCount
                 ) ?>
             </h2>
             <div>
