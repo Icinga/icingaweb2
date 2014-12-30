@@ -54,24 +54,35 @@ class TokenCommand extends Command
      *
      * USAGE:
      *
-     *   icingacli setup token create
+     *   icingacli setup token create [options]
+     *
+     * OPTIONS:
+     *
+     *  --config=<directory>    Path to Icinga Web 2's configuration files [/etc/icingaweb2]
      */
     public function createAction()
     {
+        $configDir = $this->params->get('config', $this->app->getConfigDir());
+        if (! is_string($configDir) || strlen(trim($configDir)) === 0) {
+            $this->fail($this->translate(
+                'The argument --config expects a path to Icinga Web 2\'s configuration files'
+            ));
+        }
+
+        $file = $configDir . '/setup.token';
+
         if (function_exists('openssl_random_pseudo_bytes')) {
             $token = bin2hex(openssl_random_pseudo_bytes(8));
         } else {
             $token = substr(md5(mt_rand()), 16);
         }
 
-        $filepath = $this->app->getConfigDir() . '/setup.token';
-
-        if (false === file_put_contents($filepath, $token)) {
-            $this->fail(sprintf($this->translate('Cannot write setup token "%s" to disk.'), $filepath));
+        if (false === file_put_contents($file, $token)) {
+            $this->fail(sprintf($this->translate('Cannot write setup token "%s" to disk.'), $file));
         }
 
-        if (false === chmod($filepath, 0660)) {
-            $this->fail(sprintf($this->translate('Cannot change access mode of "%s" to %o.'), $filepath, 0660));
+        if (! chmod($file, 0660)) {
+            $this->fail(sprintf($this->translate('Cannot change access mode of "%s" to %o.'), $file, 0660));
         }
 
         printf($this->translate("The newly generated setup token is: %s\n"), $token);
