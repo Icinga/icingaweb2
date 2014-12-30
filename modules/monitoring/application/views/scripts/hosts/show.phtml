@@ -62,13 +62,14 @@
 
         <?php if (! empty($unhandledObjects)): ?>
         <h3>
+            <?php $unhandledCount = count($unhandledObjects) ?>
             <?= sprintf(
                 $this->translatePlural(
                     '%u Unhandled Host Problem',
                     '%u Unhandled Host Problems',
-                    count($unhandledObjects)
+                    $unhandledCount
                 ),
-                count($unhandledObjects)
+                $unhandledCount
             ) ?>
         </h3>
         <div>
