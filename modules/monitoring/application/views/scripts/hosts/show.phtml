@@ -107,10 +107,18 @@
 
         <?php if (! empty($objectsInDowntime)): ?>
             <h2>
+                <?php $inDowntimeCount = count($objectsInDowntime) ?>
                 <a href="<?= $inDowntimeLink ?>"
                    title="<?= $this->translate('Hosts in downtime') ?>">
                     <?= $this->icon('plug') ?>
-                    <?= sprintf($this->translatePlural('%u host is in downtime', '%u hosts are in downtime', count($objectsInDowntime)),count($objectsInDowntime)) ?>
+                    <?= sprintf(
+                        $this->translatePlural(
+                            '%u host is in downtime',
+                            '%u hosts are in downtime',
+                            $inDowntimeCount
+                        ),
+                        $inDowntimeCount
+                    ) ?>
                 </a>
             </h2>
         <?php endif ?>
