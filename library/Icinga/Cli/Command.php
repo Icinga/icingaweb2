@@ -16,6 +16,10 @@ abstract class Command
 {
     protected $app;
     protected $docs;
+
+    /**
+     * @type Params
+     */
     protected $params;
     protected $screen;
     protected $isVerbose;
