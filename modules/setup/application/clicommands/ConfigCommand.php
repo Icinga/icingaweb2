@@ -60,13 +60,16 @@ class ConfigCommand extends Command
             ));
         }
 
-        $mode = octdec($mode);
         if (false === mkdir($configDir)) {
             $this->fail(sprintf($this->translate('Unable to create path: %s'), $configDir));
             return false;
         }
 
-        chmod($configDir, $mode);
+        if (! chmod($configDir, octdec($mode))) {
+            $this->fail($this->translate(
+                'Unable to change the mode of the configuration directory'
+            ));
+        }
 
         if (chgrp($configDir, $group) === false) {
             $this->fail(sprintf($this->translate('Unable to change the group of "%s" to "%s".'), $configDir, $group));
