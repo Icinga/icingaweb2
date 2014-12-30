@@ -79,7 +79,7 @@ class ConfigCommand extends Command
             ));
         }
 
-        printf($this->translate("Successfully created configuration directory at: %s\n"), $configDir);
+        printf($this->translate('Successfully created configuration directory %s') . PHP_EOL, $configDir);
     }
 
     /**
