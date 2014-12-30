@@ -22,11 +22,22 @@ class TokenCommand extends Command
      *
      * USAGE:
      *
-     *   icingacli setup token show
+     *   icingacli setup token show [options]
+     *
+     * OPTIONS:
+     *
+     *  --config=<directory>    Path to Icinga Web 2's configuration files [/etc/icingaweb2]
      */
     public function showAction()
     {
-        $token = file_get_contents($this->app->getConfigDir() . '/setup.token');
+        $configDir = $this->params->get('config', $this->app->getConfigDir());
+        if (! is_string($configDir) || strlen(trim($configDir)) === 0) {
+            $this->fail($this->translate(
+                'The argument --config expects a path to Icinga Web 2\'s configuration files'
+            ));
+        }
+
+        $token = file_get_contents($configDir . '/setup.token');
         if (! $token) {
             $this->fail(
                 $this->translate('Nothing to show. Please create a new setup token using the generateToken action.')
