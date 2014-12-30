@@ -152,9 +152,9 @@ Icinga Web 2 vendor library Zend
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/{%{basedir}/{modules,library,public},%{bindir},%{configdir},%{logdir},%{phpdir},%{wwwconfigdir},{_sysconfdir}/bash_completion.d}
+mkdir -p %{buildroot}/{%{basedir}/{modules,library,public},%{bindir},%{configdir},%{logdir},%{phpdir},%{wwwconfigdir},%{_sysconfdir}/bash_completion.d}
 cp -prv application doc %{buildroot}/%{basedir}
-cp -pv etc/bash_completion.d/icingacli %{buildroot}/{_sysconfdir}/bash_completion.d
+cp -pv etc/bash_completion.d/icingacli %{buildroot}/%{_sysconfdir}/bash_completion.d/icingacli
 cp -prv modules/{monitoring,setup} %{buildroot}/%{basedir}/modules
 cp -prv library/Icinga %{buildroot}/%{phpdir}
 cp -prv library/vendor %{buildroot}/%{basedir}/library
