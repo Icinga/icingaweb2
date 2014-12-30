@@ -41,6 +41,11 @@ class ConfigCommand extends Command
             ));
         }
 
+        if (file_exists($configDir)) {
+            printf($this->translate('Configuration directory already exists at: %s') . PHP_EOL, $configDir);
+            return true;
+        }
+
         $group = trim($this->params->get('group', 'icingaweb2'));
         if (strlen($group) === 0) {
             $this->fail($this->translate(
@@ -53,11 +58,6 @@ class ConfigCommand extends Command
             $this->fail($this->translate(
                 'The argument --mode expects an access mode for the configuration directory'
             ));
-        }
-
-        if (file_exists($configDir)) {
-            printf($this->translate("Configuration directory already exists at: %s\n"), $configDir);
-            return true;
         }
 
         $mode = octdec($mode);
