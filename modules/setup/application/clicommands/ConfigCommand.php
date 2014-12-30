@@ -20,9 +20,9 @@ class ConfigCommand extends Command
      *
      * OPTIONS:
      *
-     *  --mode=<mode>           The access mode to use [2770]
-     *
      *  --config=<directory>    Path to Icinga Web 2's configuration files [/etc/icingaweb2]
+     *
+     *  --mode=<mode>           The access mode to use [2770]
      *
      *  --group=<group>         Owner group for the configuration directory [icingaweb2]
      *
@@ -34,6 +34,13 @@ class ConfigCommand extends Command
      */
     public function directoryAction()
     {
+        $configDir = trim($this->params->get('config', $this->app->getConfigDir()));
+        if (strlen($configDir) === 0) {
+            $this->fail($this->translate(
+                'The argument --config expects a path to Icinga Web 2\'s configuration files'
+            ));
+        }
+
         $group = trim($this->params->get('group', 'icingaweb2'));
         if (strlen($group) === 0) {
             $this->fail($this->translate(
@@ -41,26 +48,32 @@ class ConfigCommand extends Command
             ));
         }
 
-        $config = $this->params->get('config', $this->app->getConfigDir());
-        if (file_exists($config)) {
-            printf($this->translate("Configuration directory already exists at: %s\n"), $config);
+        $mode = trim($this->params->get('mode', '2770'));
+        if (strlen($mode) === 0) {
+            $this->fail($this->translate(
+                'The argument --mode expects an access mode for the configuration directory'
+            ));
+        }
+
+        if (file_exists($configDir)) {
+            printf($this->translate("Configuration directory already exists at: %s\n"), $configDir);
             return true;
         }
 
-        $mode = octdec($this->params->get('mode', '2770'));
-        if (false === mkdir($config)) {
-            $this->fail(sprintf($this->translate('Unable to create path: %s'), $config));
+        $mode = octdec($mode);
+        if (false === mkdir($configDir)) {
+            $this->fail(sprintf($this->translate('Unable to create path: %s'), $configDir));
             return false;
         }
 
-        chmod($config, $mode);
+        chmod($configDir, $mode);
 
-        if (chgrp($config, $group) === false) {
-            $this->fail(sprintf($this->translate('Unable to change the group of "%s" to "%s".'), $config, $group));
+        if (chgrp($configDir, $group) === false) {
+            $this->fail(sprintf($this->translate('Unable to change the group of "%s" to "%s".'), $configDir, $group));
             return false;
         }
 
-        printf($this->translate("Successfully created configuration directory at: %s\n"), $config);
+        printf($this->translate("Successfully created configuration directory at: %s\n"), $configDir);
     }
 
     /**
