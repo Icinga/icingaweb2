@@ -204,7 +204,7 @@ exit 0
 %files -n icingacli
 %defattr(-,root,root)
 %{basedir}/application/clicommands
-{_sysconfdir}/bash_completion.d/icingacli
+%{_sysconfdir}/bash_completion.d/icingacli
 %attr(0755,root,root) %{bindir}/icingacli
 
 
