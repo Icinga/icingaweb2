@@ -24,7 +24,7 @@ abstract class Webserver
      *
      * @var string
      */
-    protected $urlPath = '/icingaweb';
+    protected $urlPath = '/icingaweb2';
 
     /**
      * Path to Icinga Web 2's configuration files
