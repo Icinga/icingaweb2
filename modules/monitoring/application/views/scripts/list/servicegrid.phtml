@@ -1,3 +1,8 @@
+<?php
+
+use Icinga\Module\Monitoring\Object\Service;
+
+?>
 <?php if (!$this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
@@ -63,7 +68,7 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
           <a href="<?= $this->href('monitoring/show/service', array(
             'host'      => $service->host_name,
             'service'   => $service->service_description
-          )); ?>" title="<?= $this->escape($service->service_output); ?>" class="state_<?= $this->monitoringState($service, 'service'); ?> <?= $service->service_handled ? 'handled' : ''; ?>"></a>
+          )); ?>" title="<?= $this->escape($service->service_output); ?>" class="state_<?= Service::getStateText($service->service_state); ?> <?= $service->service_handled ? 'handled' : ''; ?>"></a>
         </td>
 <?php else: ?>
         <td>&middot;</td>

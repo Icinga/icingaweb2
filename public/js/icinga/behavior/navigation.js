@@ -32,6 +32,15 @@
             if ($outerMenu.size()) {
                 $outerMenu.addClass('active');
             }
+
+            /*
+              Recreate the html content of the menu item to force the browser to update the layout, or else
+              the link would only be visible as active after another click or page reload in Gecko and WebKit.
+              
+              fixes #7897
+            */
+            $selectedMenu.html($selectedMenu.html());
+
         } else {
             // store menu state
             var $menus = $('#menu li.active', el);

@@ -6,6 +6,7 @@ namespace Icinga\Forms\Security;
 
 use InvalidArgumentException;
 use LogicException;
+use Zend_Form_Element;
 use Icinga\Application\Icinga;
 use Icinga\Forms\ConfigForm;
 use Icinga\Util\String;
@@ -18,14 +19,14 @@ class RoleForm extends ConfigForm
     /**
      * Provided permissions by currently loaded modules
      *
-     * @var array
+     * @type array
      */
-    protected $providedPermissions = array();
+    protected $providedPermissions = array('*' => '*');
 
     /**
      * Provided restrictions by currently loaded modules
      *
-     * @var array
+     * @type array
      */
     protected $providedRestrictions = array();
 
@@ -35,14 +36,26 @@ class RoleForm extends ConfigForm
      */
     public function init()
     {
+        $helper = new Zend_Form_Element('bogus');
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
             foreach ($module->getProvidedPermissions() as $permission) {
-                /** @var object $permission */
+                /** @type object $permission */
                 $this->providedPermissions[$permission->name] = $permission->name . ': ' . $permission->description;
             }
             foreach ($module->getProvidedRestrictions() as $restriction) {
-                /** @var object $restriction */
-                $this->providedRestrictions[$restriction->name] = $restriction->description;
+                /** @type object $restriction */
+                $name = $helper->filterName($restriction->name); // Zend only permits alphanumerics, the underscore,
+                                                                 // the circumflex and any ASCII character in range
+                                                                 // \x7f to \xff (127 to 255)
+                while (isset($this->providedRestrictions[$name])) {
+                    // Because Zend_Form_Element::filterName() replaces any not permitted character with the empty
+                    // string we may have duplicate names, e.g. 're/striction' and 'restriction'
+                    $name .= '_';
+                }
+                $this->providedRestrictions[$name] = array(
+                    'description'   => $restriction->description,
+                    'name'          => $restriction->name
+                );
             }
         }
     }
@@ -90,13 +103,13 @@ class RoleForm extends ConfigForm
                 )
             )
         ));
-        foreach ($this->providedRestrictions as $name => $description) {
+        foreach ($this->providedRestrictions as $name => $spec) {
             $this->addElement(
                 'text',
                 $name,
                 array(
-                    'label'         => $name,
-                    'description'   => $description
+                    'label'         => $spec['name'],
+                    'description'   => $spec['description']
                 )
             );
         }
@@ -129,6 +142,15 @@ class RoleForm extends ConfigForm
             ? String::trimSplit($role['permissions'])
             : null;
         $role['name'] = $name;
+        $restrictions = array();
+        foreach ($this->providedRestrictions as $name => $spec) {
+            if (isset($role[$spec['name']])) {
+                // Translate restriction names to filtered element names
+                $restrictions[$name] = $role[$spec['name']];
+                unset($role[$spec['name']]);
+            }
+        }
+        $role = array_merge($role, $restrictions);
         $this->populate($role);
         return $this;
     }
@@ -230,6 +252,15 @@ class RoleForm extends ConfigForm
         if (isset($values['permissions'])) {
             $values['permissions'] = implode(', ', $values['permissions']);
         }
+        $restrictions = array();
+        foreach ($this->providedRestrictions as $name => $spec) {
+            if (isset($values[$name])) {
+                // Translate filtered element names to restriction names
+                $restrictions[$spec['name']] = $values[$name];
+                unset($values[$name]);
+            }
+        }
+        $values = array_merge($values, $restrictions);
         return $values;
     }
 }

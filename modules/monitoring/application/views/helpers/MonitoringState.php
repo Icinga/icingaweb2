@@ -3,7 +3,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 
 /**
- * @deprecated Crap.
+ * @deprecated Most of these helpers are currently only used in the MultiController, which is probably obsolete
  */
 class Zend_View_Helper_MonitoringState extends Zend_View_Helper_Abstract
 {
@@ -11,7 +11,7 @@ class Zend_View_Helper_MonitoringState extends Zend_View_Helper_Abstract
     private $hoststates = array('up', 'down', 'unreachable', 99 => 'pending', null => 'pending');
 
     /**
-     * @deprecated The host or service object must know it's possible states.
+     * @deprecated Not used anywhere.
      */
     public function monitoringState($object, $type = 'service')
     {
@@ -22,6 +22,9 @@ class Zend_View_Helper_MonitoringState extends Zend_View_Helper_Abstract
         }
     }
 
+    /**
+     * @deprecated Not used anywhere.
+     */
     public function monitoringStateById($id, $type = 'service')
     {
         if ($type === 'service') {
@@ -91,7 +94,7 @@ class Zend_View_Helper_MonitoringState extends Zend_View_Helper_Abstract
     }
 
     /**
-     * @deprecated Not translated.
+     * @deprecated Not used anywhere.
      */
     public function getStateTitle($object, $type)
     {

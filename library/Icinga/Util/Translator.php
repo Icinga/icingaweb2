@@ -4,7 +4,6 @@
 
 namespace Icinga\Util;
 
-use Exception;
 use Icinga\Exception\IcingaException;
 
 /**
@@ -34,8 +33,8 @@ class Translator
      *
      * Falls back to the default domain in case the string cannot be translated using the given domain
      *
-     * @param   string  $text           The string to translate
-     * @param   string  $domain         The primary domain to use
+     * @param   string      $text       The string to translate
+     * @param   string      $domain     The primary domain to use
      * @param   string|null $context    Optional parameter for context based translation
      *
      * @return  string                  The translated string
@@ -64,7 +63,7 @@ class Translator
      *
      * @param   string      $textSingular   The string in singular form to translate
      * @param   string      $textPlural     The string in plural form to translate
-     * @param   integer     $number         The number to get the plural or singular string
+     * @param   integer     $number         The amount to determine from whether to return singular or plural
      * @param   string      $domain         The primary domain to use
      * @param   string|null $context        Optional parameter for context based translation
      *

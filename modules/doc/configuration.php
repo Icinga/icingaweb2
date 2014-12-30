@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-/* @var $this \Icinga\Application\Modules\Module */
+/** @type $this \Icinga\Application\Modules\Module */
 
 $section = $this->menuSection($this->translate('Documentation'), array(
     'title'    => 'Documentation',

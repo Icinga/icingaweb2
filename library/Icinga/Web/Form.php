@@ -9,6 +9,7 @@ use Zend_Config;
 use Zend_Form;
 use Zend_View_Interface;
 use Icinga\Application\Icinga;
+use Icinga\Util\Translator;
 use Icinga\Web\Form\Decorator\NoScriptApply;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
 
@@ -147,7 +148,7 @@ class Form extends Zend_Form
     /**
      * Set a callback that is called instead of this form's onSuccess method
      *
-     * It is called using the following signature: (Request $request, Form $form).
+     * It is called using the following signature: (Form $this).
      *
      * @param   callable    $onSuccess  Callback
      *
@@ -802,6 +803,58 @@ class Form extends Zend_Form
         }
 
         return array();
+    }
+
+    /**
+     * Get the translation domain for this form
+     *
+     * The returned translation domain is either determined based on this form's qualified name or it is the default
+     * 'icinga' domain
+     *
+     * @return string
+     */
+    protected function getTranslationDomain()
+    {
+        $parts = explode('\\', get_called_class());
+        if ($parts[1] === 'Module') {
+            // Assume format Icinga\Module\ModuleName\Forms\...
+            return strtolower($parts[2]);
+        }
+        return 'icinga';
+    }
+
+    /**
+     * Translate a string
+     *
+     * @param   string      $text       The string to translate
+     * @param   string|null $context    Optional parameter for context based translation
+     *
+     * @return  string                  The translated string
+     */
+    protected function translate($text, $context = null)
+    {
+        return Translator::translate($text, $this->getTranslationDomain(), $context);
+    }
+
+    /**
+     * Translate a plural string
+     *
+     * @param   string      $textSingular   The string in singular form to translate
+     * @param   string      $textPlural     The string in plural form to translate
+     * @param   integer     $number         The amount to determine from whether to return singular or plural
+     * @param   string|null $context        Optional parameter for context based translation
+     *
+     * @return  string                      The translated string
+     */
+    protected function translatePlural($textSingular, $textPlural, $number, $context = null)
+    {
+        return Translator::translatePlural(
+            $textSingular,
+            $textPlural,
+            $number,
+            $this->getTranslationDomain(),
+            $context
+        );
     }
 
     /**

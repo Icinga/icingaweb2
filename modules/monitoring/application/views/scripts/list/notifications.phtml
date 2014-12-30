@@ -1,3 +1,10 @@
+<?php
+
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Object\Service;
+
+?>
+
 <?php if (!$this->compact): ?>
 <div class="controls">
   <?= $this->tabs ?>
@@ -36,13 +43,13 @@ foreach ($notifications as $notification):
           'host'    => $notification->host,
           'service' => $notification->service
       ));
-      $stateName = strtolower($this->util()->getServiceStateName($notification->notification_state));
+      $stateName = Service::getStateText($notification->notification_state);
   } else {
       $isService = false;
       $href = $this->href('monitoring/show/host', array(
           'host'    => $notification->host
       ));
-      $stateName = strtolower($this->util()->getHostStateName($notification->notification_state));
+      $stateName = Host::getStateText($notification->notification_state);
   }
 ?>
   <tr class="state <?= $stateName ?>">

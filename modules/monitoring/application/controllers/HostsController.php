@@ -7,6 +7,7 @@ use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ObjectsCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandForm;
@@ -71,8 +72,10 @@ class Monitoring_HostsController extends Controller
             'host_obsessing'*/
         ));
         $unhandledObjects = array();
+        $unhandledFilterExpressions = array();
         $acknowledgedObjects = array();
         $objectsInDowntime = array();
+        $downtimeFilterExpressions = array();
         $hostStates = array(
             Host::getStateText(Host::STATE_UP) => 0,
             Host::getStateText(Host::STATE_DOWN) => 0,
@@ -80,15 +83,17 @@ class Monitoring_HostsController extends Controller
             Host::getStateText(Host::STATE_PENDING) => 0,
         );
         foreach ($this->hostList as $host) {
-            /** @var Service $host */
+            /** @var Host $host */
             if ((bool) $host->problem === true && (bool) $host->handled === false) {
                 $unhandledObjects[] = $host;
+                $unhandledFilterExpressions[] = Filter::where('host', $host->getName());
             }
             if ((bool) $host->acknowledged === true) {
                 $acknowledgedObjects[] = $host;
             }
             if ((bool) $host->in_downtime === true) {
                 $objectsInDowntime[] = $host;
+                $downtimeFilterExpressions[] = Filter::where('downtime_host', $host->getName());
             }
             ++$hostStates[$host::getStateText($host->state)];
         }
@@ -103,19 +108,19 @@ class Monitoring_HostsController extends Controller
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/hosts');
         $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/hosts/reschedule-check');
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/hosts/schedule-downtime');
+        $this->view->processCheckResultAllLink = Url::fromRequest()->setPath('monitoring/hosts/process-check-result');
         $this->view->hostStates = $hostStates;
         $this->view->objects = $this->hostList;
         $this->view->unhandledObjects = $unhandledObjects;
-        $this->view->acknowledgeUnhandledLink = Url::fromRequest()
-            ->setPath('monitoring/hosts/acknowledge-problem')
-            ->addParams(array('host_problem' => 1, 'host_handled' => 0));
-        $this->view->downtimeUnhandledLink = Url::fromRequest()
-            ->setPath('monitoring/hosts/schedule-downtime')
-            ->addParams(array('host_problem' => 1, 'host_handled' => 0));
+        $unhandledFilterQueryString = Filter::matchAny($unhandledFilterExpressions)->toQueryString();
+        $this->view->acknowledgeUnhandledLink = Url::fromPath('monitoring/hosts/acknowledge-problem')
+            ->setQueryString($unhandledFilterQueryString);
+        $this->view->downtimeUnhandledLink = Url::fromPath('monitoring/hosts/schedule-downtime')
+            ->setQueryString($unhandledFilterQueryString);
         $this->view->acknowledgedObjects = $acknowledgedObjects;
         $this->view->objectsInDowntime = $objectsInDowntime;
-        $this->view->inDowntimeLink = Url::fromRequest()
-            ->setPath('monitoring/list/downtimes');
+        $this->view->inDowntimeLink = Url::fromPath('monitoring/list/downtimes')
+            ->setQueryString(Filter::matchAny($downtimeFilterExpressions)->toQueryString());
         $this->view->havingCommentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
         $this->view->hostStatesPieChart = $this->createPieChart(
@@ -129,9 +134,6 @@ class Monitoring_HostsController extends Controller
     {
         $chart = new InlinePie(array_values($states), $title, $colors);
         return $chart
-            ->setLabel(array_map('strtoupper', array_keys($states)))
-            ->setHeight(100)
-            ->setWidth(100)
             ->setTitle($title);
     }
 
@@ -160,5 +162,14 @@ class Monitoring_HostsController extends Controller
     {
         $this->view->title = $this->translate('Schedule Host Downtimes');
         $this->handleCommandForm(new ScheduleHostDowntimeCommandForm());
+    }
+
+    /**
+     * Submit passive host check results
+     */
+    public function processCheckResultAction()
+    {
+        $this->view->title = $this->translate('Submit Passive Host Check Results');
+        $this->handleCommandForm(new ProcessCheckResultCommandForm());
     }
 }

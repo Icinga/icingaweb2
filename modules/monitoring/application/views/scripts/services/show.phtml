@@ -2,13 +2,14 @@
     <?= $this->tabs ?>
 </div>
 <div class="content">
-    <?php if (count($objects) === 0): ?>
+    <?php $serviceCount = count($objects) ?>
+    <?php if ($serviceCount === 0): ?>
         <?= $this->translate('No services matching the filter') ?>
     <?php else: ?>
 
         <div class="hbox">
             <div class="hbox-item" style="width: 6em;">
-                <b><?= sprintf($this->translate('Services (%u)'), array_sum(array_values($serviceStates))) ?></b>
+                <b><?= sprintf($this->translatePlural('Service (%u)', 'Services (%u)', $serviceCount), $serviceCount) ?></b>
             </div>
             <div class="hbox-item">
                 <?= $this->serviceStatesPieChart ?>
@@ -22,7 +23,8 @@
 
         <div class="hbox">
             <div class="hbox-item" style="width: 6em;">
-                <b><?= sprintf($this->translate('Hosts (%u)'), array_sum(array_values($hostStates)))  ?></b>
+                <?php $hostCount = array_sum(array_values($hostStates)) ?>
+                <b><?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', $hostCount), $hostCount) ?></b>
             </div>
             <div class="hbox-item">
                 <?= $this->hostStatesPieChart ?>
@@ -59,15 +61,23 @@
             </a>
         </div>
 
+        <div>
+            <a href="<?= $processCheckResultAllLink; ?>">
+                <?= $this->icon('reply'); ?>
+                <?= $this->translate('Submit passive check results'); ?>
+            </a>
+        </div>
+
         <?php if (! empty($unhandledObjects)): ?>
         <h3>
+            <?php $unhandledCount = count($unhandledObjects) ?>
             <?= sprintf(
                 $this->translatePlural(
                     '%u Unhandled Service Problem',
                     '%u Unhandled Service Problems',
-                    count($unhandledObjects)
+                    $unhandledCount
                 ),
-                count($unhandledObjects)
+                $unhandledCount
             ) ?>
         </h3>
         <div>
@@ -88,13 +98,14 @@
 
         <?php if (! empty($acknowledgedObjects)): ?>
             <h2>
+                <?php $acknowledgedCount = count($acknowledgedObjects) ?>
                 <?= sprintf(
                     $this->translatePlural(
                         '%u Acknowledged Service Problem',
                         '%u Acknowledged Service Problems',
-                        count($acknowledgedObjects)
+                        $acknowledgedCount
                     ),
-                    count($acknowledgedObjects)
+                    $acknowledgedCount
                 ) ?>
             </h2>
             <div>
@@ -104,20 +115,36 @@
 
         <?php if (! empty($objectsInDowntime)): ?>
             <h2>
+                <?php $inDowntimeCount = count($objectsInDowntime) ?>
                 <a href="<?= $inDowntimeLink ?>"
                    title="<?= $this->translate('Services in downtime') ?>">
                     <?= $this->icon('plug') ?>
-                    <?= $this->translate(sprintf('%u services are in downtime', count($objectsInDowntime))) ?>
+                    <?= sprintf(
+                        $this->translatePlural(
+                            '%u service is in downtime',
+                            '%u services are in downtime',
+                            $inDowntimeCount
+                        ),
+                        $inDowntimeCount
+                    ) ?>
                 </a>
             </h2>
         <?php endif ?>
 
-        <?php if (count($objects->getComments())): ?>
+        <?php $havingCommentsCount = count($objects->getComments()) ?>
+        <?php if ($havingCommentsCount): ?>
             <h2>
                 <a href="<?= $havingCommentsLink ?>"
                    title="<?= $this->translate('Comments') ?>">
                     <?= $this->icon('comment') ?>
-                    <?= $this->translate(sprintf('%u comments', count($objects->getComments()))) ?>
+                    <?= sprintf(
+                        $this->translatePlural(
+                            '%u comment',
+                            '%u comments',
+                            $havingCommentsCount
+                        ),
+                        $havingCommentsCount
+                    ) ?>
                 </a>
             </h2>
         <?php endif ?>

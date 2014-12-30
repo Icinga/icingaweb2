@@ -1,0 +1,23 @@
+Alias /<%= @web_path %> /vagrant/public
+
+<Directory "/vagrant/public/">
+    Options FollowSymLinks
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+
+    # SetEnv ICINGAWEB_CONFIGDIR <%= @config %>
+
+    EnableSendfile Off
+
+    RewriteEngine on
+    RewriteBase /<%= @web_path %>/
+    RewriteCond %{REQUEST_FILENAME} -s [OR]
+    RewriteCond %{REQUEST_FILENAME} -l [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^.*$ - [NC,L]
+    RewriteRule ^.*$ index.php [NC,L]
+
+    php_value xdebug.idekey PHPSTORM
+</Directory>
+

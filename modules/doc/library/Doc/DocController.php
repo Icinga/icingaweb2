@@ -28,7 +28,7 @@ class DocController extends ModuleActionController
             $urlParams
         );
         $this->view->title = $chapterId;
-        return $this->render('chapter', null, true);
+        $this->render('chapter', null, true);
     }
 
     /**
@@ -46,7 +46,7 @@ class DocController extends ModuleActionController
         $name = ucfirst($name);
         $this->view->docName = $name;
         $this->view->title = sprintf($this->translate('%s Documentation'), $name);
-        return $this->render('toc', null, true);
+        $this->render('toc', null, true);
     }
 
     /**
@@ -71,6 +71,6 @@ class DocController extends ModuleActionController
         );
         $this->view->docName = $name;
         $this->_request->setParam('format', 'pdf');
-        return $this->render('pdf', null, true);
+        $this->render('pdf', null, true);
     }
 }

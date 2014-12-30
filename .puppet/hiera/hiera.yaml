@@ -1,0 +1,9 @@
+---
+:backends:
+  - yaml
+
+:hierarchy:
+  - common
+
+:yaml:
+  :datadir: /vagrant/.puppet/hiera

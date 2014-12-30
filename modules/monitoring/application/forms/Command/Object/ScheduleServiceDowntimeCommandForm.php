@@ -130,7 +130,7 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
             array(
                 'decorators' => array(
                     'FormElements',
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
+                    array('HtmlTag', array('tag' => 'div'))
                 )
             )
         );
@@ -169,7 +169,7 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                     ),
                     'decorators' => array(
                         'FormElements',
-                        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group')),
+                        array('HtmlTag', array('tag' => 'div')),
                         array(
                             'Description',
                             array('tag' => 'span', 'class' => 'description', 'placement' => 'prepend')

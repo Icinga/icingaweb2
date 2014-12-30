@@ -30,7 +30,7 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
      *
      * @return  string
      */
-    public function escape($commandString)
+    protected function escape($commandString)
     {
         return str_replace(array("\r", "\n"), array('\r', '\n'), $commandString);
     }
@@ -52,7 +52,7 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
         if ($now === null) {
             $now = time();
         }
-        return sprintf('[%u] %s', $now, $this->$renderMethod($command));
+        return sprintf('[%u] %s', $now, $this->escape($this->$renderMethod($command)));
     }
 
     public function renderAddComment(AddCommentCommand $command)
@@ -126,7 +126,7 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
         } else {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $commandString = sprintf(
-                'PROCESS_SVC_CHECK_RESULT;%s;%s',
+                'PROCESS_SERVICE_CHECK_RESULT;%s;%s',
                 $object->getHost()->getName(),
                 $object->getName()
             );
