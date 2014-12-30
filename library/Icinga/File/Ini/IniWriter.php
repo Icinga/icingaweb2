@@ -90,11 +90,9 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
 
         if ($setMode) {
             $mode = isset($this->options['filemode']) ? $this->options['filemode'] : static::$fileMode;
-            $old = umask(0); // Make sure that the mode we're going to set doesn't get mangled
             if (is_int($mode) && false === @chmod($filePath, $mode)) {
                 throw new Zend_Config_Exception(sprintf('Failed to set file mode "%o" on file "%s"', $mode, $filePath));
             }
-            umask($old);
         }
     }
 
@@ -234,7 +232,7 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
 
     /**
      * Getter for filename
-     * 
+     *
      * @return string
      */
     public function getFilename()
