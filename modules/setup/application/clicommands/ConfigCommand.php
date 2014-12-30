@@ -22,7 +22,7 @@ class ConfigCommand extends Command
      *
      *  --mode=<mode>           The access mode to use [2770]
      *
-     *  --path=<directory>      Path to Icinga Web 2's configuration files [/etc/icingaweb2]
+     *  --config=<directory>    Path to Icinga Web 2's configuration files [/etc/icingaweb2]
      *
      *  --group=<group>         Owner group for the configuration directory [icingaweb2]
      *
@@ -41,28 +41,28 @@ class ConfigCommand extends Command
             ));
         }
 
-        $path = $this->params->get('path', $this->app->getConfigDir());
-        if (file_exists($path)) {
-            printf($this->translate("Configuration directory already exists at: %s\n"), $path);
+        $config = $this->params->get('config', $this->app->getConfigDir());
+        if (file_exists($config)) {
+            printf($this->translate("Configuration directory already exists at: %s\n"), $config);
             return true;
         }
 
         $mode = octdec($this->params->get('mode', '2770'));
-        if (false === mkdir($path)) {
-            $this->fail(sprintf($this->translate('Unable to create path: %s'), $path));
+        if (false === mkdir($config)) {
+            $this->fail(sprintf($this->translate('Unable to create path: %s'), $config));
             return false;
         }
 
         $old = umask(0); // Prevent $mode from being mangled by the system's umask ($old)
-        chmod($path, $mode);
+        chmod($config, $mode);
         umask($old);
 
-        if (chgrp($path, $group) === false) {
-            $this->fail(sprintf($this->translate('Unable to change the group of "%s" to "%s".'), $path, $group));
+        if (chgrp($config, $group) === false) {
+            $this->fail(sprintf($this->translate('Unable to change the group of "%s" to "%s".'), $config, $group));
             return false;
         }
 
-        printf($this->translate("Successfully created configuration directory at: %s\n"), $path);
+        printf($this->translate("Successfully created configuration directory at: %s\n"), $config);
     }
 
     /**
