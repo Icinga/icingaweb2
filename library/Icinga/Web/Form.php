@@ -806,19 +806,20 @@ class Form extends Zend_Form
     }
 
     /**
-     * Return the translation domain for this form
+     * Get the translation domain for this form
      *
-     * The returned translation domain is either determined based on
-     * this form's class path or it is the default `icinga' domain
+     * The returned translation domain is either determined based on this form's qualified name or it is the default
+     * 'icinga' domain
      *
-     * @return  string
+     * @return string
      */
     protected function getTranslationDomain()
     {
-        if (preg_match('@^Icinga\\\\Module\\\\([A-z]+)\\\\.*$@', get_called_class(), $matches) === 1) {
-            return strtolower($matches[0]);
+        $parts = explode('\\', get_called_class());
+        if ($parts[1] === 'Module') {
+            // Assume format Icinga\Module\ModuleName\Forms\...
+            return strtolower($parts[2]);
         }
-
         return 'icinga';
     }
 
