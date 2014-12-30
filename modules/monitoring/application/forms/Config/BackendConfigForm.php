@@ -138,10 +138,10 @@ class BackendConfigForm extends ConfigForm
     {
         $monitoringBackend = $this->request->getQuery('backend');
         try {
-            if ($monitoringBackend === null) { // create new backend
+            if ($monitoringBackend === null) { // Create new backend
                 $this->add($this->getValues());
                 $message = mt('monitoring', 'Monitoring backend "%s" has been successfully created');
-            } else { // edit existing backend
+            } else { // Edit existing backend
                 $this->edit($monitoringBackend, $this->getValues());
                 $message = mt('monitoring', 'Monitoring backend "%s" has been successfully changed');
             }
