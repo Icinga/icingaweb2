@@ -113,7 +113,7 @@ class ConfigCommand extends Command
             ));
         }
         $configDir = $this->params->get('config', $webserver->getConfigDir());
-        if (! is_string($documentRoot) || strlen(trim($documentRoot)) === 0) {
+        if (! is_string($configDir) || strlen(trim($configDir)) === 0) {
             $this->fail($this->translate(
                 'The argument --config expects a path to Icinga Web 2\'s configuration files'
             ));
