@@ -18,7 +18,7 @@ class BackendConfigForm extends ConfigForm
     /**
      * The available monitoring backend resources split by type
      *
-     * @var array
+     * @type array
      */
     protected $resources;
 
