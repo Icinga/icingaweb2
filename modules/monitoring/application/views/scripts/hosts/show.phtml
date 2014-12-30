@@ -2,11 +2,12 @@
     <?= $this->tabs ?>
 </div>
 <div class="content">
-    <?php if (count($objects) === 0): ?>
+    <?php $hostCount = count($objects) ?>
+    <?php if ($hostCount === 0): ?>
         <?= $this->translate('No hosts matching the filter') ?>
     <?php else: ?>
         <div class="hbox-item">
-            <b><?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', array_sum(array_values($hostStates))), array_sum(array_values($hostStates))) ?></b>
+            <b><?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', $hostCount), $hostCount) ?></b>
         </div>
         <div class="hbox-item">
             <?= $this->hostStatesPieChart ?>
@@ -22,9 +23,9 @@
                 $this->translatePlural(
                     '%u Host',
                     '%u Hosts',
-                     count($objects)
-                ), 
-                count($objects)
+                     $hostCount
+                ),
+                $hostCount
             ) ?>
         </h3>
 
