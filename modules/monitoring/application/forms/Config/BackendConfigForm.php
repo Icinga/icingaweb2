@@ -36,7 +36,7 @@ class BackendConfigForm extends ConfigForm
      *
      * @param   Config      $resources      The resource configuration
      *
-     * @return  self
+     * @return  $this
      *
      * @throws  ConfigurationError          In case there are no valid monitoring backend resources
      */
@@ -64,7 +64,7 @@ class BackendConfigForm extends ConfigForm
      *
      * @param   array   $values             The values to extend the configuration with
      *
-     * @return  self
+     * @return  $this
      *
      * @throws  InvalidArgumentException    In case the backend does already exist
      */
