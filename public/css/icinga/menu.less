@@ -62,15 +62,6 @@
   color: @colorPetrol;
 }
 
-#menu > ul > li.active li a:focus {
-  color: @colorTextDefault;
-}
-
-#menu > ul > li > a:focus {
-  color: @colorTextDefault;
-  text-shadow: none;
-}
-
 #menu > ul > li.active li a:hover {
   text-decoration: underline;
 }
@@ -264,3 +255,16 @@ html.ie8 #menu input.search {
 
 input:focus { outline: none; }
 
+/* Make focus outline properly visible */
+a:focus {
+  outline: dotted black 1px;
+}
+
+/* Displaying the outline in the navigation is not possible because of the messed up link borders,
+   color those links instead. */
+#menu a:focus,
+#menu > ul > li > a:focus,
+#menu .active ul li a:focus {
+  color: #21b5ad;
+  outline: none;
+}
