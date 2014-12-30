@@ -221,7 +221,7 @@ class Monitoring_MultiController extends Controller
     private function createPie($states, $colors, $title)
     {
         $chart = new InlinePie(array_values($states), $title, $colors);
-        $chart->setLabel(array_keys($states))->setHeight(100)->setWidth(100);
+        $chart->setLabel(array_keys($states))->setSize(100);
         $chart->setTitle($title);
         return $chart;
     }

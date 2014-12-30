@@ -4,3 +4,4 @@ DESTINATION=.
 wget -O ${FILENAME}.tar.gz https://github.com/erusev/parsedown/archive/${RELEASE}.tar.gz
 tar xfz ${FILENAME}.tar.gz -C $DESTINATION/ --strip-components 1 $FILENAME/Parsedown.php $FILENAME/LICENSE.txt
 chmod 644 $DESTINATION/Parsedown.php
+mv LICENSE.txt LICENSE

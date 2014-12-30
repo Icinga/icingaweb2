@@ -421,7 +421,7 @@ abstract class MonitoredObject
         if ($this->type === self::TYPE_SERVICE) {
             $eventHistory->where('service_description', $this->service_description);
         }
-        $this->eventhistory = $eventHistory->getQuery();
+        $this->eventhistory = $eventHistory;
         return $this;
     }
 

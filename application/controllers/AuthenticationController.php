@@ -4,16 +4,17 @@
 
 # namespace Icinga\Application\Controllers;
 
-use Icinga\Authentication\Backend\AutoLoginBackend;
-use Icinga\Web\Controller\ActionController;
-use Icinga\Forms\Authentication\LoginForm;
-use Icinga\Authentication\AuthChain;
 use Icinga\Application\Config;
+use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Authentication\AuthChain;
+use Icinga\Authentication\Backend\AutoLoginBackend;
 use Icinga\Exception\AuthenticationException;
-use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotReadableError;
+use Icinga\Forms\Authentication\LoginForm;
 use Icinga\User;
+use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Url;
 
 /**
@@ -33,7 +34,8 @@ class AuthenticationController extends ActionController
      */
     public function loginAction()
     {
-        if (@file_exists(Config::resolvePath('setup.token')) && !@file_exists(Config::resolvePath('config.ini'))) {
+        $icinga = Icinga::app();
+        if ($icinga->setupTokenExists() && $icinga->requiresSetup()) {
             $this->redirectNow(Url::fromPath('setup'));
         }
 
@@ -139,7 +141,7 @@ class AuthenticationController extends ActionController
             $this->view->errorInfo = $e->getMessage();
         }
 
-        $this->view->configMissing = is_dir(Config::$configDir) === false;
+        $this->view->requiresSetup = Icinga::app()->requiresSetup();
     }
 
     /**

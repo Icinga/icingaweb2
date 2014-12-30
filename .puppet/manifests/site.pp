@@ -12,4 +12,6 @@ node default {
   file { '/etc/profile.d/env.sh':
     source => 'puppet:////vagrant/.puppet/files/etc/profile.d/env.sh'
   }
+  @user { vagrant: ensure => present }
+  User <| title == vagrant |> { groups +> icingaweb }
 }

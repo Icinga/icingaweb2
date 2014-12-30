@@ -38,10 +38,6 @@ class TokenValidator extends Zend_Validate_Abstract
                 mt('setup', 'Cannot validate token, file "%s" is empty. Please define a token.'),
                 $tokenPath
             ),
-            'TOKEN_FILE_PUBLIC' => sprintf(
-                mt('setup', 'Cannot validate token, file "%s" must only be accessible by the webserver\'s user.'),
-                $tokenPath
-            ),
             'TOKEN_INVALID'     => mt('setup', 'Invalid token supplied.')
         );
     }
@@ -56,12 +52,6 @@ class TokenValidator extends Zend_Validate_Abstract
      */
     public function isValid($value, $context = null)
     {
-        $tokenStats = @stat($this->tokenPath);
-        if (($tokenStats['mode'] & 4) === 4) {
-            $this->_error('TOKEN_FILE_PUBLIC');
-            return false;
-        }
-
         try {
             $file = new File($this->tokenPath);
             $expectedToken = trim($file->fgets());
