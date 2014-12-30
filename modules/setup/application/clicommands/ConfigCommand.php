@@ -53,9 +53,7 @@ class ConfigCommand extends Command
             return false;
         }
 
-        $old = umask(0); // Prevent $mode from being mangled by the system's umask ($old)
         chmod($config, $mode);
-        umask($old);
 
         if (chgrp($config, $group) === false) {
             $this->fail(sprintf($this->translate('Unable to change the group of "%s" to "%s".'), $config, $group));
