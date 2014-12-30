@@ -2,13 +2,14 @@
     <?= $this->tabs ?>
 </div>
 <div class="content">
-    <?php if (count($objects) === 0): ?>
+    <?php $serviceCount = count($objects) ?>
+    <?php if ($serviceCount === 0): ?>
         <?= $this->translate('No services matching the filter') ?>
     <?php else: ?>
 
         <div class="hbox">
             <div class="hbox-item" style="width: 6em;">
-                <b><?= sprintf($this->translatePlural('Service (%u)', 'Services (%u)', array_sum(array_values($serviceStates))), array_sum(array_values($serviceStates))) ?></b>
+                <b><?= sprintf($this->translatePlural('Service (%u)', 'Services (%u)', $serviceCount), $serviceCount) ?></b>
             </div>
             <div class="hbox-item">
                 <?= $this->serviceStatesPieChart ?>
