@@ -35,9 +35,7 @@ class MakeDirStep extends Step
                     $success = false;
                 } else {
                     $this->errors[$path] = null;
-                    $old = umask(0);
                     chmod($path, $this->dirmode);
-                    umask($old);
                 }
             }
         }
