@@ -60,20 +60,23 @@ class ConfigCommand extends Command
             ));
         }
 
-        if (false === mkdir($configDir)) {
-            $this->fail(sprintf($this->translate('Unable to create path: %s'), $configDir));
-            return false;
+        if (! mkdir($configDir)) {
+            $this->fail(sprintf($this->translate('Can\'t create configuration directory %s'), $configDir));
         }
 
         if (! chmod($configDir, octdec($mode))) {
-            $this->fail($this->translate(
-                'Unable to change the mode of the configuration directory'
+            $this->fail(sprintf(
+                $this->translate('Can\'t change the mode of the configuration directory to %s'),
+                $mode
             ));
         }
 
-        if (chgrp($configDir, $group) === false) {
-            $this->fail(sprintf($this->translate('Unable to change the group of "%s" to "%s".'), $configDir, $group));
-            return false;
+        if (! chgrp($configDir, $group)) {
+            $this->fail(sprintf(
+                $this->translate('Can\'t change the  to change the group of %s to %s'),
+                $configDir,
+                $group
+            ));
         }
 
         printf($this->translate("Successfully created configuration directory at: %s\n"), $configDir);
