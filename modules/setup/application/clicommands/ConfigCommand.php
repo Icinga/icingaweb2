@@ -12,14 +12,14 @@ use Icinga\Module\Setup\Webserver;
 class ConfigCommand extends Command
 {
     /**
-     * Create the configuration directory
+     * Create Icinga Web 2's configuration directory
      *
      * This command creates the configuration directory for Icinga Web 2. The `group' argument
      * is mandatory and should be the groupname of the user your web server is running as.
      *
      * USAGE:
      *
-     *   icingacli setup config createDirectory <group> [options]
+     *   icingacli setup config directory <group> [options]
      *
      * OPTIONS:
      *
@@ -28,11 +28,11 @@ class ConfigCommand extends Command
      *
      * EXAMPLES:
      *
-     *   icingacli setup config createDirectory apache
-     *   icingacli setup config createDirectory apache --mode 2775
-     *   icingacli setup config createDirectory apache --path /some/path
+     *   icingacli setup config directory apache
+     *   icingacli setup config directory apache --mode 2775
+     *   icingacli setup config directory apache --path /some/path
      */
-    public function createDirectoryAction()
+    public function directoryAction()
     {
         $group = $this->params->getStandalone();
         if ($group === null) {
