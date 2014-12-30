@@ -147,7 +147,7 @@ class BackendConfigForm extends ConfigForm
             }
         } catch (InvalidArgumentException $e) {
             Notification::error($e->getMessage());
-            return;
+            return null;
         }
 
         if ($this->save()) {
