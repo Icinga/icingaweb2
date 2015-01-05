@@ -134,7 +134,7 @@ class LogarithmicUnit implements AxisUnit
     {
         $currentBase = $this->currentTick + $this->minExp;
         if (abs($currentBase) > 4) {
-            return '10E' . $currentBase;
+            return $this->base . 'E' . $currentBase;
         }
         return (string) intval($this->pow($currentBase));
     }
@@ -257,7 +257,7 @@ class LogarithmicUnit implements AxisUnit
      *
      * @return int
      */
-    protected function getTicks()
+    public function getTicks()
     {
         return $this->maxExp - $this->minExp;
     }

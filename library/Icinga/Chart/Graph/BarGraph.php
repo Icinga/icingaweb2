@@ -28,7 +28,7 @@ class BarGraph extends Styleable implements Drawable
      *
      * @var int
      */
-    private $barWidth = 4;
+    private $barWidth = 1;
 
     /**
      * The dataset to use for this bar graph

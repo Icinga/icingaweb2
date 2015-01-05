@@ -78,6 +78,20 @@ class Axis implements Drawable
     private $yUnit = null;
 
     /**
+     * The minimum amount of units each step must take up
+     *
+     * @var int
+     */
+    public $minUnitsPerStep = 80;
+
+    /**
+     * The minimum amount of units each tick must take up
+     *
+     * @var int
+     */
+    public $minUnitsPerTick = 15;
+
+    /**
      * If the displayed labels should be aligned horizontally or diagonally
      */
     private $labelRotationStyle = self::LABEL_ROTATE_DIAGONAL;
@@ -160,6 +174,14 @@ class Axis implements Drawable
      */
     private function renderHorizontalAxis(RenderContext $ctx, DOMElement $group)
     {
+        $steps = $this->ticksPerX($this->xUnit->getTicks(), $ctx->getNrOfUnitsX(), $this->minUnitsPerStep);
+        $ticks = $this->ticksPerX($this->xUnit->getTicks(), $ctx->getNrOfUnitsX(), $this->minUnitsPerTick);
+
+        // Steps should always be ticks
+        if ($ticks !== $steps) {
+            $steps = $ticks * 5;
+        }
+
         $line = new Line(0, 100, 100, 100);
         $line->setStrokeWidth(2);
         $group->appendChild($line->toSvg($ctx));
@@ -168,41 +190,48 @@ class Axis implements Drawable
         $lastLabelEnd = -1;
         $shift = 0;
 
+        $i = 0;
         foreach ($this->xUnit as $label => $pos) {
-            if ($this->labelRotationStyle === self::LABEL_ROTATE_HORIZONTAL) {
-                // If the  last label would overlap this label we shift the y axis a bit
-                if ($lastLabelEnd > $pos) {
-                    $shift = ($shift + 5) % 10;
-                } else {
-                    $shift = 0;
+
+            if ($i % $ticks === 0) {
+                $tick = new Line($pos, 100, $pos, 101);
+                $group->appendChild($tick->toSvg($ctx));
+            }
+
+            if ($i % $steps === 0) {
+                if ($this->labelRotationStyle === self::LABEL_ROTATE_HORIZONTAL) {
+                    // If the  last label would overlap this label we shift the y axis a bit
+                    if ($lastLabelEnd > $pos) {
+                        $shift = ($shift + 5) % 10;
+                    } else {
+                        $shift = 0;
+                    }
                 }
+
+                $labelField = new Text($pos + 0.5, ($this->xLabel ? 107 : 105) + $shift, $label);
+                if ($this->labelRotationStyle === self::LABEL_ROTATE_HORIZONTAL) {
+                    $labelField->setAlignment(Text::ALIGN_MIDDLE)
+                        ->setFontSize('1.8em');
+                } else {
+                    $labelField->setFontSize('2.5em');
+                }
+
+                if ($this->labelRotationStyle === self::LABEL_ROTATE_DIAGONAL) {
+                    $labelField = new Rotator($labelField, 45);
+                }
+                $labelField = $labelField->toSvg($ctx);
+
+                $group->appendChild($labelField);
+
+                if ($this->drawYGrid) {
+                    $bgLine = new Line($pos, 0, $pos, 100);
+                    $bgLine->setStrokeWidth(0.5)
+                        ->setStrokeColor('#232');
+                    $group->appendChild($bgLine->toSvg($ctx));
+                }
+                $lastLabelEnd = $pos + strlen($label) * 1.2;
             }
-
-            $tick = new Line($pos, 100, $pos, 102);
-            $group->appendChild($tick->toSvg($ctx));
-
-            $labelField = new Text($pos + 0.5, ($this->xLabel ? 107 : 105) + $shift, $label);
-            if ($this->labelRotationStyle === self::LABEL_ROTATE_HORIZONTAL) {
-                $labelField->setAlignment(Text::ALIGN_MIDDLE)
-                    ->setFontSize('1.8em');
-            } else {
-                $labelField->setFontSize('2.5em');
-            }
-
-            if ($this->labelRotationStyle === self::LABEL_ROTATE_DIAGONAL) {
-                $labelField = new Rotator($labelField, 45);
-            }
-            $labelField = $labelField->toSvg($ctx);
-
-            $group->appendChild($labelField);
-
-            if ($this->drawYGrid) {
-                $bgLine = new Line($pos, 0, $pos, 100);
-                $bgLine->setStrokeWidth(0.5)
-                    ->setStrokeColor('#232');
-                $group->appendChild($bgLine->toSvg($ctx));
-            }
-            $lastLabelEnd = $pos + strlen($label) * 1.2;
+            $i++;
         }
 
         // render the label for this axis
@@ -223,26 +252,42 @@ class Axis implements Drawable
      */
     private function renderVerticalAxis(RenderContext $ctx, DOMElement $group)
     {
+        $steps = $this->ticksPerX($this->yUnit->getTicks(), $ctx->getNrOfUnitsY(), $this->minUnitsPerStep);
+        $ticks = $this->ticksPerX($this->yUnit->getTicks(), $ctx->getNrOfUnitsY(), $this->minUnitsPerTick);
+
+        // Steps should always be ticks
+        if ($ticks !== $steps) {
+            $steps = $ticks * 5;
+        }
         $line = new Line(0, 0, 0, 100);
         $line->setStrokeWidth(2);
         $group->appendChild($line->toSvg($ctx));
 
+        $i = 0;
         foreach ($this->yUnit as $label => $pos) {
             $pos = 100 - $pos;
-            $tick = new Line(0, $pos, -1, $pos);
-            $group->appendChild($tick->toSvg($ctx));
 
-            $labelField = new Text(-0.5, $pos+0.5, $label);
-            $labelField->setFontSize('1.8em')
-                ->setAlignment(Text::ALIGN_END);
-
-            $group->appendChild($labelField->toSvg($ctx));
-            if ($this->drawXGrid) {
-                $bgLine = new Line(0, $pos, 100, $pos);
-                $bgLine->setStrokeWidth(0.5)
-                    ->setStrokeColor('#343');
-                $group->appendChild($bgLine->toSvg($ctx));
+            if ($i % $ticks === 0) {
+                // draw a tick
+                $tick = new Line(0, $pos, -1, $pos);
+                $group->appendChild($tick->toSvg($ctx));
             }
+
+            if ($i % $steps === 0) {
+                // draw a step
+                $labelField = new Text(-0.5, $pos+0.5, $label);
+                $labelField->setFontSize('1.8em')
+                    ->setAlignment(Text::ALIGN_END);
+
+                $group->appendChild($labelField->toSvg($ctx));
+                if ($this->drawXGrid) {
+                    $bgLine = new Line(0, $pos, 100, $pos);
+                    $bgLine->setStrokeWidth(0.5)
+                        ->setStrokeColor('#343');
+                    $group->appendChild($bgLine->toSvg($ctx));
+                }
+            }
+            $i++;
         }
 
         if ($this->yLabel) {
@@ -416,4 +461,14 @@ class Axis implements Drawable
         $this->renderVerticalAxis($ctx, $group);
         return $group;
     }
+
+    protected function ticksPerX($ticks, $units, $min)
+    {
+        $per = 1;
+        while ($per * $units / $ticks < $min) {
+            $per++;
+        }
+        return $per;
+    }
+
 }
