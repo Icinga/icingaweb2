@@ -12,7 +12,7 @@
                 <b><?= sprintf($this->translatePlural('Service (%u)', 'Services (%u)', $serviceCount), $serviceCount) ?></b>
             </div>
             <div class="hbox-item">
-                <?= $this->serviceStatesPieChart ?>
+                &nbsp;<?= $this->serviceStatesPieChart ?>
             </div>
             <div class="hbox-item" style="font-size: 14px">
                 <?php foreach (array_filter($serviceStates) as $text => $count) {
@@ -27,7 +27,7 @@
                 <b><?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', $hostCount), $hostCount) ?></b>
             </div>
             <div class="hbox-item">
-                <?= $this->hostStatesPieChart ?>
+                &nbsp;<?= $this->hostStatesPieChart ?>
             </div>
             <div class="hbox-item" style="font-size: 14px">
                 <?php foreach (array_filter($hostStates) as $text => $count) {

@@ -10,7 +10,7 @@
             <b><?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', $hostCount), $hostCount) ?></b>
         </div>
         <div class="hbox-item">
-            <?= $this->hostStatesPieChart ?>
+            &nbsp;<?= $this->hostStatesPieChart ?>
         </div>
         <div class="hbox-item" style="font-size: 14px">
             <?php foreach (array_filter($hostStates) as $text => $count) {

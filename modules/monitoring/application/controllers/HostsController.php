@@ -134,7 +134,9 @@ class Monitoring_HostsController extends Controller
     {
         $chart = new InlinePie(array_values($states), $title, $colors);
         return $chart
-            ->setTitle($title);
+            ->setSize(75)
+            ->setTitle('')
+            ->setSparklineClass('sparkline-multi');
     }
 
     /**
