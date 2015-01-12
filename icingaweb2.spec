@@ -152,7 +152,7 @@ Icinga Web 2 vendor library Zend
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/{%{basedir}/{modules,library,public},%{bindir},%{configdir},%{logdir},%{phpdir},%{wwwconfigdir},%{_sysconfdir}/bash_completion.d}
+mkdir -p %{buildroot}/{%{basedir}/{modules,library,public},%{bindir},%{configdir},%{logdir},%{phpdir},%{wwwconfigdir},%{_sysconfdir}/bash_completion.d,%{_datadir}/doc/%{name}}
 cp -prv application doc %{buildroot}/%{basedir}
 cp -pv etc/bash_completion.d/icingacli %{buildroot}/%{_sysconfdir}/bash_completion.d/icingacli
 cp -prv modules/{monitoring,setup} %{buildroot}/%{basedir}/modules
@@ -162,6 +162,7 @@ cp -prv public/{css,img,js,error_norewrite.html} %{buildroot}/%{basedir}/public
 cp -pv packages/files/apache/icingaweb2.conf %{buildroot}/%{wwwconfigdir}/icingaweb2.conf
 cp -pv packages/files/bin/icingacli %{buildroot}/%{bindir}
 cp -pv packages/files/public/index.php %{buildroot}/%{basedir}/public
+cp -prv etc/schema %{buildroot}/%{_datadir}/doc/%{name}
 
 %pre
 getent group icingacmd >/dev/null || groupadd -r icingacmd
@@ -183,6 +184,8 @@ rm -rf %{buildroot}
 %{basedir}/public
 %{wwwconfigdir}/icingaweb2.conf
 %attr(2775,root,%{icingawebgroup}) %dir %{logdir}
+%{_datadir}/doc/%{name}
+%docdir %{_datadir}/doc/%{name}
 
 
 %pre common
