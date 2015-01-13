@@ -12,8 +12,9 @@ use Zend_Controller_Front;
 
 class Perfdata
 {
-    const PERFDATA_DEFAULT = 'green';
-    const PERFDATA_RED = 'red';
+    const PERFDATA_OK = 'ok';
+    const PERFDATA_WARNING = 'warning';
+    const PERFDATA_CRITICAL = 'critical';
 
     /**
      * The performance data value being parsed
@@ -60,12 +61,16 @@ class Perfdata
     /**
      * The WARNING threshold
      *
+     * TODO: Should be parsed Range-Object instead of string
+     *
      * @var string
      */
     protected $warningThreshold;
 
     /**
      * The CRITICAL threshold
+     *
+     * TODO: Should be parsed Range-Object instead of string
      *
      * @var string
      */
@@ -240,7 +245,7 @@ class Perfdata
     /**
      * Return the minimum value or null if it is not available
      *
-     * @return  null|float
+     * @return  null|string
      */
     public function getMinimumValue()
     {
@@ -295,9 +300,9 @@ class Perfdata
                     $this->minValue = self::convert($parts[3], $this->unit);
                 }
             case 3:
-                $this->criticalThreshold = trim($parts[2]) ? self::convert(trim($parts[2]), $this->unit) : null;
+                $this->criticalThreshold = trim($parts[2]) ? trim($parts[2]) : null;
             case 2:
-                $this->warningThreshold = trim($parts[1]) ? self::convert(trim($parts[1]), $this->unit) : null;
+                $this->warningThreshold = trim($parts[1]) ? trim($parts[1]) : null;
         }
     }
 
@@ -332,7 +337,7 @@ class Perfdata
         }
     }
 
-    protected function calculatePieChartData( $color)
+    protected function calculatePieChartData()
     {
         $rawValue = $this->getValue();
         $minValue = $this->getMinimumValue() !== null ? $this->getMinimumValue() : 0;
@@ -340,36 +345,61 @@ class Perfdata
         $usedValue = ($rawValue - $minValue);
         $unusedValue = ($maxValue - $minValue) - $usedValue;
 
+        $warningThreshold = $this->convert($this->warningThreshold, $this->unit);
+        $criticalThreshold = $this->convert($this->criticalThreshold, $this->unit);
+
         $gray = $unusedValue;
         $green = $orange = $red = 0;
 
-        switch ($color) {
-            case self::PERFDATA_DEFAULT:
+        $pieState = self::PERFDATA_OK;
+        if ($warningThreshold > $criticalThreshold) {
+            // inverted threshold parsing OK > warning > critical
+            if (isset($warningThreshold) && $this->value <= $warningThreshold) {
+                $pieState = self::PERFDATA_WARNING;
+            }
+            if (isset($criticalThreshold) && $this->value <= $criticalThreshold) {
+                $pieState = self::PERFDATA_CRITICAL;
+            }
+
+        } else {
+            // TODO: Use standard perfdata range format to decide the state #8194
+
+            // regular threshold parsing  OK < warning < critical
+            if (isset($warningThreshold) && $rawValue > $warningThreshold) {
+                $pieState = self::PERFDATA_WARNING;
+            }
+            if (isset($criticalThreshold) && $rawValue > $criticalThreshold) {
+                $pieState = self::PERFDATA_CRITICAL;
+            }
+        }
+
+        switch ($pieState) {
+            case self::PERFDATA_OK:
                 $green = $usedValue;
                 break;
 
-            case self::PERFDATA_RED:
+            case self::PERFDATA_CRITICAL:
                 $red = $usedValue;
                 break;
 
-            case self::PERFDATA_ORANGE:
+            case self::PERFDATA_WARNING:
                 $orange = $usedValue;
                 break;
         }
-        // TODO(#6122): Add proper treshold parsing.
 
         return array($green, $orange, $red, $gray);
     }
 
 
-    public function asInlinePie($color)
+    public function asInlinePie()
     {
         if (! $this->isVisualizable()) {
             throw new ProgrammingError('Cannot calculate piechart data for unvisualizable perfdata entry.');
         }
 
-        $data = $this->calculatePieChartData($color);
+        $data = $this->calculatePieChartData();
         $pieChart = new InlinePie($data, $this);
+        $pieChart->setColors(array('#44bb77', '#ffaa44', '#ff5566', '#ddccdd'));
         $pieChart->setSparklineClass('sparkline-perfdata');
 
         if (Zend_Controller_Front::getInstance()->getRequest()->isXmlHttpRequest()) {
@@ -419,8 +449,8 @@ class Perfdata
             'value' => $this->format($this->getvalue()),
             'min' => isset($this->minValue) && !$this->isPercentage() ? $this->format($this->minValue) : '',
             'max' => isset($this->maxValue) && !$this->isPercentage() ? $this->format($this->maxValue) : '',
-            'warn' => isset($this->warningThreshold) ? $this->format($this->warningThreshold) : '',
-            'crit' => isset($this->criticalThreshold) ? $this->format($this->criticalThreshold) : ''
+            'warn' => isset($this->warningThreshold) ? $this->format(self::convert($this->warningThreshold, $this->unit)) : '',
+            'crit' => isset($this->criticalThreshold) ? $this->format(self::convert($this->criticalThreshold, $this->unit)) : ''
         );
         return $parts;
     }

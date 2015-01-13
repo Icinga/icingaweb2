@@ -8,7 +8,7 @@ use Icinga\Module\Monitoring\Plugin\Perfdata;
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 
 class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
-{
+{#
 
     /**
      * Display the given perfdata string to the user
@@ -19,7 +19,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
      *
      * @return string
      */
-    public function perfdata($perfdataStr, $compact = false, $color = Perfdata::PERFDATA_DEFAULT)
+    public function perfdata($perfdataStr, $compact = false, $color = Perfdata::PERFDATA_OK)
     {
         $pieChartData = PerfdataSet::fromString($perfdataStr)->asArray();
 
