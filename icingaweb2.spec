@@ -1,6 +1,8 @@
+%define revision 1.beta2
+
 Name:           icingaweb2
 Version:        2.0.0
-Release:        1.beta2%{?dist}
+Release:        %{revision}%{?dist}
 Summary:        Icinga Web 2
 Group:          Applications/System
 License:        GPL
