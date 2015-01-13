@@ -42,7 +42,7 @@ class Monitoring_ChartController extends Controller
         $chart->drawLines(
             array(
                 'label' => 'Random 1',
-                'color' => 'red',
+                'color' => '#F56',
                 'data'  =>  $data1,
                 'showPoints' => true
             )
@@ -50,7 +50,7 @@ class Monitoring_ChartController extends Controller
         $chart->drawLines(
             array(
                 'label' => 'Random 2',
-                'color' => 'blue',
+                'color' => '#fa4',
                 'data'  =>  $data2,
                 'showPoints' => true
             )
@@ -58,7 +58,7 @@ class Monitoring_ChartController extends Controller
         $chart->drawLines(
             array(
                 'label' => 'Random 3',
-                'color' => 'green',
+                'color' => '#4b7',
                 'data'  =>  $data3,
                 'showPoints' => true
             )
@@ -81,7 +81,7 @@ class Monitoring_ChartController extends Controller
         $chart->drawLines(
             array(
                 'label' => 'f(x): sign(x) * 10^|x|',
-                'color' => 'red',
+                'color' => '#F56',
                 'data'  =>  $data,
                 'showPoints' => true
             )
@@ -103,7 +103,7 @@ class Monitoring_ChartController extends Controller
         $chart->drawLines(
             array(
                 'label' => 'f(x): sign(x) * 10^|x|',
-                'color' => 'red',
+                'color' => '#F56',
                 'data'  =>  $data,
                 'showPoints' => true
             )
@@ -119,7 +119,7 @@ class Monitoring_ChartController extends Controller
         $data1 = array();
         $data2 = array();
         $data3 = array();
-        for ($i = 0; $i < 25; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $data3[] = array('Label ' . $i, rand(0, 30));
         }
 
@@ -127,13 +127,13 @@ class Monitoring_ChartController extends Controller
         $this->chart->drawLines(
             array(
                 'label' => 'Nr of outtakes',
-                'color' => 'red',
+                'color' => '#F56',
                 'width' => '5',
 
                 'data'  => $data
             ), array(
                 'label' => 'Some line',
-                'color' => 'blue',
+                'color' => '#fa4',
                 'width' => '4',
 
                 'data'  =>  $data3,
@@ -144,7 +144,7 @@ class Monitoring_ChartController extends Controller
         $this->chart->drawBars(
             array(
                 'label' => 'A big amount of data',
-                'color' => 'green',
+                'color' => '#4b7',
                 'data'  =>  $data3,
                 'showPoints' => true
             )
@@ -280,18 +280,15 @@ class Monitoring_ChartController extends Controller
         $upBars = array();
         $downBars = array();
         $unreachableBars = array();
-        foreach ($query as $hostgroup) {
+        for ($i = 0; $i < 50; $i++) {
             $upBars[] = array(
-                $hostgroup->hostgroup,
-                $hostgroup->hosts_up
+                (string)$i, rand(1, 200), rand(1, 200)
             );
             $downBars[] = array(
-                $hostgroup->hostgroup,
-                $hostgroup->hosts_down_unhandled
+                (string)$i, rand(1, 200), rand(1, 200)
             );
             $unreachableBars[] = array(
-                $hostgroup->hostgroup,
-                $hostgroup->hosts_unreachable_unhandled
+                (string)$i, rand(1, 200), rand(1, 200)
             );
         }
         $tooltip = mt('monitoring', '<b>{title}:</b><br> {value} of {sum} hosts are {label}');
@@ -367,7 +364,14 @@ class Monitoring_ChartController extends Controller
                 (int) $query->hosts_unreachable_unhandled,
                 (int) $query->hosts_pending
             ),
-            'colors' => array('#44bb77', '#ff4444', '#ff0000', '#E066FF', '#f099FF', '#fefefe'),
+            'colors' => array(
+                '#44bb77',   // 'Ok'
+                '#ff4444',   // 'Warning'
+                '#ff0000',   // 'WarningHandled'
+                '#E066FF',
+                '#f099FF',
+                '#fefefe'
+            ),
             'labels'=> array(
                 (int) $query->hosts_up . mt('monitoring', ' Up Hosts'),
                 (int) $query->hosts_down_handled . mt('monitoring', ' Down Hosts (Handled)'),
