@@ -344,8 +344,8 @@ class Monitoring_AlertsummaryController extends Controller
         $gridChart->alignTopLeft();
         $gridChart->setAxisLabel('', mt('monitoring', 'Notifications'))
             ->setXAxis(new StaticAxis())
-            ->setAxisMin(null, 0)
-            ->setYAxis(new LinearUnit(10));
+            ->setYAxis(new LinearUnit(10))
+            ->setAxisMin(null, 0);
 
         $interval = $this->getInterval();
 
