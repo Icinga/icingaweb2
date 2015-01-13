@@ -182,9 +182,11 @@ class Axis implements Drawable
             $steps = $ticks * 5;
         }
 
+        /*
         $line = new Line(0, 100, 100, 100);
         $line->setStrokeWidth(2);
         $group->appendChild($line->toSvg($ctx));
+        */
 
         // contains the approximate end position of the last label
         $lastLabelEnd = -1;
@@ -194,8 +196,10 @@ class Axis implements Drawable
         foreach ($this->xUnit as $label => $pos) {
 
             if ($i % $ticks === 0) {
+                /*
                 $tick = new Line($pos, 100, $pos, 101);
                 $group->appendChild($tick->toSvg($ctx));
+                */
             }
 
             if ($i % $steps === 0) {
@@ -211,7 +215,7 @@ class Axis implements Drawable
                 $labelField = new Text($pos + 0.5, ($this->xLabel ? 107 : 105) + $shift, $label);
                 if ($this->labelRotationStyle === self::LABEL_ROTATE_HORIZONTAL) {
                     $labelField->setAlignment(Text::ALIGN_MIDDLE)
-                        ->setFontSize('1.8em');
+                        ->setFontSize('2.5em');
                 } else {
                     $labelField->setFontSize('2.5em');
                 }
@@ -226,7 +230,7 @@ class Axis implements Drawable
                 if ($this->drawYGrid) {
                     $bgLine = new Line($pos, 0, $pos, 100);
                     $bgLine->setStrokeWidth(0.5)
-                        ->setStrokeColor('#232');
+                        ->setStrokeColor('#BFBFBF');
                     $group->appendChild($bgLine->toSvg($ctx));
                 }
                 $lastLabelEnd = $pos + strlen($label) * 1.2;
@@ -259,9 +263,11 @@ class Axis implements Drawable
         if ($ticks !== $steps) {
             $steps = $ticks * 5;
         }
+        /*
         $line = new Line(0, 0, 0, 100);
         $line->setStrokeWidth(2);
         $group->appendChild($line->toSvg($ctx));
+        */
 
         $i = 0;
         foreach ($this->yUnit as $label => $pos) {
@@ -269,21 +275,21 @@ class Axis implements Drawable
 
             if ($i % $ticks === 0) {
                 // draw a tick
-                $tick = new Line(0, $pos, -1, $pos);
-                $group->appendChild($tick->toSvg($ctx));
+                //$tick = new Line(0, $pos, -1, $pos);
+                //$group->appendChild($tick->toSvg($ctx));
             }
 
             if ($i % $steps === 0) {
                 // draw a step
-                $labelField = new Text(-0.5, $pos+0.5, $label);
-                $labelField->setFontSize('1.8em')
+                $labelField = new Text(-0.5, $pos + 0.5, $label);
+                $labelField->setFontSize('2.5em')
                     ->setAlignment(Text::ALIGN_END);
 
                 $group->appendChild($labelField->toSvg($ctx));
                 if ($this->drawXGrid) {
                     $bgLine = new Line(0, $pos, 100, $pos);
                     $bgLine->setStrokeWidth(0.5)
-                        ->setStrokeColor('#343');
+                        ->setStrokeColor('#BFBFBF');
                     $group->appendChild($bgLine->toSvg($ctx));
                 }
             }
