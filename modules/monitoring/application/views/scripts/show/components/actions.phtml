@@ -1,9 +1,5 @@
 <?php
 
-if (! $object->action_url && ! $object->notes_url) {
-    return;
-}
-
 $links = array();
 $linkText = '<a href="%s" target="_blank">%s</a>';
 $localLinkText = '<a href="%s">%s</a>';
@@ -39,8 +35,12 @@ if (isset($this->hostActions)) {
     }
 }
 
+if (empty($links)) {
+    return;
+}
+
 ?>
 <tr>
-  <th>Foreign URLs</th>
+  <th><?= $this->translate('Actions') ?></th>
   <td><?= implode("\n ", $links) . "\n" ?></td>
 </tr>
