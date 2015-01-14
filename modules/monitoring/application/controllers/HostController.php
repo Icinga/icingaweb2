@@ -9,6 +9,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Web\Controller\MonitoredObjectController;
+use Icinga\Web\Hook;
 
 class Monitoring_HostController extends MonitoredObjectController
 {
@@ -35,6 +36,28 @@ class Monitoring_HostController extends MonitoredObjectController
         $this->object = $host;
         $this->createTabs();
         $this->getTabs()->activate('host');
+    }
+
+    protected function getHostActions()
+    {
+        $urls = array();
+
+        foreach (Hook::all('Monitoring\\HostActions') as $hook) {
+            foreach ($hook->getActionsForHost($this->object) as $id => $url) {
+                $urls[$id] = $url;
+            }
+        }
+
+        return $urls;
+    }
+
+    /**
+     * Show a host
+     */
+    public function showAction()
+    {
+        $this->view->hostActions = $this->getHostActions();
+        parent::showAction();
     }
 
     /**
