@@ -45,18 +45,66 @@ mv icingaweb2 /usr/share/icingaweb2
 
 Use `icingacli` to generate web server configuration for either Apache or nginx.
 
-*Apache*
-
+Apache:
 ````
 ./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public
 ````
 
-*nginx*
-
+nginx:
 ````
 ./bin/icingacli setup config webserver nginx --document-root /usr/share/icingaweb2/public
 ````
 
-**Step 4: Web Setup**
+**Step 4: Preparing Web Setup**
+
+Because both web and CLI must have access to configuration and logs, permissions will be managed using a special
+system group. The web server user and CLI user have to be added to this system group.
+
+Add the system group `icingaweb2` in the first place.
+
+Fedora, RHEL, CentOS, SLES and OpenSUSE:
+````
+groupadd -r icingaweb2
+````
+
+Debian and Ubuntu:
+````
+addgroup --system icingaweb2
+````
+
+Add your web server's user to the system group `icingaweb2`:
+
+Fedora, RHEL and CentOS:
+````
+usermod -a -G icingaweb2 apache
+````
+
+SLES and OpenSUSE:
+````
+usermod -G icingaweb2 wwwrun
+````
+
+Debian and Ubuntu:
+````
+usermod -a -G icingaweb2 wwwrun
+````
+
+Use `icingacli` to create the configuration directory which defaults to **/etc/icingaweb2**:
+````
+./bin/icingacli setup config directory
+````
+
+When using the web setup you are required to authenticate using a token. In order to generate a token use the
+`icingacli`:
+````
+./bin/icingacli setup token create
+````
+
+In case you do not remember the token you can show it using the `icingacli`:
+````
+./bin/icingacli setup token show
+````
+
+**Step 5: Web Setup**
 
 Visit Icinga Web 2 in your browser and complete installation using the web setup.
