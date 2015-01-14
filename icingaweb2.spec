@@ -29,6 +29,20 @@ Packager:       Icinga Team <info@icinga.org>
 %endif
 %endif
 
+
+%if 0%{?suse_version}
+%define wwwconfigdir    %{_sysconfdir}/apache2/conf.d
+%define wwwuser         wwwrun
+%define zend            php5-ZendFramework
+%if 0%{?suse_version} == 1110
+%define php php53
+Requires: apache2-mod_php53
+%else
+%define php php5
+Requires: apache2-mod_php5
+%endif
+%endif
+
 Requires(pre):  shadow-utils
 Requires:       %{name}-common = %{version}-%{release}
 Requires:       php-Icinga = %{version}-%{release}
@@ -61,21 +75,23 @@ Common files for Icinga Web 2 and the Icinga CLI
 
 
 %package -n php-Icinga
-Summary:    Icinga Web 2 PHP library
-Group:      Development/Libraries
-Requires:   %{php} >= 5.3.0
+Summary:                    Icinga Web 2 PHP library
+Group:                      Development/Libraries
+Requires:                   %{php} >= 5.3.0
+%{?suse_version:Requires:   %{php}-gettext %{php}-openssl}
 
 %description -n php-Icinga
 Icinga Web 2 PHP library
 
 
 %package -n icingacli
-Summary:            Icinga CLI
-Group:              Applications/System
-Requires:           %{name}-common = %{version}-%{release}
-Requires:           php-Icinga = %{version}-%{release}
-Requires:           %{php_cli} >= 5.3.0
-%{?rhel:Requires:   bash-completion}
+Summary:                    Icinga CLI
+Group:                      Applications/System
+Requires:                   %{name}-common = %{version}-%{release}
+Requires:                   php-Icinga = %{version}-%{release}
+%{?suse_version:Requires:   %{php} >= 5.3.0}
+%{?rhel:Requires:           %{php_cli} >= 5.3.0}
+%{?rhel:Requires:           bash-completion}
 
 %description -n icingacli
 Icinga CLI
@@ -168,7 +184,11 @@ cp -prv etc/schema %{buildroot}/%{_datadir}/doc/%{name}
 
 %pre
 getent group icingacmd >/dev/null || groupadd -r icingacmd
+%if 0%{?suse_version}
+usermod -G icingacmd,%{icingawebgroup} %{wwwuser}
+%else
 usermod -a -G icingacmd,%{icingawebgroup} %{wwwuser}
+%endif
 exit 0
 
 %clean
