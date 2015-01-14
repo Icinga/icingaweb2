@@ -6,7 +6,7 @@ system and distribution you are running. But it is also possible to install Icin
 ## <a id="installation-requirements"></a> Installing Requirements
 
 * A web server, e.g. Apache or nginx
-* PHP >= 5.3.0
+* PHP >= 5.3.0 w/ gettext and OpenSSL support
 * MySQL or PostgreSQL PHP libraries when using a database for authentication or storing user preferences into a database
 * LDAP PHP library when using Active Directory or LDAP for authentication
 * Icinga 1.x w/ Livestatus or IDO, Icinga 2 w/ Livestatus or IDO feature enabled
