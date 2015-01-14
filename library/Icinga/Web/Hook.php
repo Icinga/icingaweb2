@@ -113,6 +113,18 @@ class Hook
         return $instance;
     }
 
+    protected static function splitHookName($name)
+    {
+        $sep = '\\';
+        if (false === $module = strpos($name, $sep)) {
+            return array(null, $name);
+        }
+        return array(
+            substr($name, 0, $module),
+            substr($name, $module + 1)
+        );
+    }
+
     /**
      * Test for a valid class name
      *
@@ -123,10 +135,24 @@ class Hook
      */
     private static function assertValidHook($instance, $name)
     {
-        $base_class = self::$BASE_NS . ucfirst($name) . 'Hook';
+        $suffix = self::$classSuffix; // 'Hook'
+        $base = self::$BASE_NS;       // 'Icinga\\Web\\Hook\\'
 
-        if (strpos($base_class, self::$classSuffix) === false) {
-            $base_class .= self::$classSuffix;
+        list($module, $name) = self::splitHookName($name);
+
+        if ($module === null) {
+            $base_class = $base . ucfirst($name) . 'Hook';
+
+            // I'm unsure whether this makes sense. Unused and Wrong.
+            if (strpos($base_class, $suffix) === false) {
+                $base_class .= $suffix;
+            }
+        } else {
+            $base_class = 'Icinga\\Module\\'
+                        . ucfirst($module)
+                        . '\\Web\\Hook\\'
+                        . ucfirst($name)
+                        . $suffix;
         }
 
         if (!$instance instanceof $base_class) {
