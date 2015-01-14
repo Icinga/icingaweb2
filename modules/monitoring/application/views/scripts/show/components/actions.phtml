@@ -6,6 +6,7 @@ if (! $object->action_url && ! $object->notes_url) {
 
 $links = array();
 $linkText = '<a href="%s" target="_blank">%s</a>';
+$localLinkText = '<a href="%s">%s</a>';
 
 if ($object->notes_url) {
     if (strpos($object->notes_url, "' ") === false) {
@@ -29,6 +30,12 @@ if ($object->action_url) {
             $url = strrpos($url, "'") === strlen($url) - 1 ? substr($url, 0, strlen($url) - 1) : $url;
             $links[] = sprintf($linkText, $this->resolveMacros($url, $object), 'Action');
         }
+    }
+}
+
+if (isset($this->hostActions)) {
+    foreach ($this->hostActions as $id => $action) {
+        $links[] = sprintf($localLinkText, $action, $id);
     }
 }
 
