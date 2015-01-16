@@ -16,12 +16,12 @@ class MakeDirStep extends Step
 
     /**
      * @param array $paths
-     * @param int   $dirmode
+     * @param int   $dirmode    Directory mode in octal notation
      */
     public function __construct($paths, $dirmode)
     {
         $this->paths = $paths;
-        $this->dirmode = $dirmode;
+        $this->dirmode = octdec($dirmode);
         $this->errors = array();
     }
 
