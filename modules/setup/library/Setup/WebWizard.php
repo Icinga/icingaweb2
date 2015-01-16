@@ -295,7 +295,9 @@ class WebWizard extends Wizard implements SetupWizard
                         : null,
                     'adminPassword'     => isset($pageData['setup_database_creation']['password'])
                         ? $pageData['setup_database_creation']['password']
-                        : null
+                        : null,
+                    'schemaPath'        => Config::module('setup')
+                        ->get('schema', 'path', Icinga::app()->getBaseDir('etc/schema'))
                 ))
             );
         }
