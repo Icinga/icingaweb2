@@ -323,6 +323,11 @@ abstract class IdoQuery extends DbQuery
             foreach ($columns as $key => & $value) {
                 $value = preg_replace('/ COLLATE .+$/', '', $value);
                 $value = preg_replace('/inet_aton\(([[:word:].]+)\)/i', '$1::inet - \'0.0.0.0\'', $value);
+                $value = preg_replace(
+                    '/(UNIX_TIMESTAMP(\((?>[^()]|(?-1))*\)))/i',
+                    'CASE WHEN ($1 = EXTRACT(TIMEZONE FROM NOW()) * -1) THEN 0 ELSE $1 END',
+                    $value
+                );
             }
         }
     }
