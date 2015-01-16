@@ -292,7 +292,6 @@ abstract class IdoQuery extends DbQuery
         $mapped = $this->getMappedField($field);
         if ($mapped === null) {
             return stripos($field, 'UNIX_TIMESTAMP') !== false;
-            return false;
         }
         return stripos($mapped, 'UNIX_TIMESTAMP') !== false;
     }
