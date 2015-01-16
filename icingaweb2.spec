@@ -219,7 +219,7 @@ exit 0
 %defattr(-,root,root)
 %{basedir}/application/locale
 %dir %{basedir}/modules
-%attr(2770,root,%{icingawebgroup}) %config(noreplace) %{configdir}
+%attr(2770,root,%{icingawebgroup}) %config(noreplace) %dir %{configdir}
 
 
 %files -n php-Icinga
