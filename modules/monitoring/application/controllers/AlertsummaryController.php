@@ -429,11 +429,10 @@ class Monitoring_AlertsummaryController extends Controller
             $item[1] = $item[1]/60/60;
         }
 
-
         $gridChart->drawBars(
             array(
                 'label' => $this->translate('Notifications'),
-                'color' => '#049baf',
+                'color' => '#07C0D9',
                 'data'  =>  $notifications,
                 'showPoints' => true
             )
@@ -478,7 +477,7 @@ class Monitoring_AlertsummaryController extends Controller
         $gridChart->drawBars(
             array(
                 'label' => $this->translate('Notifications'),
-                'color' => '#049baf',
+                'color' => '#07C0D9',
                 'data'  =>  $this->notificationData,
                 'showPoints' => true
             )
@@ -554,7 +553,7 @@ class Monitoring_AlertsummaryController extends Controller
     {
         $format = '';
         if ($interval === '1d') {
-            $format = '%H:00:00';
+            $format = '%H:00';
         } elseif ($interval === '1w') {
             $format = '%Y-%m-%d';
         } elseif ($interval === '1m') {
