@@ -72,8 +72,8 @@ class RoleForm extends ConfigForm
                 'name',
                 array(
                     'required'      => true,
-                    'label'         => t('Role Name'),
-                    'description'   => t('The name of the role'),
+                    'label'         => $this->translate('Role Name'),
+                    'description'   => $this->translate('The name of the role'),
                     'ignore'        => true
                 ),
             ),
@@ -81,24 +81,26 @@ class RoleForm extends ConfigForm
                 'textarea',
                 'users',
                 array(
-                    'label'         => t('Users'),
-                    'description'   => t('Comma-separated list of users that are assigned to the role')
+                    'label'         => $this->translate('Users'),
+                    'description'   => $this->translate('Comma-separated list of users that are assigned to the role')
                 ),
             ),
             array(
                 'textarea',
                 'groups',
                 array(
-                    'label'         => t('Groups'),
-                    'description'   => t('Comma-separated list of groups that are assigned to the role')
+                    'label'         => $this->translate('Groups'),
+                    'description'   => $this->translate('Comma-separated list of groups that are assigned to the role')
                 ),
             ),
             array(
                 'multiselect',
                 'permissions',
                 array(
-                    'label'         => t('Permissions Set'),
-                    'description'   => t('The permissions to grant. You may select more than one permission'),
+                    'label'         => $this->translate('Permissions Set'),
+                    'description'   => $this->translate(
+                        'The permissions to grant. You may select more than one permission'
+                    ),
                     'multiOptions'  => $this->providedPermissions
                 )
             )
@@ -133,7 +135,7 @@ class RoleForm extends ConfigForm
         }
         if (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(sprintf(
-                t('Can\'t load role \'%s\'. Role does not exist'),
+                $this->translate('Can\'t load role \'%s\'. Role does not exist'),
                 $name
             ));
         }
@@ -174,7 +176,7 @@ class RoleForm extends ConfigForm
         }
         if ($this->config->hasSection($name)) {
             throw new InvalidArgumentException(sprintf(
-                t('Can\'t add role \'%s\'. Role already exists'),
+                $this->translate('Can\'t add role \'%s\'. Role already exists'),
                 $name
             ));
         }
@@ -200,7 +202,7 @@ class RoleForm extends ConfigForm
         }
         if (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(sprintf(
-                t('Can\'t remove role \'%s\'. Role does not exist'),
+                $this->translate('Can\'t remove role \'%s\'. Role does not exist'),
                 $name
             ));
         }
@@ -233,7 +235,7 @@ class RoleForm extends ConfigForm
         } else {
             if (! $this->config->hasSection($name)) {
                 throw new InvalidArgumentException(sprintf(
-                    t('Can\'t update role \'%s\'. Role does not exist'),
+                    $this->translate('Can\'t update role \'%s\'. Role does not exist'),
                     $name
                 ));
             }

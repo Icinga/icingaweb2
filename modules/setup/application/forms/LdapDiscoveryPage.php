@@ -36,7 +36,7 @@ class LdapDiscoveryPage extends Form
             'note',
             'title',
             array(
-                'value'         => mt('setup', 'LDAP Discovery', 'setup.page.title'),
+                'value'         => $this->translate('LDAP Discovery', 'setup.page.title'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -47,8 +47,7 @@ class LdapDiscoveryPage extends Form
             'note',
             'description',
             array(
-                'value' => mt(
-                    'setup',
+                'value' => $this->translate(
                     'You can use this page to discover LDAP or ActiveDirectory servers ' .
                     ' for authentication. If you don\' want to execute a discovery, just skip this step.'
                 )
@@ -66,8 +65,8 @@ class LdapDiscoveryPage extends Form
             'skip_validation',
             array(
                 'required'      => true,
-                'label'         => mt('setup', 'Skip'),
-                'description'   => mt('setup', 'Do not discover LDAP servers and enter all settings manually.')
+                'label'         => $this->translate('Skip'),
+                'description'   => $this->translate('Do not discover LDAP servers and enter all settings manually.')
             )
         );
     }
@@ -94,7 +93,9 @@ class LdapDiscoveryPage extends Form
                 return true;
             }
         }
-        $this->addError(sprintf(t('Could not find any LDAP servers on the domain "%s".'), $data['domain']));
+        $this->addError(
+            sprintf($this->translate('Could not find any LDAP servers on the domain "%s".'), $data['domain'])
+        );
         return false;
     }
 

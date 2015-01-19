@@ -90,7 +90,7 @@ class DatabaseCreationPage extends Form
             'note',
             'title',
             array(
-                'value'         => mt('setup', 'Database Setup', 'setup.page.title'),
+                'value'         => $this->translate('Database Setup', 'setup.page.title'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -101,8 +101,7 @@ class DatabaseCreationPage extends Form
             'note',
             'description',
             array(
-                'value' => mt(
-                    'setup',
+                'value' => $this->translate(
                     'It seems that either the database you defined earlier does not yet exist and cannot be created'
                     . ' using the provided access credentials or the database does not have the required schema to '
                     . 'be operated by Icinga Web 2. Please provide appropriate access credentials to solve this.'
@@ -116,16 +115,16 @@ class DatabaseCreationPage extends Form
             'username',
             array(
                 'required'      => false === $skipValidation,
-                'label'         => mt('setup', 'Username'),
-                'description'   => mt('setup', 'A user which is able to create databases and/or touch the database schema')
+                'label'         => $this->translate('Username'),
+                'description'   => $this->translate('A user which is able to create databases and/or touch the database schema')
             )
         );
         $this->addElement(
             'password',
             'password',
             array(
-                'label'         => mt('setup', 'Password'),
-                'description'   => mt('setup', 'The password for the database user defined above')
+                'label'         => $this->translate('Password'),
+                'description'   => $this->translate('The password for the database user defined above')
             )
         );
 
@@ -182,7 +181,7 @@ class DatabaseCreationPage extends Form
         // form need to be granted to create databases, users...
         if (false === $db->checkPrivileges($this->databaseSetupPrivileges)) {
             $this->addError(
-                mt('setup', 'The provided credentials cannot be used to create the database and/or the user.')
+                $this->translate('The provided credentials cannot be used to create the database and/or the user.')
             );
             $this->addSkipValidationCheckbox();
             return false;
@@ -191,8 +190,7 @@ class DatabaseCreationPage extends Form
         // ...and to grant all required usage privileges to others
         if (false === $db->isGrantable($this->databaseUsagePrivileges)) {
             $this->addError(sprintf(
-                mt(
-                    'setup',
+                $this->translate(
                     'The provided credentials cannot be used to grant all required privileges to the login "%s".'
                 ),
                 $this->config['username']
@@ -215,9 +213,8 @@ class DatabaseCreationPage extends Form
             array(
                 'order'         => 2,
                 'required'      => true,
-                'label'         => mt('setup', 'Skip Validation'),
-                'description'   => mt(
-                    'setup',
+                'label'         => $this->translate('Skip Validation'),
+                'description'   => $this->translate(
                     'Check this to not to validate the ability to login and required privileges'
                 )
             )

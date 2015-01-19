@@ -29,6 +29,20 @@ Packager:       Icinga Team <info@icinga.org>
 %endif
 %endif
 
+
+%if 0%{?suse_version}
+%define wwwconfigdir    %{_sysconfdir}/apache2/conf.d
+%define wwwuser         wwwrun
+%define zend            php5-ZendFramework
+%if 0%{?suse_version} == 1110
+%define php php53
+Requires: apache2-mod_php53
+%else
+%define php php5
+Requires: apache2-mod_php5
+%endif
+%endif
+
 Requires(pre):  shadow-utils
 Requires:       %{name}-common = %{version}-%{release}
 Requires:       php-Icinga = %{version}-%{release}
@@ -50,6 +64,7 @@ Icinga Web 2
 %define logdir          %{_localstatedir}/log/%{name}
 %define phpdir          %{_datadir}/php
 %define icingawebgroup  icingaweb2
+%define docsdir          %{_datadir}/doc/%{name}
 
 
 %package common
@@ -61,21 +76,23 @@ Common files for Icinga Web 2 and the Icinga CLI
 
 
 %package -n php-Icinga
-Summary:    Icinga Web 2 PHP library
-Group:      Development/Libraries
-Requires:   %{php} >= 5.3.0
+Summary:                    Icinga Web 2 PHP library
+Group:                      Development/Libraries
+Requires:                   %{php} >= 5.3.0
+%{?suse_version:Requires:   %{php}-gettext %{php}-openssl}
 
 %description -n php-Icinga
 Icinga Web 2 PHP library
 
 
 %package -n icingacli
-Summary:            Icinga CLI
-Group:              Applications/System
-Requires:           %{name}-common = %{version}-%{release}
-Requires:           php-Icinga = %{version}-%{release}
-Requires:           %{php_cli} >= 5.3.0
-%{?rhel:Requires:   bash-completion}
+Summary:                    Icinga CLI
+Group:                      Applications/System
+Requires:                   %{name}-common = %{version}-%{release}
+Requires:                   php-Icinga = %{version}-%{release}
+%{?suse_version:Requires:   %{php} >= 5.3.0}
+%{?rhel:Requires:           %{php_cli} >= 5.3.0}
+%{?rhel:Requires:           bash-completion}
 
 %description -n icingacli
 Icinga CLI
@@ -154,7 +171,7 @@ Icinga Web 2 vendor library Zend
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/{%{basedir}/{modules,library,public},%{bindir},%{configdir},%{logdir},%{phpdir},%{wwwconfigdir},%{_sysconfdir}/bash_completion.d,%{_datadir}/doc/%{name}}
+mkdir -p %{buildroot}/{%{basedir}/{modules,library,public},%{bindir},%{configdir}/modules/setup,%{logdir},%{phpdir},%{wwwconfigdir},%{_sysconfdir}/bash_completion.d,%{docsdir}}
 cp -prv application doc %{buildroot}/%{basedir}
 cp -pv etc/bash_completion.d/icingacli %{buildroot}/%{_sysconfdir}/bash_completion.d/icingacli
 cp -prv modules/{monitoring,setup} %{buildroot}/%{basedir}/modules
@@ -164,11 +181,16 @@ cp -prv public/{css,img,js,error_norewrite.html} %{buildroot}/%{basedir}/public
 cp -pv packages/files/apache/icingaweb2.conf %{buildroot}/%{wwwconfigdir}/icingaweb2.conf
 cp -pv packages/files/bin/icingacli %{buildroot}/%{bindir}
 cp -pv packages/files/public/index.php %{buildroot}/%{basedir}/public
-cp -prv etc/schema %{buildroot}/%{_datadir}/doc/%{name}
+cp -prv etc/schema %{buildroot}/%{docsdir}
+cp -prv packages/files/config/modules/setup %{buildroot}/%{configdir}/modules/
 
 %pre
 getent group icingacmd >/dev/null || groupadd -r icingacmd
+%if 0%{?suse_version}
+usermod -G icingacmd,%{icingawebgroup} %{wwwuser}
+%else
 usermod -a -G icingacmd,%{icingawebgroup} %{wwwuser}
+%endif
 exit 0
 
 %clean
@@ -186,8 +208,10 @@ rm -rf %{buildroot}
 %{basedir}/public
 %{wwwconfigdir}/icingaweb2.conf
 %attr(2775,root,%{icingawebgroup}) %dir %{logdir}
-%{_datadir}/doc/%{name}
-%docdir %{_datadir}/doc/%{name}
+%{docsdir}
+%docdir %{docsdir}
+%attr(2770,root,%{icingawebgroup}) %config(noreplace) %dir %{configdir}/modules/setup
+%attr(0660,root,%{icingawebgroup}) %config(noreplace) %{configdir}/modules/setup/config.ini
 
 
 %pre common
@@ -198,7 +222,8 @@ exit 0
 %defattr(-,root,root)
 %{basedir}/application/locale
 %dir %{basedir}/modules
-%attr(2770,root,%{icingawebgroup}) %config(noreplace) %{configdir}
+%attr(2770,root,%{icingawebgroup}) %config(noreplace) %dir %{configdir}
+%attr(2770,root,%{icingawebgroup}) %config(noreplace) %dir %{configdir}/modules
 
 
 %files -n php-Icinga

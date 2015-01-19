@@ -292,7 +292,6 @@ abstract class IdoQuery extends DbQuery
         $mapped = $this->getMappedField($field);
         if ($mapped === null) {
             return stripos($field, 'UNIX_TIMESTAMP') !== false;
-            return false;
         }
         return stripos($mapped, 'UNIX_TIMESTAMP') !== false;
     }
@@ -324,6 +323,11 @@ abstract class IdoQuery extends DbQuery
             foreach ($columns as $key => & $value) {
                 $value = preg_replace('/ COLLATE .+$/', '', $value);
                 $value = preg_replace('/inet_aton\(([[:word:].]+)\)/i', '$1::inet - \'0.0.0.0\'', $value);
+                $value = preg_replace(
+                    '/UNIX_TIMESTAMP(\((?>[^()]|(?-1))*\))/i',
+                    'CASE WHEN ($1 < \'1970-01-03 00:00:00+00\'::timestamp with time zone) THEN 0 ELSE UNIX_TIMESTAMP($1) END',
+                    $value
+                );
             }
         }
     }

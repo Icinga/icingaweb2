@@ -28,9 +28,9 @@ class LocalInstanceForm extends Form
             'path',
             array(
                 'required'      => true,
-                'label'         => mt('monitoring', 'Command File'),
+                'label'         => $this->translate('Command File'),
                 'value'         => '/var/run/icinga2/cmd/icinga2.cmd',
-                'description'   => mt('monitoring', 'Path to the local Icinga command file')
+                'description'   => $this->translate('Path to the local Icinga command file')
             )
         );
         return $this;

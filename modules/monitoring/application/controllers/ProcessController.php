@@ -64,8 +64,9 @@ class Monitoring_ProcessController extends Controller
                     'process_performance_data'
                 )
             )
-            ->getQuery()
-            ->fetchRow();
+            ->getQuery();
+        $this->handleFormatRequest($programStatus);
+        $programStatus = $programStatus->fetchRow();
         if ($programStatus === false) {
             return $this->render('not-running', true, null);
         }

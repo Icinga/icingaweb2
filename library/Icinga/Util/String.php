@@ -36,4 +36,22 @@ class String
     {
         return str_replace(' ', '', ucwords(str_replace($separator, ' ', strtolower($name))));
     }
+
+    /**
+     * Add ellipsis when a string is longer than max length
+     *
+     * @param   string  $string
+     * @param   int     $maxLength
+     * @param   string  $ellipsis
+     *
+     * @return  string
+     */
+    public static function ellipsis($string, $maxLength, $ellipsis = '...')
+    {
+        if (strlen($string) > $maxLength) {
+            return substr($string, 0, $maxLength - strlen($ellipsis)) . $ellipsis;
+        }
+
+        return $string;
+    }
 }

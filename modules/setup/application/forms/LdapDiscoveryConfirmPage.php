@@ -82,7 +82,7 @@ EOT;
             'note',
             'title',
             array(
-                'value'         => mt('setup', 'LDAP Discovery Results', 'setup.page.title'),
+                'value'         => $this->translate('LDAP Discovery Results', 'setup.page.title'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -94,7 +94,7 @@ EOT;
             'description',
             array(
                 'value' => sprintf(
-                    mt('setup', 'The following directory service has been found on domain "%s":'),
+                    $this->translate('The following directory service has been found on domain "%s":'),
                     $this->config['domain']
                 )
             )
@@ -119,7 +119,7 @@ EOT;
             'confirm',
             array(
                 'value' => '1',
-                'label' => mt('setup', 'Use this configuration?')
+                'label' => $this->translate('Use this configuration?')
             )
         );
     }

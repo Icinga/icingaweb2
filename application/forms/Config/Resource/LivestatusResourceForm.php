@@ -33,8 +33,8 @@ class LivestatusResourceForm extends Form
             'name',
             array(
                 'required'      => true,
-                'label'         => t('Resource Name'),
-                'description'   => t('The unique name of this resource')
+                'label'         => $this->translate('Resource Name'),
+                'description'   => $this->translate('The unique name of this resource')
             )
         );
         $this->addElement(
@@ -42,8 +42,8 @@ class LivestatusResourceForm extends Form
             'socket',
             array(
                 'required'      => true,
-                'label'         => t('Socket'),
-                'description'   => t('The path to your livestatus socket used for querying monitoring data'),
+                'label'         => $this->translate('Socket'),
+                'description'   => $this->translate('The path to your livestatus socket used for querying monitoring data'),
                 'value'         => '/var/run/icinga2/cmd/livestatus'
             )
         );
@@ -75,8 +75,10 @@ class LivestatusResourceForm extends Form
         try {
             $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
             $resource->connect()->disconnect();
-        } catch (Exception $e) {
-            $form->addError(t('Connectivity validation failed, connection to the given resource not possible.'));
+        } catch (Exception $_) {
+            $form->addError(
+                $form->translate('Connectivity validation failed, connection to the given resource not possible.')
+            );
             return false;
         }
 

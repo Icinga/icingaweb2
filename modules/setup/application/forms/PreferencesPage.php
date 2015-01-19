@@ -30,8 +30,7 @@ class PreferencesPage extends Form
         $this->getElement('type')
             ->setValue('db')
             ->setDescription(
-                mt(
-                    'setup',
+                $this->translate(
                     'Note that choosing "Database" causes Icinga Web 2 to use the same database as for authentication.'
                 )
             );
@@ -47,7 +46,7 @@ class PreferencesPage extends Form
             'note',
             'title',
             array(
-                'value'         => mt('setup', 'Preferences', 'setup.page.title'),
+                'value'         => $this->translate('Preferences', 'setup.page.title'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -58,23 +57,23 @@ class PreferencesPage extends Form
             'note',
             'description',
             array(
-                'value' => mt('setup', 'Please choose how Icinga Web 2 should store user preferences.')
+                'value' => $this->translate('Please choose how Icinga Web 2 should store user preferences.')
             )
         );
 
         $storageTypes = array();
-        $storageTypes['ini'] = t('File System (INI Files)');
+        $storageTypes['ini'] = $this->translate('File System (INI Files)');
         if (Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
-            $storageTypes['db'] = t('Database');
+            $storageTypes['db'] = $this->translate('Database');
         }
-        $storageTypes['null'] = t('Don\'t Store Preferences');
+        $storageTypes['null'] = $this->translate('Don\'t Store Preferences');
 
         $this->addElement(
             'select',
             'type',
             array(
                 'required'      => true,
-                'label'         => t('User Preference Storage Type'),
+                'label'         => $this->translate('User Preference Storage Type'),
                 'multiOptions'  => $storageTypes
             )
         );

@@ -46,7 +46,7 @@ $cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
       ); ?></p>
       <p><?= mt('setup', 'If you\'ve got the IcingaCLI installed you can do the following:'); ?></p>
       <div class="code">
-        <span><?= $cliPath ? $cliPath : 'icingacli'; ?> setup config createDirectory <?= ($user = Platform::getPhpUser()) !== null ? $user : 'your_webserver_group'; ?><?= $configDir !== '/etc/icingaweb' ? ' --path ' . $configDir : ''; ?>;</span>
+        <span><?= $cliPath ? $cliPath : 'icingacli'; ?> setup config directory --group <?= ($user = Platform::getPhpUser()) !== null ? $user : 'your_webserver_group'; ?><?= $configDir !== '/etc/icingaweb2' ? ' --config ' . $configDir : ''; ?>;</span>
         <span><?= $cliPath ? $cliPath : 'icingacli'; ?> setup token create;</span>
       </div>
       <p><?= mt('setup', 'In case the IcingaCLI is missing you can create the token manually:'); ?></p>

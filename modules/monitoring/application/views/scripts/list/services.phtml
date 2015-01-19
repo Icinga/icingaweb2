@@ -112,7 +112,7 @@ foreach ($services as $service):
   (<?= strtoupper(Host::getStateText($service->host_state, true)); ?>)
 <?php endif ?>
 </a><?php endif ?><br />
-        <p class="pluginoutput"><?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?></p>
+        <p class="pluginoutput"><?= $this->escape($this->ellipsis($service->service_output, 10000)); ?></p>
       </td>
 <?php foreach($this->extraColumns as $col): ?>
       <td><?= $this->escape($service->$col) ?></td>

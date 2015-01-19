@@ -53,8 +53,8 @@ class DbBackendForm extends Form
             'name',
             array(
                 'required'      => true,
-                'label'         => t('Backend Name'),
-                'description'   => t(
+                'label'         => $this->translate('Backend Name'),
+                'description'   => $this->translate(
                     'The name of this authentication provider that is used to differentiate it from others'
                 ),
             )
@@ -64,8 +64,10 @@ class DbBackendForm extends Form
             'resource',
             array(
                 'required'      => true,
-                'label'         => t('Database Connection'),
-                'description'   => t('The database connection to use for authenticating with this provider'),
+                'label'         => $this->translate('Database Connection'),
+                'description'   => $this->translate(
+                    'The database connection to use for authenticating with this provider'
+                ),
                 'multiOptions'  => false === empty($this->resources)
                     ? array_combine($this->resources, $this->resources)
                     : array()
@@ -107,11 +109,11 @@ class DbBackendForm extends Form
         try {
             $dbUserBackend = new DbUserBackend(ResourceFactory::createResource($form->getResourceConfig()));
             if ($dbUserBackend->count() < 1) {
-                $form->addError(t('No users found under the specified database backend'));
+                $form->addError($form->translate('No users found under the specified database backend'));
                 return false;
             }
         } catch (Exception $e) {
-            $form->addError(sprintf(t('Using the specified backend failed: %s'), $e->getMessage()));
+            $form->addError(sprintf($form->translate('Using the specified backend failed: %s'), $e->getMessage()));
             return false;
         }
 
