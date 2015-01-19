@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Monitoring;
 
+use Icinga\Application\Icinga;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
 use Icinga\Web\Request;
@@ -124,7 +125,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
         $pageData = $this->getPageData();
         $setup = new Setup();
 
-        $setup->addStep(new MakeDirStep(array($this->getConfigDir() . '/modules/monitoring'), 2770));
+        $setup->addStep(new MakeDirStep(array(Icinga::app()->getConfigDir() . '/modules/monitoring'), 2770));
 
         $setup->addStep(
             new BackendStep(array(
@@ -158,22 +159,5 @@ class MonitoringWizard extends Wizard implements SetupWizard
     public function getRequirements()
     {
         return new Requirements();
-    }
-
-    /**
-     * Return the configuration directory of Icinga Web 2
-     *
-     * @return  string
-     */
-    protected function getConfigDir()
-    {
-        if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
-            $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
-        } else {
-            $configDir = '/etc/icingaweb';
-        }
-
-        $canonical = realpath($configDir);
-        return $canonical ? $canonical : $configDir;
     }
 }
