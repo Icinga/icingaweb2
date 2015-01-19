@@ -21,7 +21,7 @@ class MakeDirStep extends Step
     public function __construct($paths, $dirmode)
     {
         $this->paths = $paths;
-        $this->dirmode = octdec($dirmode);
+        $this->dirmode = octdec((string) $dirmode);
         $this->errors = array();
     }
 
