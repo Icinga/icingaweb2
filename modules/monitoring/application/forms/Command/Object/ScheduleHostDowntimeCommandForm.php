@@ -27,9 +27,8 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
                 'checkbox',
                 'all_services',
                 array(
-                    'label'         => mt('monitoring', 'All Services'),
-                    'description'   => mt(
-                        'monitoring',
+                    'label'         => $this->translate('All Services'),
+                    'description'   => $this->translate(
                         'Schedule downtime for all services on the hosts and the hosts themselves.'
                     )
                 )
@@ -38,15 +37,14 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
                 'select',
                 'child_hosts',
                 array(
-                    'label'        => mt('monitoring', 'Child Hosts'),
+                    'label'        => $this->translate('Child Hosts'),
                     'required'     => true,
                     'multiOptions' => array(
-                        0 => mt('monitoring', 'Do nothing with child hosts'),
-                        1 => mt('monitoring', 'Schedule triggered downtime for all child hosts'),
-                        2 => mt('monitoring', 'Schedule non-triggered downtime for all child hosts')
+                        0 => $this->translate('Do nothing with child hosts'),
+                        1 => $this->translate('Schedule triggered downtime for all child hosts'),
+                        2 => $this->translate('Schedule non-triggered downtime for all child hosts')
                     ),
-                    'description' => mt(
-                        'monitoring',
+                    'description' => $this->translate(
                         'Define what should be done with the child hosts of the hosts.'
                     )
                 )

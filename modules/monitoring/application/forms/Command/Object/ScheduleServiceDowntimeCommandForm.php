@@ -42,8 +42,7 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
      */
     public function getHelp()
     {
-        return mt(
-            'monitoring',
+        return $this->translate(
             'This command is used to schedule host and service downtimes. During the specified downtime,'
             . ' Icinga will not send notifications out about the hosts and services. When the scheduled'
             . ' downtime expires, Icinga will send out notifications for the hosts and services as it'
@@ -67,9 +66,8 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                 'comment',
                 array(
                     'required'      => true,
-                    'label'         => mt('monitoring', 'Comment'),
-                    'description'   => mt(
-                        'monitoring',
+                    'label'         => $this->translate('Comment'),
+                    'description'   => $this->translate(
                         'If you work with other administrators, you may find it useful to share information about the'
                         . ' the host or service that is having problems. Make sure you enter a brief description of'
                         . ' what you are doing.'
@@ -81,8 +79,8 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                 'start',
                 array(
                     'required'      => true,
-                    'label'         => mt('monitoring', 'Start Time'),
-                    'description'   => mt('monitoring', 'Set the start date and time for the downtime.'),
+                    'label'         => $this->translate('Start Time'),
+                    'description'   => $this->translate('Set the start date and time for the downtime.'),
                     'value'         => $start
                 )
             ),
@@ -91,8 +89,8 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                 'end',
                 array(
                     'required'      => true,
-                    'label'         => mt('monitoring', 'End Time'),
-                    'description'   => mt('monitoring', 'Set the end date and time for the downtime.'),
+                    'label'         => $this->translate('End Time'),
+                    'description'   => $this->translate('Set the end date and time for the downtime.'),
                     'value'         => $end
                 )
             ),
@@ -102,17 +100,16 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                 array(
                     'required'      => true,
                     'autosubmit'    => true,
-                    'label'         => mt('monitoring', 'Type'),
-                    'description'   => mt(
-                        'monitoring',
+                    'label'         => $this->translate('Type'),
+                    'description'   => $this->translate(
                         'If you select the fixed option, the downtime will be in effect between the start and end'
                         . ' times you specify whereas a flexible downtime starts when the host or service enters a'
                         . ' problem state sometime between the start and end times you specified and lasts as long'
                         . ' as the duration time you enter. The duration fields do not apply for fixed downtimes.'
                     ),
                     'multiOptions' => array(
-                        self::FIXED     => mt('monitoring', 'Fixed'),
-                        self::FLEXIBLE  => mt('monitoring', 'Flexible')
+                        self::FIXED     => $this->translate('Fixed'),
+                        self::FLEXIBLE  => $this->translate('Flexible')
                     ),
                     'validators' => array(
                         array(
@@ -141,7 +138,7 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                     'hours',
                     array(
                         'required'  => true,
-                        'label'     => mt('monitoring', 'Hours'),
+                        'label'     => $this->translate('Hours'),
                         'value'     => 2,
                         'min'       => -1
                     )
@@ -151,7 +148,7 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                     'minutes',
                     array(
                         'required'  => true,
-                        'label'     => mt('monitoring', 'Minutes'),
+                        'label'     => $this->translate('Minutes'),
                         'value'     => 0,
                         'min'       => -1
                     )
@@ -161,9 +158,8 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                 array('hours', 'minutes'),
                 'duration',
                 array(
-                    'legend'        => mt('monitoring', 'Flexible Duration'),
-                    'description'   => mt(
-                        'monitoring',
+                    'legend'        => $this->translate('Flexible Duration'),
+                    'description'   => $this->translate(
                         'Enter here the duration of the downtime. The downtime will be automatically deleted after this'
                         . ' time expired.'
                     ),

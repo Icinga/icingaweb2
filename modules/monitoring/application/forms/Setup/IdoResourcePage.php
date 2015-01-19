@@ -28,7 +28,7 @@ class IdoResourcePage extends Form
             'note',
             'title',
             array(
-                'value'         => mt('monitoring', 'Monitoring IDO Resource', 'setup.page.title'),
+                'value'         => $this->translate('Monitoring IDO Resource', 'setup.page.title'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -39,8 +39,7 @@ class IdoResourcePage extends Form
             'note',
             'description',
             array(
-                'value' => mt(
-                    'monitoring',
+                'value' => $this->translate(
                     'Please fill out the connection details below to access'
                     . ' the IDO database of your monitoring environment.'
                 )
@@ -91,8 +90,10 @@ class IdoResourcePage extends Form
             'skip_validation',
             array(
                 'required'      => true,
-                'label'         => t('Skip Validation'),
-                'description'   => t('Check this to not to validate connectivity with the given database server')
+                'label'         => $this->translate('Skip Validation'),
+                'description'   => $this->translate(
+                    'Check this to not to validate connectivity with the given database server'
+                )
             )
         );
     }

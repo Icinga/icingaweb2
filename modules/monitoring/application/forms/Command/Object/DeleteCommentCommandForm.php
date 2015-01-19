@@ -55,7 +55,7 @@ class DeleteCommentCommandForm extends ObjectsCommandForm
             array(
                 'ignore'        => true,
                 'label'         => 'X',
-                'title'         => mt('monitoring', 'Delete comment'),
+                'title'         => $this->translate('Delete comment'),
                 'decorators'    => array('ViewHelper')
             )
         );
@@ -80,7 +80,7 @@ class DeleteCommentCommandForm extends ObjectsCommandForm
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);
         }
-        Notification::success(mt('monitoring', 'Deleting comment..'));
+        Notification::success($this->translate('Deleting comment..'));
         return true;
     }
 }
