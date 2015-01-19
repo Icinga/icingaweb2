@@ -150,7 +150,7 @@ class LdapBackendForm extends Form
             $form->addError($e->getMessage());
             return false;
         } catch (Exception $e) {
-            $form->addError(sprintf($this->translate('Unable to validate authentication: %s'), $e->getMessage()));
+            $form->addError(sprintf($form->translate('Unable to validate authentication: %s'), $e->getMessage()));
             return false;
         }
 

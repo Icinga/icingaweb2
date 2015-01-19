@@ -109,11 +109,11 @@ class DbBackendForm extends Form
         try {
             $dbUserBackend = new DbUserBackend(ResourceFactory::createResource($form->getResourceConfig()));
             if ($dbUserBackend->count() < 1) {
-                $form->addError($this->translate('No users found under the specified database backend'));
+                $form->addError($form->translate('No users found under the specified database backend'));
                 return false;
             }
         } catch (Exception $e) {
-            $form->addError(sprintf($this->translate('Using the specified backend failed: %s'), $e->getMessage()));
+            $form->addError(sprintf($form->translate('Using the specified backend failed: %s'), $e->getMessage()));
             return false;
         }
 

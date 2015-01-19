@@ -133,7 +133,7 @@ class DbResourceForm extends Form
             $resource->getConnection()->getConnection();
         } catch (Exception $e) {
             $form->addError(
-                $this->translate('Connectivity validation failed, connection to the given resource not possible.')
+                $form->translate('Connectivity validation failed, connection to the given resource not possible.')
             );
             return false;
         }

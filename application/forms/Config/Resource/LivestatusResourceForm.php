@@ -77,7 +77,7 @@ class LivestatusResourceForm extends Form
             $resource->connect()->disconnect();
         } catch (Exception $_) {
             $form->addError(
-                $this->translate('Connectivity validation failed, connection to the given resource not possible.')
+                $form->translate('Connectivity validation failed, connection to the given resource not possible.')
             );
             return false;
         }
