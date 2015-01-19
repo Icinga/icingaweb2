@@ -35,8 +35,8 @@ class CheckNowCommandForm extends ObjectsCommandForm
                 array(
                     'ignore'        => true,
                     'type'          => 'submit',
-                    'value'         => mt('monitoring', 'Check now'),
-                    'label'         => '<i class="icon-reschedule"></i> ' . mt('monitoring', 'Check now'),
+                    'value'         => $this->translate('Check now'),
+                    'label'         => '<i class="icon-reschedule"></i> ' . $this->translate('Check now'),
                     'decorators'    => array('ViewHelper'),
                     'escape'        => false,
                     'class'         => 'link-like'

@@ -55,7 +55,7 @@ class DeleteDowntimeCommandForm extends ObjectsCommandForm
             array(
                 'ignore'        => true,
                 'label'         => 'X',
-                'title'         => mt('monitoring', 'Delete downtime'),
+                'title'         => $this->translate('Delete downtime'),
                 'decorators'    => array('ViewHelper')
             )
         );
@@ -80,7 +80,7 @@ class DeleteDowntimeCommandForm extends ObjectsCommandForm
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);
         }
-        Notification::success(mt('monitoring', 'Deleting downtime..'));
+        Notification::success($this->translate('Deleting downtime..'));
         return true;
     }
 }
