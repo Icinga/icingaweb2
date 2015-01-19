@@ -342,7 +342,7 @@ class Monitoring_AlertsummaryController extends Controller
         $gridChart = new GridChart();
 
         $gridChart->alignTopLeft();
-        $gridChart->setAxisLabel('', mt('monitoring', 'Notifications'))
+        $gridChart->setAxisLabel($this->createPeriodDescription(), mt('monitoring', 'Notifications'))
             ->setXAxis(new StaticAxis())
             ->setYAxis(new LinearUnit(10))
             ->setAxisMin(null, 0);
@@ -470,7 +470,7 @@ class Monitoring_AlertsummaryController extends Controller
         $gridChart = new GridChart();
 
         $gridChart->alignTopLeft();
-        $gridChart->setAxisLabel('', mt('monitoring', 'Notifications'))
+        $gridChart->setAxisLabel($this->createPeriodDescription(), mt('monitoring', 'Notifications'))
             ->setXAxis(new StaticAxis())
             ->setAxisMin(null, 0)
             ->setYAxis(new LinearUnit(10));
@@ -622,5 +622,29 @@ class Monitoring_AlertsummaryController extends Controller
         }
 
         return $interval;
+    }
+
+    /**
+     * Create a human-readable description of the current interval size
+     *
+     * @return string   The description of the current interval size
+     */
+    private function createPeriodDescription()
+    {
+        $int = $this->getInterval();
+        switch ($int) {
+            case '1d':
+                return t('Hour');
+                break;
+            case '1w';
+                return t('Day');
+                break;
+            case '1m':
+                return t('Day');
+                break;
+            case '1y':
+                return t('Month');
+                break;
+        }
     }
 }
