@@ -87,9 +87,16 @@ class DbUserBackend extends UserBackend
      */
     protected function getPasswordHash($username)
     {
-        $stmt = $this->conn->getDbAdapter()->prepare(
-            'SELECT password_hash FROM icingaweb_user WHERE name = :name AND active = 1'
-        );
+        if ($this->conn->getDbType() === 'pgsql') {
+            // Since PostgreSQL version 9.0 the default value for bytea_output is 'hex' instead of 'escape'
+            $stmt = $this->conn->getDbAdapter()->prepare(
+                'SELECT ENCODE(password_hash, \'escape\') FROM icingaweb_user WHERE name = :name AND active = 1'
+            );
+        } else {
+            $stmt = $this->conn->getDbAdapter()->prepare(
+                'SELECT password_hash FROM icingaweb_user WHERE name = :name AND active = 1'
+            );
+        }
         $stmt->execute(array(':name' => $username));
         $stmt->bindColumn(1, $lob, PDO::PARAM_LOB);
         $stmt->fetch(PDO::FETCH_BOUND);
