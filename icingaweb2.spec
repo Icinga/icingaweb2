@@ -64,7 +64,7 @@ Icinga Web 2
 %define logdir          %{_localstatedir}/log/%{name}
 %define phpdir          %{_datadir}/php
 %define icingawebgroup  icingaweb2
-%define docsdir          %{_datadir}/doc/%{name}
+%define docsdir         %{_datadir}/doc/%{name}
 
 
 %package common
@@ -79,7 +79,10 @@ Common files for Icinga Web 2 and the Icinga CLI
 Summary:                    Icinga Web 2 PHP library
 Group:                      Development/Libraries
 Requires:                   %{php} >= 5.3.0
-%{?suse_version:Requires:   %{php}-gettext %{php}-openssl}
+Requires:                   %{php}-gd %{php}-intl
+%{?fedora:Requires:         php-pecl-imagick}
+%{?rhel:Requires:           php-pecl-imagick}
+%{?suse_version:Requires:   %{php}-gettext %{php}-openssl php5-imagick}
 
 %description -n php-Icinga
 Icinga Web 2 PHP library
@@ -90,9 +93,9 @@ Summary:                    Icinga CLI
 Group:                      Applications/System
 Requires:                   %{name}-common = %{version}-%{release}
 Requires:                   php-Icinga = %{version}-%{release}
+%{?fedora:Requires:         %{php_cli} >= 5.3.0 bash-completion}
+%{?rhel:Requires:           %{php_cli} >= 5.3.0 bash-completion}
 %{?suse_version:Requires:   %{php} >= 5.3.0}
-%{?rhel:Requires:           %{php_cli} >= 5.3.0}
-%{?rhel:Requires:           bash-completion}
 
 %description -n icingacli
 Icinga CLI
