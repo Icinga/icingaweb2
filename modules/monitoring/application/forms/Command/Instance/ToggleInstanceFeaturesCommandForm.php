@@ -61,13 +61,13 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
         if ((bool) $this->status->notifications_enabled) {
             $notificationDescription = sprintf(
                 '<a title="%s" href="%s" data-base-target="_next">%s</a>',
-                $this->translate('Disable notifications for a specific time on a program-wide basis'),
+                mt('monitoring', 'Disable notifications for a specific time on a program-wide basis'),
                 $this->getView()->href('monitoring/process/disable-notifications'),
-                $this->translate('Disable temporarily')
+                mt('monitoring', 'Disable temporarily')
             );
         } elseif ($this->status->disable_notif_expire_time) {
             $notificationDescription = sprintf(
-                $this->translate('Notifications will be re-enabled in <strong>%s</strong>'),
+                mt('monitoring', 'Notifications will be re-enabled in <strong>%s</strong>'),
                 $this->getView()->timeUntil($this->status->disable_notif_expire_time)
             );
         } else {
@@ -78,7 +78,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_ACTIVE_HOST_CHECKS,
                 array(
-                    'label'         =>  $this->translate('Active Host Checks Being Executed'),
+                    'label'         =>  mt('monitoring', 'Active Host Checks Being Executed'),
                     'autosubmit'    => true
                 )
             ),
@@ -86,7 +86,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_ACTIVE_SERVICE_CHECKS,
                 array(
-                    'label'         =>  $this->translate('Active Service Checks Being Executed'),
+                    'label'         =>  mt('monitoring', 'Active Service Checks Being Executed'),
                     'autosubmit'    => true
                 )
             ),
@@ -94,7 +94,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_EVENT_HANDLERS,
                 array(
-                    'label'         => $this->translate('Event Handlers Enabled'),
+                    'label'         => mt('monitoring', 'Event Handlers Enabled'),
                     'autosubmit'    => true
                 )
             ),
@@ -102,7 +102,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_FLAP_DETECTION,
                 array(
-                    'label'         => $this->translate('Flap Detection Enabled'),
+                    'label'         => mt('monitoring', 'Flap Detection Enabled'),
                     'autosubmit'    => true
                 )
             ),
@@ -110,7 +110,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_NOTIFICATIONS,
                 array(
-                    'label'         => $this->translate('Notifications Enabled'),
+                    'label'         => mt('monitoring', 'Notifications Enabled'),
                     'autosubmit'    => true,
                     'description'   => $notificationDescription,
                     'decorators'    => array(
@@ -129,7 +129,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_HOST_OBSESSING,
                 array(
-                    'label'         => $this->translate('Obsessing Over Hosts'),
+                    'label'         => mt('monitoring', 'Obsessing Over Hosts'),
                     'autosubmit'    => true
                 )
             ),
@@ -137,7 +137,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_SERVICE_OBSESSING,
                 array(
-                    'label'         => $this->translate('Obsessing Over Services'),
+                    'label'         => mt('monitoring', 'Obsessing Over Services'),
                     'autosubmit'    => true
                 )
             ),
@@ -145,7 +145,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_PASSIVE_HOST_CHECKS,
                 array(
-                    'label'         =>  $this->translate('Passive Host Checks Being Accepted'),
+                    'label'         =>  mt('monitoring', 'Passive Host Checks Being Accepted'),
                     'autosubmit'    => true
                 )
             ),
@@ -153,7 +153,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_PASSIVE_SERVICE_CHECKS,
                 array(
-                    'label'         =>  $this->translate('Passive Service Checks Being Accepted'),
+                    'label'         =>  mt('monitoring', 'Passive Service Checks Being Accepted'),
                     'autosubmit'    => true
                 )
             ),
@@ -161,7 +161,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_PERFORMANCE_DATA,
                 array(
-                    'label'         =>  $this->translate('Performance Data Being Processed'),
+                    'label'         =>  mt('monitoring', 'Performance Data Being Processed'),
                     'autosubmit'    => true
                 )
             )
@@ -198,7 +198,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 ->setEnabled($enabled);
             $this->getTransport($this->request)->send($toggleFeature);
         }
-        Notification::success($this->translate('Toggling feature..'));
+        Notification::success(mt('monitoring', 'Toggling feature..'));
         return true;
     }
 }

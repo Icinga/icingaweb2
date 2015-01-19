@@ -19,7 +19,7 @@ class StatehistoryForm extends Form
     public function init()
     {
         $this->setName('form_event_overview');
-        $this->setSubmitLabel($this->translate('Apply'));
+        $this->setSubmitLabel(mt('monitoring', 'Apply'));
     }
 
     /**
@@ -65,14 +65,14 @@ class StatehistoryForm extends Form
             'select',
             'from',
             array(
-                'label' => $this->translate('From'),
+                'label' => mt('monitoring', 'From'),
                 'value' => $this->getRequest()->getParam('from', strtotime('3 months ago')),
                 'multiOptions' => array(
-                    strtotime('midnight 3 months ago') => $this->translate('3 Months'),
-                    strtotime('midnight 4 months ago') => $this->translate('4 Months'),
-                    strtotime('midnight 8 months ago') => $this->translate('8 Months'),
-                    strtotime('midnight 12 months ago') => $this->translate('1 Year'),
-                    strtotime('midnight 24 months ago') => $this->translate('2 Years')
+                    strtotime('midnight 3 months ago') => mt('monitoring', '3 Months'),
+                    strtotime('midnight 4 months ago') => mt('monitoring', '4 Months'),
+                    strtotime('midnight 8 months ago') => mt('monitoring', '8 Months'),
+                    strtotime('midnight 12 months ago') => mt('monitoring', '1 Year'),
+                    strtotime('midnight 24 months ago') => mt('monitoring', '2 Years')
                 ),
                 'class' => 'autosubmit'
             )
@@ -81,10 +81,10 @@ class StatehistoryForm extends Form
             'select',
             'to',
             array(
-                'label' => $this->translate('To'),
+                'label' => mt('monitoring', 'To'),
                 'value' => $this->getRequest()->getParam('to', time()),
                 'multiOptions' => array(
-                    time() => $this->translate('Today')
+                    time() => mt('monitoring', 'Today')
                 ),
                 'class' => 'autosubmit'
             )
@@ -95,11 +95,11 @@ class StatehistoryForm extends Form
             'select',
             'objecttype',
             array(
-                'label' => $this->translate('Object type'),
+                'label' => mt('monitoring', 'Object type'),
                 'value' => $objectType,
                 'multiOptions' => array(
-                    'services' => $this->translate('Services'),
-                    'hosts' => $this->translate('Hosts')
+                    'services' => mt('monitoring', 'Services'),
+                    'hosts' => mt('monitoring', 'Hosts')
                 ),
                 'class' => 'autosubmit'
             )
@@ -113,13 +113,13 @@ class StatehistoryForm extends Form
                 'select',
                 'state',
                 array(
-                    'label' => $this->translate('State'),
+                    'label' => mt('monitoring', 'State'),
                     'value' => $serviceState,
                     'multiOptions' => array(
-                        'cnt_critical_hard' => $this->translate('Critical'),
-                        'cnt_warning_hard' => $this->translate('Warning'),
-                        'cnt_unknown_hard' => $this->translate('Unknown'),
-                        'cnt_ok' => $this->translate('Ok')
+                        'cnt_critical_hard' => mt('monitoring', 'Critical'),
+                        'cnt_warning_hard' => mt('monitoring', 'Warning'),
+                        'cnt_unknown_hard' => mt('monitoring', 'Unknown'),
+                        'cnt_ok' => mt('monitoring', 'Ok')
                     ),
                     'class' => 'autosubmit'
                 )
@@ -133,12 +133,12 @@ class StatehistoryForm extends Form
                 'select',
                 'state',
                 array(
-                    'label' => $this->translate('State'),
+                    'label' => mt('monitoring', 'State'),
                     'value' => $hostState,
                     'multiOptions' =>  array(
-                        'cnt_up' => $this->translate('Up'),
-                        'cnt_down_hard' => $this->translate('Down'),
-                        'cnt_unreachable_hard' => $this->translate('Unreachable')
+                        'cnt_up' => mt('monitoring', 'Up'),
+                        'cnt_down_hard' => mt('monitoring', 'Down'),
+                        'cnt_unreachable_hard' => mt('monitoring', 'Unreachable')
                     ),
                     'class' => 'autosubmit'
                 )

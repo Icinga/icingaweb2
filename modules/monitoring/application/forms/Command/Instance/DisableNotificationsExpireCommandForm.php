@@ -21,7 +21,7 @@ class DisableNotificationsExpireCommandForm extends CommandForm
      */
     public function init()
     {
-        $this->setSubmitLabel($this->translate('Disable Notifications'));
+        $this->setSubmitLabel(mt('monitoring', 'Disable Notifications'));
     }
 
     /**
@@ -30,7 +30,8 @@ class DisableNotificationsExpireCommandForm extends CommandForm
      */
     public function getHelp()
     {
-        return $this->translate(
+        return mt(
+            'monitoring',
             'This command is used to disable host and service notifications for a specific time.'
         );
     }
@@ -48,8 +49,8 @@ class DisableNotificationsExpireCommandForm extends CommandForm
             'expire_time',
             array(
                 'required'      => true,
-                'label'         => $this->translate('Expire Time'),
-                'description'   => $this->translate('Set the expire time.'),
+                'label'         => mt('monitoring', 'Expire Time'),
+                'description'   => mt('monitoring', 'Set the expire time.'),
                 'value'         => $expireTime
             )
         );
@@ -66,7 +67,7 @@ class DisableNotificationsExpireCommandForm extends CommandForm
         $disableNotifications
             ->setExpireTime($this->getElement('expire_time')->getValue()->getTimestamp());
         $this->getTransport($this->request)->send($disableNotifications);
-        Notification::success($this->translate('Disabling host and service notifications..'));
+        Notification::success(mt('monitoring', 'Disabling host and service notifications..'));
         return true;
     }
 }

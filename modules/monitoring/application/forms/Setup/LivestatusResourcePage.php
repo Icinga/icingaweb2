@@ -28,7 +28,7 @@ class LivestatusResourcePage extends Form
             'note',
             'title',
             array(
-                'value'         => $this->translate('Monitoring Livestatus Resource', 'setup.page.title'),
+                'value'         => mt('monitoring', 'Monitoring Livestatus Resource', 'setup.page.title'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -39,7 +39,8 @@ class LivestatusResourcePage extends Form
             'note',
             'description',
             array(
-                'value' => $this->translate(
+                'value' => mt(
+                    'monitoring',
                     'Please fill out the connection details below to access the Livestatus'
                     . ' socket interface for your monitoring environment.'
                 )
@@ -90,10 +91,8 @@ class LivestatusResourcePage extends Form
             'skip_validation',
             array(
                 'required'      => true,
-                'label'         => $this->translate('Skip Validation'),
-                'description'   => $this->translate(
-                    'Check this to not to validate connectivity with the given Livestatus socket'
-                )
+                'label'         => t('Skip Validation'),
+                'description'   => t('Check this to not to validate connectivity with the given Livestatus socket')
             )
         );
     }

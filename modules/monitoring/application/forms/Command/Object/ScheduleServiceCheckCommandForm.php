@@ -32,7 +32,8 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
      */
     public function getHelp()
     {
-        return $this->translate(
+        return mt(
+            'monitoring',
             'This command is used to schedule the next check of hosts or services. Icinga will re-queue the'
             . ' hosts or services to be checked at the time you specify.'
         );
@@ -51,7 +52,8 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
                 'note',
                 'command-info',
                 array(
-                    'value' => $this->translate(
+                    'value' => mt(
+                        'monitoring',
                         'This command is used to schedule the next check of hosts or services. Icinga will re-queue the'
                         . ' hosts or services to be checked at the time you specify.'
                     )
@@ -62,10 +64,8 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
                 'check_time',
                 array(
                     'required'      => true,
-                    'label'         => $this->translate('Check Time'),
-                    'description'   => $this->translate(
-                        'Set the date and time when the check should be scheduled.'
-                    ),
+                    'label'         => mt('monitoring', 'Check Time'),
+                    'description'   => mt('monitoring', 'Set the date and time when the check should be scheduled.'),
                     'value'         => $checkTime
                 )
             ),
@@ -73,8 +73,9 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
                 'checkbox',
                 'force_check',
                 array(
-                    'label'         => $this->translate('Force Check'),
-                    'description'   => $this->translate(
+                    'label'         => mt('monitoring', 'Force Check'),
+                    'description'   => mt(
+                        'monitoring',
                         'If you select this option, Icinga will force a check regardless of both what time the'
                         . ' scheduled check occurs and whether or not checks are enabled.'
                     )

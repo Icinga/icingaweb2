@@ -33,7 +33,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 'checkbox',
                 ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS,
                 array(
-                    'label'         => $this->translate('Active Checks'),
+                    'label'         => mt('monitoring', 'Active Checks'),
                     'autosubmit'    => true
                 )
             ),
@@ -41,7 +41,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 'checkbox',
                 ToggleObjectFeatureCommand::FEATURE_PASSIVE_CHECKS,
                 array(
-                    'label'         => $this->translate('Passive Checks'),
+                    'label'         => mt('monitoring', 'Passive Checks'),
                     'autosubmit'    => true
                 )
             ),
@@ -49,7 +49,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 'checkbox',
                 ToggleObjectFeatureCommand::FEATURE_OBSESSING,
                 array(
-                    'label'         => $this->translate('Obsessing'),
+                    'label'         => mt('monitoring', 'Obsessing'),
                     'autosubmit'    => true
                 )
             ),
@@ -57,7 +57,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 'checkbox',
                 ToggleObjectFeatureCommand::FEATURE_NOTIFICATIONS,
                 array(
-                    'label'         => $this->translate('Notifications'),
+                    'label'         => mt('monitoring', 'Notifications'),
                     'autosubmit'    => true
                 )
             ),
@@ -65,7 +65,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 'checkbox',
                 ToggleObjectFeatureCommand::FEATURE_EVENT_HANDLER,
                 array(
-                    'label'         => $this->translate('Event Handler'),
+                    'label'         => mt('monitoring', 'Event Handler'),
                     'autosubmit'    => true
                 )
             ),
@@ -73,7 +73,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 'checkbox',
                 ToggleObjectFeatureCommand::FEATURE_FLAP_DETECTION,
                 array(
-                    'label'         => $this->translate('Flap Detection'),
+                    'label'         => mt('monitoring', 'Flap Detection'),
                     'autosubmit'    => true
                 )
             )
@@ -95,7 +95,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
             $element = $this->getElement($feature);
             $element->setChecked($object->{$feature});
             if ((bool) $object->{$feature . '_changed'} === true) {
-                $element->setDescription($this->translate('changed'));
+                $element->setDescription(mt('monitoring', 'changed'));
             }
         }
         return $this;
@@ -120,7 +120,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 }
             }
         }
-        Notification::success($this->translate('Toggling feature..'));
+        Notification::success(mt('monitoring', 'Toggling feature..'));
         return true;
     }
 }

@@ -44,7 +44,7 @@ class EventOverviewForm extends Form
             'checkbox',
             'statechange',
             array(
-                'label' => $this->translate('State Changes'),
+                'label' => t('State Changes'),
                 'class' => 'autosubmit',
                 'decorators' => $decorators,
                 'value' => strpos($url, $this->stateChangeFilter()->toQueryString()) === false ? 0 : 1
@@ -54,7 +54,7 @@ class EventOverviewForm extends Form
             'checkbox',
             'downtime',
             array(
-                'label' => $this->translate('Downtimes'),
+                'label' => t('Downtimes'),
                 'class' => 'autosubmit',
                 'decorators' => $decorators,
                 'value' => strpos($url, $this->downtimeFilter()->toQueryString()) === false ? 0 : 1
@@ -64,7 +64,7 @@ class EventOverviewForm extends Form
             'checkbox',
             'comment',
             array(
-                'label' => $this->translate('Comments'),
+                'label' => t('Comments'),
                 'class' => 'autosubmit',
                 'decorators' => $decorators,
                 'value' => strpos($url, $this->commentFilter()->toQueryString()) === false ? 0 : 1
@@ -74,7 +74,7 @@ class EventOverviewForm extends Form
             'checkbox',
             'notification',
             array(
-                'label' => $this->translate('Notifications'),
+                'label' => t('Notifications'),
                 'class' => 'autosubmit',
                 'decorators' => $decorators,
                 'value' => strpos($url, $this->notificationFilter()->toQueryString()) === false ? 0 : 1
@@ -84,7 +84,7 @@ class EventOverviewForm extends Form
             'checkbox',
             'flapping',
             array(
-                'label' => $this->translate('Flapping'),
+                'label' => t('Flapping'),
                 'class' => 'autosubmit',
                 'decorators' => $decorators,
                 'value' => strpos($url, $this->flappingFilter()->toQueryString()) === false ? 0 : 1

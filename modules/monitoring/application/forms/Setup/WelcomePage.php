@@ -19,7 +19,10 @@ class WelcomePage extends Form
             'note',
             'welcome',
             array(
-                'value' => $this->translate('Welcome to the configuration of the monitoring module for Icinga Web 2!'),
+                'value' => mt(
+                    'monitoring',
+                    'Welcome to the configuration of the monitoring module for Icinga Web 2!'
+                ),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -31,7 +34,7 @@ class WelcomePage extends Form
             'note',
             'core_hint',
             array(
-                'value' => $this->translate('This is the core module for Icinga Web 2.')
+                'value' => mt('monitoring', 'This is the core module for Icinga Web 2.')
             )
         );
 
@@ -39,7 +42,8 @@ class WelcomePage extends Form
             'note',
             'description',
             array(
-                'value' => $this->translate(
+                'value' => mt(
+                    'monitoring',
                     'It offers various status and reporting views with powerful filter capabilities that allow'
                     . ' you to keep track of the most important events in your monitoring environment.'
                 )
