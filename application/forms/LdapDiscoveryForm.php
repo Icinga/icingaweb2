@@ -26,8 +26,8 @@ class LdapDiscoveryForm extends Form
             'domain',
             array(
                 'required'      => true,
-                'label'         => t('Search Domain'),
-                'description'   => t('Search this domain for records of available servers.'),
+                'label'         => $this->translate('Search Domain'),
+                'description'   => $this->translate('Search this domain for records of available servers.'),
             )
         );
 
@@ -36,7 +36,7 @@ class LdapDiscoveryForm extends Form
                 'note',
                 'additional_description',
                 array(
-                    'value' => t('No Ldap servers found on this domain.'
+                    'value' => $this->translate('No Ldap servers found on this domain.'
                         . ' You can try to specify host and port and try again, or just skip this step and '
                         . 'configure the server manually.'
                     )
@@ -47,8 +47,8 @@ class LdapDiscoveryForm extends Form
                 'hostname',
                 array(
                     'required'      => false,
-                    'label'         => t('Host'),
-                    'description'   => t('IP or host name to search.'),
+                    'label'         => $this->translate('Host'),
+                    'description'   => $this->translate('IP or host name to search.'),
                 )
             );
 
@@ -57,8 +57,8 @@ class LdapDiscoveryForm extends Form
                 'port',
                 array(
                     'required'      => false,
-                    'label'         => t('Port'),
-                    'description'   => t('Port', 389),
+                    'label'         => $this->translate('Port'),
+                    'description'   => $this->translate('Port', 389),
                 )
             );
         }

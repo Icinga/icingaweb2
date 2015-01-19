@@ -4,7 +4,6 @@
 
 namespace Icinga\Forms\Config\General;
 
-use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Web\Form;
 use Icinga\Web\Form\Validator\WritablePathValidator;
@@ -31,12 +30,12 @@ class LoggingConfigForm extends Form
             array(
                 'required'      => true,
                 'autosubmit'    => true,
-                'label'         => t('Logging Type'),
-                'description'   => t('The type of logging to utilize.'),
+                'label'         => $this->translate('Logging Type'),
+                'description'   => $this->translate('The type of logging to utilize.'),
                 'multiOptions'  => array(
                     'syslog'    => 'Syslog',
-                    'file'      => t('File', 'app.config.logging.type'),
-                    'none'      => t('None', 'app.config.logging.type')
+                    'file'      => $this->translate('File', 'app.config.logging.type'),
+                    'none'      => $this->translate('None', 'app.config.logging.type')
                 )
             )
         );
@@ -47,13 +46,13 @@ class LoggingConfigForm extends Form
                 'logging_level',
                 array(
                     'required'      => true,
-                    'label'         => t('Logging Level'),
-                    'description'   => t('The maximum logging level to emit.'),
+                    'label'         => $this->translate('Logging Level'),
+                    'description'   => $this->translate('The maximum logging level to emit.'),
                     'multiOptions'  => array(
-                        Logger::$levels[Logger::ERROR]      => t('Error', 'app.config.logging.level'),
-                        Logger::$levels[Logger::WARNING]    => t('Warning', 'app.config.logging.level'),
-                        Logger::$levels[Logger::INFO]       => t('Information', 'app.config.logging.level'),
-                        Logger::$levels[Logger::DEBUG]      => t('Debug', 'app.config.logging.level')
+                        Logger::$levels[Logger::ERROR]   => $this->translate('Error', 'app.config.logging.level'),
+                        Logger::$levels[Logger::WARNING] => $this->translate('Warning', 'app.config.logging.level'),
+                        Logger::$levels[Logger::INFO]    => $this->translate('Information', 'app.config.logging.level'),
+                        Logger::$levels[Logger::DEBUG]   => $this->translate('Debug', 'app.config.logging.level')
                     )
                 )
             );
@@ -65,8 +64,10 @@ class LoggingConfigForm extends Form
                 'logging_application',
                 array(
                     'required'      => true,
-                    'label'         => t('Application Prefix'),
-                    'description'   => t('The name of the application by which to prefix syslog messages.'),
+                    'label'         => $this->translate('Application Prefix'),
+                    'description'   => $this->translate(
+                        'The name of the application by which to prefix syslog messages.'
+                    ),
                     'value'         => 'icingaweb2',
                     'validators'    => array(
                         array(
@@ -91,8 +92,8 @@ class LoggingConfigForm extends Form
 //                'logging_facility',
 //                array(
 //                    'required'      => true,
-//                    'label'         => t('Facility'),
-//                    'description'   => t('The syslog facility to utilize.'),
+//                    'label'         => $this->translate('Facility'),
+//                    'description'   => $this->translate('The syslog facility to utilize.'),
 //                    'multiOptions'  => array(
 //                        'user' => 'LOG_USER'
 //                    )
@@ -104,8 +105,8 @@ class LoggingConfigForm extends Form
                 'logging_file',
                 array(
                     'required'      => true,
-                    'label'         => t('File path'),
-                    'description'   => t('The full path to the log file to write messages to.'),
+                    'label'         => $this->translate('File path'),
+                    'description'   => $this->translate('The full path to the log file to write messages to.'),
                     'value'         => '/var/log/icingaweb2/icingaweb2.log',
                     'validators'    => array(new WritablePathValidator())
                 )

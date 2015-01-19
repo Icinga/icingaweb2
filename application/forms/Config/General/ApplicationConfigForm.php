@@ -33,10 +33,10 @@ class ApplicationConfigForm extends Form
             'text',
             'global_module_path',
             array(
-                'label'         => t('Module Path'),
+                'label'         => $this->translate('Module Path'),
                 'required'      => true,
                 'value'         => implode(':', Icinga::app()->getModuleManager()->getModuleDirs()),
-                'description'   => t(
+                'description'   => $this->translate(
                     'Contains the directories that will be searched for available modules, separated by '
                     . 'colons. Modules that don\'t exist in these directories can still be symlinked in '
                     . 'the module folder, but won\'t show up in the list of disabled modules.'
@@ -50,11 +50,11 @@ class ApplicationConfigForm extends Form
             array(
                 'required'      => true,
                 'autosubmit'    => true,
-                'label'         => t('User Preference Storage Type'),
+                'label'         => $this->translate('User Preference Storage Type'),
                 'multiOptions'  => array(
-                    'ini'   => t('File System (INI Files)'),
-                    'db'    => t('Database'),
-                    'null'  => t('Don\'t Store Preferences')
+                    'ini'   => $this->translate('File System (INI Files)'),
+                    'db'    => $this->translate('Database'),
+                    'null'  => $this->translate('Don\'t Store Preferences')
                 )
             )
         );
@@ -72,7 +72,7 @@ class ApplicationConfigForm extends Form
                 array(
                     'required'      => true,
                     'multiOptions'  => $backends,
-                    'label'         => t('Database Connection')
+                    'label'         => $this->translate('Database Connection')
                 )
             );
         }
