@@ -322,7 +322,7 @@ class Config implements Countable, Iterator
      */
     public static function app($configname = 'config', $fromDisk = false)
     {
-        if (!isset(self::$app[$configname]) || $fromDisk) {
+        if (! isset(self::$app[$configname]) || $fromDisk) {
             self::$app[$configname] = static::fromIni(static::resolvePath($configname . '.ini'));
         }
 
@@ -341,12 +341,12 @@ class Config implements Countable, Iterator
      */
     public static function module($modulename, $configname = 'config', $fromDisk = false)
     {
-        if (!isset(self::$modules[$modulename])) {
+        if (! isset(self::$modules[$modulename])) {
             self::$modules[$modulename] = array();
         }
 
         $moduleConfigs = self::$modules[$modulename];
-        if (!isset($moduleConfigs[$configname]) || $fromDisk) {
+        if (! isset($moduleConfigs[$configname]) || $fromDisk) {
             $moduleConfigs[$configname] = static::fromIni(
                 static::resolvePath('modules/' . $modulename . '/' . $configname . '.ini')
             );
