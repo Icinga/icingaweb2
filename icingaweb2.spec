@@ -210,7 +210,8 @@ rm -rf %{buildroot}
 %attr(2775,root,%{icingawebgroup}) %dir %{logdir}
 %{docsdir}
 %docdir %{docsdir}
-%attr(2770,root,%{icingawebgroup}) %config(noreplace) %{configdir}/modules/setup
+%attr(2770,root,%{icingawebgroup}) %config(noreplace) %dir %{configdir}/modules/setup
+%attr(0660,root,%{icingawebgroup}) %config(noreplace) %{configdir}/modules/setup/config.ini
 
 
 %pre common
@@ -222,6 +223,7 @@ exit 0
 %{basedir}/application/locale
 %dir %{basedir}/modules
 %attr(2770,root,%{icingawebgroup}) %config(noreplace) %dir %{configdir}
+%attr(2770,root,%{icingawebgroup}) %config(noreplace) %dir %{configdir}/modules
 
 
 %files -n php-Icinga
