@@ -279,7 +279,7 @@ class Config implements Countable, Iterator
      *
      * @param   string      $file   The file to parse
      *
-     * @throws  NotReadableError    When the file does not exist or cannot be read
+     * @throws  NotReadableError    When the file cannot be read
      */
     public static function fromIni($file)
     {
