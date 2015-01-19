@@ -292,7 +292,7 @@ class Config implements Countable, Iterator
             $config = new static(new ConfigObject(parse_ini_file($filepath, true)));
             $config->setConfigFile($filepath);
             return $config;
-        } else {
+        } elseif (@file_exists($filepath)) {
             throw new NotReadableError(t('Cannot read config file "%s". Permission denied'), $filepath);
         }
 
