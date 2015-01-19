@@ -94,22 +94,7 @@ class Axis implements Drawable
     /**
      * If the displayed labels should be aligned horizontally or diagonally
      */
-    private $labelRotationStyle = self::LABEL_ROTATE_DIAGONAL;
-
-    /**
-     * Set the label rotation style for the horizontal axis
-     *
-     * <ul>
-     *   <li><b>LABEL_ROTATE_HORIZONTAL</b>: Labels will be displayed horizontally </li>
-     *   <li><b>LABEL_ROTATE_DIAGONAL</b>: Labels will be rotated by 45° </li>
-     * </ul>
-     *
-     * @param $style    The rotation mode
-     */
-    public function setHorizontalLabelRotationStyle($style)
-    {
-        $this->labelRotationStyle = $style;
-    }
+    protected $labelRotationStyle = self::LABEL_ROTATE_HORIZONTAL;
 
     /**
      * Inform the axis about an added dataset
@@ -182,6 +167,12 @@ class Axis implements Drawable
             $steps = $ticks * 5;
         }
 
+        // Check whether there is enough room for regular labels
+        $labelRotationStyle = $this->labelRotationStyle;
+        if ($this->labelsOversized($this->xUnit, 6)) {
+            $labelRotationStyle = self::LABEL_ROTATE_DIAGONAL;
+        }
+
         /*
         $line = new Line(0, 100, 100, 100);
         $line->setStrokeWidth(2);
@@ -203,7 +194,7 @@ class Axis implements Drawable
             }
 
             if ($i % $steps === 0) {
-                if ($this->labelRotationStyle === self::LABEL_ROTATE_HORIZONTAL) {
+                if ($labelRotationStyle === self::LABEL_ROTATE_HORIZONTAL) {
                     // If the  last label would overlap this label we shift the y axis a bit
                     if ($lastLabelEnd > $pos) {
                         $shift = ($shift + 5) % 10;
@@ -213,14 +204,14 @@ class Axis implements Drawable
                 }
 
                 $labelField = new Text($pos + 0.5, ($this->xLabel ? 107 : 105) + $shift, $label);
-                if ($this->labelRotationStyle === self::LABEL_ROTATE_HORIZONTAL) {
+                if ($labelRotationStyle === self::LABEL_ROTATE_HORIZONTAL) {
                     $labelField->setAlignment(Text::ALIGN_MIDDLE)
                         ->setFontSize('2.5em');
                 } else {
                     $labelField->setFontSize('2.5em');
                 }
 
-                if ($this->labelRotationStyle === self::LABEL_ROTATE_DIAGONAL) {
+                if ($labelRotationStyle === self::LABEL_ROTATE_DIAGONAL) {
                     $labelField = new Rotator($labelField, 45);
                 }
                 $labelField = $labelField->toSvg($ctx);
@@ -477,4 +468,22 @@ class Axis implements Drawable
         return $per;
     }
 
+    /**
+     * Returns whether at least one label of the given Axis
+     * is bigger than the given maxLength
+     *
+     * @param   AxisUnit    $axis   The axis that contains the labels that will be checked
+     *
+     * @return  boolean             Whether at least one label is bigger than maxLength
+     */
+    private function labelsOversized(AxisUnit $axis, $maxLength = 5)
+    {
+        $oversized = false;
+        foreach ($axis as $label => $pos) {
+            if (strlen($label) > $maxLength) {
+                $oversized = true;
+            }
+        }
+        return $oversized;
+    }
 }
