@@ -29,7 +29,7 @@ class AuthenticationPage extends Form
             'note',
             'title',
             array(
-                'value'         => mt('setup', 'Authentication', 'setup.page.title'),
+                'value'         => $this->translate('Authentication', 'setup.page.title'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -40,8 +40,7 @@ class AuthenticationPage extends Form
             'note',
             'description',
             array(
-                'value' => mt(
-                    'setup',
+                'value' => $this->translate(
                     'Please choose how you want to authenticate when accessing Icinga Web 2.'
                     . ' Configuring backend specific details follows in a later step.'
                 )
@@ -50,20 +49,20 @@ class AuthenticationPage extends Form
 
         $backendTypes = array();
         if (Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
-            $backendTypes['db'] = t('Database');
+            $backendTypes['db'] = $this->translate('Database');
         }
         if (Platform::extensionLoaded('ldap')) {
             $backendTypes['ldap'] = 'LDAP';
         }
-        $backendTypes['autologin'] = t('Autologin');
+        $backendTypes['autologin'] = $this->translate('Autologin');
 
         $this->addElement(
             'select',
             'type',
             array(
                 'required'      => true,
-                'label'         => mt('setup', 'Authentication Type'),
-                'description'   => mt('setup', 'The type of authentication to use when accessing Icinga Web 2'),
+                'label'         => $this->translate('Authentication Type'),
+                'description'   => $this->translate('The type of authentication to use when accessing Icinga Web 2'),
                 'multiOptions'  => $backendTypes
             )
         );
