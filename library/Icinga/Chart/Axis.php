@@ -228,15 +228,6 @@ class Axis implements Drawable
             }
             $i++;
         }
-
-        // render the label for this axis
-        if ($this->xLabel) {
-            $axisLabel = new Text(50, 104, $this->xLabel);
-            $axisLabel->setFontSize('2em')
-                ->setFontWeight('bold')
-                ->setAlignment(Text::ALIGN_MIDDLE);
-            $group->appendChild($axisLabel->toSvg($ctx));
-        }
     }
 
     /**
@@ -287,12 +278,19 @@ class Axis implements Drawable
             $i++;
         }
 
-        if ($this->yLabel) {
-            $axisLabel = new Text(-8, 50, $this->yLabel);
+        if ($this->yLabel || $this->xLabel) {
+            if ($this->yLabel && $this->xLabel) {
+                $txt = $this->yLabel . ' / ' . $this->xLabel;
+            } else if ($this->xLabel) {
+                $txt = $this->xLabel;
+            } else {
+                $txt = $this->yLabel;
+            }
+
+            $axisLabel = new Text(50, -3, $txt);
             $axisLabel->setFontSize('2em')
                 ->setFontWeight('bold')
                 ->setAlignment(Text::ALIGN_MIDDLE);
-            $axisLabel = new Rotator($axisLabel, 90);
 
             $group->appendChild($axisLabel->toSvg($ctx));
         }
