@@ -6,6 +6,8 @@ use Icinga\Module\Monitoring\Controller;
 use Icinga\Chart\GridChart;
 use Icinga\Chart\PieChart;
 use Icinga\Chart\Unit\StaticAxis;
+use Icinga\Chart\Unit\LogarithmicUnit;
+use Icinga\Chart\Unit\LinearUnit;
 
 /**
  * Class Monitoring_CommandController
@@ -20,6 +22,95 @@ class Monitoring_ChartController extends Controller
         $this->view->compact = $this->_request->getParam('view') === 'compact';
     }
 
+    private function drawLogChart1()
+    {
+        $chart = new GridChart();
+        $chart->alignTopLeft();
+        $chart->setAxisLabel('X axis label', 'Y axis label')
+            ->setYAxis(new LogarithmicUnit());
+
+        for ($i = -15; $i < 15; $i++) {
+            $data1[] = array($i, -$i * rand(1, 10) * pow(2, rand(1, 2)));
+        }
+        for ($i = -15; $i < 15; $i++) {
+            $data2[] = array($i, 1000 + $i * rand(1, 35) * pow(2, rand(1, 2)));
+        }
+        for ($i = -15; $i < 15; $i++) {
+            $data3[] = array($i, $i * rand(1, 100) * pow(2, rand(1, 10)) - 1000);
+        }
+
+        $chart->drawLines(
+            array(
+                'label' => 'Random 1',
+                'color' => '#F56',
+                'data'  =>  $data1,
+                'showPoints' => true
+            )
+        );
+        $chart->drawLines(
+            array(
+                'label' => 'Random 2',
+                'color' => '#fa4',
+                'data'  =>  $data2,
+                'showPoints' => true
+            )
+        );
+        $chart->drawLines(
+            array(
+                'label' => 'Random 3',
+                'color' => '#4b7',
+                'data'  =>  $data3,
+                'showPoints' => true
+            )
+        );
+        return $chart;
+    }
+
+    private function drawLogChart2()
+    {
+        $chart = new GridChart();
+        $chart->alignTopLeft();
+        $chart->setAxisLabel('X axis label', 'Y axis label')
+            ->setYAxis(new LogarithmicUnit());
+
+        for ($i = -10; $i < 10; $i++) {
+            $sign = $i > 0 ?  1 :
+                   ($i < 0 ? -1 : 0);
+            $data[] = array($i, $sign * pow(10, abs($i)));
+        }
+        $chart->drawLines(
+            array(
+                'label' => 'f(x): sign(x) * 10^|x|',
+                'color' => '#F56',
+                'data'  =>  $data,
+                'showPoints' => true
+            )
+        );
+        return $chart;
+    }
+    private function drawLogChart3()
+    {
+        $chart = new GridChart();
+        $chart->alignTopLeft();
+        $chart->setAxisLabel('X axis label', 'Y axis label')
+            ->setYAxis(new LogarithmicUnit());
+
+        for ($i = -2; $i < 3; $i++) {
+            $sign = $i > 0 ?  1 :
+                ($i < 0 ? -1 : 0);
+            $data[] = array($i, $sign * pow(10, abs($i)));
+        }
+        $chart->drawLines(
+            array(
+                'label' => 'f(x): sign(x) * 10^|x|',
+                'color' => '#F56',
+                'data'  =>  $data,
+                'showPoints' => true
+            )
+        );
+        return $chart;
+    }
+
     public function testAction()
     {
         $this->chart = new GridChart();
@@ -28,7 +119,7 @@ class Monitoring_ChartController extends Controller
         $data1 = array();
         $data2 = array();
         $data3 = array();
-        for ($i = 0; $i < 25; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $data3[] = array('Label ' . $i, rand(0, 30));
         }
 
@@ -36,13 +127,13 @@ class Monitoring_ChartController extends Controller
         $this->chart->drawLines(
             array(
                 'label' => 'Nr of outtakes',
-                'color' => 'red',
+                'color' => '#F56',
                 'width' => '5',
 
                 'data'  => $data
             ), array(
                 'label' => 'Some line',
-                'color' => 'blue',
+                'color' => '#fa4',
                 'width' => '4',
 
                 'data'  =>  $data3,
@@ -52,8 +143,8 @@ class Monitoring_ChartController extends Controller
 */
         $this->chart->drawBars(
             array(
-                'label' => 'Some other line',
-                'color' => 'green',
+                'label' => 'A big amount of data',
+                'color' => '#4b7',
                 'data'  =>  $data3,
                 'showPoints' => true
             )
@@ -68,7 +159,11 @@ class Monitoring_ChartController extends Controller
             )
         );
 */
-        $this->view->svg = $this->chart;
+        $this->view->svgs = array();
+        $this->view->svgs[] = $this->drawLogChart1();
+        $this->view->svgs[] = $this->drawLogChart2();
+        $this->view->svgs[] = $this->drawLogChart3();
+        $this->view->svgs[] = $this->chart;
     }
 
     public function hostgroupAction()
@@ -185,18 +280,15 @@ class Monitoring_ChartController extends Controller
         $upBars = array();
         $downBars = array();
         $unreachableBars = array();
-        foreach ($query as $hostgroup) {
+        for ($i = 0; $i < 50; $i++) {
             $upBars[] = array(
-                $hostgroup->hostgroup,
-                $hostgroup->hosts_up
+                (string)$i, rand(1, 200), rand(1, 200)
             );
             $downBars[] = array(
-                $hostgroup->hostgroup,
-                $hostgroup->hosts_down_unhandled
+                (string)$i, rand(1, 200), rand(1, 200)
             );
             $unreachableBars[] = array(
-                $hostgroup->hostgroup,
-                $hostgroup->hosts_unreachable_unhandled
+                (string)$i, rand(1, 200), rand(1, 200)
             );
         }
         $tooltip = mt('monitoring', '<b>{title}:</b><br> {value} of {sum} hosts are {label}');
@@ -272,7 +364,14 @@ class Monitoring_ChartController extends Controller
                 (int) $query->hosts_unreachable_unhandled,
                 (int) $query->hosts_pending
             ),
-            'colors' => array('#44bb77', '#ff4444', '#ff0000', '#E066FF', '#f099FF', '#fefefe'),
+            'colors' => array(
+                '#44bb77',   // 'Ok'
+                '#ff4444',   // 'Warning'
+                '#ff0000',   // 'WarningHandled'
+                '#E066FF',
+                '#f099FF',
+                '#fefefe'
+            ),
             'labels'=> array(
                 (int) $query->hosts_up . mt('monitoring', ' Up Hosts'),
                 (int) $query->hosts_down_handled . mt('monitoring', ' Down Hosts (Handled)'),
