@@ -30,8 +30,8 @@ class FileResourceForm extends Form
             'name',
             array(
                 'required'      => true,
-                'label'         => t('Resource Name'),
-                'description'   => t('The unique name of this resource')
+                'label'         => $this->translate('Resource Name'),
+                'description'   => $this->translate('The unique name of this resource')
             )
         );
         $this->addElement(
@@ -39,8 +39,8 @@ class FileResourceForm extends Form
             'filename',
             array(
                 'required'      => true,
-                'label'         => t('Filepath'),
-                'description'   => t('The filename to fetch information from'),
+                'label'         => $this->translate('Filepath'),
+                'description'   => $this->translate('The filename to fetch information from'),
                 'validators'    => array(new ReadablePathValidator())
             )
         );
@@ -49,8 +49,8 @@ class FileResourceForm extends Form
             'fields',
             array(
                 'required'      => true,
-                'label'         => t('Pattern'),
-                'description'   => t('The regular expression by which to identify columns')
+                'label'         => $this->translate('Pattern'),
+                'description'   => $this->translate('The regular expression by which to identify columns')
             )
         );
 

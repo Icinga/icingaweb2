@@ -26,7 +26,7 @@ class DashletForm extends Form
     {
         $this->setName('form_dashboard_addurl');
         if (! $this->getSubmitLabel()) {
-            $this->setSubmitLabel(t('Add To Dashboard'));
+            $this->setSubmitLabel($this->translate('Add To Dashboard'));
         }
         $this->setAction(URL::fromRequest());
     }
@@ -66,9 +66,10 @@ class DashletForm extends Form
             'url',
             array(
                 'required'      => true,
-                'label'         => t('Url'),
-                'description'   =>
-                    t('Enter url being loaded in the dashlet. You can paste the full URL, including filters.')
+                'label'         => $this->translate('Url'),
+                'description'   => $this->translate(
+                    'Enter url being loaded in the dashlet. You can paste the full URL, including filters.'
+                )
             )
         );
         $this->addElement(
@@ -76,8 +77,8 @@ class DashletForm extends Form
             'dashlet',
             array(
                 'required'      => true,
-                'label'         => t('Dashlet Title'),
-                'description'   => t('Enter a title for the dashlet.')
+                'label'         => $this->translate('Dashlet Title'),
+                'description'   => $this->translate('Enter a title for the dashlet.')
             )
         );
         $this->addElement(
@@ -95,9 +96,8 @@ class DashletForm extends Form
                 'pane',
                 array(
                     'required'      => true,
-                    'label'         => t("New Dashboard Title"),
-                    'description'   =>
-                        t('Enter a title for the new pane.')
+                    'label'         => $this->translate("New Dashboard Title"),
+                    'description'   => $this->translate('Enter a title for the new pane.')
                 )
             );
         } else {
@@ -106,10 +106,9 @@ class DashletForm extends Form
                 'pane',
                 array(
                     'required'      => true,
-                    'label'         => t('Dashboard'),
+                    'label'         => $this->translate('Dashboard'),
                     'multiOptions'  => $panes,
-                    'description'   =>
-                        t('Select a pane you want to add the dashlet.')
+                    'description'   => $this->translate('Select a pane you want to add the dashlet.')
                 )
             );
         }
@@ -119,9 +118,9 @@ class DashletForm extends Form
             'create_new_pane',
             array(
                 'required'      => false,
-                'label'         => t('New dashboard'),
+                'label'         => $this->translate('New dashboard'),
                 'class'         => 'autosubmit',
-                'description'   => t('Check this box if you want to add the dashlet to a new dashboard')
+                'description'   => $this->translate('Check this box if you want to add the dashlet to a new dashboard')
             )
         );
     }

@@ -31,7 +31,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
     public function init()
     {
         $this->setName('form_config_authbackend');
-        $this->setSubmitLabel(t('Save Changes'));
+        $this->setSubmitLabel($this->translate('Save Changes'));
     }
 
     /**
@@ -70,7 +70,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
         } elseif ($type === 'autologin') {
             $form = new AutologinBackendForm();
         } else {
-            throw new InvalidArgumentException(sprintf(t('Invalid backend type "%s" provided'), $type));
+            throw new InvalidArgumentException(sprintf($this->translate('Invalid backend type "%s" provided'), $type));
         }
 
         return $form;
@@ -91,9 +91,9 @@ class AuthenticationBackendConfigForm extends ConfigForm
     {
         $name = isset($values['name']) ? $values['name'] : '';
         if (! $name) {
-            throw new InvalidArgumentException(t('Authentication backend name missing'));
+            throw new InvalidArgumentException($this->translate('Authentication backend name missing'));
         } elseif ($this->config->hasSection($name)) {
-            throw new InvalidArgumentException(t('Authentication backend already exists'));
+            throw new InvalidArgumentException($this->translate('Authentication backend already exists'));
         }
 
         unset($values['name']);
@@ -114,11 +114,11 @@ class AuthenticationBackendConfigForm extends ConfigForm
     public function edit($name, array $values)
     {
         if (! $name) {
-            throw new InvalidArgumentException(t('Old authentication backend name missing'));
+            throw new InvalidArgumentException($this->translate('Old authentication backend name missing'));
         } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
-            throw new InvalidArgumentException(t('New authentication backend name missing'));
+            throw new InvalidArgumentException($this->translate('New authentication backend name missing'));
         } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(t('Unknown authentication backend provided'));
+            throw new InvalidArgumentException($this->translate('Unknown authentication backend provided'));
         }
 
         $backendConfig = $this->config->getSection($name);
@@ -144,9 +144,9 @@ class AuthenticationBackendConfigForm extends ConfigForm
     public function remove($name)
     {
         if (! $name) {
-            throw new InvalidArgumentException(t('Authentication backend name missing'));
+            throw new InvalidArgumentException($this->translate('Authentication backend name missing'));
         } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(t('Unknown authentication backend provided'));
+            throw new InvalidArgumentException($this->translate('Unknown authentication backend provided'));
         }
 
         $backendConfig = $this->config->getSection($name);
@@ -167,9 +167,9 @@ class AuthenticationBackendConfigForm extends ConfigForm
     public function move($name, $position)
     {
         if (! $name) {
-            throw new InvalidArgumentException(t('Authentication backend name missing'));
+            throw new InvalidArgumentException($this->translate('Authentication backend name missing'));
         } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(t('Unknown authentication backend provided'));
+            throw new InvalidArgumentException($this->translate('Unknown authentication backend provided'));
         }
 
         $backendOrder = $this->config->keys();
@@ -208,10 +208,10 @@ class AuthenticationBackendConfigForm extends ConfigForm
         try {
             if ($authBackend === null) { // create new backend
                 $this->add($this->getValues());
-                $message = t('Authentication backend "%s" has been successfully created');
+                $message = $this->translate('Authentication backend "%s" has been successfully created');
             } else { // edit existing backend
                 $this->edit($authBackend, $this->getValues());
-                $message = t('Authentication backend "%s" has been successfully changed');
+                $message = $this->translate('Authentication backend "%s" has been successfully changed');
             }
         } catch (InvalidArgumentException $e) {
             Notification::error($e->getMessage());
@@ -237,11 +237,13 @@ class AuthenticationBackendConfigForm extends ConfigForm
         $authBackend = $this->request->getQuery('auth_backend');
         if ($authBackend !== null) {
             if ($authBackend === '') {
-                throw new ConfigurationError(t('Authentication backend name missing'));
+                throw new ConfigurationError($this->translate('Authentication backend name missing'));
             } elseif (! $this->config->hasSection($authBackend)) {
-                throw new ConfigurationError(t('Unknown authentication backend provided'));
+                throw new ConfigurationError($this->translate('Unknown authentication backend provided'));
             } elseif ($this->config->getSection($authBackend)->backend === null) {
-                throw new ConfigurationError(sprintf(t('Backend "%s" has no `backend\' setting'), $authBackend));
+                throw new ConfigurationError(
+                    sprintf($this->translate('Backend "%s" has no `backend\' setting'), $authBackend)
+                );
             }
 
             $configValues = $this->config->getSection($authBackend)->toArray();
@@ -257,7 +259,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
             );
 
             if (false === empty($autologinBackends)) {
-                throw new ConfigurationError(t('Could not find any resources for authentication'));
+                throw new ConfigurationError($this->translate('Could not find any resources for authentication'));
             }
         }
     }
@@ -276,8 +278,8 @@ class AuthenticationBackendConfigForm extends ConfigForm
             array(
                 'order'         => 0,
                 'ignore'        => true,
-                'label'         => t('Force Changes'),
-                'description'   => t('Check this box to enforce changes without connectivity validation')
+                'label'         => $this->translate('Force Changes'),
+                'description'   => $this->translate('Check this box to enforce changes without connectivity validation')
             )
         );
     }
@@ -291,7 +293,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
         $backendType = isset($formData['type']) ? $formData['type'] : null;
 
         if (isset($this->resources['db'])) {
-            $backendTypes['db'] = t('Database');
+            $backendTypes['db'] = $this->translate('Database');
         }
         if (isset($this->resources['ldap']) && ($backendType === 'ldap' || Platform::extensionLoaded('ldap'))) {
             $backendTypes['ldap'] = 'LDAP';
@@ -304,7 +306,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
             }
         );
         if ($backendType === 'autologin' || empty($autologinBackends)) {
-            $backendTypes['autologin'] = t('Autologin');
+            $backendTypes['autologin'] = $this->translate('Autologin');
         }
 
         if ($backendType === null) {
@@ -318,8 +320,10 @@ class AuthenticationBackendConfigForm extends ConfigForm
                 'ignore'            => true,
                 'required'          => true,
                 'autosubmit'        => true,
-                'label'             => t('Backend Type'),
-                'description'       => t('The type of the resource to use for this authenticaton provider'),
+                'label'             => $this->translate('Backend Type'),
+                'description'       => $this->translate(
+                    'The type of the resource to use for this authenticaton provider'
+                ),
                 'multiOptions'      => $backendTypes
             )
         );

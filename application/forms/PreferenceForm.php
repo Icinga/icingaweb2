@@ -105,9 +105,9 @@ class PreferenceForm extends Form
         try {
             if ($this->getElement('btn_submit_preferences')->isChecked()) {
                 $this->save();
-                Notification::success(t('Preferences successfully saved'));
+                Notification::success($this->translate('Preferences successfully saved'));
             } else {
-                Notification::success(t('Preferences successfully saved for the current session'));
+                Notification::success($this->translate('Preferences successfully saved for the current session'));
             }
         } catch (Exception $e) {
             Logger::error($e);
@@ -142,13 +142,13 @@ class PreferenceForm extends Form
     public function createElements(array $formData)
     {
         $languages = array();
-        $languages['autodetect'] = sprintf(t('Browser (%s)', 'preferences.form'), $this->getLocale());
+        $languages['autodetect'] = sprintf($this->translate('Browser (%s)', 'preferences.form'), $this->getLocale());
         foreach (Translator::getAvailableLocaleCodes() as $language) {
             $languages[$language] = $language;
         }
 
         $tzList = array();
-        $tzList['autodetect'] = sprintf(t('Browser (%s)', 'preferences.form'), $this->getDefaultTimezone());
+        $tzList['autodetect'] = sprintf($this->translate('Browser (%s)', 'preferences.form'), $this->getDefaultTimezone());
         foreach (DateTimeZone::listIdentifiers() as $tz) {
             $tzList[$tz] = $tz;
         }
@@ -158,8 +158,8 @@ class PreferenceForm extends Form
             'language',
             array(
                 'required'      => true,
-                'label'         => t('Your Current Language'),
-                'description'   => t('Use the following language to display texts and messages'),
+                'label'         => $this->translate('Your Current Language'),
+                'description'   => $this->translate('Use the following language to display texts and messages'),
                 'multiOptions'  => $languages,
                 'value'         => substr(setlocale(LC_ALL, 0), 0, 5)
             )
@@ -170,8 +170,8 @@ class PreferenceForm extends Form
             'timezone',
             array(
                 'required'      => true,
-                'label'         => t('Your Current Timezone'),
-                'description'   => t('Use the following timezone for dates and times'),
+                'label'         => $this->translate('Your Current Timezone'),
+                'description'   => $this->translate('Use the following timezone for dates and times'),
                 'multiOptions'  => $tzList,
                 'value'         => $this->getDefaultTimezone()
             )
@@ -182,7 +182,7 @@ class PreferenceForm extends Form
             'show_benchmark',
             array(
                 'required'  => true,
-                'label'     => t('Use benchmark')
+                'label'     => $this->translate('Use benchmark')
             )
         );
 
@@ -191,7 +191,7 @@ class PreferenceForm extends Form
             'btn_submit_preferences',
             array(
                 'ignore'        => true,
-                'label'         => t('Save to the Preferences'),
+                'label'         => $this->translate('Save to the Preferences'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'div'))
@@ -204,7 +204,7 @@ class PreferenceForm extends Form
             'btn_submit_session',
             array(
                 'ignore'        => true,
-                'label'         => t('Save for the current Session'),
+                'label'         => $this->translate('Save for the current Session'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'div'))

@@ -29,8 +29,8 @@ class RemoteInstanceForm extends Form
                 'host',
                 array(
                     'required'      => true,
-                    'label'         => mt('monitoring', 'Host'),
-                    'description'   => mt('monitoring',
+                    'label'         => $this->translate('Host'),
+                    'description'   => $this->translate(
                         'Hostname or address of the remote Icinga instance'
                     )
                 )
@@ -40,8 +40,8 @@ class RemoteInstanceForm extends Form
                 'port',
                 array(
                     'required'      => true,
-                    'label'         => mt('monitoring', 'Port'),
-                    'description'   => mt('monitoring', 'SSH port to connect to on the remote Icinga instance'),
+                    'label'         => $this->translate('Port'),
+                    'description'   => $this->translate('SSH port to connect to on the remote Icinga instance'),
                     'value'         => 22
                 )
             ),
@@ -50,8 +50,8 @@ class RemoteInstanceForm extends Form
                 'user',
                 array(
                     'required'      => true,
-                    'label'         => mt('monitoring', 'User'),
-                    'description'   => mt('monitoring',
+                    'label'         => $this->translate('User'),
+                    'description'   => $this->translate(
                         'User to log in as on the remote Icinga instance. Please note that key-based SSH login must be'
                         . ' possible for this user'
                     )
@@ -62,9 +62,9 @@ class RemoteInstanceForm extends Form
                 'path',
                 array(
                     'required'      => true,
-                    'label'         => mt('monitoring', 'Command File'),
+                    'label'         => $this->translate('Command File'),
                     'value'         => '/var/run/icinga2/cmd/icinga2.cmd',
-                    'description'   => mt('monitoring', 'Path to the Icinga command file on the remote Icinga instance')
+                    'description'   => $this->translate('Path to the Icinga command file on the remote Icinga instance')
                 )
             )
         ));

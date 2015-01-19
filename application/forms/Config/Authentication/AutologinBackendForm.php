@@ -30,8 +30,8 @@ class AutologinBackendForm extends Form
             'name',
             array(
                 'required'      => true,
-                'label'         => t('Backend Name'),
-                'description'   => t(
+                'label'         => $this->translate('Backend Name'),
+                'description'   => $this->translate(
                     'The name of this authentication provider that is used to differentiate it from others'
                 ),
                 'validators'    => array(
@@ -52,8 +52,8 @@ class AutologinBackendForm extends Form
             'text',
             'strip_username_regexp',
             array(
-                'label'         => t('Filter Pattern'),
-                'description'   => t(
+                'label'         => $this->translate('Filter Pattern'),
+                'description'   => $this->translate(
                     'The regular expression to use to strip specific parts off from usernames.'
                     . ' Leave empty if you do not want to strip off anything'
                 ),

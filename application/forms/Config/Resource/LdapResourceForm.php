@@ -32,8 +32,8 @@ class LdapResourceForm extends Form
             'name',
             array(
                 'required'      => true,
-                'label'         => t('Resource Name'),
-                'description'   => t('The unique name of this resource')
+                'label'         => $this->translate('Resource Name'),
+                'description'   => $this->translate('The unique name of this resource')
             )
         );
         $this->addElement(
@@ -41,8 +41,10 @@ class LdapResourceForm extends Form
             'hostname',
             array(
                 'required'      => true,
-                'label'         => t('Host'),
-                'description'   => t('The hostname or address of the LDAP server to use for authentication'),
+                'label'         => $this->translate('Host'),
+                'description'   => $this->translate(
+                    'The hostname or address of the LDAP server to use for authentication'
+                ),
                 'value'         => 'localhost'
             )
         );
@@ -51,8 +53,8 @@ class LdapResourceForm extends Form
             'port',
             array(
                 'required'      => true,
-                'label'         => t('Port'),
-                'description'   => t('The port of the LDAP server to use for authentication'),
+                'label'         => $this->translate('Port'),
+                'description'   => $this->translate('The port of the LDAP server to use for authentication'),
                 'value'         => 389
             )
         );
@@ -61,8 +63,10 @@ class LdapResourceForm extends Form
             'root_dn',
             array(
                 'required'      => true,
-                'label'         => t('Root DN'),
-                'description'   => t('Only the root and its child nodes will be accessible on this resource.')
+                'label'         => $this->translate('Root DN'),
+                'description'   => $this->translate(
+                    'Only the root and its child nodes will be accessible on this resource.'
+                )
             )
         );
         $this->addElement(
@@ -70,8 +74,8 @@ class LdapResourceForm extends Form
             'bind_dn',
             array(
                 'required'      => true,
-                'label'         => t('Bind DN'),
-                'description'   => t('The user dn to use for querying the ldap server')
+                'label'         => $this->translate('Bind DN'),
+                'description'   => $this->translate('The user dn to use for querying the ldap server')
             )
         );
         $this->addElement(
@@ -80,8 +84,8 @@ class LdapResourceForm extends Form
             array(
                 'required'          => true,
                 'renderPassword'    => true,
-                'label'             => t('Bind Password'),
-                'description'       => t('The password to use for querying the ldap server')
+                'label'             => $this->translate('Bind Password'),
+                'description'       => $this->translate('The password to use for querying the ldap server')
             )
         );
 
@@ -119,7 +123,9 @@ class LdapResourceForm extends Form
                 throw new Exception();
             }
         } catch (Exception $e) {
-            $form->addError(t('Connectivity validation failed, connection to the given resource not possible.'));
+            $form->addError(
+                $this->translate('Connectivity validation failed, connection to the given resource not possible.')
+            );
             return false;
         }
 
