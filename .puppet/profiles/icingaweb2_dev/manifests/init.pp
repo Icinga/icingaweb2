@@ -1,10 +1,11 @@
 class icingaweb2_dev (
-  $config   = hiera('icingaweb2::config'),
-  $log      = hiera('icingaweb2::log'),
-  $web_path = hiera('icingaweb2::web_path'),
-  $db_user  = hiera('icingaweb2::db_user'),
-  $db_pass  = hiera('icingaweb2::db_pass'),
-  $db_name  = hiera('icingaweb2::db_name'),
+  $config    = hiera('icingaweb2::config'),
+  $log       = hiera('icingaweb2::log'),
+  $web_path  = hiera('icingaweb2::web_path'),
+  $db_user   = hiera('icingaweb2::db_user'),
+  $db_pass   = hiera('icingaweb2::db_pass'),
+  $db_name   = hiera('icingaweb2::db_name'),
+  $web_group = hiera('icingaweb2::group'),
 ) {
   include apache
   include php
@@ -28,7 +29,7 @@ class icingaweb2_dev (
   Exec { path => '/usr/local/bin:/usr/bin:/bin' }
 
   # TODO(el): Enabling/disabling modules should be a resource
-  User <| alias == apache |> { groups +> 'icingaweb' }
+  User <| alias == apache |> { groups +> $web_group }
   -> exec { 'enable-monitoring-module':
     command => 'icingacli module enable monitoring',
     user    => 'apache',
@@ -50,7 +51,7 @@ class icingaweb2_dev (
   file { $log_dir:
     ensure  => directory,
     owner   => 'root',
-    group   => 'icingaweb',
+    group   => $web_group,
     mode    => '2775'
   }
 
