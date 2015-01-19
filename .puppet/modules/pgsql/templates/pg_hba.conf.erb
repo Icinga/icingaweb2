@@ -86,6 +86,11 @@ local   icingaweb      icingaweb                            trust
 host    icingaweb      icingaweb      127.0.0.1/32          trust
 host    icingaweb      icingaweb      ::1/128               trust
 
+# icingaweb2
+local   <%= scope.function_hiera(['icingaweb2::db_user']) %>    <%= scope.function_hiera(['icingaweb2::db_user']) %>                    trust
+host    <%= scope.function_hiera(['icingaweb2::db_user']) %>    <%= scope.function_hiera(['icingaweb2::db_user']) %>    127.0.0.1/32    trust
+host    <%= scope.function_hiera(['icingaweb2::db_user']) %>    <%= scope.function_hiera(['icingaweb2::db_user']) %>    ::1/128         trust
+
 # "local" is for Unix domain socket connections only
 local   all         all                               ident
 # IPv4 local connections:
