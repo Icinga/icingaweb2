@@ -9,6 +9,7 @@ class icingaweb2_dev (
 ) {
   include apache
   include php
+  include php_imagick
   include icingaweb2::config
   include icingacli
   include icinga_packages
