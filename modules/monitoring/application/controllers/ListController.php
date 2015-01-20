@@ -1,6 +1,4 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Backend;
@@ -12,13 +10,9 @@ use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Widget\SortBox;
-use Icinga\Web\Widget\FilterBox;
-use Icinga\Web\Widget\Chart\HistoryColorGrid;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget;
-use Icinga\Module\Monitoring\Web\Widget\SelectBox;
 use Icinga\Module\Monitoring\Forms\StatehistoryForm;
-use Icinga\Module\Monitoring\Forms\EventOverviewForm;
 
 class Monitoring_ListController extends Controller
 {
