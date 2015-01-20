@@ -9,19 +9,11 @@
 
 ## About
 
-`Icinga Web 2` is the next generation monitoring web interface, framework
-and CLI tool developed by the [Icinga Project](https://www.icinga.org/community/team/).
+**Icinga Web 2** is the next generation open source monitoring web interface, framework
+and command-line interface developed by the [Icinga Project](https://www.icinga.org/), supporting Icinga 2,
+Icinga Core and any other monitoring backend compatible with the Livestatus Protocol.
 
-Responsive and fast, rewritten from scratch supporting multiple backends and
-providing a CLI tool. Compatible with Icinga Core 2.x and 1.x.
-
-Check the Icinga website for some [insights](https://www.icinga.org/icinga/screenshots/icinga-web-2/).
-
-> **Note**
->
-> `Icinga Web 2` is still in development and not meant for production deployment.
-> Watch the [development roadmap](https://dev.icinga.org/projects/icingaweb2/roadmap)
-> and [Icinga website](https://www.icinga.org/) for release schedule updates!
+![Icinga Web 2](https://www.icinga.org/wp-content/uploads/2014/06/service_detail.png "Icinga Web 2")
 
 ## Installation
 
