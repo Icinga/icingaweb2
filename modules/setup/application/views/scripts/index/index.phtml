@@ -30,7 +30,7 @@ if ($notifications->hasMessages()) {
     <?= $this->img('img/logo_icinga_big.png'); ?>
     <div class="progress-bar">
       <div class="step" style="width: 10%;">
-        <h1><?= mt('setup', 'Welcome', 'setup.progress'); ?></h1>
+        <h1><?= $this->translate('Welcome', 'setup.progress'); ?></h1>
         <?php $stateClass = $finished || $currentPos > 0 ? 'complete' : (
           $maxProgress > 0 ? 'visited' : 'active'
         ); ?>
@@ -54,7 +54,7 @@ if ($notifications->hasMessages()) {
         </tr></tbody></table>
       </div>
       <div class="step" style="width: 10%;">
-        <h1><?= mt('setup', 'Requirements', 'setup.progress'); ?></h1>
+        <h1><?= $this->translate('Requirements', 'setup.progress'); ?></h1>
         <?php $stateClass = $finished || $currentPos > 2 ? ' complete' : (
           $maxProgress > 2 ? ' visited' : (
             $currentPos === 2 ? ' active' : ''
@@ -67,7 +67,7 @@ if ($notifications->hasMessages()) {
         </tr></tbody></table>
       </div>
       <div class="step" style="width: 60%;">
-        <h1><?= mt('setup', 'Configuration', 'setup.progress'); ?></h1>
+        <h1><?= $this->translate('Configuration', 'setup.progress'); ?></h1>
         <table><tbody><tr>
           <td class="left">
           <?php
@@ -118,7 +118,7 @@ if ($notifications->hasMessages()) {
         </tr></tbody></table>
       </div>
       <div class="step" style="width: 10%;">
-        <h1><?= mt('setup', 'Finish', 'setup.progress'); ?></h1>
+        <h1><?= $this->translate('Finish', 'setup.progress'); ?></h1>
         <?php $stateClass = $finished ? ' active' : ''; ?>
         <table><tbody><tr>
           <td class="left"><div class="line left<?= $stateClass; ?>"></div></td>
