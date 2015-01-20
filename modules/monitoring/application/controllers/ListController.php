@@ -143,8 +143,7 @@ class Monitoring_ListController extends Controller
             'host_severity'     => $this->translate('Severity'),
             'host_name'         => $this->translate('Hostname'),
             'host_address'      => $this->translate('Address'),
-            'host_state'        => $this->translate('Current State'),
-            'host_state'        => $this->translate('Hard State')
+            'host_state'        => $this->translate('Current State')
         ));
         $this->view->hosts = $query->paginate();
 
