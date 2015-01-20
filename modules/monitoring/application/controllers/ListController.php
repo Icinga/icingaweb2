@@ -104,6 +104,7 @@ class Monitoring_ListController extends Controller
         $query = $this->backend->select()->from('hostStatus', array_merge(array(
             'host_icon_image',
             'host_name',
+            'host_display_name',
             'host_state' => $stateColumn,
             'host_address',
             'host_acknowledged',
