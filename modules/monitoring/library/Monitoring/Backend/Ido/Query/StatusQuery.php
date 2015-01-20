@@ -118,7 +118,6 @@ class StatusQuery extends IdoQuery
 
             'host_modified_host_attributes' => 'hs.modified_host_attributes',
             'host_event_handler' => 'hs.event_handler',
-            'host_check_command' => 'hs.check_command',
             'host_normal_check_interval' => 'hs.normal_check_interval',
             'host_retry_check_interval' => 'hs.retry_check_interval',
             'host_check_timeperiod_object_id' => 'hs.check_timeperiod_object_id',
@@ -368,7 +367,7 @@ class StatusQuery extends IdoQuery
 
             case 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END':
                 if ($sign !== '=') break;
-               
+
                 if ($expression) {
                     return 'ss.current_state > 0';
                 } else {
