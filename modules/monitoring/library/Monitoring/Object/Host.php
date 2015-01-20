@@ -47,7 +47,7 @@ class Host extends MonitoredObject
     public $prefix = 'host_';
 
     /**
-     * Host name
+     * Hostname
      *
      * @var string
      */
@@ -63,8 +63,8 @@ class Host extends MonitoredObject
     /**
      * Create a new host
      *
-     * @param MonitoringBackend   $backend    Backend to fetch host information from
-     * @param string    $host       Host name
+     * @param MonitoringBackend $backend    Backend to fetch host information from
+     * @param string            $host       Hostname
      */
     public function __construct(MonitoringBackend $backend, $host)
     {
@@ -73,7 +73,7 @@ class Host extends MonitoredObject
     }
 
     /**
-     * Get the host name
+     * Get the hostname
      *
      * @return string
      */
