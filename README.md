@@ -2,12 +2,12 @@
 
 ## Table of Contents
 
-0. [General Information](#general information)
+0. [About](#about)
 1. [Installation](#installation)
 2. [Support](#support)
 3. [Vagrant - Virtual development environment](#vagrant)
 
-## General Information
+## About
 
 `Icinga Web 2` is the next generation monitoring web interface, framework
 and CLI tool developed by the [Icinga Project](https://www.icinga.org/community/team/).
