@@ -91,12 +91,10 @@ class Monitoring_ListController extends Controller
         }
 
         // Handle soft and hard states
-        $stateType = $this->params->shift('stateType', 'soft');
-        if ($stateType == 'hard') {
+        if (strtolower($this->params->shift('stateType', 'soft')) === 'hard') {
             $stateColumn = 'host_hard_state';
             $stateChangeColumn = 'host_last_hard_state_change';
         } else {
-            $stateType = 'soft';
             $stateColumn = 'host_state';
             $stateChangeColumn = 'host_last_state_change';
         }
@@ -164,14 +162,12 @@ class Monitoring_ListController extends Controller
         }
 
         // Handle soft and hard states
-        $stateType = $this->params->shift('stateType', 'soft');
-        if ($stateType == 'hard') {
+        if (strtolower($this->params->shift('stateType', 'soft')) === 'hard') {
             $stateColumn = 'service_hard_state';
             $stateChangeColumn = 'service_last_hard_state_change';
         } else {
             $stateColumn = 'service_state';
             $stateChangeColumn = 'service_last_state_change';
-            $stateType = 'soft';
         }
 
         $this->addTitleTab('services', $this->translate('Services'));
