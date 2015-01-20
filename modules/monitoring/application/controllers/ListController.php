@@ -234,7 +234,7 @@ class Monitoring_ListController extends Controller
             'service_state_type'    => $this->translate('Hard State'),
             'host_severity'         => $this->translate('Host Severity'),
             'host_state'            => $this->translate('Current Host State'),
-            'host_name'             => $this->translate('Host Name'),
+            'host_name'             => $this->translate('Hostname'),
             'host_address'          => $this->translate('Host Address'),
             'host_last_check'       => $this->translate('Last Host Check')
         ));
