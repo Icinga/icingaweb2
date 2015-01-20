@@ -11,7 +11,8 @@ class icinga2_pgsql {
     password   => 'icinga2',
     schemafile => '/usr/share/icinga2-ido-pgsql/schema/pgsql.sql',
   }
-  -> icinga2::feature { 'ido-pgsql':
-    source => 'puppet:///modules/icinga2_pgsql',
-  }
+# Because Icinga 2 does not handle more than one IDO connection properly, The ido-pgsql will not be enabled by default.
+#  -> icinga2::feature { 'ido-pgsql':
+#    source => 'puppet:///modules/icinga2_pgsql',
+#  }
 }
