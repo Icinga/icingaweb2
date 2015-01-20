@@ -24,6 +24,7 @@ class HostStatus extends DataView
         return array(
             'host',
             'host_name',
+            'host_display_name',
             'host_alias',
             'host_address',
             'host_state',
@@ -90,7 +91,7 @@ class HostStatus extends DataView
     public function getSortRules()
     {
         return array(
-            'host_name' => array(
+            'host_display_name' => array(
                 'order' => self::SORT_ASC
             ),
             'host_address' => array(
