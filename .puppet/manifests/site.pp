@@ -13,5 +13,5 @@ node default {
     source => 'puppet:////vagrant/.puppet/files/etc/profile.d/env.sh'
   }
   @user { vagrant: ensure => present }
-  User <| title == vagrant |> { groups +> icingaweb }
+  User <| title == vagrant |> { groups +> hiera('icingaweb2::group') }
 }
