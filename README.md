@@ -17,19 +17,15 @@ Icinga Core and any other monitoring backend compatible with the Livestatus Prot
 
 ## Installation
 
-Please navigate to [doc/installation.md](doc/installation.md) for updated details.
+For installing Icinga Web 2 please read [doc/installation.md](doc/installation.md).
 
 ## Support
 
-Please head over to the [community support channels](https://www.icinga.org/icinga/faq/get-help/)
-in case of questions, bugs, etc.
+If you come across problems at some time, the [community support channels](https://support.icinga.org/) 
+are good places to ask for advice from other users and give some in return.
 
-Please make sure to provide the following details:
-
-* OS, distribution, version
-* PHP and/or MySQL/PostgreSQL version
-* Which browser and its version
-* Screenshot and problem description
+For status updates check the [Icinga website](https://www.icinga.org/) and the
+[Icinga Web 2 development roadmap](https://dev.icinga.org/projects/icingaweb2/roadmap).
 
 
 ## Vagrant
