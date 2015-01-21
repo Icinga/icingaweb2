@@ -33,7 +33,7 @@ class EventHistoryQuery extends IdoQuery
             'hostgroup'             => 'hgo.name1 COLLATE latin1_general_ci',
         ),
         'hosts' => array(
-            'host_display_name'     => 'h.display_name'
+            'host_display_name'     => 'CASE WHEN sh.display_name IS NOT NULL THEN sh.display_name ELSE h.display_name END'
         ),
         'services' => array(
             'service_display_name'  => 's.display_name'
@@ -135,6 +135,11 @@ class EventHistoryQuery extends IdoQuery
         $this->select->joinLeft(
             array('s' => $this->prefix . 'services'),
             's.service_object_id = eho.object_id',
+            array()
+        );
+        $this->select->joinLeft(
+            array('sh' => $this->prefix . 'hosts'),
+            'sh.host_object_id = s.host_object_id',
             array()
         );
         return $this;
