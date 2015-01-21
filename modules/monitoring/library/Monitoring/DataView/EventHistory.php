@@ -1,6 +1,4 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\DataView;
 
@@ -20,7 +18,9 @@ class EventHistory extends DataView
             'cnt_downtime_start',
             'cnt_downtime_end',
             'host_name',
+            'host_display_name',
             'service_description',
+            'service_display_name',
             'object_type',
             'timestamp',
             'state',
@@ -38,8 +38,8 @@ class EventHistory extends DataView
     {
         return array(
             'timestamp' => array(
-                'columns' => array('timestamp'),
-                'order' => 'DESC'
+                'columns'   => array('timestamp'),
+                'order'     => 'DESC'
             )
         );
     }
