@@ -42,6 +42,10 @@ class Downtime extends DataView
     {
         return array(
             'downtime_is_in_effect' => array(
+                'columns' => array(
+                    'downtime_is_in_effect',
+                    'downtime_scheduled_start'
+                ),
                 'order' => self::SORT_DESC
             ),
             'downtime_start' => array(
