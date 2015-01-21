@@ -57,16 +57,16 @@ use Icinga\Module\Monitoring\Object\Service;
             'host'      => $downtime->host,
             'service'   => $downtime->service
           )); ?>">
-            <?= $this->escape($downtime->service) ?>
+            <?= $this->escape($downtime->service_display_name) ?>
           </a>
           <small>
-            <?= $this->translate('on'); ?> <?= $this->escape($downtime->host) ?>
+            <?= $this->translate('on'); ?> <?= $this->escape($downtime->host_display_name) ?>
           </small>
         <?php else: ?>
           <?= $this->icon('host'); ?> <a href="<?= $this->href('monitoring/host/show', array(
             'host' => $downtime->host
           )); ?>">
-            <?= $this->escape($downtime->host) ?>
+            <?= $this->escape($downtime->host_display_name) ?>
           </a>
         <?php endif ?>
           <br>
