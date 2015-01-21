@@ -73,7 +73,7 @@ if ($notifications->hasMessages()) {
           <?php
             $firstPage = current($configPagesLeft);
             $lastPage = end($configPagesLeft);
-            $lineWidth = round(100 / count($configPagesLeft), 2, PHP_ROUND_HALF_DOWN);
+            $lineWidth = sprintf('%.2F', round(100 / count($configPagesLeft), 2, PHP_ROUND_HALF_DOWN));
           ?>
           <?php foreach ($configPagesLeft as $pos => $page): ?>
             <?php $stateClass = $finished || $pos < $currentPos ? ' complete' : (
@@ -100,7 +100,7 @@ if ($notifications->hasMessages()) {
           <?php
             $firstPage = current($configPagesRight);
             $lastPage = end($configPagesRight);
-            $lineWidth = round(100 / count($configPagesRight), 2, PHP_ROUND_HALF_DOWN);
+            $lineWidth = sprintf('%.2F', round(100 / count($configPagesRight), 2, PHP_ROUND_HALF_DOWN));
           ?>
           <?php foreach ($configPagesRight as $pos => $page): ?>
             <?php $stateClass = $finished || $pos < $currentPos ? ' complete' : (
