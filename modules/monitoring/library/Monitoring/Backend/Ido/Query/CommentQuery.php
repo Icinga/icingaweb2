@@ -23,6 +23,12 @@ class CommentQuery extends IdoQuery
             'comment_service'       => 'so.name2 COLLATE latin1_general_ci',
             'service'               => 'so.name2 COLLATE latin1_general_ci', // #7278, #7279
             'comment_objecttype'    => "CASE WHEN ho.object_id IS NOT NULL THEN 'host' ELSE CASE WHEN so.object_id IS NOT NULL THEN 'service' ELSE NULL END END",
+        ),
+        'hosts' => array(
+            'host_display_name'     => 'CASE WHEN sh.display_name IS NOT NULL THEN sh.display_name ELSE h.display_name END'
+        ),
+        'services' => array(
+            'service_display_name'  => 's.display_name'
         )
     );
 
@@ -43,5 +49,30 @@ class CommentQuery extends IdoQuery
             array()
         );
         $this->joinedVirtualTables = array('comments' => true);
+    }
+
+    protected function joinHosts()
+    {
+        $this->select->joinLeft(
+            array('h' => $this->prefix . 'hosts'),
+            'h.host_object_id = ho.object_id',
+            array()
+        );
+        return $this;
+    }
+
+    protected function joinServices()
+    {
+        $this->select->joinLeft(
+            array('s' => $this->prefix . 'services'),
+            's.service_object_id = so.object_id',
+            array()
+        );
+        $this->select->joinLeft(
+            array('sh' => $this->prefix . 'hosts'),
+            'sh.host_object_id = s.host_object_id',
+            array()
+        );
+        return $this;
     }
 }
