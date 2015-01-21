@@ -27,8 +27,7 @@ class EventHistoryQuery extends IdoQuery
             'max_attempts'          => 'eh.max_attempts',
             'output'                => 'eh.output', // we do not want long_output
             'type'                  => 'eh.type',
-            'service_host_name'     => 'eho.name1 COLLATE latin1_general_ci',
-            'service_description'   => 'eho.name2 COLLATE latin1_general_ci'
+            'service_host_name'     => 'eho.name1 COLLATE latin1_general_ci'
         ),
         'hostgroups' => array(
             'hostgroup'             => 'hgo.name1 COLLATE latin1_general_ci',
