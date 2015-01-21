@@ -1,18 +1,9 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-/**
- * Handling downtime queries
- */
 class DowntimeQuery extends IdoQuery
 {
-    /**
-     * Column map
-     * @var array
-     */
     protected $columnMap = array(
         'downtime' => array(
             'downtime_author'          => 'sd.author_name',
@@ -39,9 +30,6 @@ class DowntimeQuery extends IdoQuery
         ),
     );
 
-    /**
-     * Join with scheduleddowntime
-     */
     protected function joinBaseTables()
     {
         $this->select->from(
