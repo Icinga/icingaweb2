@@ -94,7 +94,6 @@ class WebWizard extends Wizard implements SetupWizard
         $this->addPage(new AdminAccountPage());
         $this->addPage(new GeneralConfigPage());
         $this->addPage(new DatabaseCreationPage());
-        $this->addPage(new ModulePage());
         $this->addPage(new SummaryPage());
     }
 
@@ -167,9 +166,6 @@ class WebWizard extends Wizard implements SetupWizard
                 unset($pageData['setup_admin_account']);
                 unset($pageData['setup_authentication_backend']);
             }
-        } elseif ($page->getName() === 'setup_modules') {
-            $page->setPageData($this->getPageData());
-            $page->handleRequest($request);
         }
     }
 
@@ -263,7 +259,6 @@ class WebWizard extends Wizard implements SetupWizard
     public function clearSession()
     {
         parent::clearSession();
-        $this->getPage('setup_modules')->clearSession();
 
         $tokenPath = Config::resolvePath('setup.token');
         if (file_exists($tokenPath)) {
@@ -357,12 +352,6 @@ class WebWizard extends Wizard implements SetupWizard
                 2770
             )
         );
-
-        foreach ($this->getPage('setup_modules')->setPageData($this->getPageData())->getWizards() as $wizard) {
-            if ($wizard->isFinished()) {
-                $setup->addSteps($wizard->getSetup()->getSteps());
-            }
-        }
 
         return $setup;
     }
@@ -547,10 +536,6 @@ class WebWizard extends Wizard implements SetupWizard
                 $configDir
             )
         );
-
-        foreach ($this->getPage('setup_modules')->setPageData($this->getPageData())->getWizards() as $wizard) {
-            $requirements->merge($wizard->getRequirements()->allOptional());
-        }
 
         return $requirements;
     }
