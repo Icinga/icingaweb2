@@ -11,28 +11,34 @@ class EventHistoryQuery extends IdoQuery
 
     protected $columnMap = array(
         'eventhistory' => array(
-            'cnt_notification'    => "SUM(CASE eh.type WHEN 'notify' THEN 1 ELSE 0 END)",
-            'cnt_hard_state'      => "SUM(CASE eh.type WHEN 'hard_state' THEN 1 ELSE 0 END)",
-            'cnt_soft_state'      => "SUM(CASE eh.type WHEN 'hard_state' THEN 1 ELSE 0 END)",
-            'cnt_downtime_start'  => "SUM(CASE eh.type WHEN 'dt_start' THEN 1 ELSE 0 END)",
-            'cnt_downtime_end'    => "SUM(CASE eh.type WHEN 'dt_end' THEN 1 ELSE 0 END)",
-            'host'                => 'eho.name1 COLLATE latin1_general_ci',
-            'service'             => 'eho.name2 COLLATE latin1_general_ci',
-            'host_name'           => 'eho.name1 COLLATE latin1_general_ci',
-            'service_description' => 'eho.name2 COLLATE latin1_general_ci',
-            'object_type'         => 'eh.object_type',
-            'timestamp'           => 'eh.timestamp',
-            'state'               => 'eh.state',
-            'attempt'             => 'eh.attempt',
-            'max_attempts'        => 'eh.max_attempts',
-            'output'              => 'eh.output', // we do not want long_output
-            'type'                => 'eh.type',
-            'service_host_name'   => 'eho.name1 COLLATE latin1_general_ci',
-            'service_description' => 'eho.name2 COLLATE latin1_general_ci'
+            'cnt_notification'      => "SUM(CASE eh.type WHEN 'notify' THEN 1 ELSE 0 END)",
+            'cnt_hard_state'        => "SUM(CASE eh.type WHEN 'hard_state' THEN 1 ELSE 0 END)",
+            'cnt_soft_state'        => "SUM(CASE eh.type WHEN 'hard_state' THEN 1 ELSE 0 END)",
+            'cnt_downtime_start'    => "SUM(CASE eh.type WHEN 'dt_start' THEN 1 ELSE 0 END)",
+            'cnt_downtime_end'      => "SUM(CASE eh.type WHEN 'dt_end' THEN 1 ELSE 0 END)",
+            'host'                  => 'eho.name1 COLLATE latin1_general_ci',
+            'service'               => 'eho.name2 COLLATE latin1_general_ci',
+            'host_name'             => 'eho.name1 COLLATE latin1_general_ci',
+            'service_description'   => 'eho.name2 COLLATE latin1_general_ci',
+            'object_type'           => 'eh.object_type',
+            'timestamp'             => 'eh.timestamp',
+            'state'                 => 'eh.state',
+            'attempt'               => 'eh.attempt',
+            'max_attempts'          => 'eh.max_attempts',
+            'output'                => 'eh.output', // we do not want long_output
+            'type'                  => 'eh.type',
+            'service_host_name'     => 'eho.name1 COLLATE latin1_general_ci',
+            'service_description'   => 'eho.name2 COLLATE latin1_general_ci'
         ),
         'hostgroups' => array(
-            'hostgroup' => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup'             => 'hgo.name1 COLLATE latin1_general_ci',
         ),
+        'hosts' => array(
+            'host_display_name'     => 'h.display_name'
+        ),
+        'services' => array(
+            'service_display_name'  => 's.display_name'
+        )
     );
 
     protected $useSubqueryCount = true;
@@ -110,6 +116,26 @@ class EventHistoryQuery extends IdoQuery
         )->join(
             array('hgo' => $this->prefix . 'objects'),
             'hgo.' . $this->object_id. ' = hg.hostgroup_object_id' . ' AND hgo.is_active = 1',
+            array()
+        );
+        return $this;
+    }
+
+    protected function joinHosts()
+    {
+        $this->select->joinLeft(
+            array('h' => $this->prefix . 'hosts'),
+            'h.host_object_id = eho.object_id',
+            array()
+        );
+        return $this;
+    }
+
+    protected function joinServices()
+    {
+        $this->select->joinLeft(
+            array('s' => $this->prefix . 'services'),
+            's.service_object_id = eho.object_id',
             array()
         );
         return $this;
