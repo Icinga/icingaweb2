@@ -34,7 +34,8 @@ class ModulePage extends Form
                 'checkbox',
                 $module->getName(),
                 array(
-                    'label' => ucfirst($module->getName())
+                    'label' => ucfirst($module->getName()),
+                    'value' => $module->getName() === 'monitoring' ? 1 : 0
                 )
             );
             $this->addElement(
