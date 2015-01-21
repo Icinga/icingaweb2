@@ -132,11 +132,11 @@ class Monitoring_ListController extends Controller
         $this->filterQuery($query);
 
         $this->setupSortControl(array(
-            'host_last_check'   => $this->translate('Last Check'),
             'host_severity'     => $this->translate('Severity'),
+            'host_state'        => $this->translate('Current State'),
             'host_display_name' => $this->translate('Hostname'),
             'host_address'      => $this->translate('Address'),
-            'host_state'        => $this->translate('Current State')
+            'host_last_check'   => $this->translate('Last Check')
         ));
         $this->view->hosts = $query->paginate();
 
