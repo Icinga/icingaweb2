@@ -474,10 +474,11 @@ class Monitoring_ListController extends Controller
 
         $this->setupSortControl(
             array(
-                'comment_timestamp'  => $this->translate('Comment Timestamp'),
-                'comment_host'       => $this->translate('Host / Service'),
-                'comment_type'       => $this->translate('Comment Type'),
-                'comment_expiration' => $this->translate('Expiration'),
+                'comment_timestamp'     => $this->translate('Comment Timestamp'),
+                'host_display_name'     => $this->translate('Host'),
+                'service_display_name'  => $this->translate('Service'),
+                'comment_type'          => $this->translate('Comment Type'),
+                'comment_expiration'    => $this->translate('Expiration')
             )
         );
         $this->view->delCommentForm = new DeleteCommentCommandForm();
