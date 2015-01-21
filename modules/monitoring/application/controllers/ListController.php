@@ -465,7 +465,9 @@ class Monitoring_ListController extends Controller
             'persistent' => 'comment_is_persistent',
             'expiration' => 'comment_expiration',
             'host'       => 'comment_host',
-            'service'    => 'comment_service'
+            'service'    => 'comment_service',
+            'host_display_name',
+            'service_display_name'
         ));
         $this->filterQuery($query);
         $this->view->comments = $query->paginate();
