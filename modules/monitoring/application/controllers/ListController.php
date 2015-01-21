@@ -218,11 +218,10 @@ class Monitoring_ListController extends Controller
 
         $this->filterQuery($query);
         $this->setupSortControl(array(
-            'service_last_check'    => $this->translate('Last Service Check'),
-            'service_severity'      => $this->translate('Severity'),
+            'service_severity'      => $this->translate('Service Severity'),
             'service_state'         => $this->translate('Current Service State'),
             'service_display_name'  => $this->translate('Service Name'),
-            'service_state_type'    => $this->translate('Hard State'),
+            'service_last_check'    => $this->translate('Last Service Check'),
             'host_severity'         => $this->translate('Host Severity'),
             'host_state'            => $this->translate('Current Host State'),
             'host_display_name'     => $this->translate('Hostname'),
