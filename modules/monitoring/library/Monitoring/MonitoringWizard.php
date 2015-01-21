@@ -37,7 +37,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
         $this->addPage(new LivestatusResourcePage());
         $this->addPage(new InstancePage());
         $this->addPage(new SecurityPage());
-        $this->addPage(new SummaryPage());
+        $this->addPage(new SummaryPage(array('name' => 'setup_monitoring_summary')));
     }
 
     /**
@@ -47,7 +47,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
     {
         if ($page->getName() === 'setup_requirements') {
             $page->setRequirements($this->getRequirements());
-        } elseif ($page->getName() === 'setup_summary') {
+        } elseif ($page->getName() === 'setup_monitoring_summary') {
             $page->setSummary($this->getSetup()->getSummary());
             $page->setSubjectTitle(mt('monitoring', 'the monitoring module', 'setup.summary.subject'));
         } elseif (

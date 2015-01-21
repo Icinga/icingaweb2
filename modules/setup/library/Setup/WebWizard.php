@@ -94,7 +94,7 @@ class WebWizard extends Wizard implements SetupWizard
         $this->addPage(new AdminAccountPage());
         $this->addPage(new GeneralConfigPage());
         $this->addPage(new DatabaseCreationPage());
-        $this->addPage(new SummaryPage());
+        $this->addPage(new SummaryPage(array('name' => 'setup_summary')));
     }
 
     /**
