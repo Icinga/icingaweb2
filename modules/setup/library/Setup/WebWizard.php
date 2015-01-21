@@ -29,6 +29,7 @@ use Icinga\Module\Setup\Steps\DatabaseStep;
 use Icinga\Module\Setup\Steps\GeneralConfigStep;
 use Icinga\Module\Setup\Steps\ResourceStep;
 use Icinga\Module\Setup\Steps\AuthenticationStep;
+use Icinga\Module\Setup\Utils\EnableModuleStep;
 use Icinga\Module\Setup\Utils\MakeDirStep;
 use Icinga\Module\Setup\Utils\DbTool;
 
@@ -284,7 +285,7 @@ class WebWizard extends Wizard implements SetupWizard
                         ? $pageData['setup_database_creation']['password']
                         : null,
                     'schemaPath'        => Config::module('setup')
-                        ->get('schema', 'path', Icinga::app()->getBaseDir('etc/schema'))
+                        ->get('schema', 'path', Icinga::app()->getBaseDir('etc' . DIRECTORY_SEPARATOR . 'schema'))
                 ))
             );
         }
@@ -337,9 +338,9 @@ class WebWizard extends Wizard implements SetupWizard
         $setup->addStep(
             new MakeDirStep(
                 array(
-                    $configDir . '/modules',
-                    $configDir . '/preferences',
-                    $configDir . '/enabledModules'
+                    $configDir . DIRECTORY_SEPARATOR . 'modules',
+                    $configDir . DIRECTORY_SEPARATOR . 'preferences',
+                    $configDir . DIRECTORY_SEPARATOR . 'enabledModules'
                 ),
                 2770
             )
@@ -350,6 +351,8 @@ class WebWizard extends Wizard implements SetupWizard
                 $setup->addSteps($wizard->getSetup()->getSteps());
             }
         }
+
+        $setup->addStep(new EnableModuleStep(array_keys($this->getPage('setup_modules')->getCheckedModules())));
 
         return $setup;
     }
