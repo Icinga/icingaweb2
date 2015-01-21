@@ -29,6 +29,8 @@ class Comment extends DataView
             'comment_service',
             'host',
             'service',
+            'host_display_name',
+            'service_display_name'
         );
     }
 
