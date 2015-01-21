@@ -42,6 +42,7 @@ use Icinga\Module\Monitoring\Object\Service;
             </td>
             <td style="font-size: 0.8em">
                 <?php if ($isService): ?>
+                    <?= $this->icon('service') ?>
                     <?= $this->link()->service(
                         $notification->service,
                         $notification->service_display_name,
@@ -49,6 +50,7 @@ use Icinga\Module\Monitoring\Object\Service;
                         $notification->host_display_name
                     ) ?>
                 <?php else: ?>
+                    <?= $this->icon('host') ?>
                     <?= $this->link()->host($notification->host, $notification->host_display_name) ?>
                 <?php endif ?>
                 <br>
