@@ -285,7 +285,9 @@ class Monitoring_ListController extends Controller
             'host'            => 'downtime_host',
             'service'         => 'downtime_service',
             'host_state'      => 'downtime_host_state',
-            'service_state'   => 'downtime_service_state'
+            'service_state'   => 'downtime_service_state',
+            'host_display_name',
+            'service_display_name'
         ))->order('downtime_is_in_effect', 'DESC')
           ->order('downtime_scheduled_start', 'DESC');
 
