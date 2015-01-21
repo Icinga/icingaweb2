@@ -221,11 +221,11 @@ class Monitoring_ListController extends Controller
             'service_last_check'    => $this->translate('Last Service Check'),
             'service_severity'      => $this->translate('Severity'),
             'service_state'         => $this->translate('Current Service State'),
-            'service_description'   => $this->translate('Service Name'),
+            'service_display_name'  => $this->translate('Service Name'),
             'service_state_type'    => $this->translate('Hard State'),
             'host_severity'         => $this->translate('Host Severity'),
             'host_state'            => $this->translate('Current Host State'),
-            'host_name'             => $this->translate('Hostname'),
+            'host_display_name'     => $this->translate('Hostname'),
             'host_address'          => $this->translate('Host Address'),
             'host_last_check'       => $this->translate('Last Host Check')
         ));
