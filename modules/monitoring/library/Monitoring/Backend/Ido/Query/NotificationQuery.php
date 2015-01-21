@@ -1,19 +1,9 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-/**
- * Notification query
- */
 class NotificationQuery extends IdoQuery
 {
-    /**
-     * Column map
-     *
-     * @var array
-     */
     protected $columnMap = array(
         'notification' => array(
             'notification_output'       => 'n.output',
