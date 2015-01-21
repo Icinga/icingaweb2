@@ -32,7 +32,9 @@ class Downtime extends DataView
             'downtime_host',
             'downtime_service',
             'downtime_host_state',
-            'downtime_service_state'
+            'downtime_service_state',
+            'host_display_name',
+            'service_display_name'
         );
     }
 
@@ -51,7 +53,7 @@ class Downtime extends DataView
                     'downtime_service'
                 ),
                 'order' => self::SORT_ASC
-            ),
+            )
         );
     }
 }
