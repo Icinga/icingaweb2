@@ -110,21 +110,21 @@ use Icinga\Module\Monitoring\Object\Service;
             'host'      => $event->host,
             'service'   => $event->service
           )); ?>">
-            <?= $event->service; ?>
+            <?= $this->escape($event->service) ?>
           </a>
           <small>
-            <?= $this->translate('on') . ' ' . $event->host; ?>
+            <?= $this->translate('on') . ' ' . $this->escape($event->host) ?>
           </small>
         <?php else: ?>
           <a href="<?= $this->href('monitoring/show/host', array(
             'host' => $event->host
           )); ?>">
-            <?= $event->host; ?>
+            <?= $this->escape($event->host) ?>
           </a>
         <?php endif ?>
           <br>
           <div>
-            <?= $this->icon($icon, $title); ?> <?= empty($msg) ? '' : $msg; ?>
+            <?= $this->icon($icon, $title); ?> <?= empty($msg) ? '' : $this->escape($msg) ?>
           </div>
         </td>
       </tr>
