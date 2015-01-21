@@ -1,11 +1,9 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-use Icinga\Data\Filter\Filter;
 use Zend_Db_Select;
+use Icinga\Data\Filter\Filter;
 
 class EventHistoryQuery extends IdoQuery
 {
@@ -84,20 +82,20 @@ class EventHistoryQuery extends IdoQuery
 
     public function addFilter(Filter $filter)
     {
-  	    foreach ($this->subQueries as $sub) {
-		        $sub->applyFilter(clone $filter);
-		    }
-		    return $this;
+        foreach ($this->subQueries as $sub) {
+            $sub->applyFilter(clone $filter);
+        }
+        return $this;
     }
 
-	  public function where($condition, $value = null)
-	  {
-		  $this->requireColumn($condition);
-		  foreach ($this->subQueries as $sub) {
-		      $sub->where($condition, $value);
-		  }
-		  return $this;
-	  }
+    public function where($condition, $value = null)
+    {
+        $this->requireColumn($condition);
+        foreach ($this->subQueries as $sub) {
+            $sub->where($condition, $value);
+        }
+        return $this;
+    }
 
     protected function joinHostgroups()
     {
@@ -116,5 +114,4 @@ class EventHistoryQuery extends IdoQuery
         );
         return $this;
     }
-
 }
