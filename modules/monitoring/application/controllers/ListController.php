@@ -325,7 +325,9 @@ class Monitoring_ListController extends Controller
             'notification_output',
             'notification_contact',
             'notification_start_time',
-            'notification_state'
+            'notification_state',
+            'host_display_name',
+            'service_display_name'
         ));
         $this->filterQuery($query);
         $this->view->notifications = $query->paginate();
