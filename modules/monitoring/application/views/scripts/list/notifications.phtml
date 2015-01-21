@@ -52,7 +52,7 @@ use Icinga\Module\Monitoring\Object\Service;
                     <?= $this->link()->host($notification->host, $notification->host_display_name) ?>
                 <?php endif ?>
                 <br>
-                <?= $this->escape(substr(strip_tags($notification->notification_output), 0, 10000)); ?>
+                <?= $this->escape(substr($notification->notification_output, 0, 10000)); ?>
                 <br>
                 <?php if (! $this->contact): ?>
                     <small>
