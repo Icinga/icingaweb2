@@ -98,7 +98,7 @@ if ($hosts->count() === 0) {
         <?= $this->icon($this->resolveMacros($host->host_icon_image, $host)) ?>
         <?php endif ?>
         <?= implode(' ', $icons) ?>
-        <a href="<?= $hostLink  ?>"><?= $host->host_display_name ?></a>
+        <a href="<?= $hostLink  ?>"><?= $this->escape($host->host_display_name) ?></a>
         <?php if (isset($host->host_unhandled_services) && $host->host_unhandled_services > 0): ?>
         <span title="<?=
             $host->host_unhandled_services
