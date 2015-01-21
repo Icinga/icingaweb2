@@ -51,10 +51,17 @@ class Downtime extends DataView
             'downtime_start' => array(
                 'order' => self::SORT_DESC
             ),
-            'downtime_host' => array(
+            'host_display_name' => array(
                 'columns' => array(
-                    'downtime_host',
-                    'downtime_service'
+                    'host_display_name',
+                    'service_display_name'
+                ),
+                'order' => self::SORT_ASC
+            ),
+            'service_display_name' => array(
+                'columns' => array(
+                    'service_display_name',
+                    'host_display_name'
                 ),
                 'order' => self::SORT_ASC
             )
