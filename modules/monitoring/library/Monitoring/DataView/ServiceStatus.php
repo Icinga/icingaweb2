@@ -137,9 +137,6 @@ class ServiceStatus extends DataView
                 ),
                 'order' => self::SORT_ASC
             ),
-            'host_last_state_change' => array(
-                'order' => self::SORT_ASC
-            ),
             'host_severity' => array(
                 'columns' => array(
                     'host_severity',
