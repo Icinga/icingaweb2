@@ -400,7 +400,7 @@ class Wizard
     /**
      * Return the new page to set as current page
      *
-     * Permission is checked by verifying that the requested page's previous page has page data available.
+     * Permission is checked by verifying that the requested page or its previous page has page data available.
      * The requested page is automatically permitted without any checks if the origin page is its previous
      * page or one that occurs later in order.
      *
@@ -421,7 +421,7 @@ class Wizard
             $permitted = true;
 
             $pages = $this->getPages();
-            if (($index = array_search($page, $pages, true)) > 0) {
+            if (! $this->hasPageData($requestedPage) && ($index = array_search($page, $pages, true)) > 0) {
                 $previousPage = $pages[$index - 1];
                 if ($originPage === null || ($previousPage->getName() !== $originPage->getName()
                     && array_search($originPage, $pages, true) < $index))
