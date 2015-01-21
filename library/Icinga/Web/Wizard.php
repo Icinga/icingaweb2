@@ -488,6 +488,19 @@ class Wizard
     }
 
     /**
+     * Return whether all of this wizard's pages were visited by the user
+     *
+     * The base implementation just verifies that the very last page has page data available.
+     *
+     * @return  bool
+     */
+    public function isComplete()
+    {
+        $pages = $this->getPages();
+        return $this->hasPageData($pages[count($pages) - 1]->getName());
+    }
+
+    /**
      * Set whether this wizard has been completed
      *
      * @param   bool    $state      Whether this wizard has been completed
