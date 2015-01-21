@@ -441,6 +441,36 @@ class Wizard
     }
 
     /**
+     * Return the next or previous page based on the given one
+     *
+     * @param   Form    $page   The page to skip
+     *
+     * @return  Form
+     */
+    protected function skipPage(Form $page)
+    {
+        if ($this->parent) {
+            return $this->parent->skipPage($page);
+        }
+
+        if ($this->hasPageData($page->getName())) {
+            $pageData = & $this->getPageData();
+            unset($pageData[$page->getName()]);
+        }
+
+        $pages = $this->getPages();
+        if ($this->getDirection() === static::FORWARD) {
+            $nextPage = $pages[array_search($page, $pages, true) + 1];
+            $newPage = $this->getNewPage($nextPage->getName(), $page);
+        } else { // $this->getDirection() === static::BACKWARD
+            $previousPage = $pages[array_search($page, $pages, true) - 1];
+            $newPage = $this->getNewPage($previousPage->getName(), $page);
+        }
+
+        return $newPage;
+    }
+
+    /**
      * Return whether the given page is this wizard's last page
      *
      * @param   Form    $page   The page to check

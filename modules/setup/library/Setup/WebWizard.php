@@ -218,23 +218,7 @@ class WebWizard extends Wizard implements SetupWizard
             }
         }
 
-        if ($skip) {
-            if ($this->hasPageData($newPage->getName())) {
-                $pageData = & $this->getPageData();
-                unset($pageData[$newPage->getName()]);
-            }
-
-            $pages = $this->getPages();
-            if ($this->getDirection() === static::FORWARD) {
-                $nextPage = $pages[array_search($newPage, $pages, true) + 1];
-                $newPage = $this->getNewPage($nextPage->getName(), $newPage);
-            } else { // $this->getDirection() === static::BACKWARD
-                $previousPage = $pages[array_search($newPage, $pages, true) - 1];
-                $newPage = $this->getNewPage($previousPage->getName(), $newPage);
-            }
-        }
-
-        return $newPage;
+        return $skip ? $this->skipPage($newPage) : $newPage;
     }
 
     /**
