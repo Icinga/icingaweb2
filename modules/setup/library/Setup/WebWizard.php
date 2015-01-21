@@ -83,6 +83,7 @@ class WebWizard extends Wizard implements SetupWizard
     protected function init()
     {
         $this->addPage(new WelcomePage());
+        $this->addPage(new ModulePage());
         $this->addPage(new RequirementsPage());
         $this->addPage(new AuthenticationPage());
         $this->addPage(new PreferencesPage());
@@ -95,6 +96,13 @@ class WebWizard extends Wizard implements SetupWizard
         $this->addPage(new GeneralConfigPage());
         $this->addPage(new DatabaseCreationPage());
         $this->addPage(new SummaryPage(array('name' => 'setup_summary')));
+
+        if (($modulePageData = $this->getPageData('setup_modules')) !== null) {
+            $modulePage = $this->getPage('setup_modules')->populate($modulePageData);
+            foreach ($modulePage->getModuleWizards() as $moduleWizard) {
+                $this->addPage($moduleWizard);
+            }
+        }
     }
 
     /**
@@ -337,6 +345,12 @@ class WebWizard extends Wizard implements SetupWizard
             )
         );
 
+        foreach ($this->getWizards() as $wizard) {
+            if ($wizard->isComplete()) {
+                $setup->addSteps($wizard->getSetup()->getSteps());
+            }
+        }
+
         return $setup;
     }
 
@@ -520,6 +534,12 @@ class WebWizard extends Wizard implements SetupWizard
                 $configDir
             )
         );
+
+        foreach ($this->getWizards() as $wizard) {
+            // TODO(8191): Ensure that equal requirements are not shown individually but only
+            //             once with their description properly being merged together!
+            $requirements->merge($wizard->getRequirements());
+        }
 
         return $requirements;
     }
