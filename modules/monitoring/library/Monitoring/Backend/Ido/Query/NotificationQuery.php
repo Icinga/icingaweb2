@@ -6,26 +6,32 @@ class NotificationQuery extends IdoQuery
 {
     protected $columnMap = array(
         'notification' => array(
-            'notification_output'       => 'n.output',
-            'notification_start_time'   => 'UNIX_TIMESTAMP(n.start_time)',
-            'notification_state'        => 'n.state',
-            'notification_object_id'    => 'n.object_id'
+            'notification_output'           => 'n.output',
+            'notification_start_time'       => 'UNIX_TIMESTAMP(n.start_time)',
+            'notification_state'            => 'n.state',
+            'notification_object_id'        => 'n.object_id'
         ),
         'objects' => array(
-            'host'                      => 'o.name1',
-            'service'                   => 'o.name2'
+            'host'                          => 'o.name1',
+            'service'                       => 'o.name2'
         ),
         'contact' => array(
-            'notification_contact'      => 'c_o.name1',
-            'contact_object_id'         => 'c_o.object_id'
+            'notification_contact'          => 'c_o.name1',
+            'contact_object_id'             => 'c_o.object_id'
         ),
         'command' => array(
-            'notification_command'      => 'cmd_o.name1'
+            'notification_command'          => 'cmd_o.name1'
         ),
         'acknowledgement' => array(
             'acknowledgement_entry_time'    => 'UNIX_TIMESTAMP(a.entry_time)',
             'acknowledgement_author_name'   => 'a.author_name',
             'acknowledgement_comment_data'  => 'a.comment_data'
+        ),
+        'hosts' => array(
+            'host_display_name'             => 'CASE WHEN sh.display_name IS NOT NULL THEN sh.display_name ELSE h.display_name END'
+        ),
+        'services' => array(
+            'service_display_name'          => 's.display_name'
         )
     );
 
@@ -99,5 +105,30 @@ class NotificationQuery extends IdoQuery
             'n.object_id = a.object_id',
             array()
         );
+    }
+
+    protected function joinHosts()
+    {
+        $this->select->joinLeft(
+            array('h' => $this->prefix . 'hosts'),
+            'h.host_object_id = o.object_id',
+            array()
+        );
+        return $this;
+    }
+
+    protected function joinServices()
+    {
+        $this->select->joinLeft(
+            array('s' => $this->prefix . 'services'),
+            's.service_object_id = o.object_id',
+            array()
+        );
+        $this->select->joinLeft(
+            array('sh' => $this->prefix . 'hosts'),
+            'sh.host_object_id = s.host_object_id',
+            array()
+        );
+        return $this;
     }
 }
