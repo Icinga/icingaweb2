@@ -182,6 +182,7 @@ class Monitoring_ListController extends Controller
 
         $columns = array_merge(array(
             'host_name',
+            'host_display_name',
             'host_state',
             'host_state_type',
             'host_last_state_change',
