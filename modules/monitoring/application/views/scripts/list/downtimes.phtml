@@ -57,20 +57,20 @@ use Icinga\Module\Monitoring\Object\Service;
             'host'      => $downtime->host,
             'service'   => $downtime->service
           )); ?>">
-            <?= $downtime->service; ?>
+            <?= $this->escape($downtime->service) ?>
           </a>
           <small>
-            <?= $this->translate('on'); ?> <?= $downtime->host; ?>
+            <?= $this->translate('on'); ?> <?= $this->escape($downtime->host) ?>
           </small>
         <?php else: ?>
           <?= $this->icon('host'); ?> <a href="<?= $this->href('monitoring/host/show', array(
             'host' => $downtime->host
           )); ?>">
-            <?= $downtime->host; ?>
+            <?= $this->escape($downtime->host) ?>
           </a>
         <?php endif ?>
           <br>
-          <?= $this->icon('comment'); ?> [<?= $downtime->author; ?>] <?= $downtime->comment; ?>
+          <?= $this->icon('comment') ?> [<?= $this->escape($downtime->author) ?>] <?= $this->escape($downtime->comment) ?>
           <br>
           <small>
         <?php if ($downtime->is_flexible): ?>
