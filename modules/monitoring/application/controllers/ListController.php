@@ -288,8 +288,7 @@ class Monitoring_ListController extends Controller
             'service_state'   => 'downtime_service_state',
             'host_display_name',
             'service_display_name'
-        ))->order('downtime_is_in_effect', 'DESC')
-          ->order('downtime_scheduled_start', 'DESC');
+        ));
 
         $this->filterQuery($query);
 
