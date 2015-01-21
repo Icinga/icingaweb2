@@ -292,15 +292,15 @@ class Monitoring_ListController extends Controller
         $this->filterQuery($query);
 
         $this->setupSortControl(array(
-            'downtime_is_in_effect'    => $this->translate('Is In Effect'),
-            'downtime_host'            => $this->translate('Host / Service'),
-            'downtime_entry_time'      => $this->translate('Entry Time'),
-            'downtime_author'          => $this->translate('Author'),
-            'downtime_start'           => $this->translate('Start Time'),
-            'downtime_start'           => $this->translate('End Time'),
-            'downtime_scheduled_start' => $this->translate('Scheduled Start'),
-            'downtime_scheduled_end'   => $this->translate('Scheduled End'),
-            'downtime_duration'        => $this->translate('Duration'),
+            'downtime_is_in_effect'     => $this->translate('Is In Effect'),
+            'downtime_host'             => $this->translate('Host / Service'),
+            'downtime_entry_time'       => $this->translate('Entry Time'),
+            'downtime_author'           => $this->translate('Author'),
+            'downtime_start'            => $this->translate('Start Time'),
+            'downtime_end'              => $this->translate('End Time'),
+            'downtime_scheduled_start'  => $this->translate('Scheduled Start'),
+            'downtime_scheduled_end'    => $this->translate('Scheduled End'),
+            'downtime_duration'         => $this->translate('Duration')
         ));
 
         $this->view->downtimes = $query->paginate();
