@@ -580,7 +580,9 @@ class Monitoring_ListController extends Controller
 
         $query = $this->backend->select()->from('eventHistory', array(
             'host_name',
+            'host_display_name',
             'service_description',
+            'service_display_name',
             'object_type',
             'timestamp',
             'state',
