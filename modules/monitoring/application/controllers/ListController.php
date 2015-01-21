@@ -294,7 +294,8 @@ class Monitoring_ListController extends Controller
 
         $this->setupSortControl(array(
             'downtime_is_in_effect'     => $this->translate('Is In Effect'),
-            'downtime_host'             => $this->translate('Host / Service'),
+            'host_display_name'         => $this->translate('Host'),
+            'service_display_name'      => $this->translate('Service'),
             'downtime_entry_time'       => $this->translate('Entry Time'),
             'downtime_author'           => $this->translate('Author'),
             'downtime_start'            => $this->translate('Start Time'),
