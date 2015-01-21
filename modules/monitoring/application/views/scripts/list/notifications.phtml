@@ -25,20 +25,13 @@ use Icinga\Module\Monitoring\Object\Service;
     <tbody>
     <?php foreach ($notifications as $notification):
         if (isset($notification->service)) {
-        $isService = true;
-        $href = $this->href('monitoring/show/service', array(
-            'host'    => $notification->host,
-            'service' => $notification->service
-        ));
-        $stateName = Service::getStateText($notification->notification_state);
+            $isService = true;
+            $stateName = Service::getStateText($notification->notification_state);
         } else {
             $isService = false;
-            $href = $this->href('monitoring/show/host', array(
-                'host' => $notification->host
-            ));
             $stateName = Host::getStateText($notification->notification_state);
         }
-        ?>
+    ?>
         <tr class="state <?= $stateName ?>">
             <td class="state">
                 <?= $this->dateTimeRenderer($notification->notification_start_time)->render(
@@ -49,12 +42,14 @@ use Icinga\Module\Monitoring\Object\Service;
             </td>
             <td style="font-size: 0.8em">
                 <?php if ($isService): ?>
-                    <?= sprintf(
-                        $this->translate('%s on %s'),
-                        $this->qlink($notification->service, $href), $notification->host
+                    <?= $this->link()->service(
+                        $notification->service,
+                        $notification->service_display_name,
+                        $notification->host,
+                        $notification->host_display_name
                     ) ?>
                 <?php else: ?>
-                    <?= $this->qlink($notification->host, $href) ?>
+                    <?= $this->link()->host($notification->host, $notification->host_display_name) ?>
                 <?php endif ?>
                 <br>
                 <?= $this->escape(substr(strip_tags($notification->notification_output), 0, 10000)); ?>
