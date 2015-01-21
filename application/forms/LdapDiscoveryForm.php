@@ -48,7 +48,7 @@ class LdapDiscoveryForm extends Form
                 array(
                     'required'      => false,
                     'label'         => $this->translate('Host'),
-                    'description'   => $this->translate('IP or host name to search.'),
+                    'description'   => $this->translate('IP or hostname to search.'),
                 )
             );
 
