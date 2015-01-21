@@ -23,13 +23,11 @@ class StatehistoryQuery extends IdoQuery
             'output'     => 'sh.output',
             'attempt'      => 'sh.current_check_attempt',
             'max_attempts' => 'sh.max_check_attempts',
-
             'host'                => 'sho.name1 COLLATE latin1_general_ci',
-            'service'             => 'sho.name2 COLLATE latin1_general_ci',
             'host_name'           => 'sho.name1 COLLATE latin1_general_ci',
+            'service'             => 'sho.name2 COLLATE latin1_general_ci',
             'service_description' => 'sho.name2 COLLATE latin1_general_ci',
             'service_host_name'   => 'sho.name1 COLLATE latin1_general_ci',
-            'service_description' => 'sho.name2 COLLATE latin1_general_ci',
             'object_type'         => "CASE WHEN sho.objecttype_id = 1 THEN 'host' ELSE 'service' END"
         )
     );
