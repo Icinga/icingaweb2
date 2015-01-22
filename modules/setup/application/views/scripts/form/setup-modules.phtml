@@ -1,0 +1,24 @@
+<?php
+
+use Icinga\Web\Wizard;
+
+?>
+<form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
+<h2><?= $this->translate('Modules', 'setup.page.title'); ?></h2>
+<p><?= $this->translate('The following modules were found in your Icinga Web 2 installation. To enable and configure a module, just tick it and click "Next".'); ?></p>
+<?php foreach ($form->getElements() as $element): ?>
+ <?php if (! in_array($element->getName(), array(Wizard::BTN_PREV, Wizard::BTN_NEXT, $form->getTokenElementName(), $form->getUidElementName()))): ?>
+  <div class="module">
+    <h3><label for="<?= $element->getId(); ?>"><strong><?= $element->getLabel(); ?></strong></label></h3>
+    <label for="<?= $element->getId(); ?>"><?= $element->getDescription(); ?></label>
+    <?= $element; ?>
+  </div>
+ <?php endif ?>
+<?php endforeach ?>
+  <?= $form->getElement($form->getTokenElementName()); ?>
+  <?= $form->getElement($form->getUidElementName()); ?>
+  <div class="buttons">
+    <?= $form->getElement(Wizard::BTN_PREV); ?>
+    <?= $form->getElement(Wizard::BTN_NEXT); ?>
+  </div>
+</form>

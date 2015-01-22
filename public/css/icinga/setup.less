@@ -394,3 +394,45 @@
     margin-top: 0;
   }
 }
+
+#setup_modules {
+  div.module {
+    float: left;
+    width: 15em;
+    height: 15em;
+    margin: 1em;
+    padding: 0.3em;
+    border: 1px solid #ccc;
+    background-color: snow;
+
+    h3 {
+      border: none;
+      margin: 0.5em 0;
+      text-align: center;
+
+      label {
+        margin: 0;
+        width: 15em;
+        cursor: pointer;
+      }
+    }
+
+    h3 + label {
+      width: 13.5em;
+      height: 13.9em;
+      overflow: auto;
+      cursor: pointer;
+      font-weight: normal;
+    }
+
+    input[type=checkbox] {
+      height: 10em;
+      float: right;
+    }
+  }
+
+  div.buttons {
+    padding-top: 1em;
+    clear: both;
+  }
+}

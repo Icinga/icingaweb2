@@ -19,7 +19,7 @@ class ModulePage extends Form
     public function init()
     {
         $this->setName('setup_modules');
-        //$this->setViewScript('form/setup-modules.phtml');
+        $this->setViewScript('form/setup-modules.phtml');
 
         $this->modulePaths = array();
         if (($appModulePath = realpath(Icinga::app()->getApplicationDir() . '/../modules')) !== false) {
@@ -34,15 +34,11 @@ class ModulePage extends Form
                 'checkbox',
                 $module->getName(),
                 array(
-                    'label' => ucfirst($module->getName()),
-                    'value' => $module->getName() === 'monitoring' ? 1 : 0
-                )
-            );
-            $this->addElement(
-                'note',
-                $module->getName() . '_desc',
-                array(
-                    'value' => $module->getDescription()
+                    'required'      => true,
+                    'description'   => $module->getDescription(),
+                    'label'         => ucfirst($module->getName()),
+                    'value'         => $module->getName() === 'monitoring' ? 1 : 0,
+                    'decorators'    => array('ViewHelper')
                 )
             );
         }
