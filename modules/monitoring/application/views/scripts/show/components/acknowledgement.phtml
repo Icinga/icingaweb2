@@ -22,7 +22,13 @@ if ($object->getType() === $object::TYPE_HOST) {
 if ($object->acknowledged): ?>
     <tr>
         <th><?= $this->translate('Acknowledged') ?></th>
-        <td><?= $removeAckForm ?></td>
+        <td>
+            <?php if (isset($removeAckForm)) { // Form is unset if the current user lacks the respective permission
+                echo $removeAckForm;
+            } else {
+                echo '&#45;';
+            } ?>
+        </td>
     </tr>
 <?php else: ?>
     <tr>
