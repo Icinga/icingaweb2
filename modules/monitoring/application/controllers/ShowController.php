@@ -165,8 +165,10 @@ class Monitoring_ShowController extends Controller
                 'notification_output',
                 'notification_contact',
                 'notification_start_time',
-                'notification_state'
-            ))->order('notification_start_time');
+                'notification_state',
+                'host_display_name',
+                'service_display_name'
+            ));
 
             $notifications->where('contact_object_id', $contact->contact_object_id);
 

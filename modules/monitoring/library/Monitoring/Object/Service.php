@@ -68,9 +68,9 @@ class Service extends MonitoredObject
     /**
      * Create a new service
      *
-     * @param MonitoringBackend   $backend    Backend to fetch service information from
-     * @param string    $host       Host name the service is running on
-     * @param string    $service    Service name
+     * @param MonitoringBackend $backend    Backend to fetch service information from
+     * @param string            $host       Hostname the service is running on
+     * @param string            $service    Service name
      */
     public function __construct(MonitoringBackend $backend, $host, $service)
     {
@@ -108,6 +108,7 @@ class Service extends MonitoredObject
     {
         return $this->backend->select()->from('serviceStatus', array(
             'host_name',
+            'host_display_name',
             'host_state',
             'host_state_type',
             'host_last_state_change',

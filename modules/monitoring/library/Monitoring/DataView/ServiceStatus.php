@@ -25,6 +25,7 @@ class ServiceStatus extends DataView
     {
         return array(
             'host_name',
+            'host_display_name',
             'host_state',
             'host_state_type',
             'host_last_state_change',
@@ -123,22 +124,12 @@ class ServiceStatus extends DataView
     public function getSortRules()
     {
         return array(
-            'host_name' => array(
+            'service_severity' => array(
                 'columns' => array(
-                    'service_host_name',
-                    'service_description'
+                    'service_severity',
+                    'service_last_state_change'
                 ),
-                'order' => self::SORT_ASC
-            ),
-            'host_address' => array(
-                'columns' => array(
-                    'host_ipv4',
-                    'service_description'
-                ),
-                'order' => self::SORT_ASC
-            ),
-            'host_last_state_change' => array(
-                'order' => self::SORT_ASC
+                'order' => self::SORT_DESC
             ),
             'host_severity' => array(
                 'columns' => array(
@@ -147,12 +138,19 @@ class ServiceStatus extends DataView
                 ),
                 'order' => self::SORT_ASC
             ),
-            'service_severity' => array(
+            'host_display_name' => array(
                 'columns' => array(
-                    'service_severity',
-                    'service_last_state_change',
+                    'host_display_name',
+                    'service_display_name'
                 ),
-                'order' => self::SORT_DESC
+                'order' => self::SORT_ASC
+            ),
+            'host_address' => array(
+                'columns' => array(
+                    'host_ipv4',
+                    'service_display_name'
+                ),
+                'order' => self::SORT_ASC
             )
         );
     }

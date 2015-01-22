@@ -1,6 +1,4 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Backend;
@@ -12,13 +10,9 @@ use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Widget\SortBox;
-use Icinga\Web\Widget\FilterBox;
-use Icinga\Web\Widget\Chart\HistoryColorGrid;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget;
-use Icinga\Module\Monitoring\Web\Widget\SelectBox;
 use Icinga\Module\Monitoring\Forms\StatehistoryForm;
-use Icinga\Module\Monitoring\Forms\EventOverviewForm;
 
 class Monitoring_ListController extends Controller
 {
@@ -97,12 +91,10 @@ class Monitoring_ListController extends Controller
         }
 
         // Handle soft and hard states
-        $stateType = $this->params->shift('stateType', 'soft');
-        if ($stateType == 'hard') {
+        if (strtolower($this->params->shift('stateType', 'soft')) === 'hard') {
             $stateColumn = 'host_hard_state';
             $stateChangeColumn = 'host_last_hard_state_change';
         } else {
-            $stateType = 'soft';
             $stateColumn = 'host_state';
             $stateChangeColumn = 'host_last_state_change';
         }
@@ -112,6 +104,7 @@ class Monitoring_ListController extends Controller
         $query = $this->backend->select()->from('hostStatus', array_merge(array(
             'host_icon_image',
             'host_name',
+            'host_display_name',
             'host_state' => $stateColumn,
             'host_address',
             'host_acknowledged',
@@ -139,12 +132,11 @@ class Monitoring_ListController extends Controller
         $this->filterQuery($query);
 
         $this->setupSortControl(array(
-            'host_last_check'   => $this->translate('Last Check'),
             'host_severity'     => $this->translate('Severity'),
-            'host_name'         => $this->translate('Hostname'),
-            'host_address'      => $this->translate('Address'),
             'host_state'        => $this->translate('Current State'),
-            'host_state'        => $this->translate('Hard State')
+            'host_display_name' => $this->translate('Hostname'),
+            'host_address'      => $this->translate('Address'),
+            'host_last_check'   => $this->translate('Last Check')
         ));
         $this->view->hosts = $query->paginate();
 
@@ -171,14 +163,12 @@ class Monitoring_ListController extends Controller
         }
 
         // Handle soft and hard states
-        $stateType = $this->params->shift('stateType', 'soft');
-        if ($stateType == 'hard') {
+        if (strtolower($this->params->shift('stateType', 'soft')) === 'hard') {
             $stateColumn = 'service_hard_state';
             $stateChangeColumn = 'service_last_hard_state_change';
         } else {
             $stateColumn = 'service_state';
             $stateChangeColumn = 'service_last_state_change';
-            $stateType = 'soft';
         }
 
         $this->addTitleTab('services', $this->translate('Services'));
@@ -192,6 +182,7 @@ class Monitoring_ListController extends Controller
 
         $columns = array_merge(array(
             'host_name',
+            'host_display_name',
             'host_state',
             'host_state_type',
             'host_last_state_change',
@@ -228,14 +219,13 @@ class Monitoring_ListController extends Controller
 
         $this->filterQuery($query);
         $this->setupSortControl(array(
-            'service_last_check'    => $this->translate('Last Service Check'),
-            'service_severity'      => $this->translate('Severity'),
+            'service_severity'      => $this->translate('Service Severity'),
             'service_state'         => $this->translate('Current Service State'),
-            'service_description'   => $this->translate('Service Name'),
-            'service_state_type'    => $this->translate('Hard State'),
+            'service_display_name'  => $this->translate('Service Name'),
+            'service_last_check'    => $this->translate('Last Service Check'),
             'host_severity'         => $this->translate('Host Severity'),
             'host_state'            => $this->translate('Current Host State'),
-            'host_name'             => $this->translate('Host Name'),
+            'host_display_name'     => $this->translate('Hostname'),
             'host_address'          => $this->translate('Host Address'),
             'host_last_check'       => $this->translate('Last Host Check')
         ));
@@ -295,22 +285,24 @@ class Monitoring_ListController extends Controller
             'host'            => 'downtime_host',
             'service'         => 'downtime_service',
             'host_state'      => 'downtime_host_state',
-            'service_state'   => 'downtime_service_state'
-        ))->order('downtime_is_in_effect', 'DESC')
-          ->order('downtime_scheduled_start', 'DESC');
+            'service_state'   => 'downtime_service_state',
+            'host_display_name',
+            'service_display_name'
+        ));
 
         $this->filterQuery($query);
 
         $this->setupSortControl(array(
-            'downtime_is_in_effect'    => $this->translate('Is In Effect'),
-            'downtime_host'            => $this->translate('Host / Service'),
-            'downtime_entry_time'      => $this->translate('Entry Time'),
-            'downtime_author'          => $this->translate('Author'),
-            'downtime_start'           => $this->translate('Start Time'),
-            'downtime_start'           => $this->translate('End Time'),
-            'downtime_scheduled_start' => $this->translate('Scheduled Start'),
-            'downtime_scheduled_end'   => $this->translate('Scheduled End'),
-            'downtime_duration'        => $this->translate('Duration'),
+            'downtime_is_in_effect'     => $this->translate('Is In Effect'),
+            'host_display_name'         => $this->translate('Host'),
+            'service_display_name'      => $this->translate('Service'),
+            'downtime_entry_time'       => $this->translate('Entry Time'),
+            'downtime_author'           => $this->translate('Author'),
+            'downtime_start'            => $this->translate('Start Time'),
+            'downtime_end'              => $this->translate('End Time'),
+            'downtime_scheduled_start'  => $this->translate('Scheduled Start'),
+            'downtime_scheduled_end'    => $this->translate('Scheduled End'),
+            'downtime_duration'         => $this->translate('Duration')
         ));
 
         $this->view->downtimes = $query->paginate();
@@ -333,7 +325,9 @@ class Monitoring_ListController extends Controller
             'notification_output',
             'notification_contact',
             'notification_start_time',
-            'notification_state'
+            'notification_state',
+            'host_display_name',
+            'service_display_name'
         ));
         $this->filterQuery($query);
         $this->view->notifications = $query->paginate();
@@ -471,17 +465,20 @@ class Monitoring_ListController extends Controller
             'persistent' => 'comment_is_persistent',
             'expiration' => 'comment_expiration',
             'host'       => 'comment_host',
-            'service'    => 'comment_service'
+            'service'    => 'comment_service',
+            'host_display_name',
+            'service_display_name'
         ));
         $this->filterQuery($query);
         $this->view->comments = $query->paginate();
 
         $this->setupSortControl(
             array(
-                'comment_timestamp'  => $this->translate('Comment Timestamp'),
-                'comment_host'       => $this->translate('Host / Service'),
-                'comment_type'       => $this->translate('Comment Type'),
-                'comment_expiration' => $this->translate('Expiration'),
+                'comment_timestamp'     => $this->translate('Comment Timestamp'),
+                'host_display_name'     => $this->translate('Host'),
+                'service_display_name'  => $this->translate('Service'),
+                'comment_type'          => $this->translate('Comment Type'),
+                'comment_expiration'    => $this->translate('Expiration')
             )
         );
         $this->view->delCommentForm = new DeleteCommentCommandForm();
@@ -590,7 +587,9 @@ class Monitoring_ListController extends Controller
 
         $query = $this->backend->select()->from('eventHistory', array(
             'host_name',
+            'host_display_name',
             'service_description',
+            'service_display_name',
             'object_type',
             'timestamp',
             'state',

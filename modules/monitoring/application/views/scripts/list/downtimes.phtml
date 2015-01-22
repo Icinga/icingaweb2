@@ -31,8 +31,10 @@ use Icinga\Module\Monitoring\Object\Service;
     <?php foreach ($downtimes as $downtime): ?>
     <?php
       if (isset($downtime->service)) {
+          $isService = true;
           $stateName = Service::getStateText($downtime->service_state);
       } else {
+          $isService = false;
           $stateName = Host::getStateText($downtime->host_state);
       }
     ?>
@@ -52,25 +54,17 @@ use Icinga\Module\Monitoring\Object\Service;
             ?>
         </td>
         <td>
-        <?php if (isset($downtime->service)): ?>
-          <?= $this->icon('service'); ?> <a href="<?= $this->href('monitoring/service/show', array(
-            'host'      => $downtime->host,
-            'service'   => $downtime->service
-          )); ?>">
-            <?= $downtime->service; ?>
-          </a>
-          <small>
-            <?= $this->translate('on'); ?> <?= $downtime->host; ?>
-          </small>
+        <?php if ($isService): ?>
+          <?= $this->icon('service') ?>
+          <?= $this->link()->service(
+              $downtime->service, $downtime->service_display_name, $downtime->host, $downtime->host_display_name
+          ) ?>
         <?php else: ?>
-          <?= $this->icon('host'); ?> <a href="<?= $this->href('monitoring/host/show', array(
-            'host' => $downtime->host
-          )); ?>">
-            <?= $downtime->host; ?>
-          </a>
+          <?= $this->icon('host') ?>
+          <?= $this->link()->host($downtime->host, $downtime->host_display_name) ?>
         <?php endif ?>
           <br>
-          <?= $this->icon('comment'); ?> [<?= $downtime->author; ?>] <?= $downtime->comment; ?>
+          <?= $this->icon('comment') ?> [<?= $this->escape($downtime->author) ?>] <?= $this->escape($downtime->comment) ?>
           <br>
           <small>
         <?php if ($downtime->is_flexible): ?>

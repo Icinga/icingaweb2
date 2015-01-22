@@ -83,6 +83,7 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
 
     public function dump()
     {
+        $this->order();
         return $this->query->dump();
     }
 
