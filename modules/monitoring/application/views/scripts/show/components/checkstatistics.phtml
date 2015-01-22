@@ -23,7 +23,9 @@ if ($object->getType() === $object::TYPE_HOST) {
 <tr>
     <th><?= $this->translate('Last check') ?></th>
     <td data-base-target="_self">
-        <?= $checkNowForm ?>
+        <?php if (isset($checkNowForm)) { // Form is unset if the current user lacks the respective permission
+            echo $checkNowForm;
+        } ?>
         <?= $this->timeSince($object->last_check) ?>
     </td>
 </tr>

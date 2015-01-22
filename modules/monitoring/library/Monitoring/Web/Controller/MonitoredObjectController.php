@@ -57,11 +57,14 @@ abstract class MonitoredObjectController extends Controller
     public function showAction()
     {
         $this->setAutorefreshInterval(10);
-        $checkNowForm = new CheckNowCommandForm();
-        $checkNowForm
-            ->setObjects($this->object)
-            ->handleRequest();
-        $this->view->checkNowForm = $checkNowForm;
+        $auth = $this->Auth();
+        if ($auth->hasPermission('monitoring/command/schedule-check')) {
+            $checkNowForm = new CheckNowCommandForm();
+            $checkNowForm
+                ->setObjects($this->object)
+                ->handleRequest();
+            $this->view->checkNowForm = $checkNowForm;
+        }
         if ( ! in_array((int) $this->object->state, array(0, 99))) {
             if ((bool) $this->object->acknowledged) {
                 $removeAckForm = new RemoveAcknowledgementCommandForm();
