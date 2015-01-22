@@ -31,7 +31,7 @@ $isService = $object->getType() === $object::TYPE_SERVICE;
             <?= $this->prefixedTimeSince($object->service_last_state_change, true) ?>
         </td>
         <td>
-            <b><?= $this->translate('Service') ?>: <?= $this->escape($object->service_description) ?></b>
+            <b><?= $this->translate('Service') ?>: <?= $this->escape($object->service_display_name) ?></b>
             <?= $this->render('show/components/statusIcons.phtml') ?>
         </td>
   </tr>
