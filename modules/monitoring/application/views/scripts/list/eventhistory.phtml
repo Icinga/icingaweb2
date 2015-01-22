@@ -70,21 +70,13 @@ use Icinga\Module\Monitoring\Object\Service;
           $icon = $isService ? 'service' : 'host';
           $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $event->output;
           $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
-          $title = strtoupper(
-            $isService
-              ? Service::getStateText($event->state, true)
-              : Host::getStateText($event->state, true)
-          );
+          $title = $isService ? Service::getStateText($event->state, true) : Host::getStateText($event->state, true);
           break;
         case 'soft_state':
           $icon = 'lightbulb';
           $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $event->output;
           $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
-          $title = strtoupper(
-            $isService
-              ? Service::getStateText($event->state, true)
-              : Host::getStateText($event->state, true)
-          );
+          $title = $isService ? Service::getStateText($event->state, true) : Host::getStateText($event->state, true);
           break;
         case 'dt_start':
           $icon = 'starttime';

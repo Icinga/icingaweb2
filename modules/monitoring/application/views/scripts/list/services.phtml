@@ -56,7 +56,7 @@ foreach ($services as $service):
 ?>
     <tr class="state <?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
       <td class="state">
-        <strong><?= strtoupper(Service::getStateText($service->service_state, true)); ?></strong><br />
+        <strong><?= Service::getStateText($service->service_state, true); ?></strong><br />
             <?php if (!$this->compact): ?><?= $this->prefixedTimeSince($service->service_last_state_change); ?><?php else: ?><?= $this->timeSince($service->service_last_state_change); ?><?php endif ?>
             <?php if ($service->service_state > 0 && (int) $service->service_state_type === 0): ?>
               <br />
@@ -106,7 +106,7 @@ foreach ($services as $service):
       <?php endif ?>
 <a href="<?= $serviceLink ?>"><?= $this->escape($service->service_display_name) ?></a><?php if ($this->showHost): ?> on <a href="<?= $hostLink ?>"><?= $this->escape($service->host_display_name) ?>
 <?php if ($service->host_state != 0): ?>
-  (<?= strtoupper(Host::getStateText($service->host_state, true)); ?>)
+  (<?= Host::getStateText($service->host_state, true); ?>)
 <?php endif ?>
 </a><?php endif ?><br />
         <p class="pluginoutput"><?= $this->escape($this->ellipsis($service->service_output, 10000)); ?></p>

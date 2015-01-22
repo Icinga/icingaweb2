@@ -92,21 +92,13 @@ function contactsLink($match, $view) {
           $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $this->escape($event->output);
           $stateClass = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
           $icon = 'attention-alt';
-          $title = strtoupper(
-            $isService
-              ? Service::getStateText($event->state)
-              : Host::getStateText($event->state)
-          );
+          $title = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
           break;
         case 'soft_state':
           $icon = 'spinner';
           $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $this->escape($event->output);
           $stateClass = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
-          $title = strtoupper(
-            $isService
-              ? Service::getStateText($event->state)
-              : Host::getStateText($event->state)
-          );
+          $title = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
           break;
         case 'dt_start':
           $icon = 'downtime_start';

@@ -16,7 +16,7 @@
             </div>
             <div class="hbox-item" style="font-size: 14px">
                 <?php foreach (array_filter($serviceStates) as $text => $count) {
-                    echo sprintf(' %s: %u <br>', strtoupper($text), $count);
+                    echo sprintf(' %s: %u <br>', $this->translate(strtoupper($text)), $count);
                 } ?>
             </div>
         </div>
@@ -31,7 +31,7 @@
             </div>
             <div class="hbox-item" style="font-size: 14px">
                 <?php foreach (array_filter($hostStates) as $text => $count) {
-                    echo sprintf('%s: %u <br>', strtoupper($text), $count);
+                    echo sprintf('%s: %u <br>', $this->translate(strtoupper($text)), $count);
                 } ?>
             </div>
         </div>
