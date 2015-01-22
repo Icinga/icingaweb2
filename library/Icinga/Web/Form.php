@@ -512,7 +512,7 @@ class Form extends Zend_Form
 
         $el = parent::createElement($type, $name, $options);
 
-        if (($description = $el->getDescription()) !== null && ($label = $el->getDecorator('label')) !== null) {
+        if (($description = $el->getDescription()) !== null && ($label = $el->getDecorator('label')) !== false) {
             $label->setOptions(array(
                 'title' => $description,
                 'class' => 'has-feedback'
