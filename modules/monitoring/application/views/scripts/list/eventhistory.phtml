@@ -106,21 +106,11 @@ use Icinga\Module\Monitoring\Object\Service;
         </td>
         <td>
         <?php if ($isService): ?>
-          <a href="<?= $this->href('monitoring/show/service', array(
-            'host'      => $event->host,
-            'service'   => $event->service
-          )); ?>">
-            <?= $this->escape($event->service_display_name) ?>
-          </a>
-          <small>
-            <?= $this->translate('on') . ' ' . $this->escape($event->host_display_name) ?>
-          </small>
+          <?= $this->link()->service(
+              $event->service, $event->service_display_name, $event->host, $event->host_display_name
+          ) ?>
         <?php else: ?>
-          <a href="<?= $this->href('monitoring/show/host', array(
-            'host' => $event->host
-          )); ?>">
-            <?= $this->escape($event->host_display_name) ?>
-          </a>
+          <?= $this->link()->host($event->host, $event->host_display_name) ?>
         <?php endif ?>
           <br>
           <div>
