@@ -32,6 +32,9 @@ $isService = $object->getType() === $object::TYPE_SERVICE;
         </td>
         <td>
             <b><?= $this->translate('Service') ?>: <?= $this->escape($object->service_display_name) ?></b>
+            <?php if ($object->service_display_name !== $object->service_description): ?>
+            <small>(<?= $this->escape($object->service_description) ?>)</small>
+            <?php endif ?>
             <?= $this->render('show/components/statusIcons.phtml') ?>
         </td>
   </tr>
