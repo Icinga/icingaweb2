@@ -197,8 +197,8 @@ class User
      */
     public function setPermissions(array $permissions)
     {
-        natcasesort($permissions);
         if (! empty($permissions)) {
+            natcasesort($permissions);
             $this->permissions = array_combine($permissions, $permissions);
         }
         return $this;
