@@ -2,10 +2,10 @@
 
 ## Requirements
 
-* Vagrant &gt;= version 1.4
+* Vagrant &gt;= version 1.5
 * VirtualBox or Parallels
 
-> **Note:** The deployment of the virtual machine is tested against Vagrant starting with version 1.4.
+> **Note:** The deployment of the virtual machine is tested against Vagrant starting with version 1.5.
 > Unfortunately older versions will not work.
 
 ## General
