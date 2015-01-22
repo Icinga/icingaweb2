@@ -1,11 +1,8 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Web\Controller;
 
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
@@ -15,7 +12,6 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandFor
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
-use Icinga\Web\Widget\Tabextension\OutputFormat;
 
 /**
  * Base class for the host and service controller
@@ -74,12 +70,6 @@ abstract class MonitoredObjectController extends Controller
                         ->handleRequest();
                     $this->view->removeAckForm = $removeAckForm;
                 }
-            } else {
-                $ackForm = new AcknowledgeProblemCommandForm();
-                $ackForm
-                    ->setObjects($this->object)
-                    ->handleRequest();
-                $this->view->ackForm = $ackForm;
             }
         }
         if (count($this->object->comments) > 0) {
