@@ -11,7 +11,17 @@ $requirements = $form->getRequirements();
 <?php foreach ($requirements as $requirement): ?>
     <tr>
       <td><h2><?= $requirement->title; ?></h2></td>
-      <td style="width: 50%"><?= $requirement->description; ?></td>
+      <td style="width: 50%">
+      <?php if (is_array($requirement->description)): ?>
+        <ul>
+        <?php foreach ($requirement->description as $desc): ?>
+          <li><?= $desc; ?></li>
+        <?php endforeach ?>
+        </ul>
+      <?php else: ?>
+        <?= $requirement->description; ?>
+      <?php endif ?>
+      </td>
       <td class="state <?= $requirement->state === Requirements::STATE_OK ? 'fulfilled' : (
         $requirement->state === Requirements::STATE_OPTIONAL ? 'not-available' : 'missing'
       ); ?>"><?= $requirement->message; ?></td>
