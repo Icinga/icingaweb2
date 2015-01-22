@@ -58,7 +58,7 @@ class Monitoring_HostController extends MonitoredObjectController
      */
     public function addCommentAction()
     {
-        $this->assertPermission('monitoring/command/add-comment');
+        $this->assertPermission('monitoring/command/comment/add');
 
         $this->view->title = $this->translate('Add Host Comment');
         $this->handleCommandForm(new AddCommentCommandForm());
@@ -80,7 +80,7 @@ class Monitoring_HostController extends MonitoredObjectController
      */
     public function scheduleDowntimeAction()
     {
-        $this->assertPermission('monitoring/command/schedule-downtime');
+        $this->assertPermission('monitoring/command/downtime/schedule');
 
         $this->view->title = $this->translate('Schedule Host Downtime');
         $this->handleCommandForm(new ScheduleHostDowntimeCommandForm());

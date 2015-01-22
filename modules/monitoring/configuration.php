@@ -9,40 +9,40 @@ $this->providePermission(
     $this->translate('Allow all commands')
 );
 $this->providePermission(
-    'monitoring/command/schedule*',
-    $this->translate('Allow scheduling checks and downtimes')
-);
-$this->providePermission(
     'monitoring/command/schedule-check',
     $this->translate('Allow scheduling host and service checks')
-);
-$this->providePermission(
-    'monitoring/command/schedule-downtime',
-    $this->translate('Allow scheduling host and service downtimes')
 );
 $this->providePermission(
     'monitoring/command/acknowledge-problem',
     $this->translate('Allow acknowledging host and service problems')
 );
 $this->providePermission(
-    'monitoring/command/add-comment',
-    $this->translate('Allow commenting on hosts and services')
-);
-$this->providePermission(
-    'monitoring/command/remove*',
-    $this->translate('Allow removing problem acknowledgements, host and service comments and downtimes')
-);
-$this->providePermission(
     'monitoring/command/remove-acknowledgement',
     $this->translate('Allow removing problem acknowledgements')
 );
 $this->providePermission(
-    'monitoring/command/remove-comment',
-    $this->translate('Allow removing host and service comments')
+    'monitoring/command/comment/*',
+    $this->translate('Allow adding and deleting host and service comments')
 );
 $this->providePermission(
-    'monitoring/command/remove-downtime',
-    $this->translate('Allow removing host and service downtimes')
+    'monitoring/command/comment/add',
+    $this->translate('Allow commenting on hosts and services')
+);
+$this->providePermission(
+    'monitoring/command/comment/delete',
+    $this->translate('Allow deleting host and service comments')
+);
+$this->providePermission(
+    'monitoring/command/downtime/*',
+    $this->translate('Allow scheduling and deleting host and service downtimes')
+);
+$this->providePermission(
+    'monitoring/command/downtime/schedule',
+    $this->translate('Allow scheduling host and service downtimes')
+);
+$this->providePermission(
+    'monitoring/command/downtime/delete',
+    $this->translate('Allow deleting host and service downtimes')
 );
 $this->providePermission(
     'monitoring/command/process-check-result',
