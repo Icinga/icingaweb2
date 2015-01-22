@@ -91,6 +91,7 @@ class Host extends MonitoredObject
     {
         $columns = array(
             'host_name',
+            'host_display_name',
             'host_alias',
             'host_address',
             'host_state',
