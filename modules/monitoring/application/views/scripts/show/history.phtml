@@ -148,7 +148,7 @@ $output = $this->tickets ? preg_replace_callback(
         <?php endif ?>
           <br>
           <div>
-            <?= $this->icon($icon, $title); ?> <?= empty($msg) ? '' : $msg; ?>
+            <?= $this->icon($icon, $title); ?> <?= empty($msg) ? '' : $this->escape($msg) ?>
           </div>
         </td>
       </tr>
