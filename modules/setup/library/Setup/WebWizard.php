@@ -29,6 +29,7 @@ use Icinga\Module\Setup\Steps\DatabaseStep;
 use Icinga\Module\Setup\Steps\GeneralConfigStep;
 use Icinga\Module\Setup\Steps\ResourceStep;
 use Icinga\Module\Setup\Steps\AuthenticationStep;
+use Icinga\Module\Setup\Utils\EnableModuleStep;
 use Icinga\Module\Setup\Utils\MakeDirStep;
 use Icinga\Module\Setup\Utils\DbTool;
 
@@ -83,6 +84,7 @@ class WebWizard extends Wizard implements SetupWizard
     protected function init()
     {
         $this->addPage(new WelcomePage());
+        $this->addPage(new ModulePage());
         $this->addPage(new RequirementsPage());
         $this->addPage(new AuthenticationPage());
         $this->addPage(new PreferencesPage());
@@ -94,8 +96,14 @@ class WebWizard extends Wizard implements SetupWizard
         $this->addPage(new AdminAccountPage());
         $this->addPage(new GeneralConfigPage());
         $this->addPage(new DatabaseCreationPage());
-        $this->addPage(new ModulePage());
-        $this->addPage(new SummaryPage());
+        $this->addPage(new SummaryPage(array('name' => 'setup_summary')));
+
+        if (($modulePageData = $this->getPageData('setup_modules')) !== null) {
+            $modulePage = $this->getPage('setup_modules')->populate($modulePageData);
+            foreach ($modulePage->getModuleWizards() as $moduleWizard) {
+                $this->addPage($moduleWizard);
+            }
+        }
     }
 
     /**
@@ -167,9 +175,6 @@ class WebWizard extends Wizard implements SetupWizard
                 unset($pageData['setup_admin_account']);
                 unset($pageData['setup_authentication_backend']);
             }
-        } elseif ($page->getName() === 'setup_modules') {
-            $page->setPageData($this->getPageData());
-            $page->handleRequest($request);
         }
     }
 
@@ -222,23 +227,7 @@ class WebWizard extends Wizard implements SetupWizard
             }
         }
 
-        if ($skip) {
-            if ($this->hasPageData($newPage->getName())) {
-                $pageData = & $this->getPageData();
-                unset($pageData[$newPage->getName()]);
-            }
-
-            $pages = $this->getPages();
-            if ($this->getDirection() === static::FORWARD) {
-                $nextPage = $pages[array_search($newPage, $pages, true) + 1];
-                $newPage = $this->getNewPage($nextPage->getName(), $newPage);
-            } else { // $this->getDirection() === static::BACKWARD
-                $previousPage = $pages[array_search($newPage, $pages, true) - 1];
-                $newPage = $this->getNewPage($previousPage->getName(), $newPage);
-            }
-        }
-
-        return $newPage;
+        return $skip ? $this->skipPage($newPage) : $newPage;
     }
 
     /**
@@ -263,7 +252,6 @@ class WebWizard extends Wizard implements SetupWizard
     public function clearSession()
     {
         parent::clearSession();
-        $this->getPage('setup_modules')->clearSession();
 
         $tokenPath = Config::resolvePath('setup.token');
         if (file_exists($tokenPath)) {
@@ -297,7 +285,7 @@ class WebWizard extends Wizard implements SetupWizard
                         ? $pageData['setup_database_creation']['password']
                         : null,
                     'schemaPath'        => Config::module('setup')
-                        ->get('schema', 'path', Icinga::app()->getBaseDir('etc/schema'))
+                        ->get('schema', 'path', Icinga::app()->getBaseDir('etc' . DIRECTORY_SEPARATOR . 'schema'))
                 ))
             );
         }
@@ -350,19 +338,21 @@ class WebWizard extends Wizard implements SetupWizard
         $setup->addStep(
             new MakeDirStep(
                 array(
-                    $configDir . '/modules',
-                    $configDir . '/preferences',
-                    $configDir . '/enabledModules'
+                    $configDir . DIRECTORY_SEPARATOR . 'modules',
+                    $configDir . DIRECTORY_SEPARATOR . 'preferences',
+                    $configDir . DIRECTORY_SEPARATOR . 'enabledModules'
                 ),
                 2770
             )
         );
 
-        foreach ($this->getPage('setup_modules')->setPageData($this->getPageData())->getWizards() as $wizard) {
-            if ($wizard->isFinished()) {
+        foreach ($this->getWizards() as $wizard) {
+            if ($wizard->isComplete()) {
                 $setup->addSteps($wizard->getSetup()->getSteps());
             }
         }
+
+        $setup->addStep(new EnableModuleStep(array_keys($this->getPage('setup_modules')->getCheckedModules())));
 
         return $setup;
     }
@@ -376,6 +366,7 @@ class WebWizard extends Wizard implements SetupWizard
 
         $phpVersion = Platform::getPhpVersion();
         $requirements->addMandatory(
+            'php_version_>=_5_3_2',
             mt('setup', 'PHP Version'),
             mt(
                 'setup',
@@ -388,6 +379,7 @@ class WebWizard extends Wizard implements SetupWizard
 
         $defaultTimezone = Platform::getPhpConfig('date.timezone');
         $requirements->addMandatory(
+            'existing_default_timezone',
             mt('setup', 'Default Timezone'),
             sprintf(
                 mt('setup', 'It is required that a default timezone has been set using date.timezone in %s.'),
@@ -400,6 +392,7 @@ class WebWizard extends Wizard implements SetupWizard
         );
 
         $requirements->addOptional(
+            'platform=linux',
             mt('setup', 'Linux Platform'),
             mt(
                 'setup',
@@ -411,6 +404,7 @@ class WebWizard extends Wizard implements SetupWizard
         );
 
         $requirements->addMandatory(
+            'existing_php_mod_openssl',
             mt('setup', 'PHP Module: OpenSSL'),
             mt('setup', 'The PHP module for OpenSSL is required to generate cryptographically safe password salts.'),
             Platform::extensionLoaded('openssl'),
@@ -420,6 +414,7 @@ class WebWizard extends Wizard implements SetupWizard
         );
 
         $requirements->addOptional(
+            'existing_php_mod_json',
             mt('setup', 'PHP Module: JSON'),
             mt('setup', 'The JSON module for PHP is required for various export functionalities as well as APIs.'),
             Platform::extensionLoaded('json'),
@@ -429,6 +424,7 @@ class WebWizard extends Wizard implements SetupWizard
         );
 
         $requirements->addOptional(
+            'existing_php_mod_ldap',
             mt('setup', 'PHP Module: LDAP'),
             mt('setup', 'If you\'d like to authenticate users using LDAP the corresponding PHP module is required'),
             Platform::extensionLoaded('ldap'),
@@ -438,6 +434,7 @@ class WebWizard extends Wizard implements SetupWizard
         );
 
         $requirements->addOptional(
+            'existing_php_mod_intl',
             mt('setup', 'PHP Module: INTL'),
             mt(
                 'setup',
@@ -452,6 +449,7 @@ class WebWizard extends Wizard implements SetupWizard
 
         // TODO(6172): Remove this requirement once we do not ship dompdf with Icinga Web 2 anymore
         $requirements->addOptional(
+            'existing_php_mod_dom',
             mt('setup', 'PHP Module: DOM'),
             mt('setup', 'To be able to export views and reports to PDF, the DOM module for PHP is required.'),
             Platform::extensionLoaded('dom'),
@@ -461,6 +459,7 @@ class WebWizard extends Wizard implements SetupWizard
         );
 
         $requirements->addOptional(
+            'existing_php_mod_gd',
             mt('setup', 'PHP Module: GD'),
             mt(
                 'setup',
@@ -474,6 +473,7 @@ class WebWizard extends Wizard implements SetupWizard
         );
 
         $requirements->addOptional(
+            'existing_php_mod_imagick',
             mt('setup', 'PHP Module: Imagick'),
             mt(
                 'setup',
@@ -487,6 +487,7 @@ class WebWizard extends Wizard implements SetupWizard
         );
 
         $requirements->addOptional(
+            'existing_php_mod_pdo_mysql',
             mt('setup', 'PHP Module: PDO-MySQL'),
             mt(
                 'setup',
@@ -499,6 +500,7 @@ class WebWizard extends Wizard implements SetupWizard
         );
 
         $requirements->addOptional(
+            'existing_php_mod_pdo_pgsql',
             mt('setup', 'PHP Module: PDO-PostgreSQL'),
             mt(
                 'setup',
@@ -513,6 +515,7 @@ class WebWizard extends Wizard implements SetupWizard
 
         $mysqlAdapterFound = Platform::zendClassExists('Zend_Db_Adapter_Pdo_Mysql');
         $requirements->addOptional(
+            'existing_class_Zend_Db_Adapter_Pdo_Mysql',
             mt('setup', 'Zend Database Adapter For MySQL'),
             mt('setup', 'The Zend database adapter for MySQL is required to access a MySQL database.'),
             $mysqlAdapterFound,
@@ -523,6 +526,7 @@ class WebWizard extends Wizard implements SetupWizard
 
         $pgsqlAdapterFound = Platform::zendClassExists('Zend_Db_Adapter_Pdo_Pgsql');
         $requirements->addOptional(
+            'existing_class_Zend_Db_Adapter_Pdo_Pgsql',
             mt('setup', 'Zend Database Adapter For PostgreSQL'),
             mt('setup', 'The Zend database adapter for PostgreSQL is required to access a PostgreSQL database.'),
             $pgsqlAdapterFound,
@@ -533,6 +537,7 @@ class WebWizard extends Wizard implements SetupWizard
 
         $configDir = Icinga::app()->getConfigDir();
         $requirements->addMandatory(
+            'writable_directory_' . $configDir,
             mt('setup', 'Writable Config Directory'),
             mt(
                 'setup',
@@ -548,8 +553,8 @@ class WebWizard extends Wizard implements SetupWizard
             )
         );
 
-        foreach ($this->getPage('setup_modules')->setPageData($this->getPageData())->getWizards() as $wizard) {
-            $requirements->merge($wizard->getRequirements()->allOptional());
+        foreach ($this->getWizards() as $wizard) {
+            $requirements->merge($wizard->getRequirements());
         }
 
         return $requirements;

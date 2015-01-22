@@ -40,6 +40,13 @@ class Wizard
     const BTN_PREV = 'btn_prev';
 
     /**
+     * This wizard's parent
+     *
+     * @var Wizard
+     */
+    protected $parent;
+
+    /**
      * The name of the wizard's current page
      *
      * @var string
@@ -72,17 +79,53 @@ class Wizard
     }
 
     /**
+     * Return this wizard's parent or null in case it has none
+     *
+     * @return  Wizard|null
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Set this wizard's parent
+     *
+     * @param   Wizard  $wizard     The parent wizard
+     *
+     * @return  self
+     */
+    public function setParent(Wizard $wizard)
+    {
+        $this->parent = $wizard;
+        return $this;
+    }
+
+    /**
      * Return the pages being part of this wizard
+     *
+     * In case this is a nested wizard a flattened array of all contained pages is returned.
      *
      * @return  array
      */
     public function getPages()
     {
-        return $this->pages;
+        $pages = array();
+        foreach ($this->pages as $page) {
+            if ($page instanceof self) {
+                $pages = array_merge($pages, $page->getPages());
+            } else {
+                $pages[] = $page;
+            }
+        }
+
+        return $pages;
     }
 
     /**
      * Return the page with the given name
+     *
+     * Note that it's also possible to retrieve a nested wizard's page by using this method.
      *
      * @param   string      $name   The name of the page to return
      *
@@ -98,22 +141,31 @@ class Wizard
     }
 
     /**
-     * Add a new page to this wizard
+     * Add a new page or wizard to this wizard
      *
-     * @param   Form    $page   The page to add to the wizard
+     * @param   Form|Wizard     $page   The page or wizard to add to the wizard
      *
      * @return  self
      */
-    public function addPage(Form $page)
+    public function addPage($page)
     {
+        if (! $page instanceof Form && ! $page instanceof self) {
+            throw InvalidArgumentException(
+                'The $page argument must be an instance of Icinga\Web\Form '
+                . 'or Icinga\Web\Wizard but is of type: ' . get_class($page)
+            );
+        } elseif ($page instanceof self) {
+            $page->setParent($this);
+        }
+
         $this->pages[] = $page;
         return $this;
     }
 
     /**
-     * Add multiple pages to this wizard
+     * Add multiple pages or wizards to this wizard
      *
-     * @param   array   $pages      The pages to add to the wizard
+     * @param   array   $pages      The pages or wizards to add to the wizard
      *
      * @return  self
      */
@@ -148,6 +200,10 @@ class Wizard
      */
     public function getCurrentPage()
     {
+        if ($this->parent) {
+            return $this->parent->getCurrentPage();
+        }
+
         if ($this->currentPage === null) {
             $this->assertHasPages();
             $pages = $this->getPages();
@@ -202,6 +258,10 @@ class Wizard
     {
         $page = $this->getCurrentPage();
 
+        if (($wizard = $this->findWizard($page)) !== null) {
+            return $wizard->handleRequest($request);
+        }
+
         if ($request === null) {
             $request = $page->getRequest();
         }
@@ -239,6 +299,39 @@ class Wizard
     }
 
     /**
+     * Return the wizard for the given page or null if its not part of a wizard
+     *
+     * @param   Form    $page   The page to return its wizard for
+     *
+     * @return  Wizard|null
+     */
+    protected function findWizard(Form $page)
+    {
+        foreach ($this->getWizards() as $wizard) {
+            if ($wizard->getPage($page->getName()) === $page) {
+                return $wizard;
+            }
+        }
+    }
+
+    /**
+     * Return this wizard's child wizards
+     *
+     * @return  array
+     */
+    protected function getWizards()
+    {
+        $wizards = array();
+        foreach ($this->pages as $pageOrWizard) {
+            if ($pageOrWizard instanceof self) {
+                $wizards[] = $pageOrWizard;
+            }
+        }
+
+        return $wizards;
+    }
+
+    /**
      * Return the request data based on given form's request method
      *
      * @param   Form        $page       The page to fetch the data for
@@ -264,6 +357,10 @@ class Wizard
      */
     protected function getRequestedPage(array $requestData)
     {
+        if ($this->parent) {
+            return $this->parent->getRequestedPage($requestData);
+        }
+
         if (isset($requestData[static::BTN_NEXT])) {
             return $requestData[static::BTN_NEXT];
         } elseif (isset($requestData[static::BTN_PREV])) {
@@ -280,6 +377,10 @@ class Wizard
      */
     protected function getDirection(Request $request = null)
     {
+        if ($this->parent) {
+            return $this->parent->getDirection($request);
+        }
+
         $currentPage = $this->getCurrentPage();
 
         if ($request === null) {
@@ -299,7 +400,7 @@ class Wizard
     /**
      * Return the new page to set as current page
      *
-     * Permission is checked by verifying that the requested page's previous page has page data available.
+     * Permission is checked by verifying that the requested page or its previous page has page data available.
      * The requested page is automatically permitted without any checks if the origin page is its previous
      * page or one that occurs later in order.
      *
@@ -312,11 +413,15 @@ class Wizard
      */
     protected function getNewPage($requestedPage, Form $originPage)
     {
+        if ($this->parent) {
+            return $this->parent->getNewPage($requestedPage, $originPage);
+        }
+
         if (($page = $this->getPage($requestedPage)) !== null) {
             $permitted = true;
 
             $pages = $this->getPages();
-            if (($index = array_search($page, $pages, true)) > 0) {
+            if (! $this->hasPageData($requestedPage) && ($index = array_search($page, $pages, true)) > 0) {
                 $previousPage = $pages[$index - 1];
                 if ($originPage === null || ($previousPage->getName() !== $originPage->getName()
                     && array_search($originPage, $pages, true) < $index))
@@ -336,6 +441,36 @@ class Wizard
     }
 
     /**
+     * Return the next or previous page based on the given one
+     *
+     * @param   Form    $page   The page to skip
+     *
+     * @return  Form
+     */
+    protected function skipPage(Form $page)
+    {
+        if ($this->parent) {
+            return $this->parent->skipPage($page);
+        }
+
+        if ($this->hasPageData($page->getName())) {
+            $pageData = & $this->getPageData();
+            unset($pageData[$page->getName()]);
+        }
+
+        $pages = $this->getPages();
+        if ($this->getDirection() === static::FORWARD) {
+            $nextPage = $pages[array_search($page, $pages, true) + 1];
+            $newPage = $this->getNewPage($nextPage->getName(), $page);
+        } else { // $this->getDirection() === static::BACKWARD
+            $previousPage = $pages[array_search($page, $pages, true) - 1];
+            $newPage = $this->getNewPage($previousPage->getName(), $page);
+        }
+
+        return $newPage;
+    }
+
+    /**
      * Return whether the given page is this wizard's last page
      *
      * @param   Form    $page   The page to check
@@ -344,8 +479,25 @@ class Wizard
      */
     protected function isLastPage(Form $page)
     {
+        if ($this->parent) {
+            return $this->parent->isLastPage($page);
+        }
+
         $pages = $this->getPages();
         return $page->getName() === end($pages)->getName();
+    }
+
+    /**
+     * Return whether all of this wizard's pages were visited by the user
+     *
+     * The base implementation just verifies that the very last page has page data available.
+     *
+     * @return  bool
+     */
+    public function isComplete()
+    {
+        $pages = $this->getPages();
+        return $this->hasPageData($pages[count($pages) - 1]->getName());
     }
 
     /**
@@ -421,6 +573,10 @@ class Wizard
      */
     public function getSession()
     {
+        if ($this->parent) {
+            return $this->parent->getSession();
+        }
+
         return Session::getSession()->getNamespace(get_class($this));
     }
 

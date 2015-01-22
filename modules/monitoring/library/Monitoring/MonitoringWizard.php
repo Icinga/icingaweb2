@@ -4,15 +4,12 @@
 
 namespace Icinga\Module\Monitoring;
 
-use Icinga\Application\Icinga;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
 use Icinga\Web\Request;
 use Icinga\Module\Setup\Setup;
 use Icinga\Module\Setup\SetupWizard;
 use Icinga\Module\Setup\Requirements;
-use Icinga\Module\Setup\Utils\MakeDirStep;
-use Icinga\Module\Setup\Utils\EnableModuleStep;
 use Icinga\Module\Setup\Forms\SummaryPage;
 use Icinga\Module\Monitoring\Forms\Setup\WelcomePage;
 use Icinga\Module\Monitoring\Forms\Setup\BackendPage;
@@ -37,7 +34,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
         $this->addPage(new LivestatusResourcePage());
         $this->addPage(new InstancePage());
         $this->addPage(new SecurityPage());
-        $this->addPage(new SummaryPage());
+        $this->addPage(new SummaryPage(array('name' => 'setup_monitoring_summary')));
     }
 
     /**
@@ -47,7 +44,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
     {
         if ($page->getName() === 'setup_requirements') {
             $page->setRequirements($this->getRequirements());
-        } elseif ($page->getName() === 'setup_summary') {
+        } elseif ($page->getName() === 'setup_monitoring_summary') {
             $page->setSummary($this->getSetup()->getSummary());
             $page->setSubjectTitle(mt('monitoring', 'the monitoring module', 'setup.summary.subject'));
         } elseif (
@@ -79,23 +76,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
             $skip = $backendData['type'] !== 'livestatus';
         }
 
-        if ($skip) {
-            if ($this->hasPageData($newPage->getName())) {
-                $pageData = & $this->getPageData();
-                unset($pageData[$newPage->getName()]);
-            }
-
-            $pages = $this->getPages();
-            if ($this->getDirection() === static::FORWARD) {
-                $nextPage = $pages[array_search($newPage, $pages, true) + 1];
-                $newPage = $this->getNewPage($nextPage->getName(), $newPage);
-            } else { // $this->getDirection() === static::BACKWARD
-                $previousPage = $pages[array_search($newPage, $pages, true) - 1];
-                $newPage = $this->getNewPage($previousPage->getName(), $newPage);
-            }
-        }
-
-        return $newPage;
+        return $skip ? $this->skipPage($newPage) : $newPage;
     }
 
     /**
@@ -125,8 +106,6 @@ class MonitoringWizard extends Wizard implements SetupWizard
         $pageData = $this->getPageData();
         $setup = new Setup();
 
-        $setup->addStep(new MakeDirStep(array(Icinga::app()->getConfigDir() . '/modules/monitoring'), 2770));
-
         $setup->addStep(
             new BackendStep(array(
                 'backendConfig'     => $pageData['setup_monitoring_backend'],
@@ -147,8 +126,6 @@ class MonitoringWizard extends Wizard implements SetupWizard
                 'securityConfig'    => $pageData['setup_monitoring_security']
             ))
         );
-
-        $setup->addStep(new EnableModuleStep('monitoring'));
 
         return $setup;
     }
