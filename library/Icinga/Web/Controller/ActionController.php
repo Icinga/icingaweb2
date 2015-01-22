@@ -192,7 +192,6 @@ class ActionController extends Zend_Controller_Action
      */
     public function assertPermission($name)
     {
-        return;
         if (! $this->Auth()->hasPermission($name)) {
             // TODO: Shall this be an Auth Exception? Or a 404?
             throw new IcingaException(
