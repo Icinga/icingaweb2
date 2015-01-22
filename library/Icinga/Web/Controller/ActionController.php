@@ -147,6 +147,22 @@ class ActionController extends Zend_Controller_Action
     }
 
     /**
+     * Respond with HTTP 405 if the current request's method is not one of the given methods
+     *
+     * @param   string $httpMethod                  Unlimited number of allowed HTTP methods
+     *
+     * @throws  \Zend_Controller_Action_Exception   If the request method is not one of the given methods
+     */
+    public function assertHttpMethod($httpMethod)
+    {
+        $httpMethods = array_flip(array_map('strtoupper', func_get_args()));
+        if (! isset($httpMethods[$this->getRequest()->getMethod()])) {
+            $this->getResponse()->setHeader('Allow', implode(', ', array_keys($httpMethods)));
+            throw new \Zend_Controller_Action_Exception($this->translate('Method Not Allowed'), 405);
+        }
+    }
+
+    /**
      * Return restriction information for an eventually authenticated user
      *
      * @param  string  $name Permission name
