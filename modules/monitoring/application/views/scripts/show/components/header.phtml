@@ -14,7 +14,7 @@ $isService = $object->getType() === $object::TYPE_SERVICE;
 <table class="objectstate">
     <tr class="state <?= Host::getStateText($object->host_state); ?><?= $object->host_handled ? ' handled' : '' ?>">
         <td class="state"<?= $isService ? '' : ' rowspan="2"' ?>>
-            <strong><?= strtoupper(Host::getStateText($object->host_state, true)); ?></strong><br />
+            <strong><?= strtoupper(Host::getStateText($object->host_state, true)); ?></strong><br>
             <?= $this->prefixedTimeSince($object->host_last_state_change, true) ?>
         </td>
         <td>
@@ -31,7 +31,7 @@ $isService = $object->getType() === $object::TYPE_SERVICE;
 <?php if ($isService): ?>
     <tr class="state <?= Service::getStateText($object->service_state); ?><?= $object->service_handled ? ' handled' : '' ?>">
         <td class="state">
-            <strong><?= strtoupper(Service::getStateText($object->service_state, true)); ?></strong><br />
+            <strong><?= strtoupper(Service::getStateText($object->service_state, true)); ?></strong><br>
             <?= $this->prefixedTimeSince($object->service_last_state_change, true) ?>
         </td>
         <td>
