@@ -34,10 +34,6 @@ foreach ($object->comments as $comment) {
         $this->escape($comment->comment)
     ) : $this->escape($comment->comment);
 
-
-    $form = clone $delCommentForm;
-    $form->populate(array('comment_id' => $comment->id));
-
     ?>
 
     <tr>
@@ -46,7 +42,12 @@ foreach ($object->comments as $comment) {
             <table>
                 <tr>
                     <td style="vertical-align: top;" data-base-target="_self">
-                        <?= $form ?> (<?= ucfirst($comment->type) ?>):
+                        <?php if (isset($delCommentForm)) { // Form is unset if the current user lacks the respective permission
+                            $form = clone $delCommentForm;
+                            $form->populate(array('comment_id' => $comment->id));
+                            echo $form;
+                        } ?>
+                        (<?= ucfirst($comment->type) ?>):
                     </td>
                     <td style="padding-left: .5em;">
                         <?= str_replace(array('\r\n', '\n'), '<br>', $text) ?>

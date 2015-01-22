@@ -72,7 +72,7 @@ abstract class MonitoredObjectController extends Controller
                 }
             }
         }
-        if (count($this->object->comments) > 0) {
+        if (count($this->object->comments) > 0 && $auth->hasPermission('monitoring/command/comment/delete')) {
             $delCommentForm = new DeleteCommentCommandForm();
             $delCommentForm
                 ->setObjects($this->object)
