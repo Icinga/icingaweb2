@@ -44,6 +44,10 @@ $this->providePermission(
     'monitoring/command/remove-downtime',
     $this->translate('Allow removing host and service downtimes')
 );
+$this->providePermission(
+    'monitoring/command/process-check-result',
+    $this->translate('Allow processing host and service check results')
+);
 
 $this->provideRestriction(
     'monitoring/filter',
