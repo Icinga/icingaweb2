@@ -10,7 +10,7 @@ $this->providePermission(
 );
 $this->providePermission(
     'monitoring/command/schedule*',
-    $this->translate('Allow all scheduling checks and downtimes')
+    $this->translate('Allow scheduling checks and downtimes')
 );
 $this->providePermission(
     'monitoring/command/schedule-check',
