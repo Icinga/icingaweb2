@@ -143,12 +143,7 @@ abstract class MonitoredObjectController extends Controller
      */
     public function removeCommentAction()
     {
-        /*
-         * TODO(el): This is here because monitoring/list/comments has buttons to remove comments. Because of the nature
-         * of an action, the form is accessible via GET which does not make much sense because the form requires
-         * us to populate the ID of the comment which is to be deleted. We may introduce a combo box for choosing
-         * the comment ID on GET or deny GET access.
-         */
+        $this->assertHttpMethod('POST');
         $this->handleCommandForm(new DeleteCommentCommandForm());
     }
 
@@ -157,12 +152,7 @@ abstract class MonitoredObjectController extends Controller
      */
     public function deleteDowntimeAction()
     {
-        /*
-         * TODO(el): This is here because monitoring/list/downtimes has buttons to remove comments. Because of the
-         * nature of an action, the form is accessible via GET which does not make much sense because the form requires
-         * us to populate the ID of the downtime which is to be deleted. We may introduce a combo box for choosing
-         * the downtime ID on GET or deny GET access.
-         */
+        $this->assertHttpMethod('POST');
         $this->handleCommandForm(new DeleteDowntimeCommandForm());
     }
 
