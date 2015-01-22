@@ -79,7 +79,7 @@ abstract class MonitoredObjectController extends Controller
                 ->handleRequest();
             $this->view->delCommentForm = $delCommentForm;
         }
-        if (count($this->object->downtimes > 0)) {
+        if (count($this->object->downtimes > 0) && $auth->hasPermission('monitoring/command/downtime/delete')) {
             $delDowntimeForm = new DeleteDowntimeCommandForm();
             $delDowntimeForm
                 ->setObjects($this->object)

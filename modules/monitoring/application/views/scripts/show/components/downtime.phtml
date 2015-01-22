@@ -33,9 +33,6 @@ foreach ($object->downtimes as $downtime) {
         $this->escape($downtime->comment)
     ) : $this->escape($downtime->comment);
 
-    $form = clone $delDowntimeForm;
-    $form->populate(array('downtime_id' => $downtime->id));
-
     if ((bool) $downtime->is_in_effect) {
         $state = 'in downtime since ' . $this->timeSince($downtime->start);
     } else {
@@ -54,7 +51,12 @@ foreach ($object->downtimes as $downtime) {
             <table>
                 <tr>
                     <td style="vertical-align: top;" data-base-target="_self">
-                        <?= $form ?> <?= $state ?>
+                        <?php if (isset($delDowntimeForm)) { // Form is unset if the current user lacks the respective permission
+                            $form = clone $delDowntimeForm;
+                            $form->populate(array('downtime_id' => $downtime->id));
+                            echo $form;
+                        } ?>
+                        <?= $state ?>
                     </td>
                     <td style="padding-left: .5em;">
                         <?= str_replace(array('\r\n', '\n'), '<br>', $text) ?>
