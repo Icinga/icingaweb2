@@ -50,21 +50,13 @@
         </td>
         <td>
         <?php if ($comment->objecttype === 'service'): ?>
-          <?= $this->icon('conf'); ?> <a href="<?= $this->href('monitoring/service/show', array(
-            'host'    => $comment->host,
-            'service' => $comment->service,
-          )); ?>">
-            <?= $comment->service; ?>
-          </a>
-          <small>
-            <?= $this->translate('on') . ' ' . $comment->host; ?>
-          </small>
+          <?= $this->icon('service') ?>
+          <?= $this->link()->service(
+              $comment->service, $comment->service_display_name, $comment->host, $comment->host_display_name
+          ) ?>
         <?php else: ?>
-          <?= $this->icon('host'); ?> <a href="<?= $this->href('monitoring/host/show', array(
-            'host' => $comment->host
-          )); ?>">
-            <?= $comment->host; ?>
-          </a>
+          <?= $this->icon('host') ?>
+          <?= $this->link()->host($comment->host, $comment->host_display_name) ?>
         <?php endif ?>
           <br>
           <?= $this->icon('comment'); ?> <?= isset($comment->author)

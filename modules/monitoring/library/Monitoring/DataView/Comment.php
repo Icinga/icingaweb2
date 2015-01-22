@@ -29,6 +29,8 @@ class Comment extends DataView
             'comment_service',
             'host',
             'service',
+            'host_display_name',
+            'service_display_name'
         );
     }
 
@@ -43,13 +45,20 @@ class Comment extends DataView
             'comment_timestamp' => array(
                 'order' => self::SORT_DESC
             ),
-            'comment_host' => array(
+            'host_display_name' => array(
                 'columns' => array(
-                    'comment_host',
-                    'comment_service'
+                    'host_display_name',
+                    'service_display_name'
                 ),
                 'order' => self::SORT_ASC
             ),
+            'service_display_name' => array(
+                'columns' => array(
+                    'service_display_name',
+                    'host_display_name'
+                ),
+                'order' => self::SORT_ASC
+            )
         );
     }
 }

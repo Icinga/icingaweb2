@@ -408,7 +408,9 @@ abstract class MonitoredObject
         $eventHistory = $this->backend->select()->from('eventHistory', array(
                 'object_type',
                 'host_name',
+                'host_display_name',
                 'service_description',
+                'service_display_name',
                 'timestamp',
                 'state',
                 'attempt',
