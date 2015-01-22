@@ -18,9 +18,10 @@ $isService = $object->getType() === $object::TYPE_SERVICE;
             <?= $this->prefixedTimeSince($object->host_last_state_change, true) ?>
         </td>
         <td>
-            <b><?= $this->escape($object->host_name) ?></b>
+            <b><?= $this->escape($object->host_display_name) ?></b>
             <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
-            <br><?= $this->escape($object->host_address) ?>
+            <br>
+            <?= $this->escape($object->host_address) ?>
             <?php endif ?>
         </td>
     </tr>
