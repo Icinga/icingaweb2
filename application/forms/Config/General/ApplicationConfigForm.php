@@ -4,10 +4,8 @@
 
 namespace Icinga\Forms\Config\General;
 
-use DateTimeZone;
 use Icinga\Application\Icinga;
 use Icinga\Data\ResourceFactory;
-use Icinga\Util\Translator;
 use Icinga\Web\Form;
 
 
@@ -46,7 +44,7 @@ class ApplicationConfigForm extends Form
 
         $this->addElement(
             'select',
-            'preferences_type',
+            'preferences_store',
             array(
                 'required'      => true,
                 'autosubmit'    => true,
@@ -54,11 +52,11 @@ class ApplicationConfigForm extends Form
                 'multiOptions'  => array(
                     'ini'   => $this->translate('File System (INI Files)'),
                     'db'    => $this->translate('Database'),
-                    'null'  => $this->translate('Don\'t Store Preferences')
+                    'none'  => $this->translate('Don\'t Store Preferences')
                 )
             )
         );
-        if (isset($formData['preferences_type']) && $formData['preferences_type'] === 'db') {
+        if (isset($formData['preferences_store']) && $formData['preferences_store'] === 'db') {
             $backends = array();
             foreach (ResourceFactory::getResourceConfigs()->toArray() as $name => $resource) {
                 if ($resource['type'] === 'db') {
