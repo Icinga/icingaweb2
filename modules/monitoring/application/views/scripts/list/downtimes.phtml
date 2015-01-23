@@ -114,6 +114,7 @@ use Icinga\Module\Monitoring\Object\Service;
         <?php endif ?>
           </small>
         </td>
+        <?php if (isset($delDowntimeForm)): // Form is unset if the current user lacks the respective permission ?>
         <td style="width: 2em" data-base-target="self">
           <?php
           $delDowntimeForm = clone $delDowntimeForm;
@@ -126,6 +127,7 @@ use Icinga\Module\Monitoring\Object\Service;
           echo $delDowntimeForm;
           ?>
         </td>
+        <?php endif ?>
       </tr>
 <?php endforeach ?>
     </tbody>

@@ -306,7 +306,10 @@ class Monitoring_ListController extends Controller
         ));
 
         $this->view->downtimes = $query->paginate();
-        $this->view->delDowntimeForm = new DeleteDowntimeCommandForm();
+
+        if ($this->Auth()->hasPermission('monitoring/command/downtime/delete')) {
+            $this->view->delDowntimeForm = new DeleteDowntimeCommandForm();
+        }
     }
 
     /**
