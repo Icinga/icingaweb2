@@ -80,7 +80,7 @@
        <?php endif ?>
         <td class="groupname">
           <a href="<?= $this->href('monitoring/list/services', array('servicegroup' => $s->servicegroup)); ?>">
-            <?= $s->servicegroup; ?>
+            <?= $this->translate($s->servicegroup) ?>
           </a>
         </td>
         <td class="total">
