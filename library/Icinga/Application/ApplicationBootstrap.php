@@ -401,7 +401,7 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Load the setup module if Icinga Web 2 requires setup
+     * Load the setup module if Icinga Web 2 requires setup or the setup token exists
      *
      * @return $this
      */
@@ -409,6 +409,9 @@ abstract class ApplicationBootstrap
     {
         if (! @file_exists($this->config->resolvePath('config.ini'))) {
             $this->requiresSetup = true;
+            $this->moduleManager->loadModule('setup');
+        } elseif ($this->setupTokenExists()) {
+            // Load setup module but do not require setup
             $this->moduleManager->loadModule('setup');
         }
         return $this;
