@@ -84,10 +84,12 @@ class HoststatusQuery extends IdoQuery
             END'
         ),
         'hostgroups' => array(
-            'hostgroup'     => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup_alias'   => 'hg.alias'
         ),
         'servicegroups' => array(
-            'servicegroup'  => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_alias'    => 'sg.alias'
         ),
         'contactgroups' => array(
             'contactgroup'  => 'contactgroup',
