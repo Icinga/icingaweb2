@@ -50,9 +50,9 @@ if ($object->getType() === $object::TYPE_HOST) {
 <tr>
     <th><?= $this->translate('Check attempts') ?></th>
     <?php if ($stateType === 0): ?>
-        <td><?= $checkAttempts ?> <?= $this->translate('(soft state)') ?></td>
+        <td><?= $checkAttempts ?> (<?= $this->translate('soft state') ?>)</td>
     <?php else: ?>
-        <td><?= $checkAttempts ?> <?= $this->translate('(hard state)') ?></td>
+        <td><?= $checkAttempts ?> (<?= $this->translate('hard state') ?>)</td>
     <?php endif; ?>
 </tr>
 <?php if ($object->check_execution_time): ?>
