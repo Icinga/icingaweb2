@@ -70,7 +70,7 @@ class PreferencesPage extends Form
 
         $this->addElement(
             'select',
-            'type',
+            'store',
             array(
                 'required'      => true,
                 'label'         => $this->translate('User Preference Storage Type'),

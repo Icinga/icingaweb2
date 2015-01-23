@@ -26,7 +26,7 @@ use Icinga\Data\Db\DbConnection;
  * // Create a INI store
  * $store = PreferencesStore::create(
  *     new ConfigObject(
- *         'type'        => 'ini',
+ *         'store'       => 'ini',
  *         'config_path' => '/path/to/preferences'
  *     ),
  *     $user // Instance of \Icinga\User
@@ -117,9 +117,9 @@ abstract class PreferencesStore
      */
     public static function create(ConfigObject $config, User $user)
     {
-        if (($type = $config->type) === null) {
+        if (($type = $config->store) === null) {
             throw new ConfigurationError(
-                'Preferences configuration is missing the type directive'
+                'Preferences configuration is missing the store directive'
             );
         }
 

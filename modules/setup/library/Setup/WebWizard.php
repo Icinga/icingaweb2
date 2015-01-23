@@ -293,7 +293,7 @@ class WebWizard extends Wizard implements SetupWizard
         $setup->addStep(
             new GeneralConfigStep(array(
                 'generalConfig'         => $pageData['setup_general_config'],
-                'preferencesType'       => $pageData['setup_preferences_type']['type'],
+                'preferencesStore'       => $pageData['setup_preferences_type']['store'],
                 'preferencesResource'   => isset($pageData['setup_db_resource']['name'])
                     ? $pageData['setup_db_resource']['name']
                     : null

@@ -29,7 +29,7 @@ class GeneralConfigStep extends Step
             $config[$section][$property] = $value;
         }
 
-        $config['preferences']['type'] = $this->data['preferencesType'];
+        $config['preferences']['store'] = $this->data['preferencesStore'];
         if (isset($this->data['preferencesResource'])) {
             $config['preferences']['resource'] = $this->data['preferencesResource'];
         }
@@ -58,11 +58,11 @@ class GeneralConfigStep extends Step
         $generalHtml = ''
             . '<ul>'
             . '<li>' . sprintf(
-                $this->data['preferencesType'] === 'ini' ? sprintf(
+                $this->data['preferencesStore'] === 'ini' ? sprintf(
                     t('Preferences will be stored per user account in INI files at: %s'),
                     Config::resolvePath('preferences')
                 ) : (
-                    $this->data['preferencesType'] === 'db' ? t('Preferences will be stored using a database.') : (
+                    $this->data['preferencesStore'] === 'db' ? t('Preferences will be stored using a database.') : (
                         t('Preferences will not be persisted across browser sessions.')
                     )
                 )
