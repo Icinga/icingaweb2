@@ -34,7 +34,7 @@
 
 foreach ($object->comments as $comment) {
     // Ticket hook sample
-    $text = $this->tickets ? preg_replace_callback(
+    $commentText = $this->tickets ? preg_replace_callback(
         $this->tickets->getPattern(),
         array($this->tickets, 'createLink'),
         $this->escape($comment->comment)
@@ -56,11 +56,11 @@ foreach ($object->comments as $comment) {
                         (<?= ucfirst($comment->type) ?>):
                     </td>
                     <td style="padding-left: .5em;">
-                        <?= str_replace(array('\r\n', '\n'), '<br>', $text) ?>
+                        <?= nl2br($commentText) ?>
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
 
-<?php }  // endforeach ?>
+<?php } // endforeach ?>

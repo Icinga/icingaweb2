@@ -34,7 +34,7 @@
 
 foreach ($object->downtimes as $downtime) {
     // Ticket hook sample
-    $text = $this->tickets ? preg_replace_callback(
+    $commentText = $this->tickets ? preg_replace_callback(
         $this->tickets->getPattern(),
         array($this->tickets, 'createLink'),
         $this->escape($downtime->comment)
@@ -66,7 +66,7 @@ foreach ($object->downtimes as $downtime) {
                         <?= $state ?>
                     </td>
                     <td style="padding-left: .5em;">
-                        <?= str_replace(array('\r\n', '\n'), '<br>', $text) ?>
+                        <?= nl2br($commentText) ?>
                     </td>
                 </tr>
             </table>
