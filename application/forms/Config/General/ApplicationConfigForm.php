@@ -48,13 +48,13 @@ class ApplicationConfigForm extends Form
             'select',
             'preferences_type',
             array(
-                'allowEmpty'    => true,
+                'required'      => true,
                 'autosubmit'    => true,
                 'label'         => $this->translate('User Preference Storage Type'),
                 'multiOptions'  => array(
                     'ini'   => $this->translate('File System (INI Files)'),
                     'db'    => $this->translate('Database'),
-                    ''      => $this->translate('Don\'t Store Preferences')
+                    'null'  => $this->translate('Don\'t Store Preferences')
                 )
             )
         );

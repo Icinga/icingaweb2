@@ -66,13 +66,13 @@ class PreferencesPage extends Form
         if (Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
             $storageTypes['db'] = $this->translate('Database');
         }
-        $storageTypes[''] = $this->translate('Don\'t Store Preferences');
+        $storageTypes['null'] = $this->translate('Don\'t Store Preferences');
 
         $this->addElement(
             'select',
             'type',
             array(
-                'allowEmpty'    => true,
+                'required'      => true,
                 'label'         => $this->translate('User Preference Storage Type'),
                 'multiOptions'  => $storageTypes
             )
