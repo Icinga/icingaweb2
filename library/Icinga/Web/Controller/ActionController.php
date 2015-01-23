@@ -5,7 +5,7 @@
 namespace Icinga\Web\Controller;
 
 use Exception;
-use Icinga\Authentication\Manager as AuthManager;
+use Icinga\Authentication\Manager;
 use Icinga\Application\Benchmark;
 use Icinga\Application\Config;
 use Icinga\Exception\IcingaException;
@@ -47,6 +47,11 @@ class ActionController extends Zend_Controller_Action
 
     private $xhrLayout = 'inline';
 
+    /**
+     * Authentication manager
+     *
+     * @type \Icinga\Authentication\Manager|null
+     */
     private $auth;
 
     protected $params;
@@ -101,6 +106,49 @@ class ActionController extends Zend_Controller_Action
     {
     }
 
+
+    /**
+     * Get the authentication manager
+     *
+     * @return Manager
+     */
+    public function Auth()
+    {
+        if ($this->auth === null) {
+            $this->auth = Manager::getInstance();
+        }
+        return $this->auth;
+    }
+
+    /**
+     * Whether the current user has the given permission
+     *
+     * @param   string  $permission Name of the permission
+     *
+     * @return  bool
+     */
+    public function hasPermission($permission)
+    {
+        return $this->Auth()->hasPermission($permission);
+    }
+
+    /**
+     * Throw an exception if user lacks the given permission
+     *
+     * @param  string  $name Permission name
+     * @throws Exception
+     */
+    public function assertPermission($name)
+    {
+        if (! $this->Auth()->hasPermission($name)) {
+            // TODO: Shall this be an Auth Exception? Or a 404?
+            throw new IcingaException(
+                'Auth error, no permission for "%s"',
+                $name
+            );
+        }
+    }
+
     public function Config($file = null)
     {
         if ($file === null) {
@@ -108,14 +156,6 @@ class ActionController extends Zend_Controller_Action
         } else {
             return Config::app($file);
         }
-    }
-
-    public function Auth()
-    {
-        if ($this->auth === null) {
-            $this->auth = AuthManager::getInstance();
-        }
-        return $this->auth;
     }
 
     public function Window()
@@ -171,34 +211,6 @@ class ActionController extends Zend_Controller_Action
     public function getRestrictions($name)
     {
         return $this->Auth()->getRestrictions($name);
-    }
-
-    /**
-     * Whether the user currently authenticated has the given permission
-     *
-     * @param  string  $name Permission name
-     * @return bool
-     */
-    public function hasPermission($name)
-    {
-        return $this->Auth()->hasPermission($name);
-    }
-
-    /**
-     * Throws an exception if user lacks the given permission
-     *
-     * @param  string  $name Permission name
-     * @throws Exception
-     */
-    public function assertPermission($name)
-    {
-        if (! $this->Auth()->hasPermission($name)) {
-            // TODO: Shall this be an Auth Exception? Or a 404?
-            throw new IcingaException(
-                'Auth error, no permission for "%s"',
-                $name
-            );
-        }
     }
 
     /**
