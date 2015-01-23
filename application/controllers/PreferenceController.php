@@ -7,7 +7,6 @@ use Icinga\Web\Url;
 use Icinga\Web\Widget\Tab;
 use Icinga\Application\Config;
 use Icinga\Forms\PreferenceForm;
-use Icinga\Exception\ConfigurationError;
 use Icinga\User\Preferences\PreferencesStore;
 
 /**
@@ -40,9 +39,6 @@ class PreferenceController extends BasePreferenceController
     public function indexAction()
     {
         $storeConfig = Config::app()->getSection('preferences');
-        if ($storeConfig->isEmpty()) {
-            throw new ConfigurationError(t('You need to configure how to store preferences first.'));
-        }
 
         $user = $this->getRequest()->getUser();
         $form = new PreferenceForm();

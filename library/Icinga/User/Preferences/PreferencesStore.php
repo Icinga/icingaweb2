@@ -117,13 +117,7 @@ abstract class PreferencesStore
      */
     public static function create(ConfigObject $config, User $user)
     {
-        if (($type = $config->store) === null) {
-            throw new ConfigurationError(
-                'Preferences configuration is missing the store directive'
-            );
-        }
-
-        $type = ucfirst(strtolower($type));
+        $type = ucfirst(strtolower($config->get('store', 'ini')));
         $storeClass = 'Icinga\\User\\Preferences\\Store\\' . $type . 'Store';
         if (!class_exists($storeClass)) {
             throw new ConfigurationError(
