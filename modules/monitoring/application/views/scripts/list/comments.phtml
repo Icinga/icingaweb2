@@ -75,6 +75,7 @@
               date('H:i', $comment->expiration)
             ) : $this->translate('This comment does not expire.'); ?>
         </td>
+        <?php if (isset($delCommentForm)): // Form is unset if the current user lacks the respective permission ?>
         <td style="width: 2em" data-base-target="self">
           <?php
           $delCommentForm = clone $delCommentForm;
@@ -87,6 +88,7 @@
           echo $delCommentForm;
           ?>
         </td>
+        <?php endif ?>
       </tr>
 <?php endforeach ?>
     </tbody>

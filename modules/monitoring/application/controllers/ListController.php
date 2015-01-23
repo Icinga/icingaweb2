@@ -484,7 +484,10 @@ class Monitoring_ListController extends Controller
                 'comment_expiration'    => $this->translate('Expiration')
             )
         );
-        $this->view->delCommentForm = new DeleteCommentCommandForm();
+
+        if ($this->Auth()->hasPermission('monitoring/command/comment/delete')) {
+            $this->view->delCommentForm = new DeleteCommentCommandForm();
+        }
     }
 
     public function servicegroupsAction()
