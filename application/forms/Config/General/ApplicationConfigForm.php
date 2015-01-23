@@ -52,7 +52,7 @@ class ApplicationConfigForm extends Form
                 'multiOptions'  => array(
                     'ini'   => $this->translate('File System (INI Files)'),
                     'db'    => $this->translate('Database'),
-                    'null'  => $this->translate('Don\'t Store Preferences')
+                    'none'  => $this->translate('Don\'t Store Preferences')
                 )
             )
         );
