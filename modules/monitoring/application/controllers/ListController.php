@@ -523,18 +523,20 @@ class Monitoring_ListController extends Controller
             'services_critical_last_state_change_unhandled',
             'services_unknown_last_state_change_unhandled',
             'services_total'
-        ));
+        ))->order('services_severity')->order('servicegroup_alias');
+        // TODO(el): Can't default to the sort rules of the data view because it's meant for both host groups and
+        // service groups. We should separate them.
         $this->filterQuery($query);
         $this->view->servicegroups = $query->paginate();
         $this->setupSortControl(array(
-            'services_severity' => $this->translate('Severity'),
-            'servicegroup'      => $this->translate('Service Group Name'),
-            'services_total'    => $this->translate('Total Services'),
-            'services_ok'       => $this->translate('Services OK'),
-            'services_unknown'  => $this->translate('Services UNKNOWN'),
-            'services_critical' => $this->translate('Services CRITICAL'),
-            'services_warning'  => $this->translate('Services WARNING'),
-            'services_pending'  => $this->translate('Services PENDING')
+            'services_severity'     => $this->translate('Severity'),
+            'servicegroup_alias'    => $this->translate('Service Group Name'),
+            'services_total'        => $this->translate('Total Services'),
+            'services_ok'           => $this->translate('Services OK'),
+            'services_unknown'      => $this->translate('Services UNKNOWN'),
+            'services_critical'     => $this->translate('Services CRITICAL'),
+            'services_warning'      => $this->translate('Services WARNING'),
+            'services_pending'      => $this->translate('Services PENDING')
         ));
     }
 
@@ -571,12 +573,14 @@ class Monitoring_ListController extends Controller
             'services_critical_last_state_change_unhandled',
             'services_unknown_last_state_change_unhandled',
             'services_total'
-        ));
+        ))->order('services_severity')->order('hostgroup_alias');
+        // TODO(el): Can't default to the sort rules of the data view because it's meant for both host groups and
+        // service groups. We should separate them.
         $this->filterQuery($query);
         $this->view->hostgroups = $query->paginate();
         $this->setupSortControl(array(
             'services_severity' => $this->translate('Severity'),
-            'hostgroup'         => $this->translate('Host Group Name'),
+            'hostgroup_alias'   => $this->translate('Host Group Name'),
             'services_total'    => $this->translate('Total Services'),
             'services_ok'       => $this->translate('Services OK'),
             'services_unknown'  => $this->translate('Services UNKNOWN'),
