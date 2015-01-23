@@ -1,6 +1,4 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
 /** @type $this \Icinga\Application\Modules\Module */
 
@@ -47,6 +45,14 @@ $this->providePermission(
 $this->providePermission(
     'monitoring/command/process-check-result',
     $this->translate('Allow processing host and service check results')
+);
+$this->providePermission(
+    'monitoring/command/feature/program',
+    $this->translate('Allow processing commands for toggling features on a program-wide basis')
+);
+$this->providePermission(
+    'monitoring/command/feature/object',
+    $this->translate('Allow processing commands for toggling features on host and service objects')
 );
 
 $this->provideRestriction(
