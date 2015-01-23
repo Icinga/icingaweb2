@@ -3,7 +3,7 @@
     <td>
         <?php
 
-        /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+        /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
 
         if ($object->getType() === $object::TYPE_HOST) {
             $scheduleDowntimeLink = $this->href(
@@ -16,10 +16,17 @@
                 array('host' => $object->getHost()->getName(), 'service' => $object->getName())
             );
         }
+
         ?>
+
+        <?php if ($this->hasPermission('monitoring/command/downtime/schedule')): ?>
         <a href="<?= $scheduleDowntimeLink ?>">
-            <?= $this->icon('plug') ?> <?= $this->translate('Schedule downtime') ?>
+            <?= $this->icon('plug') ?>
+            <?= $this->translate('Schedule downtime') ?>
         </a>
+        <?php else: ?>
+        <?= '&#45;' ?>
+        <?php endif ?>
     </td>
 </tr>
 
@@ -52,9 +59,9 @@ foreach ($object->downtimes as $downtime) {
                 <tr>
                     <td style="vertical-align: top;" data-base-target="_self">
                         <?php if (isset($delDowntimeForm)) { // Form is unset if the current user lacks the respective permission
-                            $form = clone $delDowntimeForm;
-                            $form->populate(array('downtime_id' => $downtime->id));
-                            echo $form;
+                            $delDowntimeForm = clone $delDowntimeForm;
+                            $delDowntimeForm->populate(array('downtime_id' => $downtime->id));
+                            echo $delDowntimeForm;
                         } ?>
                         <?= $state ?>
                     </td>
@@ -66,4 +73,4 @@ foreach ($object->downtimes as $downtime) {
         </td>
     </tr>
 
-<?php }  // endforeach ?>
+<?php } // endforeach ?>
