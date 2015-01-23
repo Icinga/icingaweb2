@@ -43,7 +43,9 @@ class PreferenceController extends BasePreferenceController
         $user = $this->getRequest()->getUser();
         $form = new PreferenceForm();
         $form->setPreferences($user->getPreferences());
-        $form->setStore(PreferencesStore::create($storeConfig, $user));
+        if ($storeConfig->get('store', 'ini') !== 'none') {
+            $form->setStore(PreferencesStore::create($storeConfig, $user));
+        }
         $form->handleRequest();
 
         $this->view->form = $form;

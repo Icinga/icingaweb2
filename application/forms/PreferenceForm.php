@@ -86,7 +86,7 @@ class PreferenceForm extends Form
      */
     public function onSuccess()
     {
-        $this->preferences = new Preferences($this->store->load());
+        $this->preferences = new Preferences($this->store ? $this->store->load() : array());
 
         $webPreferences = $this->preferences->get('icingaweb', array());
         foreach ($this->getValues() as $key => $value) {
@@ -103,7 +103,7 @@ class PreferenceForm extends Form
         Session::getSession()->user->setPreferences($this->preferences);
 
         try {
-            if ($this->getElement('btn_submit_preferences')->isChecked()) {
+            if ($this->store && $this->getElement('btn_submit_preferences')->isChecked()) {
                 $this->save();
                 Notification::success($this->translate('Preferences successfully saved'));
             } else {
@@ -186,18 +186,20 @@ class PreferenceForm extends Form
             )
         );
 
-        $this->addElement(
-            'submit',
-            'btn_submit_preferences',
-            array(
-                'ignore'        => true,
-                'label'         => $this->translate('Save to the Preferences'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'div'))
+        if ($this->store) {
+            $this->addElement(
+                'submit',
+                'btn_submit_preferences',
+                array(
+                    'ignore'        => true,
+                    'label'         => $this->translate('Save to the Preferences'),
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array('HtmlTag', array('tag' => 'div'))
+                    )
                 )
-            )
-        );
+            );
+        }
 
         $this->addElement(
             'submit',
