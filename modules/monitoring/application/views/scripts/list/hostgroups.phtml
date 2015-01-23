@@ -80,7 +80,7 @@
        <?php endif ?>
         <td class="groupname">
           <a href="<?= $this->href('monitoring/list/hosts', array('hostgroup' => $h->hostgroup)); ?>">
-            <?= $h->hostgroup; ?>
+            <?= $this->escape($h->hostgroup) ?>
           </a>
         </td>
         <td class="total">
