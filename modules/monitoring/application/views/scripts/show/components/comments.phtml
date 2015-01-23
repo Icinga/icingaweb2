@@ -3,7 +3,7 @@
     <td>
         <?php
 
-        /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+        /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
 
         if ($object->getType() === $object::TYPE_HOST) {
             $addCommentLink = $this->href(
@@ -18,9 +18,15 @@
         }
 
         ?>
+
+        <?php if ($this->hasPermission('monitoring/command/comment/add')): ?>
         <a href="<?= $addCommentLink ?>">
-            <?= $this->icon('comment') ?> <?= $this->translate('Add comment') ?>
+            <?= $this->icon('comment') ?>
+            <?= $this->translate('Add comment') ?>
         </a>
+        <?php else: ?>
+        <?= '&#45;' ?>
+        <?php endif ?>
     </td>
 </tr>
 
@@ -43,9 +49,9 @@ foreach ($object->comments as $comment) {
                 <tr>
                     <td style="vertical-align: top;" data-base-target="_self">
                         <?php if (isset($delCommentForm)) { // Form is unset if the current user lacks the respective permission
-                            $form = clone $delCommentForm;
-                            $form->populate(array('comment_id' => $comment->id));
-                            echo $form;
+                            $delCommentForm = clone $delCommentForm;
+                            $delCommentForm->populate(array('comment_id' => $comment->id));
+                            echo $delCommentForm;
                         } ?>
                         (<?= ucfirst($comment->type) ?>):
                     </td>
