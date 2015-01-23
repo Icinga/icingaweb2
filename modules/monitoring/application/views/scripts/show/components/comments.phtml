@@ -1,32 +1,27 @@
 <tr>
     <th><?= $this->translate('Comments') ?></th>
     <td>
-        <?php
-
-        /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
-
-        if ($object->getType() === $object::TYPE_HOST) {
-            $addCommentLink = $this->href(
-                'monitoring/host/add-comment',
-                array('host' => $object->getName())
-            );
-        } else {
-            $addCommentLink = $this->href(
-                'monitoring/service/add-comment',
-                array('host' => $object->getHost()->getName(), 'service' => $object->getName())
-            );
-        }
-
+        <?php if ($this->hasPermission('monitoring/command/comment/add')) {
+            /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+            if ($object->getType() === $object::TYPE_HOST) {
+                $addCommentLink = $this->href(
+                    'monitoring/host/add-comment',
+                    array('host' => $object->getName())
+                );
+            } else {
+                $addCommentLink = $this->href(
+                    'monitoring/service/add-comment',
+                    array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+                );
+            }
         ?>
-
-        <?php if ($this->hasPermission('monitoring/command/comment/add')): ?>
         <a href="<?= $addCommentLink ?>">
             <?= $this->icon('comment') ?>
             <?= $this->translate('Add comment') ?>
         </a>
-        <?php else: ?>
-        <?= '&#45;' ?>
-        <?php endif ?>
+        <?php } else {
+            echo '&#45;';
+        } ?>
     </td>
 </tr>
 

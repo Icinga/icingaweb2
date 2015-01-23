@@ -1,32 +1,27 @@
 <tr>
     <th><?= $this->translate('Downtimes') ?></th>
     <td>
-        <?php
-
-        /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
-
-        if ($object->getType() === $object::TYPE_HOST) {
-            $scheduleDowntimeLink = $this->href(
-                'monitoring/host/schedule-downtime',
-                array('host' => $object->getName())
-            );
-        } else {
-            $scheduleDowntimeLink = $this->href(
-                'monitoring/service/schedule-downtime',
-                array('host' => $object->getHost()->getName(), 'service' => $object->getName())
-            );
-        }
-
+        <?php if ($this->hasPermission('monitoring/command/downtime/schedule')) {
+            /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+            if ($object->getType() === $object::TYPE_HOST) {
+                $scheduleDowntimeLink = $this->href(
+                    'monitoring/host/schedule-downtime',
+                    array('host' => $object->getName())
+                );
+            } else {
+                $scheduleDowntimeLink = $this->href(
+                    'monitoring/service/schedule-downtime',
+                    array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+                );
+            }
         ?>
-
-        <?php if ($this->hasPermission('monitoring/command/downtime/schedule')): ?>
         <a href="<?= $scheduleDowntimeLink ?>">
             <?= $this->icon('plug') ?>
             <?= $this->translate('Schedule downtime') ?>
         </a>
-        <?php else: ?>
-        <?= '&#45;' ?>
-        <?php endif ?>
+        <?php } else {
+            echo '&#45;';
+        } ?>
     </td>
 </tr>
 
