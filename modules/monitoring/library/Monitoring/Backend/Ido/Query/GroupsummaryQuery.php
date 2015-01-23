@@ -57,17 +57,14 @@ class GroupSummaryQuery extends IdoQuery
             'host_state'
         );
 
-        // Prepend group column since we'll use columns index 0 later for grouping
         if (in_array('servicegroup', $this->desiredColumns)) {
-            array_unshift($columns, 'servicegroup');
-        } else {
-            array_unshift($columns, 'hostgroup');
-        }
-        if (in_array('hostgroup_alias', $this->desiredColumns)) {
-            $columns[] = 'hostgroup_alias';
-        }
-        if (in_array('servicegroup_alias', $this->desiredColumns)) {
+            $columns[] = 'servicegroup';
             $columns[] = 'servicegroup_alias';
+            $groupColumns = array('servicegroup', 'servicegroup_alias');
+        } else {
+            $columns[] = 'hostgroup';
+            $columns[] = 'hostgroup_alias';
+            $groupColumns = array('hostgroup', 'hostgroup_alias');
         }
         $hosts = $this->createSubQuery(
             'Hoststatus',
@@ -83,6 +80,7 @@ class GroupSummaryQuery extends IdoQuery
             $hosts->group(array(
                 'sgo.name1',
                 'ho.object_id',
+                'sg.alias',
                 'state',
                 'acknowledged',
                 'in_downtime',
@@ -101,7 +99,7 @@ class GroupSummaryQuery extends IdoQuery
             )
         );
         $union = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);
-        $this->select->from(array('statussummary' => $union), array())->group(array($columns[0]));
+        $this->select->from(array('statussummary' => $union), array())->group($groupColumns);
         $this->joinedVirtualTables = array(
             'servicestatussummary'  => true,
             'hoststatussummary'     => true
