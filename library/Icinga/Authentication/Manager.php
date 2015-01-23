@@ -63,11 +63,10 @@ class Manager
             );
             $config = new Config();
         }
-        if ($config->hasSection('preferences')) {
-            $preferencesConfig = $config->getSection('preferences');
+        if ($config->get('preferences', 'type')) {
             try {
                 $preferencesStore = PreferencesStore::create(
-                    $preferencesConfig,
+                    $config->getSection('preferences'),
                     $user
                 );
                 $preferences = new Preferences($preferencesStore->load());
