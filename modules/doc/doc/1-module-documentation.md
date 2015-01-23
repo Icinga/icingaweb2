@@ -36,9 +36,17 @@ For linking between headings, place an anchor where you want to link to, e.g.:
 
     # <a id="heading"></a> Heading
 
+Please note that anchors have to be unique across all your Markdown documentation files.
+
 Now you can reference the anchor either in the same or **in another** Markdown documentation file, e.g.:
 
     This is a link to [Heading](#heading).
+
+Other tools support linking between headings by giving the filename plus the anchor to link to, e.g.:
+
+    This is a link to [About/Heading](1-about.md#heading.md)
+
+This syntax is also supported in Icinga Web 2.
 
 ## <a id="images"></a> Including Images
 

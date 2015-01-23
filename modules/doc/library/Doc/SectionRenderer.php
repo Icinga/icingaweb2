@@ -232,7 +232,7 @@ class SectionRenderer extends Renderer
                 $html
             );
             $content[] = preg_replace_callback(
-                '/<a\s+(?P<attribs>[^>]*?\s+)?href="#(?P<fragment>[^"]+)"/',
+                '/<a\s+(?P<attribs>[^>]*?\s+)?href="(?:(?!http:\/\/)[^#]*)#(?P<fragment>[^"]+)"/',
                 array($callback, 'render'),
                 $html
             );
