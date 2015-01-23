@@ -20,7 +20,8 @@ class GroupSummaryQuery extends IdoQuery
             'hosts_down_handled'            => 'SUM(CASE WHEN object_type = \'host\' AND state = 1 AND acknowledged + in_downtime != 0 THEN 1 ELSE 0 END)',
             'hosts_down_unhandled'          => 'SUM(CASE WHEN object_type = \'host\' AND state = 1 AND acknowledged + in_downtime = 0 THEN 1 ELSE 0 END)',
             'hosts_pending'                 => 'SUM(CASE WHEN object_type = \'host\' AND state = 99 THEN 1 ELSE 0 END)',
-            'hostgroup'                     => 'hostgroup'
+            'hostgroup'                     => 'hostgroup',
+            'hostgroup_alias'               => 'hostgroup_alias'
         ),
         'servicestatussummary' => array(
             'services_total'                                => 'SUM(CASE WHEN object_type = \'service\' THEN 1 ELSE 0 END)',
@@ -44,7 +45,8 @@ class GroupSummaryQuery extends IdoQuery
             'services_warning_last_state_change_unhandled'  => 'MAX(CASE WHEN object_type = \'service\' AND state = 1 AND acknowledged + in_downtime + host_state = 0 THEN state_change ELSE 0 END)',
             'services_critical_last_state_change_unhandled' => 'MAX(CASE WHEN object_type = \'service\' AND state = 2 AND acknowledged + in_downtime + host_state = 0 THEN state_change ELSE 0 END)',
             'services_unknown_last_state_change_unhandled'  => 'MAX(CASE WHEN object_type = \'service\' AND state = 3 AND acknowledged + in_downtime + host_state = 0 THEN state_change ELSE 0 END)',
-            'servicegroup'                                  => 'servicegroup'
+            'servicegroup'                                  => 'servicegroup',
+            'servicegroup_alias'                            => 'servicegroup_alias'
         )
     );
 
@@ -52,7 +54,7 @@ class GroupSummaryQuery extends IdoQuery
     {
         $columns = array(
             'object_type',
-            'host_state',
+            'host_state'
         );
 
         // Prepend group column since we'll use columns index 0 later for grouping
@@ -60,6 +62,12 @@ class GroupSummaryQuery extends IdoQuery
             array_unshift($columns, 'servicegroup');
         } else {
             array_unshift($columns, 'hostgroup');
+        }
+        if (in_array('hostgroup_alias', $this->desiredColumns)) {
+            $columns[] = 'hostgroup_alias';
+        }
+        if (in_array('servicegroup_alias', $this->desiredColumns)) {
+            $columns[] = 'servicegroup_alias';
         }
         $hosts = $this->createSubQuery(
             'Hoststatus',
