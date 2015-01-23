@@ -100,16 +100,8 @@ class GroupSummaryQuery extends IdoQuery
                 'severity'     => 'service_severity'
             )
         );
-
-        $groupColumn = 'hostgroup';
-
-        if (in_array('servicegroup', $this->desiredColumns)) {
-            $groupColumn = 'servicegroup';
-        }
-
         $union = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);
-        $this->select->from(array('statussummary' => $union), array())->group(array($groupColumn));
-
+        $this->select->from(array('statussummary' => $union), array())->group(array($columns[0]));
         $this->joinedVirtualTables = array(
             'servicestatussummary'  => true,
             'hoststatussummary'     => true
