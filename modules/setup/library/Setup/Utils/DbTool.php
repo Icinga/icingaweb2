@@ -641,7 +641,8 @@ EOD;
             foreach ($mysqlPrivileges as $privilege) {
                 if (false === empty($context) && $this->mysqlGrantContexts[$privilege] & static::TABLE_LEVEL) {
                     $tablePrivileges[] = $privilege;
-                } elseif ($this->mysqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
+                }
+                if ($this->mysqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
                     $dbPrivileges[] = $privilege;
                 }
             }
@@ -661,7 +662,11 @@ EOD;
             }
 
             $tablePrivilegesGranted = true;
-            if (false === empty($tablePrivileges)) {
+            if (
+                false === empty($tablePrivileges) && (
+                    !$dbPrivilegesGranted || array_intersect($dbPrivileges, $tablePrivileges) != $tablePrivileges
+                )
+            ) {
                 $tableCondition = 'table_name IN (' . join(',', array_map(array($this, 'quote'), $context)) . ')';
                 $query = $this->query(
                     'SELECT COUNT(*) as matches'
