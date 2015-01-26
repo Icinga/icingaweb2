@@ -24,7 +24,10 @@
         </h3>
 
         <div>
-            <a href="<?= $listAllLink ?>" title="<?= $this->translate('List all') ?>">
+            <a href="<?= $listAllLink ?>" title="<?php printf(
+                $this->translate('List all Hosts (%u)'),
+                count($objects)
+            ); ?>">
                 <?= $this->translate('List all') ?>
             </a>
         </div>
@@ -100,9 +103,19 @@
         <?php if (! empty($objectsInDowntime)): ?>
             <h2>
                 <a href="<?= $inDowntimeLink ?>"
-                   title="<?= $this->translate('Hosts in downtime') ?>">
+                   title="<?php printf(
+                        $this->translate('List all hosts in downtime (%u)'),
+                        count($objectsInDowntime)
+                    ); ?>">
                     <?= $this->icon('plug') ?>
-                    <?= $this->translate(sprintf('%u hosts are in downtime', count($objectsInDowntime))) ?>
+                    <?php printf(
+                        $this->translatePlural(
+                            '%u host is in downtime',
+                            '%u hosts are in downtime',
+                            count($objectsInDowntime)
+                        ),
+                        count($objectsInDowntime)
+                    ); ?>
                 </a>
             </h2>
         <?php endif ?>
@@ -110,7 +123,10 @@
         <?php if (count($objects->getComments())): ?>
             <h2>
                 <a href="<?= $havingCommentsLink ?>"
-                   title="<?= $this->translate('Comments') ?>">
+                   title="<?php printf(
+                        $this->translate('List all Comments (%u)'),
+                        count($objects->getComments())
+                    ); ?>">
                     <?= $this->icon('comment') ?>
                     <?= $this->translate(sprintf('%u comments', count($objects->getComments()))) ?>
                 </a>
