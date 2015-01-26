@@ -78,7 +78,9 @@ class Monitoring_AlertsummaryController extends Controller
             'notification',
             array(
                 'host',
+                'host_display_name',
                 'service',
+                'service_display_name',
                 'notification_output',
                 'notification_contact',
                 'notification_start_time',
@@ -506,7 +508,9 @@ class Monitoring_AlertsummaryController extends Controller
             'notification',
             array(
                 'host',
+                'host_display_name',
                 'service',
+                'service_display_name',
                 'notification_output',
                 'notification_contact',
                 'notification_start_time',
