@@ -22,7 +22,7 @@ Packager:       Icinga Team <info@icinga.org>
 %define php     php
 %define php_cli php-cli
 %endif
-%if 0%{rhel} == 6
+%if 0%{?rhel} == 6
 %define zend php-ZendFramework
 %else
 %define zend %{name}-vendor-Zend
