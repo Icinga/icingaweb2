@@ -27,7 +27,7 @@ class PreferencesPage extends Form
      */
     public function showDatabaseNote()
     {
-        $this->getElement('type')
+        $this->getElement('store')
             ->setValue('db')
             ->setDescription(
                 $this->translate(
