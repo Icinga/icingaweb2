@@ -36,6 +36,32 @@ class AuthenticationPage extends Form
                 )
             )
         );
+
+        if (isset($formData['type']) && $formData['type'] === 'autologin' && !isset($_SERVER['REMOTE_USER'])) {
+            $this->addElement(
+                'note',
+                'autologin_note',
+                array(
+                    'value'         => sprintf(
+                        $this->translate(
+                            'You\'re currently not authenticated using any of the web server\'s authentication '
+                            . 'mechanisms. Make sure you\'ll configure such either by using the %s or by setting'
+                            . ' it up manually, otherwise you\'ll not be able to log into Icinga Web 2 once the '
+                            . 'wizard is complete.'
+                        ),
+                        '<em title="icingacli help setup config webserver">IcingaCLI</em>'
+                    ),
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array(
+                            'HtmlTag',
+                            array('tag' => 'p', 'class' => 'icon-info info')
+                        )
+                    )
+                )
+            );
+        }
+
         $this->addElement(
             'note',
             'description',
@@ -61,6 +87,7 @@ class AuthenticationPage extends Form
             'type',
             array(
                 'required'      => true,
+                'autosubmit'    => true,
                 'label'         => $this->translate('Authentication Type'),
                 'description'   => $this->translate('The type of authentication to use when accessing Icinga Web 2'),
                 'multiOptions'  => $backendTypes
