@@ -100,9 +100,11 @@ if ($hosts->count() === 0) {
         <?= implode(' ', $icons) ?>
         <a href="<?= $hostLink  ?>"><?= $host->host_name ?></a>
         <?php if (isset($host->host_unhandled_services) && $host->host_unhandled_services > 0): ?>
-        <span title="<?=
-            $host->host_unhandled_services
-        ?> <?= $this->translate('Service Problems on Host') ?>"> (<?= $this->qlink(
+        <span title="<?php printf(
+          $this->translatePlural('%s Service Problem on Host "%s"', '%s Service Problems on Host "%s"', $host->host_unhandled_services),
+          $host->host_unhandled_services,
+          $host->host_name
+        ); ?>"> (<?= $this->qlink(
            sprintf(
                $this->translatePlural('%d unhandled service', '%d unhandled services', $host->host_unhandled_services),
                $host->host_unhandled_services),
