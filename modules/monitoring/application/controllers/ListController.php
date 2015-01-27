@@ -132,6 +132,8 @@ class Monitoring_ListController extends Controller
 
         $this->filterQuery($query);
 
+        $this->applyRestriction('monitoring/hosts/filter', $query);
+
         $this->setupSortControl(array(
             'host_severity'     => $this->translate('Severity'),
             'host_state'        => $this->translate('Current State'),
