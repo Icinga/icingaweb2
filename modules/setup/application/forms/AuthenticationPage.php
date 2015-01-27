@@ -45,11 +45,11 @@ class AuthenticationPage extends Form
                     'value'         => sprintf(
                         $this->translate(
                             'You\'re currently not authenticated using any of the web server\'s authentication '
-                            . 'mechanisms. Make sure you\'ll configure such either by using the %s or by setting'
-                            . ' it up manually, otherwise you\'ll not be able to log into Icinga Web 2 once the '
-                            . 'wizard is complete.'
+                            . 'mechanisms. Make sure you\'ll configure such either by using the %s once the '
+                            . 'wizard is complete or by setting it up manually, otherwise you\'ll not be able '
+                            . 'to log into Icinga Web 2.'
                         ),
-                        '<em title="icingacli help setup config webserver">IcingaCLI</em>'
+                        '<em title="icingacli help users">IcingaCLI</em>'
                     ),
                     'decorators'    => array(
                         'ViewHelper',
