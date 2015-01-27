@@ -55,7 +55,7 @@ class AuthenticationPage extends Form
                         'ViewHelper',
                         array(
                             'HtmlTag',
-                            array('tag' => 'p', 'class' => 'icon-info info')
+                            array('tag' => 'p', 'class' => 'icon-info info-box')
                         )
                     )
                 )
