@@ -5,8 +5,8 @@
 namespace Icinga\Module\Monitoring;
 
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filterable;
 use Icinga\File\Csv;
-use Icinga\Module\Monitoring\DataView\DataView;
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Url;
 
@@ -67,11 +67,11 @@ class Controller extends ModuleActionController
      * Apply a restriction on the given data view
      *
      * @param   string      $restriction    The name of restriction
-     * @param   DataView    $view           The view to restrict
+     * @param   Filterable  $filterable     The filterable to restrict
      *
-     * @return  DataView    $view
+     * @return  Filterable  The filterable
      */
-    protected function applyRestriction($restriction, DataView $view)
+    protected function applyRestriction($restriction, Filterable $view)
     {
         foreach ($this->getRestrictions($restriction) as $filter) {
             $view->applyFilter(Filter::fromQueryString($filter));
