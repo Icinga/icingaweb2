@@ -56,8 +56,13 @@ $this->providePermission(
 );
 
 $this->provideRestriction(
-    'monitoring/filter',
-    $this->translate('Restrict views to the hosts and services that match the filter')
+    'monitoring/hosts/filter',
+    $this->translate('Restrict hosts view to the hosts that match the filter')
+);
+
+$this->provideRestriction(
+    'monitoring/services/filter',
+    $this->translate('Restrict services view to the services that match the filter')
 );
 
 $this->provideConfigTab('backends', array(
