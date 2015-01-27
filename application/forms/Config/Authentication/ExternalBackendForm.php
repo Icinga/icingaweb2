@@ -8,16 +8,16 @@ use Zend_Validate_Callback;
 use Icinga\Web\Form;
 
 /**
- * Form class for adding/modifying autologin authentication backends
+ * Form class for adding/modifying authentication backends of type "external"
  */
-class AutologinBackendForm extends Form
+class ExternalBackendForm extends Form
 {
     /**
      * Initialize this form
      */
     public function init()
     {
-        $this->setName('form_config_authbackend_autologin');
+        $this->setName('form_config_authbackend_external');
     }
 
     /**
@@ -69,7 +69,7 @@ class AutologinBackendForm extends Form
             'backend',
             array(
                 'disabled'  => true,
-                'value'     => 'autologin'
+                'value'     => 'external'
             )
         );
 
@@ -79,7 +79,7 @@ class AutologinBackendForm extends Form
     /**
      * Validate the configuration by creating a backend and requesting the user count
      *
-     * Returns always true as autologin backends are just "passive" backends. (The webserver authenticates users.)
+     * Returns always true as backends of type "external" are just "passive" backends.
      *
      * @param   Form    $form   The form to fetch the configuration values from
      *

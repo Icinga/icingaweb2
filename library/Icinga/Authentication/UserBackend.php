@@ -5,7 +5,7 @@
 namespace Icinga\Authentication;
 
 use Countable;
-use Icinga\Authentication\Backend\AutoLoginBackend;
+use Icinga\Authentication\Backend\ExternalBackend;
 use Icinga\Authentication\Backend\DbUserBackend;
 use Icinga\Authentication\Backend\LdapUserBackend;
 use Icinga\Data\ConfigObject;
@@ -69,8 +69,8 @@ abstract class UserBackend implements Countable
             );
         }
         $backendType = strtolower($backendType);
-        if ($backendType === 'autologin') {
-            $backend = new AutoLoginBackend($backendConfig);
+        if ($backendType === 'external') {
+            $backend = new ExternalBackend($backendConfig);
             $backend->setName($name);
             return $backend;
         }

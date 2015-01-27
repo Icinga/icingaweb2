@@ -37,10 +37,10 @@ class AuthenticationPage extends Form
             )
         );
 
-        if (isset($formData['type']) && $formData['type'] === 'autologin' && !isset($_SERVER['REMOTE_USER'])) {
+        if (isset($formData['type']) && $formData['type'] === 'external' && !isset($_SERVER['REMOTE_USER'])) {
             $this->addElement(
                 'note',
-                'autologin_note',
+                'external_note',
                 array(
                     'value'         => sprintf(
                         $this->translate(
@@ -80,7 +80,7 @@ class AuthenticationPage extends Form
         if (Platform::extensionLoaded('ldap')) {
             $backendTypes['ldap'] = 'LDAP';
         }
-        $backendTypes['autologin'] = $this->translate('Autologin');
+        $backendTypes['external'] = $this->translate('External');
 
         $this->addElement(
             'select',

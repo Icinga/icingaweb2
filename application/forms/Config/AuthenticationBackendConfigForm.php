@@ -14,7 +14,7 @@ use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Forms\Config\Authentication\DbBackendForm;
 use Icinga\Forms\Config\Authentication\LdapBackendForm;
-use Icinga\Forms\Config\Authentication\AutologinBackendForm;
+use Icinga\Forms\Config\Authentication\ExternalBackendForm;
 
 class AuthenticationBackendConfigForm extends ConfigForm
 {
@@ -67,8 +67,8 @@ class AuthenticationBackendConfigForm extends ConfigForm
         } elseif ($type === 'ldap') {
             $form = new LdapBackendForm();
             $form->setResources(isset($this->resources['ldap']) ? $this->resources['ldap'] : array());
-        } elseif ($type === 'autologin') {
-            $form = new AutologinBackendForm();
+        } elseif ($type === 'external') {
+            $form = new ExternalBackendForm();
         } else {
             throw new InvalidArgumentException(sprintf($this->translate('Invalid backend type "%s" provided'), $type));
         }
@@ -251,14 +251,14 @@ class AuthenticationBackendConfigForm extends ConfigForm
             $configValues['name'] = $authBackend;
             $this->populate($configValues);
         } elseif (empty($this->resources)) {
-            $autologinBackends = array_filter(
+            $externalBackends = array_filter(
                 $this->config->toArray(),
                 function ($authBackendCfg) {
-                    return isset($authBackendCfg['backend']) && $authBackendCfg['backend'] === 'autologin';
+                    return isset($authBackendCfg['backend']) && $authBackendCfg['backend'] === 'external';
                 }
             );
 
-            if (false === empty($autologinBackends)) {
+            if (false === empty($externalBackends)) {
                 throw new ConfigurationError($this->translate('Could not find any resources for authentication'));
             }
         }
@@ -299,14 +299,14 @@ class AuthenticationBackendConfigForm extends ConfigForm
             $backendTypes['ldap'] = 'LDAP';
         }
 
-        $autologinBackends = array_filter(
+        $externalBackends = array_filter(
             $this->config->toArray(),
             function ($authBackendCfg) {
-                return isset($authBackendCfg['backend']) && $authBackendCfg['backend'] === 'autologin';
+                return isset($authBackendCfg['backend']) && $authBackendCfg['backend'] === 'external';
             }
         );
-        if ($backendType === 'autologin' || empty($autologinBackends)) {
-            $backendTypes['autologin'] = $this->translate('Autologin');
+        if ($backendType === 'external' || empty($externalBackends)) {
+            $backendTypes['external'] = $this->translate('External');
         }
 
         if ($backendType === null) {
