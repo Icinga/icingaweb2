@@ -407,7 +407,7 @@ abstract class ApplicationBootstrap
      */
     protected function loadSetupModuleIfNecessary()
     {
-        if (! @file_exists($this->config->resolvePath('config.ini'))) {
+        if (! @file_exists($this->config->resolvePath('authentication.ini'))) {
             $this->requiresSetup = true;
             $this->moduleManager->loadModule('setup');
         } elseif ($this->setupTokenExists()) {
