@@ -2,7 +2,6 @@
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Backend;
-use Icinga\Module\Monitoring\DataView\DataView;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Web\Url;
@@ -669,22 +668,6 @@ class Monitoring_ListController extends Controller
         }
         $this->handleFormatRequest($query);
         return $query;
-    }
-
-    /**
-     * Apply a restriction on the given data view
-     *
-     * @param   string      $restriction    The name of restriction
-     * @param   DataView    $view           The view to restrict
-     *
-     * @return  DataView    $view
-     */
-    protected function applyRestriction($restriction, DataView $view)
-    {
-        foreach ($this->getRestrictions($restriction) as $filter) {
-            $view->applyFilter(Filter::fromQueryString($filter));
-        }
-        return $view;
     }
 
     protected function extraColumns()
