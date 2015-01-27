@@ -217,7 +217,10 @@ class Monitoring_ListController extends Controller
             'max_check_attempts'    => 'service_max_check_attempts'
         ), $this->extraColumns());
         $query = $this->backend->select()->from('serviceStatus', $columns);
+
         $this->filterQuery($query);
+
+        $this->applyRestriction('monitoring/services/filter', $query);
 
         $this->setupSortControl(array(
             'service_severity'      => $this->translate('Service Severity'),
