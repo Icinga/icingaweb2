@@ -16,6 +16,15 @@
       '<a href="' . $this->href('setup') . '" title="' . $this->translate('Icinga Web 2 Setup-Wizard') . '">',
       '</a>'
     ); ?></p>
+    <?php elseif ($requiresExternalAuth): ?>
+    <p class="icon-info info-box"><?= sprintf(
+      $this->translate(
+        'You\'re currently not authenticated using any of the web server\'s authentication mechanisms.'
+          . ' Make sure you\'ll configure such either by using the %s or by setting it up manually,'
+          . ' otherwise you\'ll not be able to login.'
+      ),
+      '<em title="icingacli help users">IcingaCLI</em>'
+    ); ?></p>
     <?php endif ?>
     <h1><?= $this->translate('Welcome to Icinga Web 2'); ?></h1>
    <?php

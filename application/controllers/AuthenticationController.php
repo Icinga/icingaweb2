@@ -39,6 +39,7 @@ class AuthenticationController extends ActionController
             $this->redirectNow(Url::fromPath('setup'));
         }
 
+        $triedOnlyExternalAuth = null;
         $auth = $this->Auth();
         $this->view->form = $form = new LoginForm();
         $this->view->title = $this->translate('Icingaweb Login');
@@ -126,6 +127,7 @@ class AuthenticationController extends ActionController
             } elseif ($request->isGet()) {
                 $user = new User('');
                 foreach ($chain as $backend) {
+                    $triedOnlyExternalAuth = $triedOnlyExternalAuth === null;
                     if ($backend instanceof ExternalBackend) {
                         $authenticated  = $backend->authenticate($user);
                         if ($authenticated === true) {
@@ -134,6 +136,8 @@ class AuthenticationController extends ActionController
                                 Url::fromPath(Url::fromRequest()->getParam('redirect', 'dashboard'))
                             );
                         }
+                    } else {
+                        $triedOnlyExternalAuth = false;
                     }
                 }
             }
@@ -141,6 +145,7 @@ class AuthenticationController extends ActionController
             $this->view->errorInfo = $e->getMessage();
         }
 
+        $this->view->requiresExternalAuth = $triedOnlyExternalAuth && !$auth->isAuthenticated();
         $this->view->requiresSetup = Icinga::app()->requiresSetup();
     }
 
