@@ -2,6 +2,7 @@
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\DataView\DataView;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Web\Url;
@@ -216,8 +217,8 @@ class Monitoring_ListController extends Controller
             'max_check_attempts'    => 'service_max_check_attempts'
         ), $this->extraColumns());
         $query = $this->backend->select()->from('serviceStatus', $columns);
-
         $this->filterQuery($query);
+
         $this->setupSortControl(array(
             'service_severity'      => $this->translate('Service Severity'),
             'service_state'         => $this->translate('Current Service State'),
@@ -661,20 +662,24 @@ class Monitoring_ListController extends Controller
         if ($sort = $this->params->get('sort')) {
             $query->order($sort, $this->params->get('dir'));
         }
-        $this->applyRestrictions($query);
         $this->handleFormatRequest($query);
         return $query;
     }
 
     /**
-     * Apply current user's `monitoring/filter' restrictions on the given data view
+     * Apply a restriction on the given data view
+     *
+     * @param   string      $restriction    The name of restriction
+     * @param   DataView    $view           The view to restrict
+     *
+     * @return  DataView    $view
      */
-    protected function applyRestrictions($query)
+    protected function applyRestriction($restriction, DataView $view)
     {
-        foreach ($this->getRestrictions('monitoring/filter') as $restriction) {
-            // TODO: $query->applyFilter(Filter::fromQueryString());
+        foreach ($this->getRestrictions($restriction) as $filter) {
+            $view->applyFilter(Filter::fromQueryString($filter));
         }
-        return $query;
+        return $view;
     }
 
     protected function extraColumns()
