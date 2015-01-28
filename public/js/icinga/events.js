@@ -482,6 +482,16 @@
                     targetId = 'col1';
                     $target = $('#' + targetId);
                     self.icinga.ui.layout1col();
+                } else if (targetId === '_right') {
+                    // Ensure that the content is displayed in the rightmost column
+                    $target = $el.closest('.container');
+                    if ($target.attr('id') === 'col1') {
+                        // As it's not possible to detect what's preceding the current state in the
+                        // history stack this just simulates _main in case the respective element
+                        // is not part of the rightmost column
+                        $target = $('#col1');
+                        self.icinga.ui.layout1col();
+                    }
                 } else {
                     $target = $('#' + targetId);
                 }
