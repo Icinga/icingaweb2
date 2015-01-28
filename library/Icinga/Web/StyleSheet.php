@@ -11,7 +11,7 @@ use Icinga\Web\LessCompiler;
 class StyleSheet
 {
     protected static $lessFiles = array(
-        '../application/fonts/fontello-ifont/css/ifont-embedded.css',
+        'fonts/fontello-ifont/css/ifont-embedded.less',
         'css/vendor/tipsy.css',
         'css/icinga/defaults.less',
         'css/icinga/layout-colors.less',
@@ -96,7 +96,8 @@ class StyleSheet
             $cache->send($cacheFile);
             return;
         }
-        $less = new LessCompiler();
+
+        $less = new LessCompiler(dirname($_SERVER['PHP_SELF']));
         foreach ($lessFiles as $file) {
             $less->addFile($file);
         }
