@@ -219,6 +219,25 @@ EOT;
     }
 
     /**
+     * Remove a tab
+     *
+     * @param   string  $name
+     *
+     * @return  self
+     */
+    public function remove($name)
+    {
+        if ($this->has($name)) {
+            unset($this->tabs[$name]);
+            if (($dropdownIndex = array_search($name, $this->dropdownTabs)) !== false) {
+                array_splice($this->dropdownTabs, $dropdownIndex, 2);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Add a tab to the dropdown on the right side of the tab-bar.
      *
      * @param $name

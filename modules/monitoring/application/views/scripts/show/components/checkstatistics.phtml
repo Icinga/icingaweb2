@@ -39,7 +39,7 @@ if ($object->getType() === $object::TYPE_HOST) {
               );
           }
       ?>
-      <a href="<?= $reschedule ?>">
+      <a href="<?= $reschedule ?>" data-base-target="_self">
           <?= $this->icon('reschedule') ?>
           <?= $this->translate('Reschedule') ?>
       </a>
