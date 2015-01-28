@@ -34,15 +34,7 @@ class Monitoring_HostController extends MonitoredObjectController
         }
         $this->object = $host;
         $this->createTabs();
-    }
-
-    /**
-     * Show a host
-     */
-    public function showAction()
-    {
         $this->getTabs()->activate('host');
-        parent::showAction();
     }
 
     /**

@@ -34,15 +34,7 @@ class Monitoring_ServiceController extends MonitoredObjectController
         }
         $this->object = $service;
         $this->createTabs();
-    }
-
-    /**
-     * Show a service
-     */
-    public function showAction()
-    {
         $this->getTabs()->activate('service');
-        parent::showAction();
     }
 
     /**
