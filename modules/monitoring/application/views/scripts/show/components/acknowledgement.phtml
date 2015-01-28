@@ -35,7 +35,7 @@ if ($object->acknowledged): ?>
                     );
                 }
             ?>
-            <a href="<?= $ackLink ?>">
+            <a href="<?= $ackLink ?>" data-base-target="_self">
                 <?= $this->icon('ok') ?> <?= $this->translate('Acknowledge') ?>
             </a>
             <?php } else {

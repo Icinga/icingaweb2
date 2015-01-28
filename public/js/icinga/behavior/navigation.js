@@ -130,23 +130,26 @@
         }
 
         setTimeout(function () {
-            if (! $li.is('li:hover')) {
-                return;
-            }
-            if ($li.hasClass('active')) {
-                return;
-            }
+            try {
+                if (!$li.is('li:hover')) {
+                    return;
+                }
+                if ($li.hasClass('active')) {
+                    return;
+                }
+            } catch(e) { /* Bypass because if IE8 */ }
 
             $li.siblings().each(function () {
                 var $sibling = $(this);
-                if ($sibling.is('li:hover')) {
-                    return;
-                }
+                try {
+                    if ($sibling.is('li:hover')) {
+                        return;
+                    }
+                } catch(e) { /* Bypass because if IE8 */ };
                 if ($sibling.hasClass('hover')) {
                     $sibling.removeClass('hover');
                 }
             });
-
             self.hoverElement($li);
         }, delay);
     };
@@ -161,9 +164,11 @@
         }
 
         setTimeout(function () {
-            if ($li.is('li:hover') || $sidebar.is('sidebar:hover') ) {
-                return;
-            }
+            try {
+                if ($li.is('li:hover') || $sidebar.is('sidebar:hover')) {
+                    return;
+                }
+            } catch(e) { /* Bypass because if IE8 */ };
             $li.removeClass('hover');
             $('#layout').removeClass('hoveredmenu');
         }, 500);
@@ -183,9 +188,11 @@
             self = event.data.self;
         setTimeout(function () {
             // TODO: make this behave well together with keyboard navigation
-            if (! $li.is('li:hover') /*&& ! $li.find('a:focus')*/) {
-                $li.removeClass('hover');
-            }
+            try {
+                if (!$li.is('li:hover') /*&& ! $li.find('a:focus')*/) {
+                    $li.removeClass('hover');
+                }
+            } catch(e) { /* Bypass because if IE8 */ }
         }, 300);
     };
     Icinga.Behaviors.Navigation = Navigation;

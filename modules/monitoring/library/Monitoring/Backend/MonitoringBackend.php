@@ -145,7 +145,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
                 $this->type = lcfirst(substr($class, 0, -7));
             } else {
                 throw new ProgrammingError(
-                    '%s is not a valid monitoring backend class name', 
+                    '%s is not a valid monitoring backend class name',
                     $class
                 );
             }
@@ -251,7 +251,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
      * @param   string  $name
      * @param   array   $columns
      *
-     * @return  DataView
+     * @return  \Icinga\Module\Monitoring\DataView\DataView
      */
     public function from($name, array $columns = null)
     {

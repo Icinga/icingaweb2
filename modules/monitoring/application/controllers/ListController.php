@@ -131,6 +131,8 @@ class Monitoring_ListController extends Controller
 
         $this->filterQuery($query);
 
+        $this->applyRestriction('monitoring/hosts/filter', $query);
+
         $this->setupSortControl(array(
             'host_severity'     => $this->translate('Severity'),
             'host_state'        => $this->translate('Current State'),
@@ -218,6 +220,9 @@ class Monitoring_ListController extends Controller
         $query = $this->backend->select()->from('serviceStatus', $columns);
 
         $this->filterQuery($query);
+
+        $this->applyRestriction('monitoring/services/filter', $query);
+
         $this->setupSortControl(array(
             'service_severity'      => $this->translate('Service Severity'),
             'service_state'         => $this->translate('Current Service State'),
@@ -661,19 +666,7 @@ class Monitoring_ListController extends Controller
         if ($sort = $this->params->get('sort')) {
             $query->order($sort, $this->params->get('dir'));
         }
-        $this->applyRestrictions($query);
         $this->handleFormatRequest($query);
-        return $query;
-    }
-
-    /**
-     * Apply current user's `monitoring/filter' restrictions on the given data view
-     */
-    protected function applyRestrictions($query)
-    {
-        foreach ($this->getRestrictions('monitoring/filter') as $restriction) {
-            // TODO: $query->applyFilter(Filter::fromQueryString());
-        }
         return $query;
     }
 

@@ -7,13 +7,15 @@ namespace Icinga\Module\Monitoring\Object;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Exception\InvalidPropertyException;
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filterable;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Web\UrlParams;
 
 /**
  * A monitored Icinga object, i.e. host or service
  */
-abstract class MonitoredObject
+abstract class MonitoredObject implements Filterable
 {
     /**
      * Type host
@@ -117,6 +119,13 @@ abstract class MonitoredObject
     protected $stats;
 
     /**
+     * Filter
+     *
+     * @type Filter
+     */
+    protected $filter;
+
+    /**
      * Create a monitored object, i.e. host or service
      *
      * @param MonitoringBackend $backend Backend to fetch object information from
@@ -133,6 +142,35 @@ abstract class MonitoredObject
      */
     abstract protected function getDataView();
 
+    public function applyFilter(Filter $filter)
+    {
+        $this->getFilter()->addFilter($filter);
+        return $this;
+    }
+
+    public function setFilter(Filter $filter)
+    {
+        // Left out on purpose. Interface is deprecated.
+    }
+
+    public function getFilter()
+    {
+        if ($this->filter === null) {
+            $this->filter = Filter::matchAny();
+        }
+        return $this->filter;
+    }
+
+    public function addFilter(Filter $filter)
+    {
+        // Left out on purpose. Interface is deprecated.
+    }
+
+    public function where($condition, $value = null)
+    {
+        // Left out on purpose. Interface is deprecated.
+    }
+
     /**
      * Fetch the object's properties
      *
@@ -140,7 +178,7 @@ abstract class MonitoredObject
      */
     public function fetch()
     {
-        $this->properties = $this->getDataView()->getQuery()->fetchRow();
+        $this->properties = $this->getDataView()->applyFilter($this->getFilter())->getQuery()->fetchRow();
         if ($this->properties === false) {
             return false;
         }

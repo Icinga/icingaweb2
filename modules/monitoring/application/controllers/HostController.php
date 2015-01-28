@@ -26,20 +26,15 @@ class Monitoring_HostController extends MonitoredObjectController
     public function init()
     {
         $host = new Host($this->backend, $this->params->get('host'));
+
+        $this->applyRestriction('monitoring/hosts/filter', $host);
+
         if ($host->fetch() === false) {
             throw new Zend_Controller_Action_Exception($this->translate('Host not found'));
         }
         $this->object = $host;
         $this->createTabs();
-    }
-
-    /**
-     * Show a host
-     */
-    public function showAction()
-    {
         $this->getTabs()->activate('host');
-        parent::showAction();
     }
 
     /**
