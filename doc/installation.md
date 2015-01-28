@@ -107,4 +107,4 @@ In case you do not remember the token you can show it using the `icingacli`:
 
 **Step 5: Web Setup**
 
-Visit Icinga Web 2 in your browser and complete installation using the web setup.
+Visit Icinga Web 2 in your browser and complete installation using the web setup: /icingaweb2/setup

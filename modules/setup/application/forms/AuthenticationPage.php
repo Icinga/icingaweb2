@@ -36,6 +36,28 @@ class AuthenticationPage extends Form
                 )
             )
         );
+
+        if (isset($formData['type']) && $formData['type'] === 'external' && !isset($_SERVER['REMOTE_USER'])) {
+            $this->addElement(
+                'note',
+                'external_note',
+                array(
+                    'value'         => $this->translate(
+                        'You\'re currently not authenticated using any of the web server\'s authentication '
+                        . 'mechanisms. Make sure you\'ll configure such, otherwise you\'ll not be able to '
+                        . 'log into Icinga Web 2.'
+                    ),
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array(
+                            'HtmlTag',
+                            array('tag' => 'p', 'class' => 'icon-info info-box')
+                        )
+                    )
+                )
+            );
+        }
+
         $this->addElement(
             'note',
             'description',
@@ -54,13 +76,14 @@ class AuthenticationPage extends Form
         if (Platform::extensionLoaded('ldap')) {
             $backendTypes['ldap'] = 'LDAP';
         }
-        $backendTypes['autologin'] = $this->translate('Autologin');
+        $backendTypes['external'] = $this->translate('External');
 
         $this->addElement(
             'select',
             'type',
             array(
                 'required'      => true,
+                'autosubmit'    => true,
                 'label'         => $this->translate('Authentication Type'),
                 'description'   => $this->translate('The type of authentication to use when accessing Icinga Web 2'),
                 'multiOptions'  => $backendTypes

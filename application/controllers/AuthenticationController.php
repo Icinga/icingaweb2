@@ -8,7 +8,7 @@ use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\AuthChain;
-use Icinga\Authentication\Backend\AutoLoginBackend;
+use Icinga\Authentication\Backend\ExternalBackend;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
@@ -39,6 +39,7 @@ class AuthenticationController extends ActionController
             $this->redirectNow(Url::fromPath('setup'));
         }
 
+        $triedOnlyExternalAuth = null;
         $auth = $this->Auth();
         $this->view->form = $form = new LoginForm();
         $this->view->title = $this->translate('Icingaweb Login');
@@ -82,7 +83,7 @@ class AuthenticationController extends ActionController
                 }
 
                 foreach ($chain as $backend) {
-                    if ($backend instanceof AutoLoginBackend) {
+                    if ($backend instanceof ExternalBackend) {
                         continue;
                     }
                     ++$backendsTried;
@@ -126,7 +127,8 @@ class AuthenticationController extends ActionController
             } elseif ($request->isGet()) {
                 $user = new User('');
                 foreach ($chain as $backend) {
-                    if ($backend instanceof AutoLoginBackend) {
+                    $triedOnlyExternalAuth = $triedOnlyExternalAuth === null;
+                    if ($backend instanceof ExternalBackend) {
                         $authenticated  = $backend->authenticate($user);
                         if ($authenticated === true) {
                             $auth->setAuthenticated($user);
@@ -134,6 +136,8 @@ class AuthenticationController extends ActionController
                                 Url::fromPath(Url::fromRequest()->getParam('redirect', 'dashboard'))
                             );
                         }
+                    } else {
+                        $triedOnlyExternalAuth = false;
                     }
                 }
             }
@@ -141,6 +145,7 @@ class AuthenticationController extends ActionController
             $this->view->errorInfo = $e->getMessage();
         }
 
+        $this->view->requiresExternalAuth = $triedOnlyExternalAuth && !$auth->isAuthenticated();
         $this->view->requiresSetup = Icinga::app()->requiresSetup();
     }
 

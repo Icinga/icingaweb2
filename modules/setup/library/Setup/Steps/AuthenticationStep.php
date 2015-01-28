@@ -139,7 +139,7 @@ class AuthenticationStep extends Step
                 . '<td><strong>' . t('User Name Attribute') . '</strong></td>'
                 . '<td>' . $this->data['backendConfig']['user_name_attribute'] . '</td>'
                 . '</tr>'
-            ) : ($authType === 'autologin' ? (
+            ) : ($authType === 'external' ? (
                 '<tr>'
                 . '<td><strong>' . t('Filter Pattern') . '</strong></td>'
                 . '<td>' . $this->data['backendConfig']['strip_username_regexp'] . '</td>'

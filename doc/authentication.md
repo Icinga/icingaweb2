@@ -24,7 +24,7 @@ For delegating authentication to the web server simply add `autologin` to your a
 
 ````
 [autologin]
-backend = autologin
+backend = external
 ````
 
 If your web server is not configured for authentication though the `autologin` section has no effect.
