@@ -38,15 +38,17 @@ class LessCompiler
 
     /**
      * Create a new instance
+     *
+     * @param   string  $basePath   Provide web base path optional
      */
-    public function __construct()
+    public function __construct($basePath = null)
     {
         require_once 'lessphp/lessc.inc.php';
         $this->lessc = new lessc();
 
         $this->lessc->setVariables(
             array(
-                'baseurl' => '\'' . Zend_Controller_Front::getInstance()->getBaseUrl(). '\''
+                'baseurl' => '\'' . $basePath. '\''
             )
         );
     }
