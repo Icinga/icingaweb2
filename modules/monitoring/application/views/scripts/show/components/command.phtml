@@ -21,7 +21,7 @@ $command = array_shift($parts);
                     array('host' => $object->getHost()->getName(), 'service' => $object->getName())
                 );
             } ?>
-            <a href="<?= $processCheckResult ?>">
+            <a href="<?= $processCheckResult ?>" data-base-target="_self">
                 <?= $this->icon('reply') ?>
                 <?= $this->translate('Process check result') ?>
             </a>
