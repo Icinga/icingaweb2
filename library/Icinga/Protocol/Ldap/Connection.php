@@ -329,7 +329,7 @@ class Connection
                     ldap_control_paged_result_response($this->ds, $this->lastResult, $this->pageCookie);
                 } catch (Exception $e) {
                     $this->pageCookie = '';
-                    Logger::error(
+                    Logger::debug(
                         'Unable to request paged LDAP results. Does the server allow paged search requests? (%s)',
                         $e->getMessage()
                     );
