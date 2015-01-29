@@ -285,8 +285,9 @@ class Connection
             $entry = ldap_first_entry($this->ds, $results);
             while ($entry) {
                 $count++;
-                if (($offset === null || $offset <= $count)
-                    && ($limit === null || ($offset + $limit) > $count)
+                if (
+                    ($offset === null || $offset <= $count)
+                    && ($limit === null || $limit > count($entries))
                 ) {
                     $entries[ldap_get_dn($this->ds, $entry)] = $this->cleanupAttributes(
                         ldap_get_attributes($this->ds, $entry)
