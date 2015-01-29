@@ -242,7 +242,8 @@ class Connection
      */
     public function fetchRow($query, $fields = array())
     {
-        // TODO: This is ugly, make it better!
+        $query = clone $query;
+        $query->limit(1);
         $results = $this->fetchAll($query, $fields);
         return array_shift($results);
     }
@@ -365,7 +366,7 @@ class Connection
             $query->create(),
             empty($fields) ? $query->listFields() : $fields,
             0, // Attributes and values
-            0  // No limit - at least where possible
+            $query->hasLimit() ? $query->getOffset() + $query->getLimit() : 0 // No limit - at least where possible
         );
 
         if ($results === false) {
