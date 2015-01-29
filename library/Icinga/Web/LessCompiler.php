@@ -38,19 +38,11 @@ class LessCompiler
 
     /**
      * Create a new instance
-     *
-     * @param   string  $basePath   Provide web base path optional
      */
     public function __construct($basePath = null)
     {
         require_once 'lessphp/lessc.inc.php';
         $this->lessc = new lessc();
-
-        $this->lessc->setVariables(
-            array(
-                'baseurl' => '\'' . $basePath. '\''
-            )
-        );
     }
 
     public function compress()
