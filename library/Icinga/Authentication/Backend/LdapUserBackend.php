@@ -213,7 +213,7 @@ class LdapUserBackend extends UserBackend
      */
     public function count()
     {
-        return $this->conn->count($this->selectUsers());
+        return $this->selectUsers()->count();
     }
 
     /**

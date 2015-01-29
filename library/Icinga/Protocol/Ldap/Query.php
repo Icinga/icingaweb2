@@ -33,6 +33,7 @@ class Query
     protected $sort_columns = array();
     protected $count;
     protected $base;
+    protected $usePagedResults;
 
     /**
      * Constructor
@@ -43,6 +44,7 @@ class Query
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
+        $this->usePagedResults = version_compare(PHP_VERSION, '5.4.0') >= 0;
     }
 
     public function setBase($base)
@@ -59,6 +61,17 @@ class Query
     public function getBase()
     {
         return $this->base;
+    }
+
+    public function setUsePagedResults($state = true)
+    {
+        $this->usePagedResults = (bool) $state && version_compare(PHP_VERSION, '5.4.0') >= 0;
+        return $this;
+    }
+
+    public function getUsePagedResults()
+    {
+        return $this->usePagedResults;
     }
 
     /**
