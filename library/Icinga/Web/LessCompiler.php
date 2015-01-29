@@ -39,7 +39,7 @@ class LessCompiler
     /**
      * Create a new instance
      */
-    public function __construct($basePath = null)
+    public function __construct()
     {
         require_once 'lessphp/lessc.inc.php';
         $this->lessc = new lessc();
