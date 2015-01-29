@@ -320,7 +320,7 @@ class Connection
 
     protected function runQuery(Query $query, $fields = array())
     {
-        if ($query->getUsePagedResults()) {
+        if ($query->getUsePagedResults() && version_compare(PHP_VERSION, '5.4.0') >= 0) {
             if ($this->pageCookie === null) {
                 $this->pageCookie = '';
             } else {
