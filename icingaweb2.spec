@@ -5,7 +5,7 @@ Version:        2.0.0
 Release:        %{revision}%{?dist}
 Summary:        Icinga Web 2
 Group:          Applications/System
-License:        GPL
+License:        GPLv2+
 URL:            https://icinga.org
 Source0:        https://github.com/Icinga/%{name}/archive/v%{version}.tar.gz
 BuildArch:      noarch
