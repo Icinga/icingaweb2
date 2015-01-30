@@ -77,7 +77,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
         } else {
             $notificationDescription = null;
         }
-        $toggleDisabled = ! $this->hasPermission('monitoring/command/feature/instance');
+        $toggleDisabled = $this->hasPermission('monitoring/command/feature/instance') ? null : '';
         $this->addElements(array(
             array(
                 'checkbox',
