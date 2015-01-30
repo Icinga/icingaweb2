@@ -107,6 +107,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
      */
     public function onSuccess()
     {
+        $this->assertPermission('monitoring/command/feature/object');
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             foreach ($this->getValues() as $feature => $enabled) {
