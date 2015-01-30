@@ -28,13 +28,15 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
      */
     public function createElements(array $formData = array())
     {
+        $toggleDisabled = $this->hasPermission('monitoring/command/feature/instance')  ? null : '';
         $this->addElements(array(
             array(
                 'checkbox',
                 ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS,
                 array(
                     'label'         => $this->translate('Active Checks'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             ),
             array(
@@ -42,7 +44,8 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 ToggleObjectFeatureCommand::FEATURE_PASSIVE_CHECKS,
                 array(
                     'label'         => $this->translate('Passive Checks'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             ),
             array(
@@ -50,7 +53,8 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 ToggleObjectFeatureCommand::FEATURE_OBSESSING,
                 array(
                     'label'         => $this->translate('Obsessing'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             ),
             array(
@@ -58,7 +62,8 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 ToggleObjectFeatureCommand::FEATURE_NOTIFICATIONS,
                 array(
                     'label'         => $this->translate('Notifications'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             ),
             array(
@@ -66,7 +71,8 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 ToggleObjectFeatureCommand::FEATURE_EVENT_HANDLER,
                 array(
                     'label'         => $this->translate('Event Handler'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             ),
             array(
@@ -74,7 +80,8 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 ToggleObjectFeatureCommand::FEATURE_FLAP_DETECTION,
                 array(
                     'label'         => $this->translate('Flap Detection'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             )
         ));
