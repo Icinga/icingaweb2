@@ -29,7 +29,7 @@ class GeneralConfigPage extends Form
             'note',
             'title',
             array(
-                'value'         => mt('setup', 'Application Configuration', 'setup.page.title'),
+                'value'         => $this->translate('Application Configuration', 'setup.page.title'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -40,8 +40,7 @@ class GeneralConfigPage extends Form
             'note',
             'description',
             array(
-                'value' => mt(
-                    'setup',
+                'value' => $this->translate(
                     'Now please adjust all application and logging related configuration options to fit your needs.'
                 )
             )

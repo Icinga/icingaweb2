@@ -4,7 +4,7 @@ if (empty($object->hostgroups)) return;
 
 $list = array();
 foreach ($object->hostgroups as $name => $alias) {
-    $list[] = $this->qlink($alias, 'monitoring/list/services', array(
+    $list[] = $this->qlink($alias, 'monitoring/list/hosts', array(
         'hostgroup' => $name
     ));
 }

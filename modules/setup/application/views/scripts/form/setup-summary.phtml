@@ -4,9 +4,8 @@ use Icinga\Web\Wizard;
 
 ?>
 <p><?= sprintf(
-  mt(
-    'setup',
-    'The wizard is now complete. You can review the changes supposed to be made before setting up %1$s.'
+  $this->translate(
+    'You\'ve configured %1$s successfully. You can review the changes supposed to be made before setting it up.'
     . ' Make sure that everything is correct (Feel free to navigate back to make any corrections!) so'
     . ' that you can start using %1$s right after it has successfully been set up.'
   ),
@@ -21,7 +20,7 @@ use Icinga\Web\Wizard;
  <?php endif ?>
 <?php endforeach ?>
 </div>
-<form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
+<form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>" class="summary">
   <?= $form->getElement($form->getTokenElementName()); ?>
   <?= $form->getElement($form->getUidElementName()); ?>
   <div class="buttons">

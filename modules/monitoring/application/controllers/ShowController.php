@@ -73,9 +73,8 @@ class Monitoring_ShowController extends Controller
     public function historyAction()
     {
         $this->getTabs()->activate('history');
-        //$this->view->object->populate();
         $this->view->object->fetchEventHistory();
-        $this->view->history = $this->view->object->eventhistory->paginate($this->params->get('limit', 50));
+        $this->view->history = $this->view->object->eventhistory->getQuery()->paginate($this->params->get('limit', 50));
         $this->handleFormatRequest($this->view->object->eventhistory);
         $this->fetchHostStats();
     }
@@ -166,8 +165,10 @@ class Monitoring_ShowController extends Controller
                 'notification_output',
                 'notification_contact',
                 'notification_start_time',
-                'notification_state'
-            ))->order('notification_start_time');
+                'notification_state',
+                'host_display_name',
+                'service_display_name'
+            ));
 
             $notifications->where('contact_object_id', $contact->contact_object_id);
 

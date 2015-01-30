@@ -1,26 +1,27 @@
 <tr>
     <th><?= $this->translate('Comments') ?></th>
     <td>
-        <?php
-
-        /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
-
-        if ($object->getType() === $object::TYPE_HOST) {
-            $addCommentLink = $this->href(
-                'monitoring/host/add-comment',
-                array('host' => $object->getName())
-            );
-        } else {
-            $addCommentLink = $this->href(
-                'monitoring/service/add-comment',
-                array('host' => $object->getHost()->getName(), 'service' => $object->getName())
-            );
-        }
-
+        <?php if ($this->hasPermission('monitoring/command/comment/add')) {
+            /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+            if ($object->getType() === $object::TYPE_HOST) {
+                $addCommentLink = $this->href(
+                    'monitoring/host/add-comment',
+                    array('host' => $object->getName())
+                );
+            } else {
+                $addCommentLink = $this->href(
+                    'monitoring/service/add-comment',
+                    array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+                );
+            }
         ?>
-        <a href="<?= $addCommentLink ?>">
-            <?= $this->icon('comment') ?> <?= $this->translate('Add comment') ?>
+        <a href="<?= $addCommentLink ?>" data-base-target="_self">
+            <?= $this->icon('comment') ?>
+            <?= $this->translate('Add comment') ?>
         </a>
+        <?php } else {
+            echo '&#45;';
+        } // endif ?>
     </td>
 </tr>
 
@@ -28,15 +29,11 @@
 
 foreach ($object->comments as $comment) {
     // Ticket hook sample
-    $text = $this->tickets ? preg_replace_callback(
+    $commentText = $this->tickets ? preg_replace_callback(
         $this->tickets->getPattern(),
         array($this->tickets, 'createLink'),
         $this->escape($comment->comment)
     ) : $this->escape($comment->comment);
-
-
-    $form = clone $delCommentForm;
-    $form->populate(array('comment_id' => $comment->id));
 
     ?>
 
@@ -46,14 +43,19 @@ foreach ($object->comments as $comment) {
             <table>
                 <tr>
                     <td style="vertical-align: top;" data-base-target="_self">
-                        <?= $form ?> (<?= ucfirst($comment->type) ?>):
+                        <?php if (isset($delCommentForm)) { // Form is unset if the current user lacks the respective permission
+                            $delCommentForm = clone $delCommentForm;
+                            $delCommentForm->populate(array('comment_id' => $comment->id));
+                            echo $delCommentForm;
+                        } ?>
+                        (<?= ucfirst($comment->type) ?>):
                     </td>
                     <td style="padding-left: .5em;">
-                        <?= str_replace(array('\r\n', '\n'), '<br>', $text) ?>
+                        <?= nl2br($commentText) ?>
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
 
-<?php }  // endforeach ?>
+<?php } // endforeach ?>

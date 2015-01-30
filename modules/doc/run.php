@@ -47,4 +47,3 @@ $this->addRoute('doc/module/chapter', $docModuleChapter);
 $this->addRoute('doc/icingaweb/chapter', $docIcingaWebChapter);
 $this->addRoute('doc/module/toc', $docModuleToc);
 $this->addRoute('doc/module/pdf', $docModulePdf);
-

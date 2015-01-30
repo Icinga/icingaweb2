@@ -1,25 +1,27 @@
 <tr>
     <th><?= $this->translate('Downtimes') ?></th>
     <td>
-        <?php
-
-        /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
-
-        if ($object->getType() === $object::TYPE_HOST) {
-            $scheduleDowntimeLink = $this->href(
-                'monitoring/host/schedule-downtime',
-                array('host' => $object->getName())
-            );
-        } else {
-            $scheduleDowntimeLink = $this->href(
-                'monitoring/service/schedule-downtime',
-                array('host' => $object->getHost()->getName(), 'service' => $object->getName())
-            );
-        }
+        <?php if ($this->hasPermission('monitoring/command/downtime/schedule')) {
+            /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+            if ($object->getType() === $object::TYPE_HOST) {
+                $scheduleDowntimeLink = $this->href(
+                    'monitoring/host/schedule-downtime',
+                    array('host' => $object->getName())
+                );
+            } else {
+                $scheduleDowntimeLink = $this->href(
+                    'monitoring/service/schedule-downtime',
+                    array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+                );
+            }
         ?>
-        <a href="<?= $scheduleDowntimeLink ?>">
-            <?= $this->icon('plug') ?> <?= $this->translate('Schedule downtime') ?>
+        <a href="<?= $scheduleDowntimeLink ?>" data-base-target="_self">
+            <?= $this->icon('plug') ?>
+            <?= $this->translate('Schedule downtime') ?>
         </a>
+        <?php } else {
+            echo '&#45;';
+        } // endif ?>
     </td>
 </tr>
 
@@ -27,14 +29,11 @@
 
 foreach ($object->downtimes as $downtime) {
     // Ticket hook sample
-    $text = $this->tickets ? preg_replace_callback(
+    $commentText = $this->tickets ? preg_replace_callback(
         $this->tickets->getPattern(),
         array($this->tickets, 'createLink'),
         $this->escape($downtime->comment)
     ) : $this->escape($downtime->comment);
-
-    $form = clone $delDowntimeForm;
-    $form->populate(array('downtime_id' => $downtime->id));
 
     if ((bool) $downtime->is_in_effect) {
         $state = 'in downtime since ' . $this->timeSince($downtime->start);
@@ -54,14 +53,19 @@ foreach ($object->downtimes as $downtime) {
             <table>
                 <tr>
                     <td style="vertical-align: top;" data-base-target="_self">
-                        <?= $form ?> <?= $state ?>
+                        <?php if (isset($delDowntimeForm)) { // Form is unset if the current user lacks the respective permission
+                            $delDowntimeForm = clone $delDowntimeForm;
+                            $delDowntimeForm->populate(array('downtime_id' => $downtime->id));
+                            echo $delDowntimeForm;
+                        } ?>
+                        <?= $state ?>
                     </td>
                     <td style="padding-left: .5em;">
-                        <?= str_replace(array('\r\n', '\n'), '<br>', $text) ?>
+                        <?= nl2br($commentText) ?>
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
 
-<?php }  // endforeach ?>
+<?php } // endforeach ?>

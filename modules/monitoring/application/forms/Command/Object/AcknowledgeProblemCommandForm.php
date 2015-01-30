@@ -31,8 +31,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
      */
     public function getHelp()
     {
-        return mt(
-            'monitoring',
+        return $this->translate(
             'This command is used to acknowledge host or service problems. When a problem is acknowledged,'
             . ' future notifications about problems are temporarily disabled until the host or service'
             . ' recovers.'
@@ -51,9 +50,8 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'comment',
                 array(
                     'required'      => true,
-                    'label'         => mt('monitoring', 'Comment'),
-                    'description'   => mt(
-                        'monitoring',
+                    'label'         => $this->translate('Comment'),
+                    'description'   => $this->translate(
                         'If you work with other administrators, you may find it useful to share information about the'
                         . ' the host or service that is having problems. Make sure you enter a brief description of'
                         . ' what you are doing.'
@@ -64,9 +62,8 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'checkbox',
                 'persistent',
                 array(
-                    'label'         => mt('monitoring', 'Persistent Comment'),
-                    'description'   => mt(
-                        'monitoring',
+                    'label'         => $this->translate('Persistent Comment'),
+                    'description'   => $this->translate(
                         'If you would like the comment to remain even when the acknowledgement is removed, check this'
                         . ' option.'
                     )
@@ -76,8 +73,10 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'checkbox',
                 'expire',
                 array(
-                    'label'         => mt('monitoring', 'Use Expire Time'),
-                    'description'   => mt('monitoring', 'If the acknowledgement should expire, check this option.'),
+                    'label'         => $this->translate('Use Expire Time'),
+                    'description'   => $this->translate(
+                        'If the acknowledgement should expire, check this option.'
+                    ),
                     'autosubmit'    => true
                 )
             )
@@ -89,10 +88,9 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'dateTimePicker',
                 'expire_time',
                 array(
-                    'label'         => mt('monitoring', 'Expire Time'),
+                    'label'         => $this->translate('Expire Time'),
                     'value'         => $expireTime,
-                    'description'   => mt(
-                        'monitoring',
+                    'description'   => $this->translate(
                         'Enter the expire date and time for this acknowledgement here. Icinga will delete the'
                         . ' acknowledgement after this time expired.'
                     )
@@ -114,10 +112,9 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'checkbox',
                 'sticky',
                 array(
-                    'label'         => mt('monitoring', 'Sticky Acknowledgement'),
+                    'label'         => $this->translate('Sticky Acknowledgement'),
                     'value'         => true,
-                    'description'   => mt(
-                        'monitoring',
+                    'description'   => $this->translate(
                         'If you want the acknowledgement to disable notifications until the host or service recovers,'
                         . ' check this option.'
                     )
@@ -127,10 +124,9 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'checkbox',
                 'notify',
                 array(
-                    'label'         => mt('monitoring', 'Send Notification'),
+                    'label'         => $this->translate('Send Notification'),
                     'value'         => true,
-                    'description'   => mt(
-                        'monitoring',
+                    'description'   => $this->translate(
                         'If you do not want an acknowledgement notification to be sent out to the appropriate contacts,'
                         . ' uncheck this option.'
                     )

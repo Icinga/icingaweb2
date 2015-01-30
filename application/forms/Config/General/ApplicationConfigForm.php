@@ -4,10 +4,8 @@
 
 namespace Icinga\Forms\Config\General;
 
-use DateTimeZone;
 use Icinga\Application\Icinga;
 use Icinga\Data\ResourceFactory;
-use Icinga\Util\Translator;
 use Icinga\Web\Form;
 
 
@@ -33,10 +31,10 @@ class ApplicationConfigForm extends Form
             'text',
             'global_module_path',
             array(
-                'label'         => t('Module Path'),
+                'label'         => $this->translate('Module Path'),
                 'required'      => true,
                 'value'         => implode(':', Icinga::app()->getModuleManager()->getModuleDirs()),
-                'description'   => t(
+                'description'   => $this->translate(
                     'Contains the directories that will be searched for available modules, separated by '
                     . 'colons. Modules that don\'t exist in these directories can still be symlinked in '
                     . 'the module folder, but won\'t show up in the list of disabled modules.'
@@ -46,19 +44,19 @@ class ApplicationConfigForm extends Form
 
         $this->addElement(
             'select',
-            'preferences_type',
+            'preferences_store',
             array(
                 'required'      => true,
                 'autosubmit'    => true,
-                'label'         => t('User Preference Storage Type'),
+                'label'         => $this->translate('User Preference Storage Type'),
                 'multiOptions'  => array(
-                    'ini'   => t('File System (INI Files)'),
-                    'db'    => t('Database'),
-                    'null'  => t('Don\'t Store Preferences')
+                    'ini'   => $this->translate('File System (INI Files)'),
+                    'db'    => $this->translate('Database'),
+                    'none'  => $this->translate('Don\'t Store Preferences')
                 )
             )
         );
-        if (isset($formData['preferences_type']) && $formData['preferences_type'] === 'db') {
+        if (isset($formData['preferences_store']) && $formData['preferences_store'] === 'db') {
             $backends = array();
             foreach (ResourceFactory::getResourceConfigs()->toArray() as $name => $resource) {
                 if ($resource['type'] === 'db') {
@@ -72,7 +70,7 @@ class ApplicationConfigForm extends Form
                 array(
                     'required'      => true,
                     'multiOptions'  => $backends,
-                    'label'         => t('Database Connection')
+                    'label'         => $this->translate('Database Connection')
                 )
             );
         }

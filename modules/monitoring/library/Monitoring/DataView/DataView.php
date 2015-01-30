@@ -83,6 +83,7 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
 
     public function dump()
     {
+        $this->order();
         return $this->query->dump();
     }
 
@@ -354,12 +355,21 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
         return $this;
     }
 
+    /**
+     * @deprecated(EL): Only use DataView::applyFilter() for applying filter because all other functions are missing
+     * column validation. Filter::matchAny() for the IdoQuery (or the DbQuery or the SimpleQuery I didn't have a look)
+     * is required for the filter to work properly.
+     */
     public function setFilter(Filter $filter)
     {
         $this->query->setFilter($filter);
         return $this;
     }
 
+    /**
+     * @deprecated(EL): Only use DataView::applyFilter() for applying filter because all other functions are missing
+     * column validation.
+     */
     public function addFilter(Filter $filter)
     {
         $this->query->addFilter(clone($filter));

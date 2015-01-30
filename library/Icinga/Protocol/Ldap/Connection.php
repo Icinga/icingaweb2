@@ -4,6 +4,7 @@
 
 namespace Icinga\Protocol\Ldap;
 
+use Exception;
 use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Application\Platform;
 use Icinga\Application\Config;
@@ -96,6 +97,9 @@ class Connection
     protected $capabilities;
     protected $namingContexts;
     protected $discoverySuccess = false;
+
+    protected $lastResult;
+    protected $pageCookie;
 
     /**
      * Constructor
@@ -238,7 +242,8 @@ class Connection
      */
     public function fetchRow($query, $fields = array())
     {
-        // TODO: This is ugly, make it better!
+        $query = clone $query;
+        $query->limit(1);
         $results = $this->fetchAll($query, $fields);
         return array_shift($results);
     }
@@ -250,44 +255,56 @@ class Connection
      */
     public function count(Query $query)
     {
-        $results = $this->runQuery($query, '+');
-        if (! $results) {
-            return 0;
+        $this->connect();
+        $this->bind();
+
+        $count = 0;
+        $results = $this->runQuery($query);
+        while (! empty($results)) {
+            $count += ldap_count_entries($this->ds, $results);
+            $results = $this->runQuery($query);
         }
-        return ldap_count_entries($this->ds, $results);
+
+        return $count;
     }
 
-    public function fetchAll($query, $fields = array())
+    public function fetchAll(Query $query, $fields = array())
     {
-        $offset = null;
-        $limit = null;
+        $this->connect();
+        $this->bind();
+
+        $offset = $limit = null;
         if ($query->hasLimit()) {
             $offset = $query->getOffset();
-            $limit  = $query->getLimit();
+            $limit = $query->getLimit();
         }
+
+        $count = 0;
         $entries = array();
         $results = $this->runQuery($query, $fields);
-        if (! $results) {
-            return array();
-        }
-        $entry = ldap_first_entry($this->ds, $results);
-        $count = 0;
-        while ($entry) {
-            if (($offset === null || $offset <= $count)
-                && ($limit === null || ($offset + $limit) >= $count)
-            ) {
-                $attrs = ldap_get_attributes($this->ds, $entry);
-                $entries[ldap_get_dn($this->ds, $entry)]
-                    = $this->cleanupAttributes($attrs);
+        while (! empty($results)) {
+            $entry = ldap_first_entry($this->ds, $results);
+            while ($entry) {
+                $count++;
+                if (
+                    ($offset === null || $offset <= $count)
+                    && ($limit === null || $limit > count($entries))
+                ) {
+                    $entries[ldap_get_dn($this->ds, $entry)] = $this->cleanupAttributes(
+                        ldap_get_attributes($this->ds, $entry)
+                    );
+                }
+
+                $entry = ldap_next_entry($this->ds, $entry);
             }
-            $count++;
-            $entry = ldap_next_entry($this->ds, $entry);
+
+            $results = $this->runQuery($query, $fields);
         }
-        ldap_free_result($results);
+
         return $entries;
     }
 
-    public function cleanupAttributes(& $attrs)
+    protected function cleanupAttributes($attrs)
     {
         $clean = (object) array();
         for ($i = 0; $i < $attrs['count']; $i++) {
@@ -303,26 +320,55 @@ class Connection
         return $clean;
     }
 
-    protected function runQuery($query, $fields)
+    protected function runQuery(Query $query, $fields = array())
     {
-        $this->connect();
-        $this->bind();
-        if ($query instanceof Query) {
-            $fields = $query->listFields();
+        if ($query->getUsePagedResults() && version_compare(PHP_VERSION, '5.4.0') >= 0) {
+            if ($this->pageCookie === null) {
+                $this->pageCookie = '';
+            } else {
+                try {
+                    ldap_control_paged_result_response($this->ds, $this->lastResult, $this->pageCookie);
+                } catch (Exception $e) {
+                    $this->pageCookie = '';
+                    Logger::debug(
+                        'Unable to request paged LDAP results. Does the server allow paged search requests? (%s)',
+                        $e->getMessage()
+                    );
+                }
+
+                ldap_free_result($this->lastResult);
+                if (! $this->pageCookie) {
+                    $this->pageCookie = $this->lastResult = null;
+                    // Abandon the paged search request so that subsequent requests succeed
+                    ldap_control_paged_result($this->ds, 0);
+                    return false;
+                }
+            }
+
+            // Does not matter whether we'll use a valid page size here,
+            // as the server applies its hard limit in case its too high
+            ldap_control_paged_result(
+                $this->ds,
+                $query->hasLimit() ? $query->getLimit() : 500,
+                true,
+                $this->pageCookie
+            );
+        } elseif ($this->lastResult !== null) {
+            ldap_free_result($this->lastResult);
+            $this->lastResult = null;
+            return false;
         }
-        // WARNING:
-        // We do not support pagination right now, and there is no chance to
-        // do so for PHP < 5.4. Warnings about "Sizelimit exceeded" will
-        // therefore not be hidden right now.
+
         $base = $query->hasBase() ? $query->getBase() : $this->root_dn;
         $results = @ldap_search(
             $this->ds,
             $base,
             $query->create(),
-            $fields,
+            empty($fields) ? $query->listFields() : $fields,
             0, // Attributes and values
-            0  // No limit - at least where possible
+            $query->hasLimit() ? $query->getOffset() + $query->getLimit() : 0 // No limit - at least where possible
         );
+
         if ($results === false) {
             if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
                 return false;
@@ -336,12 +382,12 @@ class Connection
                 )
             );
         }
-        $list = array();
-        if ($query instanceof Query) {
-            foreach ($query->getSortColumns() as $col) {
-                ldap_sort($this->ds, $results, $col[0]);
-            }
+
+        foreach ($query->getSortColumns() as $col) {
+            ldap_sort($this->ds, $results, $col[0]);
         }
+
+        $this->lastResult = $results;
         return $results;
     }
 

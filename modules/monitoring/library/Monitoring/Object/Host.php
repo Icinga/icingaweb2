@@ -47,7 +47,7 @@ class Host extends MonitoredObject
     public $prefix = 'host_';
 
     /**
-     * Host name
+     * Hostname
      *
      * @var string
      */
@@ -63,8 +63,8 @@ class Host extends MonitoredObject
     /**
      * Create a new host
      *
-     * @param MonitoringBackend   $backend    Backend to fetch host information from
-     * @param string    $host       Host name
+     * @param MonitoringBackend $backend    Backend to fetch host information from
+     * @param string            $host       Hostname
      */
     public function __construct(MonitoringBackend $backend, $host)
     {
@@ -73,7 +73,7 @@ class Host extends MonitoredObject
     }
 
     /**
-     * Get the host name
+     * Get the hostname
      *
      * @return string
      */
@@ -91,6 +91,7 @@ class Host extends MonitoredObject
     {
         $columns = array(
             'host_name',
+            'host_display_name',
             'host_alias',
             'host_address',
             'host_state',
@@ -172,16 +173,16 @@ class Host extends MonitoredObject
         $translate = (bool) $translate;
         switch ((int) $state) {
             case self::STATE_UP:
-                $text = $translate ? mt('monitoring', 'up') : 'up';
+                $text = $translate ? mt('monitoring', 'UP') : 'up';
                 break;
             case self::STATE_DOWN:
-                $text = $translate ? mt('monitoring', 'down') : 'down';
+                $text = $translate ? mt('monitoring', 'DOWN') : 'down';
                 break;
             case self::STATE_UNREACHABLE:
-                $text = $translate ? mt('monitoring', 'unreachable') : 'unreachable';
+                $text = $translate ? mt('monitoring', 'UNREACHABLE') : 'unreachable';
                 break;
             case self::STATE_PENDING:
-                $text = $translate ? mt('monitoring', 'pending') : 'pending';
+                $text = $translate ? mt('monitoring', 'PENDING') : 'pending';
                 break;
             default:
                 throw new InvalidArgumentException('Invalid host state \'%s\'', $state);

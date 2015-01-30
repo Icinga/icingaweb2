@@ -43,12 +43,6 @@ class LessCompiler
     {
         require_once 'lessphp/lessc.inc.php';
         $this->lessc = new lessc();
-
-        $this->lessc->setVariables(
-            array(
-                'baseurl' => '\'' . Zend_Controller_Front::getInstance()->getBaseUrl(). '\''
-            )
-        );
     }
 
     public function compress()

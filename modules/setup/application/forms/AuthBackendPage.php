@@ -7,7 +7,7 @@ namespace Icinga\Module\Setup\Forms;
 use Icinga\Web\Form;
 use Icinga\Forms\Config\Authentication\DbBackendForm;
 use Icinga\Forms\Config\Authentication\LdapBackendForm;
-use Icinga\Forms\Config\Authentication\AutologinBackendForm;
+use Icinga\Forms\Config\Authentication\ExternalBackendForm;
 use Icinga\Data\ConfigObject;
 
 /**
@@ -62,7 +62,7 @@ class AuthBackendPage extends Form
             'note',
             'title',
             array(
-                'value'         => mt('setup', 'Authentication Backend', 'setup.page.title'),
+                'value'         => $this->translate('Authentication Backend', 'setup.page.title'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -71,20 +71,17 @@ class AuthBackendPage extends Form
         );
 
         if ($this->config['type'] === 'db') {
-            $note = mt(
-                'setup',
+            $note = $this->translate(
                 'As you\'ve chosen to use a database for authentication all you need '
                 . 'to do now is defining a name for your first authentication backend.'
             );
         } elseif ($this->config['type'] === 'ldap') {
-            $note = mt(
-                'setup',
+            $note = $this->translate(
                 'Before you are able to authenticate using the LDAP connection defined earlier you need to'
                 . ' provide some more information so that Icinga Web 2 is able to locate account details.'
             );
-        } else { // if ($this->config['type'] === 'autologin'
-            $note = mt(
-                'setup',
+        } else { // if ($this->config['type'] === 'external'
+            $note = $this->translate(
                 'You\'ve chosen to authenticate using a web server\'s mechanism so it may be necessary'
                 . ' to adjust usernames before any permissions, restrictions, etc. are being applied.'
             );
@@ -106,13 +103,13 @@ class AuthBackendPage extends Form
         } elseif ($this->config['type'] === 'ldap') {
             $backendForm = new LdapBackendForm();
             $backendForm->createElements($formData)->removeElement('resource');
-        } else { // $this->config['type'] === 'autologin'
-            $backendForm = new AutologinBackendForm();
+        } else { // $this->config['type'] === 'external'
+            $backendForm = new ExternalBackendForm();
             $backendForm->createElements($formData);
         }
 
         $this->addElements($backendForm->getElements());
-        $this->getElement('name')->setValue('icingaweb');
+        $this->getElement('name')->setValue('icingaweb2');
     }
 
     /**
@@ -150,8 +147,8 @@ class AuthBackendPage extends Form
                 'order'         => 2,
                 'ignore'        => true,
                 'required'      => true,
-                'label'         => mt('setup', 'Skip Validation'),
-                'description'   => mt('setup', 'Check this to not to validate authentication using this backend')
+                'label'         => $this->translate('Skip Validation'),
+                'description'   => $this->translate('Check this to not to validate authentication using this backend')
             )
         );
     }

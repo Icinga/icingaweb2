@@ -61,7 +61,7 @@ class Circle extends Styleable implements Drawable
         $circle = $ctx->getDocument()->createElement('circle');
         $circle->setAttribute('cx', Format::formatSVGNumber($coords[0]));
         $circle->setAttribute('cy', Format::formatSVGNumber($coords[1]));
-        $circle->setAttribute('r', 5);
+        $circle->setAttribute('r', $this->radius);
         $circle->setAttribute('style', $this->getStyle());
         $this->applyAttributes($circle);
         return $circle;

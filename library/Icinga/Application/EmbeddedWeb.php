@@ -6,10 +6,8 @@ namespace Icinga\Application;
 
 require_once dirname(__FILE__) . '/ApplicationBootstrap.php';
 
-use Icinga\Exception\ProgrammingError;
-
 /**
- * Use this if you want to make use of Icinga funtionality in other web projects
+ * Use this if you want to make use of Icinga functionality in other web projects
  *
  * Usage example:
  * <code>

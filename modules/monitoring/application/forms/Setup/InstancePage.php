@@ -20,7 +20,7 @@ class InstancePage extends Form
             'note',
             'title',
             array(
-                'value'         => mt('monitoring', 'Monitoring Instance', 'setup.page.title'),
+                'value'         => $this->translate('Monitoring Instance', 'setup.page.title'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -31,8 +31,7 @@ class InstancePage extends Form
             'note',
             'description',
             array(
-                'value' => mt(
-                    'monitoring',
+                'value' => $this->translate(
                     'Please define the settings specific to your monitoring instance below.'
                 )
             )

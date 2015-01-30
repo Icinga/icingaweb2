@@ -11,17 +11,27 @@ class ProgramstatusQuery extends IdoQuery
 {
     protected $columnMap = array(
         'programstatus' => array(
-            'id'                                => 'programstatus_id',
-            'status_update_time'                => 'UNIX_TIMESTAMP(status_update_time)',
-            'program_start_time'                => 'UNIX_TIMESTAMP(program_start_time)',
-            'program_end_time'                  => 'UNIX_TIMESTAMP(program_end_time)',
-            'is_currently_running'              => 'is_currently_running',
+            'id'                    => 'programstatus_id',
+            'status_update_time'    => 'UNIX_TIMESTAMP(programstatus.status_update_time)',
+            'program_start_time'    => 'UNIX_TIMESTAMP(programstatus.program_start_time)',
+            'program_end_time'      => 'UNIX_TIMESTAMP(programstatus.program_end_time)',
+            'is_currently_running'  => 'CASE WHEN (programstatus.is_currently_running = 0)
+                THEN
+                    0
+                ELSE
+                    CASE WHEN (UNIX_TIMESTAMP(programstatus.status_update_time) + 60 > UNIX_TIMESTAMP(NOW()))
+                    THEN
+                        1
+                    ELSE
+                        0
+                    END
+                END',
             'process_id'                        => 'process_id',
             'daemon_mode'                       => 'daemon_mode',
-            'last_command_check'                => 'UNIX_TIMESTAMP(last_command_check)',
-            'last_log_rotation'                 => 'UNIX_TIMESTAMP(last_log_rotation)',
+            'last_command_check'                => 'UNIX_TIMESTAMP(programstatus.last_command_check)',
+            'last_log_rotation'                 => 'UNIX_TIMESTAMP(programstatus.last_log_rotation)',
             'notifications_enabled'             => 'notifications_enabled',
-            'disable_notif_expire_time'         => 'UNIX_TIMESTAMP(disable_notif_expire_time)',
+            'disable_notif_expire_time'         => 'UNIX_TIMESTAMP(programstatus.disable_notif_expire_time)',
             'active_service_checks_enabled'     => 'active_service_checks_enabled',
             'passive_service_checks_enabled'    => 'passive_service_checks_enabled',
             'active_host_checks_enabled'        => 'active_host_checks_enabled',

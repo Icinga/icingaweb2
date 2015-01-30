@@ -37,7 +37,7 @@ class LdapResourcePage extends Form
             'note',
             'title',
             array(
-                'value'         => mt('setup', 'LDAP Resource', 'setup.page.title'),
+                'value'         => $this->translate('LDAP Resource', 'setup.page.title'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -48,8 +48,7 @@ class LdapResourcePage extends Form
             'note',
             'description',
             array(
-                'value' => mt(
-                    'setup',
+                'value' => $this->translate(
                     'Now please configure your AD/LDAP resource. This will later '
                     . 'be used to authenticate users logging in to Icinga Web 2.'
                 )
@@ -107,9 +106,8 @@ class LdapResourcePage extends Form
             'skip_validation',
             array(
                 'required'      => true,
-                'label'         => mt('setup', 'Skip Validation'),
-                'description'   => mt(
-                    'setup',
+                'label'         => $this->translate('Skip Validation'),
+                'description'   => $this->translate(
                     'Check this to not to validate connectivity with the given directory service'
                 )
             )

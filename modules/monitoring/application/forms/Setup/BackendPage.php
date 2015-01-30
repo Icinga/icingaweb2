@@ -20,7 +20,7 @@ class BackendPage extends Form
             'note',
             'title',
             array(
-                'value'         => mt('monitoring', 'Monitoring Backend', 'setup.page.title'),
+                'value'         => $this->translate('Monitoring Backend', 'setup.page.title'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -31,8 +31,7 @@ class BackendPage extends Form
             'note',
             'description',
             array(
-                'value' => mt(
-                    'monitoring',
+                'value' => $this->translate(
                     'Please configure below how Icinga Web 2 should retrieve monitoring information.'
                 )
             )
@@ -44,8 +43,8 @@ class BackendPage extends Form
             array(
                 'required'      => true,
                 'value'         => 'icinga',
-                'label'         => mt('monitoring', 'Backend Name'),
-                'description'   => mt('monitoring', 'The identifier of this backend')
+                'label'         => $this->translate('Backend Name'),
+                'description'   => $this->translate('The identifier of this backend')
             )
         );
 
@@ -60,8 +59,10 @@ class BackendPage extends Form
             'type',
             array(
                 'required'      => true,
-                'label'         => mt('monitoring', 'Backend Type'),
-                'description'   => mt('monitoring', 'The data source used for retrieving monitoring information'),
+                'label'         => $this->translate('Backend Type'),
+                'description'   => $this->translate(
+                    'The data source used for retrieving monitoring information'
+                ),
                 'multiOptions'  => $resourceTypes
             )
         );

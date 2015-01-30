@@ -41,8 +41,8 @@ class DbResourceForm extends Form
             'name',
             array(
                 'required'      => true,
-                'label'         => t('Resource Name'),
-                'description'   => t('The unique name of this resource')
+                'label'         => $this->translate('Resource Name'),
+                'description'   => $this->translate('The unique name of this resource')
             )
         );
         $this->addElement(
@@ -50,8 +50,8 @@ class DbResourceForm extends Form
             'db',
             array(
                 'required'      => true,
-                'label'         => t('Database Type'),
-                'description'   => t('The type of SQL database'),
+                'label'         => $this->translate('Database Type'),
+                'description'   => $this->translate('The type of SQL database'),
                 'multiOptions'  => $dbChoices
             )
         );
@@ -60,8 +60,8 @@ class DbResourceForm extends Form
             'host',
             array (
                 'required'      => true,
-                'label'         => t('Host'),
-                'description'   => t('The hostname of the database'),
+                'label'         => $this->translate('Host'),
+                'description'   => $this->translate('The hostname of the database'),
                 'value'         => 'localhost'
             )
         );
@@ -70,8 +70,8 @@ class DbResourceForm extends Form
             'port',
             array(
                 'required'      => true,
-                'label'         => t('Port'),
-                'description'   => t('The port to use'),
+                'label'         => $this->translate('Port'),
+                'description'   => $this->translate('The port to use'),
                 'value'         => 3306
             )
         );
@@ -80,8 +80,8 @@ class DbResourceForm extends Form
             'dbname',
             array(
                 'required'      => true,
-                'label'         => t('Database Name'),
-                'description'   => t('The name of the database to use')
+                'label'         => $this->translate('Database Name'),
+                'description'   => $this->translate('The name of the database to use')
             )
         );
         $this->addElement(
@@ -89,8 +89,8 @@ class DbResourceForm extends Form
             'username',
             array (
                 'required'      => true,
-                'label'         => t('Username'),
-                'description'   => t('The user name to use for authentication')
+                'label'         => $this->translate('Username'),
+                'description'   => $this->translate('The user name to use for authentication')
             )
         );
         $this->addElement(
@@ -99,8 +99,8 @@ class DbResourceForm extends Form
             array(
                 'required'          => true,
                 'renderPassword'    => true,
-                'label'             => t('Password'),
-                'description'       => t('The password to use for authentication')
+                'label'             => $this->translate('Password'),
+                'description'       => $this->translate('The password to use for authentication')
             )
         );
 
@@ -132,7 +132,9 @@ class DbResourceForm extends Form
             $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
             $resource->getConnection()->getConnection();
         } catch (Exception $e) {
-            $form->addError(t('Connectivity validation failed, connection to the given resource not possible.'));
+            $form->addError(
+                $form->translate('Connectivity validation failed, connection to the given resource not possible.')
+            );
             return false;
         }
 

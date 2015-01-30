@@ -22,7 +22,7 @@ class ResourceConfigForm extends ConfigForm
     public function init()
     {
         $this->setName('form_config_resource');
-        $this->setSubmitLabel(t('Save Changes'));
+        $this->setSubmitLabel($this->translate('Save Changes'));
     }
 
     /**
@@ -43,7 +43,7 @@ class ResourceConfigForm extends ConfigForm
         } elseif ($type === 'file') {
             return new FileResourceForm();
         } else {
-            throw new InvalidArgumentException(sprintf(t('Invalid resource type "%s" provided'), $type));
+            throw new InvalidArgumentException(sprintf($this->translate('Invalid resource type "%s" provided'), $type));
         }
     }
 
@@ -62,9 +62,9 @@ class ResourceConfigForm extends ConfigForm
     {
         $name = isset($values['name']) ? $values['name'] : '';
         if (! $name) {
-            throw new InvalidArgumentException(t('Resource name missing'));
+            throw new InvalidArgumentException($this->translate('Resource name missing'));
         } elseif ($this->config->hasSection($name)) {
-            throw new InvalidArgumentException(t('Resource already exists'));
+            throw new InvalidArgumentException($this->translate('Resource already exists'));
         }
 
         unset($values['name']);
@@ -85,11 +85,11 @@ class ResourceConfigForm extends ConfigForm
     public function edit($name, array $values)
     {
         if (! $name) {
-            throw new InvalidArgumentException(t('Old resource name missing'));
+            throw new InvalidArgumentException($this->translate('Old resource name missing'));
         } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
-            throw new InvalidArgumentException(t('New resource name missing'));
+            throw new InvalidArgumentException($this->translate('New resource name missing'));
         } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(t('Unknown resource provided'));
+            throw new InvalidArgumentException($this->translate('Unknown resource provided'));
         }
 
         $resourceConfig = $this->config->getSection($name);
@@ -111,9 +111,9 @@ class ResourceConfigForm extends ConfigForm
     public function remove($name)
     {
         if (! $name) {
-            throw new InvalidArgumentException(t('Resource name missing'));
+            throw new InvalidArgumentException($this->translate('Resource name missing'));
         } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(t('Unknown resource provided'));
+            throw new InvalidArgumentException($this->translate('Unknown resource provided'));
         }
 
         $resourceConfig = $this->config->getSection($name);
@@ -143,10 +143,10 @@ class ResourceConfigForm extends ConfigForm
         try {
             if ($resource === null) { // create new resource
                 $this->add($this->getValues());
-                $message = t('Resource "%s" has been successfully created');
+                $message = $this->translate('Resource "%s" has been successfully created');
             } else { // edit existing resource
                 $this->edit($resource, $this->getValues());
-                $message = t('Resource "%s" has been successfully changed');
+                $message = $this->translate('Resource "%s" has been successfully changed');
             }
         } catch (InvalidArgumentException $e) {
             Notification::error($e->getMessage());
@@ -172,9 +172,9 @@ class ResourceConfigForm extends ConfigForm
         $resource = $this->request->getQuery('resource');
         if ($resource !== null) {
             if ($resource === '') {
-                throw new ConfigurationError(t('Resource name missing'));
+                throw new ConfigurationError($this->translate('Resource name missing'));
             } elseif (! $this->config->hasSection($resource)) {
-                throw new ConfigurationError(t('Unknown resource provided'));
+                throw new ConfigurationError($this->translate('Unknown resource provided'));
             }
 
             $configValues = $this->config->getSection($resource)->toArray();
@@ -197,8 +197,8 @@ class ResourceConfigForm extends ConfigForm
             array(
                 'order'         => 0,
                 'ignore'        => true,
-                'label'         => t('Force Changes'),
-                'description'   => t('Check this box to enforce changes without connectivity validation')
+                'label'         => $this->translate('Force Changes'),
+                'description'   => $this->translate('Check this box to enforce changes without connectivity validation')
             )
         );
     }
@@ -211,14 +211,14 @@ class ResourceConfigForm extends ConfigForm
         $resourceType = isset($formData['type']) ? $formData['type'] : 'db';
 
         $resourceTypes = array(
-            'file'          => t('File'),
+            'file'          => $this->translate('File'),
             'livestatus'    => 'Livestatus',
         );
         if ($resourceType === 'ldap' || Platform::extensionLoaded('ldap')) {
             $resourceTypes['ldap'] = 'LDAP';
         }
         if ($resourceType === 'db' || Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
-            $resourceTypes['db'] = t('SQL Database');
+            $resourceTypes['db'] = $this->translate('SQL Database');
         }
 
         $this->addElement(
@@ -227,8 +227,8 @@ class ResourceConfigForm extends ConfigForm
             array(
                 'required'          => true,
                 'autosubmit'        => true,
-                'label'             => t('Resource Type'),
-                'description'       => t('The type of resource'),
+                'label'             => $this->translate('Resource Type'),
+                'description'       => $this->translate('The type of resource'),
                 'multiOptions'      => $resourceTypes,
                 'value'             => $resourceType
             )

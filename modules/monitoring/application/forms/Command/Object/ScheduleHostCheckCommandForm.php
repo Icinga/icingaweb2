@@ -24,9 +24,8 @@ class ScheduleHostCheckCommandForm extends ScheduleServiceCheckCommandForm
                 'checkbox',
                 'all_services',
                 array(
-                    'label'         => mt('monitoring', 'All Services'),
-                    'description'   => mt(
-                        'monitoring',
+                    'label'         => $this->translate('All Services'),
+                    'description'   => $this->translate(
                         'Schedule check for all services on the hosts and the hosts themselves.'
                     )
                 )

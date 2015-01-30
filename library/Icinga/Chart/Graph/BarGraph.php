@@ -28,7 +28,7 @@ class BarGraph extends Styleable implements Drawable
      *
      * @var int
      */
-    private $barWidth = 4;
+    private $barWidth = 3;
 
     /**
      * The dataset to use for this bar graph
@@ -122,6 +122,14 @@ class BarGraph extends Styleable implements Drawable
         $doc = $ctx->getDocument();
         $group = $doc->createElement('g');
         $idx = 0;
+
+        if (count($this->dataSet) > 15) {
+            $this->barWidth = 2;
+        }
+        if (count($this->dataSet) > 25) {
+            $this->barWidth = 1;
+        }
+
         foreach ($this->dataSet as $x => $point) {
             // add white background bar, to prevent other bars from altering transparency effects
             $bar = $this->drawSingleBar($point, $idx++, 'white', $this->strokeWidth, $idx)->toSvg($ctx);

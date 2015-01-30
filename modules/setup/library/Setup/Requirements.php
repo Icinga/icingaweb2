@@ -9,6 +9,9 @@ use IteratorAggregate;
 
 /**
  * Container to store and handle requirements
+ *
+ * TODO: Requirements should be registered as objects with a specific purpose (PhpModRequirement, PhpIniRequirement, ..)
+ *       so that it's not necessary to define unique identifiers which may differ between different modules.
  */
 class Requirements implements IteratorAggregate
 {
@@ -41,10 +44,38 @@ class Requirements implements IteratorAggregate
      *
      * @return  self
      */
-    public function add($requirement)
+    public function add($name, $requirement)
     {
-        $this->requirements[] = $requirement;
+        $this->requirements[$name] = array_key_exists($name, $this->requirements)
+            ? $this->combine($this->requirements[$name], $requirement)
+            : $requirement;
         return $this;
+    }
+
+    /**
+     * Combine the two given requirements
+     *
+     * Returns the most important requirement with the description from the other one being added.
+     *
+     * @param   object  $oldRequirement
+     * @param   object  $newRequirement
+     *
+     * @return  object
+     */
+    protected function combine($oldRequirement, $newRequirement)
+    {
+        if ($newRequirement->state === static::STATE_MANDATORY && $oldRequirement->state === static::STATE_OPTIONAL) {
+            $tempRequirement = $oldRequirement;
+            $oldRequirement = $newRequirement;
+            $newRequirement = $tempRequirement;
+        }
+
+        if (! is_array($oldRequirement->description)) {
+            $oldRequirement->description = array($oldRequirement->description);
+        }
+
+        $oldRequirement->description[] = $newRequirement->description;
+        return $oldRequirement;
     }
 
     /**
@@ -70,6 +101,7 @@ class Requirements implements IteratorAggregate
     /**
      * Register an optional requirement
      *
+     * @param   string      $name
      * @param   string      $title
      * @param   string      $description
      * @param   bool        $state
@@ -77,20 +109,24 @@ class Requirements implements IteratorAggregate
      *
      * @return  self
      */
-    public function addOptional($title, $description, $state, $message)
+    public function addOptional($name, $title, $description, $state, $message)
     {
-        $this->add((object) array(
-            'title'         => $title,
-            'message'       => $message,
-            'description'   => $description,
-            'state'         => (bool) $state ? static::STATE_OK : static::STATE_OPTIONAL
-        ));
+        $this->add(
+            $name,
+            (object) array(
+                'title'         => $title,
+                'message'       => $message,
+                'description'   => $description,
+                'state'         => (bool) $state ? static::STATE_OK : static::STATE_OPTIONAL
+            )
+        );
         return $this;
     }
 
     /**
      * Register a mandatory requirement
      *
+     * @param   string      $name
      * @param   string      $title
      * @param   string      $description
      * @param   bool        $state
@@ -98,14 +134,17 @@ class Requirements implements IteratorAggregate
      *
      * @return  self
      */
-    public function addMandatory($title, $description, $state, $message)
+    public function addMandatory($name, $title, $description, $state, $message)
     {
-        $this->add((object) array(
-            'title'         => $title,
-            'message'       => $message,
-            'description'   => $description,
-            'state'         => (bool) $state ? static::STATE_OK : static::STATE_MANDATORY
-        ));
+        $this->add(
+            $name,
+            (object) array(
+                'title'         => $title,
+                'message'       => $message,
+                'description'   => $description,
+                'state'         => (bool) $state ? static::STATE_OK : static::STATE_MANDATORY
+            )
+        );
         return $this;
     }
 
@@ -118,8 +157,8 @@ class Requirements implements IteratorAggregate
      */
     public function merge(Requirements $requirements)
     {
-        foreach ($requirements->getAll() as $requirement) {
-            $this->add($requirement);
+        foreach ($requirements->getAll() as $name => $requirement) {
+            $this->add($name, $requirement);
         }
 
         return $this;

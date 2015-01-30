@@ -4,9 +4,11 @@
 
 namespace Icinga\Module\Monitoring;
 
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filterable;
+use Icinga\File\Csv;
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Url;
-use Icinga\File\Csv;
 
 /**
  * Base class for all monitoring action controller
@@ -59,6 +61,22 @@ class Controller extends ModuleActionController
             Csv::fromQuery($query)->dump();
             exit;
         }
+    }
+
+    /**
+     * Apply a restriction on the given data view
+     *
+     * @param   string      $restriction    The name of restriction
+     * @param   Filterable  $filterable     The filterable to restrict
+     *
+     * @return  Filterable  The filterable
+     */
+    protected function applyRestriction($restriction, Filterable $view)
+    {
+        foreach ($this->getRestrictions($restriction) as $filter) {
+            $view->applyFilter(Filter::fromQueryString($filter));
+        }
+        return $view;
     }
 }
 

@@ -15,7 +15,9 @@ class Groupsummary extends DataView
     {
         return array(
             'servicegroup',
+            'servicegroup_alias',
             'hostgroup',
+            'hostgroup_alias',
             'hosts_up',
             'hosts_unreachable',
             'hosts_unreachable_handled',
@@ -47,7 +49,7 @@ class Groupsummary extends DataView
             'services_unknown_last_state_change_unhandled'
         );
     }
-    
+
     public function getSortRules()
     {
         return array(

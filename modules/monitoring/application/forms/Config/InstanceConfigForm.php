@@ -25,7 +25,7 @@ class InstanceConfigForm extends ConfigForm
     public function init()
     {
         $this->setName('form_config_monitoring_instance');
-        $this->setSubmitLabel(mt('monitoring', 'Save Changes'));
+        $this->setSubmitLabel($this->translate('Save Changes'));
     }
 
     /**
@@ -48,7 +48,7 @@ class InstanceConfigForm extends ConfigForm
                 break;
             default:
                 throw new InvalidArgumentException(
-                    sprintf(mt('monitoring', 'Invalid instance type "%s" given'), $type)
+                    sprintf($this->translate('Invalid instance type "%s" given'), $type)
                 );
         }
         return $form;
@@ -69,10 +69,10 @@ class InstanceConfigForm extends ConfigForm
     {
         $name = isset($values['name']) ? $values['name'] : '';
         if (! $name) {
-            throw new InvalidArgumentException(mt('monitoring', 'Instance name missing'));
+            throw new InvalidArgumentException($this->translate('Instance name missing'));
         }
         if ($this->config->hasSection($name)) {
-            throw new InvalidArgumentException(mt('monitoring', 'Instance already exists'));
+            throw new InvalidArgumentException($this->translate('Instance already exists'));
         }
 
         unset($values['name']);
@@ -93,11 +93,11 @@ class InstanceConfigForm extends ConfigForm
     public function edit($name, array $values)
     {
         if (! $name) {
-            throw new InvalidArgumentException(mt('monitoring', 'Old instance name missing'));
+            throw new InvalidArgumentException($this->translate('Old instance name missing'));
         } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
-            throw new InvalidArgumentException(mt('monitoring', 'New instance name missing'));
+            throw new InvalidArgumentException($this->translate('New instance name missing'));
         } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(mt('monitoring', 'Unknown instance name provided'));
+            throw new InvalidArgumentException($this->translate('Unknown instance name provided'));
         }
 
         unset($values['name']);
@@ -117,9 +117,9 @@ class InstanceConfigForm extends ConfigForm
     public function remove($name)
     {
         if (! $name) {
-            throw new InvalidArgumentException(mt('monitoring', 'Instance name missing'));
+            throw new InvalidArgumentException($this->translate('Instance name missing'));
         } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(mt('monitoring', 'Unknown instance name provided'));
+            throw new InvalidArgumentException($this->translate('Unknown instance name provided'));
         }
 
         $instanceConfig = $this->config->getSection($name);
@@ -136,10 +136,10 @@ class InstanceConfigForm extends ConfigForm
         $instanceName = $this->request->getQuery('instance');
         if ($instanceName !== null) {
             if (! $instanceName) {
-                throw new ConfigurationError(mt('monitoring', 'Instance name missing'));
+                throw new ConfigurationError($this->translate('Instance name missing'));
             }
             if (! $this->config->hasSection($instanceName)) {
-                throw new ConfigurationError(mt('monitoring', 'Unknown instance name given'));
+                throw new ConfigurationError($this->translate('Unknown instance name given'));
             }
 
             $instanceConfig = $this->config->getSection($instanceName)->toArray();
@@ -158,10 +158,10 @@ class InstanceConfigForm extends ConfigForm
         try {
             if ($instanceName === null) { // create new instance
                 $this->add($this->getValues());
-                $message = mt('monitoring', 'Instance "%s" created successfully.');
+                $message = $this->translate('Instance "%s" created successfully.');
             } else { // edit existing instance
                 $this->edit($instanceName, $this->getValues());
-                $message = mt('monitoring', 'Instance "%s" edited successfully.');
+                $message = $this->translate('Instance "%s" edited successfully.');
             }
         } catch (InvalidArgumentException $e) {
             Notification::error($e->getMessage());
@@ -189,7 +189,7 @@ class InstanceConfigForm extends ConfigForm
                 'name',
                 array(
                     'required'  => true,
-                    'label'     => mt('monitoring', 'Instance Name')
+                    'label'     => $this->translate('Instance Name')
                 )
             ),
             array(
@@ -198,10 +198,10 @@ class InstanceConfigForm extends ConfigForm
                 array(
                     'required'      => true,
                     'autosubmit'    => true,
-                    'label'         => mt('monitoring', 'Instance Type'),
+                    'label'         => $this->translate('Instance Type'),
                     'multiOptions'  => array(
-                        LocalCommandFile::TRANSPORT     => mt('monitoring', 'Local Command File'),
-                        RemoteCommandFile::TRANSPORT    => mt('monitoring', 'Remote Command File')
+                        LocalCommandFile::TRANSPORT     => $this->translate('Local Command File'),
+                        RemoteCommandFile::TRANSPORT    => $this->translate('Remote Command File')
                     ),
                     'value' => $instanceType
                 )

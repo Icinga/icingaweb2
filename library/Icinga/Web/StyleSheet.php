@@ -96,6 +96,7 @@ class StyleSheet
             $cache->send($cacheFile);
             return;
         }
+
         $less = new LessCompiler();
         foreach ($lessFiles as $file) {
             $less->addFile($file);

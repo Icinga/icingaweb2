@@ -6,7 +6,6 @@ namespace Icinga\Module\Setup\Steps;
 
 use Exception;
 use PDOException;
-use Icinga\Application\Icinga;
 use Icinga\Module\Setup\Step;
 use Icinga\Module\Setup\Utils\DbTool;
 use Icinga\Module\Setup\Exception\SetupException;
@@ -71,7 +70,7 @@ class DatabaseStep extends Step
             $this->log(mt('setup', 'Database schema already exists...'));
         } else {
             $this->log(mt('setup', 'Creating database schema...'));
-            $db->import(Icinga::app()->getApplicationDir() . '/../etc/schema/mysql.schema.sql');
+            $db->import($this->data['schemaPath'] . '/mysql.schema.sql');
         }
 
         if ($db->hasLogin($this->data['resourceConfig']['username'])) {
@@ -122,7 +121,7 @@ class DatabaseStep extends Step
             $this->log(mt('setup', 'Database schema already exists...'));
         } else {
             $this->log(mt('setup', 'Creating database schema...'));
-            $db->import(Icinga::app()->getApplicationDir() . '/../etc/schema/pgsql.schema.sql');
+            $db->import($this->data['schemaPath'] . '/pgsql.schema.sql');
         }
 
         if ($db->hasLogin($this->data['resourceConfig']['username'])) {

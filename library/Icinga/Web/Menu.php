@@ -248,7 +248,8 @@ class Menu implements RecursiveIterator
 
             $section->add(t('Logout'), array(
                 'url'      => 'authentication/logout',
-                'priority' => 700
+                'priority' => 700,
+                'renderer' => 'ForeignMenuItemRenderer'
             ));
         }
     }
@@ -366,7 +367,7 @@ class Menu implements RecursiveIterator
     /**
      * Return the url of this menu
      *
-     * @return  string
+     * @return  Url
      */
     public function getUrl()
     {

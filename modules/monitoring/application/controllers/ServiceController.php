@@ -26,20 +26,15 @@ class Monitoring_ServiceController extends MonitoredObjectController
     public function init()
     {
         $service = new Service($this->backend, $this->params->get('host'), $this->params->get('service'));
+
+        $this->applyRestriction('monitoring/services/filter', $service);
+
         if ($service->fetch() === false) {
             throw new Zend_Controller_Action_Exception($this->translate('Service not found'));
         }
         $this->object = $service;
         $this->createTabs();
-    }
-
-    /**
-     * Show a service
-     */
-    public function showAction()
-    {
         $this->getTabs()->activate('service');
-        parent::showAction();
     }
 
     /**
@@ -47,6 +42,8 @@ class Monitoring_ServiceController extends MonitoredObjectController
      */
     public function acknowledgeProblemAction()
     {
+        $this->assertPermission('monitoring/command/acknowledge-problem');
+
         $this->view->title = $this->translate('Acknowledge Service Problem');
         $this->handleCommandForm(new AcknowledgeProblemCommandForm());
     }
@@ -56,6 +53,8 @@ class Monitoring_ServiceController extends MonitoredObjectController
      */
     public function addCommentAction()
     {
+        $this->assertPermission('monitoring/command/comment/add');
+
         $this->view->title = $this->translate('Add Service Comment');
         $this->handleCommandForm(new AddCommentCommandForm());
     }
@@ -65,6 +64,8 @@ class Monitoring_ServiceController extends MonitoredObjectController
      */
     public function rescheduleCheckAction()
     {
+        $this->assertPermission('monitoring/command/schedule-check');
+
         $this->view->title = $this->translate('Reschedule Service Check');
         $this->handleCommandForm(new ScheduleServiceCheckCommandForm());
     }
@@ -74,6 +75,8 @@ class Monitoring_ServiceController extends MonitoredObjectController
      */
     public function scheduleDowntimeAction()
     {
+        $this->assertPermission('monitoring/command/downtime/schedule');
+
         $this->view->title = $this->translate('Schedule Service Downtime');
         $this->handleCommandForm(new ScheduleServiceDowntimeCommandForm());
     }
@@ -83,6 +86,8 @@ class Monitoring_ServiceController extends MonitoredObjectController
      */
     public function processCheckResultAction()
     {
+        $this->assertPermission('monitoring/command/process-check-result');
+
         $this->view->title = $this->translate('Submit Passive Service Check Result');
         $this->handleCommandForm(new ProcessCheckResultCommandForm());
     }

@@ -20,7 +20,7 @@ class GeneralConfigForm extends ConfigForm
     public function init()
     {
         $this->setName('form_config_general');
-        $this->setSubmitLabel(t('Save Changes'));
+        $this->setSubmitLabel($this->translate('Save Changes'));
     }
 
     /**
@@ -52,7 +52,7 @@ class GeneralConfigForm extends ConfigForm
         }
 
         if ($this->save()) {
-            Notification::success(t('New configuration has successfully been stored'));
+            Notification::success($this->translate('New configuration has successfully been stored'));
         } else {
             return false;
         }

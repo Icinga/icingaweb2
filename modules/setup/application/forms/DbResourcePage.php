@@ -39,7 +39,7 @@ class DbResourcePage extends Form
             'note',
             'title',
             array(
-                'value'         => mt('setup', 'Database Resource', 'setup.page.title'),
+                'value'         => $this->translate('Database Resource', 'setup.page.title'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -50,8 +50,7 @@ class DbResourcePage extends Form
             'note',
             'description',
             array(
-                'value' => mt(
-                    'setup',
+                'value' => $this->translate(
                     'Now please configure your database resource. Note that the database itself does not need to'
                     . ' exist at this time as it is going to be created once the wizard is about to be finished.'
                 )
@@ -121,8 +120,10 @@ class DbResourcePage extends Form
             'skip_validation',
             array(
                 'required'      => true,
-                'label'         => mt('setup', 'Skip Validation'),
-                'description'   => mt('setup', 'Check this to not to validate connectivity with the given database server')
+                'label'         => $this->translate('Skip Validation'),
+                'description'   => $this->translate(
+                    'Check this to not to validate connectivity with the given database server'
+                )
             )
         );
     }

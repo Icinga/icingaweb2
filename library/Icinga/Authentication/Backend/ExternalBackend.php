@@ -11,7 +11,7 @@ use Icinga\User;
 /**
  * Test login with external authentication mechanism, e.g. Apache
  */
-class AutoLoginBackend extends UserBackend
+class ExternalBackend extends UserBackend
 {
     /**
      * Regexp expression to strip values from a username
@@ -21,7 +21,7 @@ class AutoLoginBackend extends UserBackend
     private $stripUsernameRegexp;
 
     /**
-     * Create new autologin backend
+     * Create new authentication backend of type "external"
      *
      * @param ConfigObject $config
      */
@@ -33,7 +33,7 @@ class AutoLoginBackend extends UserBackend
     /**
      * Count the available users
      *
-     * Autologin backends will always return 1
+     * Authenticaton backends of type "external" will always return 1
      *
      * @return int
      */

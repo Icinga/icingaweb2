@@ -7,33 +7,40 @@ if (in_array((int) $object->state, array(0, 99))) {
     return;
 }
 
-if ($object->getType() === $object::TYPE_HOST) {
-    $ackLink = $this->href(
-        'monitoring/host/acknowledge-problem',
-        array('host' => $object->getName())
-    );
-} else {
-    $ackLink = $this->href(
-        'monitoring/service/acknowledge-problem',
-        array('host' => $object->getHost()->getName(), 'service' => $object->getName())
-    );
-}
-
 if ($object->acknowledged): ?>
     <tr>
         <th><?= $this->translate('Acknowledged') ?></th>
-        <td><?= $removeAckForm ?></td>
+        <td>
+            <?php if (isset($removeAckForm)) { // Form is unset if the current user lacks the respective permission
+                echo $removeAckForm;
+            } else {
+                echo '&#45;';
+            } ?>
+        </td>
     </tr>
 <?php else: ?>
     <tr>
         <th><?= $this->translate('Not acknowledged') ?></th>
         <td>
-            <?php
-
+            <?php if ($this->hasPermission('monitoring/command/acknowledge-problem')) {
+                if ($object->getType() === $object::TYPE_HOST) {
+                    $ackLink = $this->href(
+                        'monitoring/host/acknowledge-problem',
+                        array('host' => $object->getName())
+                    );
+                } else {
+                    $ackLink = $this->href(
+                        'monitoring/service/acknowledge-problem',
+                        array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+                    );
+                }
             ?>
-            <a href="<?= $ackLink ?>">
+            <a href="<?= $ackLink ?>" data-base-target="_self">
                 <?= $this->icon('ok') ?> <?= $this->translate('Acknowledge') ?>
             </a>
+            <?php } else {
+                echo '&#45;';
+            } // endif ?>
         </td>
     </tr>
 <?php endif ?>

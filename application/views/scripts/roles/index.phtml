@@ -1,4 +1,4 @@
-<div class="controls">
+<div class="controls" data-base-target="_main">
     <?= $tabs ?>
     <h1><?= $this->translate('Roles') ?></h1>
 </div>
@@ -30,7 +30,7 @@
                         <td>
                             <?php
                             // TODO(el): $role->without(...) or $role->shift(...) would be nice!
-                            $restrictions = $role;
+                            $restrictions = clone $role;
                             unset($restrictions['users']);
                             unset($restrictions['groups']);
                             unset($restrictions['permissions']);

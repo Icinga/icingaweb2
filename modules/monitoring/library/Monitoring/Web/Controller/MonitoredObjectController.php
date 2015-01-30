@@ -1,11 +1,8 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Web\Controller;
 
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
@@ -15,7 +12,6 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandFor
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
-use Icinga\Web\Widget\Tabextension\OutputFormat;
 
 /**
  * Base class for the host and service controller
@@ -57,34 +53,33 @@ abstract class MonitoredObjectController extends Controller
     public function showAction()
     {
         $this->setAutorefreshInterval(10);
-        $checkNowForm = new CheckNowCommandForm();
-        $checkNowForm
-            ->setObjects($this->object)
-            ->handleRequest();
-        $this->view->checkNowForm = $checkNowForm;
+        $auth = $this->Auth();
+        if ($auth->hasPermission('monitoring/command/schedule-check')) {
+            $checkNowForm = new CheckNowCommandForm();
+            $checkNowForm
+                ->setObjects($this->object)
+                ->handleRequest();
+            $this->view->checkNowForm = $checkNowForm;
+        }
         if ( ! in_array((int) $this->object->state, array(0, 99))) {
             if ((bool) $this->object->acknowledged) {
-                $removeAckForm = new RemoveAcknowledgementCommandForm();
-                $removeAckForm
-                    ->setObjects($this->object)
-                    ->handleRequest();
-                $this->view->removeAckForm = $removeAckForm;
-            } else {
-                $ackForm = new AcknowledgeProblemCommandForm();
-                $ackForm
-                    ->setObjects($this->object)
-                    ->handleRequest();
-                $this->view->ackForm = $ackForm;
+                if ($auth->hasPermission('monitoring/command/remove-acknowledgement')) {
+                    $removeAckForm = new RemoveAcknowledgementCommandForm();
+                    $removeAckForm
+                        ->setObjects($this->object)
+                        ->handleRequest();
+                    $this->view->removeAckForm = $removeAckForm;
+                }
             }
         }
-        if (count($this->object->comments) > 0) {
+        if (count($this->object->comments) > 0 && $auth->hasPermission('monitoring/command/comment/delete')) {
             $delCommentForm = new DeleteCommentCommandForm();
             $delCommentForm
                 ->setObjects($this->object)
                 ->handleRequest();
             $this->view->delCommentForm = $delCommentForm;
         }
-        if (count($this->object->downtimes > 0)) {
+        if (count($this->object->downtimes > 0) && $auth->hasPermission('monitoring/command/downtime/delete')) {
             $delDowntimeForm = new DeleteDowntimeCommandForm();
             $delDowntimeForm
                 ->setObjects($this->object)
@@ -139,30 +134,20 @@ abstract class MonitoredObjectController extends Controller
     abstract public function scheduleDowntimeAction();
 
     /**
-     * Remove a comment
+     * Delete a comment
      */
-    public function removeCommentAction()
+    public function deleteCommentAction()
     {
-        /*
-         * TODO(el): This is here because monitoring/list/comments has buttons to remove comments. Because of the nature
-         * of an action, the form is accessible via GET which does not make much sense because the form requires
-         * us to populate the ID of the comment which is to be deleted. We may introduce a combo box for choosing
-         * the comment ID on GET or deny GET access.
-         */
+        $this->assertHttpMethod('POST');
         $this->handleCommandForm(new DeleteCommentCommandForm());
     }
 
     /**
-     * Remove a downtime
+     * Delete a downtime
      */
     public function deleteDowntimeAction()
     {
-        /*
-         * TODO(el): This is here because monitoring/list/downtimes has buttons to remove comments. Because of the
-         * nature of an action, the form is accessible via GET which does not make much sense because the form requires
-         * us to populate the ID of the downtime which is to be deleted. We may introduce a combo box for choosing
-         * the downtime ID on GET or deny GET access.
-         */
+        $this->assertHttpMethod('POST');
         $this->handleCommandForm(new DeleteDowntimeCommandForm());
     }
 
@@ -223,8 +208,6 @@ abstract class MonitoredObjectController extends Controller
                 )
             );
         }
-        $tabs
-            ->extend(new OutputFormat())
-            ->extend(new DashboardAction());
+        $tabs->extend(new DashboardAction());
     }
 }

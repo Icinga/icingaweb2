@@ -114,6 +114,13 @@ abstract class ApplicationBootstrap
     protected $isWeb = false;
 
     /**
+     * Whether Icinga Web 2 requires setup
+     *
+     * @type bool
+     */
+    protected $requiresSetup = false;
+
+    /**
      * Constructor
      *
      * @param string $baseDir   Icinga Web 2 base directory
@@ -133,7 +140,7 @@ abstract class ApplicationBootstrap
             if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
                 $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
             } else {
-                $configDir = '/etc/icingaweb';
+                $configDir = '/etc/icingaweb2';
             }
         }
         $canonical = realpath($configDir);
@@ -333,7 +340,7 @@ abstract class ApplicationBootstrap
     /**
      * Setup Icinga auto loader
      *
-     * @return self
+     * @return $this
      */
     public function setupAutoloader()
     {
@@ -366,7 +373,7 @@ abstract class ApplicationBootstrap
     /**
      * Setup module manager
      *
-     * @return self
+     * @return $this
      */
     protected function setupModuleManager()
     {
@@ -379,24 +386,9 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Load all core modules
-     *
-     * @return self
-     */
-    protected function loadCoreModules()
-    {
-        try {
-            $this->moduleManager->loadCoreModules();
-        } catch (NotReadableError $e) {
-            Logger::error(new IcingaException('Cannot load core modules. An exception was thrown:', $e));
-        }
-        return $this;
-    }
-
-    /**
      * Load all enabled modules
      *
-     * @return self
+     * @return $this
      */
     protected function loadEnabledModules()
     {
@@ -409,9 +401,46 @@ abstract class ApplicationBootstrap
     }
 
     /**
+     * Load the setup module if Icinga Web 2 requires setup or the setup token exists
+     *
+     * @return $this
+     */
+    protected function loadSetupModuleIfNecessary()
+    {
+        if (! @file_exists($this->config->resolvePath('authentication.ini'))) {
+            $this->requiresSetup = true;
+            $this->moduleManager->loadModule('setup');
+        } elseif ($this->setupTokenExists()) {
+            // Load setup module but do not require setup
+            $this->moduleManager->loadModule('setup');
+        }
+        return $this;
+    }
+
+    /**
+     * Get whether Icinga Web 2 requires setup
+     *
+     * @return bool
+     */
+    public function requiresSetup()
+    {
+        return $this->requiresSetup;
+    }
+
+    /**
+     * Get whether the setup token exists
+     *
+     * @return bool
+     */
+    public function setupTokenExists()
+    {
+        return @file_exists($this->config->resolvePath('setup.token'));
+    }
+
+    /**
      * Setup default logging
      *
-     * @return  self
+     * @return $this
      */
     protected function setupLogging()
     {
@@ -428,7 +457,7 @@ abstract class ApplicationBootstrap
     /**
      * Load Configuration
      *
-     * @return self
+     * @return $this
      */
     protected function loadConfig()
     {
@@ -447,7 +476,7 @@ abstract class ApplicationBootstrap
     /**
      * Error handling configuration
      *
-     * @return self
+     * @return $this
      */
     protected function setupErrorHandling()
     {
@@ -473,7 +502,7 @@ abstract class ApplicationBootstrap
     /**
      * Set up logger
      *
-     * @return self
+     * @return $this
      */
     protected function setupLogger()
     {
@@ -490,7 +519,7 @@ abstract class ApplicationBootstrap
     /**
      * Set up the resource factory
      *
-     * @return self
+     * @return $this
      */
     protected function setupResourceFactory()
     {

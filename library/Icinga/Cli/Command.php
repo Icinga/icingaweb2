@@ -16,6 +16,10 @@ abstract class Command
 {
     protected $app;
     protected $docs;
+
+    /**
+     * @type Params
+     */
     protected $params;
     protected $screen;
     protected $isVerbose;
@@ -124,7 +128,7 @@ abstract class Command
 
     public function fail($msg)
     {
-        throw new IcingaException('%s', $msg);
+        throw new IcingaException($msg);
     }
 
     public function getDefaultActionName()

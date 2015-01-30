@@ -4,10 +4,11 @@
 
 namespace Icinga\Web;
 
+use Closure;
+use Zend_View_Abstract;
+use Icinga\Authentication\Manager;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Util\Translator;
-use Zend_View_Abstract;
-use Closure;
 
 /**
  * Icinga view
@@ -35,6 +36,13 @@ class View extends Zend_View_Abstract
      * Registered helper functions
      */
     private $helperFunctions = array();
+
+    /**
+     * Authentication manager
+     *
+     * @type \Icinga\Authentication\Manager|null
+     */
+    private $auth;
 
     /**
      * Create a new view object
@@ -152,6 +160,31 @@ class View extends Zend_View_Abstract
         foreach ($files as $file) {
             require_once $file;
         }
+    }
+
+    /**
+     * Get the authentication manager
+     *
+     * @return Manager
+     */
+    public function Auth()
+    {
+        if ($this->auth === null) {
+            $this->auth = Manager::getInstance();
+        }
+        return $this->auth;
+    }
+
+    /**
+     * Whether the current user has the given permission
+     *
+     * @param   string  $permission Name of the permission
+     *
+     * @return  bool
+     */
+    public function hasPermission($permission)
+    {
+        return $this->Auth()->hasPermission($permission);
     }
 
     /**

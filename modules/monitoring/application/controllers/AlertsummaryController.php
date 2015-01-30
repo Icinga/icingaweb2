@@ -78,7 +78,9 @@ class Monitoring_AlertsummaryController extends Controller
             'notification',
             array(
                 'host',
+                'host_display_name',
                 'service',
+                'service_display_name',
                 'notification_output',
                 'notification_contact',
                 'notification_start_time',
@@ -193,11 +195,11 @@ class Monitoring_AlertsummaryController extends Controller
 
         $out = new stdClass();
         if ($yesterday === $today) {
-            $out->trend = 'unchanged';
+            $out->trend = $this->translate('unchanged');
         } elseif ($yesterday > $today) {
-            $out->trend = 'down';
+            $out->trend = $this->translate('down');
         } else {
-            $out->trend = 'up';
+            $out->trend = $this->translate('up');
         }
 
         if ($yesterday <= 0) {
@@ -342,10 +344,10 @@ class Monitoring_AlertsummaryController extends Controller
         $gridChart = new GridChart();
 
         $gridChart->alignTopLeft();
-        $gridChart->setAxisLabel('', mt('monitoring', 'Notifications'))
+        $gridChart->setAxisLabel($this->createPeriodDescription(), mt('monitoring', 'Notifications'))
             ->setXAxis(new StaticAxis())
-            ->setAxisMin(null, 0)
-            ->setYAxis(new LinearUnit(10));
+            ->setYAxis(new LinearUnit(10))
+            ->setAxisMin(null, 0);
 
         $interval = $this->getInterval();
 
@@ -429,11 +431,10 @@ class Monitoring_AlertsummaryController extends Controller
             $item[1] = $item[1]/60/60;
         }
 
-
         $gridChart->drawBars(
             array(
                 'label' => $this->translate('Notifications'),
-                'color' => '#049baf',
+                'color' => '#07C0D9',
                 'data'  =>  $notifications,
                 'showPoints' => true
             )
@@ -470,15 +471,15 @@ class Monitoring_AlertsummaryController extends Controller
         $gridChart = new GridChart();
 
         $gridChart->alignTopLeft();
-        $gridChart->setAxisLabel('', mt('monitoring', 'Notifications'))
+        $gridChart->setAxisLabel($this->createPeriodDescription(), mt('monitoring', 'Notifications'))
             ->setXAxis(new StaticAxis())
-            ->setAxisMin(null, 0)
-            ->setYAxis(new LinearUnit(10));
+            ->setYAxis(new LinearUnit(10))
+            ->setAxisMin(null, 0);
 
         $gridChart->drawBars(
             array(
                 'label' => $this->translate('Notifications'),
-                'color' => '#049baf',
+                'color' => '#07C0D9',
                 'data'  =>  $this->notificationData,
                 'showPoints' => true
             )
@@ -507,7 +508,9 @@ class Monitoring_AlertsummaryController extends Controller
             'notification',
             array(
                 'host',
+                'host_display_name',
                 'service',
+                'service_display_name',
                 'notification_output',
                 'notification_contact',
                 'notification_start_time',
@@ -554,7 +557,7 @@ class Monitoring_AlertsummaryController extends Controller
     {
         $format = '';
         if ($interval === '1d') {
-            $format = '%H:00:00';
+            $format = '%H:00';
         } elseif ($interval === '1w') {
             $format = '%Y-%m-%d';
         } elseif ($interval === '1m') {
@@ -622,5 +625,29 @@ class Monitoring_AlertsummaryController extends Controller
         }
 
         return $interval;
+    }
+
+    /**
+     * Create a human-readable description of the current interval size
+     *
+     * @return string   The description of the current interval size
+     */
+    private function createPeriodDescription()
+    {
+        $int = $this->getInterval();
+        switch ($int) {
+            case '1d':
+                return t('Hour');
+                break;
+            case '1w';
+                return t('Day');
+                break;
+            case '1m':
+                return t('Day');
+                break;
+            case '1y':
+                return t('Month');
+                break;
+        }
     }
 }

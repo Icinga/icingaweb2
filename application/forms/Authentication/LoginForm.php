@@ -18,7 +18,7 @@ class LoginForm extends Form
     public function init()
     {
         $this->setName('form_login');
-        $this->setSubmitLabel(t('Login'));
+        $this->setSubmitLabel($this->translate('Login'));
     }
 
     /**
@@ -31,8 +31,8 @@ class LoginForm extends Form
             'username',
             array(
                 'required'      => true,
-                'label'         => t('Username'),
-                'placeholder'   => t('Please enter your username...'),
+                'label'         => $this->translate('Username'),
+                'placeholder'   => $this->translate('Please enter your username...'),
                 'class'         => false === isset($formData['username']) ? 'autofocus' : ''
             )
         );
@@ -41,8 +41,8 @@ class LoginForm extends Form
             'password',
             array(
                 'required'      => true,
-                'label'         => t('Password'),
-                'placeholder'   => t('...and your password'),
+                'label'         => $this->translate('Password'),
+                'placeholder'   => $this->translate('...and your password'),
                 'class'         => isset($formData['username']) ? 'autofocus' : ''
             )
         );

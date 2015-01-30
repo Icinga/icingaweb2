@@ -29,8 +29,7 @@ class AddCommentCommandForm extends ObjectsCommandForm
      */
     public function getHelp()
     {
-        return mt(
-            'monitoring',
+        return $this->translate(
             'This command is used to add host or service comments.'
         );
     }
@@ -47,9 +46,8 @@ class AddCommentCommandForm extends ObjectsCommandForm
                 'comment',
                 array(
                     'required'      => true,
-                    'label'         => mt('monitoring', 'Comment'),
-                    'description'   => mt(
-                        'monitoring',
+                    'label'         => $this->translate('Comment'),
+                    'description'   => $this->translate(
                         'If you work with other administrators, you may find it useful to share information about the'
                         . ' the host or service that is having problems. Make sure you enter a brief description of'
                         . ' what you are doing.'
@@ -60,10 +58,9 @@ class AddCommentCommandForm extends ObjectsCommandForm
                 'checkbox',
                 'persistent',
                 array(
-                    'label'         => mt('monitoring', 'Persistent'),
+                    'label'         => $this->translate('Persistent'),
                     'value'         => true,
-                    'description'   => mt(
-                        'monitoring',
+                    'description'   => $this->translate(
                         'If you uncheck this option, the comment will automatically be deleted the next time Icinga is'
                         . ' restarted.'
                     )

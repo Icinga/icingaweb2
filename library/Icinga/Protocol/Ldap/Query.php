@@ -33,6 +33,7 @@ class Query
     protected $sort_columns = array();
     protected $count;
     protected $base;
+    protected $usePagedResults = true;
 
     /**
      * Constructor
@@ -59,6 +60,17 @@ class Query
     public function getBase()
     {
         return $this->base;
+    }
+
+    public function setUsePagedResults($state = true)
+    {
+        $this->usePagedResults = (bool) $state;
+        return $this;
+    }
+
+    public function getUsePagedResults()
+    {
+        return $this->usePagedResults;
     }
 
     /**

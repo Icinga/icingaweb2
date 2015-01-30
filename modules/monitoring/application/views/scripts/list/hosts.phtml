@@ -1,8 +1,6 @@
 <?php
 use Icinga\Module\Monitoring\Object\Host;
 
-$helper = $this->getHelper('MonitoringState');
-
 if ($this->compact): ?>
 <div class="content">
 <?php else: ?>
@@ -82,7 +80,7 @@ if ($hosts->count() === 0) {
     <tr class="state <?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
       <!-- State -->
       <td class="state">
-        <strong><?= strtoupper(Host::getStateText($host->host_state, true)); ?></strong><br />
+        <strong><?= Host::getStateText($host->host_state, true); ?></strong><br />
         <?php if ((int) $host->host_state !== 99): ?>
         <?= $this->prefixedTimeSince($host->host_last_state_change, true) ?>
         <?php if ($host->host_state > 0 && (int) $host->host_state_type === 0): ?>
@@ -98,7 +96,7 @@ if ($hosts->count() === 0) {
         <?= $this->icon($this->resolveMacros($host->host_icon_image, $host)) ?>
         <?php endif ?>
         <?= implode(' ', $icons) ?>
-        <a href="<?= $hostLink  ?>"><?= $host->host_name ?></a>
+        <a href="<?= $hostLink  ?>"><?= $this->escape($host->host_display_name) ?></a>
         <?php if (isset($host->host_unhandled_services) && $host->host_unhandled_services > 0): ?>
         <span title="<?php printf(
           $this->translatePlural('%s Service Problem on Host "%s"', '%s Service Problems on Host "%s"', $host->host_unhandled_services),
@@ -110,15 +108,14 @@ if ($hosts->count() === 0) {
                $host->host_unhandled_services),
            'monitoring/show/services',
            array(
-               'host'                 => $host->host_name,
-               'service_problem'      => 1,
-               'service_acknowledged' => 0,
-               'service_in_downtime'  => 0
+               'host'               => $host->host_name,
+               'service_problem'    => 1,
+               'service_handled'    => 0
            ),
            array('style' => 'font-weight: normal')
         ) ?>)</span>
         <?php endif ?>
-        <p class="pluginoutput"><?= $this->escape(substr(strip_tags($host->host_output), 0, 10000)) ?></p>
+        <p class="pluginoutput"><?= $this->escape($this->ellipsis($host->host_output, 10000)) ?></p>
       </td>
       <?php foreach($this->extraColumns as $col): ?>
       <td><?= $this->escape($host->$col) ?></td>

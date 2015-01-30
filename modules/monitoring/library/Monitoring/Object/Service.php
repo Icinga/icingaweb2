@@ -68,9 +68,9 @@ class Service extends MonitoredObject
     /**
      * Create a new service
      *
-     * @param MonitoringBackend   $backend    Backend to fetch service information from
-     * @param string    $host       Host name the service is running on
-     * @param string    $service    Service name
+     * @param MonitoringBackend $backend    Backend to fetch service information from
+     * @param string            $host       Hostname the service is running on
+     * @param string            $service    Service name
      */
     public function __construct(MonitoringBackend $backend, $host, $service)
     {
@@ -108,6 +108,7 @@ class Service extends MonitoredObject
     {
         return $this->backend->select()->from('serviceStatus', array(
             'host_name',
+            'host_display_name',
             'host_state',
             'host_state_type',
             'host_last_state_change',
@@ -213,19 +214,19 @@ class Service extends MonitoredObject
         $translate = (bool) $translate;
         switch ((int) $state) {
             case self::STATE_OK:
-                $text = $translate ? mt('monitoring', 'ok') : 'ok';
+                $text = $translate ? mt('monitoring', 'OK') : 'ok';
                 break;
             case self::STATE_WARNING:
-                $text = $translate ? mt('monitoring', 'warning') : 'warning';
+                $text = $translate ? mt('monitoring', 'WARNING') : 'warning';
                 break;
             case self::STATE_CRITICAL:
-                $text = $translate ? mt('monitoring', 'critical') : 'critical';
+                $text = $translate ? mt('monitoring', 'CRITICAL') : 'critical';
                 break;
             case self::STATE_UNKNOWN:
-                $text = $translate ? mt('monitoring', 'unknown') : 'unknown';
+                $text = $translate ? mt('monitoring', 'UNKNOWN') : 'unknown';
                 break;
             case self::STATE_PENDING:
-                $text = $translate ? mt('monitoring', 'pending') : 'pending';
+                $text = $translate ? mt('monitoring', 'PENDING') : 'pending';
                 break;
             default:
                 throw new InvalidArgumentException('Invalid service state \'%s\'', $state);

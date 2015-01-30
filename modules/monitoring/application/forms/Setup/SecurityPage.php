@@ -20,7 +20,7 @@ class SecurityPage extends Form
             'note',
             'title',
             array(
-                'value'         => mt('monitoring', 'Monitoring Security', 'setup.page.title'),
+                'value'         => $this->translate('Monitoring Security', 'setup.page.title'),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))
@@ -31,8 +31,7 @@ class SecurityPage extends Form
             'note',
             'description',
             array(
-                'value' => mt(
-                    'monitoring',
+                'value' => $this->translate(
                     'To protect your monitoring environment against prying eyes please fill out the settings below.'
                 )
             )

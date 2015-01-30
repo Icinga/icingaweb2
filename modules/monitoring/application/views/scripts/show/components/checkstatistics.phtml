@@ -1,19 +1,13 @@
 <?php
 
-/** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+/** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
 
 if ($object->getType() === $object::TYPE_HOST) {
-    $reschedule = $this->href(
-        'monitoring/host/reschedule-check',
-        array('host' => $object->getName())
-    );
+    $isService = false;
     $checkAttempts = $object->host_current_check_attempt . '/' . $object->host_max_check_attempts;
     $stateType = (int) $object->host_state_type;
 } else {
-    $reschedule = $this->href(
-        'monitoring/service/reschedule-check',
-        array('host' => $object->getHost()->getName(), 'service' => $object->getName())
-    );
+    $isService = true;
     $checkAttempts = $object->service_attempt;
     $stateType = (int) $object->service_state_type;
 }
@@ -23,36 +17,53 @@ if ($object->getType() === $object::TYPE_HOST) {
 <tr>
     <th><?= $this->translate('Last check') ?></th>
     <td data-base-target="_self">
-        <?= $checkNowForm ?>
+        <?php if (isset($checkNowForm)) { // Form is unset if the current user lacks the respective permission
+            echo $checkNowForm;
+        } ?>
         <?= $this->timeSince($object->last_check) ?>
     </td>
 </tr>
 <tr>
   <th><?= $this->translate('Next check') ?></th>
   <td>
-      <a href="<?= $reschedule ?>">
-          <?= $this->icon('reschedule') ?> <?= $this->translate('Reschedule') ?>
+      <?php if ($this->hasPermission('monitoring/command/schedule-check')) {
+          if ($isService) {
+              $reschedule = $this->href(
+                  'monitoring/service/reschedule-check',
+                  array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+              );
+          } else {
+              $reschedule = $this->href(
+                  'monitoring/host/reschedule-check',
+                  array('host' => $object->getName())
+              );
+          }
+      ?>
+      <a href="<?= $reschedule ?>" data-base-target="_self">
+          <?= $this->icon('reschedule') ?>
+          <?= $this->translate('Reschedule') ?>
       </a>
+      <?php } // endif ?>
       <?= $this->timeUntil($object->next_check) ?>
   </td>
 </tr>
 <tr>
     <th><?= $this->translate('Check attempts') ?></th>
     <?php if ($stateType === 0): ?>
-    <td><?= $checkAttempts ?> <?= $this->translate('(soft state)') ?></td>
+        <td><?= $checkAttempts ?> (<?= $this->translate('soft state') ?>)</td>
     <?php else: ?>
-    <td><?= $checkAttempts ?> <?= $this->translate('(hard state)') ?></td>
+        <td><?= $checkAttempts ?> (<?= $this->translate('hard state') ?>)</td>
     <?php endif; ?>
 </tr>
 <?php if ($object->check_execution_time): ?>
-<tr>
-  <th><?= $this->translate('Check execution time') ?></th>
-  <td><?= $object->check_execution_time ?>s</td>
-</tr>
+    <tr>
+        <th><?= $this->translate('Check execution time') ?></th>
+        <td><?= $object->check_execution_time ?>s</td>
+    </tr>
 <?php endif ?>
 <?php if ($object->check_latency): ?>
-<tr>
- <th><?= $this->translate('Check latency') ?></th>
- <td><?= $object->check_latency ?>s</td>
-</tr>
+    <tr>
+        <th><?= $this->translate('Check latency') ?></th>
+        <td><?= $object->check_latency ?>s</td>
+    </tr>
 <?php endif ?>

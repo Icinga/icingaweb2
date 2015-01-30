@@ -279,7 +279,7 @@ class Config implements Countable, Iterator
      *
      * @param   string      $file   The file to parse
      *
-     * @throws  NotReadableError    When the file does not exist or cannot be read
+     * @throws  NotReadableError    When the file cannot be read
      */
     public static function fromIni($file)
     {
@@ -292,7 +292,7 @@ class Config implements Countable, Iterator
             $config = new static(new ConfigObject(parse_ini_file($filepath, true)));
             $config->setConfigFile($filepath);
             return $config;
-        } else {
+        } elseif (@file_exists($filepath)) {
             throw new NotReadableError(t('Cannot read config file "%s". Permission denied'), $filepath);
         }
 
@@ -322,7 +322,7 @@ class Config implements Countable, Iterator
      */
     public static function app($configname = 'config', $fromDisk = false)
     {
-        if (!isset(self::$app[$configname]) || $fromDisk) {
+        if (! isset(self::$app[$configname]) || $fromDisk) {
             self::$app[$configname] = static::fromIni(static::resolvePath($configname . '.ini'));
         }
 
@@ -341,12 +341,12 @@ class Config implements Countable, Iterator
      */
     public static function module($modulename, $configname = 'config', $fromDisk = false)
     {
-        if (!isset(self::$modules[$modulename])) {
+        if (! isset(self::$modules[$modulename])) {
             self::$modules[$modulename] = array();
         }
 
         $moduleConfigs = self::$modules[$modulename];
-        if (!isset($moduleConfigs[$configname]) || $fromDisk) {
+        if (! isset($moduleConfigs[$configname]) || $fromDisk) {
             $moduleConfigs[$configname] = static::fromIni(
                 static::resolvePath('modules/' . $modulename . '/' . $configname . '.ini')
             );

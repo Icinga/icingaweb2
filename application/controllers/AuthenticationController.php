@@ -4,16 +4,17 @@
 
 # namespace Icinga\Application\Controllers;
 
-use Icinga\Authentication\Backend\AutoLoginBackend;
-use Icinga\Web\Controller\ActionController;
-use Icinga\Forms\Authentication\LoginForm;
-use Icinga\Authentication\AuthChain;
 use Icinga\Application\Config;
+use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Authentication\AuthChain;
+use Icinga\Authentication\Backend\ExternalBackend;
 use Icinga\Exception\AuthenticationException;
-use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotReadableError;
+use Icinga\Forms\Authentication\LoginForm;
 use Icinga\User;
+use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Url;
 
 /**
@@ -33,10 +34,12 @@ class AuthenticationController extends ActionController
      */
     public function loginAction()
     {
-        if (@file_exists(Config::resolvePath('setup.token')) && !@file_exists(Config::resolvePath('config.ini'))) {
+        $icinga = Icinga::app();
+        if ($icinga->setupTokenExists() && $icinga->requiresSetup()) {
             $this->redirectNow(Url::fromPath('setup'));
         }
 
+        $triedOnlyExternalAuth = null;
         $auth = $this->Auth();
         $this->view->form = $form = new LoginForm();
         $this->view->title = $this->translate('Icingaweb Login');
@@ -80,7 +83,7 @@ class AuthenticationController extends ActionController
                 }
 
                 foreach ($chain as $backend) {
-                    if ($backend instanceof AutoLoginBackend) {
+                    if ($backend instanceof ExternalBackend) {
                         continue;
                     }
                     ++$backendsTried;
@@ -124,7 +127,8 @@ class AuthenticationController extends ActionController
             } elseif ($request->isGet()) {
                 $user = new User('');
                 foreach ($chain as $backend) {
-                    if ($backend instanceof AutoLoginBackend) {
+                    $triedOnlyExternalAuth = $triedOnlyExternalAuth === null;
+                    if ($backend instanceof ExternalBackend) {
                         $authenticated  = $backend->authenticate($user);
                         if ($authenticated === true) {
                             $auth->setAuthenticated($user);
@@ -132,6 +136,8 @@ class AuthenticationController extends ActionController
                                 Url::fromPath(Url::fromRequest()->getParam('redirect', 'dashboard'))
                             );
                         }
+                    } else {
+                        $triedOnlyExternalAuth = false;
                     }
                 }
             }
@@ -139,7 +145,8 @@ class AuthenticationController extends ActionController
             $this->view->errorInfo = $e->getMessage();
         }
 
-        $this->view->configMissing = is_dir(Config::$configDir) === false;
+        $this->view->requiresExternalAuth = $triedOnlyExternalAuth && !$auth->isAuthenticated();
+        $this->view->requiresSetup = Icinga::app()->requiresSetup();
     }
 
     /**

@@ -29,8 +29,7 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
      */
     public function getHelp()
     {
-        return mt(
-            'monitoring',
+        return $this->translate(
             'This command is used to submit passive host or service check results.'
         );
     }
@@ -53,17 +52,17 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
             'status',
             array(
                 'required'      => true,
-                'label'         => mt('monitoring', 'Status'),
-                'description'   => mt('monitoring', 'The state this check result should report'),
+                'label'         => $this->translate('Status'),
+                'description'   => $this->translate('The state this check result should report'),
                 'multiOptions'  => $object->getType() === $object::TYPE_HOST ? array(
-                    ProcessCheckResultCommand::HOST_UP          => mt('monitoring', 'UP', 'icinga.state'),
-                    ProcessCheckResultCommand::HOST_DOWN        => mt('monitoring', 'DOWN', 'icinga.state'),
-                    ProcessCheckResultCommand::HOST_UNREACHABLE => mt('monitoring', 'UNREACHABLE', 'icinga.state')
+                    ProcessCheckResultCommand::HOST_UP          => $this->translate('UP', 'icinga.state'),
+                    ProcessCheckResultCommand::HOST_DOWN        => $this->translate('DOWN', 'icinga.state'),
+                    ProcessCheckResultCommand::HOST_UNREACHABLE => $this->translate('UNREACHABLE', 'icinga.state')
                 ) : array(
-                    ProcessCheckResultCommand::SERVICE_OK       => mt('monitoring', 'OK', 'icinga.state'),
-                    ProcessCheckResultCommand::SERVICE_WARNING  => mt('monitoring', 'WARNING', 'icinga.state'),
-                    ProcessCheckResultCommand::SERVICE_CRITICAL => mt('monitoring', 'CRITICAL', 'icinga.state'),
-                    ProcessCheckResultCommand::SERVICE_UNKNOWN  => mt('monitoring', 'UNKNOWN', 'icinga.state')
+                    ProcessCheckResultCommand::SERVICE_OK       => $this->translate('OK', 'icinga.state'),
+                    ProcessCheckResultCommand::SERVICE_WARNING  => $this->translate('WARNING', 'icinga.state'),
+                    ProcessCheckResultCommand::SERVICE_CRITICAL => $this->translate('CRITICAL', 'icinga.state'),
+                    ProcessCheckResultCommand::SERVICE_UNKNOWN  => $this->translate('UNKNOWN', 'icinga.state')
                 )
             )
         );
@@ -72,8 +71,8 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
             'output',
             array(
                 'required'      => true,
-                'label'         => mt('monitoring', 'Output'),
-                'description'   => mt('monitoring', 'The plugin output of this check result')
+                'label'         => $this->translate('Output'),
+                'description'   => $this->translate('The plugin output of this check result')
             )
         );
         $this->addElement(
@@ -81,9 +80,8 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
             'perfdata',
             array(
                 'allowEmpty'    => true,
-                'label'         => mt('monitoring', 'Performance Data'),
-                'description'   => mt(
-                    'monitoring',
+                'label'         => $this->translate('Performance Data'),
+                'description'   => $this->translate(
                     'The performance data of this check result. Leave empty'
                     . ' if this check result has no performance data'
                 )

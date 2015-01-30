@@ -4,7 +4,6 @@
 VAGRANTFILE_API_VERSION = "2"
 VAGRANT_REQUIRED_VERSION = "1.5.0"
 
-# Require 1.2.x at least
 if ! defined? Vagrant.require_version
   if Gem::Version.new(Vagrant::VERSION) < Gem::Version.new(VAGRANT_REQUIRED_VERSION)
     puts "Vagrant >= " + VAGRANT_REQUIRED_VERSION + " required. Your version is " + Vagrant::VERSION

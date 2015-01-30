@@ -118,4 +118,14 @@ class StaticAxis implements AxisUnit
     {
         return reset($this->items);
     }
+
+    /**
+     * Get the amount of ticks of this axis
+     *
+     * @return int
+     */
+    public function getTicks()
+    {
+        return count($this->items);
+    }
 }

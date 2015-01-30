@@ -12,7 +12,7 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     $this->stats->services_ok,
     $selfUrl,
     array('service_state' => 0),
-    array('title' => sprintf($this->translate('Services with state %s'), strtoupper($this->translate('ok'))))
+    array('title' => sprintf($this->translate('Services with state %s'), $this->translate('OK')))
 )  ?></span>
 <?php endif ?>
 
@@ -44,7 +44,7 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
                 $this->stats->$unhandled,
                 $selfUrl,
                 $paramsUnhandled,
-                array('title' => sprintf($this->translate('Unhandled services with state %s'), strtoupper($this->translate($state))))
+                array('title' => sprintf($this->translate('Unhandled services with state %s'), $this->translate(strtoupper($state))))
             );
         }
         if ($this->stats->$handled) {
@@ -61,7 +61,7 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
                 $this->stats->$handled,
                 $selfUrl,
                 $paramsHandled,
-                array('title' => sprintf($this->translate('Handled services with state %s'), strtoupper($this->translate($state))))
+                array('title' => sprintf($this->translate('Handled services with state %s'), $this->translate(strtoupper($state))))
             );
             if ($this->stats->$unhandled) {
                 echo "</span>\n";
@@ -77,7 +77,7 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
     $this->stats->services_pending,
     $selfUrl,
     array('service_state' => 99),
-    array('title' => sprintf($this->translate('Services with state %s'), strtoupper($this->translate('pending'))))
+    array('title' => sprintf($this->translate('Services with state %s'), $this->translate('PENDING')))
 )  ?></span>
 <?php endif ?>
 </span>

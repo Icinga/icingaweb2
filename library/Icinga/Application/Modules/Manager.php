@@ -69,18 +69,6 @@ class Manager
     private $modulePaths        = array();
 
     /**
-     * The core modules
-     *
-     * Core modules do not need to be enabled to load and cannot be disabled
-     * by the user. This must not be writable programmatically!
-     *
-     * @var array
-     */
-    private $coreModules = array(
-        'setup'
-    );
-
-    /**
      *  Create a new instance of the module manager
      *
      *  @param ApplicationBootstrap $app
@@ -170,21 +158,7 @@ class Manager
     }
 
     /**
-     * Try to set all core modules in loaded state
-     *
-     * @return  self
-     * @see     Manager::loadModule()
-     */
-    public function loadCoreModules()
-    {
-        foreach ($this->coreModules as $name) {
-            $this->loadModule($name);
-        }
-        return $this;
-    }
-
-    /**
-     * Try to set all enabled modules in loaded state
+     * Try to set all enabled modules in loaded sate
      *
      * @return  self
      * @see     Manager::loadModule()
@@ -239,8 +213,6 @@ class Manager
                 'Cannot enable module "%s". Module is not installed.',
                 $name
             );
-        } elseif (in_array($name, $this->coreModules)) {
-            return $this;
         }
 
         clearstatcache(true);
@@ -458,7 +430,7 @@ class Manager
         }
 
         $installed = $this->listInstalledModules();
-        foreach (array_diff($installed, $this->coreModules) as $name) {
+        foreach ($installed as $name) {
             $info[$name] = (object) array(
                 'name'    => $name,
                 'path'    => $this->installedBaseDirs[$name],

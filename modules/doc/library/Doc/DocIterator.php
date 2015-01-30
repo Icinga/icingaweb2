@@ -9,6 +9,8 @@ use Countable;
 use IteratorAggregate;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+use Icinga\File\NonEmptyFileIterator;
+use Icinga\File\FileExtensionFilterIterator;
 
 /**
  * Iterator over non-empty Markdown files ordered by the case insensitive "natural order" of file names
@@ -29,12 +31,14 @@ class DocIterator implements Countable, IteratorAggregate
      */
     public function __construct($path)
     {
-        $it = new RecursiveIteratorIterator(
+        $it = new FileExtensionFilterIterator(
             new NonEmptyFileIterator(
-                new MarkdownFileIterator(
-                    new RecursiveDirectoryIterator($path)
+                new RecursiveIteratorIterator(
+                    new RecursiveDirectoryIterator($path),
+                    RecursiveIteratorIterator::SELF_FIRST
                 )
-            )
+            ),
+            'md'
         );
         // Unfortunately we have no chance to sort the iterator
         $fileInfo = iterator_to_array($it);

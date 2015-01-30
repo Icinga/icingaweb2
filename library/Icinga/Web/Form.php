@@ -512,7 +512,7 @@ class Form extends Zend_Form
 
         $el = parent::createElement($type, $name, $options);
 
-        if (($description = $el->getDescription()) !== null && ($label = $el->getDecorator('label')) !== null) {
+        if (($description = $el->getDescription()) !== null && ($label = $el->getDecorator('label')) !== false) {
             $label->setOptions(array(
                 'title' => $description,
                 'class' => 'has-feedback'
@@ -806,6 +806,24 @@ class Form extends Zend_Form
     }
 
     /**
+     * Get the translation domain for this form
+     *
+     * The returned translation domain is either determined based on this form's qualified name or it is the default
+     * 'icinga' domain
+     *
+     * @return string
+     */
+    protected function getTranslationDomain()
+    {
+        $parts = explode('\\', get_called_class());
+        if ($parts[1] === 'Module') {
+            // Assume format Icinga\Module\ModuleName\Forms\...
+            return strtolower($parts[2]);
+        }
+        return 'icinga';
+    }
+
+    /**
      * Translate a string
      *
      * @param   string      $text       The string to translate
@@ -815,7 +833,7 @@ class Form extends Zend_Form
      */
     protected function translate($text, $context = null)
     {
-        return Translator::translate($text, $this->request->getModuleName(), $context);
+        return Translator::translate($text, $this->getTranslationDomain(), $context);
     }
 
     /**
@@ -834,7 +852,7 @@ class Form extends Zend_Form
             $textSingular,
             $textPlural,
             $number,
-            $this->request->getModuleName(),
+            $this->getTranslationDomain(),
             $context
         );
     }

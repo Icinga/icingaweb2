@@ -1,53 +1,68 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
-/** @var $this \Icinga\Application\Modules\Module */
+/** @type $this \Icinga\Application\Modules\Module */
 
 $this->providePermission(
     'monitoring/command/*',
     $this->translate('Allow all commands')
 );
 $this->providePermission(
-    'monitoring/command/schedule*',
-    $this->translate('Allow all scheduling checks and downtimes')
-);
-$this->providePermission(
     'monitoring/command/schedule-check',
     $this->translate('Allow scheduling host and service checks')
-);
-$this->providePermission(
-    'monitoring/command/schedule-downtime',
-    $this->translate('Allow scheduling host and service downtimes')
 );
 $this->providePermission(
     'monitoring/command/acknowledge-problem',
     $this->translate('Allow acknowledging host and service problems')
 );
 $this->providePermission(
-    'monitoring/command/add-comment',
-    $this->translate('Allow commenting on hosts and services')
-);
-$this->providePermission(
-    'monitoring/command/remove*',
-    $this->translate('Allow removing problem acknowledgements, host and service comments and downtimes')
-);
-$this->providePermission(
     'monitoring/command/remove-acknowledgement',
     $this->translate('Allow removing problem acknowledgements')
 );
 $this->providePermission(
-    'monitoring/command/remove-comment',
-    $this->translate('Allow removing host and service comments')
+    'monitoring/command/comment/*',
+    $this->translate('Allow adding and deleting host and service comments')
 );
 $this->providePermission(
-    'monitoring/command/remove-downtime',
-    $this->translate('Allow removing host and service downtimes')
+    'monitoring/command/comment/add',
+    $this->translate('Allow commenting on hosts and services')
+);
+$this->providePermission(
+    'monitoring/command/comment/delete',
+    $this->translate('Allow deleting host and service comments')
+);
+$this->providePermission(
+    'monitoring/command/downtime/*',
+    $this->translate('Allow scheduling and deleting host and service downtimes')
+);
+$this->providePermission(
+    'monitoring/command/downtime/schedule',
+    $this->translate('Allow scheduling host and service downtimes')
+);
+$this->providePermission(
+    'monitoring/command/downtime/delete',
+    $this->translate('Allow deleting host and service downtimes')
+);
+$this->providePermission(
+    'monitoring/command/process-check-result',
+    $this->translate('Allow processing host and service check results')
+);
+$this->providePermission(
+    'monitoring/command/feature/program',
+    $this->translate('Allow processing commands for toggling features on a program-wide basis')
+);
+$this->providePermission(
+    'monitoring/command/feature/object',
+    $this->translate('Allow processing commands for toggling features on host and service objects')
 );
 
 $this->provideRestriction(
-    'monitoring/filter',
-    $this->translate('Restrict views to the hosts and services that match the filter')
+    'monitoring/hosts/filter',
+    $this->translate('Restrict hosts view to the hosts that match the filter')
+);
+
+$this->provideRestriction(
+    'monitoring/services/filter',
+    $this->translate('Restrict services view to the services that match the filter')
 );
 
 $this->provideConfigTab('backends', array(
@@ -127,22 +142,27 @@ $section->add($this->translate('Hostgroups'), array(
     'url'      => 'monitoring/list/hostgroups',
     'priority' => 60
 ));
-$section->add($this->translate('Contactgroups'), array(
-    'url'      => 'monitoring/list/contactgroups',
-    'priority' => 61
-));
-$section->add($this->translate('Downtimes'), array(
-    'url'      => 'monitoring/list/downtimes',
-    'priority' => 71
-));
-$section->add($this->translate('Comments'), array(
-    'url'      => 'monitoring/list/comments?comment_type=(comment|ack)',
-    'priority' => 70
-));
 $section->add($this->translate('Contacts'), array(
     'url'      => 'monitoring/list/contacts',
     'priority' => 70
 ));
+$section->add($this->translate('Contactgroups'), array(
+    'url'      => 'monitoring/list/contactgroups',
+    'priority' => 70
+));
+$section->add($this->translate('Comments'), array(
+    'url'      => 'monitoring/list/comments?comment_type=(comment|ack)',
+    'priority' => 80
+));
+$section->add($this->translate('Downtimes'), array(
+    'url'      => 'monitoring/list/downtimes',
+    'priority' => 80
+));
+$section->add($this->translate('Notifications'), array(
+    'url'      => 'monitoring/list/notifications',
+    'priority' => 80
+));
+
 
 /*
  * History Section

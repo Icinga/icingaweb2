@@ -46,6 +46,13 @@ class LineGraph extends Styleable implements Drawable
     public $strokeWidth = 5;
 
     /**
+     * The size of the displayed dots
+     *
+     * @var int
+     */
+    public $dotWith = 0;
+
+    /**
      * Create a new LineGraph displaying the given dataset
      *
      * @param array $dataset An array of [x, y] arrays to display
@@ -138,8 +145,8 @@ class LineGraph extends Styleable implements Drawable
         $group = $path->toSvg($ctx);
         if ($this->showDataPoints === true) {
             foreach ($this->dataset as $point) {
-                $dot = new Circle($point[0], $point[1], $this->strokeWidth*5);
-                $dot->setFill('black');
+                $dot = new Circle($point[0], $point[1], $this->dotWith);
+                $dot->setFill($this->strokeColor);
 
                 $group->appendChild($dot->toSvg($ctx));
             }

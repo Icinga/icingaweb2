@@ -26,20 +26,15 @@ class Monitoring_HostController extends MonitoredObjectController
     public function init()
     {
         $host = new Host($this->backend, $this->params->get('host'));
+
+        $this->applyRestriction('monitoring/hosts/filter', $host);
+
         if ($host->fetch() === false) {
             throw new Zend_Controller_Action_Exception($this->translate('Host not found'));
         }
         $this->object = $host;
         $this->createTabs();
-    }
-
-    /**
-     * Show a host
-     */
-    public function showAction()
-    {
         $this->getTabs()->activate('host');
-        parent::showAction();
     }
 
     /**
@@ -47,6 +42,8 @@ class Monitoring_HostController extends MonitoredObjectController
      */
     public function acknowledgeProblemAction()
     {
+        $this->assertPermission('monitoring/command/acknowledge-problem');
+
         $this->view->title = $this->translate('Acknowledge Host Problem');
         $this->handleCommandForm(new AcknowledgeProblemCommandForm());
     }
@@ -56,6 +53,8 @@ class Monitoring_HostController extends MonitoredObjectController
      */
     public function addCommentAction()
     {
+        $this->assertPermission('monitoring/command/comment/add');
+
         $this->view->title = $this->translate('Add Host Comment');
         $this->handleCommandForm(new AddCommentCommandForm());
     }
@@ -65,6 +64,8 @@ class Monitoring_HostController extends MonitoredObjectController
      */
     public function rescheduleCheckAction()
     {
+        $this->assertPermission('monitoring/command/schedule-check');
+
         $this->view->title = $this->translate('Reschedule Host Check');
         $this->handleCommandForm(new ScheduleHostCheckCommandForm());
     }
@@ -74,6 +75,8 @@ class Monitoring_HostController extends MonitoredObjectController
      */
     public function scheduleDowntimeAction()
     {
+        $this->assertPermission('monitoring/command/downtime/schedule');
+
         $this->view->title = $this->translate('Schedule Host Downtime');
         $this->handleCommandForm(new ScheduleHostDowntimeCommandForm());
     }
@@ -83,6 +86,8 @@ class Monitoring_HostController extends MonitoredObjectController
      */
     public function processCheckResultAction()
     {
+        $this->assertPermission('monitoring/command/process-check-result');
+
         $this->view->title = $this->translate('Submit Passive Host Check Result');
         $this->handleCommandForm(new ProcessCheckResultCommandForm());
     }

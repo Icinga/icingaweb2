@@ -52,7 +52,7 @@ class AuthenticationBackendReorderForm extends ConfigForm
 
             try {
                 if ($configForm->move($backendName, $position)->save()) {
-                    Notification::success(t('Authentication order updated!'));
+                    Notification::success($this->translate('Authentication order updated!'));
                 } else {
                     return false;
                 }

@@ -118,7 +118,6 @@ class StatusQuery extends IdoQuery
 
             'host_modified_host_attributes' => 'hs.modified_host_attributes',
             'host_event_handler' => 'hs.event_handler',
-            'host_check_command' => 'hs.check_command',
             'host_normal_check_interval' => 'hs.normal_check_interval',
             'host_retry_check_interval' => 'hs.retry_check_interval',
             'host_check_timeperiod_object_id' => 'hs.check_timeperiod_object_id',
@@ -161,10 +160,12 @@ class StatusQuery extends IdoQuery
             END'
         ),
         'hostgroups' => array(
-            'hostgroup' => 'hgo.name1',
+            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup_alias'   => 'hg.alias'
         ),
         'servicegroups' => array(
-            'servicegroup' => 'sgo.name1',
+            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_alias'    => 'sg.alias'
         ),
         'services' => array(
             'service_host_name'      => 'so.name1 COLLATE latin1_general_ci',
@@ -368,7 +369,7 @@ class StatusQuery extends IdoQuery
 
             case 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END':
                 if ($sign !== '=') break;
-               
+
                 if ($expression) {
                     return 'ss.current_state > 0';
                 } else {
@@ -518,12 +519,14 @@ class StatusQuery extends IdoQuery
     protected function joinServiceproblemsummary()
     {
         $sub = new Zend_Db_Expr('(SELECT'
-             . ' SUM(CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) > 0 THEN 0 ELSE 1 END) AS unhandled_services_count,'
-             . ' SUM(CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END) AS handled_services_count,'
+             . ' SUM(CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 0 ELSE 1 END) AS unhandled_services_count,'
+             . ' SUM(CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END) AS handled_services_count,'
              . ' s.host_object_id FROM icinga_servicestatus ss'
              . ' JOIN icinga_services s'
              . ' ON s.service_object_id = ss.service_object_id'
              . ' AND ss.current_state > 0'
+             . ' JOIN icinga_hoststatus hs'
+             . ' ON hs.host_object_id = s.host_object_id'
              . ' GROUP BY s.host_object_id)');
         $this->select->joinLeft(
             array('sps' => $sub),

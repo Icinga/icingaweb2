@@ -20,7 +20,9 @@ class Notification extends DataView
             'notification_start_time',
             'notification_contact',
             'notification_output',
-            'notification_command'
+            'notification_command',
+            'host_display_name',
+            'service_display_name'
         );
     }
 
