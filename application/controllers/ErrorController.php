@@ -19,6 +19,7 @@ class ErrorController extends ActionController
     {
         $error      = $this->_getParam('error_handler');
         $exception  = $error->exception;
+        $this->getTabs()->showOnlyCloseButton();
 
         Logger::error($exception);
         Logger::error('Stacktrace: %s', $exception->getTraceAsString());

@@ -594,18 +594,7 @@
         onFailure: function (req, textStatus, errorThrown) {
             var url = req.url;
 
-            if (req.status === 500) {
-                if (this.exception === null) {
-                    req.$target.addClass('impact');
-
-                    this.exception = this.createNotice(
-                        'error',
-                        $('h1', $(req.responseText)).first().html(),
-                        true
-                    );
-                    this.icinga.ui.fixControls();
-                }
-            } else if (req.status > 0) {
+            if (req.status > 0) {
                 this.icinga.logger.error(
                     req.status,
                     errorThrown + ':',
@@ -617,9 +606,6 @@
                     req.action,
                     req.autorefresh
                 );
-
-                // Header example:
-                // Icinga.debug(req.getResponseHeader('X-Icinga-Redirect'));
             } else {
                 if (errorThrown === 'abort') {
                     this.icinga.logger.debug(
