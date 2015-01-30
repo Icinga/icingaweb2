@@ -2,7 +2,7 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Exception;
+use \Exception;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Dashboard\DashletForm;
