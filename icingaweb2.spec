@@ -110,6 +110,7 @@ Version:    0.6.1
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library dompdf
 Group:      Development/Libraries
+License:    LGPLv2.1
 Requires:   %{php} >= 5.3.0
 
 %description vendor-dompdf
@@ -121,6 +122,7 @@ Version:    4.6.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library HTMLPurifier
 Group:      Development/Libraries
+License:    LGPLv2.1
 Requires:   %{php} >= 5.3.0
 
 %description vendor-HTMLPurifier
@@ -132,6 +134,7 @@ Version:    1.0.1
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library JShrink
 Group:      Development/Libraries
+License:    BSD
 Requires:   %{php} >= 5.3.0
 
 %description vendor-JShrink
@@ -143,6 +146,7 @@ Version:    0.4.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library lessphp
 Group:      Development/Libraries
+License:    MIT
 Requires:   %{php} >= 5.3.0
 
 %description vendor-lessphp
@@ -154,6 +158,7 @@ Version:    1.0.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library Parsedown
 Group:      Development/Libraries
+License:    MIT
 Requires:   %{php} >= 5.3.0
 
 %description vendor-Parsedown
@@ -165,6 +170,7 @@ Version:    1.12.9
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library Zend Framework
 Group:      Development/Libraries
+License:    BSD
 Requires:   %{php} >= 5.3.0
 
 %description vendor-Zend
