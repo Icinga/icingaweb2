@@ -6,8 +6,10 @@ namespace Icinga\Application;
 
 use Iterator;
 use Countable;
+use LogicException;
 use UnexpectedValueException;
 use Icinga\Data\ConfigObject;
+use Icinga\File\Ini\IniWriter;
 use Icinga\Exception\NotReadableError;
 
 /**
@@ -300,6 +302,45 @@ class Config implements Countable, Iterator
     }
 
     /**
+     * Save configuration to the given INI file
+     *
+     * @param   string|null     $filePath   The path to the INI file or null in case this config's path should be used
+     * @param   int             $fileMode   The file mode to store the file with
+     *
+     * @throws  LogicException              In case this config has no path and none is passed in either
+     * @throws  NotWritableError            In case the INI file cannot be written
+     *
+     * @todo    create basepath and throw NotWritableError in case its not possible
+     */
+    public function saveIni($filePath = null, $fileMode = 0660)
+    {
+        if ($filePath === null && $this->configFile) {
+            $filePath = $this->configFile;
+        } elseif ($filePath === null) {
+            throw new LogicException('You need to pass $filePath or set a path using Config::setConfigFile()');
+        }
+
+        $this->getIniWriter($filePath, $fileMode)->write();
+    }
+
+    /**
+     * Return a IniWriter for this config
+     *
+     * @param   string|null     $filePath
+     * @param   int             $fileMode
+     *
+     * @return  IniWriter
+     */
+    protected function getIniWriter($filePath = null, $fileMode = null)
+    {
+        return new IniWriter(array(
+            'config' => $this,
+            'filename' => $filePath,
+            'filemode' => $fileMode
+        ));
+    }
+
+    /**
      * Prepend configuration base dir to the given relative path
      *
      * @param   string  $path   A relative path
@@ -353,5 +394,15 @@ class Config implements Countable, Iterator
         }
 
         return $moduleConfigs[$configname];
+    }
+
+    /**
+     * Return this config rendered as a INI structured string
+     *
+     * @return  string
+     */
+    public function __toString()
+    {
+        return $this->getIniWriter()->render();
     }
 }

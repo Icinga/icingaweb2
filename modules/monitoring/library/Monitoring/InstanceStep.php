@@ -7,7 +7,6 @@ namespace Icinga\Module\Monitoring;
 use Exception;
 use Icinga\Module\Setup\Step;
 use Icinga\Application\Config;
-use Icinga\File\Ini\IniWriter;
 
 class InstanceStep extends Step
 {
@@ -27,11 +26,9 @@ class InstanceStep extends Step
         unset($instanceConfig['name']);
 
         try {
-            $writer = new IniWriter(array(
-                'config'    => Config::fromArray(array($instanceName => $instanceConfig)),
-                'filename'  => Config::resolvePath('modules/monitoring/instances.ini')
-            ));
-            $writer->write();
+            Config::fromArray(array($instanceName => $instanceConfig))
+                ->setConfigFile(Config::resolvePath('modules/monitoring/instances.ini'))
+                ->saveIni();
         } catch (Exception $e) {
             $this->error = $e;
             return false;

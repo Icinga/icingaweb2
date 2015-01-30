@@ -7,7 +7,6 @@ namespace Icinga\Module\Monitoring;
 use Exception;
 use Icinga\Module\Setup\Step;
 use Icinga\Application\Config;
-use Icinga\File\Ini\IniWriter;
 
 class SecurityStep extends Step
 {
@@ -26,11 +25,9 @@ class SecurityStep extends Step
         $config['security'] = $this->data['securityConfig'];
 
         try {
-            $writer = new IniWriter(array(
-                'config'    => Config::fromArray($config),
-                'filename'  => Config::resolvePath('modules/monitoring/config.ini')
-            ));
-            $writer->write();
+            Config::fromArray($config)
+                ->setConfigFile(Config::resolvePath('modules/monitoring/config.ini'))
+                ->saveIni();
         } catch (Exception $e) {
             $this->error = $e;
             return false;
