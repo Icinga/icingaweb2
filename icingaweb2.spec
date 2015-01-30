@@ -82,7 +82,7 @@ Requires:                   %{php} >= 5.3.0
 Requires:                   %{php}-gd %{php}-intl
 %{?fedora:Requires:         php-pecl-imagick}
 %{?rhel:Requires:           php-pecl-imagick}
-%{?suse_version:Requires:   %{php}-gettext %{php}-openssl php5-imagick}
+%{?suse_version:Requires:   %{php}-gettext %{php}-openssl}
 
 %description -n php-Icinga
 Icinga Web 2 PHP library
