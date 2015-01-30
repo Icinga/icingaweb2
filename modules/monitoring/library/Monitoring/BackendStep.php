@@ -7,7 +7,6 @@ namespace Icinga\Module\Monitoring;
 use Exception;
 use Icinga\Module\Setup\Step;
 use Icinga\Application\Config;
-use Icinga\File\Ini\IniWriter;
 
 class BackendStep extends Step
 {
@@ -38,11 +37,9 @@ class BackendStep extends Step
         );
 
         try {
-            $writer = new IniWriter(array(
-                'config'    => Config::fromArray($config),
-                'filename'  => Config::resolvePath('modules/monitoring/backends.ini')
-            ));
-            $writer->write();
+            Config::fromArray($config)
+                ->setConfigFile(Config::resolvePath('modules/monitoring/backends.ini'))
+                ->saveIni();
         } catch (Exception $e) {
             $this->backendIniError = $e;
             return false;
@@ -61,13 +58,7 @@ class BackendStep extends Step
         try {
             $config = Config::app('resources', true);
             $config->setSection($resourceName, $resourceConfig);
-
-            $writer = new IniWriter(array(
-                'config'    => $config,
-                'filename'  => Config::resolvePath('resources.ini'),
-                'filemode'  => 0660
-            ));
-            $writer->write();
+            $config->saveIni();
         } catch (Exception $e) {
             $this->resourcesIniError = $e;
             return false;

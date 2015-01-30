@@ -8,7 +8,6 @@ use Exception;
 use Zend_Form_Decorator_Abstract;
 use Icinga\Web\Form;
 use Icinga\Application\Config;
-use Icinga\File\Ini\IniWriter;
 
 /**
  * Form base-class providing standard functionality for configuration forms
@@ -44,21 +43,14 @@ class ConfigForm extends Form
      */
     public function save()
     {
-        $writer = new IniWriter(
-            array(
-                'config'    => $this->config,
-                'filename'  => $this->config->getConfigFile()
-            )
-        );
-
         try {
-            $writer->write();
+            $this->config->saveIni();
         } catch (Exception $e) {
             $this->addDecorator('ViewScript', array(
                 'viewModule'    => 'default',
                 'viewScript'    => 'showConfiguration.phtml',
                 'errorMessage'  => $e->getMessage(),
-                'configString'  => $writer->render(),
+                'configString'  => $this->config,
                 'filePath'      => $this->config->getConfigFile(),
                 'placement'     => Zend_Form_Decorator_Abstract::PREPEND
             ));

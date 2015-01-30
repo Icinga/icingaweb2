@@ -4,7 +4,6 @@
 
 namespace Icinga\Module\Monitoring;
 
-use Icinga\Application\Icinga;
 use Icinga\Application\Platform;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
@@ -12,7 +11,6 @@ use Icinga\Web\Request;
 use Icinga\Module\Setup\Setup;
 use Icinga\Module\Setup\SetupWizard;
 use Icinga\Module\Setup\Requirements;
-use Icinga\Module\Setup\Utils\MakeDirStep;
 use Icinga\Module\Setup\Forms\SummaryPage;
 use Icinga\Module\Monitoring\Forms\Setup\WelcomePage;
 use Icinga\Module\Monitoring\Forms\Setup\BackendPage;
@@ -108,8 +106,6 @@ class MonitoringWizard extends Wizard implements SetupWizard
     {
         $pageData = $this->getPageData();
         $setup = new Setup();
-
-        $setup->addStep(new MakeDirStep(array(Icinga::app()->getConfigDir() . '/modules/monitoring'), 2770));
 
         $setup->addStep(
             new BackendStep(array(

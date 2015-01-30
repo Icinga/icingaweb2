@@ -7,7 +7,6 @@ namespace Icinga\Module\Setup\Steps;
 use Exception;
 use Icinga\Application\Logger;
 use Icinga\Application\Config;
-use Icinga\File\Ini\IniWriter;
 use Icinga\Module\Setup\Step;
 
 class GeneralConfigStep extends Step
@@ -35,11 +34,9 @@ class GeneralConfigStep extends Step
         }
 
         try {
-            $writer = new IniWriter(array(
-                'config'    => Config::fromArray($config),
-                'filename'  => Config::resolvePath('config.ini')
-            ));
-            $writer->write();
+            Config::fromArray($config)
+                ->setConfigFile(Config::resolvePath('config.ini'))
+                ->saveIni();
         } catch (Exception $e) {
             $this->error = $e;
             return false;
