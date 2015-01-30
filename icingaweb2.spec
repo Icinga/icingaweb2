@@ -29,7 +29,6 @@ Packager:       Icinga Team <info@icinga.org>
 %endif
 %endif
 
-
 %if 0%{?suse_version}
 %define wwwconfigdir    %{_sysconfdir}/apache2/conf.d
 %define wwwuser         wwwrun
@@ -43,15 +42,17 @@ Requires: apache2-mod_php5
 %endif
 %endif
 
-Requires(pre):  shadow-utils
-Requires:       %{name}-common = %{version}-%{release}
-Requires:       php-Icinga = %{version}-%{release}
-Requires:       %{name}-vendor-dompdf
-Requires:       %{name}-vendor-HTMLPurifier
-Requires:       %{name}-vendor-JShrink
-Requires:       %{name}-vendor-lessphp
-Requires:       %{name}-vendor-Parsedown
-Requires:       %{zend}
+%{?fedora:Requires(pre):        shadow-utils}
+%{?rhel:Requires(pre):          shadow-utils}
+%{?suse_version:Requires(pre):  pwdutils}
+Requires:                       %{name}-common = %{version}-%{release}
+Requires:                       php-Icinga = %{version}-%{release}
+Requires:                       %{name}-vendor-dompdf
+Requires:                       %{name}-vendor-HTMLPurifier
+Requires:                       %{name}-vendor-JShrink
+Requires:                       %{name}-vendor-lessphp
+Requires:                       %{name}-vendor-Parsedown
+Requires:                       %{zend}
 
 
 %description
@@ -68,8 +69,11 @@ Icinga Web 2
 
 
 %package common
-Summary:    Common files for Icinga Web 2 and the Icinga CLI
-Group:      Applications/System
+Summary:                        Common files for Icinga Web 2 and the Icinga CLI
+Group:                          Applications/System
+%{?fedora:Requires(pre):        shadow-utils}
+%{?rhel:Requires(pre):          shadow-utils}
+%{?suse_version:Requires(pre):  pwdutils}
 
 %description common
 Common files for Icinga Web 2 and the Icinga CLI
