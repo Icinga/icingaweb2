@@ -334,17 +334,7 @@ class WebWizard extends Wizard implements SetupWizard
             );
         }
 
-        $configDir = Icinga::app()->getConfigDir();
-        $setup->addStep(
-            new MakeDirStep(
-                array(
-                    $configDir . DIRECTORY_SEPARATOR . 'modules',
-                    $configDir . DIRECTORY_SEPARATOR . 'preferences',
-                    $configDir . DIRECTORY_SEPARATOR . 'enabledModules'
-                ),
-                2770
-            )
-        );
+        $setup->addStep(new MakeDirStep(array(Config::resolvePath('enabledModules')), 2770));
 
         foreach ($this->getWizards() as $wizard) {
             if ($wizard->isComplete()) {
