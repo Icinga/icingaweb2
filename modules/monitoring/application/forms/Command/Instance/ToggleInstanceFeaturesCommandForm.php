@@ -191,6 +191,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
      */
     public function onSuccess()
     {
+        $this->assertPermission('monitoring/command/feature/instance');
         foreach ($this->getValues() as $feature => $enabled) {
             $toggleFeature = new ToggleInstanceFeatureCommand();
             $toggleFeature
