@@ -8,6 +8,7 @@ use Iterator;
 use Countable;
 use LogicException;
 use UnexpectedValueException;
+use Icinga\Util\File;
 use Icinga\Data\ConfigObject;
 use Icinga\File\Ini\IniWriter;
 use Icinga\Exception\NotReadableError;
@@ -318,6 +319,10 @@ class Config implements Countable, Iterator
             $filePath = $this->configFile;
         } elseif ($filePath === null) {
             throw new LogicException('You need to pass $filePath or set a path using Config::setConfigFile()');
+        }
+
+        if (! file_exists($filePath)) {
+            File::create($filePath, $fileMode);
         }
 
         $this->getIniWriter($filePath, $fileMode)->write();
