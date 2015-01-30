@@ -1,12 +1,9 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
-// namespace Icinga\Application\Controllers;
-
-use Icinga\Application\Logger;
-use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
+use Icinga\Security\SecurityException;
+use Icinga\Web\Controller\ActionController;
 
 /**
  * Application wide controller for displaying exceptions
@@ -44,6 +41,13 @@ class ErrorController extends ActionController
                 }
 
                 break;
+            case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER:
+                if ($exception instanceof SecurityException) {
+                    $this->getResponse()->setHttpResponseCode(403);
+                    $this->view->message = $exception->getMessage();
+                    break;
+                }
+                // Move to default
             default:
                 $title = preg_replace('/\r?\n.*$/s', '', $exception->getMessage());
                 $this->getResponse()->setHttpResponseCode(500);
