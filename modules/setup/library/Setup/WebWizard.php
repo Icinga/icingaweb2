@@ -334,8 +334,6 @@ class WebWizard extends Wizard implements SetupWizard
             );
         }
 
-        $setup->addStep(new MakeDirStep(array(Config::resolvePath('enabledModules')), 2770));
-
         foreach ($this->getWizards() as $wizard) {
             if ($wizard->isComplete()) {
                 $setup->addSteps($wizard->getSetup()->getSteps());
