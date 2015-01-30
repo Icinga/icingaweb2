@@ -4,6 +4,7 @@
 
 namespace Icinga\Module\Monitoring;
 
+use Icinga\Application\Platform;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
 use Icinga\Web\Request;
@@ -135,6 +136,22 @@ class MonitoringWizard extends Wizard implements SetupWizard
      */
     public function getRequirements()
     {
-        return new Requirements();
+        $requirements = new Requirements();
+
+        $requirements->addOptional(
+            'existing_php_mod_sockets',
+            mt('monitoring', 'PHP Module: Sockets'),
+            mt(
+                'monitoring',
+                'In case it\'s desired that a TCP connection is being used by Icinga Web 2 to'
+                . ' access a Livestatus interface, the Sockets module for PHP is required.'
+            ),
+            Platform::extensionLoaded('sockets'),
+            Platform::extensionLoaded('sockets') ? mt('monitoring', 'The PHP Module sockets is available.') : (
+                mt('monitoring', 'The PHP Module sockets is not available.')
+            )
+        );
+
+        return $requirements;
     }
 }

@@ -1,6 +1,4 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web;
 
@@ -9,6 +7,8 @@ use Zend_Config;
 use Zend_Form;
 use Zend_View_Interface;
 use Icinga\Application\Icinga;
+use Icinga\Authentication\Manager;
+use Icinga\Security\SecurityException;
 use Icinga\Util\Translator;
 use Icinga\Web\Form\Decorator\NoScriptApply;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
@@ -108,6 +108,13 @@ class Form extends Zend_Form
      * @var bool
      */
     protected $validatePartial = false;
+
+    /**
+     * Authentication manager
+     *
+     * @type Manager|null
+     */
+    private $auth;
 
     /**
      * Default element decorators
@@ -868,5 +875,44 @@ class Form extends Zend_Form
     {
         $this->create();
         return parent::render($view);
+    }
+
+    /**
+     * Get the authentication manager
+     *
+     * @return Manager
+     */
+    public function Auth()
+    {
+        if ($this->auth === null) {
+            $this->auth = Manager::getInstance();
+        }
+        return $this->auth;
+    }
+
+    /**
+     * Whether the current user has the given permission
+     *
+     * @param   string  $permission Name of the permission
+     *
+     * @return  bool
+     */
+    public function hasPermission($permission)
+    {
+        return $this->Auth()->hasPermission($permission);
+    }
+
+    /**
+     * Assert that the current user has the given permission
+     *
+     * @param   string  $permission     Name of the permission
+     *
+     * @throws  SecurityException       If the current user lacks the given permission
+     */
+    public function assertPermission($permission)
+    {
+        if (! $this->Auth()->hasPermission($permission)) {
+            throw new SecurityException('No permission for %s', $permission);
+        }
     }
 }

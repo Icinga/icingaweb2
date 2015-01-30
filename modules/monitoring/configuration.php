@@ -47,8 +47,8 @@ $this->providePermission(
     $this->translate('Allow processing host and service check results')
 );
 $this->providePermission(
-    'monitoring/command/feature/program',
-    $this->translate('Allow processing commands for toggling features on a program-wide basis')
+    'monitoring/command/feature/instance',
+    $this->translate('Allow processing commands for toggling features on an instance-wide basis')
 );
 $this->providePermission(
     'monitoring/command/feature/object',

@@ -24,8 +24,6 @@
 
         this.failureNotice = null;
 
-        this.exception = null;
-
         /**
          * Pending requests
          */
@@ -313,13 +311,10 @@
         onResponse: function (data, textStatus, req) {
             var self = this;
             if (this.failureNotice !== null) {
-                this.failureNotice.remove();
+                if (! this.failureNotice.hasClass('fading-out')) {
+                    this.failureNotice.remove();
+                }
                 this.failureNotice = null;
-            }
-
-            if (this.exception !== null) {
-                this.exception.remove();
-                this.exception = null;
             }
 
             // Remove 'impact' class if there was such
@@ -594,18 +589,7 @@
         onFailure: function (req, textStatus, errorThrown) {
             var url = req.url;
 
-            if (req.status === 500) {
-                if (this.exception === null) {
-                    req.$target.addClass('impact');
-
-                    this.exception = this.createNotice(
-                        'error',
-                        $('h1', $(req.responseText)).first().html(),
-                        true
-                    );
-                    this.icinga.ui.fixControls();
-                }
-            } else if (req.status > 0) {
+            if (req.status > 0) {
                 this.icinga.logger.error(
                     req.status,
                     errorThrown + ':',
@@ -617,9 +601,6 @@
                     req.action,
                     req.autorefresh
                 );
-
-                // Header example:
-                // Icinga.debug(req.getResponseHeader('X-Icinga-Redirect'));
             } else {
                 if (errorThrown === 'abort') {
                     this.icinga.logger.debug(
@@ -660,7 +641,13 @@
             var $notice = $(
                 '<li class="' + c + '">' + message + '</li>'
             ).appendTo($('#notifications'));
+
             this.icinga.ui.fixControls();
+
+            if (!persist) {
+                this.icinga.ui.fadeNotificationsAway();
+            }
+
             return $notice;
         },
 
