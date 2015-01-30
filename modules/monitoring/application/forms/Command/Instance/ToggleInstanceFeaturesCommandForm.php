@@ -59,12 +59,16 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
     public function createElements(array $formData = array())
     {
         if ((bool) $this->status->notifications_enabled) {
-            $notificationDescription = sprintf(
-                '<a title="%s" href="%s" data-base-target="_next">%s</a>',
-                $this->translate('Disable notifications for a specific time on a program-wide basis'),
-                $this->getView()->href('monitoring/process/disable-notifications'),
-                $this->translate('Disable temporarily')
-            );
+            if ($this->hasPermission('monitoring/command/feature/instance')) {
+                $notificationDescription = sprintf(
+                    '<a title="%s" href="%s" data-base-target="_next">%s</a>',
+                    $this->translate('Disable notifications for a specific time on a program-wide basis'),
+                    $this->getView()->href('monitoring/process/disable-notifications'),
+                    $this->translate('Disable temporarily')
+                );
+            } else {
+                $notificationDescription = null;
+            }
         } elseif ($this->status->disable_notif_expire_time) {
             $notificationDescription = sprintf(
                 $this->translate('Notifications will be re-enabled in <strong>%s</strong>'),
