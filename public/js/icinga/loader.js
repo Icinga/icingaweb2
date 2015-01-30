@@ -24,8 +24,6 @@
 
         this.failureNotice = null;
 
-        this.exception = null;
-
         /**
          * Pending requests
          */
@@ -313,13 +311,10 @@
         onResponse: function (data, textStatus, req) {
             var self = this;
             if (this.failureNotice !== null) {
-                this.failureNotice.remove();
+                if (! this.failureNotice.hasClass('fading-out')) {
+                    this.failureNotice.remove();
+                }
                 this.failureNotice = null;
-            }
-
-            if (this.exception !== null) {
-                this.exception.remove();
-                this.exception = null;
             }
 
             // Remove 'impact' class if there was such
@@ -646,7 +641,13 @@
             var $notice = $(
                 '<li class="' + c + '">' + message + '</li>'
             ).appendTo($('#notifications'));
+
             this.icinga.ui.fixControls();
+
+            if (!persist) {
+                this.icinga.ui.fadeNotificationsAway();
+            }
+
             return $notice;
         },
 
