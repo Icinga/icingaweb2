@@ -87,29 +87,36 @@ $this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/serv
  * Problems Section
  */
 $section = $this->menuSection($this->translate('Problems'), array(
-    'renderer' => 'ProblemMenuItemRenderer',
-    'icon'     => 'block',
-    'priority' => 20
+    'renderer'  => 'ProblemMenuItemRenderer',
+    'icon'      => 'block',
+    'priority'  => 20
 ));
 $section->add($this->translate('Unhandled Hosts'), array(
-    'renderer' => 'UnhandledHostMenuItemRenderer',
-    'url'      => 'monitoring/list/hosts?host_problem=1&host_handled=0',
-    'priority' => 40
+    'renderer'  => 'UnhandledHostMenuItemRenderer',
+    'url'       => 'monitoring/list/hosts?host_problem=1&host_handled=0',
+    'priority'  => 30
 ));
 $section->add($this->translate('Unhandled Services'), array(
-    'renderer' => 'UnhandledServiceMenuItemRenderer',
-    'url'      => 'monitoring/list/services?service_problem=1&service_handled=0&sort=service_severity',
-    'priority' => 40
+    'renderer'  => 'UnhandledServiceMenuItemRenderer',
+    'url'       => 'monitoring/list/services?service_problem=1&service_handled=0&sort=service_severity',
+    'priority'  => 40
 ));
 $section->add($this->translate('Host Problems'), array(
-    'url'      => 'monitoring/list/hosts?host_problem=1&sort=host_severity',
-    'priority' => 50
+    'url'       => 'monitoring/list/hosts?host_problem=1&sort=host_severity',
+    'priority'  => 50
 ));
 $section->add($this->translate('Service Problems'), array(
-    'url'      => 'monitoring/list/services?service_problem=1&sort=service_severity&dir=desc',
-    'priority' => 50
+    'url'       => 'monitoring/list/services?service_problem=1&sort=service_severity&dir=desc',
+    'priority'  => 60
 ));
-$section->add($this->translate('Current Downtimes'))->setUrl('monitoring/list/downtimes?downtime_is_in_effect=1');
+$section->add($this->translate('Service Grid'), array(
+    'url'       => 'monitoring/list/servicegrid?service_problem=1',
+    'priority'  => 70
+));
+$section->add($this->translate('Current Downtimes'), array(
+    'url'       => 'monitoring/list/downtimes?downtime_is_in_effect=1',
+    'priority'  => 80
+));
 
 /*
  * Overview Section
@@ -129,10 +136,6 @@ $section->add($this->translate('Hosts'), array(
 $section->add($this->translate('Services'), array(
     'url'      => 'monitoring/list/services',
     'priority' => 50
-));
-$section->add($this->translate('Service Grid'), array(
-    'url'      => 'monitoring/list/servicegrid?service_problem=1',
-    'priority' => 51
 ));
 $section->add($this->translate('Servicegroups'), array(
     'url'      => 'monitoring/list/servicegroups',
