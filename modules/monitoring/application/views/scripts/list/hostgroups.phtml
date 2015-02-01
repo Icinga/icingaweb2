@@ -28,7 +28,7 @@
     </thead>
     <tbody>
     <?php foreach ($hostgroups as $h): ?>
-      <tr href="<?= $this->href('monitoring/list/services', array('hostgroup' => $h->hostgroup)); ?>">
+      <tr href="<?= $this->href('monitoring/list/hosts', array('hostgroup' => $h->hostgroup)) ?>">
        <?php if ($h->services_critical_last_state_change_unhandled): ?>
         <td class="state change critical unhandled">
           <strong><?= $this->translate('CRITICAL'); ?></strong>
@@ -84,7 +84,7 @@
           </a>
         </td>
         <td class="total">
-          <?= $h->services_total; ?>
+            <?= $this->qlink($h->services_total, 'monitoring/list/services', array('hostgroup' => $h->hostgroup)) ?>
         </td>
         <td class="state">
         <?php if ($h->services_ok): ?>
