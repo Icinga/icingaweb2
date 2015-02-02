@@ -109,7 +109,9 @@ abstract class MonitoredObjectController extends Controller
             ->setRedirectUrl(Url::fromPath($this->commandRedirectUrl)->setParams($this->params))
             ->handleRequest();
         $this->view->form = $form;
-        $this->_helper->viewRenderer('partials/command-form', null, true);
+        $this->view->object = $this->object;
+        $this->view->tabs->remove('dashboard');
+        $this->_helper->viewRenderer('partials/command/object-command-form', null, true);
         return $form;
     }
 

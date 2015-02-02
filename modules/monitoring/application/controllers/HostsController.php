@@ -12,7 +12,6 @@ use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandFo
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
-use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\HostList;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Chart\InlinePie;
@@ -33,12 +32,39 @@ class Monitoring_HostsController extends Controller
 
     protected function handleCommandForm(ObjectsCommandForm $form)
     {
+        $this->hostList->setColumns(array(
+            'host_name',
+            'host_state',
+            'host_problem',
+            'host_handled',
+            'host_acknowledged',
+            'host_in_downtime'
+        ));
+
         $form
             ->setObjects($this->hostList)
             ->setRedirectUrl(Url::fromPath('monitoring/hosts/show')->setParams($this->params))
             ->handleRequest();
+
+        $hostStates = array(
+            Host::getStateText(Host::STATE_UP) => 0,
+            Host::getStateText(Host::STATE_DOWN) => 0,
+            Host::getStateText(Host::STATE_UNREACHABLE) => 0,
+            Host::getStateText(Host::STATE_PENDING) => 0,
+        );
+        foreach ($this->hostList as $host) {
+            ++$hostStates[$host::getStateText($host->state)];
+        }
+
         $this->view->form = $form;
-        $this->_helper->viewRenderer('partials/command-form', null, true);
+        $this->view->objects = $this->hostList;
+        $this->view->hostStates = $hostStates;
+        $this->view->hostStatesPieChart = $this->createPieChart(
+            $hostStates,
+            $this->translate('Host State'),
+            array('#44bb77', '#FF5566', '#E066FF', '#77AAFF')
+        );
+        $this->_helper->viewRenderer('partials/command/objects-command-form', null, true);
         return $form;
     }
 

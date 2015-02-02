@@ -33,12 +33,59 @@ class Monitoring_ServicesController extends Controller
 
     protected function handleCommandForm(ObjectsCommandForm $form)
     {
+        $this->serviceList->setColumns(array(
+            'host_name',
+            'host_state',
+            'service_description',
+            'service_state',
+            'service_problem',
+            'service_handled',
+            'service_acknowledged',
+            'service_in_downtime'
+        ));
+
         $form
             ->setObjects($this->serviceList)
             ->setRedirectUrl(Url::fromPath('monitoring/services/show')->setParams($this->params))
             ->handleRequest();
+
+        $serviceStates = array(
+            Service::getStateText(Service::STATE_OK) => 0,
+            Service::getStateText(Service::STATE_WARNING) => 0,
+            Service::getStateText(Service::STATE_CRITICAL) => 0,
+            Service::getStateText(Service::STATE_UNKNOWN) => 0,
+            Service::getStateText(Service::STATE_PENDING) => 0
+        );
+        $knownHostStates = array();
+        $hostStates = array(
+            Host::getStateText(Host::STATE_UP) => 0,
+            Host::getStateText(Host::STATE_DOWN) => 0,
+            Host::getStateText(Host::STATE_UNREACHABLE) => 0,
+            Host::getStateText(Host::STATE_PENDING) => 0,
+        );
+        foreach ($this->serviceList as $service) {
+            ++$serviceStates[$service::getStateText($service->state)];
+            if (! isset($knownHostStates[$service->getHost()->getName()])) {
+                $knownHostStates[$service->getHost()->getName()] = true;
+                ++$hostStates[$service->getHost()->getStateText($service->host_state)];
+            }
+        }
+
         $this->view->form = $form;
-        $this->_helper->viewRenderer('partials/command-form', null, true);
+        $this->view->objects = $this->serviceList;
+        $this->view->serviceStates = $serviceStates;
+        $this->view->hostStates = $hostStates;
+        $this->view->serviceStatesPieChart = $this->createPieChart(
+            $serviceStates,
+            $this->translate('Service State'),
+            array('#44bb77', '#FFCC66', '#FF5566', '#E066FF', '#77AAFF')
+        );
+        $this->view->hostStatesPieChart = $this->createPieChart(
+            $hostStates,
+            $this->translate('Host State'),
+            array('#44bb77', '#FF5566', '#E066FF', '#77AAFF')
+        );
+        $this->_helper->viewRenderer('partials/command/objects-command-form', null, true);
         return $form;
     }
 
