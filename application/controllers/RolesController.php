@@ -1,6 +1,4 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
 use Icinga\Application\Config;
 use Icinga\Forms\ConfirmRemovalForm;
@@ -9,31 +7,57 @@ use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Notification;
 use Icinga\Web\Widget;
 
+/**
+ * Roles configuration
+ */
 class RolesController extends ActionController
 {
+    /**
+     * Initialize tabs and validate the user's permissions
+     *
+     * @throws \Icinga\Security\SecurityException   If the user lacks permissions for configuring roles
+     */
     public function init()
     {
-        $this->view->tabs = Widget::create('tabs')->add('index', array(
-            'title' => $this->translate('Application'),
-            'url'   => 'config'
-        ))->add('authentication', array(
-            'title' => $this->translate('Authentication'),
-            'url'   => 'config/authentication'
-        ))->add('resources', array(
-            'title' => $this->translate('Resources'),
-            'url'   => 'config/resource'
-        ))->add('roles', array(
+        $this->assertPermission('system/config/roles');
+        $tabs = $this->getTabs();
+        $auth = $this->Auth();
+        if ($auth->hasPermission('system/config/application')) {
+            $tabs->add('application', array(
+                'title' => $this->translate('Application'),
+                'url'   => 'config'
+            ));
+        }
+        if ($auth->hasPermission('system/config/authentication')) {
+            $tabs->add('authentication', array(
+                'title' => $this->translate('Authentication'),
+                'url'   => 'config/authentication'
+            ));
+        }
+        if ($auth->hasPermission('system/config/resources')) {
+            $tabs->add('resource', array(
+                'title' => $this->translate('Resources'),
+                'url'   => 'config/resource'
+            ));
+        }
+        $tabs->add('roles', array(
             'title' => $this->translate('Roles'),
             'url'   => 'roles'
         ));
     }
 
+    /**
+     * List roles
+     */
     public function indexAction()
     {
         $this->view->tabs->activate('roles');
         $this->view->roles = Config::app('roles', true);
     }
 
+    /**
+     * Create a new role
+     */
     public function newAction()
     {
         $role = new RoleForm(array(
@@ -61,6 +85,11 @@ class RolesController extends ActionController
         $this->view->form = $role;
     }
 
+    /**
+     * Update a role
+     *
+     * @throws Zend_Controller_Action_Exception If the required parameter 'role' is missing or the role does not exist
+     */
     public function updateAction()
     {
         $name = $this->_request->getParam('role');
@@ -105,6 +134,11 @@ class RolesController extends ActionController
         $this->view->form = $role;
     }
 
+    /**
+     * Remove a role
+     *
+     * @throws Zend_Controller_Action_Exception If the required parameter 'role' is missing or the role does not exist
+     */
     public function removeAction()
     {
         $name = $this->_request->getParam('role');
