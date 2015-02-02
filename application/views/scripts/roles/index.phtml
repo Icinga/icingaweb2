@@ -52,10 +52,10 @@
                         <td><?= $this->escape($role->groups) ?></td>
                         <td>
                             <a href="<?= $this->url('roles/remove', array('role' => $name)) ?>"
-                               title="<?php printf(
-                                    $this->translate('Remove role "%s"'),
-                                    $name
-                                ); ?>">
+                               title="<?= sprintf(
+                                   $this->translate('Remove role %s'),
+                                   $name
+                               ) ?>">
                                 <?= $this->icon('cancel') ?>
                             </a>
                         </td>
