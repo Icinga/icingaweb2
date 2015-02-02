@@ -375,7 +375,7 @@ class Monitoring_AlertsummaryController extends Controller
 
         $query->order('notification_start_time', 'asc');
 
-        $records    = $query->getQuery()->fetchAll();
+        $records = $query->getQuery()->fetchAll();
 
         $interval       = $this->getInterval();
         $period         = $this->createPeriod($interval);
@@ -582,7 +582,7 @@ class Monitoring_AlertsummaryController extends Controller
         } elseif ($interval === '1w') {
             return new DatePeriod($this->getBeginDate($interval), new DateInterval('P1D'), 7);
         } elseif ($interval === '1m') {
-            return new DatePeriod($this->getBeginDate($interval), new DateInterval('P1D'), 30);
+            return new DatePeriod($this->getBeginDate($interval), new DateInterval('P1D'), 31);
         } elseif ($interval === '1y') {
             return new DatePeriod($this->getBeginDate($interval), new DateInterval('P1M'), 12);
         }

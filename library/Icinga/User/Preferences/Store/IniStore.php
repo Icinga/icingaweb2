@@ -7,10 +7,8 @@ namespace Icinga\User\Preferences\Store;
 use Icinga\Application\Config;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\NotWritableError;
-use Icinga\File\Ini\IniWriter;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
-use Icinga\Util\File;
 
 /**
  * Load and save user preferences from and to INI files
@@ -30,13 +28,6 @@ class IniStore extends PreferencesStore
      * @var array
      */
     protected $preferences = array();
-
-    /**
-     * Writer which stores the preferences
-     *
-     * @var IniWriter
-     */
-    protected $writer;
 
     /**
      * Initialize the store
@@ -98,35 +89,7 @@ class IniStore extends PreferencesStore
      */
     public function write()
     {
-        if ($this->writer === null) {
-            if (! file_exists($this->preferencesFile)) {
-                if (! is_writable($this->getStoreConfig()->location)) {
-                    throw new NotWritableError(
-                        'Path to the preferences INI files %s is not writable',
-                        $this->getStoreConfig()->location
-                    );
-                }
-
-                File::create($this->preferencesFile, 0664);
-            }
-
-            if (! is_writable($this->preferencesFile)) {
-                throw new NotWritableError(
-                    'Preferences INI file %s for user %s is not writable',
-                    $this->preferencesFile,
-                    $this->getUser()->getUsername()
-                );
-            }
-
-            $this->writer = new IniWriter(
-                array(
-                    'config'    => Config::fromArray($this->preferences),
-                    'filename'  => $this->preferencesFile
-                )
-            );
-        }
-
-        $this->writer->write();
+        Config::fromArray($this->preferences)->saveIni($this->preferencesFile);
     }
 
     /**

@@ -1,23 +1,22 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Controller;
 
 use Exception;
-use Icinga\Authentication\Manager;
 use Icinga\Application\Benchmark;
 use Icinga\Application\Config;
+use Icinga\Authentication\Manager;
 use Icinga\Exception\IcingaException;
+use Icinga\Exception\ProgrammingError;
+use Icinga\File\Pdf;
+use Icinga\Security\SecurityException;
 use Icinga\Util\Translator;
+use Icinga\Web\Notification;
+use Icinga\Web\Session;
+use Icinga\Web\Url;
+use Icinga\Web\UrlParams;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Window;
-use Icinga\Web\Url;
-use Icinga\Web\Notification;
-use Icinga\File\Pdf;
-use Icinga\Exception\ProgrammingError;
-use Icinga\Web\Session;
-use Icinga\Web\UrlParams;
 use Zend_Controller_Action;
 use Zend_Controller_Action_HelperBroker as ActionHelperBroker;
 use Zend_Controller_Request_Abstract as Request;
@@ -50,7 +49,7 @@ class ActionController extends Zend_Controller_Action
     /**
      * Authentication manager
      *
-     * @type \Icinga\Authentication\Manager|null
+     * @type Manager|null
      */
     private $auth;
 
@@ -106,7 +105,6 @@ class ActionController extends Zend_Controller_Action
     {
     }
 
-
     /**
      * Get the authentication manager
      *
@@ -133,19 +131,16 @@ class ActionController extends Zend_Controller_Action
     }
 
     /**
-     * Throw an exception if user lacks the given permission
+     * Assert that the current user has the given permission
      *
-     * @param  string  $name Permission name
-     * @throws Exception
+     * @param   string  $permission     Name of the permission
+     *
+     * @throws  SecurityException       If the current user lacks the given permission
      */
-    public function assertPermission($name)
+    public function assertPermission($permission)
     {
-        if (! $this->Auth()->hasPermission($name)) {
-            // TODO: Shall this be an Auth Exception? Or a 404?
-            throw new IcingaException(
-                'Auth error, no permission for "%s"',
-                $name
-            );
+        if (! $this->Auth()->hasPermission($permission)) {
+            throw new SecurityException('No permission for %s', $permission);
         }
     }
 

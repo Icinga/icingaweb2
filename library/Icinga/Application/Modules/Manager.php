@@ -103,25 +103,22 @@ class Manager
      */
     private function detectEnabledModules()
     {
-        $canonical = $this->enableDir;
-        if ($canonical === false || ! file_exists($canonical)) {
-            // TODO: I guess the check for false has something to do with a
-            //       call to realpath no longer present
+        if (! file_exists($this->enableDir)) {
             return;
         }
-        if (!is_dir($this->enableDir)) {
+        if (! is_dir($this->enableDir)) {
             throw new NotReadableError(
                 'Cannot read enabled modules. Module directory "%s" is not a directory',
                 $this->enableDir
             );
         }
-        if (!is_readable($this->enableDir)) {
+        if (! is_readable($this->enableDir)) {
             throw new NotReadableError(
                 'Cannot read enabled modules. Module directory "%s" is not readable',
                 $this->enableDir
             );
         }
-        if (($dh = opendir($canonical)) !== false) {
+        if (($dh = opendir($this->enableDir)) !== false) {
             $this->enabledDirs = array();
             while (($file = readdir($dh)) !== false) {
 
@@ -129,7 +126,7 @@ class Manager
                     continue;
                 }
 
-                $link = $this->enableDir . '/' . $file;
+                $link = $this->enableDir . DIRECTORY_SEPARATOR . $file;
                 if (! is_link($link)) {
                     Logger::warning(
                         'Found invalid module in enabledModule directory "%s": "%s" is not a symlink',
@@ -140,7 +137,7 @@ class Manager
                 }
 
                 $dir = realpath($link);
-                if (!file_exists($dir) || !is_dir($dir)) {
+                if (! file_exists($dir) || !is_dir($dir)) {
                     Logger::warning(
                         'Found invalid module in enabledModule directory "%s": "%s" points to non existing path "%s"',
                         $this->enableDir,
@@ -208,7 +205,7 @@ class Manager
      */
     public function enableModule($name)
     {
-        if (!$this->hasInstalled($name)) {
+        if (! $this->hasInstalled($name)) {
             throw new ConfigurationError(
                 'Cannot enable module "%s". Module is not installed.',
                 $name
@@ -217,11 +214,16 @@ class Manager
 
         clearstatcache(true);
         $target = $this->installedBaseDirs[$name];
-        $link = $this->enableDir . '/' . $name;
+        $link = $this->enableDir . DIRECTORY_SEPARATOR . $name;
 
-        if (! is_dir($this->enableDir)) {
-            throw new NotFoundError('Cannot enable module "%s". Path "%s" not found.', $name, $this->enableDir);
-        } elseif (!is_writable($this->enableDir)) {
+        if (! is_dir($this->enableDir) && !@mkdir($this->enableDir, 02770, true)) {
+            $error = error_get_last();
+            throw new SystemPermissionException(
+                'Failed to create enabledModule directory "%s" (%s)',
+                $this->enableDir,
+                $error['message']
+            );
+        } elseif (! is_writable($this->enableDir)) {
             throw new SystemPermissionException(
                 'Cannot enable module "%s". Insufficient system permissions for enabling modules.',
                 $name
@@ -232,7 +234,7 @@ class Manager
             return $this;
         }
 
-        if (!@symlink($target, $link)) {
+        if (! @symlink($target, $link)) {
             $error = error_get_last();
             if (strstr($error["message"], "File exists") === false) {
                 throw new SystemPermissionException(
@@ -246,9 +248,7 @@ class Manager
         }
 
         $this->enabledDirs[$name] = $link;
-
         $this->loadModule($name);
-
         return $this;
     }
 
@@ -264,22 +264,22 @@ class Manager
      */
     public function disableModule($name)
     {
-        if (!$this->hasEnabled($name)) {
+        if (! $this->hasEnabled($name)) {
             return $this;
         }
-        if (!is_writable($this->enableDir)) {
+        if (! is_writable($this->enableDir)) {
             throw new SystemPermissionException(
                 'Could not disable module. Module path is not writable.'
             );
         }
-        $link = $this->enableDir . '/' . $name;
-        if (!file_exists($link)) {
+        $link = $this->enableDir . DIRECTORY_SEPARATOR . $name;
+        if (! file_exists($link)) {
             throw new ConfigurationError(
                 'Could not disable module. The module %s was not found.',
                 $name
             );
         }
-        if (!is_link($link)) {
+        if (! is_link($link)) {
             throw new ConfigurationError(
                 'Could not disable module. The module "%s" is not a symlink. '
                 . 'It looks like you have installed this module manually and moved it to your module folder. '
@@ -290,7 +290,7 @@ class Manager
         }
 
         if (file_exists($link) && is_link($link)) {
-            if (!@unlink($link)) {
+            if (! @unlink($link)) {
                 $error = error_get_last();
                 throw new SystemPermissionException(
                     'Could not disable module "%s" due to file system errors. '

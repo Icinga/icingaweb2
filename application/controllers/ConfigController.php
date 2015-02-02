@@ -1,41 +1,70 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Web\Controller\ActionController;
-use Icinga\Web\Notification;
-use Icinga\Application\Modules\Module;
-use Icinga\Web\Widget;
-use Icinga\Application\Icinga;
 use Icinga\Application\Config;
-use Icinga\Forms\Config\GeneralConfigForm;
-use Icinga\Forms\Config\AuthenticationBackendReorderForm;
+use Icinga\Application\Icinga;
+use Icinga\Application\Modules\Module;
+use Icinga\Data\ResourceFactory;
 use Icinga\Forms\Config\AuthenticationBackendConfigForm;
+use Icinga\Forms\Config\AuthenticationBackendReorderForm;
+use Icinga\Forms\Config\GeneralConfigForm;
 use Icinga\Forms\Config\ResourceConfigForm;
 use Icinga\Forms\ConfirmRemovalForm;
-use Icinga\Data\ResourceFactory;
-
+use Icinga\Security\SecurityException;
+use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Notification;
+use Icinga\Web\Widget;
 
 /**
- * Application wide controller for application preferences
+ * Application and module configuration
  */
 class ConfigController extends ActionController
 {
+    /**
+     * The first allowed config action according to the user's permissions
+     *
+     * @type string
+     */
+    protected $firstAllowedAction;
+
+    /**
+     * Initialize tabs and validate the user's permissions
+     *
+     * @throws SecurityException    If the user does not have any configuration permission
+     */
     public function init()
     {
-        $this->view->tabs = Widget::create('tabs')->add('index', array(
-            'title' => $this->translate('Application'),
-            'url'   => 'config'
-        ))->add('authentication', array(
-            'title' => $this->translate('Authentication'),
-            'url'   => 'config/authentication'
-        ))->add('resources', array(
-            'title' => $this->translate('Resources'),
-            'url'   => 'config/resource'
-        ))->add('roles', array(
-            'title' => $this->translate('Roles'),
-            'url'   => 'roles'
-        ));
+        $tabs = $this->getTabs();
+        $auth = $this->Auth();
+        $allowedActions = array();
+        if ($auth->hasPermission('system/config/application')) {
+            $tabs->add('application', array(
+                'title' => $this->translate('Application'),
+                'url'   => 'config/application'
+            ));
+            $allowedActions[] = 'application';
+        }
+        if ($auth->hasPermission('system/config/authentication')) {
+            $tabs->add('authentication', array(
+                'title' => $this->translate('Authentication'),
+                'url'   => 'config/authentication'
+            ));
+            $allowedActions[] = 'authentication';
+        }
+        if ($auth->hasPermission('system/config/resources')) {
+            $tabs->add('resource', array(
+                'title' => $this->translate('Resources'),
+                'url'   => 'config/resource'
+            ));
+            $allowedActions[] = 'resource';
+        }
+        if ($auth->hasPermission('system/config/roles')) {
+            $tabs->add('roles', array(
+                'title' => $this->translate('Roles'),
+                'url'   => 'roles'
+            ));
+            $allowedActions[] = 'roles';
+        }
+        $this->firstAllowedAction = array_shift($allowedActions);
     }
 
     public function devtoolsAction()
@@ -44,16 +73,35 @@ class ConfigController extends ActionController
     }
 
     /**
-     * Index action, entry point for configuration
+     * Forward or redirect to the first allowed configuration action
      */
     public function indexAction()
     {
+        if ($this->firstAllowedAction === null) {
+            throw new SecurityException('No permission for configuration');
+        }
+        $action = $this->getTabs()->get($this->firstAllowedAction);
+        if (substr($action->getUrl()->getPath(), 0, 7) === 'config/') {
+            $this->forward($this->firstAllowedAction);
+        } else {
+            $this->redirectNow($action->getUrl());
+        }
+    }
+
+    /**
+     * Application configuration
+     *
+     * @throws SecurityException    If the user lacks the permission for configuring the application
+     */
+    public function applicationAction()
+    {
+        $this->assertPermission('system/config/application');
         $form = new GeneralConfigForm();
         $form->setIniConfig(Config::app());
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->view->tabs->activate('index');
+        $this->view->tabs->activate('application');
     }
 
     /**
@@ -61,16 +109,19 @@ class ConfigController extends ActionController
      */
     public function modulesAction()
     {
-        $this->view->tabs = Widget::create('tabs')->add('modules', array(
-            'title' => $this->translate('Modules'),
-            'url'   => 'config/modules'
-        ));
-
-        $this->view->tabs->activate('modules');
+        // Overwrite tabs created in init
+        // @TODO(el): This seems not natural to me. Module configuration should have its own controller.
+        $this->view->tabs = Widget::create('tabs')
+            ->add('modules', array(
+                'title' => $this->translate('Modules'),
+                'url'   => 'config/modules'
+            ))
+            ->activate('modules');
         $this->view->modules = Icinga::app()->getModuleManager()->select()
             ->from('modules')
             ->order('enabled', 'desc')
-            ->order('name')->paginate();
+            ->order('name')
+            ->paginate();
     }
 
     public function moduleAction()
@@ -79,8 +130,12 @@ class ConfigController extends ActionController
         $app = Icinga::app();
         $manager = $app->getModuleManager();
         if ($manager->hasInstalled($name)) {
-            $this->view->moduleData = Icinga::app()->getModuleManager()->select()
-            ->from('modules')->where('name', $name)->fetchRow();
+            $this->view->moduleData = Icinga::app()
+                ->getModuleManager()
+                ->select()
+                ->from('modules')
+                ->where('name', $name)
+                ->fetchRow();
             $module = new Module($app, $name, $manager->getModuleDir($name));
             $this->view->module = $module;
         } else {
@@ -94,6 +149,7 @@ class ConfigController extends ActionController
      */
     public function moduleenableAction()
     {
+        $this->assertPermission('system/config/modules');
         $module = $this->getParam('name');
         $manager = Icinga::app()->getModuleManager();
         try {
@@ -114,6 +170,7 @@ class ConfigController extends ActionController
      */
     public function moduledisableAction()
     {
+        $this->assertPermission('system/config/modules');
         $module = $this->getParam('name');
         $manager = Icinga::app()->getModuleManager();
         try {
@@ -133,6 +190,7 @@ class ConfigController extends ActionController
      */
     public function authenticationAction()
     {
+        $this->assertPermission('system/config/authentication');
         $form = new AuthenticationBackendReorderForm();
         $form->setIniConfig(Config::app('authentication'));
         $form->handleRequest();
@@ -147,6 +205,7 @@ class ConfigController extends ActionController
      */
     public function createauthenticationbackendAction()
     {
+        $this->assertPermission('system/config/authentication');
         $form = new AuthenticationBackendConfigForm();
         $form->setIniConfig(Config::app('authentication'));
         $form->setResourceConfig(ResourceFactory::getResourceConfigs());
@@ -163,6 +222,7 @@ class ConfigController extends ActionController
      */
     public function editauthenticationbackendAction()
     {
+        $this->assertPermission('system/config/authentication');
         $form = new AuthenticationBackendConfigForm();
         $form->setIniConfig(Config::app('authentication'));
         $form->setResourceConfig(ResourceFactory::getResourceConfigs());
@@ -179,6 +239,7 @@ class ConfigController extends ActionController
      */
     public function removeauthenticationbackendAction()
     {
+        $this->assertPermission('system/config/authentication');
         $form = new ConfirmRemovalForm(array(
             'onSuccess' => function ($form) {
                 $configForm = new AuthenticationBackendConfigForm();
@@ -215,8 +276,9 @@ class ConfigController extends ActionController
      */
     public function resourceAction()
     {
+        $this->assertPermission('system/config/resources');
         $this->view->resources = Config::app('resources', true)->keys();
-        $this->view->tabs->activate('resources');
+        $this->view->tabs->activate('resource');
     }
 
     /**
@@ -224,6 +286,7 @@ class ConfigController extends ActionController
      */
     public function createresourceAction()
     {
+        $this->assertPermission('system/config/resources');
         $form = new ResourceConfigForm();
         $form->setIniConfig(Config::app('resources'));
         $form->setRedirectUrl('config/resource');
@@ -238,6 +301,7 @@ class ConfigController extends ActionController
      */
     public function editresourceAction()
     {
+        $this->assertPermission('system/config/resources');
         $form = new ResourceConfigForm();
         $form->setIniConfig(Config::app('resources'));
         $form->setRedirectUrl('config/resource');
@@ -252,6 +316,7 @@ class ConfigController extends ActionController
      */
     public function removeresourceAction()
     {
+        $this->assertPermission('system/config/resources');
         $form = new ConfirmRemovalForm(array(
             'onSuccess' => function ($form) {
                 $configForm = new ResourceConfigForm();

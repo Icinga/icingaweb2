@@ -6,12 +6,9 @@ namespace Icinga\Web\Widget;
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
-use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Exception\SystemPermissionException;
-use Icinga\File\Ini\IniWriter;
 use Icinga\User;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Dashlet as DashboardDashlet;
@@ -86,13 +83,12 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * Create a writer object
+     * Create and return a Config object for this dashboard
      *
-     * @return IniWriter
+     * @return  Config
      */
-    public function createWriter()
+    public function getConfig()
     {
-        $configFile = $this->getConfigFile();
         $output = array();
         foreach ($this->panes as $pane) {
             if ($pane->isUserWidget() === true) {
@@ -105,17 +101,7 @@ class Dashboard extends AbstractWidget
             }
         }
 
-        $co = new ConfigObject($output);
-        $config = new Config($co);
-        return new IniWriter(array('config' => $config, 'filename' => $configFile));
-    }
-
-    /**
-     * Write user specific dashboards to disk
-     */
-    public function write()
-    {
-        $this->createWriter()->write();
+        return Config::fromArray($output)->setConfigFile($this->getConfigFile());
     }
 
     /**
@@ -438,28 +424,8 @@ class Dashboard extends AbstractWidget
     public function getConfigFile()
     {
         if ($this->user === null) {
-            return '';
+            throw new ProgrammingError('Can\'t load dashboards. User is not set');
         }
-
-        $baseDir = '/var/lib/icingaweb';
-
-        if (! file_exists($baseDir)) {
-            throw new NotReadableError('Could not read: ' . $baseDir);
-        }
-
-        $userDir = $baseDir . '/' . $this->user->getUsername();
-
-        if (! file_exists($userDir)) {
-            $success = @mkdir($userDir);
-            if (!$success) {
-                throw new SystemPermissionException('Could not create: ' . $userDir);
-            }
-        }
-
-        if (! file_exists($userDir)) {
-            throw new NotReadableError('Could not read: ' . $userDir);
-        }
-
-        return $userDir . '/dashboard.ini';
+        return Config::resolvePath('dashboards/' . $this->user->getUsername() . '/dashboard.ini');
     }
 }

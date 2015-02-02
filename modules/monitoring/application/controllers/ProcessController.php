@@ -92,6 +92,7 @@ class Monitoring_ProcessController extends Controller
      */
     public function disableNotificationsAction()
     {
+        $this->assertPermission('monitoring/command/feature/instance');
         $this->view->title = $this->translate('Disable Notifications');
         $programStatus = $this->backend
             ->select()

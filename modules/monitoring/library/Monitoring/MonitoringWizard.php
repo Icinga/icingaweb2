@@ -4,14 +4,13 @@
 
 namespace Icinga\Module\Monitoring;
 
-use Icinga\Application\Icinga;
+use Icinga\Application\Platform;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
 use Icinga\Web\Request;
 use Icinga\Module\Setup\Setup;
 use Icinga\Module\Setup\SetupWizard;
 use Icinga\Module\Setup\Requirements;
-use Icinga\Module\Setup\Utils\MakeDirStep;
 use Icinga\Module\Setup\Forms\SummaryPage;
 use Icinga\Module\Monitoring\Forms\Setup\WelcomePage;
 use Icinga\Module\Monitoring\Forms\Setup\BackendPage;
@@ -108,8 +107,6 @@ class MonitoringWizard extends Wizard implements SetupWizard
         $pageData = $this->getPageData();
         $setup = new Setup();
 
-        $setup->addStep(new MakeDirStep(array(Icinga::app()->getConfigDir() . '/modules/monitoring'), 2770));
-
         $setup->addStep(
             new BackendStep(array(
                 'backendConfig'     => $pageData['setup_monitoring_backend'],
@@ -139,6 +136,22 @@ class MonitoringWizard extends Wizard implements SetupWizard
      */
     public function getRequirements()
     {
-        return new Requirements();
+        $requirements = new Requirements();
+
+        $requirements->addOptional(
+            'existing_php_mod_sockets',
+            mt('monitoring', 'PHP Module: Sockets'),
+            mt(
+                'monitoring',
+                'In case it\'s desired that a TCP connection is being used by Icinga Web 2 to'
+                . ' access a Livestatus interface, the Sockets module for PHP is required.'
+            ),
+            Platform::extensionLoaded('sockets'),
+            Platform::extensionLoaded('sockets') ? mt('monitoring', 'The PHP Module sockets is available.') : (
+                mt('monitoring', 'The PHP Module sockets is not available.')
+            )
+        );
+
+        return $requirements;
     }
 }

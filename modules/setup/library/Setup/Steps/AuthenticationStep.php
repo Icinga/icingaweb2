@@ -6,7 +6,6 @@ namespace Icinga\Module\Setup\Steps;
 
 use Exception;
 use Icinga\Application\Config;
-use Icinga\File\Ini\IniWriter;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Authentication\Backend\DbUserBackend;
@@ -50,11 +49,9 @@ class AuthenticationStep extends Step
         }
 
         try {
-            $writer = new IniWriter(array(
-                'config'    => Config::fromArray($config),
-                'filename'  => Config::resolvePath('authentication.ini')
-            ));
-            $writer->write();
+            Config::fromArray($config)
+                ->setConfigFile(Config::resolvePath('authentication.ini'))
+                ->saveIni();
         } catch (Exception $e) {
             $this->authIniError = $e;
             return false;
@@ -73,11 +70,9 @@ class AuthenticationStep extends Step
         );
 
         try {
-            $writer = new IniWriter(array(
-                'config'    => Config::fromArray($config),
-                'filename'  => Config::resolvePath('permissions.ini')
-            ));
-            $writer->write();
+            Config::fromArray($config)
+                ->setConfigFile(Config::resolvePath('permissions.ini'))
+                ->saveIni();
         } catch (Exception $e) {
             $this->permIniError = $e;
             return false;

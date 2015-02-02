@@ -59,12 +59,16 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
     public function createElements(array $formData = array())
     {
         if ((bool) $this->status->notifications_enabled) {
-            $notificationDescription = sprintf(
-                '<a title="%s" href="%s" data-base-target="_next">%s</a>',
-                $this->translate('Disable notifications for a specific time on a program-wide basis'),
-                $this->getView()->href('monitoring/process/disable-notifications'),
-                $this->translate('Disable temporarily')
-            );
+            if ($this->hasPermission('monitoring/command/feature/instance')) {
+                $notificationDescription = sprintf(
+                    '<a title="%s" href="%s" data-base-target="_next">%s</a>',
+                    $this->translate('Disable notifications for a specific time on a program-wide basis'),
+                    $this->getView()->href('monitoring/process/disable-notifications'),
+                    $this->translate('Disable temporarily')
+                );
+            } else {
+                $notificationDescription = null;
+            }
         } elseif ($this->status->disable_notif_expire_time) {
             $notificationDescription = sprintf(
                 $this->translate('Notifications will be re-enabled in <strong>%s</strong>'),
@@ -73,13 +77,15 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
         } else {
             $notificationDescription = null;
         }
+        $toggleDisabled = $this->hasPermission('monitoring/command/feature/instance') ? null : '';
         $this->addElements(array(
             array(
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_ACTIVE_HOST_CHECKS,
                 array(
                     'label'         =>  $this->translate('Active Host Checks Being Executed'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             ),
             array(
@@ -87,7 +93,8 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 ToggleInstanceFeatureCommand::FEATURE_ACTIVE_SERVICE_CHECKS,
                 array(
                     'label'         =>  $this->translate('Active Service Checks Being Executed'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             ),
             array(
@@ -95,7 +102,8 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 ToggleInstanceFeatureCommand::FEATURE_EVENT_HANDLERS,
                 array(
                     'label'         => $this->translate('Event Handlers Enabled'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             ),
             array(
@@ -103,7 +111,8 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 ToggleInstanceFeatureCommand::FEATURE_FLAP_DETECTION,
                 array(
                     'label'         => $this->translate('Flap Detection Enabled'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             ),
             array(
@@ -122,7 +131,8 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                         ),
                         'Label',
                         array('HtmlTag', array('tag' => 'div'))
-                    )
+                    ),
+                    'disabled'      => $toggleDisabled
                 )
             ),
             array(
@@ -130,7 +140,8 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 ToggleInstanceFeatureCommand::FEATURE_HOST_OBSESSING,
                 array(
                     'label'         => $this->translate('Obsessing Over Hosts'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             ),
             array(
@@ -138,7 +149,8 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 ToggleInstanceFeatureCommand::FEATURE_SERVICE_OBSESSING,
                 array(
                     'label'         => $this->translate('Obsessing Over Services'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             ),
             array(
@@ -146,7 +158,8 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 ToggleInstanceFeatureCommand::FEATURE_PASSIVE_HOST_CHECKS,
                 array(
                     'label'         =>  $this->translate('Passive Host Checks Being Accepted'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             ),
             array(
@@ -154,7 +167,8 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 ToggleInstanceFeatureCommand::FEATURE_PASSIVE_SERVICE_CHECKS,
                 array(
                     'label'         =>  $this->translate('Passive Service Checks Being Accepted'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             ),
             array(
@@ -162,7 +176,8 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 ToggleInstanceFeatureCommand::FEATURE_PERFORMANCE_DATA,
                 array(
                     'label'         =>  $this->translate('Performance Data Being Processed'),
-                    'autosubmit'    => true
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
             )
         ));
@@ -191,6 +206,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
      */
     public function onSuccess()
     {
+        $this->assertPermission('monitoring/command/feature/instance');
         foreach ($this->getValues() as $feature => $enabled) {
             $toggleFeature = new ToggleInstanceFeatureCommand();
             $toggleFeature

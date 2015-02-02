@@ -2,14 +2,13 @@
 // {{{ICINGA_LICENSE_HEADER}}}
 // {{{ICINGA_LICENSE_HEADER}}}
 
-use Icinga\Application\Logger;
+use \Exception;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Dashboard\DashletForm;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 use Icinga\Web\Controller\ActionController;
-use Icinga\Web\Request;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Widget\Tabextension\DashboardSettings;
@@ -25,11 +24,11 @@ class DashboardController extends ActionController
      * @var Dashboard;
      */
     private $dashboard;
-    
+
     public function init()
     {
         $this->dashboard = new Dashboard();
-        $this->dashboard->setUser($this->getRequest()->getUser());
+        $this->dashboard->setUser($this->Auth()->getUser());
         $this->dashboard->load();
     }
 
@@ -56,11 +55,12 @@ class DashboardController extends ActionController
             $dashlet = new Dashboard\Dashlet($form->getValue('dashlet'), $form->getValue('url'), $pane);
             $dashlet->setUserWidget();
             $pane->addDashlet($dashlet);
+            $dashboardConfig = $dashboard->getConfig();
             try {
-                $dashboard->write();
-            } catch (\Zend_Config_Exception $e) {
+                $dashboardConfig->saveIni();
+            } catch (Exception $e) {
                 $action->view->error = $e;
-                $action->view->config = $dashboard->createWriter();
+                $action->view->config = $dashboardConfig;
                 $action->render('error');
                 return false;
             }
@@ -117,11 +117,12 @@ class DashboardController extends ActionController
                 $oldPane = $dashboard->getPane($form->getValue('org_pane'));
                 $oldPane->removeDashlet($dashlet->getTitle());
             }
+            $dashboardConfig = $dashboard->getConfig();
             try {
-                $dashboard->write();
-            } catch (\Zend_Config_Exception $e) {
+                $dashboardConfig->saveIni();
+            } catch (Exception $e) {
                 $action->view->error = $e;
-                $action->view->config = $dashboard->createWriter();
+                $action->view->config = $dashboardConfig;
                 $action->render('error');
                 return false;
             }
@@ -158,15 +159,16 @@ class DashboardController extends ActionController
         $dashlet = $this->_request->getParam('dashlet');
         $action = $this;
         $form->setOnSuccess(function (Form $form) use ($dashboard, $dashlet, $pane, $action) {
+            $pane = $dashboard->getPane($pane);
+            $pane->removeDashlet($dashlet);
+            $dashboardConfig = $dashboard->getConfig();
             try {
-                $pane = $dashboard->getPane($pane);
-                $pane->removeDashlet($dashlet);
-                $dashboard->write();
+                $dashboardConfig->saveIni();
                 Notification::success(t('Dashlet has been removed from') . ' ' . $pane->getTitle());
                 return true;
-            }  catch (\Zend_Config_Exception $e) {
+            }  catch (Exception $e) {
                 $action->view->error = $e;
-                $action->view->config = $dashboard->createWriter();
+                $action->view->config = $dashboardConfig;
                 $action->render('error');
                 return false;
             } catch (ProgrammingError $e) {
@@ -196,15 +198,16 @@ class DashboardController extends ActionController
         $pane = $this->_request->getParam('pane');
         $action = $this;
         $form->setOnSuccess(function (Form $form) use ($dashboard, $pane, $action) {
+            $pane = $dashboard->getPane($pane);
+            $dashboard->removePane($pane->getTitle());
+            $dashboardConfig = $dashboard->getConfig();
             try {
-                $pane = $dashboard->getPane($pane);
-                $dashboard->removePane($pane->getTitle());
-                $dashboard->write();
+                $dashboardConfig->saveIni();
                 Notification::success(t('Dashboard has been removed') . ': ' . $pane->getTitle());
                 return true;
-            }  catch (\Zend_Config_Exception $e) {
+            }  catch (Exception $e) {
                 $action->view->error = $e;
-                $action->view->config = $dashboard->createWriter();
+                $action->view->config = $dashboardConfig;
                 $action->render('error');
                 return false;
             } catch (ProgrammingError $e) {
@@ -241,7 +244,7 @@ class DashboardController extends ActionController
                 $this->view->title = $this->dashboard->getActivePane()->getTitle() . ' :: Dashboard';
                 if ($this->hasParam('remove')) {
                     $this->dashboard->getActivePane()->removeDashlet($this->getParam('remove'));
-                    $this->dashboard->write();
+                    $this->dashboard->getConfig()->saveIni();
                     $this->redirectNow(URL::fromRequest()->remove('remove'));
                 }
                 $this->view->tabs->add(

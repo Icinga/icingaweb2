@@ -24,8 +24,6 @@
 
         this.failureNotice = null;
 
-        this.exception = null;
-
         /**
          * Pending requests
          */
@@ -109,7 +107,8 @@
                 url    : url,
                 data   : data,
                 headers: headers,
-                context: self
+                context: self,
+                failure: false
             });
 
             req.$target = $target;
@@ -313,13 +312,10 @@
         onResponse: function (data, textStatus, req) {
             var self = this;
             if (this.failureNotice !== null) {
-                this.failureNotice.remove();
+                if (! this.failureNotice.hasClass('fading-out')) {
+                    this.failureNotice.remove();
+                }
                 this.failureNotice = null;
-            }
-
-            if (this.exception !== null) {
-                this.exception.remove();
-                this.exception = null;
             }
 
             // Remove 'impact' class if there was such
@@ -346,41 +342,10 @@
             var rendered = false;
             var classes;
 
-            if (! req.autorefresh) {
-                // TODO: Hook for response/url?
-                var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
-                var $matches = $.merge($('[href="' + url + '"]'), $forms);
-                $matches.each(function (idx, el) {
-                    if ($(el).closest('#menu').length) {
-                        if (req.$target[0].id === 'col1') {
-                            self.icinga.behaviors.navigation.resetActive();
-                        }
-                    } else if ($(el).closest('table.action').length) {
-                        $(el).closest('table.action').find('.active').removeClass('active');
-                    }
-                });
-
-                $matches.each(function (idx, el) {
-                    var $el = $(el);
-                    if ($el.closest('#menu').length) {
-                        if ($el.is('form')) {
-                            $('input', $el).addClass('active');
-                        } else {
-                            if (req.$target[0].id === 'col1') {
-                                self.icinga.behaviors.navigation.setActive($el);
-                            }
-                        }
-                        // Interrupt .each, only on menu item shall be active
-                        return false;
-                    } else if ($(el).closest('table.action').length) {
-                        $el.addClass('active');
-                    }
-                });
-            } else {
+            if (req.autorefresh) {
                 // TODO: next container url
                 active = $('[href].active', req.$target).attr('href');
             }
-
 
             var target = req.getResponseHeader('X-Icinga-Container');
             var newBody = false;
@@ -555,10 +520,43 @@
          * Regardless of whether a request succeeded of failed, clean up
          */
         onComplete: function (req, textStatus) {
+            if (! req.autorefresh) {
+                // TODO: Hook for response/url?
+                var url = req.url;
+                var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
+                var $matches = $.merge($('[href="' + url + '"]'), $forms);
+                $matches.each(function (idx, el) {
+                    if ($(el).closest('#menu').length) {
+                        if (req.$target[0].id === 'col1') {
+                            self.icinga.behaviors.navigation.resetActive();
+                        }
+                    } else if ($(el).closest('table.action').length) {
+                        $(el).closest('table.action').find('.active').removeClass('active');
+                    }
+                });
+
+                $matches.each(function (idx, el) {
+                    var $el = $(el);
+                    if ($el.closest('#menu').length) {
+                        if ($el.is('form')) {
+                            $('input', $el).addClass('active');
+                        } else {
+                            if (req.$target[0].id === 'col1') {
+                                self.icinga.behaviors.navigation.setActive($el);
+                            }
+                        }
+                        // Interrupt .each, only on menu item shall be active
+                        return false;
+                    } else if ($(el).closest('table.action').length) {
+                        $el.addClass('active');
+                    }
+                });
+            }
+
             // Update history when necessary. Don't do so for requests triggered
             // by history or autorefresh events
             if (! req.historyTriggered && ! req.autorefresh) {
-                if (req.$target.hasClass('container')) {
+                if (req.$target.hasClass('container') && req.failure === false) {
                     // We only want to care about top-level containers
                     if (req.$target.parent().closest('.container').length === 0) {
                         this.icinga.history.pushCurrentState();
@@ -594,18 +592,18 @@
         onFailure: function (req, textStatus, errorThrown) {
             var url = req.url;
 
-            if (req.status === 500) {
-                if (this.exception === null) {
-                    req.$target.addClass('impact');
+            req.failure = true;
 
-                    this.exception = this.createNotice(
-                        'error',
-                        $('h1', $(req.responseText)).first().html(),
-                        true
-                    );
-                    this.icinga.ui.fixControls();
-                }
-            } else if (req.status > 0) {
+            /*
+             * Test if a manual actions comes in and autorefresh is active: Stop refreshing
+             */
+            if (! req.historyTriggered && ! req.autorefresh && req.$target.data('icingaRefresh') > 0
+            && req.$target.data('icingaUrl') !== url) {
+                req.$target.data('icingaRefresh', 0);
+                req.$target.data('icingaUrl', url);
+            }
+
+            if (req.status > 0) {
                 this.icinga.logger.error(
                     req.status,
                     errorThrown + ':',
@@ -617,9 +615,6 @@
                     req.action,
                     req.autorefresh
                 );
-
-                // Header example:
-                // Icinga.debug(req.getResponseHeader('X-Icinga-Redirect'));
             } else {
                 if (errorThrown === 'abort') {
                     this.icinga.logger.debug(
@@ -660,7 +655,13 @@
             var $notice = $(
                 '<li class="' + c + '">' + message + '</li>'
             ).appendTo($('#notifications'));
+
             this.icinga.ui.fixControls();
+
+            if (!persist) {
+                this.icinga.ui.fadeNotificationsAway();
+            }
+
             return $notice;
         },
 
@@ -721,11 +722,12 @@
                 // $container.html(content);
 
             } else {
-                if ($container.closest('.dashboard').length &&
-                    ! $('h1', $content).length
+                if ($container.closest('.dashboard').length
                 ) {
-                    var title = $('h1', $container).first().detach();
-                    $('h1', $content).first().detach();
+                    if (! $('h1', $content).length) {
+                        var title = $('h1', $container).first().detach();
+                        $('h1', $content).first().detach();
+                    }
                     $container.html(title).append(content);
                 } else if (action === 'replace') {
                     $container.html(content);
