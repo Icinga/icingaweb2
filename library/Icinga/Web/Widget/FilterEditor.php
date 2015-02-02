@@ -34,6 +34,10 @@ class FilterEditor extends AbstractWidget
 
     protected $preserveParams = array();
 
+    protected $preservedParams = array();
+
+    protected $preservedUrl;
+
     protected $ignoreParams = array();
 
     /**
@@ -82,6 +86,14 @@ class FilterEditor extends AbstractWidget
             $this->url = Url::fromRequest();
         }
         return $this->url;
+    }
+
+    protected function preservedUrl()
+    {
+        if ($this->preservedUrl === null) {
+            $this->preservedUrl = $this->url()->with($this->preservedParams);
+        }
+        return $this->preservedUrl;
     }
 
     public function setQuery($query)
@@ -147,6 +159,7 @@ class FilterEditor extends AbstractWidget
                 $preserve[$key] = $value;
             }
         }
+        $this->preservedParams = $preserve;
 
         $add    = $params->shift('addFilter');
         $remove = $params->shift('removeFilter');
@@ -232,7 +245,7 @@ class FilterEditor extends AbstractWidget
         if ($modify) {
             if ($request->isPost()) {
                 if ($request->get('cancel') === 'Cancel') {
-                    $this->redirectNow($this->url()->without('modifyFilter'));
+                    $this->redirectNow($this->preservedUrl()->without('modifyFilter'));
                 }
 
                 $filter = $this->applyChanges($request->getPost());
@@ -295,7 +308,7 @@ class FilterEditor extends AbstractWidget
     {
         return $this->view()->qlink(
             '',
-            $this->url()->with('removeFilter', $filter->getId()),
+            $this->preservedUrl()->with('removeFilter', $filter->getId()),
             null,
             array(
                 'title' => t('Click to remove this part of your filter'),
@@ -308,7 +321,7 @@ class FilterEditor extends AbstractWidget
     {
         return $this->view()->qlink(
             '',
-            $this->url()->with('addFilter', $filter->getId()),
+            $this->preservedUrl()->with('addFilter', $filter->getId()),
             null,
             array(
                 'title' => t('Click to add another filter'),
@@ -321,7 +334,7 @@ class FilterEditor extends AbstractWidget
     {
         return $this->view()->qlink(
             '',
-            $this->url()->with('stripFilter', $filter->getId()),
+            $this->preservedUrl()->with('stripFilter', $filter->getId()),
             null,
             array(
                 'title' => t('Strip this filter'),
@@ -334,7 +347,7 @@ class FilterEditor extends AbstractWidget
     {
         return $this->view()->qlink(
             '',
-            $this->url()->without('addFilter'),
+            $this->preservedUrl()->without('addFilter'),
             null,
             array(
                 'title' => t('Cancel this operation'),
@@ -638,7 +651,7 @@ class FilterEditor extends AbstractWidget
     public function renderSearch()
     {
         $html = ' <form method="post" class="inline dontprint" action="'
-              . $this->url()
+              . $this->preservedUrl()
               . '"><input type="text" name="q" style="width: 8em" class="search" value="" placeholder="'
               . t('Search...')
               . '" /></form>';
@@ -653,7 +666,7 @@ class FilterEditor extends AbstractWidget
         }
         return $html
             . '<a href="'
-            . $this->url()->with('modifyFilter', true)
+            . $this->preservedUrl()->with('modifyFilter', true)
             . '" title="'
             . $title
             . '">'
@@ -663,7 +676,7 @@ class FilterEditor extends AbstractWidget
 
     public function render()
     {
-        if (! $this->url()->getParam('modifyFilter')) {
+        if (! $this->preservedUrl()->getParam('modifyFilter')) {
             return $this->renderSearch() . $this->shorten($this->filter, 50);
         }
         return  $this->renderSearch()
