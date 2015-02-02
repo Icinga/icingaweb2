@@ -139,6 +139,16 @@ class Tab extends AbstractWidget
     }
 
     /**
+     * Get the tab's target URL
+     *
+     * @return Url
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
      * Set the parameters to be set for this tabs Url
      *
      * @param array $url        The Url parameters to set
