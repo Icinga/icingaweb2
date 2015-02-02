@@ -708,11 +708,12 @@
                 // $container.html(content);
 
             } else {
-                if ($container.closest('.dashboard').length &&
-                    ! $('h1', $content).length
+                if ($container.closest('.dashboard').length
                 ) {
-                    var title = $('h1', $container).first().detach();
-                    $('h1', $content).first().detach();
+                    if (! $('h1', $content).length) {
+                        var title = $('h1', $container).first().detach();
+                        $('h1', $content).first().detach();
+                    }
                     $container.html(title).append(content);
                 } else if (action === 'replace') {
                     $container.html(content);
