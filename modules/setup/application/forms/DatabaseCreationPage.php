@@ -103,8 +103,9 @@ class DatabaseCreationPage extends Form
             array(
                 'value' => $this->translate(
                     'It seems that either the database you defined earlier does not yet exist and cannot be created'
-                    . ' using the provided access credentials or the database does not have the required schema to '
-                    . 'be operated by Icinga Web 2. Please provide appropriate access credentials to solve this.'
+                    . ' using the provided access credentials, the database does not have the required schema to be'
+                    . ' operated by Icinga Web 2 or the provided access credentials do not have the sufficient '
+                    . 'permissions to access the database. Please provide appropriate access credentials to solve this.'
                 )
             )
         );
@@ -116,7 +117,9 @@ class DatabaseCreationPage extends Form
             array(
                 'required'      => false === $skipValidation,
                 'label'         => $this->translate('Username'),
-                'description'   => $this->translate('A user which is able to create databases and/or touch the database schema')
+                'description'   => $this->translate(
+                    'A user which is able to create databases and/or touch the database schema'
+                )
             )
         );
         $this->addElement(
