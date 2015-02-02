@@ -51,6 +51,19 @@ class Monitoring_HostController extends MonitoredObjectController
         return $urls;
     }
 
+    protected function getHostActions()
+    {
+        $urls = array();
+
+        foreach (Hook::all('Monitoring\\HostActions') as $hook) {
+            foreach ($hook->getActionsForHost($this->object) as $id => $url) {
+                $urls[$id] = $url;
+            }
+        }
+
+        return $urls;
+    }
+
     /**
      * Show a host
      */
