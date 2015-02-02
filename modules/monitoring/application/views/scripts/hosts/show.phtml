@@ -1,23 +1,10 @@
 <div class="controls">
-    <?= $this->tabs ?>
+    <?= $this->render('partials/host/objects-header.phtml') ?>
 </div>
 <div class="content">
-    <?php $hostCount = count($objects) ?>
-    <?php if ($hostCount === 0): ?>
+    <?php if (($hostCount = count($objects)) === 0): ?>
         <?= $this->translate('No hosts matching the filter') ?>
     <?php else: ?>
-        <div class="hbox-item">
-            <b><?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', $hostCount), $hostCount) ?></b>
-        </div>
-        <div class="hbox-item">
-            &nbsp;<?= $this->hostStatesPieChart ?>
-        </div>
-        <div class="hbox-item" style="font-size: 14px">
-            <?php foreach (array_filter($hostStates) as $text => $count) {
-                echo sprintf('%s: %u <br>', $this->translate(strtoupper($text)), $count);
-            } ?>
-        </div>
-
         <h3>
             <?= sprintf(
                 $this->translatePlural(

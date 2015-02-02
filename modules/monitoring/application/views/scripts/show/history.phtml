@@ -3,10 +3,17 @@
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
+$self = $this;
+$hostContext = $object->getType() === 'host';
+
 ?>
 
 <div class="controls">
-  <?= $this->render('show/components/header.phtml'); ?>
+<?php if ($hostContext): ?>
+  <?= $this->render('partials/host/object-header.phtml'); ?>
+<?php else: ?>
+  <?= $this->render('partials/service/object-header.phtml'); ?>
+<?php endif ?>
   <h1><?= $this->translate('This Object\'s Event History'); ?></h1>
   <?= $this->widget('limiter', array('url' => $url, 'max' => $history->count())); ?>
   <?= $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
@@ -19,8 +26,6 @@ use Icinga\Module\Monitoring\Object\Service;
 <?php return; endif ?>
 
 <?php
-$self = $this;
-$hostContext = $object->getType() === 'host';
 function contactsLink($match, $view) {
     $links = array();
     foreach (preg_split('/,\s/', $match[1]) as $contact) {
