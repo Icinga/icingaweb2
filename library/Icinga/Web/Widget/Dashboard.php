@@ -9,7 +9,6 @@ use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Exception\SystemPermissionException;
 use Icinga\User;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Dashlet as DashboardDashlet;
@@ -425,28 +424,8 @@ class Dashboard extends AbstractWidget
     public function getConfigFile()
     {
         if ($this->user === null) {
-            return '';
+            throw new ProgrammingError('Can\'t load dashboards. User is not set');
         }
-
-        $baseDir = '/var/lib/icingaweb';
-
-        if (! file_exists($baseDir)) {
-            throw new NotReadableError('Could not read: ' . $baseDir);
-        }
-
-        $userDir = $baseDir . '/' . $this->user->getUsername();
-
-        if (! file_exists($userDir)) {
-            $success = @mkdir($userDir);
-            if (!$success) {
-                throw new SystemPermissionException('Could not create: ' . $userDir);
-            }
-        }
-
-        if (! file_exists($userDir)) {
-            throw new NotReadableError('Could not read: ' . $userDir);
-        }
-
-        return $userDir . '/dashboard.ini';
+        return Config::resolvePath('dashboards/' . $this->user->getUsername() . '/dashboard.ini');
     }
 }

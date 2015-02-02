@@ -24,11 +24,11 @@ class DashboardController extends ActionController
      * @var Dashboard;
      */
     private $dashboard;
-    
+
     public function init()
     {
         $this->dashboard = new Dashboard();
-        $this->dashboard->setUser($this->getRequest()->getUser());
+        $this->dashboard->setUser($this->Auth()->getUser());
         $this->dashboard->load();
     }
 
