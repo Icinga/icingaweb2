@@ -48,16 +48,6 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
         $checkTime->add(new DateInterval('PT1H'));
         $this->addElements(array(
             array(
-                'note',
-                'command-info',
-                array(
-                    'value' => $this->translate(
-                        'This command is used to schedule the next check of hosts or services. Icinga will re-queue the'
-                        . ' hosts or services to be checked at the time you specify.'
-                    )
-                )
-            ),
-            array(
                 'dateTimePicker',
                 'check_time',
                 array(
