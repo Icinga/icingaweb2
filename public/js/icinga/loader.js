@@ -342,41 +342,10 @@
             var rendered = false;
             var classes;
 
-            if (! req.autorefresh) {
-                // TODO: Hook for response/url?
-                var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
-                var $matches = $.merge($('[href="' + url + '"]'), $forms);
-                $matches.each(function (idx, el) {
-                    if ($(el).closest('#menu').length) {
-                        if (req.$target[0].id === 'col1') {
-                            self.icinga.behaviors.navigation.resetActive();
-                        }
-                    } else if ($(el).closest('table.action').length) {
-                        $(el).closest('table.action').find('.active').removeClass('active');
-                    }
-                });
-
-                $matches.each(function (idx, el) {
-                    var $el = $(el);
-                    if ($el.closest('#menu').length) {
-                        if ($el.is('form')) {
-                            $('input', $el).addClass('active');
-                        } else {
-                            if (req.$target[0].id === 'col1') {
-                                self.icinga.behaviors.navigation.setActive($el);
-                            }
-                        }
-                        // Interrupt .each, only on menu item shall be active
-                        return false;
-                    } else if ($(el).closest('table.action').length) {
-                        $el.addClass('active');
-                    }
-                });
-            } else {
+            if (req.autorefresh) {
                 // TODO: next container url
                 active = $('[href].active', req.$target).attr('href');
             }
-
 
             var target = req.getResponseHeader('X-Icinga-Container');
             var newBody = false;
@@ -551,6 +520,39 @@
          * Regardless of whether a request succeeded of failed, clean up
          */
         onComplete: function (req, textStatus) {
+            if (! req.autorefresh) {
+                // TODO: Hook for response/url?
+                var url = req.url;
+                var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
+                var $matches = $.merge($('[href="' + url + '"]'), $forms);
+                $matches.each(function (idx, el) {
+                    if ($(el).closest('#menu').length) {
+                        if (req.$target[0].id === 'col1') {
+                            self.icinga.behaviors.navigation.resetActive();
+                        }
+                    } else if ($(el).closest('table.action').length) {
+                        $(el).closest('table.action').find('.active').removeClass('active');
+                    }
+                });
+
+                $matches.each(function (idx, el) {
+                    var $el = $(el);
+                    if ($el.closest('#menu').length) {
+                        if ($el.is('form')) {
+                            $('input', $el).addClass('active');
+                        } else {
+                            if (req.$target[0].id === 'col1') {
+                                self.icinga.behaviors.navigation.setActive($el);
+                            }
+                        }
+                        // Interrupt .each, only on menu item shall be active
+                        return false;
+                    } else if ($(el).closest('table.action').length) {
+                        $el.addClass('active');
+                    }
+                });
+            }
+
             // Update history when necessary. Don't do so for requests triggered
             // by history or autorefresh events
             if (! req.historyTriggered && ! req.autorefresh) {
