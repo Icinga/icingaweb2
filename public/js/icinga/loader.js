@@ -318,11 +318,6 @@
                 this.failureNotice = null;
             }
 
-            // Remove 'impact' class if there was such
-            if (req.$target.hasClass('impact')) {
-                req.$target.removeClass('impact');
-            }
-
             var url = req.url;
             this.icinga.logger.debug(
                 'Got response for ', req.$target, ', URL was ' + url
@@ -520,6 +515,11 @@
          * Regardless of whether a request succeeded of failed, clean up
          */
         onComplete: function (req, textStatus) {
+            // Remove 'impact' class if there was such
+            if (req.$target.hasClass('impact')) {
+                req.$target.removeClass('impact');
+            }
+
             if (! req.autorefresh) {
                 // TODO: Hook for response/url?
                 var url = req.url;
