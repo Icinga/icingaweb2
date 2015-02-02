@@ -1,0 +1,32 @@
+<?php if (! $this->compact): ?>
+    <?= $tabs; ?>
+<?php endif ?>
+<?php if (($serviceCount = count($objects)) > 0): ?>
+<div class="hbox">
+    <div class="hbox-item" style="width: 6em;">
+        <strong><?= sprintf($this->translatePlural('Service (%u)', 'Services (%u)', $serviceCount), $serviceCount); ?></strong>
+    </div>
+    <div class="hbox-item">
+        &nbsp;<?= $serviceStatesPieChart; ?>
+    </div>
+    <div class="hbox-item" style="font-size: 14px">
+      <?php foreach (array_filter($serviceStates) as $text => $count): ?>
+        <?= sprintf('%s: %u', $this->translate(strtoupper($text)), $count); ?><br>
+      <?php endforeach ?>
+    </div>
+</div>
+<div class="hbox">
+    <div class="hbox-item" style="width: 6em;">
+        <?php $hostCount = array_sum(array_values($hostStates)); ?>
+        <strong><?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', $hostCount), $hostCount); ?></strong>
+    </div>
+    <div class="hbox-item">
+        &nbsp;<?= $hostStatesPieChart; ?>
+    </div>
+    <div class="hbox-item" style="font-size: 14px">
+      <?php foreach (array_filter($hostStates) as $text => $count): ?>
+        <?= sprintf('%s: %u', $this->translate(strtoupper($text)), $count); ?><br>
+      <?php endforeach ?>
+    </div>
+</div>
+<?php endif ?>

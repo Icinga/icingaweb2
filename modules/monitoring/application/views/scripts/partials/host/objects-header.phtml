@@ -1,0 +1,16 @@
+<?php if (! $this->compact): ?>
+    <?= $tabs; ?>
+<?php endif ?>
+<?php if (($hostCount = count($objects)) > 0): ?>
+<div class="hbox-item">
+    <strong><?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', $hostCount), $hostCount); ?></strong>
+</div>
+<div class="hbox-item">
+    &nbsp;<?= $hostStatesPieChart; ?>
+</div>
+<div class="hbox-item" style="font-size: 14px">
+  <?php foreach (array_filter($hostStates) as $text => $count): ?>
+    <?= sprintf('%s: %u', $this->translate(strtoupper($text)), $count); ?><br>
+  <?php endforeach ?>
+</div>
+<?php endif ?>

@@ -1,0 +1,32 @@
+<div class="controls">
+  <?php if (isset($serviceStates)): ?>
+    <?= $this->render('partials/service/objects-header.phtml'); ?>
+  <?php else: ?>
+    <?= $this->render('partials/host/objects-header.phtml'); ?>
+  <?php endif ?>
+</div>
+<div class="content">
+    <table class="objectlist">
+        <thead>
+            <tr>
+                <th><?= $this->icon('host'); ?> <?= $this->translate('Host'); ?></th>
+                <th><?= $this->icon('conf'); ?> <?= $this->translate('Service'); ?></th>
+            </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($form->getObjects() as $object): /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */ ?>
+            <tr>
+              <?php if ($object->getType() === $object::TYPE_HOST): ?>
+                <td colspan="2"><?= $this->escape($object->getName()); ?></td>
+              <?php else: ?>
+                <td><?= $this->escape($object->getHost()->getName()); ?></td>
+                <td><?= $this->escape($object->getName()); ?></td>
+              <?php endif ?>
+            </tr>
+          <?php endforeach ?>
+        </tbody>
+    </table>
+    <hr class="command-separator">
+    <h1 class="command-title"><?= $title ?> <?= /** @var \Icinga\Module\Monitoring\Forms\Command\CommandForm $form */ $this->icon('help', $form->getHelp()) ?></h1>
+    <?= $form ?>
+</div>
