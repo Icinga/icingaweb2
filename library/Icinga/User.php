@@ -426,11 +426,13 @@ class User
         foreach ($this->permissions as $permitted) {
             $wildcard = strpos($permitted, '*');
             if ($wildcard !== false) {
-            }
-            if (substr($permission, 0, $wildcard) === substr($permitted, 0, $wildcard)) {
-                return true;
-            } elseif ($permission === $permitted) {
-                return true;
+                if (substr($permission, 0, $wildcard) === substr($permitted, 0, $wildcard)) {
+                    return true;
+                } else {
+                    if ($permission === $permitted) {
+                        return true;
+                    }
+                }
             }
         }
         return false;
