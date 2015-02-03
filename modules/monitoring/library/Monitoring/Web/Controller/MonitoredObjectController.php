@@ -151,6 +151,7 @@ abstract class MonitoredObjectController extends Controller
     public function deleteDowntimeAction()
     {
         $this->assertHttpMethod('POST');
+        $this->assertPermission('monitoring/command/downtime/delete');
         $this->handleCommandForm(new DeleteDowntimeCommandForm());
     }
 
