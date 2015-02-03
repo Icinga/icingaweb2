@@ -123,55 +123,26 @@ class FilterEditor extends AbstractWidget
     {
         $found = false;
         if ($filter->isChain() && $filter->getOperatorName() === 'AND') {
-            if (is_array($column)) {
-                foreach ($filter->filters() as $f) {
-                    if ($f->isChain() && $f->getOperatorName() === 'OR') {
-
-                    }
-                }
-            } else {
-                foreach ($filter->filters() as $f) {
-                    if ($f->isExpression()
-                        && $f->getColumn() === $column
-                        && $f->getSign() === $sign
-                    ) {
-                        $f->setExpression($expression);
-                        $found = true;
-                        break;
-                    }
+            foreach ($filter->filters() as $f) {
+                if ($f->isExpression()
+                    && $f->getColumn() === $column
+                    && $f->getSign() === $sign
+                ) {
+                    $f->setExpression($expression);
+                    $found = true;
+                    break;
                 }
             }
-        } elseif ($filter->isExpression() && $filter->getSign() === $sign) {
-            if (is_array($column)) {
-                if (in_array($filter->getColumn(), $column)) {
-                    $or = Filter::matchAny();
-                    foreach ($column as $col) {
-                        $or->addFilter(
-                            Filter::expression($col, $sign, $expression)
-                        );
-                    }
-                    $filter = $filter->andFilter($or);
-                    $found = true;
-                }
-            } elseif ($filter->getColumn() === $column) {
+        } elseif ($filter->isExpression()) {
+            if ($filter->getColumn() === $column && $filter->getSign() === $sign) {
                 $filter->setExpression($expression);
                 $found = true;
             }
         }
         if (! $found) {
-            if (is_array($column)) {
-                $or = Filter::matchAny();
-                foreach ($column as $col) {
-                    $or->addFilter(
-                        Filter::expression($col, $sign, $expression)
-                    );
-                }
-                $filter = $filter->andFilter($or);
-            } else {
-                $filter = $filter->andFilter(
-                    Filter::expression($column, $sign, $expression)
-                );
-            }
+            $filter = $filter->andFilter(
+                Filter::expression($column, $sign, $expression)
+            );
         }
         return $filter;
     }
@@ -212,25 +183,25 @@ class FilterEditor extends AbstractWidget
                 // TODO: Ask the view for (multiple) search columns
                 switch($request->getActionName()) {
                     case 'services':
-                        $searchCols = array('service_description', 'service_display_name');
+                        $searchCol = 'service_description';
                         break;
                     case 'hosts':
-                        $searchCols = array('host_name', 'host_display_name');
+                        $searchCol = 'host_name';
                         break;
                     case 'hostgroups':
-                        $searchCols = array('hostgroup', 'hostgroup_alias');
+                        $searchCol = 'hostgroup';
                         break;
                     case 'servicegroups':
-                        $searchCols = array('servicegroup', 'servicegroup_alias');
+                        $searchCol = 'servicegroup';
                         break;
                     default:
-                        $searchCols = null;
+                        $searchCol = null;
                 }
 
-                if ($searchCols === null) {
+                if ($searchCol === null) {
                     throw new Exception('Cannot search here');
                 }
-                $filter = $this->mergeRootExpression($filter, $searchCols, '=', "*$search*");
+                $filter = $this->mergeRootExpression($filter, $searchCol, '=', "*$search*");
 
             } else {
                 list($k, $v) = preg_split('/=/', $search);
