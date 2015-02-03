@@ -98,19 +98,29 @@ if ($hosts->count() === 0) {
         <?= implode(' ', $icons) ?>
         <a href="<?= $hostLink  ?>"><?= $this->escape($host->host_display_name) ?></a>
         <?php if (isset($host->host_unhandled_services) && $host->host_unhandled_services > 0): ?>
-        <span title="<?=
+        <span> (<?= $this->qlink(
+          sprintf(
+            $this->translatePlural('%d unhandled service', '%d unhandled services', $host->host_unhandled_services),
             $host->host_unhandled_services
-        ?> <?= $this->translate('Service Problems on Host') ?>"> (<?= $this->qlink(
-           sprintf(
-               $this->translatePlural('%d unhandled service', '%d unhandled services', $host->host_unhandled_services),
-               $host->host_unhandled_services),
-           'monitoring/show/services',
-           array(
-               'host'               => $host->host_name,
-               'service_problem'    => 1,
-               'service_handled'    => 0
+          ),
+          'monitoring/show/services',
+          array(
+            'host'               => $host->host_name,
+            'service_problem'    => 1,
+            'service_handled'    => 0
            ),
-           array('style' => 'font-weight: normal')
+          array(
+            'style' => 'font-weight: normal',
+            'title' => sprintf(
+              $this->translatePlural(
+                'List %s service problem on host %s',
+                'List %s service problems on host %s',
+                $host->host_unhandled_services
+              ),
+              $host->host_unhandled_services,
+              $host->host_name
+            )
+          )
         ) ?>)</span>
         <?php endif ?>
         <p class="pluginoutput"><?= $this->escape($this->ellipsis($host->host_output, 10000)) ?></p>

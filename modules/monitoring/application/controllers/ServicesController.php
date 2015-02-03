@@ -191,7 +191,7 @@ class Monitoring_ServicesController extends Controller
         $this->view->objectsInDowntime = $objectsInDowntime;
         $this->view->inDowntimeLink = Url::fromPath('monitoring/list/downtimes')
             ->setQueryString(Filter::matchAny($downtimeFilterExpressions)->toQueryString());
-        $this->view->havingCommentsLink = Url::fromRequest()
+        $this->view->commentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
         $this->view->serviceStatesPieChart = $this->createPieChart(
             $serviceStates,

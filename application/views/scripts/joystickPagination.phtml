@@ -6,7 +6,7 @@ if ($xAxisPaginator->count() <= 1 && $yAxisPaginator->count() <= 1) {
     return; // Display this pagination only if there are multiple pages
 }
 
-$fromTo = t('%s: %d to %d of %d');
+$fromTo = t('%s: %d to %d of %d (on the %s-axis)');
 $xAxisPages = $xAxisPaginator->getPages('all');
 $yAxisPages = $yAxisPaginator->getPages('all');
 
@@ -35,7 +35,8 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
           t('Hosts'),
           ($prevYAxisPage - 1) * $yAxisPages->itemCountPerPage + 1,
           $prevYAxisPage * $yAxisPages->itemCountPerPage,
-          $yAxisPages->totalItemCount
+          $yAxisPages->totalItemCount,
+          'y'
         ); ?>"><?= $this->icon('up-open'); ?></a>
       <?php else: ?>
         <?= $this->icon('up-open'); ?>
@@ -53,7 +54,8 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
           t('Services'),
           ($prevXAxisPage - 1) * $xAxisPages->itemCountPerPage + 1,
           $prevXAxisPage * $xAxisPages->itemCountPerPage,
-          $xAxisPages->totalItemCount
+          $xAxisPages->totalItemCount,
+          'x'
         ); ?>"><?= $this->icon('left-open'); ?></a>
       <?php else: ?>
         <?= $this->icon('left-open'); ?>
@@ -69,7 +71,8 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
           t('Services'),
           $currentXAxisPage * $xAxisPages->itemCountPerPage + 1,
           $nextXAxisPage === $xAxisPages->last ? $xAxisPages->totalItemCount : $nextXAxisPage * $xAxisPages->itemCountPerPage,
-          $xAxisPages->totalItemCount
+          $xAxisPages->totalItemCount,
+          'x'
         ); ?>"><?= $this->icon('right-open'); ?></a>
       <?php else: ?>
         <?= $this->icon('right-open'); ?>
@@ -87,7 +90,8 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
           t('Hosts'),
           $currentYAxisPage * $yAxisPages->itemCountPerPage + 1,
           $nextYAxisPage === $yAxisPages->last ? $yAxisPages->totalItemCount : $nextYAxisPage * $yAxisPages->itemCountPerPage,
-          $yAxisPages->totalItemCount
+          $yAxisPages->totalItemCount,
+          'y'
         ); ?>"><?= $this->icon('down-open'); ?></a>
       <?php else: ?>
         <?= $this->icon('down-open'); ?>

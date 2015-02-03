@@ -17,7 +17,10 @@
         </h3>
 
         <div>
-            <a href="<?= $listAllLink ?>" title="<?= $this->translate('List all') ?>">
+            <a href="<?= $listAllLink ?>" title="<?= sprintf(
+                $this->translate('List all %u hosts'),
+                $hostCount
+            ); ?>">
                 <?= $this->translate('List all') ?>
             </a>
         </div>
@@ -60,17 +63,43 @@
             ) ?>
         </h3>
         <div>
-            <a href="<?= $downtimeUnhandledLink ?>"
-               title="<?= $this->translate('Schedule downtimes for unhandled problem hosts') ?>">
+            <a href="<?= $downtimeUnhandledLink ?>" title="<?= sprintf(
+                $this->translatePlural(
+                    'Schedule downtime for %u unhandled host problem',
+                    'Schedule downtimes for %u unhandled host problems',
+                    $unhandledCount
+                ),
+                $unhandledCount
+            ) ?>">
                 <?= $this->icon('plug') ?>
-                <?= $this->translate('Schedule downtimes for unhandled problem hosts') ?>
+                <?= sprintf(
+                    $this->translatePlural(
+                        'Schedule downtime for unhandled host problem',
+                        'Schedule downtimes for unhandled host problems',
+                        $unhandledCount
+                    ),
+                    $unhandledCount
+                ) ?>
             </a>
         </div>
         <div>
-            <a href="<?= $acknowledgeUnhandledLink ?>"
-               title="<?= $this->translate('Acknowledge unhandled problem hosts') ?>">
+            <a href="<?= $acknowledgeUnhandledLink ?>" title="<?= sprintf(
+                $this->translatePlural(
+                    'Acknowledge %u unhandled host problem',
+                    'Acknowledge %u unhandled host problems',
+                    $unhandledCount
+                ),
+                $unhandledCount
+            ) ?>">
                 <?= $this->icon('ok') ?>
-                <?= $this->translate('Acknowledge unhandled problem hosts') ?>
+                <?= sprintf(
+                    $this->translatePlural(
+                        'Acknowledge unhandled host problem',
+                        'Acknowledge unhandled host problems',
+                        $unhandledCount
+                    ),
+                    $unhandledCount
+                ) ?>
             </a>
         </div>
         <?php endif ?>
@@ -96,12 +125,19 @@
             <h2>
                 <?php $inDowntimeCount = count($objectsInDowntime) ?>
                 <a href="<?= $inDowntimeLink ?>"
-                   title="<?= $this->translate('Hosts in downtime') ?>">
+                   title="<?= sprintf(
+                       $this->translatePlural(
+                           'List %u host which is in downtime',
+                           'List %u hosts which are in downtime',
+                           $inDowntimeCount
+                       ),
+                       $inDowntimeCount
+                   ) ?>">
                     <?= $this->icon('plug') ?>
                     <?= sprintf(
                         $this->translatePlural(
-                            '%u host is in downtime',
-                            '%u hosts are in downtime',
+                            'List %u host currently in downtime',
+                            'List %u hosts currently downtime',
                             $inDowntimeCount
                         ),
                         $inDowntimeCount
@@ -110,19 +146,26 @@
             </h2>
         <?php endif ?>
 
-        <?php $havingCommentsCount = count($objects->getComments()) ?>
-        <?php if ($havingCommentsCount): ?>
+        <?php $commentCount = count($objects->getComments()) ?>
+        <?php if ($commentCount): ?>
             <h2>
-                <a href="<?= $havingCommentsLink ?>"
-                   title="<?= $this->translate('Comments') ?>">
+                <a href="<?= $commentsLink ?>"
+                   title="<?= sprintf(
+                       $this->translatePlural(
+                           'List %u host comment',
+                           'List %u host comments',
+                           $commentCount
+                       ),
+                       $commentCount
+                   ) ?>">
                     <?= $this->icon('comment') ?>
                     <?= sprintf(
                         $this->translatePlural(
-                            '%u comment',
-                            '%u comments',
-                            $havingCommentsCount
+                            'List %u host comment',
+                            'List %u host comments',
+                            $commentCount
                         ),
-                        $havingCommentsCount
+                        $commentCount
                     ) ?>
                 </a>
             </h2>
