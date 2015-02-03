@@ -218,6 +218,8 @@ class Monitoring_ServicesController extends Controller
      */
     public function acknowledgeProblemAction()
     {
+        $this->assertPermission('monitoring/command/acknowledge-problem');
+
         $this->view->title = $this->translate('Acknowledge Service Problems');
         $this->handleCommandForm(new AcknowledgeProblemCommandForm());
     }
@@ -227,6 +229,8 @@ class Monitoring_ServicesController extends Controller
      */
     public function rescheduleCheckAction()
     {
+        $this->assertPermission('monitoring/command/schedule-check');
+
         $this->view->title = $this->translate('Reschedule Service Checks');
         $this->handleCommandForm(new ScheduleServiceCheckCommandForm());
     }
@@ -236,6 +240,8 @@ class Monitoring_ServicesController extends Controller
      */
     public function scheduleDowntimeAction()
     {
+        $this->assertPermission('monitoring/command/downtime/schedule');
+
         $this->view->title = $this->translate('Schedule Service Downtimes');
         $this->handleCommandForm(new ScheduleServiceDowntimeCommandForm());
     }
@@ -245,6 +251,8 @@ class Monitoring_ServicesController extends Controller
      */
     public function processCheckResultAction()
     {
+        $this->assertPermission('monitoring/command/process-check-result');
+
         $this->view->title = $this->translate('Submit Passive Service Check Results');
         $this->handleCommandForm(new ProcessCheckResultCommandForm());
     }

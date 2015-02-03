@@ -169,6 +169,8 @@ class Monitoring_HostsController extends Controller
      */
     public function acknowledgeProblemAction()
     {
+        $this->assertPermission('monitoring/command/acknowledge-problem');
+
         $this->view->title = $this->translate('Acknowledge Host Problems');
         $this->handleCommandForm(new AcknowledgeProblemCommandForm());
     }
@@ -178,6 +180,8 @@ class Monitoring_HostsController extends Controller
      */
     public function rescheduleCheckAction()
     {
+        $this->assertPermission('monitoring/command/schedule-check');
+
         $this->view->title = $this->translate('Reschedule Host Checks');
         $this->handleCommandForm(new ScheduleHostCheckCommandForm());
     }
@@ -187,6 +191,8 @@ class Monitoring_HostsController extends Controller
      */
     public function scheduleDowntimeAction()
     {
+        $this->assertPermission('monitoring/command/downtime/schedule');
+
         $this->view->title = $this->translate('Schedule Host Downtimes');
         $this->handleCommandForm(new ScheduleHostDowntimeCommandForm());
     }
@@ -196,6 +202,8 @@ class Monitoring_HostsController extends Controller
      */
     public function processCheckResultAction()
     {
+        $this->assertPermission('monitoring/command/process-check-result');
+
         $this->view->title = $this->translate('Submit Passive Host Check Results');
         $this->handleCommandForm(new ProcessCheckResultCommandForm());
     }
