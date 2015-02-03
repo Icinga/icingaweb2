@@ -173,6 +173,16 @@ abstract class IdoQuery extends DbQuery
     protected static $idoVersion;
 
     /**
+     * List of columns where the COLLATE SQL-instruction has been removed
+     *
+     * This list is being populated in case of a PostgreSQL backend only,
+     * to ensure case-insensitive string comparison in WHERE clauses.
+     *
+     * @var array
+     */
+    protected $columnsWithoutCollation = array();
+
+    /**
      * Return true when the column is an aggregate column
      *
      * @param  String $column       The column to test
@@ -267,6 +277,37 @@ abstract class IdoQuery extends DbQuery
         parent::addFilter($filter);
     }
 
+    /**
+     * Recurse the given filter and ensure that any string conversion is case-insensitive
+     *
+     * @param Filter $filter
+     */
+    protected function lowerColumnsWithoutCollation(Filter $filter)
+    {
+        if ($filter instanceof FilterExpression) {
+            if (
+                in_array($filter->getColumn(), $this->columnsWithoutCollation)
+                && strpos($filter->getColumn(), 'LOWER') !== 0
+            ) {
+                $filter->setColumn('LOWER(' . $filter->getColumn() . ')');
+                $filter->setExpression(strtolower($filter->getExpression()));
+            }
+        } else {
+            foreach ($filter->filters() as $chainedFilter) {
+                $this->lowerColumnsWithoutCollation($chainedFilter);
+            }
+        }
+    }
+
+    protected function applyFilterSql($select)
+    {
+        if (! empty($this->columnsWithoutCollation)) {
+            $this->lowerColumnsWithoutCollation($this->filter);
+        }
+
+        parent::applyFilterSql($select);
+    }
+
     public function where($condition, $value = null)
     {
         $this->requireColumn($condition);
@@ -320,7 +361,10 @@ abstract class IdoQuery extends DbQuery
     {
         foreach ($this->columnMap as $table => & $columns) {
             foreach ($columns as $key => & $value) {
-                $value = preg_replace('/ COLLATE .+$/', '', $value);
+                $value = preg_replace('/ COLLATE .+$/', '', $value, -1, $count);
+                if ($count > 0) {
+                    $this->columnsWithoutCollation[] = $this->getMappedField($key);
+                }
                 $value = preg_replace('/inet_aton\(([[:word:].]+)\)/i', '$1::inet - \'0.0.0.0\'', $value);
                 $value = preg_replace(
                     '/UNIX_TIMESTAMP(\((?>[^()]|(?-1))*\))/i',
