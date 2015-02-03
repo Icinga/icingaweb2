@@ -25,24 +25,4 @@ class LayoutController extends ActionController
         $menu = new MenuRenderer(Menu::load(), $url->getRelativeUrl());
         $this->view->menuRenderer = $menu->useCustomRenderer();
     }
-
-    /**
-     * Render the top bar
-     */
-    public function topbarAction()
-    {
-        $topbarHtmlParts = array();
-
-        /** @var Hook\TopBarHook $hook */
-        $hook = null;
-
-        foreach (Hook::all('TopBar') as $hook) {
-            $topbarHtmlParts[] = $hook->getHtml($this->getRequest());
-        }
-
-        $this->view->topbarHtmlParts = $topbarHtmlParts;
-
-
-        $this->renderScript('parts/topbar.phtml');
-    }
 }
