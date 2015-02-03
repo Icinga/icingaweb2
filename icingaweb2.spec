@@ -1,3 +1,5 @@
+# Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt
+
 %define revision 1.beta2
 
 Name:           icingaweb2

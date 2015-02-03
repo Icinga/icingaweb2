@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt */
 
 namespace Icinga\Module\Monitoring\Backend\Livestatus\Query;
 
@@ -13,7 +12,7 @@ class StatusSummaryQuery extends Query
 
     protected $available_columns = array(
     'service_host_name' => 'host_name',
-    
+
             'services_total'                            => 'state != 9999',
             'services_problem'                          => 'state > 0',
             'services_problem_handled'                  => 'state > 0 & (scheduled_downtime_depth > 0 | acknowledged = 1 | host_state > 0)',
@@ -50,7 +49,7 @@ if (! array_key_exists($col, $this->available_columns)) {
   throw new ProgrammingError('No such column: %s', $col);
 }
               $filter = $this->filterStringToFilter($this->available_columns[$col]);
-              
+
               //Filter::fromQueryString(str_replace(' ', '',  $this->available_columns[$col]));
               $parts[] = $this->renderFilter( $filter, 'Stats', 0, false);
           }
