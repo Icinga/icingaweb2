@@ -65,12 +65,12 @@ class AuthenticationStep extends Step
         $config = array();
         $config['admins'] = array(
             'users'         => $this->data['adminAccountData']['username'],
-            'permission'    => '*'
+            'permissions'   => '*'
         );
 
         try {
             Config::fromArray($config)
-                ->setConfigFile(Config::resolvePath('permissions.ini'))
+                ->setConfigFile(Config::resolvePath('roles.ini'))
                 ->saveIni();
         } catch (Exception $e) {
             $this->permIniError = $e;
