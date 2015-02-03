@@ -150,7 +150,13 @@ class LdapUserBackend extends UserBackend
     public function hasUser(User $user)
     {
         $username = $user->getUsername();
-        return strtolower($this->conn->fetchOne($this->selectUser($username))) === strtolower($username);
+        $entry = $this->conn->fetchOne($this->selectUser($username));
+
+        if (is_array($entry)) {
+            return in_array(strtolower($username), array_map('strtolower', $entry));
+        }
+
+        return strtolower($entry) === strtolower($username);
     }
 
     /**
@@ -225,7 +231,13 @@ class LdapUserBackend extends UserBackend
     {
         $users = array();
         foreach ($this->selectUsers()->fetchAll() as $row) {
-            $users[] = $row->{$this->userNameAttribute};
+            if (is_array($row->{$this->userNameAttribute})) {
+                foreach ($row->{$this->userNameAttribute} as $col) {
+                    $users[] = $col;
+                }
+            } else {
+                $users[] = $row->{$this->userNameAttribute};
+            }
         }
         return $users;
     }

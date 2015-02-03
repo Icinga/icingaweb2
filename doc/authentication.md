@@ -54,6 +54,10 @@ user_class          = inetOrgPerson
 user_name_attribute = uid
 ```
 
+Note that in case the set *user_name_attribute* holds multiple values it is required that all of its
+values are unique. Additionally, a user will be logged in using the exact user id used to authenticate
+with Icinga Web 2 (e.g. an alias) no matter what the primary user id might actually be.
+
 #### <a id="authentication-configuration-ad-authentication"></a> Active Directory
 
 Directive               | Description
