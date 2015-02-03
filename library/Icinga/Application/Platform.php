@@ -191,7 +191,7 @@ class Platform
      */
     public static function zendClassExists($name)
     {
-        if (class_exists($name)) {
+        if (@class_exists($name)) {
             return true;
         }
 
