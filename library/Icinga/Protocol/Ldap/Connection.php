@@ -375,7 +375,7 @@ class Connection
             throw new LdapException(
                 sprintf(
                     'LDAP query "%s" (root %s) failed: %s',
-                    $query,
+                    $query->create(),
                     $this->root_dn,
                     ldap_error($this->ds)
                 )
@@ -478,7 +478,7 @@ class Connection
                 throw new LdapException(
                     sprintf(
                         'TLS is required but not announced by %s',
-                        $this->host_name
+                        $this->hostname
                     )
                 );
             } else {
