@@ -108,7 +108,8 @@ class RoleForm extends ConfigForm
                     'description'   => $this->translate(
                         'The permissions to grant. You may select more than one permission'
                     ),
-                    'multiOptions'  => $this->providedPermissions
+                    'multiOptions'  => $this->providedPermissions,
+                    'class'         => 'grant-permissions'
                 )
             )
         ));
