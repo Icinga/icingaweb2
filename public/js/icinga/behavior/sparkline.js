@@ -15,7 +15,7 @@
     Sparkline.prototype.onRendered = function(evt) {
         var el = evt.target;
 
-        $('span.sparkline', el).each(function(i, element) {
+        $('.sparkline', el).each(function(i, element) {
             // read custom options
             var $spark = $(element);
             var title  = $spark.attr('title');

@@ -57,8 +57,13 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         }
 
         if ($limit > 0) {
+            $count = max (count($table), count ($results));
             $table = array_slice ($table, 0, $limit);
             $results = array_slice ($results, 0, $limit);
+            if ($count > $limit) {
+                $mess = sprintf(t('%d more ...'), $count - $limit);
+                $results[] = '<span title="' . $mess . '">...</span>';
+            }
         }
 
         if ($compact) {
