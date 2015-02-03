@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
-# {{{ICINGA_LICENSE_HEADER}}}
-# {{{ICINGA_LICENSE_HEADER}}}
+# Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt
 
 import sys
 import logging

@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt */
 
 namespace Icinga\Data\Filter;
 
@@ -154,7 +153,7 @@ abstract class FilterChain extends Filter
      *
      * Useful for debugging only
      *
-     * @return string 
+     * @return string
      */
     public function __toString()
     {
@@ -217,5 +216,5 @@ abstract class FilterChain extends Filter
         foreach ($this->filters as & $filter) {
             $filter = clone $filter;
         }
-    } 
+    }
 }
