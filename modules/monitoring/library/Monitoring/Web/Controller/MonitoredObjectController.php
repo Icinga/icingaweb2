@@ -142,6 +142,7 @@ abstract class MonitoredObjectController extends Controller
     public function deleteCommentAction()
     {
         $this->assertHttpMethod('POST');
+        $this->assertPermission('monitoring/command/comment/delete');
         $this->handleCommandForm(new DeleteCommentCommandForm());
     }
 
