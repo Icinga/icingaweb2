@@ -1,5 +1,6 @@
 <?php
-/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt */
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Module\Monitoring\Web\Widget;
 
@@ -75,7 +76,7 @@ class SelectBox extends AbstractWidget
      *
      * @param   Request     $request    The request to fetch the value from
      *
-     * @return  string|null
+     * @return  string|null     
      */
     public function getInterval(Request $request = null)
     {

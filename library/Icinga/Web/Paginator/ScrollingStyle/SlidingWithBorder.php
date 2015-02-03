@@ -1,5 +1,6 @@
 <?php
-/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt */
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 /**
  * @see Zend_Paginator_ScrollingStyle_Interface
@@ -40,7 +41,7 @@ class Icinga_Web_Paginator_ScrollingStyle_SlidingWithBorder implements Zend_Pagi
                 $range[$i] = $i;
             }
             if ($pageNumber < 6 ) {
-                // We are on page 1-5 from
+                // We are on page 1-5 from  
                 for ($i = 1; $i <= 7; $i++) {
                     $range[$i] = $i;
                 }

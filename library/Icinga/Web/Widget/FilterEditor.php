@@ -1,5 +1,6 @@
 <?php
-/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt */
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\Widget;
 
@@ -68,7 +69,7 @@ class FilterEditor extends AbstractWidget
     public function getFilter()
     {
         if ($this->filter === null) {
-            $this->filter = Filter::fromQueryString((string) $this->url()->getParams());
+            $this->filter = Filter::fromQueryString((string) $this->url()->getParams()); 
         }
         return $this->filter;
     }
@@ -432,7 +433,7 @@ class FilterEditor extends AbstractWidget
     protected function renderFilterExpression(FilterExpression $filter)
     {
         if ($this->addTo && $this->addTo === $filter->getId()) {
-            return
+            return 
                    preg_replace(
             '/ class="autosubmit"/',
             ' class="autofocus"',
@@ -572,7 +573,7 @@ class FilterEditor extends AbstractWidget
             $cols[$active] = str_replace('_', ' ', ucfirst(ltrim($active, '_')));
         }
 
-        return $this->select($this->elementId('column', $filter), $cols, $active);
+        return $this->select($this->elementId('column', $filter), $cols, $active); 
     }
 
     protected function applyChanges($changes)

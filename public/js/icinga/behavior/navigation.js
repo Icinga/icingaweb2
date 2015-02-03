@@ -1,4 +1,5 @@
-/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt */
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 (function(Icinga, $) {
 
@@ -35,7 +36,7 @@
             /*
               Recreate the html content of the menu item to force the browser to update the layout, or else
               the link would only be visible as active after another click or page reload in Gecko and WebKit.
-
+              
               fixes #7897
             */
             $selectedMenu.html($selectedMenu.html());

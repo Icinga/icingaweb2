@@ -1,5 +1,6 @@
-/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt */
-
+/**
+ * Table "icingaweb_group"
+ */
 CREATE TABLE "icingaweb_group" (
   "name"   character varying(64) NOT NULL,
   "parent" character varying(64) NULL DEFAULT NULL,
@@ -19,6 +20,10 @@ CREATE UNIQUE INDEX idx_icingaweb_group
     lower((name)::text)
 );
 
+
+/**
+ * Table "icingaweb_group_membership"
+ */
 CREATE TABLE "icingaweb_group_membership" (
   "group_name" character varying(64) NOT NULL,
   "username"   character varying(64) NOT NULL,
@@ -40,6 +45,10 @@ CREATE UNIQUE INDEX idx_icingaweb_group_membership
     lower((username)::text)
 );
 
+
+/**
+ * Table "icingaweb_user"
+ */
 CREATE TABLE "icingaweb_user" (
   "name"          character varying(64) NOT NULL,
   "active"        smallint NOT NULL,
@@ -60,6 +69,10 @@ CREATE UNIQUE INDEX idx_icingaweb_user
     lower((name)::text)
 );
 
+
+/**
+ * Table "icingaweb_user_preference"
+ */
 CREATE TABLE "icingaweb_user_preference" (
   "username" character varying(64) NOT NULL,
   "name"     character varying(64) NOT NULL,

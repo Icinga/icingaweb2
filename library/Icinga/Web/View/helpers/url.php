@@ -1,5 +1,6 @@
 <?php
-/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt */
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Web\View;
 
@@ -62,7 +63,7 @@ $this->addHelperFunction('icon', function ($img, $title = null, array $propertie
         $properties['alt'] = $title;
         $properties['title'] = $title;
     }
-
+ 
     if ($class !== null) {
         if (isset($props['class'])) {
             $properties['class'] .= ' ' . $class;

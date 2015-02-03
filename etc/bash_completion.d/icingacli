@@ -1,3 +1,4 @@
+
 _icingacli_completion()
 {
   local cur opts
@@ -8,3 +9,5 @@ _icingacli_completion()
 }
 
 complete -F _icingacli_completion icingacli
+
+

@@ -1,4 +1,5 @@
-/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt */
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 /**
  * Icinga.UI
@@ -617,25 +618,25 @@
                     var sec = 0;
 
                     if (nm < 0) {
-                        signed = '-';
+                        signed = '-';    
                         nm = nm * -1;
                         sec = nm * 60 + ns;
                         sec++;
                     } else if (nm == 0 && ns == 0) {
-                        signed = '-';
+                        signed = '-';    
                         sec = 1;
                     } else if (nm == 0 && m[2][0] == '-') {
-                        signed = '-';
+                        signed = '-';    
                         sec = ns;
                         sec++;
                     } else if (nm == 0 && m[2][0] != '-') {
                         sec = ns;
                         sec--;
                     } else {
-                        signed = '';
+                        signed = '';    
                         sec = nm * 60 + ns;
                         sec--;
-                    }
+                    }    
 
                     nm = Math.floor(sec/60);
                     ns = sec - nm * 60;
@@ -670,24 +671,24 @@
                 // hide input boxess and remove text nodes
                 $target.find("input").hide();
                 $target.contents().filter(function() { return this.nodeType === 3; }).remove();
-
+                
                 // has three states?
                 var triState = $target.find('input[value="unchanged"]').size() > 0 ? 1 : 0;
-
+                
                 // fetch current value from radiobuttons
                 var value  = $target.find('input:checked').first().val();
-
+        
                 $target.append(
                   '<input class="tristate-dummy" ' +
                         ' data-icinga-old="' + value + '" data-icinga-tristate="' + triState + '" type="checkbox" ' +
                         (value === '1' ? 'checked ' : ( value === 'unchanged' ? 'indeterminate="true" ' : ' ' )) +
                   '/> <b style="visibility: hidden;" class="tristate-changed"> (changed) </b>'
-                );
+                ); 
                 if (triState) {
                   // TODO: find a better way to activate indeterminate checkboxes after load.
                   $target.append(
                     '<script type="text/javascript"> ' +
-                      ' $(\'input.tristate-dummy[indeterminate="true"]\').each(function(i, el){ el.indeterminate = true; }); ' +
+                      ' $(\'input.tristate-dummy[indeterminate="true"]\').each(function(i, el){ el.indeterminate = true; }); ' + 
                     '</script>'
                   );
                 }

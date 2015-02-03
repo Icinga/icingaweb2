@@ -1,5 +1,4 @@
 <?php
-/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt */
 
 use \Zend_Controller_Router_Route;
 use Icinga\Application\Icinga;

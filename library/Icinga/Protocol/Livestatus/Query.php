@@ -1,5 +1,6 @@
 <?php
-/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt */
+// {{{ICINGA_LICENSE_HEADER}}}
+// {{{ICINGA_LICENSE_HEADER}}}
 
 namespace Icinga\Protocol\Livestatus;
 
@@ -75,7 +76,7 @@ class Query extends SimpleQuery
     {
         // $row -> raw SplArray
         // $res -> object
-        // $cv  ->
+        // $cv  -> 
         // $result -> object to be returned
         $result = (object) array();
         $res = $this->withHeaders($row);
@@ -141,7 +142,7 @@ class Query extends SimpleQuery
             }
         }
 
-
+     
         return $result;
     }
 
@@ -312,7 +313,7 @@ class Query extends SimpleQuery
            } elseif (is_array($col)) {
                foreach ($col as $k) {
                    $columns[$k] = true;
-               }
+               }    
            } else {
                $columns[$col] = true;
            }

@@ -1,5 +1,3 @@
-# Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt
-
 CREATE TABLE `icingaweb_group`(
   `name`   varchar(64) COLLATE utf8_unicode_ci NOT NULL,
   `parent` varchar(64) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
