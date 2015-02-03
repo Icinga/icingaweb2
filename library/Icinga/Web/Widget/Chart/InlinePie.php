@@ -33,14 +33,14 @@ class InlinePie extends AbstractWidget
      * @var string
      */
     private $template =<<<'EOD'
-<span sparkType="pie" class="sparkline {class}" {title} {size} sparkSliceColors="[{colors}]" values="{data}">
+<span sparkType="pie" class="sparkline {class}" {title} sparkWidth={size} sparkHeight={size} sparkSliceColors="[{colors}]" values="{data}">
 </span>
 {noscript}
 EOD;
 
     private $noscript =<<<'EOD'
 <noscript>
-  <img class="inlinepie {class}" {title} src="{url}" data-icinga-colors="{colors}" data-icinga-values="{data}"/>
+  <img width={size} height={size} class="inlinepie {class}" {title} src="{url}" data-icinga-colors="{colors}" data-icinga-values="{data}"/>
 </noscript>
 EOD;
 
@@ -216,8 +216,7 @@ EOD;
         $template = str_replace('{class}', $this->class, $template);
 
         // style
-        $template = str_replace('{size}',
-            isset($this->size) ? 'sparkWidth="' . $this->size . '" sparkHeight="' . $this->size . '" ' : '', $template);
+        $template = str_replace('{size}', isset($this->size) ? $this->size : 16, $template);
         $template = str_replace('{title}', $this->title, $template);
 
         $template = str_replace('{colors}', implode(',', $this->colors), $template);

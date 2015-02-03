@@ -85,8 +85,7 @@
         $menu.data('icinga-url', menuDataUrl);
     };
 
-    Navigation.prototype.setActiveByUrl = function(url)
-    {
+    Navigation.prototype.setActiveByUrl = function(url) {
         this.resetActive();
         this.setActive($('#menu [href="' + url + '"]'));
     }

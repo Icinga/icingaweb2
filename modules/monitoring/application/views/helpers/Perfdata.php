@@ -18,11 +18,11 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
      *
      * @return string
      */
-    public function perfdata($perfdataStr, $compact = false, $color = Perfdata::PERFDATA_OK)
+    public function perfdata($perfdataStr, $compact = false, $limit = 0, $color = Perfdata::PERFDATA_OK)
     {
         $pieChartData = PerfdataSet::fromString($perfdataStr)->asArray();
 
-        $result = '';
+        $results = array();
         $table = array(
             '<td><b>' . implode(
                 '</b></td><td><b>',
@@ -32,7 +32,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         foreach ($pieChartData as $perfdata) {
 
             if ($compact && $perfdata->isVisualizable()) {
-                $result .= $perfdata->asInlinePie($color)->render();
+                $results[] = $perfdata->asInlinePie($color)->render();
             } else {
                 $row = '<tr>';
 
@@ -56,8 +56,13 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
             }
         }
 
+        if ($limit > 0) {
+            $table = array_slice ($table, 0, $limit);
+            $results = array_slice ($results, 0, $limit);
+        }
+
         if ($compact) {
-            return $result;
+            return join('', $results);
         } else {
             $pieCharts = empty($table) ? '' : '<table class="perfdata">' . implode("\n", $table) . '</table>';
             return $pieCharts;

@@ -28,10 +28,12 @@
             if ($spark.hasClass('sparkline-perfdata')) {
                 options = {
                     enableTagOptions: true,
-                    width: 12,
-                    height: 12,
+                    width: 16,
+                    height: 16,
                     title: title,
-                    disableTooltips: true
+                    disableTooltips: true,
+                    borderWidth: 1.4,
+                    borderColor: '#FFF'
                 };
                 $spark.sparkline('html', options);
             } else if ($spark.hasClass('sparkline-multi')) {
