@@ -1,6 +1,6 @@
 # Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt
 
-%define revision 1.beta2
+%define revision 2.rc1
 
 Name:           icingaweb2
 Version:        2.0.0
