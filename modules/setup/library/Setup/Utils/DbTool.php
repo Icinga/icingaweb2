@@ -727,28 +727,32 @@ EOD;
             }
 
             if (false === empty($dbPrivileges)) {
-                $query = $this->query(
-                    'SELECT has_database_privilege(:user, :dbname, :privileges) AS db_privileges_granted',
-                    array(
-                        ':user'         => $username !== null ? $username : $this->config['username'],
-                        ':dbname'       => $this->config['dbname'],
-                        ':privileges'   => join(',', $dbPrivileges) . ($requireGrants ? ' WITH GRANT OPTION' : '')
-                    )
-                );
-                $privilegesGranted &= $query->fetchObject()->db_privileges_granted;
+                foreach ($dbPrivileges as $dbPrivilege) {
+                    $query = $this->query(
+                        'SELECT has_database_privilege(:user, :dbname, :privilege) AS db_privilege_granted',
+                        array(
+                            ':user'         => $username !== null ? $username : $this->config['username'],
+                            ':dbname'       => $this->config['dbname'],
+                            ':privilege'    => $dbPrivilege . ($requireGrants ? ' WITH GRANT OPTION' : '')
+                        )
+                    );
+                    $privilegesGranted &= $query->fetchObject()->db_privilege_granted;
+                }
             }
 
             if (false === empty($tablePrivileges)) {
                 foreach (array_intersect($context, $this->listTables()) as $table) {
-                    $query = $this->query(
-                        'SELECT has_table_privilege(:user, :table, :privileges) AS table_privileges_granted',
-                        array(
-                            ':user'         => $username !== null ? $username : $this->config['username'],
-                            ':table'        => $table,
-                            ':privileges'   => join(',', $tablePrivileges) . ($requireGrants ? ' WITH GRANT OPTION' : '')
-                        )
-                    );
-                    $privilegesGranted &= $query->fetchObject()->table_privileges_granted;
+                    foreach ($tablePrivileges as $tablePrivilege) {
+                        $query = $this->query(
+                            'SELECT has_table_privilege(:user, :table, :privilege) AS table_privilege_granted',
+                            array(
+                                ':user'         => $username !== null ? $username : $this->config['username'],
+                                ':table'        => $table,
+                                ':privilege'    => $tablePrivilege . ($requireGrants ? ' WITH GRANT OPTION' : '')
+                            )
+                        );
+                        $privilegesGranted &= $query->fetchObject()->table_privilege_granted;
+                    }
                 }
             }
         } else {
