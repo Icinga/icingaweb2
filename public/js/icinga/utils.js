@@ -234,6 +234,68 @@
         },
 
         /**
+         * Create a selector that can be used to fetch the element the same position in the DOM-Tree
+         *
+         * Create the path to the given element in the DOM-Tree, comparable to an X-Path. Climb the
+         * DOM tree upwards until an element with an unique ID is found, this id is used as the anchor,
+         * all other elements will be addressed by their position in the parent.
+         *
+         * @param   {HTMLElement} el    The element to extract the path for.
+         *
+         * @returns {Array}             The path of the element, that can be passed to getElementByPath
+         */
+        getDomPath: function (el) {
+            if (! el) {
+                return [];
+            }
+            if (el.id !== '') {
+                return ['#' + el.id];
+            }
+            if (el === document.body) {
+                return ['body'];
+            }
+
+            var siblings = el.parentNode.childNodes;
+            var index = 0;
+            for (var i = 0; i < siblings.length; i ++) {
+                if (siblings[i].nodeType === 1) {
+                    index ++;
+                }
+
+                if (siblings[i] === el) {
+                    var p = this.getDomPath(el.parentNode);
+                    p.push(':nth-child(' + (index) + ')');
+                    return p;
+                }
+            }
+        },
+
+        /**
+         * Climbs up the given dom path and returns the element
+         *
+         * This is the counterpart
+         *
+         * @param   path    {Array}         The selector
+         * @returns         {HTMLElement}   The corresponding element
+         */
+        getElementByDomPath: function (path) {
+            var $element;
+            $.each(path, function (i, selector) {
+                if (! $element) {
+                    $element = $(selector);
+                } else {
+                    console.log(selector);
+                    $element = $element.children(selector).first();
+                    if (! $element[0]) {
+                        console.log("element not existing stopping...");
+                        return false;
+                    }
+                }
+            });
+            return $element[0];
+        },
+
+        /**
          * Cleanup
          */
         destroy: function () {

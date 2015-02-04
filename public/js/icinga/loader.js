@@ -672,7 +672,7 @@
             // Container update happens here
             var scrollPos = false;
             var self = this;
-            var origFocus = document.activeElement;
+            var origFocus = self.icinga.utils.getDomPath(document.activeElement);
             var containerId = $container.attr('id');
             if (typeof containerId !== 'undefined') {
                 if (autorefresh) {
@@ -737,8 +737,11 @@
             }
             this.icinga.ui.assignUniqueContainerIds();
 
-            if (origFocus) {
-                $(origFocus).focus();
+            console.log(origFocus);
+            if (origFocus.length == origFocus[0] !== '') {
+                setTimeout(function() {
+                    $(self.icinga.utils.getElementByDomPath(origFocus)).focus();
+                }, 0);
             }
 
             // TODO: this.icinga.events.refreshContainer(container);
