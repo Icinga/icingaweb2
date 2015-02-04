@@ -1,0 +1,31 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Accessibility: Icon Fonts</title>
+    <meta name="description" content="Accessible icon fonts">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+        .icon-star:before {
+            content: "★";
+        }
+        .sr-only {
+            border: 0;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+        }
+    </style>
+</head>
+<body>
+<span tabindex="0">
+    <i class="icon-star" aria-hidden="true"></i>
+    <span class="sr-only">Top rated article</span>
+</span>
+</body>
+</html>
