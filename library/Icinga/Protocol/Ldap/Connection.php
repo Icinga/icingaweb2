@@ -30,7 +30,8 @@ use Icinga\Data\ConfigObject;
  */
 class Connection
 {
-    const LDAP_NO_SUCH_OBJECT = 0x20;
+    const LDAP_NO_SUCH_OBJECT = 32;
+    const LDAP_SIZELIMIT_EXCEEDED = 4;
 
     protected $ds;
     protected $hostname;
@@ -329,10 +330,12 @@ class Connection
                     ldap_control_paged_result_response($this->ds, $this->lastResult, $this->pageCookie);
                 } catch (Exception $e) {
                     $this->pageCookie = '';
-                    Logger::debug(
-                        'Unable to request paged LDAP results. Does the server allow paged search requests? (%s)',
-                        $e->getMessage()
-                    );
+                    if (! $query->hasLimit() || ldap_errno($this->ds) !== static::LDAP_SIZELIMIT_EXCEEDED) {
+                        Logger::error(
+                            'Unable to request paged LDAP results. Does the server allow paged search requests? (%s)',
+                            $e->getMessage()
+                        );
+                    }
                 }
 
                 ldap_free_result($this->lastResult);
