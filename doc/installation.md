@@ -121,3 +121,7 @@ permissions = "*"
 ````
 
 After please log out from Icinga Web 2 and log in again for having all permissions granted.
+
+If you delegated authentication to your web server using the `autologin` backend, you have to switch to the `external`
+authentication backend to be able to log in again. The new name better reflects what’s going on. A similar change
+affects environments that opted for not storing preferences, your new backend is `none`.
