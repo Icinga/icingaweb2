@@ -81,7 +81,7 @@ usermod -a -G icingaweb2 apache
 
 SLES and OpenSUSE:
 ````
-usermod -G icingaweb2 wwwrun
+usermod -A icingaweb2 wwwrun
 ````
 
 Debian and Ubuntu:
