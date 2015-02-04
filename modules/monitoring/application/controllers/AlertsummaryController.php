@@ -400,6 +400,15 @@ class Monitoring_AlertsummaryController extends Controller
                 $recover = 0;
                 if ($item->acknowledgement_entry_time) {
                     $recover = $item->acknowledgement_entry_time - $item->notification_start_time;
+
+                    /*
+                     * Acknowledgements may happen before the actual notification starts, since notifications
+                     * can be configured to start a certain time after the problem. In that case we assume
+                     * a reaction time of 0s.
+                     */
+                    if ($recover < 0) {
+                        $recover = 0;
+                    }
                 }
                 $rData[$item->notification_object_id] = array(
                     'id'        => $id,
