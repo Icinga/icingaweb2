@@ -1,4 +1,4 @@
-/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | http://www.gnu.org/licenses/gpl-2.0.txt */
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 /**
  * EventListener contains event handlers and can bind / and unbind them from
