@@ -86,7 +86,7 @@ usermod -A icingaweb2 wwwrun
 
 Debian and Ubuntu:
 ````
-usermod -a -G icingaweb2 wwwrun
+usermod -a -G icingaweb2 www-data
 ````
 
 Use `icingacli` to create the configuration directory which defaults to **/etc/icingaweb2**:
