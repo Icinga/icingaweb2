@@ -65,6 +65,9 @@ The webserver should require authentication for all public Icinga Web 2 files.
 </Directory>
 ````
 
+To get these changes to work, make sure to enable the module for
+HTTPDigestAuthentication and restart the webserver.
+
 ### Preparing Icinga Web 2
 
 Once external authentication is set up correctly you need to configure Icinga
