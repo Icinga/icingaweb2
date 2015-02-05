@@ -118,8 +118,6 @@
             // Select a table row
             $(document).on('click', 'table.multiselect tr[href]', { self: this }, this.rowSelected);
 
-            $(document).on('click', 'button', { self: this }, this.submitForm);
-
             // We catch all form submit events
             $(document).on('submit', 'form', { self: this }, this.submitForm);
 
