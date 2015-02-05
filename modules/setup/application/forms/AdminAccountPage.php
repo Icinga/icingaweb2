@@ -78,7 +78,7 @@ class AdminAccountPage extends Form
                 'text',
                 'by_name',
                 array(
-                    'required'      => isset($formData['user_type']) && $formData['user_type'] === 'by_name',
+                    'required'      => !isset($formData['user_type']) || $formData['user_type'] === 'by_name',
                     'value'         => $this->getUsername(),
                     'label'         => $this->translate('Username'),
                     'description'   => $this->translate(
@@ -87,6 +87,12 @@ class AdminAccountPage extends Form
                     )
                 )
             );
+            if (! $this->request->isXmlHttpRequest()) {
+                // In case JS is disabled we must not provide client side validation as
+                // the user is required to input data even he has changed his mind
+                $this->getElement('by_name')->setAttrib('required', null);
+                $this->getElement('by_name')->setAttrib('aria-required', null);
+            }
         }
 
         if ($this->backendConfig['backend'] === 'db' || $this->backendConfig['backend'] === 'ldap') {
@@ -111,6 +117,12 @@ class AdminAccountPage extends Form
                         'multiOptions'  => array_combine($users, $users)
                     )
                 );
+                if (! $this->request->isXmlHttpRequest()) {
+                    // In case JS is disabled we must not provide client side validation as
+                    // the user is required to input data even he has changed his mind
+                    $this->getElement('existing_user')->setAttrib('required', null);
+                    $this->getElement('existing_user')->setAttrib('aria-required', null);
+                }
             }
         }
 
@@ -149,6 +161,14 @@ class AdminAccountPage extends Form
                     )
                 )
             );
+            if (! $this->request->isXmlHttpRequest()) {
+                // In case JS is disabled we must not provide client side validation as
+                // the user is required to input data even he has changed his mind
+                foreach (array('new_user', 'new_user_password', 'new_user_2ndpass') as $elementName) {
+                    $this->getElement($elementName)->setAttrib('aria-required', null);
+                    $this->getElement($elementName)->setAttrib('required', null);
+                }
+            }
         }
 
         if (count($choices) > 1) {
@@ -157,6 +177,8 @@ class AdminAccountPage extends Form
                 'user_type',
                 array(
                     'required'      => true,
+                    'autosubmit'    => true,
+                    'value'         => key($choices),
                     'multiOptions'  => $choices
                 )
             );
@@ -216,6 +238,26 @@ class AdminAccountPage extends Form
         }
 
         return true;
+    }
+
+    /**
+     * Return whether the given values (possibly incomplete) are valid
+     *
+     * Unsets all empty text-inputs so that they are not being validated when auto-submitting the form.
+     *
+     * @param   array   $formData
+     *
+     * @return type
+     */
+    public function isValidPartial(array $formData)
+    {
+        foreach (array('by_name', 'new_user', 'new_user_password', 'new_user_2ndpass') as $elementName) {
+            if (isset($formData[$elementName]) && $formData[$elementName] === '') {
+                unset($formData[$elementName]);
+            }
+        }
+
+        return parent::isValidPartial($formData);
     }
 
     /**
