@@ -3,10 +3,18 @@
 
 namespace Icinga\Data\Tree;
 
-use SplDoublyLinkedList;
+use Identifiable;
+use IteratorAggregate;
 
-class Node extends SplDoublyLinkedList implements NodeInterface
+class Node implements Identifiable, IteratorAggregate
 {
+    /**
+     * The node's ID
+     *
+     * @type mixed
+     */
+    protected $id;
+
     /**
      * The node's value
      *
@@ -15,13 +23,45 @@ class Node extends SplDoublyLinkedList implements NodeInterface
     protected $value;
 
     /**
-     * Create a new node
+     * The node's children
      *
-     * @param mixed $value The node's value
+     * @type array
      */
-    public function __construct($value = null)
+    protected $children = array();
+
+    /**
+     * Set the node's ID
+     *
+     * @param   mixed   $id ID of the node
+     *
+     * @return  $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * (non-PHPDoc)
+     * @see Identifiable::getId() For the method documentation.
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set the node's value
+     *
+     * @param   mixed   $value
+     *
+     * @return  $this
+     */
+    public function setValue($value)
     {
         $this->value = $value;
+        return $this;
     }
 
     /**
@@ -35,44 +75,45 @@ class Node extends SplDoublyLinkedList implements NodeInterface
     }
 
     /**
-     * Create a new node from the given value and insert the node as the last child of this node
+     * Append a child node as the last child of this node
      *
-     * @param   mixed           $value  The node's value
+     * @param   Node    $child  The child to append
      *
-     * @return  NodeInterface           The appended node
+     * @return  $this
      */
-    public function appendChild($value)
+    public function appendChild(Node $child)
     {
-        $child = new static($value);
-        $this->push($child);
-        return $child;
+        $this->children[] = $child;
+        return $this;
     }
 
+
     /**
-     * Whether this node has child nodes
+     * Get whether the node has children
      *
      * @return bool
      */
     public function hasChildren()
     {
-        $current = $this->current();
-        if ($current === null) {
-            $current = $this;
-        }
-        return ! $current->isEmpty();
+        return ! empty($this->children);
     }
 
     /**
-     * Get the node's child nodes
+     * Get the node's children
      *
-     * @return NodeInterface
+     * @return array
      */
     public function getChildren()
     {
-        $current = $this->current();
-        if ($current === null) {
-            $current = $this;
-        }
-        return $current;
+        return $this->children;
+    }
+
+    /**
+     * (non-PHPDoc)
+     * @see IteratorAggregate::getIterator() For the method documentation.
+     */
+    public function getIterator()
+    {
+        return new TreeNodeIterator($this);
     }
 }
