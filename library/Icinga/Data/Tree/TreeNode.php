@@ -3,8 +3,8 @@
 
 namespace Icinga\Data\Tree;
 
-use Identifiable;
 use IteratorAggregate;
+use Icinga\Data\Identifiable;
 
 class TreeNode implements Identifiable, IteratorAggregate
 {
