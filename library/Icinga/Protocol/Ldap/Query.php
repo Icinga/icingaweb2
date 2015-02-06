@@ -27,8 +27,8 @@ class Query
     protected $connection;
     protected $filters = array();
     protected $fields = array();
-    protected $limit_count;
-    protected $limit_offset;
+    protected $limit_count = 0;
+    protected $limit_offset = 0;
     protected $sort_columns = array();
     protected $count;
     protected $base;
@@ -111,7 +111,7 @@ class Query
      */
     public function hasLimit()
     {
-        return $this->limit_count !== null;
+        return $this->limit_count > 0;
     }
 
     /**
