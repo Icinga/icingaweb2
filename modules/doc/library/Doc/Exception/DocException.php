@@ -8,4 +8,6 @@ use RuntimeException;
 /**
  * Exception thrown if an error in the documentation module's library occurs
  */
-class DocException extends RuntimeException {}
+class DocException extends RuntimeException
+{
+}
