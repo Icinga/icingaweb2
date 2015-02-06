@@ -171,11 +171,9 @@ class Connection
                 return false;
             }
             throw new LdapException(
-                sprintf(
-                    'LDAP list for "%s" failed: %s',
-                    $dn,
-                    ldap_error($this->ds)
-                )
+                'LDAP list for "%s" failed: %s',
+                $dn,
+                ldap_error($this->ds)
             );
         }
         $children = ldap_get_entries($this->ds, $result);
@@ -183,7 +181,7 @@ class Connection
             $result = $this->deleteRecursively($children[$i]['dn']);
             if (!$result) {
                 //return result code, if delete fails
-                throw new LdapException(sprintf('Recursively deleting "%s" failed', $dn));
+                throw new LdapException('Recursively deleting "%s" failed', $dn);
             }
         }
         return $this->deleteDN($dn);
@@ -200,11 +198,9 @@ class Connection
                 return false;
             }
             throw new LdapException(
-                sprintf(
-                    'LDAP delete for "%s" failed: %s',
-                    $dn,
-                    ldap_error($this->ds)
-                )
+                'LDAP delete for "%s" failed: %s',
+                $dn,
+                ldap_error($this->ds)
             );
         }
 
@@ -225,10 +221,8 @@ class Connection
         $rows = $this->fetchAll($query, $fields);
         if (count($rows) !== 1) {
             throw new LdapException(
-                sprintf(
-                    'Cannot fetch single DN for %s',
-                    $query->create()
-                )
+                'Cannot fetch single DN for %s',
+                $query->create()
             );
         }
         return key($rows);
@@ -471,18 +465,14 @@ class Connection
                 } else {
                     Logger::debug('LDAP STARTTLS failed: %s', ldap_error($ds));
                     throw new LdapException(
-                        sprintf(
-                            'LDAP STARTTLS failed: %s',
-                            ldap_error($ds)
-                        )
+                        'LDAP STARTTLS failed: %s',
+                        ldap_error($ds)
                     );
                 }
             } elseif ($force_tls) {
                 throw new LdapException(
-                    sprintf(
-                        'TLS is required but not announced by %s',
-                        $this->hostname
-                    )
+                    'TLS is required but not announced by %s',
+                    $this->hostname
                 );
             } else {
                 // TODO: Log noticy -> TLS enabled but not announced
@@ -708,24 +698,20 @@ class Connection
 
         if (! $result) {
             throw new LdapException(
-                sprintf(
-                    'Capability query failed (%s:%d): %s. Check if hostname and port of the ldap resource are correct '
-                        . ' and if anonymous access is permitted.',
-                    $this->hostname,
-                    $this->port,
-                    ldap_error($ds)
-                )
+                'Capability query failed (%s:%d): %s. Check if hostname and port of the'
+                . ' ldap resource are correct and if anonymous access is permitted.',
+                $this->hostname,
+                $this->port,
+                ldap_error($ds)
             );
         }
         $entry = ldap_first_entry($ds, $result);
         if ($entry === false) {
             throw new LdapException(
-                sprintf(
-                    'Capabilities not available (%s:%d): %s. Discovery of root DSE probably not permitted.',
-                    $this->hostname,
-                    $this->port,
-                    ldap_error($ds)
-                )
+                'Capabilities not available (%s:%d): %s. Discovery of root DSE probably not permitted.',
+                $this->hostname,
+                $this->port,
+                ldap_error($ds)
             );
         }
 
@@ -771,14 +757,12 @@ class Connection
         $r = @ldap_bind($this->ds, $this->bind_dn, $this->bind_pw);
         if (! $r) {
             throw new LdapException(
-                sprintf(
-                    'LDAP connection to %s:%s (%s / %s) failed: %s',
-                    $this->hostname,
-                    $this->port,
-                    $this->bind_dn,
-                    '***' /* $this->bind_pw */,
-                    ldap_error($this->ds)
-                )
+                'LDAP connection to %s:%s (%s / %s) failed: %s',
+                $this->hostname,
+                $this->port,
+                $this->bind_dn,
+                '***' /* $this->bind_pw */,
+                ldap_error($this->ds)
             );
         }
         $this->bound = true;
