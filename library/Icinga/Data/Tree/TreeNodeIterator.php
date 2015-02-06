@@ -21,9 +21,9 @@ class TreeNodeIterator implements RecursiveIterator
     /**
      * Create a new iterator over a tree node's children
      *
-     * @param Node $node
+     * @param TreeNode $node
      */
-    public function __construct(Node $node)
+    public function __construct(TreeNode $node)
     {
         $this->children = new ArrayIterator($node->getChildren());
     }

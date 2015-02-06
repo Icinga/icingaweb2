@@ -6,7 +6,7 @@ namespace Icinga\Data\Tree;
 use Identifiable;
 use IteratorAggregate;
 
-class Node implements Identifiable, IteratorAggregate
+class TreeNode implements Identifiable, IteratorAggregate
 {
     /**
      * The node's ID
@@ -77,11 +77,11 @@ class Node implements Identifiable, IteratorAggregate
     /**
      * Append a child node as the last child of this node
      *
-     * @param   Node    $child  The child to append
+     * @param   TreeNode    $child  The child to append
      *
      * @return  $this
      */
-    public function appendChild(Node $child)
+    public function appendChild(TreeNode $child)
     {
         $this->children[] = $child;
         return $this;
