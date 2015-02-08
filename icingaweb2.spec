@@ -189,7 +189,7 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}/{%{basedir}/{modules,library,public},%{bindir},%{configdir}/modules/setup,%{logdir},%{phpdir},%{wwwconfigdir},%{_sysconfdir}/bash_completion.d,%{docsdir}}
 cp -prv application doc %{buildroot}/%{basedir}
 cp -pv etc/bash_completion.d/icingacli %{buildroot}/%{_sysconfdir}/bash_completion.d/icingacli
-cp -prv modules/{monitoring,setup} %{buildroot}/%{basedir}/modules
+cp -prv modules/{monitoring,setup,doc,translation} %{buildroot}/%{basedir}/modules
 cp -prv library/Icinga %{buildroot}/%{phpdir}
 cp -prv library/vendor %{buildroot}/%{basedir}/library
 cp -prv public/{css,img,js,error_norewrite.html} %{buildroot}/%{basedir}/public
