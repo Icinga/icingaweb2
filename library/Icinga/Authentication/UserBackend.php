@@ -93,10 +93,10 @@ abstract class UserBackend implements Countable
                 break;
             case 'msldap':
                 $groupOptions = array(
-                    'group_base_dn'             => $backendConfig->group_base_dn,
-                    'group_attribute'           => $backendConfig->group_attribute,
-                    'group_member_attribute'    => $backendConfig->group_member_attribute,
-                    'group_class'               => $backendConfig->group_class
+                    'group_base_dn'             => $backendConfig->get('group_base_dn', $resource->getDN()),
+                    'group_attribute'           => $backendConfig->get('group_attribute', 'sAMAccountName'),
+                    'group_member_attribute'    => $backendConfig->get('group_member_attribute', 'member'),
+                    'group_class'               => $backendConfig->get('group_class', 'group')
                 );
                 $backend = new LdapUserBackend(
                     $resource,
