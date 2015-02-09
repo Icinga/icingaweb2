@@ -170,7 +170,7 @@ class LdapUserBackend extends UserBackend
      *
      * @throws  AuthenticationException     In case an error occured or the health check has failed
      */
-    public function authenticate(User $user, $password, $healthCheck = true)
+    public function authenticate(User $user, $password, $healthCheck = false)
     {
         if ($healthCheck) {
             try {
