@@ -737,7 +737,6 @@
             }
             this.icinga.ui.assignUniqueContainerIds();
 
-            console.log(origFocus);
             if (origFocus.length == origFocus[0] !== '') {
                 setTimeout(function() {
                     $(self.icinga.utils.getElementByDomPath(origFocus)).focus();

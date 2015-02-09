@@ -284,10 +284,8 @@
                 if (! $element) {
                     $element = $(selector);
                 } else {
-                    console.log(selector);
                     $element = $element.children(selector).first();
                     if (! $element[0]) {
-                        console.log("element not existing stopping...");
                         return false;
                     }
                 }
