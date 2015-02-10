@@ -3,7 +3,8 @@
 
 namespace Icinga\Module\Doc;
 
-use SplDoublyLinkedList;
+use SplStack;
+use Icinga\Data\Tree\SimpleTree;
 use Icinga\Exception\NotReadableError;
 use Icinga\Module\Doc\Exception\DocEmptyException;
 use Icinga\Module\Doc\Exception\DocException;
@@ -121,16 +122,15 @@ class DocParser
     /**
      * Get the documentation tree
      *
-     * @return DocTree
+     * @return SimpleTree
      */
     public function getDocTree()
     {
-        $tree = new DocTree();
-        $stack = new SplDoublyLinkedList();
+        $tree = new SimpleTree();
+        $stack = new SplStack();
         foreach ($this->docIterator as $fileInfo) {
-            /* @var $file \SplFileInfo */
+            /** @type $fileInfo \SplFileInfo */
             $file = $fileInfo->openFile();
-            /* @var $file \SplFileObject */
             $lastLine = null;
             foreach ($file as $line) {
                 $header = $this->extractHeader($line, $lastLine);
@@ -142,7 +142,7 @@ class DocParser
                     if ($id === null) {
                         $path = array();
                         foreach ($stack as $section) {
-                            /* @var $section Section */
+                            /** @type $section DocSection */
                             $path[] = $section->getTitle();
                         }
                         $path[] = $title;
@@ -151,13 +151,20 @@ class DocParser
                     } else {
                         $noFollow = false;
                     }
+                    if ($tree->getNode($id) !== null) {
+                        $id = uniqid($id);
+                    }
+                    $section = new DocSection();
+                    $section
+                        ->setId($id)
+                        ->setTitle($title)
+                        ->setLevel($level)
+                        ->setNoFollow($noFollow);
                     if ($stack->isEmpty()) {
-                        $chapterId = $id;
-                        $section = new Section($id, $title, $level, $noFollow, $chapterId);
-                        $tree->addRoot($section);
+                        $section->setChapter($section);
+                        $tree->addChild($section);
                     } else {
-                        $chapterId = $stack->bottom()->getId();
-                        $section = new Section($id, $title, $level, $noFollow, $chapterId);
+                        $section->setChapter($stack->bottom());
                         $tree->addChild($section, $stack->top());
                     }
                     $stack->push($section);
