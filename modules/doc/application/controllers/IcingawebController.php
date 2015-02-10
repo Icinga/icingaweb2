@@ -46,17 +46,16 @@ class Doc_IcingawebController extends DocController
      */
     public function chapterAction()
     {
-        $chapterId = $this->getParam('chapterId');
-        if ($chapterId === null) {
+        $chapter = $this->getParam('chapter');
+        if ($chapter === null) {
             throw new Zend_Controller_Action_Exception(
-                sprintf($this->translate('Missing parameter \'%s\''), 'chapterId'),
+                sprintf($this->translate('Missing parameter %s'), 'chapter'),
                 404
             );
         }
         $this->renderChapter(
             $this->getPath(),
-            $chapterId,
-            'doc/icingaweb/toc',
+            $chapter,
             'doc/icingaweb/chapter'
         );
     }
