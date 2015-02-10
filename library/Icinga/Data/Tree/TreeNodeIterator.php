@@ -29,8 +29,7 @@ class TreeNodeIterator implements RecursiveIterator
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \RecursiveIterator::current() For the method documentation.
+     * {@inheritdoc}
      */
     public function current()
     {
@@ -38,8 +37,7 @@ class TreeNodeIterator implements RecursiveIterator
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \RecursiveIterator::key() For the method documentation.
+     * {@inheritdoc}
      */
     public function key()
     {
@@ -47,8 +45,7 @@ class TreeNodeIterator implements RecursiveIterator
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \RecursiveIterator::next() For the method documentation.
+     * {@inheritdoc}
      */
     public function next()
     {
@@ -56,8 +53,7 @@ class TreeNodeIterator implements RecursiveIterator
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \RecursiveIterator::rewind() For the method documentation.
+     * {@inheritdoc}
      */
     public function rewind()
     {
@@ -65,8 +61,7 @@ class TreeNodeIterator implements RecursiveIterator
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \RecursiveIterator::valid() For the method documentation.
+     * {@inheritdoc}
      */
     public function valid()
     {
@@ -74,8 +69,7 @@ class TreeNodeIterator implements RecursiveIterator
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \RecursiveIterator::hasChildren() For the method documentation.
+     * {@inheritdoc}
      */
     public function hasChildren()
     {
@@ -83,8 +77,8 @@ class TreeNodeIterator implements RecursiveIterator
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \RecursiveIterator::getChildren() For the method documentation.
+     * {@inheritdoc}
+     * @return TreeNodeIterator
      */
     public function getChildren()
     {
