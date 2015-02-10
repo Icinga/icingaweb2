@@ -3,88 +3,81 @@
 
 namespace Icinga\Module\Doc;
 
-use RecursiveIteratorIterator;
-use Zend_View_Helper_Url;
 use Icinga\Web\View;
+use Icinga\Data\Tree\TreeNodeIterator;
+use RecursiveIteratorIterator;
 
 /**
  * TOC renderer
+ *
+ * @method TreeNodeIterator getInnerIterator() {
+ *     {@inheritdoc}
+ * }
  */
 class TocRenderer extends Renderer
 {
     /**
-     * The URL to replace links with
+     * Content to render
      *
-     * @var string
-     */
-    protected $url;
-
-    /**
-     * Additional URL parameters
-     *
-     * @var array
-     */
-    protected $urlParams;
-
-    /**
-     * Content
-     *
-     * @var array
+     * @type array
      */
     protected $content = array();
 
     /**
      * Create a new toc renderer
      *
-     * @param DocTree   $docTree    The documentation tree
-     * @param string    $url        The URL to replace links with
-     * @param array     $urlParams  Additional URL parameters
+     * @param TreeNodeIterator $iterator
      */
-    public function __construct(DocTree $docTree, $url, array $urlParams)
+    public function __construct(TreeNodeIterator $iterator)
     {
-        parent::__construct($docTree, RecursiveIteratorIterator::SELF_FIRST);
-        $this->url = $url;
-        $this->urlParams = array_map(array($this, 'encodeUrlParam'), $urlParams);
+        parent::__construct($iterator, RecursiveIteratorIterator::SELF_FIRST);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function beginIteration()
     {
         $this->content[] = '<nav><ul>';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function endIteration()
     {
         $this->content[] = '</ul></nav>';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function beginChildren()
     {
         $this->content[] = '<ul>';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function endChildren()
     {
-        $this->content[] = '</ul></li>';
+        $this->content[] = '</ul>';
     }
 
     /**
-     * Render the toc
-     *
-     * @param   View                    $view
-     * @param   Zend_View_Helper_Url    $zendUrlHelper
-     *
-     * @return  string
+     * {@inheritdoc}
      */
-    public function render(View $view, Zend_View_Helper_Url $zendUrlHelper)
+    public function render()
     {
-        foreach ($this as $node) {
-            $section = $node->getValue();
-            /* @var $section \Icinga\Module\Doc\Section */
+        $view = $this->getView();
+        $zendUrlHelper = $view->getHelper('Url');
+        foreach ($this as $section) {
             $path = $zendUrlHelper->url(
                 array_merge(
                     $this->urlParams,
                     array(
-                        'chapterId' => $this->encodeUrlParam($section->getChapterId())
+                        'chapter' => $this->encodeUrlParam($section->getChapter()->getId())
                     )
                 ),
                 $this->url,
@@ -92,14 +85,15 @@ class TocRenderer extends Renderer
                 false
             );
             $url = $view->url($path);
+            /** @type \Icinga\Web\Url $url */
             $url->setAnchor($this->encodeAnchor($section->getId()));
             $this->content[] = sprintf(
-                '<li><a %shref="%s">%s</a>',
-                $section->isNoFollow() ? 'rel="nofollow" ' : '',
+                '<li><a data-base-target="_next" %shref="%s">%s</a>',
+                $section->getNoFollow() ? 'rel="nofollow" ' : '',
                 $url->getAbsoluteUrl(),
                 $view->escape($section->getTitle())
             );
-            if (! $this->getInnerIterator()->current()->hasChildren()) {
+            if (! $section->hasChildren()) {
                 $this->content[] = '</li>';
             }
         }
