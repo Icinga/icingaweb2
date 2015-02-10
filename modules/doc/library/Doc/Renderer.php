@@ -3,8 +3,9 @@
 
 namespace Icinga\Module\Doc;
 
+use Exception;
 use RecursiveIteratorIterator;
-use Zend_View_Helper_Url;
+use Icinga\Application\Icinga;
 use Icinga\Web\View;
 
 /**
@@ -12,6 +13,99 @@ use Icinga\Web\View;
  */
 abstract class Renderer extends RecursiveIteratorIterator
 {
+    /**
+     * URL to replace links with
+     *
+     * @type string
+     */
+    protected $url;
+
+    /**
+     * Additional URL parameters
+     *
+     * @type array
+     */
+    protected $urlParams = array();
+
+    /**
+     * View
+     *
+     * @type View|null
+     */
+    protected $view;
+
+    /**
+     * Set the URL to replace links with
+     *
+     * @param   string  $url
+     *
+     * @return  $this
+     */
+    public function setUrl($url)
+    {
+        $this->url = (string) $url;
+        return $this;
+    }
+
+    /**
+     * Get the URL to replace links with
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * Set additional URL parameters
+     *
+     * @param   array   $urlParams
+     *
+     * @return  $this
+     */
+    public function setUrlParams(array $urlParams)
+    {
+        $this->urlParams = array_map(array($this, 'encodeUrlParam'), $urlParams);
+        return $this;
+    }
+
+    /**
+     * Get additional URL parameters
+     *
+     * @return array
+     */
+    public function getUrlParams()
+    {
+        return $this->urlParams;
+    }
+
+    /**
+     * Set the view
+     *
+     * @param   View    $view
+     *
+     * @return  $this
+     */
+    public function setView(View $view)
+    {
+        $this->view = $view;
+        return $this;
+    }
+
+    /**
+     * Get the view
+     *
+     * @return View
+     */
+    public function getView()
+    {
+        if ($this->view === null) {
+            $this->view = Icinga::app()->getViewRenderer()->view;
+        }
+        return $this->view;
+    }
+
     /**
      * Encode an anchor identifier
      *
@@ -63,12 +157,22 @@ abstract class Renderer extends RecursiveIteratorIterator
     /**
      * Render to HTML
      *
-     * Meant to be overwritten by concrete classes.
-     *
-     * @param   View                    $view
-     * @param   Zend_View_Helper_Url    $zendUrlHelper
-     *
      * @return  string
      */
-    abstract public function render(View $view, Zend_View_Helper_Url $zendUrlHelper);
+    abstract public function render();
+
+    /**
+     * Render to HTML
+     *
+     * @return  string
+     * @see     \Icinga\Module\Doc\Renderer::render() For the render method.
+     */
+    public function __toString()
+    {
+        try {
+            return $this->render();
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
