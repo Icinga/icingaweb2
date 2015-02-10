@@ -3,10 +3,9 @@
 
 namespace Icinga\Data\Tree;
 
-use IteratorAggregate;
 use Icinga\Data\Identifiable;
 
-class TreeNode implements Identifiable, IteratorAggregate
+class TreeNode implements Identifiable
 {
     /**
      * The node's ID
@@ -106,14 +105,5 @@ class TreeNode implements Identifiable, IteratorAggregate
     public function getChildren()
     {
         return $this->children;
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see IteratorAggregate::getIterator() For the method documentation.
-     */
-    public function getIterator()
-    {
-        return new TreeNodeIterator($this);
     }
 }
