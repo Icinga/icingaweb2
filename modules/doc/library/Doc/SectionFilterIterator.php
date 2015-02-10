@@ -5,30 +5,34 @@ namespace Icinga\Module\Doc;
 
 use Countable;
 use RecursiveFilterIterator;
-use Icinga\Data\Tree\NodeInterface;
+use Icinga\Data\Tree\TreeNodeIterator;
 
 /**
- * Recursive iterator over sections that are part of a particular chapter
+ * Recursive filter iterator over sections that are part of a particular chapter
+ *
+ * @method TreeNodeIterator getInnerIterator() {
+ *     {@inheritdoc}
+ * }
  */
 class SectionFilterIterator extends RecursiveFilterIterator implements Countable
 {
     /**
-     * The chapter ID to filter for
+     * Chapter to filter for
      *
-     * @var string
+     * @type string
      */
-    protected $chapterId;
+    protected $chapter;
 
     /**
-     * Create a new SectionFilterIterator
+     * Create a new recursive filter iterator over sections that are part of a particular chapter
      *
-     * @param NodeInterface $node           Node
-     * @param string        $chapterId      The chapter ID to filter for
+     * @param TreeNodeIterator  $iterator
+     * @param string            $chapter      The chapter to filter for
      */
-    public function __construct(NodeInterface $node, $chapterId)
+    public function __construct(TreeNodeIterator $iterator, $chapter)
     {
-        parent::__construct($node);
-        $this->chapterId = $chapterId;
+        parent::__construct($iterator);
+        $this->chapter = $chapter;
     }
 
     /**
@@ -39,29 +43,37 @@ class SectionFilterIterator extends RecursiveFilterIterator implements Countable
      */
     public function accept()
     {
-        $section = $this->getInnerIterator()->current()->getValue();
-        /* @var $section \Icinga\Module\Doc\Section */
-        if ($section->getChapterId() === $this->chapterId) {
+        $section = $this->current();
+        /** @type \Icinga\Module\Doc\DocSection $section */
+        if ($section->getChapter()->getId() === $this->chapter) {
             return true;
         }
         return false;
     }
 
     /**
-     * (non-PHPDoc)
-     * @see RecursiveFilterIterator::getChildren()
+     * {@inheritdoc}
      */
     public function getChildren()
     {
-        return new static($this->getInnerIterator()->getChildren(), $this->chapterId);
+        return new static($this->getInnerIterator()->getChildren(), $this->chapter);
     }
 
     /**
-     * (non-PHPDoc)
-     * @see Countable::count()
+     * {@inheritdoc}
      */
     public function count()
     {
         return iterator_count($this);
+    }
+
+    /**
+     * Whether the filter swallowed every section
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return $this->count() === 0;
     }
 }
