@@ -11,14 +11,21 @@ use Icinga\Data\Tree\TreeNode;
 class DocSection extends TreeNode
 {
     /**
-     * The title of the section
+     * Chapter the section belongs to
      *
-     * @type string
+     * @type DocSection
      */
-    protected $title;
+    protected $chapter;
 
     /**
-     * The header level
+     * Content of the section
+     *
+     * @type array
+     */
+    protected $content = array();
+
+    /**
+     * Header level
      *
      * @type int
      */
@@ -32,33 +39,53 @@ class DocSection extends TreeNode
     protected $noFollow;
 
     /**
-     * The content of the section
+     * Title of the section
      *
-     * @type array
+     * @type string
      */
-    protected $content = array();
+    protected $title;
 
     /**
-     * Set the title of the section
+     * Set the chapter the section belongs to
      *
-     * @param   string  $title  Title of the section
+     * @param   DocSection  $section
      *
      * @return  $this
      */
-    public function setTitle($title)
+    public function setChapter(DocSection $section)
     {
-        $this->title = (string) $title;
+        $this->chapter = $section;
         return $this;
     }
 
     /**
-     * Get the title of the section
+     * Get the chapter the section belongs to
      *
-     * @return string
+     * @return DocSection
      */
-    public function getTitle()
+    public function getChapter()
     {
-        return $this->title;
+        return $this->chapter;
+    }
+
+    /**
+     * Append content
+     *
+     * @param string $content
+     */
+    public function appendContent($content)
+    {
+        $this->content[] = $content;
+    }
+
+    /**
+     * Get the content of the section
+     *
+     * @return array
+     */
+    public function getContent()
+    {
+        return $this->content;
     }
 
     /**
@@ -108,22 +135,25 @@ class DocSection extends TreeNode
     }
 
     /**
-     * Append content
+     * Set the title of the section
      *
-     * @param string $content
+     * @param   string  $title  Title of the section
+     *
+     * @return  $this
      */
-    public function appendContent($content)
+    public function setTitle($title)
     {
-        $this->content[] = $content;
+        $this->title = (string) $title;
+        return $this;
     }
 
     /**
-     * Get the content of the section
+     * Get the title of the section
      *
-     * @return array
+     * @return string
      */
-    public function getContent()
+    public function getTitle()
     {
-        return $this->content;
+        return $this->title;
     }
 }
