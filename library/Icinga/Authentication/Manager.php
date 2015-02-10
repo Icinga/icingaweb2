@@ -84,7 +84,7 @@ class Manager
             $preferences = new Preferences();
         }
         $user->setPreferences($preferences);
-        $groups = array();
+        $groups = $user->getGroups();
         foreach (Config::app('groups') as $name => $config) {
             try {
                 $groupBackend = UserGroupBackend::create($name, $config);

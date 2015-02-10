@@ -3,10 +3,12 @@
 
 namespace Icinga\Protocol\Ldap;
 
+use Icinga\Exception\IcingaException;
+
 /**
  * Class Exception
  * @package Icinga\Protocol\Ldap
  */
-class Exception extends \Exception
+class Exception extends IcingaException
 {
 }

@@ -17,7 +17,7 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
 <?php if ($showRadioBoxes): ?>
     <div class="radiobox">
       <label>
-        <input type="radio" name="user_type" value="by_name"<?= $radioElem->getValue() === 'by_name' ? ' checked' : ''; ?>>
+        <input type="radio" name="user_type" value="by_name"<?= $radioElem->getValue() === 'by_name' ? ' checked' : ''; ?> class="autosubmit" aria-required="true" required>
         <?= $radioElem->getMultiOption('by_name'); ?>
       </label>
     </div>
@@ -32,7 +32,7 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
 <?php if ($showRadioBoxes): ?>
     <div class="radiobox">
       <label>
-        <input type="radio" name="user_type" value="existing_user"<?= $radioElem->getValue() === 'existing_user' ? ' checked' : ''; ?>>
+        <input type="radio" name="user_type" value="existing_user"<?= $radioElem->getValue() === 'existing_user' ? ' checked' : ''; ?> class="autosubmit" aria-required="true" required>
         <?= $radioElem->getMultiOption('existing_user'); ?>
       </label>
     </div>
@@ -49,7 +49,7 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
 <?php if ($showRadioBoxes): ?>
     <div class="radiobox">
       <label>
-        <input type="radio" name="user_type" value="new_user"<?= $radioElem->getValue() === 'new_user' ? ' checked' : ''; ?>>
+        <input type="radio" name="user_type" value="new_user"<?= $radioElem->getValue() === 'new_user' ? ' checked' : ''; ?> class="autosubmit" aria-required="true" required>
         <?= $radioElem->getMultiOption('new_user'); ?>
       </label>
     </div>

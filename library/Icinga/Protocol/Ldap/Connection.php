@@ -32,6 +32,8 @@ class Connection
 {
     const LDAP_NO_SUCH_OBJECT = 32;
     const LDAP_SIZELIMIT_EXCEEDED = 4;
+    const LDAP_ADMINLIMIT_EXCEEDED = 11;
+    const PAGE_SIZE = 1000;
 
     protected $ds;
     protected $hostname;
@@ -97,9 +99,6 @@ class Connection
     protected $capabilities;
     protected $namingContexts;
     protected $discoverySuccess = false;
-
-    protected $lastResult;
-    protected $pageCookie;
 
     /**
      * Constructor
@@ -171,11 +170,9 @@ class Connection
                 return false;
             }
             throw new LdapException(
-                sprintf(
-                    'LDAP list for "%s" failed: %s',
-                    $dn,
-                    ldap_error($this->ds)
-                )
+                'LDAP list for "%s" failed: %s',
+                $dn,
+                ldap_error($this->ds)
             );
         }
         $children = ldap_get_entries($this->ds, $result);
@@ -183,7 +180,7 @@ class Connection
             $result = $this->deleteRecursively($children[$i]['dn']);
             if (!$result) {
                 //return result code, if delete fails
-                throw new LdapException(sprintf('Recursively deleting "%s" failed', $dn));
+                throw new LdapException('Recursively deleting "%s" failed', $dn);
             }
         }
         return $this->deleteDN($dn);
@@ -200,11 +197,9 @@ class Connection
                 return false;
             }
             throw new LdapException(
-                sprintf(
-                    'LDAP delete for "%s" failed: %s',
-                    $dn,
-                    ldap_error($this->ds)
-                )
+                'LDAP delete for "%s" failed: %s',
+                $dn,
+                ldap_error($this->ds)
             );
         }
 
@@ -225,10 +220,8 @@ class Connection
         $rows = $this->fetchAll($query, $fields);
         if (count($rows) !== 1) {
             throw new LdapException(
-                sprintf(
-                    'Cannot fetch single DN for %s',
-                    $query->create()
-                )
+                'Cannot fetch single DN for %s',
+                $query->create()
             );
         }
         return key($rows);
@@ -244,6 +237,7 @@ class Connection
     {
         $query = clone $query;
         $query->limit(1);
+        $query->setUsePagedResults(false);
         $results = $this->fetchAll($query, $fields);
         return array_shift($results);
     }
@@ -273,35 +267,144 @@ class Connection
         $this->connect();
         $this->bind();
 
-        $offset = $limit = null;
-        if ($query->hasLimit()) {
-            $offset = $query->getOffset();
-            $limit = $query->getLimit();
+        if ($query->getUsePagedResults() && version_compare(PHP_VERSION, '5.4.0') >= 0) {
+            return $this->runPagedQuery($query, $fields);
+        } else {
+            return $this->runQuery($query, $fields);
+        }
+    }
+
+    protected function runQuery(Query $query, $fields = array())
+    {
+        $limit = $query->getLimit();
+        $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
+
+        $results = @ldap_search(
+            $this->ds,
+            $query->hasBase() ? $query->getBase() : $this->root_dn,
+            $query->create(),
+            empty($fields) ? $query->listFields() : $fields,
+            0, // Attributes and values
+            $limit ? $offset + $limit : 0
+        );
+        if ($results === false) {
+            if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
+                return array();
+            }
+
+            throw new LdapException(
+                'LDAP query "%s" (base %s) failed. Error: %s',
+                $query->create(),
+                $query->hasBase() ? $query->getBase() : $this->root_dn,
+                ldap_error($this->ds)
+            );
+        } elseif (ldap_count_entries($this->ds, $results) === 0) {
+            return array();
+        }
+
+        foreach ($query->getSortColumns() as $col) {
+            ldap_sort($this->ds, $results, $col[0]);
         }
 
         $count = 0;
         $entries = array();
-        $results = $this->runQuery($query, $fields);
-        while (! empty($results)) {
+        $entry = ldap_first_entry($this->ds, $results);
+        do {
+            $count += 1;
+            if ($offset === 0 || $offset < $count) {
+                $entries[ldap_get_dn($this->ds, $entry)] = $this->cleanupAttributes(
+                    ldap_get_attributes($this->ds, $entry)
+                );
+            }
+        } while (($limit === 0 || $limit !== count($entries)) && ($entry = ldap_next_entry($this->ds, $entry)));
+
+        ldap_free_result($results);
+        return $entries;
+    }
+
+    protected function runPagedQuery(Query $query, $fields = array())
+    {
+        $limit = $query->getLimit();
+        $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
+        $queryString = $query->create();
+        $base = $query->hasBase() ? $query->getBase() : $this->root_dn;
+
+        if (empty($fields)) {
+            $fields = $query->listFields();
+        }
+
+        $count = 0;
+        $cookie = '';
+        $entries = array();
+        do {
+            ldap_control_paged_result($this->ds, static::PAGE_SIZE, true, $cookie);
+            $results = @ldap_search($this->ds, $base, $queryString, $fields, 0, $limit ? $offset + $limit : 0);
+            if ($results === false) {
+                if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
+                    break;
+                }
+
+                throw new LdapException(
+                    'LDAP query "%s" (base %s) failed. Error: %s',
+                    $queryString,
+                    $base,
+                    ldap_error($this->ds)
+                );
+            } elseif (ldap_count_entries($this->ds, $results) === 0) {
+                if (in_array(
+                    ldap_errno($this->ds),
+                    array(static::LDAP_SIZELIMIT_EXCEEDED, static::LDAP_ADMINLIMIT_EXCEEDED)
+                )) {
+                    Logger::warning(
+                        'Unable to request more than %u results. Does the server allow paged search requests? (%s)',
+                        $count,
+                        ldap_error($this->ds)
+                    );
+                }
+
+                break;
+            }
+
             $entry = ldap_first_entry($this->ds, $results);
-            while ($entry) {
-                $count++;
-                if (
-                    ($offset === null || $offset <= $count)
-                    && ($limit === null || $limit > count($entries))
-                ) {
+            do {
+                $count += 1;
+                if ($offset === 0 || $offset < $count) {
                     $entries[ldap_get_dn($this->ds, $entry)] = $this->cleanupAttributes(
                         ldap_get_attributes($this->ds, $entry)
                     );
                 }
+            } while (($limit === 0 || $limit !== count($entries)) && ($entry = ldap_next_entry($this->ds, $entry)));
 
-                $entry = ldap_next_entry($this->ds, $entry);
+            try {
+                ldap_control_paged_result_response($this->ds, $results, $cookie);
+            } catch (Exception $e) {
+                // If the page size is greater than or equal to the sizeLimit value, the server should ignore the
+                // control as the request can be satisfied in a single page: https://www.ietf.org/rfc/rfc2696.txt
+                // This applies no matter whether paged search requests are permitted or not. You're done once you
+                // got everything you were out for.
+                if (count($entries) !== $limit) {
+                    Logger::warning(
+                        'Unable to request paged LDAP results. Does the server allow paged search requests? (%s)',
+                        $e->getMessage()
+                    );
+                }
             }
 
-            $results = $this->runQuery($query, $fields);
+            ldap_free_result($results);
+        } while ($cookie && ($limit === 0 || count($entries) < $limit));
+
+        if ($cookie) {
+            // A sequence of paged search requests is abandoned by the client sending a search request containing a
+            // pagedResultsControl with the size set to zero (0) and the cookie set to the last cookie returned by
+            // the server: https://www.ietf.org/rfc/rfc2696.txt
+            ldap_control_paged_result($this->ds, 0, false, $cookie);
+            ldap_search($this->ds, $base, $queryString, $fields); // Returns no entries, due to the page size
+        } else {
+            // Reset the paged search request so that subsequent requests succeed
+            ldap_control_paged_result($this->ds, 0);
         }
 
-        return $entries;
+        return $entries; // TODO(7693): Sort entries post-processed
     }
 
     protected function cleanupAttributes($attrs)
@@ -318,79 +421,6 @@ class Connection
             }
         }
         return $clean;
-    }
-
-    protected function runQuery(Query $query, $fields = array())
-    {
-        if ($query->getUsePagedResults() && version_compare(PHP_VERSION, '5.4.0') >= 0) {
-            if ($this->pageCookie === null) {
-                $this->pageCookie = '';
-            } else {
-                try {
-                    ldap_control_paged_result_response($this->ds, $this->lastResult, $this->pageCookie);
-                } catch (Exception $e) {
-                    $this->pageCookie = '';
-                    if (! $query->hasLimit() || ldap_errno($this->ds) !== static::LDAP_SIZELIMIT_EXCEEDED) {
-                        Logger::error(
-                            'Unable to request paged LDAP results. Does the server allow paged search requests? (%s)',
-                            $e->getMessage()
-                        );
-                    }
-                }
-
-                ldap_free_result($this->lastResult);
-                if (! $this->pageCookie) {
-                    $this->pageCookie = $this->lastResult = null;
-                    // Abandon the paged search request so that subsequent requests succeed
-                    ldap_control_paged_result($this->ds, 0);
-                    return false;
-                }
-            }
-
-            // Does not matter whether we'll use a valid page size here,
-            // as the server applies its hard limit in case its too high
-            ldap_control_paged_result(
-                $this->ds,
-                $query->hasLimit() ? $query->getLimit() : 500,
-                true,
-                $this->pageCookie
-            );
-        } elseif ($this->lastResult !== null) {
-            ldap_free_result($this->lastResult);
-            $this->lastResult = null;
-            return false;
-        }
-
-        $base = $query->hasBase() ? $query->getBase() : $this->root_dn;
-        $results = @ldap_search(
-            $this->ds,
-            $base,
-            $query->create(),
-            empty($fields) ? $query->listFields() : $fields,
-            0, // Attributes and values
-            $query->hasLimit() ? $query->getOffset() + $query->getLimit() : 0 // No limit - at least where possible
-        );
-
-        if ($results === false) {
-            if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
-                return false;
-            }
-            throw new LdapException(
-                sprintf(
-                    'LDAP query "%s" (root %s) failed: %s',
-                    $query->create(),
-                    $this->root_dn,
-                    ldap_error($this->ds)
-                )
-            );
-        }
-
-        foreach ($query->getSortColumns() as $col) {
-            ldap_sort($this->ds, $results, $col[0]);
-        }
-
-        $this->lastResult = $results;
-        return $results;
     }
 
     public function testCredentials($username, $password)
@@ -471,18 +501,14 @@ class Connection
                 } else {
                     Logger::debug('LDAP STARTTLS failed: %s', ldap_error($ds));
                     throw new LdapException(
-                        sprintf(
-                            'LDAP STARTTLS failed: %s',
-                            ldap_error($ds)
-                        )
+                        'LDAP STARTTLS failed: %s',
+                        ldap_error($ds)
                     );
                 }
             } elseif ($force_tls) {
                 throw new LdapException(
-                    sprintf(
-                        'TLS is required but not announced by %s',
-                        $this->hostname
-                    )
+                    'TLS is required but not announced by %s',
+                    $this->hostname
                 );
             } else {
                 // TODO: Log noticy -> TLS enabled but not announced
@@ -708,24 +734,20 @@ class Connection
 
         if (! $result) {
             throw new LdapException(
-                sprintf(
-                    'Capability query failed (%s:%d): %s. Check if hostname and port of the ldap resource are correct '
-                        . ' and if anonymous access is permitted.',
-                    $this->hostname,
-                    $this->port,
-                    ldap_error($ds)
-                )
+                'Capability query failed (%s:%d): %s. Check if hostname and port of the'
+                . ' ldap resource are correct and if anonymous access is permitted.',
+                $this->hostname,
+                $this->port,
+                ldap_error($ds)
             );
         }
         $entry = ldap_first_entry($ds, $result);
         if ($entry === false) {
             throw new LdapException(
-                sprintf(
-                    'Capabilities not available (%s:%d): %s. Discovery of root DSE probably not permitted.',
-                    $this->hostname,
-                    $this->port,
-                    ldap_error($ds)
-                )
+                'Capabilities not available (%s:%d): %s. Discovery of root DSE probably not permitted.',
+                $this->hostname,
+                $this->port,
+                ldap_error($ds)
             );
         }
 
@@ -771,14 +793,12 @@ class Connection
         $r = @ldap_bind($this->ds, $this->bind_dn, $this->bind_pw);
         if (! $r) {
             throw new LdapException(
-                sprintf(
-                    'LDAP connection to %s:%s (%s / %s) failed: %s',
-                    $this->hostname,
-                    $this->port,
-                    $this->bind_dn,
-                    '***' /* $this->bind_pw */,
-                    ldap_error($this->ds)
-                )
+                'LDAP connection to %s:%s (%s / %s) failed: %s',
+                $this->hostname,
+                $this->port,
+                $this->bind_dn,
+                '***' /* $this->bind_pw */,
+                ldap_error($this->ds)
             );
         }
         $this->bound = true;

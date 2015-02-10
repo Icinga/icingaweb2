@@ -6,6 +6,7 @@ namespace Icinga\Web;
 use LogicException;
 use Zend_Config;
 use Zend_Form;
+use Zend_Form_Element;
 use Zend_View_Interface;
 use Icinga\Application\Icinga;
 use Icinga\Authentication\Manager;
@@ -550,7 +551,24 @@ class Form extends Zend_Form
             unset($el->autosubmit);
         }
 
-        return $el;
+        return $this->ensureElementAccessibility($el);
+    }
+
+    /**
+     * Add accessibility related attributes
+     *
+     * @param   Zend_Form_Element   $element
+     *
+     * @return  Zend_Form_Element
+     */
+    public function ensureElementAccessibility(Zend_Form_Element $element)
+    {
+        if ($element->isRequired() && strpos(strtolower($element->getType()), 'checkbox') === false) {
+            $element->setAttrib('aria-required', 'true'); // ARIA
+            $element->setAttrib('required', ''); // HTML5
+        }
+
+        return $element;
     }
 
     /**

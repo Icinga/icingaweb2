@@ -74,9 +74,6 @@
                 }
             });
 
-            if (document.activeElement === document.body) {
-                $('input.autofocus', el).focus();
-            }
             var searchField = $('#menu input.search', el);
             // Remember initial search field value if any
             if (searchField.length && searchField.val().length) {
@@ -120,8 +117,6 @@
 
             // Select a table row
             $(document).on('click', 'table.multiselect tr[href]', { self: this }, this.rowSelected);
-
-            $(document).on('click', 'button', { self: this }, this.submitForm);
 
             // We catch all form submit events
             $(document).on('submit', 'form', { self: this }, this.submitForm);

@@ -5,34 +5,44 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
 {
     protected static $purifier;
 
+    protected static $txtPatterns = array(
+        '~\\\n~',
+        '~\\\t~',
+         '~\\\n\\\n~',
+        '~(\[|\()OK(\]|\))~',
+        '~(\[|\()WARNING(\]|\))~',
+        '~(\[|\()CRITICAL(\]|\))~',
+        '~(\[|\()UNKNOWN(\]|\))~',
+        '~\@{6,}~'
+    );
+
+    protected static $txtReplacements = array(
+        "\n",
+        "\t",
+        "\n",
+        '<span class="state ok">$1OK$2</span>',
+        '<span class="state warning">$1WARNING$2</span>',
+        '<span class="state critical">$1CRITICAL$2</span>',
+        '<span class="state error">$1UNKNOWN$2</span>',
+        '@@@@@@',
+    );
+
     public function pluginOutput($output)
     {
         if (empty($output)) {
             return '';
         }
         $output = preg_replace('~<br[^>]+>~', "\n", $output);
-        if (preg_match('~<\w+[^>]*>~', $output)) {
+        if (preg_match('~<\w+[^>^\\\]{,60}>~', $output)) {
             // HTML
             $output = preg_replace('~<table~', '<table style="font-size: 0.75em"',
                 $this->getPurifier()->purify($output)
             );
-        } elseif (preg_match('~\\\n~', $output)) {
-            // Plaintext
-            $output = '<pre class="pluginoutput">'
-               . preg_replace(
-              '~\\\n~', "\n", preg_replace(
-                '~\\\n\\\n~', "\n",
-                preg_replace('~\[OK\]~', '<span class="ok">[OK]</span>',
-                 preg_replace('~\[WARNING\]~', '<span class="warning">[WARNING]</span>',
-                  preg_replace('~\[CRITICAL\]~', '<span class="error">[CRITICAL]</span>',
-                   preg_replace('~\@{6,}~', '@@@@@@',
-                     $this->view->escape($output)
-                ))))
-              )
-            ) . '</pre>';
         } else {
-            $output = '<pre class="pluginoutput">'
-               . preg_replace('~\@{6,}~', '@@@@@@',
+            // Plaintext
+            $output = '<pre class="pluginoutput">' . preg_replace(
+                self::$txtPatterns,
+                self::$txtReplacements,
                 $this->view->escape($output)
             ) . '</pre>';
         }
@@ -55,7 +65,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
                 parse_str($m[1], $params);
                 if (isset($params['host'])) {
                     $tag->setAttribute('href', $this->view->baseUrl(
-                        '/monitoring/detail/show?host=' . urlencode($params['host']
+                        '/monitoring/host/show?host=' . urlencode($params['host']
                     )));
                 }
             } else {
