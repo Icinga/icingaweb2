@@ -55,6 +55,14 @@ nginx:
 ./bin/icingacli setup config webserver nginx --document-root /usr/share/icingaweb2/public
 ````
 
+Save the output as new file in your webserver's configuration directory.
+
+Example for Apache on RHEL/CentOS:
+````
+./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public > /etc/httpd/conf.d/icingaweb2.conf
+````
+
+
 **Step 4: Preparing Web Setup**
 
 Because both web and CLI must have access to configuration and logs, permissions will be managed using a special
