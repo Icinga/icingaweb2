@@ -4,12 +4,21 @@
 namespace Icinga\Module\Doc\Search;
 
 use UnexpectedValueException;
+use Icinga\Application\Icinga;
+use Icinga\Web\View;
 
 /**
  * A doc search match
  */
 class DocSearchMatch
 {
+    /**
+     * CSS class for highlighting matches
+     *
+     * @type string
+     */
+    const HIGHLIGHT_CSS_CLASS = 'search-highlight';
+
     /**
      * Header match
      *
@@ -51,6 +60,13 @@ class DocSearchMatch
      * @type array
      */
     protected $matches = array();
+
+    /**
+     * View
+     *
+     * @type View|null
+     */
+    protected $view;
 
     /**
      * Set the line
@@ -137,6 +153,54 @@ class DocSearchMatch
     public function getMatches()
     {
         return $this->matches;
+    }
+
+    /**
+     * Set the view
+     *
+     * @param   View    $view
+     *
+     * @return  $this
+     */
+    public function setView(View $view)
+    {
+        $this->view = $view;
+        return $this;
+    }
+
+    /**
+     * Get the view
+     *
+     * @return View
+     */
+    public function getView()
+    {
+        if ($this->view === null) {
+            $this->view = Icinga::app()->getViewRenderer()->view;
+        }
+        return $this->view;
+    }
+
+    /**
+     * Get the line having matches highlighted
+     *
+     * @return string
+     */
+    public function highlight()
+    {
+        $highlighted = '';
+        $offset = 0;
+        $matches = $this->getMatches();
+        ksort($matches);
+        foreach ($matches as $position => $match) {
+            $highlighted .= $this->getView()->escape(substr($this->line, $offset, $position - $offset))
+                . '<span class="' . static::HIGHLIGHT_CSS_CLASS .'">'
+                . $this->getView()->escape($match)
+                . '</span>';
+            $offset = $position + strlen($match);
+        }
+        $highlighted .= $this->getView()->escape(substr($this->line, $offset));
+        return $highlighted;
     }
 
     /**
