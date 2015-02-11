@@ -11,6 +11,9 @@ use Parsedown;
 use RecursiveIteratorIterator;
 use Icinga\Data\Tree\SimpleTree;
 use Icinga\Module\Doc\Exception\ChapterNotFoundException;
+use Icinga\Module\Doc\Search\DocSearch;
+use Icinga\Module\Doc\Search\DocSearchMatch;
+use Icinga\Web\Dom\DomNodeIterator;
 use Icinga\Web\Url;
 use Icinga\Web\View;
 
@@ -25,6 +28,13 @@ class SectionRenderer extends Renderer
      * @type array
      */
     protected $content = array();
+
+    /**
+     * Search criteria to highlight
+     *
+     * @type string
+     */
+    protected $highlightSearch;
 
     /**
      * Parsedown instance
@@ -69,6 +79,29 @@ class SectionRenderer extends Renderer
     }
 
     /**
+     * Set the search criteria to highlight
+     *
+     * @param   string $highlightSearch
+     *
+     * @return  $this
+     */
+    public function setHighlightSearch($highlightSearch)
+    {
+        $this->highlightSearch = $highlightSearch;
+        return $this;
+    }
+
+    /**
+     * Get the search criteria to highlight
+     *
+     * @return string
+     */
+    public function getHighlightSearch()
+    {
+        return $this->highlightSearch;
+    }
+
+    /**
      * Syntax highlighting for PHP code
      *
      * @param   array $match
@@ -78,6 +111,48 @@ class SectionRenderer extends Renderer
     protected function highlightPhp($match)
     {
         return '<pre>' . highlight_string(htmlspecialchars_decode($match[1]), true) . '</pre>';
+    }
+
+    /**
+     * Highlight search criteria
+     *
+     * @param   string      $html
+     * @param   DocSearch   $search Search criteria
+     *
+     * @return  string
+     */
+    protected function highlightSearch($html, DocSearch $search)
+    {
+        $doc = new DOMDocument();
+        $fragment = $doc->createDocumentFragment();
+        $fragment->appendXML($html);
+        $doc->appendChild($fragment);
+        $iter = new RecursiveIteratorIterator(new DomNodeIterator($doc), RecursiveIteratorIterator::SELF_FIRST);
+        foreach ($iter as $node) {
+            if ($node->nodeType !== XML_TEXT_NODE
+                || ($node->parentNode->nodeType === XML_ELEMENT_NODE && $node->parentNode->tagName === 'code')
+            ) {
+                continue;
+            }
+            $text = $node->nodeValue;
+            if (($match = $search->search($text)) === null) {
+                continue;
+            }
+            $matches = $match->getMatches();
+            ksort($matches);
+            $offset = 0;
+            $parentNode = $node->parentNode;
+            /** @type \DOMElement $parentNode */
+            $parentNode->removeChild($node);
+            foreach ($matches as $position => $match) {
+                $parentNode->appendChild($doc->createTextNode(substr($text, $offset, $position - $offset)));
+                $parentNode->appendChild($doc->createElement('span', $match))
+                    ->setAttribute('class', DocSearchMatch::HIGHLIGHT_CSS_CLASS);
+                $offset = $position + strlen($match);
+            }
+            $parentNode->appendChild($doc->createTextNode(substr($text, $offset)));
+        }
+        return $doc->saveHTML();
     }
 
     /**
@@ -93,7 +168,7 @@ class SectionRenderer extends Renderer
         $doc->loadHTML($match[0]);
         $xpath = new DOMXPath($doc);
         $blockquote = $xpath->query('//blockquote[1]')->item(0);
-        /* @var $blockquote \DOMElement */
+        /** @type \DOMElement $blockquote */
         if (strtolower(substr(trim($blockquote->nodeValue), 0, 5)) === 'note:') {
             $blockquote->setAttribute('class', 'note');
         }
@@ -113,7 +188,7 @@ class SectionRenderer extends Renderer
         $doc->loadHTML($match[0]);
         $xpath = new DOMXPath($doc);
         $img = $xpath->query('//img[1]')->item(0);
-        /* @var $img \DOMElement */
+        /** @type \DOMElement $img */
         $img->setAttribute('src', Url::fromPath($img->getAttribute('src'))->getAbsoluteUrl());
         return substr_replace($doc->saveXML($img), '', -2, 1);  // Replace '/>' with '>'
     }
@@ -130,7 +205,7 @@ class SectionRenderer extends Renderer
         if (($section = $this->tree->getNode($this->decodeAnchor($match['fragment']))) === null) {
             return $match[0];
         }
-        /** @type $section \Icinga\Module\Doc\DocSection */
+        /** @type \Icinga\Module\Doc\DocSection $section */
         $path = $this->getView()->getHelper('Url')->url(
             array_merge(
                 $this->urlParams,
@@ -158,17 +233,31 @@ class SectionRenderer extends Renderer
      */
     public function render()
     {
+        $search = null;
+        if (($highlightSearch = $this->getHighlightSearch()) !== null) {
+            $search = new DocSearch($highlightSearch);
+        }
         foreach ($this as $section) {
+            $title = $section->getTitle();
+            if ($search !== null && ($match = $search->search($title)) !== null) {
+                $title = $match->highlight();
+            } else {
+                $title = $this->getView()->escape($title);
+            }
             $this->content[] = sprintf(
                 '<a name="%1$s"></a><h%2$d>%3$s</h%2$d>',
                 Renderer::encodeAnchor($section->getId()),
                 $section->getLevel(),
-                $this->getView()->escape($section->getTitle())
+                $title
             );
+            $content = $this->parsedown->text(implode('', $section->getContent()));
+            if (empty($content)) {
+                continue;
+            }
             $html = preg_replace_callback(
                 '#<pre><code class="language-php">(.*?)</code></pre>#s',
                 array($this, 'highlightPhp'),
-                $this->parsedown->text(implode('', $section->getContent()))
+                $content
             );
             $html = preg_replace_callback(
                 '/<img[^>]+>/',
@@ -180,11 +269,15 @@ class SectionRenderer extends Renderer
                 array($this, 'markupNotes'),
                 $html
             );
-            $this->content[] = preg_replace_callback(
+            $html = preg_replace_callback(
                 '/<a\s+(?P<attribs>[^>]*?\s+)?href="(?:(?!http:\/\/)[^#]*)#(?P<fragment>[^"]+)"/',
                 array($this, 'replaceLink'),
                 $html
             );
+            if ($search !== null) {
+                $html = $this->highlightSearch($html, $search);
+            }
+            $this->content[] = $html;
         }
         return implode("\n", $this->content);
     }
