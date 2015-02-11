@@ -17,14 +17,14 @@ class DocParser
     /**
      * Path to the documentation
      *
-     * @var string
+     * @type string
      */
     protected $path;
 
     /**
      * Iterator over documentation files
      *
-     * @var DocIterator
+     * @type DocIterator
      */
     protected $docIterator;
 
