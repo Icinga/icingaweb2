@@ -521,6 +521,14 @@ class Form extends Zend_Form
 
         $el = parent::createElement($type, $name, $options);
 
+        $el->addPrefixPaths(array(
+            array(
+                'prefix'    => 'Icinga\\Web\\Form\\Validator\\',
+                'path'      => Icinga::app()->getLibraryDir('Icinga/Web/Form/Validator'),
+                'type'      => $el::VALIDATE
+            )
+        ));
+
         if (($description = $el->getDescription()) !== null && ($label = $el->getDecorator('label')) !== false) {
             $label->setOptions(array(
                 'title' => $description,
