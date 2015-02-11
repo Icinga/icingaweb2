@@ -3,8 +3,8 @@
 
 namespace Icinga\Module\Doc\Search;
 
-use Countable;
 use RecursiveFilterIterator;
+use RecursiveIteratorIterator;
 use Icinga\Data\Tree\TreeNodeIterator;
 
 /**
@@ -14,7 +14,7 @@ use Icinga\Data\Tree\TreeNodeIterator;
  *     {@inheritdoc}
  * }
  */
-class DocSearchIterator extends RecursiveFilterIterator implements Countable
+class DocSearchIterator extends RecursiveFilterIterator
 {
     /**
      * Search criteria
@@ -24,7 +24,7 @@ class DocSearchIterator extends RecursiveFilterIterator implements Countable
     protected $search;
 
     /**
-     * Search matches
+     * Current search matches
      *
      * @type DocSearchMatch[]|null
      */
@@ -93,31 +93,23 @@ class DocSearchIterator extends RecursiveFilterIterator implements Countable
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function count()
-    {
-        $count = 0;
-        foreach ($this as $section) {
-            if ($this->getMatches() !== null) {
-                ++$count;
-            }
-        }
-        return $count;
-    }
-
-    /**
      * Whether the search did not yield any match
      *
      * @return bool
      */
     public function isEmpty()
     {
-        return $this->count() === 0;
+        $iter = new RecursiveIteratorIterator($this, RecursiveIteratorIterator::SELF_FIRST);
+        foreach ($iter as $section) {
+            if ($iter->getInnerIterator()->getMatches() !== null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
-     * Get matches
+     * Get current matches
      *
      * @return DocSearchMatch[]|null
      */
