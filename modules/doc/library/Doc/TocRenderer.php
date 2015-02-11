@@ -38,7 +38,7 @@ class TocRenderer extends Renderer
      */
     public function beginIteration()
     {
-        $this->content[] = '<nav><ul>';
+        $this->content[] = '<nav role="navigation"><ul class="toc">';
     }
 
     /**
@@ -54,7 +54,7 @@ class TocRenderer extends Renderer
      */
     public function beginChildren()
     {
-        $this->content[] = '<ul>';
+        $this->content[] = '<ul class="toc">';
     }
 
     /**
