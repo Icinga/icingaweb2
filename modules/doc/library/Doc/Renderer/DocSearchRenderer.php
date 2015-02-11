@@ -1,10 +1,11 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Module\Doc\Search;
+namespace Icinga\Module\Doc\Renderer;
 
 use RecursiveIteratorIterator;
-use Icinga\Module\Doc\DocRenderer;
+use Icinga\Module\Doc\Search\DocSearchIterator;
+use Icinga\Module\Doc\Search\DocSearchMatch;
 
 /**
  * Renderer for doc searches

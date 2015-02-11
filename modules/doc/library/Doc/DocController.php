@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Doc;
 
+use Icinga\Module\Doc\Renderer\DocSectionRenderer;
+use Icinga\Module\Doc\Renderer\DocTocRenderer;
 use Icinga\Web\Controller\ModuleActionController;
 
 class DocController extends ModuleActionController

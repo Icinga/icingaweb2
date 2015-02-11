@@ -1,7 +1,7 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Module\Doc;
+namespace Icinga\Module\Doc\Renderer;
 
 require_once 'Parsedown/Parsedown.php';
 
@@ -11,6 +11,7 @@ use Parsedown;
 use RecursiveIteratorIterator;
 use Icinga\Data\Tree\SimpleTree;
 use Icinga\Module\Doc\Exception\ChapterNotFoundException;
+use Icinga\Module\Doc\DocSectionFilterIterator;
 use Icinga\Module\Doc\Search\DocSearch;
 use Icinga\Module\Doc\Search\DocSearchMatch;
 use Icinga\Web\Dom\DomNodeIterator;
