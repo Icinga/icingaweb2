@@ -1,0 +1,11 @@
+<div class="controls">
+    <?= /** @type \Icinga\Web\Widget\Tabs $tabs */ $tabs->showOnlyCloseButton() ?>
+</div>
+<div class="content">
+    <?php foreach (/** @type \Icinga\Module\Doc\Search\DocSearchRenderer[] $searches */ $searches as $title => $search): ?>
+        <?php if (! $search->isEmpty()): ?>
+            <h2><?= $this->escape($title) ?></h2>
+            <?= $search ?>
+        <?php endif ?>
+    <?php endforeach ?>
+</div>
