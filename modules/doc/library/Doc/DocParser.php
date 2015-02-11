@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Doc;
 
+use LogicException;
 use SplStack;
 use Icinga\Data\Tree\SimpleTree;
 use Icinga\Exception\NotReadableError;
@@ -169,6 +170,9 @@ class DocParser
                     }
                     $stack->push($section);
                 } else {
+                    if ($stack->isEmpty()) {
+                        throw new LogicException('Heading required');
+                    }
                     $stack->top()->appendContent($line);
                 }
                 // Save last line for setext-style headers
