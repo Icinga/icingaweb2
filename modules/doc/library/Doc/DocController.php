@@ -38,7 +38,7 @@ class DocController extends ModuleActionController
     protected function renderToc($path, $name, $url, array $urlParams = array())
     {
         $parser = new DocParser($path);
-        $toc = new TocRenderer($parser->getDocTree()->getIterator());
+        $toc = new DocTocRenderer($parser->getDocTree()->getIterator());
         $this->view->toc = $toc
             ->setUrl($url)
             ->setUrlParams($urlParams);
