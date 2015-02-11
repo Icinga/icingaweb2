@@ -14,7 +14,7 @@ use RecursiveIteratorIterator;
  *     {@inheritdoc}
  * }
  */
-class DocTocRenderer extends Renderer
+class DocTocRenderer extends DocRenderer
 {
     /**
      * Content to render

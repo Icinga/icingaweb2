@@ -20,7 +20,7 @@ use Icinga\Web\View;
 /**
  * Section renderer
  */
-class DocSectionRenderer extends Renderer
+class DocSectionRenderer extends DocRenderer
 {
     /**
      * Content to render
@@ -245,7 +245,7 @@ class DocSectionRenderer extends Renderer
             }
             $this->content[] = sprintf(
                 '<a name="%1$s"></a><h%2$d>%3$s</h%2$d>',
-                Renderer::encodeAnchor($section->getId()),
+                static::encodeAnchor($section->getId()),
                 $section->getLevel(),
                 $title
             );

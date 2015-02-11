@@ -11,7 +11,7 @@ use Icinga\Web\View;
 /**
  * Base class for toc and section renderer
  */
-abstract class Renderer extends RecursiveIteratorIterator
+abstract class DocRenderer extends RecursiveIteratorIterator
 {
     /**
      * URL to replace links with

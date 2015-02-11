@@ -4,7 +4,7 @@
 namespace Icinga\Module\Doc\Search;
 
 use RecursiveIteratorIterator;
-use Icinga\Module\Doc\Renderer;
+use Icinga\Module\Doc\DocRenderer;
 
 /**
  * Renderer for doc searches
@@ -13,7 +13,7 @@ use Icinga\Module\Doc\Renderer;
  *     @{inheritdoc}
  * }
  */
-class DocSearchRenderer extends Renderer
+class DocSearchRenderer extends DocRenderer
 {
     /**
      * The content to render
