@@ -77,7 +77,6 @@ thead {
     .uppercase;
     .bold;
   }
-  position: sticky;
   border-bottom: 0.25rem solid @icinga;
 }
 
@@ -105,31 +104,12 @@ pre > code {
   .box-shadow;
 }
 
-div.chapter > ul.navigation {
+ul.toc {
   margin: 0;
-  padding: 0.4em;
-  text-align: center;
-  background-color: #888;
+  padding: 0 0 0 1em;
+}
 
-  li {
-    list-style: none;
-    display: inline;
-    margin: 0.2em;
-    padding: 0;
-
-    a {
-      color: #fff;
-      text-decoration: none;
-    }
-
-    &.prev {
-      padding-right: 0.6em;
-      border-right: 2px solid #fff;
-    }
-
-    &.next {
-      padding-left: 0.6em;
-      border-left: 2px solid #fff;
-    }
-  }
+.search-highlight {
+  color: #FBE012;
+  background: @icinga;
 }
