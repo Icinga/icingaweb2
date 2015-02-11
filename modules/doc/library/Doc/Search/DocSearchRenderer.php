@@ -16,13 +16,6 @@ use Icinga\Module\Doc\Renderer;
 class DocSearchRenderer extends Renderer
 {
     /**
-     * CSS class
-     *
-     * @type string
-     */
-    const HIGHLIGHT_CSS_CLASS = 'search-highlight';
-
-    /**
      * The content to render
      *
      * @type array
@@ -44,7 +37,7 @@ class DocSearchRenderer extends Renderer
      */
     public function beginIteration()
     {
-        $this->content[] = '<nav><ul>';
+        $this->content[] = '<nav role="navigation"><ul class="toc">';
     }
 
     /**
@@ -61,7 +54,7 @@ class DocSearchRenderer extends Renderer
     public function beginChildren()
     {
         if ($this->getInnerIterator()->getMatches()) {
-            $this->content[] = '<ul>';
+            $this->content[] = '<ul class="toc">';
         }
     }
 
@@ -73,22 +66,6 @@ class DocSearchRenderer extends Renderer
         if ($this->getInnerIterator()->getMatches()) {
             $this->content[] = '</ul>';
         }
-    }
-
-    public function highlight($line, array $matches)
-    {
-        $highlighted = '';
-        $offset = 0;
-        ksort($matches);
-        foreach ($matches as $position => $match) {
-            $highlighted .= $this->getView()->escape(substr($line, $offset, $position - $offset))
-                . '<span class="' . static::HIGHLIGHT_CSS_CLASS .'">'
-                . $this->getView()->escape($match)
-                . '</span>';
-            $offset = $position + strlen($match);
-        }
-        $highlighted .= $this->getView()->escape(substr($line, $offset));
-        return $highlighted;
     }
 
     /**
@@ -104,17 +81,17 @@ class DocSearchRenderer extends Renderer
             $contentMatches = array();
             foreach ($matches as $match) {
                 if ($match->getMatchType() === DocSearchMatch::MATCH_HEADER) {
-                    $title = $this->highlight($match->getLine(), $match->getMatches());
+                    $title = $match->highlight();
                 } else {
                     $contentMatches[] = sprintf(
                         '<p>%s</p>',
-                        $this->highlight($match->getLine(), $match->getMatches())
+                        $match->highlight()
                     );
                 }
             }
             $path = $this->getView()->getHelper('Url')->url(
                 array_merge(
-                    $this->urlParams,
+                    $this->getUrlParams(),
                     array(
                         'chapter' => $this->encodeUrlParam($section->getChapter()->getId())
                     )
@@ -125,7 +102,7 @@ class DocSearchRenderer extends Renderer
             );
             $url = $this->getView()->url(
                 $path,
-                array('highlight' => $this->getInnerIterator()->getSearch()->getInput())
+                array('highlight-search' => $this->getInnerIterator()->getSearch()->getInput())
             );
             /** @type \Icinga\Web\Url $url */
             $url->setAnchor($this->encodeAnchor($section->getId()));
