@@ -18,7 +18,7 @@ class DocController extends ModuleActionController
     protected function renderChapter($path, $chapter, $url, array $urlParams = array())
     {
         $parser = new DocParser($path);
-        $section = new SectionRenderer($parser->getDocTree(), SectionRenderer::decodeUrlParam($chapter));
+        $section = new DocSectionRenderer($parser->getDocTree(), DocSectionRenderer::decodeUrlParam($chapter));
         $this->view->section = $section
             ->setUrl($url)
             ->setUrlParams($urlParams)

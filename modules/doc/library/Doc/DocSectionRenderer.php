@@ -20,7 +20,7 @@ use Icinga\Web\View;
 /**
  * Section renderer
  */
-class SectionRenderer extends Renderer
+class DocSectionRenderer extends Renderer
 {
     /**
      * Content to render
