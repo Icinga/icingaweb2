@@ -37,19 +37,22 @@ class Pdf extends DOMPDF
     public function renderControllerAction($controller)
     {
         $this->assertNoHeadersSent();
-
         ini_set('memory_limit', '384M');
         ini_set('max_execution_time', 300);
-
-        $request = $controller->getRequest();
+        $viewRenderer = $controller->getHelper('viewRenderer');
+        $controller->render(
+            $viewRenderer->getScriptAction(),
+            $viewRenderer->getResponseSegment(),
+            $viewRenderer->getNoController()
+        );
         $layout = $controller->getHelper('layout')->setLayout('pdf');
-        $controller->render();
         $layout->content = $controller->getResponse();
         $html = $layout->render();
         $imgDir = Url::fromPath('img');
         $html = preg_replace('~src="' . $imgDir . '/~', 'src="' . Icinga::app()->getBootstrapDirectory() . '/img/', $html);
         $this->load_html($html);
         $this->render();
+        $request = $controller->getRequest();
         $this->stream(
             sprintf(
                 '%s-%s-%d.pdf',

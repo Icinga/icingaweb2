@@ -6,4 +6,6 @@ namespace Icinga\Module\Doc\Exception;
 /**
  * Exception thrown if a chapter was not found
  */
-class ChapterNotFoundException extends DocException {}
+class ChapterNotFoundException extends DocException
+{
+}

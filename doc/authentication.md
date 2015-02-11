@@ -40,7 +40,7 @@ or LDAP configuration method.
 Directive               | Description
 ------------------------|------------
 **backend**             | `ldap`
-**resource**            | The name of the LDAP resource defined in [resources.ini](resources).
+**resource**            | The name of the LDAP resource defined in [resources.ini](#resources).
 **user_class**          | LDAP user class.
 **user_name_attribute** | LDAP attribute which contains the username.
 
@@ -63,7 +63,7 @@ with Icinga Web 2 (e.g. an alias) no matter what the primary user id might actua
 Directive               | Description
 ------------------------|------------
 **backend**             | `ad`
-**resource**            | The name of the LDAP resource defined in [resources.ini](resources).
+**resource**            | The name of the LDAP resource defined in [resources.ini](#resources).
 
 **Example:**
 
@@ -82,7 +82,7 @@ authentication method.
 Directive               | Description
 ------------------------|------------
 **backend**             | `db`
-**resource**            | The name of the database resource defined in [resources.ini](resources).
+**resource**            | The name of the database resource defined in [resources.ini](#resources).
 
 **Example:**
 
