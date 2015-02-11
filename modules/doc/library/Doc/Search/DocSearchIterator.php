@@ -50,7 +50,7 @@ class DocSearchIterator extends RecursiveFilterIterator implements Countable
      */
     public function accept()
     {
-        $section = $this->getInnerIterator()->current();
+        $section = $this->current();
         /** @type $section \Icinga\Module\Doc\DocSection */
         $matches = array();
         if (($match = $this->search->search($section->getTitle())) !== null) {
@@ -97,7 +97,13 @@ class DocSearchIterator extends RecursiveFilterIterator implements Countable
      */
     public function count()
     {
-        return iterator_count($this);
+        $count = 0;
+        foreach ($this as $section) {
+            if ($this->getMatches() !== null) {
+                ++$count;
+            }
+        }
+        return $count;
     }
 
     /**
