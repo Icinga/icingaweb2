@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2015-02-10 17:58+0100\n"
-"PO-Revision-Date: 2015-02-04 17:48+0100\n"
-"Last-Translator: Davide Demuru <davide.demuru@gmail.com>\n"
+"POT-Creation-Date: 2015-02-11 15:47+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it_IT\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -21,23 +21,23 @@ msgstr ""
 #: /usr/share/icingaweb2/library/Icinga/Web/Menu/MonitoringMenuItemRenderer.php:40
 #, php-format
 msgid "%d unhandled hosts down"
-msgstr "%d host down non gestiti"
+msgstr ""
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Menu/MonitoringMenuItemRenderer.php:41
 #, php-format
 msgid "%d unhandled services critical"
-msgstr "%d servizi critical non gestiti"
+msgstr ""
 
 #: /usr/share/icingaweb2/library/Icinga/Web/View/DateTimeRenderer.php:185
 msgctxt "timespan"
 msgid "%im %ss"
-msgstr "%im %ss"
+msgstr ""
 
 #: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:9
 #: /usr/share/icingaweb2/application/views/scripts/pivottablePagination.phtml:9
-#, fuzzy, php-format
+#, php-format
 msgid "%s: %d to %d of %d (on the %s-axis)"
-msgstr "%s: %d a %d di %d"
+msgstr ""
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Form/Element/Number.php:138
 #, php-format
@@ -76,7 +76,7 @@ msgstr "Applicazione"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Menu.php:233
 msgid "Application Log"
-msgstr "Log dell'applicazione"
+msgstr "Log Applicazione"
 
 #: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:66
 msgid "Application Prefix"
@@ -94,17 +94,17 @@ msgstr "Autenticazione"
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:213
 #, php-format
 msgid "Authentication backend \"%s\" has been successfully changed"
-msgstr "Backend di Autenticazoine \"%s\" modificato con successo"
+msgstr "Backend di autenticazione \"%s\" modificato con successo"
 
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:210
 #, php-format
 msgid "Authentication backend \"%s\" has been successfully created"
-msgstr "Backend di Autenticazoine \"%s\" creato con successo"
+msgstr "Backend di autenticazione \"%s\" creato con successo"
 
 #: /usr/share/icingaweb2/application/controllers/ConfigController.php:259
-#, php-format
+#, fuzzy, php-format
 msgid "Authentication backend \"%s\" has been successfully removed"
-msgstr "Backend di Autenticazoine \"%s\" rimosso con successo"
+msgstr "Backend di autenticazione \"%s\" creato con successo"
 
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:95
 msgid "Authentication backend already exists"
@@ -115,11 +115,11 @@ msgstr "Backend di autenticazione già esistente"
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:169
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:239
 msgid "Authentication backend name missing"
-msgstr "Nome del Backend di Autenticazione mancante"
+msgstr "Nome del Backend di autenticazione non specificato"
 
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendReorderForm.php:54
 msgid "Authentication order updated!"
-msgstr "Ordine di autenticazione aggiornato"
+msgstr "Ordine di autenticazione aggiornato!"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Wizard.php:617
 #: /usr/share/icingaweb2/library/Icinga/Web/Wizard.php:638
@@ -129,7 +129,7 @@ msgstr "Indietro"
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:244
 #, php-format
 msgid "Backend \"%s\" has no `backend' setting"
-msgstr "Il Backend \"%s\" non ha impostazioni di `backend'"
+msgstr "Backend \"%s\" senza attributo `backend'"
 
 #: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:56
 #: /usr/share/icingaweb2/application/forms/Config/Authentication/ExternalBackendForm.php:32
@@ -155,7 +155,7 @@ msgstr "Bind Password"
 
 #: /usr/share/icingaweb2/application/forms/PreferenceForm.php:144
 #: /usr/share/icingaweb2/application/forms/PreferenceForm.php:150
-#, php-format
+#, fuzzy, php-format
 msgctxt "preferences.form"
 msgid "Browser (%s)"
 msgstr "Browser (%s)"
@@ -163,22 +163,22 @@ msgstr "Browser (%s)"
 #: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:187
 #, php-format
 msgid "Can't add role '%s'. Role already exists"
-msgstr "Impossibile aggiugnere il ruolo '%s'. Ruolo già esistente"
+msgstr "Impossibile aggiungere il ruolo '%s'. Ruolo già esistente."
 
 #: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:146
 #, php-format
 msgid "Can't load role '%s'. Role does not exist"
-msgstr "Impossibile caricare il ruolo '%s'. Ruolo non trovato"
+msgstr "Impossibile caricare il ruolo '%s'. Ruolo inesistente."
 
 #: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:213
 #, php-format
 msgid "Can't remove role '%s'. Role does not exist"
-msgstr "Impossibile rimuovere il ruolo '%s'. Ruolo non trovato"
+msgstr "Impossibile rimuovere il ruolo '%s'. Ruolo inesistente"
 
 #: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:246
 #, php-format
 msgid "Can't update role '%s'. Role does not exist"
-msgstr "Impossibile aggiornare il ruolo '%s'. Ruolo non trovato"
+msgstr "Impossibile aggiornare il ruolo '%s'. Ruolo inesistente"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterEditor.php:352
 msgid "Cancel this operation"
@@ -187,12 +187,12 @@ msgstr "Annulla operazione"
 #: /usr/share/icingaweb2/library/Icinga/Application/Config.php:298
 #, php-format
 msgid "Cannot read config file \"%s\". Permission denied"
-msgstr "Impossibile leggere il file di configurazione \"%s\". Permesso negato"
+msgstr "Impossibile leggere il file \"%s\". Accesso negato"
 
 #: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:122
 msgid "Check this box if you want to add the dashlet to a new dashboard"
 msgstr ""
-"Spunta questa casella se si vuole aggiugnere questa vista a una nuova "
+"Selezionare questa opzione se si  vuole aggiungere questa vista a una nuova "
 "dashboard"
 
 #: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:200
@@ -200,7 +200,7 @@ msgstr ""
 msgid "Check this box to enforce changes without connectivity validation"
 msgstr ""
 "Selezionare questa casella per forzare le modifiche senza verificare la "
-"connettività"
+"connettività."
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterEditor.php:326
 msgid "Click to add another filter"
@@ -213,11 +213,11 @@ msgstr "Clicca per rimuovere questa parte del filtro"
 
 #: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:100
 msgid "Comma-separated list of groups that are assigned to the role"
-msgstr "Lista dei gruppi assegnati al ruolo separati da virgola"
+msgstr "Lista dei gruppi assegnati al ruolo separati da virgole"
 
 #: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:92
 msgid "Comma-separated list of users that are assigned to the role"
-msgstr "Lista degli utenti assegnati al ruolo separati da virgola"
+msgstr "Lista degli utenti assegnati al ruolo separati da virgole"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Menu.php:223
 msgid "Configuration"
@@ -244,17 +244,18 @@ msgid ""
 "be symlinked in the module folder, but won't show up in the list of disabled "
 "modules."
 msgstr ""
-"Contiene la cartella dove verranno cercati i moduli disponibili, separati da "
-"due punti. Saranno caricati anche eventuali link a cartelle dimoduli ma non "
-"verranno mostrati nella lista dei moduli abilitati. "
+"Contiene le cartelle dove verranno cercati i moduli disponibili, separati da "
+"due punti . I moduli non presenti in queste cartelle possono essere aggiunti "
+"tramite link alla cartella del modulo, ma non appariranno nella lista dei "
+"moduli disabilitati."
 
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:261
 msgid "Could not find any resources for authentication"
-msgstr "Nessuna risorsa di autenticazione trovata"
+msgstr "Nessuna risorsa disponibile per l'autenticazione"
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:2
 msgid "Could not persist dashboard"
-msgstr "Dashboardi non permanente"
+msgstr "Dashboard non persistente"
 
 #: /usr/share/icingaweb2/application/controllers/AuthenticationController.php:62
 msgid ""
@@ -266,16 +267,16 @@ msgstr ""
 
 #: /usr/share/icingaweb2/application/views/scripts/config/authentication/reorder.phtml:7
 msgid "Create A New Authentication Backend"
-msgstr "Crea un Nuovo Backend di Autenticazione"
+msgstr "Crea un nuovo backend di autenticazione"
 
 #: /usr/share/icingaweb2/application/views/scripts/config/resource.phtml:7
 #: /usr/share/icingaweb2/application/views/scripts/config/resource/create.phtml:4
 msgid "Create A New Resource"
-msgstr "Crea Nuova Risorsa"
+msgstr "Crea una nuova Risorsa"
 
 #: /usr/share/icingaweb2/application/views/scripts/config/authentication/create.phtml:4
 msgid "Create New Authentication Backend"
-msgstr "Crea un Nuovo Backend di Autenticazione"
+msgstr "Crea un nuovo backend di autenticazione"
 
 #: /usr/share/icingaweb2/application/controllers/RolesController.php:82
 msgid "Create Role"
@@ -286,8 +287,8 @@ msgid ""
 "Create a new backend for authenticating your users. This backend will be "
 "added at the end of your authentication order."
 msgstr ""
-"Crea un nuovo backend di autenticazione per gli utenti, Questo backend sarà "
-"aggiunto come ultimo elemento in ordine di autenticazione"
+"Crea un nuovo backend per autenticare gli utenti. Questo backend verrà "
+"aggiunto alla fine della lista."
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/index.phtml:13
 #, php-format
@@ -295,8 +296,8 @@ msgid ""
 "Currently there is no dashlet available. This might change once you enabled "
 "some of the available %s."
 msgstr ""
-"Nessuna vista disponibile, Si prega di abilitare una di quelle disponibili %"
-"s."
+"Nessuna vista disponibile. E' necessario prima abilitare prima uno dei %s "
+"disponibili."
 
 #: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:108
 #: /usr/share/icingaweb2/application/layouts/scripts/body.phtml:31
@@ -310,7 +311,7 @@ msgstr "Impostazioni Dashboard"
 
 #: /usr/share/icingaweb2/application/controllers/DashboardController.php:205
 msgid "Dashboard has been removed"
-msgstr "Dashboard rimossa"
+msgstr "Dashboard Rimossa"
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:13
 msgid "Dashlet Name"
@@ -353,7 +354,7 @@ msgstr "Tipo Database"
 #: /usr/share/icingaweb2/library/Icinga/Web/Form/Validator/DateTimeValidator.php:48
 #, php-format
 msgid "Date/time string not in the expected format %s"
-msgstr "La stringa di Data/Ora non rispetta il formato %s"
+msgstr "La stringa della Data/Ora non è nel formato atteso %s "
 
 #: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:54
 msgctxt "app.config.logging.level"
@@ -373,16 +374,16 @@ msgid ""
 "Details can be found in the application log. (If you don't have access to "
 "this log, call your administrator in this case)"
 msgstr ""
-"Per maggiori dettagli consultare il log dell'applicazione. (In caso di "
-"assenza di permessi contattare l'amministratore di sistema)"
+"Maggiori dettagli sono disponibili nel log applicativo. (in caso di accesso "
+"negato al file contattare il proprio amministratore di sistema)"
 
 #: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:54
 msgid "Don't Store Preferences"
-msgstr "None Salvare le Preferenze"
+msgstr "Non salvare le Preferenze"
 
 #: /usr/share/icingaweb2/application/views/scripts/config/authentication/modify.phtml:4
 msgid "Edit Backend"
-msgstr "Modifica Backend"
+msgstr "Modifica backend"
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/update-dashlet.phtml:6
 msgid "Edit Dashlet"
@@ -390,7 +391,7 @@ msgstr "Modifica Vista"
 
 #: /usr/share/icingaweb2/application/views/scripts/config/resource/modify.phtml:4
 msgid "Edit Existing Resource"
-msgstr "Modifica Risorsa Esistente"
+msgstr "Modifica Risorsa esistente"
 
 #: /usr/share/icingaweb2/application/controllers/ErrorController.php:39
 #, php-format
@@ -399,28 +400,27 @@ msgstr "Abilitare il modulo \"%s\" potrebbe essere utile!"
 
 #: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:80
 msgid "Enter a title for the dashlet."
-msgstr "Inserisci un titolo per la vista"
+msgstr "Inserisci un titolo per la vista."
 
 #: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:99
 msgid "Enter a title for the new pane."
-msgstr "Inserisci un titolo per il nuovo pannello"
+msgstr "Inserisci un titolo per il nuovo pannello."
 
 #: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:70
 msgid ""
 "Enter url being loaded in the dashlet. You can paste the full URL, including "
 "filters."
 msgstr ""
-"Inserire la URL dell vista. E' possibilie inserire la URL complera, filtri "
-"inclusi "
+"Inserire l'indirizzo della vista. Incollare l'intera URL, filtri inclusi."
 
 #: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:51
 msgctxt "app.config.logging.level"
 msgid "Error"
-msgstr "Errore"
+msgstr "Error"
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:11
 msgid "Error details"
-msgstr "Dettagli Errore"
+msgstr "Dettagli dell'Errore"
 
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:308
 msgid "External"
@@ -454,7 +454,7 @@ msgstr "Filtro"
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterWidget.php:89
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterEditor.php:659
 msgid "Filter this list"
-msgstr "Filtrare questa lista"
+msgstr "Pattern"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterWidget.php:93
 msgid "Filtered"
@@ -488,7 +488,7 @@ msgstr "Host"
 #: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:90
 #: /usr/share/icingaweb2/application/views/scripts/pivottablePagination.phtml:28
 msgid "Hosts"
-msgstr "Hosts"
+msgstr "Host"
 
 #: /usr/share/icingaweb2/application/views/scripts/search/hint.phtml:2
 msgid "I'm ready to search, waiting for your input"
@@ -496,7 +496,7 @@ msgstr "Pronto per la ricerca, in attesa di un input."
 
 #: /usr/share/icingaweb2/application/forms/LdapDiscoveryForm.php:50
 msgid "IP or hostname to search."
-msgstr "IP o hostname da cercare"
+msgstr "IP o hostname da cercare."
 
 #: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:15
 msgid "Icinga Web 2 Documentation"
@@ -516,17 +516,14 @@ msgid ""
 "current session manually by clearing the cache, or by closing the current "
 "browser session."
 msgstr ""
-"Se questo messaggio non scompare, potrebbe essere necessario chiudere "
-"manualmente la sessione corrente ripulendo la cache, oppure chiudere la "
-"sessione del browser."
 
 #: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:21
 msgid ""
 "In case you can access the file by yourself, you can open it and insert the "
 "config manually:"
 msgstr ""
-"In caso di mancato accesso al file, modificare la configurazione "
-"manualmente: "
+"In caso di mancato accesso al file, aprire il file ad inserire i dati "
+"manualmente."
 
 #: /usr/share/icingaweb2/application/controllers/AuthenticationController.php:124
 msgid "Incorrect username or password"
@@ -535,25 +532,25 @@ msgstr "Utente o password errati"
 #: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:53
 msgctxt "app.config.logging.level"
 msgid "Information"
-msgstr "Informazione"
+msgstr "Information"
 
 #: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:3
 msgid "Installed Modules"
-msgstr "Moduli Installati"
+msgstr "Moduli intallati"
 
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:72
 #, php-format
 msgid "Invalid backend type \"%s\" provided"
-msgstr "Tipo di backend fornito \"%s\" non valido "
+msgstr "Tipo \"%s\" di backend non valido"
 
 #: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:45
 #, php-format
 msgid "Invalid resource type \"%s\" provided"
-msgstr "Tipo di risorsa fornita \"%s\" non valida "
+msgstr "Tipo \"%s\" di risorsa non valido"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Form/Validator/DateTimeValidator.php:41
 msgid "Invalid type given. Instance of DateTime or date/time string expected"
-msgstr "Tipo di data non valida. "
+msgstr "Formato non valido. Istanza di DateTime o stringa Data/Ora prevista."
 
 #: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:11
 #, php-format
@@ -563,10 +560,10 @@ msgid ""
 "authentication method by following the instructions in the %1$sdocumentation%"
 "3$s or by using our %2$sweb-based setup-wizard%3$s."
 msgstr ""
-"Icinga Web 2 non è stato configurato, non essendo stato definito nessun "
-"metodo d iautenticazione non è possibile accedere. Si prega di definire un "
-"metodo di autenticazione seguendo le istruzioni dalla %1$sdocumentazione%3$s "
-"o usando %2$sl'istallazione guidata%3$s"
+"Icinga Web 2 non è stato configurato e quindi non è possibile autenticarsi "
+"senza aver definito nessun metodo di autenticazione. Si prega di definire un "
+"metodo di autenticazione seguendo le istruzioni della %1$sdocumentazione%3$s "
+"o usando la nostra %2$sinstallazione guidata via web%3$s."
 
 #: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:67
 msgid "LDAP Resource"
@@ -590,7 +587,7 @@ msgstr "Tipo di Log"
 
 #: /usr/share/icingaweb2/application/views/scripts/authentication/logout.phtml:12
 msgid "Logging out..."
-msgstr "Uscita in corso..."
+msgstr "Uscita..."
 
 #: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:20
 #: /usr/share/icingaweb2/application/views/scripts/authentication/logout.phtml:21
@@ -603,20 +600,21 @@ msgstr "Esci"
 
 #: /usr/share/icingaweb2/application/views/scripts/authentication/logout.phtml:43
 msgid "Logout successful!"
-msgstr "Disconnesso con successo!"
+msgstr "Uscito con successo!"
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:7
 msgid "Make sure that the webserver can write to this file."
-msgstr "Assicurarsi che il web server possa scrivere su questo file."
+msgstr ""
+"Controlla che il server web abbia i permessi per scrivere su questo file."
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Controller/ActionController.php:197
 msgid "Method Not Allowed"
-msgstr "Metodo Non Autorizzato"
+msgstr "Metodo non consentito"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterWidget.php:94
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterEditor.php:661
 msgid "Modify this filter"
-msgstr "Modifica filtro"
+msgstr "Modifica questo filtro"
 
 #: /usr/share/icingaweb2/application/controllers/ConfigController.php:179
 #, php-format
@@ -630,7 +628,7 @@ msgstr "Modulo \"%s\" abilitato"
 
 #: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:33
 msgid "Module Path"
-msgstr "Percorso Modul"
+msgstr "Percorso Modulo"
 
 #: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:16
 msgid "Module is disabled"
@@ -663,23 +661,21 @@ msgid "Navigation"
 msgstr "Navigazione"
 
 #: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:98
-#, fuzzy
 msgid "New Dashboard Title"
-msgstr "Nuova Dashboard"
+msgstr "Titolo nuova Dashboard"
 
 #: /usr/share/icingaweb2/application/views/scripts/roles/index.phtml:68
 #: /usr/share/icingaweb2/application/views/scripts/roles/new.phtml:3
-#, fuzzy
 msgid "New Role"
-msgstr "Crea Ruolo"
+msgstr "Nuovo Ruolo"
 
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:118
 msgid "New authentication backend name missing"
-msgstr "Nomedel backend di autenticazione mancante"
+msgstr "Nome del nuovo backend di autenticazione mancante"
 
 #: /usr/share/icingaweb2/application/forms/Config/GeneralConfigForm.php:54
 msgid "New configuration has successfully been stored"
-msgstr "La nuova configurazione è stata salvata correttamente"
+msgstr "Nuova configurazione salvata correttamente"
 
 #: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:120
 msgid "New dashboard"
@@ -687,7 +683,7 @@ msgstr "Nuova Dashboard"
 
 #: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:89
 msgid "New resource name missing"
-msgstr "Nuovo Nome Risorsa mancante"
+msgstr "Nome della nuova risorsa non trovato"
 
 #: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:86
 #: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:89
@@ -701,21 +697,21 @@ msgid ""
 "No Ldap servers found on this domain. You can try to specify host and port "
 "and try again, or just skip this step and configure the server manually."
 msgstr ""
-"Nessun server LDAP troato in questo dominio. Provare a specificare host e "
-"porta e riprovare, o saltare questo passaggio e configurare il server "
-"manualmente."
+"Nessun server LDAP trovato in questo dominio. Si prega di specificare host e "
+"porta e provare di nuovo, altrimenti saltare questo passaggio e configurare "
+"il server manualmente."
 
 #: /usr/share/icingaweb2/application/controllers/AuthenticationController.php:104
 msgid ""
 "No authentication methods available. Did you create authentication.ini when "
 "setting up Icinga Web 2?"
 msgstr ""
-"Nessun metodo di autenticazione trovato. E' stato creato authentication.ini "
-"durante l'installazione di Icinga Web 2?"
+"Nessun metodo di autenticazione trovato. E' stato creato il file "
+"authentication.ini durante l'installazione di Icinga Web 2?"
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:37
 msgid "No dashlets added to dashboard"
-msgstr "Nessuna vista aggiunsta alla dashboard"
+msgstr "Nessuna vista aggiunta a questa dashboard"
 
 #: /usr/share/icingaweb2/application/views/scripts/roles/index.phtml:8
 msgid "No roles found."
@@ -728,23 +724,24 @@ msgstr "Non sono stai trovati utenti nel database di backend specificato"
 #: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:37
 msgctxt "app.config.logging.type"
 msgid "None"
-msgstr "Nessuno"
+msgstr "Niente"
 
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:116
 msgid "Old authentication backend name missing"
-msgstr "Vecchio nome del backend di autenticazione mancante"
+msgstr "Nome del vecchio backend di autenticazione mancante"
 
 #: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:87
 msgid "Old resource name missing"
-msgstr "Vecchio nome della risors mancante"
+msgstr "Nome della vecchia risorsa non presente"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:67
 msgid "Only the root and its child nodes will be accessible on this resource."
-msgstr "Solo la radice e nodi figli saranno accessibili su questa risorsa."
+msgstr ""
+"Solo gli oggetti che appartengono a questa risorsa radice saranno accessibili"
 
 #: /usr/share/icingaweb2/application/views/scripts/form/reorder-authbackend.phtml:6
 msgid "Order"
-msgstr "Ordina"
+msgstr "Ordine"
 
 #: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:33
 msgid "Page"
@@ -756,7 +753,7 @@ msgstr "Pagina non trovata."
 
 #: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:12
 msgid "Pagination"
-msgstr "Paginazione"
+msgstr "Impaginazione"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:101
 #: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:43
@@ -793,7 +790,7 @@ msgstr "Confermare la rimozione di"
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:4
 msgid "Please copy the following dashboard snippet to "
-msgstr "Copiare la seguente dashboard in "
+msgstr "Copiare la seguente porzione di dashboard in "
 
 #: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:34
 msgid "Please enter your username..."
@@ -804,7 +801,7 @@ msgid ""
 "Please note that not all authentication methods were available. Check the "
 "system log or Icinga Web 2 log for more information."
 msgstr ""
-"Si fa notare che non sono disponibili tutti i metodi di autenticazione. "
+"Si fa notare che non tutti i metodi di autenticazione sono disponibili. "
 "Controllare il log di sistema o di Icinga Web 2 per maggiori dettagli."
 
 #: /usr/share/icingaweb2/application/views/scripts/search/hint.phtml:4
@@ -830,11 +827,11 @@ msgstr "Preferenze"
 
 #: /usr/share/icingaweb2/application/forms/PreferenceForm.php:107
 msgid "Preferences successfully saved"
-msgstr "Preferenze aggiornate con successo"
+msgstr "Preferenze salvate con successo"
 
 #: /usr/share/icingaweb2/application/forms/PreferenceForm.php:109
 msgid "Preferences successfully saved for the current session"
-msgstr "Preferenze salvate con successo nella sessione corrente"
+msgstr "Preferenze per la sessione corrente salvate con successo"
 
 #: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:48
 #: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:51
@@ -861,11 +858,11 @@ msgstr "Rimuovi Vista dalla Dashboard"
 
 #: /usr/share/icingaweb2/application/views/scripts/config/resource/remove.phtml:4
 msgid "Remove Existing Resource"
-msgstr "Rimuovi Risorsa Esistente"
+msgstr "Rimuovi Risorsa esistente"
 
 #: /usr/share/icingaweb2/application/controllers/RolesController.php:179
 msgid "Remove Role"
-msgstr "Rimuovi Ruolo"
+msgstr "Rimuovi ruolo"
 
 #: /usr/share/icingaweb2/application/views/scripts/roles/remove.phtml:3
 #, php-format
@@ -885,7 +882,7 @@ msgstr "Rimuovi filtro"
 #: /usr/share/icingaweb2/application/controllers/RolesController.php:148
 #, php-format
 msgid "Required parameter '%s' missing"
-msgstr "Parametro richiesto '%s' mancante"
+msgstr "Parametro richiesto '%s' non trovato"
 
 #: /usr/share/icingaweb2/application/views/scripts/config/resource.phtml:12
 msgid "Resource"
@@ -894,7 +891,7 @@ msgstr "Risorsa"
 #: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:148
 #, php-format
 msgid "Resource \"%s\" has been successfully changed"
-msgstr "Risorsa \"%s\" modificata con successo"
+msgstr "Risorsa \"%s\" aggiornata con successo"
 
 #: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:145
 #, php-format
@@ -902,7 +899,7 @@ msgid "Resource \"%s\" has been successfully created"
 msgstr "Risorsa \"%s\" creata con successo"
 
 #: /usr/share/icingaweb2/application/controllers/ConfigController.php:335
-#, php-format
+#, fuzzy, php-format
 msgid "Resource \"%s\" has been successfully removed"
 msgstr "Risorsa \"%s\" rimossa con successo"
 
@@ -919,7 +916,7 @@ msgstr "Tipo di Risorsa"
 
 #: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:66
 msgid "Resource already exists"
-msgstr "Nome Risorsa già presente"
+msgstr "Risorsa già presente"
 
 #: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:64
 #: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:113
@@ -934,7 +931,7 @@ msgstr "Risorse"
 
 #: /usr/share/icingaweb2/application/views/scripts/config/resource/create.phtml:5
 msgid "Resources are entities that provide data to Icinga Web 2."
-msgstr "Le Risorse sone le entità che forniscono i dati a Icinga Web 2"
+msgstr "Le Risorse sono le entità da cui Icinga Web 2 recupera i dati."
 
 #: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:62
 msgid "Restrictions"
@@ -978,27 +975,27 @@ msgstr "Salva Modifiche"
 
 #: /usr/share/icingaweb2/application/forms/PreferenceForm.php:208
 msgid "Save for the current Session"
-msgstr "Salva per la Sessione corrente"
+msgstr "Salva per la sessione corrente"
 
 #: /usr/share/icingaweb2/application/forms/PreferenceForm.php:194
 msgid "Save to the Preferences"
-msgstr "Salva le Preferenze"
+msgstr "Salva Preferenze"
 
 #: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:2
 msgid "Saving Configuration Failed"
-msgstr "Salvataggio Configurazione Fallito"
+msgstr "Salvataggio Configurazione fallito"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/SearchDashboard.php:63
 msgid "Search"
-msgstr "Cerca"
+msgstr "Cerca..."
 
 #: /usr/share/icingaweb2/application/forms/LdapDiscoveryForm.php:28
 msgid "Search Domain"
-msgstr "Cerca Dominio"
+msgstr "Cerca nel Dominio"
 
 #: /usr/share/icingaweb2/application/forms/LdapDiscoveryForm.php:29
 msgid "Search this domain for records of available servers."
-msgstr "Cerca in questo dominio la lista dei server disponibili."
+msgstr "Cerca in questo dominio i server disponibili."
 
 #: /usr/share/icingaweb2/application/views/scripts/layout/menu.phtml:8
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterEditor.php:655
@@ -1007,13 +1004,13 @@ msgstr "Cerca..."
 
 #: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:110
 msgid "Select a pane you want to add the dashlet."
-msgstr "Selezionare un pannello da aggiungere alla vista."
+msgstr "Selezione un pannello a cui aggiungere la vista."
 
 #: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:54
 #: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:71
 #: /usr/share/icingaweb2/application/views/scripts/pivottablePagination.phtml:35
 msgid "Services"
-msgstr "Servizi"
+msgstr ""
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/Tabextension/DashboardSettings.php:34
 msgid "Settings"
@@ -1022,12 +1019,12 @@ msgstr "Impostazioni"
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/Limiter.php:83
 #, php-format
 msgid "Show %s rows on one page"
-msgstr "Mostra %s righe per pagina"
+msgstr ""
 
 #: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:16
 #, php-format
 msgid "Show rows %d to %d of %d"
-msgstr "Mostra da riga %d a %d di %d"
+msgstr ""
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:44
 msgid "Socket"
@@ -1043,7 +1040,7 @@ msgstr "Stato"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterEditor.php:339
 msgid "Strip this filter"
-msgstr "Modifica filtro"
+msgstr "Dividi filtro"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Menu.php:219
 msgid "System"
@@ -1069,7 +1066,7 @@ msgstr "La connessione database da usare per autenticarsi con questo servizio"
 #: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:5
 #, php-format
 msgid "The file %s couldn't be stored. (Error: \"%s\")"
-msgstr "Impossibile salavare Il file %s. (Errore: \"%s\")"
+msgstr "Il file %s non può essere salvato. (Errore: \"%s\")"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:42
 msgid "The filename to fetch information from"
@@ -1077,7 +1074,7 @@ msgstr "Nome del file dal quale recuperare l'informazione"
 
 #: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:108
 msgid "The full path to the log file to write messages to."
-msgstr "Percorso completo del file di log dove scrivere i messaggi"
+msgstr "Percorso completo del file di  log dove scrivere i messaggi."
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:63
 msgid "The hostname of the database"
@@ -1085,11 +1082,12 @@ msgstr "Hostname del database"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:45
 msgid "The hostname or address of the LDAP server to use for authentication"
-msgstr "Hostname o indirizzo ip del server LDAP da usare per l'autenticazione"
+msgstr ""
+"L'hostname o l'indirizzo ip del server LDAP da usare per l'autenticazione"
 
 #: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:49
 msgid "The maximum logging level to emit."
-msgstr "Livello massimo da considerare."
+msgstr "Livello massimo da scrivere nei log."
 
 #: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:68
 msgid "The name of the application by which to prefix syslog messages."
@@ -1101,7 +1099,7 @@ msgstr "Nome del database da usare"
 
 #: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:83
 msgid "The name of the role"
-msgstr "Nome del ruolo"
+msgstr "Il nome del ruolo"
 
 #: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:58
 #: /usr/share/icingaweb2/application/forms/Config/Authentication/ExternalBackendForm.php:34
@@ -1109,7 +1107,9 @@ msgstr "Nome del ruolo"
 msgid ""
 "The name of this authentication provider that is used to differentiate it "
 "from others"
-msgstr "Nome univoco del servizio di autenticazione"
+msgstr ""
+"Nome del servizio di autenticazione che verrà usato per differenziarlo dagli "
+"altri"
 
 #: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:80
 msgid "The object class used for storing users on the ldap server"
@@ -1134,8 +1134,8 @@ msgid ""
 "The path where users can be found on the ldap server. Leave empty to select "
 "all users available on the specified resource."
 msgstr ""
-"Percorso per trovare gli utenti nel server ldap. Lasciare vuoto per "
-"selezionare tutti gli utenti disponibili nella risorsa specificata."
+"Percorso dove possono essere trovati gli utenti nel server ldap. Lasciare "
+"vuoto per selezionare tutti gli utenti disponibili della risorsa specificata."
 
 #: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:109
 msgid "The permissions to grant. You may select more than one permission"
@@ -1143,11 +1143,11 @@ msgstr "Permessi da assegnare. E' possibile selezionare più di un permesso"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:56
 msgid "The port of the LDAP server to use for authentication"
-msgstr "Porta del server LDAP da usare per l'autencazione "
+msgstr "La porta del server LDAP da usare per l'autenticazione"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:73
 msgid "The port to use"
-msgstr "La porta da usare."
+msgstr "La porta da usare"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:52
 msgid "The regular expression by which to identify columns"
@@ -1158,8 +1158,8 @@ msgid ""
 "The regular expression to use to strip specific parts off from usernames. "
 "Leave empty if you do not want to strip off anything"
 msgstr ""
-"Espressione regolare che identifica le parti da escludere dal nome utente."
-"Lasciare vuoto in caso non si voglia escludere niente"
+"Espressione regolare da usare per separare parti specifiche dai nomi utente. "
+"Lasciare vuoto se non si vuole modificare niente."
 
 #: /usr/share/icingaweb2/application/controllers/ConfigController.php:351
 #, php-format
@@ -1168,9 +1168,9 @@ msgid ""
 "\". Removing the resource can result in noone being able to log in any "
 "longer."
 msgstr ""
-"La risorsa \"%s\" è attualmente in usa dal backend di autenticazione\"%s\". "
-"Rimuovere la risorsa può causare la negazione dell'accesso a tutti gli "
-"utenti."
+"La risorsa \"%s\" è attualmente in uso dal backend di autenticazione \"%s\". "
+"Rimuovere la risorsa potrebbe non impedire a tutti gli utenti di poter "
+"effettuare il login."
 
 #: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:68
 msgid "The resource to use for authenticating with this provider"
@@ -1186,11 +1186,11 @@ msgstr "Tipo di log da utilizzare."
 
 #: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:230
 msgid "The type of resource"
-msgstr "Tipo di risorsa"
+msgstr "Il Tipo di risorsa"
 
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:324
 msgid "The type of the resource to use for this authenticaton provider"
-msgstr "La risorsa da usare per autenticarsi con questo servizio"
+msgstr "Il tipo di risorsa da usare per autenticarsi con questo servizio"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:36
 #: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:35
@@ -1209,17 +1209,17 @@ msgstr "Nome utente da usare per l'autenticazione"
 
 #: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:7
 msgid "There is no such module installed."
-msgstr "Il modulo selezionato non risulta installato"
+msgstr "Il modulo selezionato no risulta installato"
 
 #: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:15
 msgid ""
 "There's an application error preventing you from persisting the configuration"
 msgstr ""
-"Nessun errore applicativo pregiudica il salvataggio della configurazione"
+"Un errore applicativo sta impedendo di rendere la configurazione persistente"
 
 #: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:10
 msgid "This could have one or more of the following reasons:"
-msgstr "Possono esserci svariati motivi:"
+msgstr "Questo potrebbe avere una o più delle seguenti ragioni:"
 
 #: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:46
 msgid "This module has no dependencies"
@@ -1234,22 +1234,22 @@ msgid "UI Debug"
 msgstr "Debug Interfaccia Utente"
 
 #: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:152
-#, fuzzy, php-format
+#, php-format
 msgid "Unable to validate authentication: %s"
-msgstr "Impossibile verificare l'autenticazione: %s"
+msgstr "Non è stato possibile verificare l'autenticazione: %s"
 
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:120
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:148
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:171
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:241
 msgid "Unknown authentication backend provided"
-msgstr "Nome del backend di autenticazione sconosciuto"
+msgstr "Backend di autenticazione sconosciuto"
 
 #: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:91
 #: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:115
 #: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:176
 msgid "Unknown resource provided"
-msgstr "Risorsa fornita sconosciuta"
+msgstr "Risorsa sconosciuta"
 
 #: /usr/share/icingaweb2/application/controllers/DashboardController.php:80
 msgid "Update Dashlet"
@@ -1262,7 +1262,7 @@ msgstr "Aggiorna Ruolo"
 #: /usr/share/icingaweb2/application/views/scripts/roles/update.phtml:3
 #, php-format
 msgid "Update Role %s"
-msgstr "Ruolo %s Aggiornato"
+msgstr "Aggiorna Ruolo %s"
 
 #: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:68
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:16
@@ -1271,7 +1271,7 @@ msgstr "Url"
 
 #: /usr/share/icingaweb2/application/forms/PreferenceForm.php:184
 msgid "Use benchmark"
-msgstr "Mostra prestazioni"
+msgstr "Attiva analisi delle prestazioni"
 
 #: /usr/share/icingaweb2/application/forms/PreferenceForm.php:161
 msgid "Use the following language to display texts and messages"
@@ -1279,16 +1279,16 @@ msgstr "Usa la lingua seguente per visualizzare testi e messaggi"
 
 #: /usr/share/icingaweb2/application/forms/PreferenceForm.php:173
 msgid "Use the following timezone for dates and times"
-msgstr "Usa il fuso orario seguente per data e ora"
+msgstr "Usa il seguente fuso orario per data e ora"
 
 #: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:50
 msgid "User Preference Storage Type"
-msgstr "Salvataggio delle Preferenze degli Utenti "
+msgstr "Metodo di salvataggio delle preferenze degli utenti"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:91
 #: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:33
 msgid "Username"
-msgstr "Nome utente"
+msgstr "Nome Utente"
 
 #: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:91
 #: /usr/share/icingaweb2/application/views/scripts/roles/index.phtml:16
@@ -1311,7 +1311,7 @@ msgstr "Warning"
 
 #: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:25
 msgid "Welcome to Icinga Web 2"
-msgstr "Benvenuto in Icinga Web 2"
+msgstr "Benvenuto in Icinga Web 2!"
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/index.phtml:10
 msgid "Welcome to Icinga Web!"
@@ -1319,7 +1319,7 @@ msgstr "Benvenuto in Icinga Web!"
 
 #: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:13
 msgid "You don't have file-system permissions to write to the file"
-msgstr "Impossibile srivere sul file. Controllare i permessi su file system."
+msgstr "Nessun permesso per scrivere nel file"
 
 #: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:21
 msgid ""
@@ -1327,8 +1327,8 @@ msgid ""
 "authentication mechanisms. Make sure you'll configure such, otherwise you'll "
 "not be able to login."
 msgstr ""
-"Non è possibile utilizzare nessun meccanimo di autenticazioneSi prega di "
-"configurarne almeno uno per potersi connettere. "
+"Non sei autenticato con nessun meccanismo di autenticazione. Si prega di "
+"configurarne almeno uno per poter fare effettuare l'accesso."
 
 #: /usr/share/icingaweb2/application/forms/PreferenceForm.php:160
 msgid "Your Current Language"
@@ -1336,11 +1336,11 @@ msgstr "Lingua Corrente"
 
 #: /usr/share/icingaweb2/application/forms/PreferenceForm.php:172
 msgid "Your Current Timezone"
-msgstr "Fuso Orario Corrente"
+msgstr "Fuso orario corrente"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/Limiter.php:57
 msgid "all"
-msgstr "tutti"
+msgstr ""
 
 #: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:24
 msgid "disable"
@@ -1365,7 +1365,7 @@ msgstr "fallito"
 #: /usr/share/icingaweb2/library/Icinga/Util/Format.php:82
 #: /usr/share/icingaweb2/library/Icinga/Util/Format.php:88
 msgid "for"
-msgstr "per"
+msgstr ""
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/index.phtml:14
 msgid "modules"
@@ -1375,100 +1375,11 @@ msgstr "moduli"
 #: /usr/share/icingaweb2/library/Icinga/Util/Format.php:108
 #: /usr/share/icingaweb2/library/Icinga/Util/Format.php:110
 msgid "since"
-msgstr "da"
+msgstr ""
 
 #: /usr/share/icingaweb2/application/views/scripts/config/devtools.phtml:5
 msgid "toggle"
 msgstr "seleziona"
 
-#~ msgid "Add"
-#~ msgstr "Aggiungi"
-
-#~ msgid "Check this to enable logging."
-#~ msgstr "Selezionare questa casella per abilitare la scrittura nei log."
-
-#~ msgid "Click to add a filter expression to this operator"
-#~ msgstr "Clicca per aggiungere un filtro a questo operatore"
-
-#~ msgid "Connection Validation Failed: "
-#~ msgstr "Verifica della Connessione Fallita: "
-
-#~ msgid "Connectivity validation failed, the provided file does not exist."
-#~ msgstr "Verifica della connessione fallita, il file fornito non esiste."
-
-#~ msgid "Default Language"
-#~ msgstr "Lingua Predefinita"
-
-#~ msgid "Expression"
-#~ msgstr "Espressione"
-
-#~ msgid "Facility"
-#~ msgstr "Facility"
-
-#~ msgid "Failed to persist preferences. (%s)"
-#~ msgstr "Impossibile salvare le preferenze. (%s)"
-
-#~ msgid "Location of your icinga objects.cache file"
-#~ msgstr "Posizione del file objects.cache di icinga"
-
-#~ msgid "Location of your icinga status.dat file"
-#~ msgstr "Posizione del file status.dat di icinga"
-
-#~ msgid "Logging Enabled"
-#~ msgstr "Scrittura Log Abilitata"
-
-#~ msgid "Operator"
-#~ msgstr "Operatore"
-
-#~ msgid "Please enter a number."
-#~ msgstr "Inserire un numero."
-
-#~ msgid "Security check failed, please submit your form again"
-#~ msgstr ""
-#~ "Controllo di sicurezza fallito, si prega di re-inviare nuovamente il "
-#~ "modulo."
-
-#~ msgid ""
-#~ "Select the language to use by default. Can be overwritten by a user in "
-#~ "his preferences."
-#~ msgstr ""
-#~ "Selezionare la lingua predefinita. Può essere sovrascritta dalle "
-#~ "preferenze dell'utente."
-
-#~ msgid "The Syslog facility to utilize."
-#~ msgstr "Facility Syslog da utilizzare"
-
-#~ msgid "The path where users can be found on the ldap server"
-#~ msgstr "Percorso per trovare gli utenti nel server ldap"
-
-#~ msgid "The type of SQL database you want to create."
-#~ msgstr "Tipo di SQL database che si vuole creare."
-
-#~ msgid "Use Default Language"
-#~ msgstr "Usa Lingua Predefinita"
-
-#~ msgid ""
-#~ "Using ldap is not possible, the php extension \"ldap\" is not installed."
-#~ msgstr ""
-#~ "Impossibile usare ldap, l'estensione \"ldap\" per php non è installata"
-
-#~ msgid ""
-#~ "We tried to load a dashboard configuration with no success. Please have "
-#~ "look that the configuration does exist:"
-#~ msgstr ""
-#~ "Non è stato possibile caricare la configurazione della dashboard. Si "
-#~ "prega di controllare che la configurazione esista:"
-
-#~ msgid ""
-#~ "You need to install the php extension \"mysql\" and the Zend_Pdo_Mysql "
-#~ "classes to use  MySQL database resources."
-#~ msgstr ""
-#~ "E' necessario installare l'estensione \"mysql\" di php e le classi "
-#~ "Zend_Pdo_Mysql per poter usare come risorse i database Mysql"
-
-#~ msgid ""
-#~ "You need to install the php extension \"pgsql\" and the Zend_Pdo_Pgsql "
-#~ "classes to use  PostgreSQL database resources."
-#~ msgstr ""
-#~ "E' necessario installare l'estensione \"pgsql\" di php e le classi "
-#~ "Zend_Pdo_Pgsql per poter usare come risorse i database PostgreSQL"
+#~ msgid "Lorem ipsum dolor sit amet"
+#~ msgstr "Lorem ipsum dolor sit amet"
