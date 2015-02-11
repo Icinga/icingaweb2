@@ -141,16 +141,15 @@ class SectionRenderer extends Renderer
             $matches = $match->getMatches();
             ksort($matches);
             $offset = 0;
-            $parentNode = $node->parentNode;
-            /** @type \DOMElement $parentNode */
-            $parentNode->removeChild($node);
+            $fragment = $doc->createDocumentFragment();
             foreach ($matches as $position => $match) {
-                $parentNode->appendChild($doc->createTextNode(substr($text, $offset, $position - $offset)));
-                $parentNode->appendChild($doc->createElement('span', $match))
-                    ->setAttribute('class', DocSearchMatch::HIGHLIGHT_CSS_CLASS);
+                    $fragment->appendChild($doc->createTextNode(substr($text, $offset, $position - $offset)));
+                    $fragment->appendChild($doc->createElement('span', $match))
+                        ->setAttribute('class', DocSearchMatch::HIGHLIGHT_CSS_CLASS);
                 $offset = $position + strlen($match);
             }
-            $parentNode->appendChild($doc->createTextNode(substr($text, $offset)));
+            $fragment->appendChild($doc->createTextNode(substr($text, $offset)));
+            $node->parentNode->replaceChild($fragment, $node);
         }
         return $doc->saveHTML();
     }
