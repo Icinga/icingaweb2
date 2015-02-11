@@ -45,7 +45,6 @@ class DocController extends ModuleActionController
             ->setUrl($url)
             ->setUrlParams($urlParams);
         $name = ucfirst($name);
-        $this->view->docName = $name;
         $this->view->title = sprintf($this->translate('%s Documentation'), $name);
         $this->render('toc', null, true);
     }
@@ -61,17 +60,16 @@ class DocController extends ModuleActionController
     protected function renderPdf($path, $name, $url, array $urlParams = array())
     {
         $parser = new DocParser($path);
-        $docTree = $parser->getDocTree();
-        $this->view->tocRenderer = new TocRenderer($docTree, $url, $urlParams);
-        $this->view->sectionRenderer = new SectionRenderer(
-            $docTree,
-            null,
-            null,
-            $url,
-            $urlParams
-        );
-        $this->view->docName = $name;
+        $toc = new DocTocRenderer($parser->getDocTree()->getIterator());
+        $this->view->toc = $toc
+            ->setUrl($url)
+            ->setUrlParams($urlParams);
+        $section = new DocSectionRenderer($parser->getDocTree());
+        $this->view->section = $section
+            ->setUrl($url)
+            ->setUrlParams($urlParams);
+        $this->view->title = sprintf($this->translate('%s Documentation'), $name);
         $this->_request->setParam('format', 'pdf');
-        $this->render('pdf', null, true);
+        $this->_helper->viewRenderer->setRender('pdf', null, true);
     }
 }
