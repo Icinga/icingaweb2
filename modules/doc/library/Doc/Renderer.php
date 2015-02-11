@@ -172,7 +172,7 @@ abstract class Renderer extends RecursiveIteratorIterator
         try {
             return $this->render();
         } catch (Exception $e) {
-            return $e->getMessage();
+            return $e->getMessage() . ': ' . $e->getTraceAsString();
         }
     }
 }
