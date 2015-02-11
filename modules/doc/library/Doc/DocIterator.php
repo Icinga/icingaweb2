@@ -6,8 +6,8 @@ namespace Icinga\Module\Doc;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Icinga\File\NonEmptyFileIterator;
 use Icinga\File\FileExtensionFilterIterator;
 
