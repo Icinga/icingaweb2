@@ -21,7 +21,8 @@ class DocController extends ModuleActionController
         $section = new SectionRenderer($parser->getDocTree(), SectionRenderer::decodeUrlParam($chapter));
         $this->view->section = $section
             ->setUrl($url)
-            ->setUrlParams($urlParams);
+            ->setUrlParams($urlParams)
+            ->setHighlightSearch($this->params->get('highlight-search'));
         $this->view->title = $chapter;
         $this->render('chapter', null, true);
     }
