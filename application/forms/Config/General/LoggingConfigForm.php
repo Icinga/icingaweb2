@@ -5,7 +5,6 @@ namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Logger;
 use Icinga\Web\Form;
-use Icinga\Web\Form\Validator\WritablePathValidator;
 
 class LoggingConfigForm extends Form
 {
@@ -107,7 +106,7 @@ class LoggingConfigForm extends Form
                     'label'         => $this->translate('File path'),
                     'description'   => $this->translate('The full path to the log file to write messages to.'),
                     'value'         => '/var/log/icingaweb2/icingaweb2.log',
-                    'validators'    => array(new WritablePathValidator())
+                    'validators'    => array('WritablePathValidator')
                 )
             );
         }
