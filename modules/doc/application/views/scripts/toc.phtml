@@ -1,6 +1,7 @@
 <div class="controls">
+    <?= /** @type \Icinga\Web\Widget\Tabs $tabs */ $tabs->showOnlyCloseButton() ?>
     <h1><?= /** @type string $title */ $title ?></h1>
 </div>
-<div class="content toc">
+<div class="content">
     <?= /** @type \Icinga\Module\Doc\TocRenderer $toc */ $toc ?>
 </div>
