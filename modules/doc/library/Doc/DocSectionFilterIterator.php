@@ -14,7 +14,7 @@ use Icinga\Data\Tree\TreeNodeIterator;
  *     {@inheritdoc}
  * }
  */
-class SectionFilterIterator extends RecursiveFilterIterator implements Countable
+class DocSectionFilterIterator extends RecursiveFilterIterator implements Countable
 {
     /**
      * Chapter to filter for

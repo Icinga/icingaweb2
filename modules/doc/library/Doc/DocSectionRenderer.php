@@ -61,7 +61,7 @@ class DocSectionRenderer extends DocRenderer
     public function __construct(SimpleTree $tree, $chapter = null)
     {
         if ($chapter !== null) {
-            $filter = new SectionFilterIterator($tree->getIterator(), $chapter);
+            $filter = new DocSectionFilterIterator($tree->getIterator(), $chapter);
             if ($filter->isEmpty()) {
                 throw new ChapterNotFoundException(
                     mt('doc', 'Chapter %s not found'), $chapter
