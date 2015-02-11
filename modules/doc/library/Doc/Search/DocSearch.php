@@ -32,20 +32,24 @@ class DocSearch
         $this->input = $search = (string) $search;
         $criteria = array();
         if (preg_match_all('/"(?P<search>[^"]*)"/', $search, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
-            $unquoted = '';
+            $unquoted = array();
             $offset = 0;
             foreach ($matches as $match) {
                 $fullMatch = $match[0];
                 $searchMatch = $match['search'];
-                $unquoted .= substr($search, $offset, $fullMatch[1] - $offset);
-                $offset += $fullMatch[1] + strlen($fullMatch[0]);
+                $unquoted[] = substr($search, $offset, $fullMatch[1] - $offset);
+                $offset = $fullMatch[1] + strlen($fullMatch[0]);
                 if (strlen($searchMatch[0]) > 0) {
                     $criteria[] = $searchMatch[0];
                 }
             }
-            $search = $unquoted . substr($search, $offset);
+            $unquoted[] = substr($search, $offset);
+            $search = implode(' ', $unquoted);
         }
-        $this->search = array_unique(array_merge($criteria, array_filter(explode(' ', trim($search)))));
+        $this->search = array_map(
+            'strtolower',
+            array_unique(array_merge($criteria, array_filter(explode(' ', trim($search)))))
+        );
     }
 
     /**
