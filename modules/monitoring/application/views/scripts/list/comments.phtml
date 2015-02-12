@@ -59,7 +59,7 @@
           <?= $this->link()->host($comment->host, $comment->host_display_name) ?>
         <?php endif ?>
           <br>
-          <?= $this->icon('comment'); ?> <?= isset($comment->author)
+          <?= $this->icon('comment', null, array('aria-hidden' => 'true')); ?> <?= isset($comment->author)
             ? '[' . $comment->author . '] '
             : '';
           ?><?= $this->escape($comment->comment); ?>

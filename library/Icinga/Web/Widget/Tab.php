@@ -215,13 +215,9 @@ class Tab extends AbstractWidget
 
         if ($this->icon !== null) {
             if (strpos($this->icon, '.') === false) {
-                if ($tagParams && array_key_exists('class', $tagParams)) {
-                    $tagParams['class'] .= ' icon-' . $this->icon;
-                } else {
-                    $tagParams['class'] = 'icon-' . $this->icon;
-                }
+                $caption = $view->icon($this->icon, null, array('aria-hidden' => 'true')) . $caption;
             } else {
-                $caption = $view->img($this->icon, array('class' => 'icon')) . $caption;
+                $caption = $view->img($this->icon, array('aria-hidden' => 'true', 'class' => 'icon')) . $caption;
             }
         }
         if ($this->url !== null) {
