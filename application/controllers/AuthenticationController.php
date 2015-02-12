@@ -141,7 +141,7 @@ class AuthenticationController extends ActionController
                 }
             }
         } catch (Exception $e) {
-            $this->view->errorInfo = $e->getMessage();
+            $this->view->form->addError($e->getMessage());
         }
 
         $this->view->requiresExternalAuth = $triedOnlyExternalAuth && !$auth->isAuthenticated();
