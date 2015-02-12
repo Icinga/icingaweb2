@@ -1,6 +1,12 @@
 <div class="controls">
     <?= $this->tabs->showOnlyCloseButton() ?>
 </div>
-<h4><?= $this->translate('Create A New Resource'); ?></h4>
-<p><?= $this->translate('Resources are entities that provide data to Icinga Web 2.'); ?></p>
-<?= $form; ?>
+<div class="content">
+    <h1 tabindex="0" id="resource-create">
+        <?= $this->translate('Create A New Resource'); ?>
+    </h1>
+    <p><?= $this->translate('Resources are entities that provide data to Icinga Web 2.'); ?></p>
+    <div>
+        <?= $form; ?>
+    </div>
+</div>
