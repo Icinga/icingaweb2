@@ -1,5 +1,44 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+/* Color definitions */
+@colorGray: #f9f9f9;
+@colorLinkDefault: #049baf;
+@colorTextDefault: #666;
+@colorTextDarkDefault: #555;
+@colorPetrol: #049baf;
+@colorOk: #44bb77;
+@colorWarning: #ffaa44;
+@colorWarningHandled: #ffcc66;
+@colorCritical: #ff5566;
+@colorCriticalHandled: #ff99aa;
+/*
+@colorUnknown: #dd66ff;
+@colorUnknownHandled: #ee99ff;
+@colorUnreachable: #dd66ff;
+@colorUnreachableHandled: #ee99ff;
+*/
+@colorUnknown: #aa44ff;
+@colorUnknownHandled: #cc77ff;
+@colorUnreachable: #aa44ff;
+@colorUnreachableHandled: #cc77ff;
+@colorPending: #77aaff;
+@colorInvalid: #999;
+
+/* Mixins */
+
+.page-header(@borderSize: 2px; @fontSize: 2em; @textColor: @colorTextDarkDefault) {
+  font-size: @fontSize;
+  color: @textColor;
+  border-bottom: @borderSize solid @colorPetrol;
+  a {
+    text-decoration: none;
+    color: inherit;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 /*** Base rules ***/
 * {
   font-size: 100%;
@@ -50,9 +89,7 @@ a:hover {
 
 /* W3C Recommendation <http://www.w3.org/TR/CSS21/sample.html> (except h4) */
 h1 {
-    font-size:    2em;
-    color: @colorTextDefault;
-    border-bottom: 2px solid @colorPetrol;
+    .page-header();
 }
 
 h2 {
@@ -61,19 +98,16 @@ h2 {
 }
 
 h3 {
-    font-size: 1.17em;
-    color: @colorTextDefault;
-    border-bottom: 1px solid @colorPetrol;
+  .page-header(1px, 1.17em);
 }
 
 h4 {
-    font-size:    1em;
-    color: @colorPetrol;
+  font-size:    1em;
+  color: @colorPetrol;
 }
 
 h5 {
-    font-size:  .83em;
-    border-bottom: 1px solid @colorPetrol;
+  .page-header(1px, .83em);
 }
 
 h6 {
@@ -81,17 +115,19 @@ h6 {
     color: @colorPetrol;
 }
 
-h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
-  text-decoration: none;
-  color: inherit;
-}
+h1, h2, h3, h4, h5, h6 {
+  a {
+    text-decoration: none;
+    color: inherit;
 
-h1 a:hover, h2 a:hover, h3 a:hover, h4 a:hover, h5 a:hover, h6 a:hover {
-  text-decoration: underline;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 button {
-    font-family: inherit;
+  font-family: inherit;
 }
 
 #fontsize-calc {
@@ -103,5 +139,3 @@ button {
   top: -2em;
 }
 /*** END of Base rules */
-
-

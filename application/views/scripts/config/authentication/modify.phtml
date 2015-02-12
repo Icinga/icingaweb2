@@ -1,5 +1,11 @@
 <div class="controls">
     <?= $this->tabs->showOnlyCloseButton() ?>
 </div>
-<h4><?= $this->translate('Edit Backend'); ?></h4>
-<?= $form; ?>
+<div class="content">
+    <h1 tabindex="0" id="authentication-modify">
+        <?= $this->translate('Edit Backend'); ?>
+    </h1>
+    <div>
+        <?= $form; ?>
+    </div>
+</div>

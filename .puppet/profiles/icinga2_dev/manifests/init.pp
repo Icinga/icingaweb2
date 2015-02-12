@@ -6,6 +6,7 @@
 #
 #   icinga2_mysql
 #   icinga2::config
+#   icinga2::feature
 #
 # Sample Usage:
 #
@@ -20,5 +21,10 @@ class icinga2_dev {
   icinga2::config { [
     'conf.d/test-config', 'conf.d/commands', 'constants' ]:
     source => 'puppet:///modules/icinga2_dev',
+  }
+
+  icinga2::feature { 'ido-pgsql':
+    ensure  => absent,
+    require => Class['icinga2_pgsql'],
   }
 }

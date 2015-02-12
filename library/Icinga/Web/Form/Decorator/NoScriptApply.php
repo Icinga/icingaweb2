@@ -25,7 +25,7 @@ class NoScriptApply extends Zend_Form_Decorator_Abstract
     {
         if ($content) {
             $content .= '<noscript><button name="noscript_apply" style="margin-left: 0.5em;" type="submit" value="1">'
-                . Icinga::app()->getViewRenderer()->view->icon('refresh.png') . '&nbsp;' . t('Apply')
+                . Icinga::app()->getViewRenderer()->view->icon('refresh.png', null, array('aria-hidden' => 'true')) . '&nbsp;' . t('Apply')
                 . '</button></noscript>';
         }
 

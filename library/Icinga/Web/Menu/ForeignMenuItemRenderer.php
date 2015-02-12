@@ -16,7 +16,7 @@ class ForeignMenuItemRenderer implements MenuItemRenderer {
         return sprintf(
             '<a href="%s" target="_self">%s%s<span></span></a>',
             $menu->getUrl() ?: '#',
-            $menu->getIcon() ? '<img src="' . Url::fromPath($menu->getIcon()) . '" class="icon" /> ' : '',
+            $menu->getIcon() ? '<img aria-hidden="true" src="' . Url::fromPath($menu->getIcon()) . '" class="icon" /> ' : '',
             htmlspecialchars($menu->getTitle())
         );
     }

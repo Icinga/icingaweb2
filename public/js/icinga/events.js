@@ -334,6 +334,28 @@
             return false;
         },
 
+        handleAnchor: function(query) {
+            var $element = $(query);
+            if ($element.length > 0) {
+                // Try to find the first header. It is more pleasant to users
+                // to select the header instead a container
+                var $header = $element.find(':header:first');
+                if ($header.length > 0) {
+                    $element = $header;
+                } else {
+                    var $input = $element.find(':header:first');
+                    if ($input.length > 0) {
+                        $element = $input
+                    }
+                }
+                // If we want to focus an element which has no tabindex
+                // add one that we can focus is
+                if ($element.prop('tabindex') < 0) {
+                    $element.prop('tabindex', 0);
+                }
+                $element.focus();
+            }
+        },
 
         /**
          * Someone clicked a link or tr[href]
@@ -383,7 +405,6 @@
                 return;
             }
 
-
             // ignore multiselect table row clicks
             if ($a.is('tr') && $a.closest('table.multiselect').length > 0) {
                 return;
@@ -392,6 +413,12 @@
             // Handle all other links as XHR requests
             event.stopPropagation();
             event.preventDefault();
+
+            // This is an anchor only
+            if (href.substr(0, 1) === '#' && href.substr(1, 1) !== '!') {
+                self.handleAnchor(href);
+                return;
+            }
 
             // If link has hash tag...
             if (href.match(/#/)) {

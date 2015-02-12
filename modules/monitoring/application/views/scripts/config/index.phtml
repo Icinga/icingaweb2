@@ -6,7 +6,7 @@
 <div class="content" data-base-target="_next">
   <p>
     <a href="<?= $this->href('/monitoring/config/createbackend'); ?>">
-      <?= $this->icon('plus'); ?> <?= $this->translate('Create New Monitoring Backend'); ?>
+      <?= $this->icon('plus', null, array('aria-hidden' => 'true')); ?> <?= $this->translate('Create New Monitoring Backend'); ?>
     </a>
   </p>
   <table class="action">
@@ -38,7 +38,7 @@
   <h1><?= $this->translate('Monitoring Instances') ?></h1>
   <p>
     <a href="<?= $this->href('/monitoring/config/createinstance'); ?>">
-      <?= $this->icon('plus'); ?> <?= $this->translate('Create New Instance'); ?>
+      <?= $this->icon('plus', null, array('aria-hidden' => 'true')); ?> <?= $this->translate('Create New Instance'); ?>
     </a>
   </p>
   <table class="action">

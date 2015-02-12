@@ -61,7 +61,7 @@ class MenuRenderer extends RecursiveIteratorIterator
      */
     public function beginIteration()
     {
-        $this->tags[] = '<ul role="navigation">';
+        $this->tags[] = '<ul>';
     }
 
     /**
@@ -115,7 +115,7 @@ class MenuRenderer extends RecursiveIteratorIterator
         }
         if ($child->getIcon() && strpos($child->getIcon(), '.') === false) {
             return sprintf(
-                '<a href="%s" class="icon-%s">%s</a>',
+                '<a href="%s"><i aria-hidden="true" class="icon-%s"></i>%s</a>',
                 $child->getUrl() ?: '#',
                 $child->getIcon(),
                 htmlspecialchars($child->getTitle())
@@ -124,7 +124,9 @@ class MenuRenderer extends RecursiveIteratorIterator
         return sprintf(
             '<a href="%s">%s%s</a>',
             $child->getUrl() ?: '#',
-            $child->getIcon() ? '<img src="' . Url::fromPath($child->getIcon()) . '" class="icon" /> ' : '',
+            $child->getIcon()
+                ? '<img aria-hidden="true" src="' . Url::fromPath($child->getIcon()) . '" class="icon" /> '
+                : '',
             htmlspecialchars($child->getTitle())
         );
     }

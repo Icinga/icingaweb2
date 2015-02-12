@@ -54,7 +54,7 @@ class SyslogWriter extends LogWriter
      */
     public function __construct(ConfigObject $config)
     {
-        $this->ident = $config->get('application', 'icingaweb');
+        $this->ident = $config->get('application', 'icingaweb2');
         $this->facility = static::$facilities['user'];
     }
 
