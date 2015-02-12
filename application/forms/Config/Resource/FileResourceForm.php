@@ -4,7 +4,6 @@
 namespace Icinga\Forms\Config\Resource;
 
 use Icinga\Web\Form;
-use Icinga\Web\Form\Validator\ReadablePathValidator;
 
 /**
  * Form class for adding/modifying file resources
@@ -40,7 +39,7 @@ class FileResourceForm extends Form
                 'required'      => true,
                 'label'         => $this->translate('Filepath'),
                 'description'   => $this->translate('The filename to fetch information from'),
-                'validators'    => array(new ReadablePathValidator())
+                'validators'    => array('ReadablePathValidator')
             )
         );
         $this->addElement(

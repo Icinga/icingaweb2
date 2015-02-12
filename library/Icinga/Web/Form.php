@@ -12,6 +12,7 @@ use Icinga\Application\Icinga;
 use Icinga\Authentication\Manager;
 use Icinga\Security\SecurityException;
 use Icinga\Util\Translator;
+use Icinga\Web\Form\ErrorLabeller;
 use Icinga\Web\Form\Decorator\NoScriptApply;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
 
@@ -520,6 +521,15 @@ class Form extends Zend_Form
         }
 
         $el = parent::createElement($type, $name, $options);
+        $el->setTranslator(new ErrorLabeller(array('element' => $el)));
+
+        $el->addPrefixPaths(array(
+            array(
+                'prefix'    => 'Icinga\\Web\\Form\\Validator\\',
+                'path'      => Icinga::app()->getLibraryDir('Icinga/Web/Form/Validator'),
+                'type'      => $el::VALIDATE
+            )
+        ));
 
         if (($description = $el->getDescription()) !== null && ($label = $el->getDecorator('label')) !== false) {
             $label->setOptions(array(
