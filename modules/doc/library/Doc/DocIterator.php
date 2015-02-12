@@ -6,8 +6,8 @@ namespace Icinga\Module\Doc;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Icinga\File\NonEmptyFileIterator;
 use Icinga\File\FileExtensionFilterIterator;
 
@@ -19,7 +19,7 @@ class DocIterator implements Countable, IteratorAggregate
     /**
      * Ordered files
      *
-     * @var array
+     * @type array
      */
     protected $fileInfo;
 
@@ -46,8 +46,7 @@ class DocIterator implements Countable, IteratorAggregate
     }
 
     /**
-     * (non-PHPDoc)
-     * @see Countable::count()
+     * {@inheritdoc}
      */
     public function count()
     {
@@ -55,8 +54,7 @@ class DocIterator implements Countable, IteratorAggregate
     }
 
     /**
-     * (non-PHPDoc)
-     * @see IteratorAggregate::getIterator()
+     * {@inheritdoc}
      */
     public function getIterator()
     {

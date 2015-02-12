@@ -20,3 +20,5 @@ $section->add($this->translate('Developer - Style'), array(
     'url' => 'doc/style/guide',
     'priority' => 200,
 ));
+
+$this->provideSearchUrl($this->translate('Doc'), 'doc/search');

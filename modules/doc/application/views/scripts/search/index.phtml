@@ -1,0 +1,8 @@
+<div class="content">
+    <?php foreach (/** @type \Icinga\Module\Doc\Renderer\DocSearchRenderer[] $searches */ $searches as $title => $search): ?>
+        <?php if (! $search->isEmpty()): ?>
+            <h1><?= $this->escape($title) ?></h1>
+            <?= $search ?>
+        <?php endif ?>
+    <?php endforeach ?>
+</div>

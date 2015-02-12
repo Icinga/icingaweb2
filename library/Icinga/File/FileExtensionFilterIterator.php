@@ -58,7 +58,7 @@ class FileExtensionFilterIterator extends FilterIterator
     public function accept()
     {
         $current = $this->current();
-        /* @var $current \SplFileInfo */
+        /** @type $current \SplFileInfo */
         if (! $current->isFile()) {
             return false;
         }

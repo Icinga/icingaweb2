@@ -122,10 +122,10 @@ class Doc_ModuleController extends DocController
     {
         $module = $this->getParam('moduleName');
         $this->assertModuleEnabled($module);
-        $chapterId = $this->getParam('chapterId');
-        if ($chapterId === null) {
+        $chapter = $this->getParam('chapter');
+        if ($chapter === null) {
             throw new Zend_Controller_Action_Exception(
-                sprintf($this->translate('Missing parameter \'%s\''), 'chapterId'),
+                sprintf($this->translate('Missing parameter %s'), 'chapter'),
                 404
             );
         }
@@ -133,8 +133,7 @@ class Doc_ModuleController extends DocController
         try {
             $this->renderChapter(
                 $this->getPath($module, Icinga::app()->getModuleManager()->getModuleDir($module, '/doc')),
-                $chapterId,
-                $this->_helper->url->url(array('moduleName' => $module), 'doc/module/toc'),
+                $chapter,
                 'doc/module/chapter',
                 array('moduleName' => $module)
             );
