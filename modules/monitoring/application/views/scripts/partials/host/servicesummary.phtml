@@ -1,11 +1,10 @@
 <?php
 
 use Icinga\Web\Url;
+
 $selfUrl = Url::fromPath('monitoring/show/services', array('host' => $this->object->host_name));
 $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
-
-?>
-<h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
+?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
 <?php if ($object->stats->services_total > 0): ?>
 <?= $this->qlink(sprintf($this->translatePlural('%d configured service:', '%d configured services:', $object->stats->services_total), $object->stats->services_total), $selfUrl) ?>
 <?php else: ?>
@@ -21,7 +20,6 @@ $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
 )  ?></span>
 <?php endif ?>
 <?php
-
 foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $state) {
     $pre = 'services_' . $state;
     if ($object->stats->$pre) {
@@ -74,7 +72,6 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
         echo "</span>\n";
     }
 }
-
 ?>
 <?php if ($object->stats->services_pending): ?>
  <span class="state pending<?= $currentUrl === $selfUrl->with('service_state', 99)->getRelativeUrl() ? ' active' : '' ?>"><?= $this->qlink(
@@ -85,5 +82,4 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
 )  ?></span>
 <?php endif ?>
 </span>
-</h1>
-
+</div>

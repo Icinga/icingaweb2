@@ -4,9 +4,7 @@ use Icinga\Web\Url;
 
 $selfUrl = 'monitoring/list/hosts';
 $currentUrl = Url::fromRequest()->getRelativeUrl();
-
-?>
-<h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
+?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
     <?= $this->qlink(sprintf($this->translate('%s hosts:'), $this->stats->hosts_total), $selfUrl); ?>
   <span class="badges">
     <?php if($this->stats->hosts_up): ?>
@@ -81,4 +79,4 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     </span>
     <?php endif; ?>
   </span>
-</h1>
+</div>

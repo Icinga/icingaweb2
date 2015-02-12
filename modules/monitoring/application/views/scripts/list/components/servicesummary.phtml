@@ -1,10 +1,10 @@
 <?php
 
 use Icinga\Web\Url;
+
 $selfUrl = 'monitoring/list/services';
 $currentUrl = Url::fromRequest()->getRelativeUrl();
-
-?><h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
+?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
 <?= $this->qlink(sprintf($this->translate('%s services:'), $this->stats->services_total), $selfUrl) ?>
 <span class="badges">
 <?php if ($this->stats->services_ok): ?>
@@ -15,9 +15,7 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     array('title' => sprintf($this->translate('Services with state %s'), $this->translate('OK')))
 )  ?></span>
 <?php endif ?>
-
 <?php
-
 foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $state) {
     $pre = 'services_' . $state;
     if ($this->stats->$pre) {
@@ -70,7 +68,6 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
         echo "</span>\n";
     }
 }
-
 ?>
 <?php if ($this->stats->services_pending): ?>
  <span class="state pending<?= $currentUrl === Url::fromPath($selfUrl, array('service_state' => 99))->getRelativeUrl() ? ' active' : '' ?>"><?= $this->qlink(
@@ -81,5 +78,4 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
 )  ?></span>
 <?php endif ?>
 </span>
-</h1>
-
+</div>
