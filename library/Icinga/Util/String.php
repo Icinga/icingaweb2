@@ -53,4 +53,30 @@ class String
 
         return $string;
     }
+
+    /**
+     * Find and return all similar strings in $possibilites matching $string with the given minimum $similarity
+     *
+     * @param   string  $string
+     * @param   array   $possibilities
+     * @param   float   $similarity
+     *
+     * @return  array
+     */
+    public static function findSimilar($string, array $possibilities, $similarity = 0.33)
+    {
+        if (empty($string)) {
+            return array();
+        }
+
+        $matches = array();
+        foreach ($possibilities as $possibility) {
+            $distance = levenshtein($string, $possibility);
+            if ($distance / strlen($string) <= $similarity) {
+                $matches[] = $possibility;
+            }
+        }
+
+        return $matches;
+    }
 }

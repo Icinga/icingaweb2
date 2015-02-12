@@ -402,7 +402,6 @@ class ActionController extends Zend_Controller_Action
         }
 
         if ($req->getParam('format') === 'pdf') {
-            $layout->setLayout('pdf');
             $this->shutdownSession();
             $this->sendAsPdf();
             exit;
