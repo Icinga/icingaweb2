@@ -399,6 +399,10 @@ class ActionController extends Zend_Controller_Action
                     $layout->benchmark = $this->renderBenchmark();
                 }
             }
+
+            if ((bool) $user->getPreferences()->getValue('icingaweb', 'auto_refresh', true) === false) {
+                $this->disableAutoRefresh();
+            }
         }
 
         if ($req->getParam('format') === 'pdf') {
