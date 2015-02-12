@@ -40,12 +40,21 @@ class ExternalBackendForm extends Form
                         array(
                             'pattern'  => '/^[^\\[\\]:]+$/',
                             'messages' => array(
-                                'regexNotMatch' => 'The backend name cannot contain \'[\', \']\' or \':\'.'
+                                'regexNotMatch' => $this->translate(
+                                    'The backend name cannot contain \'[\', \']\' or \':\'.'
+                                )
                             )
                         )
                     )
                 )
             )
+        );
+        $callbackValidator = new Zend_Validate_Callback(function ($value) {
+            return @preg_match($value, '') !== false;
+        });
+        $callbackValidator->setMessage(
+            $this->translate('"%value%" is not a valid regular expression'),
+            Zend_Validate_Callback::INVALID_VALUE
         );
         $this->addElement(
             'text',
@@ -56,11 +65,7 @@ class ExternalBackendForm extends Form
                     'The regular expression to use to strip specific parts off from usernames.'
                     . ' Leave empty if you do not want to strip off anything'
                 ),
-                'validators'    => array(
-                    new Zend_Validate_Callback(function ($value) {
-                        return @preg_match($value, '') !== false;
-                    })
-                )
+                'validators'    => array($callbackValidator)
             )
         );
         $this->addElement(
