@@ -5,6 +5,7 @@
    </div>
   </div>
   <div class="form" data-base-target="layout">
+    <h1><?= $this->translate('Welcome to Icinga Web 2'); ?></h1>
     <?php if ($requiresSetup): ?>
     <p tabindex="0" class="config-note"><?= sprintf(
       $this->translate(
@@ -22,15 +23,7 @@
       . ' Make sure you\'ll configure such, otherwise you\'ll not be able to login.'
     ); ?></p>
     <?php endif ?>
-    <h1><?= $this->translate('Welcome to Icinga Web 2'); ?></h1>
-   <?php
-   /* TODO: remove this as soon as notifications and forms are ready */
-   if (isset($this->errorInfo)): ?>
-    <div class="error">
-    <?= $this->errorInfo ?>
-    </div>
-   <?php endif ?>
-   <?= $this->form ?>
-   <div class="footer">Icinga Web 2 &copy; 2013-2015<br><a href="https://www.icinga.org"><?= $this->translate('The Icinga Project'); ?></a></div>
+    <?= $this->form ?>
+    <div class="footer">Icinga Web 2 &copy; 2013-2015<br><a href="https://www.icinga.org"><?= $this->translate('The Icinga Project'); ?></a></div>
   </div>
  </div>
