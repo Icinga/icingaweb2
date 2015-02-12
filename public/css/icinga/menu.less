@@ -267,3 +267,36 @@ a:focus {
   color: #21b5ad;
   outline: none;
 }
+
+/* Accessibility Skip Links */
+.skip-links {
+  position: absolute;
+  opacity: 1;
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    li {
+      display: inline;
+      margin: 0;
+      padding: 0;
+      a {
+        position: absolute;
+        display: block;
+        left: -999em;
+        width: 10.4em;
+        top: 0.4em;
+        padding: 0.8em;
+        background-color: white;
+        z-index: 4;
+        border: 1px @colorGray solid;
+        &:focus {
+          left: 0;
+        }
+      }
+    }
+  }
+}
+.skip-links-inline {
+  margin-top: -3.5em;
+}
