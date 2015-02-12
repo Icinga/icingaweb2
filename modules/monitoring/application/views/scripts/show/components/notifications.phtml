@@ -1,4 +1,4 @@
-<?php
+?php
 
 // We are not interested in notifications for OK or pending objects
 if (in_array((int) $object->state, array(0, 99))) {
@@ -14,12 +14,12 @@ if (in_array((int) $object->state, array(0, 99))) {
 if ($object->current_notification_number > 0) {
     if ((int) $object->current_notification_number === 1) {
         $msg = sprintf(
-            $this->translate('A notication has been sent for this issue %s ago'),
+            $this->translate('A notification has been sent for this issue %s ago'),
             $this->timeSince($object->last_notification)
         );
     } else {
         $msg = sprintf(
-            $this->translate('%s notications have been sent for this issue'),
+            $this->translate('%s notifications have been sent for this issue'),
             $object->current_notification_number
         ) . '<br />' . sprintf(
             $this->translate('The last one occured %s ago'),

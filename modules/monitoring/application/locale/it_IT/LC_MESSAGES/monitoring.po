@@ -310,7 +310,7 @@ msgstr "%s non è in esecuzione."
 
 #: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/notifications.phtml:22
 #, php-format
-msgid "%s notications have been sent for this issue"
+msgid "%s notifications have been sent for this issue"
 msgstr "%s notifiche inviate per questo problema"
 
 #: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/Link.php:52
@@ -399,7 +399,7 @@ msgstr "<b>{title}:</b><br> {value} di{sum} servizi sono {label}"
 
 #: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/notifications.phtml:17
 #, php-format
-msgid "A notication has been sent for this issue %s ago"
+msgid "A notification has been sent for this issue %s ago"
 msgstr "Una notifica è stata inviata per questo problema %s fa"
 
 #: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/history.phtml:73
