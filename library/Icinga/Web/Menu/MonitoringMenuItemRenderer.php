@@ -80,7 +80,7 @@ class MonitoringMenuItemRenderer implements MenuItemRenderer {
         }
         if ($menu->getIcon() && strpos($menu->getIcon(), '.') === false) {
             return sprintf(
-                '%s <a href="%s" class="icon-%s">%s</a>',
+                '%s <a href="%s"><i aria-hidden="true" class="icon-%s"></i>%s</a>',
                 $badge,
                 $menu->getUrl() ?: '#',
                 $menu->getIcon(),
@@ -92,7 +92,7 @@ class MonitoringMenuItemRenderer implements MenuItemRenderer {
             '%s<a href="%s">%s%s<span></span></a>',
             $badge,
             $menu->getUrl() ?: '#',
-            $menu->getIcon() ? '<img src="' . Url::fromPath($menu->getIcon()) . '" class="icon" /> ' : '',
+            $menu->getIcon() ? '<img aria-hidden="true" src="' . Url::fromPath($menu->getIcon()) . '" class="icon" /> ' : '',
             htmlspecialchars($menu->getTitle())
         );
     }

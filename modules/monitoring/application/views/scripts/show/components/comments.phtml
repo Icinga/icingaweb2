@@ -16,7 +16,7 @@
             }
         ?>
         <a href="<?= $addCommentLink ?>" data-base-target="_self">
-            <?= $this->icon('comment') ?>
+            <?= $this->icon('comment', null, array('aria-hidden' => 'true')) ?>
             <?= $this->translate('Add comment') ?>
         </a>
         <?php } else {

@@ -20,7 +20,7 @@ foreach ($groupData as $groupName => $groupInfo): ?>
             <div class="box contents">
 <?php foreach ($groupInfo['contacts'] as $c): ?>
                 <div class="box entry">
-                    <img src="<?= $this->href('/static/gravatar', array('email' => $c->contact_email )) ?>" />
+                    <img aria-hidden="true" src="<?= $this->href('/static/gravatar', array('email' => $c->contact_email )) ?>" />
                     <a href="<?= $this->href(
                         'monitoring/show/contact',
                         array('contact' => $c->contact_name)
