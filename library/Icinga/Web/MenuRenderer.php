@@ -61,7 +61,7 @@ class MenuRenderer extends RecursiveIteratorIterator
      */
     public function beginIteration()
     {
-        $this->tags[] = '<ul role="navigation">';
+        $this->tags[] = '<ul>';
     }
 
     /**

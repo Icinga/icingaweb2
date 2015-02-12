@@ -7,6 +7,22 @@ use Icinga\Authentication\Manager as Auth;
 
 if (Auth::getInstance()->isAuthenticated()): ?>
  <div id="header">
+   <div class="skip-links">
+     <nav>
+       <h1 class="sr-only"><?= t('Accessibility Skip Links'); ?></h1>
+       <ul>
+         <li>
+           <a tabindex="0" href="#main"><?= t('Skip to Content'); ?></a>
+         </li>
+         <li>
+           <a tabindex="0" href="#search"><?= t('Skip to Search'); ?></a>
+         </li>
+         <li>
+           <a tabindex="0" href="#navigation"><?= t('Skip to Navigation'); ?></a>
+         </li>
+       </ul>
+     </nav>
+   </div>
    <ul id="notifications"><?php
 
 $moduleName = $this->layout()->moduleName;

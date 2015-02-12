@@ -27,55 +27,55 @@
   margin-left: 0.0em;
 }
 
-#menu > ul > li > ul {
+#menu > nav > ul > li > ul {
   display: none;
   padding-left: 6px;
 }
 
-.no-js #menu > ul > li > ul {
+.no-js #menu > nav > ul > li > ul {
   display: block;
 }
 
-#menu > ul > li.active > ul {
+#menu > nav > ul > li.active > ul {
   display: block;
 }
 
-#menu > ul > li.active {
+#menu > nav > ul > li.active {
   background-color: white;
   padding-left: 0.0em;
   margin-left: 0;
   margin-right: 0;
 }
 
-#menu > ul > li > a {
+#menu > nav > ul > li > a {
   font-size: 0.9em;
   text-shadow: none;
 }
 
-#menu > ul > li.active > a {
+#menu > nav > ul > li.active > a {
   color: @colorTextDefault;
   text-shadow: none;
 }
 
-#menu > ul > li.active li.active a {
+#menu > nav > ul > li.active li.active a {
   color: @colorPetrol;
 }
 
-#menu > ul > li.active li a:hover {
+#menu > nav > ul > li.active li a:hover {
   text-decoration: underline;
 }
 
-#menu > ul > li {
+#menu > nav > ul > li {
   border-bottom: 1px solid #d9d9d9;
 }
 
-#menu > ul > li li {
+#menu > nav > ul > li li {
   font-size: 0.8em;
   padding-left: 1.6em;
 }
 
 /* Collapsed menu item color */
-#menu > ul > li > a {
+#menu > nav > ul > li > a {
   color: @colorTextDefault;
 }
 
@@ -110,11 +110,11 @@
   padding-bottom: 1em;
 }
 
-#menu > ul > li {
+#menu > nav > ul > li {
   margin-left: 5px;
 }
 
-#menu > ul > li.active {
+#menu > nav > ul > li.active {
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
@@ -262,8 +262,41 @@ a:focus {
 /* Displaying the outline in the navigation is not possible because of the messed up link borders,
    color those links instead. */
 #menu a:focus,
-#menu > ul > li > a:focus,
+#menu > nav > ul > li > a:focus,
 #menu .active ul li a:focus {
   color: #21b5ad;
   outline: none;
+}
+
+/* Accessibility Skip Links */
+.skip-links {
+  position: absolute;
+  opacity: 1;
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    li {
+      display: inline;
+      margin: 0;
+      padding: 0;
+      a {
+        position: absolute;
+        display: block;
+        left: -999em;
+        width: 10.4em;
+        top: 0.4em;
+        padding: 0.8em;
+        background-color: white;
+        z-index: 4;
+        border: 1px @colorGray solid;
+        &:focus {
+          left: 0;
+        }
+      }
+    }
+  }
+}
+.skip-links-inline {
+  margin-top: -3.5em;
 }
