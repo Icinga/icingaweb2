@@ -125,9 +125,7 @@ class DocSectionRenderer extends DocRenderer
     protected function highlightSearch($html, DocSearch $search)
     {
         $doc = new DOMDocument();
-        $fragment = $doc->createDocumentFragment();
-        $fragment->appendXML($html);
-        $doc->appendChild($fragment);
+        @$doc->loadHTML($html);
         $iter = new RecursiveIteratorIterator(new DomNodeIterator($doc), RecursiveIteratorIterator::SELF_FIRST);
         foreach ($iter as $node) {
             if ($node->nodeType !== XML_TEXT_NODE
@@ -152,7 +150,10 @@ class DocSectionRenderer extends DocRenderer
             $fragment->appendChild($doc->createTextNode(substr($text, $offset)));
             $node->parentNode->replaceChild($fragment, $node);
         }
-        return $doc->saveHTML();
+        // Remove <!DOCTYPE
+        $doc->removeChild($doc->doctype);
+        // Remove <html><body> and </body></html>
+        return substr($doc->saveHTML(), 12, -15);
     }
 
     /**
@@ -250,14 +251,14 @@ class DocSectionRenderer extends DocRenderer
                 $section->getLevel(),
                 $title
             );
-            $content = $this->parsedown->text(implode('', $section->getContent()));
-            if (empty($content)) {
+            $html = $this->parsedown->text(implode('', $section->getContent()));
+            if (empty($html)) {
                 continue;
             }
             $html = preg_replace_callback(
                 '#<pre><code class="language-php">(.*?)</code></pre>#s',
                 array($this, 'highlightPhp'),
-                $content
+                $html
             );
             $html = preg_replace_callback(
                 '/<img[^>]+>/',
@@ -270,7 +271,7 @@ class DocSectionRenderer extends DocRenderer
                 $html
             );
             $html = preg_replace_callback(
-                '/<a\s+(?P<attribs>[^>]*?\s+)?href="(?:(?!http:\/\/)[^#]*)#(?P<fragment>[^"]+)"/',
+                '/<a\s+(?P<attribs>[^>]*?\s+)?href="(?:(?!http:\/\/)[^"#]*)#(?P<fragment>[^"]+)"/',
                 array($this, 'replaceLink'),
                 $html
             );
