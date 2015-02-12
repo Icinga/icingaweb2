@@ -335,14 +335,25 @@
         },
 
         handleAnchor: function(query) {
-            var element = $(query);
-            if (element.length > 0) {
+            var $element = $(query);
+            if ($element.length > 0) {
+                // Try to find the first header. It is more pleasant to users
+                // to select the header instead a container
+                var $header = $element.find(':header:first');
+                if ($header.length > 0) {
+                    $element = $header;
+                } else {
+                    var $input = $element.find(':header:first');
+                    if ($input.length > 0) {
+                        $element = $input
+                    }
+                }
                 // If we want to focus an element which has no tabindex
                 // add one that we can focus is
-                if (element.prop('tabindex') < 0) {
-                    element.prop('tabindex', 0);
+                if ($element.prop('tabindex') < 0) {
+                    $element.prop('tabindex', 0);
                 }
-                element.focus();
+                $element.focus();
             }
         },
 
