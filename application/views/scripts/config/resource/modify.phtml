@@ -1,5 +1,11 @@
 <div class="controls">
     <?= $this->tabs->showOnlyCloseButton() ?>
 </div>
-<h4><?= $this->translate('Edit Existing Resource'); ?></h4>
-<?= $form; ?>
+<div class="content">
+    <h1 tabindex="0" id="resource-edit">
+        <?= $this->translate('Edit Existing Resource'); ?>
+    </h1>
+    <div>
+        <?= $form; ?>
+    </div>
+</div>

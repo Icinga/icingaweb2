@@ -415,7 +415,8 @@
             event.preventDefault();
 
             // This is an anchor only
-            if (href.substr(0, 1) === '#' && href.substr(1, 1) !== '!') {
+            if (href.substr(0, 1) === '#' && href.length > 1
+                && href.substr(1, 1) !== '!') {
                 self.handleAnchor(href);
                 return;
             }
@@ -516,14 +517,6 @@
 
             return $target;
         },
-
-    /*
-        hrefIsHashtag: function(href) {
-            // WARNING: IE gives full URL :(
-            // Also it doesn't support negativ indexes in substr
-            return href.substr(href.length - 1, 1) == '#';
-        },
-    */
 
         unbindGlobalHandlers: function () {
             $.each(self.icinga.behaviors, function (name, behavior) {
