@@ -45,6 +45,7 @@ class RolesController extends ActionController
             'title' => $this->translate('Roles'),
             'url'   => 'roles'
         ));
+        $this->getTabs()->setTitle($this->translate('Role Configuration'));
     }
 
     /**
