@@ -517,14 +517,6 @@
             return $target;
         },
 
-    /*
-        hrefIsHashtag: function(href) {
-            // WARNING: IE gives full URL :(
-            // Also it doesn't support negativ indexes in substr
-            return href.substr(href.length - 1, 1) == '#';
-        },
-    */
-
         unbindGlobalHandlers: function () {
             $.each(self.icinga.behaviors, function (name, behavior) {
                 behavior.unbind($(document));
