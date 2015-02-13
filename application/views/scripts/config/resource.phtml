@@ -2,21 +2,20 @@
   <?= $tabs; ?>
 </div>
 <div class="content" data-base-target="_next">
-  <h1 tabindex="0" id="resource-index">
+  <h1 tabindex="-1" id="resource-index">
     <?= t('Resource Configuration'); ?>
   </h1>
   <div class="skip-links skip-links-inline">
-    <nav>
-      <ul>
-        <li>
-          <a tabindex="0" href="#resource-edit-table">
-            <?= t('Skip To Existing Resources'); ?>
-          </a>
-        </li>
-      </ul>
-    </nav>
+    <h2 class="sr-only"><?= $this->translate('Skip Links'); ?></h2>
+    <ul>
+      <li>
+        <a tabindex="0" href="#resource-edit-table">
+          <?= t('Skip To Existing Resources'); ?>
+        </a>
+      </li>
+    </ul>
   </div>
-  <h2 tabindex="0" id="resource-new-resource" class="sr-only">
+  <h2 tabindex="-1" id="resource-new-resource" class="sr-only">
     <?= t('Create New Resource'); ?>
   </h2>
   <p>
@@ -24,7 +23,7 @@
       <?= $this->icon('plus', null, array('aria-hidden' => 'true')); ?> <?= $this->translate('Create A New Resource'); ?>
     </a>
   </p>
-  <h2 tabindex="0" id="resource-edit-resource" class="sr-only">
+  <h2 tabindex="-1" id="resource-edit-resource" class="sr-only">
     <?= t('Edit Existing Resources'); ?>
   </h2>
   <table class="action" id="resource-edit-table">
