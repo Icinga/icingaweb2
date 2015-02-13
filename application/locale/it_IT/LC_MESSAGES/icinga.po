@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2015-02-12 17:50+0100\n"
+"POT-Creation-Date: 2015-02-13 17:59+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it_IT\n"
@@ -742,7 +742,7 @@ msgstr "Nome della nuova risorsa non trovato"
 #: /usr/share/icingaweb2/library/Icinga/Web/Wizard.php:606
 #: /usr/share/icingaweb2/library/Icinga/Web/Wizard.php:627
 msgid "Next"
-msgstr "Prossimo"
+msgstr "Successivo"
 
 #: /usr/share/icingaweb2/application/forms/LdapDiscoveryForm.php:38
 msgid ""
@@ -1072,7 +1072,7 @@ msgstr "Mostra %s righe per pagina"
 #: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:16
 #, php-format
 msgid "Show rows %d to %d of %d"
-msgstr "Mostra righe %d a %d di %d"
+msgstr "Mostra da riga %d a %d di %d"
 
 #: /usr/share/icingaweb2/application/views/scripts/config/authentication/reorder.phtml:13
 msgid "Skip To Authentication Reorder Form"
