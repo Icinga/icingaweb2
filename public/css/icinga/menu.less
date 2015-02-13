@@ -300,3 +300,22 @@ a:focus {
 .skip-links-inline {
   margin-top: -3.5em;
 }
+
+.auto-refresh-trigger {
+  position: absolute;
+  form {
+    button[type="submit"] {
+      position: absolute;
+      display: block;
+      left: -999em;
+      width: 12em !important;
+      top: 0.4em;
+      padding: 0.8em 0.8em !important;
+      background-color: white !important;
+      text-align: left !important;
+      &:focus {
+        left: 0;
+      }
+    }
+  }
+}

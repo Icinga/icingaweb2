@@ -23,6 +23,11 @@ if (Auth::getInstance()->isAuthenticated()): ?>
        </ul>
      </nav>
    </div>
+
+   <div class="auto-refresh-trigger">
+       <?= $this->layout()->autoRefreshForm ?>
+   </div>
+
    <ul id="notifications"><?php
 
 $moduleName = $this->layout()->moduleName;
