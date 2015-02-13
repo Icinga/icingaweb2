@@ -8,6 +8,7 @@ use Icinga\User\Preferences;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
+use Icinga\Web\Url;
 
 /**
  * Form class to adjust user auto refresh preferences
@@ -46,6 +47,7 @@ class AutoRefreshForm extends Form
         Notification::success($notification);
 
         $this->getResponse()->setHeader('X-Icinga-Rerender-Layout', 'yes');
+        $this->setRedirectUrl(Url::fromRequest()->without('renderLayout'));
     }
 
     /**
