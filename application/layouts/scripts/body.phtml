@@ -20,12 +20,11 @@ if (Auth::getInstance()->isAuthenticated()): ?>
          <li>
            <a tabindex="0" href="#navigation"><?= t('Skip to Navigation'); ?></a>
          </li>
+         <li>
+           <?= $this->layout()->autoRefreshForm ?>
+         </li>
        </ul>
      </nav>
-   </div>
-
-   <div class="auto-refresh-trigger">
-       <?= $this->layout()->autoRefreshForm ?>
    </div>
 
    <ul id="notifications"><?php
