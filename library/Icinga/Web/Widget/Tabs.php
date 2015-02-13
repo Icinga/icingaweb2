@@ -19,12 +19,20 @@ class Tabs extends AbstractWidget implements Countable
      * @var string
      */
     private $baseTpl = <<< 'EOT'
+{HEADER}
 <ul class="tabs">
   {TABS}
   {DROPDOWN}
   {CLOSE}
 </ul>
 EOT;
+
+    /**
+     * Template used for the header
+     *
+     * @type string
+     */
+    private $headerTpl = '<h2 class="sr-only">{TITLE}</h2>';
 
     /**
      * Template used for the tabs dropdown
@@ -86,6 +94,13 @@ EOT;
      * @var bool
      */
     private $closeTab = true;
+
+    /**
+     * Title of the tab navigation
+     *
+     * @type string
+     */
+    private $title;
 
     /**
      * Set whether the current tab is closable
@@ -309,11 +324,21 @@ EOT;
         }
         $close = $this->closeTab ? $this->renderCloseTab() : '';
 
-        $html = $this->baseTpl;
-        $html = str_replace('{TABS}', $tabs, $html);
-        $html = str_replace('{DROPDOWN}', $drop, $html);
-        $html = str_replace('{CLOSE}', $close, $html);
-        return $html;
+        return str_replace(
+            array(
+                '{TABS}',
+                '{DROPDOWN}',
+                '{CLOSE}',
+                '{HEADER}'
+            ),
+            array(
+                $tabs,
+                $drop,
+                $close,
+                $this->renderHeader()
+            ),
+            $this->baseTpl
+        );
     }
 
     public function __toString()
@@ -371,5 +396,31 @@ EOT;
     {
         $tabextension->apply($this);
         return $this;
+    }
+
+    /**
+     * Set the title of the tab navigation
+     *
+     * @param   string  $title
+     * @return  self
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * Render the title into the header template
+     *
+     * @return string
+     */
+    public function renderHeader()
+    {
+        if (! $this->title) {
+            return '';
+        }
+
+        return str_replace('{TITLE}', $this->title, $this->headerTpl);
     }
 }

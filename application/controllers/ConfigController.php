@@ -66,6 +66,7 @@ class ConfigController extends ActionController
             $allowedActions[] = 'roles';
         }
         $this->firstAllowedAction = array_shift($allowedActions);
+        $this->getTabs()->setTitle($this->translate('Config Navigation'));
     }
 
     public function devtoolsAction()
