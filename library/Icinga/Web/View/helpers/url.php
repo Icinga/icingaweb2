@@ -27,55 +27,68 @@ $this->addHelperFunction('url', function ($path = null, $params = null) {
     return $url;
 });
 
+$this->addHelperFunction('qlink', function ($title, $url, $params = null, $properties = array(), $escape = true) use ($view) {
+    if (array_key_exists('title', $properties) && !array_key_exists('aria-label', $properties)) {
+        $properties['aria-label'] = $properties['title'];
+    }
 
-$this->addHelperFunction('qlink', function ($title, $url, $params = null, $properties = array()) use ($view) {
     return sprintf(
         '<a href="%s"%s>%s</a>',
         $view->url($url, $params),
         $view->propertiesToString($properties),
-        $view->escape($title)
+        $escape ? $view->escape($title) : $title
     );
 });
 
-$this->addHelperFunction('img', function ($url, array $properties = array()) use ($view) {
+$this->addHelperFunction('img', function ($url, $params = null, array $properties = array()) use ($view) {
     if (! array_key_exists('alt', $properties)) {
         $properties['alt'] = '';
     }
 
+    if (array_key_exists('title', $properties)) {
+        if (! array_key_exists('aria-label', $properties)) {
+            $properties['aria-label'] = $properties['title'];
+        }
+    } elseif (! array_key_exists('aria-hidden', $properties)) {
+        $properties['aria-hidden'] = 'true';
+    }
+
     return sprintf(
         '<img src="%s"%s />',
-        $view->url($url),
+        $view->url($url, $params),
         $view->propertiesToString($properties)
     );
 });
 
 $this->addHelperFunction('icon', function ($img, $title = null, array $properties = array()) use ($view) {
-    $isClass = strpos($img, '.') === false;
-    $class = null;
-
-    if ($isClass) {
-        $class = 'icon-' . $img;
-    } else {
-        $class = 'icon';
-    }
-    if ($title !== null) {
-        $properties['alt'] = $title;
-        $properties['title'] = $title;
-    }
-
-    if ($class !== null) {
-        if (isset($props['class'])) {
-            $properties['class'] .= ' ' . $class;
+    if (strpos($img, '.') !== false) {
+        if (array_key_exists('class', $properties)) {
+            $properties['class'] .= ' icon';
         } else {
-            $properties['class'] = $class;
+            $properties['class'] = 'icon';
         }
-    }
-    if ($isClass) {
-        return sprintf('<i %s ></i>', $view->propertiesToString($properties));
 
-    } else {
         return $view->img('img/icons/' . $img, $properties);
     }
+
+    if ($title !== null) {
+        $properties['role'] = 'img';
+        $properties['title'] = $title;
+
+        if (! array_key_exists('aria-label', $properties)) {
+            $properties['aria-label'] = $title;
+        }
+    } elseif (! array_key_exists('aria-hidden', $properties)) {
+        $properties['aria-hidden'] = 'true';
+    }
+
+    if (isset($properties['class'])) {
+        $properties['class'] .= ' icon-' . $img;
+    } else {
+        $properties['class'] = 'icon-' . $img;
+    }
+
+    return sprintf('<i %s></i>', $view->propertiesToString($properties));
 });
 
 $this->addHelperFunction('propertiesToString', function ($properties) use ($view) {

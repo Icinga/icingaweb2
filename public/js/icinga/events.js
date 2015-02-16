@@ -364,6 +364,7 @@
             var self   = event.data.self;
             var icinga = self.icinga;
             var $a = $(this);
+            var $eventTarget = $(event.target);
             var href = $a.attr('href');
             var linkTarget = $a.attr('target');
             var $target;
@@ -400,9 +401,17 @@
                 return false;
             }
 
-            // Ignore form elements in action rows
-            if ($(event.target).is('input') || $(event.target).is('button')) {
-                return;
+            if (! $eventTarget.is($a)) {
+                if ($eventTarget.is('input') || $eventTarget.is('button')) {
+                    // Ignore form elements in action rows
+                    return;
+                } else {
+                    var $button = $('input[type=submit]:focus').add('button[type=submit]:focus');
+                    if ($button.length > 0 && $.contains($button[0], $eventTarget[0])) {
+                        // Ignore any descendant of form elements
+                        return;
+                    }
+                }
             }
 
             // ignore multiselect table row clicks

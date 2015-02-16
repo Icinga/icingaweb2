@@ -92,7 +92,7 @@
             // TODO: update navigation
             // Did we find any URL? Then push it!
             if (url !== '') {
-                window.history.pushState({icinga: true}, null, this.cleanupUrl(url));
+                this.push(url);
             }
         },
 
@@ -101,15 +101,18 @@
             if (!this.enabled) {
                 return;
             }
-            window.history.pushState({icinga: true}, null, this.cleanupUrl(url));
+            this.push(url);
         },
 
-        cleanupUrl: function(url) {
-            url = url.replace(/_render=[a-z0-9]+&/, '').replace(/&_render=[a-z0-9]+/, '').replace(/\?_render=[a-z0-9]+$/, '');
-            url = url.replace(/_reload=[a-z0-9]+&/, '').replace(/&_reload=[a-z0-9]+/, '').replace(/\?_reload=[a-z0-9]+$/, '');
-            return url;
+        push: function (url) {
+            url = url.replace(/[\?&]?_(render|reload)=[a-z0-9]+/g, '');
+            if (this.lastPushUrl === url) {
+                return;
+            }
+            this.lastPushUrl = url;
+            window.history.pushState({icinga: true}, null, url);
         },
-
+        
         /**
          * Event handler for pop events
          *
@@ -155,7 +158,7 @@
                 icinga.loader.loadUrl(
                     main,
                     $('#col1')
-                ).historyTriggered = true;
+                ).addToHistory = false;
             }
 
             if (document.location.hash && document.location.hash.match(/^#!/)) {
@@ -172,7 +175,7 @@
                         icinga.loader.loadUrl(
                             parts[1],
                             $('#col2')
-                        ).historyTriggered = true;
+                        ).addToHistory = false;
                     }
                 }
 

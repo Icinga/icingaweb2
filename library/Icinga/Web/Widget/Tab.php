@@ -215,9 +215,9 @@ class Tab extends AbstractWidget
 
         if ($this->icon !== null) {
             if (strpos($this->icon, '.') === false) {
-                $caption = $view->icon($this->icon, null, array('aria-hidden' => 'true')) . $caption;
+                $caption = $view->icon($this->icon) . $caption;
             } else {
-                $caption = $view->img($this->icon, array('aria-hidden' => 'true', 'class' => 'icon')) . $caption;
+                $caption = $view->img($this->icon, null, array('class' => 'icon')) . $caption;
             }
         }
         if ($this->url !== null) {

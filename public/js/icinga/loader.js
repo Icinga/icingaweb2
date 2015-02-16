@@ -114,10 +114,10 @@
             req.done(this.onResponse);
             req.fail(this.onFailure);
             req.complete(this.onComplete);
-            req.historyTriggered = false;
             req.autorefresh = autorefresh;
             req.action = action;
             req.failure = false;
+            req.addToHistory = true;
 
             if (id) {
                 this.requests[id] = req;
@@ -420,8 +420,6 @@
                     var $el = $(el);
                     if ($el.hasClass('dashboard')) {
                         return;
-                    } else {
-
                     }
                     var url = $el.data('icingaUrl');
                     targets[i].data('icingaUrl', url);
@@ -555,7 +553,7 @@
 
             // Update history when necessary. Don't do so for requests triggered
             // by history or autorefresh events
-            if (! req.historyTriggered && ! req.autorefresh) {
+            if (! req.autorefresh && req.addToHistory) {
                 if (req.$target.hasClass('container') && ! req.failure) {
                     // We only want to care about top-level containers
                     if (req.$target.parent().closest('.container').length === 0) {
@@ -564,7 +562,7 @@
                 } else {
                     // Request wasn't for a container, so it's usually the body
                     // or the full layout. Push request URL to history:
-                    this.icinga.history.pushUrl(req.url);
+                    this.icinga.history.pushCurrentState();
                 }
             }
 
@@ -594,10 +592,12 @@
 
             req.failure = true;
 
+            req.$target.data('icingaUrl', req.url);
+
             /*
              * Test if a manual actions comes in and autorefresh is active: Stop refreshing
              */
-            if (! req.historyTriggered && ! req.autorefresh && req.$target.data('icingaRefresh') > 0
+            if (req.addToHistory && ! req.autorefresh && req.$target.data('icingaRefresh') > 0
             && req.$target.data('icingaUrl') !== url) {
                 req.$target.data('icingaRefresh', 0);
                 req.$target.data('icingaUrl', url);
@@ -621,6 +621,9 @@
                         'Request to ' + url + ' has been aborted for ',
                         req.$target
                     );
+
+                    // Aborted requests should not be added to browser history
+                    req.addToHistory = false;
                 } else {
                     if (this.failureNotice === null) {
                         this.failureNotice = this.createNotice(

@@ -7,22 +7,6 @@ use Icinga\Authentication\Manager as Auth;
 
 if (Auth::getInstance()->isAuthenticated()): ?>
  <div id="header">
-   <div class="skip-links">
-     <nav>
-       <h1 class="sr-only"><?= t('Accessibility Skip Links'); ?></h1>
-       <ul>
-         <li>
-           <a tabindex="0" href="#main"><?= t('Skip to Content'); ?></a>
-         </li>
-         <li>
-           <a tabindex="0" href="#search"><?= t('Skip to Search'); ?></a>
-         </li>
-         <li>
-           <a tabindex="0" href="#navigation"><?= t('Skip to Navigation'); ?></a>
-         </li>
-       </ul>
-     </nav>
-   </div>
    <ul id="notifications"><?php
 
 $moduleName = $this->layout()->moduleName;
@@ -44,8 +28,9 @@ if ($notifications->hasMessages()) {
     }
 }
    ?></ul>
-   <div id="logo" data-base-target="_main"><a href="<?= $this->href('/dashboard') ?>"><img aria-hidden="true" src="<?= $this->href('img/logo_icinga-inv.png') ?>" class="logo" alt="<?= t('Dashboard') ?>" /></a>
- </div>
+   <div id="logo" data-base-target="_main">
+           <img aria-hidden="true" src="<?= $this->href('img/logo_icinga-inv.png') ?>" class="logo" alt="<?= t('Dashboard') ?>" />
+   </div>
  </div>
 
 <?php if (!$this->layout()->isIframe): ?>

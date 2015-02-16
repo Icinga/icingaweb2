@@ -185,6 +185,17 @@ class PreferenceForm extends Form
             )
         );
 
+        $this->addElement(
+            'checkbox',
+            'auto_refresh',
+            array(
+                'required'      => false,
+                'label'         => $this->translate('Enable auto refresh'),
+                'description'   => $this->translate('This option allows you to enable or to disable the global page content auto refresh'),
+                'value'         => 1
+            )
+        );
+
         if ($this->store) {
             $this->addElement(
                 'submit',
