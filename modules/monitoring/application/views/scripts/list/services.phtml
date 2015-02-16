@@ -90,7 +90,7 @@ foreach ($services as $service):
         <?php endif ?>
 
         <?php if (isset($service->service_last_comment) && $service->service_last_comment !== null): ?>
-        <?= $this->icon('comment', $this->translate('Comment: ') . $service->service_last_comment) ?>
+        <?= $this->icon('comment', $this->translate('Last Comment: ') . $service->service_last_comment) ?>
         <?php endif ?>
 
         <?php if (!$service->service_active_checks_enabled): ?>

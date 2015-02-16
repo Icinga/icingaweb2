@@ -669,7 +669,7 @@ class FilterEditor extends AbstractWidget
             . '" title="'
             . $title
             . '">'
-            . '<i class="icon-filter"></i>'
+            . '<i aria-hidden="true" class="icon-filter"></i>'
             . '</a>';
     }
 

@@ -6,7 +6,7 @@
 <div class="content" data-base-target="_next">
   <p>
     <a href="<?= $this->href('/monitoring/config/createbackend'); ?>">
-      <?= $this->icon('plus', null, array('aria-hidden' => 'true')); ?> <?= $this->translate('Create New Monitoring Backend'); ?>
+      <?= $this->icon('plus'); ?> <?= $this->translate('Create New Monitoring Backend'); ?>
     </a>
   </p>
   <table class="action">
@@ -18,18 +18,26 @@
     <?php foreach ($this->backendsConfig as $backendName => $config): ?>
       <tr>
         <td>
-          <a href="<?= $this->href('/monitoring/config/editbackend', array('backend' => $backendName)); ?>">
-            <?= $this->icon('edit'); ?> <?= $this->escape($backendName); ?>
-          </a>
+          <?= $this->qlink(
+            $this->icon('edit') . ' ' . $this->escape($backendName),
+            '/monitoring/config/editbackend',
+            array('backend' => $backendName),
+            array('title' => sprintf($this->translate('Edit monitoring backend %s'), $backendName)),
+            false
+          ); ?>
           <small>(<?= sprintf(
             $this->translate('Type: %s'),
             $this->escape($config->type === 'ido' ? 'IDO' : ucfirst($config->type))
           ); ?>)</small>
         </td>
         <td>
-          <a href="<?= $this->href('/monitoring/config/removebackend', array('backend' => $backendName)); ?>">
-            <?= $this->icon('cancel'); ?>
-          </a>
+          <?= $this->qlink(
+            $this->icon('cancel'),
+            '/monitoring/config/removebackend',
+            array('backend' => $backendName),
+            array('title' => sprintf($this->translate('Remove monitoring backend %s'), $backendName)),
+            false
+          ); ?>
         </td>
       </tr>
     <?php endforeach; ?>
@@ -38,7 +46,7 @@
   <h1><?= $this->translate('Monitoring Instances') ?></h1>
   <p>
     <a href="<?= $this->href('/monitoring/config/createinstance'); ?>">
-      <?= $this->icon('plus', null, array('aria-hidden' => 'true')); ?> <?= $this->translate('Create New Instance'); ?>
+      <?= $this->icon('plus'); ?> <?= $this->translate('Create New Instance'); ?>
     </a>
   </p>
   <table class="action">
@@ -50,18 +58,26 @@
     <?php foreach ($this->instancesConfig as $instanceName => $config): ?>
       <tr>
         <td>
-          <a href="<?= $this->href('/monitoring/config/editinstance', array('instance' => $instanceName)); ?>">
-            <?= $this->icon('edit'); ?> <?= $this->escape($instanceName); ?>
-          </a>
+          <?= $this->qlink(
+            $this->icon('edit') . ' ' . $this->escape($instanceName),
+            '/monitoring/config/editinstance',
+            array('instance' => $instanceName),
+            array('title' => sprintf($this->translate('Edit monitoring instance %s'), $instanceName)),
+            false
+          ); ?>
           <small>(<?= sprintf(
             $this->translate('Type: %s'),
             $config->host !== null ? $this->translate('Remote') : $this->translate('Local')
           ); ?>)</small>
         </td>
         <td>
-          <a href="<?= $this->href('/monitoring/config/removeinstance', array('instance' => $instanceName)); ?>">
-            <?= $this->icon('cancel'); ?>
-          </a>
+          <?= $this->qlink(
+            $this->icon('cancel'),
+            '/monitoring/config/removeinstance',
+            array('instance' => $instanceName),
+            array('title' => sprintf($this->translate('Remove monitoring instance %s'), $instanceName)),
+            false
+          ); ?>
         </td>
       </tr>
     <?php endforeach; ?>
