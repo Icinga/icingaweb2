@@ -106,7 +106,6 @@
 
         push: function (url) {
             url = url.replace(/[\?&]?_(render|reload)=[a-z0-9]+/g, '');
-            console.log("URL:", url);
             if (this.lastPushUrl === url) {
                 return;
             }
@@ -159,7 +158,7 @@
                 icinga.loader.loadUrl(
                     main,
                     $('#col1')
-                ).historyTriggered = true;
+                ).addToHistory = false;
             }
 
             if (document.location.hash && document.location.hash.match(/^#!/)) {
@@ -176,7 +175,7 @@
                         icinga.loader.loadUrl(
                             parts[1],
                             $('#col2')
-                        ).historyTriggered = true;
+                        ).addToHistory = false;
                     }
                 }
 
