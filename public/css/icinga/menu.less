@@ -284,6 +284,7 @@ a:focus {
         position: absolute;
         display: block;
         left: -999em;
+        box-sizing: content-box;
         width: 10.4em !important;
         top: 0em;
         text-align: left !important;
@@ -293,6 +294,7 @@ a:focus {
         border: 1px @colorGray solid;
         &:focus {
           left: 0;
+          outline: 1px dotted black !important;
         }
       }
     }
