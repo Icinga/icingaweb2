@@ -105,8 +105,8 @@
         },
 
         push: function (url) {
-            url = url.replace(/_render=[a-z0-9]+&/, '').replace(/&_render=[a-z0-9]+/, '').replace(/\?_render=[a-z0-9]+$/, '');
-            url = url.replace(/_reload=[a-z0-9]+&/, '').replace(/&_reload=[a-z0-9]+/, '').replace(/\?_reload=[a-z0-9]+$/, '');
+            url = url.replace(/[\?&]?_(render|reload)=[a-z0-9]+/g, '');
+            console.log("URL:", url);
             if (this.lastPushUrl === url) {
                 return;
             }
