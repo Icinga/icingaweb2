@@ -92,7 +92,7 @@
             // TODO: update navigation
             // Did we find any URL? Then push it!
             if (url !== '') {
-                window.history.pushState({icinga: true}, null, this.cleanupUrl(url));
+                this.push(url);
             }
         },
 
@@ -101,15 +101,19 @@
             if (!this.enabled) {
                 return;
             }
-            window.history.pushState({icinga: true}, null, this.cleanupUrl(url));
+            this.push(url);
         },
 
-        cleanupUrl: function(url) {
+        push: function (url) {
             url = url.replace(/_render=[a-z0-9]+&/, '').replace(/&_render=[a-z0-9]+/, '').replace(/\?_render=[a-z0-9]+$/, '');
             url = url.replace(/_reload=[a-z0-9]+&/, '').replace(/&_reload=[a-z0-9]+/, '').replace(/\?_reload=[a-z0-9]+$/, '');
-            return url;
+            if (this.lastPushUrl === url) {
+                return;
+            }
+            this.lastPushUrl = url;
+            window.history.pushState({icinga: true}, null, url);
         },
-
+        
         /**
          * Event handler for pop events
          *
