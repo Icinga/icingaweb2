@@ -55,16 +55,16 @@ use Icinga\Module\Monitoring\Object\Service;
         </td>
         <td>
         <?php if ($isService): ?>
-          <?= $this->icon('service') ?>
+          <?= $this->icon('service', $this->translate('Service')); ?>
           <?= $this->link()->service(
               $downtime->service, $downtime->service_display_name, $downtime->host, $downtime->host_display_name
           ) ?>
         <?php else: ?>
-          <?= $this->icon('host') ?>
+          <?= $this->icon('host', $this->translate('Host')); ?>
           <?= $this->link()->host($downtime->host, $downtime->host_display_name) ?>
         <?php endif ?>
           <br>
-          <?= $this->icon('comment') ?> [<?= $this->escape($downtime->author) ?>] <?= $this->escape($downtime->comment) ?>
+          <?= $this->icon('comment', $this->translate('Comment')); ?> [<?= $this->escape($downtime->author) ?>] <?= $this->escape($downtime->comment) ?>
           <br>
           <small>
         <?php if ($downtime->is_flexible): ?>

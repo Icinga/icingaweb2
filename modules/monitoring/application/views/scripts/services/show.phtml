@@ -19,21 +19,21 @@
 
         <div>
             <a href="<?= $rescheduleAllLink ?>">
-                <?= $this->icon('reschedule', null, array('aria-hidden' => 'true')) ?>
+                <?= $this->icon('reschedule'); ?>
                 <?= $this->translate('Reschedule service checks') ?>
             </a>
         </div>
 
         <div>
             <a href="<?= $downtimeAllLink ?>">
-                <?= $this->icon('plug', null, array('aria-hidden' => 'true')) ?>
+                <?= $this->icon('plug'); ?>
                 <?= $this->translate('Schedule service downtimes') ?>
             </a>
         </div>
 
         <div>
             <a href="<?= $processCheckResultAllLink; ?>">
-                <?= $this->icon('reply', null, array('aria-hidden' => 'true')); ?>
+                <?= $this->icon('reply'); ?>
                 <?= $this->translate('Submit passive check results'); ?>
             </a>
         </div>
@@ -59,7 +59,7 @@
                 ),
                 $unhandledCount
             ) ?>">
-                <?= $this->icon('plug', null, array('aria-hidden' => 'true')) ?>
+                <?= $this->icon('plug'); ?>
                 <?= sprintf(
                     $this->translatePlural(
                         'Schedule downtime for unhandled service problem',
@@ -79,7 +79,7 @@
                 ),
                 $unhandledCount
             ) ?>">
-                <?= $this->icon('ok', null, array('aria-hidden' => 'true')) ?>
+                <?= $this->icon('ok'); ?>
                 <?= sprintf(
                     $this->translatePlural(
                         'Acknowledge unhandled service problem',
@@ -119,7 +119,7 @@
                         $inDowntimeCount
                     ),
                 $inDowntimeCount) ?>">
-                    <?= $this->icon('plug', null, array('aria-hidden' => 'true')) ?>
+                    <?= $this->icon('plug'); ?>
                     <?= sprintf(
                         $this->translatePlural(
                             'List %u service currently in downtime',
@@ -143,7 +143,7 @@
                     ),
                     $commentCount
                 ) ?>">
-                    <?= $this->icon('comment', null, array('aria-hidden' => 'true')) ?>
+                    <?= $this->icon('comment'); ?>
                     <?= sprintf(
                         $this->translatePlural(
                             'List %u service comment',

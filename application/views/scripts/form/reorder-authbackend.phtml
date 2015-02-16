@@ -10,24 +10,50 @@
 <?php for ($i = 0; $i < count($backendNames); $i++): ?>
       <tr>
         <td class="action">
-          <a href="<?= $this->href('config/editAuthenticationBackend', array('auth_backend' => $backendNames[$i])); ?>">
-            <?= $this->icon('edit'); ?> <?= $this->escape($backendNames[$i]); ?>
-          </a>
+          <?= $this->qlink(
+            $this->icon('edit') . ' ' . $this->escape($backendNames[$i]),
+            'config/editAuthenticationBackend',
+            array('auth_backend' => $backendNames[$i]),
+            array('title' => sprintf($this->translate('Edit authentication backend %s'), $backendNames[$i])),
+            false
+          ); ?>
         </td>
         <td>
-          <a href="<?= $this->href('config/removeAuthenticationBackend', array('auth_backend' => $backendNames[$i])); ?>">
-            <?= $this->icon('cancel', $this->translate('Remove')); ?>
-          </a>
+          <?= $this->qlink(
+            $this->icon('cancel'),
+            'config/removeAuthenticationBackend',
+            array('auth_backend' => $backendNames[$i]),
+            array('title' => sprintf($this->translate('Remove authentication backend %s'), $backendNames[$i])),
+            false
+          ); ?>
         </td>
         <td>
 <?php if ($i > 0): ?>
-          <button type="submit" name="backend_newpos" value="<?= sprintf('%s|%s', $backendNames[$i], $i - 1); ?>">
-            <?= $this->icon('up-big', $this->translate('Move up in authentication order')); ?>
+          <button type="submit" name="backend_newpos" value="<?= sprintf(
+            '%s|%s',
+            $backendNames[$i],
+            $i - 1
+          ); ?>" title="<?= $this->translate(
+            'Move up in authentication order'
+          ); ?>" aria-label="<?= sprintf(
+            $this->translate('Move authentication backend %s upwards'),
+            $backendNames[$i]
+          ); ?>">
+            <?= $this->icon('up-big'); ?>
           </button>
 <?php endif; ?>
 <?php if ($i + 1 < count($backendNames)): ?>
-          <button type="submit" name="backend_newpos" value="<?= sprintf('%s|%s', $backendNames[$i], $i + 1); ?>">
-            <?= $this->icon('down-big', $this->translate('Move down in authentication order')); ?>
+          <button type="submit" name="backend_newpos" value="<?= sprintf(
+            '%s|%s',
+            $backendNames[$i],
+            $i + 1
+          ); ?>" title="<?= $this->translate(
+            'Move down in authentication order'
+          ); ?>" aria-label="<?= sprintf(
+            $this->translate('Move authentication backend %s downwards'),
+            $backendNames[$i]
+          ); ?>">
+            <?= $this->icon('down-big'); ?>
           </button>
 <?php endif; ?>
         </td>

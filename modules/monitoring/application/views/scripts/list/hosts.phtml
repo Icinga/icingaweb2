@@ -74,7 +74,7 @@ if ($hosts->count() === 0) {
     }
 
     if (isset($host->host_last_comment) && $host->host_last_comment !== null) {
-        $icons[] = $this->icon('comment', $this->translate('Comment: ') . $host->host_last_comment);
+        $icons[] = $this->icon('comment', $this->translate('Last Comment: ') . $host->host_last_comment);
     }
     ?>
     <tr class="state <?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">

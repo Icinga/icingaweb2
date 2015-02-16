@@ -1,10 +1,16 @@
 <div class="controls">
     <?= $this->tabs->showOnlyCloseButton() ?>
 </div>
-<h4><?= $this->translate('Create New Authentication Backend'); ?></h4>
-<p>
-  <?= $this->translate(
-    'Create a new backend for authenticating your users. This backend will be added at the end of your authentication order.'
-  ); ?>
-</p>
-<?= $form; ?>
+<div class="content">
+    <h1 tabindex="0" id="authentication-create">
+        <?= $this->translate('Create New Authentication Backend'); ?>
+    </h1>
+    <p>
+        <?= $this->translate(
+            'Create a new backend for authenticating your users. This backend will be added at the end of your authentication order.'
+        ); ?>
+    </p>
+    <div>
+        <?= $form; ?>
+    </div>
+</div>
