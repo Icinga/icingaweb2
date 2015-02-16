@@ -42,11 +42,11 @@
 
             <span>
                 <?php if ($this->trend->trend === 'up'): ?>
-                    <?= $this->icon('up-open', null, array('aria-hidden' => 'true')); ?>
+                    <?= $this->icon('up-open'); ?>
                 <?php elseif ($this->trend->trend === 'unchanged'): ?>
-                    <?= $this->icon('right-open', null, array('aria-hidden' => 'true')); ?>
+                    <?= $this->icon('right-open'); ?>
                 <?php else: ?>
-                    <?= $this->icon('down-open', null, array('aria-hidden' => 'true')); ?>
+                    <?= $this->icon('down-open'); ?>
                 <?php endif; ?>
             </span>
         </div>
