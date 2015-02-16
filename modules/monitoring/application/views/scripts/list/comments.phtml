@@ -50,16 +50,16 @@
         </td>
         <td>
         <?php if ($comment->objecttype === 'service'): ?>
-          <?= $this->icon('service') ?>
+          <?= $this->icon('service', $this->translate('Service')); ?>
           <?= $this->link()->service(
               $comment->service, $comment->service_display_name, $comment->host, $comment->host_display_name
           ) ?>
         <?php else: ?>
-          <?= $this->icon('host') ?>
+          <?= $this->icon('host', $this->translate('Host')); ?>
           <?= $this->link()->host($comment->host, $comment->host_display_name) ?>
         <?php endif ?>
           <br>
-          <?= $this->icon('comment', null, array('aria-hidden' => 'true')); ?> <?= isset($comment->author)
+          <?= $this->icon('comment', $this->translate('Comment')); ?> <?= isset($comment->author)
             ? '[' . $comment->author . '] '
             : '';
           ?><?= $this->escape($comment->comment); ?>
