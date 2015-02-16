@@ -10,6 +10,7 @@ use Icinga\Authentication\Manager;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\File\Pdf;
+use Icinga\Forms\AutoRefreshForm;
 use Icinga\Security\SecurityException;
 use Icinga\Util\Translator;
 use Icinga\Web\Notification;
@@ -380,6 +381,16 @@ class ActionController extends Zend_Controller_Action
     }
 
     /**
+     * @see Zend_Controller_Action::preDispatch()
+     */
+    public function preDispatch()
+    {
+        $form = new AutoRefreshForm();
+        $form->handleRequest();
+        $this->_helper->layout()->autoRefreshForm = $form;
+    }
+
+    /**
      * Detect whether the current request requires changes in the layout and apply them before rendering
      *
      * @see Zend_Controller_Action::postDispatch()
@@ -398,6 +409,10 @@ class ActionController extends Zend_Controller_Action
                 if (!$this->_helper->viewRenderer->getNoRender()) {
                     $layout->benchmark = $this->renderBenchmark();
                 }
+            }
+
+            if ((bool) $user->getPreferences()->getValue('icingaweb', 'auto_refresh', true) === false) {
+                $this->disableAutoRefresh();
             }
         }
 

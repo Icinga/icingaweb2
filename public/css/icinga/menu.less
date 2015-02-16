@@ -280,26 +280,26 @@ a:focus {
       display: inline;
       margin: 0;
       padding: 0;
-      a {
+      a, button[type="submit"] {
         position: absolute;
         display: block;
         left: -999em;
-        width: 10.4em;
+        box-sizing: content-box;
+        width: 10.4em !important;
         top: 0em;
+        text-align: left !important;
         padding: 0.8em;
         background-color: white;
         z-index: 4;
         border: 1px @colorGray solid;
         &:focus {
           left: 0;
+          outline: 1px dotted black !important;
         }
       }
     }
   }
 }
 .skip-links-inline {
-  margin-top: -4em;
-  ul > li > a {
-    width: 16em;
-  }
+  margin-top: -3.5em;
 }

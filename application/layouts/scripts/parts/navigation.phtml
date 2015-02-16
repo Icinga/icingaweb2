@@ -16,6 +16,9 @@ if (! $this->auth()->isAuthenticated()) {
         <li>
             <a tabindex="0" href="#main"><?= t('Skip to Content'); ?></a>
         </li>
+        <li>
+            <?= $this->layout()->autoRefreshForm ?>
+        </li>
     </ul>
 </div>
 <div  id="menu" data-last-update="<?= (time() - 14) ?>000" data-base-target="_main" class="container"
