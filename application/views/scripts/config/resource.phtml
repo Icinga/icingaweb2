@@ -36,14 +36,24 @@
     <?php foreach ($this->resources as $name): ?>
       <tr>
         <td>
-          <a href="<?= $this->href('config/editresource', array('resource' => $name)); ?>">
-            <?= $this->icon('edit'); ?> <?= $this->escape($name); ?>
-          </a>
+          <?= $this->qlink(
+            $this->icon('edit') . ' ' . $this->escape($name),
+            'config/editresource',
+            array('resource' => $name),
+            array('title' => sprintf($this->translate('Edit resource %s'), $name)),
+            false
+          ); ?>
         </td>
-        <td style="text-align: center">
-          <a href="<?= $this->href('config/removeresource', array('resource' => $name)); ?>">
-            <?= $this->icon('cancel'); ?>
-          </a>
+        <td>
+          <center>
+            <?= $this->qlink(
+              $this->icon('cancel'),
+              'config/removeresource',
+              array('resource' => $name),
+              array('title' => sprintf($this->translate('Remove resource %s'), $name)),
+              false
+            ); ?>
+          </center>
         </td>
       </tr>
     <?php endforeach; ?>
