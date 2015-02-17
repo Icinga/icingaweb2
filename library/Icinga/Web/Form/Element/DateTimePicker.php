@@ -4,7 +4,6 @@
 namespace Icinga\Web\Form\Element;
 
 use DateTime;
-use Icinga\Web\Form;
 use Icinga\Web\Form\FormElement;
 use Icinga\Web\Form\Validator\DateTimeValidator;
 
@@ -126,10 +125,17 @@ class DateTimePicker extends FormElement
         if (! parent::isValid($value, $context)) {
             return false;
         }
+
         if (! $value instanceof DateTime) {
             $format = $this->local === true ? 'Y-m-d\TH:i:s' : DateTime::RFC3339;
-            $this->setValue(DateTime::createFromFormat($format, $value));
+            $dateTime = DateTime::createFromFormat($format, $value);
+            if ($dateTime === false) {
+                $dateTime = DateTime::createFromFormat(substr($format, 0, strrpos($format, ':')), $value);
+            }
+
+            $this->setValue($dateTime);
         }
+
         return true;
     }
 }
