@@ -63,13 +63,13 @@
                         <td><?= $this->escape($role->users) ?></td>
                         <td><?= $this->escape($role->groups) ?></td>
                         <td>
-                            <a href="<?= $this->url('roles/remove', array('role' => $name)) ?>"
-                               title="<?= sprintf(
-                                   $this->translate('Remove role %s'),
-                                   $name
-                               ) ?>">
-                                <?= $this->icon('cancel') ?>
-                            </a>
+                            <?= $this->qlink(
+                                $this->icon('cancel'),
+                                'roles/remove',
+                                array('role' => $name),
+                                array('title' => sprintf($this->translate('Remove role %s'), $name)),
+                                false
+                            ); ?>
                         </td>
                     </tr>
                 <?php endforeach ?>

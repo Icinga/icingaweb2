@@ -57,14 +57,22 @@ class DateTimeValidator extends Zend_Validate_Abstract
             $this->_error(self::INVALID_DATETIME_TYPE);
             return false;
         }
-        if (is_string($value)) {
-            $format = $this->local === true ? 'Y-m-d\TH:i:s' : DateTime::RFC3339;
+
+        if (! $value instanceof DateTime) {
+            $format = $baseFormat = $this->local === true ? 'Y-m-d\TH:i:s' : DateTime::RFC3339;
             $dateTime = DateTime::createFromFormat($format, $value);
+
+            if ($dateTime === false) {
+                $format = substr($format, 0, strrpos($format, ':'));
+                $dateTime = DateTime::createFromFormat($format, $value);
+            }
+
             if ($dateTime === false || $dateTime->format($format) !== $value) {
-                $this->_error(self::INVALID_DATETIME_FORMAT, DateTimeFactory::create()->format($format));
+                $this->_error(self::INVALID_DATETIME_FORMAT, DateTimeFactory::create()->format($baseFormat));
                 return false;
             }
         }
+
         return true;
     }
 }

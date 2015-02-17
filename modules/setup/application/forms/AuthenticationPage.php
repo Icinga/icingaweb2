@@ -41,7 +41,7 @@ class AuthenticationPage extends Form
                 'note',
                 'external_note',
                 array(
-                    'value'         => $this->translate(
+                    'value'         => '<i aria-hidden="true" class="icon-info"></i>' . $this->translate(
                         'You\'re currently not authenticated using any of the web server\'s authentication '
                         . 'mechanisms. Make sure you\'ll configure such, otherwise you\'ll not be able to '
                         . 'log into Icinga Web 2.'
@@ -50,7 +50,7 @@ class AuthenticationPage extends Form
                         'ViewHelper',
                         array(
                             'HtmlTag',
-                            array('tag' => 'p', 'class' => 'icon-info info-box')
+                            array('tag' => 'p', 'class' => 'info-box')
                         )
                     )
                 )

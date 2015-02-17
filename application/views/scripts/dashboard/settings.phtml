@@ -1,5 +1,3 @@
-<?php
-?>
 <div class="controls">
     <?= $this->tabs ?>
 </div>
@@ -25,9 +23,13 @@
                         <?= $pane->getName(); ?>
                     </th>
                     <th>
-                        <a href="<?= $this->href('dashboard/remove-pane', array('pane' => $pane->getName()));  ?>">
-                            <?= $this->icon('cancel'); ?>
-                        </a>
+                        <?= $this->qlink(
+                            $this->icon('cancel'),
+                            'dashboard/remove-pane',
+                            array('pane' => $pane->getName()),
+                            array('title' => sprintf($this->translate('Remove pane %s'), $pane->getName())),
+                            false
+                        ); ?>
                     </th>
                 </tr>
                 <?php $dashlets = $pane->getDashlets(); ?>
@@ -50,9 +52,13 @@
                                 <a href="<?= $this->href($dashlet->getUrl()); ?>"><?= $dashlet->getUrl(); ?></a>
                             </td>
                             <td>
-                                <a href="<?= $this->href('dashboard/remove-dashlet', array('pane' => $pane->getName(), 'dashlet' => $dashlet->getTitle()));  ?>">
-                                <?= $this->icon('cancel'); ?>
-                                </a>
+                                <?= $this->qlink(
+                                    $this->icon('cancel'),
+                                    'dashboard/remove-dashlet',
+                                    array('pane' => $pane->getName(), 'dashlet' => $dashlet->getTitle()),
+                                    array('title' => sprintf($this->translate('Remove dashlet %s from pane %s'), $dashlet->getTitle(), $pane->getName())),
+                                    false
+                                ); ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

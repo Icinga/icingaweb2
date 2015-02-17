@@ -11,7 +11,7 @@ foreach ($object->hostgroups as $name => $alias) {
 printf(
     "<tr><th>%s</th><td>%s %s</td></tr>\n",
     $this->translate('Hostgroups'),
-    $this->icon('host', null, array('aria-hidden' => 'true')),
+    $this->icon('host'),
     implode(', ', $list)
 );
 

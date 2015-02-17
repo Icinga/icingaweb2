@@ -10,17 +10,24 @@
   <?php foreach ($modules as $module): ?>
     <tr>
       <td>
-      <?php if ($module->enabled): ?>
-      <?= $this->icon('thumbs-up', $this->translate('Module is enabled')) ?>
-      <?php else: ?>
-      <?= $this->icon('thumbs-down', $this->translate('Module is disabled')) ?>
-      <?php endif ?>
-        <a href="<?= $this->url(
-            'config/module/',
-            array('name' => $module->name)
-        ) ?>"><?= $this->escape($module->name); ?></a> (<?=
-            $module->enabled ? ($module->loaded ? $this->translate('enabled') : $this->translate('failed')) : $this->translate('disabled')
-        ?>)
+        <?php if ($module->enabled && $module->loaded) {
+          $icon = $this->icon('thumbs-up');
+          $title = sprintf($this->translate('Module %s is enabled'), $module->name);
+        } elseif (! $module->enabled) {
+          $icon = $this->icon('thumbs-down');
+          $title = sprintf($this->translate('Module %s is disabled'), $module->name);
+        } else { // ! $module->loaded
+          $icon = $this->icon('thumbs-down');
+          $title = sprintf($this->translate('Module %s has failed to load'), $module->name);
+        }
+
+        echo $this->qlink(
+          $icon . $this->escape($module->name),
+          'config/module/',
+          array('name' => $module->name),
+          array('title' => $title),
+          false
+        ); ?>
       </td>
     </tr>
   <?php endforeach ?>

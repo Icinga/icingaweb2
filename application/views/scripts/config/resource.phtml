@@ -20,7 +20,7 @@
   </h2>
   <p>
     <a href="<?= $this->href('/config/createresource'); ?>">
-      <?= $this->icon('plus', null, array('aria-hidden' => 'true')); ?> <?= $this->translate('Create A New Resource'); ?>
+      <?= $this->icon('plus'); ?> <?= $this->translate('Create A New Resource'); ?>
     </a>
   </p>
   <h2 tabindex="-1" id="resource-edit-resource" class="sr-only">
@@ -35,14 +35,24 @@
     <?php foreach ($this->resources as $name): ?>
       <tr>
         <td>
-          <a href="<?= $this->href('config/editresource', array('resource' => $name)); ?>">
-            <?= $this->icon('edit'); ?> <?= $this->escape($name); ?>
-          </a>
+          <?= $this->qlink(
+            $this->icon('edit') . ' ' . $this->escape($name),
+            'config/editresource',
+            array('resource' => $name),
+            array('title' => sprintf($this->translate('Edit resource %s'), $name)),
+            false
+          ); ?>
         </td>
-        <td style="text-align: center">
-          <a href="<?= $this->href('config/removeresource', array('resource' => $name)); ?>">
-            <?= $this->icon('cancel'); ?>
-          </a>
+        <td>
+          <center>
+            <?= $this->qlink(
+              $this->icon('cancel'),
+              'config/removeresource',
+              array('resource' => $name),
+              array('title' => sprintf($this->translate('Remove resource %s'), $name)),
+              false
+            ); ?>
+          </center>
         </td>
       </tr>
     <?php endforeach; ?>

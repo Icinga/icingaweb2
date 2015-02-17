@@ -10,22 +10,9 @@
         .icon-star:before {
             content: "★";
         }
-        .sr-only {
-            border: 0;
-            clip: rect(0 0 0 0);
-            height: 1px;
-            margin: -1px;
-            overflow: hidden;
-            padding: 0;
-            position: absolute;
-            width: 1px;
-        }
     </style>
 </head>
 <body>
-<span tabindex="0">
-    <i class="icon-star" aria-hidden="true"></i>
-    <span class="sr-only">Top rated article</span>
-</span>
+    <i role="img" class="icon-star" aria-label="Top rated article" title="Top rated article"></i>
 </body>
 </html>

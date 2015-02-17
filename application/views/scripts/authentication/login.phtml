@@ -7,7 +7,7 @@
   <div class="form" data-base-target="layout">
     <h1><?= $this->translate('Welcome to Icinga Web 2'); ?></h1>
     <?php if ($requiresSetup): ?>
-    <p tabindex="0" class="config-note"><?= sprintf(
+    <p class="config-note"><?= sprintf(
       $this->translate(
         'It appears that you did not configure Icinga Web 2 yet so it\'s not possible to log in without any defined '
         . 'authentication method. Please define a authentication method by following the instructions in the'
@@ -18,7 +18,7 @@
       '</a>'
     ); ?></p>
     <?php elseif ($requiresExternalAuth): ?>
-    <p tabindex="0" class="info-box"><i aria-hidden="true" class="icon-info"></i><?= $this->translate(
+    <p class="info-box"><?= $this->icon('icon-info'); ?><?= $this->translate(
       'You\'re currently not authenticated using any of the web server\'s authentication mechanisms.'
       . ' Make sure you\'ll configure such, otherwise you\'ll not be able to login.'
     ); ?></p>
