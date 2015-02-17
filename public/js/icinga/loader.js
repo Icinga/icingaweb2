@@ -675,7 +675,6 @@
             // Container update happens here
             var scrollPos = false;
             var self = this;
-            var origFocus = self.icinga.utils.getDomPath(document.activeElement);
             var containerId = $container.attr('id');
             if (typeof containerId !== 'undefined') {
                 if (autorefresh) {
@@ -683,6 +682,9 @@
                 } else {
                     scrollPos = 0;
                 }
+            }
+            if (autorefresh && $.contains($container[0], document.activeElement)) {
+                var origFocus = self.icinga.utils.getDomPath(document.activeElement);
             }
 
             $container.trigger('beforerender');
@@ -740,7 +742,7 @@
             }
             this.icinga.ui.assignUniqueContainerIds();
 
-            if (origFocus.length == origFocus[0] !== '') {
+            if (origFocus && origFocus.length > 0 && origFocus[0] !== '') {
                 setTimeout(function() {
                     $(self.icinga.utils.getElementByDomPath(origFocus)).focus();
                 }, 0);
