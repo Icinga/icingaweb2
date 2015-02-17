@@ -341,6 +341,8 @@ class Monitoring_AlertsummaryController extends Controller
     public function createHealingChart()
     {
         $gridChart = new GridChart();
+        $gridChart->title = t('Healing Chart');
+        $gridChart->description = t('Notifications and average reaction time per hour.');
 
         $gridChart->alignTopLeft();
         $gridChart->setAxisLabel($this->createPeriodDescription(), mt('monitoring', 'Notifications'))
@@ -477,6 +479,8 @@ class Monitoring_AlertsummaryController extends Controller
     public function createDefectImage()
     {
         $gridChart = new GridChart();
+        $gridChart->title = t('Defect Chart');
+        $gridChart->description = t('Notifications and defects per hour');
 
         $gridChart->alignTopLeft();
         $gridChart->setAxisLabel($this->createPeriodDescription(), mt('monitoring', 'Notifications'))

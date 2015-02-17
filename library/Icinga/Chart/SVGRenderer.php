@@ -49,6 +49,27 @@ class SVGRenderer
     private $svg;
 
     /**
+     * The description of this SVG, useful for screen readers
+     *
+     * @var string
+     */
+    private $ariaDescription;
+
+    /**
+     * The title of this SVG, useful for screen readers
+     *
+     * @var string
+     */
+    private $ariaTitle;
+
+    /**
+     * The aria role used by this svg element
+     *
+     * @var string
+     */
+    private $ariaRole = 'img';
+
+    /**
      * The root layer for all elements
      *
      * @var Canvas
@@ -126,6 +147,7 @@ class SVGRenderer
         $svg = $this->document->createElement('svg');
         $svg->setAttribute('xmlns', 'http://www.w3.org/2000/svg');
         $svg->setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+        $svg->setAttribute('role', $this->ariaRole);
         $svg->setAttribute('width', '100%');
         $svg->setAttribute('height', '100%');
         $svg->setAttribute(
@@ -151,6 +173,42 @@ class SVGRenderer
     }
 
     /**
+     * Add aria title and description
+     *
+     * Adds an aria title and desc element to the given SVG node, which are used to describe this SVG by accessibility
+     * tools such as screen readers.
+     *
+     * @param DOMNode $svg          The SVG DOMNode to which the aria attributes should be attached
+     * @param         $title        The title text
+     * @param         $description  The description text
+     */
+    private function addAriaDescription (DOMNode $svg, $titleText, $descriptionText)
+    {
+        $doc = $svg->ownerDocument;
+
+        $titleId = $descId = '';
+        if (isset ($this->ariaTitle)) {
+            $titleId = 'aria-title-' . $this->stripNonAlphanumeric($titleText);
+            $title = $doc->createElement('title');
+            $title->setAttribute('id', $titleId);
+
+            $title->appendChild($doc->createTextNode($titleText));
+            $svg->appendChild($title);
+        }
+
+        if (isset ($this->ariaDescription)) {
+            $descId = 'aria-desc-' . $this->stripNonAlphanumeric($descriptionText);
+            $desc = $doc->createElement('desc');
+            $desc->setAttribute('id', $descId);
+
+            $desc->appendChild($doc->createTextNode($descriptionText));
+            $svg->appendChild($desc);
+        }
+
+        $svg->setAttribute('aria-labelledby', join(' ', array($titleId, $descId)));
+    }
+
+    /**
      * Initialises the XML-document, SVG-element and this figure's root canvas
      *
      * @param int $width    The width ratio
@@ -172,6 +230,7 @@ class SVGRenderer
     {
         $this->createRootDocument();
         $ctx = $this->createRenderContext();
+        $this->addAriaDescription($this->svg, $this->ariaTitle, $this->ariaDescription);
         $this->svg->appendChild($this->rootCanvas->toSvg($ctx));
         $this->document->formatOutput = true;
         return $this->document->saveXML();
@@ -231,5 +290,41 @@ class SVGRenderer
     public function setYAspectRatioAlignment($alignment)
     {
         $this->yAspectRatio = $alignment;
+    }
+
+    /**
+     * Set the aria description, that is used as a title for this SVG in screen readers
+     *
+     * @param $text
+     */
+    public function setAriaTitle($text)
+    {
+        $this->ariaTitle = $text;
+    }
+
+    /**
+     * Set the aria description, that is used to describe this SVG in screen readers
+     *
+     * @param $text
+     */
+    public function setAriaDescription($text)
+    {
+        $this->ariaDescription = $text;
+    }
+
+    /**
+     * Set the aria role, that is used to describe the purpose of this SVG in screen readers
+     *
+     * @param $text
+     */
+    public function setAriaRole($text)
+    {
+        $this->ariaRole = $text;
+    }
+
+
+    private function stripNonAlphanumeric($str)
+    {
+        return preg_replace('/[^A-Za-z]+/', '', $str);
     }
 }

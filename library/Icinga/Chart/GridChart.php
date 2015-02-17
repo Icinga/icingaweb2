@@ -84,6 +84,13 @@ class GridChart extends Chart
      */
     private $tooltips = array();
 
+    public function __construct()
+    {
+        $this->title = t('Grid Chart');
+        $this->description = t('Contains data in a bar or line chart.');
+        parent::__construct();
+    }
+
     /**
      * Check if the current dataset has the proper structure for this chart.
      *
