@@ -39,6 +39,8 @@ class Monitoring_AlertsummaryController extends Controller
 
         $this->notificationData = $this->createNotificationData();
         $this->problemData = $this->createProblemData();
+
+        $tabs->setTitle($this->translate('Alertsummary Navigation'));
     }
 
     /**
