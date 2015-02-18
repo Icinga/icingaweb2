@@ -270,7 +270,7 @@ a:focus {
 
 /* Accessibility Skip Links */
 .skip-links {
-  position: absolute;
+  position: relative;
   opacity: 1;
   ul {
     list-style-type: none;
@@ -286,7 +286,6 @@ a:focus {
         left: -999em;
         box-sizing: content-box;
         width: 10.4em !important;
-        top: 0em;
         text-align: left !important;
         padding: 0.8em;
         background-color: white;
@@ -301,8 +300,8 @@ a:focus {
   }
 }
 .skip-links-inline {
-  margin-top: -2em;
   ul > li > a {
     width: 14em !important;
+    top: -3em;
   }
 }
