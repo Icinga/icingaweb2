@@ -44,7 +44,6 @@ EOD;
 </noscript>
 EOD;
 
-
     /**
      * @var Url
      */

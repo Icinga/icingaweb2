@@ -402,7 +402,12 @@ class GridChart extends Chart
                         );
                         break;
                     case self::TYPE_LINE:
-                        $graphObj = new LineGraph($axis->transform($graph['data']));
+                        $graphObj = new LineGraph(
+                            $axis->transform($graph['data']),
+                            $graphs,
+                            $dataset,
+                            $this->tooltips
+                        );
                         break;
                     default:
                         continue;
