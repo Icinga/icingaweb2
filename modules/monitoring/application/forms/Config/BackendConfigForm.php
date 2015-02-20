@@ -43,8 +43,11 @@ class BackendConfigForm extends ConfigForm
     {
         $resources = array();
         foreach ($resourceConfig as $name => $resource) {
-            if ($resource->type === 'db' || $resource->type === 'livestatus') {
-                $resources[$resource->type === 'db' ? 'ido' : 'livestatus'][$name] = $name;
+//            if ($resource->type === 'db' || $resource->type === 'livestatus') {
+//                $resources[$resource->type === 'db' ? 'ido' : 'livestatus'][$name] = $name;
+//            }
+            if ($resource->type === 'db') {
+                $resources['ido'][$name] = $name;
             }
         }
 
@@ -183,13 +186,19 @@ class BackendConfigForm extends ConfigForm
     {
         $resourceType = isset($formData['type']) ? $formData['type'] : key($this->resources);
 
+        if ($resourceType === 'livestatus') {
+            throw new ConfigurationError(
+                'We\'ve disabled livestatus support for now because it\'s not feature complete yet'
+            );
+        }
+
         $resourceTypes = array();
         if ($resourceType === 'ido' || array_key_exists('ido', $this->resources)) {
             $resourceTypes['ido'] = 'IDO Backend';
         }
-        if ($resourceType === 'livestatus' || array_key_exists('livestatus', $this->resources)) {
-            $resourceTypes['livestatus'] = 'Livestatus';
-        }
+//        if ($resourceType === 'livestatus' || array_key_exists('livestatus', $this->resources)) {
+//            $resourceTypes['livestatus'] = 'Livestatus';
+//        }
 
         $this->addElement(
             'checkbox',
