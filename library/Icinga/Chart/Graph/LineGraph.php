@@ -39,6 +39,13 @@ class LineGraph extends Styleable implements Drawable
     private $isDiscrete = false;
 
     /**
+     * The tooltips
+     *
+     * @var
+     */
+    private $tooltips;
+
+    /**
      * The default stroke width
      * @var int
      */
@@ -56,10 +63,22 @@ class LineGraph extends Styleable implements Drawable
      *
      * @param array $dataset An array of [x, y] arrays to display
      */
-    public function __construct(array $dataset)
-    {
+    public function __construct(
+        array $dataset,
+        array &$graphs,
+        $order,
+        array $tooltips = null
+    ) {
         usort($dataset, array($this, 'sortByX'));
         $this->dataset = $dataset;
+        $this->graphs = $graphs;
+
+        $this->tooltips = $tooltips;
+        foreach ($this->tooltips as $value) {
+            $ts[] = $value;
+        }
+        $this->tooltips = $ts;
+        $this->order = $order;
     }
 
     /**
@@ -142,14 +161,41 @@ class LineGraph extends Styleable implements Drawable
         $path->setAdditionalStyle('clip-path: url(#clip);');
         $path->setId($this->id);
         $group = $path->toSvg($ctx);
-        if ($this->showDataPoints === true) {
-            foreach ($this->dataset as $point) {
-                $dot = new Circle($point[0], $point[1], $this->dotWith);
-                $dot->setFill($this->strokeColor);
 
-                $group->appendChild($dot->toSvg($ctx));
+            foreach ($this->dataset as $x => $point) {
+
+                if ($this->showDataPoints === true) {
+                    $dot = new Circle($point[0], $point[1], $this->dotWith);
+                    $dot->setFill($this->strokeColor);
+                    $group->appendChild($dot->toSvg($ctx));
+                }
+
+                // Draw invisible circle for tooltip hovering
+                $invisible = new Circle($point[0], $point[1], 20);
+                $invisible->setFill($this->strokeColor);
+                $invisible->setAdditionalStyle('opacity: 0.0;');
+                $invisible->setAttribute('class', 'chart-data');
+                if (isset($this->tooltips[$x])) {
+                    $data = array(
+                        'label' => isset($this->graphs[$this->order]['label']) ?
+                                strtolower($this->graphs[$this->order]['label']) : '',
+                        'color' => isset($this->graphs[$this->order]['color']) ?
+                                strtolower($this->graphs[$this->order]['color']) : '#fff'
+                    );
+                    $format = isset($this->graphs[$this->order]['tooltip'])
+                        ? $this->graphs[$this->order]['tooltip'] : null;
+                    $invisible->setAttribute(
+                        'title',
+                        $this->tooltips[$x]->renderNoHtml($this->order, $data, $format)
+                    );
+                    $invisible->setAttribute(
+                        'data-title-rich',
+                        $this->tooltips[$x]->render($this->order, $data, $format)
+                    );
+                }
+                $group->appendChild($invisible->toSvg($ctx));
             }
-        }
+
         return $group;
     }
 }

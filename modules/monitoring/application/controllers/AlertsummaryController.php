@@ -341,6 +341,8 @@ class Monitoring_AlertsummaryController extends Controller
     public function createHealingChart()
     {
         $gridChart = new GridChart();
+        $gridChart->title = t('Healing Chart');
+        $gridChart->description = t('Notifications and average reaction time per hour.');
 
         $gridChart->alignTopLeft();
         $gridChart->setAxisLabel($this->createPeriodDescription(), mt('monitoring', 'Notifications'))
@@ -444,7 +446,8 @@ class Monitoring_AlertsummaryController extends Controller
                 'label' => $this->translate('Notifications'),
                 'color' => '#07C0D9',
                 'data'  =>  $notifications,
-                'showPoints' => true
+                'showPoints' => true,
+                'tooltip' => '<b>{title}:</b> {value} {label}'
             )
         );
 
@@ -453,7 +456,8 @@ class Monitoring_AlertsummaryController extends Controller
                 'label' => $this->translate('Avg (min)'),
                 'color' => '#ffaa44',
                 'data'  =>  $dAvg,
-                'showPoints' => true
+                'showPoints' => true,
+                'tooltip' => t('<b>{title}:</b> {value}m min. reaction time')
             )
         );
 
@@ -462,7 +466,8 @@ class Monitoring_AlertsummaryController extends Controller
                 'label' => $this->translate('Max (min)'),
                 'color' => '#ff5566',
                 'data'  =>  $dMax,
-                'showPoints' => true
+                'showPoints' => true,
+                'tooltip' => t('<b>{title}:</b> {value}m max. reaction time')
             )
         );
 
@@ -477,6 +482,8 @@ class Monitoring_AlertsummaryController extends Controller
     public function createDefectImage()
     {
         $gridChart = new GridChart();
+        $gridChart->title = t('Defect Chart');
+        $gridChart->description = t('Notifications and defects per hour');
 
         $gridChart->alignTopLeft();
         $gridChart->setAxisLabel($this->createPeriodDescription(), mt('monitoring', 'Notifications'))
@@ -489,7 +496,8 @@ class Monitoring_AlertsummaryController extends Controller
                 'label' => $this->translate('Notifications'),
                 'color' => '#07C0D9',
                 'data'  =>  $this->notificationData,
-                'showPoints' => true
+                'showPoints' => true,
+                'tooltip' => '<b>{title}:</b> {value} {label}'
             )
         );
 
@@ -498,7 +506,8 @@ class Monitoring_AlertsummaryController extends Controller
                 'label' => $this->translate('Defects'),
                 'color' => '#ff5566',
                 'data'  =>  $this->problemData,
-                'showPoints' => true
+                'showPoints' => true,
+                'tooltip' => '<b>{title}:</b> {value} {label}'
             )
         );
 
