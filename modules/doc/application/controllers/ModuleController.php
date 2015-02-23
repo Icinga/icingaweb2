@@ -52,7 +52,7 @@ class Doc_ModuleController extends DocController
         foreach ($moduleManager->listEnabledModules() as $module) {
             $path = $this->getPath($module, $moduleManager->getModuleDir($module, '/doc'), true);
             if ($path !== null) {
-                $modules[] = $module;
+                $modules[] = $moduleManager->getModule($module);
             }
         }
         $this->view->modules = $modules;
