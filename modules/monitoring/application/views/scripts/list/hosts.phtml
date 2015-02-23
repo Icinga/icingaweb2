@@ -96,11 +96,18 @@ if ($hosts->count() === 0) {
         <?= $this->icon($this->resolveMacros($host->host_icon_image, $host)) ?>
         <?php endif ?>
         <?= implode(' ', $icons) ?>
-        <a href="<?= $hostLink  ?>"><?= $this->escape($host->host_display_name) ?></a>
+        <?= $this->qlink(
+          $host->host_display_name,
+          $hostLink,
+          null,
+          array(
+            'title' => sprintf($this->translate('Show detailed information for host %s'), $host->host_display_name)
+          )
+        ); ?>
         <?php if (isset($host->host_unhandled_services) && $host->host_unhandled_services > 0): ?>
         <span> (<?= $this->qlink(
           sprintf(
-            $this->translatePlural('%d unhandled service', '%d unhandled services', $host->host_unhandled_services),
+            $this->translatePlural('%u unhandled service', '%u unhandled services', $host->host_unhandled_services),
             $host->host_unhandled_services
           ),
           'monitoring/show/services',
@@ -113,8 +120,8 @@ if ($hosts->count() === 0) {
             'style' => 'font-weight: normal',
             'title' => sprintf(
               $this->translatePlural(
-                'List %s service problem on host %s',
-                'List %s service problems on host %s',
+                'List %s unhandled service problem on host %s',
+                'List %s unhandled service problems on host %s',
                 $host->host_unhandled_services
               ),
               $host->host_unhandled_services,
