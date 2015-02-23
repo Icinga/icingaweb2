@@ -1,159 +1,129 @@
 <div class="controls">
-    <?= $this->render('partials/service/objects-header.phtml') ?>
+    <?= $this->render('partials/service/objects-header.phtml'); ?>
 </div>
 <div class="content">
     <?php if (($serviceCount = count($objects)) === 0): ?>
-        <?= $this->translate('No services matching the filter') ?>
+        <?= $this->translate('No services matching the filter'); ?>
     <?php else: ?>
-
+        <h3><?= sprintf($this->translatePlural('%u Service', '%u Services', $serviceCount), $serviceCount); ?></h3>
+        <div><?= $this->qlink(
+            sprintf($this->translate('List all %u services'), $serviceCount),
+            $listAllLink
+        ); ?></div>
         <div>
-            <a href="<?= $listAllLink ?>" title="<?= sprintf($this->translate('List all %u services'), $serviceCount) ?>">
-                <?= $this->translate('List all') ?>
-            </a>
+            <?= $checkNowForm; ?>
         </div>
-
-
+        <div><?= $this->qlink(
+            $this->icon('reschedule') . ' ' . sprintf(
+                $this->translate('Reschedule the next check for all %u services'),
+                $serviceCount
+            ),
+            $rescheduleAllLink,
+            null,
+            null,
+            false
+        ); ?></div>
+        <div><?= $this->qlink(
+            $this->icon('plug') . ' ' . sprintf($this->translate('Schedule a downtime for all %u services'), $serviceCount),
+            $downtimeAllLink,
+            null,
+            null,
+            false
+        ); ?></div>
+        <div><?= $this->qlink(
+            $this->icon('reply') . ' ' . sprintf(
+                $this->translate('Submit a passive check result for all %u services'),
+                $serviceCount
+            ),
+            $processCheckResultAllLink,
+            null,
+            null,
+            false
+        ); ?></div>
+      <?php if (($unhandledCount = count($unhandledObjects)) > 0): ?>
         <div>
-            <?= $checkNowForm ?>
-        </div>
-
-        <div>
-            <a href="<?= $rescheduleAllLink ?>">
-                <?= $this->icon('reschedule'); ?>
-                <?= $this->translate('Reschedule service checks') ?>
-            </a>
-        </div>
-
-        <div>
-            <a href="<?= $downtimeAllLink ?>">
-                <?= $this->icon('plug'); ?>
-                <?= $this->translate('Schedule service downtimes') ?>
-            </a>
-        </div>
-
-        <div>
-            <a href="<?= $processCheckResultAllLink; ?>">
-                <?= $this->icon('reply'); ?>
-                <?= $this->translate('Submit passive check results'); ?>
-            </a>
-        </div>
-
-        <?php if (! empty($unhandledObjects)): ?>
-        <h3>
-            <?php $unhandledCount = count($unhandledObjects) ?>
-            <?= sprintf(
+            <h3><?= sprintf(
                 $this->translatePlural(
                     '%u Unhandled Service Problem',
                     '%u Unhandled Service Problems',
                     $unhandledCount
                 ),
                 $unhandledCount
-            ) ?>
-        </h3>
-        <div>
-            <a href="<?= $downtimeUnhandledLink ?>" title="<?= sprintf(
-                $this->translatePlural(
-                    'Schedule downtime for %u unhandled service problem',
-                    'Schedule downtimes for %u unhandled service problems',
-                    $unhandledCount
-                ),
-                $unhandledCount
-            ) ?>">
-                <?= $this->icon('plug'); ?>
-                <?= sprintf(
+            ); ?></h3>
+            <div><?= $this->qlink(
+                $this->icon('plug') . ' ' . sprintf(
                     $this->translatePlural(
-                        'Schedule downtime for unhandled service problem',
-                        'Schedule downtimes for unhandled service problems',
+                        'Schedule a downtime for %u unhandled service problem',
+                        'Schedule a downtime for %u unhandled service problems',
                         $unhandledCount
                     ),
                     $unhandledCount
-                ) ?>
-            </a>
-        </div>
-        <div>
-            <a href="<?= $acknowledgeUnhandledLink ?>" title="<?= sprintf(
-                $this->translatePlural(
-                    'Acknowledge %u unhandled service problem',
-                    'Acknowledge %u unhandled service problems',
-                    $unhandledCount
                 ),
-                $unhandledCount
-            ) ?>">
-                <?= $this->icon('ok'); ?>
-                <?= sprintf(
+                $downtimeUnhandledLink,
+                null,
+                null,
+                false
+            ); ?></div>
+            <div><?= $this->qlink(
+                $this->icon('ok') . ' ' . sprintf(
                     $this->translatePlural(
-                        'Acknowledge unhandled service problem',
-                        'Acknowledge unhandled service problems',
+                        'Acknowledge %u unhandled service problem',
+                        'Acknowledge %u unhandled service problems',
                         $unhandledCount
                     ),
                     $unhandledCount
-                ) ?>
-            </a>
+                ),
+                $acknowledgeUnhandledLink,
+                null,
+                null,
+                false
+            ); ?></div>
         </div>
-        <?php endif ?>
-
-        <?php if (! empty($acknowledgedObjects)): ?>
-            <h2>
-                <?php $acknowledgedCount = count($acknowledgedObjects) ?>
-                <?= sprintf(
-                    $this->translatePlural(
-                        '%u Acknowledged Service Problem',
-                        '%u Acknowledged Service Problems',
-                        $acknowledgedCount
-                    ),
+      <?php endif ?>
+      <?php if (($acknowledgedCount = count($acknowledgedObjects)) > 0): ?>
+        <div>
+            <h2><?= sprintf(
+                $this->translatePlural(
+                    '%u Acknowledged Service Problem',
+                    '%u Acknowledged Service Problems',
                     $acknowledgedCount
-                ) ?>
-            </h2>
-            <div>
-                <?= $removeAckForm ?>
-            </div>
-        <?php endif ?>
-
-        <?php if (! empty($objectsInDowntime)): ?>
-            <h2>
-                <?php $inDowntimeCount = count($objectsInDowntime) ?>
-                <a href="<?= $inDowntimeLink ?>" title="<?= sprintf(
-                    $this->translatePlural(
-                        'List %u service currently in downtime',
-                        'List %u services currently in downtime',
-                        $inDowntimeCount
-                    ),
-                $inDowntimeCount) ?>">
-                    <?= $this->icon('plug'); ?>
-                    <?= sprintf(
-                        $this->translatePlural(
-                            'List %u service currently in downtime',
-                            'List %u services currently in downtime',
-                            $inDowntimeCount
-                        ),
-                        $inDowntimeCount
-                    ) ?>
-                </a>
-            </h2>
-        <?php endif ?>
-
-        <?php $commentCount = count($objects->getComments()) ?>
-        <?php if ($commentCount): ?>
-            <h2>
-                <a href="<?= $commentsLink ?>" title="<?= sprintf(
-                    $this->translatePlural(
-                        'List %u service comment',
-                        'List %u service comments',
-                        $commentCount
-                    ),
+                ),
+                $acknowledgedCount
+            ); ?></h2>
+            <?= $removeAckForm ?>
+        </div>
+      <?php endif ?>
+      <?php if (($inDowntimeCount = count($objectsInDowntime)) > 0): ?>
+        <h2><?= $this->qlink(
+            $this->icon('plug') . ' ' . sprintf(
+                $this->translatePlural(
+                    'List %u service currently in downtime',
+                    'List %u services currently in downtime',
+                    $inDowntimeCount
+                ),
+                $inDowntimeCount
+            ),
+            $inDowntimeLink,
+            null,
+            null,
+            false
+        ); ?></h2>
+      <?php endif ?>
+      <?php if (($commentCount = count($objects->getComments())) > 0): ?>
+        <h2><?= $this->qlink(
+            $this->icon('comment') . ' ' . sprintf(
+                $this->translatePlural(
+                    'List %u service comment',
+                    'List %u service comments',
                     $commentCount
-                ) ?>">
-                    <?= $this->icon('comment'); ?>
-                    <?= sprintf(
-                        $this->translatePlural(
-                            'List %u service comment',
-                            'List %u service comments',
-                            $commentCount
-                        ),
-                        $commentCount
-                    ) ?>
-                </a>
-            </h2>
-        <?php endif ?>
+                ),
+                $commentCount
+            ),
+            $commentsLink,
+            null,
+            null,
+            false
+        ); ?></h2>
+      <?php endif ?>
     <?php endif ?>
 </div>
