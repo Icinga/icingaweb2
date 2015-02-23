@@ -72,8 +72,12 @@ class Monitoring_HostsController extends Controller
         $this->getTabs()->add(
             'show',
             array(
-                'title' => mt('monitoring', 'Hosts'),
-                'url' => Url::fromRequest()
+                'title' => sprintf(
+                    $this->translate('Show summarized information for %u hosts'),
+                    count($this->hostList)
+                ),
+                'label' => $this->translate('Hosts'),
+                'url'   => Url::fromRequest()
             )
         )->activate('show');
         $this->setAutorefreshInterval(15);
