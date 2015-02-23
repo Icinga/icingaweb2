@@ -1,27 +1,38 @@
 <tr>
-    <th><?= $this->translate('Downtimes') ?></th>
+    <th><?= $this->translate('Downtimes'); ?></th>
     <td>
         <?php if ($this->hasPermission('monitoring/command/downtime/schedule')) {
             /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             if ($object->getType() === $object::TYPE_HOST) {
-                $scheduleDowntimeLink = $this->href(
+                echo $this->qlink(
+                    $this->icon('plug') . ' ' . $this->translate('Schedule downtime'),
                     'monitoring/host/schedule-downtime',
-                    array('host' => $object->getName())
+                    array('host' => $object->getName()),
+                    array(
+                        'data-base-target'  => '_self',
+                        'title'             => $this->translate(
+                            'Schedule a downtime to suppress all problem notifications within a specific period of time'
+                        )
+                    ),
+                    false
                 );
             } else {
-                $scheduleDowntimeLink = $this->href(
+                echo $this->qlink(
+                    $this->icon('plug') . ' ' . $this->translate('Schedule downtime'),
                     'monitoring/service/schedule-downtime',
-                    array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+                    array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
+                    array(
+                        'data-base-target'  => '_self',
+                        'title'             => $this->translate(
+                            'Schedule a downtime to suppress all problem notifications within a specific period of time'
+                        )
+                    ),
+                    false
                 );
             }
-        ?>
-        <a href="<?= $scheduleDowntimeLink ?>" data-base-target="_self">
-            <?= $this->icon('plug') ?>
-            <?= $this->translate('Schedule downtime') ?>
-        </a>
-        <?php } else {
+        } else {
             echo '&#45;';
-        } // endif ?>
+        } ?>
     </td>
 </tr>
 
