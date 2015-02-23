@@ -9,7 +9,7 @@
 <div data-base-target="_next" class="content contacts">
     <?php
     if (count($contacts) === 0) {
-        echo mt('monitoring', 'No contacts matching the filter');
+        echo $this->translate('No contacts matching the filter');
         return;
     }
     foreach ($contacts as $contact): ?>
@@ -26,7 +26,7 @@
             ) ?></div>
             <?php if ($contact->contact_pager): ?>
             <div>
-                <?= mt('monitoring', 'Pager') ?>:
+                <?= $this->translate('Pager') ?>:
                 <?= $this->escape($contact->contact_pager) ?>
             </div>
             <?php endif; ?>
@@ -34,13 +34,13 @@
             <div class="notification-periods">
                 <?php if ($contact->contact_notify_service_timeperiod): ?>
                 <div>
-                    <?= mt('monitoring', 'Service notification period') ?>:
+                    <?= $this->translate('Service notification period') ?>:
                     <?= $this->escape($contact->contact_notify_service_timeperiod) ?>
                 </div>
                 <?php endif; ?>
                 <?php if ($contact->contact_notify_host_timeperiod): ?>
                 <div>
-                    <?= mt('monitoring', 'Host notification period') ?>:
+                    <?= $this->translate('Host notification period') ?>:
                     <?= $this->escape($contact->contact_notify_host_timeperiod) ?>
                 </div>
                 <?php endif; ?>
