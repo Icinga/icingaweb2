@@ -27,8 +27,8 @@ $this->addHelperFunction('url', function ($path = null, $params = null) {
     return $url;
 });
 
-$this->addHelperFunction('qlink', function ($title, $url, $params = null, $properties = array(), $escape = true) use ($view) {
-    if (array_key_exists('title', $properties) && !array_key_exists('aria-label', $properties)) {
+$this->addHelperFunction('qlink', function ($title, $url, $params = null, $properties = null, $escape = true) use ($view) {
+    if ($properties && array_key_exists('title', $properties) && !array_key_exists('aria-label', $properties)) {
         $properties['aria-label'] = $properties['title'];
     }
 
