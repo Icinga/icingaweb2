@@ -337,6 +337,15 @@
         handleAnchor: function(query) {
             var $element = $(query);
             if ($element.length > 0) {
+                // TODO(mh): Some elements are missing to place the right focus
+                // This is a fixed workarround until all header took place
+
+                var $item = $element.find(':header:first').nextUntil(':header:first').next();
+                if ($item.length > 0) {
+                    $element = $item;
+                }
+
+                /*
                 var focusQueries = ['h1:first', ':header:first', ':input:first'];
                 $.each(focusQueries, function(index,q) {
                     var $item = $element.find(q);
@@ -345,6 +354,7 @@
                         return false;
                     }
                 });
+                */
 
                 // If we want to focus an element which has no tabindex
                 // add one that we can focus is
