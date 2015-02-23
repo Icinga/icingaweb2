@@ -6,7 +6,6 @@ namespace Icinga\Web\Widget\Dashboard;
 use Zend_Form_Element_Button;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
-use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
 
@@ -54,7 +53,12 @@ class Dashlet extends UserWidget
     <div class="container" data-icinga-url="{URL}">
         <h1><a href="{FULL_URL}" data-base-target="col1">{TITLE}</a></h1>
         <noscript>
-            <iframe src="{IFRAME_URL}" style="height:100%; width:99%" frameborder="no"></iframe>
+            <iframe
+                src="{IFRAME_URL}"
+                style="height:100%; width:99%"
+                frameborder="no"
+                title="{TITLE_PREFIX}{TITLE}">
+            </iframe>
         </noscript>
     </div>
 EOD;
@@ -184,7 +188,8 @@ EOD;
             '{IFRAME_URL}',
             '{FULL_URL}',
             '{TITLE}',
-            '{REMOVE}'
+            '{REMOVE}',
+            '{TITLE_PREFIX}'
         );
 
         $replaceTokens = array(
@@ -192,7 +197,9 @@ EOD;
             $iframeUrl,
             $url->getUrlWithout(array('view', 'limit')),
             $view->escape($this->getTitle()),
-            $this->getRemoveLink()
+            $this->getRemoveLink(),
+            t('Dashlet') . ': '
+
         );
 
         return str_replace($searchTokens, $replaceTokens, $this->template);
