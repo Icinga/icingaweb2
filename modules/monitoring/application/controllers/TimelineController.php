@@ -19,7 +19,8 @@ class Monitoring_TimelineController extends Controller
         $this->getTabs()->add($action, array(
             'title' => $title,
             'url' => Url::fromRequest()
-        ))->activate($action);
+        ))->activate($action)
+            ->setTitle($this->translate('Timeline Navigation'));
         $this->view->title = $title;
     }
 
