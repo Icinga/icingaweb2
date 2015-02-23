@@ -85,7 +85,7 @@ class OutputFormat implements Tabextension
         if (Platform::extensionLoaded('gd')) {
             $supportedTypes[self::TYPE_PDF] = array(
                 'name'      => 'pdf',
-                'title'     => 'PDF',
+                'label'     => 'PDF',
                 'icon'      => 'file-pdf',
                 'urlParams' => array('format' => 'pdf'),
             );
@@ -93,7 +93,7 @@ class OutputFormat implements Tabextension
 
         $supportedTypes[self::TYPE_CSV] = array(
             'name'      => 'csv',
-            'title'     => 'CSV',
+            'label'     => 'CSV',
             'icon'      => 'file-excel',
             'urlParams' => array('format' => 'csv')
         );
@@ -101,7 +101,7 @@ class OutputFormat implements Tabextension
         if (Platform::extensionLoaded('json')) {
             $supportedTypes[self::TYPE_JSON] = array(
                 'name'      => 'json',
-                'title'     => 'JSON',
+                'label'     => 'JSON',
                 'icon'      => 'img/icons/json.png',
                 'urlParams' => array('format' => 'json')
             );
