@@ -10,7 +10,6 @@ use Icinga\Module\Monitoring\Object\Service;
   <?= $this->sortControl ?>
   <?= $this->widget('limiter', array('url' => $this->url, 'max' => $this->history->count())); ?>
   <?= $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
-
 </div>
 <?php endif ?>
 
