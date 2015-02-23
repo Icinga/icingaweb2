@@ -15,15 +15,21 @@
     foreach ($contacts as $contact): ?>
         <div class="contact">
             <?= $this->img('/static/gravatar', array('email' => $contact->contact_email)); ?>
-            <a href="<?= $this->href(
+            <?= $this->qlink(
+                '<strong>' . $this->escape($contact->contact_name) . '</strong>',
                 'monitoring/show/contact',
-                array('contact' => $contact->contact_name)
-            ) ?>"><strong><?= $contact->contact_name ?></strong></a> (<?= $contact->contact_alias ?>)
-            <div><?= sprintf(
-                '%1$s: <a href="mailto:%2$s">%2$s</a>',
-                mt('monitoring', 'Email'),
-                $this->escape($contact->contact_email)
-            ) ?></div>
+                array('contact' => $contact->contact_name),
+                array('title' => sprintf(
+                    $this->translate('Show detailed information about %s'),
+                    $contact->contact_alias
+                )),
+                false
+            ); ?> (<?= $contact->contact_alias; ?>)
+            <div>
+                <?= $this->translate('Email'); ?>: <a href="mailto:<?= $contact->contact_email; ?>" title="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>" aria-label="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>">
+                    <?= $this->escape($contact->contact_email); ?>
+                </a>
+            </div>
             <?php if ($contact->contact_pager): ?>
             <div>
                 <?= $this->translate('Pager') ?>:
