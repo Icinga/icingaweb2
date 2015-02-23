@@ -1,19 +1,29 @@
 <?php
 
 use Icinga\Web\Url;
+use Icinga\Module\Monitoring\Object\Service;
 
 $selfUrl = 'monitoring/list/services';
 $currentUrl = Url::fromRequest()->getRelativeUrl();
-?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
-<?= $this->qlink(sprintf($this->translate('%s services:'), $this->stats->services_total), $selfUrl) ?>
+?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
+<?= sprintf($this->translate('%s services:'), $this->stats->services_total); ?>
 <span class="badges">
 <?php if ($this->stats->services_ok): ?>
- <span class="state ok<?= $currentUrl === Url::fromPath($selfUrl, array('service_state' => 0))->getRelativeUrl() ? ' active' : '' ?>"><?= $this->qlink(
-    $this->stats->services_ok,
-    $selfUrl,
-    array('service_state' => 0),
-    array('title' => sprintf($this->translate('Services with state %s'), $this->translate('OK')))
-)  ?></span>
+<span class="state ok<?= $currentUrl === Url::fromPath($selfUrl, array('service_state' => 0))->getRelativeUrl() ? ' active' : ''; ?>">
+    <?= $this->qlink(
+        $this->stats->services_ok,
+        $selfUrl,
+        array('service_state' => 0),
+        array('title' => sprintf(
+            $this->translatePlural(
+                'List %u service that is currently in state OK',
+                'List %u services which are currently in state OK',
+                $this->stats->services_ok
+            ),
+            $this->stats->services_ok
+        ))
+    ); ?>
+</span>
 <?php endif ?>
 <?php
 foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $state) {
@@ -42,7 +52,15 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
                 $this->stats->$unhandled,
                 $selfUrl,
                 $paramsUnhandled,
-                array('title' => sprintf($this->translate('Unhandled services with state %s'), $this->translate(strtoupper($state))))
+                array('title' => sprintf(
+                    $this->translatePlural(
+                        'List %u service that is currently in state %s',
+                        'List %u services which are currently in state %s',
+                        $this->stats->$unhandled
+                    ),
+                    $this->stats->$unhandled,
+                    Service::getStateText($stateId, true)
+                ))
             );
         }
         if ($this->stats->$handled) {
@@ -59,7 +77,15 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
                 $this->stats->$handled,
                 $selfUrl,
                 $paramsHandled,
-                array('title' => sprintf($this->translate('Handled services with state %s'), $this->translate(strtoupper($state))))
+                array('title' => sprintf(
+                    $this->translatePlural(
+                        'List %u service that is currently in state %s (Acknowledged)',
+                        'List %u services which are currently in state %s (Acknowledged)',
+                        $this->stats->$handled
+                    ),
+                    $this->stats->$handled,
+                    Service::getStateText($stateId, true)
+                ))
             );
             if ($this->stats->$unhandled) {
                 echo "</span>\n";
@@ -70,12 +96,21 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
 }
 ?>
 <?php if ($this->stats->services_pending): ?>
- <span class="state pending<?= $currentUrl === Url::fromPath($selfUrl, array('service_state' => 99))->getRelativeUrl() ? ' active' : '' ?>"><?= $this->qlink(
-    $this->stats->services_pending,
-    $selfUrl,
-    array('service_state' => 99),
-    array('title' => sprintf($this->translate('Services with state %s'), $this->translate('PENDING')))
-)  ?></span>
+<span class="state pending<?= $currentUrl === Url::fromPath($selfUrl, array('service_state' => 99))->getRelativeUrl() ? ' active' : ''; ?>">
+    <?= $this->qlink(
+        $this->stats->services_pending,
+        $selfUrl,
+        array('service_state' => 99),
+        array('title' => sprintf(
+            $this->translatePlural(
+                'List %u service that is currently in state PENDING',
+                'List %u services which are currently in state PENDING',
+                $this->stats->services_pending
+            ),
+            $this->stats->services_pending
+        ))
+    ); ?>
+</span>
 <?php endif ?>
 </span>
 </div>
