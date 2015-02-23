@@ -1,27 +1,34 @@
 <tr>
-    <th><?= $this->translate('Comments') ?></th>
+    <th><?= $this->translate('Comments'); ?></th>
     <td>
         <?php if ($this->hasPermission('monitoring/command/comment/add')) {
             /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             if ($object->getType() === $object::TYPE_HOST) {
-                $addCommentLink = $this->href(
+                echo $this->qlink(
+                    $this->icon('comment') . ' ' . $this->translate('Add comment'),
                     'monitoring/host/add-comment',
-                    array('host' => $object->getName())
+                    array('host' => $object->getName()),
+                    array(
+                        'data-base-target'  => '_self',
+                        'title'             => $this->translate('Add a new comment to this host')
+                    ),
+                    false
                 );
             } else {
-                $addCommentLink = $this->href(
+                echo $this->qlink(
+                    $this->icon('comment') . ' ' . $this->translate('Add comment'),
                     'monitoring/service/add-comment',
-                    array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+                    array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
+                    array(
+                        'data-base-target'  => '_self',
+                        'title'             => $this->translate('Add a new comment to this service')
+                    ),
+                    false
                 );
             }
-        ?>
-        <a href="<?= $addCommentLink ?>" data-base-target="_self">
-            <?= $this->icon('comment') ?>
-            <?= $this->translate('Add comment') ?>
-        </a>
-        <?php } else {
+        } else {
             echo '&#45;';
-        } // endif ?>
+        } ?>
     </td>
 </tr>
 
