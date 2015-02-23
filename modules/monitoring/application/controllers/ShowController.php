@@ -189,10 +189,12 @@ class Monitoring_ShowController extends Controller
             return;
         }
         if ($object->getType() === $object::TYPE_HOST) {
+            $isService = false;
             $params = array(
                 'host' => $object->getName()
             );
         } else {
+            $isService = true;
             $params = array(
                 'host'      => $object->getHost()->getName(),
                 'service'   => $object->getName()
@@ -202,17 +204,26 @@ class Monitoring_ShowController extends Controller
         $tabs->add(
             'host',
             array(
-                'title'     => $this->translate('Host'),
+                'title'     => sprintf(
+                    $this->translate('Show detailed information for host %s'),
+                    $isService ? $object->getHost()->getName() : $object->getName()
+                ),
+                'label'     => $this->translate('Host'),
                 'icon'      => 'host',
                 'url'       => 'monitoring/show/host',
                 'urlParams' => $params,
             )
         );
-        if (isset($params['service'])) {
+        if ($isService) {
             $tabs->add(
                 'service',
                 array(
-                    'title'     => $this->translate('Service'),
+                    'title'     => sprintf(
+                        $this->translate('Show detailed information for service %s on host %s'),
+                        $object->getName(),
+                        $object->getHost()->getName()
+                    ),
+                    'label'     => $this->translate('Service'),
                     'icon'      => 'service',
                     'url'       => 'monitoring/show/service',
                     'urlParams' => $params,
@@ -222,7 +233,11 @@ class Monitoring_ShowController extends Controller
         $tabs->add(
             'services',
             array(
-                'title'     => $this->translate('Services'),
+                'title'     => sprintf(
+                    $this->translate('List all services on host %s'),
+                    $isService ? $object->getHost()->getName() : $object->getName()
+                ),
+                'label'     => $this->translate('Services'),
                 'icon'      => 'services',
                 'url'       => 'monitoring/show/services',
                 'urlParams' => $params,
@@ -232,7 +247,15 @@ class Monitoring_ShowController extends Controller
             $tabs->add(
                 'history',
                 array(
-                    'title'     => $this->translate('History'),
+                    'title'     => $isService
+                        ? sprintf(
+                            $this->translate('Show all event records of service %s on host %s'),
+                            $object->getName(),
+                            $object->getHost()->getName()
+                        )
+                        : sprintf($this->translate('Show all event records of host %s'), $object->getName())
+                    ,
+                    'label'     => $this->translate('History'),
                     'icon'      => 'rewind',
                     'url'       => 'monitoring/show/history',
                     'urlParams' => $params,
