@@ -21,14 +21,20 @@ $state = $moduleData->enabled ? ($moduleData->loaded ? 'enabled' : 'failed') : '
 <tr>
   <th><?= $this->translate('State') ?></th>
   <td><?= $state ?><?php if ($state === 'enabled'): ?>
-  <?= $this->qlink($this->translate('disable'), 'config/moduledisable', array(
-      'name' => $module->getName()
-  )) ?>
+  <?= $this->qlink(
+    $this->translate('disable'),
+    'config/moduledisable',
+    array('name' => $module->getName()),
+    array('title' => sprintf($this->translate('Disable the %s module'), $module->getName()))
+  ); ?>
   <?php endif ?>
   <?php if ($state === 'disabled'): ?>
-  <?= $this->qlink($this->translate('enable'), 'config/moduleenable', array(
-      'name' => $module->getName()
-  )) ?>
+  <?= $this->qlink(
+    $this->translate('enable'),
+    'config/moduleenable',
+    array('name' => $module->getName()),
+    array('title' => sprintf($this->translate('Enable the %s module'), $module->getName()))
+  ); ?>
   <?php endif ?>
   </td>
 <tr>
