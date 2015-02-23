@@ -1,36 +1,36 @@
 <div class="controls">
 <?= $this->tabs ?>
-<h1><?= $this->translate('Installed Modules') ?></h1>
 <?= $this->paginationControl($modules) ?>
 </div>
 
 <div class="content">
-<table class="action" data-base-target="_next">
-  <tbody>
-  <?php foreach ($modules as $module): ?>
-    <tr>
-      <td>
-        <?php if ($module->enabled && $module->loaded) {
-          $icon = $this->icon('thumbs-up');
-          $title = sprintf($this->translate('Module %s is enabled'), $module->name);
-        } elseif (! $module->enabled) {
-          $icon = $this->icon('thumbs-down');
-          $title = sprintf($this->translate('Module %s is disabled'), $module->name);
-        } else { // ! $module->loaded
-          $icon = $this->icon('thumbs-down');
-          $title = sprintf($this->translate('Module %s has failed to load'), $module->name);
-        }
+  <h1 tabindex="-1"><?= $this->translate('Installed Modules') ?></h1>
+  <table class="action" data-base-target="_next">
+    <tbody>
+    <?php foreach ($modules as $module): ?>
+      <tr>
+        <td>
+          <?php if ($module->enabled && $module->loaded) {
+            $icon = $this->icon('thumbs-up');
+            $title = sprintf($this->translate('Module %s is enabled'), $module->name);
+          } elseif (! $module->enabled) {
+            $icon = $this->icon('thumbs-down');
+            $title = sprintf($this->translate('Module %s is disabled'), $module->name);
+          } else { // ! $module->loaded
+            $icon = $this->icon('thumbs-down');
+            $title = sprintf($this->translate('Module %s has failed to load'), $module->name);
+          }
 
-        echo $this->qlink(
-          $icon . $this->escape($module->name),
-          'config/module/',
-          array('name' => $module->name),
-          array('title' => $title),
-          false
-        ); ?>
-      </td>
-    </tr>
-  <?php endforeach ?>
-  </tbody>
-</table>
+          echo $this->qlink(
+            $icon . $this->escape($module->name),
+            'config/module/',
+            array('name' => $module->name),
+            array('title' => $title),
+            false
+          ); ?>
+        </td>
+      </tr>
+    <?php endforeach ?>
+    </tbody>
+  </table>
 </div>

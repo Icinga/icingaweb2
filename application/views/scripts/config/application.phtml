@@ -1,10 +1,9 @@
 <div class="controls" data-base-target="_main">
   <?= $this->tabs->render($this); ?>
 </div>
-
 <div class="content">
-  <h1 tabindex="0" id="application-configuration">
-    <?= t('Generic Configuration'); ?>
+  <h1 tabindex="-1" id="application-configuration">
+    <?= $this->translate('Generic Configuration'); ?>
   </h1>
   <?php if (isset($this->messageBox)): ?>
     <?= $this->messageBox->render() ?>

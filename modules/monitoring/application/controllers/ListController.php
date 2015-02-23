@@ -717,6 +717,7 @@ class Monitoring_ListController extends Controller
     private function createTabs()
     {
         $tabs = $this->getTabs();
+        $tabs->setTitle($this->translate('Monitoring Navigation'));
         if (in_array($this->_request->getActionName(), array(
             'hosts',
             'services',

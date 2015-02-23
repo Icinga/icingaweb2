@@ -1,8 +1,10 @@
 <div class="controls" data-base-target="_main">
     <?= $tabs ?>
-    <h1><?= $this->translate('Roles') ?></h1>
 </div>
 <div class="content">
+    <h1 tabindex="-1" id="roles-index">
+        <?= $this->translate('Roles') ?>
+    </h1>
     <div>
         <?php /** @var \Icinga\Application\Config $roles */ if ($roles->isEmpty()): ?>
             <?= $this->translate('No roles found.') ?>
@@ -64,6 +66,9 @@
                 </tbody>
             </table>
         <?php endif ?>
+        <h2 tabindex="-1" id="roles-index-new" class="sr-only">
+            <?= $this->translate('Create New Role'); ?>
+        </h2>
         <a data-base-target="_next" href="<?= $this->href('roles/new') ?>">
             <?= $this->translate('New Role') ?>
         </a>
