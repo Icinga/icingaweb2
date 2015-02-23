@@ -6,7 +6,6 @@ use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Web\Url;
-use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabs;
@@ -17,11 +16,7 @@ use Icinga\Module\Monitoring\Forms\StatehistoryForm;
 
 class Monitoring_ListController extends Controller
 {
-    protected $url;
-
     /**
-     * Retrieve backend and hooks for this controller
-     *
      * @see ActionController::init
      */
     public function init()
@@ -32,7 +27,6 @@ class Monitoring_ListController extends Controller
             $this->view->compact = true;
             $this->view->inline = true;
         }
-        $this->url = Url::fromRequest();
     }
 
     /**
@@ -56,7 +50,7 @@ class Monitoring_ListController extends Controller
     protected function hasBetterUrl()
     {
         $request = $this->getRequest();
-        $url = clone($this->url);
+        $url = Url::fromRequest();
 
         if ($this->getRequest()->isPost()) {
             if ($request->getPost('sort')) {
@@ -100,7 +94,7 @@ class Monitoring_ListController extends Controller
             $stateChangeColumn = 'host_last_state_change';
         }
 
-        $this->addTitleTab('hosts', $this->translate('Hosts'));
+        $this->addTitleTab('hosts', $this->translate('Hosts'), $this->translate('List hosts'));
         $this->setAutorefreshInterval(10);
         $query = $this->backend->select()->from('hostStatus', array_merge(array(
             'host_icon_image',
@@ -174,7 +168,7 @@ class Monitoring_ListController extends Controller
             $stateChangeColumn = 'service_last_state_change';
         }
 
-        $this->addTitleTab('services', $this->translate('Services'));
+        $this->addTitleTab('services', $this->translate('Services'), $this->translate('List services'));
         $this->view->showHost = true;
         if ($host = $this->_getParam('host')) {
             if (strpos($host, '*') === false) {
@@ -272,7 +266,7 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
-        $this->addTitleTab('downtimes', $this->translate('Downtimes'));
+        $this->addTitleTab('downtimes', $this->translate('Downtimes'), $this->translate('List downtimes'));
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('downtime', array(
             'id'              => 'downtime_internal_id',
@@ -326,7 +320,11 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
-        $this->addTitleTab('notifications', $this->translate('Notifications'));
+        $this->addTitleTab(
+            'notifications',
+            $this->translate('Notifications'),
+            $this->translate('List notifications')
+        );
         $this->setAutorefreshInterval(15);
         $query = $this->backend->select()->from('notification', array(
             'host',
@@ -350,7 +348,7 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
-        $this->addTitleTab('contacts', $this->translate('Contacts'));
+        $this->addTitleTab('contacts', $this->translate('Contacts'), $this->translate('List contacts'));
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
             'contact_id',
@@ -389,7 +387,7 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
-        $this->addTitleTab('eventgrid', $this->translate('Event Grid'));
+        $this->addTitleTab('eventgrid', $this->translate('Event Grid'), $this->translate('Show the Event Grid'));
 
         $form = new StatehistoryForm();
         $form->setEnctype(Zend_Form::ENCTYPE_URLENCODED);
@@ -430,7 +428,11 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
-        $this->addTitleTab('contactgroups', $this->translate('Contact Groups'));
+        $this->addTitleTab(
+            'contactgroups',
+            $this->translate('Contact Groups'),
+            $this->translate('List contact groups')
+        );
         $query = $this->backend->select()->from('contactgroup', array(
             'contactgroup_name',
             'contactgroup_alias',
@@ -462,7 +464,7 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
-        $this->addTitleTab('comments', $this->translate('Comments'));
+        $this->addTitleTab('comments', $this->translate('Comments'), $this->translate('List comments'));
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('comment', array(
             'id'         => 'comment_internal_id',
@@ -501,7 +503,11 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
-        $this->addTitleTab('servicegroups', $this->translate('Service Groups'));
+        $this->addTitleTab(
+            'servicegroups',
+            $this->translate('Service Groups'),
+            $this->translate('List service groups')
+        );
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('groupsummary', array(
             'servicegroup',
@@ -551,7 +557,7 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
-        $this->addTitleTab('hostgroups', $this->translate('Host Groups'));
+        $this->addTitleTab('hostgroups', $this->translate('Host Groups'), $this->translate('List host groups'));
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('groupsummary', array(
             'hostgroup',
@@ -601,7 +607,11 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
-        $this->addTitleTab('eventhistory', $this->translate('Event Overview'));
+        $this->addTitleTab(
+            'eventhistory',
+            $this->translate('Event Overview'),
+            $this->translate('List event records')
+        );
 
         $query = $this->backend->select()->from('eventHistory', array(
             'host_name',
@@ -632,7 +642,7 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
-        $this->addTitleTab('servicegrid', $this->translate('Service Grid'));
+        $this->addTitleTab('servicegrid', $this->translate('Service Grid'), $this->translate('Show the Service Grid'));
         $this->setAutorefreshInterval(15);
         $query = $this->backend->select()->from('serviceStatus', array(
             'host_name',
@@ -698,13 +708,12 @@ class Monitoring_ListController extends Controller
         $this->view->sortControl->applyRequest($this->getRequest());
     }
 
-    protected function addTitleTab($action, $title = false)
+    protected function addTitleTab($action, $title, $tip)
     {
-        $title = $title ?: ucfirst($action);
         $this->getTabs()->add($action, array(
-            'title' => $title,
-            // 'url' => Url::fromPath('monitoring/list/' . $action)
-            'url' => $this->url
+            'title' => $tip,
+            'label' => $title,
+            'url'   => Url::fromRequest()
         ))->activate($action);
         $this->view->title = $title;
     }
