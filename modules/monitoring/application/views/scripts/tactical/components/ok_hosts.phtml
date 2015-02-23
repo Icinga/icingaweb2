@@ -10,18 +10,40 @@ $service_problems = (
 ?>
 <div class="box ok_hosts state_<?= $this->statusSummary->hosts_up ? 'up' : 'pending'; ?>">
 <?php if ($this->statusSummary->hosts_up): ?>
-    <h2>
-        <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 0)); ?>">
-            <?= sprintf($this->translatePlural('%d Host UP', '%d Hosts UP', $this->statusSummary->hosts_up), $this->statusSummary->hosts_up); ?>
-        </a>
-    </h2>
+    <h2><?= $this->qlink(
+        sprintf(
+            $this->translatePlural('%u Host UP', '%u Hosts UP', $this->statusSummary->hosts_up),
+            $this->statusSummary->hosts_up
+        ),
+        'monitoring/list/hosts',
+        array('host_state' => 0),
+        array('title' => sprintf(
+            $this->translatePlural(
+                'List %u host that is currently in state UP',
+                'List %u hosts which are currently in state UP',
+                $this->statusSummary->hosts_up
+            ),
+            $this->statusSummary->hosts_up
+        ))
+    ); ?></h2>
 <?php endif ?>
 <?php if ($this->statusSummary->hosts_pending): ?>
-    <h2>
-        <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 99)); ?>">
-            <?= sprintf($this->translatePlural('%d Host PENDING', '%d Hosts PENDING', $this->statusSummary->hosts_pending), $this->statusSummary->hosts_pending); ?>
-        </a>
-    </h2>
+    <h2><?= $this->qlink(
+        sprintf(
+            $this->translatePlural('%u Host PENDING', '%u Hosts PENDING', $this->statusSummary->hosts_pending),
+            $this->statusSummary->hosts_pending
+        ),
+        'monitoring/list/hosts',
+        array('host_state' => 99),
+        array('title' => sprintf(
+            $this->translatePlural(
+                'List %u host that is currently in state PENDING',
+                'List %u hosts which are currently in state PENDING',
+                $this->statusSummary->hosts_pending
+            ),
+            $this->statusSummary->hosts_pending
+        ))
+    ); ?></h2>
 <?php endif ?>
 <?php if ($service_problems || $this->statusSummary->hosts_down || $this->statusSummary->hosts_unreachable): ?>
     <div class="box contents">
