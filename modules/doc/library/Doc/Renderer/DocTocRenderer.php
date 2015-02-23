@@ -87,11 +87,25 @@ class DocTocRenderer extends DocRenderer
             $url = $view->url($path);
             /** @type \Icinga\Web\Url $url */
             $url->setAnchor($this->encodeAnchor($section->getId()));
-            $this->content[] = sprintf(
-                '<li><a data-base-target="_next" %shref="%s">%s</a>',
-                $section->getNoFollow() ? 'rel="nofollow" ' : '',
+            $urlAttributes = array(
+                'data-base-target'  => '_next',
+                'title'             => sprintf(
+                    $this->getView()->translate('Show the %schapter "%s"', 'toc.render.section.link'),
+                    $section->getId() !== $section->getChapter()->getId() ? sprintf(
+                        $this->getView()->translate('section "%s" of the ', 'toc.render.section.link'),
+                        $section->getTitle()
+                    ) : '',
+                    $section->getChapter()->getTitle()
+                )
+            );
+            if ($section->getNoFollow()) {
+                $urlAttributes['rel'] = 'nofollow';
+            }
+            $this->content[] = '<li>' . $this->getView()->qlink(
+                $section->getTitle(),
                 $url->getAbsoluteUrl(),
-                $view->escape($section->getTitle())
+                null,
+                $urlAttributes
             );
             if (! $section->hasChildren()) {
                 $this->content[] = '</li>';
