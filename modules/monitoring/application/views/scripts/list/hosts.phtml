@@ -18,6 +18,7 @@ if ($this->compact): ?>
 
 <div class="content">
 <?= $this->filterEditor ?>
+<h1 tabindex="-1"><?= $this->translate('Hosts') ?></h1>
 <?php
 
 endif;
@@ -30,7 +31,6 @@ if ($hosts->count() === 0) {
     return;
 }
 ?>
-<h1 tabindex="-1"><?= $this->translate('Hosts') ?></h1>
 <table
     data-base-target="_next"
     class="action multiselect"

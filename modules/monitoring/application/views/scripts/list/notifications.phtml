@@ -11,10 +11,11 @@ use Icinga\Module\Monitoring\Object\Service;
     <?= $this->widget('limiter') ?>
     <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)) ?>
 </div>
-<?php endif ?>
-
 <div class="content">
     <h1 tabindex="-1"><?= $this->translate('Notifications'); ?></h1>
+<?php else: ?>
+    <div class="content">
+<?php endif ?>
     <?php if (count($notifications) === 0): ?>
     <?= $this->translate('No notifications matching the filter') ?>
     <?php return; endif ?>

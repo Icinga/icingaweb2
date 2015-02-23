@@ -9,8 +9,8 @@
 </div>
 <div class="content">
   <?= $this->filterEditor; ?>
-<?php endif ?>
   <h1 tabindex="-1"><?= $this->translate('Host Groups') ?></h1>
+<?php endif ?>
   <?php
     if (count($hostgroups) === 0) {
       echo $this->translate('No host groups matching the filter');
