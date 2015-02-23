@@ -21,10 +21,12 @@
                 <?php foreach ($roles as $name => $role): /** @var object $role */ ?>
                     <tr>
                         <td>
-                            <?= $this->escape($name) ?>
-                            <div class="hidden">
-                                <a href="<?= $this->url('roles/update', array('role' => $name)) ?>"></a>
-                            </div>
+                            <?= $this->qlink(
+                                $name,
+                                'roles/update',
+                                array('role' => $name),
+                                array('title' => sprintf($this->translate('Edit role %s'), $name))
+                            ); ?>
                         </td>
 <!--                        <td>--><?//= $this->escape($role->permissions, 0, 50) ?><!--</td>-->
 <!--                        <td>-->
@@ -65,7 +67,7 @@
             </table>
         <?php endif ?>
         <a data-base-target="_next" href="<?= $this->href('roles/new') ?>">
-            <?= $this->translate('New Role') ?>
+            <?= $this->translate('Create a New Role') ?>
         </a>
     </div>
 </div>
