@@ -115,6 +115,8 @@
             $(document).on('click', 'a', { self: this }, this.linkClicked);
             $(document).on('click', 'tr[href]', { self: this }, this.linkClicked);
 
+            $(document).on('click', '.refresh', { self: this }, this.refreshContent);
+
             // Select a table row
             $(document).on('click', 'table.multiselect tr[href]', { self: this }, this.rowSelected);
 
@@ -479,6 +481,11 @@
             }
 
             return false;
+        },
+
+        refreshContent: function () {
+            var $icon = $(this).children('i');
+            $icon.addClass($icon.data('load-class'));
         },
 
         /**

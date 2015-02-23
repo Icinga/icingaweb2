@@ -10,6 +10,7 @@ use Icinga\Web\LessCompiler;
 class StyleSheet
 {
     protected static $lessFiles = array(
+        '../application/fonts/fontello-ifont/css/animation.css',
         '../application/fonts/fontello-ifont/css/ifont-embedded.css',
         'css/vendor/tipsy.css',
         'css/icinga/defaults.less',

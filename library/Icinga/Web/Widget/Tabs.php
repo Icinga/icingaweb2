@@ -4,6 +4,7 @@
 namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\Tabextension;
 use Icinga\Application\Icinga;
 use Countable;
@@ -23,6 +24,7 @@ class Tabs extends AbstractWidget implements Countable
 <ul class="tabs">
   {TABS}
   {DROPDOWN}
+  {REFRESH}
   {CLOSE}
 </ul>
 EOT;
@@ -59,6 +61,16 @@ EOT;
 </li>
 EOT;
 
+    /**
+     * Template used for the refresh icon
+     *
+     * @var string
+     */
+    private $refreshTpl = <<< 'EOT'
+<li>
+  <a class="refresh" href="{URL}"><i aria-hidden="true" class="icon-cw" data-load-class="icon-spin6 animate-spin"></i></a>
+</li>
+EOT;
 
     /**
      * This is where single tabs added to this container will be stored
@@ -101,6 +113,13 @@ EOT;
      * @type string
      */
     private $title;
+
+    /**
+     * Whether the tabs should contain a refresh icon
+     *
+     * @var bool
+     */
+    private $refreshTab = true;
 
     /**
      * Set whether the current tab is closable
@@ -308,6 +327,14 @@ EOT;
         return $this->closeTpl;
     }
 
+    private function renderRefreshTab()
+    {
+        $url = Url::fromRequest()->without('renderLayout');
+        $tpl = str_replace('{URL}', $url, $this->refreshTpl);
+
+        return $tpl;
+    }
+
     /**
      * Render to HTML
      *
@@ -323,11 +350,13 @@ EOT;
             $drop = $this->renderDropdownTabs();
         }
         $close = $this->closeTab ? $this->renderCloseTab() : '';
+        $refresh = $this->refreshTab ? $this->renderRefreshTab() : '';
 
         return str_replace(
             array(
                 '{TABS}',
                 '{DROPDOWN}',
+                '{REFRESH}',
                 '{CLOSE}',
                 '{HEADER}'
             ),
@@ -335,6 +364,7 @@ EOT;
                 $tabs,
                 $drop,
                 $close,
+                $refresh,
                 $this->renderHeader()
             ),
             $this->baseTpl
