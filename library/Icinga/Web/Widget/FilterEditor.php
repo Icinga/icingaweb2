@@ -310,7 +310,7 @@ class FilterEditor extends AbstractWidget
             $this->preservedUrl()->with('removeFilter', $filter->getId()),
             null,
             array(
-                'title' => t('Click to remove this part of your filter'),
+                'title' => t('Remove this part of your filter'),
                 'class' => 'icon-cancel'
             )
         );
@@ -323,7 +323,7 @@ class FilterEditor extends AbstractWidget
             $this->preservedUrl()->with('addFilter', $filter->getId()),
             null,
             array(
-                'title' => t('Click to add another filter'),
+                'title' => t('Add another filter'),
                 'class' => 'icon-plus'
             )
         );
@@ -666,6 +666,8 @@ class FilterEditor extends AbstractWidget
         return $html
             . '<a href="'
             . $this->preservedUrl()->with('modifyFilter', true)
+            . '" aria-label="'
+            . $title
             . '" title="'
             . $title
             . '">'
