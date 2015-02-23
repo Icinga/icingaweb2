@@ -21,18 +21,21 @@ foreach ($groupData as $groupName => $groupInfo): ?>
 <?php foreach ($groupInfo['contacts'] as $c): ?>
                 <div class="box entry">
                     <?= $this->img('/static/gravatar', array('email' => $c->contact_email)); ?>
-                    <a href="<?= $this->href(
+                    <?= $this->qlink(
+                        $c->contact_alias,
                         'monitoring/show/contact',
-                        array('contact' => $c->contact_name)
-                    ); ?>">
-                        <?= $this->escape($c->contact_alias) ?>
-                    </a>
+                        array('contact' => $c->contact_name),
+                        array('title' => sprintf(
+                            $this->translate('Show detailed information about %s'),
+                            $c->contact_alias
+                        ))
+                    ); ?>
                     <p>
 <?php if ($c->contact_email): ?>
                         <?= $c->contact_email; ?>
 <?php endif;
 if ($c->contact_pager): ?>
-                        <br />
+                        <br>
                         <?= $c->contact_pager; ?>
 <?php endif ?>
                     </p>
