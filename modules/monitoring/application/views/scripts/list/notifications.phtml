@@ -4,19 +4,17 @@ use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
 ?>
-
 <?php if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs ?>
-    <div class="dontprint" style="margin: 1em;">
-        <?= $this->translate('Sort by') ?> <?= $this->sortControl->render($this) ?>
-    </div>
+    <?= $this->sortControl->render($this) ?>
     <?= $this->widget('limiter') ?>
     <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)) ?>
 </div>
 <?php endif ?>
 
 <div class="content">
+    <h1 tabindex="-1"><?= $this->translate('Notifications'); ?></h1>
     <?php if (count($notifications) === 0): ?>
     <?= $this->translate('No notifications matching the filter') ?>
     <?php return; endif ?>
