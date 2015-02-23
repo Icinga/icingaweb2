@@ -12,26 +12,7 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
     <h1 tabindex="-1">
         <?= $this->translate('Monitoring Health'); ?>
     </h1>
-    <div class="skip-links skip-links-inline">
-        <h2 class="sr-only"><?= $this->translate('Skip Links'); ?></h2>
-        <ul>
-            <li>
-                <a tabindex="0" href="#process-feature-command">
-                    <?= t('Skip To Feature Commands'); ?>
-                </a>
-            </li>
-            <li>
-                <a tabindex="0" href="#process-process-info">
-                    <?= t('Skip To Process Information'); ?>
-                </a>
-            </li>
-            <li>
-                <a tabindex="0" href="#process-performance-info">
-                    <?= t('Skip To Performance Information'); ?>
-                </a>
-            </li>
-        </ul>
-    </div>
+
     <div class="boxview">
 
         <div class="box left">
@@ -98,26 +79,6 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
             <h2 tabindex="-1" id="process-performance-info">
                 <?= $this->translate('Performance Info') ?>
             </h2>
-            <div class="skip-links skip-links-inline">
-                <h2 class="sr-only"><?= $this->translate('Skip Links'); ?></h2>
-                <ul>
-                    <li>
-                        <a tabindex="0" href="#process-object-summaries">
-                            <?= t('Skip To Object Summaries'); ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a tabindex="0" href="#process-active-checks">
-                            <?= t('Skip To Active Checks'); ?>
-                        </a>
-                    </li>
-                    <li>
-                        <a tabindex="0" href="#process-passive-checks">
-                            <?= t('Skip To Passive Checks'); ?>
-                        </a>
-                    </li>
-                </ul>
-            </div>
 
             <h3 tabindex="-1" id="process-object-summaries">
                 <?= $this->translate('Object summaries') ?>

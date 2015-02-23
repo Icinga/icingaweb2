@@ -5,16 +5,6 @@
     <h1 tabindex="-1" id="roles-index">
         <?= $this->translate('Roles') ?>
     </h1>
-    <div class="skip-links skip-links-inline">
-        <h2 class="sr-only"><?= $this->translate('Skip Links'); ?></h2>
-        <ul>
-            <li>
-                <a tabindex="0" href="#roles-index-new">
-                    <?= t('Skip To Create New Role'); ?>
-                </a>
-            </li>
-        </ul>
-    </div>
     <div>
         <?php /** @var \Icinga\Application\Config $roles */ if ($roles->isEmpty()): ?>
             <?= $this->translate('No roles found.') ?>
