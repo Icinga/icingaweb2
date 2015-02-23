@@ -60,7 +60,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
         if ((bool) $this->status->notifications_enabled) {
             if ($this->hasPermission('monitoring/command/feature/instance')) {
                 $notificationDescription = sprintf(
-                    '<a title="%s" href="%s" data-base-target="_next">%s</a>',
+                    '<a aria-label="%1$s" title="%1$s" href="%2$s" data-base-target="_next">%3$s</a>',
                     $this->translate('Disable notifications for a specific time on a program-wide basis'),
                     $this->getView()->href('monitoring/process/disable-notifications'),
                     $this->translate('Disable temporarily')
