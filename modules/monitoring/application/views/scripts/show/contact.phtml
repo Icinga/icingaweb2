@@ -19,8 +19,12 @@
       </tr>
 <?php if ($contact->contact_email): ?>
       <tr>
-        <td><?= sprintf('<a href="mailto:%1$s">%1$s</a>', $this->escape($contact->contact_email)) ?></td>
         <th><?= $this->translate('Email') ?></th>
+        <td>
+            <a href="mailto:<?= $contact->contact_email; ?>" title="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>" aria-label="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>">
+                <?= $this->escape($contact->contact_email); ?>
+            </a>
+        </td>
       </tr>
 <?php endif ?>
 <?php if ($contact->contact_pager): ?>
