@@ -52,7 +52,7 @@ class Dashlet extends UserWidget
     private $template =<<<'EOD'
 
     <div class="container" data-icinga-url="{URL}">
-        <h1><a href="{FULL_URL}" data-base-target="col1">{TITLE}</a></h1>
+        <h1><a href="{FULL_URL}" aria-label="{TOOLTIP}" title="{TOOLTIP}" data-base-target="col1">{TITLE}</a></h1>
         <noscript>
             <iframe src="{IFRAME_URL}" style="height:100%; width:99%" frameborder="no"></iframe>
         </noscript>
@@ -183,36 +183,19 @@ EOD;
             '{URL}',
             '{IFRAME_URL}',
             '{FULL_URL}',
-            '{TITLE}',
-            '{REMOVE}'
+            '{TOOLTIP}',
+            '{TITLE}'
         );
 
         $replaceTokens = array(
             $url,
             $iframeUrl,
             $url->getUrlWithout(array('view', 'limit')),
-            $view->escape($this->getTitle()),
-            $this->getRemoveLink()
+            sprintf($view->translate('Show %s', 'dashboard.dashlet.tooltip'), $view->escape($this->getTitle())),
+            $view->escape($this->getTitle())
         );
 
         return str_replace($searchTokens, $replaceTokens, $this->template);
-    }
-
-    /**
-     * Render the form for removing a dashboard elemetn
-     *
-     * @return string                       The html representation of the form
-     */
-    protected function getRemoveLink()
-    {
-        return sprintf(
-            '<a data-base-target="main" href="%s">%s</a>',
-            Url::fromPath('dashboard/remove-dashlet', array(
-                'dashlet' => $this->getTitle(),
-                'pane'      => $this->pane->getTitle()
-            )),
-            t('Remove')
-        );
     }
 
     /**
