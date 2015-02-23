@@ -141,7 +141,7 @@ class Monitoring_TimelineController extends Controller
             case '1d':
                 return $this->getDateFormat();
             case '1w':
-                return '\W\e\ek #W\<b\r\>\of Y';
+                return '\W\e\ek W\<b\r\>\of Y';
             case '1m':
                 return 'F Y';
             case '1y':
