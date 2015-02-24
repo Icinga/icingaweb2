@@ -54,7 +54,7 @@ class DeleteDowntimeCommandForm extends ObjectsCommandForm
             array(
                 'ignore'        => true,
                 'label'         => 'X',
-                'title'         => $this->translate('Delete downtime'),
+                'title'         => $this->translate('Delete this downtime'),
                 'decorators'    => array('ViewHelper')
             )
         );

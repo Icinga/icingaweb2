@@ -641,7 +641,7 @@ class Module
         $tabs->add('info', array(
             'url'       => 'config/module',
             'urlParams' => array('name' => $this->getName()),
-            'title'     => 'Module: ' . $this->getName()
+            'label'     => 'Module: ' . $this->getName()
         ));
         foreach ($this->configTabs as $name => $config) {
             $tabs->add($name, $config);

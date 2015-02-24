@@ -32,7 +32,17 @@ $requirements = $form->getRequirements();
       <td></td>
       <td class="btn-update">
         <div class="buttons">
-          <a title="<?= $this->translate('You may also need to restart the web-server for the changes to take effect!'); ?>" href="<?= $this->href(); ?>" class="button-like"><?= $this->translate('Refresh'); ?></a>
+          <?php $title = $this->translate('You may also need to restart the web-server for the changes to take effect!'); ?>
+          <?= $this->qlink(
+            $this->translate('Refresh'),
+            null,
+            null,
+            array(
+              'class'       => 'button-like',
+              'title'       => $title,
+              'aria-label'  => sprintf($this->translate('Refresh the page; %s'), $title)
+            )
+          ); ?>
         </div>
       </td>
     </tr>

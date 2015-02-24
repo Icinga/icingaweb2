@@ -11,20 +11,24 @@
       <tr>
         <td class="action">
           <?= $this->qlink(
-            $this->icon('edit') . ' ' . $this->escape($backendNames[$i]),
+            $backendNames[$i],
             'config/editAuthenticationBackend',
             array('auth_backend' => $backendNames[$i]),
-            array('title' => sprintf($this->translate('Edit authentication backend %s'), $backendNames[$i])),
-            false
+            array(
+                'icon'  => 'edit',
+                'title' => sprintf($this->translate('Edit authentication backend %s'), $backendNames[$i])
+            )
           ); ?>
         </td>
         <td>
           <?= $this->qlink(
-            $this->icon('cancel'),
+            '',
             'config/removeAuthenticationBackend',
             array('auth_backend' => $backendNames[$i]),
-            array('title' => sprintf($this->translate('Remove authentication backend %s'), $backendNames[$i])),
-            false
+            array(
+                'icon'  => 'cancel',
+                'title' => sprintf($this->translate('Remove authentication backend %s'), $backendNames[$i])
+            )
           ); ?>
         </td>
         <td>

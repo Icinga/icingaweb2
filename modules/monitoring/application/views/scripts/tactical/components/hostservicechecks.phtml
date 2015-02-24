@@ -12,66 +12,114 @@
                 <tr>
                     <td>
 <?php if ($this->statusSummary->hosts_active): ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
-                                'monitoring/list/hosts',
-                                array('host_active_checks_enabled' => 1)
-                            ); ?>">
-                                <?= sprintf($this->translatePlural('%d Active', '%d Active', $this->statusSummary->hosts_active), $this->statusSummary->hosts_active); ?>
-                            </a>
-                        </div>
+                        <div class="box entry"><?= $this->qlink(
+                            sprintf(
+                                $this->translatePlural('%u Active', '%u Active', $this->statusSummary->hosts_active),
+                                $this->statusSummary->hosts_active
+                            ),
+                            'monitoring/list/hosts',
+                            array('host_active_checks_enabled' => 1),
+                            array('title' => sprintf(
+                                $this->translatePlural(
+                                    'List %u actively checked host',
+                                    'List %u actively checked hosts',
+                                    $this->statusSummary->hosts_active
+                                ),
+                                $this->statusSummary->hosts_active
+                            ))
+                        ); ?></div>
 <?php endif ?>
 <?php if ($this->statusSummary->hosts_passive): ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
-                                'monitoring/list/hosts',
-                                array('host_active_checks_enabled' => 0, 'host_passive_checks_enabled' => 1)
-                            ); ?>">
-                                <?= sprintf($this->translatePlural('%d Passive', '%d Passive', $this->statusSummary->hosts_passive), $this->statusSummary->hosts_passive); ?>
-                            </a>
-                        </div>
+                        <div class="box entry"><?= $this->qlink(
+                            sprintf(
+                                $this->translatePlural('%d Passive', '%d Passive', $this->statusSummary->hosts_passive),
+                                $this->statusSummary->hosts_passive
+                            ),
+                            'monitoring/list/hosts',
+                            array('host_active_checks_enabled' => 0, 'host_passive_checks_enabled' => 1),
+                            array('title' => sprintf(
+                                $this->translatePlural(
+                                    'List %u passively checked host',
+                                    'List %u passively checked hosts',
+                                    $this->statusSummary->hosts_passive
+                                ),
+                                $this->statusSummary->hosts_passive
+                            ))
+                        ); ?></div>
 <?php endif ?>
 <?php if ($this->statusSummary->hosts_not_checked): ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
-                                'monitoring/list/hosts',
-                                array('host_active_checks_enabled' => 0, 'host_passive_checks_enabled' => 0)
-                            ); ?>" style="color: red;">
-                                <?= sprintf($this->translatePlural('%d Disabled', '%d Disabled', $this->statusSummary->hosts_not_checked), $this->statusSummary->hosts_not_checked); ?>
-                            </a>
-                        </div>
+                        <div class="box entry"><?= $this->qlink(
+                            sprintf(
+                                $this->translatePlural('%d Disabled', '%d Disabled', $this->statusSummary->hosts_not_checked),
+                                $this->statusSummary->hosts_not_checked
+                            ),
+                            'monitoring/list/hosts',
+                            array('host_active_checks_enabled' => 0, 'host_passive_checks_enabled' => 0),
+                            array('title' => sprintf(
+                                $this->translatePlural(
+                                    'List %u host that is not being checked at all',
+                                    'List %u hosts which are not being checked at all',
+                                    $this->statusSummary->hosts_not_checked
+                                ),
+                                $this->statusSummary->hosts_not_checked
+                            ))
+                        ); ?></div>
 <?php endif ?>
                     </td>
                     <td>
 <?php if ($this->statusSummary->services_active): ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
-                                'monitoring/list/services',
-                                array('service_active_checks_enabled' => 1)
-                            ); ?>">
-                                <?= sprintf($this->translatePlural('%d Active', '%d Active', $this->statusSummary->services_active), $this->statusSummary->services_active); ?>
-                            </a>
-                        </div>
+                        <div class="box entry"><?= $this->qlink(
+                            sprintf(
+                                $this->translatePlural('%d Active', '%d Active', $this->statusSummary->services_active),
+                                $this->statusSummary->services_active
+                            ),
+                            'monitoring/list/services',
+                            array('service_active_checks_enabled' => 1),
+                            array('title' => sprintf(
+                                $this->translatePlural(
+                                    'List %u actively checked service',
+                                    'List %u actively checked services',
+                                    $this->statusSummary->services_active
+                                ),
+                                $this->statusSummary->services_active
+                            ))
+                        ); ?></div>
 <?php endif ?>
 <?php if ($this->statusSummary->services_passive): ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
-                                'monitoring/list/services',
-                                array('service_active_checks_enabled' => 0, 'service_passive_checks_enabled' => 1)
-                            ); ?>">
-                                <?=  sprintf($this->translatePlural('%d Passive', '%d Passive', $this->statusSummary->services_passive), $this->statusSummary->services_passive); ?>
-                            </a>
-                        </div>
+                        <div class="box entry"><?= $this->qlink(
+                            sprintf(
+                                $this->translatePlural('%d Passive', '%d Passive', $this->statusSummary->services_passive),
+                                $this->statusSummary->services_passive
+                            ),
+                            'monitoring/list/services',
+                            array('service_active_checks_enabled' => 0, 'service_passive_checks_enabled' => 1),
+                            array('title' => sprintf(
+                                $this->translatePlural(
+                                    'List %u passively checked service',
+                                    'List %u passively checked services',
+                                    $this->statusSummary->services_passive
+                                ),
+                                $this->statusSummary->services_passive
+                            ))
+                        ); ?></div>
 <?php endif ?>
 <?php if ($this->statusSummary->services_not_checked): ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
-                                'monitoring/list/services',
-                                array('service_active_checks_enabled' => 0, 'service_passive_checks_enabled' => 0)
-                            ); ?>" style="color: red;">
-                                <?= sprintf($this->translatePlural('%d Disabled', '%d Disabled', $this->statusSummary->services_not_checked), $this->statusSummary->services_not_checked); ?>
-                            </a>
-                        </div>
+                        <div class="box entry"><?= $this->qlink(
+                            sprintf(
+                                $this->translatePlural('%d Disabled', '%d Disabled', $this->statusSummary->services_not_checked),
+                                $this->statusSummary->services_not_checked
+                            ),
+                            'monitoring/list/services',
+                            array('service_active_checks_enabled' => 0, 'service_passive_checks_enabled' => 0),
+                            array('title' => sprintf(
+                                $this->translatePlural(
+                                    'List %u service that is not being checked at all',
+                                    'List %u services which are not being checked at all',
+                                    $this->statusSummary->services_not_checked
+                                ),
+                                $this->statusSummary->services_not_checked
+                            ))
+                        ); ?></div>
 <?php endif ?>
                     </td>
                 </tr>

@@ -13,20 +13,17 @@ use Icinga\Module\Monitoring\Web\Widget\SelectBox;
 
 class Monitoring_TimelineController extends Controller
 {
-    protected function addTitleTab($action, $title = false)
-    {
-        $title = $title ? : ucfirst($action);
-        $this->getTabs()->add($action, array(
-            'title' => $title,
-            'url' => Url::fromRequest()
-        ))->activate($action)
-            ->setTitle($this->translate('Timeline Navigation'));
-        $this->view->title = $title;
-    }
-
     public function indexAction()
     {
-        $this->addTitleTab('index', t('Timeline'));
+        $this->getTabs()->add(
+            'timeline',
+            array(
+                'title' => $this->translate('Show the number of historical event records grouped by time and type'),
+                'label' => $this->translate('Timeline'),
+                'url'   => Url::fromRequest()
+            )
+        )->activate('timeline')->setTitle($this->translate('Timeline Navigation'));
+        $this->view->title = $this->translate('Timeline');
 
         // TODO: filter for hard_states (precedence adjustments necessary!)
         $this->setupIntervalBox();
@@ -144,7 +141,7 @@ class Monitoring_TimelineController extends Controller
             case '1d':
                 return $this->getDateFormat();
             case '1w':
-                return '\W\e\ek #W\<b\r\>\of Y';
+                return '\W\e\ek W\<b\r\>\of Y';
             case '1m':
                 return 'F Y';
             case '1y':

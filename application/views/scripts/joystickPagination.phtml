@@ -6,7 +6,7 @@ if ($xAxisPaginator->count() <= 1 && $yAxisPaginator->count() <= 1) {
     return; // Display this pagination only if there are multiple pages
 }
 
-$fromTo = t('%s: %d to %d of %d (on the %s-axis)');
+$showText = $this->translate('%s: Show %s %u to %u out of %u', 'pagination.joystick');
 $xAxisPages = $xAxisPaginator->getPages('all');
 $yAxisPages = $yAxisPaginator->getPages('all');
 
@@ -28,16 +28,25 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
       <td>&nbsp;</td>
       <td>
       <?php if ($prevYAxisPage): ?>
-        <a target="_self" href="<?= Url::fromRequest()->overwriteParams(array(
-          'page' => $currentXAxisPage . ',' . $prevYAxisPage
-        ))->getAbsoluteUrl(); ?>" title="<?= sprintf(
-          $fromTo,
-          t('Hosts'),
-          ($prevYAxisPage - 1) * $yAxisPages->itemCountPerPage + 1,
-          $prevYAxisPage * $yAxisPages->itemCountPerPage,
-          $yAxisPages->totalItemCount,
-          'y'
-        ); ?>"><?= $this->icon('up-open'); ?></a>
+        <?= $this->qlink(
+          '',
+          Url::fromRequest(),
+          array(
+            'page' => $currentXAxisPage . ',' . $prevYAxisPage
+          ),
+          array(
+            'icon'              => 'up-open',
+            'data-base-target'  => '_self',
+            'title'             => sprintf(
+              $showText,
+              $this->translate('Y-Axis', 'pagination.joystick'),
+              $this->translate('hosts', 'pagination.joystick'),
+              ($prevYAxisPage - 1) * $yAxisPages->itemCountPerPage + 1,
+              $prevYAxisPage * $yAxisPages->itemCountPerPage,
+              $yAxisPages->totalItemCount
+            )
+          )
+        ); ?>
       <?php else: ?>
         <?= $this->icon('up-open'); ?>
       <?php endif ?>
@@ -47,16 +56,25 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
     <tr>
       <td>
       <?php if ($prevXAxisPage): ?>
-        <a target="_self" href="<?= Url::fromRequest()->overwriteParams(array(
-          'page' => $prevXAxisPage . ',' . $currentYAxisPage
-        ))->getAbsoluteUrl(); ?>" title="<?= sprintf(
-          $fromTo,
-          t('Services'),
-          ($prevXAxisPage - 1) * $xAxisPages->itemCountPerPage + 1,
-          $prevXAxisPage * $xAxisPages->itemCountPerPage,
-          $xAxisPages->totalItemCount,
-          'x'
-        ); ?>"><?= $this->icon('left-open'); ?></a>
+        <?= $this->qlink(
+          '',
+          Url::fromRequest(),
+          array(
+            'page' => $prevXAxisPage . ',' . $currentYAxisPage
+          ),
+          array(
+            'icon'              => 'left-open',
+            'data-base-target'  => '_self',
+            'title'             => sprintf(
+              $showText,
+              $this->translate('X-Axis', 'pagination.joystick'),
+              $this->translate('services', 'pagination.joystick'),
+              ($prevXAxisPage - 1) * $xAxisPages->itemCountPerPage + 1,
+              $prevXAxisPage * $xAxisPages->itemCountPerPage,
+              $xAxisPages->totalItemCount
+            )
+          )
+        ); ?>
       <?php else: ?>
         <?= $this->icon('left-open'); ?>
       <?php endif ?>
@@ -64,16 +82,26 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
       <td>&nbsp;</td>
       <td>
       <?php if ($nextXAxisPage): ?>
-        <a target="_self" href="<?= Url::fromRequest()->overwriteParams(array(
-          'page' => $nextXAxisPage . ',' . $currentYAxisPage
-        ))->getAbsoluteUrl(); ?>" title="<?= sprintf(
-          $fromTo,
-          t('Services'),
-          $currentXAxisPage * $xAxisPages->itemCountPerPage + 1,
-          $nextXAxisPage === $xAxisPages->last ? $xAxisPages->totalItemCount : $nextXAxisPage * $xAxisPages->itemCountPerPage,
-          $xAxisPages->totalItemCount,
-          'x'
-        ); ?>"><?= $this->icon('right-open'); ?></a>
+        <?= $this->qlink(
+          '',
+          Url::fromRequest(),
+          array(
+            'page' => $nextXAxisPage . ',' . $currentYAxisPage
+          ),
+          array(
+            'icon'              => 'right-open',
+            'data-base-target'  => '_self',
+            'title'             => sprintf(
+              $showText,
+              $this->translate('X-Axis', 'pagination.joystick'),
+              $this->translate('services', 'pagination.joystick'),
+              $currentXAxisPage * $xAxisPages->itemCountPerPage + 1,
+              $nextXAxisPage === $xAxisPages->last ? $xAxisPages->totalItemCount : $nextXAxisPage * $xAxisPages->itemCountPerPage,
+              $xAxisPages->totalItemCount
+            )
+          ),
+          false
+        ); ?>
       <?php else: ?>
         <?= $this->icon('right-open'); ?>
       <?php endif ?>
@@ -83,16 +111,25 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
       <td>&nbsp;</td>
       <td>
       <?php if ($nextYAxisPage): ?>
-        <a target="_self" href="<?= Url::fromRequest()->overwriteParams(array(
-          'page' => $currentXAxisPage . ',' . $nextYAxisPage
-        ))->getAbsoluteUrl(); ?>" title="<?= sprintf(
-          $fromTo,
-          t('Hosts'),
-          $currentYAxisPage * $yAxisPages->itemCountPerPage + 1,
-          $nextYAxisPage === $yAxisPages->last ? $yAxisPages->totalItemCount : $nextYAxisPage * $yAxisPages->itemCountPerPage,
-          $yAxisPages->totalItemCount,
-          'y'
-        ); ?>"><?= $this->icon('down-open'); ?></a>
+        <?= $this->qlink(
+          '',
+          Url::fromRequest(),
+          array(
+            'page' => $currentXAxisPage . ',' . $nextYAxisPage
+          ),
+          array(
+            'icon'              => 'down-open',
+            'data-base-target'  => '_self',
+            'title'             => sprintf(
+              $showText,
+              $this->translate('Y-Axis', 'pagination.joystick'),
+              $this->translate('hosts', 'pagination.joystick'),
+              $currentYAxisPage * $yAxisPages->itemCountPerPage + 1,
+              $nextYAxisPage === $yAxisPages->last ? $yAxisPages->totalItemCount : $nextYAxisPage * $yAxisPages->itemCountPerPage,
+              $yAxisPages->totalItemCount
+            )
+          )
+        ); ?>
       <?php else: ?>
         <?= $this->icon('down-open'); ?>
       <?php endif ?>

@@ -39,28 +39,34 @@ class ConfigController extends ActionController
         $allowedActions = array();
         if ($auth->hasPermission('system/config/application')) {
             $tabs->add('application', array(
-                'title' => $this->translate('Application'),
+                'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
+                'label' => $this->translate('Application'),
                 'url'   => 'config/application'
             ));
             $allowedActions[] = 'application';
         }
         if ($auth->hasPermission('system/config/authentication')) {
             $tabs->add('authentication', array(
-                'title' => $this->translate('Authentication'),
+                'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
+                'label' => $this->translate('Authentication'),
                 'url'   => 'config/authentication'
             ));
             $allowedActions[] = 'authentication';
         }
         if ($auth->hasPermission('system/config/resources')) {
             $tabs->add('resource', array(
-                'title' => $this->translate('Resources'),
+                'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
+                'label' => $this->translate('Resources'),
                 'url'   => 'config/resource'
             ));
             $allowedActions[] = 'resource';
         }
         if ($auth->hasPermission('system/config/roles')) {
             $tabs->add('roles', array(
-                'title' => $this->translate('Roles'),
+                'title' => $this->translate(
+                    'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
+                ),
+                'label' => $this->translate('Roles'),
                 'url'   => 'roles'
             ));
             $allowedActions[] = 'roles';

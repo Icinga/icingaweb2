@@ -11,58 +11,112 @@
             <tbody>
                 <tr>
                     <td>
+                        <div class="box entry">
 <?php if ($this->statusSummary->hosts_without_flap_detection): ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
+                            <?= $this->qlink(
+                                sprintf(
+                                    $this->translatePlural('%u Host Disabled', '%u Hosts Disabled', $this->statusSummary->hosts_without_flap_detection),
+                                    $this->statusSummary->hosts_without_flap_detection
+                                ),
                                 'monitoring/list/hosts',
-                                array('host_flap_detection_enabled' => 0)
-                            ); ?>" class="feature-highlight">
-                                <?= sprintf($this->translatePlural('%d Host Disabled', '%d Hosts Disabled', $this->statusSummary->hosts_without_flap_detection), $this->statusSummary->hosts_without_flap_detection); ?>
-                            </a>
+                                array('host_flap_detection_enabled' => 0),
+                                array(
+                                    'class' => 'feature-highlight',
+                                    'title' => sprintf(
+                                        $this->translatePlural(
+                                            'List %u host for which flap detection has been disabled',
+                                            'List %u hosts for which flap detection has been disabled',
+                                            $this->statusSummary->hosts_without_flap_detection
+                                        ),
+                                        $this->statusSummary->hosts_without_flap_detection
+                                    )
+                                )
+                            ); ?>
 <?php else: ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
+                            <?= $this->qlink(
+                                $this->translate('All Hosts Enabled'),
                                 'monitoring/list/hosts',
-                                array('host_flap_detection_enabled' => 1)
-                            ); ?>">
-                                <?= $this->translate('All Hosts Enabled'); ?>
-                            </a>
+                                array('host_flap_detection_enabled' => 1),
+                                array('title' => $this->translate(
+                                    'List all hosts, for which flap detection is enabled entirely'
+                                ))
+                            ); ?>
 <?php endif ?>
 <?php if ($this->statusSummary->hosts_flapping): ?>
-                            <a href="<?= $this->href(
+                            <?= $this->qlink(
+                                sprintf(
+                                    $this->translatePlural('%u Host Flapping', '%u Hosts Flapping', $this->statusSummary->hosts_flapping),
+                                    $this->statusSummary->hosts_flapping
+                                ),
                                 'monitoring/list/hosts',
-                                array('host_is_flapping' => 1)
-                            ); ?>" class="feature-highlight">
-                                <?= sprintf($this->translatePlural('%d Host Flapping', '%d Hosts Flapping', $this->statusSummary->hosts_flapping), $this->statusSummary->hosts_flapping); ?>
-                            </a>
+                                array('host_is_flapping' => 1),
+                                array(
+                                    'class' => 'feature-highlight',
+                                    'title' => sprintf(
+                                        $this->translatePlural(
+                                            'List %u host that is currently flapping',
+                                            'List %u hosts which are currently flapping',
+                                            $this->statusSummary->hosts_flapping
+                                        ),
+                                        $this->statusSummary->hosts_flapping
+                                    )
+                                )
+                            ); ?>
 <?php endif ?>
                         </div>
                     </td>
                     <td>
+                        <div class="box entry">
 <?php if ($this->statusSummary->services_without_flap_detection): ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
+                            <?= $this->qlink(
+                                sprintf(
+                                    $this->translatePlural('%u Service Disabled', '%u Services Disabled', $this->statusSummary->services_without_flap_detection),
+                                    $this->statusSummary->services_without_flap_detection
+                                ),
                                 'monitoring/list/services',
-                                array('service_flap_detection_enabled' => 0)
-                            ); ?>" class="feature-highlight">
-                                <?= sprintf($this->translatePlural('%d Service Disabled', '%d Services Disabled', $this->statusSummary->services_without_flap_detection), $this->statusSummary->services_without_flap_detection); ?>
-                            </a>
+                                array('service_flap_detection_enabled' => 0),
+                                array(
+                                    'class' => 'feature-highlight',
+                                    'title' => sprintf(
+                                        $this->translatePlural(
+                                            'List %u service for which flap detection has been disabled',
+                                            'List %u services for which flap detection has been disabled',
+                                            $this->statusSummary->services_without_flap_detection
+                                        ),
+                                        $this->statusSummary->services_without_flap_detection
+                                    )
+                                )
+                            ); ?>
 <?php else: ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
+                            <?= $this->qlink(
+                                $this->translate('All Services Enabled'),
                                 'monitoring/list/services',
-                                array('service_flap_detection_enabled' => 1)
-                            ); ?>">
-                                <?= $this->translate('All Services Enabled'); ?>
-                            </a>
+                                array('service_flap_detection_enabled' => 1),
+                                array('title' => $this->translate(
+                                    'List all services, for which flap detection is enabled entirely'
+                                ))
+                            ); ?>
 <?php endif ?>
 <?php if ($this->statusSummary->services_flapping): ?>
-                            <a href="<?= $this->href(
+                            <?= $this->qlink(
+                                sprintf(
+                                    $this->translatePlural('%u Service Flapping', '%u Services Flapping', $this->statusSummary->services_flapping),
+                                    $this->statusSummary->services_flapping
+                                ),
                                 'monitoring/list/services',
-                                array('service_is_flapping' => 1)
-                            ); ?>" class="feature-highlight">
-                                <?= sprintf($this->translatePlural('%d Service Flapping', '%d Services Flapping', $this->statusSummary->services_flapping), $this->statusSummary->services_flapping); ?>
-                            </a>
+                                array('service_is_flapping' => 1),
+                                array(
+                                    'class' => 'feature-highlight',
+                                    'title' => sprintf(
+                                        $this->translatePlural(
+                                            'List %u service that is currently flapping',
+                                            'List %u services which are currently flapping',
+                                            $this->statusSummary->services_flapping
+                                        ),
+                                        $this->statusSummary->services_flapping
+                                    )
+                                )
+                            ); ?>
 <?php endif ?>
                         </div>
                     </td>
@@ -78,42 +132,70 @@
             <tbody>
                 <tr>
                     <td>
+                        <div class="box entry">
 <?php if ($this->statusSummary->hosts_not_triggering_notifications): ?>
-                        <div class="box entry ">
-                            <a href="<?= $this->href(
+                            <?= $this->qlink(
+                                sprintf(
+                                    $this->translatePlural('%u Host Disabled', '%u Hosts Disabled', $this->statusSummary->hosts_not_triggering_notifications),
+                                    $this->statusSummary->hosts_not_triggering_notifications
+                                ),
                                 'monitoring/list/hosts',
-                                array('host_notifications_enabled' => 0)
-                            ); ?>" class="feature-highlight">
-                                <?= sprintf($this->translatePlural('%d Host Disabled', '%d Hosts Disabled', $this->statusSummary->hosts_not_triggering_notifications), $this->statusSummary->hosts_not_triggering_notifications); ?>
-                            </a>
+                                array('host_notifications_enabled' => 0),
+                                array(
+                                    'class' => 'feature-highlight',
+                                    'title' => sprintf(
+                                        $this->translatePlural(
+                                            'List %u host for which notifications are suppressed',
+                                            'List %u hosts for which notifications are suppressed',
+                                            $this->statusSummary->hosts_not_triggering_notifications
+                                        ),
+                                        $this->statusSummary->hosts_not_triggering_notifications
+                                    )
+                                )
+                            ); ?>
 <?php else: ?>
-                        <div class="box entry ">
-                            <a href="<?= $this->href(
+                            <?= $this->qlink(
+                                $this->translate('All Hosts Enabled'),
                                 'monitoring/list/hosts',
-                                array('host_notifications_enabled' => 1)
-                            ); ?>">
-                                <?= $this->translate('All Hosts Enabled'); ?>
-                            </a>
+                                array('host_notifications_enabled' => 1),
+                                array('title' => $this->translate(
+                                    'List all hosts, for which notifications are enabled entirely'
+                                ))
+                            ); ?>
 <?php endif ?>
                         </div>
                     </td>
                     <td>
+                        <div class="box entry">
 <?php if ($this->statusSummary->services_not_triggering_notifications): ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
+                            <?= $this->qlink(
+                                sprintf(
+                                    $this->translatePlural('%u Service Disabled', '%u Services Disabled', $this->statusSummary->services_not_triggering_notifications),
+                                    $this->statusSummary->services_not_triggering_notifications
+                                ),
                                 'monitoring/list/services',
-                                array('service_notifications_enabled' => 0)
-                            ); ?>" class="feature-highlight">
-                                <?= sprintf($this->translatePlural('%d Service Disabled', '%d Services Disabled', $this->statusSummary->services_not_triggering_notifications), $this->statusSummary->services_not_triggering_notifications); ?>
-                            </a>
+                                array('service_notifications_enabled' => 0),
+                                array(
+                                    'class' => 'feature-highlight',
+                                    'title' => sprintf(
+                                        $this->translatePlural(
+                                            'List %u service for which notifications are suppressed',
+                                            'List %u services for which notifications are suppressed',
+                                            $this->statusSummary->services_not_triggering_notifications
+                                        ),
+                                        $this->statusSummary->services_not_triggering_notifications
+                                    )
+                                )
+                            ); ?>
 <?php else: ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
+                            <?= $this->qlink(
+                                $this->translate('All Services Enabled'),
                                 'monitoring/list/services',
-                                array('service_notifications_enabled' => 1)
-                            ); ?>">
-                                <?= $this->translate('All Services Enabled'); ?>
-                            </a>
+                                array('service_notifications_enabled' => 1),
+                                array('title' => $this->translate(
+                                    'List all services, for which notifications are enabled entirely'
+                                ))
+                            ); ?>
 <?php endif ?>
                         </div>
                     </td>
@@ -129,42 +211,70 @@
             <tbody>
                 <tr>
                     <td>
+                        <div class="box entry">
 <?php if ($this->statusSummary->hosts_not_processing_event_handlers): ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
+                            <?= $this->qlink(
+                                sprintf(
+                                    $this->translatePlural('%u Host Disabled', '%u Hosts Disabled', $this->statusSummary->hosts_not_processing_event_handlers),
+                                    $this->statusSummary->hosts_not_processing_event_handlers
+                                ),
                                 'monitoring/list/hosts',
-                                array('host_event_handler_enabled' => 0)
-                            ); ?>" class="feature-highlight">
-                                <?= sprintf($this->translatePlural('%d Host Disabled', '%d Hosts Disabled', $this->statusSummary->hosts_not_processing_event_handlers), $this->statusSummary->hosts_not_processing_event_handlers); ?>
-                            </a>
+                                array('host_event_handler_enabled' => 0),
+                                array(
+                                    'class' => 'feature-highlight',
+                                    'title' => sprintf(
+                                        $this->translatePlural(
+                                            'List %u host that is not processing any event handlers',
+                                            'List %u hosts which are not processing any event handlers',
+                                            $this->statusSummary->hosts_not_processing_event_handlers
+                                        ),
+                                        $this->statusSummary->hosts_not_processing_event_handlers
+                                    )
+                                )
+                            ); ?>
 <?php else: ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
+                            <?= $this->qlink(
+                                $this->translate('All Hosts Enabled'),
                                 'monitoring/list/hosts',
-                                array('host_event_handler_enabled' => 1)
-                            ); ?>">
-                                <?= $this->translate('All Hosts Enabled'); ?>
-                            </a>
+                                array('host_event_handler_enabled' => 1),
+                                array('title' => $this->translate(
+                                    'List all hosts, which are processing event handlers entirely'
+                                ))
+                            ); ?>
 <?php endif ?>
                         </div>
                     </td>
                     <td>
+                        <div class="box entry">
 <?php if ($this->statusSummary->services_not_processing_event_handlers): ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
+                            <?= $this->qlink(
+                                sprintf(
+                                    $this->translatePlural('%u Service Disabled', '%u Services Disabled', $this->statusSummary->services_not_processing_event_handlers),
+                                    $this->statusSummary->services_not_processing_event_handlers
+                                ),
                                 'monitoring/list/services',
-                                array('service_event_handler_enabled' => 0)
-                            ); ?>" class="feature-highlight">
-                                <?= sprintf($this->translatePlural('%d Service Disabled', '%d Services Disabled', $this->statusSummary->services_not_processing_event_handlers), $this->statusSummary->services_not_processing_event_handlers); ?>
-                            </a>
+                                array('service_event_handler_enabled' => 0),
+                                array(
+                                    'class' => 'feature-highlight',
+                                    'title' => sprintf(
+                                        $this->translatePlural(
+                                            'List %u service that is not processing any event handlers',
+                                            'List %u services which are not processing any event handlers',
+                                            $this->statusSummary->services_not_processing_event_handlers
+                                        ),
+                                        $this->statusSummary->services_not_processing_event_handlers
+                                    )
+                                )
+                            ); ?>
 <?php else: ?>
-                        <div class="box entry">
-                            <a href="<?= $this->href(
+                            <?= $this->qlink(
+                                $this->translate('All Services Enabled'),
                                 'monitoring/list/services',
-                                array('service_event_handler_enabled' => 1)
-                            ); ?>">
-                                <?= $this->translate('All Services Enabled'); ?>
-                            </a>
+                                array('service_event_handler_enabled' => 1),
+                                array('title' => $this->translate(
+                                    'List all services, which are processing event handlers entirely'
+                                ))
+                            ); ?>
 <?php endif ?>
                         </div>
                     </td>

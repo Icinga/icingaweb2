@@ -11,24 +11,29 @@
     <h1 tabindex="-1"><?= $this->translate('Contacts') ?></h1>
     <?php
     if (count($contacts) === 0) {
-        echo mt('monitoring', 'No contacts matching the filter');
+        echo $this->translate('No contacts matching the filter');
         return;
     }
     foreach ($contacts as $contact): ?>
         <div class="contact">
             <?= $this->img('/static/gravatar', array('email' => $contact->contact_email)); ?>
-            <a href="<?= $this->href(
+            <strong><?= $this->qlink(
+                $contact->contact_name,
                 'monitoring/show/contact',
-                array('contact' => $contact->contact_name)
-            ) ?>"><strong><?= $contact->contact_name ?></strong></a> (<?= $contact->contact_alias ?>)
-            <div><?= sprintf(
-                '%1$s: <a href="mailto:%2$s">%2$s</a>',
-                mt('monitoring', 'Email'),
-                $this->escape($contact->contact_email)
-            ) ?></div>
+                array('contact' => $contact->contact_name),
+                array('title' => sprintf(
+                    $this->translate('Show detailed information about %s'),
+                    $contact->contact_alias
+                ))
+            ); ?></strong> (<?= $contact->contact_alias; ?>)
+            <div>
+                <?= $this->translate('Email'); ?>: <a href="mailto:<?= $contact->contact_email; ?>" title="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>" aria-label="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>">
+                    <?= $this->escape($contact->contact_email); ?>
+                </a>
+            </div>
             <?php if ($contact->contact_pager): ?>
             <div>
-                <?= mt('monitoring', 'Pager') ?>:
+                <?= $this->translate('Pager') ?>:
                 <?= $this->escape($contact->contact_pager) ?>
             </div>
             <?php endif; ?>
@@ -36,13 +41,13 @@
             <div class="notification-periods">
                 <?php if ($contact->contact_notify_service_timeperiod): ?>
                 <div>
-                    <?= mt('monitoring', 'Service notification period') ?>:
+                    <?= $this->translate('Service notification period') ?>:
                     <?= $this->escape($contact->contact_notify_service_timeperiod) ?>
                 </div>
                 <?php endif; ?>
                 <?php if ($contact->contact_notify_host_timeperiod): ?>
                 <div>
-                    <?= mt('monitoring', 'Host notification period') ?>:
+                    <?= $this->translate('Host notification period') ?>:
                     <?= $this->escape($contact->contact_notify_host_timeperiod) ?>
                 </div>
                 <?php endif; ?>

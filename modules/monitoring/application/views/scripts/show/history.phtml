@@ -29,7 +29,12 @@ $hostContext = $object->getType() === 'host';
 function contactsLink($match, $view) {
     $links = array();
     foreach (preg_split('/,\s/', $match[1]) as $contact) {
-        $links[] = $view->qlink($contact, 'monitoring/show/contact', array('contact' => $contact));
+        $links[] = $view->qlink(
+            $contact,
+            'monitoring/show/contact',
+            array('contact' => $contact),
+            array('title' => sprintf($view->translate('Show detailed information about %s'), $contact))
+        );
     }
     return '[' . implode(', ', $links) . ']';
 }
@@ -136,12 +141,17 @@ $output = $this->tickets ? preg_replace_callback(
           <?= sprintf(
               $this->translate('%s on %s', 'Service running on host'),
               $hostContext ? $this->qlink(
-                  $this->escape($event->service_display_name),
+                  $event->service_display_name,
                   'monitoring/show/service',
                   array(
                       'host' => $event->host_name,
                       'service' => $event->service_description
-                  )
+                  ),
+                  array('title' => sprintf(
+                      $this->translate('Show detailed information for service %s on host %s'),
+                      $event->service_display_name,
+                      $event->host_display_name
+                  ))
               ) : $this->escape($event->service_display_name),
               $event->host_display_name
           ) ?>
@@ -150,7 +160,7 @@ $output = $this->tickets ? preg_replace_callback(
         <?php endif ?>
           <br>
           <div>
-            <?= $this->icon($icon, $title); ?> <?= empty($msg) ? '' : $this->escape($msg) ?>
+            <?= $this->icon($icon, $title); ?> <?= empty($msg) ? '' : $msg; ?>
           </div>
         </td>
       </tr>

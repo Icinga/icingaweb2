@@ -23,10 +23,12 @@
                 <?php foreach ($roles as $name => $role): /** @var object $role */ ?>
                     <tr>
                         <td>
-                            <?= $this->escape($name) ?>
-                            <div class="hidden">
-                                <a href="<?= $this->url('roles/update', array('role' => $name)) ?>"></a>
-                            </div>
+                            <?= $this->qlink(
+                                $name,
+                                'roles/update',
+                                array('role' => $name),
+                                array('title' => sprintf($this->translate('Edit role %s'), $name))
+                            ); ?>
                         </td>
 <!--                        <td>--><?//= $this->escape($role->permissions, 0, 50) ?><!--</td>-->
 <!--                        <td>-->
@@ -54,11 +56,13 @@
                         <td><?= $this->escape($role->groups) ?></td>
                         <td>
                             <?= $this->qlink(
-                                $this->icon('cancel'),
+                                '',
                                 'roles/remove',
                                 array('role' => $name),
-                                array('title' => sprintf($this->translate('Remove role %s'), $name)),
-                                false
+                                array(
+                                    'icon'  => 'cancel',
+                                    'title' => sprintf($this->translate('Remove role %s'), $name)
+                                )
                             ); ?>
                         </td>
                     </tr>
@@ -70,7 +74,7 @@
             <?= $this->translate('Create New Role'); ?>
         </h2>
         <a data-base-target="_next" href="<?= $this->href('roles/new') ?>">
-            <?= $this->translate('New Role') ?>
+            <?= $this->translate('Create a New Role') ?>
         </a>
     </div>
 </div>

@@ -54,7 +54,7 @@ class DeleteCommentCommandForm extends ObjectsCommandForm
             array(
                 'ignore'        => true,
                 'label'         => 'X',
-                'title'         => $this->translate('Delete comment'),
+                'title'         => $this->translate('Delete this comment'),
                 'decorators'    => array('ViewHelper')
             )
         );

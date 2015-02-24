@@ -1,9 +1,19 @@
 <div class="controls"></div>
-    <?= /** @type \Icinga\Web\Widget\Tabs $tabs */ $tabs->showOnlyCloseButton() ?>
-    <h1><?= $this->translate('Available documentations') ?></h1>
+    <?= /** @type \Icinga\Web\Widget\Tabs $tabs */ $tabs->showOnlyCloseButton(); ?>
+    <h1><?= $this->translate('Available documentations'); ?></h1>
 <div class="content">
     <ul>
-        <li><a href="<?= $this->href('doc/icingaweb/toc') ?>">Icinga Web 2</a></li>
-        <li><a href="<?= $this->href('doc/module/') ?>"><?= $this->translate('Module documentations') ?></a></li>
+        <li><?= $this->qlink(
+            'Icinga Web 2',
+            'doc/icingaweb/toc',
+            null,
+            array('title' => $this->translate('Show the documentation\'s table of contents for Icinga Web 2'))
+        ); ?></li>
+        <li><?= $this->qlink(
+            $this->translate('Module documentations'),
+            'doc/module/',
+            null,
+            array('title' => $this->translate('List all modifications for which documentation is available'))
+        ); ?></li>
     </ul>
 </div>
