@@ -211,7 +211,11 @@ class Dashboard extends AbstractWidget
                 $this->tabs->add(
                     $key,
                     array(
-                        'title'     => $pane->getTitle(),
+                        'title'       => sprintf(
+                            t('Show %s', 'dashboard.pane.tooltip'),
+                            $pane->getTitle()
+                        ),
+                        'label'     => $pane->getTitle(),
                         'url'       => clone($url),
                         'urlParams' => array($this->tabParam => $key)
                     )

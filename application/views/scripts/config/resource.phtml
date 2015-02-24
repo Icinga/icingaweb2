@@ -26,21 +26,25 @@
       <tr>
         <td>
           <?= $this->qlink(
-            $this->icon('edit') . ' ' . $this->escape($name),
+            $name,
             'config/editresource',
             array('resource' => $name),
-            array('title' => sprintf($this->translate('Edit resource %s'), $name)),
-            false
+            array(
+                'icon'  => 'edit',
+                'title' => sprintf($this->translate('Edit resource %s'), $name)
+            )
           ); ?>
         </td>
         <td>
           <center>
             <?= $this->qlink(
-              $this->icon('cancel'),
+              '',
               'config/removeresource',
               array('resource' => $name),
-              array('title' => sprintf($this->translate('Remove resource %s'), $name)),
-              false
+              array(
+                  'icon'    => 'cancel',
+                  'title'   => sprintf($this->translate('Remove resource %s'), $name)
+              )
             ); ?>
           </center>
         </td>

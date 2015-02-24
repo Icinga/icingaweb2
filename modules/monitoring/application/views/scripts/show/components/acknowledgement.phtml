@@ -35,9 +35,17 @@ if ($object->acknowledged): ?>
                     );
                 }
             ?>
-            <a href="<?= $ackLink ?>" data-base-target="_self">
-                <?= $this->icon('ok') ?> <?= $this->translate('Acknowledge') ?>
-            </a>
+            <?= $this->qlink(
+                $this->translate('Acknowledge'),
+                $ackLink,
+                null,
+                array(
+                    'icon'  => 'ok',
+                    'title' => $this->translate(
+                        'Acknowledge this problem, suppress all future notifications for it and tag it as being handled'
+                    )
+                )
+            ); ?>
             <?php } else {
                 echo '&#45;';
             } // endif ?>

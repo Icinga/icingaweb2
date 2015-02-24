@@ -11,7 +11,11 @@ class Monitoring_TacticalController extends MonitoringController
         $this->getTabs()->add(
             'tactical_overview',
             array(
-                'title' => $this->translate('Tactical Overview'),
+                'title' => $this->translate(
+                    'Show an overview of all hosts and services, their current'
+                    . ' states and monitoring feature utilisation'
+                ),
+                'label' => $this->translate('Tactical Overview'),
                 'url'   => Url::fromRequest()
             )
         )->activate('tactical_overview');

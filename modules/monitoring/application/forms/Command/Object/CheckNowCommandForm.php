@@ -39,7 +39,8 @@ class CheckNowCommandForm extends ObjectsCommandForm
                         . $this->translate('Check now'),
                     'decorators'    => array('ViewHelper'),
                     'escape'        => false,
-                    'class'         => 'link-like'
+                    'class'         => 'link-like',
+                    'title'         => $this->translate('Schedule the next active check to run immediately')
                 )
             )
         ));

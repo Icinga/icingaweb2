@@ -11,22 +11,18 @@
       <tr>
         <td>
           <?php if ($module->enabled && $module->loaded) {
-            $icon = $this->icon('thumbs-up');
-            $title = sprintf($this->translate('Module %s is enabled'), $module->name);
+            echo $this->icon('thumbs-up', sprintf($this->translate('Module %s is enabled'), $module->name));
           } elseif (! $module->enabled) {
-            $icon = $this->icon('thumbs-down');
-            $title = sprintf($this->translate('Module %s is disabled'), $module->name);
+            echo $this->icon('thumbs-down', sprintf($this->translate('Module %s is disabled'), $module->name));
           } else { // ! $module->loaded
-            $icon = $this->icon('thumbs-down');
-            $title = sprintf($this->translate('Module %s has failed to load'), $module->name);
+            echo $this->icon('thumbs-down', sprintf($this->translate('Module %s has failed to load'), $module->name));
           }
 
           echo $this->qlink(
-            $icon . $this->escape($module->name),
+            $module->name,
             'config/module/',
             array('name' => $module->name),
-            array('title' => $title),
-            false
+            array('title' => sprintf($this->translate('Show the overview of the %s module'), $module->name))
           ); ?>
         </td>
       </tr>

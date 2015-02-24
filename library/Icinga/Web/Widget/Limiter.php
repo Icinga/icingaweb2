@@ -80,7 +80,7 @@ class Limiter extends AbstractWidget
                     $this->url->setParam('limit', $limit),
                     null,
                     array(
-                        'title' => sprintf(t('Show %s rows on one page'), $caption)
+                        'title' => sprintf($view->translate('Limit each page to a maximum of %u rows'), $caption)
                     )
                 );
             }

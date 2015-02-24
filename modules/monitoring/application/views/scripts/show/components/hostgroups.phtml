@@ -4,9 +4,12 @@ if (empty($object->hostgroups)) return;
 
 $list = array();
 foreach ($object->hostgroups as $name => $alias) {
-    $list[] = $this->qlink($alias, 'monitoring/list/hosts', array(
-        'hostgroup' => $name
-    ));
+    $list[] = $this->qlink(
+        $alias,
+        'monitoring/list/hosts',
+        array('hostgroup' => $name),
+        array('title' => sprintf($this->translate('List all hosts in the group "%s"'), $alias))
+    );
 }
 printf(
     "<tr><th>%s</th><td>%s %s</td></tr>\n",

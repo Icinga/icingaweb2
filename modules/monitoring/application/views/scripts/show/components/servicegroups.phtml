@@ -4,9 +4,12 @@ if (empty($object->servicegroups)) return;
 
 $list = array();
 foreach ($object->servicegroups as $name => $alias) {
-    $list[] = $this->qlink($alias, 'monitoring/list/services', array(
-        'servicegroup' => $name
-    ));
+    $list[] = $this->qlink(
+        $alias,
+        'monitoring/list/services',
+        array('servicegroup' => $name),
+        array('title' => sprintf($this->translate('List all services in the group "%s"'), $alias))
+    );
 }
 
 printf(

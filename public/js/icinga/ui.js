@@ -140,7 +140,7 @@
 
         cutContainer: function ($col) {
             var props = {
-              'elements': $('#' + $col.attr('id') + ' > div').detach(),
+              'elements': $('#' + $col.attr('id') + ' > *').detach(),
               'data': {
                 'data-icinga-url': $col.data('icingaUrl'),
                 'data-icinga-refresh': $col.data('icingaRefresh'),

@@ -67,11 +67,13 @@ $this->provideRestriction(
 );
 
 $this->provideConfigTab('backends', array(
-    'title' => 'Backends',
+    'title' => $this->translate('Configure how to retrieve monitoring information'),
+    'label' => $this->translate('Backends'),
     'url' => 'config'
 ));
 $this->provideConfigTab('security', array(
-    'title' => 'Security',
+    'title' => $this->translate('Configure how to protect your monitoring environment against prying eyes'),
+    'label' => $this->translate('Security'),
     'url' => 'config/security'
 ));
 $this->provideSetupWizard('Icinga\Module\Monitoring\MonitoringWizard');

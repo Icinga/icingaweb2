@@ -18,9 +18,25 @@
   </div>
   <div class="buttons">
   <?php if ($success): ?>
-    <a href="<?= $this->href('authentication/login'); ?>" class="button-like login"><?= $this->translate('Login to Icinga Web 2'); ?></a>
+    <?= $this->qlink(
+        $this->translate('Login to Icinga Web 2'),
+        'authentication/login',
+        null,
+        array(
+            'class' => 'button-like login',
+            'title' => $this->translate('Show the login page of Icinga Web 2')
+        )
+    ); ?>
   <?php else: ?>
-    <a href="<?= $this->href(); ?>" class="button-like"><?= $this->translate('Back'); ?></a>
+    <?= $this->qlink(
+        $this->translate('Back'),
+        null,
+        null,
+        array(
+            'class' => 'button-like',
+            'title' => $this->translate('Show previous wizard-page')
+        )
+    ); ?>
   <?php endif ?>
   </div>
 </div>

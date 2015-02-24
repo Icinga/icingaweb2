@@ -1,23 +1,54 @@
 <?php
 
 use Icinga\Web\Url;
+use Icinga\Module\Monitoring\Object\Service;
 
-$selfUrl = Url::fromPath('monitoring/show/services', array('host' => $this->object->host_name));
+$selfUrl = Url::fromPath('monitoring/show/services', array('host' => $object->host_name));
 $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
-?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
-<?php if ($object->stats->services_total > 0): ?>
-<?= $this->qlink(sprintf($this->translatePlural('%d configured service:', '%d configured services:', $object->stats->services_total), $object->stats->services_total), $selfUrl) ?>
+?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
+<?php if ($object->stats->services_total): ?>
+<?= $this->qlink(
+    sprintf(
+        $this->translatePlural(
+            '%u configured service:',
+            '%u configured services:',
+            $object->stats->services_total
+        ),
+        $object->stats->services_total
+    ),
+    $selfUrl,
+    null,
+    array('title' => sprintf(
+        $this->translatePlural(
+            'List all %u service on host %s',
+            'List all %u services on host %s',
+            $object->stats->services_total
+        ),
+        $object->stats->services_total,
+        $object->host_name
+    ))
+); ?>
 <?php else: ?>
 <?= $this->translate('No services configured on this host'); ?>
 <?php endif; ?>
 <span class="badges">
-<?php if ($object->stats->services_ok > 0): ?>
- <span class="state ok<?= $currentUrl === $selfUrl->with('service_state', 0)->getRelativeUrl() ? ' active' : '' ?>"><?= $this->qlink(
-    $object->stats->services_ok,
-    $selfUrl,
-    array('service_state' => 0),
-    array('title' => sprintf($this->translate('Services with state %s'), $this->translate('OK')))
-)  ?></span>
+<?php if ($object->stats->services_ok): ?>
+<span class="state ok<?= $currentUrl === $selfUrl->with('service_state', 0)->getRelativeUrl() ? ' active' : ''; ?>">
+    <?= $this->qlink(
+        $object->stats->services_ok,
+        $selfUrl,
+        array('service_state' => 0),
+        array('title' => sprintf(
+            $this->translatePlural(
+                'List %u service that is currently in state OK on host %s',
+                'List %u services which are currently in state OK on host %s',
+                $object->stats->services_ok
+            ),
+            $object->stats->services_ok,
+            $object->host_name
+        ))
+    ); ?>
+</span>
 <?php endif ?>
 <?php
 foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $state) {
@@ -46,7 +77,16 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
                 $object->stats->$unhandled,
                 $selfUrl,
                 $paramsUnhandled,
-                array('title' => sprintf($this->translate('Unhandled services with state %s'), $this->translate(strtoupper($state))))
+                array('title' => sprintf(
+                    $this->translatePlural(
+                        'List %u service that is currently in state %s on host %s',
+                        'List %u services which are currently in state %s on host %s',
+                        $object->stats->$unhandled
+                    ),
+                    $object->stats->$unhandled,
+                    Service::getStateText($stateId, true),
+                    $object->host_name
+                ))
             );
         }
         if ($object->stats->$handled) {
@@ -63,7 +103,16 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
                 $object->stats->$handled,
                 $selfUrl,
                 $paramsHandled,
-                array('title' => sprintf($this->translate('Handled services with state %s'), $this->translate(strtoupper($state))))
+                array('title' => sprintf(
+                    $this->translatePlural(
+                        'List %u service that is currently in state %s (Acknowledged) on host %s',
+                        'List %u services which are currently in state %s (Acknowledged) on host %s',
+                        $object->stats->$handled
+                    ),
+                    $object->stats->$handled,
+                    Service::getStateText($stateId, true),
+                    $object->host_name
+                ))
             );
             if ($object->stats->$unhandled) {
                 echo "</span>\n";
@@ -74,12 +123,22 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
 }
 ?>
 <?php if ($object->stats->services_pending): ?>
- <span class="state pending<?= $currentUrl === $selfUrl->with('service_state', 99)->getRelativeUrl() ? ' active' : '' ?>"><?= $this->qlink(
-    $object->stats->services_pending,
-    $selfUrl,
-    array('service_state' => 99),
-    array('title' => sprintf($this->translate('Services with state %s'), $this->translate('PENDING')))
-)  ?></span>
+<span class="state pending<?= $currentUrl === $selfUrl->with('service_state', 99)->getRelativeUrl() ? ' active' : ''; ?>">
+    <?= $this->qlink(
+        $object->stats->services_pending,
+        $selfUrl,
+        array('service_state' => 99),
+        array('title' => sprintf(
+            $this->translatePlural(
+                'List %u service that is currently in state PENDING on host %s',
+                'List %u services which are currently in state PENDING on host %s',
+                $object->stats->services_pending
+            ),
+            $object->stats->services_pending,
+            $object->host_name
+        ))
+    ) ?>
+</span>
 <?php endif ?>
 </span>
 </div>

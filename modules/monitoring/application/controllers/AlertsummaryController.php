@@ -11,11 +11,6 @@ use Icinga\Web\Url;
 class Monitoring_AlertsummaryController extends Controller
 {
     /**
-     * @var string
-     */
-    protected $url;
-
-    /**
      * @var array
      */
     private $notificationData;
@@ -30,42 +25,28 @@ class Monitoring_AlertsummaryController extends Controller
      */
     public function init()
     {
-        $tabs = $this->getTabs();
-        if (in_array($this->_request->getActionName(), array('alertsummary'))) {
-            $tabs->extend(new OutputFormat())->extend(new DashboardAction());
-        }
-
-        $this->url = Url::fromRequest();
-
         $this->notificationData = $this->createNotificationData();
         $this->problemData = $this->createProblemData();
-
-        $tabs->setTitle($this->translate('Alertsummary Navigation'));
     }
 
     /**
-     * @param string $action
-     * @param bool $title
-     */
-    protected function addTitleTab($action, $title = false)
-    {
-        $title = $title ?: ucfirst($action);
-        $this->getTabs()->add(
-            $action,
-            array(
-                'title' => $title,
-                'url'   => $this->url
-            )
-        )->activate($action);
-        $this->view->title = $title;
-    }
-
-    /**
-     * Creat full report
+     * Create full report
      */
     public function indexAction()
     {
-        $this->addTitleTab('alertsummary', $this->translate('Alert Summary'));
+        $this->getTabs()->add(
+            'alertsummary',
+            array(
+                'title' => $this->translate(
+                    'Show recent alerts and visualize notifications and problems'
+                    . ' based on their amount and chronological distribution'
+                ),
+                'label' => $this->translate('Alert Summary'),
+                'url'   => Url::fromRequest()
+            )
+        )->activate('alertsummary')->setTitle($this->translate('Alertsummary Navigation'));
+        $this->view->title = $this->translate('Alert Summary');
+
         $this->view->intervalBox = $this->createIntervalBox();
         $this->view->recentAlerts = $this->createRecentAlerts();
         $this->view->interval = $this->getInterval();

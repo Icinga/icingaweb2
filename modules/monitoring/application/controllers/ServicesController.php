@@ -93,8 +93,12 @@ class Monitoring_ServicesController extends Controller
         $this->getTabs()->add(
             'show',
             array(
-                'title' => mt('monitoring', 'Services'),
-                'url' => Url::fromRequest()
+                'title' => sprintf(
+                    $this->translate('Show summarized information for %u services'),
+                    count($this->serviceList)
+                ),
+                'label' => $this->translate('Services'),
+                'url'   => Url::fromRequest()
             )
         )->activate('show');
         $this->setAutorefreshInterval(15);

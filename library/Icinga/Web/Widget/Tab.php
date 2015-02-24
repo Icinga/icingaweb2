@@ -42,6 +42,8 @@ class Tab extends AbstractWidget
      */
     private $title = '';
 
+    private $label = '';
+
     /**
      * The Url this tab points to
      *
@@ -114,6 +116,11 @@ class Tab extends AbstractWidget
     public function getName()
     {
         return $this->name;
+    }
+
+    public function setLabel($label)
+    {
+        $this->label = $label;
     }
 
     /**
@@ -210,8 +217,21 @@ class Tab extends AbstractWidget
         if ($this->active) {
             $classes[] = 'active';
         }
-        $caption = $view->escape($this->title);
+
+        $caption = $view->escape($this->label);
         $tagParams = $this->tagParams;
+
+        if ($this->title) {
+            if ($tagParams !== null) {
+                $tagParams['title'] = $this->title;
+                $tagParams['aria-label'] = $this->title;
+            } else {
+                $tagParams = array(
+                    'title'         => $this->title,
+                    'aria-label'    => $this->title
+                );
+            }
+        }
 
         if ($this->icon !== null) {
             if (strpos($this->icon, '.') === false) {
@@ -220,13 +240,16 @@ class Tab extends AbstractWidget
                 $caption = $view->img($this->icon, null, array('class' => 'icon')) . $caption;
             }
         }
+
         if ($this->url !== null) {
             $this->url->overwriteParams($this->urlParams);
+
             if ($tagParams !== null) {
                 $params = $view->propertiesToString($tagParams);
             } else {
                 $params = '';
             }
+
             $tab = sprintf(
                 '<a href="%s"%s>%s</a>',
                 $this->url,
@@ -236,6 +259,7 @@ class Tab extends AbstractWidget
         } else {
             $tab = $caption;
         }
+
         $class = empty($classes) ? '' : sprintf(' class="%s"', implode(' ', $classes));
         return '<li ' . $class . '>' . $tab . "</li>\n";
     }
