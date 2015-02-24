@@ -4,6 +4,7 @@
 namespace Icinga\Protocol\Ldap;
 
 use Exception;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Application\Platform;
 use Icinga\Application\Config;
@@ -267,13 +268,22 @@ class Connection
         $this->connect();
         $this->bind();
 
-        if ($query->getUsePagedResults() && version_compare(PHP_VERSION, '5.4.0') >= 0) {
+        if ($this->pageControlAvailable($query)) {
             return $this->runPagedQuery($query, $fields);
         } else {
             return $this->runQuery($query, $fields);
         }
     }
 
+    /**
+     * Execute the given LDAP query and return the resulting entries
+     *
+     * @param Query $query      The query to execute
+     * @param array $fields     The fields that will be fetched from the matches
+     *
+     * @return array            The matched entries
+     * @throws LdapException
+     */
     protected function runQuery(Query $query, $fields = array())
     {
         $limit = $query->getLimit();
@@ -322,8 +332,35 @@ class Connection
         return $entries;
     }
 
-    protected function runPagedQuery(Query $query, $fields = array())
+    /**
+     * Returns whether requesting the page control is available
+     */
+    protected function pageControlAvailable(Query $query)
     {
+        return $query->getUsePagedResults() && version_compare(PHP_VERSION, '5.4.0') >= 0;
+    }
+
+    /**
+     * Execute the given LDAP query while requesting pagination control to separate
+     * big responses into smaller chunks
+     *
+     * @param Query $query      The query to execute
+     * @param array $fields     The fields that will be fetched from the matches
+     * @param int   $page_size  The maximum page size, defaults to Connection::PAGE_SIZE
+     *
+     * @return array            The matched entries
+     * @throws LdapException
+     * @throws ProgrammingError When executed without available page controls (check with pageControlAvailable() )
+     */
+    protected function runPagedQuery(Query $query, $fields = array(), $pageSize = null)
+    {
+        if (! $this->pageControlAvailable($query)) {
+            throw new ProgrammingError('LDAP: Page control not available.');
+        }
+        if (! isset($pageSize)) {
+            $pageSize = static::PAGE_SIZE;
+        }
+
         $limit = $query->getLimit();
         $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
         $queryString = $query->create();
@@ -337,7 +374,10 @@ class Connection
         $cookie = '';
         $entries = array();
         do {
-            ldap_control_paged_result($this->ds, static::PAGE_SIZE, true, $cookie);
+            // do not set controlPageResult as a critical extension, since we still want the
+            // server to return an answer in case the pagination extension is missing.
+            ldap_control_paged_result($this->ds, $pageSize, false, $cookie);
+
             $results = @ldap_search($this->ds, $base, $queryString, $fields, 0, $limit ? $offset + $limit : 0);
             if ($results === false) {
                 if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
@@ -375,18 +415,16 @@ class Connection
                 }
             } while (($limit === 0 || $limit !== count($entries)) && ($entry = ldap_next_entry($this->ds, $entry)));
 
-            try {
-                ldap_control_paged_result_response($this->ds, $results, $cookie);
-            } catch (Exception $e) {
+            if (false === ldap_control_paged_result_response($this->ds, $results, $cookie)) {
                 // If the page size is greater than or equal to the sizeLimit value, the server should ignore the
                 // control as the request can be satisfied in a single page: https://www.ietf.org/rfc/rfc2696.txt
                 // This applies no matter whether paged search requests are permitted or not. You're done once you
                 // got everything you were out for.
                 if (count($entries) !== $limit) {
-                    Logger::warning(
-                        'Unable to request paged LDAP results. Does the server allow paged search requests? (%s)',
-                        $e->getMessage()
-                    );
+
+                    // The server does not support pagination, but still returned a response by ignoring the
+                    // pagedResultsControl. We output a warning to indicate that the pagination control was ignored.
+                    Logger::warning('Unable to request paged LDAP results. Does the server allow paged search requests?');
                 }
             }
 
