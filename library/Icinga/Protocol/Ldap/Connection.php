@@ -442,7 +442,7 @@ class Connection
             ldap_control_paged_result($this->ds, 0);
         }
 
-        return $entries; // TODO(7693): Sort entries post-processed
+        return $entries;
     }
 
     protected function cleanupAttributes($attrs)
