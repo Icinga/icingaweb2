@@ -236,6 +236,9 @@ class Monitoring_ChartController extends Controller
             $unknownBars[] = array($servicegroup->servicegroup, $servicegroup->services_unknown_unhandled);
         }
         $this->view->chart = new GridChart();
+        $this->view->chart->title = t('Service Group Chart');
+        $this->view->chart->description = t('Contains service states for each service group.');
+
         $this->view->chart->alignTopLeft();
         $this->view->chart->setAxisLabel('', mt('monitoring', 'Services'))
             ->setXAxis(new StaticAxis())
@@ -292,6 +295,9 @@ class Monitoring_ChartController extends Controller
         }
         $tooltip = mt('monitoring', '<b>{title}:</b><br> {value} of {sum} hosts are {label}');
         $this->view->chart = new GridChart();
+        $this->view->chart->title = t('Host Group Chart');
+        $this->view->chart->description = t('Contains host states of each service group.');
+
         $this->view->chart->alignTopLeft();
         $this->view->chart->setAxisLabel('', mt('monitoring', 'Hosts'))
             ->setXAxis(new StaticAxis())

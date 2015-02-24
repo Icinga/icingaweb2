@@ -50,6 +50,13 @@ class PieChart extends Chart
      */
     private $noCaption = false;
 
+    public function __construct()
+    {
+        $this->title = t('Pie Chart');
+        $this->description = t('Contains data in a pie chart.');
+        parent::__construct();
+    }
+
     /**
      * Test if the given pies have the correct format
      *

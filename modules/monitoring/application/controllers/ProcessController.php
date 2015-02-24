@@ -29,7 +29,7 @@ class Monitoring_ProcessController extends Controller
                     'label' => $this->translate('Monitoring Health'),
                     'url'   =>'monitoring/process/info'
                 )
-            );
+            )->setTitle($this->translate('Process Information'));
     }
 
     /**

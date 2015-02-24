@@ -4,6 +4,7 @@
 </div>
 <?php endif ?>
 <div class="content tactical">
+    <h1 tabindex="-1"><?= $this->translate('Tactical Overview') ?></h1>
     <div class="boxview" data-base-target="_next">
 <?php if ($this->statusSummary->hosts_down || $this->statusSummary->hosts_unreachable): ?>
         <?= $this->render('tactical/components/problem_hosts.phtml'); ?>

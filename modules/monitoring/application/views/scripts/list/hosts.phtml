@@ -9,9 +9,8 @@ if ($this->compact): ?>
   <div style="margin: 1em;" class="dontprint">
     <?= $this->render('list/components/selectioninfo.phtml') ?>
     <?= $this->render('list/components/hostssummary.phtml') ?>
-    <?= $this->translate('Sort by') ?> <?= $this->sortControl->render($this) ?>
   </div>
-
+<?= $this->sortControl->render($this) ?>
 <?= $this->widget('limiter')->setMaxLimit($this->hosts->count()) ?>
 <?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)) ?>
 <?= $this->selectionToolbar('multi', $this->href('monitoring/hosts/show?' . $this->filter->toQueryString())) ?>
@@ -19,6 +18,7 @@ if ($this->compact): ?>
 
 <div class="content">
 <?= $this->filterEditor ?>
+<h1 tabindex="-1"><?= $this->translate('Hosts') ?></h1>
 <?php
 
 endif;
@@ -31,7 +31,6 @@ if ($hosts->count() === 0) {
     return;
 }
 ?>
-
 <table
     data-base-target="_next"
     class="action multiselect"

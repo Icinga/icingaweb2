@@ -4,7 +4,9 @@
 <?php if (($serviceCount = count($objects)) > 0): ?>
 <div class="hbox">
     <div class="hbox-item" style="width: 6em;">
-        <strong><?= sprintf($this->translatePlural('Service (%u)', 'Services (%u)', $serviceCount), $serviceCount); ?></strong>
+        <h1 tabindex="-1">
+            <?= sprintf($this->translatePlural('Service (%u)', 'Services (%u)', $serviceCount), $serviceCount); ?>
+        </h1>
     </div>
     <div class="hbox-item">
         &nbsp;<?= $serviceStatesPieChart; ?>
