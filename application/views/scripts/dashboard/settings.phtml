@@ -24,11 +24,13 @@
                     </th>
                     <th>
                         <?= $this->qlink(
-                            $this->icon('cancel'),
+                            '',
                             'dashboard/remove-pane',
                             array('pane' => $pane->getName()),
-                            array('title' => sprintf($this->translate('Remove pane %s'), $pane->getName())),
-                            false
+                            array(
+                                'icon'  => 'cancel',
+                                'title' => sprintf($this->translate('Remove pane %s'), $pane->getName())
+                            )
                         ); ?>
                     </th>
                 </tr>
@@ -61,11 +63,13 @@
                             </td>
                             <td>
                                 <?= $this->qlink(
-                                    $this->icon('cancel'),
+                                    '',
                                     'dashboard/remove-dashlet',
                                     array('pane' => $pane->getName(), 'dashlet' => $dashlet->getTitle()),
-                                    array('title' => sprintf($this->translate('Remove dashlet %s from pane %s'), $dashlet->getTitle(), $pane->getName())),
-                                    false
+                                    array(
+                                        'icon'  => 'cancel',
+                                        'title' => sprintf($this->translate('Remove dashlet %s from pane %s'), $dashlet->getTitle(), $pane->getName())
+                                    )
                                 ); ?>
                             </td>
                         </tr>

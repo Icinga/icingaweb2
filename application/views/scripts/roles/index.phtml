@@ -56,11 +56,13 @@
                         <td><?= $this->escape($role->groups) ?></td>
                         <td>
                             <?= $this->qlink(
-                                $this->icon('cancel'),
+                                '',
                                 'roles/remove',
                                 array('role' => $name),
-                                array('title' => sprintf($this->translate('Remove role %s'), $name)),
-                                false
+                                array(
+                                    'icon'  => 'cancel',
+                                    'title' => sprintf($this->translate('Remove role %s'), $name)
+                                )
                             ); ?>
                         </td>
                     </tr>

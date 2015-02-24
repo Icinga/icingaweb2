@@ -28,15 +28,23 @@ $this->addHelperFunction('url', function ($path = null, $params = null) {
 });
 
 $this->addHelperFunction('qlink', function ($title, $url, $params = null, $properties = null, $escape = true) use ($view) {
-    if ($properties && array_key_exists('title', $properties) && !array_key_exists('aria-label', $properties)) {
-        $properties['aria-label'] = $properties['title'];
+    $icon = '';
+    if ($properties) {
+        if (array_key_exists('title', $properties) && !array_key_exists('aria-label', $properties)) {
+            $properties['aria-label'] = $properties['title'];
+        }
+
+        if (array_key_exists('icon', $properties)) {
+            $icon = $view->icon($properties['icon']);
+            unset($properties['icon']);
+        }
     }
 
     return sprintf(
         '<a href="%s"%s>%s</a>',
         $view->url($url, $params),
         $view->propertiesToString($properties),
-        $escape ? $view->escape($title) : $title
+        $icon . ($escape ? $view->escape($title) : $title)
     );
 });
 

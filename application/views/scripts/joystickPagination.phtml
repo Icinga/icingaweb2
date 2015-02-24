@@ -29,12 +29,13 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
       <td>
       <?php if ($prevYAxisPage): ?>
         <?= $this->qlink(
-          $this->icon('up-open'),
+          '',
           Url::fromRequest(),
           array(
             'page' => $currentXAxisPage . ',' . $prevYAxisPage
           ),
           array(
+            'icon'              => 'up-open',
             'data-base-target'  => '_self',
             'title'             => sprintf(
               $showText,
@@ -44,8 +45,7 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
               $prevYAxisPage * $yAxisPages->itemCountPerPage,
               $yAxisPages->totalItemCount
             )
-          ),
-          false
+          )
         ); ?>
       <?php else: ?>
         <?= $this->icon('up-open'); ?>
@@ -57,12 +57,13 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
       <td>
       <?php if ($prevXAxisPage): ?>
         <?= $this->qlink(
-          $this->icon('left-open'),
+          '',
           Url::fromRequest(),
           array(
             'page' => $prevXAxisPage . ',' . $currentYAxisPage
           ),
           array(
+            'icon'              => 'left-open',
             'data-base-target'  => '_self',
             'title'             => sprintf(
               $showText,
@@ -72,8 +73,7 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
               $prevXAxisPage * $xAxisPages->itemCountPerPage,
               $xAxisPages->totalItemCount
             )
-          ),
-          false
+          )
         ); ?>
       <?php else: ?>
         <?= $this->icon('left-open'); ?>
@@ -83,12 +83,13 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
       <td>
       <?php if ($nextXAxisPage): ?>
         <?= $this->qlink(
-          $this->icon('right-open'),
+          '',
           Url::fromRequest(),
           array(
             'page' => $nextXAxisPage . ',' . $currentYAxisPage
           ),
           array(
+            'icon'              => 'right-open',
             'data-base-target'  => '_self',
             'title'             => sprintf(
               $showText,
@@ -111,12 +112,13 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
       <td>
       <?php if ($nextYAxisPage): ?>
         <?= $this->qlink(
-          $this->icon('down-open'),
+          '',
           Url::fromRequest(),
           array(
             'page' => $currentXAxisPage . ',' . $nextYAxisPage
           ),
           array(
+            'icon'              => 'down-open',
             'data-base-target'  => '_self',
             'title'             => sprintf(
               $showText,
@@ -126,8 +128,7 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
               $nextYAxisPage === $yAxisPages->last ? $yAxisPages->totalItemCount : $nextYAxisPage * $yAxisPages->itemCountPerPage,
               $yAxisPages->totalItemCount
             )
-          ),
-          false
+          )
         ); ?>
       <?php else: ?>
         <?= $this->icon('down-open'); ?>

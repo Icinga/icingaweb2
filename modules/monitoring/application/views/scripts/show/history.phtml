@@ -141,7 +141,7 @@ $output = $this->tickets ? preg_replace_callback(
           <?= sprintf(
               $this->translate('%s on %s', 'Service running on host'),
               $hostContext ? $this->qlink(
-                  $this->escape($event->service_display_name),
+                  $event->service_display_name,
                   'monitoring/show/service',
                   array(
                       'host' => $event->host_name,

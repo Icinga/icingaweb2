@@ -17,16 +17,15 @@
     foreach ($contacts as $contact): ?>
         <div class="contact">
             <?= $this->img('/static/gravatar', array('email' => $contact->contact_email)); ?>
-            <?= $this->qlink(
-                '<strong>' . $this->escape($contact->contact_name) . '</strong>',
+            <strong><?= $this->qlink(
+                $contact->contact_name,
                 'monitoring/show/contact',
                 array('contact' => $contact->contact_name),
                 array('title' => sprintf(
                     $this->translate('Show detailed information about %s'),
                     $contact->contact_alias
-                )),
-                false
-            ); ?> (<?= $contact->contact_alias; ?>)
+                ))
+            ); ?></strong> (<?= $contact->contact_alias; ?>)
             <div>
                 <?= $this->translate('Email'); ?>: <a href="mailto:<?= $contact->contact_email; ?>" title="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>" aria-label="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>">
                     <?= $this->escape($contact->contact_email); ?>

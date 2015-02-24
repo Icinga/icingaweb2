@@ -310,8 +310,8 @@ class FilterEditor extends AbstractWidget
             $this->preservedUrl()->with('removeFilter', $filter->getId()),
             null,
             array(
-                'title' => t('Remove this part of your filter'),
-                'class' => 'icon-cancel'
+                'icon'  => 'icon-cancel',
+                'title' => t('Remove this part of your filter')
             )
         );
     }
@@ -323,8 +323,8 @@ class FilterEditor extends AbstractWidget
             $this->preservedUrl()->with('addFilter', $filter->getId()),
             null,
             array(
-                'title' => t('Add another filter'),
-                'class' => 'icon-plus'
+                'icon'  => 'icon-plus',
+                'title' => t('Add another filter')
             )
         );
     }
@@ -336,8 +336,8 @@ class FilterEditor extends AbstractWidget
             $this->preservedUrl()->with('stripFilter', $filter->getId()),
             null,
             array(
-                'title' => t('Strip this filter'),
-                'class' => 'icon-minus'
+                'icon'  => 'icon-minus',
+                'title' => t('Strip this filter')
             )
         );
     }
@@ -349,8 +349,8 @@ class FilterEditor extends AbstractWidget
             $this->preservedUrl()->without('addFilter'),
             null,
             array(
-                'title' => t('Cancel this operation'),
-                'class' => 'icon-cancel'
+                'icon'  => 'icon-cancel',
+                'title' => t('Cancel this operation')
             )
         );
     }

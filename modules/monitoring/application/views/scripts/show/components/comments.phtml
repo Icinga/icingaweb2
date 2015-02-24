@@ -5,25 +5,25 @@
             /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             if ($object->getType() === $object::TYPE_HOST) {
                 echo $this->qlink(
-                    $this->icon('comment') . ' ' . $this->translate('Add comment'),
+                    $this->translate('Add comment'),
                     'monitoring/host/add-comment',
                     array('host' => $object->getName()),
                     array(
+                        'icon'              => 'comment',
                         'data-base-target'  => '_self',
                         'title'             => $this->translate('Add a new comment to this host')
-                    ),
-                    false
+                    )
                 );
             } else {
                 echo $this->qlink(
-                    $this->icon('comment') . ' ' . $this->translate('Add comment'),
+                    $this->translate('Add comment'),
                     'monitoring/service/add-comment',
                     array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
                     array(
+                        'icon'              => 'comment',
                         'data-base-target'  => '_self',
                         'title'             => $this->translate('Add a new comment to this service')
-                    ),
-                    false
+                    )
                 );
             }
         } else {

@@ -19,11 +19,13 @@
       <tr>
         <td>
           <?= $this->qlink(
-            $this->icon('edit') . ' ' . $this->escape($backendName),
+            $backendName,
             '/monitoring/config/editbackend',
             array('backend' => $backendName),
-            array('title' => sprintf($this->translate('Edit monitoring backend %s'), $backendName)),
-            false
+            array(
+                'icon'  => 'edit',
+                'title' => sprintf($this->translate('Edit monitoring backend %s'), $backendName)
+            )
           ); ?>
           <small>(<?= sprintf(
             $this->translate('Type: %s'),
@@ -32,11 +34,13 @@
         </td>
         <td>
           <?= $this->qlink(
-            $this->icon('cancel'),
+            '',
             '/monitoring/config/removebackend',
             array('backend' => $backendName),
-            array('title' => sprintf($this->translate('Remove monitoring backend %s'), $backendName)),
-            false
+            array(
+                'icon'  => 'cancel',
+                'title' => sprintf($this->translate('Remove monitoring backend %s'), $backendName)
+            )
           ); ?>
         </td>
       </tr>
@@ -59,11 +63,13 @@
       <tr>
         <td>
           <?= $this->qlink(
-            $this->icon('edit') . ' ' . $this->escape($instanceName),
+            $instanceName,
             '/monitoring/config/editinstance',
             array('instance' => $instanceName),
-            array('title' => sprintf($this->translate('Edit monitoring instance %s'), $instanceName)),
-            false
+            array(
+                'icon'  => 'edit',
+                'title' => sprintf($this->translate('Edit monitoring instance %s'), $instanceName)
+            )
           ); ?>
           <small>(<?= sprintf(
             $this->translate('Type: %s'),
@@ -72,11 +78,13 @@
         </td>
         <td>
           <?= $this->qlink(
-            $this->icon('cancel'),
+            '',
             '/monitoring/config/removeinstance',
             array('instance' => $instanceName),
-            array('title' => sprintf($this->translate('Remove monitoring instance %s'), $instanceName)),
-            false
+            array(
+                'icon'  => 'cancel',
+                'title' => sprintf($this->translate('Remove monitoring instance %s'), $instanceName)
+            )
           ); ?>
         </td>
       </tr>

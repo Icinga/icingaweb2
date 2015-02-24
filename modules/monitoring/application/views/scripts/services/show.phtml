@@ -14,31 +14,22 @@
             <?= $checkNowForm; ?>
         </div>
         <div><?= $this->qlink(
-            $this->icon('reschedule') . ' ' . sprintf(
-                $this->translate('Reschedule the next check for all %u services'),
-                $serviceCount
-            ),
+            sprintf($this->translate('Reschedule the next check for all %u services'), $serviceCount),
             $rescheduleAllLink,
             null,
-            null,
-            false
+            array('icon' => 'reschedule')
         ); ?></div>
         <div><?= $this->qlink(
-            $this->icon('plug') . ' ' . sprintf($this->translate('Schedule a downtime for all %u services'), $serviceCount),
+            sprintf($this->translate('Schedule a downtime for all %u services'), $serviceCount),
             $downtimeAllLink,
             null,
-            null,
-            false
+            array('icon' => 'plug')
         ); ?></div>
         <div><?= $this->qlink(
-            $this->icon('reply') . ' ' . sprintf(
-                $this->translate('Submit a passive check result for all %u services'),
-                $serviceCount
-            ),
+            sprintf($this->translate('Submit a passive check result for all %u services'), $serviceCount),
             $processCheckResultAllLink,
             null,
-            null,
-            false
+            array('icon' => 'reply')
         ); ?></div>
       <?php if (($unhandledCount = count($unhandledObjects)) > 0): ?>
         <div>
@@ -51,7 +42,7 @@
                 $unhandledCount
             ); ?></h3>
             <div><?= $this->qlink(
-                $this->icon('plug') . ' ' . sprintf(
+                sprintf(
                     $this->translatePlural(
                         'Schedule a downtime for %u unhandled service problem',
                         'Schedule a downtime for %u unhandled service problems',
@@ -61,11 +52,10 @@
                 ),
                 $downtimeUnhandledLink,
                 null,
-                null,
-                false
+                array('icon' => 'plug')
             ); ?></div>
             <div><?= $this->qlink(
-                $this->icon('ok') . ' ' . sprintf(
+                sprintf(
                     $this->translatePlural(
                         'Acknowledge %u unhandled service problem',
                         'Acknowledge %u unhandled service problems',
@@ -75,8 +65,7 @@
                 ),
                 $acknowledgeUnhandledLink,
                 null,
-                null,
-                false
+                array('icon' => 'ok')
             ); ?></div>
         </div>
       <?php endif ?>
@@ -95,7 +84,7 @@
       <?php endif ?>
       <?php if (($inDowntimeCount = count($objectsInDowntime)) > 0): ?>
         <h2><?= $this->qlink(
-            $this->icon('plug') . ' ' . sprintf(
+            sprintf(
                 $this->translatePlural(
                     'List %u service currently in downtime',
                     'List %u services currently in downtime',
@@ -105,13 +94,12 @@
             ),
             $inDowntimeLink,
             null,
-            null,
-            false
+            array('icon' => 'plug')
         ); ?></h2>
       <?php endif ?>
       <?php if (($commentCount = count($objects->getComments())) > 0): ?>
         <h2><?= $this->qlink(
-            $this->icon('comment') . ' ' . sprintf(
+            sprintf(
                 $this->translatePlural(
                     'List %u service comment',
                     'List %u service comments',
@@ -121,8 +109,7 @@
             ),
             $commentsLink,
             null,
-            null,
-            false
+            array('icon' => 'comment')
         ); ?></h2>
       <?php endif ?>
     <?php endif ?>

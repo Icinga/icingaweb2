@@ -5,29 +5,29 @@
             /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             if ($object->getType() === $object::TYPE_HOST) {
                 echo $this->qlink(
-                    $this->icon('plug') . ' ' . $this->translate('Schedule downtime'),
+                    $this->translate('Schedule downtime'),
                     'monitoring/host/schedule-downtime',
                     array('host' => $object->getName()),
                     array(
+                        'icon'              => 'plug',
                         'data-base-target'  => '_self',
                         'title'             => $this->translate(
                             'Schedule a downtime to suppress all problem notifications within a specific period of time'
                         )
-                    ),
-                    false
+                    )
                 );
             } else {
                 echo $this->qlink(
-                    $this->icon('plug') . ' ' . $this->translate('Schedule downtime'),
+                    $this->translate('Schedule downtime'),
                     'monitoring/service/schedule-downtime',
                     array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
                     array(
+                        'icon'              => 'plug',
                         'data-base-target'  => '_self',
                         'title'             => $this->translate(
                             'Schedule a downtime to suppress all problem notifications within a specific period of time'
                         )
-                    ),
-                    false
+                    )
                 );
             }
         } else {

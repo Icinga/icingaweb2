@@ -13,19 +13,25 @@ $command = array_shift($parts);
             $title = sprintf($this->translate('Submit a one time or so called passive result for the %s check'), $command);
             if ($object->getType() === $object::TYPE_HOST) {
                 echo $this->qlink(
-                    $this->icon('reply') . ' ' . $this->translate('Process check result'),
+                    $this->translate('Process check result'),
                     'monitoring/host/process-check-result',
                     array('host' => $object->getName()),
-                    array('data-base-target' => '_self', 'title' => $title),
-                    false
+                    array(
+                        'icon'              => 'reply',
+                        'data-base-target'  => '_self',
+                        'title'             => $title
+                    )
                 );
             } else {
                 echo $this->qlink(
-                    $this->icon('reply') . ' ' . $this->translate('Process check result'),
+                    $this->translate('Process check result'),
                     'monitoring/service/process-check-result',
                     array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
-                    array('data-base-target' => '_self', 'title' => $title),
-                    false
+                    array(
+                        'icon'              => 'reply',
+                        'data-base-target'  => '_self',
+                        'title'             => $title
+                    )
                 );
             }
         } ?>
