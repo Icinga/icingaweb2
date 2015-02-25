@@ -226,6 +226,11 @@
             event.stopPropagation();
             event.preventDefault();
 
+            // activate spinner indicator
+            if ($button.hasClass('spinner')) {
+                $button.addClass('active');
+            }
+
             icinga.logger.debug('Submitting form: ' + method + ' ' + url, method);
 
             $target = self.getLinkTargetFor($form);
