@@ -9,7 +9,6 @@ use Icinga\Web\Wizard;
 use Icinga\Web\Request;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
-use Icinga\Application\Platform;
 use Icinga\Module\Setup\Forms\ModulePage;
 use Icinga\Module\Setup\Forms\WelcomePage;
 use Icinga\Module\Setup\Forms\SummaryPage;
@@ -29,8 +28,13 @@ use Icinga\Module\Setup\Steps\GeneralConfigStep;
 use Icinga\Module\Setup\Steps\ResourceStep;
 use Icinga\Module\Setup\Steps\AuthenticationStep;
 use Icinga\Module\Setup\Utils\EnableModuleStep;
-use Icinga\Module\Setup\Utils\MakeDirStep;
 use Icinga\Module\Setup\Utils\DbTool;
+use Icinga\Module\Setup\Requirement\OSRequirement;
+use Icinga\Module\Setup\Requirement\ClassRequirement;
+use Icinga\Module\Setup\Requirement\PhpConfigRequirement;
+use Icinga\Module\Setup\Requirement\PhpModuleRequirement;
+use Icinga\Module\Setup\Requirement\PhpVersionRequirement;
+use Icinga\Module\Setup\Requirement\ConfigDirectoryRequirement;
 
 /**
  * Icinga Web 2 Setup Wizard
@@ -351,194 +355,147 @@ class WebWizard extends Wizard implements SetupWizard
     {
         $requirements = new Requirements();
 
-        $phpVersion = Platform::getPhpVersion();
-        $requirements->addMandatory(
-            'php_version_>=_5_3_2',
-            mt('setup', 'PHP Version'),
-            mt(
+        $requirements->add(new PhpVersionRequirement(array(
+            'condition'     => array('>=', '5.3.2'),
+            'description'   => mt(
                 'setup',
                 'Running Icinga Web 2 requires PHP version 5.3.2. Advanced features'
                 . ' like the built-in web server require PHP version 5.4.'
-            ),
-            version_compare($phpVersion, '5.3.2', '>='),
-            sprintf(mt('setup', 'You are running PHP version %s.'), $phpVersion)
-        );
+            )
+        )));
 
-        $defaultTimezone = Platform::getPhpConfig('date.timezone');
-        $requirements->addMandatory(
-            'existing_default_timezone',
-            mt('setup', 'Default Timezone'),
-            sprintf(
+        $requirements->add(new PhpConfigRequirement(array(
+            'condition'     => array('date.timezone', true),
+            'title'         => mt('setup', 'Default Timezone'),
+            'description'   => sprintf(
                 mt('setup', 'It is required that a default timezone has been set using date.timezone in %s.'),
                 php_ini_loaded_file() ?: 'php.ini'
             ),
-            $defaultTimezone,
-            $defaultTimezone ? sprintf(mt('setup', 'Your default timezone is: %s'), $defaultTimezone) : (
-                mt('setup', 'You did not define a default timezone.')
-            )
-        );
+        )));
 
-        $requirements->addOptional(
-            'platform=linux',
-            mt('setup', 'Linux Platform'),
-            mt(
+        $requirements->add(new OSRequirement(array(
+            'optional'      => true,
+            'condition'     => 'linux',
+            'description'   => mt(
                 'setup',
                 'Icinga Web 2 is developed for and tested on Linux. While we cannot'
                 . ' guarantee they will, other platforms may also perform as well.'
-            ),
-            Platform::isLinux(),
-            sprintf(mt('setup', 'You are running PHP on a %s system.'), Platform::getOperatingSystemName())
-        );
-
-        $requirements->addMandatory(
-            'existing_php_mod_openssl',
-            mt('setup', 'PHP Module: OpenSSL'),
-            mt('setup', 'The PHP module for OpenSSL is required to generate cryptographically safe password salts.'),
-            Platform::extensionLoaded('openssl'),
-            Platform::extensionLoaded('openssl') ? mt('setup', 'The PHP module for OpenSSL is available.') : (
-                mt('setup', 'The PHP module for OpenSSL is missing.')
             )
-        );
+        )));
 
-        $requirements->addOptional(
-            'existing_php_mod_json',
-            mt('setup', 'PHP Module: JSON'),
-            mt('setup', 'The JSON module for PHP is required for various export functionalities as well as APIs.'),
-            Platform::extensionLoaded('json'),
-            Platform::extensionLoaded('json') ? mt('setup', 'The PHP module JSON is available.') : (
-                mt('setup', 'The PHP module JSON is missing.')
+        $requirements->add(new PhpModuleRequirement(array(
+            'condition'     => 'OpenSSL',
+            'description'   => mt(
+                'setup',
+                'The PHP module for OpenSSL is required to generate cryptographically safe password salts.'
             )
-        );
+        )));
 
-        $requirements->addOptional(
-            'existing_php_mod_ldap',
-            mt('setup', 'PHP Module: LDAP'),
-            mt('setup', 'If you\'d like to authenticate users using LDAP the corresponding PHP module is required'),
-            Platform::extensionLoaded('ldap'),
-            Platform::extensionLoaded('ldap') ? mt('setup', 'The PHP module LDAP is available') : (
-                mt('setup', 'The PHP module LDAP is missing')
+        $requirements->add(new PhpModuleRequirement(array(
+            'optional'      => true,
+            'condition'     => 'JSON',
+            'description'   => mt(
+                'setup',
+                'The JSON module for PHP is required for various export functionalities as well as APIs.'
             )
-        );
+        )));
 
-        $requirements->addOptional(
-            'existing_php_mod_intl',
-            mt('setup', 'PHP Module: INTL'),
-            mt(
+        $requirements->add(new PhpModuleRequirement(array(
+            'optional'      => true,
+            'condition'     => 'LDAP',
+            'description'   => mt(
+                'setup',
+                'If you\'d like to authenticate users using LDAP the corresponding PHP module is required.'
+            )
+        )));
+
+        $requirements->add(new PhpModuleRequirement(array(
+            'optional'      => true,
+            'condition'     => 'INTL',
+            'description'   => mt(
                 'setup',
                 'If you want your users to benefit from language, timezone and date/time'
                 . ' format negotiation, the INTL module for PHP is required.'
-            ),
-            Platform::extensionLoaded('intl'),
-            Platform::extensionLoaded('intl') ? mt('setup', 'The PHP module INTL is available') : (
-                mt('setup', 'The PHP module INTL is missing')
             )
-        );
+        )));
 
         // TODO(6172): Remove this requirement once we do not ship dompdf with Icinga Web 2 anymore
-        $requirements->addOptional(
-            'existing_php_mod_dom',
-            mt('setup', 'PHP Module: DOM'),
-            mt('setup', 'To be able to export views and reports to PDF, the DOM module for PHP is required.'),
-            Platform::extensionLoaded('dom'),
-            Platform::extensionLoaded('dom') ? mt('setup', 'The PHP module DOM is available') : (
-                mt('setup', 'The PHP module DOM is missing')
-            )
-        );
-
-        $requirements->addOptional(
-            'existing_php_mod_gd',
-            mt('setup', 'PHP Module: GD'),
-            mt(
+        $requirements->add(new PhpModuleRequirement(array(
+            'optional'      => true,
+            'condition'     => 'DOM',
+            'description'   => mt(
                 'setup',
-                'In case you want views being exported to PDF,'
-                . ' you\'ll need the GD extension for PHP.'
-            ),
-            Platform::extensionLoaded('gd'),
-            Platform::extensionLoaded('gd') ? mt('setup', 'The PHP module GD is available') : (
-                mt('setup', 'The PHP module GD is missing')
+                'To be able to export views and reports to PDF, the DOM module for PHP is required.'
             )
-        );
+        )));
 
-        $requirements->addOptional(
-            'existing_php_mod_imagick',
-            mt('setup', 'PHP Module: Imagick'),
-            mt(
+        $requirements->add(new PhpModuleRequirement(array(
+            'optional'      => true,
+            'condition'     => 'GD',
+            'description'   => mt(
                 'setup',
-                'In case you want graphs being exported to PDF as well'
-                . ', you\'ll need the ImageMagick extension for PHP.'
-            ),
-            Platform::extensionLoaded('imagick'),
-            Platform::extensionLoaded('imagick') ? mt('setup', 'The PHP module Imagick is available') : (
-                mt('setup', 'The PHP module Imagick is missing')
+                'In case you want views being exported to PDF, you\'ll need the GD extension for PHP.'
             )
-        );
+        )));
 
-        $requirements->addOptional(
-            'existing_php_mod_pdo_mysql',
-            mt('setup', 'PHP Module: PDO-MySQL'),
-            mt(
+        $requirements->add(new PhpModuleRequirement(array(
+            'optional'      => true,
+            'condition'     => 'Imagick',
+            'description'   => mt(
+                'setup',
+                'In case you want graphs being exported to PDF as well, you\'ll need the ImageMagick extension for PHP.'
+            )
+        )));
+
+        $requirements->add(new PhpModuleRequirement(array(
+            'optional'      => true,
+            'condition'     => 'mysql',
+            'alias'         => 'PDO-MySQL',
+            'description'   => mt(
                 'setup',
                 'Is Icinga Web 2 supposed to access a MySQL database the PDO-MySQL module for PHP is required.'
-            ),
-            Platform::extensionLoaded('mysql'),
-            Platform::extensionLoaded('mysql') ? mt('setup', 'The PHP module PDO-MySQL is available.') : (
-                mt('setup', 'The PHP module PDO-MySQL is missing.')
             )
-        );
+        )));
 
-        $requirements->addOptional(
-            'existing_php_mod_pdo_pgsql',
-            mt('setup', 'PHP Module: PDO-PostgreSQL'),
-            mt(
+        $requirements->add(new PhpModuleRequirement(array(
+            'optional'      => true,
+            'condition'     => 'pgsql',
+            'alias'         => 'PDO-PostgreSQL',
+            'description'   => mt(
                 'setup',
                 'Is Icinga Web 2 supposed to access a PostgreSQL database'
                 . ' the PDO-PostgreSQL module for PHP is required.'
-            ),
-            Platform::extensionLoaded('pgsql'),
-            Platform::extensionLoaded('pgsql') ? mt('setup', 'The PHP module PDO-PostgreSQL is available.') : (
-                mt('setup', 'The PHP module PDO-PostgreSQL is missing.')
             )
-        );
+        )));
 
-        $mysqlAdapterFound = Platform::zendClassExists('Zend_Db_Adapter_Pdo_Mysql');
-        $requirements->addOptional(
-            'existing_class_Zend_Db_Adapter_Pdo_Mysql',
-            mt('setup', 'Zend Database Adapter For MySQL'),
-            mt('setup', 'The Zend database adapter for MySQL is required to access a MySQL database.'),
-            $mysqlAdapterFound,
-            $mysqlAdapterFound ? mt('setup', 'The Zend database adapter for MySQL is available.') : (
-                mt('setup', 'The Zend database adapter for MySQL is missing.')
+        $requirements->add(new ClassRequirement(array(
+            'optional'      => true,
+            'condition'     => 'Zend_Db_Adapter_Pdo_Mysql',
+            'alias'         => mt('setup', 'Zend database adapter for MySQL'),
+            'description'   => mt(
+                'setup',
+                'The Zend database adapter for MySQL is required to access a MySQL database.'
             )
-        );
+        )));
 
-        $pgsqlAdapterFound = Platform::zendClassExists('Zend_Db_Adapter_Pdo_Pgsql');
-        $requirements->addOptional(
-            'existing_class_Zend_Db_Adapter_Pdo_Pgsql',
-            mt('setup', 'Zend Database Adapter For PostgreSQL'),
-            mt('setup', 'The Zend database adapter for PostgreSQL is required to access a PostgreSQL database.'),
-            $pgsqlAdapterFound,
-            $pgsqlAdapterFound ? mt('setup', 'The Zend database adapter for PostgreSQL is available.') : (
-                mt('setup', 'The Zend database adapter for PostgreSQL is missing.')
+        $requirements->add(new ClassRequirement(array(
+            'optional'      => true,
+            'condition'     => 'Zend_Db_Adapter_Pdo_Pgsql',
+            'alias'         => mt('setup', 'Zend database adapter for PostgreSQL'),
+            'description'   => mt(
+                'setup',
+                'The Zend database adapter for PostgreSQL is required to access a PostgreSQL database.'
             )
-        );
+        )));
 
-        $configDir = Icinga::app()->getConfigDir();
-        $requirements->addMandatory(
-            'writable_directory_' . $configDir,
-            mt('setup', 'Writable Config Directory'),
-            mt(
+        $requirements->add(new ConfigDirectoryRequirement(array(
+            'condition'     => Icinga::app()->getConfigDir(),
+            'description'   => mt(
                 'setup',
                 'The Icinga Web 2 configuration directory defaults to "/etc/icingaweb2", if' .
                 ' not explicitly set in the environment variable "ICINGAWEB_CONFIGDIR".'
-            ),
-            is_writable($configDir),
-            sprintf(
-                is_writable($configDir) ? mt('setup', 'The current configuration directory is writable: %s') : (
-                    mt('setup', 'The current configuration directory is not writable: %s')
-                ),
-                $configDir
             )
-        );
+        )));
 
         foreach ($this->getWizards() as $wizard) {
             $requirements->merge($wizard->getRequirements());
