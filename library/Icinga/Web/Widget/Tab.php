@@ -123,6 +123,11 @@ class Tab extends AbstractWidget
         $this->label = $label;
     }
 
+    public function getLabel()
+    {
+        return $this->label;
+    }
+
     /**
      * @param mixed $title
      */

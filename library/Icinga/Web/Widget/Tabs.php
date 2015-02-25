@@ -68,7 +68,9 @@ EOT;
      */
     private $refreshTpl = <<< 'EOT'
 <li>
-  <a class="refresh" href="{URL}"><i aria-hidden="true" class="icon-cw" data-load-class="icon-spin6 animate-spin"></i></a>
+  <a class="spinner" href="{URL}" title="{TITLE}" aria-label="{LABEL}">
+    <i aria-hidden="true" class="icon-cw"></i>
+  </a>
 </li>
 EOT;
 
@@ -330,7 +332,32 @@ EOT;
     private function renderRefreshTab()
     {
         $url = Url::fromRequest()->without('renderLayout');
-        $tpl = str_replace('{URL}', $url, $this->refreshTpl);
+        $tab = $this->get($this->getActiveName());
+
+        if ($tab !== null) {
+            $caption = Icinga::app()->getViewRenderer()->view->escape(
+                $tab->getLabel()
+            );
+        } else {
+            $caption = t('Content');
+        }
+
+        $label = t(sprintf('Refresh the %s', $caption));
+        $title = $label;
+
+        $tpl = str_replace(
+            array(
+                '{URL}',
+                '{TITLE}',
+                '{LABEL}'
+            ),
+            array(
+                $url,
+                $title,
+                $label
+            ),
+            $this->refreshTpl
+        );
 
         return $tpl;
     }
