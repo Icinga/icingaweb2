@@ -42,6 +42,11 @@ class Tab extends AbstractWidget
      */
     private $title = '';
 
+    /**
+     * The label displayed for this tab
+     *
+     * @var string
+     */
     private $label = '';
 
     /**
@@ -118,9 +123,24 @@ class Tab extends AbstractWidget
         return $this->name;
     }
 
+    /**
+     * Set the tab label
+     *
+     * @param string $label
+     */
     public function setLabel($label)
     {
         $this->label = $label;
+    }
+
+    /**
+     * Get the tab label
+     *
+     * @return string
+     */
+    public function getLabel()
+    {
+        return $this->label;
     }
 
     /**

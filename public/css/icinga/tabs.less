@@ -136,3 +136,15 @@ ul.tabs img.icon {
 a.close-tab {
   display: none;
 }
+
+.spinner > i {
+  line-height: 1;
+}
+
+.spinner.active > i  {
+  .animate(spin 2s infinite linear);
+  &:before {
+    // icon-spin6
+    content: '\e874';
+  }
+}

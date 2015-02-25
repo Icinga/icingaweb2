@@ -226,6 +226,11 @@
             event.stopPropagation();
             event.preventDefault();
 
+            // activate spinner indicator
+            if ($button.hasClass('spinner')) {
+                $button.addClass('active');
+            }
+
             icinga.logger.debug('Submitting form: ' + method + ' ' + url, method);
 
             $target = self.getLinkTargetFor($form);
@@ -436,6 +441,11 @@
                 && href.substr(1, 1) !== '!') {
                 self.handleAnchor(href);
                 return;
+            }
+
+            // activate spinner indicator
+            if ($a.hasClass('spinner')) {
+                $a.addClass('active');
             }
 
             // If link has hash tag...
