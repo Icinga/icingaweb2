@@ -415,7 +415,7 @@ class Connection
                 }
             } while (($limit === 0 || $limit !== count($entries)) && ($entry = ldap_next_entry($this->ds, $entry)));
 
-            if (false === ldap_control_paged_result_response($this->ds, $results, $cookie)) {
+            if (false === @ldap_control_paged_result_response($this->ds, $results, $cookie)) {
                 // If the page size is greater than or equal to the sizeLimit value, the server should ignore the
                 // control as the request can be satisfied in a single page: https://www.ietf.org/rfc/rfc2696.txt
                 // This applies no matter whether paged search requests are permitted or not. You're done once you
