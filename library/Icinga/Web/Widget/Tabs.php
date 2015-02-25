@@ -117,13 +117,6 @@ EOT;
     private $title;
 
     /**
-     * Whether the tabs should contain a refresh icon
-     *
-     * @var bool
-     */
-    private $refreshTab = true;
-
-    /**
      * Set whether the current tab is closable
      */
     public function hideCloseButton()
@@ -335,7 +328,7 @@ EOT;
         $tab = $this->get($this->getActiveName());
 
         if ($tab !== null) {
-            $caption = Icinga::app()->getViewRenderer()->view->escape(
+            $caption = $this->view()->escape(
                 $tab->getLabel()
             );
         } else {
@@ -377,7 +370,7 @@ EOT;
             $drop = $this->renderDropdownTabs();
         }
         $close = $this->closeTab ? $this->renderCloseTab() : '';
-        $refresh = $this->refreshTab ? $this->renderRefreshTab() : '';
+        $refresh = $this->renderRefreshTab();
 
         return str_replace(
             array(
