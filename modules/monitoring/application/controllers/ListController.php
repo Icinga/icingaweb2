@@ -702,7 +702,7 @@ class Monitoring_ListController extends Controller
     private function setupSortControl(array $columns)
     {
         $this->view->sortControl = new SortBox(
-            $this->getRequest()->getActionName(),
+            'sortbox-' . $this->getRequest()->getActionName(),
             $columns
         );
         $this->view->sortControl->applyRequest($this->getRequest());

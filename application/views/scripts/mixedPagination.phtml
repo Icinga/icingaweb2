@@ -9,8 +9,8 @@ use Icinga\Web\Url;
 
 if ($this->pageCount <= 1) return;
 
-?><p id="paginationlabel" class="audible"><?= t('Pagination') ?></p>
-<ul class="pagination" aria-labelledby="paginationlabel" role="navigation"
+?><p id="<?= $this->protectId('paginationlabel'); ?>" class="audible"><?= t('Pagination') ?></p>
+<ul class="pagination" aria-labelledby="<?= $this->protectId('paginationlabel'); ?>" role="navigation"
 <?php
 
 $fromto = t('Show rows %u to %u out of %u');
