@@ -328,9 +328,13 @@ EOT;
         $tab = $this->get($this->getActiveName());
 
         if ($tab !== null) {
-            $caption = $this->view()->escape(
+            $label = $this->view()->escape(
                 $tab->getLabel()
             );
+        }
+
+        if (! empty($label)) {
+            $caption = $label;
         } else {
             $caption = t('Content');
         }
