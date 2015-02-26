@@ -226,9 +226,14 @@
             event.stopPropagation();
             event.preventDefault();
 
+            // activate spinner indicator
+            if ($button.hasClass('spinner')) {
+                $button.addClass('active');
+            }
+
             icinga.logger.debug('Submitting form: ' + method + ' ' + url, method);
 
-            $target = self.getLinkTargetFor($form);
+            $target = self.getLinkTargetFor($button);
 
             if (method === 'GET') {
                 var dataObj = $form.serializeObject();
@@ -337,21 +342,29 @@
         handleAnchor: function(query) {
             var $element = $(query);
             if ($element.length > 0) {
-                // Try to find the first header. It is more pleasant to users
-                // to select the header instead a container
-                var $header = $element.find(':header:first');
-                if ($header.length > 0) {
-                    $element = $header;
-                } else {
-                    var $input = $element.find(':header:first');
-                    if ($input.length > 0) {
-                        $element = $input
-                    }
+                // TODO(mh): Some elements are missing to place the right focus
+                // This is a fixed workarround until all header took place
+
+                var $item = $element.find(':header:first').nextUntil(':header:first').next();
+                if ($item.length > 0) {
+                    $element = $item;
                 }
+
+                /*
+                var focusQueries = ['h1:first', ':header:first', ':input:first'];
+                $.each(focusQueries, function(index,q) {
+                    var $item = $element.find(q);
+                    if ($item.length > 0) {
+                        $element = $item;
+                        return false;
+                    }
+                });
+                */
+
                 // If we want to focus an element which has no tabindex
                 // add one that we can focus is
                 if ($element.prop('tabindex') < 0) {
-                    $element.prop('tabindex', 0);
+                    $element.prop('tabindex', '-1');
                 }
                 $element.focus();
             }
@@ -428,6 +441,11 @@
                 && href.substr(1, 1) !== '!') {
                 self.handleAnchor(href);
                 return;
+            }
+
+            // activate spinner indicator
+            if ($a.hasClass('spinner')) {
+                $a.addClass('active');
             }
 
             // If link has hash tag...
@@ -540,8 +558,8 @@
             $(document).off('click', 'table.action tr[href]', this.rowSelected);
             $(document).off('click', 'table.action tr a', this.rowSelected);
             $(document).off('submit', 'form', this.submitForm);
-            $(document).off('click', 'button', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
+            $(document).off('change', 'form input.autosubmit', this.submitForm);
         },
 
         destroy: function() {

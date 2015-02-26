@@ -1,7 +1,9 @@
 <div class="controls">
     <?= $tabs->showOnlyCloseButton() ?>
-    <h1><?= sprintf($this->translate('Remove Role %s'), $name) ?></h1>
 </div>
 <div class="content">
+    <h1 tabindex="-1" id="roles-remove">
+        <?= sprintf($this->translate('Remove Role %s'), $name) ?>
+    </h1>
     <?= $form ?>
 </div>

@@ -23,7 +23,7 @@ class ListController extends Controller
     protected function addTitleTab($action)
     {
         $this->getTabs()->add($action, array(
-            'title' => ucfirst($action),
+            'label' => ucfirst($action),
             'url' => Url::fromPath(
                     'list/'
                     . str_replace(' ', '', $action)

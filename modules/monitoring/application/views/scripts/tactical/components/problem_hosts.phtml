@@ -5,18 +5,44 @@
     }
 ?>">
 <?php if ($this->statusSummary->hosts_down): ?>
-    <h2>
-        <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 1)); ?>">
-            <?= sprintf($this->translatePlural('%d Host DOWN', '%d Hosts DOWN', $this->statusSummary->hosts_down), $this->statusSummary->hosts_down); ?>
-        </a>
-    </h2>
+    <h2><?= $this->qlink(
+        sprintf(
+            $this->translatePlural('%u Host DOWN', '%u Hosts DOWN', $this->statusSummary->hosts_down),
+            $this->statusSummary->hosts_down
+        ),
+        'monitoring/list/hosts',
+        array('host_state' => 1),
+        array('title' => sprintf(
+            $this->translatePlural(
+                'List %u host that is currently in state DOWN',
+                'List %u hosts which are currently in state DOWN',
+                $this->statusSummary->hosts_down
+            ),
+            $this->statusSummary->hosts_down
+        ))
+    ); ?></h2>
 <?php endif ?>
 <?php if ($this->statusSummary->hosts_unreachable): ?>
-    <h2>
-        <a href="<?= $this->href('monitoring/list/hosts', array('host_state' => 2)); ?>">
-            <?= sprintf($this->translatePlural('%d Host UNREACHABLE', '%d Hosts UNREACHABLE', $this->statusSummary->hosts_unreachable), $this->statusSummary->hosts_unreachable); ?>
-        </a>
-    </h2>
+    <h2><?= $this->qlink(
+        sprintf(
+            $this->translatePlural(
+                '%u Host UNREACHABLE',
+                '%u Hosts UNREACHABLE',
+                $this->statusSummary->hosts_unreachable
+            ),
+            $this->statusSummary->hosts_unreachable
+        ),
+        'monitoring/list/hosts',
+        array('host_state' => 2),
+        array('title' => sprintf(
+            $this->translatePlural(
+                'List %u host that is currently in state UNREACHABLE',
+                'List %u hosts which are currently in state UNREACHABLE',
+                $this->statusSummary->hosts_unreachable
+            ),
+            $this->statusSummary->hosts_unreachable
+        ))
+    ); ?></h2>
 <?php endif ?>
     <div class="box contents">
         <strong><?= $this->translate('Services'); ?></strong>

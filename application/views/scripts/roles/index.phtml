@@ -1,8 +1,10 @@
 <div class="controls" data-base-target="_main">
     <?= $tabs ?>
-    <h1><?= $this->translate('Roles') ?></h1>
 </div>
 <div class="content">
+    <h1 tabindex="-1" id="roles-index">
+        <?= $this->translate('Roles') ?>
+    </h1>
     <div>
         <?php /** @var \Icinga\Application\Config $roles */ if ($roles->isEmpty()): ?>
             <?= $this->translate('No roles found.') ?>
@@ -21,10 +23,12 @@
                 <?php foreach ($roles as $name => $role): /** @var object $role */ ?>
                     <tr>
                         <td>
-                            <?= $this->escape($name) ?>
-                            <div class="hidden">
-                                <a href="<?= $this->url('roles/update', array('role' => $name)) ?>"></a>
-                            </div>
+                            <?= $this->qlink(
+                                $name,
+                                'roles/update',
+                                array('role' => $name),
+                                array('title' => sprintf($this->translate('Edit role %s'), $name))
+                            ); ?>
                         </td>
 <!--                        <td>--><?//= $this->escape($role->permissions, 0, 50) ?><!--</td>-->
 <!--                        <td>-->
@@ -52,11 +56,13 @@
                         <td><?= $this->escape($role->groups) ?></td>
                         <td>
                             <?= $this->qlink(
-                                $this->icon('cancel'),
+                                '',
                                 'roles/remove',
                                 array('role' => $name),
-                                array('title' => sprintf($this->translate('Remove role %s'), $name)),
-                                false
+                                array(
+                                    'icon'  => 'cancel',
+                                    'title' => sprintf($this->translate('Remove role %s'), $name)
+                                )
                             ); ?>
                         </td>
                     </tr>
@@ -64,8 +70,11 @@
                 </tbody>
             </table>
         <?php endif ?>
+        <h2 tabindex="-1" id="roles-index-new" class="sr-only">
+            <?= $this->translate('Create New Role'); ?>
+        </h2>
         <a data-base-target="_next" href="<?= $this->href('roles/new') ?>">
-            <?= $this->translate('New Role') ?>
+            <?= $this->translate('Create a New Role') ?>
         </a>
     </div>
 </div>

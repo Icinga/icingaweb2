@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg">
-<metadata>Copyright (C) 2014 by original authors @ fontello.com</metadata>
+<metadata>Copyright (C) 2015 by original authors @ fontello.com</metadata>
 <defs>
 <font id="ifont" horiz-adv-x="1000" >
 <font-face font-family="ifont" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
@@ -122,6 +122,7 @@
 <glyph glyph-name="chart-bar" unicode="&#xe871;" d="m357 350v-286h-143v286h143z m214 286v-572h-142v572h142z m572-643v-72h-1143v858h71v-786h1072z m-357 500v-429h-143v429h143z m214 214v-643h-143v643h143z" horiz-adv-x="1142.9" />
 <glyph glyph-name="beaker" unicode="&#xe872;" d="m852 42q31-50 12-85t-78-36h-643q-59 0-79 36t12 85l281 442v223h-36q-14 0-25 11t-10 25 10 25 25 11h286q15 0 25-11t11-25-11-25-25-11h-36v-223z m-435 405l-151-240h397l-152 240-11 17v243h-71v-243z" horiz-adv-x="928.6" />
 <glyph glyph-name="magic" unicode="&#xe873;" d="m664 526l164 163-60 60-164-164z m249 163q0-15-10-25l-717-718q-10-10-25-10t-25 10l-111 111q-10 10-10 25t10 25l718 718q10 10 25 10t25-10l110-111q10-10 10-25z m-753 106l54-16-54-17-17-55-17 55-55 17 55 16 17 55z m195-90l109-34-109-33-34-109-33 109-109 33 109 34 33 109z m519-267l55-17-55-16-17-55-17 55-54 16 54 17 17 55z m-357 357l54-16-54-17-17-55-17 55-54 17 54 16 17 55z" horiz-adv-x="928.6" />
+<glyph glyph-name="spin6" unicode="&#xe874;" d="m855 9c-189-190-520-172-705 13-190 190-200 494-28 695 11 13 21 26 35 34 36 23 85 18 117-13 30-31 35-76 16-112-5-9-9-15-16-22-140-151-145-379-8-516 153-153 407-121 542 34 106 122 142 297 77 451-83 198-305 291-510 222l0 1c236 82 492-24 588-252 71-167 37-355-72-493-11-15-23-29-36-42z" horiz-adv-x="1000" />
 </font>
 </defs>
 </svg>

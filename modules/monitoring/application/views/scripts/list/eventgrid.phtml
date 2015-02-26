@@ -2,55 +2,58 @@
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget\Chart\HistoryColorGrid;
 ?>
-
-
-<? if (! $compact): ?>
+<?php if (! $compact): ?>
     <div class="controls">
         <?= $this->tabs->render($this); ?>
         <div class="fake-controls">
+            <h2 tabindex="-1" class="sr-only">
+                <?= $this->translate('Filters'); ?>
+            </h2>
             <?= $form ?>
         </div>
     </div>
-<? endif; ?>
-
-<div class="content" data-base-target="_next">
+    <div class="content" data-base-target="_next">
+        <h1 tabindex="-1"><?= $this->translate('Event Grid'); ?></h1>
+<?php else: ?>
+    <div class="content" data-base-target="_next">
+<?php endif; ?>
 <?php
 
 $settings = array(
     'cnt_up' => array(
-        'tooltip' => mt('monitoring', '%d ok on %s'),
+        'tooltip' => $this->translate('%d hosts ok on %s'),
         'color' => '#49DF96',
         'opacity' => '0.55'
     ),
     'cnt_unreachable_hard' => array(
-        'tooltip' => mt('monitoring', '%d unreachable on %s'),
+        'tooltip' => $this->translate('%d hosts unreachable on %s'),
         'color' => '#77AAFF',
         'opacity' => '0.55'
     ),
     'cnt_critical_hard' => array(
-        'tooltip' => mt('monitoring', '%d critical on %s'),
+        'tooltip' => $this->translate('%d services critical on %s'),
         'color' => '#ff5566',
         'opacity' => '0.9'
     ),
 
     'cnt_warning_hard' => array(
-        'tooltip' => mt('monitoring', '%d warning on %s'),
+        'tooltip' => $this->translate('%d services warning on %s'),
         'color' => '#ffaa44',
         'opacity' => '1.0'
     ),
 
     'cnt_down_hard' => array(
-        'tooltip' => mt('monitoring', '%d down on %s'),
+        'tooltip' => $this->translate('%d hosts down on %s'),
         'color' => '#ff5566',
         'opacity' => '0.9'
     ),
     'cnt_unknown_hard' => array(
-        'tooltip' => mt('monitoring', '%d unknown on %s'),
+        'tooltip' => $this->translate('%d services unknown on %s'),
         'color' => '#cc77ff',
         'opacity' => '0.7'
     ),
     'cnt_ok' => array(
-        'tooltip' => mt('monitoring', '%d ok on %s'),
+        'tooltip' => $this->translate('%d services ok on %s'),
         'color' => '#49DF96',
         'opacity' => '0.55'
     )
@@ -66,7 +69,7 @@ if ($to - $from > 315360000) {
 $data = array();
 
 if (count($summary) === 0) {
-    echo mt('monitoring', 'No state changes in the selected time period.');
+    echo $this->translate('No state changes in the selected time period.');
 }
 foreach ($summary as $entry) {
     $day = $entry->day;

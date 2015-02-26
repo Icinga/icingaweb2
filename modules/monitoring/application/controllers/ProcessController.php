@@ -22,10 +22,14 @@ class Monitoring_ProcessController extends Controller
             ->add(
                 'info',
                 array(
-                    'title' => $this->translate('Monitoring Health'),
+                    'title' => $this->translate(
+                        'Show information about the current monitoring instance\'s process'
+                        . ' and it\'s performance as well as available features'
+                    ),
+                    'label' => $this->translate('Monitoring Health'),
                     'url'   =>'monitoring/process/info'
                 )
-            );
+            )->setTitle($this->translate('Process Information'));
     }
 
     /**

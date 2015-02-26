@@ -9,9 +9,8 @@ if ($this->compact): ?>
   <div style="margin: 1em;" class="dontprint">
     <?= $this->render('list/components/selectioninfo.phtml') ?>
     <?= $this->render('list/components/hostssummary.phtml') ?>
-    <?= $this->translate('Sort by') ?> <?= $this->sortControl->render($this) ?>
   </div>
-
+<?= $this->sortControl->render($this) ?>
 <?= $this->widget('limiter')->setMaxLimit($this->hosts->count()) ?>
 <?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)) ?>
 <?= $this->selectionToolbar('multi', $this->href('monitoring/hosts/show?' . $this->filter->toQueryString())) ?>
@@ -19,6 +18,7 @@ if ($this->compact): ?>
 
 <div class="content">
 <?= $this->filterEditor ?>
+<h1 tabindex="-1"><?= $this->translate('Hosts') ?></h1>
 <?php
 
 endif;
@@ -31,7 +31,6 @@ if ($hosts->count() === 0) {
     return;
 }
 ?>
-
 <table
     data-base-target="_next"
     class="action multiselect"
@@ -96,11 +95,18 @@ if ($hosts->count() === 0) {
         <?= $this->icon($this->resolveMacros($host->host_icon_image, $host)) ?>
         <?php endif ?>
         <?= implode(' ', $icons) ?>
-        <a href="<?= $hostLink  ?>"><?= $this->escape($host->host_display_name) ?></a>
+        <?= $this->qlink(
+          $host->host_display_name,
+          $hostLink,
+          null,
+          array(
+            'title' => sprintf($this->translate('Show detailed information for host %s'), $host->host_display_name)
+          )
+        ); ?>
         <?php if (isset($host->host_unhandled_services) && $host->host_unhandled_services > 0): ?>
         <span> (<?= $this->qlink(
           sprintf(
-            $this->translatePlural('%d unhandled service', '%d unhandled services', $host->host_unhandled_services),
+            $this->translatePlural('%u unhandled service', '%u unhandled services', $host->host_unhandled_services),
             $host->host_unhandled_services
           ),
           'monitoring/show/services',
@@ -113,8 +119,8 @@ if ($hosts->count() === 0) {
             'style' => 'font-weight: normal',
             'title' => sprintf(
               $this->translatePlural(
-                'List %s service problem on host %s',
-                'List %s service problems on host %s',
+                'List %s unhandled service problem on host %s',
+                'List %s unhandled service problems on host %s',
                 $host->host_unhandled_services
               ),
               $host->host_unhandled_services,

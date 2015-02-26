@@ -28,23 +28,33 @@ if ($object->getType() === $object::TYPE_HOST) {
   <td>
       <?php if ($this->hasPermission('monitoring/command/schedule-check')) {
           if ($isService) {
-              $reschedule = $this->href(
+              echo $this->qlink(
+                  $this->translate('Reschedule'),
                   'monitoring/service/reschedule-check',
-                  array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+                  array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
+                  array(
+                      'icon'                => 'reschedule',
+                      'data-base-target'    => '_self',
+                      'title'               => $this->translate(
+                          'Schedule the next active check at a different time than the current one'
+                      )
+                  )
               );
           } else {
-              $reschedule = $this->href(
+              echo $this->qlink(
+                  $this->translate('Reschedule'),
                   'monitoring/host/reschedule-check',
-                  array('host' => $object->getName())
+                  array('host' => $object->getName()),
+                  array(
+                      'icon'                => 'reschedule',
+                      'data-base-target'    => '_self',
+                      'title'               => $this->translate(
+                          'Schedule the next active check at a different time than the current one'
+                      )
+                  )
               );
           }
-      ?>
-      <a href="<?= $reschedule ?>" data-base-target="_self">
-          <?= $this->icon('reschedule') ?>
-          <?= $this->translate('Reschedule') ?>
-      </a>
-      <?php } // endif ?>
-      <?= $this->timeUntil($object->next_check) ?>
+      } ?> <?= $this->timeUntil($object->next_check) ?>
   </td>
 </tr>
 <tr>

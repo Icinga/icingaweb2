@@ -6,26 +6,35 @@ $command = array_shift($parts);
 ?>
 
 <tr class="newsection">
-    <th><?= $this->translate('Command') ?></th>
+    <th><?= $this->translate('Command'); ?></th>
     <td>
-        <?= $this->escape($command) ?>
-        <?php if ($this->hasPermission('monitoring/command/schedule-check') && $object->passive_checks_enabled): ?>
-            <?php if ($object->getType() === $object::TYPE_HOST) {
-                $processCheckResult = $this->href(
+        <?= $this->escape($command); ?>
+        <?php if ($this->hasPermission('monitoring/command/schedule-check') && $object->passive_checks_enabled) {
+            $title = sprintf($this->translate('Submit a one time or so called passive result for the %s check'), $command);
+            if ($object->getType() === $object::TYPE_HOST) {
+                echo $this->qlink(
+                    $this->translate('Process check result'),
                     'monitoring/host/process-check-result',
-                    array('host' => $object->getName())
+                    array('host' => $object->getName()),
+                    array(
+                        'icon'              => 'reply',
+                        'data-base-target'  => '_self',
+                        'title'             => $title
+                    )
                 );
             } else {
-                $processCheckResult = $this->href(
+                echo $this->qlink(
+                    $this->translate('Process check result'),
                     'monitoring/service/process-check-result',
-                    array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+                    array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
+                    array(
+                        'icon'              => 'reply',
+                        'data-base-target'  => '_self',
+                        'title'             => $title
+                    )
                 );
-            } ?>
-            <a href="<?= $processCheckResult ?>" data-base-target="_self">
-                <?= $this->icon('reply') ?>
-                <?= $this->translate('Process check result') ?>
-            </a>
-        <?php endif ?>
+            }
+        } ?>
     </td>
 </tr>
 

@@ -612,10 +612,11 @@ class Wizard
                 'button',
                 static::BTN_PREV,
                 array(
-                    'type'          => 'submit',
-                    'value'         => $pages[$index - 1]->getName(),
-                    'label'         => t('Back'),
-                    'decorators'    => array('ViewHelper')
+                    'type'              => 'submit',
+                    'value'             => $pages[$index - 1]->getName(),
+                    'label'             => t('Back'),
+                    'decorators'        => array('ViewHelper'),
+                    'formnovalidate'    => 'formnovalidate'
                 )
             );
             $page->addElement(
@@ -633,10 +634,11 @@ class Wizard
                 'button',
                 static::BTN_PREV,
                 array(
-                    'type'          => 'submit',
-                    'value'         => $pages[$index - 1]->getName(),
-                    'label'         => t('Back'),
-                    'decorators'    => array('ViewHelper')
+                    'type'              => 'submit',
+                    'value'             => $pages[$index - 1]->getName(),
+                    'label'             => t('Back'),
+                    'decorators'        => array('ViewHelper'),
+                    'formnovalidate'    => 'formnovalidate'
                 )
             );
             $page->addElement(

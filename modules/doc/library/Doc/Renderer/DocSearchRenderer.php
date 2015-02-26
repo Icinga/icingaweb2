@@ -107,11 +107,30 @@ class DocSearchRenderer extends DocRenderer
             );
             /** @type \Icinga\Web\Url $url */
             $url->setAnchor($this->encodeAnchor($section->getId()));
-            $this->content[] = sprintf(
-                '<li><a data-base-target="_next" %shref="%s">%s</a>',
-                $section->getNoFollow() ? 'rel="nofollow" ' : '',
+            $urlAttributes = array(
+                'data-base-target'  => '_next',
+                'title'             => sprintf(
+                    $this->getView()->translate(
+                        'Show all matches of "%s" in %sthe chapter "%s"',
+                        'search.render.section.link'
+                    ),
+                    $this->getInnerIterator()->getSearch()->getInput(),
+                    $section->getId() !== $section->getChapter()->getId() ? sprintf(
+                        $this->getView()->translate('the section "%s" of ', 'search.render.section.link'),
+                        $section->getTitle()
+                    ) : '',
+                    $section->getChapter()->getTitle()
+                )
+            );
+            if ($section->getNoFollow()) {
+                $urlAttributes['rel'] = 'nofollow';
+            }
+            $this->content[] = '<li>' . $this->getView()->qlink(
+                $title,
                 $url->getAbsoluteUrl(),
-                $title
+                null,
+                $urlAttributes,
+                false
             );
             if (! empty($contentMatches)) {
                 $this->content = array_merge($this->content, $contentMatches);

@@ -4,6 +4,7 @@
 namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\Tabextension;
 use Icinga\Application\Icinga;
 use Countable;
@@ -19,12 +20,21 @@ class Tabs extends AbstractWidget implements Countable
      * @var string
      */
     private $baseTpl = <<< 'EOT'
+{HEADER}
 <ul class="tabs">
   {TABS}
   {DROPDOWN}
+  {REFRESH}
   {CLOSE}
 </ul>
 EOT;
+
+    /**
+     * Template used for the header
+     *
+     * @type string
+     */
+    private $headerTpl = '<h2 class="sr-only">{TITLE}</h2>';
 
     /**
      * Template used for the tabs dropdown
@@ -51,6 +61,18 @@ EOT;
 </li>
 EOT;
 
+    /**
+     * Template used for the refresh icon
+     *
+     * @var string
+     */
+    private $refreshTpl = <<< 'EOT'
+<li>
+  <a class="spinner" href="{URL}" title="{TITLE}" aria-label="{LABEL}">
+    <i aria-hidden="true" class="icon-cw"></i>
+  </a>
+</li>
+EOT;
 
     /**
      * This is where single tabs added to this container will be stored
@@ -86,6 +108,13 @@ EOT;
      * @var bool
      */
     private $closeTab = true;
+
+    /**
+     * Title of the tab navigation
+     *
+     * @type string
+     */
+    private $title;
 
     /**
      * Set whether the current tab is closable
@@ -293,6 +322,43 @@ EOT;
         return $this->closeTpl;
     }
 
+    private function renderRefreshTab()
+    {
+        $url = Url::fromRequest()->without('renderLayout');
+        $tab = $this->get($this->getActiveName());
+
+        if ($tab !== null) {
+            $label = $this->view()->escape(
+                $tab->getLabel()
+            );
+        }
+
+        if (! empty($label)) {
+            $caption = $label;
+        } else {
+            $caption = t('Content');
+        }
+
+        $label = t(sprintf('Refresh the %s', $caption));
+        $title = $label;
+
+        $tpl = str_replace(
+            array(
+                '{URL}',
+                '{TITLE}',
+                '{LABEL}'
+            ),
+            array(
+                $url,
+                $title,
+                $label
+            ),
+            $this->refreshTpl
+        );
+
+        return $tpl;
+    }
+
     /**
      * Render to HTML
      *
@@ -308,12 +374,25 @@ EOT;
             $drop = $this->renderDropdownTabs();
         }
         $close = $this->closeTab ? $this->renderCloseTab() : '';
+        $refresh = $this->renderRefreshTab();
 
-        $html = $this->baseTpl;
-        $html = str_replace('{TABS}', $tabs, $html);
-        $html = str_replace('{DROPDOWN}', $drop, $html);
-        $html = str_replace('{CLOSE}', $close, $html);
-        return $html;
+        return str_replace(
+            array(
+                '{TABS}',
+                '{DROPDOWN}',
+                '{REFRESH}',
+                '{CLOSE}',
+                '{HEADER}'
+            ),
+            array(
+                $tabs,
+                $drop,
+                $close,
+                $refresh,
+                $this->renderHeader()
+            ),
+            $this->baseTpl
+        );
     }
 
     public function __toString()
@@ -371,5 +450,31 @@ EOT;
     {
         $tabextension->apply($this);
         return $this;
+    }
+
+    /**
+     * Set the title of the tab navigation
+     *
+     * @param   string  $title
+     * @return  self
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
+    }
+
+    /**
+     * Render the title into the header template
+     *
+     * @return string
+     */
+    public function renderHeader()
+    {
+        if (! $this->title) {
+            return '';
+        }
+
+        return str_replace('{TITLE}', $this->title, $this->headerTpl);
     }
 }

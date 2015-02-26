@@ -49,10 +49,10 @@ class Doc_ModuleController extends DocController
     {
         $moduleManager = Icinga::app()->getModuleManager();
         $modules = array();
-        foreach (Icinga::app()->getModuleManager()->listEnabledModules() as $module) {
+        foreach ($moduleManager->listEnabledModules() as $module) {
             $path = $this->getPath($module, $moduleManager->getModuleDir($module, '/doc'), true);
             if ($path !== null) {
-                $modules[] = $module;
+                $modules[] = $moduleManager->getModule($module);
             }
         }
         $this->view->modules = $modules;

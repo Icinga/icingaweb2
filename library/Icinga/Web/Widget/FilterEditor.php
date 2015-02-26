@@ -310,8 +310,8 @@ class FilterEditor extends AbstractWidget
             $this->preservedUrl()->with('removeFilter', $filter->getId()),
             null,
             array(
-                'title' => t('Click to remove this part of your filter'),
-                'class' => 'icon-cancel'
+                'icon'  => 'icon-cancel',
+                'title' => t('Remove this part of your filter')
             )
         );
     }
@@ -323,8 +323,8 @@ class FilterEditor extends AbstractWidget
             $this->preservedUrl()->with('addFilter', $filter->getId()),
             null,
             array(
-                'title' => t('Click to add another filter'),
-                'class' => 'icon-plus'
+                'icon'  => 'icon-plus',
+                'title' => t('Add another filter')
             )
         );
     }
@@ -336,8 +336,8 @@ class FilterEditor extends AbstractWidget
             $this->preservedUrl()->with('stripFilter', $filter->getId()),
             null,
             array(
-                'title' => t('Strip this filter'),
-                'class' => 'icon-minus'
+                'icon'  => 'icon-minus',
+                'title' => t('Strip this filter')
             )
         );
     }
@@ -349,8 +349,8 @@ class FilterEditor extends AbstractWidget
             $this->preservedUrl()->without('addFilter'),
             null,
             array(
-                'title' => t('Cancel this operation'),
-                'class' => 'icon-cancel'
+                'icon'  => 'icon-cancel',
+                'title' => t('Cancel this operation')
             )
         );
     }
@@ -666,6 +666,8 @@ class FilterEditor extends AbstractWidget
         return $html
             . '<a href="'
             . $this->preservedUrl()->with('modifyFilter', true)
+            . '" aria-label="'
+            . $title
             . '" title="'
             . $title
             . '">'
@@ -676,20 +678,28 @@ class FilterEditor extends AbstractWidget
     public function render()
     {
         if (! $this->preservedUrl()->getParam('modifyFilter')) {
-            return $this->renderSearch() . $this->shorten($this->filter, 50);
+            $filterEditor = $this->renderSearch() . $this->shorten($this->filter, 50);
+        } else {
+            $filterEditor = $this->renderSearch()
+                . '<form action="'
+                . Url::fromRequest()
+                . '" class="filterEditor" method="POST">'
+                . '<ul class="tree widgetFilter"><li>'
+                . $this->renderFilter($this->filter)
+                . '</li></ul>'
+                . '<div style="float: right">'
+                . '<input type="submit" name="submit" value="Apply" />'
+                . '<input type="submit" name="cancel" value="Cancel" />'
+                . '</div>'
+                . '</form>';
         }
-        return  $this->renderSearch()
-              . '<form action="'
-              . Url::fromRequest()
-              . '" class="filterEditor" method="POST">'
-              . '<ul class="tree widgetFilter"><li>'
-              . $this->renderFilter($this->filter)
-              . '</li></ul>'
-              . '<div style="float: right">'
-              . '<input type="submit" name="submit" value="Apply" />'
-              . '<input type="submit" name="cancel" value="Cancel" />'
-              . '</div>'
-              . '</form>';
+
+        return sprintf(
+            '<div class="filter-editor dontprint">'
+            . '<h2 tabindex="-1" class="sr-only">%s</h2>%s</div>',
+            t('Filters'),
+            $filterEditor
+        );
     }
 
     protected function shorten($string, $length)

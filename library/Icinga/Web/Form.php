@@ -113,6 +113,13 @@ class Form extends Zend_Form
     protected $validatePartial = false;
 
     /**
+     * Whether element ids will be protected against collisions by appending a request-specific unique identifier
+     *
+     * @var bool
+     */
+    protected $protectIds = true;
+
+    /**
      * Authentication manager
      *
      * @type Manager|null
@@ -576,6 +583,11 @@ class Form extends Zend_Form
         if ($element->isRequired() && strpos(strtolower($element->getType()), 'checkbox') === false) {
             $element->setAttrib('aria-required', 'true'); // ARIA
             $element->setAttrib('required', ''); // HTML5
+            if (($label = $element->getDecorator('label')) !== false) {
+                $element->setLabel($this->getView()->escape($element->getLabel()));
+                $label->setOption('escape', false);
+                $label->setOption('requiredSuffix', ' <span aria-hidden="true">*</span>');
+            }
         }
 
         return $element;
@@ -903,6 +915,28 @@ class Form extends Zend_Form
     public function render(Zend_View_Interface $view = null)
     {
         $this->create();
+        if ($this->protectIds) {
+            if (null !== $this->getAttrib('id')) {
+                $this->setAttrib('id', $this->getRequest()->protectId($this->getAttrib('id')));
+            } else {
+                $this->setAttrib('id', $this->getRequest()->protectId($this->name));
+            }
+
+            /** @var Zend_Form_Element $element */
+            foreach ($this->getElements() as $element) {
+                if (null !== $element->getAttrib('id')) {
+                    $element->setAttrib(
+                        'id',
+                        $this->getRequest()->protectId($this->getName() . '-' . $element->getAttrib('id'))
+                    );
+                } else {
+                    $element->setAttrib(
+                        'id',
+                        $this->getRequest()->protectId($this->getName() . '-' . $element->getName())
+                    );
+                }
+            }
+        }
         return parent::render($view);
     }
 
@@ -943,5 +977,30 @@ class Form extends Zend_Form
         if (! $this->Auth()->hasPermission($permission)) {
             throw new SecurityException('No permission for %s', $permission);
         }
+    }
+
+    /**
+     * Enable or disable whether ids should be altered to guard them against duplications
+     *
+     * @param $value    boolean Whether or not protect ids against collisions through other requests
+     */
+    public function setProtectIds($value)
+    {
+        $this->protectIds = $value;
+    }
+
+    /**
+     * Get the id that is written into the output html when rendering this form
+     *
+     * This will return the protected id, in case $protectIds is enabled.
+     *
+     * @return string   The id
+     */
+    public function getId()
+    {
+        if ($this->protectIds) {
+            return $this->getRequest()->protectId($this->getName());
+        }
+        return $this->getName();
     }
 }
