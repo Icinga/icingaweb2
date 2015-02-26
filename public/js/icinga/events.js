@@ -233,7 +233,7 @@
 
             icinga.logger.debug('Submitting form: ' + method + ' ' + url, method);
 
-            $target = self.getLinkTargetFor($form);
+            $target = self.getLinkTargetFor($button);
 
             if (method === 'GET') {
                 var dataObj = $form.serializeObject();
@@ -558,8 +558,8 @@
             $(document).off('click', 'table.action tr[href]', this.rowSelected);
             $(document).off('click', 'table.action tr a', this.rowSelected);
             $(document).off('submit', 'form', this.submitForm);
-            $(document).off('click', 'button', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
+            $(document).off('change', 'form input.autosubmit', this.submitForm);
         },
 
         destroy: function() {
