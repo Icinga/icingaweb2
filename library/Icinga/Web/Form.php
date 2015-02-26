@@ -583,6 +583,11 @@ class Form extends Zend_Form
         if ($element->isRequired() && strpos(strtolower($element->getType()), 'checkbox') === false) {
             $element->setAttrib('aria-required', 'true'); // ARIA
             $element->setAttrib('required', ''); // HTML5
+            if (($label = $element->getDecorator('label')) !== false) {
+                $element->setLabel($this->getView()->escape($element->getLabel()));
+                $label->setOption('escape', false);
+                $label->setOption('requiredSuffix', ' <span aria-hidden="true">*</span>');
+            }
         }
 
         return $element;
