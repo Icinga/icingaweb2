@@ -16,6 +16,7 @@ use Icinga\Module\Monitoring\Forms\Setup\InstancePage;
 use Icinga\Module\Monitoring\Forms\Setup\SecurityPage;
 use Icinga\Module\Monitoring\Forms\Setup\IdoResourcePage;
 use Icinga\Module\Monitoring\Forms\Setup\LivestatusResourcePage;
+use Icinga\Module\Setup\Requirement\ClassRequirement;
 use Icinga\Module\Setup\Requirement\PhpModuleRequirement;
 
 /**
@@ -146,6 +147,45 @@ class MonitoringWizard extends Wizard implements SetupWizard
                 . ' access a Livestatus interface, the Sockets module for PHP is required.'
             )
         )));
+
+        $idoRequirements = new Requirements(Requirements::MODE_OR);
+        $mysqlRequirements = new Requirements();
+        $mysqlRequirements->add(new PhpModuleRequirement(array(
+            'condition'     => 'mysql',
+            'alias'         => 'PDO-MySQL',
+            'description'   => mt(
+                'monitoring',
+                'To access the IDO stored in a MySQL database the PDO-MySQL module for PHP is required.'
+            )
+        )));
+        $mysqlRequirements->add(new ClassRequirement(array(
+            'condition'     => 'Zend_Db_Adapter_Pdo_Mysql',
+            'alias'         => mt('monitoring', 'Zend database adapter for MySQL'),
+            'description'   => mt(
+                'monitoring',
+                'The Zend database adapter for MySQL is required to access a MySQL database.'
+            )
+        )));
+        $idoRequirements->merge($mysqlRequirements);
+        $pgsqlRequirements = new Requirements();
+        $pgsqlRequirements->add(new PhpModuleRequirement(array(
+            'condition'     => 'pgsql',
+            'alias'         => 'PDO-PostgreSQL',
+            'description'   => mt(
+                'monitoring',
+                'To access the IDO stored in a PostgreSQL database the PDO-PostgreSQL module for PHP is required.'
+            )
+        )));
+        $pgsqlRequirements->add(new ClassRequirement(array(
+            'condition'     => 'Zend_Db_Adapter_Pdo_Pgsql',
+            'alias'         => mt('monitoring', 'Zend database adapter for PostgreSQL'),
+            'description'   => mt(
+                'monitoring',
+                'The Zend database adapter for PostgreSQL is required to access a PostgreSQL database.'
+            )
+        )));
+        $idoRequirements->merge($pgsqlRequirements);
+        $requirements->merge($idoRequirements);
 
         return $requirements;
     }
