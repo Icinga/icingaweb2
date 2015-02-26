@@ -1,13 +1,15 @@
 <?php
 
+use \RecursiveIteratorIterator;
 use Icinga\Web\Wizard;
 
 $requirements = $form->getRequirements();
+$iterator = new RecursiveIteratorIterator($requirements);
 
 ?>
 <table class="requirements">
   <tbody>
-<?php foreach ($requirements as $requirement): ?>
+<?php foreach ($iterator as $requirement): ?>
     <tr>
       <td><h2><?= $requirement->getTitle(); ?></h2></td>
       <td style="width: 50%">
