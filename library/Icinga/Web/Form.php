@@ -120,6 +120,13 @@ class Form extends Zend_Form
     protected $protectIds = true;
 
     /**
+     * The cue that is appended to each element's label if it's required
+     *
+     * @var string
+     */
+    protected $requiredCue = '*';
+
+    /**
      * Authentication manager
      *
      * @type Manager|null
@@ -407,6 +414,29 @@ class Form extends Zend_Form
     }
 
     /**
+     * Set the cue to append to each element's label if it's required
+     *
+     * @param   string  $cue
+     *
+     * @return  Form
+     */
+    public function setRequiredCue($cue)
+    {
+        $this->requiredCue = $cue;
+        return $this;
+    }
+
+    /**
+     * Return the cue being appended to each element's label if it's required
+     *
+     * @return  string
+     */
+    public function getRequiredCue()
+    {
+        return $this->requiredCue;
+    }
+
+    /**
      * Create this form
      *
      * @param   array   $formData   The data sent by the user
@@ -604,10 +634,10 @@ class Form extends Zend_Form
         if ($element->isRequired() && strpos(strtolower($element->getType()), 'checkbox') === false) {
             $element->setAttrib('aria-required', 'true'); // ARIA
             $element->setAttrib('required', ''); // HTML5
-            if (($label = $element->getDecorator('label')) !== false) {
+            if (($cue = $this->getRequiredCue()) !== null && ($label = $element->getDecorator('label')) !== false) {
                 $element->setLabel($this->getView()->escape($element->getLabel()));
                 $label->setOption('escape', false);
-                $label->setOption('requiredSuffix', ' <span aria-hidden="true">*</span>');
+                $label->setOption('requiredSuffix', sprintf(' <span aria-hidden="true">%s</span>', $cue));
             }
         }
 
