@@ -310,7 +310,7 @@ class FilterEditor extends AbstractWidget
             $this->preservedUrl()->with('removeFilter', $filter->getId()),
             null,
             array(
-                'icon'  => 'icon-cancel',
+                'icon'  => 'trash',
                 'title' => t('Remove this part of your filter')
             )
         );
