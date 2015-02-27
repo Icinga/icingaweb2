@@ -32,7 +32,7 @@ class Help extends Zend_Form_Decorator_Abstract
      *
      * @param   bool    $state
      *
-     * @return  Feedback
+     * @return  Help
      */
     public function setAccessible($state = true)
     {
@@ -85,7 +85,7 @@ class Help extends Zend_Form_Decorator_Abstract
                     . '</span>' . $content;
             }
 
-            $content = $this->getView()->icon('help', $description) . $content;
+            $content = $this->getView()->icon('help', $description, array('aria-hidden' => 'true')) . $content;
         }
 
         return $content;

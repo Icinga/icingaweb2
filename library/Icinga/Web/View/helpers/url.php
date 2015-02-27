@@ -54,7 +54,7 @@ $this->addHelperFunction('img', function ($url, $params = null, array $propertie
     }
 
     if (array_key_exists('title', $properties)) {
-        if (! array_key_exists('aria-label', $properties)) {
+        if (! array_key_exists('aria-label', $properties) && !array_key_exists('aria-hidden', $properties)) {
             $properties['aria-label'] = $properties['title'];
         }
     } elseif (! array_key_exists('aria-hidden', $properties)) {
@@ -83,7 +83,7 @@ $this->addHelperFunction('icon', function ($img, $title = null, array $propertie
         $properties['role'] = 'img';
         $properties['title'] = $title;
 
-        if (! array_key_exists('aria-label', $properties)) {
+        if (! array_key_exists('aria-label', $properties) && !array_key_exists('aria-hidden', $properties)) {
             $properties['aria-label'] = $title;
         }
     } elseif (! array_key_exists('aria-hidden', $properties)) {
