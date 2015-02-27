@@ -323,7 +323,7 @@ class FilterEditor extends AbstractWidget
             $this->preservedUrl()->with('addFilter', $filter->getId()),
             null,
             array(
-                'icon'  => 'icon-plus',
+                'icon'  => 'plus',
                 'title' => t('Add another filter')
             )
         );
@@ -336,7 +336,7 @@ class FilterEditor extends AbstractWidget
             $this->preservedUrl()->with('stripFilter', $filter->getId()),
             null,
             array(
-                'icon'  => 'icon-minus',
+                'icon'  => 'minus',
                 'title' => t('Strip this filter')
             )
         );
@@ -349,7 +349,7 @@ class FilterEditor extends AbstractWidget
             $this->preservedUrl()->without('addFilter'),
             null,
             array(
-                'icon'  => 'icon-cancel',
+                'icon'  => 'cancel',
                 'title' => t('Cancel this operation')
             )
         );
