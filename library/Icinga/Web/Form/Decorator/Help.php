@@ -51,7 +51,7 @@ class Help extends Zend_Form_Decorator_Abstract
     {
         if ($this->descriptionId === null) {
             $element = $element ?: $this->getElement();
-            $this->descriptionId = $this->getView()->protectId($element->getId() . '_desc');
+            $this->descriptionId = 'desc_' . $element->getId();
         }
 
         return $this->descriptionId;
