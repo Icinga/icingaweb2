@@ -249,8 +249,9 @@ class DashboardController extends ActionController
                 $this->view->tabs->add(
                     'Add',
                     array(
-                        'title' => '+',
-                        'url' => Url::fromPath('dashboard/new-dashlet')
+                        'label' => '+',
+                        'title' => 'Add a dashlet to an existing or new dashboard',
+                        'url'   => Url::fromPath('dashboard/new-dashlet')
                     )
                 );
                 $this->view->dashboard = $this->dashboard;

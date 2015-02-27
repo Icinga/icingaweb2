@@ -121,7 +121,8 @@ class ConfigController extends ActionController
         // @TODO(el): This seems not natural to me. Module configuration should have its own controller.
         $this->view->tabs = Widget::create('tabs')
             ->add('modules', array(
-                'title' => $this->translate('Modules'),
+                'label' => $this->translate('Modules'),
+                'title' => $this->translate('List intalled modules'),
                 'url'   => 'config/modules'
             ))
             ->activate('modules');
