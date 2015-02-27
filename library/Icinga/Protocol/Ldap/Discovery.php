@@ -54,7 +54,7 @@ class Discovery {
         return array(
             'hostname' => $this->connection->getHostname(),
             'port' => $this->connection->getPort(),
-            'root_dn' => $this->connection->getDefaultNamingContext()
+            'root_dn' => $this->connection->getCapabilities()->getDefaultNamingContext()
         );
     }
 
@@ -69,14 +69,14 @@ class Discovery {
         $this->execDiscovery();
         if ($this->isAd()) {
             return array(
-                'base_dn' => $this->connection->getDefaultNamingContext(),
+                'base_dn' => $this->connection->getCapabilities()->getDefaultNamingContext(),
                 'user_class' => 'user',
                 'user_name_attribute' => 'sAMAccountName'
             );
         } else {
             return array(
-                'base_dn' => $this->connection->getDefaultNamingContext(),
-                'user_class' => 'getDefaultNamingContext',
+                'base_dn' => $this->connection->getCapabilities()->getDefaultNamingContext(),
+                'user_class' => 'inetOrgPerson',
                 'user_name_attribute' => 'uid'
             );
         }
@@ -90,8 +90,7 @@ class Discovery {
     public function isAd()
     {
         $this->execDiscovery();
-        $caps = $this->connection->getCapabilities();
-        return isset($caps->msCapabilities->ActiveDirectoryOid) && $caps->msCapabilities->ActiveDirectoryOid;
+        return $this->connection->getCapabilities()->hasAdOid();
     }
 
     /**
