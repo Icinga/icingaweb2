@@ -469,7 +469,6 @@ class Connection
     protected function prepareNewConnection()
     {
         $use_tls = false;
-        $force_tls = true;
         $force_tls = false;
 
         if ($use_tls) {

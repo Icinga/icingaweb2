@@ -101,24 +101,16 @@ class Capability {
     {
         $this->attributes = $attributes;
 
-        if (isset($attributes->supportedControl)) {
-            foreach ($attributes->supportedControl as $oid) {
-                $this->oids[$oid] = true;
-            }
-        }
-        if (isset($attributes->supportedExtension)) {
-            foreach ($attributes->supportedExtension as $oid) {
-                $this->oids[$oid] = true;
-            }
-        }
-        if (isset($attributes->supportedFeatures)) {
-            foreach ($attributes->supportedFeatures as $oid) {
-                $this->oids[$oid] = true;
-            }
-        }
-        if (isset($attributes->supportedCapabilities)) {
-            foreach ($attributes->supportedCapabilities as $oid) {
-                $this->oids[$oid] = true;
+        $keys = array('supportedControl', 'supportedExtension', 'supportedFeatures', 'supportedCapabilities');
+        foreach ($keys as $key) {
+            if (isset($attributes->$key)) {
+                if (is_array($attributes->$key)) {
+                    foreach ($attributes->$key as $oid) {
+                        $this->oids[$oid] = true;
+                    }
+                } else {
+                    $this->oids[$attributes->$key] = true;
+                }
             }
         }
     }
@@ -160,7 +152,7 @@ class Capability {
      */
     public function hasLdapV3()
     {
-        if (!isset($this->attributes)) {
+        if (! isset($this->attributes) || ! isset($this->attributes->supportedLDAPVersion)) {
             // Default to true, if unknown
             return true;
         }
