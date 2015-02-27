@@ -299,7 +299,9 @@ class Connection
      */
     protected function pageControlAvailable(Query $query)
     {
-        return $query->getUsePagedResults() && version_compare(PHP_VERSION, '5.4.0') >= 0;
+        return $this->capabilities->hasPagedResult() &&
+               $query->getUsePagedResults() &&
+               version_compare(PHP_VERSION, '5.4.0') >= 0;
     }
 
     /**
@@ -336,8 +338,8 @@ class Connection
         $cookie = '';
         $entries = array();
         do {
-            // do not set controlPageResult as a critical extension, since there is still the possibillity that the
-            // server returns an answer in case the pagination extension is missing.
+            // do not set controlPageResult as a critical extension, since we still want the
+            // possibillity  server to return an answer in case the pagination extension is missing.
             ldap_control_paged_result($this->ds, $pageSize, false, $cookie);
 
             $results = @ldap_search($this->ds, $base, $queryString, $fields, 0, $limit ? $offset + $limit : 0);
