@@ -134,6 +134,7 @@ class Form extends Zend_Form
     public static $defaultElementDecorators = array(
         array('ViewHelper', array('separator' => '')),
         array('Errors', array('separator' => '')),
+        array('Help'),
         array('Label', array('separator' => '')),
         array('HtmlTag', array('tag' => 'div', 'class' => 'element'))
     );
@@ -538,13 +539,6 @@ class Form extends Zend_Form
             )
         ));
 
-        if (($description = $el->getDescription()) !== null && ($label = $el->getDecorator('label')) !== false) {
-            $label->setOptions(array(
-                'title' => $description,
-                'class' => 'has-feedback'
-            ));
-        }
-
         if ($el->getAttrib('autosubmit')) {
             $noScript = new NoScriptApply(); // Non-JS environments
             $decorators = $el->getDecorators();
@@ -588,6 +582,10 @@ class Form extends Zend_Form
                 $label->setOption('escape', false);
                 $label->setOption('requiredSuffix', ' <span aria-hidden="true">*</span>');
             }
+        }
+
+        if ($element->getDescription() !== null && ($help = $element->getDecorator('help')) !== false) {
+            $element->setAttrib('aria-describedby', $help->setAccessible()->getDescriptionId($element));
         }
 
         return $element;
