@@ -384,6 +384,29 @@ class Form extends Zend_Form
     }
 
     /**
+     * Set whether each element's id should be altered to avoid duplicates
+     *
+     * @param   bool    $value
+     *
+     * @return  Form
+     */
+    public function setProtectIds($value = true)
+    {
+        $this->protectIds = (bool) $value;
+        return $this;
+    }
+
+    /**
+     * Return whether each element's id is being altered to avoid duplicates
+     *
+     * @return  bool
+     */
+    public function getProtectIds()
+    {
+        return $this->protectIds;
+    }
+
+    /**
      * Create this form
      *
      * @param   array   $formData   The data sent by the user
@@ -560,6 +583,10 @@ class Form extends Zend_Form
             $el->setAttrib('class', $class); // JS environments
 
             unset($el->autosubmit);
+        }
+
+        if ($this->protectIds) {
+            $el->setAttrib('id', $this->getRequest()->protectId($this->getId(false) . '_' . $el->getId()));
         }
 
         return $this->ensureElementAccessibility($el);
@@ -796,6 +823,21 @@ class Form extends Zend_Form
     }
 
     /**
+     * Get element id
+     *
+     * Returns the protected id, in case id protection is enabled.
+     *
+     * @param   bool    $protect
+     *
+     * @return  string
+     */
+    public function getId($protect = true)
+    {
+        $id = parent::getId();
+        return $protect && $this->protectIds ? $this->getRequest()->protectId($id) : $id;
+    }
+
+    /**
      * Return the name of this form
      *
      * @return  string
@@ -913,28 +955,6 @@ class Form extends Zend_Form
     public function render(Zend_View_Interface $view = null)
     {
         $this->create();
-        if ($this->protectIds) {
-            if (null !== $this->getAttrib('id')) {
-                $this->setAttrib('id', $this->getRequest()->protectId($this->getAttrib('id')));
-            } else {
-                $this->setAttrib('id', $this->getRequest()->protectId($this->name));
-            }
-
-            /** @var Zend_Form_Element $element */
-            foreach ($this->getElements() as $element) {
-                if (null !== $element->getAttrib('id')) {
-                    $element->setAttrib(
-                        'id',
-                        $this->getRequest()->protectId($this->getName() . '-' . $element->getAttrib('id'))
-                    );
-                } else {
-                    $element->setAttrib(
-                        'id',
-                        $this->getRequest()->protectId($this->getName() . '-' . $element->getName())
-                    );
-                }
-            }
-        }
         return parent::render($view);
     }
 
@@ -975,30 +995,5 @@ class Form extends Zend_Form
         if (! $this->Auth()->hasPermission($permission)) {
             throw new SecurityException('No permission for %s', $permission);
         }
-    }
-
-    /**
-     * Enable or disable whether ids should be altered to guard them against duplications
-     *
-     * @param $value    boolean Whether or not protect ids against collisions through other requests
-     */
-    public function setProtectIds($value)
-    {
-        $this->protectIds = $value;
-    }
-
-    /**
-     * Get the id that is written into the output html when rendering this form
-     *
-     * This will return the protected id, in case $protectIds is enabled.
-     *
-     * @return string   The id
-     */
-    public function getId()
-    {
-        if ($this->protectIds) {
-            return $this->getRequest()->protectId($this->getName());
-        }
-        return $this->getName();
     }
 }
