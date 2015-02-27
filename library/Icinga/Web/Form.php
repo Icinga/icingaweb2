@@ -13,7 +13,7 @@ use Icinga\Authentication\Manager;
 use Icinga\Security\SecurityException;
 use Icinga\Util\Translator;
 use Icinga\Web\Form\ErrorLabeller;
-use Icinga\Web\Form\Decorator\NoScriptApply;
+use Icinga\Web\Form\Decorator\Autosubmit;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
 
 /**
@@ -592,15 +592,26 @@ class Form extends Zend_Form
             )
         ));
 
+        if ($this->protectIds) {
+            $el->setAttrib('id', $this->getRequest()->protectId($this->getId(false) . '_' . $el->getId()));
+        }
+
         if ($el->getAttrib('autosubmit')) {
-            $noScript = new NoScriptApply(); // Non-JS environments
+            $autosubmitDecorator = new Autosubmit();
+            $autosubmitDecorator->setAccessible();
             $decorators = $el->getDecorators();
             $pos = array_search('Zend_Form_Decorator_ViewHelper', array_keys($decorators)) + 1;
             $el->setDecorators(
                 array_slice($decorators, 0, $pos, true)
-                + array(get_class($noScript) => $noScript)
+                + array(get_class($autosubmitDecorator) => $autosubmitDecorator)
                 + array_slice($decorators, $pos, count($decorators) - $pos, true)
             );
+
+            if (($describedBy = $el->getAttrib('aria-describedby')) !== null) {
+                $el->setAttrib('aria-describedby', $describedBy . ' ' . $autosubmitDecorator->getWarningId($el));
+            } else {
+                $el->setAttrib('aria-describedby', $autosubmitDecorator->getWarningId($el));
+            }
 
             $class = $el->getAttrib('class');
             if (is_array($class)) {
@@ -610,13 +621,9 @@ class Form extends Zend_Form
             } else {
                 $class .= ' autosubmit';
             }
-            $el->setAttrib('class', $class); // JS environments
+            $el->setAttrib('class', $class);
 
             unset($el->autosubmit);
-        }
-
-        if ($this->protectIds) {
-            $el->setAttrib('id', $this->getRequest()->protectId($this->getId(false) . '_' . $el->getId()));
         }
 
         return $this->ensureElementAccessibility($el);
@@ -642,7 +649,17 @@ class Form extends Zend_Form
         }
 
         if ($element->getDescription() !== null && ($help = $element->getDecorator('help')) !== false) {
-            $element->setAttrib('aria-describedby', $help->setAccessible()->getDescriptionId($element));
+            if (($describedBy = $element->getAttrib('aria-describedby')) !== null) {
+                // Assume that it's because of the element being of type autosubmit or
+                // that one who did set the property manually removes the help decorator
+                // in case it has already an aria-requiredby property set
+                $element->setAttrib(
+                    'aria-describedby',
+                    $help->setAccessible()->getDescriptionId($element) . ' ' . $describedBy
+                );
+            } else {
+                $element->setAttrib('aria-describedby', $help->setAccessible()->getDescriptionId($element));
+            }
         }
 
         return $element;

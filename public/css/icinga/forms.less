@@ -195,6 +195,18 @@ select.grant-permissions {
   width: auto;
 }
 
-label + input, label + select, label + input + input {
+label ~ input, label ~ select {
   margin-left: 1.6em;
+}
+
+label + i ~ input, label + i ~ select {
+  margin-left: 0;
+}
+
+button.noscript-apply {
+  margin-left: 0.5em;
+}
+
+html.no-js i.autosubmit-warning {
+  .sr-only;
 }
