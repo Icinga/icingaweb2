@@ -8,6 +8,8 @@ use Icinga\Web\Form;
 
 /**
  * Decorator to add a list of descriptions at the top of a form
+ *
+ * The description for required form elements is automatically being handled.
  */
 class FormDescriptions extends Zend_Form_Decorator_Abstract
 {
@@ -31,6 +33,10 @@ class FormDescriptions extends Zend_Form_Decorator_Abstract
         }
 
         $descriptions = $form->getDescriptions();
+        if (($requiredDesc = $this->getRequiredDescription($form)) !== null) {
+            $descriptions[] = $requiredDesc;
+        }
+
         if (empty($descriptions)) {
             return $content;
         }
@@ -50,6 +56,55 @@ class FormDescriptions extends Zend_Form_Decorator_Abstract
                 return $content . $html . '</ul>';
             case self::PREPEND:
                 return $html . '</ul>' . $content;
+        }
+    }
+
+    /**
+     * Return the description for the given form's required elements
+     *
+     * @param   Form    $form
+     *
+     * @return  string|null
+     */
+    protected function getRequiredDescription(Form $form)
+    {
+        if (($cue = $form->getRequiredCue()) === null) {
+            return;
+        }
+
+        $requiredLabels = array();
+        $entirelyRequired = true;
+        $partiallyRequired = false;
+        $blacklist = array(
+            'Zend_Form_Element_Hidden',
+            'Zend_Form_Element_Submit',
+            'Zend_Form_Element_Button',
+            'Icinga\Web\Form\Element\CsrfCounterMeasure'
+        );
+        foreach ($form->getElements() as $element) {
+            if (! in_array($element->getType(), $blacklist)) {
+                if (! $element->isRequired()) {
+                    $entirelyRequired = false;
+                } else {
+                    $partiallyRequired = true;
+                    if (($label = $element->getDecorator('label')) !== false) {
+                        $requiredLabels[] = $label;
+                    }
+                }
+            }
+        }
+
+        if ($entirelyRequired && $partiallyRequired) {
+            foreach ($requiredLabels as $label) {
+                $label->setRequiredSuffix('');
+            }
+
+            return $form->getView()->translate('All fields are required and must be filled in to complete the form.');
+        } elseif ($partiallyRequired) {
+            return $form->getView()->translate(sprintf(
+                'Required fields are marked with %s and must be filled in to complete the form.',
+                $cue
+            ));
         }
     }
 }
