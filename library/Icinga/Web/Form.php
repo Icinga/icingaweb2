@@ -127,6 +127,13 @@ class Form extends Zend_Form
     protected $requiredCue = '*';
 
     /**
+     * The descriptions of this form
+     *
+     * @var array
+     */
+    protected $descriptions;
+
+    /**
      * Authentication manager
      *
      * @type Manager|null
@@ -434,6 +441,49 @@ class Form extends Zend_Form
     public function getRequiredCue()
     {
         return $this->requiredCue;
+    }
+
+    /**
+     * Set the descriptions for this form
+     *
+     * @param   array   $descriptions
+     *
+     * @return  Form
+     */
+    public function setDescriptions(array $descriptions)
+    {
+        $this->descriptions = $descriptions;
+        return $this;
+    }
+
+    /**
+     * Add a description for this form
+     *
+     * If $description is an array the second value should be
+     * an array as well containing additional HTML properties.
+     *
+     * @param   string|array    $description
+     *
+     * @return  Form
+     */
+    public function addDescription($description)
+    {
+        $this->descriptions[] = $description;
+        return $this;
+    }
+
+    /**
+     * Return the descriptions of this form
+     *
+     * @return  array
+     */
+    public function getDescriptions()
+    {
+        if ($this->descriptions === null) {
+            return array();
+        }
+
+        return $this->descriptions;
     }
 
     /**
@@ -860,6 +910,7 @@ class Form extends Zend_Form
                 ));
             } else {
                 $this->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
+                    ->addDecorator('FormDescriptions')
                     ->addDecorator('FormElements')
                     //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
                     ->addDecorator('Form');

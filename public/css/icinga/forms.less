@@ -126,10 +126,10 @@ input.link-like:hover, button.link-like:focus {
 .non-list-like-list {
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 0.5em 0.5em 0;
 
   li {
-    margin: 0.5em;
+    padding-bottom: 0.5em;
   }
 }
 
@@ -146,12 +146,16 @@ form div.element ul.errors {
 
 form ul.form-errors {
   .non-list-like-list;
-  display: inline-block;
   margin-bottom: 1em;
   background-color: @colorCritical;
 
   ul.errors {
     .non-list-like-list;
+    padding: 0;
+
+    li:last-child {
+      padding-bottom: 0;
+    }
   }
 
   li {
@@ -209,4 +213,18 @@ button.noscript-apply {
 
 html.no-js i.autosubmit-warning {
   .sr-only;
+}
+
+form ul.descriptions {
+  .info-box;
+  padding: 0.5em 0.5em 0 1.8em;
+
+  li {
+    padding-bottom: 0.5em;
+
+    &:only-child {
+      margin-left: -1.3em;
+      list-style-type: none;
+    }
+  }
 }
