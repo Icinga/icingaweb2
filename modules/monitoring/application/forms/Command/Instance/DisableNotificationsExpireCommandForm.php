@@ -22,17 +22,9 @@ class DisableNotificationsExpireCommandForm extends CommandForm
     {
         $this->setRequiredCue(null);
         $this->setSubmitLabel($this->translate('Disable Notifications'));
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
-     */
-    public function getHelp()
-    {
-        return $this->translate(
+        $this->addDescription($this->translate(
             'This command is used to disable host and service notifications for a specific time.'
-        );
+        ));
     }
 
     /**

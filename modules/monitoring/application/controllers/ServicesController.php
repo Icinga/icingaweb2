@@ -224,8 +224,9 @@ class Monitoring_ServicesController extends Controller
     {
         $this->assertPermission('monitoring/command/acknowledge-problem');
 
-        $this->view->title = $this->translate('Acknowledge Service Problems');
-        $this->handleCommandForm(new AcknowledgeProblemCommandForm());
+        $form = new AcknowledgeProblemCommandForm();
+        $form->setTitle($this->translate('Acknowledge Service Problems'));
+        $this->handleCommandForm($form);
     }
 
     /**
@@ -235,8 +236,9 @@ class Monitoring_ServicesController extends Controller
     {
         $this->assertPermission('monitoring/command/schedule-check');
 
-        $this->view->title = $this->translate('Reschedule Service Checks');
-        $this->handleCommandForm(new ScheduleServiceCheckCommandForm());
+        $form = new ScheduleServiceCheckCommandForm();
+        $form->setTitle($this->translate('Reschedule Service Checks'));
+        $this->handleCommandForm($form);
     }
 
     /**
@@ -246,8 +248,9 @@ class Monitoring_ServicesController extends Controller
     {
         $this->assertPermission('monitoring/command/downtime/schedule');
 
-        $this->view->title = $this->translate('Schedule Service Downtimes');
-        $this->handleCommandForm(new ScheduleServiceDowntimeCommandForm());
+        $form = new ScheduleServiceDowntimeCommandForm();
+        $form->setTitle($this->translate('Schedule Service Downtimes'));
+        $this->handleCommandForm($form);
     }
 
     /**
@@ -257,7 +260,8 @@ class Monitoring_ServicesController extends Controller
     {
         $this->assertPermission('monitoring/command/process-check-result');
 
-        $this->view->title = $this->translate('Submit Passive Service Check Results');
-        $this->handleCommandForm(new ProcessCheckResultCommandForm());
+        $form = new ProcessCheckResultCommandForm();
+        $form->setTitle($this->translate('Submit Passive Service Check Results'));
+        $this->handleCommandForm($form);
     }
 }

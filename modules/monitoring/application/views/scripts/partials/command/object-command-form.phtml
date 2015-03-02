@@ -7,7 +7,6 @@
     <hr class="command-separator">
   <?php endif ?>
 </div>
-<div class="content">
-    <h1 class="command-title"><?= $title; ?> <?= /** @var \Icinga\Module\Monitoring\Forms\Command\CommandForm $form */ $this->icon('help', $form->getHelp()); ?></h1>
-    <?= $form ?>
+<div class="content object-command">
+    <?= $form; ?>
 </div>
