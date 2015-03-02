@@ -957,6 +957,20 @@ class Form extends Zend_Form
     }
 
     /**
+     * Set form description
+     *
+     * Alias for Zend_Form::setDescription().
+     *
+     * @param   string  $value
+     *
+     * @return  Form
+     */
+    public function setTitle($value)
+    {
+        return $this->setDescription($value);
+    }
+
+    /**
      * Return the request associated with this form
      *
      * Returns the global request if none has been set for this form yet.
