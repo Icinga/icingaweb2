@@ -20,6 +20,7 @@ class DisableNotificationsExpireCommandForm extends CommandForm
      */
     public function init()
     {
+        $this->setRequiredCue(null);
         $this->setSubmitLabel($this->translate('Disable Notifications'));
     }
 
