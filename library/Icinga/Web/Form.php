@@ -913,7 +913,12 @@ class Form extends Zend_Form
                     ->addDecorator('FormDescriptions')
                     ->addDecorator('FormElements')
                     //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
-                    ->addDecorator('Form');
+                    ->addDecorator('Form')
+                    ->addDecorator('Description', array(
+                        'placement' => 'prepend',
+                        'class' => 'form-title',
+                        'tag' => 'h1'
+                    ));
             }
         }
 
