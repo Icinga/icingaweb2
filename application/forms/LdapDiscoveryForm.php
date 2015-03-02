@@ -24,7 +24,6 @@ class LdapDiscoveryForm extends Form
             'text',
             'domain',
             array(
-                'required'      => true,
                 'label'         => $this->translate('Search Domain'),
                 'description'   => $this->translate('Search this domain for records of available servers.'),
             )
