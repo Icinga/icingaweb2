@@ -16,6 +16,7 @@ class PreferencesPage extends Form
      */
     public function init()
     {
+        $this->setRequiredCue(null);
         $this->setName('setup_preferences_type');
     }
 
