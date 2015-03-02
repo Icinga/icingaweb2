@@ -86,6 +86,7 @@ class RolesController extends ActionController
             }
         ));
         $role
+            ->setTitle($this->translate('New Role'))
             ->setSubmitLabel($this->translate('Create Role'))
             ->setIniConfig(Config::app('roles', true))
             ->setRedirectUrl('roles')
@@ -108,6 +109,7 @@ class RolesController extends ActionController
             );
         }
         $role = new RoleForm();
+        $role->setTitle(sprintf($this->translate('Update Role %s'), $name));
         $role->setSubmitLabel($this->translate('Update Role'));
         try {
             $role
@@ -138,7 +140,6 @@ class RolesController extends ActionController
             })
             ->setRedirectUrl('roles')
             ->handleRequest();
-        $this->view->name = $name;
         $this->view->form = $role;
     }
 
@@ -183,10 +184,10 @@ class RolesController extends ActionController
             }
         ));
         $confirmation
+            ->setTitle(sprintf($this->translate('Remove Role %s'), $name))
             ->setSubmitLabel($this->translate('Remove Role'))
             ->setRedirectUrl('roles')
             ->handleRequest();
-        $this->view->name = $name;
         $this->view->form = $confirmation;
     }
 }

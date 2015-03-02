@@ -1,7 +1,6 @@
 <div class="controls">
     <?= $tabs->showOnlyCloseButton() ?>
 </div>
-<h4><?= $this->translate('Remove Existing Instance'); ?></h4>
-<p><?= $this->translate('Are you sure you want to remove this instance?'); ?></p>
-<p><?= $this->translate('If you have still any environments or views referring to this instance, you won\'t be able to send commands anymore after deletion.'); ?></p>
-<?= $form; ?>
+<div class="content">
+    <?= $form; ?>
+</div>

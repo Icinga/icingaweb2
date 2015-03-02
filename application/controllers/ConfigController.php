@@ -216,6 +216,11 @@ class ConfigController extends ActionController
     {
         $this->assertPermission('system/config/authentication');
         $form = new AuthenticationBackendConfigForm();
+        $form->setTitle($this->translate('Create New Authentication Backend'));
+        $form->addDescription($this->translate(
+            'Create a new backend for authenticating your users. This backend'
+            . ' will be added at the end of your authentication order.'
+        ));
         $form->setIniConfig(Config::app('authentication'));
         $form->setResourceConfig(ResourceFactory::getResourceConfigs());
         $form->setRedirectUrl('config/authentication');
@@ -233,6 +238,7 @@ class ConfigController extends ActionController
     {
         $this->assertPermission('system/config/authentication');
         $form = new AuthenticationBackendConfigForm();
+        $form->setTitle($this->translate('Edit Backend'));
         $form->setIniConfig(Config::app('authentication'));
         $form->setResourceConfig(ResourceFactory::getResourceConfigs());
         $form->setRedirectUrl('config/authentication');
@@ -272,6 +278,7 @@ class ConfigController extends ActionController
                 }
             }
         ));
+        $form->setTitle($this->translate('Remove Backend'));
         $form->setRedirectUrl('config/authentication');
         $form->handleRequest();
 
@@ -297,6 +304,8 @@ class ConfigController extends ActionController
     {
         $this->assertPermission('system/config/resources');
         $form = new ResourceConfigForm();
+        $form->setTitle($this->translate('Create A New Resource'));
+        $form->addDescription($this->translate('Resources are entities that provide data to Icinga Web 2.'));
         $form->setIniConfig(Config::app('resources'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
@@ -312,6 +321,7 @@ class ConfigController extends ActionController
     {
         $this->assertPermission('system/config/resources');
         $form = new ResourceConfigForm();
+        $form->setTitle($this->translate('Edit Existing Resource'));
         $form->setIniConfig(Config::app('resources'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
@@ -346,6 +356,7 @@ class ConfigController extends ActionController
                 }
             }
         ));
+        $form->setTitle($this->translate('Remove Existing Resource'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
 
@@ -354,7 +365,7 @@ class ConfigController extends ActionController
         $authConfig = Config::app('authentication');
         foreach ($authConfig as $backendName => $config) {
             if ($config->get('resource') === $resource) {
-                $form->addError(sprintf(
+                $form->addDescription(sprintf(
                     $this->translate(
                         'The resource "%s" is currently in use by the authentication backend "%s". ' .
                         'Removing the resource can result in noone being able to log in any longer.'
