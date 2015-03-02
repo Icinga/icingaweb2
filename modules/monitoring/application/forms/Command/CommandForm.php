@@ -44,16 +44,6 @@ abstract class CommandForm extends Form
     }
 
     /**
-     * Get the command help description
-     *
-     * @return string|null
-     */
-    public function getHelp()
-    {
-        return null;
-    }
-
-    /**
      * Get the transport used to send commands
      *
      * @param   Request $request
