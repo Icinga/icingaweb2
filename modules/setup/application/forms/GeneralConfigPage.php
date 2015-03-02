@@ -17,6 +17,10 @@ class GeneralConfigPage extends Form
     public function init()
     {
         $this->setName('setup_general_config');
+        $this->setTitle($this->translate('Application Configuration', 'setup.page.title'));
+        $this->addDescription($this->translate(
+            'Now please adjust all application and logging related configuration options to fit your needs.'
+        ));
     }
 
     /**
@@ -24,27 +28,6 @@ class GeneralConfigPage extends Form
      */
     public function createElements(array $formData)
     {
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => $this->translate('Application Configuration', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-        $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => $this->translate(
-                    'Now please adjust all application and logging related configuration options to fit your needs.'
-                )
-            )
-        );
-
         $loggingForm = new LoggingConfigForm();
         $this->addElements($loggingForm->createElements($formData)->getElements());
     }

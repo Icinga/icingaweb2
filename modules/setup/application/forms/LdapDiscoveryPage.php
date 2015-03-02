@@ -26,6 +26,11 @@ class LdapDiscoveryPage extends Form
     public function init()
     {
         $this->setName('setup_ldap_discovery');
+        $this->setTitle($this->translate('LDAP Discovery', 'setup.page.title'));
+        $this->addDescription($this->translate(
+            'You can use this page to discover LDAP or ActiveDirectory servers ' .
+            ' for authentication. If you don\' want to execute a discovery, just skip this step.'
+        ));
     }
 
     /**
@@ -33,28 +38,6 @@ class LdapDiscoveryPage extends Form
      */
     public function createElements(array $formData)
     {
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => $this->translate('LDAP Discovery', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-        $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => $this->translate(
-                    'You can use this page to discover LDAP or ActiveDirectory servers ' .
-                    ' for authentication. If you don\' want to execute a discovery, just skip this step.'
-                )
-            )
-        );
-
         $discoveryForm = new LdapDiscoveryForm();
         $this->addElements($discoveryForm->createElements($formData)->getElements());
 

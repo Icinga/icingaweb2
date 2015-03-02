@@ -11,6 +11,11 @@ class LivestatusResourcePage extends Form
     public function init()
     {
         $this->setName('setup_monitoring_livestatus');
+        $this->setTitle($this->translate('Monitoring Livestatus Resource', 'setup.page.title'));
+        $this->addDescription($this->translate(
+            'Please fill out the connection details below to access the Livestatus'
+            . ' socket interface for your monitoring environment.'
+        ));
     }
 
     public function createElements(array $formData)
@@ -21,27 +26,6 @@ class LivestatusResourcePage extends Form
             array(
                 'required'  => true,
                 'value'     => 'livestatus'
-            )
-        );
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => $this->translate('Monitoring Livestatus Resource', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-        $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => $this->translate(
-                    'Please fill out the connection details below to access the Livestatus'
-                    . ' socket interface for your monitoring environment.'
-                )
             )
         );
 

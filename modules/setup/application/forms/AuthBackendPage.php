@@ -27,6 +27,7 @@ class AuthBackendPage extends Form
     public function init()
     {
         $this->setName('setup_authentication_backend');
+        $this->setTitle($this->translate('Authentication Backend', 'setup.page.title'));
     }
 
     /**
@@ -57,54 +58,33 @@ class AuthBackendPage extends Form
      */
     public function createElements(array $formData)
     {
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => $this->translate('Authentication Backend', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-
-        if ($this->config['type'] === 'db') {
-            $note = $this->translate(
-                'As you\'ve chosen to use a database for authentication all you need '
-                . 'to do now is defining a name for your first authentication backend.'
-            );
-        } elseif ($this->config['type'] === 'ldap') {
-            $note = $this->translate(
-                'Before you are able to authenticate using the LDAP connection defined earlier you need to'
-                . ' provide some more information so that Icinga Web 2 is able to locate account details.'
-            );
-        } else { // if ($this->config['type'] === 'external'
-            $note = $this->translate(
-                'You\'ve chosen to authenticate using a web server\'s mechanism so it may be necessary'
-                . ' to adjust usernames before any permissions, restrictions, etc. are being applied.'
-            );
-        }
-
-        $this->addElement(
-            'note',
-            'description',
-            array('value' => $note)
-        );
-
         if (isset($formData['skip_validation']) && $formData['skip_validation']) {
             $this->addSkipValidationCheckbox();
         }
 
         if ($this->config['type'] === 'db') {
+            $this->setRequiredCue(null);
             $backendForm = new DbBackendForm();
+            $backendForm->setRequiredCue(null);
             $backendForm->createElements($formData)->removeElement('resource');
+            $this->addDescription($this->translate(
+                'As you\'ve chosen to use a database for authentication all you need '
+                . 'to do now is defining a name for your first authentication backend.'
+            ));
         } elseif ($this->config['type'] === 'ldap') {
             $backendForm = new LdapBackendForm();
             $backendForm->createElements($formData)->removeElement('resource');
+            $this->addDescription($this->translate(
+                'Before you are able to authenticate using the LDAP connection defined earlier you need to'
+                . ' provide some more information so that Icinga Web 2 is able to locate account details.'
+            ));
         } else { // $this->config['type'] === 'external'
             $backendForm = new ExternalBackendForm();
             $backendForm->createElements($formData);
+            $this->addDescription($this->translate(
+                'You\'ve chosen to authenticate using a web server\'s mechanism so it may be necessary'
+                . ' to adjust usernames before any permissions, restrictions, etc. are being applied.'
+            ));
         }
 
         $this->addElements($backendForm->getElements());
@@ -143,7 +123,7 @@ class AuthBackendPage extends Form
             'checkbox',
             'skip_validation',
             array(
-                'order'         => 2,
+                'order'         => 0,
                 'ignore'        => true,
                 'required'      => true,
                 'label'         => $this->translate('Skip Validation'),

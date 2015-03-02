@@ -115,7 +115,11 @@ class WebWizard extends Wizard implements SetupWizard
         } elseif ($page->getName() === 'setup_preferences_type') {
             $authData = $this->getPageData('setup_authentication_type');
             if ($authData['type'] === 'db') {
-                $page->create()->showDatabaseNote();
+                $page->create()->getElement('store')->setValue('db');
+                $page->addDescription(mt(
+                    'setup',
+                    'Note that choosing "Database" causes Icinga Web 2 to use the same database as for authentication.'
+                ));
             }
         } elseif ($page->getName() === 'setup_authentication_backend') {
             $authData = $this->getPageData('setup_authentication_type');
