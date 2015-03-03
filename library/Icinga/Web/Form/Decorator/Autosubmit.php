@@ -3,15 +3,15 @@
 
 namespace Icinga\Web\Form\Decorator;
 
-use Zend_Form_Element;
 use Zend_Form_Decorator_Abstract;
 use Icinga\Application\Icinga;
 use Icinga\Web\View;
+use Icinga\Web\Form;
 
 /**
  * Decorator to add an icon and a submit button encapsulated in noscript-tags
  *
- * The icon is shown in JS environments to indicate that a specific form control does automatically request an update
+ * The icon is shown in JS environments to indicate that a specific form field does automatically request an update
  * of its form upon it has changed. The button allows users in non-JS environments to trigger the update manually.
  */
 class Autosubmit extends Zend_Form_Decorator_Abstract
@@ -21,7 +21,7 @@ class Autosubmit extends Zend_Form_Decorator_Abstract
      *
      * @var bool
      */
-    protected $accessible = false;
+    protected $accessible;
 
     /**
      * The id used to identify the auto-submit warning associated with the decorated form element
@@ -44,13 +44,27 @@ class Autosubmit extends Zend_Form_Decorator_Abstract
     }
 
     /**
+     * Return whether a hidden <span> is being created with the same warning as in the icon label
+     *
+     * @return  bool
+     */
+    public function getAccessible()
+    {
+        if ($this->accessible === null) {
+            $this->accessible = $this->getOption('accessible') ?: false;
+        }
+
+        return $this->accessible;
+    }
+
+    /**
      * Return the id used to identify the auto-submit warning associated with the decorated element
      *
-     * @param   Zend_Form_Element   $element    The element for which to generate a id
+     * @param   mixed   $element    The element for which to generate a id
      *
      * @return  string
      */
-    public function getWarningId(Zend_Form_Element $element = null)
+    public function getWarningId($element = null)
     {
         if ($this->warningId === null) {
             $element = $element ?: $this->getElement();
@@ -80,13 +94,18 @@ class Autosubmit extends Zend_Form_Decorator_Abstract
     public function render($content = '')
     {
         if ($content) {
-            $warning = t('Upon its value has changed, this control issues an automatic update of this page.');
+            $isForm = $this->getElement() instanceof Form;
+            $warning = $isForm
+                ? t('Upon any of this form\'s fields were changed, this page is being updated automatically.')
+                : t('Upon its value has changed, this field issues an automatic update of this page.');
             $content .= $this->getView()->icon('cw', $warning, array(
                 'aria-hidden'   => 'true',
                 'class'         => 'autosubmit-warning'
             ));
-            if ($this->accessible) {
-                $content = '<span id="' . $this->getWarningId() . '" class="sr-only">' . $warning . '</span>' . $content;
+            if ($this->getAccessible()) {
+                $content = $isForm
+                    ? $content . '<span id="' . $this->getWarningId() . '" class="sr-only">' . $warning . '</span>'
+                    : '<span id="' . $this->getWarningId() . '" class="sr-only">' . $warning . '</span>' . $content;
             }
 
             $content .= sprintf(
@@ -95,10 +114,13 @@ class Autosubmit extends Zend_Form_Decorator_Abstract
                 . ' class="noscript-apply"'
                 . ' type="submit"'
                 . ' value="1"'
-                . ($this->accessible ? ' aria-label="%1$s"' : '')
+                . ($this->getAccessible() ? ' aria-label="%1$s"' : '')
                 . ' title="%1$s"'
                 . '>%2$s</button></noscript>',
-                t('Push this button to update the form to reflect the change that was made in the control on the left'),
+                $isForm
+                    ? t('Push this button to update the form to reflect the changes that were made below')
+                    : t('Push this button to update the form to reflect the change'
+                        . ' that was made in the field on the left'),
                 $this->getView()->icon('cw') . t('Apply')
             );
         }

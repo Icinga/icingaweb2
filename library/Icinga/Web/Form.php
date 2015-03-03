@@ -134,6 +134,15 @@ class Form extends Zend_Form
     protected $descriptions;
 
     /**
+     * Whether the Autosubmit decorator should be applied to this form
+     *
+     * If this is true, the Autosubmit decorator is being applied to this form instead of to each of its elements.
+     *
+     * @var bool
+     */
+    protected $useFormAutosubmit = false;
+
+    /**
      * Authentication manager
      *
      * @type Manager|null
@@ -487,6 +496,31 @@ class Form extends Zend_Form
     }
 
     /**
+     * Set whether the Autosubmit decorator should be applied to this form
+     *
+     * If true, the Autosubmit decorator is being applied to this form instead of to each of its elements.
+     *
+     * @param   bool    $state
+     *
+     * @return  Form
+     */
+    public function setUseFormAutosubmit($state = true)
+    {
+        $this->useFormAutosubmit = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Return whether the Autosubmit decorator is being applied to this form
+     *
+     * @return  bool
+     */
+    public function getUseFormAutosubmit()
+    {
+        return $this->useFormAutosubmit;
+    }
+
+    /**
      * Create this form
      *
      * @param   array   $formData   The data sent by the user
@@ -647,20 +681,35 @@ class Form extends Zend_Form
         }
 
         if ($el->getAttrib('autosubmit')) {
-            $autosubmitDecorator = new Autosubmit();
-            $autosubmitDecorator->setAccessible();
+            if ($this->getUseFormAutosubmit()) {
+                $warningId = 'autosubmit_warning_' . $el->getId();
+                $warningText = $this->getView()->escape($this->translate(
+                    'Upon its value has changed, this control issues an automatic update of this page.'
+                ));
+                $autosubmitDecorator = $this->_getDecorator('Callback', array(
+                    'placement' => 'PREPEND',
+                    'callback'  => function ($content) use ($warningId, $warningText) {
+                        return '<span class="sr-only" id="' . $warningId . '">' . $warningText . '</span>';
+                    }
+                ));
+            } else {
+                $autosubmitDecorator = new Autosubmit();
+                $autosubmitDecorator->setAccessible();
+                $warningId = $autosubmitDecorator->getWarningId($el);
+            }
+
             $decorators = $el->getDecorators();
             $pos = array_search('Zend_Form_Decorator_ViewHelper', array_keys($decorators)) + 1;
             $el->setDecorators(
                 array_slice($decorators, 0, $pos, true)
-                + array(get_class($autosubmitDecorator) => $autosubmitDecorator)
+                + array('autosubmit' => $autosubmitDecorator)
                 + array_slice($decorators, $pos, count($decorators) - $pos, true)
             );
 
             if (($describedBy = $el->getAttrib('aria-describedby')) !== null) {
-                $el->setAttrib('aria-describedby', $describedBy . ' ' . $autosubmitDecorator->getWarningId($el));
+                $el->setAttrib('aria-describedby', $describedBy . ' ' . $warningId);
             } else {
-                $el->setAttrib('aria-describedby', $autosubmitDecorator->getWarningId($el));
+                $el->setAttrib('aria-describedby', $warningId);
             }
 
             $class = $el->getAttrib('class');
@@ -702,7 +751,7 @@ class Form extends Zend_Form
             if (($describedBy = $element->getAttrib('aria-describedby')) !== null) {
                 // Assume that it's because of the element being of type autosubmit or
                 // that one who did set the property manually removes the help decorator
-                // in case it has already an aria-requiredby property set
+                // in case it has already an aria-describedby property set
                 $element->setAttrib(
                     'aria-describedby',
                     $help->setAccessible()->getDescriptionId($element) . ' ' . $describedBy
@@ -909,8 +958,13 @@ class Form extends Zend_Form
                     'form'          => $this
                 ));
             } else {
-                $this->addDecorator('Description', array('tag' => 'h1'))
-                    ->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
+                $this->addDecorator('Description', array('tag' => 'h1'));
+                if ($this->getUseFormAutosubmit()) {
+                    $this->addDecorator('Autosubmit', array('accessible' => true))
+                        ->addDecorator('HtmlTag', array('tag' => 'div', 'class' => 'header'));
+                }
+
+                $this->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
                     ->addDecorator('FormDescriptions')
                     ->addDecorator('FormElements')
                     //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
