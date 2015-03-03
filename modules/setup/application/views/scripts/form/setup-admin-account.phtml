@@ -6,8 +6,8 @@ $radioElem = $form->getElement('user_type');
 $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
 
 ?>
-<h1 class="form-title"><?= $this->translate('Administration', 'setup.page.title'); ?></h1>
 <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
+  <h1><?= $this->translate('Administration', 'setup.page.title'); ?></h1>
   <ul class="descriptions">
     <li><?= $this->translatePlural(
       'Now it\'s time to configure your first administrative account for Icinga Web 2. Please follow the instructions below:',

@@ -909,16 +909,12 @@ class Form extends Zend_Form
                     'form'          => $this
                 ));
             } else {
-                $this->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
+                $this->addDecorator('Description', array('tag' => 'h1'))
+                    ->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
                     ->addDecorator('FormDescriptions')
                     ->addDecorator('FormElements')
                     //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
-                    ->addDecorator('Form')
-                    ->addDecorator('Description', array(
-                        'placement' => 'prepend',
-                        'class' => 'form-title',
-                        'tag' => 'h1'
-                    ));
+                    ->addDecorator('Form');
             }
         }
 
