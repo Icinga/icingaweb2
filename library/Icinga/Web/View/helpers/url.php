@@ -53,11 +53,12 @@ $this->addHelperFunction('img', function ($url, $params = null, array $propertie
         $properties['alt'] = '';
     }
 
+    $ariaHidden = array_key_exists('aria-hidden', $properties) ? $properties['aria-hidden'] : null;
     if (array_key_exists('title', $properties)) {
-        if (! array_key_exists('aria-label', $properties) && !array_key_exists('aria-hidden', $properties)) {
+        if (! array_key_exists('aria-label', $properties) && $ariaHidden !== 'true') {
             $properties['aria-label'] = $properties['title'];
         }
-    } elseif (! array_key_exists('aria-hidden', $properties)) {
+    } elseif ($ariaHidden === null) {
         $properties['aria-hidden'] = 'true';
     }
 
@@ -79,14 +80,15 @@ $this->addHelperFunction('icon', function ($img, $title = null, array $propertie
         return $view->img('img/icons/' . $img, $properties);
     }
 
+    $ariaHidden = array_key_exists('aria-hidden', $properties) ? $properties['aria-hidden'] : null;
     if ($title !== null) {
         $properties['role'] = 'img';
         $properties['title'] = $title;
 
-        if (! array_key_exists('aria-label', $properties) && !array_key_exists('aria-hidden', $properties)) {
+        if (! array_key_exists('aria-label', $properties) && $ariaHidden !== 'true') {
             $properties['aria-label'] = $title;
         }
-    } elseif (! array_key_exists('aria-hidden', $properties)) {
+    } elseif ($ariaHidden === null) {
         $properties['aria-hidden'] = 'true';
     }
 
