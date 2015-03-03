@@ -684,7 +684,7 @@ class Form extends Zend_Form
             if ($this->getUseFormAutosubmit()) {
                 $warningId = 'autosubmit_warning_' . $el->getId();
                 $warningText = $this->getView()->escape($this->translate(
-                    'Upon its value has changed, this control issues an automatic update of this page.'
+                    'Upon its value has changed, this field issues an automatic update of this page.'
                 ));
                 $autosubmitDecorator = $this->_getDecorator('Callback', array(
                     'placement' => 'PREPEND',
