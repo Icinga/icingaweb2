@@ -1071,10 +1071,11 @@ class Form extends Zend_Form
     protected function getTranslationDomain()
     {
         $parts = explode('\\', get_called_class());
-        if ($parts[1] === 'Module') {
+        if (count($parts) > 1 && $parts[1] === 'Module') {
             // Assume format Icinga\Module\ModuleName\Forms\...
             return strtolower($parts[2]);
         }
+
         return 'icinga';
     }
 
