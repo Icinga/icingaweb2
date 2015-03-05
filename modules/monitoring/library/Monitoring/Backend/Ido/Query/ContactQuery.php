@@ -33,12 +33,10 @@ class ContactQuery extends IdoQuery
             'contact_notify_service_timeperiod' => 'st.alias COLLATE latin1_general_ci'
         ),
         'hosts' => array(
-            'host_object_id' => 'ho.object_id',
             'host_name'      => 'ho.name1 COLLATE latin1_general_ci',
             'host'           => 'ho.name1 COLLATE latin1_general_ci',
         ),
         'services' => array(
-            'service_object_id'   => 'so.object_id',
             'service_host_name'   => 'so.name1 COLLATE latin1_general_ci',
             'service'             => 'so.name1 COLLATE latin1_general_ci',
             'service_description' => 'so.name2 COLLATE latin1_general_ci',
