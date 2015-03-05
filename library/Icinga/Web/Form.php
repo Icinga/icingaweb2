@@ -743,7 +743,7 @@ class Form extends Zend_Form
             if (($cue = $this->getRequiredCue()) !== null && ($label = $element->getDecorator('label')) !== false) {
                 $element->setLabel($this->getView()->escape($element->getLabel()));
                 $label->setOption('escape', false);
-                $label->setOption('requiredSuffix', sprintf(' <span aria-hidden="true">%s</span>', $cue));
+                $label->setRequiredSuffix(sprintf(' <span aria-hidden="true">%s</span>', $cue));
             }
         }
 
