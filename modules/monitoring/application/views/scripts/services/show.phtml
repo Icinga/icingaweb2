@@ -1,47 +1,66 @@
+<?php
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
+use Icinga\Web\Url;
+?>
+
 <div class="controls">
+
+    <?php if (! $this->compact): ?>
+        <?= $tabs; ?>
+    <?php endif ?>
+
+    <?= $this->render('partials/service/objects-tinysummary.phtml') ?>
     <?= $this->render('partials/service/objects-header.phtml'); ?>
+
 </div>
 <div class="content">
     <?php if (($serviceCount = count($objects)) === 0): ?>
-        <?= $this->translate('No services matching the filter'); ?>
+    <?= $this->translate('No services matching the filter'); ?>
     <?php else: ?>
-        <h3><?= sprintf($this->translatePlural('%u Service', '%u Services', $serviceCount), $serviceCount); ?></h3>
-        <div><?= $this->qlink(
-            sprintf($this->translate('List all %u services'), $serviceCount),
-            $listAllLink
-        ); ?></div>
+        <?= sprintf(t('Issue commands on all %d selected services'), count($objects)) ?>
+
+    <p>
         <div>
             <?= $checkNowForm; ?>
         </div>
         <div><?= $this->qlink(
-            sprintf($this->translate('Reschedule the next check for all %u services'), $serviceCount),
-            $rescheduleAllLink,
-            null,
-            array('icon' => 'reschedule')
-        ); ?></div>
+                $this->translate('Reschedule the next check'),
+                $rescheduleAllLink,
+                null,
+                array('icon' => 'reschedule')
+            ); ?></div>
         <div><?= $this->qlink(
-            sprintf($this->translate('Schedule a downtime for all %u services'), $serviceCount),
-            $downtimeAllLink,
-            null,
-            array('icon' => 'plug')
-        ); ?></div>
+                $this->translate('Schedule a downtime'),
+                $downtimeAllLink,
+                null,
+                array('icon' => 'plug')
+            ); ?></div>
         <div><?= $this->qlink(
-            sprintf($this->translate('Submit a passive check result for all %u services'), $serviceCount),
-            $processCheckResultAllLink,
-            null,
-            array('icon' => 'reply')
-        ); ?></div>
-      <?php if (($unhandledCount = count($unhandledObjects)) > 0): ?>
-        <div>
-            <h3><?= sprintf(
-                $this->translatePlural(
-                    '%u Unhandled Service Problem',
-                    '%u Unhandled Service Problems',
-                    $unhandledCount
-                ),
-                $unhandledCount
-            ); ?></h3>
-            <div><?= $this->qlink(
+                $this->translate('Submit a passive check result'),
+                $processCheckResultAllLink,
+                null,
+                array('icon' => 'reply')
+            ); ?></div>
+    </p>
+
+    <?php if (($unhandledCount = count($unhandledObjects)) > 0): ?>
+    <div>
+        <h3>
+            <?= $this->icon('attention-alt') ?>
+                <?= $this->translatePlural(
+                        'Unhandled Problem',
+                        'Unhandled Problems',
+                        $unhandledCount
+                ) ?>
+        </h3>
+
+        <p><?= sprintf(t('There are %s unhandled problems. ' .
+                'Issue commands to the problematic services.'),
+                '<span class="badge badge-critical">' . $unhandledCount . '</span>') ?>
+
+
+            <div>
+            <?= $this->qlink(
                 sprintf(
                     $this->translatePlural(
                         'Schedule a downtime for %u unhandled service problem',
@@ -53,7 +72,9 @@
                 $downtimeUnhandledLink,
                 null,
                 array('icon' => 'plug')
-            ); ?></div>
+            ); ?>
+            </div>
+
             <div><?= $this->qlink(
                 sprintf(
                     $this->translatePlural(
@@ -67,50 +88,101 @@
                 null,
                 array('icon' => 'ok')
             ); ?></div>
-        </div>
-      <?php endif ?>
-      <?php if (($acknowledgedCount = count($acknowledgedObjects)) > 0): ?>
-        <div>
-            <h2><?= sprintf(
-                $this->translatePlural(
-                    '%u Acknowledged Service Problem',
-                    '%u Acknowledged Service Problems',
-                    $acknowledgedCount
-                ),
+        </p>
+
+
+    </div>
+
+    <?php endif ?>
+    <?php if (($acknowledgedCount = count($acknowledgedObjects)) > 0): ?>
+
+    <h3> <?= $this->icon('ok', $this->translate('Acknowledgements')) ?> <?= $this->translate('Acknowledgements') ?> </h3>
+    <p>
+        <?= sprintf(
+            $this->translatePlural(
+                '%u Acknowledged Service Problem',
+                '%u Acknowledged Service Problems',
                 $acknowledgedCount
-            ); ?></h2>
-            <?= $removeAckForm ?>
-        </div>
-      <?php endif ?>
-      <?php if (($inDowntimeCount = count($objectsInDowntime)) > 0): ?>
-        <h2><?= $this->qlink(
-            sprintf(
-                $this->translatePlural(
-                    'List %u service currently in downtime',
-                    'List %u services currently in downtime',
-                    $inDowntimeCount
-                ),
-                $inDowntimeCount
             ),
+            $acknowledgedCount
+        ); ?> <?= $removeAckForm ?>
+    </p>
+    <?php endif ?>
+
+
+    <?php if (($inDowntimeCount = count($objectsInDowntime)) > 0): ?>
+
+    <h3>  <?= $this->icon('plug', $this->translate('Downtimes')) ?> <?= $this->translate('Downtimes') ?>  </h3>
+    <p> <?= sprintf($this->translatePlural(
+            '%u service currently in downtime',
+            '%u services currently in downtime',
+            $inDowntimeCount
+        ), $inDowntimeCount) ?>
+
+        <div>
+        <?= $this->qlink(
+            $this->translate('List all'),
             $inDowntimeLink,
             null,
             array('icon' => 'plug')
-        ); ?></h2>
-      <?php endif ?>
-      <?php if (($commentCount = count($objects->getComments())) > 0): ?>
-        <h2><?= $this->qlink(
-            sprintf(
-                $this->translatePlural(
-                    'List %u service comment',
-                    'List %u service comments',
-                    $commentCount
-                ),
+        );?>
+        </div>
+
+        <div>
+            <?= $removeDowntimeForm ?> Delete All
+        </div>
+    </p>
+    <?php endif ?>
+
+
+<?php $commentCount = count($objects->getComments()) ?>
+<?php if ($commentCount > 0): ?>
+    <h3> <?= $this->icon('comment') ?> <?= t('Comments') ?> </h3>
+    <p><?= sprintf(
+            $this->translatePlural(
+                'There are no comments.',
+                'There are %d comments',
                 $commentCount
-            ),
-            $commentsLink,
-            null,
-            array('icon' => 'comment')
-        ); ?></h2>
-      <?php endif ?>
+            ), $commentCount);
+    ?>
+    <?= $this->qlink(
+        $this->translate('List all'),
+        $commentsLink,
+        null,
+        array('icon' => 'comment')
+    ); ?></p>
+
+        <table>
+        <?php foreach ($objects as $service): ?>
+            <?php $service->fetchComments(); ?>
+
+                <?php foreach ($service->comments as $comment): ?>
+                <tr >
+                <td style="vertical-align: top;" data-base-target="_self">
+                    <?php
+                    $delCommentForm = new DeleteCommentCommandForm();
+                    $delCommentForm->populate(
+                        array('comment_id' => $comment->id, 'redirect' => html_entity_decode($this->url))
+                    );
+                    $delCommentForm->setAction(
+                        $this->url(
+                            'monitoring/service/delete-comment',
+                            array('host' => $service->getHost()->getName(), 'service' => $service->getName())
+                        )
+                    );
+                    echo $delCommentForm;
+                    ?>
+                    (<?= ucfirst($comment->type) ?>):
+                </td>
+                <td style="padding-left: .5em;">
+                    <?= nl2br($comment->comment) ?>
+                </td>
+                </tr>
+                <?php endforeach ?>
+
+            <?php endforeach ?>
+            </table>
+        <?php endif ?>
+
     <?php endif ?>
 </div>

@@ -922,3 +922,50 @@ table.groupview {
 }
 
 /* End of monitoring groupsummary styles */
+
+/* compact table */
+table.statesummary {
+  text-align: left;
+  width: auto;
+  border-collapse: separate;
+
+  tbody {
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0em 0.4em 0em 0.4em;
+    line-height: 1.2em;
+  }
+
+  tr.state td.state {
+    width: auto;
+    font-weight: bold;
+  }
+
+  td .pluginoutput {
+    font-size: 0.8em;
+    line-height: 1.2em;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  td.state {
+    min-width: 70px;
+    font-size: 0.7em;
+    text-align: center;
+  }
+
+  td a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+/* Up to 576px for 1em=16px, should fit 320px devices */
+@media screen and (max-width: 97em) {
+
+  table.statesummary .collapse {
+    display: none;
+  }
+}

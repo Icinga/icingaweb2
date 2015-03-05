@@ -77,7 +77,8 @@ class Monitoring_HostsController extends Controller
                     count($this->hostList)
                 ),
                 'label' => $this->translate('Hosts'),
-                'url'   => Url::fromRequest()
+                'url'   => Url::fromRequest(),
+                'icon'  => 'host'
             )
         )->activate('show');
         $this->setAutorefreshInterval(15);

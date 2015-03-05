@@ -10,6 +10,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\ServiceList;
@@ -28,6 +29,19 @@ class Monitoring_ServicesController extends Controller
         $serviceList = new ServiceList($this->backend);
         $serviceList->setFilter(Filter::fromQueryString((string) $this->params->without('service_problem', 'service_handled')));
         $this->serviceList = $serviceList;
+        $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/services');
+        $this->getTabs()->add(
+            'show',
+            array(
+                'title' => sprintf(
+                    $this->translate('Show summarized information for %u services'),
+                    count($this->serviceList)
+                ),
+                'label' => $this->translate('Services'),
+                'url'   => Url::fromRequest(),
+                'icon' => 'services'
+            )
+        )->activate('show');
     }
 
     protected function handleCommandForm(ObjectsCommandForm $form)
@@ -40,7 +54,11 @@ class Monitoring_ServicesController extends Controller
             'service_problem',
             'service_handled',
             'service_acknowledged',
-            'service_in_downtime'
+            'service_in_downtime',
+            'service_is_flapping',
+            'service_notifications_enabled',
+            'service_output',
+            'service_last_ack'
         ));
 
         $form
@@ -90,17 +108,6 @@ class Monitoring_ServicesController extends Controller
 
     public function showAction()
     {
-        $this->getTabs()->add(
-            'show',
-            array(
-                'title' => sprintf(
-                    $this->translate('Show summarized information for %u services'),
-                    count($this->serviceList)
-                ),
-                'label' => $this->translate('Services'),
-                'url'   => Url::fromRequest()
-            )
-        )->activate('show');
         $this->setAutorefreshInterval(15);
         $checkNowForm = new CheckNowCommandForm();
         $checkNowForm
@@ -109,15 +116,21 @@ class Monitoring_ServicesController extends Controller
         $this->view->checkNowForm = $checkNowForm;
         $this->serviceList->setColumns(array(
             'host_name',
+            'host_output',
             'host_state',
+            'service_output',
             'service_description',
             'service_state',
             'service_problem',
             'service_handled',
             'service_acknowledged',
-            'service_in_downtime'/*,
-            'service_passive_checks_enabled',
+            'service_in_downtime',
+            'service_is_flapping',
             'service_notifications_enabled',
+            'service_last_comment',
+            'service_last_ack'
+            /*,
+            'service_passive_checks_enabled',
             'service_event_handler_enabled',
             'service_flap_detection_enabled',
             'service_active_checks_enabled',
@@ -129,22 +142,34 @@ class Monitoring_ServicesController extends Controller
         $objectsInDowntime = array();
         $downtimeFilterExpressions = array();
         $serviceStates = array(
-            Service::getStateText(Service::STATE_OK) => 0,
-            Service::getStateText(Service::STATE_WARNING) => 0,
-            Service::getStateText(Service::STATE_CRITICAL) => 0,
-            Service::getStateText(Service::STATE_UNKNOWN) => 0,
-            Service::getStateText(Service::STATE_PENDING) => 0
+            'services_' . Service::getStateText(Service::STATE_OK) => 0,
+            'services_' . Service::getStateText(Service::STATE_OK) . '_unhandled' => 0,
+            'services_' . Service::getStateText(Service::STATE_WARNING) => 0,
+            'services_' . Service::getStateText(Service::STATE_WARNING) . '_unhandled' => 0,
+            'services_' . Service::getStateText(Service::STATE_CRITICAL) => 0,
+            'services_' . Service::getStateText(Service::STATE_CRITICAL) . '_unhandled' => 0,
+            'services_' .  Service::getStateText(Service::STATE_UNKNOWN) => 0,
+            'services_' .  Service::getStateText(Service::STATE_UNKNOWN) . '_unhandled' => 0,
+            'services_' .  Service::getStateText(Service::STATE_PENDING) => 0,
+            'services_' .  Service::getStateText(Service::STATE_PENDING) . '_unhandled' => 0
         );
         $knownHostStates = array();
         $hostStates = array(
-            Host::getStateText(Host::STATE_UP) => 0,
-            Host::getStateText(Host::STATE_DOWN) => 0,
-            Host::getStateText(Host::STATE_UNREACHABLE) => 0,
-            Host::getStateText(Host::STATE_PENDING) => 0,
+            'hosts_' . Host::getStateText(Host::STATE_UP) => 0,
+            'hosts_' . Host::getStateText(Host::STATE_UP) . '_unhandled' => 0,
+            'hosts_' . Host::getStateText(Host::STATE_DOWN) => 0,
+            'hosts_' . Host::getStateText(Host::STATE_DOWN) . '_unhandled' => 0,
+            'hosts_' . Host::getStateText(Host::STATE_UNREACHABLE) => 0,
+            'hosts_' . Host::getStateText(Host::STATE_UNREACHABLE) . '_unhandled' => 0,
+            'hosts_' . Host::getStateText(Host::STATE_PENDING) => 0,
+            'hosts_' . Host::getStateText(Host::STATE_PENDING) . '_unhandled' => 0
         );
         foreach ($this->serviceList as $service) {
+            $unhandled = false;
+
             /** @var Service $service */
             if ((bool) $service->problem === true && (bool) $service->handled === false) {
+                $unhandled = true;
                 $unhandledObjects[] = $service;
                 $unhandledFilterExpressions[] = Filter::matchAll(
                     Filter::where('host', $service->getHost()->getName()),
@@ -161,10 +186,11 @@ class Monitoring_ServicesController extends Controller
                     Filter::where('downtime_service', $service->getName())
                 );
             }
-            ++$serviceStates[$service::getStateText($service->state)];
+
+            ++$serviceStates['services_' . $service::getStateText($service->state) . ($unhandled ? '_unhandled' : '')];
             if (! isset($knownHostStates[$service->getHost()->getName()])) {
                 $knownHostStates[$service->getHost()->getName()] = true;
-                ++$hostStates[$service->getHost()->getStateText($service->host_state)];
+                ++$hostStates['hosts_' . $service->getHost()->getStateText($service->host_state)];
             }
         }
         if (! empty($acknowledgedObjects)) {
@@ -174,15 +200,20 @@ class Monitoring_ServicesController extends Controller
                 ->handleRequest();
             $this->view->removeAckForm = $removeAckForm;
         }
+        if (! empty($objectsInDowntime)) {
+            $removeDowntimeForm = new DeleteDowntimeCommandForm();
+            $removeDowntimeForm->setObjects($objectsInDowntime)
+                ->handleRequest();
+            $this->view->removeDowntimeForm = $removeDowntimeForm;
+        }
         $this->setAutorefreshInterval(15);
-        $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/services');
         $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/services/reschedule-check');
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/services/schedule-downtime');
         $this->view->processCheckResultAllLink = Url::fromRequest()->setPath(
             'monitoring/services/process-check-result'
         );
-        $this->view->hostStates = $hostStates;
-        $this->view->serviceStates = $serviceStates;
+        $this->view->hostStates = (object)$hostStates;
+        $this->view->serviceStates = (object)$serviceStates;
         $this->view->objects = $this->serviceList;
         $this->view->unhandledObjects = $unhandledObjects;
         $unhandledFilterQueryString = Filter::matchAny($unhandledFilterExpressions)->toQueryString();
@@ -196,6 +227,7 @@ class Monitoring_ServicesController extends Controller
             ->setQueryString(Filter::matchAny($downtimeFilterExpressions)->toQueryString());
         $this->view->commentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
+        /*
         $this->view->serviceStatesPieChart = $this->createPieChart(
             $serviceStates,
             $this->translate('Service State'),
@@ -206,6 +238,7 @@ class Monitoring_ServicesController extends Controller
             $this->translate('Host State'),
             array('#44bb77', '#FF5566', '#E066FF', '#77AAFF')
         );
+        */
     }
 
     protected function createPieChart(array $states, $title, array $colors)

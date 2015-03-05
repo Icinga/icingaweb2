@@ -30,7 +30,7 @@
         $('svg .chart-data', el).tipsy({ gravity: 'se', html: true });
         $('.historycolorgrid a[title]', el).tipsy({ gravity: 's', offset: 2 });
         $('img.icon[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
-        $('[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, delayIn: 500 });
+        $('[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, delayIn: 500, html: true });
 
         // migrate or remove all orphaned tooltips
         $('.tipsy').each(function () {
