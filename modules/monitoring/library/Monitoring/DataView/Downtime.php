@@ -33,7 +33,10 @@ class Downtime extends DataView
             'downtime_host_state',
             'downtime_service_state',
             'host_display_name',
-            'service_display_name'
+            'service_display_name',
+            'host_name',
+            'service_host_name',
+            'service_description'
         );
     }
 
