@@ -27,6 +27,18 @@ class Monitoring_HostsController extends Controller
         $hostList = new HostList($this->backend);
         $hostList->setFilter(Filter::fromQueryString((string) $this->params));
         $this->hostList = $hostList;
+        $this->getTabs()->add(
+            'show',
+            array(
+                'title' => sprintf(
+                    $this->translate('Show summarized information for %u hosts'),
+                    count($this->hostList)
+                ),
+                'label' => $this->translate('Hosts'),
+                'url'   => Url::fromRequest(),
+                'icon'  => 'host'
+            )
+        )->activate('show');
     }
 
     protected function handleCommandForm(ObjectsCommandForm $form)
@@ -69,18 +81,6 @@ class Monitoring_HostsController extends Controller
 
     public function showAction()
     {
-        $this->getTabs()->add(
-            'show',
-            array(
-                'title' => sprintf(
-                    $this->translate('Show summarized information for %u hosts'),
-                    count($this->hostList)
-                ),
-                'label' => $this->translate('Hosts'),
-                'url'   => Url::fromRequest(),
-                'icon'  => 'host'
-            )
-        )->activate('show');
         $this->setAutorefreshInterval(15);
         $checkNowForm = new CheckNowCommandForm();
         $checkNowForm
