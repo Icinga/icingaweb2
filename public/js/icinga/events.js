@@ -125,6 +125,10 @@
             $(document).on('change', 'form select.autosubmit', { self: this }, this.autoSubmitForm);
             $(document).on('change', 'form input.autosubmit', { self: this }, this.autoSubmitForm);
 
+            // Automatically check a radio button once a specific input is focused
+            $(document).on('focus', 'form select[data-related-radiobtn]', { self: this }, this.autoCheckRadioButton);
+            $(document).on('focus', 'form input[data-related-radiobtn]', { self: this }, this.autoCheckRadioButton);
+
             $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitSearch);
 
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
@@ -161,6 +165,15 @@
         onContainerScroll: function (event) {
             // Ugly. And PLEASE, not so often
             icinga.ui.fixControls();
+        },
+
+        autoCheckRadioButton: function (event) {
+            var $input = $(event.currentTarget);
+            var $radio = $('#' + $input.attr('data-related-radiobtn'));
+            if ($radio.length) {
+                $radio.prop('checked', true);
+            }
+            return true;
         },
 
         autoSubmitSearch: function(event) {
@@ -560,6 +573,8 @@
             $(document).off('submit', 'form', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
             $(document).off('change', 'form input.autosubmit', this.submitForm);
+            $(document).off('focus', 'form select[data-related-radiobtn]', this.autoCheckRadioButton);
+            $(document).off('focus', 'form input[data-related-radiobtn]', this.autoCheckRadioButton);
         },
 
         destroy: function() {
