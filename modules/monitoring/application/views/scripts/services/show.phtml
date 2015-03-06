@@ -21,7 +21,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
     <?php if (($serviceCount = count($objects)) === 0): ?>
         <?= $this->translate('No services matching the filter'); ?>
     <?php else: ?>
-        <?= sprintf(t('Issue commands to all %d selected services:'), count($objects)) ?>
+        <?= sprintf($this->translate('Issue commands to all %d selected services:'), count($objects)) ?>
 
         <p>
         <div>
@@ -30,7 +30,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 
         <div>
             <?= $this->qlink(
-                $this->translate('Reschedule the next check'),
+                $this->translate('Reschedule next checks'),
                 $rescheduleAllLink,
                 null,
                 array('icon' => 'reschedule')
@@ -39,7 +39,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 
         <div>
             <?= $this->qlink(
-                $this->translate('Schedule a downtime'),
+                $this->translate('Schedule downtimes'),
                 $downtimeAllLink,
                 null,
                 array('icon' => 'plug')
@@ -48,7 +48,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 
         <div>
             <?= $this->qlink(
-                $this->translate('Submit a passive check result'),
+                $this->translate('Submit passive check results'),
                 $processCheckResultAllLink,
                 null,
                 array('icon' => 'reply')
@@ -57,7 +57,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 
         <div>
             <?= $this->qlink(
-                $this->translate('Add a comment'),
+                $this->translate('Add comments'),
                 $addCommentLink,
                 null,
                 array('icon' => 'comment')
@@ -76,7 +76,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
                     ) ?>
             </h3>
 
-            <p><?= sprintf(t('There are %s unhandled problems. ' .
+            <p><?= sprintf($this->translate('There are %s unhandled problems. ' .
                     'Issue commands to the problematic services:'),
                     '<span class="badge badge-critical">' . $unhandledCount . '</span>') ?>
 
@@ -149,7 +149,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 
 <?php $commentCount = count($objects->getComments()) ?>
 <?php if ($commentCount > 0): ?>
-    <h3> <?= $this->icon('comment') ?> <?= t('Comments') ?> </h3>
+    <h3> <?= $this->icon('comment') ?> <?= $this->translate('Comments') ?> </h3>
     <p><?= sprintf(
             $this->translatePlural(
                 'There is %d comment.',
