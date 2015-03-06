@@ -135,22 +135,23 @@ class ConfigController extends ActionController
 
     public function moduleAction()
     {
-        $name = $this->getParam('name');
         $app = Icinga::app();
         $manager = $app->getModuleManager();
+        $name = $this->getParam('name');
         if ($manager->hasInstalled($name)) {
-            $this->view->moduleData = Icinga::app()
-                ->getModuleManager()
-                ->select()
-                ->from('modules')
-                ->where('name', $name)
-                ->fetchRow();
-            $module = new Module($app, $name, $manager->getModuleDir($name));
+            $this->view->moduleData = $manager->select()->from('modules')->where('name', $name)->fetchRow();
+            if ($manager->hasLoaded($name)) {
+                $module = $manager->getModule($name);
+            } else {
+                $module = new Module($app, $name, $manager->getModuleDir($name));
+            }
+
             $this->view->module = $module;
+            $this->view->tabs = $module->getConfigTabs()->activate('info');
         } else {
             $this->view->module = false;
+            $this->view->tabs = null;
         }
-        $this->view->tabs = $module->getConfigTabs()->activate('info');
     }
 
     /**
