@@ -13,7 +13,6 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandFor
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\HostList;
 use Icinga\Web\Url;
-use Icinga\Web\Widget\Chart\InlinePie;
 
 class Monitoring_HostsController extends Controller
 {
@@ -58,11 +57,6 @@ class Monitoring_HostsController extends Controller
         $this->view->form = $form;
         $this->view->objects = $this->hostList;
         $this->view->hostStates = $hostStates;
-        $this->view->hostStatesPieChart = $this->createPieChart(
-            $hostStates,
-            $this->translate('Host State'),
-            array('#44bb77', '#FF5566', '#E066FF', '#77AAFF')
-        );
         $this->_helper->viewRenderer('partials/command/objects-command-form', null, true);
         return $form;
     }
@@ -153,20 +147,6 @@ class Monitoring_HostsController extends Controller
             ->setQueryString(Filter::matchAny($downtimeFilterExpressions)->toQueryString());
         $this->view->commentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
-        $this->view->hostStatesPieChart = $this->createPieChart(
-            $hostStates,
-            $this->translate('Host State'),
-            array('#44bb77', '#FF5566', '#E066FF', '#77AAFF')
-        );
-    }
-
-    protected function createPieChart(array $states, $title, array $colors)
-    {
-        $chart = new InlinePie(array_values($states), $title, $colors);
-        return $chart
-            ->setSize(75)
-            ->setTitle('')
-            ->setSparklineClass('sparkline-multi');
     }
 
     /**

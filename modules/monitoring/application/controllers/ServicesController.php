@@ -16,7 +16,6 @@ use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\ServiceList;
 use Icinga\Web\Url;
-use Icinga\Web\Widget\Chart\InlinePie;
 
 class Monitoring_ServicesController extends Controller
 {
@@ -94,16 +93,6 @@ class Monitoring_ServicesController extends Controller
         $this->view->objects = $this->serviceList;
         $this->view->serviceStates = $serviceStates;
         $this->view->hostStates = $hostStates;
-        $this->view->serviceStatesPieChart = $this->createPieChart(
-            $serviceStates,
-            $this->translate('Service State'),
-            array('#44bb77', '#FFCC66', '#FF5566', '#E066FF', '#77AAFF')
-        );
-        $this->view->hostStatesPieChart = $this->createPieChart(
-            $hostStates,
-            $this->translate('Host State'),
-            array('#44bb77', '#FF5566', '#E066FF', '#77AAFF')
-        );
         $this->_helper->viewRenderer('partials/command/objects-command-form', null, true);
         return $form;
     }
@@ -234,29 +223,7 @@ class Monitoring_ServicesController extends Controller
             ->setQueryString(Filter::matchAny($downtimeFilterExpressions)->toQueryString());
         $this->view->commentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
-        /*
-        $this->view->serviceStatesPieChart = $this->createPieChart(
-            $serviceStates,
-            $this->translate('Service State'),
-            array('#44bb77', '#FFCC66', '#FF5566', '#E066FF', '#77AAFF')
-        );
-        $this->view->hostStatesPieChart = $this->createPieChart(
-            $hostStates,
-            $this->translate('Host State'),
-            array('#44bb77', '#FF5566', '#E066FF', '#77AAFF')
-        );
-        */
     }
-
-    protected function createPieChart(array $states, $title, array $colors)
-    {
-        $chart = new InlinePie(array_values($states), $title, $colors);
-        return $chart
-            ->setSize(75)
-            ->setTitle('')
-            ->setSparklineClass('sparkline-multi');
-    }
-
 
     /**
      * Add a service comment
