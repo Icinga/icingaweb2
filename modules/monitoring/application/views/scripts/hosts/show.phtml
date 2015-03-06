@@ -14,8 +14,8 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
          $listAllLink
       ); ?>
     </h1>
-
     <?= $this->render('partials/host/objects-header.phtml'); ?>
+
 </div>
 
 <div class="content">
@@ -23,7 +23,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
         <?= $this->icon('reschedule') ?>
         <?= $this->translate('Commands') ?>
     </h3>
-    <?= sprintf(t('Issue commands on all %d selected services:'), count($objects)) ?>
+    <?= sprintf(t('Issue commands on all %d selected hosts:'), count($objects)) ?>
 
     <?php if (($hostCount = count($objects)) === 0): ?>
         <?= $this->translate('No hosts matching the filter'); ?>
@@ -192,7 +192,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
                         );
                         $delCommentForm->setAction(
                             $this->url(
-                                'monitoring/service/delete-comment',
+                                'monitoring/host/delete-comment',
                                 array('host' => $service->getName())
                             )
                         );

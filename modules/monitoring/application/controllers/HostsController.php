@@ -174,6 +174,18 @@ class Monitoring_HostsController extends Controller
     }
 
     /**
+     * Delete a comment
+     */
+    public function deleteCommentAction()
+    {
+        $this->assertPermission('monitoring/command/comment/delete');
+
+        $form = new DeleteCommentCommandForm();
+        $form->setTitle($this->translate('Delete Host Comments'));
+        $this->handleCommandForm($form);
+    }
+
+    /**
      * Acknowledge host problems
      */
     public function acknowledgeProblemAction()
