@@ -23,7 +23,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
         <?= $this->icon('reschedule') ?>
         <?= $this->translate('Commands') ?>
     </h3>
-    <?= sprintf(t('Issue commands on all %d selected hosts:'), count($objects)) ?>
+    <?= sprintf(t('Issue commands to all %d selected hosts:'), count($objects)) ?>
 
     <?php if (($hostCount = count($objects)) === 0): ?>
         <?= $this->translate('No hosts matching the filter'); ?>
@@ -85,7 +85,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 
             <p>
               <?= sprintf(
-                  t('There are %s unhandled problems. Issue commands to the problematic hosts.'),
+                  t('There are %s unhandled problems. Issue commands to the problematic hosts:'),
                   '<span class="badge badge-critical">' . $unhandledCount . '</span>'
               ) ?>
 

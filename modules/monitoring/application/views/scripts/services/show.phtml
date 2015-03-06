@@ -21,7 +21,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
     <?php if (($serviceCount = count($objects)) === 0): ?>
         <?= $this->translate('No services matching the filter'); ?>
     <?php else: ?>
-        <?= sprintf(t('Issue commands on all %d selected services:'), count($objects)) ?>
+        <?= sprintf(t('Issue commands to all %d selected services:'), count($objects)) ?>
 
         <p>
         <div>
@@ -77,7 +77,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
             </h3>
 
             <p><?= sprintf(t('There are %s unhandled problems. ' .
-                    'Issue commands to the problematic services.'),
+                    'Issue commands to the problematic services:'),
                     '<span class="badge badge-critical">' . $unhandledCount . '</span>') ?>
 
                 <div>
