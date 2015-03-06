@@ -426,10 +426,12 @@ abstract class MonitoredObject implements Filterable
         $contactsGroups = $this->backend->select()->from('contactgroup', array(
                 'contactgroup_name',
                 'contactgroup_alias'
-        ))
-            ->where('host_name', $this->host_name);
+        ));
         if ($this->type === self::TYPE_SERVICE) {
+            $contactsGroups->where('service_host_name', $this->host_name);
             $contactsGroups->where('service_description', $this->service_description);
+        } else {
+            $contactsGroups->where('host_name', $this->host_name);
         }
         $this->contactgroups = $contactsGroups->getQuery()->fetchAll();
         return $this;
