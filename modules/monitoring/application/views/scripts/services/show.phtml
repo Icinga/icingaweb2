@@ -20,124 +20,130 @@ use Icinga\Web\Url;
     </h3>
 
     <?php if (($serviceCount = count($objects)) === 0): ?>
-    <?= $this->translate('No services matching the filter'); ?>
+        <?= $this->translate('No services matching the filter'); ?>
     <?php else: ?>
-        <?= sprintf(t('Issue commands on all %d selected services'), count($objects)) ?>
+        <?= sprintf(t('Issue commands on all %d selected services:'), count($objects)) ?>
 
-    <p>
+        <p>
         <div>
             <?= $checkNowForm; ?>
         </div>
-        <div><?= $this->qlink(
+
+        <div>
+            <?= $this->qlink(
                 $this->translate('Reschedule the next check'),
                 $rescheduleAllLink,
                 null,
                 array('icon' => 'reschedule')
-            ); ?></div>
-        <div><?= $this->qlink(
+            ); ?>
+        </div>
+
+        <div>
+            <?= $this->qlink(
                 $this->translate('Schedule a downtime'),
                 $downtimeAllLink,
                 null,
                 array('icon' => 'plug')
-            ); ?></div>
-        <div><?= $this->qlink(
+            ); ?>
+        </div>
+
+        <div>
+            <?= $this->qlink(
                 $this->translate('Submit a passive check result'),
                 $processCheckResultAllLink,
                 null,
                 array('icon' => 'reply')
-            ); ?></div>
-        <div><?= $this->qlink(
+            ); ?>
+        </div>
+
+        <div>
+            <?= $this->qlink(
                 $this->translate('Add a comment'),
                 $addCommentLink,
                 null,
                 array('icon' => 'comment')
-            ); ?></div>
-    </p>
-
-    <?php if (($unhandledCount = count($unhandledObjects)) > 0): ?>
-    <div>
-        <h3>
-            <?= $this->icon('attention-alt') ?>
-                <?= $this->translatePlural(
-                        'Unhandled Problem',
-                        'Unhandled Problems',
-                        $unhandledCount
-                ) ?>
-        </h3>
-
-        <p><?= sprintf(t('There are %s unhandled problems. ' .
-                'Issue commands to the problematic services.'),
-                '<span class="badge badge-critical">' . $unhandledCount . '</span>') ?>
-
-            <div>
-            <?= $this->qlink(
-                sprintf(
-                    $this->translatePlural(
-                        'Schedule a downtime for %u unhandled service problem',
-                        'Schedule a downtime for %u unhandled service problems',
-                        $unhandledCount
-                    ),
-                    $unhandledCount
-                ),
-                $downtimeUnhandledLink,
-                null,
-                array('icon' => 'plug')
             ); ?>
-            </div>
-
-            <div><?= $this->qlink(
-                sprintf(
-                    $this->translatePlural(
-                        'Acknowledge %u unhandled service problem',
-                        'Acknowledge %u unhandled service problems',
-                        $unhandledCount
-                    ),
-                    $unhandledCount
-                ),
-                $acknowledgeUnhandledLink,
-                null,
-                array('icon' => 'ok')
-            ); ?></div>
+        </div>
         </p>
 
-
-    </div>
-
-    <?php endif ?>
-    <?php if (($acknowledgedCount = count($acknowledgedObjects)) > 0): ?>
-
-    <h3> <?= $this->icon('ok', $this->translate('Acknowledgements')) ?> <?= $this->translate('Acknowledgements') ?> </h3>
-    <p>
-        <?= sprintf(
-            $this->translatePlural(
-                '%u Acknowledged Service Problem',
-                '%u Acknowledged Service Problems',
-                $acknowledgedCount
-            ),
-            $acknowledgedCount
-        ); ?> <?= $removeAckForm ?>
-    </p>
-    <?php endif ?>
-
-
-    <?php if (($inDowntimeCount = count($objectsInDowntime)) > 0): ?>
-
-    <h3>  <?= $this->icon('plug', $this->translate('Downtimes')) ?> <?= $this->translate('Downtimes') ?>  </h3>
-    <p> <?= sprintf($this->translatePlural(
-            '%u service currently in downtime',
-            '%u services currently in downtime',
-            $inDowntimeCount
-        ), $inDowntimeCount) ?>
-
+        <?php if (($unhandledCount = count($unhandledObjects)) > 0): ?>
         <div>
-        <?= $this->qlink(
-            $this->translate('List all'),
-            $inDowntimeLink,
-            null,
-            array('icon' => 'plug')
-        );?>
+            <h3>
+                <?= $this->icon('attention-alt') ?>
+                    <?= $this->translatePlural(
+                            'Unhandled Problem',
+                            'Unhandled Problems',
+                            $unhandledCount
+                    ) ?>
+            </h3>
+
+            <p><?= sprintf(t('There are %s unhandled problems. ' .
+                    'Issue commands to the problematic services.'),
+                    '<span class="badge badge-critical">' . $unhandledCount . '</span>') ?>
+
+                <div>
+                <?= $this->qlink(
+                    sprintf(
+                        $this->translatePlural(
+                            'Schedule a downtime for %u unhandled service problem',
+                            'Schedule a downtime for %u unhandled service problems',
+                            $unhandledCount
+                        ),
+                        $unhandledCount
+                    ),
+                    $downtimeUnhandledLink,
+                    null,
+                    array('icon' => 'plug')
+                ); ?>
+                </div>
+
+                <div><?= $this->qlink(
+                    sprintf(
+                        $this->translatePlural(
+                            'Acknowledge %u unhandled service problem',
+                            'Acknowledge %u unhandled service problems',
+                            $unhandledCount
+                        ),
+                        $unhandledCount
+                    ),
+                    $acknowledgeUnhandledLink,
+                    null,
+                    array('icon' => 'ok')
+                ); ?></div>
+            </p>
+
         </div>
-    </p>
+    <?php endif ?>
+
+    <?php if (($acknowledgedCount = count($acknowledgedObjects)) > 0): ?>
+        <h3><?= $this->icon('ok', $this->translate('Acknowledgements')) ?> <?= $this->translate('Acknowledgements') ?></h3>
+        <p>
+            <?= sprintf(
+                $this->translatePlural(
+                    '%u Acknowledged Service Problem.',
+                    '%u Acknowledged Service Problems.',
+                    $acknowledgedCount
+                ),
+                $acknowledgedCount
+            ); ?> <?= $removeAckForm ?>
+        </p>
+    <?php endif ?>
+
+
+    <?php if (($inDowntimeCount = count($objectsInDowntime)) > 0 /*&& $auth->hasPermission('monitoring/command/comment/delete')*/): ?>
+        <h3>  <?= $this->icon('plug', $this->translate('Downtimes')) ?> <?= $this->translate('Downtimes') ?>  </h3>
+        <p> <?= sprintf($this->translatePlural(
+                '%u service currently in downtime.',
+                '%u services currently in downtime.',
+                $inDowntimeCount
+            ), $inDowntimeCount) ?>
+
+            <?= $this->qlink(
+                $this->translate('List all'),
+                $inDowntimeLink,
+                null
+            );?>
+        </p>
     <?php endif ?>
 
 
@@ -146,12 +152,18 @@ use Icinga\Web\Url;
     <h3> <?= $this->icon('comment') ?> <?= t('Comments') ?> </h3>
     <p><?= sprintf(
             $this->translatePlural(
-                'There are no comments.',
-                'There are %d comments',
+                'There is %d comment.',
+                'There are %d comments.',
                 $commentCount
             ), $commentCount);
     ?>
+    <?= $this->qlink(
+        $this->translate('List all'),
+        $commentsLink,
+        null
+    ); ?>
     <p>
+
     <table>
     <?php foreach ($objects as $service): ?>
         <?php $service->fetchComments(); ?>
@@ -180,20 +192,9 @@ use Icinga\Web\Url;
         <?php endforeach ?>
     <?php endforeach ?>
     </table>
+
+    <!--
     </p>
-
-    <div>
-    <?= $this->qlink(
-        $this->translate('List all'),
-        $commentsLink,
-        null,
-        array('icon' => 'comment')
-    ); ?>
-    </div>
-
-<!--
-    TODO: implement backend functionality.
-    
     <div><?= $this->qlink(
             $this->translate('Remove all'),
             $deleteCommentLink,
@@ -201,8 +202,7 @@ use Icinga\Web\Url;
             array('icon' => 'trash')
     ); ?></div>
     </p>
--->
-
+    -->
 
     <?php endif ?>
 
