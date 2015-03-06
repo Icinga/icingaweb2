@@ -132,35 +132,10 @@ class Monitoring_ServicesController extends Controller
         $acknowledgedObjects = array();
         $objectsInDowntime = array();
         $downtimeFilterExpressions = array();
-        $serviceStates = array(
-            'services_' . Service::getStateText(Service::STATE_OK) => 0,
-            'services_' . Service::getStateText(Service::STATE_OK) . '_unhandled' => 0,
-            'services_' . Service::getStateText(Service::STATE_WARNING) => 0,
-            'services_' . Service::getStateText(Service::STATE_WARNING) . '_unhandled' => 0,
-            'services_' . Service::getStateText(Service::STATE_CRITICAL) => 0,
-            'services_' . Service::getStateText(Service::STATE_CRITICAL) . '_unhandled' => 0,
-            'services_' .  Service::getStateText(Service::STATE_UNKNOWN) => 0,
-            'services_' .  Service::getStateText(Service::STATE_UNKNOWN) . '_unhandled' => 0,
-            'services_' .  Service::getStateText(Service::STATE_PENDING) => 0,
-            'services_' .  Service::getStateText(Service::STATE_PENDING) . '_unhandled' => 0
-        );
-        $knownHostStates = array();
-        $hostStates = array(
-            'hosts_' . Host::getStateText(Host::STATE_UP) => 0,
-            'hosts_' . Host::getStateText(Host::STATE_UP) . '_unhandled' => 0,
-            'hosts_' . Host::getStateText(Host::STATE_DOWN) => 0,
-            'hosts_' . Host::getStateText(Host::STATE_DOWN) . '_unhandled' => 0,
-            'hosts_' . Host::getStateText(Host::STATE_UNREACHABLE) => 0,
-            'hosts_' . Host::getStateText(Host::STATE_UNREACHABLE) . '_unhandled' => 0,
-            'hosts_' . Host::getStateText(Host::STATE_PENDING) => 0,
-            'hosts_' . Host::getStateText(Host::STATE_PENDING) . '_unhandled' => 0
-        );
-        foreach ($this->serviceList as $service) {
-            $unhandled = false;
 
+        foreach ($this->serviceList as $service) {
             /** @var Service $service */
             if ((bool) $service->problem === true && (bool) $service->handled === false) {
-                $unhandled = true;
                 $unhandledObjects[] = $service;
                 $unhandledFilterExpressions[] = Filter::matchAll(
                     Filter::where('host', $service->getHost()->getName()),
@@ -176,12 +151,6 @@ class Monitoring_ServicesController extends Controller
                     Filter::where('downtime_host', $service->getHost()->getName()),
                     Filter::where('downtime_service', $service->getName())
                 );
-            }
-
-            ++$serviceStates['services_' . $service::getStateText($service->state) . ($unhandled ? '_unhandled' : '')];
-            if (! isset($knownHostStates[$service->getHost()->getName()])) {
-                $knownHostStates[$service->getHost()->getName()] = true;
-                ++$hostStates['hosts_' . $service->getHost()->getStateText($service->host_state)];
             }
         }
         if (! empty($acknowledgedObjects)) {
@@ -208,8 +177,7 @@ class Monitoring_ServicesController extends Controller
         );
         $this->view->addCommentLink = Url::fromRequest()->setPath('monitoring/services/add-comment');
         $this->view->deleteCommentLink = Url::fromRequest()->setPath('monitoring/services/delete-comment');
-        $this->view->hostStates = (object)$hostStates;
-        $this->view->serviceStates = (object)$serviceStates;
+        $this->view->stats = $this->serviceList->getStateSummary();
         $this->view->objects = $this->serviceList;
         $this->view->unhandledObjects = $unhandledObjects;
         $unhandledFilterQueryString = Filter::matchAny($unhandledFilterExpressions)->toQueryString();
