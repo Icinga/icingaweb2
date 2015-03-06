@@ -2,13 +2,11 @@
 use Icinga\Module\Monitoring\Object\Host;
 ?>
 
-
 <?php
 $i = 0;
 $hidden = array();
 $hiddenRich = array();
 ?>
-
 
 <?php if (($hostCount = count($objects)) > 0): ?>
 
@@ -71,8 +69,8 @@ $hiddenRich = array();
 
         <?php if (count($hidden)): ?>
             <tr>
-                <td>
-                    <div class="selection-info" data-title-rich="<span align='left'><?= join('<br>', $hiddenRich) ?></span>"
+                <td class="state">
+                    <div data-title-rich="<span align='left'><?= join('<br>', $hiddenRich) ?></span>"
                          title="<?= join(', ', $hidden) ?>">
                         <?= sprintf($this->translate('%d more ...'), count($hidden)) ?>
                     </div>

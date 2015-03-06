@@ -111,14 +111,19 @@ class Monitoring_HostsController extends Controller
         $objectsInDowntime = array();
         $downtimeFilterExpressions = array();
         $hostStates = array(
-            Host::getStateText(Host::STATE_UP) => 0,
-            Host::getStateText(Host::STATE_DOWN) => 0,
-            Host::getStateText(Host::STATE_UNREACHABLE) => 0,
-            Host::getStateText(Host::STATE_PENDING) => 0,
+            'hosts_' . Host::getStateText(Host::STATE_UP) => 0,
+            'hosts_' . Host::getStateText(Host::STATE_UP) . '_unhandled' => 0,
+            'hosts_' . Host::getStateText(Host::STATE_DOWN) => 0,
+            'hosts_' . Host::getStateText(Host::STATE_DOWN) . '_unhandled' => 0,
+            'hosts_' . Host::getStateText(Host::STATE_UNREACHABLE) => 0,
+            'hosts_' . Host::getStateText(Host::STATE_UNREACHABLE) . '_unhandled' => 0,
+            'hosts_' . Host::getStateText(Host::STATE_PENDING) => 0,
+            'hosts_' . Host::getStateText(Host::STATE_PENDING) . '_unhandled' => 0,
         );
         foreach ($this->hostList as $host) {
             /** @var Host $host */
-            if ((bool) $host->problem === true && (bool) $host->handled === false) {
+            $unhandled = (bool) $host->problem === true && (bool) $host->handled === false;
+            if ($unhandled) {
                 $unhandledObjects[] = $host;
                 $unhandledFilterExpressions[] = Filter::where('host', $host->getName());
             }
@@ -129,7 +134,7 @@ class Monitoring_HostsController extends Controller
                 $objectsInDowntime[] = $host;
                 $downtimeFilterExpressions[] = Filter::where('downtime_host', $host->getName());
             }
-            ++$hostStates[$host::getStateText($host->state)];
+            ++$hostStates['hosts_' . $host::getStateText($host->state) . ($unhandled ? '_unhandled' : '')];
         }
         if (! empty($acknowledgedObjects)) {
             $removeAckForm = new RemoveAcknowledgementCommandForm();
@@ -145,7 +150,7 @@ class Monitoring_HostsController extends Controller
         $this->view->processCheckResultAllLink = Url::fromRequest()->setPath('monitoring/hosts/process-check-result');
         $this->view->addCommentLink = Url::fromRequest()->setPath('monitoring/hosts/add-comment');
         $this->view->deleteCommentLink = Url::fromRequest()->setPath('monitoring/hosts/delete-comment');
-        $this->view->hostStates = $hostStates;
+        $this->view->hostStates = (object)$hostStates;
         $this->view->objects = $this->hostList;
         $this->view->unhandledObjects = $unhandledObjects;
         $unhandledFilterQueryString = Filter::matchAny($unhandledFilterExpressions)->toQueryString();

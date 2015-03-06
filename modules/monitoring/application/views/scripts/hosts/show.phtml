@@ -8,12 +8,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
         <?= $tabs; ?>
     <?php endif ?>
 
-    <h1>
-      <?= $this->qlink(
-         sprintf($this->translate('%d Hosts Selected'), count($objects)),
-         $listAllLink
-      ); ?>
-    </h1>
+    <?= $this->render('partials/host/objects-tinysummary.phtml') ?>
     <?= $this->render('partials/host/objects-header.phtml'); ?>
 
 </div>

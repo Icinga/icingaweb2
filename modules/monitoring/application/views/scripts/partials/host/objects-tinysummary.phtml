@@ -1,0 +1,44 @@
+<?php
+use Icinga\Web\Url;
+?>
+
+<h1 class="tinystatesummary">
+    <?= $this->qlink(
+        sprintf($this->translate('%d Hosts Selected:'), count($objects)),
+        $listAllLink
+    ); ?>
+
+    <span class="badges">
+    <?php if ($hostStates->hosts_up): ?>
+
+        <?php $selfUrl = Url::fromPath('monitoring/list/hosts'); ?>
+        <span class="state up"><b>
+                <?= $hostStates->hosts_up ?>
+            </b></span>
+    <?php endif ?>
+
+
+    <?php
+    foreach (
+        array(
+            1 => 'down',
+            2 => 'unreachable',
+            99 => 'pending'
+        ) as $stateId => $state) {
+
+        $stateName = 'hosts_' . $state;
+        $unhandledStateName = $stateName . '_unhandled';
+        if ($hostStates->$unhandledStateName) {
+            echo '<span class="state ' . $state . '"><b>' . $hostStates->$unhandledStateName . '</b>';
+        }
+        if ($hostStates->$stateName) {
+            echo '<span class="state ' . $state . ' handled"><b>' . $hostStates->$stateName . '</b></span>';
+        }
+        if ($hostStates->$unhandledStateName) {
+            echo '</span>';
+        }
+        $stateName .= '_unhandled';
+    }?>
+
+    </span>
+</h1>
