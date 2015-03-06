@@ -18,8 +18,8 @@ $hiddenRich = array();
         <tr>
             <th></th>
             <th></th>
-            <th><?= $this->icon('host'); ?> <?= $this->translate('Host'); ?></th>
-            <th class="collapse"><?= $this->translate('Output'); ?></th>
+            <th class="oneline"><?= $this->icon('host'); ?> <?= $this->translate('Host'); ?></th>
+            <th class="oneline"><?= $this->icon('paste'); ?> <?= $this->translate('Plugin Output'); ?></th>
         </tr>
         </thead>
 
@@ -64,8 +64,8 @@ $hiddenRich = array();
                         <?= $this->icon('comment', $this->translate('Last Comment: ') . $host->host_last_comment) ?>
                     <?php endif ?>
                 </td>
-                <td><?= $this->escape($host->getName()); ?></td>
-                <td><p class="pluginoutput"><?= $this->escape($host->host_output) ?></p></td>
+                <td class="name oneline"><?= $this->escape($host->getName()); ?></td>
+                <td><?= $this->escape($host->host_output) ?></td>
             </tr>
         <?php endforeach ?>
 

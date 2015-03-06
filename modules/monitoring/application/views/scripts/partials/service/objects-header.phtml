@@ -15,12 +15,11 @@ use Icinga\Web\Url;
     <tr>
         <th></th>
         <th></th>
-        <th><?= $this->icon('service'); ?> <?= $this->translate('Service'); ?></th>
-        <th><?= $this->icon('host'); ?> <?= $this->translate('Host'); ?></th>
-        <th class="collapse"><?= $this->translate('Output'); ?></th>
+        <th class="oneline"><?= $this->icon('service'); ?> <?= $this->translate('Service'); ?></th>
+        <th class="oneline"><?= $this->icon('host'); ?> <?= $this->translate('Host'); ?></th>
+        <th class="oneline"><?= $this->icon('paste'); ?> <?= $this->translate('Plugin Output'); ?></th>
     </tr>
     </thead>
-
     <tbody>
     <?php foreach ($objects as $service): /** @var Service $service */ ?>
         <?php
@@ -62,16 +61,16 @@ use Icinga\Web\Url;
                     <?= $this->icon('comment', $this->translate('Last Comment: ') . $service->service_last_comment) ?>
                 <?php endif ?>
             </td>
-            <td><?= $this->escape($service->getName()); ?></td>
-            <td><?= $this->escape($service->getHost()->getName()); ?></b></td>
-            <td><p class="pluginoutput collapse"><?= $this->escape($service->service_output) ?></p></td>
+            <td class="name oneline"><?= $this->escape($service->getName()); ?></td>
+            <td class="name oneline"><?= $this->escape($service->getHost()->getName()); ?></b></td>
+            <td><?= $this->escape($service->service_output) ?></td>
         </tr>
     <?php endforeach ?>
 
     <?php if (count($hidden)): ?>
         <tr>
-        <td>
-        <div class="selection-info" data-title-rich="<span align='left'><?= join('<br>', $hiddenRich) ?></span>"
+        <td class="state">
+        <div data-title-rich="<span align='left'><?= join('<br>', $hiddenRich) ?></span>"
               title="<?= join(', ', $hidden) ?>">
               <?= sprintf(t('%d more ...'), count($hidden)) ?>
         </div>

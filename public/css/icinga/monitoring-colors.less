@@ -929,10 +929,6 @@ table.statesummary {
   width: auto;
   border-collapse: separate;
 
-  tbody {
-    white-space: nowrap;
-  }
-
   td {
     padding: 0em 0.4em 0em 0.4em;
     line-height: 1.2em;
@@ -943,17 +939,22 @@ table.statesummary {
     font-weight: bold;
   }
 
-  td .pluginoutput {
-    font-size: 0.8em;
+  td {
+    font-size: 0.85em;
     line-height: 1.2em;
-    padding-left: 0;
+    padding-left: 0.2em;
     margin: 0;
   }
 
   td.state {
+    padding: 0.2em;
     min-width: 75px;
-    font-size: 0.7em;
+    font-size: 0.75em;
     text-align: center;
+  }
+
+  td.name {
+    font-weight: bold;
   }
 
   td a {
@@ -962,10 +963,3 @@ table.statesummary {
   }
 }
 
-/* Up to 576px for 1em=16px, should fit 320px devices */
-@media screen and (max-width: 97em) {
-
-  table.statesummary .collapse {
-    display: none;
-  }
-}
