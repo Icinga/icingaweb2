@@ -10,7 +10,8 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\ServiceList;
@@ -58,7 +59,8 @@ class Monitoring_ServicesController extends Controller
             'service_is_flapping',
             'service_notifications_enabled',
             'service_output',
-            'service_last_ack'
+            'service_last_ack',
+            'service_last_comment'
         ));
 
         $form
@@ -200,18 +202,23 @@ class Monitoring_ServicesController extends Controller
                 ->handleRequest();
             $this->view->removeAckForm = $removeAckForm;
         }
+        /*
         if (! empty($objectsInDowntime)) {
             $removeDowntimeForm = new DeleteDowntimeCommandForm();
-            $removeDowntimeForm->setObjects($objectsInDowntime)
+            $removeDowntimeForm
+                ->setObjects($objectsInDowntime)
                 ->handleRequest();
             $this->view->removeDowntimeForm = $removeDowntimeForm;
         }
+        */
         $this->setAutorefreshInterval(15);
         $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/services/reschedule-check');
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/services/schedule-downtime');
         $this->view->processCheckResultAllLink = Url::fromRequest()->setPath(
             'monitoring/services/process-check-result'
         );
+        $this->view->addCommentLink = Url::fromRequest()->setPath('monitoring/services/add-comment');
+        $this->view->deleteCommentLink = Url::fromRequest()->setPath('monitoring/services/delete-comment');
         $this->view->hostStates = (object)$hostStates;
         $this->view->serviceStates = (object)$serviceStates;
         $this->view->objects = $this->serviceList;
@@ -249,6 +256,33 @@ class Monitoring_ServicesController extends Controller
             ->setTitle('')
             ->setSparklineClass('sparkline-multi');
     }
+
+
+    /**
+     * Add a service comment
+     */
+    public function addCommentAction()
+    {
+        $this->assertPermission('monitoring/command/comment/add');
+
+        $form = new AddCommentCommandForm();
+        $form->setTitle($this->translate('Add Service Comments'));
+        $this->handleCommandForm($form);
+    }
+
+
+    /**
+     * Delete a comment
+     */
+    public function deleteCommentAction()
+    {
+        $this->assertPermission('monitoring/command/comment/delete');
+
+        $form = new DeleteCommentCommandForm();
+        $form->setTitle($this->translate('Delete Service Comments'));
+        $this->handleCommandForm($form);
+    }
+
 
     /**
      * Acknowledge service problems

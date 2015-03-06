@@ -14,6 +14,11 @@ use Icinga\Web\Url;
 
 </div>
 <div class="content">
+    <h3>
+        <?= $this->icon('reschedule') ?>
+        <?= $this->translate('Commands') ?>
+    </h3>
+
     <?php if (($serviceCount = count($objects)) === 0): ?>
     <?= $this->translate('No services matching the filter'); ?>
     <?php else: ?>
@@ -40,6 +45,12 @@ use Icinga\Web\Url;
                 $processCheckResultAllLink,
                 null,
                 array('icon' => 'reply')
+            ); ?></div>
+        <div><?= $this->qlink(
+                $this->translate('Add a comment'),
+                $addCommentLink,
+                null,
+                array('icon' => 'comment')
             ); ?></div>
     </p>
 
@@ -127,10 +138,6 @@ use Icinga\Web\Url;
             array('icon' => 'plug')
         );?>
         </div>
-
-        <div>
-            <?= $removeDowntimeForm ?> Delete All
-        </div>
     </p>
     <?php endif ?>
 
@@ -145,44 +152,60 @@ use Icinga\Web\Url;
                 $commentCount
             ), $commentCount);
     ?>
+    <p>
+    <table>
+    <?php foreach ($objects as $service): ?>
+        <?php $service->fetchComments(); ?>
+        <?php foreach ($service->comments as $comment): ?>
+        <tr>
+        <td style="vertical-align: top;" data-base-target="_self">
+            <?php
+            $delCommentForm = new DeleteCommentCommandForm();
+            $delCommentForm->populate(
+                array('comment_id' => $comment->id, 'redirect' => html_entity_decode($this->url))
+            );
+            $delCommentForm->setAction(
+                $this->url(
+                    'monitoring/service/delete-comment',
+                    array('host' => $service->getHost()->getName(), 'service' => $service->getName())
+                )
+            );
+            echo $delCommentForm;
+            ?>
+            (<?= ucfirst($comment->type) ?>):
+        </td>
+        <td style="padding-left: .5em;">
+            <?= nl2br($comment->comment) ?>
+        </td>
+        </tr>
+        <?php endforeach ?>
+    <?php endforeach ?>
+    </table>
+    </p>
+
+    <div>
     <?= $this->qlink(
         $this->translate('List all'),
         $commentsLink,
         null,
         array('icon' => 'comment')
-    ); ?></p>
+    ); ?>
+    </div>
 
-        <table>
-        <?php foreach ($objects as $service): ?>
-            <?php $service->fetchComments(); ?>
+<!--
+    TODO: implement backend functionality.
+    
+    <div><?= $this->qlink(
+            $this->translate('Remove all'),
+            $deleteCommentLink,
+            null,
+            array('icon' => 'trash')
+    ); ?></div>
+    </p>
+-->
 
-                <?php foreach ($service->comments as $comment): ?>
-                <tr >
-                <td style="vertical-align: top;" data-base-target="_self">
-                    <?php
-                    $delCommentForm = new DeleteCommentCommandForm();
-                    $delCommentForm->populate(
-                        array('comment_id' => $comment->id, 'redirect' => html_entity_decode($this->url))
-                    );
-                    $delCommentForm->setAction(
-                        $this->url(
-                            'monitoring/service/delete-comment',
-                            array('host' => $service->getHost()->getName(), 'service' => $service->getName())
-                        )
-                    );
-                    echo $delCommentForm;
-                    ?>
-                    (<?= ucfirst($comment->type) ?>):
-                </td>
-                <td style="padding-left: .5em;">
-                    <?= nl2br($comment->comment) ?>
-                </td>
-                </tr>
-                <?php endforeach ?>
 
-            <?php endforeach ?>
-            </table>
-        <?php endif ?>
+    <?php endif ?>
 
     <?php endif ?>
 </div>
