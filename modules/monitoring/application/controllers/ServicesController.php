@@ -127,32 +127,25 @@ class Monitoring_ServicesController extends Controller
             'service_active_checks_enabled',
             'service_obsessing'*/
         ));
-        $unhandledObjects = array();
+        $unhandledObjects = $this->serviceList->getUnhandledObjects();
         $unhandledFilterExpressions = array();
-        $acknowledgedObjects = array();
-        $objectsInDowntime = array();
-        $downtimeFilterExpressions = array();
-
-        foreach ($this->serviceList as $service) {
-            /** @var Service $service */
-            if ((bool) $service->problem === true && (bool) $service->handled === false) {
-                $unhandledObjects[] = $service;
-                $unhandledFilterExpressions[] = Filter::matchAll(
-                    Filter::where('host', $service->getHost()->getName()),
-                    Filter::where('service', $service->getName())
-                );
-            }
-            if ((bool) $service->acknowledged === true) {
-                $acknowledgedObjects[] = $service;
-            }
-            if ((bool) $service->in_downtime === true) {
-                $objectsInDowntime[] = $service;
-                $downtimeFilterExpressions[] = Filter::matchAll(
-                    Filter::where('downtime_host', $service->getHost()->getName()),
-                    Filter::where('downtime_service', $service->getName())
-                );
-            }
+        foreach ($unhandledObjects as $service) {
+            $unhandledFilterExpressions[] = Filter::matchAll(
+                Filter::where('host', $service->getHost()->getName()),
+                Filter::where('service', $service->getName())
+            );
         }
+
+        $objectsInDowntime = $this->serviceList->getObjectsInDowntime();
+        $downtimeFilterExpressions = array();
+        foreach ($objectsInDowntime as $service) {
+            $downtimeFilterExpressions[] = Filter::matchAll(
+                Filter::where('downtime_host', $service->getHost()->getName()),
+                Filter::where('downtime_service', $service->getName())
+            );
+        }
+
+        $acknowledgedObjects = $this->serviceList->getAcknowledgedObjects();
         if (! empty($acknowledgedObjects)) {
             $removeAckForm = new RemoveAcknowledgementCommandForm();
             $removeAckForm

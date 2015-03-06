@@ -105,27 +105,19 @@ class Monitoring_HostsController extends Controller
             'host_active_checks_enabled',
             'host_obsessing'*/
         ));
-        $unhandledObjects = array();
+        $unhandledObjects = $this->hostList->getUnhandledObjects();
         $unhandledFilterExpressions = array();
-        $acknowledgedObjects = array();
-        $objectsInDowntime = array();
-        $downtimeFilterExpressions = array();
-
-        foreach ($this->hostList as $host) {
-            /** @var Host $host */
-            $unhandled = (bool) $host->problem === true && (bool) $host->handled === false;
-            if ($unhandled) {
-                $unhandledObjects[] = $host;
-                $unhandledFilterExpressions[] = Filter::where('host', $host->getName());
-            }
-            if ((bool) $host->acknowledged === true) {
-                $acknowledgedObjects[] = $host;
-            }
-            if ((bool) $host->in_downtime === true) {
-                $objectsInDowntime[] = $host;
-                $downtimeFilterExpressions[] = Filter::where('downtime_host', $host->getName());
-            }
+        foreach ($unhandledObjects as $object) {
+            $unhandledFilterExpressions[] = Filter::where('host', $object->getName());
         }
+
+        $objectsInDowntime = $this->hostList->getObjectsInDowntime();
+        $downtimeFilterExpressions = array();
+        foreach ($objectsInDowntime as $object) {
+            $downtimeFilterExpressions[] = Filter::where('downtime_host', $object->getName());
+        }
+
+        $acknowledgedObjects = $this->hostList->getAcknowledgedObjects();
         if (! empty($acknowledgedObjects)) {
             $removeAckForm = new RemoveAcknowledgementCommandForm();
             $removeAckForm

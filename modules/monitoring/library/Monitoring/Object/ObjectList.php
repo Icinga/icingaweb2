@@ -86,6 +86,39 @@ abstract class ObjectList implements Countable, IteratorAggregate
         return $this->backend->select()->from('comment')->applyFilter($this->filter);
     }
 
+    public function getAcknowledgedObjects()
+    {
+        $acknowledgedObjects = array();
+        foreach ($this as $object) {
+            if ((bool) $object->acknowledged === true) {
+                $acknowledgedObjects[] = $object;
+            }
+        }
+        return $acknowledgedObjects;
+    }
+
+    public function getObjectsInDowntime()
+    {
+        $objectsInDowntime = array();
+        foreach ($this as $object) {
+            if ((bool) $object->in_downtime === true) {
+                $objectsInDowntime[] = $object;
+            }
+        }
+        return $objectsInDowntime;
+    }
+
+    public function getUnhandledObjects()
+    {
+        $unhandledObjects = array();
+        foreach ($this as $object) {
+            if ((bool) $object->problem === true && (bool) $object->handled === false) {
+                $unhandledObjects[] = $object;
+            }
+        }
+        return $unhandledObjects;
+    }
+
     protected  function prepareStateNames($prefix, array $names) {
         $new = array();
         foreach ($names as $name) {
