@@ -281,16 +281,18 @@ abstract class MonitoredObject implements Filterable
             'is_flexible'       => 'downtime_is_flexible',
             'is_fixed'          => 'downtime_is_fixed',
             'is_in_effect'      => 'downtime_is_in_effect',
-            'entry_time'        => 'downtime_entry_time',
-            'host'              => 'downtime_host',
-            'service'           => 'downtime_service'
+            'entry_time'        => 'downtime_entry_time'
         ))
             ->where('downtime_objecttype', $this->type)
-            ->where('downtime_host', $this->host_name)
             ->order('downtime_is_in_effect', 'DESC')
             ->order('downtime_scheduled_start', 'ASC');
         if ($this->type === self::TYPE_SERVICE) {
-            $downtimes->where('downtime_service', $this->service_description);
+            $downtimes
+                ->where('service_host_name', $this->host_name)
+                ->where('service_description', $this->service_description);
+        } else {
+            $downtimes
+                ->where('host_name', $this->host_name);
         }
         $this->downtimes = $downtimes->getQuery()->fetchAll();
         return $this;
