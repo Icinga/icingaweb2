@@ -39,6 +39,7 @@ class Monitoring_HostsController extends Controller
                 'icon'  => 'host'
             )
         )->activate('show');
+        $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/hosts');
     }
 
     protected function handleCommandForm(ObjectsCommandForm $form)
@@ -125,8 +126,8 @@ class Monitoring_HostsController extends Controller
                 ->handleRequest();
             $this->view->removeAckForm = $removeAckForm;
         }
+
         $this->setAutorefreshInterval(15);
-        $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/hosts');
         $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/hosts/reschedule-check');
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/hosts/schedule-downtime');
         $this->view->processCheckResultAllLink = Url::fromRequest()->setPath('monitoring/hosts/process-check-result');

@@ -72,7 +72,12 @@ $hiddenRich = array();
                 <td class="state">
                     <div data-title-rich="<span align='left'><?= join('<br>', $hiddenRich) ?></span>"
                          title="<?= join(', ', $hidden) ?>">
-                        <?= sprintf($this->translate('%d more ...'), count($hidden)) ?>
+
+                        <?= $this->qlink(
+                            sprintf($this->translate('%d more ...'), count($hidden)),
+                            $listAllLink,
+                            null
+                        ) ?>
                     </div>
                 </td>
             </tr>
