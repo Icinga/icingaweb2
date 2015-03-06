@@ -10,6 +10,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\HostList;
 use Icinga\Web\Url;
@@ -36,7 +37,12 @@ class Monitoring_HostsController extends Controller
             'host_problem',
             'host_handled',
             'host_acknowledged',
-            'host_in_downtime'
+            'host_in_downtime',
+            'host_last_ack',
+            'host_is_flapping',
+            'host_last_comment',
+            'host_output',
+            'host_notifications_enabled'
         ));
 
         $form
@@ -87,9 +93,13 @@ class Monitoring_HostsController extends Controller
             'host_problem',
             'host_handled',
             'host_acknowledged',
-            'host_in_downtime'/*,
+            'host_in_downtime',
+            'host_last_ack',
+            'host_is_flapping',
+            'host_last_comment',
+            'host_output',
+            'host_notifications_enabled',/*,
             'host_passive_checks_enabled',
-            'host_notifications_enabled',
             'host_event_handler_enabled',
             'host_flap_detection_enabled',
             'host_active_checks_enabled',
@@ -133,6 +143,8 @@ class Monitoring_HostsController extends Controller
         $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/hosts/reschedule-check');
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/hosts/schedule-downtime');
         $this->view->processCheckResultAllLink = Url::fromRequest()->setPath('monitoring/hosts/process-check-result');
+        $this->view->addCommentLink = Url::fromRequest()->setPath('monitoring/hosts/add-comment');
+        $this->view->deleteCommentLink = Url::fromRequest()->setPath('monitoring/hosts/delete-comment');
         $this->view->hostStates = $hostStates;
         $this->view->objects = $this->hostList;
         $this->view->unhandledObjects = $unhandledObjects;
@@ -147,6 +159,18 @@ class Monitoring_HostsController extends Controller
             ->setQueryString(Filter::matchAny($downtimeFilterExpressions)->toQueryString());
         $this->view->commentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
+    }
+
+    /**
+     * Add a host comments
+     */
+    public function addCommentAction()
+    {
+        $this->assertPermission('monitoring/command/comment/add');
+
+        $form = new AddCommentCommandForm();
+        $form->setTitle($this->translate('Add Host Comments'));
+        $this->handleCommandForm($form);
     }
 
     /**

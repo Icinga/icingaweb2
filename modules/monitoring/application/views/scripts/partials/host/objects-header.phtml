@@ -1,16 +1,91 @@
-<?php if (! $this->compact): ?>
-    <?= $tabs; ?>
-<?php endif ?>
+<?php
+use Icinga\Module\Monitoring\Object\Host;
+?>
+
+
+<?php
+$i = 0;
+$hidden = array();
+$hiddenRich = array();
+?>
+
 
 <?php if (($hostCount = count($objects)) > 0): ?>
-<div class="hbox-item">
-    <h1 tabindex="-1">
-        <?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', $hostCount), $hostCount); ?>
-    </h1>
-</div>
-<div class="hbox-item" style="font-size: 14px">
-  <?php foreach (array_filter($hostStates) as $text => $count): ?>
-    <?= sprintf('%s: %u', $this->translate(strtoupper($text)), $count); ?><br>
-  <?php endforeach ?>
-</div>
+
+    <p>
+    <table class="state statesummary">
+        <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th><?= $this->icon('host'); ?> <?= $this->translate('Host'); ?></th>
+            <th class="collapse"><?= $this->translate('Output'); ?></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <?php foreach ($objects as $host): /** @var Host $host */ ?>
+            <?php
+            $i++;
+            if ($i > 5) {
+                $desc = $host->getName();
+                $hidden[] = $desc;
+                $hiddenRich[] = sprintf("<div class='color-box badge-%s'></div>%s", $host->getStateText($host->host_state) ,$desc);
+                continue;
+            }
+            ?>
+
+            <tr class="state <?= Host::getStateText($host->host_state); ?><?= $host->host_handled ? ' handled' : '' ?>">
+                <td class="state"><?= Host::getStateText($host->host_state, true); ?><br /></td>
+                <td>
+                    <?php if (!$host->host_handled && $host->host_state > 0): ?>
+                        <?= $this->icon('attention-alt', $this->translate('Unhandled')) ?>
+                    <?php endif ?>
+
+                    <?php if ($host->host_acknowledged && !$host->host_in_downtime): ?>
+                        <?= $this->icon('ok', $this->translate('Acknowledged') . (
+                            $host->host_last_ack ? ': ' . $host->host_last_ack : ''
+                            )) ?>
+                    <?php endif ?>
+
+                    <?php if ($host->host_is_flapping): ?>
+                        <?= $this->icon('flapping', $this->translate('Flapping')) ?>
+                    <?php endif ?>
+
+                    <?php if (!$host->host_notifications_enabled): ?>
+                        <?= $this->icon('bell-off-empty', $this->translate('Notifications Disabled')) ?>
+                    <?php endif ?>
+
+                    <?php if ($host->host_in_downtime): ?>
+                        <?= $this->icon('plug', $this->translate('In Downtime')) ?>
+                    <?php endif ?>
+
+                    <?php if (isset($host->host_last_comment) && $host->host_last_comment !== null): ?>
+                        <?= $this->icon('comment', $this->translate('Last Comment: ') . $host->host_last_comment) ?>
+                    <?php endif ?>
+                </td>
+                <td><?= $this->escape($host->getName()); ?></td>
+                <td><p class="pluginoutput"><?= $this->escape($host->host_output) ?></p></td>
+            </tr>
+        <?php endforeach ?>
+
+        <?php if (count($hidden)): ?>
+            <tr>
+                <td>
+                    <div class="selection-info" data-title-rich="<span align='left'><?= join('<br>', $hiddenRich) ?></span>"
+                         title="<?= join(', ', $hidden) ?>">
+                        <?= sprintf(t('%d more ...'), count($hidden)) ?>
+                    </div>
+                </td>
+            </tr>
+        <?php endif ?>
+
+        </tbody>
+    </table>
+    </p>
+
+
 <?php endif ?>
+
+
+
