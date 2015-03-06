@@ -157,7 +157,7 @@ class Form extends Zend_Form
     public static $defaultElementDecorators = array(
         array('ViewHelper', array('separator' => '')),
         array('Errors', array('separator' => '')),
-        array('Help'),
+        array('Help', array('placement' => 'PREPEND')),
         array('Label', array('separator' => '')),
         array('HtmlTag', array('tag' => 'div', 'class' => 'element'))
     );

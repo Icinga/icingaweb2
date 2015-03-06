@@ -76,18 +76,35 @@ class Help extends Zend_Form_Decorator_Abstract
      */
     public function render($content = '')
     {
-        if ($content && ($description = $this->getElement()->getDescription()) !== null) {
+        $element = $this->getElement();
+        $description = $element->getDescription();
+        $requirement = $element->getAttrib('requirement');
+        unset($element->requirement);
+
+        $helpContent = '';
+        if ($description || $requirement) {
             if ($this->accessible) {
-                $content = '<span id="'
+                $helpContent = '<span id="'
                     . $this->getDescriptionId()
                     . '" class="sr-only">'
                     . $description
-                    . '</span>' . $content;
+                    . ($description && $requirement ? ' ' : '')
+                    . $requirement
+                    . '</span>';
             }
 
-            $content = $this->getView()->icon('help', $description, array('aria-hidden' => 'true')) . $content;
+            $helpContent = $this->getView()->icon(
+                'help',
+                $description . ($description && $requirement ? ' ' : '') . $requirement,
+                array('aria-hidden' => $this->accessible ? 'true' : 'false')
+            ) . $helpContent;
         }
 
-        return $content;
+        switch ($this->getPlacement()) {
+            case self::APPEND:
+                return $content . $helpContent;
+            case self::PREPEND:
+                return $helpContent . $content;
+        }
     }
 }
