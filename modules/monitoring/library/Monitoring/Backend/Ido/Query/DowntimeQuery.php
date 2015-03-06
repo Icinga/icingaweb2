@@ -21,19 +21,26 @@ class DowntimeQuery extends IdoQuery
             'downtime_duration'         => 'sd.duration',
             'downtime_is_in_effect'     => 'sd.is_in_effect',
             'downtime_internal_id'      => 'sd.internal_downtime_id',
+            'downtime_objecttype'       => "CASE WHEN ho.object_id IS NULL THEN 'service' ELSE 'host' END",
             'downtime_host'             => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci', // #7278, #7279
             'host'                      => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci',
+            'host_name'                 => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END',
             'downtime_service'          => 'so.name2 COLLATE latin1_general_ci',
             'service'                   => 'so.name2 COLLATE latin1_general_ci', // #7278, #7279
-            'downtime_objecttype'       => "CASE WHEN ho.object_id IS NOT NULL THEN 'host' ELSE CASE WHEN so.object_id IS NOT NULL THEN 'service' ELSE NULL END END",
-            'downtime_host_state'       => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
-            'downtime_service_state'    => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END'
+            'service_description'       => 'so.name2',
+            'service_host_name'         => 'so.name1'
         ),
         'hosts' => array(
-            'host_display_name'         => 'CASE WHEN sh.display_name IS NOT NULL THEN sh.display_name ELSE h.display_name END'
+            'host_display_name'         => 'CASE WHEN h.display_name IS NULL THEN sh.display_name ELSE h.display_name END'
+        ),
+        'hoststatus' => array(
+            'downtime_host_state'       => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END'
         ),
         'services' => array(
             'service_display_name'      => 's.display_name'
+        ),
+        'servicestatus' => array(
+            'downtime_service_state'    => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END'
         )
     );
 
@@ -53,16 +60,6 @@ class DowntimeQuery extends IdoQuery
             'sd.object_id = so.object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
-        $this->select->joinLeft(
-            array('hs' => $this->prefix . 'hoststatus'),
-            'ho.object_id = hs.host_object_id',
-            array()
-        );
-        $this->select->joinLeft(
-            array('ss' => $this->prefix . 'servicestatus'),
-            'so.object_id = ss.service_object_id',
-            array()
-        );
         $this->joinedVirtualTables = array('downtime' => true);
     }
 
@@ -76,6 +73,15 @@ class DowntimeQuery extends IdoQuery
         return $this;
     }
 
+    protected function joinHoststatus()
+    {
+        $this->select->joinLeft(
+            array('hs' => $this->prefix . 'hoststatus'),
+            'ho.object_id = hs.host_object_id',
+            array()
+        );
+    }
+
     protected function joinServices()
     {
         $this->select->joinLeft(
@@ -86,6 +92,16 @@ class DowntimeQuery extends IdoQuery
         $this->select->joinLeft(
             array('sh' => $this->prefix . 'hosts'),
             'sh.host_object_id = s.host_object_id',
+            array()
+        );
+        return $this;
+    }
+
+    protected function joinServicestatus()
+    {
+        $this->select->joinLeft(
+            array('ss' => $this->prefix . 'servicestatus'),
+            'so.object_id = ss.service_object_id',
             array()
         );
         return $this;
