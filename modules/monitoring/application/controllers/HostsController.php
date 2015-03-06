@@ -175,8 +175,9 @@ class Monitoring_HostsController extends Controller
     {
         $this->assertPermission('monitoring/command/acknowledge-problem');
 
-        $this->view->title = $this->translate('Acknowledge Host Problems');
-        $this->handleCommandForm(new AcknowledgeProblemCommandForm());
+        $form = new AcknowledgeProblemCommandForm();
+        $form->setTitle($this->translate('Acknowledge Host Problems'));
+        $this->handleCommandForm($form);
     }
 
     /**
@@ -186,8 +187,9 @@ class Monitoring_HostsController extends Controller
     {
         $this->assertPermission('monitoring/command/schedule-check');
 
-        $this->view->title = $this->translate('Reschedule Host Checks');
-        $this->handleCommandForm(new ScheduleHostCheckCommandForm());
+        $form = new ScheduleHostCheckCommandForm();
+        $form->setTitle($this->translate('Reschedule Host Checks'));
+        $this->handleCommandForm($form);
     }
 
     /**
@@ -197,8 +199,9 @@ class Monitoring_HostsController extends Controller
     {
         $this->assertPermission('monitoring/command/downtime/schedule');
 
-        $this->view->title = $this->translate('Schedule Host Downtimes');
-        $this->handleCommandForm(new ScheduleHostDowntimeCommandForm());
+        $form = new ScheduleHostDowntimeCommandForm();
+        $form->setTitle($this->translate('Schedule Host Downtimes'));
+        $this->handleCommandForm($form);
     }
 
     /**
@@ -208,7 +211,8 @@ class Monitoring_HostsController extends Controller
     {
         $this->assertPermission('monitoring/command/process-check-result');
 
-        $this->view->title = $this->translate('Submit Passive Host Check Results');
-        $this->handleCommandForm(new ProcessCheckResultCommandForm());
+        $form = new ProcessCheckResultCommandForm();
+        $form->setTitle($this->translate('Submit Passive Host Check Results'));
+        $this->handleCommandForm($form);
     }
 }

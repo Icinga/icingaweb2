@@ -31,7 +31,10 @@ class LdapBackendFormTest extends BaseTestCase
         Mockery::mock('overload:Icinga\Authentication\Backend\LdapUserBackend')
             ->shouldReceive('assertAuthenticationPossible')->andReturnNull();
 
-        $form = new LdapBackendForm();
+        $form = Mockery::mock('Icinga\Forms\Config\Authentication\LdapBackendForm[getView]');
+        $form->shouldReceive('getView->escape')
+            ->with(Mockery::type('string'))
+            ->andReturnUsing(function ($s) { return $s; });
         $form->setTokenDisabled();
         $form->setResources(array('test_ldap_backend'));
         $form->populate(array('resource' => 'test_ldap_backend'));
@@ -52,7 +55,10 @@ class LdapBackendFormTest extends BaseTestCase
         Mockery::mock('overload:Icinga\Authentication\Backend\LdapUserBackend')
             ->shouldReceive('assertAuthenticationPossible')->andThrow(new AuthenticationException);
 
-        $form = new LdapBackendForm();
+        $form = Mockery::mock('Icinga\Forms\Config\Authentication\LdapBackendForm[getView]');
+        $form->shouldReceive('getView->escape')
+            ->with(Mockery::type('string'))
+            ->andReturnUsing(function ($s) { return $s; });
         $form->setTokenDisabled();
         $form->setResources(array('test_ldap_backend'));
         $form->populate(array('resource' => 'test_ldap_backend'));

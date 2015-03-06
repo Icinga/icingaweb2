@@ -3,7 +3,9 @@
 
 namespace Icinga\Module\Setup\Forms;
 
+use Zend_Validate_NotEmpty;
 use Icinga\Web\Form;
+use Icinga\Web\Form\ErrorLabeller;
 use Icinga\Forms\LdapDiscoveryForm;
 use Icinga\Protocol\Ldap\Discovery;
 use Icinga\Module\Setup\Forms\LdapDiscoveryConfirmPage;
@@ -24,6 +26,11 @@ class LdapDiscoveryPage extends Form
     public function init()
     {
         $this->setName('setup_ldap_discovery');
+        $this->setTitle($this->translate('LDAP Discovery', 'setup.page.title'));
+        $this->addDescription($this->translate(
+            'You can use this page to discover LDAP or ActiveDirectory servers ' .
+            ' for authentication. If you don\' want to execute a discovery, just skip this step.'
+        ));
     }
 
     /**
@@ -31,39 +38,13 @@ class LdapDiscoveryPage extends Form
      */
     public function createElements(array $formData)
     {
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => $this->translate('LDAP Discovery', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-        $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => $this->translate(
-                    'You can use this page to discover LDAP or ActiveDirectory servers ' .
-                    ' for authentication. If you don\' want to execute a discovery, just skip this step.'
-                )
-            )
-        );
-
         $discoveryForm = new LdapDiscoveryForm();
         $this->addElements($discoveryForm->createElements($formData)->getElements());
-        $this->getElement('domain')->setRequired(
-            isset($formData['skip_validation']) === false || ! $formData['skip_validation']
-        );
 
         $this->addElement(
             'checkbox',
             'skip_validation',
             array(
-                'required'      => true,
                 'label'         => $this->translate('Skip'),
                 'description'   => $this->translate('Do not discover LDAP servers and enter all settings manually.')
             )
@@ -82,19 +63,24 @@ class LdapDiscoveryPage extends Form
         if (false === parent::isValid($data)) {
             return false;
         }
-        if ($data['skip_validation']) {
+        if (isset($data['skip_validation']) && $data['skip_validation']) {
             return true;
         }
 
-        if (isset($data['domain'])) {
+        if (isset($data['domain']) && $data['domain']) {
             $this->discovery = Discovery::discoverDomain($data['domain']);
             if ($this->discovery->isSuccess()) {
                 return true;
             }
+
+            $this->addError(
+                sprintf($this->translate('Could not find any LDAP servers on the domain "%s".'), $data['domain'])
+            );
+        } else {
+            $labeller = new ErrorLabeller(array('element' => $this->getElement('domain')));
+            $this->getElement('domain')->addError($labeller->translate(Zend_Validate_NotEmpty::IS_EMPTY));
         }
-        $this->addError(
-            sprintf($this->translate('Could not find any LDAP servers on the domain "%s".'), $data['domain'])
-        );
+
         return false;
     }
 

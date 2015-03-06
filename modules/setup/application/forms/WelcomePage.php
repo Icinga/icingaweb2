@@ -17,6 +17,7 @@ class WelcomePage extends Form
      */
     public function init()
     {
+        $this->setRequiredCue(null);
         $this->setName('setup_welcome');
         $this->setViewScript('form/setup-welcome.phtml');
     }

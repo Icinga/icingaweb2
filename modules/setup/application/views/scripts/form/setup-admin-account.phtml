@@ -7,17 +7,25 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
 
 ?>
 <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
+  <h1><?= $this->translate('Administration', 'setup.page.title'); ?></h1>
+  <ul class="descriptions">
+    <li><?= $this->translatePlural(
+      'Now it\'s time to configure your first administrative account for Icinga Web 2. Please follow the instructions below:',
+      'Now it\'s time to configure your first administrative account for Icinga Web 2. Below are several options you can choose from. Select one and follow its instructions:',
+      $showRadioBoxes ? count($radioElem->getMultiOptions()) : 1
+    ); ?></li>
+  </ul>
   <?= $form->getElement('title'); ?>
   <?= $form->getElement('description'); ?>
 <?php if (($byNameElem = $form->getElement('by_name')) !== null): ?>
   <div>
     <div class="instructions">
-      <?= $byNameElem; ?>
+      <?= $showRadioBoxes ? $byNameElem->setAttrib('data-related-radiobtn', 'by_name') : $byNameElem; ?>
     </div>
 <?php if ($showRadioBoxes): ?>
     <div class="radiobox">
       <label>
-        <input type="radio" name="user_type" value="by_name"<?= $radioElem->getValue() === 'by_name' ? ' checked' : ''; ?> class="autosubmit" aria-required="true" required>
+        <input type="radio" id="by_name" name="user_type" value="by_name"<?= $radioElem->getValue() === 'by_name' ? ' checked' : ''; ?> class="autosubmit" aria-required="true" required>
         <?= $radioElem->getMultiOption('by_name'); ?>
       </label>
     </div>
@@ -27,12 +35,12 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
 <?php if (($existingUserElem = $form->getElement('existing_user')) !== null): ?>
   <div>
     <div class="instructions">
-      <?= $existingUserElem; ?>
+      <?= $showRadioBoxes ? $byNameElem->setAttrib('data-related-radiobtn', 'existing_user') : $existingUserElem; ?>
     </div>
 <?php if ($showRadioBoxes): ?>
     <div class="radiobox">
       <label>
-        <input type="radio" name="user_type" value="existing_user"<?= $radioElem->getValue() === 'existing_user' ? ' checked' : ''; ?> class="autosubmit" aria-required="true" required>
+        <input type="radio" id="existing_user" name="user_type" value="existing_user"<?= $radioElem->getValue() === 'existing_user' ? ' checked' : ''; ?> class="autosubmit" aria-required="true" required>
         <?= $radioElem->getMultiOption('existing_user'); ?>
       </label>
     </div>
@@ -42,14 +50,14 @@ $showRadioBoxes = strpos(strtolower(get_class($radioElem)), 'radio') !== false;
 <?php if (($newUserElem = $form->getElement('new_user')) !== null): ?>
   <div>
     <div class="instructions">
-      <?= $newUserElem; ?>
+      <?= $showRadioBoxes ? $newUserElem->setAttrib('data-related-radiobtn', 'new_user') : $newUserElem; ?>
       <?= $form->getElement('new_user_password'); ?>
       <?= $form->getElement('new_user_2ndpass'); ?>
     </div>
 <?php if ($showRadioBoxes): ?>
     <div class="radiobox">
       <label>
-        <input type="radio" name="user_type" value="new_user"<?= $radioElem->getValue() === 'new_user' ? ' checked' : ''; ?> class="autosubmit" aria-required="true" required>
+        <input type="radio" id="new_user" name="user_type" value="new_user"<?= $radioElem->getValue() === 'new_user' ? ' checked' : ''; ?> class="autosubmit" aria-required="true" required>
         <?= $radioElem->getMultiOption('new_user'); ?>
       </label>
     </div>

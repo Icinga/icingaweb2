@@ -96,10 +96,15 @@ class DbUserBackend extends UserBackend
                 'SELECT password_hash FROM icingaweb_user WHERE name = :name AND active = 1'
             );
         }
+
         $stmt->execute(array(':name' => $username));
         $stmt->bindColumn(1, $lob, PDO::PARAM_LOB);
         $stmt->fetch(PDO::FETCH_BOUND);
-        return is_resource($lob) ? stream_get_contents($lob) : $lob;
+        if (is_resource($lob)) {
+            $lob = stream_get_contents($lob);
+        }
+
+        return $this->conn->getDbType() === 'pgsql' ? pg_unescape_bytea($lob) : $lob;
     }
 
     /**

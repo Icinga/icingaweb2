@@ -126,10 +126,10 @@ input.link-like:hover, button.link-like:focus {
 .non-list-like-list {
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 0.5em 0.5em 0;
 
   li {
-    margin: 0.5em;
+    padding-bottom: 0.5em;
   }
 }
 
@@ -146,12 +146,16 @@ form div.element ul.errors {
 
 form ul.form-errors {
   .non-list-like-list;
-  display: inline-block;
   margin-bottom: 1em;
   background-color: @colorCritical;
 
   ul.errors {
     .non-list-like-list;
+    padding: 0;
+
+    li:last-child {
+      padding-bottom: 0;
+    }
   }
 
   li {
@@ -190,38 +194,43 @@ form .description {
   display: block;
 }
 
-form label.has-feedback:after {
-  content: '\e85b';
-  font-family: "ifont";
-  font-style: normal;
-  font-weight: normal;
-  speak: none;
-
-  text-decoration: inherit;
-  width: 1em;
-  margin-right: .2em;
-  text-align: center;
-  /* opacity: .8; */
-
-  /* For safety - reset parent styles, that can break glyph codes*/
-  font-variant: normal;
-  text-transform: none;
-
-  /* fix buttons height, for twitter bootstrap */
-  line-height: 1em;
-
-  /* Animation center compensation - margins should be symmetric */
-  /* remove if not needed */
-  margin-left: .2em;
-
-  /* you can be more comfortable with increased icons size */
-  /* font-size: 120%; */
-
-  /* Uncomment for 3D effect */
-  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
-}
-
 select.grant-permissions {
   height: 20em;
   width: auto;
+}
+
+label ~ input, label ~ select {
+  margin-left: 1.6em;
+}
+
+label + i ~ input, label + i ~ select {
+  margin-left: 0;
+}
+
+button.noscript-apply {
+  margin-left: 0.5em;
+}
+
+html.no-js i.autosubmit-warning {
+  .sr-only;
+}
+
+form ul.descriptions {
+  .info-box;
+  padding: 0.5em 0.5em 0 1.8em;
+
+  li {
+    padding-bottom: 0.5em;
+
+    &:only-child {
+      margin-left: -1.3em;
+      list-style-type: none;
+    }
+  }
+}
+
+form > div.header {
+  h1, h2, h3, h4, h5, h6 {
+    display: inline-block;
+  }
 }

@@ -1,4 +1,4 @@
-<form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
+<form id="<?= $form->getId(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
   <table class="action">
     <thead>
       <th>Backend</th>
@@ -26,7 +26,7 @@
             'config/removeAuthenticationBackend',
             array('auth_backend' => $backendNames[$i]),
             array(
-                'icon'  => 'cancel',
+                'icon'  => 'trash',
                 'title' => sprintf($this->translate('Remove authentication backend %s'), $backendNames[$i])
             )
           ); ?>

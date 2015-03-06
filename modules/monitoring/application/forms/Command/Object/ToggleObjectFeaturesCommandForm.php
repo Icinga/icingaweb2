@@ -18,7 +18,10 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
      */
     public function init()
     {
+        $this->setUseFormAutosubmit();
+        $this->setTitle('Feature Commands');
         $this->setAttrib('class', 'inline object-features');
+        $this->loadDefaultDecorators()->getDecorator('description')->setTag('h4');
     }
 
     /**

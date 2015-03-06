@@ -2,9 +2,6 @@
   <?= $this->tabs->render($this); ?>
 </div>
 <div class="content">
-  <h1 tabindex="-1" id="application-configuration">
-    <?= $this->translate('General Configuration'); ?>
-  </h1>
   <?php if (isset($this->messageBox)): ?>
     <?= $this->messageBox->render() ?>
   <?php endif ?>

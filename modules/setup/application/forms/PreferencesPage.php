@@ -16,24 +16,10 @@ class PreferencesPage extends Form
      */
     public function init()
     {
+        $this->setRequiredCue(null);
         $this->setName('setup_preferences_type');
-    }
-
-    /**
-     * Pre-select "db" as preference backend and add a hint to the select element
-     *
-     * @return  self
-     */
-    public function showDatabaseNote()
-    {
-        $this->getElement('store')
-            ->setValue('db')
-            ->setDescription(
-                $this->translate(
-                    'Note that choosing "Database" causes Icinga Web 2 to use the same database as for authentication.'
-                )
-            );
-        return $this;
+        $this->setTitle($this->translate('Preferences', 'setup.page.title'));
+        $this->addDescription($this->translate('Please choose how Icinga Web 2 should store user preferences.'));
     }
 
     /**
@@ -41,25 +27,6 @@ class PreferencesPage extends Form
      */
     public function createElements(array $formData)
     {
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => $this->translate('Preferences', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-        $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => $this->translate('Please choose how Icinga Web 2 should store user preferences.')
-            )
-        );
-
         $storageTypes = array();
         $storageTypes['ini'] = $this->translate('File System (INI Files)');
         if (Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {

@@ -192,31 +192,6 @@ class AdminAccountPage extends Form
                 )
             );
         }
-
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => $this->translate('Administration', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-        $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => tp(
-                    'Now it\'s time to configure your first administrative account for Icinga Web 2.'
-                    . ' Please follow the instructions below:',
-                    'Now it\'s time to configure your first administrative account for Icinga Web 2.'
-                    . ' Below are several options you can choose from. Select one and follow its instructions:',
-                    count($choices)
-                )
-            )
-        );
     }
 
     /**

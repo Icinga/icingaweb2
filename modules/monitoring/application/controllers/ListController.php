@@ -397,6 +397,7 @@ class Monitoring_ListController extends Controller
         $form->render();
         $this->view->form = $form;
 
+        $this->params->remove('view');
         $orientation = $this->params->shift('vertical', 0) ? 'vertical' : 'horizontal';
 /*
         $orientationBox = new SelectBox(

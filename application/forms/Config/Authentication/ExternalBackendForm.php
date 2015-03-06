@@ -53,7 +53,7 @@ class ExternalBackendForm extends Form
             return @preg_match($value, '') !== false;
         });
         $callbackValidator->setMessage(
-            $this->translate('"%value%" is not a valid regular expression'),
+            $this->translate('"%value%" is not a valid regular expression.'),
             Zend_Validate_Callback::INVALID_VALUE
         );
         $this->addElement(
@@ -62,9 +62,10 @@ class ExternalBackendForm extends Form
             array(
                 'label'         => $this->translate('Filter Pattern'),
                 'description'   => $this->translate(
-                    'The regular expression to use to strip specific parts off from usernames.'
-                    . ' Leave empty if you do not want to strip off anything'
+                    'The filter to use to strip specific parts off from usernames.'
+                    . ' Leave empty if you do not want to strip off anything.'
                 ),
+                'requirement'   => $this->translate('The filter pattern must be a valid regular expression.'),
                 'validators'    => array($callbackValidator)
             )
         );

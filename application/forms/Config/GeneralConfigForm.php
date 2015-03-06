@@ -20,6 +20,7 @@ class GeneralConfigForm extends ConfigForm
     {
         $this->setName('form_config_general');
         $this->setSubmitLabel($this->translate('Save Changes'));
+        $this->setTitle($this->translate('General Configuration'));
     }
 
     /**

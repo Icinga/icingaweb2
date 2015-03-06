@@ -24,14 +24,15 @@ class Doc_StyleController extends Controller
         return Widget::create('tabs')->add(
             'guide',
             array(
-                'title' => $this->translate('Style Guide'),
-                'url' => 'doc/style/guide'
+                'label' => $this->translate('Style Guide'),
+                'url'   => 'doc/style/guide'
             )
         )->add(
             'font',
             array(
-                'title' => $this->translate('Icons'),
-                'url' => 'doc/style/font'
+                'label' => $this->translate('Icons'),
+                'title' => $this->translate('List all available icons'),
+                'url'   => 'doc/style/font'
             )
         );
     }

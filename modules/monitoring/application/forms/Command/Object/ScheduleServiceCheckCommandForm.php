@@ -15,26 +15,23 @@ use Icinga\Web\Request;
 class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
 {
     /**
+     * Initialize this form
+     */
+    public function init()
+    {
+        $this->addDescription($this->translate(
+            'This command is used to schedule the next check of hosts or services. Icinga will re-queue the'
+            . ' hosts or services to be checked at the time you specify.'
+        ));
+    }
+
+    /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
      */
     public function getSubmitLabel()
     {
-        return mtp(
-            'monitoring', 'Schedule check', 'Schedule checks', count($this->objects)
-        );
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
-     */
-    public function getHelp()
-    {
-        return $this->translate(
-            'This command is used to schedule the next check of hosts or services. Icinga will re-queue the'
-            . ' hosts or services to be checked at the time you specify.'
-        );
+        return $this->translatePlural('Schedule check', 'Schedule checks', count($this->objects));
     }
 
     /**
@@ -99,8 +96,7 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
             $check->setObject($object);
             $this->scheduleCheck($check, $this->request);
         }
-        Notification::success(mtp(
-            'monitoring',
+        Notification::success($this->translatePlural(
             'Scheduling service check..',
             'Scheduling service checks..',
             count($this->objects)

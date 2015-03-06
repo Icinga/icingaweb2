@@ -121,7 +121,8 @@ class ConfigController extends ActionController
         // @TODO(el): This seems not natural to me. Module configuration should have its own controller.
         $this->view->tabs = Widget::create('tabs')
             ->add('modules', array(
-                'title' => $this->translate('Modules'),
+                'label' => $this->translate('Modules'),
+                'title' => $this->translate('List intalled modules'),
                 'url'   => 'config/modules'
             ))
             ->activate('modules');
@@ -134,22 +135,23 @@ class ConfigController extends ActionController
 
     public function moduleAction()
     {
-        $name = $this->getParam('name');
         $app = Icinga::app();
         $manager = $app->getModuleManager();
+        $name = $this->getParam('name');
         if ($manager->hasInstalled($name)) {
-            $this->view->moduleData = Icinga::app()
-                ->getModuleManager()
-                ->select()
-                ->from('modules')
-                ->where('name', $name)
-                ->fetchRow();
-            $module = new Module($app, $name, $manager->getModuleDir($name));
+            $this->view->moduleData = $manager->select()->from('modules')->where('name', $name)->fetchRow();
+            if ($manager->hasLoaded($name)) {
+                $module = $manager->getModule($name);
+            } else {
+                $module = new Module($app, $name, $manager->getModuleDir($name));
+            }
+
             $this->view->module = $module;
+            $this->view->tabs = $module->getConfigTabs()->activate('info');
         } else {
             $this->view->module = false;
+            $this->view->tabs = null;
         }
-        $this->view->tabs = $module->getConfigTabs()->activate('info');
     }
 
     /**
@@ -162,7 +164,6 @@ class ConfigController extends ActionController
         $manager = Icinga::app()->getModuleManager();
         try {
             $manager->enableModule($module);
-            $manager->loadModule($module);
             Notification::success(sprintf($this->translate('Module "%s" enabled'), $module));
             $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
         } catch (Exception $e) {
@@ -215,6 +216,11 @@ class ConfigController extends ActionController
     {
         $this->assertPermission('system/config/authentication');
         $form = new AuthenticationBackendConfigForm();
+        $form->setTitle($this->translate('Create New Authentication Backend'));
+        $form->addDescription($this->translate(
+            'Create a new backend for authenticating your users. This backend'
+            . ' will be added at the end of your authentication order.'
+        ));
         $form->setIniConfig(Config::app('authentication'));
         $form->setResourceConfig(ResourceFactory::getResourceConfigs());
         $form->setRedirectUrl('config/authentication');
@@ -232,6 +238,7 @@ class ConfigController extends ActionController
     {
         $this->assertPermission('system/config/authentication');
         $form = new AuthenticationBackendConfigForm();
+        $form->setTitle($this->translate('Edit Backend'));
         $form->setIniConfig(Config::app('authentication'));
         $form->setResourceConfig(ResourceFactory::getResourceConfigs());
         $form->setRedirectUrl('config/authentication');
@@ -271,6 +278,7 @@ class ConfigController extends ActionController
                 }
             }
         ));
+        $form->setTitle($this->translate('Remove Backend'));
         $form->setRedirectUrl('config/authentication');
         $form->handleRequest();
 
@@ -296,6 +304,8 @@ class ConfigController extends ActionController
     {
         $this->assertPermission('system/config/resources');
         $form = new ResourceConfigForm();
+        $form->setTitle($this->translate('Create A New Resource'));
+        $form->addDescription($this->translate('Resources are entities that provide data to Icinga Web 2.'));
         $form->setIniConfig(Config::app('resources'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
@@ -311,6 +321,7 @@ class ConfigController extends ActionController
     {
         $this->assertPermission('system/config/resources');
         $form = new ResourceConfigForm();
+        $form->setTitle($this->translate('Edit Existing Resource'));
         $form->setIniConfig(Config::app('resources'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
@@ -345,6 +356,7 @@ class ConfigController extends ActionController
                 }
             }
         ));
+        $form->setTitle($this->translate('Remove Existing Resource'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
 
@@ -353,7 +365,7 @@ class ConfigController extends ActionController
         $authConfig = Config::app('authentication');
         foreach ($authConfig as $backendName => $config) {
             if ($config->get('resource') === $resource) {
-                $form->addError(sprintf(
+                $form->addDescription(sprintf(
                     $this->translate(
                         'The resource "%s" is currently in use by the authentication backend "%s". ' .
                         'Removing the resource can result in noone being able to log in any longer.'

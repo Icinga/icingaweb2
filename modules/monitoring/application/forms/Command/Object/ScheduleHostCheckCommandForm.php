@@ -47,8 +47,7 @@ class ScheduleHostCheckCommandForm extends ScheduleServiceCheckCommandForm
                 ->setOfAllServices($this->getElement('all_services')->isChecked());
             $this->scheduleCheck($check, $this->request);
         }
-        Notification::success(mtp(
-            'monitoring',
+        Notification::success($this->translatePlural(
             'Scheduling host check..',
             'Scheduling host checks..',
             count($this->objects)
