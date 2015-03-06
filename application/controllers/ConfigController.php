@@ -163,7 +163,6 @@ class ConfigController extends ActionController
         $manager = Icinga::app()->getModuleManager();
         try {
             $manager->enableModule($module);
-            $manager->loadModule($module);
             Notification::success(sprintf($this->translate('Module "%s" enabled'), $module));
             $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
         } catch (Exception $e) {
