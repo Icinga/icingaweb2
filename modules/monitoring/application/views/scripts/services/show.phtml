@@ -140,7 +140,8 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
             <?= $this->qlink(
                 $this->translate('List all'),
                 $inDowntimeLink,
-                null
+                null,
+                array('data-base-target' => '_next')
             );?>
         </p>
     <?php endif ?>
@@ -159,7 +160,8 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
     <?= $this->qlink(
         $this->translate('List all'),
         $commentsLink,
-        null
+        null,
+        array('data-base-target' => '_next')
     ); ?>
     <p>
 
