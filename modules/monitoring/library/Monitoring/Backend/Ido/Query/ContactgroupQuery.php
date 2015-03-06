@@ -95,10 +95,10 @@ class ContactgroupQuery extends IdoQuery
 
     protected function joinServices()
     {
-        $scgSub = $this->db->select()->distinct()->from(
-            $this->prefix . 'service_contactgroups',
-            array('contactgroup_object_id', 'service_id')
-        );
+//        $scgSub = $this->db->select()->distinct()->from(
+//            $this->prefix . 'service_contactgroups',
+//            array('contactgroup_object_id', 'service_id')
+//        );
 
             /*
             This subselect is a workaround for a fucking stupid bug. Other tables
