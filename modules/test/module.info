@@ -2,4 +2,4 @@ Module: test
 Version: 2.0.0~alpha4
 Description: Translation module
  This module allows developers to run (unit) tests against Icinga Web 2 and
- any of it's modules. Usually you do not need to enable this.
+ any of its modules. Usually you do not need to enable this.
