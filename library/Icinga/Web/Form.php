@@ -13,7 +13,7 @@ use Icinga\Authentication\Manager;
 use Icinga\Security\SecurityException;
 use Icinga\Util\Translator;
 use Icinga\Web\Form\ErrorLabeller;
-use Icinga\Web\Form\Decorator\NoScriptApply;
+use Icinga\Web\Form\Decorator\Autosubmit;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
 
 /**
@@ -113,6 +113,36 @@ class Form extends Zend_Form
     protected $validatePartial = false;
 
     /**
+     * Whether element ids will be protected against collisions by appending a request-specific unique identifier
+     *
+     * @var bool
+     */
+    protected $protectIds = true;
+
+    /**
+     * The cue that is appended to each element's label if it's required
+     *
+     * @var string
+     */
+    protected $requiredCue = '*';
+
+    /**
+     * The descriptions of this form
+     *
+     * @var array
+     */
+    protected $descriptions;
+
+    /**
+     * Whether the Autosubmit decorator should be applied to this form
+     *
+     * If this is true, the Autosubmit decorator is being applied to this form instead of to each of its elements.
+     *
+     * @var bool
+     */
+    protected $useFormAutosubmit = false;
+
+    /**
      * Authentication manager
      *
      * @type Manager|null
@@ -127,6 +157,7 @@ class Form extends Zend_Form
     public static $defaultElementDecorators = array(
         array('ViewHelper', array('separator' => '')),
         array('Errors', array('separator' => '')),
+        array('Help', array('placement' => 'PREPEND')),
         array('Label', array('separator' => '')),
         array('HtmlTag', array('tag' => 'div', 'class' => 'element'))
     );
@@ -376,6 +407,120 @@ class Form extends Zend_Form
     }
 
     /**
+     * Set whether each element's id should be altered to avoid duplicates
+     *
+     * @param   bool    $value
+     *
+     * @return  Form
+     */
+    public function setProtectIds($value = true)
+    {
+        $this->protectIds = (bool) $value;
+        return $this;
+    }
+
+    /**
+     * Return whether each element's id is being altered to avoid duplicates
+     *
+     * @return  bool
+     */
+    public function getProtectIds()
+    {
+        return $this->protectIds;
+    }
+
+    /**
+     * Set the cue to append to each element's label if it's required
+     *
+     * @param   string  $cue
+     *
+     * @return  Form
+     */
+    public function setRequiredCue($cue)
+    {
+        $this->requiredCue = $cue;
+        return $this;
+    }
+
+    /**
+     * Return the cue being appended to each element's label if it's required
+     *
+     * @return  string
+     */
+    public function getRequiredCue()
+    {
+        return $this->requiredCue;
+    }
+
+    /**
+     * Set the descriptions for this form
+     *
+     * @param   array   $descriptions
+     *
+     * @return  Form
+     */
+    public function setDescriptions(array $descriptions)
+    {
+        $this->descriptions = $descriptions;
+        return $this;
+    }
+
+    /**
+     * Add a description for this form
+     *
+     * If $description is an array the second value should be
+     * an array as well containing additional HTML properties.
+     *
+     * @param   string|array    $description
+     *
+     * @return  Form
+     */
+    public function addDescription($description)
+    {
+        $this->descriptions[] = $description;
+        return $this;
+    }
+
+    /**
+     * Return the descriptions of this form
+     *
+     * @return  array
+     */
+    public function getDescriptions()
+    {
+        if ($this->descriptions === null) {
+            return array();
+        }
+
+        return $this->descriptions;
+    }
+
+    /**
+     * Set whether the Autosubmit decorator should be applied to this form
+     *
+     * If true, the Autosubmit decorator is being applied to this form instead of to each of its elements.
+     *
+     * @param   bool    $state
+     *
+     * @return  Form
+     */
+    public function setUseFormAutosubmit($state = true)
+    {
+        $this->useFormAutosubmit = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Return whether the Autosubmit decorator is being applied to this form
+     *
+     * @return  bool
+     */
+    public function getUseFormAutosubmit()
+    {
+        return $this->useFormAutosubmit;
+    }
+
+    /**
      * Create this form
      *
      * @param   array   $formData   The data sent by the user
@@ -477,7 +622,7 @@ class Form extends Zend_Form
     public function addSubForm(Zend_Form $form, $name = null, $order = null)
     {
         if ($form instanceof self) {
-            $form->removeDecorator('Form');
+            $form->setDecorators(array('FormElements')); // TODO: Makes it difficult to customise subform decorators..
             $form->setSubmitLabel('');
             $form->setTokenDisabled();
             $form->setUidDisabled();
@@ -531,22 +676,41 @@ class Form extends Zend_Form
             )
         ));
 
-        if (($description = $el->getDescription()) !== null && ($label = $el->getDecorator('label')) !== false) {
-            $label->setOptions(array(
-                'title' => $description,
-                'class' => 'has-feedback'
-            ));
+        if ($this->protectIds) {
+            $el->setAttrib('id', $this->getRequest()->protectId($this->getId(false) . '_' . $el->getId()));
         }
 
         if ($el->getAttrib('autosubmit')) {
-            $noScript = new NoScriptApply(); // Non-JS environments
+            if ($this->getUseFormAutosubmit()) {
+                $warningId = 'autosubmit_warning_' . $el->getId();
+                $warningText = $this->getView()->escape($this->translate(
+                    'Upon its value has changed, this field issues an automatic update of this page.'
+                ));
+                $autosubmitDecorator = $this->_getDecorator('Callback', array(
+                    'placement' => 'PREPEND',
+                    'callback'  => function ($content) use ($warningId, $warningText) {
+                        return '<span class="sr-only" id="' . $warningId . '">' . $warningText . '</span>';
+                    }
+                ));
+            } else {
+                $autosubmitDecorator = new Autosubmit();
+                $autosubmitDecorator->setAccessible();
+                $warningId = $autosubmitDecorator->getWarningId($el);
+            }
+
             $decorators = $el->getDecorators();
             $pos = array_search('Zend_Form_Decorator_ViewHelper', array_keys($decorators)) + 1;
             $el->setDecorators(
                 array_slice($decorators, 0, $pos, true)
-                + array(get_class($noScript) => $noScript)
+                + array('autosubmit' => $autosubmitDecorator)
                 + array_slice($decorators, $pos, count($decorators) - $pos, true)
             );
+
+            if (($describedBy = $el->getAttrib('aria-describedby')) !== null) {
+                $el->setAttrib('aria-describedby', $describedBy . ' ' . $warningId);
+            } else {
+                $el->setAttrib('aria-describedby', $warningId);
+            }
 
             $class = $el->getAttrib('class');
             if (is_array($class)) {
@@ -556,7 +720,7 @@ class Form extends Zend_Form
             } else {
                 $class .= ' autosubmit';
             }
-            $el->setAttrib('class', $class); // JS environments
+            $el->setAttrib('class', $class);
 
             unset($el->autosubmit);
         }
@@ -576,6 +740,25 @@ class Form extends Zend_Form
         if ($element->isRequired() && strpos(strtolower($element->getType()), 'checkbox') === false) {
             $element->setAttrib('aria-required', 'true'); // ARIA
             $element->setAttrib('required', ''); // HTML5
+            if (($cue = $this->getRequiredCue()) !== null && ($label = $element->getDecorator('label')) !== false) {
+                $element->setLabel($this->getView()->escape($element->getLabel()));
+                $label->setOption('escape', false);
+                $label->setRequiredSuffix(sprintf(' <span aria-hidden="true">%s</span>', $cue));
+            }
+        }
+
+        if ($element->getDescription() !== null && ($help = $element->getDecorator('help')) !== false) {
+            if (($describedBy = $element->getAttrib('aria-describedby')) !== null) {
+                // Assume that it's because of the element being of type autosubmit or
+                // that one who did set the property manually removes the help decorator
+                // in case it has already an aria-describedby property set
+                $element->setAttrib(
+                    'aria-describedby',
+                    $help->setAccessible()->getDescriptionId($element) . ' ' . $describedBy
+                );
+            } else {
+                $element->setAttrib('aria-describedby', $help->setAccessible()->getDescriptionId($element));
+            }
         }
 
         return $element;
@@ -775,7 +958,14 @@ class Form extends Zend_Form
                     'form'          => $this
                 ));
             } else {
+                $this->addDecorator('Description', array('tag' => 'h1'));
+                if ($this->getUseFormAutosubmit()) {
+                    $this->addDecorator('Autosubmit', array('accessible' => true))
+                        ->addDecorator('HtmlTag', array('tag' => 'div', 'class' => 'header'));
+                }
+
                 $this->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
+                    ->addDecorator('FormDescriptions')
                     ->addDecorator('FormElements')
                     //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
                     ->addDecorator('Form');
@@ -783,6 +973,21 @@ class Form extends Zend_Form
         }
 
         return $this;
+    }
+
+    /**
+     * Get element id
+     *
+     * Returns the protected id, in case id protection is enabled.
+     *
+     * @param   bool    $protect
+     *
+     * @return  string
+     */
+    public function getId($protect = true)
+    {
+        $id = parent::getId();
+        return $protect && $this->protectIds ? $this->getRequest()->protectId($id) : $id;
     }
 
     /**
@@ -799,6 +1004,20 @@ class Form extends Zend_Form
             $name = parent::getName();
         }
         return $name;
+    }
+
+    /**
+     * Set form description
+     *
+     * Alias for Zend_Form::setDescription().
+     *
+     * @param   string  $value
+     *
+     * @return  Form
+     */
+    public function setTitle($value)
+    {
+        return $this->setDescription($value);
     }
 
     /**
@@ -852,10 +1071,11 @@ class Form extends Zend_Form
     protected function getTranslationDomain()
     {
         $parts = explode('\\', get_called_class());
-        if ($parts[1] === 'Module') {
+        if (count($parts) > 1 && $parts[1] === 'Module') {
             // Assume format Icinga\Module\ModuleName\Forms\...
             return strtolower($parts[2]);
         }
+
         return 'icinga';
     }
 

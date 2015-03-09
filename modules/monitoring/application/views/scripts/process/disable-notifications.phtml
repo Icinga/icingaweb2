@@ -2,7 +2,7 @@
     <?= $this->tabs->showOnlyCloseButton() ?>
 </div>
 <div class="content">
-    <h1><?= $title ?> <?= $this->icon('help', $form->getHelp()) ?></h1>
+    <h1><?= $title; ?></h1>
     <?php if ((bool) $programStatus->notifications_enabled === false): ?>
     <div>
         <?= $this->translate('Host and service notifications are already disabled.') ?>
@@ -13,6 +13,6 @@
         <?php endif; ?>
     </div>
     <?php else: ?>
-    <?= $form ?>
+    <?= $form; ?>
     <?php endif ?>
 </div>

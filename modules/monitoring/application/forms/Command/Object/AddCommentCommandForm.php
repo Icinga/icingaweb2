@@ -12,25 +12,20 @@ use Icinga\Web\Notification;
 class AddCommentCommandForm extends ObjectsCommandForm
 {
     /**
+     * Initialize this form
+     */
+    public function init()
+    {
+        $this->addDescription($this->translate('This command is used to add host or service comments.'));
+    }
+
+    /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
      */
     public function getSubmitLabel()
     {
-        return mtp(
-            'monitoring', 'Add comment', 'Add comments', count($this->objects)
-        );
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
-     */
-    public function getHelp()
-    {
-        return $this->translate(
-            'This command is used to add host or service comments.'
-        );
+        return $this->translatePlural('Add comment', 'Add comments', count($this->objects));
     }
 
     /**
@@ -84,8 +79,7 @@ class AddCommentCommandForm extends ObjectsCommandForm
             $comment->setPersistent($this->getElement('persistent')->isChecked());
             $this->getTransport($this->request)->send($comment);
         }
-        Notification::success(mtp(
-            'monitoring',
+        Notification::success($this->translatePlural(
             'Adding comment..',
             'Adding comments..',
             count($this->objects)

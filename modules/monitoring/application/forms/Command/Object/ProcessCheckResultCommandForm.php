@@ -12,24 +12,23 @@ use Icinga\Module\Monitoring\Command\Object\ProcessCheckResultCommand;
 class ProcessCheckResultCommandForm extends ObjectsCommandForm
 {
     /**
+     * Initialize this form
+     */
+    public function init()
+    {
+        $this->addDescription($this->translate(
+            'This command is used to submit passive host or service check results.'
+        ));
+    }
+
+    /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
      */
     public function getSubmitLabel()
     {
-        return mtp(
-            'monitoring', 'Submit Passive Check Result', 'Submit Passive Check Results', count($this->objects)
-        );
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
-     */
-    public function getHelp()
-    {
-        return $this->translate(
-            'This command is used to submit passive host or service check results.'
+        return $this->translatePlural(
+            'Submit Passive Check Result', 'Submit Passive Check Results', count($this->objects)
         );
     }
 
@@ -108,8 +107,7 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
             $this->getTransport($this->request)->send($command);
         }
 
-        Notification::success(mtp(
-            'monitoring',
+        Notification::success($this->translatePlural(
             'Processing check result..',
             'Processing check results..',
             count($this->objects)

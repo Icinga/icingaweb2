@@ -125,6 +125,10 @@
             $(document).on('change', 'form select.autosubmit', { self: this }, this.autoSubmitForm);
             $(document).on('change', 'form input.autosubmit', { self: this }, this.autoSubmitForm);
 
+            // Automatically check a radio button once a specific input is focused
+            $(document).on('focus', 'form select[data-related-radiobtn]', { self: this }, this.autoCheckRadioButton);
+            $(document).on('focus', 'form input[data-related-radiobtn]', { self: this }, this.autoCheckRadioButton);
+
             $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitSearch);
 
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
@@ -161,6 +165,15 @@
         onContainerScroll: function (event) {
             // Ugly. And PLEASE, not so often
             icinga.ui.fixControls();
+        },
+
+        autoCheckRadioButton: function (event) {
+            var $input = $(event.currentTarget);
+            var $radio = $('#' + $input.attr('data-related-radiobtn'));
+            if ($radio.length) {
+                $radio.prop('checked', true);
+            }
+            return true;
         },
 
         autoSubmitSearch: function(event) {
@@ -226,9 +239,14 @@
             event.stopPropagation();
             event.preventDefault();
 
+            // activate spinner indicator
+            if ($button.hasClass('spinner')) {
+                $button.addClass('active');
+            }
+
             icinga.logger.debug('Submitting form: ' + method + ' ' + url, method);
 
-            $target = self.getLinkTargetFor($form);
+            $target = self.getLinkTargetFor($button);
 
             if (method === 'GET') {
                 var dataObj = $form.serializeObject();
@@ -438,6 +456,11 @@
                 return;
             }
 
+            // activate spinner indicator
+            if ($a.hasClass('spinner')) {
+                $a.addClass('active');
+            }
+
             // If link has hash tag...
             if (href.match(/#/)) {
                 if (href === '#') {
@@ -548,8 +571,10 @@
             $(document).off('click', 'table.action tr[href]', this.rowSelected);
             $(document).off('click', 'table.action tr a', this.rowSelected);
             $(document).off('submit', 'form', this.submitForm);
-            $(document).off('click', 'button', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
+            $(document).off('change', 'form input.autosubmit', this.submitForm);
+            $(document).off('focus', 'form select[data-related-radiobtn]', this.autoCheckRadioButton);
+            $(document).off('focus', 'form input[data-related-radiobtn]', this.autoCheckRadioButton);
         },
 
         destroy: function() {

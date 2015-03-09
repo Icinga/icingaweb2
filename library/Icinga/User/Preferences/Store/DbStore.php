@@ -203,12 +203,14 @@ class DbStore extends PreferencesStore
             foreach ($preferences as $key => $value) {
                 $db->update(
                     $this->table,
-                    array(self::COLUMN_VALUE => $value),
+                    array(
+                        self::COLUMN_VALUE => $value,
+                        self::COLUMN_MODIFIED_TIME => new Zend_Db_Expr('NOW()')
+                    ),
                     array(
                         self::COLUMN_USERNAME . '=?' => $this->getUser()->getUsername(),
                         $db->quoteIdentifier(self::COLUMN_SECTION) . '=?' => $section,
-                        $db->quoteIdentifier(self::COLUMN_PREFERENCE) . '=?' => $key,
-                        self::COLUMN_MODIFIED_TIME => new Zend_Db_Expr('NOW()')
+                        $db->quoteIdentifier(self::COLUMN_PREFERENCE) . '=?' => $key
                     )
                 );
             }

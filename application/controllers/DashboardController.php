@@ -66,6 +66,7 @@ class DashboardController extends ActionController
             Notification::success(t('Dashlet created'));
             return true;
         });
+        $form->setTitle($this->translate('Add Dashlet To Dashboard'));
         $form->setRedirectUrl('dashboard');
         $form->handleRequest();
         $this->view->form = $form;
@@ -128,6 +129,7 @@ class DashboardController extends ActionController
             Notification::success(t('Dashlet updated'));
             return true;
         });
+        $form->setTitle($this->translate('Edit Dashlet'));
         $form->setRedirectUrl('dashboard/settings');
         $form->handleRequest();
         $pane = $dashboard->getPane($this->getParam('pane'));
@@ -176,6 +178,7 @@ class DashboardController extends ActionController
             }
             return false;
         });
+        $form->setTitle($this->translate('Remove Dashlet From Dashboard'));
         $form->setRedirectUrl('dashboard/settings');
         $form->handleRequest();
         $this->view->pane = $pane;
@@ -215,6 +218,7 @@ class DashboardController extends ActionController
             }
             return false;
         });
+        $form->setTitle($this->translate('Remove Dashboard'));
         $form->setRedirectUrl('dashboard/settings');
         $form->handleRequest();
         $this->view->pane = $pane;
@@ -249,8 +253,9 @@ class DashboardController extends ActionController
                 $this->view->tabs->add(
                     'Add',
                     array(
-                        'title' => '+',
-                        'url' => Url::fromPath('dashboard/new-dashlet')
+                        'label' => '+',
+                        'title' => 'Add a dashlet to an existing or new dashboard',
+                        'url'   => Url::fromPath('dashboard/new-dashlet')
                     )
                 );
                 $this->view->dashboard = $this->dashboard;

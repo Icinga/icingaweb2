@@ -40,8 +40,9 @@ if ($object->acknowledged): ?>
                 $ackLink,
                 null,
                 array(
-                    'icon'  => 'ok',
-                    'title' => $this->translate(
+                    'icon'              => 'ok',
+                    'data-base-target'  => '_self',
+                    'title'             => $this->translate(
                         'Acknowledge this problem, suppress all future notifications for it and tag it as being handled'
                     )
                 )

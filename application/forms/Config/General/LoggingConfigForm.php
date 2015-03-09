@@ -66,6 +66,7 @@ class LoggingConfigForm extends Form
                     'description'   => $this->translate(
                         'The name of the application by which to prefix syslog messages.'
                     ),
+                    'requirement'   => $this->translate('The application prefix must not contain whitespace.'),
                     'value'         => 'icingaweb2',
                     'validators'    => array(
                         array(

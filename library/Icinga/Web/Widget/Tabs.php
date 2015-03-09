@@ -4,6 +4,7 @@
 namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\Tabextension;
 use Icinga\Application\Icinga;
 use Countable;
@@ -23,6 +24,7 @@ class Tabs extends AbstractWidget implements Countable
 <ul class="tabs">
   {TABS}
   {DROPDOWN}
+  {REFRESH}
   {CLOSE}
 </ul>
 EOT;
@@ -59,6 +61,18 @@ EOT;
 </li>
 EOT;
 
+    /**
+     * Template used for the refresh icon
+     *
+     * @var string
+     */
+    private $refreshTpl = <<< 'EOT'
+<li>
+  <a class="spinner" href="{URL}" title="{TITLE}" aria-label="{LABEL}">
+    <i aria-hidden="true" class="icon-cw"></i>
+  </a>
+</li>
+EOT;
 
     /**
      * This is where single tabs added to this container will be stored
@@ -193,7 +207,7 @@ EOT;
      * with tab properties or an instance of an existing Tab
      *
      * @param   string      $name   The new tab name
-     * @param   array|Tab   $tab    The tab itself of it's properties
+     * @param   array|Tab   $tab    The tab itself of its properties
      *
      * @return  self
      *
@@ -218,7 +232,7 @@ EOT;
      * of an existing Tab
      *
      * @param   string      $name   The new tab name
-     * @param   array|Tab   $tab    The tab itself of it's properties
+     * @param   array|Tab   $tab    The tab itself of its properties
      *
      * @return  self
      */
@@ -265,7 +279,7 @@ EOT;
     }
 
     /**
-     * Render the dropdown area with it's tabs and return the resulting HTML
+     * Render the dropdown area with its tabs and return the resulting HTML
      *
      * @return  mixed|string
      */
@@ -308,6 +322,43 @@ EOT;
         return $this->closeTpl;
     }
 
+    private function renderRefreshTab()
+    {
+        $url = Url::fromRequest()->without('renderLayout');
+        $tab = $this->get($this->getActiveName());
+
+        if ($tab !== null) {
+            $label = $this->view()->escape(
+                $tab->getLabel()
+            );
+        }
+
+        if (! empty($label)) {
+            $caption = $label;
+        } else {
+            $caption = t('Content');
+        }
+
+        $label = t(sprintf('Refresh the %s', $caption));
+        $title = $label;
+
+        $tpl = str_replace(
+            array(
+                '{URL}',
+                '{TITLE}',
+                '{LABEL}'
+            ),
+            array(
+                $url,
+                $title,
+                $label
+            ),
+            $this->refreshTpl
+        );
+
+        return $tpl;
+    }
+
     /**
      * Render to HTML
      *
@@ -323,11 +374,13 @@ EOT;
             $drop = $this->renderDropdownTabs();
         }
         $close = $this->closeTab ? $this->renderCloseTab() : '';
+        $refresh = $this->renderRefreshTab();
 
         return str_replace(
             array(
                 '{TABS}',
                 '{DROPDOWN}',
+                '{REFRESH}',
                 '{CLOSE}',
                 '{HEADER}'
             ),
@@ -335,6 +388,7 @@ EOT;
                 $tabs,
                 $drop,
                 $close,
+                $refresh,
                 $this->renderHeader()
             ),
             $this->baseTpl

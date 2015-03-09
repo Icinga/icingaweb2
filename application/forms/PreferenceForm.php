@@ -40,6 +40,7 @@ class PreferenceForm extends Form
     public function init()
     {
         $this->setName('form_config_preferences');
+        $this->setTitle($this->translate('Preferences'));
     }
 
     /**

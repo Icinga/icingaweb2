@@ -37,6 +37,7 @@ EOT;
     public function init()
     {
         $this->setName('setup_ldap_discovery_confirm');
+        $this->setTitle($this->translate('LDAP Discovery Results', 'setup.page.title'));
     }
 
     /**
@@ -77,27 +78,10 @@ EOT;
         $html = str_replace('{user_attribute}', $backend['user_name_attribute'], $html);
         $html = str_replace('{user_class}', $backend['user_class'], $html);
 
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => $this->translate('LDAP Discovery Results', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-        $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => sprintf(
-                    $this->translate('The following directory service has been found on domain "%s":'),
-                    $this->config['domain']
-                )
-            )
-        );
+        $this->addDescription(sprintf(
+            $this->translate('The following directory service has been found on domain "%s".'),
+            $this->config['domain']
+        ));
 
         $this->addElement(
             'note',

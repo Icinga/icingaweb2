@@ -44,47 +44,6 @@ class Connection
     protected $root_dn;
     protected $count;
 
-    protected $ldap_extension = array(
-        '1.3.6.1.4.1.1466.20037' => 'STARTTLS',
-        // '1.3.6.1.4.1.4203.1.11.1' => '11.1', // PASSWORD_MODIFY
-        // '1.3.6.1.4.1.4203.1.11.3' => '11.3', // Whoami
-        // '1.3.6.1.1.8' => '8', // Cancel Extended Request
-    );
-
-    protected $ms_capability = array(
-        // Prefix LDAP_CAP_
-        // Source: http://msdn.microsoft.com/en-us/library/cc223359.aspx
-
-        // Running Active Directory as AD DS:
-        '1.2.840.113556.1.4.800'  => 'ACTIVE_DIRECTORY_OID',
-
-        // Capable of signing and sealing on an NTLM authenticated connection
-        // and of performing subsequent binds on a signed or sealed connection.
-        '1.2.840.113556.1.4.1791' => 'ACTIVE_DIRECTORY_LDAP_INTEG_OID',
-
-        // If AD DS: running at least W2K3, if AD LDS running at least W2K8
-        '1.2.840.113556.1.4.1670' => 'ACTIVE_DIRECTORY_V51_OID',
-
-        // If AD LDS: accepts DIGEST-MD5 binds for AD LDSsecurity principals
-        '1.2.840.113556.1.4.1880' => 'ACTIVE_DIRECTORY_ADAM_DIGEST',
-
-        // Running Active Directory as AD LDS
-        '1.2.840.113556.1.4.1851' => 'ACTIVE_DIRECTORY_ADAM_OID',
-
-        // If AD DS: it's a Read Only DC (RODC)
-        '1.2.840.113556.1.4.1920' => 'ACTIVE_DIRECTORY_PARTIAL_SECRETS_OID',
-
-        // Running at least W2K8
-        '1.2.840.113556.1.4.1935' => 'ACTIVE_DIRECTORY_V60_OID',
-
-        // Running at least W2K8r2
-        '1.2.840.113556.1.4.2080' => 'ACTIVE_DIRECTORY_V61_R2_OID',
-
-        // Running at least W2K12
-        '1.2.840.113556.1.4.2237' => 'ACTIVE_DIRECTORY_W8_OID',
-
-    );
-
     /**
      * Whether the bind on this connection was already performed
      *
@@ -94,11 +53,14 @@ class Connection
 
     protected $root;
 
-    protected $supports_v3  = false;
-    protected $supports_tls = false;
-
+    /**
+     * @var Capability
+     */
     protected $capabilities;
-    protected $namingContexts;
+
+    /**
+     * @var bool
+     */
     protected $discoverySuccess = false;
 
     /**
@@ -337,7 +299,9 @@ class Connection
      */
     protected function pageControlAvailable(Query $query)
     {
-        return $query->getUsePagedResults() && version_compare(PHP_VERSION, '5.4.0') >= 0;
+        return $this->capabilities->hasPagedResult() &&
+               $query->getUsePagedResults() &&
+               version_compare(PHP_VERSION, '5.4.0') >= 0;
     }
 
     /**
@@ -375,7 +339,7 @@ class Connection
         $entries = array();
         do {
             // do not set controlPageResult as a critical extension, since we still want the
-            // server to return an answer in case the pagination extension is missing.
+            // possibillity  server to return an answer in case the pagination extension is missing.
             ldap_control_paged_result($this->ds, $pageSize, false, $cookie);
 
             $results = @ldap_search($this->ds, $base, $queryString, $fields, 0, $limit ? $offset + $limit : 0);
@@ -415,7 +379,7 @@ class Connection
                 }
             } while (($limit === 0 || $limit !== count($entries)) && ($entry = ldap_next_entry($this->ds, $entry)));
 
-            if (false === ldap_control_paged_result_response($this->ds, $results, $cookie)) {
+            if (false === @ldap_control_paged_result_response($this->ds, $results, $cookie)) {
                 // If the page size is greater than or equal to the sizeLimit value, the server should ignore the
                 // control as the request can be satisfied in a single page: https://www.ietf.org/rfc/rfc2696.txt
                 // This applies no matter whether paged search requests are permitted or not. You're done once you
@@ -507,7 +471,6 @@ class Connection
     protected function prepareNewConnection()
     {
         $use_tls = false;
-        $force_tls = true;
         $force_tls = false;
 
         if ($use_tls) {
@@ -516,24 +479,18 @@ class Connection
 
         $ds = ldap_connect($this->hostname, $this->port);
         try {
-            $capabilities = $this->discoverCapabilities($ds);
-            list($cap, $namingContexts) = $capabilities;
+            $this->capabilities = $this->discoverCapabilities($ds);
             $this->discoverySuccess = true;
+
         } catch (LdapException $e) {
 
-            // discovery failed, guess defaults
-            $cap = (object) array(
-                'supports_ldapv3'   => true,
-                'supports_starttls' => false,
-                'msCapabilities'    => array()
-            );
-            $namingContexts = null;
+            // create empty default capabilities
+            Logger::warning('LADP discovery failed, assuming default LDAP settings.');
+            $this->capabilities = new Capability();
         }
-        $this->capabilities = $cap;
-        $this->namingContexts = $namingContexts;
 
         if ($use_tls) {
-            if ($cap->supports_starttls) {
+            if ($this->capabilities->hasStartTLS()) {
                 if (@ldap_start_tls($ds)) {
                     Logger::debug('LDAP STARTTLS succeeded');
                 } else {
@@ -549,11 +506,11 @@ class Connection
                     $this->hostname
                 );
             } else {
-                // TODO: Log noticy -> TLS enabled but not announced
+                Logger::warning('LDAP TLS enabled but not announced');
             }
         }
         // ldap_rename requires LDAPv3:
-        if ($cap->supports_ldapv3) {
+        if ($this->capabilities->hasLdapV3()) {
             if (! ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3)) {
                 throw new LdapException('LDAPv3 is required');
             }
@@ -591,139 +548,13 @@ class Connection
     }
 
     /**
-     * Return if the capability object contains support for StartTLS
+     * Get the capabilities of the connected server
      *
-     * @param $cap  The object containing the capabilities
-     *
-     * @return bool Whether StartTLS is supported
-     */
-    protected function hasCapabilityStartTLS($cap)
-    {
-        $cap = $this->getExtensionCapabilities($cap);
-        return isset($cap['1.3.6.1.4.1.1466.20037']);
-    }
-
-    /**
-     * Return if the capability objects contains support for LdapV3
-     *
-     * @param $cap
-     *
-     * @return bool
-     */
-    protected function hasCapabilityLdapV3($cap)
-    {
-        if ((is_string($cap->supportedLDAPVersion)
-                && (int) $cap->supportedLDAPVersion === 3)
-            || (is_array($cap->supportedLDAPVersion)
-                && in_array(3, $cap->supportedLDAPVersion)
-            )) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Extract an array of all extension capabilities from the given ldap response
-     *
-     * @param $cap      object  The response returned by a ldap_search discovery query
-     *
-     * @return object           The extracted capabilities.
-     */
-    protected function getExtensionCapabilities($cap)
-    {
-        $extensions = array();
-        if (isset($cap->supportedExtension)) {
-            foreach ($cap->supportedExtension as $oid) {
-                if (array_key_exists($oid, $this->ldap_extension)) {
-                    if ($this->ldap_extension[$oid] === 'STARTTLS') {
-                        $extensions['1.3.6.1.4.1.1466.20037'] = $this->ldap_extension['1.3.6.1.4.1.1466.20037'];
-                    }
-                }
-            }
-        }
-        return $extensions;
-    }
-
-    /**
-     * Extract an array of all MSAD capabilities from the given ldap response
-     *
-     * @param $cap      object  The response returned by a ldap_search discovery query
-     *
-     * @return object           The extracted capabilities.
-     */
-    protected function getMsCapabilities($cap)
-    {
-        $ms = array();
-        foreach ($this->ms_capability as $name) {
-            $ms[$this->convName($name)] = false;
-        }
-
-        if (isset($cap->supportedCapabilities)) {
-            foreach ($cap->supportedCapabilities as $oid) {
-                if (array_key_exists($oid, $this->ms_capability)) {
-                    $ms[$this->convName($this->ms_capability[$oid])] = true;
-                }
-            }
-        }
-        return (object)$ms;
-    }
-
-    /**
-     * Convert a single capability name entry into camel-case
-     *
-     * @param   $name   string  The name to convert
-     *
-     * @return          string  The name in camel-case
-     */
-    private function convName($name)
-    {
-        $parts = explode('_', $name);
-        foreach ($parts as $i => $part) {
-            $parts[$i] = ucfirst(strtolower($part));
-        }
-        return implode('', $parts);
-    }
-
-    /**
-     * Get the capabilities of this ldap server
-     *
-     * @return stdClass     An object, providing the flags 'ldapv3' and 'starttls' to indicate LdapV3 and StartTLS
-     * support and an additional property 'msCapabilities', containing all supported active directory capabilities.
+     * @return Capability   The capability object
      */
     public function getCapabilities()
     {
         return $this->capabilities;
-    }
-
-    /**
-     * Get the default naming context of this ldap connection
-     *
-     * @return string|null the default naming context, or null when no contexts are available
-     */
-    public function getDefaultNamingContext()
-    {
-        $cap = $this->capabilities;
-        if (isset($cap->defaultNamingContext)) {
-            return $cap->defaultNamingContext;
-        }
-        $namingContexts = $this->namingContexts($cap);
-        return empty($namingContexts) ? null : $namingContexts[0];
-    }
-
-    /**
-     * Fetch the namingContexts for this Ldap-Connection
-     *
-     * @return array    the available naming contexts
-     */
-    public function namingContexts()
-    {
-        if (!isset($this->namingContexts)) {
-            return array();
-        }
-        if (!is_array($this->namingContexts)) {
-            return array($this->namingContexts);
-        }
-        return $this->namingContexts;
     }
 
     /**
@@ -742,7 +573,7 @@ class Connection
      *
      * @param  resource     $ds     The link identifier of the current ldap connection
      *
-     * @return array                The capabilities and naming-contexts
+     * @return Capability           The capabilities
      * @throws LdapException        When the capability query fails
      */
     protected function discoverCapabilities($ds)
@@ -759,6 +590,7 @@ class Connection
                 'schemaNamingContext',
                 'supportedLDAPVersion', // => array(3, 2)
                 'supportedCapabilities',
+                'supportedControl',
                 'supportedExtension',
                 '+'
             )
@@ -789,19 +621,9 @@ class Connection
             );
         }
 
-        $cap = (object) array(
-            'supports_ldapv3'   => false,
-            'supports_starttls' => false,
-            'msCapabilities' => array()
-        );
-
         $ldapAttributes = ldap_get_attributes($ds, $entry);
         $result = $this->cleanupAttributes($ldapAttributes);
-        $cap->supports_ldapv3 = $this->hasCapabilityLdapV3($result);
-        $cap->supports_starttls = $this->hasCapabilityStartTLS($result);
-        $cap->msCapabilities = $this->getMsCapabilities($result);
-
-        return array($cap,  $result->namingContexts);
+        return new Capability($result);
     }
 
     /**

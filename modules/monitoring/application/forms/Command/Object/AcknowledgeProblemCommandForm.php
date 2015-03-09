@@ -14,27 +14,24 @@ use Icinga\Web\Notification;
 class AcknowledgeProblemCommandForm extends ObjectsCommandForm
 {
     /**
+     * Initialize this form
+     */
+    public function init()
+    {
+        $this->addDescription($this->translate(
+            'This command is used to acknowledge host or service problems. When a problem is acknowledged,'
+            . ' future notifications about problems are temporarily disabled until the host or service'
+            . ' recovers.'
+        ));
+    }
+
+    /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
      */
     public function getSubmitLabel()
     {
-        return mtp(
-            'monitoring', 'Acknowledge problem', 'Acknowledge problems', count($this->objects)
-        );
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
-     */
-    public function getHelp()
-    {
-        return $this->translate(
-            'This command is used to acknowledge host or service problems. When a problem is acknowledged,'
-            . ' future notifications about problems are temporarily disabled until the host or service'
-            . ' recovers.'
-        );
+        return $this->translatePlural('Acknowledge problem', 'Acknowledge problems', count($this->objects));
     }
 
     /**
@@ -156,8 +153,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
             }
             $this->getTransport($this->request)->send($ack);
         }
-        Notification::success(mtp(
-            'monitoring',
+        Notification::success($this->translatePlural(
             'Acknowledging problem..',
             'Acknowledging problems..',
             count($this->objects)

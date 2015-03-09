@@ -16,7 +16,7 @@ use Icinga\Chart\Unit\LinearUnit;
 /**
  * Axis class for the GridChart class.
  *
- * Implements drawing functions for the axis and it's labels but delegates tick and label calculations
+ * Implements drawing functions for the axis and its labels but delegates tick and label calculations
  * to the AxisUnit implementations
  *
  * @see GridChart

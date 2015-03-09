@@ -116,9 +116,9 @@ class DashletForm extends Form
             'checkbox',
             'create_new_pane',
             array(
+                'autosubmit'    => true,
                 'required'      => false,
                 'label'         => $this->translate('New dashboard'),
-                'class'         => 'autosubmit',
                 'description'   => $this->translate('Check this box if you want to add the dashlet to a new dashboard')
             )
         );

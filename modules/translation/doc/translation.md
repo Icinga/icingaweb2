@@ -109,7 +109,7 @@ When you are done, just save your new settings.
 
 To work with Icinga Web 2 .po files, you can open for e.g. the german icinga.po file which is located under
 `application/locale/de_DE/LC_MESSAGES/icinga.po`, as shown below, you will get then a full list of all available
-translation strings for the core application. Each module names it's translation files `%module_name%.po`. For a
+translation strings for the core application. Each module names its translation files `%module_name%.po`. For a
 module called __yourmodule__ the .po translation file will be named `yourmodule.po`.
 
 

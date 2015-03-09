@@ -397,6 +397,7 @@ class Monitoring_ListController extends Controller
         $form->render();
         $this->view->form = $form;
 
+        $this->params->remove('view');
         $orientation = $this->params->shift('vertical', 0) ? 'vertical' : 'horizontal';
 /*
         $orientationBox = new SelectBox(
@@ -702,7 +703,7 @@ class Monitoring_ListController extends Controller
     private function setupSortControl(array $columns)
     {
         $this->view->sortControl = new SortBox(
-            $this->getRequest()->getActionName(),
+            'sortbox-' . $this->getRequest()->getActionName(),
             $columns
         );
         $this->view->sortControl->applyRequest($this->getRequest());

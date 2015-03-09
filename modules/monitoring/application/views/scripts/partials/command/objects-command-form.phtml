@@ -5,7 +5,7 @@
     <?= $this->render('partials/host/objects-header.phtml'); ?>
   <?php endif ?>
 </div>
-<div class="content">
+<div class="content objects-command">
     <table class="objectlist">
         <thead>
             <tr>
@@ -27,6 +27,5 @@
         </tbody>
     </table>
     <hr class="command-separator">
-    <h1 class="command-title"><?= $title ?> <?= /** @var \Icinga\Module\Monitoring\Forms\Command\CommandForm $form */ $this->icon('help', $form->getHelp()) ?></h1>
-    <?= $form ?>
+    <?= $form; ?>
 </div>
