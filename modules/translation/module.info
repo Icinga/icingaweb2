@@ -2,6 +2,6 @@ Module: translation
 Version: 2.0.0~alpha4
 Description: Translation module
  This module allows developers and translators to translate Icinga Web 2 and
- it's modules for multiple languages. You do not need this module to run an
+ its modules for multiple languages. You do not need this module to run an
  internationalized web frontend. This is only for people who want to contribute
  translations or translate just their own moduls.

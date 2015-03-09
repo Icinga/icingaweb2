@@ -18,7 +18,7 @@ use Icinga\Web\Url;
  *
  * The terminology is as follows:
  * - Dashlet:     A single view showing a specific url
- * - Pane:          Aggregates one or more dashlets on one page, displays it's title as a tab
+ * - Pane:          Aggregates one or more dashlets on one page, displays its title as a tab
  * - Dashboard:     Shows all panes
  *
  */
@@ -347,7 +347,7 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * Activates the default pane of this dashboard and returns it's name
+     * Activates the default pane of this dashboard and returns its name
      *
      * @return mixed
      */
