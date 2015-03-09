@@ -4,7 +4,7 @@
 namespace Icinga\Module\Setup\Forms;
 
 use Icinga\Web\Form;
-use Icinga\Module\Setup\Requirements;
+use Icinga\Module\Setup\RequirementSet;
 
 /**
  * Wizard page to list setup requirements
@@ -14,9 +14,9 @@ class RequirementsPage extends Form
     /**
      * The requirements to list
      *
-     * @var Requirements
+     * @var RequirementSet
      */
-    protected $requirements;
+    protected $set;
 
     /**
      * Initialize this page
@@ -30,24 +30,24 @@ class RequirementsPage extends Form
     /**
      * Set the requirements to list
      *
-     * @param   Requirements    $requirements
+     * @param   RequirementSet    $set
      *
      * @return  self
      */
-    public function setRequirements(Requirements $requirements)
+    public function setRequirements(RequirementSet $set)
     {
-        $this->requirements = $requirements;
+        $this->set = $set;
         return $this;
     }
 
     /**
      * Return the requirements to list
      *
-     * @return  Requirements
+     * @return  RequirementSet
      */
     public function getRequirements()
     {
-        return $this->requirements;
+        return $this->set;
     }
 
     /**
@@ -63,6 +63,6 @@ class RequirementsPage extends Form
             return false;
         }
 
-        return $this->requirements->fulfilled();
+        return $this->set->fulfilled();
     }
 }

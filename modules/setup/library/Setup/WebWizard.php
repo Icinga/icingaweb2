@@ -357,9 +357,9 @@ class WebWizard extends Wizard implements SetupWizard
      */
     public function getRequirements()
     {
-        $requirements = new Requirements();
+        $set = new RequirementSet();
 
-        $requirements->add(new PhpVersionRequirement(array(
+        $set->add(new PhpVersionRequirement(array(
             'condition'     => array('>=', '5.3.2'),
             'description'   => mt(
                 'setup',
@@ -368,7 +368,7 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $requirements->add(new PhpConfigRequirement(array(
+        $set->add(new PhpConfigRequirement(array(
             'condition'     => array('date.timezone', true),
             'title'         => mt('setup', 'Default Timezone'),
             'description'   => sprintf(
@@ -377,7 +377,7 @@ class WebWizard extends Wizard implements SetupWizard
             ),
         )));
 
-        $requirements->add(new OSRequirement(array(
+        $set->add(new OSRequirement(array(
             'optional'      => true,
             'condition'     => 'linux',
             'description'   => mt(
@@ -387,7 +387,7 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $requirements->add(new PhpModuleRequirement(array(
+        $set->add(new PhpModuleRequirement(array(
             'condition'     => 'OpenSSL',
             'description'   => mt(
                 'setup',
@@ -395,7 +395,7 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $requirements->add(new PhpModuleRequirement(array(
+        $set->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'JSON',
             'description'   => mt(
@@ -404,7 +404,7 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $requirements->add(new PhpModuleRequirement(array(
+        $set->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'LDAP',
             'description'   => mt(
@@ -413,7 +413,7 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $requirements->add(new PhpModuleRequirement(array(
+        $set->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'INTL',
             'description'   => mt(
@@ -424,7 +424,7 @@ class WebWizard extends Wizard implements SetupWizard
         )));
 
         // TODO(6172): Remove this requirement once we do not ship dompdf with Icinga Web 2 anymore
-        $requirements->add(new PhpModuleRequirement(array(
+        $set->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'DOM',
             'description'   => mt(
@@ -433,7 +433,7 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $requirements->add(new PhpModuleRequirement(array(
+        $set->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'GD',
             'description'   => mt(
@@ -442,7 +442,7 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $requirements->add(new PhpModuleRequirement(array(
+        $set->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'Imagick',
             'description'   => mt(
@@ -451,8 +451,8 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $mysqlRequirements = new Requirements();
-        $mysqlRequirements->add(new PhpModuleRequirement(array(
+        $mysqlSet = new RequirementSet();
+        $mysqlSet->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'mysql',
             'alias'         => 'PDO-MySQL',
@@ -461,7 +461,7 @@ class WebWizard extends Wizard implements SetupWizard
                 'To store users or preferences in a MySQL database the PDO-MySQL module for PHP is required.'
             )
         )));
-        $mysqlRequirements->add(new ClassRequirement(array(
+        $mysqlSet->add(new ClassRequirement(array(
             'optional'      => true,
             'condition'     => 'Zend_Db_Adapter_Pdo_Mysql',
             'alias'         => mt('setup', 'Zend database adapter for MySQL'),
@@ -470,10 +470,10 @@ class WebWizard extends Wizard implements SetupWizard
                 'The Zend database adapter for MySQL is required to access a MySQL database.'
             )
         )));
-        $requirements->merge($mysqlRequirements);
+        $set->merge($mysqlSet);
 
-        $pgsqlRequirements = new Requirements();
-        $pgsqlRequirements->add(new PhpModuleRequirement(array(
+        $pgsqlSet = new RequirementSet();
+        $pgsqlSet->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'pgsql',
             'alias'         => 'PDO-PostgreSQL',
@@ -482,7 +482,7 @@ class WebWizard extends Wizard implements SetupWizard
                 'To store users or preferences in a PostgreSQL database the PDO-PostgreSQL module for PHP is required.'
             )
         )));
-        $pgsqlRequirements->add(new ClassRequirement(array(
+        $pgsqlSet->add(new ClassRequirement(array(
             'optional'      => true,
             'condition'     => 'Zend_Db_Adapter_Pdo_Pgsql',
             'alias'         => mt('setup', 'Zend database adapter for PostgreSQL'),
@@ -491,9 +491,9 @@ class WebWizard extends Wizard implements SetupWizard
                 'The Zend database adapter for PostgreSQL is required to access a PostgreSQL database.'
             )
         )));
-        $requirements->merge($pgsqlRequirements);
+        $set->merge($pgsqlSet);
 
-        $requirements->add(new ConfigDirectoryRequirement(array(
+        $set->add(new ConfigDirectoryRequirement(array(
             'condition'     => Icinga::app()->getConfigDir(),
             'description'   => mt(
                 'setup',
@@ -503,9 +503,9 @@ class WebWizard extends Wizard implements SetupWizard
         )));
 
         foreach ($this->getWizards() as $wizard) {
-            $requirements->merge($wizard->getRequirements());
+            $set->merge($wizard->getRequirements());
         }
 
-        return $requirements;
+        return $set;
     }
 }

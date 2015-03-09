@@ -8,7 +8,7 @@ use Icinga\Web\Wizard;
 use Icinga\Web\Request;
 use Icinga\Module\Setup\Setup;
 use Icinga\Module\Setup\SetupWizard;
-use Icinga\Module\Setup\Requirements;
+use Icinga\Module\Setup\RequirementSet;
 use Icinga\Module\Setup\Forms\SummaryPage;
 use Icinga\Module\Monitoring\Forms\Setup\WelcomePage;
 use Icinga\Module\Monitoring\Forms\Setup\BackendPage;
@@ -136,9 +136,9 @@ class MonitoringWizard extends Wizard implements SetupWizard
      */
     public function getRequirements()
     {
-        $requirements = new Requirements();
+        $set = new RequirementSet();
 
-        $requirements->add(new PhpModuleRequirement(array(
+        $set->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'Sockets',
             'description'   => mt(
@@ -148,9 +148,9 @@ class MonitoringWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $idoRequirements = new Requirements(Requirements::MODE_OR);
-        $mysqlRequirements = new Requirements();
-        $mysqlRequirements->add(new PhpModuleRequirement(array(
+        $idoSet = new RequirementSet(RequirementSet::MODE_OR);
+        $mysqlSet = new RequirementSet();
+        $mysqlSet->add(new PhpModuleRequirement(array(
             'condition'     => 'mysql',
             'alias'         => 'PDO-MySQL',
             'description'   => mt(
@@ -158,7 +158,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
                 'To access the IDO stored in a MySQL database the PDO-MySQL module for PHP is required.'
             )
         )));
-        $mysqlRequirements->add(new ClassRequirement(array(
+        $mysqlSet->add(new ClassRequirement(array(
             'condition'     => 'Zend_Db_Adapter_Pdo_Mysql',
             'alias'         => mt('monitoring', 'Zend database adapter for MySQL'),
             'description'   => mt(
@@ -166,9 +166,9 @@ class MonitoringWizard extends Wizard implements SetupWizard
                 'The Zend database adapter for MySQL is required to access a MySQL database.'
             )
         )));
-        $idoRequirements->merge($mysqlRequirements);
-        $pgsqlRequirements = new Requirements();
-        $pgsqlRequirements->add(new PhpModuleRequirement(array(
+        $idoSet->merge($mysqlSet);
+        $pgsqlSet = new RequirementSet();
+        $pgsqlSet->add(new PhpModuleRequirement(array(
             'condition'     => 'pgsql',
             'alias'         => 'PDO-PostgreSQL',
             'description'   => mt(
@@ -176,7 +176,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
                 'To access the IDO stored in a PostgreSQL database the PDO-PostgreSQL module for PHP is required.'
             )
         )));
-        $pgsqlRequirements->add(new ClassRequirement(array(
+        $pgsqlSet->add(new ClassRequirement(array(
             'condition'     => 'Zend_Db_Adapter_Pdo_Pgsql',
             'alias'         => mt('monitoring', 'Zend database adapter for PostgreSQL'),
             'description'   => mt(
@@ -184,9 +184,9 @@ class MonitoringWizard extends Wizard implements SetupWizard
                 'The Zend database adapter for PostgreSQL is required to access a PostgreSQL database.'
             )
         )));
-        $idoRequirements->merge($pgsqlRequirements);
-        $requirements->merge($idoRequirements);
+        $idoSet->merge($pgsqlSet);
+        $set->merge($idoSet);
 
-        return $requirements;
+        return $set;
     }
 }

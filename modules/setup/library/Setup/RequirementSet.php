@@ -9,7 +9,7 @@ use RecursiveIterator;
 /**
  * Container to store and handle requirements
  */
-class Requirements implements RecursiveIterator
+class RequirementSet implements RecursiveIterator
 {
     /**
      * Mode AND (all requirements must met)
@@ -59,7 +59,7 @@ class Requirements implements RecursiveIterator
      *
      * @param   int     $mode
      *
-     * @return  Requirements
+     * @return  RequirementSet
      *
      * @throws  LogicException      In case the given mode is invalid
      */
@@ -88,7 +88,7 @@ class Requirements implements RecursiveIterator
      *
      * @param   Requirement     $requirement    The requirement to add
      *
-     * @return  Requirements
+     * @return  RequirementSet
      */
     public function add(Requirement $requirement)
     {
@@ -144,14 +144,14 @@ class Requirements implements RecursiveIterator
     /**
      * Register the given requirements
      *
-     * @param   Requirements    $requirements   The requirements to register
+     * @param   RequirementSet  $set    The requirements to register
      *
-     * @return  Requirements
+     * @return  RequirementSet
      */
-    public function merge(Requirements $requirements)
+    public function merge(RequirementSet $set)
     {
-        if ($this->getMode() === static::MODE_OR && $requirements->getMode() === static::MODE_OR) {
-            foreach ($requirements->getAll() as $requirement) {
+        if ($this->getMode() === static::MODE_OR && $set->getMode() === static::MODE_OR) {
+            foreach ($set->getAll() as $requirement) {
                 if ($requirement instanceof static) {
                     $this->merge($requirement);
                 } else {
@@ -159,11 +159,11 @@ class Requirements implements RecursiveIterator
                 }
             }
         } else {
-            if ($requirements->getMode() === static::MODE_OR) {
+            if ($set->getMode() === static::MODE_OR) {
                 $this->containsMandatoryRequirements = true;
             }
 
-            $this->requirements[] = $requirements;
+            $this->requirements[] = $set;
         }
 
         return $this;
@@ -250,7 +250,7 @@ class Requirements implements RecursiveIterator
     /**
      * Return the current element in the iteration
      *
-     * @return  Requirement|Requirements
+     * @return  Requirement|RequirementSet
      */
     public function current()
     {
