@@ -138,6 +138,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
     {
         $set = new RequirementSet();
 
+        // TODO(8254): Add this to the $backendSet
         $set->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'Sockets',
@@ -148,7 +149,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $idoSet = new RequirementSet(false, RequirementSet::MODE_OR);
+        $backendSet = new RequirementSet(false, RequirementSet::MODE_OR);
         $mysqlSet = new RequirementSet(true);
         $mysqlSet->add(new PhpModuleRequirement(array(
             'optional'      => true,
@@ -168,7 +169,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
                 'The Zend database adapter for MySQL is required to access a MySQL database.'
             )
         )));
-        $idoSet->merge($mysqlSet);
+        $backendSet->merge($mysqlSet);
         $pgsqlSet = new RequirementSet(true);
         $pgsqlSet->add(new PhpModuleRequirement(array(
             'optional'      => true,
@@ -188,8 +189,8 @@ class MonitoringWizard extends Wizard implements SetupWizard
                 'The Zend database adapter for PostgreSQL is required to access a PostgreSQL database.'
             )
         )));
-        $idoSet->merge($pgsqlSet);
-        $set->merge($idoSet);
+        $backendSet->merge($pgsqlSet);
+        $set->merge($backendSet);
 
         return $set;
     }
