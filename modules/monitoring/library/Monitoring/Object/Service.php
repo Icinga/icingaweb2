@@ -123,7 +123,6 @@ class Service extends MonitoredObject
             'service_long_output',
             'service_is_flapping',
             'service_state_type',
-            'service_severity',
             'service_last_check',
             'service_notifications_enabled',
             'service_notifications_enabled_changed',
