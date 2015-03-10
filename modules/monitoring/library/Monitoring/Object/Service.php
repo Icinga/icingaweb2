@@ -148,8 +148,6 @@ class Service extends MonitoredObject
             'service_passive_checks_enabled_changed',
             'service_check_execution_time',
             'service_check_latency',
-            'service_current_check_attempt',
-            'service_max_check_attempts',
             'service_obsessing',
             'service_obsessing_changed',
             'service_event_handler_enabled',
