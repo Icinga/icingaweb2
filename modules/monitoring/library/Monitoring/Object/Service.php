@@ -143,7 +143,6 @@ class Service extends MonitoredObject
             'host_passive_checks_enabled',
             'host',
             'service',
-            'service_hard_state',
             'service_problem',
             'service_perfdata',
             'service_active_checks_enabled',
