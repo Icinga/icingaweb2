@@ -268,7 +268,7 @@ class HistoryColorGrid extends AbstractWidget {
                 }
                 $week++;
             }
-            if ($day > cal_days_in_month(CAL_GREGORIAN, $month, $year)) {
+            if ($day > date('t', mktime(0, 0, 0, $month, 1, $year))) {
                 $month++;
                 if ($month > 12) {
                     $year++;
