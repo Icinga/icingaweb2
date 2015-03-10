@@ -1,63 +1,32 @@
 <?php
 
-use \RecursiveIteratorIterator;
 use Icinga\Web\Wizard;
 
 $requirements = $form->getRequirements();
-$iterator = new RecursiveIteratorIterator($requirements);
+echo $requirements;
 
 ?>
-<table class="requirements">
-  <tbody>
-<?php foreach ($iterator as $requirement): ?>
-    <tr>
-      <td><h2><?= $requirement->getTitle(); ?></h2></td>
-      <td style="width: 50%">
-      <?php $descriptions = $requirement->getDescriptions(); ?>
-      <?php if (count($descriptions) > 1): ?>
-        <ul>
-        <?php foreach ($descriptions as $desc): ?>
-          <li><?= $desc; ?></li>
-        <?php endforeach ?>
-        </ul>
-      <?php elseif (! empty($descriptions)): ?>
-        <?= $descriptions[0]; ?>
-      <?php endif ?>
-      </td>
-      <td class="state <?= $requirement->getState() ? 'fulfilled' : (
-        $requirement->isOptional() ? 'not-available' : 'missing'
-      ); ?>"><?= $requirement->getStateText(); ?></td>
-    </tr>
-<?php endforeach ?>
-    <tr>
-      <td></td>
-      <td></td>
-      <td class="btn-update">
-        <div class="buttons">
-          <?php $title = $this->translate('You may also need to restart the web-server for the changes to take effect!'); ?>
-          <?= $this->qlink(
-            $this->translate('Refresh'),
-            null,
-            null,
-            array(
-              'class'       => 'button-like',
-              'title'       => $title,
-              'aria-label'  => sprintf($this->translate('Refresh the page; %s'), $title)
-            )
-          ); ?>
-        </div>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div class="buttons requirements-refresh">
+  <?php $title = $this->translate('You may also need to restart the web-server for the changes to take effect!'); ?>
+  <?= $this->qlink(
+    $this->translate('Refresh'),
+    null,
+    null,
+    array(
+      'class'       => 'button-like',
+      'title'       => $title,
+      'aria-label'  => sprintf($this->translate('Refresh the page; %s'), $title)
+    )
+  ); ?>
+</div>
 <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
   <?= $form->getElement($form->getTokenElementName()); ?>
   <?= $form->getElement($form->getUidElementName()); ?>
-  <div class="buttons" style="margin: 0 0 1.5em;">
+  <div class="buttons">
     <?= $form->getElement(Wizard::BTN_PREV); ?>
     <?php
       $btn = $form->getElement(Wizard::BTN_NEXT);
-      if (false === $requirements->fulfilled()) {
+      if (! $requirements->fulfilled()) {
           $btn->setAttrib('disabled', 1);
       }
       echo $btn;

@@ -110,7 +110,8 @@
 }
 
 #setup div.buttons {
-  margin: 1.5em 0;
+  margin-top: 1.5em; // Yes, -top and -bottom, keep it like that...
+  margin-bottom: 1.5em;
 
   .double {
     position: absolute;
@@ -166,16 +167,35 @@
   }
 }
 
-#setup table.requirements {
+form#setup_requirements {
+  padding-top: 0.5em;
+  border-top: 2px solid @colorPetrol;
+}
+
+div.requirements-refresh {
+  width: 25%;
+  margin-left: 75%;
+  text-align: center;
+}
+
+#setup > table.requirements {
   font-size: 0.9em;
-  margin: -1em -1em 2em;
+}
+
+#setup table.requirements {
+  margin: -1em;
   border-spacing: 1em;
   border-collapse: separate;
-  border-bottom: 2px solid @colorPetrol;
 
   td {
+    padding: 0;
+
     h2 {
       margin: 0 1em 0 0;
+    }
+
+    table {
+      font-size: 102%; // Just a hack for webkit, remove this in case you can't see any difference or make it work without it
     }
 
     ul {
@@ -184,7 +204,16 @@
       list-style-type: square;
     }
 
+    &.title {
+      width: 25%;
+    }
+
+    &.desc {
+      width: 50%;
+    }
+
     &.state {
+      width: 25%;
       color: white;
       padding: 0.4em;
 

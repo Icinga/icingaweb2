@@ -319,4 +319,15 @@ class RequirementSet implements RecursiveIterator
     {
         next($this->requirements);
     }
+
+    /**
+     * Return this set of requirements rendered as HTML
+     *
+     * @return  string
+     */
+    public function __toString()
+    {
+        $renderer = new RequirementsRenderer($this);
+        return (string) $renderer;
+    }
 }
