@@ -132,12 +132,15 @@ class Number extends FormElement
      */
     public function isValid($value, $context = null)
     {
-        $this->setValue($value);
-        $value = $this->getValue();
-        if (! is_numeric($value)) {
-            $this->addError(sprintf($this->translate('\'%s\' is not a valid number'), $value));
+        if (! parent::isValid($value, $context)) {
             return false;
         }
-        return parent::isValid($value, $context);
+
+        if ((! empty($value) || !$this->getAllowEmpty()) && !is_numeric($value)) {
+            $this->addError(sprintf(t('\'%s\' is not a valid number'), $value));
+            return false;
+        }
+
+        return true;
     }
 }
