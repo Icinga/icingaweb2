@@ -135,7 +135,6 @@ class Service extends MonitoredObject
             'service_check_source',
             'service_current_notification_number',
             'host_acknowledged',
-            'host_long_output',
             'host_in_downtime',
             'host_is_flapping',
             'host_last_check',
