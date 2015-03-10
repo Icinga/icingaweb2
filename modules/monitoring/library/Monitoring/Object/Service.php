@@ -132,7 +132,6 @@ class Service extends MonitoredObject
             'service_notifications_enabled_changed',
             'service_action_url',
             'service_notes_url',
-            'service_last_check',
             'service_next_check',
             'service_attempt',
             'service_last_notification',
