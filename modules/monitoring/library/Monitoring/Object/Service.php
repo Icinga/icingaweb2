@@ -154,7 +154,6 @@ class Service extends MonitoredObject
             'service_event_handler_enabled_changed',
             'service_flap_detection_enabled',
             'service_flap_detection_enabled_changed',
-            'service_modified_service_attributes',
             'service_process_performance_data',
             'process_perfdata' => 'service_process_performance_data',
             'service_percent_state_change',
