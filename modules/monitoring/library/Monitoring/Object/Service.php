@@ -118,7 +118,6 @@ class Service extends MonitoredObject
             'service_in_downtime',
             'service_acknowledged',
             'service_handled',
-            'service_unhandled',
             'service_output',
             'service_last_state_change',
             'service_long_output',
