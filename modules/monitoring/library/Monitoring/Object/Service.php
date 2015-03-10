@@ -141,8 +141,6 @@ class Service extends MonitoredObject
             'host_alias',
             'host_active_checks_enabled',
             'host_passive_checks_enabled',
-            'host_last_hard_state',
-            'host_last_hard_state_change',
             'host_last_time_up',
             'host_last_time_down',
             'host_last_time_unreachable',
