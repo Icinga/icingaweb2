@@ -139,7 +139,6 @@ class Service extends MonitoredObject
             'host_notifications_enabled',
             'host_display_name',
             'host_alias',
-            'host_severity',
             'host_perfdata',
             'host_active_checks_enabled',
             'host_passive_checks_enabled',
