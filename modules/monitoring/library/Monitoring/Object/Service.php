@@ -137,7 +137,6 @@ class Service extends MonitoredObject
             'host_acknowledged',
             'host_in_downtime',
             'host_notifications_enabled',
-            'host_notes_url',
             'host_display_name',
             'host_alias',
             'host_ipv4',
