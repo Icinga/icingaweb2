@@ -111,7 +111,6 @@ class Service extends MonitoredObject
             'host_address',
             'host_alias',
             'host_display_name',
-            'host_display_name',
             'host_handled',
             'host_in_downtime',
             'host_last_state_change',
