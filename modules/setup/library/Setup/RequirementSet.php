@@ -12,17 +12,31 @@ use RecursiveIterator;
 class RequirementSet implements RecursiveIterator
 {
     /**
-     * Mode AND (all requirements must met)
+     * Mode AND (all requirements must be met)
      */
     const MODE_AND = 0;
 
     /**
-     * Mode OR (at least one requirement must met)
+     * Mode OR (at least one requirement must be met)
      */
     const MODE_OR = 1;
 
     /**
-     * The mode by with the requirements are evaluated
+     * Whether all requirements meet their condition
+     *
+     * @var bool
+     */
+    protected $state;
+
+    /**
+     * Whether this set is optional
+     *
+     * @var bool
+     */
+    protected $optional;
+
+    /**
+     * The mode by which the requirements are evaluated
      *
      * @var string
      */
@@ -36,26 +50,75 @@ class RequirementSet implements RecursiveIterator
     protected $requirements;
 
     /**
-     * Whether there is any mandatory requirement part of this set
+     * The raw state of this set's requirements
      *
      * @var bool
      */
-    protected $containsMandatoryRequirements;
+    private $forcedState;
 
     /**
-     * Create a new set of requirements
+     * Initialize a new set of requirements
      *
-     * @param   int     $mode   The mode by with to evaluate the requirements
+     * @param   bool    $optional   Whether this set is optional
+     * @param   int     $mode       The mode by which to evaluate this set
      */
-    public function __construct($mode = null)
+    public function __construct($optional = false, $mode = null)
     {
+        $this->optional = $optional;
         $this->requirements = array();
-        $this->containsMandatoryRequirements = false;
         $this->setMode($mode ?: static::MODE_AND);
     }
 
     /**
-     * Set the mode by with to evaluate the requirements
+     * Set the state of this set
+     *
+     * @param   bool    $state
+     *
+     * @return  RequirementSet
+     */
+    public function setState($state)
+    {
+        $this->state = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Return the state of this set
+     *
+     * Alias for RequirementSet::fulfilled(true).
+     *
+     * @return  bool
+     */
+    public function getState()
+    {
+        return $this->fulfilled(true);
+    }
+
+    /**
+     * Set whether this set of requirements should be optional
+     *
+     * @param   bool    $state
+     *
+     * @return  RequirementSet
+     */
+    public function setOptional($state = true)
+    {
+        $this->optional = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Return whether this set of requirements is optional
+     *
+     * @return  bool
+     */
+    public function isOptional()
+    {
+        return $this->optional;
+    }
+
+    /**
+     * Set the mode by which to evaluate the requirements
      *
      * @param   int     $mode
      *
@@ -74,7 +137,7 @@ class RequirementSet implements RecursiveIterator
     }
 
     /**
-     * Return the mode by with the requirements are evaluated
+     * Return the mode by which the requirements are evaluated
      *
      * @return  int
      */
@@ -95,10 +158,7 @@ class RequirementSet implements RecursiveIterator
         $merged = false;
         foreach ($this->requirements as $knownRequirement) {
             if ($knownRequirement instanceof Requirement && $requirement->equals($knownRequirement)) {
-                if ($this->getMode() === static::MODE_AND && !$requirement->isOptional()) {
-                    $knownRequirement->setOptional(false);
-                }
-
+                $knownRequirement->setOptional($requirement->isOptional());
                 foreach ($requirement->getDescriptions() as $description) {
                     $knownRequirement->addDescription($description);
                 }
@@ -109,12 +169,6 @@ class RequirementSet implements RecursiveIterator
         }
 
         if (! $merged) {
-            if ($this->getMode() === static::MODE_OR) {
-                $requirement->setOptional();
-            } elseif (! $requirement->isOptional()) {
-                $this->containsMandatoryRequirements = true;
-            }
-
             $this->requirements[] = $requirement;
         }
 
@@ -132,25 +186,15 @@ class RequirementSet implements RecursiveIterator
     }
 
     /**
-     * Return whether there is any mandatory requirement part of this set
+     * Register the given set of requirements
      *
-     * @return  bool
-     */
-    public function hasAnyMandatoryRequirement()
-    {
-        return $this->containsMandatoryRequirements || $this->getMode() === static::MODE_OR;
-    }
-
-    /**
-     * Register the given requirements
-     *
-     * @param   RequirementSet  $set    The requirements to register
+     * @param   RequirementSet  $set    The set to register
      *
      * @return  RequirementSet
      */
     public function merge(RequirementSet $set)
     {
-        if ($this->getMode() === static::MODE_OR && $set->getMode() === static::MODE_OR) {
+        if ($this->getMode() === $set->getMode() && $this->isOptional() === $set->isOptional()) {
             foreach ($set->getAll() as $requirement) {
                 if ($requirement instanceof static) {
                     $this->merge($requirement);
@@ -159,10 +203,6 @@ class RequirementSet implements RecursiveIterator
                 }
             }
         } else {
-            if ($set->getMode() === static::MODE_OR) {
-                $this->containsMandatoryRequirements = true;
-            }
-
             $this->requirements[] = $set;
         }
 
@@ -172,40 +212,45 @@ class RequirementSet implements RecursiveIterator
     /**
      * Return whether all requirements can successfully be evaluated based on the current mode
      *
+     * In case this is a optional set of requirements (and $force is false), true is returned immediately.
+     *
+     * @param   bool    $force      Whether to ignore the optionality of a set or single requirement
+     *
      * @return  bool
      */
-    public function fulfilled()
+    public function fulfilled($force = false)
     {
-        $state = false;
-        foreach ($this->requirements as $requirement) {
-            if ($requirement instanceof static) {
-                if ($requirement->fulfilled()) {
-                    if ($this->getMode() === static::MODE_OR) {
-                        return true;
-                    }
+        $state = $this->isOptional();
+        if (! $force && $state) {
+            return true;
+        }
 
-                    $state = true;
-                } elseif ($this->getMode() === static::MODE_AND && $requirement->hasAnyMandatoryRequirement()) {
-                    return false;
+        if (! $force && $this->state !== null) {
+            return $this->state;
+        } elseif ($force && $this->forcedState !== null) {
+            return $this->forcedState;
+        }
+
+        $self = $this->requirements;
+        foreach ($self as $requirement) {
+            if ($requirement->getState()) {
+                $state = true;
+                if ($this->getMode() === static::MODE_OR) {
+                    break;
                 }
-            } else {
-                if ($requirement->getState()) {
-                    if ($this->getMode() === static::MODE_OR) {
-                        return true;
-                    }
-
-                    $state = true;
-                } elseif ($this->getMode() === static::MODE_AND) {
-                    if (! $requirement->isOptional()) {
-                        return false;
-                    }
-
-                    $state = true; // There may only be optional requirements...
+            } elseif ($force || !$requirement->isOptional()) {
+                $state = false;
+                if ($this->getMode() === static::MODE_AND) {
+                    break;
                 }
             }
         }
 
-        return $state;
+        if ($force) {
+            return $this->forcedState = $state;
+        }
+
+        return $this->state = $state;
     }
 
     /**

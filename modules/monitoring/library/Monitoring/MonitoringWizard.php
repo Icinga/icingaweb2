@@ -148,9 +148,10 @@ class MonitoringWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $idoSet = new RequirementSet(RequirementSet::MODE_OR);
-        $mysqlSet = new RequirementSet();
+        $idoSet = new RequirementSet(false, RequirementSet::MODE_OR);
+        $mysqlSet = new RequirementSet(true);
         $mysqlSet->add(new PhpModuleRequirement(array(
+            'optional'      => true,
             'condition'     => 'mysql',
             'alias'         => 'PDO-MySQL',
             'description'   => mt(
@@ -159,6 +160,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
             )
         )));
         $mysqlSet->add(new ClassRequirement(array(
+            'optional'      => true,
             'condition'     => 'Zend_Db_Adapter_Pdo_Mysql',
             'alias'         => mt('monitoring', 'Zend database adapter for MySQL'),
             'description'   => mt(
@@ -167,8 +169,9 @@ class MonitoringWizard extends Wizard implements SetupWizard
             )
         )));
         $idoSet->merge($mysqlSet);
-        $pgsqlSet = new RequirementSet();
+        $pgsqlSet = new RequirementSet(true);
         $pgsqlSet->add(new PhpModuleRequirement(array(
+            'optional'      => true,
             'condition'     => 'pgsql',
             'alias'         => 'PDO-PostgreSQL',
             'description'   => mt(
@@ -177,6 +180,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
             )
         )));
         $pgsqlSet->add(new ClassRequirement(array(
+            'optional'      => true,
             'condition'     => 'Zend_Db_Adapter_Pdo_Pgsql',
             'alias'         => mt('monitoring', 'Zend database adapter for PostgreSQL'),
             'description'   => mt(

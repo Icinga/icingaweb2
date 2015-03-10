@@ -451,7 +451,7 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $mysqlSet = new RequirementSet();
+        $mysqlSet = new RequirementSet(true);
         $mysqlSet->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'mysql',
@@ -472,7 +472,7 @@ class WebWizard extends Wizard implements SetupWizard
         )));
         $set->merge($mysqlSet);
 
-        $pgsqlSet = new RequirementSet();
+        $pgsqlSet = new RequirementSet(true);
         $pgsqlSet->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'pgsql',
