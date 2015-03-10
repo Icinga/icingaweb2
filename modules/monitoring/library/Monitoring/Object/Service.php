@@ -146,8 +146,6 @@ class Service extends MonitoredObject
             'service_active_checks_enabled_changed',
             'service_passive_checks_enabled',
             'service_passive_checks_enabled_changed',
-            'service_last_hard_state',
-            'service_last_hard_state_change',
             'service_last_time_ok',
             'service_last_time_warning',
             'service_last_time_critical',
