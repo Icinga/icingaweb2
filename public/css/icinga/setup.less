@@ -168,14 +168,19 @@
 }
 
 form#setup_requirements {
+  margin-top: 2em;
   padding-top: 0.5em;
   border-top: 2px solid @colorPetrol;
-}
 
-div.requirements-refresh {
-  width: 25%;
-  margin-left: 75%;
-  text-align: center;
+  div.buttons div.requirements-refresh {
+    width: 25%;
+    float: right;
+    text-align: center;
+
+    a.button-like {
+      padding: 0.1em 0.4em;
+    }
+  }
 }
 
 #setup > table.requirements {
@@ -228,24 +233,6 @@ div.requirements-refresh {
 
       &.missing {
         background-color: @colorCritical;
-      }
-    }
-
-    &.btn-update {
-      padding-top: 0.3em;
-      text-align: center;
-
-      div.buttons {
-        margin: 0;
-
-        a.button-like {
-          padding: 0.2em 0.5em;
-          background-color: @colorPetro;
-
-          &:hover, &:focus {
-            background-color: #666;
-          }
-        }
       }
     }
   }

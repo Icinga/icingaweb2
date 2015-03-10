@@ -2,23 +2,13 @@
 
 use Icinga\Web\Wizard;
 
-$requirements = $form->getRequirements();
-echo $requirements;
-
 ?>
-<div class="buttons requirements-refresh">
-  <?php $title = $this->translate('You may also need to restart the web-server for the changes to take effect!'); ?>
-  <?= $this->qlink(
-    $this->translate('Refresh'),
-    null,
-    null,
-    array(
-      'class'       => 'button-like',
-      'title'       => $title,
-      'aria-label'  => sprintf($this->translate('Refresh the page; %s'), $title)
-    )
-  ); ?>
-</div>
+<h1>Icinga Web 2</h1>
+<?= $form->getWizard()->getRequirements(true); ?>
+<?php foreach ($form->getWizard()->getPage('setup_modules')->getModuleWizards() as $moduleName => $wizard): ?>
+<h1><?= ucwords($moduleName) . ' ' . $this->translate('Module'); ?></h1>
+<?= $wizard->getRequirements(); ?>
+<?php endforeach ?>
 <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
   <?= $form->getElement($form->getTokenElementName()); ?>
   <?= $form->getElement($form->getUidElementName()); ?>
@@ -26,10 +16,23 @@ echo $requirements;
     <?= $form->getElement(Wizard::BTN_PREV); ?>
     <?php
       $btn = $form->getElement(Wizard::BTN_NEXT);
-      if (! $requirements->fulfilled()) {
+      if (! $form->getWizard()->getRequirements()->fulfilled()) {
           $btn->setAttrib('disabled', 1);
       }
       echo $btn;
     ?>
+    <div class="requirements-refresh">
+      <?php $title = $this->translate('You may also need to restart the web-server for the changes to take effect!'); ?>
+      <?= $this->qlink(
+        $this->translate('Refresh'),
+        null,
+        null,
+        array(
+          'class'       => 'button-like',
+          'title'       => $title,
+          'aria-label'  => sprintf($this->translate('Refresh the page; %s'), $title)
+        )
+      ); ?>
+    </div>
   </div>
 </form>

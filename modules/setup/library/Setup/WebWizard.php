@@ -115,7 +115,7 @@ class WebWizard extends Wizard implements SetupWizard
     public function setupPage(Form $page, Request $request)
     {
         if ($page->getName() === 'setup_requirements') {
-            $page->setRequirements($this->getRequirements());
+            $page->setWizard($this);
         } elseif ($page->getName() === 'setup_preferences_type') {
             $authData = $this->getPageData('setup_authentication_type');
             if ($authData['type'] === 'db') {
@@ -355,7 +355,7 @@ class WebWizard extends Wizard implements SetupWizard
     /**
      * @see SetupWizard::getRequirements()
      */
-    public function getRequirements()
+    public function getRequirements($skipModules = false)
     {
         $set = new RequirementSet();
 
@@ -502,8 +502,10 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
 
-        foreach ($this->getWizards() as $wizard) {
-            $set->merge($wizard->getRequirements());
+        if (! $skipModules) {
+            foreach ($this->getWizards() as $wizard) {
+                $set->merge($wizard->getRequirements());
+            }
         }
 
         return $set;
