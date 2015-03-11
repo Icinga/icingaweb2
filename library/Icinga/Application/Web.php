@@ -5,22 +5,22 @@ namespace Icinga\Application;
 
 require_once __DIR__ . '/ApplicationBootstrap.php';
 
-use Icinga\Authentication\Manager;
-use Icinga\Application\Logger;
-use Icinga\Util\TimezoneDetect;
-use Icinga\Web\Request;
-use Icinga\Web\Response;
-use Icinga\Web\View;
-use Icinga\Web\Session\Session as BaseSession;
-use Icinga\Web\Session;
-use Icinga\User;
-use Icinga\Util\Translator;
+use Zend_Controller_Action_HelperBroker;
+use Zend_Controller_Front;
+use Zend_Controller_Router_Route;
 use Zend_Layout;
 use Zend_Paginator;
 use Zend_View_Helper_PaginationControl;
-use Zend_Controller_Action_HelperBroker;
-use Zend_Controller_Router_Route;
-use Zend_Controller_Front;
+use Icinga\Application\Logger;
+use Icinga\Authentication\Manager;
+use Icinga\User;
+use Icinga\Util\TimezoneDetect;
+use Icinga\Util\Translator;
+use Icinga\Web\Request;
+use Icinga\Web\Response;
+use Icinga\Web\Session;
+use Icinga\Web\Session\Session as BaseSession;
+use Icinga\Web\View;
 
 /**
  * Use this if you want to make use of Icinga functionality in other web projects
