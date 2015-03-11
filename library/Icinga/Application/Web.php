@@ -166,10 +166,8 @@ class Web extends ApplicationBootstrap
                 'layoutPath' => $this->getApplicationDir('/layouts/scripts')
             )
         );
-
         $this->setupFrontController();
         $this->setupViewRenderer();
-
         return $this;
     }
 
@@ -206,11 +204,9 @@ class Web extends ApplicationBootstrap
     private function setupRequest()
     {
         $this->request = new Request();
-
         if ($this->user instanceof User) {
             $this->request->setUser($this->user);
         }
-
         return $this;
     }
 
@@ -222,17 +218,13 @@ class Web extends ApplicationBootstrap
     private function setupFrontController()
     {
         $this->frontController = Zend_Controller_Front::getInstance();
-
         $this->frontController->setRequest($this->request);
-
         $this->frontController->setControllerDirectory($this->getApplicationDir('/controllers'));
-
         $this->frontController->setParams(
             array(
                 'displayExceptions' => true
             )
         );
-
         return $this;
     }
 
@@ -261,17 +253,14 @@ class Web extends ApplicationBootstrap
      */
     private function setupPagination()
     {
-
         Zend_Paginator::addScrollingStylePrefixPath(
             'Icinga_Web_Paginator_ScrollingStyle',
             'Icinga/Web/Paginator/ScrollingStyle'
         );
-
         Zend_Paginator::setDefaultScrollingStyle('SlidingWithBorder');
         Zend_View_Helper_PaginationControl::setDefaultViewPartial(
             array('mixedPagination.phtml', 'default')
         );
-
         return $this;
     }
 
