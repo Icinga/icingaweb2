@@ -337,4 +337,3 @@ class Web extends ApplicationBootstrap
         return $this;
     }
 }
-// @codeCoverageIgnoreEnd
