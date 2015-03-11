@@ -74,26 +74,26 @@ abstract class MonitoredObjectController extends Controller
             }
         }
         $this->object->populate();
-        if (count($this->object->comments) > 0 && $auth->hasPermission('monitoring/command/comment/delete')) {
-            $delCommentForm = new DeleteCommentCommandForm();
-            $delCommentForm
-                ->setObjects($this->object)
-                ->handleRequest();
-            $this->view->delCommentForm = $delCommentForm;
-        }
-        if (count($this->object->downtimes > 0) && $auth->hasPermission('monitoring/command/downtime/delete')) {
-            $delDowntimeForm = new DeleteDowntimeCommandForm();
-            $delDowntimeForm
-                ->setObjects($this->object)
-                ->handleRequest();
-            $this->view->delDowntimeForm = $delDowntimeForm;
-        }
         $toggleFeaturesForm = new ToggleObjectFeaturesCommandForm();
         $toggleFeaturesForm
             ->load($this->object)
             ->setObjects($this->object)
             ->handleRequest();
         $this->view->toggleFeaturesForm = $toggleFeaturesForm;
+        if (! empty($this->object->comments) && $auth->hasPermission('monitoring/command/comment/delete')) {
+            $delCommentForm = new DeleteCommentCommandForm();
+            $delCommentForm
+                ->setObjects($this->object)
+                ->handleRequest();
+            $this->view->delCommentForm = $delCommentForm;
+        }
+        if (! empty($this->object->downtimes) && $auth->hasPermission('monitoring/command/downtime/delete')) {
+            $delDowntimeForm = new DeleteDowntimeCommandForm();
+            $delDowntimeForm
+                ->setObjects($this->object)
+                ->handleRequest();
+            $this->view->delDowntimeForm = $delDowntimeForm;
+        }
         $this->view->object = $this->object;
     }
 
