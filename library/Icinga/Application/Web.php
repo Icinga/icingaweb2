@@ -7,8 +7,6 @@ require_once __DIR__ . '/ApplicationBootstrap.php';
 
 use Icinga\Authentication\Manager as AuthenticationManager;
 use Icinga\Authentication\Manager;
-use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\NotReadableError;
 use Icinga\Application\Logger;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Web\Request;
@@ -18,9 +16,6 @@ use Icinga\Web\Session\Session as BaseSession;
 use Icinga\Web\Session;
 use Icinga\User;
 use Icinga\Util\Translator;
-use Icinga\Util\DateTimeFactory;
-use DateTimeZone;
-use Exception;
 use Zend_Layout;
 use Zend_Paginator;
 use Zend_View_Helper_PaginationControl;
