@@ -3,8 +3,14 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+/**
+ * Query for host and service downtimes
+ */
 class DowntimeQuery extends IdoQuery
 {
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'downtime' => array(
             'downtime_author'           => 'sd.author_name',
@@ -44,6 +50,9 @@ class DowntimeQuery extends IdoQuery
         )
     );
 
+    /**
+     * {@inheritdoc}
+     */
     protected function joinBaseTables()
     {
         $this->select->from(
@@ -63,6 +72,11 @@ class DowntimeQuery extends IdoQuery
         $this->joinedVirtualTables = array('downtime' => true);
     }
 
+    /**
+     * Join downtimes' hosts
+     *
+     * @return $this
+     */
     protected function joinHosts()
     {
         $this->select->joinLeft(
@@ -73,6 +87,11 @@ class DowntimeQuery extends IdoQuery
         return $this;
     }
 
+    /**
+     * Join downtimes' hosts' status
+     *
+     * @return $this
+     */
     protected function joinHoststatus()
     {
         $this->select->joinLeft(
@@ -80,8 +99,14 @@ class DowntimeQuery extends IdoQuery
             'ho.object_id = hs.host_object_id',
             array()
         );
+        return $this;
     }
 
+    /**
+     * Join downtimes' services
+     *
+     * @return $this
+     */
     protected function joinServices()
     {
         $this->select->joinLeft(
@@ -97,6 +122,11 @@ class DowntimeQuery extends IdoQuery
         return $this;
     }
 
+    /**
+     * Join downtimes' services' status
+     *
+     * @return $this
+     */
     protected function joinServicestatus()
     {
         $this->select->joinLeft(
