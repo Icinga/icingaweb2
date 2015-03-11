@@ -157,7 +157,7 @@ class Form extends Zend_Form
     public static $defaultElementDecorators = array(
         array('ViewHelper', array('separator' => '')),
         array('Errors', array('separator' => '')),
-        array('Help'),
+        array('Help', array('placement' => 'PREPEND')),
         array('Label', array('separator' => '')),
         array('HtmlTag', array('tag' => 'div', 'class' => 'element'))
     );
@@ -622,7 +622,7 @@ class Form extends Zend_Form
     public function addSubForm(Zend_Form $form, $name = null, $order = null)
     {
         if ($form instanceof self) {
-            $form->removeDecorator('Form');
+            $form->setDecorators(array('FormElements')); // TODO: Makes it difficult to customise subform decorators..
             $form->setSubmitLabel('');
             $form->setTokenDisabled();
             $form->setUidDisabled();
@@ -743,7 +743,7 @@ class Form extends Zend_Form
             if (($cue = $this->getRequiredCue()) !== null && ($label = $element->getDecorator('label')) !== false) {
                 $element->setLabel($this->getView()->escape($element->getLabel()));
                 $label->setOption('escape', false);
-                $label->setOption('requiredSuffix', sprintf(' <span aria-hidden="true">%s</span>', $cue));
+                $label->setRequiredSuffix(sprintf(' <span aria-hidden="true">%s</span>', $cue));
             }
         }
 

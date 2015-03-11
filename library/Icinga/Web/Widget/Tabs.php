@@ -207,7 +207,7 @@ EOT;
      * with tab properties or an instance of an existing Tab
      *
      * @param   string      $name   The new tab name
-     * @param   array|Tab   $tab    The tab itself of it's properties
+     * @param   array|Tab   $tab    The tab itself of its properties
      *
      * @return  self
      *
@@ -232,7 +232,7 @@ EOT;
      * of an existing Tab
      *
      * @param   string      $name   The new tab name
-     * @param   array|Tab   $tab    The tab itself of it's properties
+     * @param   array|Tab   $tab    The tab itself of its properties
      *
      * @return  self
      */
@@ -279,7 +279,7 @@ EOT;
     }
 
     /**
-     * Render the dropdown area with it's tabs and return the resulting HTML
+     * Render the dropdown area with its tabs and return the resulting HTML
      *
      * @return  mixed|string
      */

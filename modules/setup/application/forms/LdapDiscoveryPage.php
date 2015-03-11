@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Setup\Forms;
 
+use Exception;
 use Zend_Validate_NotEmpty;
 use Icinga\Web\Form;
 use Icinga\Web\Form\ErrorLabeller;
@@ -68,9 +69,12 @@ class LdapDiscoveryPage extends Form
         }
 
         if (isset($data['domain']) && $data['domain']) {
-            $this->discovery = Discovery::discoverDomain($data['domain']);
-            if ($this->discovery->isSuccess()) {
-                return true;
+            try {
+                $this->discovery = Discovery::discoverDomain($data['domain']);
+                if ($this->discovery->isSuccess()) {
+                    return true;
+                }
+            } catch (Exception $e) {
             }
 
             $this->addError(

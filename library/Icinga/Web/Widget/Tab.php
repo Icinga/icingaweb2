@@ -140,6 +140,10 @@ class Tab extends AbstractWidget
      */
     public function getLabel()
     {
+        if (! $this->label) {
+            return $this->title;
+        }
+
         return $this->label;
     }
 
@@ -238,7 +242,7 @@ class Tab extends AbstractWidget
             $classes[] = 'active';
         }
 
-        $caption = $view->escape($this->label);
+        $caption = $view->escape($this->getLabel());
         $tagParams = $this->tagParams;
 
         if ($this->title) {

@@ -27,7 +27,7 @@ class BasePreferenceController extends ActionController
     }
 
     /**
-     *  Initialize the controller and collect all tabs for it from the application and it's modules
+     *  Initialize the controller and collect all tabs for it from the application and its modules
      *
      *  @see ActionController::init()
      */

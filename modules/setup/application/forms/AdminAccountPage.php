@@ -272,7 +272,8 @@ class AdminAccountPage extends Form
                 ResourceFactory::createResource(new ConfigObject($this->resourceConfig)),
                 $this->backendConfig['user_class'],
                 $this->backendConfig['user_name_attribute'],
-                $this->backendConfig['base_dn']
+                $this->backendConfig['base_dn'],
+                $this->backendConfig['filter']
             );
         } else {
             throw new LogicException(

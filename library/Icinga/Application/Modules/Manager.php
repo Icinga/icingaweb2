@@ -252,7 +252,7 @@ class Manager
     }
 
     /**
-     * Disable the given module and remove it's enabled state
+     * Disable the given module and remove its enabled state
      *
      * @param   string $name                The name of the module to disable
      *
