@@ -144,7 +144,7 @@ class AuthenticationController extends ActionController
             $this->view->form->addError($e->getMessage());
         }
 
-        $this->view->requiresExternalAuth = $triedOnlyExternalAuth && !$auth->isAuthenticated();
+        $this->view->requiresExternalAuth = $triedOnlyExternalAuth && ! $auth->isAuthenticated();
         $this->view->requiresSetup = Icinga::app()->requiresSetup();
     }
 
