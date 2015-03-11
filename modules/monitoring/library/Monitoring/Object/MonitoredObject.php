@@ -459,7 +459,6 @@ abstract class MonitoredObject implements Filterable
                 'output',
                 'type'
         ))
-            ->order('timestamp', 'DESC')
             ->where('host_name', $this->host_name);
         if ($this->type === self::TYPE_SERVICE) {
             $eventHistory->where('service_description', $this->service_description);
