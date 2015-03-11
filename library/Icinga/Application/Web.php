@@ -314,13 +314,15 @@ class Web extends ApplicationBootstrap
     protected function detectLocale()
     {
         $auth = Manager::getInstance();
-        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) && !$auth->isAuthenticated()
-            || ($locale = $auth->getUser()->getPreferences()->getValue('icingaweb', 'language')) === null
+        if ($auth->isAuthenticated()
+            && ($locale = $auth->getUser()->getPreferences()->getValue('icingaweb', 'language')) !== null
         ) {
-            $locale = Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+            return $locale;
         }
-
-        return $locale;
+        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+            return Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+        }
+        return Translator::DEFAULT_LOCALE;
     }
 
     /**
