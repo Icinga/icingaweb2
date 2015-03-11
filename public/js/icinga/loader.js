@@ -245,6 +245,15 @@
             }
         },
 
+        /**
+         * Process the X-Icinga-Redirect HTTP Response Header
+         *
+         * If the response includes the X-Icinga-Redirect header, redirects to the URL associated with the header.
+         *
+         * @param   {object}    req     Current request
+         *
+         * @returns {boolean}           Whether we're about to redirect
+         */
         processRedirectHeader: function(req) {
             var icinga      = this.icinga,
                 redirect    = req.getResponseHeader('X-Icinga-Redirect');
