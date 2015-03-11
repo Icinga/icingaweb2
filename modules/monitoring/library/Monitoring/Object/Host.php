@@ -128,8 +128,7 @@ class Host extends MonitoredObject
             'host_is_flapping',
             'host_action_url',
             'host_notes_url',
-            'host_process_performance_data',
-            'process_perfdata' => 'host_process_performance_data'
+            'host_process_perfdata' => 'host_process_performance_data'
         );
         if ($this->backend->getType() === 'livestatus') {
             $columns[] = 'host_contacts';
