@@ -34,7 +34,7 @@
             if (navigator.userAgent.toLowerCase().indexOf('msie') !== -1) {
                 document.execCommand('ClearAuthenticationCache');
             } else {
-                var xhttp = getXMLHttpRequest();
+                var xhttp = new XMLHttpRequest();
                 xhttp.open('GET', 'arbitrary url', true, 'logout', 'logout');
                 xhttp.send('');
                 xhttp.abort();
