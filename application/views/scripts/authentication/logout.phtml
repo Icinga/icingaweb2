@@ -18,7 +18,7 @@
         ); ?>
     </div>
 
-    <div class="container" >
+    <div class="container">
         <a href="<?= $this->href('dashboard/index'); ?>"><?= $this->translate('Login'); ?></a>
     </div>
 </div>
@@ -28,8 +28,8 @@
      * before it is able to finish. This will cause the browser to show a new authentication prompt in the next
      * request.
      */
-    $(document).ready(function() {
-        var msg = $('#logout-status');
+    document.addEventListener('DOMContentLoaded', function () {
+        var msg = document.getElementById('logout-status');
         try {
             if (navigator.userAgent.toLowerCase().indexOf('msie') !== -1) {
                 document.execCommand('ClearAuthenticationCache');
@@ -41,8 +41,7 @@
             }
         } catch (e) {
         }
-        msg.html('<?= $this->translate('Logout successful!'); ?>');
-        msg.removeClass();
-        msg.addClass('alert alert-success');
+        msg.innerHTML = '<?= $this->translate('Logout successful!'); ?>';
+        msg.className = 'alert alert-success';
     });
 </script>
