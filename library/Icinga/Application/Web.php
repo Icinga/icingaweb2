@@ -5,7 +5,6 @@ namespace Icinga\Application;
 
 require_once __DIR__ . '/ApplicationBootstrap.php';
 
-use Icinga\Authentication\Manager as AuthenticationManager;
 use Icinga\Authentication\Manager;
 use Icinga\Application\Logger;
 use Icinga\Util\TimezoneDetect;
@@ -181,12 +180,10 @@ class Web extends ApplicationBootstrap
      */
     private function setupUser()
     {
-        $authenticationManager = AuthenticationManager::getInstance();
-
-        if ($authenticationManager->isAuthenticated() === true) {
-            $this->user = $authenticationManager->getUser();
+        $auth = Manager::getInstance();
+        if ($auth->isAuthenticated() === true) {
+            $this->user = $auth->getUser();
         }
-
         return $this;
     }
 
