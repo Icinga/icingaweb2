@@ -295,9 +295,9 @@ class ActionController extends Zend_Controller_Action
     /**
      * Redirect to login
      *
-     * XHR will always redirect to __SELF__. __SELF__ instructs JavaScript to redirect to the current window's URL
-     * if it's an auto-refresh request or to redirect to the URL which required login if it's not an auto-refreshing
-     * one.
+     * XHR will always redirect to __SELF__ if an URL to redirect to after successful login is set. __SELF__ instructs
+     * JavaScript to redirect to the current window's URL if it's an auto-refresh request or to redirect to the URL
+     * which required login if it's not an auto-refreshing one.
      *
      * XHR will respond with HTTP status code 403 Forbidden.
      *
@@ -307,7 +307,9 @@ class ActionController extends Zend_Controller_Action
     {
         $login = Url::fromPath('authentication/login');
         if ($this->isXhr()) {
-            $login->setParam('redirect', '__SELF__');
+            if ($redirect !== null) {
+                $login->setParam('redirect', '__SELF__');
+            }
             $this->_response->setHttpResponseCode(403);
         } elseif ($redirect !== null) {
             if (! $redirect instanceof Url) {
