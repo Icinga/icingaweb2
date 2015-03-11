@@ -3,6 +3,7 @@
 
 namespace Icinga\Protocol\Ldap;
 
+use Exception;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Application\Platform;
@@ -75,7 +76,7 @@ class Connection
         $this->bind_dn  = $config->bind_dn;
         $this->bind_pw  = $config->bind_pw;
         $this->root_dn  = $config->root_dn;
-        $this->port = $config->get('port') ?: $this->port;
+        $this->port = $config->get('port', $this->port);
     }
 
     public function getHostname()

@@ -32,7 +32,7 @@ class LdapResourceForm extends Form
             array(
                 'required'      => true,
                 'label'         => $this->translate('Resource Name'),
-                'description'   => $this->translate('The unique name of this resource.')
+                'description'   => $this->translate('The unique name of this resource')
             )
         );
         $this->addElement(
@@ -42,40 +42,18 @@ class LdapResourceForm extends Form
                 'required'      => true,
                 'label'         => $this->translate('Host'),
                 'description'   => $this->translate(
-                    'The hostname, address or URL of the LDAP server.'
+                    'The hostname or address of the LDAP server to use for authentication'
                 ),
-                'value'         => 'localhost',
-                'validators'    => array(
-                    array(
-                        'Callback',
-                        false,
-                        array(
-                            'callback'  => function ($v) {
-                                return strpos($v, '?') === false;
-                            },
-                            'messages'  => array(
-                                'callbackValue' => $this->translate(
-                                    'The URL pointing to the LDAP server must not contain any filter attributes.'
-                                )
-                            )
-                        )
-                    )
-                ),
-                'requirement'   => $this->translate(
-                    'The LDAP server\'s URL must have the following format: [ldap[s]://]host[:port]'
-                )
+                'value'         => 'localhost'
             )
         );
         $this->addElement(
             'number',
             'port',
             array(
-                'allowEmpty'    => true,
+                'required'      => true,
                 'label'         => $this->translate('Port'),
-                'description'   => $this->translate(
-                    'The port of the LDAP server. Leave empty if you\'ll set this as part of the URL above.'
-                    . ' If not set the default port (389) is being used.'
-                ),
+                'description'   => $this->translate('The port of the LDAP server to use for authentication'),
                 'value'         => 389
             )
         );
@@ -96,7 +74,7 @@ class LdapResourceForm extends Form
             array(
                 'required'      => true,
                 'label'         => $this->translate('Bind DN'),
-                'description'   => $this->translate('The user dn to use for querying the ldap server.')
+                'description'   => $this->translate('The user dn to use for querying the ldap server')
             )
         );
         $this->addElement(
@@ -106,7 +84,7 @@ class LdapResourceForm extends Form
                 'required'          => true,
                 'renderPassword'    => true,
                 'label'             => $this->translate('Bind Password'),
-                'description'       => $this->translate('The password to use for querying the ldap server.')
+                'description'       => $this->translate('The password to use for querying the ldap server')
             )
         );
 
