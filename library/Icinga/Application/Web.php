@@ -84,7 +84,7 @@ class Web extends ApplicationBootstrap
     /**
      * Initialize all together
      *
-     * @return self
+     * @return $this
      */
     protected function bootstrap()
     {
@@ -112,7 +112,7 @@ class Web extends ApplicationBootstrap
     /**
      * Prepare routing
      *
-     * @return self
+     * @return $this
      */
     private function setupRoute()
     {
@@ -161,7 +161,7 @@ class Web extends ApplicationBootstrap
     /**
      * Prepare Zend MVC Base
      *
-     * @return self
+     * @return $this
      */
     private function setupZendMvc()
     {
@@ -182,7 +182,7 @@ class Web extends ApplicationBootstrap
     /**
      * Create user object
      *
-     * @return  self
+     * @return $this
      */
     private function setupUser()
     {
@@ -198,7 +198,7 @@ class Web extends ApplicationBootstrap
     /**
      * Initialize a session provider
      *
-     * @return  self
+     * @return $this
      */
     private function setupSession()
     {
@@ -209,7 +209,7 @@ class Web extends ApplicationBootstrap
     /**
      * Inject dependencies into request
      *
-     * @return self
+     * @return $this
      */
     private function setupRequest()
     {
@@ -225,7 +225,7 @@ class Web extends ApplicationBootstrap
     /**
      * Instantiate front controller
      *
-     * @return self
+     * @return $this
      */
     private function setupFrontController()
     {
@@ -247,7 +247,7 @@ class Web extends ApplicationBootstrap
     /**
      * Register helper paths and views for renderer
      *
-     * @return self
+     * @return $this
      */
     private function setupViewRenderer()
     {
@@ -270,7 +270,7 @@ class Web extends ApplicationBootstrap
     /**
      * Configure pagination settings
      *
-     * @return self
+     * @return $this
      */
     private function setupPagination()
     {
@@ -330,7 +330,7 @@ class Web extends ApplicationBootstrap
     /**
      * Setup an autoloader namespace for Icinga\Forms
      *
-     * @return  self
+     * @return $this
      */
     private function setupFormNamespace()
     {
