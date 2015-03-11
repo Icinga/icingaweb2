@@ -307,9 +307,11 @@ class Web extends ApplicationBootstrap
     /**
      * Setup internationalization using gettext
      *
-     * Uses the preferred user language or the configured default and system default, respectively.
+     * Uses the preferred user language or the browser suggested language or our default.
      *
-     * @return  self
+     * @return  string                      Detected locale code
+     *
+     * @see     Translator::DEFAULT_LOCALE  For the the default locale code.
      */
     protected function detectLocale()
     {
