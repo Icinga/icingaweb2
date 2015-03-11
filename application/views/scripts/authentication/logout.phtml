@@ -28,7 +28,7 @@
      * request.
      */
     $(document).ready(function() {
-        msg = $('#logout-status');
+        var msg = $('#logout-status');
         try {
             if (navigator.userAgent.toLowerCase().indexOf('msie') !== -1) {
                 document.execCommand('ClearAuthenticationCache');
