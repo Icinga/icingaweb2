@@ -307,6 +307,8 @@ class ActionController extends Zend_Controller_Action
                 $afterLogin = Url::fromPath($afterLogin);
             }
             if ($this->isXhr()) {
+                // __SELF__ instructs JavaScript to redirect to the current window's URL in case it's an auto-refreshing
+                // request or to redirect to the URL which required login in case it's not an auto-refreshing one
                 $redir = '__SELF__';
             } else {
                 // TODO: Ignore /?
@@ -319,7 +321,6 @@ class ActionController extends Zend_Controller_Action
         if ($redir) {
             $url->setParam('redirect', $redir);
         }
-
         $this->rerenderLayout()->redirectNow($url);
     }
 
