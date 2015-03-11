@@ -159,7 +159,6 @@ class Web extends ApplicationBootstrap
      */
     private function setupZendMvc()
     {
-        // TODO: Replace Zend_Application:
         Zend_Layout::startMvc(
             array(
                 'layout'     => 'layout',
