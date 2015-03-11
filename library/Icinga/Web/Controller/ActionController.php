@@ -293,35 +293,26 @@ class ActionController extends Zend_Controller_Action
     }
 
     /**
-     * Redirect to the login path
+     * Redirect to login
      *
-     * @param   Url         $afterLogin   The action to call when the login was successful. Defaults to '/index/welcome'
+     * XHR will always redirect to __SELF__. __SELF__ instructs JavaScript to redirect to the current window's URL
+     * if it's an auto-refresh request or to redirect to the URL which required login if it's not an auto-refreshing
+     * one.
      *
-     * @throws  \Exception
+     * @param   Url|string  $redirect   URL to redirect to after successful login
      */
-    protected function redirectToLogin($afterLogin = null)
+    protected function redirectToLogin($redirect = null)
     {
-        $redir = null;
-        if ($afterLogin !== null) {
-            if (! $afterLogin instanceof Url) {
-                $afterLogin = Url::fromPath($afterLogin);
+        $login = Url::fromPath('authentication/login');
+        if ($this->isXhr()) {
+            $login->setParam('redirect', '__SELF__');
+        } elseif ($redirect !== null) {
+            if (! $redirect instanceof Url) {
+                $redirect = Url::fromPath($redirect);
             }
-            if ($this->isXhr()) {
-                // __SELF__ instructs JavaScript to redirect to the current window's URL in case it's an auto-refreshing
-                // request or to redirect to the URL which required login in case it's not an auto-refreshing one
-                $redir = '__SELF__';
-            } else {
-                // TODO: Ignore /?
-                $redir = $afterLogin->getRelativeUrl();
-            }
+            $login->setParam('redirect', $redirect->getRelativeUrl());
         }
-
-        $url = Url::fromPath('authentication/login');
-
-        if ($redir) {
-            $url->setParam('redirect', $redir);
-        }
-        $this->rerenderLayout()->redirectNow($url);
+        $this->rerenderLayout()->redirectNow($login);
     }
 
     protected function rerenderLayout()
