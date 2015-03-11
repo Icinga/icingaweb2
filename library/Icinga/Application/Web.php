@@ -178,7 +178,7 @@ class Web extends ApplicationBootstrap
     private function setupUser()
     {
         $auth = Manager::getInstance();
-        if ($auth->isAuthenticated() === true) {
+        if ($auth->isAuthenticated()) {
             $this->user = $auth->getUser();
         }
         return $this;
