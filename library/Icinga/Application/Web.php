@@ -18,7 +18,7 @@ use Icinga\Util\Translator;
 use Zend_Layout;
 use Zend_Paginator;
 use Zend_View_Helper_PaginationControl;
-use Zend_Controller_Action_HelperBroker as ActionHelperBroker;
+use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Router_Route;
 use Zend_Controller_Front;
 
@@ -243,19 +243,14 @@ class Web extends ApplicationBootstrap
      */
     private function setupViewRenderer()
     {
+        $view = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
         /** @var \Zend_Controller_Action_Helper_ViewRenderer $view */
-        $view = ActionHelperBroker::getStaticHelper('viewRenderer');
         $view->setView(new View());
-
         $view->view->addHelperPath($this->getApplicationDir('/views/helpers'));
-
         $view->view->setEncoding('UTF-8');
         $view->view->headTitle()->prepend($this->config->get('global', 'project', 'Icinga'));
-
         $view->view->headTitle()->setSeparator(' :: ');
-
         $this->viewRenderer = $view;
-
         return $this;
     }
 
