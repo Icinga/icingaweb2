@@ -128,7 +128,6 @@ class Host extends MonitoredObject
             'host_is_flapping',
             'host_action_url',
             'host_notes_url',
-            'host_modified_host_attributes',
             'host_problem',
             'host_process_performance_data',
             'process_perfdata' => 'host_process_performance_data'
