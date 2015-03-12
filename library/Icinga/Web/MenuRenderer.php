@@ -6,6 +6,7 @@ namespace Icinga\Web;
 use Exception;
 use RecursiveIteratorIterator;
 use Icinga\Application\Logger;
+use Icinga\Web\Menu\PermittedMenuItemFilter;
 
 /**
  * A renderer to draw a menu with its sub-menus using an unordered html list
@@ -44,7 +45,7 @@ class MenuRenderer extends RecursiveIteratorIterator
         } else {
             $this->url = Url::fromPath($url);
         }
-        parent::__construct($menu, RecursiveIteratorIterator::CHILD_FIRST);
+        parent::__construct(new PermittedMenuItemFilter($menu), RecursiveIteratorIterator::CHILD_FIRST);
     }
 
     /**
