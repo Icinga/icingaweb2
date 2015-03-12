@@ -36,14 +36,14 @@ class Connection
      *
      * @var string
      */
-    const STARTTLS = 'tls';
+    const STARTTLS = 'starttls';
 
     /**
      * Encrypt connection using LDAP over SSL (using a separate port)
      *
      * @var string
      */
-    const LDAPS = 'ssl';
+    const LDAPS = 'ldaps';
 
     protected $ds;
     protected $hostname;
