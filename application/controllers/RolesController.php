@@ -23,7 +23,7 @@ class RolesController extends ActionController
         $this->assertPermission('system/config/roles');
         $tabs = $this->getTabs();
         $auth = $this->Auth();
-        if ($auth->hasPermission('system/config/application')) {
+        if ($auth->hasPermission('config/application/general')) {
             $tabs->add('application', array(
                 'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
                 'label' => $this->translate('Application'),

@@ -37,7 +37,7 @@ class ConfigController extends ActionController
         $tabs = $this->getTabs();
         $auth = $this->Auth();
         $allowedActions = array();
-        if ($auth->hasPermission('system/config/application')) {
+        if ($auth->hasPermission('config/application/general')) {
             $tabs->add('application', array(
                 'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
                 'label' => $this->translate('Application'),
@@ -103,7 +103,7 @@ class ConfigController extends ActionController
      */
     public function applicationAction()
     {
-        $this->assertPermission('system/config/application');
+        $this->assertPermission('config/application/general');
         $form = new GeneralConfigForm();
         $form->setIniConfig(Config::app());
         $form->handleRequest();
