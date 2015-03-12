@@ -3,7 +3,6 @@
 
 namespace Icinga\Protocol\Ldap;
 
-use Exception;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Application\Platform;
@@ -35,6 +34,8 @@ class Connection
     const LDAP_SIZELIMIT_EXCEEDED = 4;
     const LDAP_ADMINLIMIT_EXCEEDED = 11;
     const PAGE_SIZE = 1000;
+    const STARTTLS = 'tls';
+    const SSL = 'ssl';
 
     protected $ds;
     protected $hostname;
@@ -43,6 +44,8 @@ class Connection
     protected $bind_pw;
     protected $root_dn;
     protected $count;
+    protected $connectionType;
+    protected $reqCert = true;
 
     /**
      * Whether the bind on this connection was already performed
@@ -66,8 +69,6 @@ class Connection
     /**
      * Constructor
      *
-     * TODO: Allow to pass port and SSL options
-     *
      * @param ConfigObject $config
      */
     public function __construct(ConfigObject $config)
@@ -77,6 +78,8 @@ class Connection
         $this->bind_pw  = $config->bind_pw;
         $this->root_dn  = $config->root_dn;
         $this->port = $config->get('port', $this->port);
+        $this->connectionType = $config->connection;
+        $this->reqCert = (bool) $config->get('reqcert', $this->reqCert);
     }
 
     public function getHostname()
@@ -470,59 +473,53 @@ class Connection
      */
     protected function prepareNewConnection()
     {
-        $use_tls = false;
-        $force_tls = false;
-
-        if ($use_tls) {
+        if ($this->connectionType === static::STARTTLS || $this->connectionType === static::SSL) {
             $this->prepareTlsEnvironment();
         }
 
-        $ds = ldap_connect($this->hostname, $this->port);
+        $hostname = $this->hostname;
+        if ($this->connectionType === static::SSL) {
+            $hostname = 'ldaps://' . $hostname;
+        }
+
+        $ds = ldap_connect($hostname, $this->port);
         try {
             $this->capabilities = $this->discoverCapabilities($ds);
             $this->discoverySuccess = true;
-
         } catch (LdapException $e) {
-
-            // create empty default capabilities
+            Logger::debug($e);
             Logger::warning('LADP discovery failed, assuming default LDAP settings.');
-            $this->capabilities = new Capability();
+            $this->capabilities = new Capability(); // create empty default capabilities
         }
 
-        if ($use_tls) {
+        if ($this->connectionType === static::STARTTLS) {
+            $force_tls = false;
             if ($this->capabilities->hasStartTLS()) {
                 if (@ldap_start_tls($ds)) {
                     Logger::debug('LDAP STARTTLS succeeded');
                 } else {
-                    Logger::debug('LDAP STARTTLS failed: %s', ldap_error($ds));
-                    throw new LdapException(
-                        'LDAP STARTTLS failed: %s',
-                        ldap_error($ds)
-                    );
+                    Logger::error('LDAP STARTTLS failed: %s', ldap_error($ds));
+                    throw new LdapException('LDAP STARTTLS failed: %s', ldap_error($ds));
                 }
             } elseif ($force_tls) {
-                throw new LdapException(
-                    'TLS is required but not announced by %s',
-                    $this->hostname
-                );
+                throw new LdapException('STARTTLS is required but not announced by %s', $this->hostname);
             } else {
-                Logger::warning('LDAP TLS enabled but not announced');
+                Logger::warning('LDAP STARTTLS enabled but not announced');
             }
         }
+
         // ldap_rename requires LDAPv3:
         if ($this->capabilities->hasLdapV3()) {
             if (! ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3)) {
                 throw new LdapException('LDAPv3 is required');
             }
         } else {
-
             // TODO: remove this -> FORCING v3 for now
             ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
             Logger::warning('No LDAPv3 support detected');
         }
 
-        // Not setting this results in "Operations error" on AD when using the
-        // whole domain as search base:
+        // Not setting this results in "Operations error" on AD when using the whole domain as search base
         ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
         // ldap_set_option($ds, LDAP_OPT_DEREF, LDAP_DEREF_NEVER);
         return $ds;
@@ -530,17 +527,16 @@ class Connection
 
     protected function prepareTlsEnvironment()
     {
-        $strict_tls   = true;
         // TODO: allow variable known CA location (system VS Icinga)
         if (Platform::isWindows()) {
-            // putenv('LDAP...')
+            putenv('LDAPTLS_REQCERT=never');
         } else {
-            if ($strict_tls) {
+            if ($this->reqCert) {
                 $ldap_conf = $this->getConfigDir('ldap_ca.conf');
             } else {
                 $ldap_conf = $this->getConfigDir('ldap_nocert.conf');
             }
-            putenv('LDAPRC=' . $ldap_conf);
+            putenv('LDAPRC=' . $ldap_conf); // TODO: Does not have any effect
             if (getenv('LDAPRC') !== $ldap_conf) {
                 throw new LdapException('putenv failed');
             }
