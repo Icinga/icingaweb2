@@ -30,7 +30,7 @@ class RolesController extends ActionController
                 'url'   => 'config'
             ));
         }
-        if ($auth->hasPermission('system/config/authentication')) {
+        if ($auth->hasPermission('config/application/authentication')) {
             $tabs->add('authentication', array(
                 'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
                 'label' => $this->translate('Authentication'),

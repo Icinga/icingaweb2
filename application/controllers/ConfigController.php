@@ -45,7 +45,7 @@ class ConfigController extends ActionController
             ));
             $allowedActions[] = 'application';
         }
-        if ($auth->hasPermission('system/config/authentication')) {
+        if ($auth->hasPermission('config/application/authentication')) {
             $tabs->add('authentication', array(
                 'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
                 'label' => $this->translate('Authentication'),
@@ -199,7 +199,7 @@ class ConfigController extends ActionController
      */
     public function authenticationAction()
     {
-        $this->assertPermission('system/config/authentication');
+        $this->assertPermission('config/application/authentication');
         $form = new AuthenticationBackendReorderForm();
         $form->setIniConfig(Config::app('authentication'));
         $form->handleRequest();
@@ -214,7 +214,7 @@ class ConfigController extends ActionController
      */
     public function createauthenticationbackendAction()
     {
-        $this->assertPermission('system/config/authentication');
+        $this->assertPermission('config/application/authentication');
         $form = new AuthenticationBackendConfigForm();
         $form->setTitle($this->translate('Create New Authentication Backend'));
         $form->addDescription($this->translate(
@@ -236,7 +236,7 @@ class ConfigController extends ActionController
      */
     public function editauthenticationbackendAction()
     {
-        $this->assertPermission('system/config/authentication');
+        $this->assertPermission('config/application/authentication');
         $form = new AuthenticationBackendConfigForm();
         $form->setTitle($this->translate('Edit Backend'));
         $form->setIniConfig(Config::app('authentication'));
@@ -254,7 +254,7 @@ class ConfigController extends ActionController
      */
     public function removeauthenticationbackendAction()
     {
-        $this->assertPermission('system/config/authentication');
+        $this->assertPermission('config/application/authentication');
         $form = new ConfirmRemovalForm(array(
             'onSuccess' => function ($form) {
                 $configForm = new AuthenticationBackendConfigForm();
