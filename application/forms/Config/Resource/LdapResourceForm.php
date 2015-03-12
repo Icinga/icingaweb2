@@ -119,12 +119,15 @@ class LdapResourceForm extends Form
                 $form->getElement('bind_pw')->getValue()
                 )
             ) {
-                throw new Exception();
+                throw new Exception(); // TODO: Get the exact error message
             }
         } catch (Exception $e) {
-            $form->addError(
-                $form->translate('Connectivity validation failed, connection to the given resource not possible.')
-            );
+            $msg = $form->translate('Connectivity validation failed, connection to the given resource not possible.');
+            if (($error = $e->getMessage())) {
+                $msg .= ' (' . $error . ')';
+            }
+
+            $form->addError($msg);
             return false;
         }
 
