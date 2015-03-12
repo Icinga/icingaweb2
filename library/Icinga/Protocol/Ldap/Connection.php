@@ -487,9 +487,9 @@ class Connection
             $this->capabilities = $this->discoverCapabilities($ds);
             $this->discoverySuccess = true;
         } catch (LdapException $e) {
-            // create empty default capabilities
+            Logger::debug($e);
             Logger::warning('LADP discovery failed, assuming default LDAP settings.');
-            $this->capabilities = new Capability();
+            $this->capabilities = new Capability(); // create empty default capabilities
         }
 
         if ($this->connectionType === static::STARTTLS) {
