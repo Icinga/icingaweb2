@@ -21,4 +21,4 @@ $section->add($this->translate('Developer - Style'), array(
     'priority' => 200,
 ));
 
-$this->provideSearchUrl($this->translate('Doc'), 'doc/search');
+$this->provideSearchUrl($this->translate('Doc'), 'doc/search', -10);
