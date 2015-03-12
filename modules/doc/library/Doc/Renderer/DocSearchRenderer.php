@@ -19,7 +19,7 @@ class DocSearchRenderer extends DocRenderer
     /**
      * The content to render
      *
-     * @type array
+     * @var array
      */
     protected $content = array();
 
@@ -105,7 +105,7 @@ class DocSearchRenderer extends DocRenderer
                 $path,
                 array('highlight-search' => $this->getInnerIterator()->getSearch()->getInput())
             );
-            /** @type \Icinga\Web\Url $url */
+            /** @var \Icinga\Web\Url $url */
             $url->setAnchor($this->encodeAnchor($section->getId()));
             $urlAttributes = array(
                 'data-base-target'  => '_next',

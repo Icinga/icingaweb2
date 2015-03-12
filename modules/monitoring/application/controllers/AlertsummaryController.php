@@ -44,7 +44,7 @@ class Monitoring_AlertsummaryController extends Controller
                 'label' => $this->translate('Alert Summary'),
                 'url'   => Url::fromRequest()
             )
-        )->activate('alertsummary')->setTitle($this->translate('Alertsummary Navigation'));
+        )->activate('alertsummary');
         $this->view->title = $this->translate('Alert Summary');
 
         $this->view->intervalBox = $this->createIntervalBox();

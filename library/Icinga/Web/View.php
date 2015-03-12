@@ -39,7 +39,7 @@ class View extends Zend_View_Abstract
     /**
      * Authentication manager
      *
-     * @type \Icinga\Authentication\Manager|null
+     * @var \Icinga\Authentication\Manager|null
      */
     private $auth;
 

@@ -93,7 +93,7 @@ class WebWizard extends Wizard implements SetupWizard
         $this->addPage(new PreferencesPage());
         $this->addPage(new DbResourcePage());
         $this->addPage(new LdapDiscoveryPage());
-        $this->addPage(new LdapDiscoveryConfirmPage());
+        //$this->addPage(new LdapDiscoveryConfirmPage());
         $this->addPage(new LdapResourcePage());
         $this->addPage(new AuthBackendPage());
         $this->addPage(new AdminAccountPage());
@@ -132,13 +132,13 @@ class WebWizard extends Wizard implements SetupWizard
             } elseif ($authData['type'] === 'ldap') {
                 $page->setResourceConfig($this->getPageData('setup_ldap_resource'));
 
-                $suggestions = $this->getPageData('setup_ldap_discovery_confirm');
+                $suggestions = $this->getPageData('setup_ldap_discovery');
                 if (isset($suggestions['backend'])) {
                     $page->populate($suggestions['backend']);
                 }
             }
-        } elseif ($page->getName() === 'setup_ldap_discovery_confirm') {
-            $page->setResourceConfig($this->getPageData('setup_ldap_discovery'));
+        /*} elseif ($page->getName() === 'setup_ldap_discovery_confirm') {
+            $page->setResourceConfig($this->getPageData('setup_ldap_discovery'));*/
         } elseif ($page->getName() === 'setup_admin_account') {
             $page->setBackendConfig($this->getPageData('setup_authentication_backend'));
             $authData = $this->getPageData('setup_authentication_type');
@@ -169,7 +169,7 @@ class WebWizard extends Wizard implements SetupWizard
                 );
             }
 
-            $suggestion = $this->getPageData('setup_ldap_discovery_confirm');
+            $suggestion = $this->getPageData('setup_ldap_discovery');
             if (isset($suggestion['resource'])) {
                 $page->populate($suggestion['resource']);
             }
@@ -199,8 +199,8 @@ class WebWizard extends Wizard implements SetupWizard
         } elseif ($newPage->getname() === 'setup_ldap_discovery') {
             $authData = $this->getPageData('setup_authentication_type');
             $skip = $authData['type'] !== 'ldap';
-        } elseif ($newPage->getName() === 'setup_ldap_discovery_confirm') {
-            $skip = false === $this->hasPageData('setup_ldap_discovery');
+        /*} elseif ($newPage->getName() === 'setup_ldap_discovery_confirm') {
+            $skip = false === $this->hasPageData('setup_ldap_discovery');*/
         } elseif ($newPage->getName() === 'setup_ldap_resource') {
             $authData = $this->getPageData('setup_authentication_type');
             $skip = $authData['type'] !== 'ldap';

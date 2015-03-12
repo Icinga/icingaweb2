@@ -17,7 +17,7 @@ abstract class Command
     protected $docs;
 
     /**
-     * @type Params
+     * @var Params
      */
     protected $params;
     protected $screen;

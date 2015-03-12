@@ -13,35 +13,35 @@ class DocSection extends TreeNode
     /**
      * Chapter the section belongs to
      *
-     * @type DocSection
+     * @var DocSection
      */
     protected $chapter;
 
     /**
      * Content of the section
      *
-     * @type array
+     * @var array
      */
     protected $content = array();
 
     /**
      * Header level
      *
-     * @type int
+     * @var int
      */
     protected $level;
 
     /**
      * Whether to instruct search engines to not index the link to the section
      *
-     * @type bool
+     * @var bool
      */
     protected $noFollow;
 
     /**
      * Title of the section
      *
-     * @type string
+     * @var string
      */
     protected $title;
 

@@ -239,14 +239,18 @@
             event.stopPropagation();
             event.preventDefault();
 
-            // activate spinner indicator
-            if ($button.hasClass('spinner')) {
-                $button.addClass('active');
-            }
-
             icinga.logger.debug('Submitting form: ' + method + ' ' + url, method);
 
-            $target = self.getLinkTargetFor($button);
+            if ($button.length) {
+                // activate spinner indicator
+                if ($button.hasClass('spinner')) {
+                    $button.addClass('active');
+                }
+
+                $target = self.getLinkTargetFor($button);
+            } else {
+                $target = self.getLinkTargetFor($form);
+            }
 
             if (method === 'GET') {
                 var dataObj = $form.serializeObject();
@@ -352,32 +356,16 @@
             return false;
         },
 
+        /**
+         * Handle anchor, i.e. focus the element which is referenced by the anchor
+         *
+         * @param {string} query jQuery selector
+         */
         handleAnchor: function(query) {
             var $element = $(query);
             if ($element.length > 0) {
-                // TODO(mh): Some elements are missing to place the right focus
-                // This is a fixed workarround until all header took place
-
-                var $item = $element.find(':header:first').nextUntil(':header:first').next();
-                if ($item.length > 0) {
-                    $element = $item;
-                }
-
-                /*
-                var focusQueries = ['h1:first', ':header:first', ':input:first'];
-                $.each(focusQueries, function(index,q) {
-                    var $item = $element.find(q);
-                    if ($item.length > 0) {
-                        $element = $item;
-                        return false;
-                    }
-                });
-                */
-
-                // If we want to focus an element which has no tabindex
-                // add one that we can focus is
-                if ($element.prop('tabindex') < 0) {
-                    $element.prop('tabindex', '-1');
+                if (typeof $element.attr('tabindex') === 'undefined') {
+                    $element.attr('tabindex', -1);
                 }
                 $element.focus();
             }
