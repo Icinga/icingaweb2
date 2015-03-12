@@ -20,7 +20,7 @@ class RolesController extends ActionController
      */
     public function init()
     {
-        $this->assertPermission('system/config/roles');
+        $this->assertPermission('config/application/roles');
         $tabs = $this->getTabs();
         $auth = $this->Auth();
         if ($auth->hasPermission('config/application/general')) {
