@@ -589,7 +589,7 @@ SQL;
     {
         $this->select->joinLeft(
             array('hlcd' => $this->getLastCommentSubQuery(2, 'last_downtime_data')),
-            'hlcg.object_id = hs.host_object_id',
+            'hlcd.object_id = hs.host_object_id',
             array()
         );
     }
@@ -601,7 +601,7 @@ SQL;
     {
         $this->select->joinLeft(
             array('hlcf' => $this->getLastCommentSubQuery(3, 'last_flapping_data')),
-            'hlcg.object_id = hs.host_object_id',
+            'hlcf.object_id = hs.host_object_id',
             array()
         );
     }

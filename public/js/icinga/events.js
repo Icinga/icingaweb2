@@ -239,14 +239,18 @@
             event.stopPropagation();
             event.preventDefault();
 
-            // activate spinner indicator
-            if ($button.hasClass('spinner')) {
-                $button.addClass('active');
-            }
-
             icinga.logger.debug('Submitting form: ' + method + ' ' + url, method);
 
-            $target = self.getLinkTargetFor($button);
+            if ($button.length) {
+                // activate spinner indicator
+                if ($button.hasClass('spinner')) {
+                    $button.addClass('active');
+                }
+
+                $target = self.getLinkTargetFor($button);
+            } else {
+                $target = self.getLinkTargetFor($form);
+            }
 
             if (method === 'GET') {
                 var dataObj = $form.serializeObject();
