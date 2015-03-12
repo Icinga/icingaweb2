@@ -9,20 +9,20 @@ namespace Icinga\Module\Monitoring\Command\Object;
 class SendCustomNotificationCommand extends WithCommentCommand
 {
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Module\Monitoring\Command\Object\ObjectCommand::$allowedObjects For the property documentation.
+     * {@inheritdoc}
      */
     protected $allowedObjects = array(
         self::TYPE_HOST,
         self::TYPE_SERVICE
     );
+    
     /**
      * Whether a notification is forced to send
      *
      * Forced notifications are send regardless of time and if notifications
      * are enabled.
      *
-     * @type bool
+     * @var bool
      */
     protected $forced;
 
@@ -32,7 +32,7 @@ class SendCustomNotificationCommand extends WithCommentCommand
      * If broadcast is true, the notification is send to all normal and
      * escalated contacts for the object
      *
-     * @type bool
+     * @var bool
      */
     protected $broadcast;
 
