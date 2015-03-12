@@ -6,6 +6,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Web\Controller\MonitoredObjectController;
 
@@ -93,6 +94,18 @@ class Monitoring_ServiceController extends MonitoredObjectController
 
         $form = new ProcessCheckResultCommandForm();
         $form->setTitle($this->translate('Submit Passive Service Check Result'));
+        $this->handleCommandForm($form);
+    }
+
+    /**
+     * Send a custom notification for a service
+     */
+    public function sendCustomNotificationAction()
+    {
+        $this->assertPermission('monitoring/command/send-custom-notification');
+
+        $form = new SendCustomNotificationCommandForm();
+        $form->setTitle($this->translate('Send Custom Service Notification'));
         $this->handleCommandForm($form);
     }
 }

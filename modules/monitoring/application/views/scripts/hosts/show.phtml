@@ -31,6 +31,12 @@
             null,
             array('icon' => 'reply')
         ); ?></div>
+        <div><?= $this->qlink(
+                sprintf($this->translate('Send a custom notification for all %u hosts'), $hostCount),
+                $sendCustomNotificationLink,
+                null,
+                array('icon' => 'comment')
+            ); ?></div>
       <?php if (($unhandledCount = count($unhandledObjects)) > 0): ?>
         <div>
             <h3><?= sprintf(

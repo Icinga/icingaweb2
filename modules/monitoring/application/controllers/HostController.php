@@ -6,6 +6,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Web\Controller\MonitoredObjectController;
 use Icinga\Web\Hook;
@@ -116,6 +117,18 @@ class Monitoring_HostController extends MonitoredObjectController
 
         $form = new ProcessCheckResultCommandForm();
         $form->setTitle($this->translate('Submit Passive Host Check Result'));
+        $this->handleCommandForm($form);
+    }
+
+    /**
+     * Send a custom notification for host
+     */
+    public function sendCustomNotificationAction()
+    {
+        $this->assertPermission('monitoring/command/send-custom-notification');
+
+        $form = new SendCustomNotificationCommandForm();
+        $form->setTitle($this->translate('Send Custom Host Notification'));
         $this->handleCommandForm($form);
     }
 }
