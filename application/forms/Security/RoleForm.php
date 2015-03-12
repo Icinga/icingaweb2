@@ -39,8 +39,7 @@ class RoleForm extends ConfigForm
     protected $providedRestrictions = array();
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::init() For the method documentation.
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -69,8 +68,7 @@ class RoleForm extends ConfigForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::createElements() For the method documentation.
+     * {@inheritdoc}
      */
     public function createElements(array $formData = array())
     {
@@ -254,8 +252,7 @@ class RoleForm extends ConfigForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Zend_Form::getValues() For the method documentation.
+     * {@inheritdoc}
      */
     public function getValues($suppressArrayNotation = false)
     {
