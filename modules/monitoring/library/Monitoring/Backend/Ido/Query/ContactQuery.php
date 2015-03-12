@@ -34,12 +34,12 @@ class ContactQuery extends IdoQuery
         ),
         'hosts' => array(
             'host'      => 'ho.name1 COLLATE latin1_general_ci',
-            'host_name' => 'ho.name1 COLLATE latin1_general_ci',
+            'host_name' => 'ho.name1',
         ),
         'services' => array(
             'service'               => 'so.name1 COLLATE latin1_general_ci',
-            'service_description'   => 'so.name2 COLLATE latin1_general_ci',
-            'service_host_name'     => 'so.name1 COLLATE latin1_general_ci',
+            'service_description'   => 'so.name2',
+            'service_host_name'     => 'so.name1',
         )
     );
 
