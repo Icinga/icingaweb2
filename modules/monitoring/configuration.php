@@ -85,10 +85,10 @@ $this->provideSetupWizard('Icinga\Module\Monitoring\MonitoringWizard');
 /*
  * Available Search Urls
  */
-$this->provideSearchUrl($this->translate('Hosts'), 'monitoring/list/hosts?sort=host_severity&limit=10');
-$this->provideSearchUrl($this->translate('Services'), 'monitoring/list/services?sort=service_severity&limit=10');
-$this->provideSearchUrl($this->translate('Hostgroups'), 'monitoring/list/hostgroups?limit=10');
-$this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/servicegroups?limit=10');
+$this->provideSearchUrl($this->translate('Hosts'), 'monitoring/list/hosts?sort=host_severity&limit=10', 99);
+$this->provideSearchUrl($this->translate('Services'), 'monitoring/list/services?sort=service_severity&limit=10', 98);
+$this->provideSearchUrl($this->translate('Hostgroups'), 'monitoring/list/hostgroups?limit=10', 97);
+$this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/servicegroups?limit=10', 96);
 
 /*
  * Problems Section
