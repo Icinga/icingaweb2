@@ -159,7 +159,7 @@ class ConfigController extends ActionController
      */
     public function moduleenableAction()
     {
-        $this->assertPermission('system/config/modules');
+        $this->assertPermission('config/modules');
         $module = $this->getParam('name');
         $manager = Icinga::app()->getModuleManager();
         try {
@@ -179,7 +179,7 @@ class ConfigController extends ActionController
      */
     public function moduledisableAction()
     {
-        $this->assertPermission('system/config/modules');
+        $this->assertPermission('config/modules');
         $module = $this->getParam('name');
         $manager = Icinga::app()->getModuleManager();
         try {
