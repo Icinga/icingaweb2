@@ -78,7 +78,7 @@ class Connection
         $this->bind_pw  = $config->bind_pw;
         $this->root_dn  = $config->root_dn;
         $this->port = $config->get('port', $this->port);
-        $this->connectionType = $config->connection;
+        $this->connectionType = $config->get('connection');
         $this->reqCert = (bool) $config->get('reqcert', $this->reqCert);
     }
 
