@@ -66,12 +66,13 @@ class LdapResourceForm extends Form
                 'autosubmit'    => true,
                 'label'         => $this->translate('Connection'),
                 'description'   => $this->translate(
-                    'The type of connection to use. Unencrypted (Plaintext) or encrypted (SSL, TLS).'
+                    'Whether to encrypt communication. Choose STARTTLS or LDAPS for encrypted communication or'
+                    . ' Plaintext for unencrypted communication'
                 ),
                 'multiOptions'  => array(
                     'plaintext'             => $this->translate('Plaintext'),
-                    Connection::LDAPS       => 'Secure Sockets Layer (SSL)',
-                    Connection::STARTTLS    => 'Transport Layer Security (TLS)'
+                    Connection::LDAPS       => 'LDAPS',
+                    Connection::STARTTLS    => 'STARTTLS'
                 )
             )
         );
