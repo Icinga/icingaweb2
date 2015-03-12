@@ -253,10 +253,13 @@ abstract class MonitoredObject implements Filterable
             'type'      => 'comment_type',
         ))
             ->where('comment_type', array('comment', 'ack'))
-            ->where('comment_objecttype', $this->type)
-            ->where('comment_host', $this->host_name);
+            ->where('comment_objecttype', $this->type);
         if ($this->type === self::TYPE_SERVICE) {
-            $comments->where('comment_service', $this->service_description);
+            $comments
+                ->where('service_host_name', $this->host_name)
+                ->where('service_description', $this->service_description);
+        } else {
+            $comments->where('host_name', $this->host_name);
         }
         $this->comments = $comments->getQuery()->fetchAll();
         return $this;
@@ -387,8 +390,9 @@ abstract class MonitoredObject implements Filterable
                 'contact_pager',
         ));
         if ($this->type === self::TYPE_SERVICE) {
-            $contacts->where('service_host_name', $this->host_name);
-            $contacts->where('service_description', $this->service_description);
+            $contacts
+                ->where('service_host_name', $this->host_name)
+                ->where('service_description', $this->service_description);
         } else {
             $contacts->where('host_name', $this->host_name);
         }
@@ -430,8 +434,9 @@ abstract class MonitoredObject implements Filterable
                 'contactgroup_alias'
         ));
         if ($this->type === self::TYPE_SERVICE) {
-            $contactsGroups->where('service_host_name', $this->host_name);
-            $contactsGroups->where('service_description', $this->service_description);
+            $contactsGroups
+                ->where('service_host_name', $this->host_name)
+                ->where('service_description', $this->service_description);
         } else {
             $contactsGroups->where('host_name', $this->host_name);
         }
