@@ -232,12 +232,14 @@ class Menu implements RecursiveIterator
                 'priority' => 200
             ));
             $section->add(t('Configuration'), array(
-                'url'      => 'config',
-                'priority' => 300
+                'url'           => 'config',
+                'permission'    => 'config/application/*',
+                'priority'      => 300
             ));
             $section->add(t('Modules'), array(
-                'url'      => 'config/modules',
-                'priority' => 400
+                'url'           => 'config/modules',
+                'permission'    => 'config/modules',
+                'priority'      => 400
             ));
 
             if (Logger::writesToFile()) {
