@@ -30,7 +30,19 @@ class Connection
     const LDAP_SIZELIMIT_EXCEEDED = 4;
     const LDAP_ADMINLIMIT_EXCEEDED = 11;
     const PAGE_SIZE = 1000;
+
+    /**
+     * Encrypt connection using STARTTLS (upgrading a plain text connection)
+     *
+     * @var string
+     */
     const STARTTLS = 'tls';
+
+    /**
+     * Encrypt connection using LDAP over SSL (using a separate port)
+     *
+     * @var string
+     */
     const SSL = 'ssl';
 
     protected $ds;
