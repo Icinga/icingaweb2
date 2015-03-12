@@ -23,10 +23,6 @@ use Icinga\Data\ConfigObject;
  *     'bind_pw'  => '***'
  * ));
  * </code>
- *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
 class Connection
 {
