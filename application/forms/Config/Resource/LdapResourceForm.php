@@ -70,7 +70,7 @@ class LdapResourceForm extends Form
                 ),
                 'multiOptions'  => array(
                     'plaintext'             => $this->translate('Plaintext'),
-                    Connection::SSL         => 'Secure Sockets Layer (SSL)',
+                    Connection::LDAPS       => 'Secure Sockets Layer (SSL)',
                     Connection::STARTTLS    => 'Transport Layer Security (TLS)'
                 )
             )

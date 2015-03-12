@@ -43,7 +43,7 @@ class Connection
      *
      * @var string
      */
-    const SSL = 'ssl';
+    const LDAPS = 'ssl';
 
     protected $ds;
     protected $hostname;
@@ -481,12 +481,12 @@ class Connection
      */
     protected function prepareNewConnection()
     {
-        if ($this->connectionType === static::STARTTLS || $this->connectionType === static::SSL) {
+        if ($this->connectionType === static::STARTTLS || $this->connectionType === static::LDAPS) {
             $this->prepareTlsEnvironment();
         }
 
         $hostname = $this->hostname;
-        if ($this->connectionType === static::SSL) {
+        if ($this->connectionType === static::LDAPS) {
             $hostname = 'ldaps://' . $hostname;
         }
 
