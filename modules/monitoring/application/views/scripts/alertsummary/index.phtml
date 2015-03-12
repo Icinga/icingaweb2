@@ -1,9 +1,6 @@
 <div class="controls">
     <?= $this->tabs ?>
     <div style="margin: 1em;" class="dontprint">
-        <h2 tabindex="-1" class="sr-only">
-            <?= $this->translate('Filters'); ?>
-        </h2>
         <?= $intervalBox; ?>
     </div>
     <?= $this->widget('limiter') ?>
@@ -11,33 +8,25 @@
 </div>
 
 <div class="content alertsummary">
-    <h1 tabindex="-1">
-        <?= $this->translate('Alert summary'); ?>
-    </h1>
+    <!-- <h1><?= $this->translate('Alert summary'); ?></h1> -->
 
     <div class="hbox">
         <div class="hbox-item">
-            <h2 tabindex="-1" id="alertsummary-notifications">
-                <?= $this->translate('Notifications and Problems'); ?>
-            </h2>
+            <h2><?= $this->translate('Notifications and Problems'); ?></h2>
             <div style="width: 400px; height: 400px;">
                 <?= $defectChart->render(); ?>
             </div>
         </div>
 
         <div class="hbox-item">
-            <h2 tabindex="-1" id="alertsummary-reaction-time">
-                <?= $this->translate('Time to Reaction (Ack, Recover)'); ?>
-            </h2>
+            <h2><?= $this->translate('Time to Reaction (Ack, Recover)'); ?></h2>
             <div style="width: 400px; height: 400px;">
                 <?= $healingChart->render(); ?>
             </div>
         </div>
     </div>
 
-    <h2 tabindex="-1" id="alertsummary-trend">
-        <?= $this->translate('Trend'); ?>
-    </h2>
+    <h2><?= $this->translate('Trend'); ?></h2>
 
     <div class="alertsummary-flex-container">
         <div class="alertsummary-flex">
@@ -64,9 +53,7 @@
     </div>
 
     <?php if ($this->recentAlerts): ?>
-        <h2 tabindex="-1" id="alertsummary-top5">
-            <?= $this->translate('Top 5 Recent Alerts'); ?>
-        </h2>
+        <h1><?= $this->translate('Top 5 Recent Alerts'); ?></h1>
 
         <div class="alertsummary-flex-container">
             <div class="alertsummary-flex">
@@ -79,9 +66,7 @@
         </div>
     <?php endif; ?>
 
-    <h2 tabindex="-1" id="alertsummary-history">
-        <?= $this->translate('History'); ?>
-    </h2>
+    <h1><?= $this->translate('History'); ?></h1>
     <div class="alertsummary-flex-container">
         <div class="alertsummary-flex">
             <?= $this->partial('list/notifications.phtml', array(

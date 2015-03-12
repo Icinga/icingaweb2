@@ -10,8 +10,10 @@ if (!$this->compact): ?>
 <div style="margin: 1em;" class="dontprint">
 <?= $this->render('list/components/selectioninfo.phtml') ?>
 <?= $this->render('list/components/servicesummary.phtml') ?>
+<div style="float: right">
+<?= $this->translate('Sort by') ?> <?= $this->sortControl ?>
 </div>
-<?= $this->sortControl ?>
+</div>
 <?php if ($this->limit === 0): ?>
 <?= $this->widget('limiter') ?>
 <?php else: ?>
@@ -22,7 +24,6 @@ if (!$this->compact): ?>
 
 <div class="content">
 <?= $this->filterEditor ?>
-<h1 tabindex="-1"><?= $this->translate('Services') ?></h1>
 <?php else: ?>
 
 <div class="content">

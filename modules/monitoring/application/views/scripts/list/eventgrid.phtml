@@ -2,21 +2,18 @@
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget\Chart\HistoryColorGrid;
 ?>
-<?php if (! $compact): ?>
+
+
+<? if (! $compact): ?>
     <div class="controls">
         <?= $this->tabs->render($this); ?>
         <div class="fake-controls">
-            <h2 tabindex="-1" class="sr-only">
-                <?= $this->translate('Filters'); ?>
-            </h2>
             <?= $form ?>
         </div>
     </div>
-    <div class="content" data-base-target="_next">
-        <h1 tabindex="-1"><?= $this->translate('Event Grid'); ?></h1>
-<?php else: ?>
-    <div class="content" data-base-target="_next">
-<?php endif; ?>
+<? endif; ?>
+
+<div class="content" data-base-target="_next">
 <?php
 
 $settings = array(

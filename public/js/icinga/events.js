@@ -359,29 +359,21 @@
         handleAnchor: function(query) {
             var $element = $(query);
             if ($element.length > 0) {
-                // TODO(mh): Some elements are missing to place the right focus
-                // This is a fixed workarround until all header took place
-
-                var $item = $element.find(':header:first').nextUntil(':header:first').next();
-                if ($item.length > 0) {
-                    $element = $item;
-                }
-
-                /*
-                var focusQueries = ['h1:first', ':header:first', ':input:first'];
-                $.each(focusQueries, function(index,q) {
-                    var $item = $element.find(q);
-                    if ($item.length > 0) {
-                        $element = $item;
-                        return false;
+                // Try to find the first header. It is more pleasant to users
+                // to select the header instead a container
+                var $header = $element.find(':header:first');
+                if ($header.length > 0) {
+                    $element = $header;
+                } else {
+                    var $input = $element.find(':header:first');
+                    if ($input.length > 0) {
+                        $element = $input
                     }
-                });
-                */
-
+                }
                 // If we want to focus an element which has no tabindex
                 // add one that we can focus is
                 if ($element.prop('tabindex') < 0) {
-                    $element.prop('tabindex', '-1');
+                    $element.prop('tabindex', 0);
                 }
                 $element.focus();
             }
