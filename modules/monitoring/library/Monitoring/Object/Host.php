@@ -109,6 +109,7 @@ class Host extends MonitoredObject
             'host_handled',
             'host_in_downtime',
             'host_is_flapping',
+            'host_is_reachable',
             'host_last_check',
             'host_last_notification',
             'host_last_state_change',
