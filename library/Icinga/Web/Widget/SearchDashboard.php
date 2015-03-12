@@ -19,13 +19,6 @@ class SearchDashboard extends Dashboard
     const SEARCH_PANE = 'search';
 
     /**
-     * All searchUrls provided by Modules
-     *
-     * @var array
-     */
-    protected $searchUrls = array();
-
-    /**
      * Load all available search dashlets from modules
      *
      * @param string $searchString
@@ -64,9 +57,22 @@ class SearchDashboard extends Dashboard
         $this->activate(self::SEARCH_PANE);
 
         $manager = Icinga::app()->getModuleManager();
+        $searchUrls = array();
 
         foreach ($manager->getLoadedModules() as $module) {
-            $this->addSearchDashletsFromModule($searchString, $module, $pane);
+            $moduleSearchUrls = $module->getSearchUrls();
+            if (! empty($moduleSearchUrls)) {
+                $searchUrls = array_merge($searchUrls, $moduleSearchUrls);
+            }
+        }
+
+        usort($searchUrls, array($this, 'compareSearchUrls'));
+
+        foreach (array_reverse($searchUrls) as $searchUrl) {
+            $pane->addDashlet(
+                $searchUrl->title . ': ' . $searchString,
+                Url::fromPath($searchUrl->url, array('q' => $searchString))
+            );
         }
 
         if ($searchString === '' && $pane->hasDashlets()) {
@@ -77,24 +83,18 @@ class SearchDashboard extends Dashboard
     }
 
     /**
-     * Add available search dashlets to the pane
+     * Compare search URLs based on their priority
      *
-     * @param string $searchString
-     * @param Module $module
-     * @param Pane $pane
+     * @param   object  $a
+     * @param   object  $b
+     *
+     * @return  int
      */
-    protected function addSearchDashletsFromModule($searchString, $module, $pane)
+    private function compareSearchUrls($a, $b)
     {
-        $searchUrls = $module->getSearchUrls();
-
-        if (! empty($searchUrls)) {
-            $this->searchUrls[] = $module->getSearchUrls();
-            foreach ($searchUrls as $search) {
-                $pane->addDashlet(
-                    $search->title . ': ' . $searchString,
-                    Url::fromPath($search->url, array('q' => $searchString))
-                );
-            }
+        if ($a->priority === $b->priority) {
+            return 0;
         }
+        return ($a->priority < $b->priority) ? -1 : 1;
     }
 }
