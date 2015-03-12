@@ -11,8 +11,6 @@ use Zend_Controller_Action_Exception as ActionError;
 
 /**
  * Class SearchDashboard display multiple search views on a single search page
- *
- * @package Icinga\Web\Widget
  */
 class SearchDashboard extends Dashboard
 {
