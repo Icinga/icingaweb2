@@ -23,7 +23,7 @@ class ConfigController extends ActionController
     /**
      * The first allowed config action according to the user's permissions
      *
-     * @type string
+     * @var string
      */
     protected $firstAllowedAction;
 

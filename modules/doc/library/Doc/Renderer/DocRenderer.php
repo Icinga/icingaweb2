@@ -16,21 +16,21 @@ abstract class DocRenderer extends RecursiveIteratorIterator
     /**
      * URL to replace links with
      *
-     * @type string
+     * @var string
      */
     protected $url;
 
     /**
      * Additional URL parameters
      *
-     * @type array
+     * @var array
      */
     protected $urlParams = array();
 
     /**
      * View
      *
-     * @type View|null
+     * @var View|null
      */
     protected $view;
 
