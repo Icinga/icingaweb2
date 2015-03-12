@@ -60,6 +60,10 @@ class SearchDashboard extends Dashboard
         foreach ($manager->getLoadedModules() as $module) {
             $moduleSearchUrls = $module->getSearchUrls();
             if (! empty($moduleSearchUrls)) {
+                if ($searchString === '') {
+                    $pane->add(t('Ready to search'), 'search/hint');
+                    return;
+                }
                 $searchUrls = array_merge($searchUrls, $moduleSearchUrls);
             }
         }
@@ -71,12 +75,6 @@ class SearchDashboard extends Dashboard
                 $searchUrl->title . ': ' . $searchString,
                 Url::fromPath($searchUrl->url, array('q' => $searchString))
             );
-        }
-
-        if ($searchString === '' && $pane->hasDashlets()) {
-            $pane->removeDashlets();
-            $pane->add('Ready to search', 'search/hint');
-            return;
         }
     }
 
