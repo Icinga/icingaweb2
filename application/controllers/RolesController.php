@@ -37,7 +37,7 @@ class RolesController extends ActionController
                 'url'   => 'config/authentication'
             ));
         }
-        if ($auth->hasPermission('system/config/resources')) {
+        if ($auth->hasPermission('config/application/resources')) {
             $tabs->add('resource', array(
                 'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
                 'label' => $this->translate('Resources'),

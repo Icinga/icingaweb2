@@ -26,7 +26,7 @@ class RoleForm extends ConfigForm
         'config/application/general'        => 'config/application/general',
         'config/application/authentication' => 'config/application/authentication',
         'system/config/modules'             => 'system/config/modules',
-        'system/config/resources'           => 'system/config/resources',
+        'config/application/resources'      => 'config/application/resources',
         'system/config/roles'               => 'system/config/roles'
     );
 

@@ -53,7 +53,7 @@ class ConfigController extends ActionController
             ));
             $allowedActions[] = 'authentication';
         }
-        if ($auth->hasPermission('system/config/resources')) {
+        if ($auth->hasPermission('config/application/resources')) {
             $tabs->add('resource', array(
                 'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
                 'label' => $this->translate('Resources'),
@@ -292,7 +292,7 @@ class ConfigController extends ActionController
      */
     public function resourceAction()
     {
-        $this->assertPermission('system/config/resources');
+        $this->assertPermission('config/application/resources');
         $this->view->resources = Config::app('resources', true)->keys();
         $this->view->tabs->activate('resource');
     }
@@ -302,7 +302,7 @@ class ConfigController extends ActionController
      */
     public function createresourceAction()
     {
-        $this->assertPermission('system/config/resources');
+        $this->assertPermission('config/application/resources');
         $form = new ResourceConfigForm();
         $form->setTitle($this->translate('Create A New Resource'));
         $form->addDescription($this->translate('Resources are entities that provide data to Icinga Web 2.'));
@@ -319,7 +319,7 @@ class ConfigController extends ActionController
      */
     public function editresourceAction()
     {
-        $this->assertPermission('system/config/resources');
+        $this->assertPermission('config/application/resources');
         $form = new ResourceConfigForm();
         $form->setTitle($this->translate('Edit Existing Resource'));
         $form->setIniConfig(Config::app('resources'));
@@ -335,7 +335,7 @@ class ConfigController extends ActionController
      */
     public function removeresourceAction()
     {
-        $this->assertPermission('system/config/resources');
+        $this->assertPermission('config/application/resources');
         $form = new ConfirmRemovalForm(array(
             'onSuccess' => function ($form) {
                 $configForm = new ResourceConfigForm();
