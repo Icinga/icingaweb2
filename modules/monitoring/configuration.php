@@ -57,7 +57,7 @@ $this->providePermission(
 );
 $this->providesPermission(
     'monitoring/command/send-custom-notification',
-    $this->translate('Allow sending custom notifications for hosts and services');
+    $this->translate('Allow sending custom notifications for hosts and services')
 );
 
 $this->provideRestriction(
