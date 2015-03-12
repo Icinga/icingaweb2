@@ -184,14 +184,18 @@ class Module
     protected $searchUrls = array();
 
     /**
-     * @param string $title
-     * @param string $url
+     * Provide a search URL
+     *
+     * @param string    $title
+     * @param string    $url
+     * @param int       $priority
      */
-    public function provideSearchUrl($title, $url)
+    public function provideSearchUrl($title, $url, $priority = 0)
     {
         $searchUrl = (object) array(
-            'title' => $title,
-            'url'   => $url
+            'title'     => (string) $title,
+            'url'       => (string) $url,
+            'priority'  => (int) $priority
         );
 
         $this->searchUrls[] = $searchUrl;
