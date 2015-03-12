@@ -245,14 +245,41 @@
             }
         },
 
+        /**
+         * Process the X-Icinga-Redirect HTTP Response Header
+         *
+         * If the response includes the X-Icinga-Redirect header, redirects to the URL associated with the header.
+         *
+         * @param   {object}    req     Current request
+         *
+         * @returns {boolean}           Whether we're about to redirect
+         */
         processRedirectHeader: function(req) {
-            var icinga = this.icinga;
-            var redirect = req.getResponseHeader('X-Icinga-Redirect');
-            if (! redirect) return false;
+            var icinga      = this.icinga,
+                redirect    = req.getResponseHeader('X-Icinga-Redirect');
+
+            if (! redirect) {
+                return false;
+            }
+
             redirect = decodeURIComponent(redirect);
             if (redirect.match(/__SELF__/)) {
-                redirect = redirect.replace(/__SELF__/, encodeURIComponent(document.location.pathname + document.location.search + document.location.hash));
+                if (req.autorefresh) {
+                    // Redirect to the current window's URL in case it's an auto-refresh request. If authenticated
+                    // externally this ensures seamless re-login if the session's expired
+                    redirect = redirect.replace(
+                        /__SELF__/,
+                        encodeURIComponent(
+                            document.location.pathname + document.location.search + document.location.hash
+                        )
+                    );
+                } else {
+                    // Redirect to the URL which required authentication. When clicking a link this ensures that we
+                    // redirect to the link's URL instead of the current window's URL (see above)
+                    redirect = redirect.replace(/__SELF__/, req.url);
+                }
             }
+
             icinga.logger.debug(
                 'Got redirect for ', req.$target, ', URL was ' + redirect
             );
