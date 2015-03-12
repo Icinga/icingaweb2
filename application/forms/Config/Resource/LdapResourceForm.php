@@ -67,17 +67,17 @@ class LdapResourceForm extends Form
                 'label'         => $this->translate('Encryption'),
                 'description'   => $this->translate(
                     'Whether to encrypt communication. Choose STARTTLS or LDAPS for encrypted communication or'
-                    . ' Plaintext for unencrypted communication'
+                    . ' none for unencrypted communication'
                 ),
                 'multiOptions'  => array(
-                    'plaintext'             => $this->translate('Plaintext'),
+                    'none'                  => $this->translate('None'),
                     Connection::STARTTLS    => 'STARTTLS',
                     Connection::LDAPS       => 'LDAPS'
                 )
             )
         );
 
-        if (isset($formData['encryption']) && $formData['encryption'] !== 'plaintext') {
+        if (isset($formData['encryption']) && $formData['encryption'] !== 'none') {
             // TODO(jom): Do not show this checkbox unless the connection is actually failing due to certificate errors
             $this->addElement(
                 'checkbox',
