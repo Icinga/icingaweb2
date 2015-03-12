@@ -15,56 +15,56 @@ class DocSearchMatch
     /**
      * CSS class for highlighting matches
      *
-     * @type string
+     * @var string
      */
     const HIGHLIGHT_CSS_CLASS = 'search-highlight';
 
     /**
      * Header match
      *
-     * @type int
+     * @var int
      */
     const MATCH_HEADER = 1;
 
     /**
      * Content match
      *
-     * @type int
+     * @var int
      */
     const MATCH_CONTENT = 2;
 
     /**
      * Line
      *
-     * @type string
+     * @var string
      */
     protected $line;
 
     /**
      * Line number
      *
-     * @type int
+     * @var int
      */
     protected $lineno;
 
     /**
      * Type of the match
      *
-     * @type int
+     * @var int
      */
     protected $matchType;
 
     /**
      * Matches
      *
-     * @type array
+     * @var array
      */
     protected $matches = array();
 
     /**
      * View
      *
-     * @type View|null
+     * @var View|null
      */
     protected $view;
 

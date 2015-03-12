@@ -2,7 +2,7 @@
     <th><?= $this->translate('Comments'); ?></th>
     <td>
         <?php if ($this->hasPermission('monitoring/command/comment/add')) {
-            /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+            /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             if ($object->getType() === $object::TYPE_HOST) {
                 echo $this->qlink(
                     $this->translate('Add comment'),

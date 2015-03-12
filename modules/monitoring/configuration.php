@@ -1,7 +1,7 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-/** @type $this \Icinga\Application\Modules\Module */
+/** @var $this \Icinga\Application\Modules\Module */
 
 $this->providePermission(
     'monitoring/command/*',
@@ -54,6 +54,10 @@ $this->providePermission(
 $this->providePermission(
     'monitoring/command/feature/object',
     $this->translate('Allow processing commands for toggling features on host and service objects')
+);
+$this->providesPermission(
+    'monitoring/command/send-custom-notification',
+    $this->translate('Allow sending custom notifications for hosts and services')
 );
 
 $this->provideRestriction(

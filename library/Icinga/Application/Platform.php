@@ -182,19 +182,24 @@ class Platform
     }
 
     /**
-     * Return whether the given Zend framework class exists
+     * Return whether the given class exists
      *
      * @param   string  $name   The name of the class to check
      *
      * @return  bool
      */
-    public static function zendClassExists($name)
+    public static function classExists($name)
     {
         if (@class_exists($name)) {
             return true;
         }
 
-        return (@include str_replace('_', '/', $name) . '.php') !== false;
+        if (strpos($name, '_') !== false) {
+            // Assume it's a Zend-Framework class
+            return (@include str_replace('_', '/', $name) . '.php') !== false;
+        }
+
+        return false;
     }
 
     /**
@@ -206,7 +211,7 @@ class Platform
      */
     public static function hasMysqlSupport()
     {
-        return static::extensionLoaded('mysql') && static::zendClassExists('Zend_Db_Adapter_Pdo_Mysql');
+        return static::extensionLoaded('mysql') && static::classExists('Zend_Db_Adapter_Pdo_Mysql');
     }
 
     /**
@@ -218,6 +223,6 @@ class Platform
      */
     public static function hasPostgresqlSupport()
     {
-        return static::extensionLoaded('pgsql') && static::zendClassExists('Zend_Db_Adapter_Pdo_Pgsql');
+        return static::extensionLoaded('pgsql') && static::classExists('Zend_Db_Adapter_Pdo_Pgsql');
     }
 }

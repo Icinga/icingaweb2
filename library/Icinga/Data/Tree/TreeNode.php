@@ -10,7 +10,7 @@ class TreeNode implements Identifiable
     /**
      * The node's ID
      *
-     * @type mixed
+     * @var mixed
      */
     protected $id;
 
@@ -24,7 +24,7 @@ class TreeNode implements Identifiable
     /**
      * The node's children
      *
-     * @type array
+     * @var array
      */
     protected $children = array();
 

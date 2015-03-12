@@ -19,7 +19,7 @@ class DocIterator implements Countable, IteratorAggregate
     /**
      * Ordered files
      *
-     * @type array
+     * @var array
      */
     protected $fileInfo;
 

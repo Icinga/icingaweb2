@@ -22,6 +22,9 @@ class CommentQuery extends IdoQuery
             'comment_service'       => 'so.name2 COLLATE latin1_general_ci',
             'service'               => 'so.name2 COLLATE latin1_general_ci', // #7278, #7279
             'comment_objecttype'    => "CASE WHEN ho.object_id IS NOT NULL THEN 'host' ELSE CASE WHEN so.object_id IS NOT NULL THEN 'service' ELSE NULL END END",
+            'service_description'   => 'so.name2',
+            'host_name'             => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END',
+            'service_host_name'     => 'so.name1'
         ),
         'hosts' => array(
             'host_display_name'     => 'CASE WHEN sh.display_name IS NOT NULL THEN sh.display_name ELSE h.display_name END'

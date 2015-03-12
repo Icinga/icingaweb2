@@ -718,6 +718,9 @@
         initializeControls: function (parent) {
 
             var self = this;
+            if ($(parent).closest('.dashboard').length) {
+                return;
+            }
 
             $('.controls', parent).each(function (idx, el) {
                 var $el = $(el);
@@ -758,6 +761,10 @@
                     self.fixControls($(container));
                 });
 
+                return;
+            }
+
+            if ($parent.closest('.dashboard').length) {
                 return;
             }
 

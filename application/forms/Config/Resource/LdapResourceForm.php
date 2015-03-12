@@ -7,6 +7,7 @@ use Exception;
 use Icinga\Web\Form;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
+use Icinga\Protocol\Ldap\Connection;
 
 /**
  * Form class for adding/modifying ldap resources
@@ -57,6 +58,40 @@ class LdapResourceForm extends Form
                 'value'         => 389
             )
         );
+        $this->addElement(
+            'select',
+            'connection',
+            array(
+                'required'      => true,
+                'autosubmit'    => true,
+                'label'         => $this->translate('Connection'),
+                'description'   => $this->translate(
+                    'The type of connection to use. Unencrypted (Plaintext) or encrypted (SSL, TLS).'
+                ),
+                'multiOptions'  => array(
+                    'plaintext'             => $this->translate('Plaintext'),
+                    Connection::SSL         => 'Secure Sockets Layer (SSL)',
+                    Connection::STARTTLS    => 'Transport Layer Security (TLS)'
+                )
+            )
+        );
+
+        if (isset($formData['connection']) && $formData['connection'] !== 'plaintext') {
+            // TODO(jom): Do not show this checkbox unless the connection is actually failing due to certificate errors
+            $this->addElement(
+                'checkbox',
+                'reqcert',
+                array(
+                    'required'      => true,
+                    'label'         => $this->translate('Require Certificate'),
+                    'description'   => $this->translate(
+                        'When checked, the LDAP server must provide a valid and known (trusted) certificate.'
+                    ),
+                    'value'         => 1
+                )
+            );
+        }
+
         $this->addElement(
             'text',
             'root_dn',
@@ -119,12 +154,15 @@ class LdapResourceForm extends Form
                 $form->getElement('bind_pw')->getValue()
                 )
             ) {
-                throw new Exception();
+                throw new Exception(); // TODO: Get the exact error message
             }
         } catch (Exception $e) {
-            $form->addError(
-                $form->translate('Connectivity validation failed, connection to the given resource not possible.')
-            );
+            $msg = $form->translate('Connectivity validation failed, connection to the given resource not possible.');
+            if (($error = $e->getMessage())) {
+                $msg .= ' (' . $error . ')';
+            }
+
+            $form->addError($msg);
             return false;
         }
 

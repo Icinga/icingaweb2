@@ -10,6 +10,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\ServiceList;
@@ -206,6 +207,10 @@ class Monitoring_ServicesController extends Controller
             $this->translate('Host State'),
             array('#44bb77', '#FF5566', '#E066FF', '#77AAFF')
         );
+        $this->view->sendCustomNotificationLink =
+            Url::fromRequest()->setPath(
+                'monitoring/services/send-custom-notification'
+            );
     }
 
     protected function createPieChart(array $states, $title, array $colors)
@@ -262,6 +267,18 @@ class Monitoring_ServicesController extends Controller
 
         $form = new ProcessCheckResultCommandForm();
         $form->setTitle($this->translate('Submit Passive Service Check Results'));
+        $this->handleCommandForm($form);
+    }
+
+    /**
+     * Send a custom notification for services
+     */
+    public function sendCustomNotificationAction()
+    {
+        $this->assertPermission('monitoring/command/send-custom-notification');
+
+        $form = new SendCustomNotificationCommandForm();
+        $form->setTitle($this->translate('Send Custom Service Notification'));
         $this->handleCommandForm($form);
     }
 }

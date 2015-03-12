@@ -145,7 +145,7 @@ class Form extends Zend_Form
     /**
      * Authentication manager
      *
-     * @type Manager|null
+     * @var Manager|null
      */
     private $auth;
 

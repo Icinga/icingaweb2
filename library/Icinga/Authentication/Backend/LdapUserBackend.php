@@ -9,6 +9,7 @@ use Icinga\Protocol\Ldap\Query;
 use Icinga\Protocol\Ldap\Connection;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Protocol\Ldap\Exception as LdapException;
+use Icinga\Protocol\Ldap\Expression;
 
 class LdapUserBackend extends UserBackend
 {
@@ -25,14 +26,23 @@ class LdapUserBackend extends UserBackend
 
     protected $userNameAttribute;
 
+    protected $customFilter;
+
     protected $groupOptions;
 
-    public function __construct(Connection $conn, $userClass, $userNameAttribute, $baseDn, $groupOptions = null)
-    {
+    public function __construct(
+        Connection $conn,
+        $userClass,
+        $userNameAttribute,
+        $baseDn,
+        $cutomFilter,
+        $groupOptions = null
+    ) {
         $this->conn = $conn;
-        $this->baseDn = trim($baseDn) !== '' ? $baseDn : $conn->getDN();
+        $this->baseDn = trim($baseDn) ?: $conn->getDN();
         $this->userClass = $userClass;
         $this->userNameAttribute = $userNameAttribute;
+        $this->customFilter = trim($cutomFilter);
         $this->groupOptions = $groupOptions;
     }
 
@@ -43,12 +53,18 @@ class LdapUserBackend extends UserBackend
      */
     protected function selectUsers()
     {
-        return $this->conn->select()->setBase($this->baseDn)->from(
+        $query = $this->conn->select()->setBase($this->baseDn)->from(
             $this->userClass,
             array(
                 $this->userNameAttribute
             )
         );
+
+        if ($this->customFilter) {
+            $query->addFilter(new Expression($this->customFilter));
+        }
+
+        return $query;
     }
 
     /**
@@ -88,9 +104,10 @@ class LdapUserBackend extends UserBackend
 
         if ($result === null) {
             throw new AuthenticationException(
-                'No objects with objectClass="%s" in DN="%s" found.',
+                'No objects with objectClass="%s" in DN="%s" found. (Filter: %s)',
                 $this->userClass,
-                $this->baseDn
+                $this->baseDn,
+                $this->customFilter ?: 'None'
             );
         }
 

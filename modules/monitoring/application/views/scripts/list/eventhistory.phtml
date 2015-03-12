@@ -4,21 +4,24 @@ use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
 ?>
+
 <?php if (false === $this->compact): ?>
 <div class="controls">
   <?= $this->tabs ?>
-  <?= $this->sortControl ?>
+  <div style="margin: 1em" class="dontprint">
+    <div style="float: right">
+      <?= $this->translate('Sort by') ?> <?= $this->sortControl ?>
+    </div>
+  </div>
+
   <?= $this->widget('limiter', array('url' => $this->url, 'max' => $this->history->count())); ?>
   <?= $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
+
 </div>
+<?php endif ?>
+
 <div class="content">
-    <?= $this->filterEditor ?>
-    <h1 tabindex="-1"><?= $this->translate('Event History') ?></h1>
-<?php else: ?>
-    <div class="content">
-<?php endif; ?>
-
-
+<?= $this->filterEditor ?>
 <?php if (empty($history)): ?>
   <?= $this->translate('No history events matching the filter') ?>
 </div>

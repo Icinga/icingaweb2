@@ -18,7 +18,7 @@ interface SetupWizard
     /**
      * Return the requirements of this wizard
      *
-     * @return  Requirements
+     * @return  RequirementSet
      */
     public function getRequirements();
 }

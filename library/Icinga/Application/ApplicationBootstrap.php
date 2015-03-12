@@ -115,7 +115,7 @@ abstract class ApplicationBootstrap
     /**
      * Whether Icinga Web 2 requires setup
      *
-     * @type bool
+     * @var bool
      */
     protected $requiresSetup = false;
 

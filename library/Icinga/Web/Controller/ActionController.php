@@ -51,7 +51,7 @@ class ActionController extends Zend_Controller_Action
     /**
      * Authentication manager
      *
-     * @type Manager|null
+     * @var Manager|null
      */
     private $auth;
 
@@ -293,34 +293,31 @@ class ActionController extends Zend_Controller_Action
     }
 
     /**
-     * Redirect to the login path
+     * Redirect to login
      *
-     * @param   Url         $afterLogin   The action to call when the login was successful. Defaults to '/index/welcome'
+     * XHR will always redirect to __SELF__ if an URL to redirect to after successful login is set. __SELF__ instructs
+     * JavaScript to redirect to the current window's URL if it's an auto-refresh request or to redirect to the URL
+     * which required login if it's not an auto-refreshing one.
      *
-     * @throws  \Exception
+     * XHR will respond with HTTP status code 403 Forbidden.
+     *
+     * @param   Url|string  $redirect   URL to redirect to after successful login
      */
-    protected function redirectToLogin($afterLogin = null)
+    protected function redirectToLogin($redirect = null)
     {
-        $redir = null;
-        if ($afterLogin !== null) {
-            if (! $afterLogin instanceof Url) {
-                $afterLogin = Url::fromPath($afterLogin);
+        $login = Url::fromPath('authentication/login');
+        if ($this->isXhr()) {
+            if ($redirect !== null) {
+                $login->setParam('redirect', '__SELF__');
             }
-            if ($this->isXhr()) {
-                $redir = '__SELF__';
-            } else {
-                // TODO: Ignore /?
-                $redir = $afterLogin->getRelativeUrl();
+            $this->_response->setHttpResponseCode(403);
+        } elseif ($redirect !== null) {
+            if (! $redirect instanceof Url) {
+                $redirect = Url::fromPath($redirect);
             }
+            $login->setParam('redirect', $redirect->getRelativeUrl());
         }
-
-        $url = Url::fromPath('authentication/login');
-
-        if ($redir) {
-            $url->setParam('redirect', $redir);
-        }
-
-        $this->rerenderLayout()->redirectNow($url);
+        $this->rerenderLayout()->redirectNow($login);
     }
 
     protected function rerenderLayout()

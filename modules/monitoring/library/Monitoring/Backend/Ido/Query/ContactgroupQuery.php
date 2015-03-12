@@ -33,13 +33,13 @@ class ContactgroupQuery extends IdoQuery
             'contact_notify_host_downtime'      => 'c.notify_host_downtime',
         ),
         'hosts' => array(
-            'host'      => 'ho.name1',
+            'host'      => 'ho.name1 COLLATE latin1_general_ci',
             'host_name' => 'ho.name1'
         ),
         'services' => array(
             'service'               => 'so.name2 COLLATE latin1_general_ci',
-            'service_description'   => 'so.name2 COLLATE latin1_general_ci',
-            'service_host_name'     => 'so.name1 COLLATE latin1_general_ci'
+            'service_description'   => 'so.name2',
+            'service_host_name'     => 'so.name1'
         )
     );
 
@@ -95,10 +95,10 @@ class ContactgroupQuery extends IdoQuery
 
     protected function joinServices()
     {
-        $scgSub = $this->db->select()->distinct()->from(
-            $this->prefix . 'service_contactgroups',
-            array('contactgroup_object_id', 'service_id')
-        );
+//        $scgSub = $this->db->select()->distinct()->from(
+//            $this->prefix . 'service_contactgroups',
+//            array('contactgroup_object_id', 'service_id')
+//        );
 
             /*
             This subselect is a workaround for a fucking stupid bug. Other tables

@@ -102,21 +102,21 @@ class AuthenticationController extends ActionController
                     $this->view->form->addError(
                         $this->translate(
                             'No authentication methods available. Did you create'
-                          . ' authentication.ini when setting up Icinga Web 2?'
+                            . ' authentication.ini when setting up Icinga Web 2?'
                          )
                     );
                 } else if ($backendsTried === $backendsWithError) {
                     $this->view->form->addError(
                         $this->translate(
                             'All configured authentication methods failed.'
-                          . ' Please check the system log or Icinga Web 2 log for more information.'
+                            . ' Please check the system log or Icinga Web 2 log for more information.'
                         )
                     );
                 } elseif ($backendsWithError) {
                     $this->view->form->addError(
                         $this->translate(
                             'Please note that not all authentication methods were available.'
-                          . ' Check the system log or Icinga Web 2 log for more information.'
+                            . ' Check the system log or Icinga Web 2 log for more information.'
                         )
                     );
                 }
@@ -144,7 +144,7 @@ class AuthenticationController extends ActionController
             $this->view->form->addError($e->getMessage());
         }
 
-        $this->view->requiresExternalAuth = $triedOnlyExternalAuth && !$auth->isAuthenticated();
+        $this->view->requiresExternalAuth = $triedOnlyExternalAuth && ! $auth->isAuthenticated();
         $this->view->requiresSetup = Icinga::app()->requiresSetup();
     }
 

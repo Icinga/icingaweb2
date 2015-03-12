@@ -9,39 +9,39 @@
 -->
 <div class="content">
     <div class="alert alert-warning" id="logout-status">
-        <b> <?= t('Logging out...'); ?> </b> <br />
-        <?= t(
-            'If this message does not disappear, it might be necessary to quit the ' .
-            'current session manually by clearing the cache, or by closing the current ' .
-            'browser session.'
+        <b><?= $this->translate('Logging out...'); ?></b>
+        <br>
+        <?= $this->translate(
+            'If this message does not disappear, it might be necessary to quit the'
+            . ' current session manually by clearing the cache, or by closing the current'
+            . ' browser session.'
         ); ?>
     </div>
 
-    <div class="container" >
-        <a href="<?= $this->href('dashboard/index'); ?>"> <?= t('Login'); ?></a>
+    <div class="container">
+        <a href="<?= $this->href('dashboard/index?renderLayout'); ?>"><?= $this->translate('Login'); ?></a>
     </div>
 </div>
 <script type="text/javascript">
-    /**
+    /*
      * When JavaScript is available, trigger an XmlHTTPRequest with the non-existing user 'logout' and abort it
      * before it is able to finish. This will cause the browser to show a new authentication prompt in the next
      * request.
      */
-    $(document).ready(function() {
-        msg = $('#logout-status');
+    document.addEventListener('DOMContentLoaded', function () {
+        var msg = document.getElementById('logout-status');
         try {
             if (navigator.userAgent.toLowerCase().indexOf('msie') !== -1) {
                 document.execCommand('ClearAuthenticationCache');
             } else {
-                var xhttp = getXMLHttpRequest();
+                var xhttp = new XMLHttpRequest();
                 xhttp.open('GET', 'arbitrary url', true, 'logout', 'logout');
                 xhttp.send('');
                 xhttp.abort();
             }
         } catch (e) {
         }
-        msg.html('<?= t('Logout successful!'); ?>');
-        msg.removeClass();
-        msg.addClass('alert alert-success');
+        msg.innerHTML = '<?= $this->translate('Logout successful!'); ?>';
+        msg.className = 'alert alert-success';
     });
 </script>

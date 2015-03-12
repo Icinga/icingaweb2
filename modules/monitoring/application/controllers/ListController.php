@@ -282,8 +282,8 @@ class Monitoring_ListController extends Controller
             'is_fixed'        => 'downtime_is_fixed',
             'is_in_effect'    => 'downtime_is_in_effect',
             'entry_time'      => 'downtime_entry_time',
-            'host'            => 'downtime_host',
-            'service'         => 'downtime_service',
+            'host'            => 'host_name',
+            'service'         => 'service_description',
             'host_state'      => 'downtime_host_state',
             'service_state'   => 'downtime_service_state',
             'host_display_name',
@@ -727,7 +727,6 @@ class Monitoring_ListController extends Controller
     private function createTabs()
     {
         $tabs = $this->getTabs();
-        $tabs->setTitle($this->translate('Monitoring Navigation'));
         if (in_array($this->_request->getActionName(), array(
             'hosts',
             'services',

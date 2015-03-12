@@ -10,6 +10,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\HostList;
 use Icinga\Web\Url;
@@ -157,6 +158,10 @@ class Monitoring_HostsController extends Controller
             $this->translate('Host State'),
             array('#44bb77', '#FF5566', '#E066FF', '#77AAFF')
         );
+        $this->view->sendCustomNotificationLink =
+            Url::fromRequest()->setPath(
+                'monitoring/hosts/send-custom-notification'
+            );
     }
 
     protected function createPieChart(array $states, $title, array $colors)
@@ -213,6 +218,18 @@ class Monitoring_HostsController extends Controller
 
         $form = new ProcessCheckResultCommandForm();
         $form->setTitle($this->translate('Submit Passive Host Check Results'));
+        $this->handleCommandForm($form);
+    }
+
+    /**
+     * Send a custom notification for hosts
+     */
+    public function sendCustomNotificationAction()
+    {
+        $this->assertPermission('monitoring/command/send-custom-notification');
+
+        $form = new SendCustomNotificationCommandForm();
+        $form->setTitle($this->translate('Send Custom Host Notification'));
         $this->handleCommandForm($form);
     }
 }

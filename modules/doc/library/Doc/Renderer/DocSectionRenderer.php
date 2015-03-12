@@ -26,28 +26,28 @@ class DocSectionRenderer extends DocRenderer
     /**
      * Content to render
      *
-     * @type array
+     * @var array
      */
     protected $content = array();
 
     /**
      * Search criteria to highlight
      *
-     * @type string
+     * @var string
      */
     protected $highlightSearch;
 
     /**
      * Parsedown instance
      *
-     * @type Parsedown
+     * @var Parsedown
      */
     protected $parsedown;
 
     /**
      * Documentation tree
      *
-     * @type SimpleTree
+     * @var SimpleTree
      */
     protected $tree;
 
@@ -169,7 +169,7 @@ class DocSectionRenderer extends DocRenderer
         $doc->loadHTML($match[0]);
         $xpath = new DOMXPath($doc);
         $blockquote = $xpath->query('//blockquote[1]')->item(0);
-        /** @type \DOMElement $blockquote */
+        /** @var \DOMElement $blockquote */
         if (strtolower(substr(trim($blockquote->nodeValue), 0, 5)) === 'note:') {
             $blockquote->setAttribute('class', 'note');
         }
@@ -189,7 +189,7 @@ class DocSectionRenderer extends DocRenderer
         $doc->loadHTML($match[0]);
         $xpath = new DOMXPath($doc);
         $img = $xpath->query('//img[1]')->item(0);
-        /** @type \DOMElement $img */
+        /** @var \DOMElement $img */
         $img->setAttribute('src', Url::fromPath($img->getAttribute('src'))->getAbsoluteUrl());
         return substr_replace($doc->saveXML($img), '', -2, 1);  // Replace '/>' with '>'
     }
@@ -206,7 +206,7 @@ class DocSectionRenderer extends DocRenderer
         if (($section = $this->tree->getNode($this->decodeAnchor($match['fragment']))) === null) {
             return $match[0];
         }
-        /** @type \Icinga\Module\Doc\DocSection $section */
+        /** @var \Icinga\Module\Doc\DocSection $section */
         $path = $this->getView()->getHelper('Url')->url(
             array_merge(
                 $this->urlParams,
@@ -219,7 +219,7 @@ class DocSectionRenderer extends DocRenderer
             false
         );
         $url = $this->getView()->url($path);
-        /** @type \Icinga\Web\Url $url */
+        /** @var \Icinga\Web\Url $url */
         $url->setAnchor($this->encodeAnchor($section->getId()));
         return sprintf(
             '<a %s%shref="%s"',

@@ -9,10 +9,6 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
 </div>
 
 <div class="content processinfo">
-    <h1 tabindex="-1">
-        <?= $this->translate('Monitoring Health'); ?>
-    </h1>
-
     <div class="boxview">
 
         <div class="box left">
@@ -20,9 +16,7 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
         </div>
 
         <div class="box left">
-            <h2 tabindex="-1" id="process-process-info">
-                <?= $this->translate('Process Info') ?>
-            </h2>
+            <h2><?= $this->translate('Process Info') ?></h2>
             <table class="avp">
                 <tbody>
                 <tr>
@@ -73,13 +67,9 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
         </div>
 
         <div class="box left">
-            <h2 tabindex="-1" id="process-performance-info">
-                <?= $this->translate('Performance Info') ?>
-            </h2>
+            <h2><?= $this->translate('Performance Info') ?></h2>
 
-            <h3 tabindex="-1" id="process-object-summaries">
-                <?= $this->translate('Object summaries') ?>
-            </h3>
+            <h3><?= $this->translate('Object summaries') ?></h3>
             <table class="avp">
                 <thead>
                 <tr>
@@ -127,9 +117,7 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
                 </tbody>
             </table>
 
-            <h3 tabindex="-1" id="process-active-checks">
-                <?= $this->translate('Active checks') ?>
-            </h3>
+            <h3><?= $this->translate('Active checks') ?></h3>
             <table class="avp">
                 <thead>
                 <tr>
@@ -159,9 +147,7 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
                 </tbody>
             </table>
 
-            <h3 tabindex="-1" id="process-passive-checks">
-                <?= $this->translate('Passive checks') ?>
-            </h3>
+            <h3><?= $this->translate('Passive checks') ?></h3>
             <table class="avp">
                 <tbody>
                 <tr>

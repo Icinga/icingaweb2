@@ -6,10 +6,23 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 use Zend_Db_Select;
 use Icinga\Data\Filter\Filter;
 
+/**
+ * Query for event history
+ */
 class EventHistoryQuery extends IdoQuery
 {
+    /**
+     * Subqueries used for the event history query
+     *
+     * @type    IdoQuery[]
+     *
+     * @see     EventHistoryQuery::joinBaseTables() For the used subqueries.
+     */
     protected $subQueries = array();
 
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'eventhistory' => array(
             'cnt_notification'      => "SUM(CASE eh.type WHEN 'notify' THEN 1 ELSE 0 END)",
@@ -41,8 +54,14 @@ class EventHistoryQuery extends IdoQuery
         )
     );
 
+    /**
+     * {@inheritdoc}
+     */
     protected $useSubqueryCount = true;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function joinBaseTables()
     {
         $columns = array(
@@ -77,15 +96,20 @@ class EventHistoryQuery extends IdoQuery
         $this->joinedVirtualTables = array('eventhistory' => true);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function order($columnOrAlias, $dir = null)
     {
         foreach ($this->subQueries as $sub) {
             $sub->requireColumn($columnOrAlias);
         }
-
         return parent::order($columnOrAlias, $dir);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function addFilter(Filter $filter)
     {
         foreach ($this->subQueries as $sub) {
@@ -94,6 +118,9 @@ class EventHistoryQuery extends IdoQuery
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function where($condition, $value = null)
     {
         $this->requireColumn($condition);
@@ -103,6 +130,11 @@ class EventHistoryQuery extends IdoQuery
         return $this;
     }
 
+    /**
+     * Join host groups
+     *
+     * @return $this
+     */
     protected function joinHostgroups()
     {
         $this->select->join(
@@ -121,6 +153,11 @@ class EventHistoryQuery extends IdoQuery
         return $this;
     }
 
+    /**
+     * Join hosts
+     *
+     * @return $this
+     */
     protected function joinHosts()
     {
         $this->select->joinLeft(
@@ -131,6 +168,11 @@ class EventHistoryQuery extends IdoQuery
         return $this;
     }
 
+    /**
+     * Join services
+     *
+     * @return $this
+     */
     protected function joinServices()
     {
         $this->select->joinLeft(

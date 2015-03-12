@@ -3,9 +3,7 @@
 <?php endif ?>
 <?php if (($hostCount = count($objects)) > 0): ?>
 <div class="hbox-item">
-    <h1 tabindex="-1">
-        <?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', $hostCount), $hostCount); ?>
-    </h1>
+    <strong><?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', $hostCount), $hostCount); ?></strong>
 </div>
 <div class="hbox-item">
     &nbsp;<?= $hostStatesPieChart; ?>

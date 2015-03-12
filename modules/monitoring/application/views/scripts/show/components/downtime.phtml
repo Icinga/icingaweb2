@@ -2,7 +2,7 @@
     <th><?= $this->translate('Downtimes'); ?></th>
     <td>
         <?php if ($this->hasPermission('monitoring/command/downtime/schedule')) {
-            /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+            /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             if ($object->getType() === $object::TYPE_HOST) {
                 echo $this->qlink(
                     $this->translate('Schedule downtime'),
