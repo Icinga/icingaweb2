@@ -3,11 +3,9 @@
 
 namespace Icinga\Web\Widget;
 
+use Zend_Controller_Action_Exception;
 use Icinga\Application\Icinga;
-use Icinga\Application\Modules\Module;
 use Icinga\Web\Url;
-use Icinga\Web\Widget\Dashboard\Pane;
-use Zend_Controller_Action_Exception as ActionError;
 
 /**
  * Class SearchDashboard display multiple search views on a single search page
@@ -33,13 +31,14 @@ class SearchDashboard extends Dashboard
     /**
      * Renders the output
      *
-     * @return string
-     * @throws \Zend_Controller_Action_Exception
+     * @return  string
+     *
+     * @throws  Zend_Controller_Action_Exception
      */
     public function render()
     {
         if (! $this->getPane(self::SEARCH_PANE)->hasDashlets()) {
-            throw new ActionError('Site not found', 404);
+            throw new Zend_Controller_Action_Exception(t('Page not found'), 404);
         }
         return parent::render();
     }
