@@ -37,7 +37,7 @@ class NonEmptyFileIterator extends FilterIterator
     public function accept()
     {
         $current = $this->current();
-        /** @type $current \SplFileInfo */
+        /** @var $current \SplFileInfo */
         if (! $current->isFile()
             || $current->getSize() === 0
         ) {

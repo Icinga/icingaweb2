@@ -120,7 +120,7 @@ abstract class MonitoredObject implements Filterable
     /**
      * Filter
      *
-     * @type Filter
+     * @var Filter
      */
     protected $filter;
 

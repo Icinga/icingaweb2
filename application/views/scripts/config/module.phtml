@@ -11,9 +11,6 @@
     $permissions = $module->getProvidedPermissions();
     $state = $moduleData->enabled ? ($moduleData->loaded ? 'enabled' : 'failed') : 'disabled'
   ?>
-  <h1 tabindex="-1">
-    <?= $this->escape($module->getTitle()) ?>
-  </h1>
   <table class="avp">
     <tr>
       <th><?= $this->escape($this->translate('Name')) ?></th>

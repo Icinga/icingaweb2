@@ -23,7 +23,7 @@ class ConfigController extends ActionController
     /**
      * The first allowed config action according to the user's permissions
      *
-     * @type string
+     * @var string
      */
     protected $firstAllowedAction;
 
@@ -72,7 +72,6 @@ class ConfigController extends ActionController
             $allowedActions[] = 'roles';
         }
         $this->firstAllowedAction = array_shift($allowedActions);
-        $this->getTabs()->setTitle($this->translate('Config Navigation'));
     }
 
     public function devtoolsAction()

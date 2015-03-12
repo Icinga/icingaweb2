@@ -19,7 +19,7 @@ class DocSectionFilterIterator extends RecursiveFilterIterator implements Counta
     /**
      * Chapter to filter for
      *
-     * @type string
+     * @var string
      */
     protected $chapter;
 
@@ -44,7 +44,7 @@ class DocSectionFilterIterator extends RecursiveFilterIterator implements Counta
     public function accept()
     {
         $section = $this->current();
-        /** @type \Icinga\Module\Doc\DocSection $section */
+        /** @var \Icinga\Module\Doc\DocSection $section */
         if ($section->getChapter()->getId() === $this->chapter) {
             return true;
         }

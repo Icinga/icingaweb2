@@ -18,7 +18,7 @@ class RoleForm extends ConfigForm
     /**
      * Provided permissions by currently loaded modules
      *
-     * @type array
+     * @var array
      */
     protected $providedPermissions = array(
         '*'                             => '*',
@@ -33,7 +33,7 @@ class RoleForm extends ConfigForm
     /**
      * Provided restrictions by currently loaded modules
      *
-     * @type array
+     * @var array
      */
     protected $providedRestrictions = array();
 
@@ -46,11 +46,11 @@ class RoleForm extends ConfigForm
         $helper = new Zend_Form_Element('bogus');
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
             foreach ($module->getProvidedPermissions() as $permission) {
-                /** @type object $permission */
+                /** @var object $permission */
                 $this->providedPermissions[$permission->name] = $permission->name . ': ' . $permission->description;
             }
             foreach ($module->getProvidedRestrictions() as $restriction) {
-                /** @type object $restriction */
+                /** @var object $restriction */
                 $name = $helper->filterName($restriction->name); // Zend only permits alphanumerics, the underscore,
                                                                  // the circumflex and any ASCII character in range
                                                                  // \x7f to \xff (127 to 255)

@@ -33,7 +33,7 @@ class DomNodeIterator implements RecursiveIterator
     /**
      * The node's children
      *
-     * @type IteratorIterator
+     * @var IteratorIterator
      */
     protected $children;
 

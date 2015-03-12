@@ -19,14 +19,14 @@ class DocSearchIterator extends RecursiveFilterIterator
     /**
      * Search criteria
      *
-     * @type DocSearch
+     * @var DocSearch
      */
     protected $search;
 
     /**
      * Current search matches
      *
-     * @type DocSearchMatch[]|null
+     * @var DocSearchMatch[]|null
      */
     protected $matches;
 
@@ -51,7 +51,7 @@ class DocSearchIterator extends RecursiveFilterIterator
     public function accept()
     {
         $section = $this->current();
-        /** @type $section \Icinga\Module\Doc\DocSection */
+        /** @var $section \Icinga\Module\Doc\DocSection */
         $matches = array();
         if (($match = $this->search->search($section->getTitle())) !== null) {
             $matches[] = $match->setMatchType(DocSearchMatch::MATCH_HEADER);

@@ -51,7 +51,7 @@ class ActionController extends Zend_Controller_Action
     /**
      * Authentication manager
      *
-     * @type Manager|null
+     * @var Manager|null
      */
     private $auth;
 

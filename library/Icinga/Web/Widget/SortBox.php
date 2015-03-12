@@ -133,13 +133,6 @@ class SortBox extends AbstractWidget
         if ($this->request) {
             $form->populate($this->request->getParams());
         }
-
-        return sprintf(
-            '<div class="sort-box dontprint">'
-            . '<h2 tabindex="-1" class="sr-only">%s</h2>%s%s</div>',
-            t('Sort Criteria'),
-            t('Sort by'),
-            (string) $form
-        );
+        return $form;
     }
 }

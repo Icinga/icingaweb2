@@ -18,7 +18,7 @@ class Menu implements RecursiveIterator
     /**
      * The id of this menu
      *
-     * @type string
+     * @var string
      */
     protected $id;
 
@@ -27,7 +27,7 @@ class Menu implements RecursiveIterator
      *
      * Used for sorting when priority is unset or equal to other items
      *
-     * @type string
+     * @var string
      */
     protected $title;
 
@@ -36,42 +36,42 @@ class Menu implements RecursiveIterator
      *
      * Used for sorting
      *
-     * @type int
+     * @var int
      */
     protected $priority = 100;
 
     /**
      * The url of this menu
      *
-     * @type string
+     * @var string
      */
     protected $url;
 
     /**
      * The path to the icon of this menu
      *
-     * @type string
+     * @var string
      */
     protected $icon;
 
     /**
      * The sub menus of this menu
      *
-     * @type array
+     * @var array
      */
     protected $subMenus = array();
 
     /**
      * A custom item renderer used instead of the default rendering logic
      *
-     * @type MenuItemRenderer
+     * @var MenuItemRenderer
      */
     protected $itemRenderer = null;
 
     /*
      * Parent menu
      *
-     * @type Menu
+     * @var Menu
      */
     protected $parent;
 
