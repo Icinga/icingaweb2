@@ -22,7 +22,8 @@ class RoleForm extends ConfigForm
      */
     protected $providedPermissions = array(
         '*'                                 => '*',
-        'system/config/*'                   => 'system/config/*',
+        'config/*'                          => 'config/*',
+        'config/application/*'              => 'config/application/*',
         'config/application/general'        => 'config/application/general',
         'config/application/authentication' => 'config/application/authentication',
         'config/application/resources'      => 'config/application/resources',
