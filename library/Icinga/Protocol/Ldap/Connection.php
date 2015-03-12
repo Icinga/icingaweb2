@@ -502,7 +502,7 @@ class Connection
 
         if ($this->connectionType === static::STARTTLS) {
             $force_tls = false;
-            if ($this->capabilities->hasStartTLS()) {
+            if ($this->capabilities->hasStartTls()) {
                 if (@ldap_start_tls($ds)) {
                     Logger::debug('LDAP STARTTLS succeeded');
                 } else {
