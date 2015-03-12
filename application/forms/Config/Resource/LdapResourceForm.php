@@ -71,8 +71,8 @@ class LdapResourceForm extends Form
                 ),
                 'multiOptions'  => array(
                     'plaintext'             => $this->translate('Plaintext'),
-                    Connection::LDAPS       => 'LDAPS',
-                    Connection::STARTTLS    => 'STARTTLS'
+                    Connection::STARTTLS    => 'STARTTLS',
+                    Connection::LDAPS       => 'LDAPS'
                 )
             )
         );
