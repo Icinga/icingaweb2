@@ -31,6 +31,14 @@
             null,
             array('icon' => 'reply')
         ); ?></div>
+        <?php if ($this->hasPermission('monitoring/command/send-custom-notification')): ?>
+        <div><?= $this->qlink(
+                sprintf($this->translate('Send a custom notification for all %u services'), $serviceCount),
+                $sendCustomNotificationLink,
+                null,
+                array('icon' => 'comment')
+            ); ?></div>
+        <?php endif; ?>
       <?php if (($unhandledCount = count($unhandledObjects)) > 0): ?>
         <div>
             <h3><?= sprintf(
