@@ -356,6 +356,11 @@
             return false;
         },
 
+        /**
+         * Handle anchor, i.e. focus the element which is referenced by the anchor
+         *
+         * @param {string} query jQuery selector
+         */
         handleAnchor: function(query) {
             var $element = $(query);
             if ($element.length > 0) {
