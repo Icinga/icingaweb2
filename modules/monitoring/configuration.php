@@ -55,6 +55,10 @@ $this->providePermission(
     'monitoring/command/feature/object',
     $this->translate('Allow processing commands for toggling features on host and service objects')
 );
+$this->providesPermission(
+    'monitoring/command/send-custom-notification',
+    $this->translate('Allow sending custom notifications for hosts and services');
+);
 
 $this->provideRestriction(
     'monitoring/hosts/filter',
