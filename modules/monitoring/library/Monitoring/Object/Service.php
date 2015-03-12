@@ -137,6 +137,7 @@ class Service extends MonitoredObject
             'service_handled',
             'service_in_downtime',
             'service_is_flapping',
+            'service_is_reachable',
             'service_last_check',
             'service_last_notification',
             'service_last_state_change',
