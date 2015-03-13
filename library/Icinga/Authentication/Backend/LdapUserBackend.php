@@ -30,6 +30,18 @@ class LdapUserBackend extends UserBackend
 
     protected $groupOptions;
 
+    /**
+     * Normed attribute names based on known LDAP environments
+     *
+     * @var array
+     */
+    protected $normedAttributes = array(
+        'uid'               => 'uid',
+        'user'              => 'user',
+        'inetorgperson'     => 'inetOrgPerson',
+        'samaccountname'    => 'sAMAccountName'
+    );
+
     public function __construct(
         Connection $conn,
         $userClass,
@@ -40,10 +52,27 @@ class LdapUserBackend extends UserBackend
     ) {
         $this->conn = $conn;
         $this->baseDn = trim($baseDn) ?: $conn->getDN();
-        $this->userClass = $userClass;
-        $this->userNameAttribute = $userNameAttribute;
+        $this->userClass = $this->getNormedAttribute($userClass);
+        $this->userNameAttribute = $this->getNormedAttribute($userNameAttribute);
         $this->customFilter = trim($cutomFilter);
         $this->groupOptions = $groupOptions;
+    }
+
+    /**
+     * Return the given attribute name normed to known LDAP enviroments, if possible
+     *
+     * @param   string  $name
+     *
+     * @return  string
+     */
+    protected function getNormedAttribute($name)
+    {
+        $loweredName = strtolower($name);
+        if (array_key_exists($loweredName, $this->normedAttributes)) {
+            return $this->normedAttributes[$loweredName];
+        }
+
+        return $name;
     }
 
     /**
