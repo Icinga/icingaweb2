@@ -535,7 +535,13 @@ class Form extends Zend_Form
                 ->addCsrfCounterMeasure()
                 ->addSubmitButton();
 
-            if ($this->getAction() === '') {
+            if ($this->getAttrib('action') === null) {
+                // Use Form::getAttrib() instead of Form::getAction() here because we want to explicitly check against
+                // null. Form::getAction() would return the empty string '' if the action is not set.
+                // For not setting the action attribute use Form::setAction(''). This is required for for the
+                // accessibility's enable/disable auto-refresh mechanic
+
+                // TODO(el): Re-evalute this necessity. JavaScript could use the container's URL if there's no action set.
                 // We MUST set an action as JS gets confused otherwise, if
                 // this form is being displayed in an additional column
                 $this->setAction(Url::fromRequest()->without(array_keys($this->getElements())));

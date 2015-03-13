@@ -292,6 +292,12 @@
                 r.url = redirect;
                 if (parts.length) {
                     r.loadNext = parts;
+                } else if (!! document.location.hash) {
+                    // Retain detail URL if the layout is rerendered
+                    parts = document.location.hash.split('#!').splice(1);
+                    if (parts.length) {
+                        r.loadNext = parts;
+                    }
                 }
 
             } else {

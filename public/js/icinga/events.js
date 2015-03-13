@@ -239,10 +239,8 @@
             event.stopPropagation();
             event.preventDefault();
 
-            icinga.logger.debug('Submitting form: ' + method + ' ' + url, method);
-
             if ($button.length) {
-                // activate spinner indicator
+                // Activate spinner
                 if ($button.hasClass('spinner')) {
                     $button.addClass('active');
                 }
@@ -251,6 +249,13 @@
             } else {
                 $target = self.getLinkTargetFor($form);
             }
+
+            if (! url) {
+                // Use the URL of the target container if the form's action is not set
+                url = $target.closest('.container').data('icinga-url');
+            }
+
+            icinga.logger.debug('Submitting form: ' + method + ' ' + url, method);
 
             if (method === 'GET') {
                 var dataObj = $form.serializeObject();
@@ -274,6 +279,7 @@
                     }
                 }
             }
+
             icinga.loader.loadUrl(url, $target, data, method);
 
             return false;
