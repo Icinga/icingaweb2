@@ -70,7 +70,7 @@ class LdapResourceForm extends Form
                     . ' none for unencrypted communication'
                 ),
                 'multiOptions'  => array(
-                    'none'                  => $this->translate('None'),
+                    'none'                  => $this->translate('None', 'resource.ldap.encryption'),
                     Connection::STARTTLS    => 'STARTTLS',
                     Connection::LDAPS       => 'LDAPS'
                 )
