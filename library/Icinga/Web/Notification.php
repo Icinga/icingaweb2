@@ -18,7 +18,12 @@ use Icinga\Web\Session;
 class Notification
 {
     protected static $instance;
+
     protected $isCli = false;
+
+    protected $session;
+
+    protected $messages = array();
 
     public static function info($msg)
     {
@@ -74,8 +79,7 @@ class Notification
             return;
         }
 
-        $messages = & Session::getSession()->getByRef('messages');
-        $messages[] = (object) array(
+        $this->messages[] = (object) array(
             'type'    => $type,
             'message' => $message,
         );
@@ -83,30 +87,30 @@ class Notification
 
     public function hasMessages()
     {
-        $session = Session::getSession();
-        return false === empty($session->messages);
+        return false === empty($this->messages);
     }
 
     public function getMessages()
     {
-        $session = Session::getSession();
-        $messages = $session->messages;
-        if (false === empty($messages)) {
-            $session->messages = array();
-        }
-
+        $messages = $this->messages;
+        $this->messages = array();
         return $messages;
     }
 
     final private function __construct()
     {
-        $session = Session::getSession();
-        if (!is_array($session->get('messages'))) {
-            $session->messages = array();
+        if (Platform::isCli()) {
+            $this->isCli = true;
+            return;
         }
 
-        if (Platform::isCli()) {
-            $this->is_cli = true;
+        $this->session = Session::getSession();
+
+        $stored = $this->session->get('messages');
+        if (is_array($stored)) {
+            $this->messages = $stored;
+            $this->session->set('messages', array());
+            $this->session->write();
         }
     }
 
@@ -116,5 +120,18 @@ class Notification
             self::$instance = new Notification();
         }
         return self::$instance;
+    }
+
+    final public function __destruct()
+    {
+        if ($this->isCli) {
+            return;
+        }
+        if ($this->session->get('messages') !== $this->messages) {
+            $this->session->set('messages', $this->messages);
+        }
+        $this->session->write();
+
+        unset($this->session);
     }
 }
