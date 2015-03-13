@@ -23,10 +23,6 @@ use Icinga\Data\ConfigObject;
  *     'bind_pw'  => '***'
  * ));
  * </code>
- *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
 class Connection
 {
@@ -34,8 +30,20 @@ class Connection
     const LDAP_SIZELIMIT_EXCEEDED = 4;
     const LDAP_ADMINLIMIT_EXCEEDED = 11;
     const PAGE_SIZE = 1000;
-    const STARTTLS = 'tls';
-    const SSL = 'ssl';
+
+    /**
+     * Encrypt connection using STARTTLS (upgrading a plain text connection)
+     *
+     * @var string
+     */
+    const STARTTLS = 'starttls';
+
+    /**
+     * Encrypt connection using LDAP over SSL (using a separate port)
+     *
+     * @var string
+     */
+    const LDAPS = 'ldaps';
 
     protected $ds;
     protected $hostname;
@@ -473,12 +481,12 @@ class Connection
      */
     protected function prepareNewConnection()
     {
-        if ($this->connectionType === static::STARTTLS || $this->connectionType === static::SSL) {
+        if ($this->connectionType === static::STARTTLS || $this->connectionType === static::LDAPS) {
             $this->prepareTlsEnvironment();
         }
 
         $hostname = $this->hostname;
-        if ($this->connectionType === static::SSL) {
+        if ($this->connectionType === static::LDAPS) {
             $hostname = 'ldaps://' . $hostname;
         }
 
@@ -494,7 +502,7 @@ class Connection
 
         if ($this->connectionType === static::STARTTLS) {
             $force_tls = false;
-            if ($this->capabilities->hasStartTLS()) {
+            if ($this->capabilities->hasStartTls()) {
                 if (@ldap_start_tls($ds)) {
                     Logger::debug('LDAP STARTTLS succeeded');
                 } else {

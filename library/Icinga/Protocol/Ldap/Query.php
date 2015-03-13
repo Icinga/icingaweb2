@@ -348,6 +348,11 @@ class Query
         }
     }
 
+    public function __toString()
+    {
+        return $this->create();
+    }
+
     /**
      * Descructor
      */

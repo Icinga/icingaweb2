@@ -76,6 +76,17 @@ class Menu implements RecursiveIterator
     protected $parent;
 
     /**
+     * Permission a user is required to have granted to display the menu item
+     *
+     * If a permission is set, authentication is of course required.
+     *
+     * Note that only one required permission can be set yet.
+     *
+     * @var string|null
+     */
+    protected $permission;
+
+    /**
      * Create a new menu
      *
      * @param   int             $id         The id of this menu
@@ -221,12 +232,14 @@ class Menu implements RecursiveIterator
                 'priority' => 200
             ));
             $section->add(t('Configuration'), array(
-                'url'      => 'config',
-                'priority' => 300
+                'url'           => 'config',
+                'permission'    => 'config/application/*',
+                'priority'      => 300
             ));
             $section->add(t('Modules'), array(
-                'url'      => 'config/modules',
-                'priority' => 400
+                'url'           => 'config/modules',
+                'permission'    => 'config/modules',
+                'priority'      => 400
             ));
 
             if (Logger::writesToFile()) {
@@ -442,15 +455,27 @@ class Menu implements RecursiveIterator
     }
 
     /**
-     * Set required Permissions
+     * Get the permission a user is required to have granted to display the menu item
      *
-     * @param   $permission
+     * @return string|null
+     */
+    public function getPermission()
+    {
+        return $this->permission;
+    }
+
+    /**
+     * Set permission a user is required to have granted to display the menu item
+     *
+     * If a permission is set, authentication is of course required.
+     *
+     * @param   string  $permission
      *
      * @return  $this
      */
-    public function requirePermission($permission)
+    public function setPermission($permission)
     {
-        // Not implemented yet
+        $this->permission = (string) $permission;
         return $this;
     }
 

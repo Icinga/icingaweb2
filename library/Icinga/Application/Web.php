@@ -16,6 +16,7 @@ use Icinga\Authentication\Manager;
 use Icinga\User;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Util\Translator;
+use Icinga\Web\Notification;
 use Icinga\Web\Request;
 use Icinga\Web\Response;
 use Icinga\Web\Session;
@@ -89,6 +90,7 @@ class Web extends ApplicationBootstrap
             ->loadConfig()
             ->setupResourceFactory()
             ->setupSession()
+            ->setupNotifications()
             ->setupUser()
             ->setupTimezone()
             ->setupLogger()
@@ -192,6 +194,17 @@ class Web extends ApplicationBootstrap
     private function setupSession()
     {
         $this->session = Session::create();
+        return $this;
+    }
+
+    /**
+     * Initialize notifications to remove them immediately from session
+     *
+     * @return $this
+     */
+    private function setupNotifications()
+    {
+        Notification::getInstance();
         return $this;
     }
 

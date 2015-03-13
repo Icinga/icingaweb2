@@ -10,7 +10,7 @@ if (in_array((int) $object->state, array(0, 99))) {
 if ($object->acknowledged): ?>
     <tr>
         <th><?= $this->translate('Acknowledged') ?></th>
-        <td>
+        <td data-base-target="_self">
             <?php if (isset($removeAckForm)) { // Form is unset if the current user lacks the respective permission
                 echo $removeAckForm;
             } else {

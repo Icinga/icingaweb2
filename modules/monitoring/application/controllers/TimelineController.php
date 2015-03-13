@@ -22,7 +22,7 @@ class Monitoring_TimelineController extends Controller
                 'label' => $this->translate('Timeline'),
                 'url'   => Url::fromRequest()
             )
-        )->activate('timeline')->setTitle($this->translate('Timeline Navigation'));
+        )->activate('timeline');
         $this->view->title = $this->translate('Timeline');
 
         // TODO: filter for hard_states (precedence adjustments necessary!)

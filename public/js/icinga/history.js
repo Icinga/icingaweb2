@@ -112,7 +112,7 @@
             this.lastPushUrl = url;
             window.history.pushState({icinga: true}, null, url);
         },
-        
+
         /**
          * Event handler for pop events
          *
@@ -166,9 +166,10 @@
                 parts = document.location.hash.split(/#!/);
 
                 if ($('#layout > #login').length) {
-                    // We are on the login page!
-                    $('#login form #redirect').val(
-                        $('#login form #redirect').val() + '#!' + parts[1]
+                    // We are on the login page
+                    var redirect = $('#login form input[name=redirect]').first();
+                    redirect.val(
+                        redirect.val() + '#!' + parts[1]
                     );
                 } else {
                     if ($('#col2').data('icingaUrl') !== main) {

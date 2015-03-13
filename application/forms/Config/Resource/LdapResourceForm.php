@@ -60,23 +60,24 @@ class LdapResourceForm extends Form
         );
         $this->addElement(
             'select',
-            'connection',
+            'encryption',
             array(
                 'required'      => true,
                 'autosubmit'    => true,
-                'label'         => $this->translate('Connection'),
+                'label'         => $this->translate('Encryption'),
                 'description'   => $this->translate(
-                    'The type of connection to use. Unencrypted (Plaintext) or encrypted (SSL, TLS).'
+                    'Whether to encrypt communication. Choose STARTTLS or LDAPS for encrypted communication or'
+                    . ' none for unencrypted communication'
                 ),
                 'multiOptions'  => array(
-                    'plaintext'             => $this->translate('Plaintext'),
-                    Connection::SSL         => 'Secure Sockets Layer (SSL)',
-                    Connection::STARTTLS    => 'Transport Layer Security (TLS)'
+                    'none'                  => $this->translate('None', 'resource.ldap.encryption'),
+                    Connection::STARTTLS    => 'STARTTLS',
+                    Connection::LDAPS       => 'LDAPS'
                 )
             )
         );
 
-        if (isset($formData['connection']) && $formData['connection'] !== 'plaintext') {
+        if (isset($formData['encryption']) && $formData['encryption'] !== 'none') {
             // TODO(jom): Do not show this checkbox unless the connection is actually failing due to certificate errors
             $this->addElement(
                 'checkbox',
