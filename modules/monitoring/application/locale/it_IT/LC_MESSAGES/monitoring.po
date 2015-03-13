@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Monitoring Module (2.0.0~alpha4)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2015-03-13 09:49+0100\n"
-"PO-Revision-Date: 2015-03-13 10:47+0100\n"
+"POT-Creation-Date: 2015-03-13 14:47+0100\n"
+"PO-Revision-Date: 2015-03-13 14:51+0100\n"
 "Last-Translator: Davide Demuru <davide.demuru@gmail.com>\n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -652,10 +652,6 @@ msgstr "Mostra il numero di eventi dello storico raggruppati per ora e tipo"
 msgid "Timeline"
 msgstr "Cronologia"
 
-#: /home/gandhi/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:25
-msgid "Timeline Navigation"
-msgstr "Navigazione della Cronologia"
-
 #: /home/gandhi/icingaweb2/modules/monitoring/application/forms/Command/Instance/DisableNotificationsExpireCommandForm.php:26
 msgid ""
 "This command is used to disable host and service notifications for a "
@@ -756,6 +752,7 @@ msgstr ""
 #: /home/gandhi/icingaweb2/modules/monitoring/application/views/scripts/list/comments.phtml:62
 #: /home/gandhi/icingaweb2/modules/monitoring/application/views/scripts/list/downtimes.phtml:67
 #: /home/gandhi/icingaweb2/modules/monitoring/application/views/scripts/list/eventhistory.phtml:46
+#: /home/gandhi/icingaweb2/modules/monitoring/application/views/scripts/show/components/comments.phtml:54
 #: /home/gandhi/icingaweb2/modules/monitoring/application/views/scripts/show/history.phtml:63
 msgid "Comment"
 msgstr "Commento"
@@ -851,19 +848,19 @@ msgstr "Controlla ora"
 msgid "Schedule the next active check to run immediately"
 msgstr "Schedula il prossimo controllo per essere eseguito immediatamente"
 
-#: /home/gandhi/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteCommentCommandForm.php:57
+#: /home/gandhi/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteCommentCommandForm.php:64
 msgid "Delete this comment"
 msgstr "Cancella questo commento"
 
-#: /home/gandhi/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteCommentCommandForm.php:82
+#: /home/gandhi/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteCommentCommandForm.php:89
 msgid "Deleting comment.."
 msgstr "Rimozione commento..."
 
-#: /home/gandhi/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteDowntimeCommandForm.php:57
+#: /home/gandhi/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteDowntimeCommandForm.php:64
 msgid "Delete this downtime"
 msgstr "Cancella questa manutenzione"
 
-#: /home/gandhi/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteDowntimeCommandForm.php:82
+#: /home/gandhi/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteDowntimeCommandForm.php:89
 msgid "Deleting downtime.."
 msgstr "Cancellazione Manutenzione..."
 
@@ -1826,6 +1823,7 @@ msgid "Comment was created by an user."
 msgstr "Commento creato da un utente."
 
 #: /home/gandhi/icingaweb2/modules/monitoring/application/views/scripts/list/comments.phtml:35
+#: /home/gandhi/icingaweb2/modules/monitoring/application/views/scripts/show/components/downtime.phtml:68
 msgid "Downtime"
 msgstr "Manutenzione"
 
@@ -2369,9 +2367,21 @@ msgstr ""
 msgid "Actions"
 msgstr "Azioni"
 
-#: /home/gandhi/icingaweb2/modules/monitoring/application/views/scripts/show/components/checksource.phtml:3
+#: /home/gandhi/icingaweb2/modules/monitoring/application/views/scripts/show/components/checksource.phtml:4
 msgid "Check Source"
 msgstr "Eseguito da"
+
+#: /home/gandhi/icingaweb2/modules/monitoring/application/views/scripts/show/components/checksource.phtml:14
+msgid "Reachable"
+msgstr "Raggiungibile"
+
+#: /home/gandhi/icingaweb2/modules/monitoring/application/views/scripts/show/components/checksource.phtml:17
+msgid "Yes"
+msgstr "Si"
+
+#: /home/gandhi/icingaweb2/modules/monitoring/application/views/scripts/show/components/checksource.phtml:17
+msgid "No"
+msgstr "No"
 
 #: /home/gandhi/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:18
 msgid "Last check"
@@ -2592,6 +2602,9 @@ msgstr "Mostra tutti gli eventi dello storico %s"
 #, php-format
 msgid "List %u %s registered %s"
 msgstr "Mostra %u %s salvati %s"
+
+#~ msgid "Timeline Navigation"
+#~ msgstr "Navigazione della Cronologia"
 
 #~ msgid " Down Hosts (Handled)"
 #~ msgstr "Host Down (Gestiti)"

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2015-03-13 10:05+0100\n"
-"PO-Revision-Date: 2015-03-13 10:47+0100\n"
+"POT-Creation-Date: 2015-03-13 14:47+0100\n"
+"PO-Revision-Date: 2015-03-13 14:51+0100\n"
 "Last-Translator: Davide Demuru <davide.demuru@gmail.com>\n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -251,20 +251,20 @@ msgstr "Password"
 msgid "...and your password"
 msgstr "...e password"
 
-#: /home/gandhi/icingaweb2/application/forms/AutoRefreshForm.php:39
+#: /home/gandhi/icingaweb2/application/forms/AutoRefreshForm.php:41
 msgid "Auto refresh successfully enabled"
 msgstr "Aggiornamento automatico abilitato correttamente"
 
-#: /home/gandhi/icingaweb2/application/forms/AutoRefreshForm.php:42
+#: /home/gandhi/icingaweb2/application/forms/AutoRefreshForm.php:44
 msgid "Auto refresh successfully disabled"
 msgstr "Aggiornamento automatico disabilitato correttamente"
 
-#: /home/gandhi/icingaweb2/application/forms/AutoRefreshForm.php:61
+#: /home/gandhi/icingaweb2/application/forms/AutoRefreshForm.php:63
 #: /home/gandhi/icingaweb2/application/forms/PreferenceForm.php:194
 msgid "Enable auto refresh"
 msgstr "Abilitare aggiornamento automatico"
 
-#: /home/gandhi/icingaweb2/application/forms/AutoRefreshForm.php:63
+#: /home/gandhi/icingaweb2/application/forms/AutoRefreshForm.php:65
 msgid "Disable auto refresh"
 msgstr "Disabilitare aggiornamento automatico"
 
@@ -531,6 +531,7 @@ msgid "File"
 msgstr "File"
 
 #: /home/gandhi/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:36
+#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:73
 msgid "None"
 msgstr "None"
 
@@ -644,7 +645,7 @@ msgid "The password to use for authentication"
 msgstr "Password da usare per l'autenticazione"
 
 #: /home/gandhi/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:135
-#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:160
+#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:161
 #: /home/gandhi/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:79
 msgid ""
 "Connectivity validation failed, connection to the given resource not "
@@ -685,26 +686,22 @@ msgid "The port of the LDAP server to use for authentication"
 msgstr "La porta del server LDAP da usare per l'autenticazione"
 
 #: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:67
-msgid "Connection"
-msgstr "Connessione"
+msgid "Encryption"
+msgstr "Crittografia"
 
 #: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:69
 msgid ""
-"The type of connection to use. Unencrypted (Plaintext) or encrypted (SSL, "
-"TLS)."
+"Whether to encrypt communication. Choose STARTTLS or LDAPS for encrypted "
+"communication or none for unencrypted communication"
 msgstr ""
-"Il tipo di connessione da utilizzare. Criptata (SSL, TLS) o non criptata "
-"(Testo in chiaro)"
+"Scegliere STARTTLS o LDAPS per una crittografare la comunicazione o None per "
+"la comunicazione in chiaro"
 
-#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:72
-msgid "Plaintext"
-msgstr "Testo in chiaro"
-
-#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:86
+#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:87
 msgid "Require Certificate"
 msgstr "Certificato Richiesto"
 
-#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:88
+#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:89
 msgid ""
 "When checked, the LDAP server must provide a valid and known (trusted) "
 "certificate."
@@ -712,28 +709,28 @@ msgstr ""
 "Se selzionato, il server LDAP deve fornire un certificato valido e sicuro "
 "(trusted)."
 
-#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:100
+#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:101
 msgid "Root DN"
 msgstr "Root DN"
 
-#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:102
+#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:103
 msgid "Only the root and its child nodes will be accessible on this resource."
 msgstr ""
 "Solo gli oggetti che appartengono a questa risorsa radice saranno accessibili"
 
-#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:111
+#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:112
 msgid "Bind DN"
 msgstr "Bind DN"
 
-#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:112
+#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:113
 msgid "The user dn to use for querying the ldap server"
 msgstr "Utente DN da usare per interrogare il server ldap"
 
-#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:121
+#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:122
 msgid "Bind Password"
 msgstr "Bind Password"
 
-#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:122
+#: /home/gandhi/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:123
 msgid "The password to use for querying the ldap server"
 msgstr "Password da usare per interrogare il server ldap"
 
@@ -913,56 +910,56 @@ msgstr "Salva Preferenze"
 msgid "Save for the current Session"
 msgstr "Salva per la sessione corrente"
 
-#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:82
+#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:81
 msgid "Role Name"
 msgstr "Nome Ruolo"
 
-#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:83
+#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:82
 msgid "The name of the role"
 msgstr "Il nome del ruolo"
 
-#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:91
+#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:90
 #: /home/gandhi/icingaweb2/application/views/scripts/roles/index.phtml:15
 msgid "Users"
 msgstr "Utenti"
 
-#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:92
+#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:91
 msgid "Comma-separated list of users that are assigned to the role"
 msgstr "Lista degli utenti assegnati al ruolo separati da virgole"
 
-#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:99
+#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:98
 #: /home/gandhi/icingaweb2/application/views/scripts/roles/index.phtml:16
 msgid "Groups"
 msgstr "Gruppi"
 
-#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:100
+#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:99
 msgid "Comma-separated list of groups that are assigned to the role"
 msgstr "Lista dei gruppi assegnati al ruolo separati da virgole"
 
-#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:107
+#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:106
 msgid "Permissions Set"
 msgstr "Permessi"
 
-#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:109
+#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:108
 msgid "The permissions to grant. You may select more than one permission"
 msgstr "Permessi da assegnare. E' possibile selezionare più di un permesso"
 
-#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:146
+#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:145
 #, php-format
 msgid "Can't load role '%s'. Role does not exist"
 msgstr "Impossibile caricare il ruolo '%s'. Ruolo inesistente."
 
-#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:187
+#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:186
 #, php-format
 msgid "Can't add role '%s'. Role already exists"
 msgstr "Impossibile aggiungere il ruolo '%s'. Ruolo già esistente."
 
-#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:213
+#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:212
 #, php-format
 msgid "Can't remove role '%s'. Role does not exist"
 msgstr "Impossibile rimuovere il ruolo '%s'. Ruolo inesistente"
 
-#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:246
+#: /home/gandhi/icingaweb2/application/forms/Security/RoleForm.php:245
 #, php-format
 msgid "Can't update role '%s'. Role does not exist"
 msgstr "Impossibile aggiornare il ruolo '%s'. Ruolo inesistente"
@@ -971,7 +968,7 @@ msgstr "Impossibile aggiornare il ruolo '%s'. Ruolo inesistente"
 msgid "Method Not Allowed"
 msgstr "Metodo non consentito"
 
-#: /home/gandhi/icingaweb2/library/Icinga/Web/Form.php:687
+#: /home/gandhi/icingaweb2/library/Icinga/Web/Form.php:693
 msgid ""
 "Upon its value has changed, this field issues an automatic update of this "
 "page."
@@ -1375,6 +1372,19 @@ msgid ""
 msgstr ""
 "In caso di mancato accesso al file, aprire il file ad inserire i dati "
 "manualmente."
+
+#~ msgid "Connection"
+#~ msgstr "Connessione"
+
+#~ msgid ""
+#~ "The type of connection to use. Unencrypted (Plaintext) or encrypted (SSL, "
+#~ "TLS)."
+#~ msgstr ""
+#~ "Il tipo di connessione da utilizzare. Criptata (SSL, TLS) o non criptata "
+#~ "(Testo in chiaro)"
+
+#~ msgid "Plaintext"
+#~ msgstr "Testo in chiaro"
 
 #~ msgid "\"%value%\" is not a valid regular expression"
 #~ msgstr "\"%value%\" non è un espressione regolare valida"
