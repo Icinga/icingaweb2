@@ -686,7 +686,7 @@ class Monitoring_ListController extends Controller
     {
         $columns = preg_split(
             '~,~',
-            $this->params->shift('addcolumns', ''),
+            $this->params->shift('addColumns', ''),
             -1,
             PREG_SPLIT_NO_EMPTY
         );
