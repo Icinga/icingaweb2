@@ -162,6 +162,26 @@ class SimpleQuery implements QueryInterface, Queryable
     }
 
     /**
+     * Split order field into its field and sort direction
+     *
+     * @param   string  $field
+     *
+     * @return  array
+     */
+    public function splitOrder($field)
+    {
+        $fieldAndDirection = explode(' ', $field, 2);
+        if (count($fieldAndDirection) === 1) {
+            $direction = null;
+        } else {
+            $field = $fieldAndDirection[0];
+            $direction = (strtoupper(trim($fieldAndDirection[1])) === 'DESC') ?
+                Sortable::SORT_DESC : Sortable::SORT_ASC;
+        }
+        return array($field, $direction);
+    }
+
+    /**
      * Sort result set by the given field (and direction)
      *
      * Preferred usage:
@@ -177,13 +197,9 @@ class SimpleQuery implements QueryInterface, Queryable
     public function order($field, $direction = null)
     {
         if ($direction === null) {
-            $fieldAndDirection = explode(' ', $field, 2);
-            if (count($fieldAndDirection) === 1) {
-                $direction = self::SORT_ASC;
-            } else {
-                $field = $fieldAndDirection[0];
-                $direction = (strtoupper(trim($fieldAndDirection[1])) === 'DESC') ?
-                    Sortable::SORT_DESC : Sortable::SORT_ASC;
+            list($field, $direction) = $this->splitOrder($field);
+            if ($direction === null) {
+                $direction = Sortable::SORT_ASC;
             }
         } else {
             switch (($direction = strtoupper($direction))) {
