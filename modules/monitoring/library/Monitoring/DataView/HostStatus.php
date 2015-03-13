@@ -90,6 +90,13 @@ class HostStatus extends DataView
     public function getSortRules()
     {
         return array(
+            'host_severity' => array(
+                'columns' => array(
+                    'host_severity',
+                    'host_last_state_change',
+                ),
+                'order' => self::SORT_DESC
+            ),
             'host_display_name' => array(
                 'order' => self::SORT_ASC
             ),
@@ -101,13 +108,6 @@ class HostStatus extends DataView
             ),
             'host_last_state_change' => array(
                 'order' => self::SORT_ASC
-            ),
-            'host_severity' => array(
-                'columns' => array(
-                    'host_severity',
-                    'host_last_state_change',
-                ),
-                'order' => self::SORT_DESC
             )
         );
     }
