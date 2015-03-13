@@ -37,7 +37,7 @@ class ConfigController extends ActionController
         $tabs = $this->getTabs();
         $auth = $this->Auth();
         $allowedActions = array();
-        if ($auth->hasPermission('system/config/application')) {
+        if ($auth->hasPermission('config/application/general')) {
             $tabs->add('application', array(
                 'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
                 'label' => $this->translate('Application'),
@@ -45,7 +45,7 @@ class ConfigController extends ActionController
             ));
             $allowedActions[] = 'application';
         }
-        if ($auth->hasPermission('system/config/authentication')) {
+        if ($auth->hasPermission('config/application/authentication')) {
             $tabs->add('authentication', array(
                 'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
                 'label' => $this->translate('Authentication'),
@@ -53,7 +53,7 @@ class ConfigController extends ActionController
             ));
             $allowedActions[] = 'authentication';
         }
-        if ($auth->hasPermission('system/config/resources')) {
+        if ($auth->hasPermission('config/application/resources')) {
             $tabs->add('resource', array(
                 'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
                 'label' => $this->translate('Resources'),
@@ -61,7 +61,7 @@ class ConfigController extends ActionController
             ));
             $allowedActions[] = 'resource';
         }
-        if ($auth->hasPermission('system/config/roles')) {
+        if ($auth->hasPermission('config/application/roles')) {
             $tabs->add('roles', array(
                 'title' => $this->translate(
                     'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
@@ -102,7 +102,7 @@ class ConfigController extends ActionController
      */
     public function applicationAction()
     {
-        $this->assertPermission('system/config/application');
+        $this->assertPermission('config/application/general');
         $form = new GeneralConfigForm();
         $form->setIniConfig(Config::app());
         $form->handleRequest();
@@ -158,7 +158,7 @@ class ConfigController extends ActionController
      */
     public function moduleenableAction()
     {
-        $this->assertPermission('system/config/modules');
+        $this->assertPermission('config/modules');
         $module = $this->getParam('name');
         $manager = Icinga::app()->getModuleManager();
         try {
@@ -178,7 +178,7 @@ class ConfigController extends ActionController
      */
     public function moduledisableAction()
     {
-        $this->assertPermission('system/config/modules');
+        $this->assertPermission('config/modules');
         $module = $this->getParam('name');
         $manager = Icinga::app()->getModuleManager();
         try {
@@ -198,7 +198,7 @@ class ConfigController extends ActionController
      */
     public function authenticationAction()
     {
-        $this->assertPermission('system/config/authentication');
+        $this->assertPermission('config/application/authentication');
         $form = new AuthenticationBackendReorderForm();
         $form->setIniConfig(Config::app('authentication'));
         $form->handleRequest();
@@ -213,7 +213,7 @@ class ConfigController extends ActionController
      */
     public function createauthenticationbackendAction()
     {
-        $this->assertPermission('system/config/authentication');
+        $this->assertPermission('config/application/authentication');
         $form = new AuthenticationBackendConfigForm();
         $form->setTitle($this->translate('Create New Authentication Backend'));
         $form->addDescription($this->translate(
@@ -235,7 +235,7 @@ class ConfigController extends ActionController
      */
     public function editauthenticationbackendAction()
     {
-        $this->assertPermission('system/config/authentication');
+        $this->assertPermission('config/application/authentication');
         $form = new AuthenticationBackendConfigForm();
         $form->setTitle($this->translate('Edit Backend'));
         $form->setIniConfig(Config::app('authentication'));
@@ -253,7 +253,7 @@ class ConfigController extends ActionController
      */
     public function removeauthenticationbackendAction()
     {
-        $this->assertPermission('system/config/authentication');
+        $this->assertPermission('config/application/authentication');
         $form = new ConfirmRemovalForm(array(
             'onSuccess' => function ($form) {
                 $configForm = new AuthenticationBackendConfigForm();
@@ -291,7 +291,7 @@ class ConfigController extends ActionController
      */
     public function resourceAction()
     {
-        $this->assertPermission('system/config/resources');
+        $this->assertPermission('config/application/resources');
         $this->view->resources = Config::app('resources', true)->keys();
         $this->view->tabs->activate('resource');
     }
@@ -301,7 +301,7 @@ class ConfigController extends ActionController
      */
     public function createresourceAction()
     {
-        $this->assertPermission('system/config/resources');
+        $this->assertPermission('config/application/resources');
         $form = new ResourceConfigForm();
         $form->setTitle($this->translate('Create A New Resource'));
         $form->addDescription($this->translate('Resources are entities that provide data to Icinga Web 2.'));
@@ -318,7 +318,7 @@ class ConfigController extends ActionController
      */
     public function editresourceAction()
     {
-        $this->assertPermission('system/config/resources');
+        $this->assertPermission('config/application/resources');
         $form = new ResourceConfigForm();
         $form->setTitle($this->translate('Edit Existing Resource'));
         $form->setIniConfig(Config::app('resources'));
@@ -334,7 +334,7 @@ class ConfigController extends ActionController
      */
     public function removeresourceAction()
     {
-        $this->assertPermission('system/config/resources');
+        $this->assertPermission('config/application/resources');
         $form = new ConfirmRemovalForm(array(
             'onSuccess' => function ($form) {
                 $configForm = new ResourceConfigForm();
