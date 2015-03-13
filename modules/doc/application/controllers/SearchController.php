@@ -25,6 +25,10 @@ class Doc_SearchController extends DocController
             )
         );
         $search->setUrl('doc/icingaweb/chapter');
+        if (strlen($this->params->get('q')) < 3) {
+            $this->view->searches = array();
+            return;
+        }
         $searches = array(
             'Icinga Web 2' => $search
         );
