@@ -21,6 +21,8 @@ class AutoRefreshForm extends Form
     public function init()
     {
         $this->setName('form_auto_refresh');
+        // Post against the current location
+        $this->setAction('');
     }
 
     /**
