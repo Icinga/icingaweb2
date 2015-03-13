@@ -123,6 +123,13 @@ class ServiceStatus extends DataView
     public function getSortRules()
     {
         return array(
+            'service_display_name' => array(
+                'columns' => array(
+                    'service_display_name',
+                    'host_display_name'
+                ),
+                'order' => self::SORT_ASC
+            ),
             'service_severity' => array(
                 'columns' => array(
                     'service_severity DESC',
@@ -130,13 +137,6 @@ class ServiceStatus extends DataView
                     'service_display_name ASC',
                     'host_display_name ASC'
                 )
-            ),
-            'service_display_name' => array(
-                'columns' => array(
-                    'service_display_name',
-                    'host_display_name'
-                ),
-                'order' => self::SORT_ASC
             ),
             'host_severity' => array(
                 'columns' => array(
