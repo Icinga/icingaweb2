@@ -36,15 +36,15 @@ class Doc_SearchController extends DocController
             if (($path = $this->getModulePath($module)) !== null) {
                 try {
                     $parser = new DocParser($path);
+                    $search = new DocSearchRenderer(
+                        new DocSearchIterator(
+                            $parser->getDocTree()->getIterator(),
+                            new DocSearch($this->params->get('q'))
+                        )
+                    );
                 } catch (DocException $e) {
                     continue;
                 }
-                $search = new DocSearchRenderer(
-                    new DocSearchIterator(
-                        $parser->getDocTree()->getIterator(),
-                        new DocSearch($this->params->get('q'))
-                    )
-                );
                 $search
                     ->setUrl('doc/module/chapter')
                     ->setUrlParams(array('moduleName' => $module));
