@@ -57,26 +57,15 @@ foreach ($object->downtimes as $downtime) {
     }
 
     ?>
-
     <tr>
-        <th><?= $this->escape($downtime->author) ?></th>
-        <td>
-            <table>
-                <tr>
-                    <td style="vertical-align: top;" data-base-target="_self">
-                        <?php if (isset($delDowntimeForm)) { // Form is unset if the current user lacks the respective permission
-                            $delDowntimeForm = clone $delDowntimeForm;
-                            $delDowntimeForm->populate(array('downtime_id' => $downtime->id));
-                            echo $delDowntimeForm;
-                        } ?>
-                        <?= $state ?>
-                    </td>
-                    <td style="padding-left: .5em;">
-                        <?= nl2br($commentText) ?>
-                    </td>
-                </tr>
-            </table>
+        <th><?= $this->escape($downtime->author); ?></th>
+        <td data-base-target="_self">
+            <?php if (isset($delDowntimeForm)) { // Form is unset if the current user lacks the respective permission
+                $delDowntimeForm = clone $delDowntimeForm;
+                $delDowntimeForm->populate(array('downtime_id' => $downtime->id));
+                echo $delDowntimeForm;
+            } ?>
+            <span class="sr-only"><?= $this->translate('Downtime'); ?></span><?= $state; ?><?= str_replace(array('\r\n', '\n'), '<br>', $commentText); ?>
         </td>
     </tr>
-
 <?php } // endforeach ?>

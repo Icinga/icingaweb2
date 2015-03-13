@@ -17,7 +17,7 @@ class DeleteDowntimeCommandForm extends ObjectsCommandForm
      */
     public function init()
     {
-        $this->setAttrib('class', 'inline link-like');
+        $this->setAttrib('class', 'inline');
     }
 
     /**
@@ -31,12 +31,16 @@ class DeleteDowntimeCommandForm extends ObjectsCommandForm
                 'hidden',
                 'downtime_id',
                 array(
-                    'required' => true
+                    'required' => true,
+                    'decorators'    => array('ViewHelper')
                 )
             ),
             array(
                 'hidden',
-                'redirect'
+                'redirect',
+                array(
+                    'decorators' => array('ViewHelper')
+                )
             )
         ));
         return $this;
@@ -49,11 +53,14 @@ class DeleteDowntimeCommandForm extends ObjectsCommandForm
     public function addSubmitButton()
     {
         $this->addElement(
-            'submit',
+            'button',
             'btn_submit',
             array(
                 'ignore'        => true,
-                'label'         => 'X',
+                'escape'        => false,
+                'type'          => 'submit',
+                'class'         => 'link-like',
+                'label'         => $this->getView()->icon('trash'),
                 'title'         => $this->translate('Delete this downtime'),
                 'decorators'    => array('ViewHelper')
             )
