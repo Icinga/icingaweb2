@@ -228,7 +228,7 @@ msgstr "%s não está rodando"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/notifications.phtml:22
 #, php-format
-msgid "%s notications have been sent for this issue"
+msgid "%s notifications have been sent for this issue"
 msgstr "%s notificações foram enviadas para este problema"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:8
@@ -311,7 +311,7 @@ msgstr "<b>{title}:</b><br>{value} de {sum} serviços estão {label}"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/notifications.phtml:17
 #, php-format
-msgid "A notication has been sent for this issue %s ago"
+msgid "A notification has been sent for this issue %s ago"
 msgstr "Uma notificação foi enviada para este problema %s atrás"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/history.phtml:64
