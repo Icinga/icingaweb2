@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-?php
-
-// We are not interested in notifications for OK or pending objects
-if (in_array((int) $object->state, array(0, 99))) {
-    return;
-}
-
-?>
-=======
->>>>>>> icingaweb2/master
 <tr>
   <th><?= $this->translate('Notifications') ?></th>
   <td>
@@ -26,39 +15,23 @@ if (in_array((int) $object->state, array(0, 99))) {
       }
       ?>
       <?= $this->qlink(
-          $this->translate('Send Custom Notification'),
+          $this->translate('Send notification'),
           $ackLink,
           null,
           array(
-              'icon'              => 'comment',
+              'icon'              => 'bell',
               'data-base-target'  => '_self',
               'title'             => $this->translate(
                   'Send a custom notification, share information about the'
                   . ' object to contacts.'
               )
           )
-      ); ?>
+      ) ?><br />
       <?php } ?>
 <?php
 // We are not interested in notifications for OK or pending objects
 if (! in_array((int) $object->state, array(0, 99))) {
 
-<<<<<<< HEAD
-if ($object->current_notification_number > 0) {
-    if ((int) $object->current_notification_number === 1) {
-        $msg = sprintf(
-            $this->translate('A notification has been sent for this issue %s ago'),
-            $this->timeSince($object->last_notification)
-        );
-    } else {
-        $msg = sprintf(
-            $this->translate('%s notifications have been sent for this issue'),
-            $object->current_notification_number
-        ) . '<br />' . sprintf(
-            $this->translate('The last one occured %s ago'),
-            $this->timeSince($object->last_notification)
-        );
-=======
     if ($object->current_notification_number > 0) {
         if ((int) $object->current_notification_number === 1) {
             $msg = sprintf(
@@ -74,12 +47,11 @@ if ($object->current_notification_number > 0) {
                 $this->timeSince($object->last_notification)
             );
         }
-        echo '- ' . $msg;
+        echo $msg;
     } else {
         echo '('
             . $this->translate('No notification has been sent for this issue')
             . ')';
->>>>>>> icingaweb2/master
     }
 }
 ?>
