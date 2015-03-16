@@ -1,7 +1,11 @@
 <?php
 
 $links = array();
-$linkText = '<a href="%s" target="_blank">%s</a>';
+
+// add warning to links that open in new tabs to improve accessibility, as recommended by WCAG20 G201
+$newTabInfo = sprintf('<span class="info-box display-on-hover"> %s </span>', $this->translate('opens in new window'));
+
+$linkText = '<a href="%s" target="_blank">%s ' . $newTabInfo . '</a>';
 $localLinkText = '<a href="%s">%s</a>';
 
 if ($object->notes_url) {
