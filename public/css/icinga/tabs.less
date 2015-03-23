@@ -148,3 +148,19 @@ a.close-tab {
     content: '\e874';
   }
 }
+
+span.display-on-hover {
+  font-size: 0.8em;
+  left: -9000px;
+  position: relative;
+  display: inline;
+  width: 0;
+  overflow: hidden;
+  color: #000000;
+  text-decoration: none;
+}
+
+:hover > span.display-on-hover, :focus > span.display-on-hover {
+  left:1em; width:12em;
+  text-align: center
+}

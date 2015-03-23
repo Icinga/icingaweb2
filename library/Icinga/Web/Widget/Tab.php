@@ -85,6 +85,13 @@ class Tab extends AbstractWidget
     private $tagParams;
 
     /**
+     * Whether to open the link target on a new page
+     *
+     * @var boolean
+     */
+    private $targetBlank = false;
+
+    /**
      * Sets an icon image for this tab
      *
      * @param string $icon      The url of the image to use
@@ -198,6 +205,11 @@ class Tab extends AbstractWidget
         $this->tagParams = $tagParams;
     }
 
+    public function setTargetBlank($value = true)
+    {
+        $this->targetBlank =  $value;
+    }
+
     /**
      * Create a new Tab with the given properties
      *
@@ -244,6 +256,11 @@ class Tab extends AbstractWidget
 
         $caption = $view->escape($this->getLabel());
         $tagParams = $this->tagParams;
+        if ($this->targetBlank) {
+            // add warning to links that open in new tabs to improve accessibility, as recommended by WCAG20 G201
+            $caption .= '<span class="info-box display-on-hover"> opens in new window </span>';
+            $tagParams['target'] ='_blank';
+        }
 
         if ($this->title) {
             if ($tagParams !== null) {

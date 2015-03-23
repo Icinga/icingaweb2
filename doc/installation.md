@@ -133,3 +133,8 @@ After please log out from Icinga Web 2 and log in again for having all permissio
 If you delegated authentication to your web server using the `autologin` backend, you have to switch to the `external`
 authentication backend to be able to log in again. The new name better reflects what’s going on. A similar change
 affects environments that opted for not storing preferences, your new backend is `none`.
+
+## Upgrading to Icinga Web 2 Beta 3
+
+Because Icinga Web 2 Beta 3 does not introduce any backward incompatible change you don't have to change your
+configuration files after upgrading to Icinga Web 2 Beta 3.

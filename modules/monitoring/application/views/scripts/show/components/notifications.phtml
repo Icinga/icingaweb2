@@ -15,18 +15,18 @@
       }
       ?>
       <?= $this->qlink(
-          $this->translate('Send Custom Notification'),
+          $this->translate('Send notification'),
           $ackLink,
           null,
           array(
-              'icon'              => 'comment',
+              'icon'              => 'bell',
               'data-base-target'  => '_self',
               'title'             => $this->translate(
                   'Send a custom notification, share information about the'
                   . ' object to contacts.'
               )
           )
-      ); ?>
+      ) ?><br />
       <?php } ?>
 <?php
 // We are not interested in notifications for OK or pending objects
@@ -47,7 +47,7 @@ if (! in_array((int) $object->state, array(0, 99))) {
                 $this->timeSince($object->last_notification)
             );
         }
-        echo '- ' . $msg;
+        echo $msg;
     } else {
         echo '('
             . $this->translate('No notification has been sent for this issue')
