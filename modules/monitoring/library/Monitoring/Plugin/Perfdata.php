@@ -429,7 +429,7 @@ class Perfdata
      *
      * @param bool $html
      *
-     * @return stringS
+     * @return string
      */
     public function formatLabel($html = false)
     {
