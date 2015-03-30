@@ -1,20 +1,18 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Util\Format;
-use Icinga\Web\Widget\Chart\InlinePie;
 use Icinga\Module\Monitoring\Plugin\Perfdata;
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 
 class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
-{#
-
+{
     /**
      * Display the given perfdata string to the user
      *
-     * @param      $perfdataStr The perfdata string
-     * @param bool $compact     Whether to display the perfdata in compact mode
-     * @param      $color       The color indicating the perfdata state
+     * @param   string  $perfdataStr    The perfdata string
+     * @param   bool    $compact        Whether to display the perfdata in compact mode
+     * @param   int     $limit          Max labels to show; 0 for no limit
+     * @param   string  $color          The color indicating the perfdata state
      *
      * @return string
      */
