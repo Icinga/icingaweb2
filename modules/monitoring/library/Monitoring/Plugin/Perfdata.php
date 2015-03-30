@@ -434,7 +434,7 @@ class Perfdata
     public function formatLabel($html = false)
     {
         return sprintf(
-            $html ? t('<b>%s %s</b> (%s%%)') : t('%s %s (%s%%)'),
+            $html ? '<b>%s %s</b> (%s%%)' : '%s %s (%s%%)',
             htmlspecialchars($this->getLabel()),
             $this->format($this->value),
             number_format($this->getPercentage(), 2)
