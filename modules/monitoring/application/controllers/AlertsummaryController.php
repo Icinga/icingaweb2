@@ -324,11 +324,11 @@ class Monitoring_AlertsummaryController extends Controller
     public function createHealingChart()
     {
         $gridChart = new GridChart();
-        $gridChart->title = t('Healing Chart');
-        $gridChart->description = t('Notifications and average reaction time per hour.');
+        $gridChart->title = $this->translate('Healing Chart');
+        $gridChart->description = $this->translate('Notifications and average reaction time per hour.');
 
         $gridChart->alignTopLeft();
-        $gridChart->setAxisLabel($this->createPeriodDescription(), mt('monitoring', 'Notifications'))
+        $gridChart->setAxisLabel($this->createPeriodDescription(), $this->translate('Notifications'))
             ->setXAxis(new StaticAxis())
             ->setYAxis(new LinearUnit(10))
             ->setAxisMin(null, 0);
@@ -440,7 +440,7 @@ class Monitoring_AlertsummaryController extends Controller
                 'color' => '#ffaa44',
                 'data'  =>  $dAvg,
                 'showPoints' => true,
-                'tooltip' => t('<b>{title}:</b> {value}m min. reaction time')
+                'tooltip' => $this->translate('<b>{title}:</b> {value}m min. reaction time')
             )
         );
 
@@ -450,7 +450,7 @@ class Monitoring_AlertsummaryController extends Controller
                 'color' => '#ff5566',
                 'data'  =>  $dMax,
                 'showPoints' => true,
-                'tooltip' => t('<b>{title}:</b> {value}m max. reaction time')
+                'tooltip' => $this->translate('<b>{title}:</b> {value}m max. reaction time')
             )
         );
 
@@ -465,11 +465,11 @@ class Monitoring_AlertsummaryController extends Controller
     public function createDefectImage()
     {
         $gridChart = new GridChart();
-        $gridChart->title = t('Defect Chart');
-        $gridChart->description = t('Notifications and defects per hour');
+        $gridChart->title = $this->translate('Defect Chart');
+        $gridChart->description = $this->translate('Notifications and defects per hour');
 
         $gridChart->alignTopLeft();
-        $gridChart->setAxisLabel($this->createPeriodDescription(), mt('monitoring', 'Notifications'))
+        $gridChart->setAxisLabel($this->createPeriodDescription(), $this->translate('Notifications'))
             ->setXAxis(new StaticAxis())
             ->setYAxis(new LinearUnit(10))
             ->setAxisMin(null, 0);
@@ -637,16 +637,16 @@ class Monitoring_AlertsummaryController extends Controller
         $int = $this->getInterval();
         switch ($int) {
             case '1d':
-                return t('Hour');
+                return $this->translate('Hour');
                 break;
             case '1w';
-                return t('Day');
+                return $this->translate('Day');
                 break;
             case '1m':
-                return t('Day');
+                return $this->translate('Day');
                 break;
             case '1y':
-                return t('Month');
+                return $this->translate('Month');
                 break;
         }
     }
