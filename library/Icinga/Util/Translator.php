@@ -100,7 +100,11 @@ class Translator
     {
         $contextString = "{$context}\004{$text}";
 
-        $translation = dcgettext($domain, $contextString, LC_MESSAGES);
+        $translation = dcgettext(
+            $domain,
+            $contextString,
+            defined('LC_MESSAGES') ? LC_MESSAGES : LC_ALL
+        );
 
         if ($translation == $contextString) {
             return $text;
@@ -126,7 +130,13 @@ class Translator
     {
         $contextString = "{$context}\004{$textSingular}";
 
-        $translation = dcngettext($domain, $contextString, $textPlural, $number, LC_MESSAGES);
+        $translation = dcngettext(
+            $domain,
+            $contextString,
+            $textPlural,
+            $number,
+            defined('LC_MESSAGES') ? LC_MESSAGES : LC_ALL
+        );
 
         if ($translation == $contextString || $translation == $textPlural) {
             return ($number == 1 ? $textSingular : $textPlural);
