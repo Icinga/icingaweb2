@@ -26,7 +26,15 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         $table = array(
             '<td><b>' . implode(
                 '</b></td><td><b>',
-                array('', t('Label'), t('Value'), t('Min'), t('Max'), t('Warning'), t('Critical'))
+                array(
+                    '',
+                    $this->view->translate('Label'),
+                    $this->view->translate('Value'),
+                    $this->view->translate('Min'),
+                    $this->view->translate('Max'),
+                    $this->view->translate('Warning'),
+                    $this->view->translate('Critical')
+                )
             ) . '<b></td>'
         );
         foreach ($pieChartData as $perfdata) {
@@ -61,7 +69,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
             $table = array_slice ($table, 0, $limit);
             $results = array_slice ($results, 0, $limit);
             if ($count > $limit) {
-                $mess = sprintf(t('%d more ...'), $count - $limit);
+                $mess = sprintf($this->view->translate('%d more ...'), $count - $limit);
                 $results[] = '<span title="' . $mess . '">...</span>';
             }
         }
