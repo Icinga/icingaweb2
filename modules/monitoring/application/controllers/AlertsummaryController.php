@@ -533,12 +533,12 @@ class Monitoring_AlertsummaryController extends Controller
         $box = new SelectBox(
             'intervalBox',
             array(
-                '1d' => mt('monitoring', 'One day'),
-                '1w' => mt('monitoring', 'One week'),
-                '1m' => mt('monitoring', 'One month'),
-                '1y' => mt('monitoring', 'One year')
+                '1d' => $this->translate('One day'),
+                '1w' => $this->translate('One week'),
+                '1m' => $this->translate('One month'),
+                '1y' => $this->translate('One year')
             ),
-            mt('monitoring', 'Report interval'),
+            $this->translate('Report interval'),
             'interval'
         );
         $box->applyRequest($this->getRequest());
