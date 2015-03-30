@@ -5,6 +5,10 @@ namespace Icinga\Util;
 
 use Icinga\Exception\IcingaException;
 
+if (!defined('LC_MESSAGES')) {
+    define('LC_MESSAGES', 6);
+}
+
 /**
  * Helper class to ease internationalization when using gettext
  */
