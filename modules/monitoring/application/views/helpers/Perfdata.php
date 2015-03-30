@@ -19,7 +19,6 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
     public function perfdata($perfdataStr, $compact = false, $limit = 0, $color = Perfdata::PERFDATA_OK)
     {
         $pieChartData = PerfdataSet::fromString($perfdataStr)->asArray();
-
         $results = array();
         $table = array(
             '<td><b>' . implode(
@@ -48,12 +47,12 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 }
                 $row .= '</td>';
 
-                if (!$compact) {
+                if (! $compact) {
                     foreach ($perfdata->toArray() as $value) {
                         if ($value === '') {
                             $value = '-';
                         }
-                        $row .= '<td>' . (string)$value  . '</td>';
+                        $row .= '<td>' . (string) $value . '</td>';
                     }
                 }
 
@@ -61,17 +60,15 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 $table[] = $row;
             }
         }
-
         if ($limit > 0) {
-            $count = max (count($table), count ($results));
-            $table = array_slice ($table, 0, $limit);
-            $results = array_slice ($results, 0, $limit);
+            $count = max(count($table), count($results));
+            $table = array_slice($table, 0, $limit);
+            $results = array_slice($results, 0, $limit);
             if ($count > $limit) {
                 $mess = sprintf($this->view->translate('%d more ...'), $count - $limit);
                 $results[] = '<span title="' . $mess . '">...</span>';
             }
         }
-
         if ($compact) {
             return join('', $results);
         } else {
