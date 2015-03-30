@@ -138,7 +138,13 @@ abstract class ApplicationBootstrap
             if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
                 $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
             } else {
-                $configDir = '/etc/icingaweb2';
+                // default configuration path. Use /etc/icingaweb2 on linux
+                // For config on windows - use config folder within php code
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    $configDir = $baseDir . '/config';
+                } else {
+                    $configDir = '/etc/icingaweb2';
+                }
             }
         }
         $canonical = realpath($configDir);
