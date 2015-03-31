@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
+use Icinga\Util\String;
+
 /**
  * A service list
  */
@@ -33,20 +35,8 @@ class ServiceList extends ObjectList
      */
     public function getStateSummary()
     {
-        $serviceStates = $this->prepareStateNames('services_', array(
-            Service::getStateText(Service::STATE_OK),
-            Service::getStateText(Service::STATE_WARNING),
-            Service::getStateText(Service::STATE_CRITICAL),
-            Service::getStateText(Service::STATE_UNKNOWN),
-            Service::getStateText(Service::STATE_PENDING),
-        ));
-
-        $hostStates = $this->prepareStateNames('hosts_', array(
-            Host::getStateText(Host::STATE_UP),
-            Host::getStateText(Host::STATE_DOWN),
-            Host::getStateText(Host::STATE_UNREACHABLE),
-            Host::getStateText(Host::STATE_PENDING),
-        ));
+        $serviceStates = array_fill_keys(self::getServiceStatesSummaryEmpty(), 0);
+        $hostStates = array_fill_keys(HostList::getHostStatesSummaryEmpty(), 0);
 
         foreach ($this as $service) {
             $unhandled = false;
@@ -66,5 +56,28 @@ class ServiceList extends ObjectList
         $serviceStates['services_total'] = count($this);
 
         return (object)$serviceStates;
+    }
+
+    /**
+     * Return an empty array with all possible host state names
+     *
+     * @return array    An array containing all possible host states as keys and 0 as values.
+     */
+    public static function getServiceStatesSummaryEmpty()
+    {
+        return String::cartesianProduct(
+            array(
+                array('services'),
+                array(
+                    Service::getStateText(Service::STATE_OK),
+                    Service::getStateText(Service::STATE_WARNING),
+                    Service::getStateText(Service::STATE_CRITICAL),
+                    Service::getStateText(Service::STATE_UNKNOWN),
+                    Service::getStateText(Service::STATE_PENDING)
+                ),
+                array(null, 'handled', 'unhandled')
+            ),
+            '_'
+        );
     }
 }

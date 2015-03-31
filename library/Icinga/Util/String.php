@@ -79,4 +79,45 @@ class String
 
         return $matches;
     }
+
+    /**
+     * Generates an array of strings that constitutes the cartesian product of all passed sets, with all
+     * string combinations concatenated using the passed join-operator.
+     *
+     * <pre>
+     *  cartesianProduct(
+     *      array(array('foo', 'bar'), array('mumble', 'grumble', null)),
+     *      '_'
+     *  );
+     *     => array('foo_mumble', 'foo_grumble', 'bar_mumble', 'bar_grumble', 'foo', 'bar')
+     * </pre>
+     *
+     * @param   array   $sets   An array of arrays containing all sets for which the cartesian
+     *                          product should be calculated.
+     * @param   string  $glue   The glue used to join the strings, defaults to ''.
+     *
+     * @returns array           The cartesian product in one array of strings.
+     */
+    public static function cartesianProduct(array $sets, $glue = '')
+    {
+        $product = null;
+        foreach ($sets as $set) {
+            if (! isset($product)) {
+                $product = $set;
+            } else {
+                $newProduct = array();
+                foreach ($product as $strA) {
+                    foreach ($set as $strB) {
+                        if ($strB === null) {
+                            $newProduct []= $strA;
+                        } else {
+                            $newProduct []= $strA . $glue . $strB;
+                        }
+                    }
+                }
+                $product = $newProduct;
+            }
+        }
+        return $product;
+    }
 }

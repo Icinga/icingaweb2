@@ -118,15 +118,4 @@ abstract class ObjectList implements Countable, IteratorAggregate
         }
         return $unhandledObjects;
     }
-
-    protected  function prepareStateNames($prefix, array $names) {
-        $new = array();
-        foreach ($names as $name) {
-            $new[$prefix . $name] = 0;
-            $new[$prefix . $name . '_handled'] = 0;
-            $new[$prefix . $name . '_unhandled'] = 0;
-        }
-        $new[$prefix . 'total'] = 0;
-        return $new;
-    }
 }

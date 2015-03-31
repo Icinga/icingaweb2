@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
+use Icinga\Util\String;
+
 /**
  * A host list
  */
@@ -33,13 +35,7 @@ class HostList extends ObjectList
      */
     public function getStateSummary()
     {
-        $hostStates = $this->prepareStateNames('hosts_', array(
-            Host::getStateText(Host::STATE_UP),
-            Host::getStateText(Host::STATE_DOWN),
-            Host::getStateText(Host::STATE_UNREACHABLE),
-            Host::getStateText(Host::STATE_PENDING)
-        ));
-
+        $hostStates = array_fill_keys(self::getHostStatesSummaryEmpty(), 0);
         foreach ($this as $host) {
             $unhandled = (bool) $host->problem === true && (bool) $host->handled === false;
 
@@ -51,5 +47,27 @@ class HostList extends ObjectList
         $hostStates['hosts_total'] = count($this);
 
         return (object)$hostStates;
+    }
+
+    /**
+     * Return an empty array with all possible host state names
+     *
+     * @return array    An array containing all possible host states as keys and 0 as values.
+     */
+    public static function getHostStatesSummaryEmpty()
+    {
+        return String::cartesianProduct(
+            array(
+                array('hosts'),
+                array(
+                    Host::getStateText(Host::STATE_UP),
+                    Host::getStateText(Host::STATE_DOWN),
+                    Host::getStateText(Host::STATE_UNREACHABLE),
+                    Host::getStateText(Host::STATE_PENDING)
+                ),
+                array(null, 'handled', 'unhandled')
+            ),
+            '_'
+        );
     }
 }
