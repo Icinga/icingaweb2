@@ -51,6 +51,7 @@ abstract class CommandTransport
      */
     public static function fromConfig(ConfigObject $config)
     {
+        $config = clone $config;
         switch (strtolower($config->transport)) {
             case RemoteCommandFile::TRANSPORT:
                 $transport = new RemoteCommandFile();
