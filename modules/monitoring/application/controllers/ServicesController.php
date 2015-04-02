@@ -32,6 +32,19 @@ class Monitoring_ServicesController extends Controller
         $serviceList->setFilter(Filter::fromQueryString((string) $this->params->without('service_problem', 'service_handled')));
         $this->serviceList = $serviceList;
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/services');
+
+        $this->getTabs()->add(
+            'hosts',
+            array(
+                'title' => sprintf(
+                    $this->translate('Show summarized information for hosts')
+                ),
+                'label' => $this->translate('Hosts'),
+                'url'   => Url::fromPath('monitoring/hosts/show')->setParams(Url::fromRequest()->getParams()),
+                'icon' => 'host'
+            )
+        )->activate('show');
+
         $this->getTabs()->add(
             'show',
             array(

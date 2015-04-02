@@ -25,9 +25,14 @@ class Monitoring_HostsController extends Controller
 
     public function init()
     {
+        // Support switching from service-view using the host and service selection. The filter would error
+        // on any occurrence of a filter based on service.
+        $filterString = preg_replace('/(service=[^)&]*)/', '', (string)$this->params);
+
         $hostList = new HostList($this->backend);
-        $hostList->setFilter(Filter::fromQueryString((string) $this->params));
+        $hostList->setFilter(Filter::fromQueryString($filterString));
         $this->hostList = $hostList;
+
         $this->getTabs()->add(
             'show',
             array(
@@ -40,6 +45,19 @@ class Monitoring_HostsController extends Controller
                 'icon'  => 'host'
             )
         )->activate('show');
+
+        $this->getTabs()->add(
+            'services',
+            array(
+                'title' => sprintf(
+                    $this->translate('Show summarized information for related services')
+                ),
+                'label' => $this->translate('Services'),
+                'url'   => Url::fromPath('monitoring/services/show')->setParams(Url::fromRequest()->getParams()),
+                'icon'  => 'services'
+            )
+        )->activate('show');
+
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/hosts');
     }
 
