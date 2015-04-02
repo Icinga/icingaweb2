@@ -10,15 +10,6 @@ use Icinga\Module\Monitoring\Object\Service;
 <?php if (($serviceCount = count($objects)) > 0): ?>
     <p>
     <table class="state statesummary">
-    <thead>
-    <tr>
-        <th></th>
-        <th></th>
-        <th class="oneline"><?= $this->icon('service'); ?> <?= $this->translate('Service'); ?></th>
-        <th class="oneline"><?= $this->icon('host'); ?> <?= $this->translate('Host'); ?></th>
-        <th class="oneline"><?= $this->icon('paste'); ?> <?= $this->translate('Plugin Output'); ?></th>
-    </tr>
-    </thead>
     <tbody>
     <?php foreach ($objects as $service): /** @var Service $service */ ?>
         <?php

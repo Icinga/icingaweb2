@@ -15,7 +15,9 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\ServiceList;
+use Icinga\Util\String;
 use Icinga\Web\Url;
+use Icinga\Web\Widget\Chart\InlinePie;
 
 class Monitoring_ServicesController extends Controller
 {
@@ -109,6 +111,8 @@ class Monitoring_ServicesController extends Controller
             'host_name',
             'host_output',
             'host_state',
+            'host_problem',
+            'host_handled',
             'service_output',
             'service_description',
             'service_state',
@@ -153,6 +157,20 @@ class Monitoring_ServicesController extends Controller
                 ->handleRequest();
             $this->view->removeAckForm = $removeAckForm;
         }
+
+        $serviceStates = $this->serviceList->getServiceStateSummary();
+        $this->view->serviceStatesPieChart = InlinePie::createFromStateSummary(
+            $serviceStates,
+            $this->translate('Service State'),
+            InlinePie::$colorsServiceStatesHandleUnhandled
+        );
+
+        $hostStates = $this->serviceList->getHostStateSummary();
+        $this->view->hostStatesPieChart = InlinePie::createFromStateSummary(
+            $hostStates,
+            $this->translate('Host State'),
+            InlinePie::$colorsHostStatesHandledUnhandled
+        );
         /*
         if (! empty($objectsInDowntime)) {
             $removeDowntimeForm = new DeleteDowntimeCommandForm();
@@ -170,7 +188,8 @@ class Monitoring_ServicesController extends Controller
         );
         $this->view->addCommentLink = Url::fromRequest()->setPath('monitoring/services/add-comment');
         $this->view->deleteCommentLink = Url::fromRequest()->setPath('monitoring/services/delete-comment');
-        $this->view->stats = $this->serviceList->getStateSummary();
+        $this->view->stats = $serviceStates;
+        $this->view->hostStats = $hostStates;
         $this->view->objects = $this->serviceList;
         $this->view->unhandledObjects = $unhandledObjects;
         $unhandledFilterQueryString = Filter::matchAny($unhandledFilterExpressions)->toQueryString();

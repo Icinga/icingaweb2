@@ -9,6 +9,13 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
     <?php endif ?>
 
     <?= $this->render('list/components/hostssummary.phtml') ?>
+
+    <br>
+    <div class="hbox-item">
+        <?= $this->translate('Host States:') ?>
+        &nbsp;<?= $hostStatesPieChart; ?>
+    </div>
+
     <?= $this->render('partials/host/objects-header.phtml'); ?>
 
 </div>

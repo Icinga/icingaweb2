@@ -81,6 +81,20 @@ class String
     }
 
     /**
+     * Check if a string ends with a different string
+     *
+     * @param $haystack The string to search for matches
+     * @param $needle   The string to match at the start of the haystack
+     *
+     * @return bool     Whether or not needle is at the beginning of haystack
+     */
+    public static function endsWith($haystack, $needle)
+    {
+        return $needle === '' ||
+             (($temp = strlen($haystack) - strlen($needle)) >= 0 && false !== strpos($haystack, $needle, $temp));
+    }
+
+    /**
      * Generates an array of strings that constitutes the cartesian product of all passed sets, with all
      * string combinations concatenated using the passed join-operator.
      *

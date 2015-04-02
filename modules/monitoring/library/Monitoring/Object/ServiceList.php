@@ -10,6 +10,10 @@ use Icinga\Util\String;
  */
 class ServiceList extends ObjectList
 {
+    protected $hostStateSummary;
+
+    protected $serviceStateSummary;
+
     protected $dataViewName = 'serviceStatus';
 
     protected $columns = array('host_name', 'service_description');
@@ -33,7 +37,32 @@ class ServiceList extends ObjectList
      *
      * @return object   The summary
      */
-    public function getStateSummary()
+    public function getServiceStateSummary()
+    {
+        if (! $this->serviceStateSummary) {
+            $this->initStateSummaries();
+        }
+        return (object)$this->serviceStateSummary;
+    }
+
+    /**
+     * Create a state summary of all hosts that can be consumed by hostsummary.phtml
+     *
+     * @return object   The summary
+     */
+    public function getHostStateSummary()
+    {
+        if (! $this->hostStateSummary) {
+            $this->initStateSummaries();
+        }
+        return (object)$this->hostStateSummary;
+    }
+
+    /**
+     * Calculate the current state summary and populate hostStateSummary and serviceStateSummary
+     * properties
+     */
+    protected function initStateSummaries()
     {
         $serviceStates = array_fill_keys(self::getServiceStatesSummaryEmpty(), 0);
         $hostStates = array_fill_keys(HostList::getHostStatesSummaryEmpty(), 0);
@@ -47,15 +76,19 @@ class ServiceList extends ObjectList
             $stateName = 'services_' . $service::getStateText($service->state);
             ++$serviceStates[$stateName];
             ++$serviceStates[$stateName . ($unhandled ? '_unhandled' : '_handled')];
+
             if (! isset($knownHostStates[$service->getHost()->getName()])) {
-                $knownHostStates[$service->getHost()->getName()] = true;
+                $unhandledHost = (bool) $service->host_problem === true && (bool) $service->host_handled === false;
                 ++$hostStates['hosts_' . $service->getHost()->getStateText($service->host_state)];
+                ++$hostStates['hosts_' . $service->getHost()->getStateText($service->host_state)
+                        . ($unhandledHost ? '_unhandled' : '_handled')];
+                $knownHostStates[$service->getHost()->getName()] = true;
             }
         }
 
         $serviceStates['services_total'] = count($this);
-
-        return (object)$serviceStates;
+        $this->hostStateSummary = $hostStates;
+        $this->serviceStateSummary = $serviceStates;
     }
 
     /**

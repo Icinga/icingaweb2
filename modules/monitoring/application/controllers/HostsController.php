@@ -14,6 +14,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\HostList;
 use Icinga\Web\Url;
+use Icinga\Web\Widget\Chart\InlinePie;
 
 class Monitoring_HostsController extends Controller
 {
@@ -127,13 +128,20 @@ class Monitoring_HostsController extends Controller
             $this->view->removeAckForm = $removeAckForm;
         }
 
+        $hostStates = (object)$this->hostList->getStateSummary();
+        $this->view->hostStatesPieChart = InlinePie::createFromStateSummary(
+            $hostStates,
+            $this->translate('Host State'),
+            InlinePie::$colorsHostStatesHandledUnhandled
+        );
+
         $this->setAutorefreshInterval(15);
         $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/hosts/reschedule-check');
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/hosts/schedule-downtime');
         $this->view->processCheckResultAllLink = Url::fromRequest()->setPath('monitoring/hosts/process-check-result');
         $this->view->addCommentLink = Url::fromRequest()->setPath('monitoring/hosts/add-comment');
         $this->view->deleteCommentLink = Url::fromRequest()->setPath('monitoring/hosts/delete-comment');
-        $this->view->stats = (object)$this->hostList->getStateSummary();
+        $this->view->stats = $hostStates;
         $this->view->objects = $this->hostList;
         $this->view->unhandledObjects = $unhandledObjects;
         $unhandledFilterQueryString = Filter::matchAny($unhandledFilterExpressions)->toQueryString();
