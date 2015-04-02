@@ -45,6 +45,13 @@ class Connection
      */
     const LDAPS = 'ldaps';
 
+    /**
+     * Encryption for the connection if any
+     *
+     * @var string|null
+     */
+    protected $encryption;
+
     protected $ds;
     protected $hostname;
     protected $port = 389;
@@ -52,7 +59,6 @@ class Connection
     protected $bind_pw;
     protected $root_dn;
     protected $count;
-    protected $connectionType;
     protected $reqCert = true;
 
     /**
@@ -86,7 +92,10 @@ class Connection
         $this->bind_pw  = $config->bind_pw;
         $this->root_dn  = $config->root_dn;
         $this->port = $config->get('port', $this->port);
-        $this->connectionType = $config->get('connection');
+        $this->encryption = $config->get('encryption');
+        if ($this->encryption !== null) {
+            $this->encryption = strtolower($this->encryption);
+        }
         $this->reqCert = (bool) $config->get('reqcert', $this->reqCert);
     }
 
@@ -481,12 +490,12 @@ class Connection
      */
     protected function prepareNewConnection()
     {
-        if ($this->connectionType === static::STARTTLS || $this->connectionType === static::LDAPS) {
+        if ($this->encryption === static::STARTTLS || $this->encryption === static::LDAPS) {
             $this->prepareTlsEnvironment();
         }
 
         $hostname = $this->hostname;
-        if ($this->connectionType === static::LDAPS) {
+        if ($this->encryption === static::LDAPS) {
             $hostname = 'ldaps://' . $hostname;
         }
 
@@ -499,8 +508,7 @@ class Connection
             Logger::warning('LADP discovery failed, assuming default LDAP settings.');
             $this->capabilities = new Capability(); // create empty default capabilities
         }
-
-        if ($this->connectionType === static::STARTTLS) {
+        if ($this->encryption === static::STARTTLS) {
             $force_tls = false;
             if ($this->capabilities->hasStartTls()) {
                 if (@ldap_start_tls($ds)) {
