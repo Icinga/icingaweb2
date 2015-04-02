@@ -1,7 +1,3 @@
-<?php
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
-?>
-
 <div class="controls">
 
     <?php if (! $this->compact): ?>
@@ -174,35 +170,6 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
         array('data-base-target' => '_next')
     ); ?>
     <p>
-
-    <table>
-    <?php foreach ($objects as $service): ?>
-        <?php $service->fetchComments(); ?>
-        <?php foreach ($service->comments as $comment): ?>
-        <tr>
-        <td style="vertical-align: top;" data-base-target="_self">
-            <?php
-            $delCommentForm = new DeleteCommentCommandForm();
-            $delCommentForm->populate(
-                array('comment_id' => $comment->id, 'redirect' => html_entity_decode($this->url))
-            );
-            $delCommentForm->setAction(
-                $this->url(
-                    'monitoring/service/delete-comment',
-                    array('host' => $service->getHost()->getName(), 'service' => $service->getName())
-                )
-            );
-            echo $delCommentForm;
-            ?>
-            (<?= ucfirst($comment->type) ?>):
-        </td>
-        <td style="padding-left: .5em;">
-            <?= nl2br($comment->comment) ?>
-        </td>
-        </tr>
-        <?php endforeach ?>
-    <?php endforeach ?>
-    </table>
 
     <!--
     </p>

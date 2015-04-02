@@ -171,8 +171,7 @@ class Monitoring_HostsController extends Controller
         $this->view->objectsInDowntime = $objectsInDowntime;
         $this->view->inDowntimeLink = Url::fromPath('monitoring/list/downtimes')
             ->setQueryString(Filter::matchAny($downtimeFilterExpressions)->toQueryString());
-        $this->view->commentsLink = Url::fromRequest()
-            ->setPath('monitoring/list/comments');
+        $this->view->commentsLink = Url::fromRequest()->setPath('monitoring/list/comments');
     }
 
     /**
