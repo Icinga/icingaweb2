@@ -4,8 +4,7 @@
 namespace Icinga\Exception;
 
 /**
- * Class MissingParameterException
- * @package Icinga\Exception
+ * Exception thrown if a mandatory parameter was not given
  */
 class MissingParameterException extends IcingaException
 {
