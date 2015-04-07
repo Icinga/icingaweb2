@@ -59,21 +59,24 @@ $hiddenRich = array();
             </tr>
         <?php endforeach ?>
 
-        <?php if (count($hidden)): ?>
-            <tr>
-                <td class="state">
-                    <div data-title-rich="<span align='left'><?= join('<br>', $hiddenRich) ?></span>"
-                         title="<?= join(', ', $hidden) ?>">
-
-                        <?= $this->qlink(
-                            sprintf($this->translate('%d more ...'), count($hidden)),
+        <tr>
+            <td class="state">
+                <div data-title-rich="<span align='left'><?= join('<br>', $hiddenRich) ?></span>"
+                     title="<?= join(', ', $hidden) ?>">
+                        <?php
+                        echo $this->qlink(
+                            count($hidden) ? sprintf(
+                                $this->translate('%d more ...'),
+                                count($hidden)
+                            ) : $this->translate('list all ...'),
                             $listAllLink,
-                            null
-                        ) ?>
-                    </div>
-                </td>
-            </tr>
-        <?php endif ?>
+                            null,
+                            array('data-base-target' => '_next')
+                        );
+                        ?>
+                </div>
+            </td>
+        </tr>
 
         </tbody>
     </table>
