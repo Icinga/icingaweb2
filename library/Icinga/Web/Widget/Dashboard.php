@@ -64,7 +64,7 @@ class Dashboard extends AbstractWidget
     /**
      * Load Pane items provided by all enabled modules
      *
-     * @return  self
+     * @return  $this
      */
     public function load()
     {
@@ -241,7 +241,7 @@ class Dashboard extends AbstractWidget
      *
      * @param string $title
      *
-     * @return self
+     * @return $this
      */
     public function createPane($title)
     {
@@ -278,7 +278,7 @@ class Dashboard extends AbstractWidget
      *
      * @param Pane $pane        The pane to add
      *
-     * @return self
+     * @return $this
      */
     public function addPane(Pane $pane)
     {

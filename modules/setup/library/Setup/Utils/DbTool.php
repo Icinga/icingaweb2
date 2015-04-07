@@ -127,7 +127,7 @@ class DbTool
     /**
      * Connect to the server
      *
-     * @return  self
+     * @return  $this
      */
     public function connectToHost()
     {
@@ -150,7 +150,7 @@ class DbTool
     /**
      * Connect to the database
      *
-     * @return  self
+     * @return  $this
      */
     public function connectToDb()
     {

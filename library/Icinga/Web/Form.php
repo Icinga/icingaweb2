@@ -211,7 +211,7 @@ class Form extends Zend_Form
      *
      * @param   string  $label  The label to use for the submit button
      *
-     * @return  self
+     * @return  $this
      */
     public function setSubmitLabel($label)
     {
@@ -234,7 +234,7 @@ class Form extends Zend_Form
      *
      * @param   string|Url  $url    The url to redirect to
      *
-     * @return  self
+     * @return  $this
      */
     public function setRedirectUrl($url)
     {
@@ -263,7 +263,7 @@ class Form extends Zend_Form
      *
      * @param   string  $viewScript     The view script to use
      *
-     * @return  self
+     * @return  $this
      */
     public function setViewScript($viewScript)
     {
@@ -286,7 +286,7 @@ class Form extends Zend_Form
      *
      * @param   bool    $disabled   Set true in order to disable CSRF protection for this form, otherwise false
      *
-     * @return  self
+     * @return  $this
      */
     public function setTokenDisabled($disabled = true)
     {
@@ -314,7 +314,7 @@ class Form extends Zend_Form
      *
      * @param   string  $name   The name to set
      *
-     * @return  self
+     * @return  $this
      */
     public function setTokenElementName($name)
     {
@@ -337,7 +337,7 @@ class Form extends Zend_Form
      *
      * @param   bool    $disabled   Set true in order to disable identification for this form, otherwise false
      *
-     * @return  self
+     * @return  $this
      */
     public function setUidDisabled($disabled = true)
     {
@@ -365,7 +365,7 @@ class Form extends Zend_Form
      *
      * @param   string  $name   The name to set
      *
-     * @return  self
+     * @return  $this
      */
     public function setUidElementName($name)
     {
@@ -388,7 +388,7 @@ class Form extends Zend_Form
      *
      * @param   bool    $state
      *
-     * @return  self
+     * @return  $this
      */
     public function setValidatePartial($state)
     {
@@ -525,7 +525,7 @@ class Form extends Zend_Form
      *
      * @param   array   $formData   The data sent by the user
      *
-     * @return  self
+     * @return  $this
      */
     public function create(array $formData = array())
     {
@@ -593,7 +593,7 @@ class Form extends Zend_Form
      * Uses the label previously set with Form::setSubmitLabel(). Overwrite this
      * method in order to add multiple submit buttons or one with a custom name.
      *
-     * @return  self
+     * @return  $this
      */
     public function addSubmitButton()
     {
@@ -773,7 +773,7 @@ class Form extends Zend_Form
     /**
      * Add a field with a unique and form specific ID
      *
-     * @return  self
+     * @return  $this
      */
     public function addFormIdentification()
     {
@@ -795,7 +795,7 @@ class Form extends Zend_Form
     /**
      * Add CSRF counter measure field to this form
      *
-     * @return  self
+     * @return  $this
      */
     public function addCsrfCounterMeasure()
     {
@@ -948,7 +948,7 @@ class Form extends Zend_Form
      * Overwrites Zend_Form::loadDefaultDecorators to avoid having
      * the HtmlTag-Decorator added and to provide viewscript usage
      *
-     * @return  self
+     * @return  $this
      */
     public function loadDefaultDecorators()
     {

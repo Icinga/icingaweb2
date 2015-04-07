@@ -32,7 +32,7 @@ class RequirementsPage extends Form
      *
      * @param   SetupWizard    $wizard
      *
-     * @return  self
+     * @return  $this
      */
     public function setWizard(SetupWizard $wizard)
     {

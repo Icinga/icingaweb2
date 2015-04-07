@@ -199,7 +199,7 @@ abstract class IdoQuery extends DbQuery
      * @param string $columnOrAlias         The column or column alias to order by
      * @param int $dir                      The sort direction or null to use default direction
      *
-     * @return self                         Fluent interface
+     * @return $this                         Fluent interface
      */
     public function order($columnOrAlias, $dir = null)
     {
@@ -487,7 +487,7 @@ abstract class IdoQuery extends DbQuery
      *
      * @param $alias                                The alias of the column to require
      *
-     * @return self                                 Fluent interface
+     * @return $this                                 Fluent interface
      * @see    IdoQuery::requireVirtualTable        The method initializing required joins
      * @throws \Icinga\Exception\ProgrammingError   When an unknown column is requested
      */
@@ -522,7 +522,7 @@ abstract class IdoQuery extends DbQuery
      * Require a virtual table for the given table name if not already required
      *
      * @param  String $name         The table name to require
-     * @return self                 Fluent interface
+     * @return $this                 Fluent interface
      */
     protected function requireVirtualTable($name)
     {
@@ -549,7 +549,7 @@ abstract class IdoQuery extends DbQuery
      * This requires a join$Table() method to exist
      *
      * @param  String $table        The table to join by calling join$Table() in the concrete implementation
-     * @return self                 Fluent interface
+     * @return $this                 Fluent interface
      *
      * @throws \Icinga\Exception\ProgrammingError   If the join method for this table does not exist
      */
@@ -676,7 +676,7 @@ abstract class IdoQuery extends DbQuery
      *
      * @param   array $columns
      *
-     * @return  self
+     * @return  $this
      */
     public function columns(array $columns)
     {

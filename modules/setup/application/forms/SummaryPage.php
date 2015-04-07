@@ -64,7 +64,7 @@ class SummaryPage extends Form
      *
      * @param   array   $summary
      *
-     * @return  self
+     * @return  $this
      */
     public function setSummary(array $summary)
     {

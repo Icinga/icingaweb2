@@ -65,7 +65,7 @@ class LogarithmicUnit implements AxisUnit
      * @param   array $dataset  The dataset to add
      * @param   int $idx        The idx (0 for x, 1 for y)
      *
-     * @return  self            Fluent interface
+     * @return  $this            Fluent interface
      */
     public function addValues(array $dataset, $idx = 0)
     {

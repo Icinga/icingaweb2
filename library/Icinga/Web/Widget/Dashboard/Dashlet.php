@@ -119,7 +119,7 @@ EOD;
      *
      * @param  string|Url $url  The url to use, either as an Url object or as a path
      *
-     * @return self
+     * @return $this
      */
     public function setUrl($url)
     {

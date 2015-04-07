@@ -63,7 +63,7 @@ class PivotTable
     /**
      * Prepare the queries used for the pre processing
      *
-     * @return  self
+     * @return  $this
      */
     protected function prepareQueries()
     {
@@ -82,7 +82,7 @@ class PivotTable
     /**
      * Set a default sorting for the x- and y-axis without losing any existing rules
      *
-     * @return  self
+     * @return  $this
      */
     protected function adjustSorting()
     {

@@ -26,7 +26,7 @@ abstract class UserBackend implements Countable
      *
      * @param   string $name
      *
-     * @return  self
+     * @return  $this
      */
     public function setName($name)
     {

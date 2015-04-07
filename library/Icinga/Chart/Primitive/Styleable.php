@@ -59,7 +59,7 @@ class Styleable
      *
      * @param   string $width   The stroke with with unit
      *
-     * @return  self            Fluid interface
+     * @return  $this            Fluid interface
      */
     public function setStrokeWidth($width)
     {
@@ -72,7 +72,7 @@ class Styleable
      *
      * @param   string $color   The color to set for the stroke
      *
-     * @return  self            Fluid interface
+     * @return  $this            Fluid interface
      */
     public function setStrokeColor($color)
     {
@@ -85,7 +85,7 @@ class Styleable
      *
      * @param   string $styles  The styles to set additionally
      *
-     * @return  self            Fluid interface
+     * @return  $this            Fluid interface
      */
     public function setAdditionalStyle($styles)
     {
@@ -98,7 +98,7 @@ class Styleable
      *
      * @param   string $color   The color to use for filling or null to use no fill
      *
-     * @return  self            Fluid interface
+     * @return  $this            Fluid interface
      */
     public function setFill($color = null)
     {
@@ -111,7 +111,7 @@ class Styleable
      *
      * @param   string $id  The id to set for this element
      *
-     * @return  self        Fluid interface
+     * @return  $this        Fluid interface
      */
     public function setId($id)
     {

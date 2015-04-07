@@ -45,7 +45,7 @@ EOT;
      *
      * @param   array   $config
      *
-     * @return  self
+     * @return  $this
      */
     public function setResourceConfig(array $config)
     {

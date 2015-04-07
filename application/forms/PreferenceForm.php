@@ -48,7 +48,7 @@ class PreferenceForm extends Form
      *
      * @param   Preferences     $preferences    The preferences to work with
      *
-     * @return  self
+     * @return  $this
      */
     public function setPreferences(Preferences $preferences)
     {
@@ -61,17 +61,18 @@ class PreferenceForm extends Form
      *
      * @param   PreferencesStore    $store      The preference store to use
      *
-     * @return  self
+     * @return  $this
      */
     public function setStore(PreferencesStore $store)
     {
         $this->store = $store;
+        return $this;
     }
 
     /**
      * Persist preferences
      *
-     * @return  self
+     * @return  $this
      */
     public function save()
     {

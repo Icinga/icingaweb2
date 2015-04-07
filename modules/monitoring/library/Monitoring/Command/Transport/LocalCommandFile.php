@@ -55,7 +55,7 @@ class LocalCommandFile implements CommandTransportInterface
      *
      * @param   string $path
      *
-     * @return  self
+     * @return  $this
      */
     public function setPath($path)
     {
@@ -78,7 +78,7 @@ class LocalCommandFile implements CommandTransportInterface
      *
      * @param   string $openMode
      *
-     * @return  self
+     * @return  $this
      */
     public function setOpenMode($openMode)
     {

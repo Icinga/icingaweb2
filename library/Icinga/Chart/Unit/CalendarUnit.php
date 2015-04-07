@@ -110,7 +110,7 @@ class CalendarUnit extends LinearUnit
      * @param   array   $dataset    The dataset to update
      * @param   int     $idx        The index to use for determining the data
      *
-     * @return  self                Fluid interface
+     * @return  $this                Fluid interface
      */
     public function addValues(array $dataset, $idx = 0)
     {

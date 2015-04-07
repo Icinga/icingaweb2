@@ -116,7 +116,7 @@ EOT;
      *
      * @param   string $name Name of the tab going to be activated
      *
-     * @return  self
+     * @return  $this
      *
      * @throws  ProgrammingError When the given tab name doesn't exist
      *
@@ -148,7 +148,7 @@ EOT;
      *
      * @param   string $name CSS class name(s)
      *
-     * @return  self
+     * @return  $this
      */
     public function setClass($name)
     {
@@ -194,7 +194,7 @@ EOT;
      * @param   string      $name   The new tab name
      * @param   array|Tab   $tab    The tab itself of its properties
      *
-     * @return  self
+     * @return  $this
      *
      * @throws  ProgrammingError When the tab name already exists
      */
@@ -219,7 +219,7 @@ EOT;
      * @param   string      $name   The new tab name
      * @param   array|Tab   $tab    The tab itself of its properties
      *
-     * @return  self
+     * @return  $this
      */
     public function set($name, $tab)
     {
@@ -236,7 +236,7 @@ EOT;
      *
      * @param   string  $name
      *
-     * @return  self
+     * @return  $this
      */
     public function remove($name)
     {
@@ -427,7 +427,7 @@ EOT;
      *
      * @param   Tabextension $tabextension
      *
-     * @return  self
+     * @return  $this
      */
     public function extend(Tabextension $tabextension)
     {

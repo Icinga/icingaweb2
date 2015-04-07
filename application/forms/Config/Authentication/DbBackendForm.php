@@ -34,7 +34,7 @@ class DbBackendForm extends Form
      *
      * @param   array   $resources      The resources to choose from
      *
-     * @return  self
+     * @return  $this
      */
     public function setResources(array $resources)
     {

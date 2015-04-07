@@ -183,7 +183,7 @@ class DbConnection implements Selectable
      *
      * @param   string $prefix
      *
-     * @return  self
+     * @return  $this
      */
     public function setTablePrefix($prefix)
     {

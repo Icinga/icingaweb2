@@ -106,7 +106,7 @@ class SimpleQuery implements QueryInterface, Queryable
      *
      * Query will return all available columns if none are given here
      *
-     * @return self
+     * @return $this
      */
     public function from($target, array $fields = null)
     {
@@ -125,7 +125,7 @@ class SimpleQuery implements QueryInterface, Queryable
      * @param   string  $condition
      * @param   mixed   $value
      *
-     * @return  self
+     * @return  $this
      */
     public function where($condition, $value = null)
     {
@@ -192,7 +192,7 @@ class SimpleQuery implements QueryInterface, Queryable
      * @param  string   $field
      * @param  string   $direction
      *
-     * @return self
+     * @return $this
      */
     public function order($field, $direction = null)
     {
@@ -270,7 +270,7 @@ class SimpleQuery implements QueryInterface, Queryable
      * @param   int $count  Number of rows to return
      * @param   int $offset Start returning after this many rows
      *
-     * @return  self
+     * @return  $this
      */
     public function limit($count = null, $offset = null)
     {
@@ -417,7 +417,7 @@ class SimpleQuery implements QueryInterface, Queryable
      *
      * @param   array $columns
      *
-     * @return  self
+     * @return  $this
      */
     public function columns(array $columns)
     {
