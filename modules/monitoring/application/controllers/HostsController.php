@@ -165,6 +165,7 @@ class Monitoring_HostsController extends Controller
             ->setQueryString($this->hostList->getObjectsInDowntime()->filterFromResult());
 
         $this->view->commentsLink = Url::fromRequest()->setPath('monitoring/list/comments');
+        $this->view->baseFilter = $this->hostList->getFilter();
     }
 
     /**

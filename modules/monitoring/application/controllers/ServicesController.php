@@ -202,6 +202,7 @@ class Monitoring_ServicesController extends Controller
             ->setQueryString($this->serviceList->getObjectsInDowntime()->filterFromResult()->toQueryString());
         $this->view->commentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
+        $this->view->baseFilter = $this->serviceList->getFilter();
     }
 
     /**

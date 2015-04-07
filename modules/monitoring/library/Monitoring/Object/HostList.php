@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterOr;
 use Icinga\Util\String;
 
 /**

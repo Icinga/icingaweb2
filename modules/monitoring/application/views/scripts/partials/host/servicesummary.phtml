@@ -3,6 +3,15 @@
 use Icinga\Web\Url;
 use Icinga\Module\Monitoring\Object\Service;
 
+function urlAddFilterOptional($url, $filter, $optional) {
+    $url = Url::fromPath($url);
+    $f = $filter;
+    if (isset($optional)) {
+        $f = Filter::matchAll($filter, $optional);
+    }
+    return $url->setQueryString($f->toQueryString());
+}
+
 $selfUrl = Url::fromPath('monitoring/show/services', array('host' => $object->host_name));
 $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
 ?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
