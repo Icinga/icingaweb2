@@ -3,6 +3,8 @@
 
 namespace Icinga\Web;
 
+use Icinga\Exception\MissingParameterException;
+
 class UrlParams
 {
     protected $separator = '&';
@@ -40,6 +42,29 @@ class UrlParams
         }
 
         return rawurldecode($this->params[ end($this->index[$param]) ][ 1 ]);
+    }
+
+    /**
+     * Require a parameter
+     *
+     * @param   string  $name               Name of the parameter
+     * @param   bool    $strict             Whether the parameter's value must not be the empty string
+     *
+     * @return  mixed
+     *
+     * @throws  MissingParameterException   If the parameter was not given
+     */
+    public function req($name, $strict = true)
+    {
+        if ($this->has($name)) {
+            $value = $this->get($name);
+            if (! $strict || strlen($value) > 0) {
+                return $value;
+            }
+        }
+        $e = new MissingParameterException(t('Required parameter \'%s\' missing'), $name);
+        $e->setParameter($name);
+        throw $e;
     }
 
     /**
