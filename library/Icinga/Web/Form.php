@@ -34,6 +34,11 @@ use Icinga\Web\Form\Element\CsrfCounterMeasure;
 class Form extends Zend_Form
 {
     /**
+     * The suffix to append to a field's hidden default field name
+     */
+    const DEFAULT_SUFFIX = '_default';
+
+    /**
      * Whether this form has been created
      *
      * @var bool
@@ -731,6 +736,20 @@ class Form extends Zend_Form
             unset($el->autosubmit);
         }
 
+        if ($el->getAttrib('preserveDefault')) {
+            $el->addDecorator(
+                array('preserveDefault' => 'HtmlTag'),
+                array(
+                    'tag'   => 'input',
+                    'type'  => 'hidden',
+                    'name'  => $name . static::DEFAULT_SUFFIX,
+                    'value' => $el->getValue()
+                )
+            );
+
+            unset($el->preserveDefault);
+        }
+
         return $this->ensureElementAccessibility($el);
     }
 
@@ -814,6 +833,17 @@ class Form extends Zend_Form
     public function populate(array $defaults)
     {
         $this->create($defaults);
+
+        foreach ($this->getElements() as $name => $_) {
+            if (
+                array_key_exists($name, $defaults)
+                && array_key_exists($name . static::DEFAULT_SUFFIX, $defaults)
+                && $defaults[$name] === $defaults[$name . static::DEFAULT_SUFFIX]
+            ) {
+                unset($defaults[$name]);
+            }
+        }
+
         return parent::populate($defaults);
     }
 
@@ -900,10 +930,18 @@ class Form extends Zend_Form
     {
         $this->create($formData);
 
-        // Ensure that disabled elements are not overwritten (http://www.zendframework.com/issues/browse/ZF-6909)
         foreach ($this->getElements() as $name => $element) {
-            if ($element->getAttrib('disabled')) {
-                $formData[$name] = $element->getValue();
+            if (array_key_exists($name, $formData)) {
+                if ($element->getAttrib('disabled')) {
+                    // Ensure that disabled elements are not overwritten
+                    // (http://www.zendframework.com/issues/browse/ZF-6909)
+                    $formData[$name] = $element->getValue();
+                } elseif (
+                    array_key_exists($name . static::DEFAULT_SUFFIX, $formData)
+                    && $formData[$name] === $formData[$name . static::DEFAULT_SUFFIX]
+                ) {
+                    unset($formData[$name]);
+                }
             }
         }
 
