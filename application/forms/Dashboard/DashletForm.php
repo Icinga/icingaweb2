@@ -148,9 +148,9 @@ class DashletForm extends Form
         $this->populate(array(
             'pane'          => $dashlet->getPane()->getName(),
             'org_pane'      => $dashlet->getPane()->getName(),
-            'dashlet'     => $dashlet->getTitle(),
-            'org_dashlet' => $dashlet->getTitle(),
-            'url'           => $dashlet->getUrl()
+            'dashlet'       => $dashlet->getTitle(),
+            'org_dashlet'   => $dashlet->getTitle(),
+            'url'           => $dashlet->getUrl()->getRelativeUrl()
         ));
     }
 }

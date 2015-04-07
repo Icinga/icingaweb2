@@ -55,8 +55,8 @@
                             </td>
                             <td style="table-layout: fixed; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                 <?= $this->qlink(
-                                    $dashlet->getUrl(),
-                                    $dashlet->getUrl(),
+                                    $dashlet->getUrl()->getRelativeUrl(),
+                                    $dashlet->getUrl()->getRelativeUrl(),
                                     null,
                                     array('title' => sprintf($this->translate('Show dashlet %s'), $dashlet->getTitle()))
                                 ); ?>
