@@ -55,6 +55,11 @@ class ActionController extends Zend_Controller_Action
      */
     private $auth;
 
+    /**
+     * URL parameters
+     *
+     * @var UrlParams
+     */
     protected $params;
 
     /**
