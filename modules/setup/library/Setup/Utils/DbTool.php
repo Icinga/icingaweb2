@@ -786,6 +786,6 @@ EOD;
             $privilegesGranted &= $query->fetchColumn() !== false;
         }
 
-        return $privilegesGranted;
+        return (bool) $privilegesGranted;
     }
 }
