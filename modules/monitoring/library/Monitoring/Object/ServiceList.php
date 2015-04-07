@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterOr;
 use Icinga\Util\String;
 
 /**
@@ -113,4 +115,22 @@ class ServiceList extends ObjectList
             '_'
         );
     }
+
+    /**
+     * Returns a Filter that matches all hosts in this HostList
+     *
+     * @return Filter
+     */
+    public function filterFromResult()
+    {
+        $filterExpression = array();
+        foreach ($this as $service) {
+            $filterExpression[] = Filter::matchAll(
+                Filter::where('host', $service->getHost()->getName()),
+                Filter::where('service', $service->getName())
+            );
+        }
+        return FilterOr::matchAny($filterExpression);
+    }
 }
+

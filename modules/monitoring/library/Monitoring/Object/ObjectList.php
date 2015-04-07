@@ -94,7 +94,7 @@ abstract class ObjectList implements Countable, IteratorAggregate
                 $acknowledgedObjects[] = $object;
             }
         }
-        return $acknowledgedObjects;
+        return $this->newFromArray($acknowledgedObjects);
     }
 
     public function getObjectsInDowntime()
@@ -105,7 +105,7 @@ abstract class ObjectList implements Countable, IteratorAggregate
                 $objectsInDowntime[] = $object;
             }
         }
-        return $objectsInDowntime;
+        return $this->newFromArray($objectsInDowntime);
     }
 
     public function getUnhandledObjects()
@@ -116,6 +116,37 @@ abstract class ObjectList implements Countable, IteratorAggregate
                 $unhandledObjects[] = $object;
             }
         }
-        return $unhandledObjects;
+        return $this->newFromArray($unhandledObjects);
     }
+
+    /**
+     * @return ObjectList
+     */
+    public function getProblemObjects()
+    {
+        $handledObjects = array();
+        foreach ($this as $object) {
+            if ((bool) $object->problem === true) {
+                $handledObjects[] = $object;
+            }
+        }
+        return $this->newFromArray($handledObjects);
+    }
+
+    /**
+     * Create a ObjectList from an array of hosts without querying a backend
+     *
+     * @return ObjectList
+     */
+    protected function newFromArray(array $objects)
+    {
+        $class = get_called_class();
+        $list = new $class($this->backend);
+        $list->objects = $objects;
+        $list->count = count($objects);
+        $list->filter = $list->filterFromResult();
+        return $list;
+    }
+
+    abstract function filterFromResult();
 }

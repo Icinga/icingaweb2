@@ -17,6 +17,7 @@ use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\ServiceList;
 use Icinga\Util\String;
 use Icinga\Web\Url;
+use Icinga\Web\UrlParams;
 use Icinga\Web\Widget\Chart\InlinePie;
 
 class Monitoring_ServicesController extends Controller
@@ -144,23 +145,6 @@ class Monitoring_ServicesController extends Controller
             'service_active_checks_enabled',
             'service_obsessing'*/
         ));
-        $unhandledObjects = $this->serviceList->getUnhandledObjects();
-        $unhandledFilterExpressions = array();
-        foreach ($unhandledObjects as $service) {
-            $unhandledFilterExpressions[] = Filter::matchAll(
-                Filter::where('host', $service->getHost()->getName()),
-                Filter::where('service', $service->getName())
-            );
-        }
-
-        $objectsInDowntime = $this->serviceList->getObjectsInDowntime();
-        $downtimeFilterExpressions = array();
-        foreach ($objectsInDowntime as $service) {
-            $downtimeFilterExpressions[] = Filter::matchAll(
-                Filter::where('downtime_host', $service->getHost()->getName()),
-                Filter::where('downtime_service', $service->getName())
-            );
-        }
 
         $acknowledgedObjects = $this->serviceList->getAcknowledgedObjects();
         if (! empty($acknowledgedObjects)) {
@@ -204,16 +188,18 @@ class Monitoring_ServicesController extends Controller
         $this->view->stats = $serviceStates;
         $this->view->hostStats = $hostStates;
         $this->view->objects = $this->serviceList;
-        $this->view->unhandledObjects = $unhandledObjects;
-        $unhandledFilterQueryString = Filter::matchAny($unhandledFilterExpressions)->toQueryString();
+        $this->view->unhandledObjects = $this->serviceList->getUnhandledObjects();
+        $this->view->problemObjects = $this->serviceList->getProblemObjects();
         $this->view->acknowledgeUnhandledLink = Url::fromPath('monitoring/services/acknowledge-problem')
-            ->setQueryString($unhandledFilterQueryString);
+            ->setQueryString($this->serviceList->getUnhandledObjects()->filterFromResult()->toQueryString());
         $this->view->downtimeUnhandledLink = Url::fromPath('monitoring/services/schedule-downtime')
-            ->setQueryString($unhandledFilterQueryString);
+            ->setQueryString($this->serviceList->getUnhandledObjects()->filterFromResult()->toQueryString());
+        $this->view->downtimeLink = Url::fromPath('monitoring/services/schedule-downtime')
+            ->setQueryString($this->serviceList->getProblemObjects()->filterFromResult()->toQueryString());
         $this->view->acknowledgedObjects = $acknowledgedObjects;
-        $this->view->objectsInDowntime = $objectsInDowntime;
+        $this->view->objectsInDowntime = $this->serviceList->getObjectsInDowntime();
         $this->view->inDowntimeLink = Url::fromPath('monitoring/list/downtimes')
-            ->setQueryString(Filter::matchAny($downtimeFilterExpressions)->toQueryString());
+            ->setQueryString($this->serviceList->getObjectsInDowntime()->filterFromResult()->toQueryString());
         $this->view->commentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
     }

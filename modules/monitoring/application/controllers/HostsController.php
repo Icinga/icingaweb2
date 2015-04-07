@@ -125,17 +125,6 @@ class Monitoring_HostsController extends Controller
             'host_active_checks_enabled',
             'host_obsessing'*/
         ));
-        $unhandledObjects = $this->hostList->getUnhandledObjects();
-        $unhandledFilterExpressions = array();
-        foreach ($unhandledObjects as $object) {
-            $unhandledFilterExpressions[] = Filter::where('host', $object->getName());
-        }
-
-        $objectsInDowntime = $this->hostList->getObjectsInDowntime();
-        $downtimeFilterExpressions = array();
-        foreach ($objectsInDowntime as $object) {
-            $downtimeFilterExpressions[] = Filter::where('downtime_host', $object->getName());
-        }
 
         $acknowledgedObjects = $this->hostList->getAcknowledgedObjects();
         if (! empty($acknowledgedObjects)) {
@@ -161,16 +150,20 @@ class Monitoring_HostsController extends Controller
         $this->view->deleteCommentLink = Url::fromRequest()->setPath('monitoring/hosts/delete-comment');
         $this->view->stats = $hostStates;
         $this->view->objects = $this->hostList;
-        $this->view->unhandledObjects = $unhandledObjects;
-        $unhandledFilterQueryString = Filter::matchAny($unhandledFilterExpressions)->toQueryString();
+        $this->view->unhandledObjects = $this->hostList->getUnhandledObjects();
+        $this->view->problemObjects = $this->hostList->getProblemObjects();
+
         $this->view->acknowledgeUnhandledLink = Url::fromPath('monitoring/hosts/acknowledge-problem')
-            ->setQueryString($unhandledFilterQueryString);
+            ->setQueryString($this->hostList->getUnhandledObjects()->filterFromResult());
         $this->view->downtimeUnhandledLink = Url::fromPath('monitoring/hosts/schedule-downtime')
-            ->setQueryString($unhandledFilterQueryString);
-        $this->view->acknowledgedObjects = $acknowledgedObjects;
-        $this->view->objectsInDowntime = $objectsInDowntime;
+            ->setQueryString($this->hostList->getUnhandledObjects()->filterFromResult());
+        $this->view->downtimeLink = Url::fromPath('monitoring/hosts/schedule-downtime')
+            ->setQueryString($this->hostList->getProblemObjects()->filterFromResult());
+        $this->view->acknowledgedObjects = $this->hostList->getAcknowledgedObjects();
+        $this->view->objectsInDowntime = $this->hostList->getObjectsInDowntime();
         $this->view->inDowntimeLink = Url::fromPath('monitoring/list/downtimes')
-            ->setQueryString(Filter::matchAny($downtimeFilterExpressions)->toQueryString());
+            ->setQueryString($this->hostList->getObjectsInDowntime()->filterFromResult());
+
         $this->view->commentsLink = Url::fromRequest()->setPath('monitoring/list/comments');
     }
 

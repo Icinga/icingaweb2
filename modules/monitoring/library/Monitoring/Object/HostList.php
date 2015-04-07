@@ -70,4 +70,18 @@ class HostList extends ObjectList
             '_'
         );
     }
+
+    /**
+     * Returns a Filter that matches all hosts in this list
+     *
+     * @return array    An
+     */
+    public function filterFromResult()
+    {
+        $filterExpression = array();
+        foreach ($this as $host) {
+            $filterExpression[] = Filter::where('host', $host->getName());
+        }
+        return FilterOr::matchAny($filterExpression);
+    }
 }
