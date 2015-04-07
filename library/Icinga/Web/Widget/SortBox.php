@@ -69,6 +69,20 @@ class SortBox extends AbstractWidget
     }
 
     /**
+     * Create a SortBox with the entries from $sortFields
+     *
+     * @param string    $name           The name of the sort form
+     * @param array     $sortFields     An array containing the columns and their labels to be displayed
+     *                                  in the sort select box
+     *
+     * @return static
+     */
+    public static function create($name, array $sortFields)
+    {
+        return new static($name, $sortFields);
+    }
+
+    /**
      * Apply the parameters from the given request on this SortBox
      *
      * @param Request $request The request to use for populating the form
