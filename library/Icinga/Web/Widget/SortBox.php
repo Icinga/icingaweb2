@@ -72,10 +72,13 @@ class SortBox extends AbstractWidget
      * Apply the parameters from the given request on this SortBox
      *
      * @param Request $request The request to use for populating the form
+     *
+     * @return static $this
      */
     public function applyRequest($request)
     {
         $this->request = $request;
+        return $this;
     }
 
     /**
