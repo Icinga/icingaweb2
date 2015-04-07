@@ -271,7 +271,7 @@ class Logger
      */
     public static function writesToSyslog()
     {
-        return static::$instance && static::$instance instanceof SyslogWriter;
+        return static::$instance && static::$instance->getWriter() instanceof SyslogWriter;
     }
 
     /**
@@ -281,7 +281,7 @@ class Logger
      */
     public static function writesToFile()
     {
-        return static::$instance && static::$instance instanceof FileWriter;
+        return static::$instance && static::$instance->getWriter() instanceof FileWriter;
     }
 
     /**
