@@ -58,7 +58,7 @@ class Monitoring_HostsController extends Controller
             )
         )->activate('show');
 
-        $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/hosts');
+        $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/hosts')->setQueryString($filterString);
     }
 
     protected function handleCommandForm(ObjectsCommandForm $form)
