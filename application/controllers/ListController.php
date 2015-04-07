@@ -3,6 +3,7 @@
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Web\Url;
+use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
 use Icinga\Protocol\File\FileReader;
@@ -44,11 +45,10 @@ class ListController extends Controller
         $pattern = '/^(?<datetime>[0-9]{4}(-[0-9]{2}){2}'                 // date
                  . 'T[0-9]{2}(:[0-9]{2}){2}([\\+\\-][0-9]{2}:[0-9]{2})?)' // time
                  . ' - (?<loglevel>[A-Za-z]+)'                            // loglevel
-                 . ' - (?<message>.*)$/';                                 // message
+                 . ' - (?<message>.*)$/';
 
-        $loggerWriter = Logger::getInstance()->getWriter();
         $resource = new FileReader(new ConfigObject(array(
-            'filename'  => $loggerWriter->getPath(),
+            'filename'  => Config::app()->get('logging', 'file'),
             'fields'    => $pattern
         )));
         $this->view->logData = $resource->select()->order('DESC')->paginate();
