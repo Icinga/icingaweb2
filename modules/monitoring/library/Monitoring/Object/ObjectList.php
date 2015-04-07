@@ -5,21 +5,40 @@ namespace Icinga\Module\Monitoring\Object;
 
 use ArrayIterator;
 use Countable;
+use Icinga\Data\Filter\Filter;
 use IteratorAggregate;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
 abstract class ObjectList implements Countable, IteratorAggregate
 {
+    /**
+     * @var string
+     */
     protected $dataViewName;
 
+    /**
+     * @var MonitoringBackend
+     */
     protected $backend;
 
+    /**
+     * @var array
+     */
     protected $columns;
 
+    /**
+     * @var Filter
+     */
     protected $filter;
 
+    /**
+     * @var array
+     */
     protected $objects;
 
+    /**
+     * @var int
+     */
     protected $count;
 
     public function __construct(MonitoringBackend $backend)
@@ -27,23 +46,39 @@ abstract class ObjectList implements Countable, IteratorAggregate
         $this->backend = $backend;
     }
 
+    /**
+     * @param array $columns
+     *
+     * @return $this
+     */
     public function setColumns(array $columns)
     {
         $this->columns = $columns;
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getColumns()
     {
         return $this->columns;
     }
 
+    /**
+     * @param $filter
+     *
+     * @return $this
+     */
     public function setFilter($filter)
     {
         $this->filter = $filter;
         return $this;
     }
 
+    /**
+     * @return Filter
+     */
     public function getFilter()
     {
         return $this->filter;
@@ -51,6 +86,9 @@ abstract class ObjectList implements Countable, IteratorAggregate
 
     abstract protected function fetchObjects();
 
+    /**
+     * @return array
+     */
     public function fetch()
     {
         if ($this->objects === null) {
@@ -59,6 +97,9 @@ abstract class ObjectList implements Countable, IteratorAggregate
         return $this->objects;
     }
 
+    /**
+     * @return int
+     */
     public function count()
     {
         if ($this->count === null) {
@@ -86,6 +127,9 @@ abstract class ObjectList implements Countable, IteratorAggregate
         return $this->backend->select()->from('comment')->applyFilter($this->filter);
     }
 
+    /**
+     * @return ObjectList
+     */
     public function getAcknowledgedObjects()
     {
         $acknowledgedObjects = array();
@@ -97,6 +141,9 @@ abstract class ObjectList implements Countable, IteratorAggregate
         return $this->newFromArray($acknowledgedObjects);
     }
 
+    /**
+     * @return ObjectList
+     */
     public function getObjectsInDowntime()
     {
         $objectsInDowntime = array();
@@ -108,6 +155,9 @@ abstract class ObjectList implements Countable, IteratorAggregate
         return $this->newFromArray($objectsInDowntime);
     }
 
+    /**
+     * @return ObjectList
+     */
     public function getUnhandledObjects()
     {
         $unhandledObjects = array();
@@ -148,5 +198,8 @@ abstract class ObjectList implements Countable, IteratorAggregate
         return $list;
     }
 
+    /**
+     * @return Filter
+     */
     abstract function filterFromResult();
 }

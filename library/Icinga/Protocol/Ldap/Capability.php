@@ -9,7 +9,8 @@ namespace Icinga\Protocol\Ldap;
  * Provides information about the available encryption mechanisms (StartTLS), the supported
  * LDAP protocol (v2/v3), vendor-specific extensions or protocols controls and extensions.
  */
-class Capability {
+class Capability
+{
 
     const LDAP_SERVER_START_TLS_OID = '1.3.6.1.4.1.1466.20037';
 
