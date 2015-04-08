@@ -55,7 +55,7 @@ class Zend_View_Helper_Link extends Zend_View_Helper_Abstract
             $this->view->qlink(
                 $serviceLinkText,
                 'monitoring/service/show',
-                array('host_name' => $host, 'service' => $service),
+                array('host_name' => $host, 'service_description' => $service),
                 array('title' => sprintf(
                     $this->view->translate('Show detailed information for service %s on host %s'),
                     $service,

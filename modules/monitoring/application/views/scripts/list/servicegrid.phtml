@@ -82,8 +82,8 @@ foreach ($serviceDescriptions as $service_description): ?>
             '',
             'monitoring/service/show',
             array(
-              'host_name' => $service->host_name,
-              'service'   => $service->service_description
+              'host_name'           => $service->host_name,
+              'service_description' => $service->service_description
             ),
             array(
               'aria-describedby'    => $service->host_name . '_' . $service->service_description . '_desc',

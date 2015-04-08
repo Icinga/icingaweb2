@@ -172,8 +172,8 @@ abstract class MonitoredObjectController extends Controller
         } else {
             $isService = true;
             $params = array(
-                'host_name' => $object->getHost()->getName(),
-                'service'   => $object->getName()
+                'host_name'             => $object->getHost()->getName(),
+                'service_description'   => $object->getName()
             );
         }
         $tabs->add(
