@@ -9,7 +9,6 @@ use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabs;
-use Icinga\Web\Widget\SortBox;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget;
 use Icinga\Module\Monitoring\Forms\StatehistoryForm;
@@ -692,21 +691,6 @@ class Monitoring_ListController extends Controller
         );
         $this->view->extraColumns = $columns;
         return $columns;
-    }
-
-    /**
-     * Create a sort control box at the 'sortControl' view parameter
-     *
-     * @param array $columns    An array containing the sort columns, with the
-     *                          submit value as the key and the value as the label
-     */
-    private function setupSortControl(array $columns)
-    {
-        $this->view->sortControl = new SortBox(
-            'sortbox-' . $this->getRequest()->getActionName(),
-            $columns
-        );
-        $this->view->sortControl->applyRequest($this->getRequest());
     }
 
     protected function addTitleTab($action, $title, $tip)
