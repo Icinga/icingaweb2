@@ -171,7 +171,7 @@ class StatusQuery extends IdoQuery
             'service_host'           => 'so.name1 COLLATE latin1_general_ci',
             'service_host_name'      => 'so.name1',
             'service'                => 'so.name2 COLLATE latin1_general_ci',
-            'service_description'    => 'so.name2 COLLATE latin1_general_ci',
+            'service_description'    => 'so.name2',
             'service_display_name'   => 's.display_name',
             'service_icon_image'     => 's.icon_image',
             'service_action_url'     => 's.action_url',
