@@ -42,14 +42,14 @@ foreach ($services as $service):
     $serviceLink = $this->href(
       'monitoring/service/show',
       array(
-        'host' => $service->host_name,
-        'service' => $service->service_description
+        'host_name' => $service->host_name,
+        'service'   => $service->service_description
       )
     );
     $hostLink = $this->href(
-      'monitoring/show/host',
+      'monitoring/host/show',
       array(
-        'host' => $service->host_name,
+        'host_name' => $service->host_name,
       )
     );
     $serviceStateName = Service::getStateText($service->service_state);

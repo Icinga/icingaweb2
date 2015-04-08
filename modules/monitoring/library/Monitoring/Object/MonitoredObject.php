@@ -556,10 +556,10 @@ abstract class MonitoredObject implements Filterable
      */
     public static function fromParams(UrlParams $params)
     {
-        if ($params->has('service') && $params->has('host')) {
-            return new Service(MonitoringBackend::instance(), $params->get('host'), $params->get('service'));
-        } elseif ($params->has('host')) {
-            return new Host(MonitoringBackend::instance(), $params->get('host'));
+        if ($params->has('service') && $params->has('host_name')) {
+            return new Service(MonitoringBackend::instance(), $params->get('host_name'), $params->get('service'));
+        } elseif ($params->has('host_name')) {
+            return new Host(MonitoringBackend::instance(), $params->get('host_name'));
         }
         return null;
     }

@@ -188,12 +188,12 @@ class Monitoring_ShowController extends Controller
         if ($object->getType() === $object::TYPE_HOST) {
             $isService = false;
             $params = array(
-                'host' => $object->getName()
+                'host_name' => $object->getName()
             );
         } else {
             $isService = true;
             $params = array(
-                'host'      => $object->getHost()->getName(),
+                'host_name' => $object->getHost()->getName(),
                 'service'   => $object->getName()
             );
         }
@@ -207,7 +207,7 @@ class Monitoring_ShowController extends Controller
                 ),
                 'label'     => $this->translate('Host'),
                 'icon'      => 'host',
-                'url'       => 'monitoring/show/host',
+                'url'       => 'monitoring/host/show',
                 'urlParams' => $params,
             )
         );

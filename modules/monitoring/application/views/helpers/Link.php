@@ -33,7 +33,7 @@ class Zend_View_Helper_Link extends Zend_View_Helper_Abstract
         return $this->view->qlink(
             $linkText,
             'monitoring/host/show',
-            array('host' => $host),
+            array('host_name' => $host),
             array('title' => sprintf($this->view->translate('Show detailed information for host %s'), $host))
         );
     }
@@ -55,7 +55,7 @@ class Zend_View_Helper_Link extends Zend_View_Helper_Abstract
             $this->view->qlink(
                 $serviceLinkText,
                 'monitoring/service/show',
-                array('host' => $host, 'service' => $service),
+                array('host_name' => $host, 'service' => $service),
                 array('title' => sprintf(
                     $this->view->translate('Show detailed information for service %s on host %s'),
                     $service,
