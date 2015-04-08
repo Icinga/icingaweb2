@@ -602,7 +602,7 @@
             });
 
             $('.timeuntil').each(function (idx, el) {
-
+                return;
                 // todo remove after replace timeUntil
                 var mp = el.innerHTML.match(/^(.*?)(-?\d+)d\s(-?\d+)h/);
                 if (mp !== null) {
