@@ -72,7 +72,6 @@ class ServiceStatus extends DataView
             'host_action_url',
             'host_notes_url',
             'host_last_comment',
-            'host',
             'host_display_name',
             'host_alias',
             'host_ipv4',
@@ -87,7 +86,6 @@ class ServiceStatus extends DataView
             'host_last_time_down',
             'host_last_time_unreachable',
             'host_modified_host_attributes',
-            'service',
             'service_hard_state',
             'service_problem',
             'service_perfdata',
@@ -165,7 +163,7 @@ class ServiceStatus extends DataView
 
     public function getFilterColumns()
     {
-        return array('hostgroup', 'servicegroup', 'service_problems');
+        return array('host', 'hostgroup', 'service', 'service_host', 'servicegroup');
     }
 
     public function isValidFilterTarget($column)
