@@ -239,7 +239,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
     /**
      * Backend entry point
      *
-     * @return self
+     * @return $this
      */
     public function select()
     {

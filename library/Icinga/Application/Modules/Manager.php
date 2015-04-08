@@ -156,7 +156,7 @@ class Manager
     /**
      * Try to set all enabled modules in loaded sate
      *
-     * @return  self
+     * @return  $this
      * @see     Manager::loadModule()
      */
     public function loadEnabledModules()
@@ -173,7 +173,7 @@ class Manager
      * @param string $name    The name of the module to load
      * @param mixed  $basedir Optional module base directory
      *
-     * @return self
+     * @return $this
      */
     public function loadModule($name, $basedir = null)
     {
@@ -197,7 +197,7 @@ class Manager
      *
      * @param   string $name                The module to enable
      *
-     * @return  self
+     * @return  $this
      * @throws  ConfigurationError          When trying to enable a module that is not installed
      * @throws  NotFoundError               In case the "enabledModules" directory does not exist
      * @throws  SystemPermissionException   When insufficient permissions for the application exist
@@ -256,7 +256,7 @@ class Manager
      *
      * @param   string $name                The name of the module to disable
      *
-     * @return  self
+     * @return  $this
      *
      * @throws  ConfigurationError          When the module is not installed or it's not a symlink
      * @throws  SystemPermissionException   When the module can't be disabled
@@ -491,7 +491,7 @@ class Manager
      *
      * @param   array   $availableDirs      Installed modules location
      *
-     * @return self
+     * @return $this
      */
     public function detectInstalledModules(array $availableDirs = null)
     {

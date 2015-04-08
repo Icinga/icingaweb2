@@ -186,7 +186,7 @@ class Params
      * @param   string  $key    The option name
      * @param   mixed   $value  The value to set
      *
-     * @return  self
+     * @return  $this
      */
     public function set($key, $value)
     {
@@ -199,7 +199,7 @@ class Params
      *
      * @param   string|array    $keys   The option or options to remove
      *
-     * @return  self
+     * @return  $this
      */
     public function remove($keys = array())
     {
@@ -263,7 +263,7 @@ class Params
      *
      * @param   mixed   $key    The argument
      *
-     * @return  self
+     * @return  $this
      */
     public function unshift($key)
     {

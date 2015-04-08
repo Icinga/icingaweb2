@@ -44,7 +44,7 @@ class AdminAccountPage extends Form
      *
      * @param   array   $config
      *
-     * @return  self
+     * @return  $this
      */
     public function setResourceConfig(array $config)
     {
@@ -57,7 +57,7 @@ class AdminAccountPage extends Form
      *
      * @param   array   $config
      *
-     * @return  self
+     * @return  $this
      */
     public function setBackendConfig(array $config)
     {

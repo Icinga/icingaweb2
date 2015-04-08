@@ -20,7 +20,7 @@ class EmbeddedWeb extends ApplicationBootstrap
      * Embedded bootstrap parts
      *
      * @see    ApplicationBootstrap::bootstrap
-     * @return self
+     * @return $this
      */
     protected function bootstrap()
     {

@@ -159,7 +159,7 @@ class UrlParams
      * @param string $param The parameter you're interested in
      * @param string $value The value to be stored
      *
-     * @return self
+     * @return $this
      */
     public function add($param, $value = true)
     {
@@ -175,7 +175,7 @@ class UrlParams
      * @param string $param Parameter name or param/value list
      * @param string $value The value to be stored
      *
-     * @return self
+     * @return $this
      */
     public function addValues($param, $values = null)
     {
@@ -231,7 +231,7 @@ class UrlParams
      * @param string $param The parameter you're interested in
      * @param string $value The value to be stored
      *
-     * @return self
+     * @return $this
      */
     public function unshift($param, $value)
     {
@@ -248,7 +248,7 @@ class UrlParams
      * @param string $param The parameter you want to set
      * @param string $value The value to be stored
      *
-     * @return self
+     * @return $this
      */
     public function set($param, $value)
     {

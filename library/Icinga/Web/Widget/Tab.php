@@ -235,7 +235,7 @@ class Tab extends AbstractWidget
      *
      * @param  bool $active Whether the tab should be active
      *
-     * @return self
+     * @return $this
      */
     public function setActive($active = true)
     {

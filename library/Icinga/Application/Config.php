@@ -77,7 +77,7 @@ class Config implements Countable, Iterator
      *
      * @param   string      $filepath   The path to the ini file
      *
-     * @return  self
+     * @return  $this
      */
     public function setConfigFile($filepath)
     {
@@ -223,7 +223,7 @@ class Config implements Countable, Iterator
      * @param   string              $name
      * @param   array|ConfigObject  $config
      *
-     * @return  self
+     * @return  $this
      */
     public function setSection($name, $config = null)
     {
@@ -242,7 +242,7 @@ class Config implements Countable, Iterator
      *
      * @param   string  $name
      *
-     * @return  self
+     * @return  $this
      */
     public function removeSection($name)
     {

@@ -87,7 +87,7 @@ class SortBox extends AbstractWidget
      *
      * @param Request $request The request to use for populating the form
      *
-     * @return static $this
+     * @return $this
      */
     public function applyRequest($request)
     {

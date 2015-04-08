@@ -274,7 +274,7 @@ class ConfigObject implements Countable, Iterator, ArrayAccess
      *
      * @param   array|Config    $data   An array or a config
      *
-     * @return  self
+     * @return  $this
      */
     public function merge($data)
     {

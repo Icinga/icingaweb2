@@ -34,6 +34,11 @@ use Icinga\Web\Form\Element\CsrfCounterMeasure;
 class Form extends Zend_Form
 {
     /**
+     * The suffix to append to a field's hidden default field name
+     */
+    const DEFAULT_SUFFIX = '_default';
+
+    /**
      * Whether this form has been created
      *
      * @var bool
@@ -211,7 +216,7 @@ class Form extends Zend_Form
      *
      * @param   string  $label  The label to use for the submit button
      *
-     * @return  self
+     * @return  $this
      */
     public function setSubmitLabel($label)
     {
@@ -234,7 +239,7 @@ class Form extends Zend_Form
      *
      * @param   string|Url  $url    The url to redirect to
      *
-     * @return  self
+     * @return  $this
      */
     public function setRedirectUrl($url)
     {
@@ -263,7 +268,7 @@ class Form extends Zend_Form
      *
      * @param   string  $viewScript     The view script to use
      *
-     * @return  self
+     * @return  $this
      */
     public function setViewScript($viewScript)
     {
@@ -286,7 +291,7 @@ class Form extends Zend_Form
      *
      * @param   bool    $disabled   Set true in order to disable CSRF protection for this form, otherwise false
      *
-     * @return  self
+     * @return  $this
      */
     public function setTokenDisabled($disabled = true)
     {
@@ -314,7 +319,7 @@ class Form extends Zend_Form
      *
      * @param   string  $name   The name to set
      *
-     * @return  self
+     * @return  $this
      */
     public function setTokenElementName($name)
     {
@@ -337,7 +342,7 @@ class Form extends Zend_Form
      *
      * @param   bool    $disabled   Set true in order to disable identification for this form, otherwise false
      *
-     * @return  self
+     * @return  $this
      */
     public function setUidDisabled($disabled = true)
     {
@@ -365,7 +370,7 @@ class Form extends Zend_Form
      *
      * @param   string  $name   The name to set
      *
-     * @return  self
+     * @return  $this
      */
     public function setUidElementName($name)
     {
@@ -388,7 +393,7 @@ class Form extends Zend_Form
      *
      * @param   bool    $state
      *
-     * @return  self
+     * @return  $this
      */
     public function setValidatePartial($state)
     {
@@ -525,7 +530,7 @@ class Form extends Zend_Form
      *
      * @param   array   $formData   The data sent by the user
      *
-     * @return  self
+     * @return  $this
      */
     public function create(array $formData = array())
     {
@@ -593,7 +598,7 @@ class Form extends Zend_Form
      * Uses the label previously set with Form::setSubmitLabel(). Overwrite this
      * method in order to add multiple submit buttons or one with a custom name.
      *
-     * @return  self
+     * @return  $this
      */
     public function addSubmitButton()
     {
@@ -731,6 +736,20 @@ class Form extends Zend_Form
             unset($el->autosubmit);
         }
 
+        if ($el->getAttrib('preserveDefault')) {
+            $el->addDecorator(
+                array('preserveDefault' => 'HtmlTag'),
+                array(
+                    'tag'   => 'input',
+                    'type'  => 'hidden',
+                    'name'  => $name . static::DEFAULT_SUFFIX,
+                    'value' => $el->getValue()
+                )
+            );
+
+            unset($el->preserveDefault);
+        }
+
         return $this->ensureElementAccessibility($el);
     }
 
@@ -773,7 +792,7 @@ class Form extends Zend_Form
     /**
      * Add a field with a unique and form specific ID
      *
-     * @return  self
+     * @return  $this
      */
     public function addFormIdentification()
     {
@@ -795,7 +814,7 @@ class Form extends Zend_Form
     /**
      * Add CSRF counter measure field to this form
      *
-     * @return  self
+     * @return  $this
      */
     public function addCsrfCounterMeasure()
     {
@@ -814,6 +833,17 @@ class Form extends Zend_Form
     public function populate(array $defaults)
     {
         $this->create($defaults);
+
+        foreach ($this->getElements() as $name => $_) {
+            if (
+                array_key_exists($name, $defaults)
+                && array_key_exists($name . static::DEFAULT_SUFFIX, $defaults)
+                && $defaults[$name] === $defaults[$name . static::DEFAULT_SUFFIX]
+            ) {
+                unset($defaults[$name]);
+            }
+        }
+
         return parent::populate($defaults);
     }
 
@@ -900,10 +930,18 @@ class Form extends Zend_Form
     {
         $this->create($formData);
 
-        // Ensure that disabled elements are not overwritten (http://www.zendframework.com/issues/browse/ZF-6909)
         foreach ($this->getElements() as $name => $element) {
-            if ($element->getAttrib('disabled')) {
-                $formData[$name] = $element->getValue();
+            if (array_key_exists($name, $formData)) {
+                if ($element->getAttrib('disabled')) {
+                    // Ensure that disabled elements are not overwritten
+                    // (http://www.zendframework.com/issues/browse/ZF-6909)
+                    $formData[$name] = $element->getValue();
+                } elseif (
+                    array_key_exists($name . static::DEFAULT_SUFFIX, $formData)
+                    && $formData[$name] === $formData[$name . static::DEFAULT_SUFFIX]
+                ) {
+                    unset($formData[$name]);
+                }
             }
         }
 
@@ -948,7 +986,7 @@ class Form extends Zend_Form
      * Overwrites Zend_Form::loadDefaultDecorators to avoid having
      * the HtmlTag-Decorator added and to provide viewscript usage
      *
-     * @return  self
+     * @return  $this
      */
     public function loadDefaultDecorators()
     {

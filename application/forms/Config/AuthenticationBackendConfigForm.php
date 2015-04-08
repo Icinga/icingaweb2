@@ -38,7 +38,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
      *
      * @param   Config      $resources      The resource configuration
      *
-     * @return  self
+     * @return  $this
      */
     public function setResourceConfig(Config $resourceConfig)
     {
@@ -82,7 +82,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
      *
      * @param   array   $values             The values to extend the configuration with
      *
-     * @return  self
+     * @return  $this
      *
      * @throws  InvalidArgumentException    In case the backend does already exist
      */
@@ -159,7 +159,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
      * @param   string      $name           The name of the backend to be moved
      * @param   int         $position       The new (absolute) position of the backend
      *
-     * @return  self
+     * @return  $this
      *
      * @throws  InvalidArgumentException    In case the backend does not exist
      */

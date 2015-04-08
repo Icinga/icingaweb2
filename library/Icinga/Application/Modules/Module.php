@@ -752,7 +752,7 @@ class Module
      * @param string $name   Unique tab name
      * @param string $config Tab config
      *
-     * @return self
+     * @return $this
      */
     protected function provideConfigTab($name, $config = array())
     {
@@ -769,7 +769,7 @@ class Module
      *
      * @param   string  $className      The name of the class
      *
-     * @return  self
+     * @return  $this
      */
     protected function provideSetupWizard($className)
     {
@@ -780,7 +780,7 @@ class Module
     /**
      * Register new namespaces on the autoloader
      *
-     * @return self
+     * @return $this
      */
     protected function registerAutoloader()
     {
@@ -802,7 +802,7 @@ class Module
     /**
      * Bind text domain for i18n
      *
-     * @return self
+     * @return $this
      */
     protected function registerLocales()
     {
@@ -849,7 +849,7 @@ class Module
      *
      * Add controller directory to mvc
      *
-     * @return self
+     * @return $this
      */
     protected function registerWebIntegration()
     {
@@ -872,7 +872,7 @@ class Module
     /**
      * Add routes for static content and any route added via addRoute() to the route chain
      *
-     * @return  self
+     * @return  $this
      * @see     addRoute()
      */
     protected function registerRoutes()
@@ -912,7 +912,7 @@ class Module
     /**
      * Run module bootstrap script
      *
-     * @return self
+     * @return $this
      */
     protected function launchRunScript()
     {
@@ -924,7 +924,7 @@ class Module
      *
      * @param string $file File to include
      *
-     * @return self
+     * @return $this
      */
     protected function includeScript($file)
     {
@@ -958,7 +958,7 @@ class Module
      * @param string $class
      * @param string $key
      *
-     * @return self
+     * @return $this
      */
     protected function registerHook($name, $class, $key = null)
     {
@@ -977,7 +977,7 @@ class Module
      * @param   string                                  $name   Name of the route
      * @param   Zend_Controller_Router_Route_Abstract   $route  Instance of the route
      *
-     * @return  self
+     * @return  $this
      * @see     registerRoutes()
      */
     protected function addRoute($name, Zend_Controller_Router_Route_Abstract $route)

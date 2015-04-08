@@ -127,7 +127,7 @@ class DbTool
     /**
      * Connect to the server
      *
-     * @return  self
+     * @return  $this
      */
     public function connectToHost()
     {
@@ -150,7 +150,7 @@ class DbTool
     /**
      * Connect to the database
      *
-     * @return  self
+     * @return  $this
      */
     public function connectToDb()
     {
@@ -691,7 +691,7 @@ EOD;
             . ' AND ' . $privilegeCondition . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
             array(':grantee' => $grantee)
         );
-        return (int) $query->fetchObject()->matches === count($mysqlPrivileges);
+        return $query->fetchObject()->matches === count($mysqlPrivileges);
     }
 
     /**
@@ -786,6 +786,6 @@ EOD;
             $privilegesGranted &= $query->fetchColumn() !== false;
         }
 
-        return $privilegesGranted;
+        return (bool) $privilegesGranted;
     }
 }

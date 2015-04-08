@@ -639,7 +639,7 @@ class Menu implements RecursiveIterator
      *
      * @param   array   $menus  The menus to load, as key-value array
      *
-     * @return  static
+     * @return  $this
      */
     protected function loadSubMenus(array $menus)
     {
