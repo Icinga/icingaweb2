@@ -691,7 +691,7 @@ EOD;
             . ' AND ' . $privilegeCondition . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
             array(':grantee' => $grantee)
         );
-        return (int) $query->fetchObject()->matches === count($mysqlPrivileges);
+        return $query->fetchObject()->matches === count($mysqlPrivileges);
     }
 
     /**
