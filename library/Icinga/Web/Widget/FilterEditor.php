@@ -186,7 +186,7 @@ class FilterEditor extends AbstractWidget
                         $searchCol = 'service_description';
                         break;
                     case 'hosts':
-                        $searchCol = 'host_name';
+                        $searchCol = 'host';
                         break;
                     case 'hostgroups':
                         $searchCol = 'hostgroup';
