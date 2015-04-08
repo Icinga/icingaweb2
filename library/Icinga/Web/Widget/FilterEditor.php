@@ -201,13 +201,13 @@ class FilterEditor extends AbstractWidget
                 if ($searchCol === null) {
                     throw new Exception('Cannot search here');
                 }
+                $search = ltrim($search);
                 $filter = $this->mergeRootExpression($filter, $searchCol, '=', "*$search*");
 
             } else {
                 list($k, $v) = preg_split('/=/', $search);
-                $filter = $this->mergeRootExpression($filter, $k, '=', $v);
+                $filter = $this->mergeRootExpression($filter, trim($k), '=', ltrim($v));
             }
-
             $url = $this->url()->setQueryString(
                 $filter->toQueryString()
             )->addParams($preserve);
