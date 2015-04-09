@@ -469,7 +469,7 @@ class Monitoring_ListController extends Controller
             'id'         => 'comment_internal_id',
             'objecttype' => 'comment_objecttype',
             'comment'    => 'comment_data',
-            'author'     => 'comment_author',
+            'author'     => 'comment_author_name',
             'timestamp'  => 'comment_timestamp',
             'type'       => 'comment_type',
             'persistent' => 'comment_is_persistent',

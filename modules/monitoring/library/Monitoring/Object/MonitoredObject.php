@@ -248,7 +248,7 @@ abstract class MonitoredObject implements Filterable
         $comments = $this->backend->select()->from('comment', array(
             'id'        => 'comment_internal_id',
             'timestamp' => 'comment_timestamp',
-            'author'    => 'comment_author',
+            'author'    => 'comment_author_name',
             'comment'   => 'comment_data',
             'type'      => 'comment_type',
         ))
