@@ -119,15 +119,17 @@ class ServiceList extends ObjectList
     /**
      * Returns a Filter that matches all hosts in this HostList
      *
-     * @return Filter
+     * @param   array   $columns    Override filter column names
+     *
+     * @return  Filter
      */
-    public function filterFromResult()
+    public function objectsFilter($columns = array('host' => 'host', 'service' => 'service'))
     {
         $filterExpression = array();
         foreach ($this as $service) {
             $filterExpression[] = Filter::matchAll(
-                Filter::where('host', $service->getHost()->getName()),
-                Filter::where('service', $service->getName())
+                Filter::where($columns['host'], $service->getHost()->getName()),
+                Filter::where($columns['service'], $service->getName())
             );
         }
         return FilterOr::matchAny($filterExpression);

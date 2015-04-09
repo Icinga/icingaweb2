@@ -194,12 +194,16 @@ abstract class ObjectList implements Countable, IteratorAggregate
         $list = new $class($this->backend);
         $list->objects = $objects;
         $list->count = count($objects);
-        $list->filter = $list->filterFromResult();
+        $list->filter = $list->objectsFilter();
         return $list;
     }
 
     /**
-     * @return Filter
+     * Create a filter that matches exactly the elements of this object list
+     *
+     * @param   array   $columns    Override default column names.
+     *
+     * @return  Filter
      */
-    abstract function filterFromResult();
+    abstract function objectsFilter($columns = array());
 }

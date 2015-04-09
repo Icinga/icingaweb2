@@ -78,11 +78,11 @@ class HostList extends ObjectList
      *
      * @return array    An
      */
-    public function filterFromResult()
+    public function objectsFilter($columns = array('host' => 'host'))
     {
         $filterExpression = array();
         foreach ($this as $host) {
-            $filterExpression[] = Filter::where('host', $host->getName());
+            $filterExpression[] = Filter::where($columns['host'], $host->getName());
         }
         return FilterOr::matchAny($filterExpression);
     }

@@ -191,15 +191,16 @@ class Monitoring_ServicesController extends Controller
         $this->view->unhandledObjects = $this->serviceList->getUnhandledObjects();
         $this->view->problemObjects = $this->serviceList->getProblemObjects();
         $this->view->acknowledgeUnhandledLink = Url::fromPath('monitoring/services/acknowledge-problem')
-            ->setQueryString($this->serviceList->getUnhandledObjects()->filterFromResult()->toQueryString());
+            ->setQueryString($this->serviceList->getUnhandledObjects()->objectsFilter()->toQueryString());
         $this->view->downtimeUnhandledLink = Url::fromPath('monitoring/services/schedule-downtime')
-            ->setQueryString($this->serviceList->getUnhandledObjects()->filterFromResult()->toQueryString());
+            ->setQueryString($this->serviceList->getUnhandledObjects()->objectsFilter()->toQueryString());
         $this->view->downtimeLink = Url::fromPath('monitoring/services/schedule-downtime')
-            ->setQueryString($this->serviceList->getProblemObjects()->filterFromResult()->toQueryString());
+            ->setQueryString($this->serviceList->getProblemObjects()->objectsFilter()->toQueryString());
         $this->view->acknowledgedObjects = $acknowledgedObjects;
         $this->view->objectsInDowntime = $this->serviceList->getObjectsInDowntime();
         $this->view->inDowntimeLink = Url::fromPath('monitoring/list/downtimes')
-            ->setQueryString($this->serviceList->getObjectsInDowntime()->filterFromResult()->toQueryString());
+            ->setQueryString($this->serviceList->getObjectsInDowntime()
+            ->objectsFilter(array('host' => 'downtime_host', 'service' => 'downtime_service'))->toQueryString());
         $this->view->commentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
         $this->view->baseFilter = $this->serviceList->getFilter();
