@@ -75,10 +75,10 @@ class Monitoring_ServicesController extends Controller
             'service_acknowledged',
             'service_in_downtime',
             'service_is_flapping',
-            'service_notifications_enabled',
             'service_output',
             'service_last_ack',
             'service_last_comment',
+            'service_notifications_enabled',
             'service_active_checks_enabled',
             'service_passive_checks_enabled'
         ));
@@ -129,9 +129,9 @@ class Monitoring_ServicesController extends Controller
             'service_acknowledged',
             'service_in_downtime',
             'service_is_flapping',
-            'service_notifications_enabled',
             'service_last_comment',
             'service_last_ack',
+            'service_notifications_enabled',
             'service_active_checks_enabled',
             'service_passive_checks_enabled'
             /*
