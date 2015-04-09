@@ -10,7 +10,7 @@
       } else {
           $ackLink = $this->href(
               'monitoring/service/send-custom-notification',
-              array('host_name' => $object->getHost()->getName(), 'service' => $object->getName())
+              array('host_name' => $object->getHost()->getName(), 'service_description' => $object->getName())
           );
       }
       ?>

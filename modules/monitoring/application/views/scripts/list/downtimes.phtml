@@ -122,7 +122,10 @@ use Icinga\Module\Monitoring\Object\Service;
           if (! isset($downtime->service)) {
             $delDowntimeForm->setAction($this->url('monitoring/host/delete-downtime', array('host_name' => $downtime->host)));
           } else {
-            $delDowntimeForm->setAction($this->url('monitoring/service/delete-downtime', array('host_name' => $downtime->host, 'service' => $downtime->service)));
+            $delDowntimeForm->setAction($this->url('monitoring/service/delete-downtime', array(
+                'host_name'             => $downtime->host,
+                'service_description'   => $downtime->service
+            )));
           }
           echo $delDowntimeForm;
           ?>
