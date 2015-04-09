@@ -64,7 +64,10 @@ class Monitoring_ServicesController extends Controller
     {
         $this->serviceList->setColumns(array(
             'host_name',
+            'host_output',
             'host_state',
+            'host_problem',
+            'host_handled',
             'service_description',
             'service_state',
             'service_problem',
@@ -83,32 +86,21 @@ class Monitoring_ServicesController extends Controller
             ->setRedirectUrl(Url::fromPath('monitoring/services/show')->setParams($this->params))
             ->handleRequest();
 
-        $serviceStates = array(
-            Service::getStateText(Service::STATE_OK) => 0,
-            Service::getStateText(Service::STATE_WARNING) => 0,
-            Service::getStateText(Service::STATE_CRITICAL) => 0,
-            Service::getStateText(Service::STATE_UNKNOWN) => 0,
-            Service::getStateText(Service::STATE_PENDING) => 0
-        );
-        $knownHostStates = array();
-        $hostStates = array(
-            Host::getStateText(Host::STATE_UP) => 0,
-            Host::getStateText(Host::STATE_DOWN) => 0,
-            Host::getStateText(Host::STATE_UNREACHABLE) => 0,
-            Host::getStateText(Host::STATE_PENDING) => 0,
-        );
-        foreach ($this->serviceList as $service) {
-            ++$serviceStates[$service::getStateText($service->state)];
-            if (! isset($knownHostStates[$service->getHost()->getName()])) {
-                $knownHostStates[$service->getHost()->getName()] = true;
-                ++$hostStates[$service->getHost()->getStateText($service->host_state)];
-            }
-        }
-
         $this->view->form = $form;
         $this->view->objects = $this->serviceList;
-        $this->view->serviceStates = $serviceStates;
-        $this->view->hostStates = $hostStates;
+        $this->view->stats = $this->serviceList->getServiceStateSummary();
+        $this->view->serviceStates = true;
+        $this->view->serviceStatesPieChart = InlinePie::createFromStateSummary(
+            $this->view->stats,
+            $this->translate('Service State'),
+            InlinePie::$colorsServiceStatesHandleUnhandled
+        );
+        $this->view->hostStates = $this->serviceList->getHostStateSummary();
+        $this->view->hostStatesPieChart = InlinePie::createFromStateSummary(
+            $this->view->hostStates,
+            $this->translate('Service State'),
+            InlinePie::$colorsHostStatesHandledUnhandled
+        );
         $this->_helper->viewRenderer('partials/command/objects-command-form', null, true);
         return $form;
     }
@@ -168,15 +160,6 @@ class Monitoring_ServicesController extends Controller
             $this->translate('Host State'),
             InlinePie::$colorsHostStatesHandledUnhandled
         );
-        /*
-        if (! empty($objectsInDowntime)) {
-            $removeDowntimeForm = new DeleteDowntimeCommandForm();
-            $removeDowntimeForm
-                ->setObjects($objectsInDowntime)
-                ->handleRequest();
-            $this->view->removeDowntimeForm = $removeDowntimeForm;
-        }
-        */
         $this->setAutorefreshInterval(15);
         $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/services/reschedule-check');
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/services/schedule-downtime');

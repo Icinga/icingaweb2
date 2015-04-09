@@ -5,16 +5,6 @@
     <?php endif ?>
 
     <?= $this->render('list/components/servicesummary.phtml') ?>
-    <br>
-    <div class="hbox-item">
-        <?= $this->translate('Service states:') ?>
-        &nbsp;<?= $serviceStatesPieChart; ?>
-    </div>
-    <div class="hbox-item">
-        <?= $this->translate('Host states:') ?>
-        &nbsp;<?= $hostStatesPieChart; ?>
-    </div>
-
     <?= $this->render('partials/service/objects-header.phtml'); ?>
 
 </div>

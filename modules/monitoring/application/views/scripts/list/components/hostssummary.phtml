@@ -12,7 +12,6 @@ function urlAddFilterOptional($url, $filter, $optional) {
     return $url->setQueryString($f->toQueryString());
 }
 $this->baseFilter = isset($this->baseFilter) ? $this->baseFilter : null;
-
 $selfUrl = 'monitoring/list/hosts';
 $currentUrl = Url::fromRequest()->getRelativeUrl();
 ?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>

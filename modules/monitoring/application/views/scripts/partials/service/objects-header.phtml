@@ -2,6 +2,15 @@
 use Icinga\Module\Monitoring\Object\Service;
 ?>
 
+<div class="hbox-item">
+    <?= $this->translate('Service states:') ?>
+    &nbsp;<?= $serviceStatesPieChart; ?>
+</div>
+<div class="hbox-item">
+    <?= $this->translate('Host states:') ?>
+    &nbsp;<?= $hostStatesPieChart; ?>
+</div>
+
 <?php
     $i = 0;
     $hidden = array();
@@ -14,19 +23,22 @@ use Icinga\Module\Monitoring\Object\Service;
     <?php foreach ($objects as $service): /** @var Service $service */ ?>
         <?php
         $i++;
-        if ($i > 5) {
+        if ($i > 5 && $i < 20) {
             $desc = $service->getName() . ' on ' . $service->getHost()->getName();
             $hidden[] = $desc;
             $hiddenRich[] = sprintf("<div class='color-box badge-%s'></div>%s", $service->getStateText($service->service_state) ,$desc);
+        }
+        if ($i == 20) {
+            $hiddenRich[] = '...';
+        }
+        if ($i > 5) {
             continue;
         }
         ?>
 
         <tr class="state <?= Service::getStateText($service->service_state); ?><?= $service->service_handled ? ' handled' : '' ?>">
             <td class="state"><?= Service::getStateText($service->service_state, true); ?><br /></td>
-
             <td>
-
                 <?php if (!$service->service_handled && $service->service_state > 0): ?>
                     <?= $this->icon('attention-alt', $this->translate('Unhandled')) ?>
                 <?php endif ?>
@@ -52,7 +64,6 @@ use Icinga\Module\Monitoring\Object\Service;
                 <?php if (isset($service->service_last_comment) && $service->service_last_comment !== null): ?>
                     <?= $this->icon('comment', $this->translate('Last Comment: ') . $service->service_last_comment) ?>
                 <?php endif ?>
-
             </td>
             <td class="name oneline"><?= $this->escape($service->getName()); ?></td>
             <td class="name oneline"><?= $this->escape($service->getHost()->getName()); ?></b></td>
@@ -62,7 +73,8 @@ use Icinga\Module\Monitoring\Object\Service;
 
     <tr>
         <td class="state">
-            <div data-title-rich="<span align='left'><?= join('<br>', $hiddenRich) ?></span>"
+            <div <?= count($hidden) ?
+                'data-title-rich="<span align=\'left\'>' . join('<br>', $hiddenRich) . '</span>"' : ''; ?>
                  title="<?= join(', ', $hidden) ?>">
 
                 <?php

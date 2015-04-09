@@ -8,6 +8,11 @@ $hidden = array();
 $hiddenRich = array();
 ?>
 
+<div class="hbox-item">
+    <?= $this->translate('States:') ?>
+    &nbsp;<?= $hostStatesPieChart; ?>
+</div>
+
 <?php if (($hostCount = count($objects)) > 0): ?>
 
     <p>
@@ -61,7 +66,8 @@ $hiddenRich = array();
 
         <tr>
             <td class="state">
-                <div data-title-rich="<span align='left'><?= join('<br>', $hiddenRich) ?></span>"
+                <div <?= count($hidden) ?
+                            'data-title-rich="<span align=\'left\'>' . join('<br>', $hiddenRich) . '</span>"' : ''; ?>
                      title="<?= join(', ', $hidden) ?>">
                         <?php
                         echo $this->qlink(

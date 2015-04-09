@@ -5,10 +5,10 @@
    <?php endif ?>
 
   <?php if (isset($serviceStates)): ?>
-    <h1><?= sprintf($this->translate('%d Services Selected'), count($objects)) ?></h1>
+    <?= $this->render('list/components/servicesummary.phtml') ?>
     <?= $this->render('partials/service/objects-header.phtml'); ?>
   <?php else: ?>
-    <h1><?= sprintf($this->translate('%d Hosts Selected'), count($objects)) ?></h1>
+    <?= $this->render('list/components/hostssummary.phtml') ?>
     <?= $this->render('partials/host/objects-header.phtml'); ?>
   <?php endif ?>
 </div>
