@@ -60,6 +60,6 @@ class Comment extends DataView
      */
     public function getFilterColumns()
     {
-        return array('host', 'service');
+        return array('host', 'service', 'service_host');
     }
 }

@@ -22,6 +22,7 @@ class CommentQuery extends IdoQuery
             'host_name'             => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END',
             'service'               => 'so.name2 COLLATE latin1_general_ci',
             'service_description'   => 'so.name2',
+            'service_host'          => 'so.name1 COLLATE latin1_general_ci',
             'service_host_name'     => 'so.name1'
         ),
         'hosts' => array(
