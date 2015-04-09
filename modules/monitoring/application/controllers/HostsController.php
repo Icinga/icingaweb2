@@ -113,11 +113,11 @@ class Monitoring_HostsController extends Controller
             'host_is_flapping',
             'host_last_comment',
             'host_output',
-            'host_notifications_enabled',/*,
-            'host_passive_checks_enabled',
-            'host_event_handler_enabled',
-            'host_flap_detection_enabled',
+            'host_notifications_enabled',
             'host_active_checks_enabled',
+            'host_passive_checks_enabled'
+            /*'host_event_handler_enabled',
+            'host_flap_detection_enabled',
             'host_obsessing'*/
         ));
 

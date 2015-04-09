@@ -22,77 +22,29 @@ use Icinga\Module\Monitoring\Object\Service;
     <tbody>
     <?php foreach ($objects as $service): /** @var Service $service */ ?>
         <?php
-        $i++;
-        if ($i > 5 && $i < 20) {
-            $desc = $service->getName() . ' on ' . $service->getHost()->getName();
-            $hidden[] = $desc;
-            $hiddenRich[] = sprintf("<div class='color-box badge-%s'></div>%s", $service->getStateText($service->service_state) ,$desc);
-        }
-        if ($i == 20) {
-            $hiddenRich[] = '...';
-        }
-        if ($i > 5) {
+        if ($i ++ > 5) {
             continue;
         }
         ?>
-
         <tr class="state <?= Service::getStateText($service->service_state); ?><?= $service->service_handled ? ' handled' : '' ?>">
             <td class="state"><?= Service::getStateText($service->service_state, true); ?><br /></td>
-            <td>
-                <?php if (!$service->service_handled && $service->service_state > 0): ?>
-                    <?= $this->icon('attention-alt', $this->translate('Unhandled')) ?>
-                <?php endif ?>
-
-                <?php if ($service->service_acknowledged && !$service->service_in_downtime): ?>
-                    <?= $this->icon('ok', $this->translate('Acknowledged') . (
-                        $service->service_last_ack ? ': ' . $service->service_last_ack : ''
-                        )) ?>
-                <?php endif ?>
-
-                <?php if ($service->service_is_flapping): ?>
-                    <?= $this->icon('flapping', $this->translate('Flapping')) ?>
-                <?php endif ?>
-
-                <?php if (!$service->service_notifications_enabled): ?>
-                    <?= $this->icon('bell-off-empty', $this->translate('Notifications Disabled')) ?>
-                <?php endif ?>
-
-                <?php if ($service->service_in_downtime): ?>
-                    <?= $this->icon('plug', $this->translate('In Downtime')) ?>
-                <?php endif ?>
-
-                <?php if (isset($service->service_last_comment) && $service->service_last_comment !== null): ?>
-                    <?= $this->icon('comment', $this->translate('Last Comment: ') . $service->service_last_comment) ?>
-                <?php endif ?>
-            </td>
+            <td><?= implode(' ', $this->serviceFlags($service)) ?></td>
             <td class="name oneline"><?= $this->escape($service->getName()); ?></td>
             <td class="name oneline"><?= $this->escape($service->getHost()->getName()); ?></b></td>
             <td><?= $this->escape($service->service_output) ?></td>
         </tr>
     <?php endforeach ?>
-
-    <tr>
-        <td class="state">
-            <div <?= count($hidden) ?
-                'data-title-rich="<span align=\'left\'>' . join('<br>', $hiddenRich) . '</span>"' : ''; ?>
-                 title="<?= join(', ', $hidden) ?>">
-
-                <?php
-                echo $this->qlink(
-                    count($hidden) ? sprintf(
-                        $this->translate('%d more ...'),
-                        count($hidden)
-                    ) : $this->translate('list all ...'),
-                    $listAllLink,
-                    null,
-                    array('data-base-target' => '_next')
-                );
-                ?>
-            </div>
-        </td>
-    </tr>
-
     </tbody>
     </table>
+    <div class="hbox-item">
+        <?php
+        echo $this->qlink(
+            sprintf($this->translate('List all %d services ...'), $i),
+            $listAllLink,
+            null,
+            array('data-base-target' => '_next')
+        );
+        ?>
+    </div>
     </p>
 <?php endif ?>

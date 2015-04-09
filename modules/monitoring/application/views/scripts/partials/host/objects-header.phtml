@@ -15,7 +15,7 @@ $hiddenRich = array();
 
 <?php if (($hostCount = count($objects)) > 0): ?>
 
-    <p>
+<p>
     <table class="state statesummary">
 
         <tbody>
@@ -23,71 +23,30 @@ $hiddenRich = array();
             <?php
             $i++;
             if ($i > 5) {
-                $desc = $host->getName();
-                $hidden[] = $desc;
-                $hiddenRich[] = sprintf("<div class='color-box badge-%s'></div>%s", $host->getStateText($host->host_state) ,$desc);
                 continue;
             }
             ?>
 
             <tr class="state <?= Host::getStateText($host->host_state); ?><?= $host->host_handled ? ' handled' : '' ?>">
                 <td class="state"><?= Host::getStateText($host->host_state, true); ?><br /></td>
-                <td>
-                    <?php if (!$host->host_handled && $host->host_state > 0): ?>
-                        <?= $this->icon('attention-alt', $this->translate('Unhandled')) ?>
-                    <?php endif ?>
-
-                    <?php if ($host->host_acknowledged && !$host->host_in_downtime): ?>
-                        <?= $this->icon('ok', $this->translate('Acknowledged') . (
-                            $host->host_last_ack ? ': ' . $host->host_last_ack : ''
-                            )) ?>
-                    <?php endif ?>
-
-                    <?php if ($host->host_is_flapping): ?>
-                        <?= $this->icon('flapping', $this->translate('Flapping')) ?>
-                    <?php endif ?>
-
-                    <?php if (!$host->host_notifications_enabled): ?>
-                        <?= $this->icon('bell-off-empty', $this->translate('Notifications Disabled')) ?>
-                    <?php endif ?>
-
-                    <?php if ($host->host_in_downtime): ?>
-                        <?= $this->icon('plug', $this->translate('In Downtime')) ?>
-                    <?php endif ?>
-
-                    <?php if (isset($host->host_last_comment) && $host->host_last_comment !== null): ?>
-                        <?= $this->icon('comment', $this->translate('Last Comment: ') . $host->host_last_comment) ?>
-                    <?php endif ?>
-                </td>
+                <td><?= implode(' ', $this->hostFlags($host)) ?></td>
                 <td class="name oneline"><?= $this->escape($host->getName()); ?></td>
                 <td><?= $this->escape($host->host_output) ?></td>
             </tr>
         <?php endforeach ?>
-
-        <tr>
-            <td class="state">
-                <div <?= count($hidden) ?
-                            'data-title-rich="<span align=\'left\'>' . join('<br>', $hiddenRich) . '</span>"' : ''; ?>
-                     title="<?= join(', ', $hidden) ?>">
-                        <?php
-                        echo $this->qlink(
-                            count($hidden) ? sprintf(
-                                $this->translate('%d more ...'),
-                                count($hidden)
-                            ) : $this->translate('list all ...'),
-                            $listAllLink,
-                            null,
-                            array('data-base-target' => '_next')
-                        );
-                        ?>
-                </div>
-            </td>
-        </tr>
-
-        </tbody>
+    </tbody>
     </table>
-    </p>
-
+    <div class="hbox-item">
+        <?=
+        $this->qlink(
+            sprintf($this->translate('list all %d hosts ...'), $i),
+            $listAllLink,
+            null,
+            array('data-base-target' => '_next')
+        );
+        ?>
+    </div>
+</p>
 
 <?php endif ?>
 

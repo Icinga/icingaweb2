@@ -78,7 +78,9 @@ class Monitoring_ServicesController extends Controller
             'service_notifications_enabled',
             'service_output',
             'service_last_ack',
-            'service_last_comment'
+            'service_last_comment',
+            'service_active_checks_enabled',
+            'service_passive_checks_enabled'
         ));
 
         $form
@@ -129,12 +131,12 @@ class Monitoring_ServicesController extends Controller
             'service_is_flapping',
             'service_notifications_enabled',
             'service_last_comment',
-            'service_last_ack'
-            /*,
-            'service_passive_checks_enabled',
+            'service_last_ack',
+            'service_active_checks_enabled',
+            'service_passive_checks_enabled'
+            /*
             'service_event_handler_enabled',
             'service_flap_detection_enabled',
-            'service_active_checks_enabled',
             'service_obsessing'*/
         ));
 
