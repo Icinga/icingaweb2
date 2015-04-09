@@ -210,12 +210,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
-                'notification_output',
-                'notification_contact',
-                'notification_start_time',
-                'notification_state'
+                'notification_start_time'
             )
         );
 
@@ -265,17 +260,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'eventHistory',
             array(
-                'host_name',
-                'service_description',
-                'object_type',
-                'timestamp',
-                'state',
-                'attempt',
-                'max_attempts',
-                'output',
-                'type',
-                'host',
-                'service'
+                'timestamp'
             )
         );
 
