@@ -25,7 +25,8 @@ class Comment extends DataView
             'host_name',
             'service_description',
             'host_display_name',
-            'service_display_name'
+            'service_display_name',
+            'service_host_name'
         );
     }
 
