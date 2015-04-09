@@ -17,7 +17,6 @@ class Comment extends DataView
             'comment_objecttype',
             'comment_internal_id',
             'comment_data',
-            'comment_author',
             'comment_author_name',
             'comment_timestamp',
             'comment_type',
@@ -62,6 +61,6 @@ class Comment extends DataView
      */
     public function getFilterColumns()
     {
-        return array('host', 'service', 'service_host');
+        return array('comment_author', 'host', 'service', 'service_host');
     }
 }
