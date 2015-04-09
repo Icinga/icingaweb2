@@ -30,8 +30,7 @@ class EventHistory extends DataView
             'output',
             'type',
             'host',
-            'service',
-            'service_host_name'
+            'service'
         );
     }
 

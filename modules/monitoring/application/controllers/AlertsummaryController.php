@@ -263,7 +263,7 @@ class Monitoring_AlertsummaryController extends Controller
         $interval = $this->getInterval();
 
         $query = $this->backend->select()->from(
-            'EventHistory',
+            'eventHistory',
             array(
                 'host_name',
                 'service_description',
@@ -275,8 +275,7 @@ class Monitoring_AlertsummaryController extends Controller
                 'output',
                 'type',
                 'host',
-                'service',
-                'service_host_name'
+                'service'
             )
         );
 
