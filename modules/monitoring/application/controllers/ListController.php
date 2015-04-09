@@ -170,10 +170,8 @@ class Monitoring_ListController extends Controller
 
         $this->addTitleTab('services', $this->translate('Services'), $this->translate('List services'));
         $this->view->showHost = true;
-        if ($host = $this->_getParam('host')) {
-            if (strpos($host, '*') === false) {
-                $this->view->showHost = false;
-            }
+        if (strpos($this->params->get('host_name', '*'), '*') === false) {
+            $this->view->showHost = false;
         }
         $this->setAutorefreshInterval(10);
 
