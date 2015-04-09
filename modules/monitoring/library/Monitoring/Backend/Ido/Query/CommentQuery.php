@@ -17,13 +17,11 @@ class CommentQuery extends IdoQuery
             'comment_type'          => "CASE cm.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'downtime' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END",
             'comment_is_persistent' => 'cm.is_persistent',
             'comment_expiration'    => 'CASE cm.expires WHEN 1 THEN UNIX_TIMESTAMP(cm.expiration_time) ELSE NULL END',
-            'comment_host'          => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci',
-            'host'                  => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci', // #7278, #7279
-            'comment_service'       => 'so.name2 COLLATE latin1_general_ci',
-            'service'               => 'so.name2 COLLATE latin1_general_ci', // #7278, #7279
             'comment_objecttype'    => "CASE WHEN ho.object_id IS NOT NULL THEN 'host' ELSE CASE WHEN so.object_id IS NOT NULL THEN 'service' ELSE NULL END END",
-            'service_description'   => 'so.name2',
+            'host'                  => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci',
             'host_name'             => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END',
+            'service'               => 'so.name2 COLLATE latin1_general_ci',
+            'service_description'   => 'so.name2',
             'service_host_name'     => 'so.name1'
         ),
         'hosts' => array(

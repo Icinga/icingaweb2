@@ -22,10 +22,10 @@ class Comment extends DataView
             'comment_type',
             'comment_is_persistent',
             'comment_expiration',
-            'comment_host',
-            'comment_service',
             'host',
             'service',
+            'host_name',
+            'service_description',
             'host_display_name',
             'service_display_name'
         );

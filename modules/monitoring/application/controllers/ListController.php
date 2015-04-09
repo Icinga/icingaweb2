@@ -474,8 +474,8 @@ class Monitoring_ListController extends Controller
             'type'       => 'comment_type',
             'persistent' => 'comment_is_persistent',
             'expiration' => 'comment_expiration',
-            'host'       => 'comment_host',
-            'service'    => 'comment_service',
+            'host_name',
+            'service_description',
             'host_display_name',
             'service_display_name'
         ));
