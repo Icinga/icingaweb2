@@ -1,22 +1,17 @@
 <?php
 use Icinga\Module\Monitoring\Object\Service;
-?>
 
-<div class="hbox-item">
-    <?= $this->translate('Service states:') ?>
-    &nbsp;<?= $serviceStatesPieChart; ?>
-</div>
-<div class="hbox-item">
-    <?= $this->translate('Host states:') ?>
-    &nbsp;<?= $hostStatesPieChart; ?>
-</div>
-
-<?php
-    $i = 0;
-    $hidden = array();
-    $hiddenRich = array();
+$i = 0;
 ?>
 <?php if (($serviceCount = count($objects)) > 0): ?>
+    <div class="hbox-item">
+        <?= $this->translate('Service states:') ?>
+        &nbsp;<?= $serviceStatesPieChart; ?>
+    </div>
+    <div class="hbox-item">
+        <?= $this->translate('Host states:') ?>
+        &nbsp;<?= $hostStatesPieChart; ?>
+    </div>
     <p>
     <table class="state statesummary">
     <tbody>

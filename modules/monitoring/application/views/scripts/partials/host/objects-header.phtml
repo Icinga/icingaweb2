@@ -1,20 +1,14 @@
 <?php
 use Icinga\Module\Monitoring\Object\Host;
-?>
 
-<?php
 $i = 0;
-$hidden = array();
-$hiddenRich = array();
 ?>
-
-<div class="hbox-item">
-    <?= $this->translate('States:') ?>
-    &nbsp;<?= $hostStatesPieChart; ?>
-</div>
 
 <?php if (($hostCount = count($objects)) > 0): ?>
-
+    <div class="hbox-item">
+        <?= $this->translate('States:') ?>
+        &nbsp;<?= $hostStatesPieChart; ?>
+    </div>
 <p>
     <table class="state statesummary">
 
