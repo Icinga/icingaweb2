@@ -34,7 +34,7 @@ use Icinga\Module\Monitoring\Object\Service;
       $icon = 'help';
       $title = $event->type;
       $stateName = 'invalid';
-      $isService = isset($event->service);
+      $isService = isset($event->service_description);
       switch ($event->type) {
         case 'notify':
           $icon = 'bell';
@@ -99,10 +99,10 @@ use Icinga\Module\Monitoring\Object\Service;
         <td>
         <?php if ($isService): ?>
           <?= $this->link()->service(
-              $event->service, $event->service_display_name, $event->host, $event->host_display_name
+              $event->service_description, $event->service_display_name, $event->host_name, $event->host_display_name
           ) ?>
         <?php else: ?>
-          <?= $this->link()->host($event->host, $event->host_display_name) ?>
+          <?= $this->link()->host($event->host_name, $event->host_display_name) ?>
         <?php endif ?>
           <br>
           <div>

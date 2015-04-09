@@ -623,9 +623,7 @@ class Monitoring_ListController extends Controller
             'attempt',
             'max_attempts',
             'output',
-            'type',
-            'host',
-            'service'
+            'type'
         ));
 
         $this->filterQuery($query);
