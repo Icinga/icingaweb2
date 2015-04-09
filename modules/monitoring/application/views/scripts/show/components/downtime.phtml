@@ -7,7 +7,7 @@
                 echo $this->qlink(
                     $this->translate('Schedule downtime'),
                     'monitoring/host/schedule-downtime',
-                    array('host' => $object->getName()),
+                    array('host_name' => $object->getName()),
                     array(
                         'icon'              => 'plug',
                         'data-base-target'  => '_self',
@@ -20,7 +20,7 @@
                 echo $this->qlink(
                     $this->translate('Schedule downtime'),
                     'monitoring/service/schedule-downtime',
-                    array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
+                    array('host_name' => $object->getHost()->getName(), 'service' => $object->getName()),
                     array(
                         'icon'              => 'plug',
                         'data-base-target'  => '_self',
