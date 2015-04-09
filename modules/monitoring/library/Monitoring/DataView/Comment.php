@@ -18,6 +18,7 @@ class Comment extends DataView
             'comment_internal_id',
             'comment_data',
             'comment_author',
+            'comment_author_name',
             'comment_timestamp',
             'comment_type',
             'comment_is_persistent',

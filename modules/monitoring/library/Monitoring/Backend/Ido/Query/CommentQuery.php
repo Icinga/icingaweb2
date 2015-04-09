@@ -13,6 +13,7 @@ class CommentQuery extends IdoQuery
             'comment_internal_id'   => 'cm.internal_comment_id',
             'comment_data'          => 'cm.comment_data',
             'comment_author'        => 'cm.author_name COLLATE latin1_general_ci',
+            'comment_author_name'   => 'cm.author_name',
             'comment_timestamp'     => 'UNIX_TIMESTAMP(cm.comment_time)',
             'comment_type'          => "CASE cm.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'downtime' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END",
             'comment_is_persistent' => 'cm.is_persistent',
