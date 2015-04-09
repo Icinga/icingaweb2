@@ -580,7 +580,7 @@
         refreshTimeSince: function () {
 
             $('.timesince').each(function (idx, el) {
-
+                return;
                 // todo remove after replace timeSince
                 var mp = el.innerHTML.match(/^(.*?)(-?\d+)d\s(-?\d+)h/);
                 if (mp !== null) {
