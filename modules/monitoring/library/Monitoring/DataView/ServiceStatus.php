@@ -163,7 +163,15 @@ class ServiceStatus extends DataView
 
     public function getFilterColumns()
     {
-        return array('host', 'hostgroup', 'service', 'service_host', 'servicegroup');
+        return array(
+            'host',
+            'hostgroup',
+            'hostgroup_name',
+            'service',
+            'service_host',
+            'servicegroup',
+            'servicegroup_name'
+        );
     }
 
     public function isValidFilterTarget($column)
