@@ -22,7 +22,7 @@ use Icinga\Module\Monitoring\Object\Service;
 
 <div class="content">
 <?= $this->filterEditor ?>
-<?php if (empty($history)): ?>
+<?php if (count($history) === 0): ?>
   <?= $this->translate('No history events matching the filter') ?>
 </div>
 <?php return; endif ?>
