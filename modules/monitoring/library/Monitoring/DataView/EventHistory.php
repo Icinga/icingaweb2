@@ -28,9 +28,7 @@ class EventHistory extends DataView
             'attempt',
             'max_attempts',
             'output',
-            'type',
-            'host',
-            'service'
+            'type'
         );
     }
 
@@ -46,8 +44,6 @@ class EventHistory extends DataView
 
     public function getFilterColumns()
     {
-        return array(
-            'hostgroups'
-        );
+        return array('host', 'service', 'hostgroup');
     }
 }
