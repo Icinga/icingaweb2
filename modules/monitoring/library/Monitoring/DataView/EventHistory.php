@@ -22,6 +22,7 @@ class EventHistory extends DataView
             'host_display_name',
             'service_description',
             'service_display_name',
+            'hostgroup_name',
             'object_type',
             'timestamp',
             'state',

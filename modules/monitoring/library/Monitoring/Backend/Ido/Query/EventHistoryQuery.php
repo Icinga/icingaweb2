@@ -44,6 +44,7 @@ class EventHistoryQuery extends IdoQuery
         ),
         'hostgroups' => array(
             'hostgroup'             => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup_name'        => 'hgo.name1'
         ),
         'hosts' => array(
             'host_display_name'     => 'CASE WHEN sh.display_name IS NOT NULL THEN sh.display_name ELSE h.display_name END'
