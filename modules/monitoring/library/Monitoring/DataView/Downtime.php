@@ -69,6 +69,6 @@ class Downtime extends DataView
 
     public function getFilterColumns()
     {
-        return array('author', 'host', 'service');
+        return array('author', 'host', 'service', 'service_host');
     }
 }
