@@ -559,7 +559,7 @@ class Monitoring_ListController extends Controller
         $this->addTitleTab('hostgroups', $this->translate('Host Groups'), $this->translate('List host groups'));
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('groupsummary', array(
-            'hostgroup',
+            'hostgroup_name',
             'hostgroup_alias',
             'hosts_up',
             'hosts_unreachable_handled',

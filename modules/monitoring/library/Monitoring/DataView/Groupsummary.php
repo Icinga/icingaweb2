@@ -15,7 +15,7 @@ class Groupsummary extends DataView
         return array(
             'servicegroup',
             'servicegroup_alias',
-            'hostgroup',
+            'hostgroup_name',
             'hostgroup_alias',
             'hosts_up',
             'hosts_unreachable',

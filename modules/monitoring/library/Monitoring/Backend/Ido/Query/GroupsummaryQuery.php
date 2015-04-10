@@ -19,7 +19,7 @@ class GroupSummaryQuery extends IdoQuery
             'hosts_down_handled'            => 'SUM(CASE WHEN object_type = \'host\' AND state = 1 AND acknowledged + in_downtime != 0 THEN 1 ELSE 0 END)',
             'hosts_down_unhandled'          => 'SUM(CASE WHEN object_type = \'host\' AND state = 1 AND acknowledged + in_downtime = 0 THEN 1 ELSE 0 END)',
             'hosts_pending'                 => 'SUM(CASE WHEN object_type = \'host\' AND state = 99 THEN 1 ELSE 0 END)',
-            'hostgroup'                     => 'hostgroup',
+            'hostgroup_name'                => 'hostgroup_name',
             'hostgroup_alias'               => 'hostgroup_alias'
         ),
         'servicestatussummary' => array(
@@ -61,9 +61,9 @@ class GroupSummaryQuery extends IdoQuery
             $columns[] = 'servicegroup_alias';
             $groupColumns = array('servicegroup', 'servicegroup_alias');
         } else {
-            $columns[] = 'hostgroup';
+            $columns[] = 'hostgroup_name';
             $columns[] = 'hostgroup_alias';
-            $groupColumns = array('hostgroup', 'hostgroup_alias');
+            $groupColumns = array('hostgroup_name', 'hostgroup_alias');
         }
         $hosts = $this->createSubQuery(
             'Hoststatus',
