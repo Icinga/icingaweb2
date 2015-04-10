@@ -36,7 +36,7 @@ if ($hosts->count() === 0) {
     data-base-target="_next"
     class="action multiselect"
     data-icinga-multiselect-url="<?= $this->href('monitoring/hosts/show') ?>"
-    data-icinga-multiselect-data="host"
+    data-icinga-multiselect-data="host_name"
 >
   <tbody>
   <?php foreach($hosts as $host):
