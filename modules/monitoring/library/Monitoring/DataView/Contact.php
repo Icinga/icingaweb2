@@ -8,7 +8,6 @@ namespace Icinga\Module\Monitoring\DataView;
  */
 class Contact extends DataView
 {
-
     /**
      * Retrieve columns provided by this view
      *
@@ -17,7 +16,6 @@ class Contact extends DataView
     public function getColumns()
     {
         return array(
-            'contact',
             'contact_name',
             'contact_alias_name',
             'contact_email_address',
@@ -43,9 +41,7 @@ class Contact extends DataView
             'host_name',
             'service_object_id',
             'service_host_name',
-            'service_description',
-            'service',
-            'host',
+            'service_description'
         );
     }
 
@@ -61,5 +57,10 @@ class Contact extends DataView
                 'order' => self::SORT_DESC
             )
         );
+    }
+
+    public function getFilterColumns()
+    {
+        return array('contact', 'alias', 'email', 'host', 'service');
     }
 }
