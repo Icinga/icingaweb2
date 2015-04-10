@@ -61,6 +61,6 @@ class Contactgroup extends DataView
 
     public function getFilterColumns()
     {
-        return array('contactgroup', 'contact', 'host', 'service');
+        return array('contactgroup', 'contact', 'host', 'service', 'service_host');
     }
 }
