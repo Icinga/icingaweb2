@@ -4,7 +4,7 @@
 namespace Icinga\Util;
 
 use DateTime;
-use IntlDateFormatter;
+use Icinga\Date\DateFormatter;
 use Icinga\Exception\ProgrammingError;
 
 class Format
@@ -113,9 +113,31 @@ class Format
         return $prefix . self::showHourMin(abs($diff), $includePrefix);
     }
 
-    public static function timeSince($timestamp)
+    /**
+     * (non-PHPDoc)
+     * @see \Icinga\Date\DateFormatter::timeAgo() For the method description.
+     */
+    public static function timeAgo($time)
     {
-        return self::smartTimeDiff(time() - $timestamp, $timestamp);
+        return DateFormatter::create(DateFormatter::AGO)->format($time);
+    }
+
+    /**
+     * (non-PHPDoc)
+     * @see \Icinga\Date\DateFormatter::timeUntil() For the method description.
+     */
+    public static function timeUntil($time)
+    {
+        return DateFormatter::create(DateFormatter::UNTIL)->format($time);
+    }
+
+    /**
+     * (non-PHPDoc)
+     * @see \Icinga\Date\DateFormatter::timeSince() For the method description.
+     */
+    public static function timeSince($time)
+    {
+        return DateFormatter::create(DateFormatter::SINCE)->format($time);
     }
 
     public static function prefixedTimeSince($timestamp, $ucfirst = false)
@@ -125,37 +147,6 @@ class Format
             $result = ucfirst($result);
         }
         return $result;
-    }
-
-    public static function timeUntil($time, $now = null)
-    {
-        $time = (float) $time;
-        if ($now === null) {
-            $now = time();
-        }
-        $diff = $time - $now;
-        if ($diff < 0) {
-            $diff = abs($diff);
-            // return static::timeAgo($time, $now);
-        }
-        if ($diff > 3600 * 24 * 3) {
-            $fmt = new IntlDateFormatter('en_US', IntlDateFormatter::SHORT, IntlDateFormatter::SHORT);
-            $until = $fmt->format($time);
-        } else {
-            $minutes = floor($diff / 60);
-            if ($minutes < 60) {
-                $until = sprintf('%dm %ds', $minutes, $diff % 60);
-            } else {
-                $hours = floor($minutes / 60);
-                if ($hours < 24) {
-                    $fmt = new IntlDateFormatter('en_US', IntlDateFormatter::NONE, IntlDateFormatter::SHORT);
-                    $until = $fmt->format($time);
-                } else {
-                    $until = sprintf('%dd %dh', floor($hours / 24), $hours % 24);
-                }
-            }
-        }
-        return $until;
     }
 
     public static function prefixedTimeUntil($timestamp, $ucfirst)
