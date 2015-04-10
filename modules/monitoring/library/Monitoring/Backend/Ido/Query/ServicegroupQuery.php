@@ -9,7 +9,7 @@ class ServicegroupQuery extends IdoQuery
         'servicegroups' => array(
             'servicegroup'       => 'sgo.name1 COLLATE latin1_general_ci',
             'servicegroup_name'  => 'sgo.name1',
-            'servicegroup_alias' => 'sg.alias'
+            'servicegroup_alias' => 'sg.alias COLLATE latin1_general_ci'
         ),
         'services' => array(
             'host'                => 'so.name1 COLLATE latin1_general_ci',
