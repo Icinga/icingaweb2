@@ -10,7 +10,7 @@ class HostgroupQuery extends IdoQuery
             'hostgroups'      => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_name'  => 'hgo.name1',
             'hostgroup_alias' => 'hg.alias',
-            'id'              => 'hg.hostgroup_id',
+            'hostgroup_id'    => 'hg.hostgroup_id'
         ),
         'hosts' => array(
             'host'            => 'ho.name1 COLLATE latin1_general_ci',
