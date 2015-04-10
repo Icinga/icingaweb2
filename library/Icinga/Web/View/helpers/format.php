@@ -10,19 +10,19 @@ $this->addHelperFunction('format', function () {
     return Format::getInstance();
 });
 
+$this->addHelperFunction('timeAgo', function ($timestamp) {
+    return sprintf(
+        '<span class="timeAgo" title="%s">%s</span>',
+        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
+        Format::timeAgo($timestamp)
+    );
+});
+
 $this->addHelperFunction('timeSince', function ($timestamp) {
     return sprintf(
         '<span class="timesince" title="%s">%s</span>',
         date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
         Format::timeSince($timestamp)
-    );
-});
-
-$this->addHelperFunction('prefixedTimeSince', function ($timestamp, $ucfirst = false) {
-    return sprintf(
-        '<span class="timesince" title="%s">%s</span>',
-        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
-        Format::prefixedTimeSince($timestamp, $ucfirst)
     );
 });
 
@@ -32,6 +32,14 @@ $this->addHelperFunction('timeUntil', function ($timestamp) {
         '<span class="timeuntil" title="%s">%s</span>',
         date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
         Format::timeUntil($timestamp)
+    );
+});
+
+$this->addHelperFunction('prefixedTimeSince', function ($timestamp, $ucfirst = false) {
+    return sprintf(
+        '<span class="timesince" title="%s">%s</span>',
+        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
+        Format::prefixedTimeSince($timestamp, $ucfirst)
     );
 });
 
