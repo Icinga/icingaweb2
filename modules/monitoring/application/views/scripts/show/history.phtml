@@ -20,7 +20,7 @@ $hostContext = $object->getType() === 'host';
 </div>
 
 <div class="content">
-<?php if (empty($history)): ?>
+<?php if (count($history) === 0): ?>
   <?= $this->translate('No history available for this object'); ?>
 </div>
 <?php return; endif ?>
