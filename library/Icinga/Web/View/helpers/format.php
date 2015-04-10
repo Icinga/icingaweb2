@@ -12,7 +12,7 @@ $this->addHelperFunction('format', function () {
 
 $this->addHelperFunction('timeAgo', function ($timestamp) {
     return sprintf(
-        '<span class="timeAgo" title="%s">%s</span>',
+        '<span class="time-ago" title="%s">%s</span>',
         date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
         Format::timeAgo($timestamp)
     );
@@ -20,7 +20,7 @@ $this->addHelperFunction('timeAgo', function ($timestamp) {
 
 $this->addHelperFunction('timeSince', function ($timestamp) {
     return sprintf(
-        '<span class="timesince" title="%s">%s</span>',
+        '<span class="time-since" title="%s">%s</span>',
         date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
         Format::timeSince($timestamp)
     );
@@ -29,7 +29,7 @@ $this->addHelperFunction('timeSince', function ($timestamp) {
 $this->addHelperFunction('timeUntil', function ($timestamp) {
     if (! $timestamp) return '';
     return sprintf(
-        '<span class="timeuntil" title="%s">%s</span>',
+        '<span class="time-until" title="%s">%s</span>',
         date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
         Format::timeUntil($timestamp)
     );
