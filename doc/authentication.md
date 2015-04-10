@@ -107,7 +107,7 @@ Icinga Web 2 uses the MD5 based BSD password algorithm. For generating a passwor
 command:
 
 ````
-openssl passwd -1 "password"
+openssl passwd -1 password
 ````
 
 > Note: The switch to `openssl passwd` is the **number one** (`-1`) for using the MD5 based BSD password algorithm.
