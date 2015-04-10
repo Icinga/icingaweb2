@@ -1,9 +1,7 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-
 namespace Icinga\Module\Monitoring\DataView;
-
 
 class Servicegroup extends DataView
 {
@@ -15,10 +13,11 @@ class Servicegroup extends DataView
     public function getColumns()
     {
         return array(
-            'service',
-            'host',
             'servicegroup_name',
-            'servicegroup_alias'
+            'servicegroup_alias',
+            'host_name',
+            'service_host_name',
+            'service_description'
         );
     }
 
@@ -32,7 +31,15 @@ class Servicegroup extends DataView
         return array(
             'servicegroup_name' => array(
                 'order' => self::SORT_ASC
+            ),
+            'servicegroup_alias' => array(
+                'order' => self::SORT_ASC
             )
         );
+    }
+
+    public function getFilterColumns()
+    {
+        return array('servicegroup', 'host', 'service');
     }
 }
