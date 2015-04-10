@@ -13,7 +13,7 @@ class ContactgroupQuery extends IdoQuery
         ),
         'contacts' => array(
             'contact'                           => 'co.name1 COLLATE latin1_general_ci',
-            'contact_name'                      => 'co.name1 COLLATE latin1_general_ci',
+            'contact_name'                      => 'co.name1',
             'contact_alias'                     => 'c.alias',
             'contact_email'                     => 'c.email_address',
             'contact_pager'                     => 'c.pager_address',
