@@ -8,7 +8,8 @@ class ContactQuery extends IdoQuery
     protected $columnMap = array(
         'contacts' => array(
             'contact_id'                        => 'c.contact_id',
-            'contact_name'                      => 'co.name1 COLLATE latin1_general_ci',
+            'contact'                           => 'co.name1 COLLATE latin1_general_ci',
+            'contact_name'                      => 'co.name1',
             'alias'                             => 'c.alias COLLATE latin1_general_ci',
             'contact_alias_name'                => 'c.alias',
             'email'                             => 'c.email_address COLLATE latin1_general_ci',
