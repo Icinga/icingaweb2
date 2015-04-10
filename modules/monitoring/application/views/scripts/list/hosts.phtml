@@ -80,13 +80,14 @@ if ($hosts->count() === 0) {
     <tr class="state <?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
       <!-- State -->
       <td class="state">
-        <strong><?= Host::getStateText($host->host_state, true); ?></strong><br />
+        <strong><?= Host::getStateText($host->host_state, true); ?></strong>
         <?php if ((int) $host->host_state !== 99): ?>
-        <?= $this->timeSince($host->host_last_state_change) ?>
-        <?php if ($host->host_state > 0 && (int) $host->host_state_type === 0): ?>
-        <br />
-        <strong>Soft <?= $host->host_attempt ?></strong>
-        <?php endif ?>
+          <br />
+          <?= $this->timeSince($host->host_last_state_change) ?>
+          <?php if ((int) $host->host_state > 0 && (int) $host->host_state_type === 0): ?>
+            <br />
+            <strong>Soft <?= $host->host_attempt ?></strong>
+          <?php endif ?>
         <?php endif ?>
       </td>
 
