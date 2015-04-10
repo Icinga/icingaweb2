@@ -32,7 +32,7 @@ function contactsLink($match, $view) {
         $links[] = $view->qlink(
             $contact,
             'monitoring/show/contact',
-            array('contact' => $contact),
+            array('contact_name' => $contact),
             array('title' => sprintf($view->translate('Show detailed information about %s'), $contact))
         );
     }

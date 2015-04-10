@@ -63,7 +63,7 @@ use Icinga\Module\Monitoring\Object\Service;
                             $this->qlink(
                                 $notification->notification_contact,
                                 'monitoring/show/contact',
-                                array('contact' => $notification->notification_contact)
+                                array('contact_name' => $notification->notification_contact)
                             )
                         ) ?>
                     </small>
