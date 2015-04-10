@@ -123,7 +123,7 @@ class Monitoring_HostsController extends Controller
             }
             if ((bool) $host->in_downtime === true) {
                 $objectsInDowntime[] = $host;
-                $downtimeFilterExpressions[] = Filter::where('downtime_host', $host->getName());
+                $downtimeFilterExpressions[] = Filter::where('host_name', $host->getName());
             }
             ++$hostStates[$host::getStateText($host->state)];
         }

@@ -280,10 +280,10 @@ class Monitoring_ListController extends Controller
             'is_fixed'        => 'downtime_is_fixed',
             'is_in_effect'    => 'downtime_is_in_effect',
             'entry_time'      => 'downtime_entry_time',
-            'host'            => 'host_name',
-            'service'         => 'service_description',
             'host_state'      => 'downtime_host_state',
             'service_state'   => 'downtime_service_state',
+            'host_name',
+            'service_description',
             'host_display_name',
             'service_display_name'
         ));

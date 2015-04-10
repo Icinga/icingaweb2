@@ -158,8 +158,8 @@ class Monitoring_ServicesController extends Controller
             if ((bool) $service->in_downtime === true) {
                 $objectsInDowntime[] = $service;
                 $downtimeFilterExpressions[] = Filter::matchAll(
-                    Filter::where('downtime_host', $service->getHost()->getName()),
-                    Filter::where('downtime_service', $service->getName())
+                    Filter::where('host_name', $service->getHost()->getName()),
+                    Filter::where('service_description', $service->getName())
                 );
             }
             ++$serviceStates[$service::getStateText($service->state)];
