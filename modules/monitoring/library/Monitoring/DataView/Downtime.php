@@ -15,7 +15,6 @@ class Downtime extends DataView
         return array(
             'downtime_objecttype',
             'downtime_author_name',
-            'author',
             'downtime_comment',
             'downtime_entry_time',
             'downtime_is_fixed',
@@ -68,5 +67,10 @@ class Downtime extends DataView
                 'order' => self::SORT_ASC
             )
         );
+    }
+
+    public function getFilterColumns()
+    {
+        return array('author', 'host', 'service');
     }
 }

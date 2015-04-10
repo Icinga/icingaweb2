@@ -14,7 +14,7 @@ class DowntimeQuery extends IdoQuery
     protected $columnMap = array(
         'downtime' => array(
             'downtime_author_name'      => 'sd.author_name',
-            'author'                    => 'sd.author_name',
+            'author'                    => 'sd.author_name COLLATE latin1_general_ci',
             'downtime_comment'          => 'sd.comment_data',
             'downtime_entry_time'       => 'UNIX_TIMESTAMP(sd.entry_time)',
             'downtime_is_fixed'         => 'sd.is_fixed',
