@@ -276,7 +276,7 @@ abstract class MonitoredObject implements Filterable
             'id'                => 'downtime_internal_id',
             'objecttype'        => 'downtime_objecttype',
             'comment'           => 'downtime_comment',
-            'author'            => 'downtime_author',
+            'author_name'       => 'downtime_author_name',
             'start'             => 'downtime_start',
             'scheduled_start'   => 'downtime_scheduled_start',
             'end'               => 'downtime_end',

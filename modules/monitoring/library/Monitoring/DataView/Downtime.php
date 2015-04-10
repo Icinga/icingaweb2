@@ -14,7 +14,7 @@ class Downtime extends DataView
     {
         return array(
             'downtime_objecttype',
-            'downtime_author',
+            'downtime_author_name',
             'author',
             'downtime_comment',
             'downtime_entry_time',

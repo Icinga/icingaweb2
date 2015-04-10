@@ -58,7 +58,7 @@ foreach ($object->downtimes as $downtime) {
 
     ?>
     <tr>
-        <th><?= $this->escape($downtime->author); ?></th>
+        <th><?= $this->escape($downtime->author_name); ?></th>
         <td data-base-target="_self">
             <?php if (isset($delDowntimeForm)) { // Form is unset if the current user lacks the respective permission
                 $delDowntimeForm = clone $delDowntimeForm;

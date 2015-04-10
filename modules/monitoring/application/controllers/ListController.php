@@ -270,7 +270,7 @@ class Monitoring_ListController extends Controller
             'id'              => 'downtime_internal_id',
             'objecttype'      => 'downtime_objecttype',
             'comment'         => 'downtime_comment',
-            'author'          => 'downtime_author',
+            'author_name'     => 'downtime_author_name',
             'start'           => 'downtime_start',
             'scheduled_start' => 'downtime_scheduled_start',
             'scheduled_end'   => 'downtime_scheduled_end',

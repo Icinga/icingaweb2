@@ -64,7 +64,7 @@ use Icinga\Module\Monitoring\Object\Service;
           <?= $this->link()->host($downtime->host_name, $downtime->host_display_name) ?>
         <?php endif ?>
           <br>
-          <?= $this->icon('comment', $this->translate('Comment')); ?> [<?= $this->escape($downtime->author) ?>] <?= $this->escape($downtime->comment) ?>
+          <?= $this->icon('comment', $this->translate('Comment')); ?> [<?= $this->escape($downtime->author_name) ?>] <?= $this->escape($downtime->comment) ?>
           <br>
           <small>
         <?php if ($downtime->is_flexible): ?>
