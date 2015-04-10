@@ -31,7 +31,8 @@ class EventgridQuery extends IdoQuery
         ),
 
         'servicegroups' => array(
-            'servicegroup' => 'sgo.name1'
+            'servicegroup'      => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_name' => 'sgo.name1'
         ),
 
         'hostgroups' => array(

@@ -47,6 +47,6 @@ class Eventgrid extends DataView
 
     public function getFilterColumns()
     {
-        return array('host', 'service', 'hostgroup');
+        return array('host', 'service', 'hostgroup', 'servicegroup');
     }
 }
