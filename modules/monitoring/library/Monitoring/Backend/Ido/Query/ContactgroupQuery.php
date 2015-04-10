@@ -8,7 +8,7 @@ class ContactgroupQuery extends IdoQuery
     protected $columnMap = array(
         'contactgroups' => array(
             'contactgroup'          => 'cgo.name1 COLLATE latin1_general_ci',
-            'contactgroup_name'     => 'cgo.name1 COLLATE latin1_general_ci',
+            'contactgroup_name'     => 'cgo.name1',
             'contactgroup_alias'    => 'cg.alias',
         ),
         'contacts' => array(
