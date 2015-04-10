@@ -54,7 +54,10 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
             <?php if ((bool) $this->programStatus->is_currently_running === true): ?>
                 <div class="backend-running">
                     <?= sprintf(
-                        $this->translate('%s has been up and running with PID %d since %s'),
+                        $this->translate(
+                            '%1$s has been up and running with PID %2$d %3$s',
+                            'Last format parameter represents the time running'
+                        ),
                         $this->backendName,
                         $this->programStatus->process_id,
                         $this->timeSince($this->programStatus->program_start_time)) ?>
