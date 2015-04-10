@@ -42,7 +42,8 @@ class ContactQuery extends IdoQuery
         'services' => array(
             'service'               => 'so.name2 COLLATE latin1_general_ci',
             'service_description'   => 'so.name2',
-            'service_host_name'     => 'so.name1',
+            'service_host'          => 'so.name1 COLLATE latin1_general_ci',
+            'service_host_name'     => 'so.name1'
         )
     );
 

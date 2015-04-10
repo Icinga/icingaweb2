@@ -61,6 +61,6 @@ class Contact extends DataView
 
     public function getFilterColumns()
     {
-        return array('contact', 'alias', 'email', 'host', 'service');
+        return array('contact', 'alias', 'email', 'host', 'service', 'service_host');
     }
 }
