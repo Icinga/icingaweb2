@@ -27,8 +27,6 @@ class Downtime extends DataView
             'downtime_is_in_effect',
             'downtime_triggered_by_id',
             'downtime_internal_id',
-            'downtime_host',
-            'downtime_service',
             'downtime_host_state',
             'downtime_service_state',
             'host_display_name',
