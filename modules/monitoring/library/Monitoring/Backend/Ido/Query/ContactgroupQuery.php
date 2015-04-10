@@ -9,7 +9,7 @@ class ContactgroupQuery extends IdoQuery
         'contactgroups' => array(
             'contactgroup'          => 'cgo.name1 COLLATE latin1_general_ci',
             'contactgroup_name'     => 'cgo.name1',
-            'contactgroup_alias'    => 'cg.alias',
+            'contactgroup_alias'    => 'cg.alias COLLATE latin1_general_ci'
         ),
         'contacts' => array(
             'contact'                           => 'co.name1 COLLATE latin1_general_ci',
