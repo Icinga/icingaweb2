@@ -17,8 +17,8 @@ class Contact extends DataView
     {
         return array(
             'contact_name',
-            'contact_alias_name',
-            'contact_email_address',
+            'contact_alias',
+            'contact_email',
             'contact_pager',
             'contact_notify_hosts',
             'contact_notify_services',
@@ -53,7 +53,7 @@ class Contact extends DataView
     public function getSortRules()
     {
         return array(
-            'contact_alias_name' => array(
+            'contact_alias' => array(
                 'order' => self::SORT_DESC
             )
         );

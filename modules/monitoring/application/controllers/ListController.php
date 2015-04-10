@@ -350,8 +350,8 @@ class Monitoring_ListController extends Controller
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
             'contact_id',
-            'contact_alias_name',
-            'contact_email_address',
+            'contact_alias',
+            'contact_email',
             'contact_pager',
             'contact_notify_service_timeperiod',
             'contact_notify_service_recovery',
@@ -365,18 +365,18 @@ class Monitoring_ListController extends Controller
             'contact_notify_host_down',
             'contact_notify_host_unreachable',
             'contact_notify_host_flapping',
-            'contact_notify_host_downtime'
+            'contact_notify_host_downtime',
         ));
         $this->filterQuery($query);
         $this->view->contacts = $query->paginate();
 
         $this->setupSortControl(array(
-            'contact_name'                      => $this->translate('Name'),
-            'contact_alias_name'                => $this->translate('Alias'),
-            'contact_email_address'             => $this->translate('Email'),
-            'contact_pager'                     => $this->translate('Pager Address / Number'),
+            'contact_name' => $this->translate('Name'),
+            'contact_alias' => $this->translate('Alias'),
+            'contact_email' => $this->translate('Email'),
+            'contact_pager' => $this->translate('Pager Address / Number'),
             'contact_notify_service_timeperiod' => $this->translate('Service Notification Timeperiod'),
-            'contact_notify_host_timeperiod'    => $this->translate('Host Notification Timeperiod')
+            'contact_notify_host_timeperiod' => $this->translate('Host Notification Timeperiod')
         ));
     }
 

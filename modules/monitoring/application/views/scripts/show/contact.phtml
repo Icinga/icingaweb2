@@ -3,7 +3,7 @@
   <?= $this->tabs ?>
   <h1><?= $this->translate('Contact details') ?></h1>
   <div class="circular" style="background-image: url('<?=
-      $this->href('static/gravatar', array('email' => $contact->contact_email_address))
+      $this->href('static/gravatar', array('email' => $contact->contact_email))
   ?>')"></div>
 
 <?php if (! $contact): ?>
@@ -15,14 +15,14 @@
     <tbody>
       <tr>
         <th style="width: 20%"></th>
-        <td><strong><?= $this->escape($contact->contact_alias_name) ?></strong> (<?= $contact->contact_name ?>)</td>
+        <td><strong><?= $this->escape($contact->contact_alias) ?></strong> (<?= $contact->contact_name ?>)</td>
       </tr>
-<?php if ($contact->contact_email_address): ?>
+<?php if ($contact->contact_email): ?>
       <tr>
         <th><?= $this->translate('Email') ?></th>
         <td>
-            <a href="mailto:<?= $contact->contact_email_address; ?>" title="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias_name); ?>" aria-label="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias_name); ?>">
-                <?= $this->escape($contact->contact_email_address); ?>
+            <a href="mailto:<?= $contact->contact_email; ?>" title="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>" aria-label="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>">
+                <?= $this->escape($contact->contact_email); ?>
             </a>
         </td>
       </tr>
