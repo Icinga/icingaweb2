@@ -26,7 +26,7 @@ class EventgridQuery extends IdoQuery
             'host'                => 'sho.name1 COLLATE latin1_general_ci',
             'service'             => 'sho.name2 COLLATE latin1_general_ci',
             'host_name'           => 'sho.name1',
-            'service_description' => 'sho.name2 COLLATE latin1_general_ci',
+            'service_description' => 'sho.name2',
             'timestamp'           => 'UNIX_TIMESTAMP(sh.state_time)'
         ),
 
