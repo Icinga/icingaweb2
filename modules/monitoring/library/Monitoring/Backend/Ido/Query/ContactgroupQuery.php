@@ -15,7 +15,7 @@ class ContactgroupQuery extends IdoQuery
             'contact'                           => 'co.name1 COLLATE latin1_general_ci',
             'contact_name'                      => 'co.name1',
             'contact_alias'                     => 'c.alias COLLATE latin1_general_ci',
-            'contact_email'                     => 'c.email_address',
+            'contact_email'                     => 'c.email_address COLLATE latin1_general_ci',
             'contact_pager'                     => 'c.pager_address',
             'contact_has_host_notfications'     => 'c.host_notifications_enabled',
             'contact_has_service_notfications'  => 'c.service_notifications_enabled',
