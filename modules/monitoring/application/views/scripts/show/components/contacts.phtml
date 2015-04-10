@@ -27,7 +27,7 @@ if (! empty($object->contactgroups)) {
         $list[] = $this->qlink(
             $contactgroup->contactgroup_alias,
             'monitoring/list/contactgroups',
-            array('contactgroup' => $contactgroup->contactgroup_name),
+            array('contactgroup_name' => $contactgroup->contactgroup_name),
             array('title' => sprintf($this->translate('List contacts in contact-group "%s"'), $contactgroup->contactgroup_alias))
         );
     }
