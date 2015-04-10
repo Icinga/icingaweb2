@@ -185,10 +185,10 @@ abstract class MonitoredObject implements Filterable
             $this->contacts = array();
             foreach (preg_split('~,~', $this->properties->host_contacts) as $contact) {
                 $this->contacts[] = (object) array(
-                    'contact_name'  => $contact,
-                    'contact_alias' => $contact,
-                    'contact_email' => null,
-                    'contact_pager' => null,
+                    'contact_name'          => $contact,
+                    'contact_alias_name'    => $contact,
+                    'contact_email_address' => null,
+                    'contact_pager'         => null
                 );
             }
         }
@@ -385,9 +385,9 @@ abstract class MonitoredObject implements Filterable
 
         $contacts = $this->backend->select()->from('contact', array(
                 'contact_name',
-                'contact_alias',
-                'contact_email',
-                'contact_pager',
+                'contact_alias_name',
+                'contact_email_address',
+                'contact_pager'
         ));
         if ($this->type === self::TYPE_SERVICE) {
             $contacts

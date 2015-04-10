@@ -124,8 +124,8 @@ class Monitoring_ShowController extends Controller
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
             'contact_id',
-            'contact_alias',
-            'contact_email',
+            'contact_alias_name',
+            'contact_email_address',
             'contact_pager',
             'contact_object_id',
             'contact_notify_service_timeperiod',
@@ -140,7 +140,7 @@ class Monitoring_ShowController extends Controller
             'contact_notify_host_down',
             'contact_notify_host_unreachable',
             'contact_notify_host_flapping',
-            'contact_notify_host_downtime',
+            'contact_notify_host_downtime'
         ));
 
         $query->where('contact_name', $contactName);

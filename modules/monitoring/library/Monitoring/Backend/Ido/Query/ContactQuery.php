@@ -9,8 +9,10 @@ class ContactQuery extends IdoQuery
         'contacts' => array(
             'contact_id'                        => 'c.contact_id',
             'contact_name'                      => 'co.name1 COLLATE latin1_general_ci',
-            'contact_alias'                     => 'c.alias COLLATE latin1_general_ci',
-            'contact_email'                     => 'c.email_address COLLATE latin1_general_ci',
+            'alias'                             => 'c.alias COLLATE latin1_general_ci',
+            'contact_alias_name'                => 'c.alias',
+            'email'                             => 'c.email_address COLLATE latin1_general_ci',
+            'contact_email_address'             => 'c.email_address',
             'contact_pager'                     => 'c.pager_address',
             'contact_object_id'                 => 'c.contact_object_id',
             'contact_has_host_notfications'     => 'c.host_notifications_enabled',
