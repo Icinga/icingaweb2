@@ -14,7 +14,7 @@ class HostgroupQuery extends IdoQuery
         ),
         'hosts' => array(
             'host'            => 'ho.name1 COLLATE latin1_general_ci',
-            'host_name'       => 'ho.name1 COLLATE latin1_general_ci'
+            'host_name'       => 'ho.name1'
         )
     );
 
