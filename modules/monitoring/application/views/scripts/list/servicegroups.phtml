@@ -28,7 +28,7 @@
     </thead>
     <tbody>
     <?php foreach ($servicegroups as $s): ?>
-      <tr href="<?= $this->href('monitoring/list/services', array('servicegroup_name' => $s->servicegroup)); ?>">
+      <tr href="<?= $this->href('monitoring/list/services', array('servicegroup_name' => $s->servicegroup_name)); ?>">
        <?php if ($s->services_critical_last_state_change_unhandled): ?>
         <td class="state change critical unhandled">
           <strong><?= $this->translate('CRITICAL'); ?></strong>
@@ -82,7 +82,7 @@
           <?= $this->qlink(
             $s->servicegroup_alias,
             'monitoring/list/services',
-            array('servicegroup_name' => $s->servicegroup),
+            array('servicegroup_name' => $s->servicegroup_name),
             array('title' => sprintf($this->translate('List all services in the group "%s"'), $s->servicegroup_alias))
           ); ?>
         </td>
@@ -97,7 +97,7 @@
               'monitoring/list/services',
               array(
                 'service_state'     => 0,
-                'servicegroup_name' => $s->servicegroup,
+                'servicegroup_name' => $s->servicegroup_name,
                 'sort'              => 'service_severity'
               ),
               array(
@@ -124,7 +124,7 @@
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'servicegroup_name'     => $s->servicegroup,
+                'servicegroup_name'     => $s->servicegroup_name,
                 'sort'                  => 'service_severity'
               ),
               array(
@@ -148,7 +148,7 @@
                 array(
                   'service_state'     => 2,
                   'service_handled'   => 1,
-                  'servicegroup_name' => $s->servicegroup,
+                  'servicegroup_name' => $s->servicegroup_name,
                   'sort'              => 'service_severity'
                 ),
                 array(
@@ -178,7 +178,7 @@
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'servicegroup_name'     => $s->servicegroup,
+                'servicegroup_name'     => $s->servicegroup_name,
                 'sort'                  => 'service_severity'
               ),
               array(
@@ -202,7 +202,7 @@
                 array(
                   'service_state'     => 3,
                   'service_handled'   => 1,
-                  'servicegroup_name' => $s->servicegroup,
+                  'servicegroup_name' => $s->servicegroup_name,
                   'sort'              => 'service_severity'
                 ),
                 array(
@@ -232,7 +232,7 @@
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'servicegroup_name'     => $s->servicegroup,
+                'servicegroup_name'     => $s->servicegroup_name,
                 'sort'                  => 'service_severity'
               ),
               array(
@@ -256,7 +256,7 @@
                 array(
                     'service_state'     => 1,
                     'service_handled'   => 1,
-                    'servicegroup_name' => $s->servicegroup,
+                    'servicegroup_name' => $s->servicegroup_name,
                     'sort'              => 'service_severity'
                 ),
                 array(
@@ -283,7 +283,7 @@
               'monitoring/list/services',
               array(
                 'service_state'     => 99,
-                'servicegroup_name' => $s->servicegroup,
+                'servicegroup_name' => $s->servicegroup_name,
                 'sort'              => 'service_severity'
               ),
               array(
