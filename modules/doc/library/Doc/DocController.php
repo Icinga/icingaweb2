@@ -5,9 +5,9 @@ namespace Icinga\Module\Doc;
 
 use Icinga\Module\Doc\Renderer\DocSectionRenderer;
 use Icinga\Module\Doc\Renderer\DocTocRenderer;
-use Icinga\Web\Controller\ModuleActionController;
+use Icinga\Web\Controller;
 
-class DocController extends ModuleActionController
+class DocController extends Controller
 {
     /**
      * Render a chapter

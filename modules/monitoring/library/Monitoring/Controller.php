@@ -6,13 +6,13 @@ namespace Icinga\Module\Monitoring;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 use Icinga\File\Csv;
-use Icinga\Web\Controller\ModuleActionController;
+use Icinga\Web\Controller as IcingaWebController;
 use Icinga\Web\Url;
 
 /**
  * Base class for all monitoring action controller
  */
-class Controller extends ModuleActionController
+class Controller extends IcingaWebController
 {
     /**
      * The backend used for this controller
