@@ -21,7 +21,6 @@ class HostStatus extends DataView
     public function getColumns()
     {
         return array(
-            'host',
             'host_name',
             'host_display_name',
             'host_alias',
@@ -114,7 +113,7 @@ class HostStatus extends DataView
 
     public function getFilterColumns()
     {
-        return array('hostgroup', 'service_problems', 'servicegroup');
+        return array('host', 'hostgroup', 'hostgroup_name', 'service', 'servicegroup', 'servicegroup_name');
     }
 
     public function isValidFilterTarget($column)

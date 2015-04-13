@@ -31,7 +31,7 @@ if (!$this->compact): ?>
 <table data-base-target="_next"
     class="action multiselect <?php if ($this->compact): ?> compact<?php endif ?>" style="table-layout: auto;"
     data-icinga-multiselect-url="<?= $this->href("monitoring/services/show") ?>"
-    data-icinga-multiselect-data="service,host">
+    data-icinga-multiselect-data="service_description,host_name">
   <tbody>
 <?php
 
@@ -42,14 +42,14 @@ foreach ($services as $service):
     $serviceLink = $this->href(
       'monitoring/service/show',
       array(
-        'host' => $service->host_name,
-        'service' => $service->service_description
+        'host_name'             => $service->host_name,
+        'service_description'   => $service->service_description
       )
     );
     $hostLink = $this->href(
-      'monitoring/show/host',
+      'monitoring/host/show',
       array(
-        'host' => $service->host_name,
+        'host_name' => $service->host_name,
       )
     );
     $serviceStateName = Service::getStateText($service->service_state);

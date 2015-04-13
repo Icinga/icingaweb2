@@ -19,7 +19,7 @@ class GroupSummaryQuery extends IdoQuery
             'hosts_down_handled'            => 'SUM(CASE WHEN object_type = \'host\' AND state = 1 AND acknowledged + in_downtime != 0 THEN 1 ELSE 0 END)',
             'hosts_down_unhandled'          => 'SUM(CASE WHEN object_type = \'host\' AND state = 1 AND acknowledged + in_downtime = 0 THEN 1 ELSE 0 END)',
             'hosts_pending'                 => 'SUM(CASE WHEN object_type = \'host\' AND state = 99 THEN 1 ELSE 0 END)',
-            'hostgroup'                     => 'hostgroup',
+            'hostgroup_name'                => 'hostgroup_name',
             'hostgroup_alias'               => 'hostgroup_alias'
         ),
         'servicestatussummary' => array(
@@ -44,7 +44,7 @@ class GroupSummaryQuery extends IdoQuery
             'services_warning_last_state_change_unhandled'  => 'MAX(CASE WHEN object_type = \'service\' AND state = 1 AND acknowledged + in_downtime + host_state = 0 THEN state_change ELSE 0 END)',
             'services_critical_last_state_change_unhandled' => 'MAX(CASE WHEN object_type = \'service\' AND state = 2 AND acknowledged + in_downtime + host_state = 0 THEN state_change ELSE 0 END)',
             'services_unknown_last_state_change_unhandled'  => 'MAX(CASE WHEN object_type = \'service\' AND state = 3 AND acknowledged + in_downtime + host_state = 0 THEN state_change ELSE 0 END)',
-            'servicegroup'                                  => 'servicegroup',
+            'servicegroup_name'                             => 'servicegroup_name',
             'servicegroup_alias'                            => 'servicegroup_alias'
         )
     );
@@ -56,14 +56,14 @@ class GroupSummaryQuery extends IdoQuery
             'host_state'
         );
 
-        if (in_array('servicegroup', $this->desiredColumns)) {
-            $columns[] = 'servicegroup';
+        if (in_array('servicegroup_name', $this->desiredColumns)) {
+            $columns[] = 'servicegroup_name';
             $columns[] = 'servicegroup_alias';
-            $groupColumns = array('servicegroup', 'servicegroup_alias');
+            $groupColumns = array('servicegroup_name', 'servicegroup_alias');
         } else {
-            $columns[] = 'hostgroup';
+            $columns[] = 'hostgroup_name';
             $columns[] = 'hostgroup_alias';
-            $groupColumns = array('hostgroup', 'hostgroup_alias');
+            $groupColumns = array('hostgroup_name', 'hostgroup_alias');
         }
         $hosts = $this->createSubQuery(
             'Hoststatus',
@@ -75,7 +75,7 @@ class GroupSummaryQuery extends IdoQuery
                 'severity'     => 'host_severity'
             )
         );
-        if (in_array('servicegroup', $this->desiredColumns)) {
+        if (in_array('servicegroup_name', $this->desiredColumns)) {
             $hosts->group(array(
                 'sgo.name1',
                 'ho.object_id',

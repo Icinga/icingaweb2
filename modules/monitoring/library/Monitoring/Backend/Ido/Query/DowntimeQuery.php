@@ -13,8 +13,8 @@ class DowntimeQuery extends IdoQuery
      */
     protected $columnMap = array(
         'downtime' => array(
-            'downtime_author'           => 'sd.author_name',
-            'author'                    => 'sd.author_name',
+            'downtime_author_name'      => 'sd.author_name',
+            'author'                    => 'sd.author_name COLLATE latin1_general_ci',
             'downtime_comment'          => 'sd.comment_data',
             'downtime_entry_time'       => 'UNIX_TIMESTAMP(sd.entry_time)',
             'downtime_is_fixed'         => 'sd.is_fixed',
@@ -28,12 +28,11 @@ class DowntimeQuery extends IdoQuery
             'downtime_is_in_effect'     => 'sd.is_in_effect',
             'downtime_internal_id'      => 'sd.internal_downtime_id',
             'downtime_objecttype'       => "CASE WHEN ho.object_id IS NULL THEN 'service' ELSE 'host' END",
-            'downtime_host'             => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci', // #7278, #7279
             'host'                      => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci',
             'host_name'                 => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END',
-            'downtime_service'          => 'so.name2 COLLATE latin1_general_ci',
-            'service'                   => 'so.name2 COLLATE latin1_general_ci', // #7278, #7279
+            'service'                   => 'so.name2 COLLATE latin1_general_ci',
             'service_description'       => 'so.name2',
+            'service_host'              => 'so.name1 COLLATE latin1_general_ci',
             'service_host_name'         => 'so.name1'
         ),
         'hosts' => array(

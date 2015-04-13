@@ -1,7 +1,6 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Application\Benchmark;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
@@ -10,8 +9,6 @@ use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Object\Host;
-use Icinga\Module\Monitoring\Object\Service;
 
 /**
  * Class Monitoring_ShowController
@@ -115,11 +112,11 @@ class Monitoring_ShowController extends Controller
 
     public function contactAction()
     {
-        $contactName = $this->getParam('contact');
+        $contactName = $this->getParam('contact_name');
 
         if (! $contactName) {
             throw new Zend_Controller_Action_Exception(
-                $this->translate('The parameter `contact\' is required'),
+                $this->translate('The parameter `contact_name\' is required'),
                 404
             );
         }
@@ -159,10 +156,10 @@ class Monitoring_ShowController extends Controller
             $this->view->commands = $commands->paginate();
 
             $notifications = $this->backend->select()->from('notification', array(
-                'host',
-                'service',
+                'host_name',
+                'service_description',
                 'notification_output',
-                'notification_contact',
+                'notification_contact_name',
                 'notification_start_time',
                 'notification_state',
                 'host_display_name',
@@ -191,13 +188,13 @@ class Monitoring_ShowController extends Controller
         if ($object->getType() === $object::TYPE_HOST) {
             $isService = false;
             $params = array(
-                'host' => $object->getName()
+                'host_name' => $object->getName()
             );
         } else {
             $isService = true;
             $params = array(
-                'host'      => $object->getHost()->getName(),
-                'service'   => $object->getName()
+                'host_name'             => $object->getHost()->getName(),
+                'service_description'   => $object->getName()
             );
         }
         $tabs = $this->getTabs();
@@ -210,7 +207,7 @@ class Monitoring_ShowController extends Controller
                 ),
                 'label'     => $this->translate('Host'),
                 'icon'      => 'host',
-                'url'       => 'monitoring/show/host',
+                'url'       => 'monitoring/host/show',
                 'urlParams' => $params,
             )
         );
@@ -225,7 +222,7 @@ class Monitoring_ShowController extends Controller
                     ),
                     'label'     => $this->translate('Service'),
                     'icon'      => 'service',
-                    'url'       => 'monitoring/show/service',
+                    'url'       => 'monitoring/service/show',
                     'urlParams' => $params,
                 )
             );

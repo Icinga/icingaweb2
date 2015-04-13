@@ -65,7 +65,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
                 parse_str($m[1], $params);
                 if (isset($params['host'])) {
                     $tag->setAttribute('href', $this->view->baseUrl(
-                        '/monitoring/host/show?host=' . urlencode($params['host']
+                        '/monitoring/host/show?host_name=' . urlencode($params['host']
                     )));
                 }
             } else {

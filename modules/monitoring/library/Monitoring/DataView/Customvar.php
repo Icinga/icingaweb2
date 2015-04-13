@@ -19,7 +19,11 @@ class Customvar extends DataView
             'varname',
             'varvalue',
             'is_json',
-            'object_type'
+            'host_name',
+            'service_description',
+            'contact_name',
+            'object_type',
+            'object_type_id'
         );
     }
 
@@ -36,5 +40,10 @@ class Customvar extends DataView
                 'varvalue' => self::SORT_ASC,
             )
         );
+    }
+
+    public function getFilterColumns()
+    {
+        return array('host', 'service', 'contact');
     }
 }

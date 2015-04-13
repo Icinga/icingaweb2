@@ -7,24 +7,22 @@ class NotificationhistoryQuery extends IdoQuery
 {
     protected $columnMap = array(
         'history' => array(
-            'timestamp'     => 'UNIX_TIMESTAMP(n.start_time)',
-            'raw_timestamp' => 'n.start_time',
-            'state_time'    => 'n.start_time',
-            'object_id'     => 'n.object_id',
-            'type'          => "('notify')",
-            'state'         => 'n.state',
-            'state_type'    => '(NULL)',
-            'output'        => null,
-            'attempt'       => '(NULL)',
-            'max_attempts'  => '(NULL)',
+            'state_time'            => 'n.start_time',
+            'timestamp'             => 'UNIX_TIMESTAMP(n.start_time)',
+            'raw_timestamp'         => 'n.start_time',
+            'object_id'             => 'n.object_id',
+            'type'                  => "('notify')",
+            'state'                 => 'n.state',
+            'state_type'            => '(NULL)',
+            'output'                => null,
+            'attempt'               => '(NULL)',
+            'max_attempts'          => '(NULL)',
 
-            'host'                => 'o.name1 COLLATE latin1_general_ci',
-            'service'             => 'o.name2 COLLATE latin1_general_ci',
-            'host_name'           => 'o.name1 COLLATE latin1_general_ci',
-            'service_description' => 'o.name2 COLLATE latin1_general_ci',
-            'service_host_name'   => 'o.name1 COLLATE latin1_general_ci',
-            'service_description' => 'o.name2 COLLATE latin1_general_ci',
-            'object_type'         => "CASE WHEN o.objecttype_id = 1 THEN 'host' ELSE 'service' END"
+            'host'                  => 'o.name1 COLLATE latin1_general_ci',
+            'service'               => 'o.name2 COLLATE latin1_general_ci',
+            'host_name'             => 'o.name1',
+            'service_description'   => 'o.name2',
+            'object_type'           => "CASE WHEN o.objecttype_id = 1 THEN 'host' ELSE 'service' END"
         )
     );
 

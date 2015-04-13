@@ -8,7 +8,8 @@ class ContactQuery extends IdoQuery
     protected $columnMap = array(
         'contacts' => array(
             'contact_id'                        => 'c.contact_id',
-            'contact_name'                      => 'co.name1 COLLATE latin1_general_ci',
+            'contact'                           => 'co.name1 COLLATE latin1_general_ci',
+            'contact_name'                      => 'co.name1',
             'contact_alias'                     => 'c.alias COLLATE latin1_general_ci',
             'contact_email'                     => 'c.email_address COLLATE latin1_general_ci',
             'contact_pager'                     => 'c.pager_address',
@@ -34,12 +35,13 @@ class ContactQuery extends IdoQuery
         ),
         'hosts' => array(
             'host'      => 'ho.name1 COLLATE latin1_general_ci',
-            'host_name' => 'ho.name1',
+            'host_name' => 'ho.name1'
         ),
         'services' => array(
-            'service'               => 'so.name1 COLLATE latin1_general_ci',
+            'service'               => 'so.name2 COLLATE latin1_general_ci',
             'service_description'   => 'so.name2',
-            'service_host_name'     => 'so.name1',
+            'service_host'          => 'so.name1 COLLATE latin1_general_ci',
+            'service_host_name'     => 'so.name1'
         )
     );
 

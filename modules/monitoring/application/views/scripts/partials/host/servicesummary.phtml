@@ -3,7 +3,7 @@
 use Icinga\Web\Url;
 use Icinga\Module\Monitoring\Object\Service;
 
-$selfUrl = Url::fromPath('monitoring/show/services', array('host' => $object->host_name));
+$selfUrl = Url::fromPath('monitoring/show/services', array('host_name' => $object->host_name));
 $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
 ?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
 <?php if ($object->stats->services_total): ?>

@@ -24,7 +24,7 @@ foreach ($groupData as $groupName => $groupInfo): ?>
                     <?= $this->qlink(
                         $c->contact_alias,
                         'monitoring/show/contact',
-                        array('contact' => $c->contact_name),
+                        array('contact_name' => $c->contact_name),
                         array('title' => sprintf(
                             $this->translate('Show detailed information about %s'),
                             $c->contact_alias

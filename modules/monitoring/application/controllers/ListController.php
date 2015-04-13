@@ -169,10 +169,8 @@ class Monitoring_ListController extends Controller
 
         $this->addTitleTab('services', $this->translate('Services'), $this->translate('List services'));
         $this->view->showHost = true;
-        if ($host = $this->_getParam('host')) {
-            if (strpos($host, '*') === false) {
-                $this->view->showHost = false;
-            }
+        if (strpos($this->params->get('host_name', '*'), '*') === false) {
+            $this->view->showHost = false;
         }
         $this->setAutorefreshInterval(10);
 
@@ -271,7 +269,7 @@ class Monitoring_ListController extends Controller
             'id'              => 'downtime_internal_id',
             'objecttype'      => 'downtime_objecttype',
             'comment'         => 'downtime_comment',
-            'author'          => 'downtime_author',
+            'author_name'     => 'downtime_author_name',
             'start'           => 'downtime_start',
             'scheduled_start' => 'downtime_scheduled_start',
             'scheduled_end'   => 'downtime_scheduled_end',
@@ -281,10 +279,10 @@ class Monitoring_ListController extends Controller
             'is_fixed'        => 'downtime_is_fixed',
             'is_in_effect'    => 'downtime_is_in_effect',
             'entry_time'      => 'downtime_entry_time',
-            'host'            => 'host_name',
-            'service'         => 'service_description',
             'host_state'      => 'downtime_host_state',
             'service_state'   => 'downtime_service_state',
+            'host_name',
+            'service_description',
             'host_display_name',
             'service_display_name'
         ));
@@ -326,10 +324,10 @@ class Monitoring_ListController extends Controller
         );
         $this->setAutorefreshInterval(15);
         $query = $this->backend->select()->from('notification', array(
-            'host',
-            'service',
+            'host_name',
+            'service_description',
             'notification_output',
-            'notification_contact',
+            'notification_contact_name',
             'notification_start_time',
             'notification_state',
             'host_display_name',
@@ -470,13 +468,13 @@ class Monitoring_ListController extends Controller
             'id'         => 'comment_internal_id',
             'objecttype' => 'comment_objecttype',
             'comment'    => 'comment_data',
-            'author'     => 'comment_author',
+            'author'     => 'comment_author_name',
             'timestamp'  => 'comment_timestamp',
             'type'       => 'comment_type',
             'persistent' => 'comment_is_persistent',
             'expiration' => 'comment_expiration',
-            'host'       => 'comment_host',
-            'service'    => 'comment_service',
+            'host_name',
+            'service_description',
             'host_display_name',
             'service_display_name'
         ));
@@ -510,7 +508,7 @@ class Monitoring_ListController extends Controller
         );
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('groupsummary', array(
-            'servicegroup',
+            'servicegroup_name',
             'servicegroup_alias',
             'hosts_up',
             'hosts_unreachable_handled',
@@ -560,7 +558,7 @@ class Monitoring_ListController extends Controller
         $this->addTitleTab('hostgroups', $this->translate('Host Groups'), $this->translate('List host groups'));
         $this->setAutorefreshInterval(12);
         $query = $this->backend->select()->from('groupsummary', array(
-            'hostgroup',
+            'hostgroup_name',
             'hostgroup_alias',
             'hosts_up',
             'hosts_unreachable_handled',
@@ -624,9 +622,7 @@ class Monitoring_ListController extends Controller
             'attempt',
             'max_attempts',
             'output',
-            'type',
-            'host',
-            'service'
+            'type'
         ));
 
         $this->filterQuery($query);

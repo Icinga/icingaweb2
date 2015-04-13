@@ -13,9 +13,9 @@ class Groupsummary extends DataView
     public function getColumns()
     {
         return array(
-            'servicegroup',
+            'servicegroup_name',
             'servicegroup_alias',
-            'hostgroup',
+            'hostgroup_name',
             'hostgroup_alias',
             'hosts_up',
             'hosts_unreachable',

@@ -30,7 +30,7 @@ use Icinga\Module\Monitoring\Object\Service;
     <tbody>
     <?php foreach ($downtimes as $downtime): ?>
     <?php
-      if (isset($downtime->service)) {
+      if (isset($downtime->service_description)) {
           $isService = true;
           $stateName = Service::getStateText($downtime->service_state);
       } else {
@@ -57,20 +57,20 @@ use Icinga\Module\Monitoring\Object\Service;
         <?php if ($isService): ?>
           <?= $this->icon('service', $this->translate('Service')); ?>
           <?= $this->link()->service(
-              $downtime->service, $downtime->service_display_name, $downtime->host, $downtime->host_display_name
+              $downtime->service_description, $downtime->service_display_name, $downtime->host_name, $downtime->host_display_name
           ) ?>
         <?php else: ?>
           <?= $this->icon('host', $this->translate('Host')); ?>
-          <?= $this->link()->host($downtime->host, $downtime->host_display_name) ?>
+          <?= $this->link()->host($downtime->host_name, $downtime->host_display_name) ?>
         <?php endif ?>
           <br>
-          <?= $this->icon('comment', $this->translate('Comment')); ?> [<?= $this->escape($downtime->author) ?>] <?= $this->escape($downtime->comment) ?>
+          <?= $this->icon('comment', $this->translate('Comment')); ?> [<?= $this->escape($downtime->author_name) ?>] <?= $this->escape($downtime->comment) ?>
           <br>
           <small>
         <?php if ($downtime->is_flexible): ?>
           <?php if ($downtime->is_in_effect): ?>
             <?= sprintf(
-              isset($downtime->service)
+              $isService
                 ? $this->translate('This flexible service downtime was started on %s at %s and lasts for %s until %s at %s.')
                 : $this->translate('This flexible host downtime was started on %s at %s and lasts for %s until %s at %s.'),
               date('d.m.y', $downtime->start),
@@ -81,7 +81,7 @@ use Icinga\Module\Monitoring\Object\Service;
             ); ?>
           <?php else: ?>
             <?= sprintf(
-              isset($downtime->service)
+              $isService
                 ? $this->translate('This flexible service downtime has been scheduled to start between %s - %s and to last for %s.')
                 : $this->translate('This flexible host downtime has been scheduled to start between %s - %s and to last for %s.'),
               date('d.m.y H:i', $downtime->scheduled_start),
@@ -92,7 +92,7 @@ use Icinga\Module\Monitoring\Object\Service;
         <?php else: ?>
           <?php if ($downtime->is_in_effect): ?>
             <?= sprintf(
-              isset($downtime->service)
+              $isService
                 ? $this->translate('This fixed service downtime was started on %s at %s and expires on %s at %s.')
                 : $this->translate('This fixed host downtime was started on %s at %s and expires on %s at %s.'),
               date('d.m.y', $downtime->start),
@@ -102,7 +102,7 @@ use Icinga\Module\Monitoring\Object\Service;
             ); ?>
           <?php else: ?>
             <?= sprintf(
-              isset($downtime->service)
+              $isService
                 ? $this->translate('This fixed service downtime has been scheduled to start on %s at %s and to end on %s at %s.')
                 : $this->translate('This fixed host downtime has been scheduled to start on %s at %s and to end on %s at %s.'),
               date('d.m.y', $downtime->scheduled_start),
@@ -119,10 +119,13 @@ use Icinga\Module\Monitoring\Object\Service;
           <?php
           $delDowntimeForm = clone $delDowntimeForm;
           $delDowntimeForm->populate(array('downtime_id' => $downtime->id, 'redirect' => $this->url));
-          if (! isset($downtime->service)) {
-            $delDowntimeForm->setAction($this->url('monitoring/host/delete-downtime', array('host' => $downtime->host)));
+          if (! $isService) {
+            $delDowntimeForm->setAction($this->url('monitoring/host/delete-downtime', array('host_name' => $downtime->host_name)));
           } else {
-            $delDowntimeForm->setAction($this->url('monitoring/service/delete-downtime', array('host' => $downtime->host, 'service' => $downtime->service)));
+            $delDowntimeForm->setAction($this->url('monitoring/service/delete-downtime', array(
+                'host_name'             => $downtime->host_name,
+                'service_description'   => $downtime->service_description
+            )));
           }
           echo $delDowntimeForm;
           ?>
