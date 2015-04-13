@@ -24,7 +24,7 @@ use Icinga\Module\Monitoring\Object\Service;
     <table data-base-target="_next" class="action">
     <tbody>
     <?php foreach ($notifications as $notification):
-        if (isset($notification->service)) {
+        if (isset($notification->service_description)) {
             $isService = true;
             $stateName = Service::getStateText($notification->notification_state);
         } else {
@@ -44,7 +44,7 @@ use Icinga\Module\Monitoring\Object\Service;
                 <?php if ($isService): ?>
                     <?= $this->icon('service', $this->translate('Service')); ?>
                     <?= $this->link()->service(
-                        $notification->service,
+                        $notification->service_description,
                         $notification->service_display_name,
                         $notification->host_name,
                         $notification->host_display_name

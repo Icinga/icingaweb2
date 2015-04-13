@@ -14,7 +14,7 @@ class Notification extends DataView
     {
         return array(
             'host_name',
-            'service',
+            'service_description',
             'notification_state',
             'notification_start_time',
             'notification_contact',
