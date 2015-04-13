@@ -19,6 +19,7 @@ class NotificationQuery extends IdoQuery
             'service_description'           => 'o.name2'
         ),
         'contact' => array(
+            'contact'                       => 'c_o.name1 COLLATE latin1_general_ci',
             'notification_contact_name'     => 'c_o.name1',
             'contact_object_id'             => 'c_o.object_id'
         ),
