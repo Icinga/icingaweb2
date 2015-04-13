@@ -17,7 +17,7 @@ class Notification extends DataView
             'service_description',
             'notification_state',
             'notification_start_time',
-            'notification_contact',
+            'notification_contact_name',
             'notification_output',
             'notification_command',
             'host_display_name',

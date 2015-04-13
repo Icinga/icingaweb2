@@ -64,7 +64,7 @@ class Monitoring_AlertsummaryController extends Controller
                 'service_description',
                 'service_display_name',
                 'notification_output',
-                'notification_contact',
+                'notification_contact_name',
                 'notification_start_time',
                 'notification_state'
             )
@@ -482,7 +482,7 @@ class Monitoring_AlertsummaryController extends Controller
                 'service_description',
                 'service_display_name',
                 'notification_output',
-                'notification_contact',
+                'notification_contact_name',
                 'notification_start_time',
                 'notification_state'
             )

@@ -17,7 +17,7 @@ class NotificationQuery extends IdoQuery
             'service_description'           => 'o.name2'
         ),
         'contact' => array(
-            'notification_contact'          => 'c_o.name1',
+            'notification_contact_name'     => 'c_o.name1',
             'contact_object_id'             => 'c_o.object_id'
         ),
         'command' => array(

@@ -61,9 +61,9 @@ use Icinga\Module\Monitoring\Object\Service;
                         <?= sprintf(
                             $this->translate('Sent to %s'),
                             $this->qlink(
-                                $notification->notification_contact,
+                                $notification->notification_contact_name,
                                 'monitoring/show/contact',
-                                array('contact_name' => $notification->notification_contact)
+                                array('contact_name' => $notification->notification_contact_name)
                             )
                         ) ?>
                     </small>
