@@ -460,6 +460,9 @@
                             } else {
                                 icinga.ui.layout1col();
                             }
+                            $('table tr[href].active').removeClass('active');
+                            icinga.ui.storeSelectionData(null);
+                            icinga.ui.loadSelectionData();
                             icinga.history.pushCurrentState();
                         }
                     }
