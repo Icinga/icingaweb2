@@ -13,6 +13,7 @@ class NotificationQuery extends IdoQuery
             'notification_object_id'        => 'n.object_id'
         ),
         'objects' => array(
+            'host'                          => 'o.name1 COLLATE latin1_general_ci',
             'host_name'                     => 'o.name1',
             'service_description'           => 'o.name2'
         ),
