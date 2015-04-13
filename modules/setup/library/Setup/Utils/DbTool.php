@@ -721,7 +721,8 @@ EOD;
             foreach (array_intersect($privileges, array_keys($this->pgsqlGrantContexts)) as $privilege) {
                 if (false === empty($context) && $this->pgsqlGrantContexts[$privilege] & static::TABLE_LEVEL) {
                     $tablePrivileges[] = $privilege;
-                } elseif ($this->pgsqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
+                }
+                if ($this->pgsqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
                     $dbPrivileges[] = $privilege;
                 }
             }
@@ -760,14 +761,14 @@ EOD;
             // connected to the database defined in the resource configuration it is safe to just ignore them
             // as the chances are very high that the database is created later causing the current user being
             // the owner with ALL privileges. (Which in turn can be granted to others.)
-        }
 
-        if (array_search('CREATE', $privileges) !== false) {
-            $query = $this->query(
-                'select rolcreatedb from pg_roles where rolname = :user',
-                array(':user' => $username !== null ? $username : $this->config['username'])
-            );
-            $privilegesGranted &= $query->fetchColumn() !== false;
+            if (array_search('CREATE', $privileges) !== false) {
+                $query = $this->query(
+                    'select rolcreatedb from pg_roles where rolname = :user',
+                    array(':user' => $username !== null ? $username : $this->config['username'])
+                );
+                $privilegesGranted &= $query->fetchColumn() !== false;
+            }
         }
 
         if (array_search('CREATEROLE', $privileges) !== false) {
