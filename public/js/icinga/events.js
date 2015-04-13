@@ -17,12 +17,6 @@
 
     Icinga.Events.prototype = {
 
-        keyboard: {
-            ctrlKey:    false,
-            altKey:     false,
-            shiftKey:   false
-        },
-
         /**
          * Icinga will call our initialize() function once it's ready
          */
