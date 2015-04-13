@@ -78,7 +78,7 @@ class DbTool
         'INSERT'                    => 29,
         'LOCK TABLES'               => 5,
         'PROCESS'                   => 1,
-        'REFERENCES'                => 0,
+        'REFERENCES'                => 12,
         'RELOAD'                    => 1,
         'REPLICATION CLIENT'        => 1,
         'REPLICATION SLAVE'         => 1,
