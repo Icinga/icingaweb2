@@ -37,6 +37,6 @@ class Notification extends DataView
 
     public function getFilterColumns()
     {
-        return array('host');
+        return array('host', 'service');
     }
 }
