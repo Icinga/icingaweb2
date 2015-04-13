@@ -85,12 +85,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
-                'notification_output',
-                'notification_contact',
-                'notification_start_time',
-                'notification_state'
+                'notification_start_time'
             )
         );
 
@@ -138,12 +133,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
-                'notification_output',
-                'notification_contact',
-                'notification_start_time',
-                'notification_state'
+                'notification_start_time'
             )
         );
 
@@ -322,11 +312,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
                 'notification_object_id',
-                'notification_output',
-                'notification_contact',
                 'notification_start_time',
                 'notification_state',
                 'acknowledgement_entry_time'
