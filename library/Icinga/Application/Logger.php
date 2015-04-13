@@ -68,6 +68,13 @@ class Logger
     protected $level;
 
     /**
+     * Error messages to be displayed prior to any other log message
+     *
+     * @var array
+     */
+    protected $configErrors = array();
+
+    /**
      * Create a new logger object
      *
      * @param   ConfigObject  $config
@@ -129,6 +136,24 @@ class Logger
     }
 
     /**
+     * Register the given message as config error
+     *
+     * Config errors are logged every time a log message is being logged.
+     *
+     * @param   mixed   $arg,...    A string, exception or format-string + substitutions
+     *
+     * @return  $this
+     */
+    public function registerConfigError()
+    {
+        if (func_num_args() > 0) {
+            $this->configErrors[] = static::formatMessage(func_get_args());
+        }
+
+        return $this;
+    }
+
+    /**
      * Create a new logger object
      *
      * @param   ConfigObject     $config
@@ -170,6 +195,10 @@ class Logger
     public function log($level, $message)
     {
         if ($this->writer !== null && $this->level <= $level) {
+            foreach ($this->configErrors as $error_message) {
+                $this->writer->log(static::ERROR, $error_message);
+            }
+
             $this->writer->log($level, $message);
         }
     }

@@ -511,12 +511,12 @@ abstract class ApplicationBootstrap
             try {
                 Logger::create($loggingConfig);
             } catch (ConfigurationError $e) {
-                Logger::error($e);
+                Logger::getInstance()->registerConfigError($e->getMessage());
 
                 try {
                     Logger::getInstance()->setLevel($loggingConfig->get('level', Logger::ERROR));
                 } catch (ConfigurationError $e) {
-                    Logger::error($e);
+                    Logger::getInstance()->registerConfigError($e->getMessage());
                 }
             }
         }
