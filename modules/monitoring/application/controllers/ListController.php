@@ -325,7 +325,7 @@ class Monitoring_ListController extends Controller
         );
         $this->setAutorefreshInterval(15);
         $query = $this->backend->select()->from('notification', array(
-            'host',
+            'host_name',
             'service',
             'notification_output',
             'notification_contact',

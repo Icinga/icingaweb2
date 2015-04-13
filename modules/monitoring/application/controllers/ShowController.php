@@ -156,7 +156,7 @@ class Monitoring_ShowController extends Controller
             $this->view->commands = $commands->paginate();
 
             $notifications = $this->backend->select()->from('notification', array(
-                'host',
+                'host_name',
                 'service',
                 'notification_output',
                 'notification_contact',

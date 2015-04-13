@@ -13,7 +13,7 @@ class NotificationQuery extends IdoQuery
             'notification_object_id'        => 'n.object_id'
         ),
         'objects' => array(
-            'host'                          => 'o.name1',
+            'host_name'                     => 'o.name1',
             'service'                       => 'o.name2'
         ),
         'contact' => array(

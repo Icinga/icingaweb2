@@ -13,7 +13,7 @@ class Notification extends DataView
     public function getColumns()
     {
         return array(
-            'host',
+            'host_name',
             'service',
             'notification_state',
             'notification_start_time',

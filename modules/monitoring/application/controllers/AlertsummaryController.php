@@ -59,7 +59,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
+                'host_name',
                 'host_display_name',
                 'service',
                 'service_display_name',
@@ -477,7 +477,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
+                'host_name',
                 'host_display_name',
                 'service',
                 'service_display_name',
