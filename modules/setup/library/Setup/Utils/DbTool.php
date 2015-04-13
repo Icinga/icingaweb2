@@ -629,10 +629,6 @@ EOD;
         $mysqlPrivileges = array_intersect($privileges, array_keys($this->mysqlGrantContexts));
         list($_, $host) = explode('@', $this->query('select current_user()')->fetchColumn());
         $grantee = "'" . ($username === null ? $this->config['username'] : $username) . "'@'" . $host . "'";
-        $privilegeCondition = sprintf(
-            'privilege_type IN (%s)',
-            join(',', array_map(array($this, 'quote'), $mysqlPrivileges))
-        );
 
         if (isset($this->config['dbname'])) {
             $dbPrivileges = array();
@@ -653,7 +649,7 @@ EOD;
                     . ' FROM information_schema.schema_privileges'
                     . ' WHERE grantee = :grantee'
                     . ' AND table_schema = :dbname'
-                    . ' AND ' . $privilegeCondition
+                    . ' AND privilege_type IN (' . join(',', array_map(array($this, 'quote'), $dbPrivileges)) . ')'
                     . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
                     array(':grantee' => $grantee, ':dbname' => $this->config['dbname'])
                 );
@@ -666,14 +662,13 @@ EOD;
                     !$dbPrivilegesGranted || array_intersect($dbPrivileges, $tablePrivileges) != $tablePrivileges
                 )
             ) {
-                $tableCondition = 'table_name IN (' . join(',', array_map(array($this, 'quote'), $context)) . ')';
                 $query = $this->query(
                     'SELECT COUNT(*) as matches'
                     . ' FROM information_schema.table_privileges'
                     . ' WHERE grantee = :grantee'
                     . ' AND table_schema = :dbname'
-                    . ' AND ' . $tableCondition
-                    . ' AND ' . $privilegeCondition
+                    . ' AND table_name IN (' . join(',', array_map(array($this, 'quote'), $context)) . ')'
+                    . ' AND privilege_type IN (' . join(',', array_map(array($this, 'quote'), $tablePrivileges)) . ')'
                     . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
                     array(':grantee' => $grantee, ':dbname' => $this->config['dbname'])
                 );
@@ -688,7 +683,8 @@ EOD;
 
         $query = $this->query(
             'SELECT COUNT(*) as matches FROM information_schema.user_privileges WHERE grantee = :grantee'
-            . ' AND ' . $privilegeCondition . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
+            . ' AND privilege_type IN (' . join(',', array_map(array($this, 'quote'), $mysqlPrivileges)) . ')'
+            . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
             array(':grantee' => $grantee)
         );
         return (int) $query->fetchObject()->matches === count($mysqlPrivileges);
