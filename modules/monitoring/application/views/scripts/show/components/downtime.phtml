@@ -65,7 +65,7 @@ foreach ($object->downtimes as $downtime) {
                 $delDowntimeForm->populate(array('downtime_id' => $downtime->id));
                 echo $delDowntimeForm;
             } ?>
-            <span class="sr-only"><?= $this->translate('Downtime'); ?></span><?= $state; ?><?= str_replace(array('\r\n', '\n'), '<br>', $commentText); ?>
+            <span class="sr-only"><?= $this->translate('Downtime'); ?></span><?= $state; ?> - <?= str_replace(array('\r\n', '\n'), '<br>', $commentText); ?>
         </td>
     </tr>
 <?php } // endforeach ?>
