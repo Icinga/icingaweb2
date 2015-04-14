@@ -16,6 +16,7 @@ class Contact extends DataView
     public function getColumns()
     {
         return array(
+            'contact_id',
             'contact_name',
             'contact_alias',
             'contact_email',
@@ -41,7 +42,9 @@ class Contact extends DataView
             'host_name',
             'service_object_id',
             'service_host_name',
-            'service_description'
+            'service_description',
+            'contact_notify_host_timeperiod',
+            'contact_notify_service_timeperiod'
         );
     }
 
