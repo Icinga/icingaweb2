@@ -158,7 +158,7 @@ class WebWizard extends Wizard implements SetupWizard
             }
         } elseif ($page->getName() === 'setup_database_creation') {
             $page->setDatabaseSetupPrivileges(
-                array_merge($this->databaseCreationPrivileges, $this->databaseSetupPrivileges)
+                array_unique(array_merge($this->databaseCreationPrivileges, $this->databaseSetupPrivileges))
             );
             $page->setDatabaseUsagePrivileges($this->databaseUsagePrivileges);
             $page->setResourceConfig($this->getPageData('setup_db_resource'));
@@ -236,7 +236,9 @@ class WebWizard extends Wizard implements SetupWizard
                         // It is not possible to reliably determine whether a database exists or not if a user can't
                         // log in to the database, so we just require the user to be able to create the database
                         $skip = $db->checkPrivileges(
-                            array_merge($this->databaseCreationPrivileges, $this->databaseSetupPrivileges),
+                            array_unique(
+                                array_merge($this->databaseCreationPrivileges, $this->databaseSetupPrivileges)
+                            ),
                             $this->databaseTables
                         );
                     } catch (PDOException $_) {
