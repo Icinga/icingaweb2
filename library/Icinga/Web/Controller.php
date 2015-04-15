@@ -14,15 +14,15 @@ use Icinga\Web\Widget\SortBox;
 class Controller extends ModuleActionController
 {
     /**
-     * Create a sort control box at the 'sortControl' view parameter
+     * Create a SortBox widget at the `sortBox' view property
      *
-     * @param array $columns    An array containing the sort columns, with the
-     *                          submit value as the key and the label as the value
+     * @param   array   $columns    An array containing the sort columns, with the
+     *                               submit value as the key and the label as the value
      */
     protected function setupSortControl(array $columns)
     {
         $req = $this->getRequest();
-        $this->view->sortControl = SortBox::create(
+        $this->view->sortBox = SortBox::create(
             'sortbox-' . $req->getActionName(),
             $columns
         )->applyRequest($req);
