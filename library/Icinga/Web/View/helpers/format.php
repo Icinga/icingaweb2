@@ -35,15 +35,6 @@ $this->addHelperFunction('timeUntil', function ($timestamp) {
     );
 });
 
-$this->addHelperFunction('prefixedTimeUntil', function ($timestamp, $ucfirst = false) {
-    if (! $timestamp) return '';
-    return sprintf(
-        '<span class="timeuntil" title="%s">%s</span>',
-        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
-        Format::prefixedTimeUntil($timestamp, $ucfirst)
-    );
-});
-
 $this->addHelperFunction('dateTimeRenderer', function ($dateTimeOrTimestamp, $future = false) {
     return DateTimeRenderer::create($dateTimeOrTimestamp, $future);
 });

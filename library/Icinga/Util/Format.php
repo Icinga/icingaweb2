@@ -140,15 +140,6 @@ class Format
         return DateFormatter::create(DateFormatter::SINCE)->format($time);
     }
 
-    public static function prefixedTimeUntil($timestamp, $ucfirst)
-    {
-        $result = self::smartTimeDiff($timestamp - time(), $timestamp, true);
-        if ($ucfirst) {
-            $result = ucfirst($result);
-        }
-        return $result;
-    }
-
     protected static function formatForUnits($value, & $units, $base)
     {
         $sign = '';
