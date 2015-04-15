@@ -59,8 +59,7 @@
             <div class="alertsummary-flex">
                 <?= $this->partial('list/notifications.phtml', array(
                     'notifications' => $this->recentAlerts,
-                    'compact'       => true,
-                    'inline'        => true
+                    'compact'       => true
                 )); ?>
             </div>
         </div>
@@ -71,8 +70,7 @@
         <div class="alertsummary-flex">
             <?= $this->partial('list/notifications.phtml', array(
                 'notifications' => $this->notifications,
-                'compact'       => true,
-                'inline'        => true
+                'compact'       => true
             )); ?>
         </div>
     </div>

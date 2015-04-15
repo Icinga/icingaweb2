@@ -22,10 +22,6 @@ class Monitoring_ListController extends Controller
     {
         $this->createTabs();
         $this->view->compact = $this->_request->getParam('view') === 'compact';
-        if ($this->_request->getParam('view') === 'inline') {
-            $this->view->compact = true;
-            $this->view->inline = true;
-        }
     }
 
     /**
