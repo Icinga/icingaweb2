@@ -107,8 +107,8 @@ class DateFormatter
             $invert = true;
         }
         if ($diff > 3600 * 24 * 3) {
-            $type = static::DATETIME;
-            $fmt = new IntlDateFormatter(null, IntlDateFormatter::SHORT, IntlDateFormatter::SHORT);
+            $type = static::DATE;
+            $fmt = new IntlDateFormatter(null, IntlDateFormatter::SHORT, IntlDateFormatter::NONE);
             $formatted = $fmt->format($time);
         } else {
             $minutes = floor($diff / 60);
@@ -137,11 +137,14 @@ class DateFormatter
                         );
                         break;
                     case static::TIME:
-                        $formatted = sprintf(t('at %s', 'An event that happened at the given time'), $formatted);
+                        $formatted = sprintf(t('at %s', 'An event happened at the given time'), $formatted);
                         break;
+                    case static::DATE:
+                        // Move to next case
                     case static::DATETIME:
+                        // TODO(el): Use own format string for date?
                         $formatted = sprintf(
-                            t('on %s', 'An event that happened at the given date and time'),
+                            t('on %s', 'An event happened on the given date or date and time'),
                             $formatted
                         );
                         break;
@@ -158,8 +161,14 @@ class DateFormatter
                     case static::TIME:
                         $formatted = sprintf(t('at %s', 'An event will happen at the given time'), $formatted);
                         break;
+                    case static::DATE:
+                        // Move to next case
                     case static::DATETIME:
-                        $formatted = sprintf(t('on %s', 'An event will happen on the given date and time'), $formatted);
+                        // TODO(el): Use own format string for date?
+                        $formatted = sprintf(
+                            t('on %s', 'An event will happen on the given date or date and time'),
+                            $formatted
+                        );
                         break;
                 }
                 break;
@@ -173,9 +182,12 @@ class DateFormatter
                         break;
                     case static::TIME:
                         // Move to next case
+                    case static::DATE:
+                        // Move to next case
                     case static::DATETIME:
+                        // TODO(el): Use own format strings for time and date?
                         $formatted = sprintf(
-                            t('since %s', 'A status is lasting since the given date and time'),
+                            t('since %s', 'A status is lasting since the given time, date or date and time'),
                             $formatted
                         );
                         break;
