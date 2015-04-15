@@ -17,12 +17,6 @@
 
     Icinga.Events.prototype = {
 
-        keyboard: {
-            ctrlKey:    false,
-            altKey:     false,
-            shiftKey:   false
-        },
-
         /**
          * Icinga will call our initialize() function once it's ready
          */
@@ -106,7 +100,6 @@
 
             // Destroy Icinga, clean up and interrupt pending requests on unload
             $( window ).on('unload', { self: this }, this.onUnload);
-            $( window ).on('beforeunload', { self: this }, this.onUnload);
 
             // We catch scroll events in our containers
             $('.container').on('scroll', { self: this }, this.icinga.events.onContainerScroll);
@@ -467,6 +460,9 @@
                             } else {
                                 icinga.ui.layout1col();
                             }
+                            $('table tr[href].active').removeClass('active');
+                            icinga.ui.storeSelectionData(null);
+                            icinga.ui.loadSelectionData();
                             icinga.history.pushCurrentState();
                         }
                     }
@@ -559,7 +555,6 @@
             $(window).off('resize', this.onWindowResize);
             $(window).off('load', this.onLoad);
             $(window).off('unload', this.onUnload);
-            $(window).off('beforeunload', this.onUnload);
             $(document).off('scroll', '.container', this.onContainerScroll);
             $(document).off('click', 'a', this.linkClicked);
             $(document).off('click', 'table.action tr[href]', this.rowSelected);

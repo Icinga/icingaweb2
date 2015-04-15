@@ -13,14 +13,14 @@ class CustomvarQuery extends IdoQuery
         ),
         'objects' => array(
             'host'                => 'cvo.name1 COLLATE latin1_general_ci',
-            'host_name'           => 'cvo.name1 COLLATE latin1_general_ci',
-            'service_host_name'   => 'cvo.name1 COLLATE latin1_general_ci',
-            'service' => 'cvo.name2 COLLATE latin1_general_ci',
-            'service_description' => 'cvo.name2 COLLATE latin1_general_ci',
-            'contact_name'        => 'cvo.name1 COLLATE latin1_general_ci',
+            'host_name'           => 'cvo.name1',
+            'service'             => 'cvo.name2 COLLATE latin1_general_ci',
+            'service_description' => 'cvo.name2',
+            'contact'             => 'cvo.name1 COLLATE latin1_general_ci',
+            'contact_name'        => 'cvo.name1',
             'object_type'         => "CASE cvo.objecttype_id WHEN 1 THEN 'host' WHEN 2 THEN 'service' WHEN 10 THEN 'contact' ELSE 'invalid' END",
             'object_type_id'      => 'cvo.objecttype_id'
-//             'object_type'         => "CASE cvo.objecttype_id WHEN 1 THEN 'host' WHEN 2 THEN 'service' WHEN 3 THEN 'hostgroup' WHEN 4 THEN 'servicegroup' WHEN 5 THEN 'hostescalation' WHEN 6 THEN 'serviceescalation' WHEN 7 THEN 'hostdependency' WHEN 8 THEN 'servicedependency' WHEN 9 THEN 'timeperiod' WHEN 10 THEN 'contact' WHEN 11 THEN 'contactgroup' WHEN 12 THEN 'command' ELSE 'other' END"
+//            'object_type'         => "CASE cvo.objecttype_id WHEN 1 THEN 'host' WHEN 2 THEN 'service' WHEN 3 THEN 'hostgroup' WHEN 4 THEN 'servicegroup' WHEN 5 THEN 'hostescalation' WHEN 6 THEN 'serviceescalation' WHEN 7 THEN 'hostdependency' WHEN 8 THEN 'servicedependency' WHEN 9 THEN 'timeperiod' WHEN 10 THEN 'contact' WHEN 11 THEN 'contactgroup' WHEN 12 THEN 'command' ELSE 'other' END"
         ),
     );
 

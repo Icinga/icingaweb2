@@ -9,8 +9,7 @@ namespace Icinga\Module\Monitoring\Command\Object;
 class ScheduleServiceCheckCommand extends ObjectCommand
 {
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Module\Monitoring\Command\Object\ObjectCommand::$allowedObjects For the property documentation.
+     * {@inheritdoc}
      */
     protected $allowedObjects = array(
         self::TYPE_SERVICE
@@ -74,7 +73,7 @@ class ScheduleServiceCheckCommand extends ObjectCommand
     }
 
     /**
-     * Is the check forced?
+     * Get whether the check is forced
      *
      * @return bool
      */
@@ -84,8 +83,7 @@ class ScheduleServiceCheckCommand extends ObjectCommand
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Module\Monitoring\Command\Object\IcingaCommand::getName() For the method documentation.
+     * {@inheritdoc}
      */
     public function getName()
     {

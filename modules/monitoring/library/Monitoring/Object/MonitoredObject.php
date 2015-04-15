@@ -248,7 +248,7 @@ abstract class MonitoredObject implements Filterable
         $comments = $this->backend->select()->from('comment', array(
             'id'        => 'comment_internal_id',
             'timestamp' => 'comment_timestamp',
-            'author'    => 'comment_author',
+            'author'    => 'comment_author_name',
             'comment'   => 'comment_data',
             'type'      => 'comment_type',
         ))
@@ -276,7 +276,7 @@ abstract class MonitoredObject implements Filterable
             'id'                => 'downtime_internal_id',
             'objecttype'        => 'downtime_objecttype',
             'comment'           => 'downtime_comment',
-            'author'            => 'downtime_author',
+            'author_name'       => 'downtime_author_name',
             'start'             => 'downtime_start',
             'scheduled_start'   => 'downtime_scheduled_start',
             'end'               => 'downtime_end',
@@ -556,11 +556,14 @@ abstract class MonitoredObject implements Filterable
      */
     public static function fromParams(UrlParams $params)
     {
-        if ($params->has('service') && $params->has('host')) {
-            return new Service(MonitoringBackend::instance(), $params->get('host'), $params->get('service'));
-        } elseif ($params->has('host')) {
-            return new Host(MonitoringBackend::instance(), $params->get('host'));
+        if ($params->has('service_description') && $params->has('host_name')) {
+            return new Service(
+                MonitoringBackend::instance(),
+                $params->get('host_name'),
+                $params->get('service_description')
+            );
+        } elseif ($params->has('host_name')) {
+            return new Host(MonitoringBackend::instance(), $params->get('host_name'));
         }
-        return null;
     }
 }

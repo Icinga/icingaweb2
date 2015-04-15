@@ -15,29 +15,27 @@ class SendCustomNotificationCommand extends WithCommentCommand
         self::TYPE_HOST,
         self::TYPE_SERVICE
     );
-    
+
     /**
-     * Whether a notification is forced to send
+     * Whether the notification is forced
      *
-     * Forced notifications are send regardless of time and if notifications
-     * are enabled.
+     * Forced notifications are sent out regardless of time restrictions and whether or not notifications are enabled.
      *
      * @var bool
      */
     protected $forced;
 
     /**
-     * Broadcast the notification
+     * Whether to broadcast the notification
      *
-     * If broadcast is true, the notification is send to all normal and
-     * escalated contacts for the object
+     * Broadcast notifications are sent out to all normal and escalated contacts.
      *
      * @var bool
      */
     protected $broadcast;
 
     /**
-     * Get notification force flag
+     * Get whether to force the notification
      *
      * @return bool
      */
@@ -47,17 +45,20 @@ class SendCustomNotificationCommand extends WithCommentCommand
     }
 
     /**
-     * Set whether notification should be forced
+     * Set whether to force the notification
      *
-     * @param bool $forced
+     * @param   bool $forced
+     *
+     * @return  $this
      */
     public function setForced($forced = true)
     {
         $this->forced = $forced;
+        return $this;
     }
 
     /**
-     * Get notification broadcast flag
+     * Get whether to broadcast the notification
      *
      * @return bool
      */
@@ -67,12 +68,15 @@ class SendCustomNotificationCommand extends WithCommentCommand
     }
 
     /**
-     * Set notification to broadcast
+     * Set whether to broadcast the notification
      *
-     * @param bool $broadcast
+     * @param   bool $broadcast
+     *
+     * @return  $this
      */
     public function setBroadcast($broadcast = true)
     {
         $this->broadcast = $broadcast;
+        return $this;
     }
 }

@@ -34,10 +34,12 @@
           $icon = 'plug';
           $title = $this->translate('Downtime');
           $tooltip = $this->translate('Comment was caused by a downtime.');
+          break;
         case 'ack':
           $icon = 'ok';
           $title = $this->translate('Acknowledgement');
           $tooltip = $this->translate('Comment was caused by an acknowledgement.');
+          break;
       }
     ?>
       <tr class="state invalid">
@@ -52,11 +54,14 @@
         <?php if ($comment->objecttype === 'service'): ?>
           <?= $this->icon('service', $this->translate('Service')); ?>
           <?= $this->link()->service(
-              $comment->service, $comment->service_display_name, $comment->host, $comment->host_display_name
-          ) ?>
+              $comment->service_description,
+              $comment->service_display_name,
+              $comment->host_name,
+              $comment->host_display_name
+          ); ?>
         <?php else: ?>
           <?= $this->icon('host', $this->translate('Host')); ?>
-          <?= $this->link()->host($comment->host, $comment->host_display_name) ?>
+          <?= $this->link()->host($comment->host_name, $comment->host_display_name); ?>
         <?php endif ?>
           <br>
           <?= $this->icon('comment', $this->translate('Comment')); ?> <?= isset($comment->author)
@@ -80,9 +85,14 @@
           $delCommentForm = clone $delCommentForm;
           $delCommentForm->populate(array('comment_id' => $comment->id, 'redirect' => $this->url));
           if ($comment->objecttype === 'host') {
-            $delCommentForm->setAction($this->url('monitoring/host/delete-comment', array('host' => $comment->host)));
+            $delCommentForm->setAction(
+                $this->url('monitoring/host/delete-comment', array('host_name' => $comment->host_name))
+            );
           } else {
-            $delCommentForm->setAction($this->url('monitoring/service/delete-comment', array('host' => $comment->host, 'service' => $comment->service)));
+            $delCommentForm->setAction($this->url('monitoring/service/delete-comment', array(
+                'host_name'             => $comment->host_name,
+                'service_description'   => $comment->service_description
+            )));
           }
           echo $delCommentForm;
           ?>

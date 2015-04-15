@@ -7,7 +7,7 @@
                 echo $this->qlink(
                     $this->translate('Schedule downtime'),
                     'monitoring/host/schedule-downtime',
-                    array('host' => $object->getName()),
+                    array('host_name' => $object->getName()),
                     array(
                         'icon'              => 'plug',
                         'data-base-target'  => '_self',
@@ -20,7 +20,7 @@
                 echo $this->qlink(
                     $this->translate('Schedule downtime'),
                     'monitoring/service/schedule-downtime',
-                    array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
+                    array('host_name' => $object->getHost()->getName(), 'service_description' => $object->getName()),
                     array(
                         'icon'              => 'plug',
                         'data-base-target'  => '_self',
@@ -58,14 +58,14 @@ foreach ($object->downtimes as $downtime) {
 
     ?>
     <tr>
-        <th><?= $this->escape($downtime->author); ?></th>
+        <th><?= $this->escape($downtime->author_name); ?></th>
         <td data-base-target="_self">
             <?php if (isset($delDowntimeForm)) { // Form is unset if the current user lacks the respective permission
                 $delDowntimeForm = clone $delDowntimeForm;
                 $delDowntimeForm->populate(array('downtime_id' => $downtime->id));
                 echo $delDowntimeForm;
             } ?>
-            <span class="sr-only"><?= $this->translate('Downtime'); ?></span><?= $state; ?><?= str_replace(array('\r\n', '\n'), '<br>', $commentText); ?>
+            <span class="sr-only"><?= $this->translate('Downtime'); ?></span><?= $state; ?> - <?= str_replace(array('\r\n', '\n'), '<br>', $commentText); ?>
         </td>
     </tr>
 <?php } // endforeach ?>

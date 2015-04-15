@@ -7,24 +7,22 @@ class DowntimeendhistoryQuery extends IdoQuery
 {
     protected $columnMap = array(
         'downtimehistory' => array(
-            'state_time'    => 'h.actual_end_time',
-            'timestamp'     => 'UNIX_TIMESTAMP(h.actual_end_time)',
-            'raw_timestamp' => 'h.actual_end_time',
-            'object_id'     => 'h.object_id',
-            'type'          => "('dt_end')",
-            'state'         => '(NULL)',
-            'state_type'    => '(NULL)',
-            'output'        => "('[' || h.author_name || '] ' || h.comment_data)",
-            'attempt'       => '(NULL)',
-            'max_attempts'  => '(NULL)',
+            'state_time'            => 'h.actual_end_time',
+            'timestamp'             => 'UNIX_TIMESTAMP(h.actual_end_time)',
+            'raw_timestamp'         => 'h.actual_end_time',
+            'object_id'             => 'h.object_id',
+            'type'                  => "('dt_end')",
+            'state'                 => '(NULL)',
+            'state_type'            => '(NULL)',
+            'output'                => "('[' || h.author_name || '] ' || h.comment_data)",
+            'attempt'               => '(NULL)',
+            'max_attempts'          => '(NULL)',
 
-            'host'                => 'o.name1 COLLATE latin1_general_ci',
-            'service'             => 'o.name2 COLLATE latin1_general_ci',
-            'host_name'           => 'o.name1 COLLATE latin1_general_ci',
-            'service_description' => 'o.name2 COLLATE latin1_general_ci',
-            'service_host_name'   => 'o.name1 COLLATE latin1_general_ci',
-            'service_description' => 'o.name2 COLLATE latin1_general_ci',
-            'object_type'         => "CASE WHEN o.objecttype_id = 1 THEN 'host' ELSE 'service' END"
+            'host'                  => 'o.name1 COLLATE latin1_general_ci',
+            'service'               => 'o.name2 COLLATE latin1_general_ci',
+            'host_name'             => 'o.name1',
+            'service_description'   => 'o.name2',
+            'object_type'           => "CASE WHEN o.objecttype_id = 1 THEN 'host' ELSE 'service' END"
         )
     );
 

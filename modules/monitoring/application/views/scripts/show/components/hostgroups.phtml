@@ -7,7 +7,7 @@ foreach ($object->hostgroups as $name => $alias) {
     $list[] = $this->qlink(
         $alias,
         'monitoring/list/hosts',
-        array('hostgroup' => $name),
+        array('hostgroup_name' => $name),
         array('title' => sprintf($this->translate('List all hosts in the group "%s"'), $alias))
     );
 }

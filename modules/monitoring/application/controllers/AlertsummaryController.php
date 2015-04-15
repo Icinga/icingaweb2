@@ -59,12 +59,12 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
+                'host_name',
                 'host_display_name',
-                'service',
+                'service_description',
                 'service_display_name',
                 'notification_output',
-                'notification_contact',
+                'notification_contact_name',
                 'notification_start_time',
                 'notification_state'
             )
@@ -85,12 +85,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
-                'notification_output',
-                'notification_contact',
-                'notification_start_time',
-                'notification_state'
+                'notification_start_time'
             )
         );
 
@@ -138,12 +133,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
-                'notification_output',
-                'notification_contact',
-                'notification_start_time',
-                'notification_state'
+                'notification_start_time'
             )
         );
 
@@ -210,12 +200,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
-                'notification_output',
-                'notification_contact',
-                'notification_start_time',
-                'notification_state'
+                'notification_start_time'
             )
         );
 
@@ -263,20 +248,9 @@ class Monitoring_AlertsummaryController extends Controller
         $interval = $this->getInterval();
 
         $query = $this->backend->select()->from(
-            'EventHistory',
+            'eventHistory',
             array(
-                'host_name',
-                'service_description',
-                'object_type',
-                'timestamp',
-                'state',
-                'attempt',
-                'max_attempts',
-                'output',
-                'type',
-                'host',
-                'service',
-                'service_host_name'
+                'timestamp'
             )
         );
 
@@ -338,11 +312,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
                 'notification_object_id',
-                'notification_output',
-                'notification_contact',
                 'notification_start_time',
                 'notification_state',
                 'acknowledgement_entry_time'
@@ -507,12 +477,12 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
+                'host_name',
                 'host_display_name',
-                'service',
+                'service_description',
                 'service_display_name',
                 'notification_output',
-                'notification_contact',
+                'notification_contact_name',
                 'notification_start_time',
                 'notification_state'
             )

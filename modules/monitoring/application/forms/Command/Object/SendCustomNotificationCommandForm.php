@@ -17,29 +17,20 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
     public function init()
     {
         $this->addDescription(
-            $this->translate(
-                'This command is used to send custom notifications for hosts or'
-                . ' services.'
-            )
+            $this->translate('This command is used to send custom notifications about hosts or services.')
         );
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
+     * {@inheritdoc}
      */
     public function getSubmitLabel()
     {
-        return $this->translatePlural(
-            'Send custom notification',
-            'Send custom notifications',
-            count($this->objects)
-        );
+        return $this->translatePlural('Send custom notification',  'Send custom notifications',  count($this->objects));
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::createElements() For the method documentation.
+     * {@inheritdoc}
      */
     public function createElements(array $formData = array())
     {
@@ -64,9 +55,8 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
                     'label'         => $this->translate('Forced'),
                     'value'         => false,
                     'description'   => $this->translate(
-                        'If you check this option, a notification is sent'
-                        . 'regardless of the current time and whether'
-                        . ' notifications are enabled.'
+                        'If you check this option, the notification is sent out regardless of time restrictions and'
+                        . ' whether or not notifications are enabled.'
                     )
                 )
             ),
@@ -77,8 +67,7 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
                     'label'         => $this->translate('Broadcast'),
                     'value'         => false,
                     'description'   => $this->translate(
-                        'If you check this option, a notification is sent to'
-                        . ' all normal and escalated contacts.'
+                        'If you check this option, the notification is sent out to all normal and escalated contacts.'
                     )
                 )
             )
@@ -87,24 +76,24 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::onSuccess() For the method documentation.
+     * {@inheritdoc}
      */
     public function onSuccess()
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
-            $comment = new SendCustomNotificationCommand();
-            $comment->setObject($object);
-            $comment->setComment($this->getElement('comment')->getValue());
-            $comment->setAuthor($this->request->getUser()->getUsername());
-            $comment->setForced($this->getElement('forced')->isChecked());
-            $comment->setBroadcast($this->getElement('broadcast')->isChecked());
-            $this->getTransport($this->request)->send($comment);
+            $notification = new SendCustomNotificationCommand();
+            $notification
+                ->setObject($object)
+                ->setComment($this->getElement('comment')->getValue())
+                ->setAuthor($this->request->getUser()->getUsername())
+                ->setForced($this->getElement('forced')->isChecked())
+                ->setBroadcast($this->getElement('broadcast')->isChecked());
+            $this->getTransport($this->request)->send($notification);
         }
         Notification::success($this->translatePlural(
-            'Send custom notification..',
-            'Send custom notifications..',
+            'Sending custom notification..',
+            'Sending custom notifications..',
             count($this->objects)
         ));
         return true;

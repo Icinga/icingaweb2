@@ -18,7 +18,7 @@
             <strong><?= $this->qlink(
                 $contact->contact_name,
                 'monitoring/show/contact',
-                array('contact' => $contact->contact_name),
+                array('contact_name' => $contact->contact_name),
                 array('title' => sprintf(
                     $this->translate('Show detailed information about %s'),
                     $contact->contact_alias

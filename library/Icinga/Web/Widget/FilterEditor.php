@@ -183,10 +183,10 @@ class FilterEditor extends AbstractWidget
                 // TODO: Ask the view for (multiple) search columns
                 switch($request->getActionName()) {
                     case 'services':
-                        $searchCol = 'service_description';
+                        $searchCol = 'service';
                         break;
                     case 'hosts':
-                        $searchCol = 'host_name';
+                        $searchCol = 'host';
                         break;
                     case 'hostgroups':
                         $searchCol = 'hostgroup';

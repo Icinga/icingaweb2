@@ -15,6 +15,7 @@ class Eventgrid extends DataView
         return array(
             'day',
             'cnt_events',
+            'objecttype_id',
             'cnt_up',
             'cnt_down_hard',
             'cnt_down',
@@ -22,12 +23,16 @@ class Eventgrid extends DataView
             'cnt_unreachable',
             'cnt_unknown_hard',
             'cnt_unknown',
-            'cnt_unknown_hard',
             'cnt_critical',
             'cnt_critical_hard',
             'cnt_warning',
             'cnt_warning_hard',
             'cnt_ok',
+            'host_name',
+            'service_description',
+            'timestamp',
+            'servicegroup_name',
+            'hostgroup_name'
         );
     }
 
@@ -38,5 +43,10 @@ class Eventgrid extends DataView
                 'order' => self::SORT_DESC
             )
         );
+    }
+
+    public function getFilterColumns()
+    {
+        return array('host', 'service', 'hostgroup', 'servicegroup');
     }
 }

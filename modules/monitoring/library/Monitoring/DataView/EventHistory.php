@@ -22,16 +22,14 @@ class EventHistory extends DataView
             'host_display_name',
             'service_description',
             'service_display_name',
+            'hostgroup_name',
             'object_type',
             'timestamp',
             'state',
             'attempt',
             'max_attempts',
             'output',
-            'type',
-            'host',
-            'service',
-            'service_host_name'
+            'type'
         );
     }
 
@@ -47,8 +45,6 @@ class EventHistory extends DataView
 
     public function getFilterColumns()
     {
-        return array(
-            'hostgroups'
-        );
+        return array('host', 'service', 'hostgroup');
     }
 }
