@@ -35,14 +35,6 @@ $this->addHelperFunction('timeUntil', function ($timestamp) {
     );
 });
 
-$this->addHelperFunction('prefixedTimeSince', function ($timestamp, $ucfirst = false) {
-    return sprintf(
-        '<span class="timesince" title="%s">%s</span>',
-        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
-        Format::prefixedTimeSince($timestamp, $ucfirst)
-    );
-});
-
 $this->addHelperFunction('prefixedTimeUntil', function ($timestamp, $ucfirst = false) {
     if (! $timestamp) return '';
     return sprintf(
