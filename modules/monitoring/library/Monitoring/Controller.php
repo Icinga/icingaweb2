@@ -21,16 +21,6 @@ class Controller extends IcingaWebController
      */
     protected $backend;
 
-    /**
-     * Compact layout name
-     *
-     * Set to a string containing the compact layout name to use when
-     * 'compact' is set as the layout parameter, otherwise null
-     *
-     * @var string
-     */
-    protected $compactView;
-
     protected function moduleInit()
     {
         $this->backend = Backend::createBackend($this->_getParam('backend'));
@@ -39,10 +29,6 @@ class Controller extends IcingaWebController
 
     protected function handleFormatRequest($query)
     {
-        if ($this->compactView !== null && ($this->_getParam('view', false) === 'compact')) {
-            $this->_helper->viewRenderer($this->compactView);
-        }
-
         if ($this->_getParam('format') === 'sql') {
             echo '<pre>'
                 . htmlspecialchars(wordwrap($query->dump()))
