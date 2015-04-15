@@ -57,7 +57,10 @@
 </div>
 
 <?php if (count($notifications)): ?>
-<?= $this->render('list/notifications.phtml') ?>
+<?= $this->partial('list/notifications.phtml', array(
+    'notifications' => $notifications,
+    'compact' => true
+)); ?>
 <?php else: ?>
 <div class="content"><?= $this->translate('No notifications have been sent for this contact') ?></div>
 <?php endif ?>

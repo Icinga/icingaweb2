@@ -21,7 +21,6 @@ class Monitoring_ListController extends Controller
     public function init()
     {
         $this->createTabs();
-        $this->view->compact = $this->_request->getParam('view') === 'compact';
     }
 
     /**

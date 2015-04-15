@@ -16,11 +16,6 @@ use Icinga\Chart\Unit\LinearUnit;
 
 class Monitoring_ChartController extends Controller
 {
-    public function init()
-    {
-        $this->view->compact = $this->_request->getParam('view') === 'compact';
-    }
-
     private function drawLogChart1()
     {
         $chart = new GridChart();

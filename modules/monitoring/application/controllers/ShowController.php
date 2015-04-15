@@ -167,8 +167,6 @@ class Monitoring_ShowController extends Controller
             ));
 
             $notifications->where('contact_object_id', $contact->contact_object_id);
-
-            $this->view->compact = true;
             $this->view->notifications = $notifications->paginate();
         }
 
