@@ -30,7 +30,18 @@
         $('svg .chart-data', el).tipsy({ gravity: 'se', html: true });
         $('.historycolorgrid a[title]', el).tipsy({ gravity: 's', offset: 2 });
         $('img.icon[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
-        $('[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, delayIn: 500 });
+        $('[title]', el).each(function (i, el) {
+           var $el = $(el);
+           var delay = 500;
+           if ($el.data('tooltip-delay') !== undefined) {
+               delay = $el.data('tooltip-delay');
+           }
+           var gravity = $.fn.tipsy.autoNS;
+           if ($el.data('tooltip-gravity')) {
+               gravity = $el.data('tooltip-gravity');
+           }
+           $el.tipsy({ gravity: gravity, delayIn: delay });
+        });
 
         // migrate or remove all orphaned tooltips
         $('.tipsy').each(function () {
