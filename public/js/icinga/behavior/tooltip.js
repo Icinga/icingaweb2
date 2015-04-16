@@ -28,8 +28,7 @@
             $el.attr('title', $el.data('title-rich') || $el.attr('title'));
         });
         $('svg .chart-data', el).tipsy({ gravity: 'se', html: true });
-        $('.historycolorgrid a[title]', el).tipsy({ gravity: 's', offset: 2 });
-        $('img.icon[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
+        $('i[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
         $('[title]', el).each(function (i, el) {
            var $el = $(el);
            var delay = 500;
