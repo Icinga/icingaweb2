@@ -49,7 +49,7 @@ EOT;
      */
     private $closeTpl = <<< 'EOT'
 <li class="dropdown" style="float: right;">
-  <a href="#" class="dropdown-toggle close-toggle">X</a>
+  <a href="#" class="dropdown-toggle close-toggle"> <i aria-hidden="true" class="icon-cancel"></i> </a>
 </li>
 EOT;
 
