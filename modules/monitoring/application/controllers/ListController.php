@@ -467,8 +467,10 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab('comments', $this->translate('Comments'), $this->translate('List comments'));
         $this->setAutorefreshInterval(12);
+
         $query = $this->backend->select()->from('comment', array(
             'id'         => 'comment_internal_id',
             'objecttype' => 'comment_objecttype',
@@ -486,6 +488,8 @@ class Monitoring_ListController extends Controller
         $this->filterQuery($query);
         $this->view->comments = $query->paginate();
 
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->comments);
         $this->setupSortControl(
             array(
                 'comment_timestamp'     => $this->translate('Comment Timestamp'),
