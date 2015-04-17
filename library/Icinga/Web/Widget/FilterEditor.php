@@ -649,7 +649,7 @@ class FilterEditor extends AbstractWidget
 
     public function renderSearch()
     {
-        $html = ' <form method="post" class="inline dontprint" action="'
+        $html = ' <form method="post" class="search inline dontprint" action="'
               . $this->preservedUrl()
               . '"><input type="text" name="q" style="width: 8em" class="search" value="" placeholder="'
               . t('Search...')
@@ -678,20 +678,22 @@ class FilterEditor extends AbstractWidget
     public function render()
     {
         if (! $this->preservedUrl()->getParam('modifyFilter')) {
-            return $this->renderSearch() . $this->shorten($this->filter, 50);
+            return '<div class="filter">' . $this->renderSearch() . $this->shorten($this->filter, 50) . '</div>';
         }
-        return  $this->renderSearch()
-              . '<form action="'
-              . Url::fromRequest()
-              . '" class="filterEditor" method="POST">'
-              . '<ul class="tree widgetFilter"><li>'
-              . $this->renderFilter($this->filter)
-              . '</li></ul>'
-              . '<div style="float: right">'
-              . '<input type="submit" name="submit" value="Apply" />'
-              . '<input type="submit" name="cancel" value="Cancel" />'
-              . '</div>'
-              . '</form>';
+        return  '<div class="filter">'
+            . $this->renderSearch()
+            . '<form action="'
+            . Url::fromRequest()
+            . '" class="editor" method="POST">'
+            . '<ul class="tree"><li>'
+            . $this->renderFilter($this->filter)
+            . '</li></ul>'
+            . '<div class="buttons">'
+            . '<input type="submit" name="submit" value="Apply" />'
+            . '<input type="submit" name="cancel" value="Cancel" />'
+            . '</div>'
+            . '</form>'
+            . '</div>';
     }
 
     protected function shorten($string, $length)
