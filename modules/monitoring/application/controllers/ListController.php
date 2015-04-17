@@ -624,6 +624,7 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab(
             'eventhistory',
             $this->translate('Event Overview'),
@@ -645,11 +646,13 @@ class Monitoring_ListController extends Controller
         ));
 
         $this->filterQuery($query);
+        $this->view->history = $query->paginate();
 
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->history);
         $this->setupSortControl(array(
             'timestamp' => $this->translate('Occurence')
         ));
-        $this->view->history = $query->paginate();
     }
 
     public function servicegridAction()
