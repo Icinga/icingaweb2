@@ -424,11 +424,13 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab(
             'contactgroups',
             $this->translate('Contact Groups'),
             $this->translate('List contact groups')
         );
+
         $query = $this->backend->select()->from('contactgroup', array(
             'contactgroup_name',
             'contactgroup_alias',
@@ -436,7 +438,7 @@ class Monitoring_ListController extends Controller
             'contact_alias',
             'contact_email',
             'contact_pager',
-        ))->order('contactgroup_alias');
+        ));
         $this->filterQuery($query);
 
         // Fetch and prepare all contact groups:
@@ -453,6 +455,11 @@ class Monitoring_ListController extends Controller
         }
         // TODO: Find a better naming
         $this->view->groupData = $groupData;
+
+        $this->setupSortControl(array(
+            'contactgroup_name'     => $this->translate('Contactgroup Name'),
+            'contactgroup_alias'    => $this->translate('Contactgroup Alias')
+        ));
     }
 
     public function commentsAction()
