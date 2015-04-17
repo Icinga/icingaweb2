@@ -117,18 +117,8 @@ class Monitoring_ListController extends Controller
             'host_current_check_attempt',
             'host_max_check_attempts'
         ), $this->extraColumns()));
-
         $this->filterQuery($query);
-
         $this->applyRestriction('monitoring/hosts/filter', $query);
-
-        $this->setupSortControl(array(
-            'host_severity'     => $this->translate('Severity'),
-            'host_state'        => $this->translate('Current State'),
-            'host_display_name' => $this->translate('Hostname'),
-            'host_address'      => $this->translate('Address'),
-            'host_last_check'   => $this->translate('Last Check')
-        ));
         $this->view->hosts = $query->paginate();
 
         $this->view->stats = $this->backend->select()->from('statusSummary', array(
@@ -142,6 +132,16 @@ class Monitoring_ListController extends Controller
             'hosts_unreachable_unhandled',
             'hosts_pending',
         ))->getQuery()->fetchRow();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->hosts);
+        $this->setupSortControl(array(
+            'host_severity'     => $this->translate('Severity'),
+            'host_state'        => $this->translate('Current State'),
+            'host_display_name' => $this->translate('Hostname'),
+            'host_address'      => $this->translate('Address'),
+            'host_last_check'   => $this->translate('Last Check')
+        ));
     }
 
     /**
