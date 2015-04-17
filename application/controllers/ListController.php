@@ -52,5 +52,8 @@ class ListController extends Controller
             'fields'    => $pattern
         )));
         $this->view->logData = $resource->select()->order('DESC')->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->logData);
     }
 }
