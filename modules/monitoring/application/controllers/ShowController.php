@@ -145,9 +145,7 @@ class Monitoring_ShowController extends Controller
             'contact_notify_host_flapping',
             'contact_notify_host_downtime',
         ));
-
         $query->where('contact_name', $contactName);
-
         $contact = $query->getQuery()->fetchRow();
 
         if ($contact) {
@@ -171,6 +169,8 @@ class Monitoring_ShowController extends Controller
 
             $notifications->where('contact_object_id', $contact->contact_object_id);
             $this->view->notifications = $notifications->paginate();
+            $this->setupLimitControl();
+            $this->setupPaginationControl($this->view->notifications);
         }
 
         $this->view->contact = $contact;
