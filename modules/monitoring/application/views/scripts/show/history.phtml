@@ -1,29 +1,33 @@
 <?php
-
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
 $self = $this;
 $hostContext = $object->getType() === 'host';
 
-?>
-
+if (! $this->compact): ?>
 <div class="controls">
-<?php if ($hostContext): ?>
+  <?= $this->tabs; ?>
+ <?php if ($hostContext): ?>
   <?= $this->render('partials/host/object-header.phtml'); ?>
-<?php else: ?>
+ <?php else: ?>
   <?= $this->render('partials/service/object-header.phtml'); ?>
-<?php endif ?>
+ <?php endif ?>
   <h1><?= $this->translate('This Object\'s Event History'); ?></h1>
-  <?= $this->widget('limiter', array('url' => $url, 'max' => $history->count())); ?>
-  <?= $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
-
+<?php endif ?>
 <div class="content">
-<?php if (count($history) === 0): ?>
-  <?= $this->translate('No history available for this object'); ?>
-</div>
-<?php return; endif ?>
+<?php
+
+if (count($history) === 0) {
+    echo $this->translate('No history available for this object') . '</div>';
+    return;
+}
+?>
 
 <?php
 function contactsLink($match, $view) {

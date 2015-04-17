@@ -73,6 +73,9 @@ class Monitoring_ShowController extends Controller
         $this->view->history = $this->view->object->eventhistory->getQuery()->paginate($this->params->get('limit', 50));
         $this->handleFormatRequest($this->view->object->eventhistory);
         $this->fetchHostStats();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->history);
     }
 
     public function servicesAction()
