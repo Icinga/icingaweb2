@@ -119,12 +119,12 @@ html {
 .container .controls {
   top: 0;
   background-color: white;
-  padding: 0;
+  padding: 1em 1em 0;
   z-index: 100;
 }
 
 .container .fake-controls {
-  padding: 0;
+  padding: 1em 1em 0;
 }
 
 .container .controls .pagination {
@@ -149,16 +149,16 @@ html {
   font-size: 0.9em;
 }
 
-.container .controls > * {
-  margin-left: 1em;
-}
-
 .container .controls .pagination {
   margin-left: 1.2em;
 }
 
 .content {
   padding: 1em;
+}
+
+.controls + .fake-controls + .content {
+  padding-top: 0;
 }
 
 .dashboard .content {
