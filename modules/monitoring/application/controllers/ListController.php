@@ -339,7 +339,9 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab('contacts', $this->translate('Contacts'), $this->translate('List contacts'));
+
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
             'contact_id',
@@ -363,6 +365,8 @@ class Monitoring_ListController extends Controller
         $this->filterQuery($query);
         $this->view->contacts = $query->paginate();
 
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->contacts);
         $this->setupSortControl(array(
             'contact_name' => $this->translate('Name'),
             'contact_alias' => $this->translate('Alias'),
