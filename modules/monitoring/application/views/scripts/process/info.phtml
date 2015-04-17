@@ -1,12 +1,12 @@
 <?php
-
 $rv = $this->runtimeVariables()->create($this->runtimevariables);
 $cp = $this->checkPerformance()->create($this->checkperformance);
 
-?>
+if (! $this->compact): ?>
 <div class="controls">
-    <?= $this->tabs ?>
+    <?= $this->tabs; ?>
 </div>
+<?php endif ?>
 
 <div class="content processinfo">
     <div class="boxview">
