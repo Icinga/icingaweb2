@@ -569,8 +569,10 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab('hostgroups', $this->translate('Host Groups'), $this->translate('List host groups'));
         $this->setAutorefreshInterval(12);
+
         $query = $this->backend->select()->from('groupsummary', array(
             'hostgroup_name',
             'hostgroup_alias',
@@ -602,6 +604,9 @@ class Monitoring_ListController extends Controller
         // service groups. We should separate them.
         $this->filterQuery($query);
         $this->view->hostgroups = $query->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->hostgroups);
         $this->setupSortControl(array(
             'services_severity' => $this->translate('Severity'),
             'hostgroup_alias'   => $this->translate('Host Group Name'),
