@@ -1,26 +1,24 @@
 <?php
-
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
-?>
-
-<?php if (! $this->compact): ?>
+if (! $this->compact): ?>
 <div class="controls">
-    <?= $this->tabs ?>
-    <div class="dontprint" style="margin: 1em;">
-        <?= $this->translate('Sort by') ?> <?= $this->sortControl->render($this) ?>
-    </div>
-    <?= $this->widget('limiter') ?>
-    <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)) ?>
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
 <?php endif ?>
-
 <div class="content">
-    <?php if (count($notifications) === 0): ?>
-    <?= $this->translate('No notifications matching the filter') ?>
-    <?php return; endif ?>
+<?php
 
+if (count($notifications) === 0) {
+    echo $this->translate('No notifications found matching the filter') . '</div>';
+    return;
+}
+?>
     <table data-base-target="_next" class="action">
     <tbody>
     <?php foreach ($notifications as $notification):

@@ -306,12 +306,14 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab(
             'notifications',
             $this->translate('Notifications'),
             $this->translate('List notifications')
         );
         $this->setAutorefreshInterval(15);
+
         $query = $this->backend->select()->from('notification', array(
             'host_name',
             'service_description',
@@ -324,6 +326,9 @@ class Monitoring_ListController extends Controller
         ));
         $this->filterQuery($query);
         $this->view->notifications = $query->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->notifications);
         $this->setupSortControl(array(
             'notification_start_time' => $this->translate('Notification Start')
         ));
