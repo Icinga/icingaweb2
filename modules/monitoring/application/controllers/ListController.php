@@ -205,11 +205,12 @@ class Monitoring_ListController extends Controller
             'max_check_attempts'    => 'service_max_check_attempts'
         ), $this->extraColumns());
         $query = $this->backend->select()->from('serviceStatus', $columns);
-
         $this->filterQuery($query);
-
         $this->applyRestriction('monitoring/services/filter', $query);
+        $this->view->services = $query->paginate();
 
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->services);
         $this->setupSortControl(array(
             'service_severity'      => $this->translate('Service Severity'),
             'service_state'         => $this->translate('Current Service State'),
@@ -221,14 +222,6 @@ class Monitoring_ListController extends Controller
             'host_address'          => $this->translate('Host Address'),
             'host_last_check'       => $this->translate('Last Host Check')
         ));
-        $limit = $this->params->get('limit');
-        $this->view->limit = $limit;
-        if ($limit === 0) {
-            $this->view->services = $query->getQuery()->fetchAll();
-        } else {
-            // TODO: Workaround, paginate should be able to fetch limit from new params
-            $this->view->services = $query->paginate($this->params->get('limit'));
-        }
 
         $this->view->stats = $this->backend->select()->from('statusSummary', array(
             'services_total',
@@ -247,7 +240,6 @@ class Monitoring_ListController extends Controller
             'services_unknown_handled',
             'services_pending',
         ))->getQuery()->fetchRow();
-
     }
 
     /**
