@@ -510,12 +510,14 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab(
             'servicegroups',
             $this->translate('Service Groups'),
             $this->translate('List service groups')
         );
         $this->setAutorefreshInterval(12);
+
         $query = $this->backend->select()->from('groupsummary', array(
             'servicegroup_name',
             'servicegroup_alias',
@@ -547,6 +549,9 @@ class Monitoring_ListController extends Controller
         // service groups. We should separate them.
         $this->filterQuery($query);
         $this->view->servicegroups = $query->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->servicegroups);
         $this->setupSortControl(array(
             'services_severity'     => $this->translate('Severity'),
             'servicegroup_alias'    => $this->translate('Service Group Name'),
