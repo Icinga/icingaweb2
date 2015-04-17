@@ -689,7 +689,7 @@ class Monitoring_ListController extends Controller
             ->handleRequest($this->getRequest());
         $query->applyFilter($editor->getFilter());
 
-        $this->view->filterEditor = $editor;
+        $this->setupFilterControl($editor);
         $this->view->filter = $editor->getFilter();
 
         if ($sort = $this->params->get('sort')) {
