@@ -250,8 +250,10 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab('downtimes', $this->translate('Downtimes'), $this->translate('List downtimes'));
         $this->setAutorefreshInterval(12);
+
         $query = $this->backend->select()->from('downtime', array(
             'id'              => 'downtime_internal_id',
             'objecttype'      => 'downtime_objecttype',
@@ -273,9 +275,11 @@ class Monitoring_ListController extends Controller
             'host_display_name',
             'service_display_name'
         ));
-
         $this->filterQuery($query);
+        $this->view->downtimes = $query->paginate();
 
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->downtimes);
         $this->setupSortControl(array(
             'downtime_is_in_effect'     => $this->translate('Is In Effect'),
             'host_display_name'         => $this->translate('Host'),
@@ -288,8 +292,6 @@ class Monitoring_ListController extends Controller
             'downtime_scheduled_end'    => $this->translate('Scheduled End'),
             'downtime_duration'         => $this->translate('Duration')
         ));
-
-        $this->view->downtimes = $query->paginate();
 
         if ($this->Auth()->hasPermission('monitoring/command/downtime/delete')) {
             $this->view->delDowntimeForm = new DeleteDowntimeCommandForm();
