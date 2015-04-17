@@ -69,8 +69,10 @@ class Monitoring_AlertsummaryController extends Controller
                 'notification_state'
             )
         );
-
         $this->view->notifications = $query->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->notifications);
     }
 
     /**
