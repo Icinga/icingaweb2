@@ -1,12 +1,8 @@
 <?php
-
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
 ?>
-<?php if (! $this->compact): ?>
-    <?= $tabs; ?>
-<?php endif ?>
 <table class="objectstate">
     <tr class="state <?= Host::getStateText($object->host_state); ?><?= $object->host_handled ? ' handled' : ''; ?>">
         <td class="state">
