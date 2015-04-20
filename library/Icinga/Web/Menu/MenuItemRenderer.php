@@ -5,6 +5,7 @@ namespace Icinga\Web\Menu;
 
 use Icinga\Application\Icinga;
 use Icinga\Web\Menu;
+use Icinga\Web\Url;
 use Icinga\Web\View;
 
 /**
