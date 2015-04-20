@@ -167,12 +167,12 @@ abstract class MonitoredObjectController extends Controller
         if ($object->getType() === $object::TYPE_HOST) {
             $isService = false;
             $params = array(
-                'host_name' => $object->getName()
+                'host' => $object->getName()
             );
         } else {
             $isService = true;
             $params = array(
-                'host_name' => $object->getHost()->getName(),
+                'host'      => $object->getHost()->getName(),
                 'service'   => $object->getName()
             );
         }

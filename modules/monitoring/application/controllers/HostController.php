@@ -26,7 +26,7 @@ class Monitoring_HostController extends MonitoredObjectController
      */
     public function init()
     {
-        $host = new Host($this->backend, $this->params->get('host_name'));
+        $host = new Host($this->backend, $this->params->get('host'));
 
         $this->applyRestriction('monitoring/hosts/filter', $host);
 

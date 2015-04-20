@@ -25,7 +25,7 @@ class Monitoring_ServiceController extends MonitoredObjectController
      */
     public function init()
     {
-        $service = new Service($this->backend, $this->params->get('host_name'), $this->params->get('service'));
+        $service = new Service($this->backend, $this->params->get('host'), $this->params->get('service'));
 
         $this->applyRestriction('monitoring/services/filter', $service);
 
