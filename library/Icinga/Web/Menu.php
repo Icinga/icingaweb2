@@ -117,10 +117,11 @@ class Menu implements RecursiveIterator
             foreach ($props as $key => $value) {
                 $method = 'set' . implode('', array_map('ucfirst', explode('_', strtolower($key))));
                 if ($key === 'renderer') {
+                    $value = '\\' . ltrim($value, '\\');
                     if (class_exists($value)) {
                         $value = new $value;
                     } else {
-                        $class = '\Icinga\Web\Menu\\' . $value;
+                        $class = '\Icinga\Web\Menu' . $value;
                         if (!class_exists($class)) {
                             throw new ConfigurationError(
                                 sprintf('ItemRenderer with class "%s" does not exist', $class)
