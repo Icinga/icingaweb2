@@ -12,7 +12,6 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\SystemPermissionException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\NotReadableError;
-use Icinga\Exception\NotFoundError;
 
 /**
  * Module manager that handles detecting, enabling and disabling of modules
@@ -199,7 +198,6 @@ class Manager
      *
      * @return  $this
      * @throws  ConfigurationError          When trying to enable a module that is not installed
-     * @throws  NotFoundError               In case the "enabledModules" directory does not exist
      * @throws  SystemPermissionException   When insufficient permissions for the application exist
      */
     public function enableModule($name)
@@ -218,14 +216,15 @@ class Manager
         if (! is_dir($this->enableDir) && !@mkdir($this->enableDir, 02770, true)) {
             $error = error_get_last();
             throw new SystemPermissionException(
-                'Failed to create enabledModule directory "%s" (%s)',
+                'Failed to create enabledModules directory "%s" (%s)',
                 $this->enableDir,
                 $error['message']
             );
         } elseif (! is_writable($this->enableDir)) {
             throw new SystemPermissionException(
-                'Cannot enable module "%s". Insufficient system permissions for enabling modules.',
-                $name
+                'Cannot enable module "%s". Check the permissions for the enabledModules directory: %s',
+                $name,
+                $this->enableDir
             );
         }
 
@@ -237,10 +236,11 @@ class Manager
             $error = error_get_last();
             if (strstr($error["message"], "File exists") === false) {
                 throw new SystemPermissionException(
-                    'Could not enable module "%s" due to file system errors. '
+                    'Cannot enable module "%s" at %s due to file system errors. '
                     . 'Please check path and mounting points because this is not a permission error. '
                     . 'Primary error was: %s',
                     $name,
+                    $this->enableDir,
                     $error['message']
                 );
             }
@@ -259,32 +259,37 @@ class Manager
      * @return  $this
      *
      * @throws  ConfigurationError          When the module is not installed or it's not a symlink
-     * @throws  SystemPermissionException   When the module can't be disabled
+     * @throws  SystemPermissionException   When insufficient permissions for the application exist
      */
     public function disableModule($name)
     {
         if (! $this->hasEnabled($name)) {
             return $this;
         }
+
         if (! is_writable($this->enableDir)) {
             throw new SystemPermissionException(
-                'Could not disable module. Module path is not writable.'
+                'Cannot disable module "%s". Check the permissions for the enabledModules directory: %s',
+                $name,
+                $this->enableDir
             );
         }
+
         $link = $this->enableDir . DIRECTORY_SEPARATOR . $name;
         if (! file_exists($link)) {
             throw new ConfigurationError(
-                'Could not disable module. The module %s was not found.',
+                'Cannot disable module "%s". Module is not installed.',
                 $name
             );
         }
         if (! is_link($link)) {
             throw new ConfigurationError(
-                'Could not disable module. The module "%s" is not a symlink. '
+                'Cannot disable module %s at %s. '
                 . 'It looks like you have installed this module manually and moved it to your module folder. '
                 . 'In order to dynamically enable and disable modules, you have to create a symlink to '
-                . 'the enabled_modules folder.',
-                $name
+                . 'the enabledModules folder.',
+                $name,
+                $this->enableDir
             );
         }
 
@@ -292,10 +297,11 @@ class Manager
             if (! @unlink($link)) {
                 $error = error_get_last();
                 throw new SystemPermissionException(
-                    'Could not disable module "%s" due to file system errors. '
+                    'Cannot enable module "%s" at %s due to file system errors. '
                     . 'Please check path and mounting points because this is not a permission error. '
                     . 'Primary error was: %s',
                     $name,
+                    $this->enableDir,
                     $error['message']
                 );
             }

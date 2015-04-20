@@ -640,7 +640,7 @@
                 this.icinga.logger.error(
                     req.status,
                     errorThrown + ':',
-                    $(req.responseText).text().slice(0, 100)
+                    $(req.responseText).text().replace(/\s+/g, ' ').slice(0, 100)
                 );
                 this.renderContentToContainer(
                     req.responseText,
