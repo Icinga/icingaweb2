@@ -6,6 +6,7 @@ namespace Icinga\Web\Widget;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Filter\FilterChain;
+use Icinga\Data\Filter\FilterOr;
 use Icinga\Web\Url;
 use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
@@ -39,6 +40,8 @@ class FilterEditor extends AbstractWidget
 
     protected $ignoreParams = array();
 
+    protected $searchColumns = null;
+
     /**
      * @var string
      */
@@ -71,6 +74,12 @@ class FilterEditor extends AbstractWidget
             $this->filter = Filter::fromQueryString((string) $this->url()->getParams());
         }
         return $this->filter;
+    }
+
+    public function setSearchColumns(array $searchColumns)
+    {
+        $this->searchColumns = $searchColumns;
+        return $this;
     }
 
     public function setUrl($url)
@@ -147,6 +156,26 @@ class FilterEditor extends AbstractWidget
         return $filter;
     }
 
+    protected function resetSearchColumns(Filter &$filter)
+    {
+        if ($filter->isChain()) {
+            $filters = &$filter->filters();
+            if (!($empty = empty($filters))) {
+                foreach ($filters as $k => &$f) {
+                    if (false === $this->resetSearchColumns($f)) {
+                        unset($filters[$k]);
+                    }
+                }
+            }
+            return $empty || !empty($filters);
+        }
+        return $filter->isExpression() ? !(
+            in_array($filter->getColumn(), $this->searchColumns)
+            &&
+            $filter->getSign() === '='
+        ) : true;
+    }
+
     public function handleRequest($request)
     {
         $this->setUrl($request->getUrl()->without($this->ignoreParams));
@@ -179,33 +208,44 @@ class FilterEditor extends AbstractWidget
         $filter = $this->getFilter();
 
         if ($search !== null) {
-            if (strpos($search, '=') === false) {
-                // TODO: Ask the view for (multiple) search columns
-                switch($request->getActionName()) {
-                    case 'services':
-                        $searchCol = 'service';
-                        break;
-                    case 'hosts':
-                        $searchCol = 'host';
-                        break;
-                    case 'hostgroups':
-                        $searchCol = 'hostgroup';
-                        break;
-                    case 'servicegroups':
-                        $searchCol = 'servicegroup';
-                        break;
-                    default:
-                        $searchCol = null;
-                }
+            if ($this->searchColumns === null) {
+                if (strpos($search, '=') === false) {
+                    // TODO: Ask the view for (multiple) search columns
+                    switch($request->getActionName()) {
+                        case 'services':
+                            $searchCol = 'service';
+                            break;
+                        case 'hosts':
+                            $searchCol = 'host';
+                            break;
+                        case 'hostgroups':
+                            $searchCol = 'hostgroup';
+                            break;
+                        case 'servicegroups':
+                            $searchCol = 'servicegroup';
+                            break;
+                        default:
+                            $searchCol = null;
+                    }
 
-                if ($searchCol === null) {
-                    throw new Exception('Cannot search here');
+                    if ($searchCol === null) {
+                        throw new Exception('Cannot search here');
+                    }
+                    $filter = $this->mergeRootExpression($filter, $searchCol, '=', "*$search*");
+                } else {
+                    list($k, $v) = preg_split('/=/', $search);
+                    $filter = $this->mergeRootExpression($filter, $k, '=', $v);
                 }
-                $filter = $this->mergeRootExpression($filter, $searchCol, '=', "*$search*");
-
             } else {
-                list($k, $v) = preg_split('/=/', $search);
-                $filter = $this->mergeRootExpression($filter, $k, '=', $v);
+                if (false === $this->resetSearchColumns($filter)) {
+                    $filter = Filter::matchAll();
+                }
+
+                $filters = array();
+                foreach ($this->searchColumns as $searchColumn) {
+                    $filters[] = Filter::expression($searchColumn, '=', "*$search*");
+                }
+                $filter->andFilter(new FilterOr($filters));
             }
 
             $url = $this->url()->setQueryString(
