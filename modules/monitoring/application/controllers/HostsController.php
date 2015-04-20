@@ -26,7 +26,7 @@ class Monitoring_HostsController extends Controller
     public function init()
     {
         $hostList = new HostList($this->backend);
-        $hostList->setFilter(Filter::fromQueryString((string) $this->params));
+        $hostList->setFilter(Filter::fromQueryString((string) $this->params->without('view')));
         $this->hostList = $hostList;
     }
 
