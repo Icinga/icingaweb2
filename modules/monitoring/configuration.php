@@ -94,17 +94,17 @@ $this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/serv
  * Problems Section
  */
 $section = $this->menuSection($this->translate('Problems'), array(
-    'renderer'  => 'ProblemMenuItemRenderer',
+    'renderer'  => 'Icinga\Module\Monitoring\Web\Menu\ProblemMenuItemRenderer',
     'icon'      => 'block',
     'priority'  => 20
 ));
 $section->add($this->translate('Unhandled Hosts'), array(
-    'renderer'  => 'UnhandledHostMenuItemRenderer',
+    'renderer'  => 'Icinga\Module\Monitoring\Web\Menu\UnhandledHostMenuItemRenderer',
     'url'       => 'monitoring/list/hosts?host_problem=1&host_handled=0',
     'priority'  => 30
 ));
 $section->add($this->translate('Unhandled Services'), array(
-    'renderer'  => 'UnhandledServiceMenuItemRenderer',
+    'renderer'  => 'Icinga\Module\Monitoring\Web\Menu\UnhandledServiceMenuItemRenderer',
     'url'       => 'monitoring/list/services?service_problem=1&service_handled=0&sort=service_severity',
     'priority'  => 40
 ));
