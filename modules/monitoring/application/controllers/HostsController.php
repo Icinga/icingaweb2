@@ -15,6 +15,7 @@ use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\HostList;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Chart\InlinePie;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
 
 class Monitoring_HostsController extends Controller
 {
@@ -80,7 +81,7 @@ class Monitoring_HostsController extends Controller
                 'label' => $this->translate('Hosts'),
                 'url'   => Url::fromRequest()
             )
-        )->activate('show');
+        )->extend(new DashboardAction())->activate('show');
         $this->setAutorefreshInterval(15);
         $checkNowForm = new CheckNowCommandForm();
         $checkNowForm
