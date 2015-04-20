@@ -117,8 +117,8 @@ if (count($downtimes) === 0) {
             $delDowntimeForm->setAction($this->url('monitoring/host/delete-downtime', array('host_name' => $downtime->host_name)));
           } else {
             $delDowntimeForm->setAction($this->url('monitoring/service/delete-downtime', array(
-                'host_name'             => $downtime->host_name,
-                'service_description'   => $downtime->service_description
+                'host_name' => $downtime->host_name,
+                'service'   => $downtime->service_description
             )));
           }
           echo $delDowntimeForm;

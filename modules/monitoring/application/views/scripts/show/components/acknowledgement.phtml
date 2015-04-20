@@ -31,7 +31,7 @@ if ($object->acknowledged): ?>
                 } else {
                     $ackLink = $this->href(
                         'monitoring/service/acknowledge-problem',
-                        array('host_name' => $object->getHost()->getName(), 'service_description' => $object->getName())
+                        array('host_name' => $object->getHost()->getName(), 'service' => $object->getName())
                     );
                 }
             ?>

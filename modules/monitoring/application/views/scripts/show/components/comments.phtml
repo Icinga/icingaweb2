@@ -18,7 +18,7 @@
                 echo $this->qlink(
                     $this->translate('Add comment'),
                     'monitoring/service/add-comment',
-                    array('host_name' => $object->getHost()->getName(), 'service_description' => $object->getName()),
+                    array('host_name' => $object->getHost()->getName(), 'service' => $object->getName()),
                     array(
                         'icon'              => 'comment',
                         'data-base-target'  => '_self',
