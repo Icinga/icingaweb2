@@ -34,8 +34,8 @@ if (count($services) === 0) {
     $serviceLink = $this->href(
       'monitoring/service/show',
       array(
-        'host_name'             => $service->host_name,
-        'service_description'   => $service->service_description
+        'host_name' => $service->host_name,
+        'service'   => $service->service_description
       )
     );
     $hostLink = $this->href(
