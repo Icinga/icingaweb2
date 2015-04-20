@@ -31,15 +31,25 @@
         $('i[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
         $('[title]', el).each(function (i, el) {
            var $el = $(el);
-           var delay = 500;
+           var delay, gravity;
            if ($el.data('tooltip-delay') !== undefined) {
                delay = $el.data('tooltip-delay');
            }
-           var gravity = $.fn.tipsy.autoNS;
            if ($el.data('tooltip-gravity')) {
                gravity = $el.data('tooltip-gravity');
            }
-           $el.tipsy({ gravity: gravity, delayIn: delay });
+           if (delay === undefined &&
+               gravity === undefined &&
+               !$el.data('title-rich')) {
+               // use native tooltips for everything that doesn't
+               // require specific behavior or html markup
+               return;
+           }
+           delay = delay === undefined ? 500 : delay;
+           $el.tipsy({
+               gravity: gravity || $.fn.tipsy.autoNS,
+               delayIn: delay
+           });
         });
 
         // migrate or remove all orphaned tooltips
