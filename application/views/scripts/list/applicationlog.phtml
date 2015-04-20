@@ -1,9 +1,12 @@
+<?php if (! $this->compact): ?>
 <div class="controls">
-    <?= $this->tabs->render($this) ?>
-    <div style="margin-top: 1em"></div>
-    <?=  $this->logData ?>
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
-
+<?php endif ?>
 <div class="content">
     <?php if ($this->logData !== null): ?>
     <table class="action">

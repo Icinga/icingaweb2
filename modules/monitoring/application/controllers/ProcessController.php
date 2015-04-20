@@ -1,6 +1,7 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Instance\DisableNotificationsExpireCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Instance\ToggleInstanceFeaturesCommandForm;
@@ -29,7 +30,7 @@ class Monitoring_ProcessController extends Controller
                     'label' => $this->translate('Monitoring Health'),
                     'url'   =>'monitoring/process/info'
                 )
-            );
+            )->extend(new DashboardAction());
     }
 
     /**

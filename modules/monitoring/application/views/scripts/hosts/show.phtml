@@ -1,9 +1,12 @@
 <div class="controls">
+  <?php if (! $this->compact): ?>
+    <?= $tabs; ?>
+  <?php endif ?>
     <?= $this->render('partials/host/objects-header.phtml'); ?>
 </div>
 <div class="content">
     <?php if (($hostCount = count($objects)) === 0): ?>
-        <?= $this->translate('No hosts matching the filter'); ?>
+        <?= $this->translate('No hosts found matching the filter'); ?>
     <?php else: ?>
         <h3><?= sprintf($this->translatePlural('%u Host', '%u Hosts', $hostCount), $hostCount); ?></h3>
         <div><?= $this->qlink(

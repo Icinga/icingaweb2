@@ -3,6 +3,8 @@
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Web\Url;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
@@ -29,7 +31,7 @@ class ListController extends Controller
                     'list/'
                     . str_replace(' ', '', $action)
                 )
-        ))->activate($action);
+        ))->extend(new OutputFormat())->extend(new DashboardAction())->activate($action);
     }
 
     /**
@@ -52,5 +54,8 @@ class ListController extends Controller
             'fields'    => $pattern
         )));
         $this->view->logData = $resource->select()->order('DESC')->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->logData);
     }
 }

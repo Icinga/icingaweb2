@@ -1,6 +1,3 @@
-<?php if (! $this->compact): ?>
-    <?= $tabs; ?>
-<?php endif ?>
 <?php if (($hostCount = count($objects)) > 0): ?>
 <div class="hbox-item">
     <strong><?= sprintf($this->translatePlural('Host (%u)', 'Hosts (%u)', $hostCount), $hostCount); ?></strong>

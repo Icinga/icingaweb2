@@ -1,20 +1,20 @@
-<?php if (false === $this->compact): ?>
+<?php if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs->render($this); ?>
-  <div style="margin: 1em" class="dontprint">
-    <?= $this->translate('Sort by'); ?> <?= $this->sortControl->render($this); ?>
-  </div>
-  <?= $this->widget('limiter', array('url' => $this->url, 'max' => $comments->count())); ?>
-  <?= $this->paginationControl($comments, null, null, array('preserve' => $this->preserve)); ?>
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
 <?php endif ?>
-
 <div class="content">
-<?php if (count($comments) === 0): ?>
-  <?= $this->translate('No comments matching the filter'); ?>
-</div>
-<?php return; endif ?>
+<?php
 
+if (count($comments) === 0) {
+    echo $this->translate('No comments found matching the filter') . '</div>';
+    return;
+}
+?>
   <table data-base-target="_next" class="action comments">
     <tbody>
     <?php foreach ($comments as $comment): ?>

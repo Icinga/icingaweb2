@@ -6,6 +6,7 @@ use Icinga\Chart\Unit\LinearUnit;
 use Icinga\Chart\Unit\StaticAxis;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Web\Widget\SelectBox;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Url;
 
 class Monitoring_AlertsummaryController extends Controller
@@ -44,7 +45,7 @@ class Monitoring_AlertsummaryController extends Controller
                 'label' => $this->translate('Alert Summary'),
                 'url'   => Url::fromRequest()
             )
-        )->activate('alertsummary');
+        )->extend(new DashboardAction())->activate('alertsummary');
         $this->view->title = $this->translate('Alert Summary');
 
         $this->view->intervalBox = $this->createIntervalBox();
@@ -69,8 +70,10 @@ class Monitoring_AlertsummaryController extends Controller
                 'notification_state'
             )
         );
-
         $this->view->notifications = $query->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->notifications);
     }
 
     /**

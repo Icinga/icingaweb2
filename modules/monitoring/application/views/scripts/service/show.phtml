@@ -1,4 +1,7 @@
 <div class="controls">
+  <?php if (! $this->compact): ?>
+    <?= $this->tabs; ?>
+  <?php endif ?>
     <?= $this->render('partials/service/object-header.phtml') ?>
     <h1><?= $this->translate("Service detail information") ?></h1>
 </div>

@@ -716,8 +716,6 @@
         },
 
         initializeControls: function (parent) {
-
-            var self = this;
             if ($(parent).closest('.dashboard').length) {
                 return;
             }
@@ -747,7 +745,6 @@
         },
 
         fixControls: function ($parent) {
-
             var self = this;
 
             if ('undefined' === typeof $parent) {
@@ -773,6 +770,11 @@
 
             $('.controls', $parent).each(function (idx, el) {
                 var $el = $(el);
+
+                if ($el.closest('.dashboard').length) {
+                    return;
+                }
+
                 var $fake = $el.next('.fake-controls');
                 var y = $parent.scrollTop();
 
