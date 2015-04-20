@@ -87,11 +87,11 @@ if (count($comments) === 0) {
           $delCommentForm->populate(array('comment_id' => $comment->id, 'redirect' => $this->url));
           if ($comment->objecttype === 'host') {
             $delCommentForm->setAction(
-                $this->url('monitoring/host/delete-comment', array('host_name' => $comment->host_name))
+                $this->url('monitoring/host/delete-comment', array('host' => $comment->host_name))
             );
           } else {
             $delCommentForm->setAction($this->url('monitoring/service/delete-comment', array(
-                'host_name' => $comment->host_name,
+                'host'      => $comment->host_name,
                 'service'   => $comment->service_description
             )));
           }

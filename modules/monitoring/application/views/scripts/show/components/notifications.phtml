@@ -5,12 +5,12 @@
       if ($object->getType() === $object::TYPE_HOST) {
           $ackLink = $this->href(
               'monitoring/host/send-custom-notification',
-              array('host_name' => $object->getName())
+              array('host' => $object->getName())
           );
       } else {
           $ackLink = $this->href(
               'monitoring/service/send-custom-notification',
-              array('host_name' => $object->getHost()->getName(), 'service' => $object->getName())
+              array('host' => $object->getHost()->getName(), 'service' => $object->getName())
           );
       }
       ?>
