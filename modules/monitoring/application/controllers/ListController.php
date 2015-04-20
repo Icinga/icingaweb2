@@ -728,15 +728,6 @@ class Monitoring_ListController extends Controller
      */
     private function createTabs()
     {
-        $tabs = $this->getTabs();
-        if (in_array($this->_request->getActionName(), array(
-            'hosts',
-            'services',
-            'eventhistory',
-            'eventgrid',
-            'notifications'
-        ))) {
-            $tabs->extend(new OutputFormat())->extend(new DashboardAction());
-        }
+        $this->getTabs()->extend(new OutputFormat())->extend(new DashboardAction());
     }
 }
