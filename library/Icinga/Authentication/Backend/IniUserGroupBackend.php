@@ -4,7 +4,7 @@
 namespace Icinga\Authentication\Backend;
 
 use Icinga\Application\Config;
-use Icinga\Authentication\UserGroupBackend;
+use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Exception\ConfigurationError;
 use Icinga\User;
 use Icinga\Util\String;

@@ -4,6 +4,7 @@
 namespace Icinga\Authentication;
 
 use Exception;
+use Icinga\Authentication\Usergroup\UserGroupBackend;
 use Icinga\Application\Config;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;

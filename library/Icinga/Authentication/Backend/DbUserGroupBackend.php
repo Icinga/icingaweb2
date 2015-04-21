@@ -3,7 +3,7 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Icinga\Authentication\UserGroupBackend;
+use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Data\Db\DbConnection;
 use Icinga\User;
 
