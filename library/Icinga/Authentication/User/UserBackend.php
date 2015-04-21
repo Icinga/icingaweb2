@@ -9,19 +9,22 @@ use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\User;
 
+/**
+ * Base class for concrete user backends
+ */
 abstract class UserBackend implements Countable
 {
     /**
-     * Name of the backend
+     * The name of this backend
      *
      * @var string
      */
     protected $name;
 
     /**
-     * Setter for the backend's name
+     * Set this backend's name
      *
-     * @param   string $name
+     * @param   string  $name
      *
      * @return  $this
      */
@@ -32,20 +35,31 @@ abstract class UserBackend implements Countable
     }
 
     /**
-     * Getter for the backend's name
+     * Return this backend's name
      *
-     * @return string
+     * @return  string
      */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * Create and return a UserBackend with the given name and given configuration applied to it
+     *
+     * @param   string          $name
+     * @param   ConfigObject    $backendConfig
+     *
+     * @return  UserBackend
+     *
+     * @throws  ConfigurationError
+     */
     public static function create($name, ConfigObject $backendConfig)
     {
         if ($backendConfig->name !== null) {
             $name = $backendConfig->name;
         }
+
         if (isset($backendConfig->class)) {
             // Use a custom backend class, this is only useful for testing
             if (!class_exists($backendConfig->class)) {
@@ -58,32 +72,27 @@ abstract class UserBackend implements Countable
             }
             return new $backendConfig->class($backendConfig);
         }
-        if (($backendType = $backendConfig->backend) === null) {
+
+        if (! ($backendType = strtolower($backendConfig->backend))) {
             throw new ConfigurationError(
                 'Authentication configuration for backend "%s" is missing the backend directive',
                 $name
             );
         }
-        $backendType = strtolower($backendType);
         if ($backendType === 'external') {
             $backend = new ExternalBackend($backendConfig);
             $backend->setName($name);
             return $backend;
         }
+
         if ($backendConfig->resource === null) {
             throw new ConfigurationError(
                 'Authentication configuration for backend "%s" is missing the resource directive',
                 $name
             );
         }
-        try {
-            $resourceConfig = ResourceFactory::getResourceConfig($backendConfig->resource);
-        } catch (ProgrammingError $e) {
-            throw new ConfigurationError(
-                'Resources not set up. Please contact your Icinga Web administrator'
-            );
-        }
-        $resource = ResourceFactory::createResource($resourceConfig);
+        $resource = ResourceFactory::createResource(ResourceFactory::getResourceConfig($backendConfig->resource));
+
         switch ($backendType) {
             case 'db':
                 $backend = new DbUserBackend($resource);
@@ -140,12 +149,13 @@ abstract class UserBackend implements Countable
                     $backendType
                 );
         }
+
         $backend->setName($name);
         return $backend;
     }
 
     /**
-     * Authenticate
+     * Authenticate the given user
      *
      * @param   User    $user
      * @param   string  $password
