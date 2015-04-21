@@ -1,0 +1,179 @@
+<?php
+use Icinga\Module\Monitoring\Object\Service;
+use Icinga\Module\Monitoring\Object\Host;
+
+if (isset($downtime->service_description)) {
+    $isService = true;
+    $stateName = Service::getStateText($downtime->service_state);
+} else {
+    $isService = false;
+    $stateName = Host::getStateText($downtime->host_state);
+}
+?>
+
+<div class="controls">
+  <?php if (! $this->compact): ?>
+    <?= $this->tabs; ?>
+  <?php endif ?>
+  <h1>
+    <?php if ($isService): ?>
+       <?php 
+          $link = $this->link()->service(
+                $downtime->service_description, 
+                $downtime->service_display_name,
+                $downtime->host_name,
+                $downtime->host_display_name
+          );
+          $icon = $this->icon('service', $this->translate('Service')); 
+        ?>
+    <?php else: ?>
+      <?php 
+        $icon = $this->icon('host', $this->translate('Host'));
+        $link = $this->link()->host($downtime->host_name, $downtime->host_display_name)
+      ?>
+    <?php endif ?>
+    <?= sprintf(
+            $this->translate(
+                'Downtime for %s',
+                'Downtime for host or service.'
+            ),
+            $link
+        ); ?>
+    <?= $icon ?>
+  </h1>
+</div>
+
+<div class="content" data-base-target="_next">
+<small>
+  <?php if ($downtime->is_flexible): ?>
+    <?php if ($downtime->is_in_effect): ?>
+      <?= sprintf(
+        $isService
+          ? $this->translate('This flexible service downtime was started on %s at %s and lasts for %s until %s at %s.')
+          : $this->translate('This flexible host downtime was started on %s at %s and lasts for %s until %s at %s.'),
+        date('d.m.y', $downtime->start),
+        date('H:i', $downtime->start),
+        $this->format()->duration($downtime->duration),
+        date('d.m.y', $downtime->end),
+        date('H:i', $downtime->end)
+      ); ?>
+    <?php else: ?>
+      <?= sprintf(
+        $isService
+          ? $this->translate('This flexible service downtime has been scheduled to start between %s - %s and to last for %s.')
+          : $this->translate('This flexible host downtime has been scheduled to start between %s - %s and to last for %s.'),
+        date('d.m.y H:i', $downtime->scheduled_start),
+        date('d.m.y H:i', $downtime->scheduled_end),
+        $this->format()->duration($downtime->duration)
+      ); ?>
+    <?php endif ?>
+  <?php else: ?>
+    <?php if ($downtime->is_in_effect): ?>
+      <?= sprintf(
+        $isService
+          ? $this->translate('This fixed service downtime was started on %s at %s and expires on %s at %s.')
+          : $this->translate('This fixed host downtime was started on %s at %s and expires on %s at %s.'),
+        date('d.m.y', $downtime->start),
+        date('H:i', $downtime->start),
+        date('d.m.y', $downtime->end),
+        date('H:i', $downtime->end)
+      ); ?>
+    <?php else: ?>
+      <?= sprintf(
+        $isService
+          ? $this->translate('This fixed service downtime has been scheduled to start on %s at %s and to end on %s at %s.')
+          : $this->translate('This fixed host downtime has been scheduled to start on %s at %s and to end on %s at %s.'),
+        date('d.m.y', $downtime->scheduled_start),
+        date('H:i', $downtime->scheduled_start),
+        date('d.m.y', $downtime->scheduled_end),
+        date('H:i', $downtime->scheduled_end)
+      ); ?>
+    <?php endif ?>
+  <?php endif ?>
+</small>
+<br>
+<br>
+    
+<table class="avp newsection"> 
+  <tbody>
+    <tr>
+      <th><?= $this->translate('Author') ?></th>
+      <td><?= $this->escape($this->downtime->author_name) ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->translate('Comments') ?></th>
+      <td><?= $this->escape($this->downtime->comment) ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->translate('Scheduled start') ?></th>
+      <td><?= date('d.m.y H:i', $this->downtime->scheduled_start) ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->translate('Scheduled end') ?></th>
+      <td><?= date('d.m.y H:i', $this->downtime->scheduled_end) ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->translate('Is Flexible') ?></th>
+      <td>
+      <?= $this->escape(
+          $this->downtime->is_flexible ? 
+          $this->translate('Yes') : $this->translate('No')
+        ); 
+      ?>
+      </td>
+    </tr>
+    <tr>
+      <th><?= $this->translate('In Effect') ?></th>
+      <td>
+      <?= $this->escape(
+          $this->downtime->is_in_effect ? 
+          $this->translate('Yes') : $this->translate('No')
+        ); 
+      ?>
+      </td>
+    </tr>
+
+    <?php if ($this->downtime->is_flexible && $this->downtime->is_in_effect): ?>
+    <tr>
+      <th><?= $this->translate('Start') ?></th>
+      <td><?= date('d.m.y H:i', $downtime->start); ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->translate('End') ?></th>
+      <td><?= date('d.m.y H:i', $downtime->end); ?></td>
+    </tr>
+    <?php endif; ?>
+    <tr>
+      <th><?= $this->translate('Duration') ?></th>
+      <td><?= $this->format()->duration($this->escape($this->downtime->duration)); ?></td>
+    </tr>
+    
+    <?php if (isset($delDowntimeForm)): // Form is unset if the current user lacks the respective permission ?>
+    <tr class="newsection">
+      <th><?= $this->translate('Commands') ?></th>
+      <td>
+        <?php
+        $delDowntimeForm->populate(array('downtime_id' => $downtime->id, 'redirect' => $this->listAllLink));
+        if (! $isService) {
+          $delDowntimeForm->setAction(
+              $this->url('monitoring/host/delete-downtime',
+              array('host' => $downtime->host_name))
+          );
+        } else {
+          $delDowntimeForm->setAction(
+              $this->url('monitoring/service/delete-downtime', array(
+                  'host'      => $downtime->host_name,
+                  'service'   => $downtime->service_description
+              ))
+          );
+        }
+        echo $delDowntimeForm;
+        ?>
+      </td>
+    </tr>
+    <?php endif ?>
+  </tbody>
+</table>
+
+</div>
+
