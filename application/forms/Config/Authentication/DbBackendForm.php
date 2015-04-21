@@ -7,7 +7,7 @@ use Exception;
 use Icinga\Web\Form;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
-use Icinga\Authentication\Backend\DbUserBackend;
+use Icinga\Authentication\User\DbUserBackend;
 
 /**
  * Form class for adding/modifying database authentication backends

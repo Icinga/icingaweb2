@@ -4,9 +4,6 @@
 namespace Icinga\Authentication\User;
 
 use Countable;
-use Icinga\Authentication\Backend\ExternalBackend;
-use Icinga\Authentication\Backend\DbUserBackend;
-use Icinga\Authentication\Backend\LdapUserBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;

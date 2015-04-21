@@ -1,10 +1,9 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Authentication\Backend;
+namespace Icinga\Authentication\User;
 
 use Icinga\User;
-use Icinga\Authentication\User\UserBackend;
 use Icinga\Protocol\Ldap\Query;
 use Icinga\Protocol\Ldap\Connection;
 use Icinga\Exception\AuthenticationException;

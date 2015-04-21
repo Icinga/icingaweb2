@@ -8,8 +8,8 @@ use LogicException;
 use Icinga\Web\Form;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
-use Icinga\Authentication\Backend\DbUserBackend;
-use Icinga\Authentication\Backend\LdapUserBackend;
+use Icinga\Authentication\User\DbUserBackend;
+use Icinga\Authentication\User\LdapUserBackend;
 
 /**
  * Wizard page to define the initial administrative account

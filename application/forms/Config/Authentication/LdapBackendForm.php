@@ -8,7 +8,7 @@ use Icinga\Web\Form;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\AuthenticationException;
-use Icinga\Authentication\Backend\LdapUserBackend;
+use Icinga\Authentication\User\LdapUserBackend;
 
 /**
  * Form class for adding/modifying LDAP authentication backends

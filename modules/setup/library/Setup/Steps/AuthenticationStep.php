@@ -7,7 +7,7 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
-use Icinga\Authentication\Backend\DbUserBackend;
+use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Module\Setup\Step;
 
 class AuthenticationStep extends Step

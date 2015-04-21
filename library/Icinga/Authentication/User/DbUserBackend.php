@@ -1,10 +1,9 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Authentication\Backend;
+namespace Icinga\Authentication\User;
 
 use PDO;
-use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\Db\DbConnection;
 use Icinga\User;
 use Icinga\Exception\AuthenticationException;
