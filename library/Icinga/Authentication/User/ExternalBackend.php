@@ -41,33 +41,6 @@ class ExternalBackend extends UserBackend
     }
 
     /**
-     * Test whether the given user exists
-     *
-     * @param   User $user
-     *
-     * @return  bool
-     */
-    public function hasUser(User $user)
-    {
-        if (isset($_SERVER['REMOTE_USER'])) {
-            $username = $_SERVER['REMOTE_USER'];
-            $user->setRemoteUserInformation($username, 'REMOTE_USER');
-            if ($this->stripUsernameRegexp) {
-                $stripped = preg_replace($this->stripUsernameRegexp, '', $username);
-                if ($stripped !== false) {
-                    // TODO(el): PHP issues a warning when PHP cannot compile the regular expression. Should we log an
-                    // additional message in that case?
-                    $username = $stripped;
-                }
-            }
-            $user->setUsername($username);
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Authenticate
      *
      * @param   User    $user
@@ -77,6 +50,23 @@ class ExternalBackend extends UserBackend
      */
     public function authenticate(User $user, $password = null)
     {
-        return $this->hasUser($user);
+        if (isset($_SERVER['REMOTE_USER'])) {
+            $username = $_SERVER['REMOTE_USER'];
+            $user->setRemoteUserInformation($username, 'REMOTE_USER');
+
+            if ($this->stripUsernameRegexp) {
+                $stripped = preg_replace($this->stripUsernameRegexp, '', $username);
+                if ($stripped !== false) {
+                    // TODO(el): PHP issues a warning when PHP cannot compile the regular expression. Should we log an
+                    // additional message in that case?
+                    $username = $stripped;
+                }
+            }
+
+            $user->setUsername($username);
+            return true;
+        }
+
+        return false;
     }
 }
