@@ -145,15 +145,6 @@ abstract class UserBackend implements Countable
     }
 
     /**
-     * Test whether the given user exists
-     *
-     * @param   User $user
-     *
-     * @return  bool
-     */
-    abstract public function hasUser(User $user);
-
-    /**
      * Authenticate
      *
      * @param   User    $user
