@@ -60,19 +60,6 @@ abstract class UserBackend implements Countable
             $name = $backendConfig->name;
         }
 
-        if (isset($backendConfig->class)) {
-            // Use a custom backend class, this is only useful for testing
-            if (!class_exists($backendConfig->class)) {
-                throw new ConfigurationError(
-                    'Authentication configuration for backend "%s" defines an invalid backend class.'
-                    . ' Backend class "%s" not found',
-                    $name,
-                    $backendConfig->class
-                );
-            }
-            return new $backendConfig->class($backendConfig);
-        }
-
         if (! ($backendType = strtolower($backendConfig->backend))) {
             throw new ConfigurationError(
                 'Authentication configuration for backend "%s" is missing the backend directive',
