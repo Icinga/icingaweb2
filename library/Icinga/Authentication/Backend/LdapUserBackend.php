@@ -4,7 +4,7 @@
 namespace Icinga\Authentication\Backend;
 
 use Icinga\User;
-use Icinga\Authentication\UserBackend;
+use Icinga\Authentication\User\UserBackend;
 use Icinga\Protocol\Ldap\Query;
 use Icinga\Protocol\Ldap\Connection;
 use Icinga\Exception\AuthenticationException;

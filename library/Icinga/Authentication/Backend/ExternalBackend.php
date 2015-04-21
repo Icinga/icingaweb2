@@ -3,7 +3,7 @@
 
 namespace Icinga\Authentication\Backend;
 
-use Icinga\Authentication\UserBackend;
+use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\User;
 

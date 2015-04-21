@@ -5,6 +5,7 @@ namespace Icinga\Authentication;
 
 use Iterator;
 use Icinga\Data\ConfigObject;
+use Icinga\Authentication\User\UserBackend;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;

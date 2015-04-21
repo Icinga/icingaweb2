@@ -4,7 +4,7 @@
 namespace Icinga\Authentication\Backend;
 
 use PDO;
-use Icinga\Authentication\UserBackend;
+use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\Db\DbConnection;
 use Icinga\User;
 use Icinga\Exception\AuthenticationException;
