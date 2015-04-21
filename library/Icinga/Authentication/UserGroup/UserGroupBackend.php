@@ -3,8 +3,6 @@
 
 namespace Icinga\Authentication\UserGroup;
 
-use Icinga\Authentication\Backend\DbUserGroupBackend;
-use Icinga\Authentication\Backend\IniUserGroupBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;

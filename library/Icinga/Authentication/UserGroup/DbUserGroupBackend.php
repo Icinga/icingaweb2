@@ -1,9 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Authentication\Backend;
+namespace Icinga\Authentication\UserGroup;
 
-use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Data\Db\DbConnection;
 use Icinga\User;
 
