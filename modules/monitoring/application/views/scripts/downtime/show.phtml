@@ -80,37 +80,72 @@
 </small>
 <br>
 <br>
-    
+
 <table class="avp newsection"> 
   <tbody>
-    <tr>
+    <tr title="<?= $this->translate('The name of the person who scheduled this downtime'); ?>">
       <th><?= $this->translate('Author') ?></th>
-      <td><?= $this->escape($this->downtime->author_name) ?></td>
+      <td><?= $this->icon('user') ?> <?= $this->escape($this->downtime->author_name) ?></td>
     </tr>
-    <tr>
-      <th><?= $this->translate('Comments') ?></th>
-      <td><?= $this->escape($this->downtime->comment) ?></td>
+    <tr title="<?= $this->translate('A comment, as entered by the author, associated with the scheduled downtime'); ?>">
+      <th><?= $this->translate('Comment') ?></th>
+      <td><?= $this->icon('comment') ?> <?= $this->escape($this->downtime->comment) ?></td>
     </tr>
-    <tr>
-      <th><?= $this->translate('Scheduled start') ?></th>
-      <td><?= date('d.m.y H:i', $this->downtime->scheduled_start) ?></td>
+     <tr title="<?= $this->translate('Date and time this downtime was entered'); ?>">
+      <th><?= $this->translate('Entry Time') ?></th>
+      <td> <?= date('d.m.y H:i' ,$this->escape($this->downtime->entry_time)) ?></td>
     </tr>
-    <tr>
-      <th><?= $this->translate('Scheduled end') ?></th>
-      <td><?= date('d.m.y H:i', $this->downtime->scheduled_end) ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Is Flexible') ?></th>
+    <tr class="newsection">
+      <th><?= $this->escape(
+          $this->downtime->is_flexible ? 
+          $this->translate('Flexible') : $this->translate('Fixed')
+        );  ?></th>
       <td>
       <?= $this->escape(
           $this->downtime->is_flexible ? 
-          $this->translate('Yes') : $this->translate('No')
-        ); 
-      ?>
+          $this->translate('Flexible downtimes have a hard start and end time,' 
+            . ' but also an additional restriction on the duration in which ' 
+            . ' the host or service may actually be down.') : 
+          $this->translate('Fixed downtimes have a static start and end time.')
+        );  ?>
       </td>
     </tr>
-    <tr>
-      <th><?= $this->translate('In Effect') ?></th>
+    <tr title="<?= $this->translate('The date/time the scheduled downtime is'
+            . ' supposed to start. If this is a flexible (non-fixed) downtime, '
+            . 'this refers to the earliest possible time that the downtime'
+            . ' can start'); ?>">
+      <th><?= $this->translate('Scheduled start') ?></th>
+      <td><?= date('d.m.y H:i', $this->downtime->scheduled_start) ?></td>
+    </tr>
+    <tr title="<?= $this->translate('The date/time the scheduled downtime is '
+            . 'supposed to end. If this is a flexible (non-fixed) downtime, '
+            . 'this refers to the last possible time that the downtime can '
+            . 'start'); ?>">
+      <th><?= $this->translate('Scheduled end') ?></th>
+      <td><?= date('d.m.y H:i', $this->downtime->scheduled_end) ?></td>
+    </tr>
+    <?php if ($this->downtime->is_flexible): ?>
+      <tr title="<?= $this->translate('Indicates the number of seconds that the '
+              . 'scheduled downtime should last. This is usually only needed if'
+              . ' this is a flexible downtime, which can start at a variable '
+              . 'time, but lasts for the specified duration'); ?>">
+        <th tit><?= $this->translate('Duration') ?></th>
+        <td><?= $this->format()->duration($this->escape($this->downtime->duration)); ?></td>
+      </tr>
+      <tr title="<?= $this->translate('he date/time the scheduled downtime was'
+              . ' actually started'); ?>">
+         <th><?= $this->translate('Actual start time') ?></th>
+         <td><?= date('d.m.y H:i', $downtime->start); ?></td>
+       </tr>
+       <tr title="<?= $this->translate('The date/time the scheduled downtime '
+               . 'actually ended'); ?>">
+         <th><?= $this->translate('Actual end time') ?></th>
+         <td><?= date('d.m.y H:i', $downtime->end); ?></td>
+       </tr>
+    <?php endif; ?>
+      
+    <tr class="newsection">
+      <th><?= $this->translate('In effect') ?></th>
       <td>
       <?= $this->escape(
           $this->downtime->is_in_effect ? 
