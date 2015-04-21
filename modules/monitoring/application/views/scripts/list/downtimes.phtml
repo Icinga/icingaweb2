@@ -19,8 +19,10 @@ if (count($downtimes) === 0) {
     return;
 }
 ?>
-
-  <table data-base-target="_next" class="action">
+  <table data-base-target="_next" 
+         class="action multiselect" 
+         data-icinga-multiselect-url="/icingaweb2/monitoring/downtimes/show"
+         data-icinga-multiselect-data="downtime_id">
     <tbody>
     <?php foreach ($downtimes as $downtime): ?>
     <?php
@@ -48,15 +50,22 @@ if (count($downtimes) === 0) {
             ?>
         </td>
         <td>
-        <?php if ($isService): ?>
-          <?= $this->icon('service', $this->translate('Service')); ?>
-          <?= $this->link()->service(
-              $downtime->service_description, $downtime->service_display_name, $downtime->host_name, $downtime->host_display_name
-          ) ?>
-        <?php else: ?>
-          <?= $this->icon('host', $this->translate('Host')); ?>
-          <?= $this->link()->host($downtime->host_name, $downtime->host_display_name) ?>
-        <?php endif ?>
+        <?php 
+            if ($isService) {
+                echo $this->icon('service');
+            } else {
+                echo $this->icon('host');
+            } 
+        ?>
+        <?= $this->qlink(
+            sprintf($this->translate('%s on %s', 'Service running on host'), $downtime->service_display_name, $downtime->host_display_name),
+                'monitoring/downtime/show',
+                array('downtime_id' => $downtime->id),
+                array('title' => sprintf(
+                $this->translate('Show detailed information for downtime on %s for %s'),
+                $downtime->service_display_name,
+                $downtime->host_display_name
+        ))) ?>
           <br>
           <?= $this->icon('comment', $this->translate('Comment')); ?> [<?= $this->escape($downtime->author_name) ?>] <?= $this->escape($downtime->comment) ?>
           <br>
