@@ -40,23 +40,6 @@ class DbUserBackend extends UserBackend
     }
 
     /**
-     * Test whether the given user exists
-     *
-     * @param   User $user
-     *
-     * @return  bool
-     */
-    public function hasUser(User $user)
-    {
-        $select = new Zend_Db_Select($this->conn->getDbAdapter());
-        $row = $select->from('icingaweb_user', array(new Zend_Db_Expr(1)))
-            ->where('name = ?', $user->getUsername())
-            ->query()->fetchObject();
-
-        return ($row !== false) ? true : false;
-    }
-
-    /**
      * Add a new user
      *
      * @param   string  $username   The name of the new user
