@@ -201,7 +201,7 @@ class Connection
     public function fetchDN(Query $query, $fields = array())
     {
         $rows = $this->fetchAll($query, $fields);
-        if (count($rows) !== 1) {
+        if (count($rows) > 1) {
             throw new LdapException(
                 'Cannot fetch single DN for %s',
                 $query->create()

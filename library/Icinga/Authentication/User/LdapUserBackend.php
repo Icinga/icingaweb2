@@ -186,25 +186,6 @@ class LdapUserBackend extends UserBackend
     }
 
     /**
-     * Return whether the given user exists
-     *
-     * @param   User    $user
-     *
-     * @return  bool
-     */
-    public function hasUser(User $user)
-    {
-        $username = $user->getUsername();
-        $entry = $this->selectUser($username)->fetchOne();
-
-        if (is_array($entry)) {
-            return in_array(strtolower($username), array_map('strtolower', $entry));
-        }
-
-        return strtolower($entry) === strtolower($username);
-    }
-
-    /**
      * Return whether the given user credentials are valid
      *
      * @param   User    $user
@@ -229,17 +210,16 @@ class LdapUserBackend extends UserBackend
             }
         }
 
-        if (! $this->hasUser($user)) {
-            return false;
-        }
-
         try {
             $userDn = $this->conn->fetchDN($this->selectUser($user->getUsername()));
+            if ($userDn === null) {
+                return false;
+            }
+
             $authenticated = $this->conn->testCredentials(
                 $userDn,
                 $password
             );
-
             if ($authenticated) {
                 $groups = $this->getGroups($userDn);
                 if ($groups !== null) {
