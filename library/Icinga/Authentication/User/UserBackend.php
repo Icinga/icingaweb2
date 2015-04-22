@@ -183,7 +183,7 @@ abstract class UserBackend implements Countable
                 $name
             );
         }
-        $resource = ResourceFactory::createResource(ResourceFactory::getResourceConfig($backendConfig->resource));
+        $resource = ResourceFactory::create($backendConfig->resource);
 
         switch ($backendType) {
             case 'db':
