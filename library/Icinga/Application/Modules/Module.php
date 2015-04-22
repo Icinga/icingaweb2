@@ -193,6 +193,13 @@ class Module
     protected $userBackends = array();
 
     /**
+     * This module's user group backends
+     *
+     * @var array
+     */
+    protected $userGroupBackends = array();
+
+    /**
      * Provide a search URL
      *
      * @param string    $title
@@ -728,6 +735,17 @@ class Module
     }
 
     /**
+     * Return this module's user group backends
+     *
+     * @return  array
+     */
+    public function getUserGroupBackends()
+    {
+        $this->launchConfigScript();
+        return $this->userGroupBackends;
+    }
+
+    /**
      * Provide a named permission
      *
      * @param string $name Unique permission name
@@ -813,6 +831,20 @@ class Module
     protected function provideUserBackend($identifier, $className)
     {
         $this->userBackends[strtolower($identifier)] = $className;
+        return $this;
+    }
+
+    /**
+     * Provide a user group backend
+     *
+     * @param   string  $identifier     The identifier of the new backend type
+     * @param   string  $className      The name of the class
+     *
+     * @return  $this
+     */
+    protected function provideUserGroupBackend($identifier, $className)
+    {
+        $this->userGroupBackends[strtolower($identifier)] = $className;
         return $this;
     }
 
