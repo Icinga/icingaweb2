@@ -4,6 +4,8 @@
 namespace Icinga\Authentication\User;
 
 use Countable;
+use Icinga\Application\Logger;
+use Icinga\Application\Icinga;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
@@ -14,6 +16,25 @@ use Icinga\User;
  */
 abstract class UserBackend implements Countable
 {
+    /**
+     * The default user backend types provided by Icinga Web 2
+     *
+     * @var array
+     */
+    private static $defaultBackends = array( // I would have liked it if I were able to declare this as constant :'(
+        'external',
+        'db',
+        'ldap',
+        'msldap'
+    );
+
+    /**
+     * The registered custom user backends with their identifier as key and class name as value
+     *
+     * @var array
+     */
+    protected static $customBackends;
+
     /**
      * The name of this backend
      *
@@ -45,6 +66,75 @@ abstract class UserBackend implements Countable
     }
 
     /**
+     * Fetch all custom user backends from all loaded modules
+     */
+    public static function loadCustomUserBackends()
+    {
+        if (static::$customBackends !== null) {
+            return;
+        }
+
+        static::$customBackends = array();
+        $providedBy = array();
+        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
+            foreach ($module->getUserBackends() as $identifier => $className) {
+                if (array_key_exists($identifier, $providedBy)) {
+                    Logger::warning(
+                        'Cannot register UserBackend of type "%s" provided by module "%s".'
+                        . ' The type is already provided by module "%s"',
+                        $identifier,
+                        $module->getName(),
+                        $providedBy[$identifier]
+                    );
+                } elseif (in_array($identifier, static::$defaultBackends)) {
+                    Logger::warning(
+                        'Cannot register UserBackend of type "%s" provided by module "%s".'
+                        . ' The type is a default type provided by Icinga Web 2',
+                        $identifier,
+                        $module->getName()
+                    );
+                } else {
+                    $providedBy[$identifier] = $module->getName();
+                    static::$customBackends[$identifier] = $className;
+                }
+            }
+        }
+    }
+
+    /**
+     * Validate and return the class for the given custom user backend
+     *
+     * @param   string  $identifier     The identifier of the custom user backend
+     *
+     * @return  string|null             The name of the class or null in case there was no
+     *                                   backend found with the given identifier
+     *
+     * @throws  ConfigurationError      In case the class could not be successfully validated
+     */
+    protected static function getCustomUserBackend($identifier)
+    {
+        static::loadCustomUserBackends();
+        if (array_key_exists($identifier, static::$customBackends)) {
+            $className = static::$customBackends[$identifier];
+            if (! class_exists($className)) {
+                throw new ConfigurationError(
+                    'Cannot utilize UserBackend of type "%s". Class "%s" does not exist',
+                    $identifier,
+                    $className
+                );
+            } elseif (! is_subclass_of($className, __CLASS__)) {
+                throw new ConfigurationError(
+                    'Cannot utilize UserBackend of type "%s". Class "%s" is not a sub-type of UserBackend',
+                    $identifier,
+                    $className
+                );
+            }
+
+            return $className;
+        }
+    }
+
+    /**
      * Create and return a UserBackend with the given name and given configuration applied to it
      *
      * @param   string          $name
@@ -70,6 +160,21 @@ abstract class UserBackend implements Countable
             $backend = new ExternalBackend($backendConfig);
             $backend->setName($name);
             return $backend;
+        }
+        if (in_array($backendType, static::$defaultBackends)) {
+            // The default backend check is the first one because of performance reasons:
+            // Do not attempt to load a custom user backend unless it's actually required
+        } elseif (($customClass = static::getCustomUserBackend($backendType)) !== null) {
+            $backend = new $customClass($backendConfig);
+            $backend->setName($name);
+            return $backend;
+        } else {
+            throw new ConfigurationError(
+                'Authentication configuration for backend "%s" defines an invalid backend type.'
+                . ' Backend type "%s" is not supported',
+                $name,
+                $backendType
+            );
         }
 
         if ($backendConfig->resource === null) {
@@ -128,13 +233,6 @@ abstract class UserBackend implements Countable
                     $groupOptions
                 );
                 break;
-            default:
-                throw new ConfigurationError(
-                    'Authentication configuration for backend "%s" defines an invalid backend type.'
-                    . ' Backend type "%s" is not supported',
-                    $name,
-                    $backendType
-                );
         }
 
         $backend->setName($name);

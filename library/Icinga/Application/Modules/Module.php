@@ -186,6 +186,13 @@ class Module
     protected $searchUrls = array();
 
     /**
+     * This module's user backends providing several authentication mechanisms
+     *
+     * @var array
+     */
+    protected $userBackends = array();
+
+    /**
      * Provide a search URL
      *
      * @param string    $title
@@ -710,6 +717,17 @@ class Module
     }
 
     /**
+     * Return this module's user backends
+     *
+     * @return  array
+     */
+    public function getUserBackends()
+    {
+        $this->launchConfigScript();
+        return $this->userBackends;
+    }
+
+    /**
      * Provide a named permission
      *
      * @param string $name Unique permission name
@@ -781,6 +799,20 @@ class Module
     protected function provideSetupWizard($className)
     {
         $this->setupWizard = $className;
+        return $this;
+    }
+
+    /**
+     * Provide a user backend capable of authenticating users
+     *
+     * @param   string  $identifier     The identifier of the new backend type
+     * @param   string  $className      The name of the class
+     *
+     * @return  $this
+     */
+    protected function provideUserBackend($identifier, $className)
+    {
+        $this->userBackends[strtolower($identifier)] = $className;
         return $this;
     }
 
