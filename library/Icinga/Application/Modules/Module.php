@@ -179,6 +179,8 @@ class Module
     protected $paneItems = array();
 
     /**
+     * A set of objects representing a searchUrl configuration
+     *
      * @var array
      */
     protected $searchUrls = array();
@@ -201,6 +203,11 @@ class Module
         $this->searchUrls[] = $searchUrl;
     }
 
+    /**
+     * Return this module's search urls
+     *
+     * @return  array
+     */
     public function getSearchUrls()
     {
         $this->launchConfigScript();
