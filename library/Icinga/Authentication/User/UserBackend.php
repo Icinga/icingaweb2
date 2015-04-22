@@ -152,7 +152,7 @@ abstract class UserBackend implements Countable
 
         if (! ($backendType = strtolower($backendConfig->backend))) {
             throw new ConfigurationError(
-                'Authentication configuration for backend "%s" is missing the backend directive',
+                'Authentication configuration for backend "%s" is missing the \'backend\' directive',
                 $name
             );
         }
@@ -179,7 +179,7 @@ abstract class UserBackend implements Countable
 
         if ($backendConfig->resource === null) {
             throw new ConfigurationError(
-                'Authentication configuration for backend "%s" is missing the resource directive',
+                'Authentication configuration for backend "%s" is missing the \'resource\' directive',
                 $name
             );
         }
@@ -208,13 +208,14 @@ abstract class UserBackend implements Countable
             case 'ldap':
                 if ($backendConfig->user_class === null) {
                     throw new ConfigurationError(
-                        'Authentication configuration for backend "%s" is missing the user_class directive',
+                        'Authentication configuration for backend "%s" is missing the \'user_class\' directive',
                         $name
                     );
                 }
                 if ($backendConfig->user_name_attribute === null) {
                     throw new ConfigurationError(
-                        'Authentication configuration for backend "%s" is missing the user_name_attribute directive',
+                        'Authentication configuration for backend "%s" is'
+                        . ' missing the \'user_name_attribute\' directive',
                         $name
                     );
                 }
