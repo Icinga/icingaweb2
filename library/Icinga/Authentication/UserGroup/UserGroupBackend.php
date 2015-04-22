@@ -6,7 +6,6 @@ namespace Icinga\Authentication\UserGroup;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\IcingaException;
 use Icinga\User;
 
 /**
@@ -15,16 +14,16 @@ use Icinga\User;
 abstract class UserGroupBackend
 {
     /**
-     * Name of the backend
+     * The name of this backend
      *
      * @var string
      */
     protected $name;
 
     /**
-     * Set the backend name
+     * Set this backend's name
      *
-     * @param   string $name
+     * @param   string  $name
      *
      * @return  $this
      */
@@ -35,9 +34,9 @@ abstract class UserGroupBackend
     }
 
     /**
-     * Get the backend name
+     * Return this backend's name
      *
-     * @return string
+     * @return  string
      */
     public function getName()
     {
@@ -45,42 +44,36 @@ abstract class UserGroupBackend
     }
 
     /**
-     * Create a user group backend
+     * Create and return a UserGroupBackend with the given name and given configuration applied to it
      *
      * @param   string          $name
      * @param   ConfigObject    $backendConfig
      *
-     * @return DbUserGroupBackend|IniUserGroupBackend
-     * @throws ConfigurationError If the backend configuration is invalid
+     * @return  UserGroupBackend
+     *
+     * @throws  ConfigurationError
      */
     public static function create($name, ConfigObject $backendConfig)
     {
         if ($backendConfig->name !== null) {
             $name = $backendConfig->name;
         }
-        if (($backendType = $backendConfig->backend) === null) {
+
+        if (! ($backendType = strtolower($backendConfig->backend))) {
             throw new ConfigurationError(
-                'Configuration for user group backend \'%s\' is missing the \'backend\' directive',
+                'Configuration for user group backend "%s" is missing the \'backend\' directive',
                 $name
             );
         }
-        $backendType = strtolower($backendType);
-        if (($resourceName = $backendConfig->resource) === null) {
+
+        if ($backendConfig->resource === null) {
             throw new ConfigurationError(
-                'Configuration for user group backend \'%s\' is missing the \'resource\' directive',
+                'Configuration for user group backend "%s" is missing the \'resource\' directive',
                 $name
             );
         }
-        $resourceName = strtolower($resourceName);
-        try {
-            $resource = ResourceFactory::create($resourceName);
-        } catch (IcingaException $e) {
-            throw new ConfigurationError(
-                'Can\'t create user group backend \'%s\'. An exception was thrown: %s',
-                $resourceName,
-                $e
-            );
-        }
+        $resource = ResourceFactory::create($backendConfig->resource);
+
         switch ($backendType) {
             case 'db':
                 $backend = new DbUserGroupBackend($resource);
@@ -90,11 +83,13 @@ abstract class UserGroupBackend
                 break;
             default:
                 throw new ConfigurationError(
-                    'Can\'t create user group backend \'%s\'. Invalid backend type \'%s\'.',
+                    'Configuration for user group backend "%s" defines an invalid backend type.'
+                    . ' Backend type "%s" is not supported',
                     $name,
                     $backendType
                 );
         }
+
         $backend->setName($name);
         return $backend;
     }
@@ -102,7 +97,7 @@ abstract class UserGroupBackend
     /**
      * Get the groups the given user is a member of
      *
-     * @param   User $user
+     * @param   User    $user
      *
      * @return  array
      */
