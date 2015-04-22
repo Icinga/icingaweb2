@@ -101,10 +101,10 @@ class Manager
      */
     private function detectEnabledModules()
     {
-        if (false === file_exists($parent = dirname($this->enableDir))) {
+        if (! file_exists($parent = dirname($this->enableDir))) {
             return;
         }
-        if (false === is_readable($parent)) {
+        if (! is_readable($parent)) {
             throw new NotReadableError(
                 'Cannot read enabled modules. Module directory\'s parent directory "%s" is not readable',
                 $parent
