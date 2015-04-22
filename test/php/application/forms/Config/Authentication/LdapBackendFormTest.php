@@ -28,7 +28,7 @@ class LdapBackendFormTest extends BaseTestCase
     public function testValidBackendIsValid()
     {
         $this->setUpResourceFactoryMock();
-        Mockery::mock('overload:Icinga\Authentication\Backend\LdapUserBackend')
+        Mockery::mock('overload:Icinga\Authentication\User\LdapUserBackend')
             ->shouldReceive('assertAuthenticationPossible')->andReturnNull();
 
         $form = Mockery::mock('Icinga\Forms\Config\Authentication\LdapBackendForm[getView]');
@@ -52,7 +52,7 @@ class LdapBackendFormTest extends BaseTestCase
     public function testInvalidBackendIsNotValid()
     {
         $this->setUpResourceFactoryMock();
-        Mockery::mock('overload:Icinga\Authentication\Backend\LdapUserBackend')
+        Mockery::mock('overload:Icinga\Authentication\User\LdapUserBackend')
             ->shouldReceive('assertAuthenticationPossible')->andThrow(new AuthenticationException);
 
         $form = Mockery::mock('Icinga\Forms\Config\Authentication\LdapBackendForm[getView]');

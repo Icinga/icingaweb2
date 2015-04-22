@@ -27,7 +27,7 @@ class DbBackendFormTest extends BaseTestCase
     public function testValidBackendIsValid()
     {
         $this->setUpResourceFactoryMock();
-        Mockery::mock('overload:Icinga\Authentication\Backend\DbUserBackend')
+        Mockery::mock('overload:Icinga\Authentication\User\DbUserBackend')
             ->shouldReceive('count')
             ->andReturn(2);
 
@@ -52,7 +52,7 @@ class DbBackendFormTest extends BaseTestCase
     public function testInvalidBackendIsNotValid()
     {
         $this->setUpResourceFactoryMock();
-        Mockery::mock('overload:Icinga\Authentication\Backend\DbUserBackend')
+        Mockery::mock('overload:Icinga\Authentication\User\DbUserBackend')
             ->shouldReceive('count')
             ->andReturn(0);
 
