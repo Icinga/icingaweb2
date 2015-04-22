@@ -442,4 +442,60 @@ class User
         }
         return false;
     }
+
+    /**
+     * @param   string          $username
+     * @param   array           $userGroups
+     * @param   ConfigObject    $section
+     *
+     * @return  bool
+     */
+    protected function match($username, $userGroups, ConfigObject $section)
+    {
+        $username = strtolower($username);
+        if (! empty($section->users)) {
+            $users = array_map('strtolower', String::trimSplit($section->users));
+            if (in_array($username, $users)) {
+                return true;
+            }
+        }
+        if (! empty($section->groups)) {
+            $groups = array_map('strtolower', String::trimSplit($section->groups));
+            foreach ($userGroups as $userGroup) {
+                if (in_array(strtolower($userGroup), $groups)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Retrieve the user roles
+     *
+     * @return  array
+     */
+    public function getRoles()
+    {
+        $userRoles = array();
+        $username = $this->getUsername();
+        $userGroups = $this->getGroups();
+        try {
+            $roles = Config::app('roles');
+        } catch (NotReadableError $e) {
+            Logger::error(
+            'Can\'t get permissions and restrictions for user \'%s\'. An exception was thrown:',
+            $username,
+            $e
+            );
+            return array();
+        }
+        foreach ($roles as $role) {
+            if ($this->match($username, $userGroups, $role)) {
+                array_push($userRoles, $role);
+            }
+        }
+        return $userRoles;
+    }
+
 }
