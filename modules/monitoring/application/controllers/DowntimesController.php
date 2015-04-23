@@ -23,8 +23,6 @@ class Monitoring_DowntimesController extends Controller
 {
     protected $downtimes;
     
-    protected $isService;
-    
     protected $filter;
     
     /**
@@ -72,6 +70,20 @@ class Monitoring_DowntimesController extends Controller
                     'url'   =>'monitoring/downtimes/show'
                 )
         )->activate('downtimes')->extend(new DashboardAction());
+        
+        foreach ($this->downtimes as $downtime) {
+            if (isset($downtime->service_description)) {
+                $downtime->isService = true;
+            } else {
+                $downtime->isService = false;
+            }
+            
+            if ($downtime->isService) {
+                $downtime->stateText = Service::getStateText($downtime->service_state);
+            } else {
+                $downtime->stateText = Host::getStateText($downtime->host_state);
+            }
+        }
     }
     
     public function showAction()
@@ -80,9 +92,6 @@ class Monitoring_DowntimesController extends Controller
             return;
         }
         $this->view->downtimes = $this->downtimes;
-        $this->view->isService = $this->isService;
-
-        // $this->view->delDowntimeForm = $this->createDelDowntimeForm();
         $this->view->listAllLink = Url::fromPath('monitoring/list/downtimes')
                 ->setQueryString($this->filter->toQueryString());
         $this->view->removeAllLink = Url::fromPath('monitoring/downtimes/removeAll')
@@ -90,11 +99,6 @@ class Monitoring_DowntimesController extends Controller
     }
     
     public function removeAllAction()
-    {
-        
-    }
-    
-    private function createDelDowntimeForm()
     {
         $delDowntimeForm = new DeleteDowntimeCommandForm();
         $delDowntimeForm->setObjects($this->downtimes);
