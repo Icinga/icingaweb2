@@ -199,7 +199,9 @@ class Logger
                 $this->writer->log(static::ERROR, $error_message);
             }
 
-            $this->writer->log($level, $message);
+            foreach (explode("\n", $message) as $msg) {
+                $this->writer->log($level, $msg);
+            }
         }
     }
 
