@@ -1,0 +1,41 @@
+<div class="controls">
+  <?php if (! isset($downtimes)): ?>
+    <?= $this->translate('No scheduled downtimes matching the filter.') ?>
+    </div>
+    <?php return; ?>
+  <?php endif; ?>
+   
+  <?php if (! $this->compact): ?>
+    <?= $this->tabs; ?>
+  <?php endif ?>
+    
+  <h1 data-base-target="_next"> 
+    <?= sprintf('%d Downtimes', count($downtimes)) ?>
+  </h1>
+</div>
+
+<div class="content">
+    <p>
+        <?= $this->translate('You have selected') ?>
+        <?= $this->qlink(
+            sprintf($this->translate('%d downtimes'), count($downtimes)),
+            $listAllLink,
+            null,
+            array('title' => $this->translate('List all selected downtimes.'))
+        ) ?>
+        <div>
+            <?= $this->qlink(
+                sprintf(
+                        $this->translate('Remove all %d downtimes.'),
+                        count($downtimes)
+                ),
+                $removeAllLink,
+                null,
+                array(
+                    'icon' => 'trash',
+                    'title' => $this->translate('Remove all selected downtimes.')
+                )
+            ) ?>
+        </div>
+    </p>
+</div>
