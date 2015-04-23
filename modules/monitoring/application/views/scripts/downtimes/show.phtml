@@ -8,14 +8,6 @@
   <?php if (! $this->compact): ?>
     <?= $this->tabs; ?>
   <?php endif ?>
-
-  <h1>
-    <?= sprintf($this->translate('%d Downtimes'), count($downtimes)) ?>
-    <?= count($downtimes) > 5 ? 
-            sprintf($this->translate('(%d not shown)'), count ($downtimes) - 5) 
-            : ''; 
-    ?>
-  </h1>
 <p>
   <table class="action">
     <tbody>
@@ -40,10 +32,10 @@
           </td>
           <td class="name oneline">
             <?php if ($downtime->isService): ?>
-                <?= $this->icon('service') ?>
+                <?= $this->icon('service', $this->translate('Service')) ?>
                 <b><?= $downtime->service ?> on <?= $downtime->host_name ?>.</b>
             <?php else: ?>
-                 <?= $this->icon('host') ?>
+                 <?= $this->icon('host', $this->translate('Host')) ?>
                 <b><?= $downtime->host_name ?>.</b>
             <?php endif; ?>
                 

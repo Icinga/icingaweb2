@@ -76,45 +76,44 @@
         </td>
       </tr>
     </table>
-    
-  <h1 data-base-target="_next">
-    <?php if ($this->isService): ?>
-       <?php 
-          $link = $this->link()->service(
-                $downtime->service_description, 
-                $downtime->service_display_name,
-                $downtime->host_name,
-                $downtime->host_display_name
-          );
-          $icon = $this->icon('service', $this->translate('Service')); 
-        ?>
-    <?php else: ?>
-      <?php 
-        $icon = $this->icon('host', $this->translate('Host'));
-        $link = $this->link()->host($downtime->host_name, $downtime->host_display_name)
-      ?>
-    <?php endif ?>
-    <?= sprintf(
-            $this->translate(
-                'Downtime on %s',
-                'Downtime for host or service.'
-            ),
-            $link
-        ); ?>
-    <?= $icon ?>
-  </h1>
 </div>
 
 <div class="content">
+    <h3><?= $this->translate('Downtime detail information') ?></h3>
 <table class="avp"> 
   <tbody>
+      <tr>
+          <th>
+              <?= $this->isService ? $this->translate('Service') : $this->translate('Host') ?>
+          </th>
+          <td data-base-target="_next">
+              <?php if ($this->isService): ?>
+              <?php 
+                  $link = $this->link()->service(
+                       $downtime->service_description, 
+                       $downtime->service_display_name,
+                       $downtime->host_name,
+                       $downtime->host_display_name
+                  );
+                  $icon = $this->icon('service', $this->translate('Service')); 
+               ?>
+              <?php else: ?>
+              <?php 
+                  $icon = $this->icon('host', $this->translate('Host'));
+                  $link = $this->link()->host($downtime->host_name, $downtime->host_display_name)
+              ?>
+              <?php endif ?>
+              <?= $icon ?>
+              <?= $link ?>
+          </td>
+      </tr>    
     <tr title="<?= $this->translate('The name of the person who scheduled this downtime'); ?>">
       <th><?= $this->translate('Author') ?></th>
-      <td><?= $this->icon('user') ?> <?= $this->escape($this->downtime->author_name) ?></td>
+      <td><?= $this->icon('user', $this->translate('User')) ?> <?= $this->escape($this->downtime->author_name) ?></td>
     </tr>
     <tr title="<?= $this->translate('A comment, as entered by the author, associated with the scheduled downtime'); ?>">
       <th><?= $this->translate('Comment') ?></th>
-      <td><?= $this->icon('comment') ?> <?= $this->escape($this->downtime->comment) ?></td>
+      <td><?= $this->icon('comment', $this->translate('Comment')) ?> <?= $this->escape($this->downtime->comment) ?></td>
     </tr>
      <tr title="<?= $this->translate('Date and time this downtime was entered'); ?>">
       <th><?= $this->translate('Entry Time') ?></th>
