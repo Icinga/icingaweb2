@@ -38,7 +38,7 @@ class Zend_View_Helper_Customvar extends Zend_View_Helper_Abstract
 
     protected function renderObject($object)
     {
-        if (empty($object)) {
+        if (0 === count((array) $object)) {
             return '{}';
         }
         $out = "{<ul>\n";
