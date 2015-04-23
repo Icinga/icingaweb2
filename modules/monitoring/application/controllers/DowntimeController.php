@@ -2,6 +2,8 @@
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 use Icinga\Module\Monitoring\Controller;
+use Icinga\Module\Monitoring\Object\Service;
+use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -76,6 +78,10 @@ class Monitoring_DowntimeController extends Controller
     {
         $this->view->downtime = $this->downtime;
         $this->view->isService = $this->isService;
+        $this->view->stateName = isset($this->downtime->service_description) ? 
+                Service::getStateText($this->downtime->service_state) :
+                Host::getStateText($this->downtime->host_state);
+        
         $this->view->delDowntimeForm = $this->createDelDowntimeForm();
         $this->view->listAllLink = Url::fromPath('monitoring/list/downtimes');
         $this->view->showHostLink = Url::fromPath('monitoring/host/show')
