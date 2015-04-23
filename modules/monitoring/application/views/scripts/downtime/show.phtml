@@ -1,4 +1,10 @@
 <div class="controls">
+  <?php if (! isset($downtime)): ?>
+    <?= $this->translate('No scheduled downtime matching the filter.') ?>
+    </div>
+    <?php return; ?>
+  <?php endif; ?>
+   
   <?php if (! $this->compact): ?>
     <?= $this->tabs; ?>
   <?php endif ?>

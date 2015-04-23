@@ -15,7 +15,8 @@ if (! $this->compact): ?>
 <?php
 
 if (count($downtimes) === 0) {
-    echo $this->translate('No downtimes found matching the filter') . '</div>';
+    echo $this->translate('No downtimes found matching the filter,'
+            . ' maybe the downtime already expired.') . '</div>';
     return;
 }
 ?>

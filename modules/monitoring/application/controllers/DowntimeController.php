@@ -76,12 +76,14 @@ class Monitoring_DowntimeController extends Controller
     
     public function showAction()
     {
+        if (false === $this->downtime) {
+            return;
+        }
         $this->view->downtime = $this->downtime;
         $this->view->isService = $this->isService;
         $this->view->stateName = isset($this->downtime->service_description) ? 
                 Service::getStateText($this->downtime->service_state) :
                 Host::getStateText($this->downtime->host_state);
-        
         $this->view->delDowntimeForm = $this->createDelDowntimeForm();
         $this->view->listAllLink = Url::fromPath('monitoring/list/downtimes');
         $this->view->showHostLink = Url::fromPath('monitoring/host/show')
