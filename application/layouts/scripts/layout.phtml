@@ -62,6 +62,20 @@ $iframeClass = $isIframe ? ' iframe' : '';
 var icinga = new Icinga({
   baseUrl: '<?= $this->href('/') ?>'
 });
+
+function notify(e) {
+    var data = JSON.parse(e.data);
+    alert("New Message: " + data.message);
+}
+
+var source = new EventSource("...");
+<?php
+foreach($this->auth->getUser()->getRoles() as $role)
+{
+    echo "source.addEventListener('".$role->key()."', notify, false);";
+}
+?>
+
 </script>
 </body>
 </html>
