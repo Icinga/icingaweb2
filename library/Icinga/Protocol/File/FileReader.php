@@ -58,7 +58,7 @@ class FileReader implements Selectable, Countable
      */
     public function iterate()
     {
-        return new FileIterator($this->filename, $this->fields);
+        return new LogFileIterator($this->filename, $this->fields);
     }
 
     /**

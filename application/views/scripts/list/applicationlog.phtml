@@ -19,7 +19,7 @@
                         <?= $this->escape($value->loglevel) ?>
                     </td>
                     <td>
-                        <?= $this->escape($value->message) ?>
+                        <?= nl2br($this->escape($value->message), false) ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

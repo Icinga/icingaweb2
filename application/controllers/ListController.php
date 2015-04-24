@@ -44,14 +44,12 @@ class ListController extends Controller
         }
 
         $this->addTitleTab('application log');
-        $pattern = '/^(?<datetime>[0-9]{4}(-[0-9]{2}){2}'                 // date
-                 . 'T[0-9]{2}(:[0-9]{2}){2}([\\+\\-][0-9]{2}:[0-9]{2})?)' // time
-                 . ' - (?<loglevel>[A-Za-z]+)'                            // loglevel
-                 . ' - (?<message>.*)$/';
 
         $resource = new FileReader(new ConfigObject(array(
             'filename'  => Config::app()->get('logging', 'file'),
-            'fields'    => $pattern
+            'fields'    => '/(?<!.)(?<datetime>[0-9]{4}(?:-[0-9]{2}){2}'    // date
+                . 'T[0-9]{2}(?::[0-9]{2}){2}(?:[\+\-][0-9]{2}:[0-9]{2})?)'  // time
+                . ' - (?<loglevel>[A-Za-z]+) - (?<message>.*)(?!.)/msS'     // loglevel, message
         )));
         $this->view->logData = $resource->select()->order('DESC')->paginate();
 
