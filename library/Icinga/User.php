@@ -6,6 +6,9 @@ namespace Icinga;
 use DateTimeZone;
 use InvalidArgumentException;
 use Icinga\User\Preferences;
+use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
+use Icinga\Util\String;
 
 /**
  *  This class represents an authorized user
