@@ -193,7 +193,7 @@ cp -pv etc/icinga2/scripts/icingaweb2-web-notification.sh %{buildroot}/%{_syscon
 cp -prv modules/{monitoring,setup,doc,translation} %{buildroot}/%{basedir}/modules
 cp -prv library/Icinga %{buildroot}/%{phpdir}
 cp -prv library/vendor %{buildroot}/%{basedir}/library
-cp -prv public/{css,img,js,error_norewrite.html} %{buildroot}/%{basedir}/public
+cp -prv public/{css,img,js,audio,error_norewrite.html} %{buildroot}/%{basedir}/public
 cp -pv packages/files/apache/icingaweb2.conf %{buildroot}/%{wwwconfigdir}/icingaweb2.conf
 cp -pv packages/files/bin/icingacli %{buildroot}/%{bindir}
 cp -pv packages/files/public/index.php %{buildroot}/%{basedir}/public
