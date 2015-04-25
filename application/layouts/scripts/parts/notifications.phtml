@@ -1,7 +1,10 @@
 <script type="text/javascript">
+    //var alertSound = document.getElementById("alertSound");
+    var Notification = window.Notification || window.mozNotification || window.webkitNotification;
+    Notification.requestPermission(function (permission) { });
 
 function notify(e) {
-    alert("New Message: " + e.data);
+    var instance = new Notification(e.data, { 'icon' : '<?= $this->baseUrl("img/icinga-icon.png") ?>' } );
 }
 
 var source = new EventSource("<?= $this->baseUrl("sse.php") ?>");
