@@ -186,9 +186,10 @@ Icinga Web 2 vendor library Zend
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/{%{basedir}/{modules,library,public},%{bindir},%{configdir}/modules/setup,%{logdir},%{phpdir},%{wwwconfigdir},%{_sysconfdir}/bash_completion.d,%{docsdir}}
+mkdir -p %{buildroot}/{%{basedir}/{modules,library,public},%{bindir},%{configdir}/modules/setup,%{logdir},%{phpdir},%{wwwconfigdir},%{_sysconfdir}/bash_completion.d,%{docsdir},%{_sysconfdir}/icinga2/scripts/}
 cp -prv application doc %{buildroot}/%{basedir}
 cp -pv etc/bash_completion.d/icingacli %{buildroot}/%{_sysconfdir}/bash_completion.d/icingacli
+cp -pv etc/icinga2/scripts/icingaweb2-web-notification.sh %{buildroot}/%{_sysconfdir}/icinga2/scripts/icingaweb2-web-notification.sh
 cp -prv modules/{monitoring,setup,doc,translation} %{buildroot}/%{basedir}/modules
 cp -prv library/Icinga %{buildroot}/%{phpdir}
 cp -prv library/vendor %{buildroot}/%{basedir}/library
