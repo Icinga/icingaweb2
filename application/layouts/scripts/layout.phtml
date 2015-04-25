@@ -64,18 +64,17 @@ var icinga = new Icinga({
 });
 
 function notify(e) {
-    var data = JSON.parse(e.data);
-    alert("New Message: " + data.message);
+    alert("New Message: " + e.data);
 }
 
-var source = new EventSource("...");
+var source = new EventSource("<?= $this->baseUrl("sse.php") ?>");
+
 <?php
 foreach($this->auth->getUser()->getRoles() as $role)
 {
     echo "source.addEventListener('".$role->key()."', notify, false);";
 }
 ?>
-
 </script>
 </body>
 </html>

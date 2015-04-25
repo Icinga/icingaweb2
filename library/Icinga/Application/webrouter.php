@@ -104,6 +104,9 @@ if (in_array($path, $special)) {
     $pie->initFromRequest();
     $pie->toPng();
 
+} elseif ($path === 'sse.php') {
+    include __DIR__ . '/Sse.php';
+
 } elseif (file_exists($baseDir . '/' . $path) && is_file($baseDir . '/' . $path)) {
     return false;
 } else {
