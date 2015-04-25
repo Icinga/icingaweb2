@@ -1,0 +1,23 @@
+<audio id="notification-sound">
+  <source src="<?= $this->baseUrl("audio/notification.wav") ?>" type="audio/wav">
+</audio>
+
+<script type="text/javascript">
+    //var alertSound = document.getElementById("alertSound");
+    var Notification = window.Notification || window.mozNotification || window.webkitNotification;
+    Notification.requestPermission(function (permission) { });
+
+function notify(e) {
+    var instance = new Notification(e.data, { 'icon' : '<?= $this->baseUrl("img/icinga-icon.png") ?>' } );
+    document.getElementById("notification-sound").play();
+}
+
+var source = new EventSource("<?= $this->baseUrl("sse.php") ?>");
+
+<?php
+foreach($this->auth->getUser()->getRoles() as $role)
+{
+    echo "source.addEventListener('".$role->key()."', notify, false);";
+}
+?>
+</script>

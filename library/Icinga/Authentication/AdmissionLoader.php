@@ -15,32 +15,6 @@ use Icinga\Util\String;
  */
 class AdmissionLoader
 {
-    /**
-     * @param   string          $username
-     * @param   array           $userGroups
-     * @param   ConfigObject    $section
-     *
-     * @return  bool
-     */
-    protected function match($username, $userGroups, ConfigObject $section)
-    {
-        $username = strtolower($username);
-        if (! empty($section->users)) {
-            $users = array_map('strtolower', String::trimSplit($section->users));
-            if (in_array($username, $users)) {
-                return true;
-            }
-        }
-        if (! empty($section->groups)) {
-            $groups = array_map('strtolower', String::trimSplit($section->groups));
-            foreach ($userGroups as $userGroup) {
-                if (in_array(strtolower($userGroup), $groups)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     /**
      * Get user permissions and restrictions
@@ -53,34 +27,20 @@ class AdmissionLoader
     {
         $permissions = array();
         $restrictions = array();
-        $username = $user->getUsername();
-        try {
-            $roles = Config::app('roles');
-        } catch (NotReadableError $e) {
-            Logger::error(
-                'Can\'t get permissions and restrictions for user \'%s\'. An exception was thrown:',
-                $username,
-                $e
+        foreach ($user->getRoles() as $role) {
+            $permissions = array_merge(
+                $permissions,
+                array_diff(String::trimSplit($role->permissions), $permissions)
             );
-            return array($permissions, $restrictions);
-        }
-        $userGroups = $user->getGroups();
-        foreach ($roles as $role) {
-            if ($this->match($username, $userGroups, $role)) {
-                $permissions = array_merge(
-                    $permissions,
-                    array_diff(String::trimSplit($role->permissions), $permissions)
-                );
-                $restrictionsFromRole = $role->toArray();
-                unset($restrictionsFromRole['users']);
-                unset($restrictionsFromRole['groups']);
-                unset($restrictionsFromRole['permissions']);
-                foreach ($restrictionsFromRole as $name => $restriction) {
-                    if (! isset($restrictions[$name])) {
-                        $restrictions[$name] = array();
-                    }
-                    $restrictions[$name][] = $restriction;
+            $restrictionsFromRole = $role->toArray();
+            unset($restrictionsFromRole['users']);
+            unset($restrictionsFromRole['groups']);
+            unset($restrictionsFromRole['permissions']);
+            foreach ($restrictionsFromRole as $name => $restriction) {
+                if (! isset($restrictions[$name])) {
+                    $restrictions[$name] = array();
                 }
+                $restrictions[$name][] = $restriction;
             }
         }
         return array($permissions, $restrictions);
