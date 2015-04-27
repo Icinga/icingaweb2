@@ -58,6 +58,12 @@ class Monitoring_DowntimesController extends Controller
             'host_display_name',
             'service_display_name'
         ))->addFilter($this->filter)->getQuery()->fetchAll();
+        if (false === $this->downtimes) {
+            throw new Zend_Controller_Action_Exception(
+                    $this->translate('Downtime not found')
+            );
+        }
+        
         $this->getTabs()
             ->add(
                 'downtimes',

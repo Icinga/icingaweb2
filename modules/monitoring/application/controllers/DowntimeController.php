@@ -54,6 +54,10 @@ class Monitoring_DowntimeController extends Controller
             'service_display_name'
         ))->where('downtime_internal_id', $downtimeId)->getQuery()->fetchRow();
         
+        if (false === $this->downtime) {
+            throw new Zend_Controller_Action_Exception($this->translate('Downtime not found'));
+        }
+        
         if (isset($this->downtime->service_description)) {
             $this->isService = true;
         } else {
@@ -76,9 +80,6 @@ class Monitoring_DowntimeController extends Controller
     
     public function showAction()
     {
-        if (false === $this->downtime) {
-            return;
-        }
         $this->view->downtime = $this->downtime;
         $this->view->isService = $this->isService;
         $this->view->stateName = isset($this->downtime->service_description) ? 
