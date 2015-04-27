@@ -274,7 +274,6 @@ class Monitoring_AlertsummaryController extends Controller
         );
 
         $defects = array();
-        $records = $query->getQuery()->fetchAll();
         $period     = $this->createPeriod($interval);
 
         foreach ($period as $entry) {
@@ -282,7 +281,7 @@ class Monitoring_AlertsummaryController extends Controller
             $defects[$id] = array($id, 0);
         }
 
-        foreach ($records as $item) {
+        foreach ($query as $item) {
             $id = $this->getPeriodFormat($interval, $item->timestamp);
             if (empty($defects[$id])) {
                 $defects[$id] = array($id, 0);
