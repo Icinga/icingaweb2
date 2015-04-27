@@ -4,7 +4,7 @@
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeQuickCommandForm;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
@@ -294,7 +294,7 @@ class Monitoring_ListController extends Controller
         ));
 
         if ($this->Auth()->hasPermission('monitoring/command/downtime/delete')) {
-            $this->view->delDowntimeForm = new DeleteDowntimeCommandForm();
+            $this->view->delDowntimeForm = new DeleteDowntimeQuickCommandForm();
         }
     }
 

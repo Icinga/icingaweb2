@@ -4,7 +4,7 @@
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\Host;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeQuickCommandForm;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 
@@ -85,38 +85,27 @@ class Monitoring_DowntimeController extends Controller
         $this->view->stateName = isset($this->downtime->service_description) ? 
                 Service::getStateText($this->downtime->service_state) :
                 Host::getStateText($this->downtime->host_state);
-        $this->view->delDowntimeForm = $this->createDelDowntimeForm();
         $this->view->listAllLink = Url::fromPath('monitoring/list/downtimes');
         $this->view->showHostLink = Url::fromPath('monitoring/host/show')
                 ->setParam('host', $this->downtime->host);
         $this->view->showServiceLink = Url::fromPath('monitoring/service/show')
                 ->setParam('host', $this->downtime->host)
                 ->setParam('service', $this->downtime->service_description);
+        if ($this->hasPermission('monitoring/command/downtime/delete')) {
+            $this->view->delDowntimeForm = $this->createDelDowntimeForm();
+        }
     }
     
     private function createDelDowntimeForm()
     {
-        $delDowntimeForm = new DeleteDowntimeCommandForm();
-        $delDowntimeForm->setObjects($this->downtime);
-        $delDowntimeForm->populate(
-            array(
-                'downtime_id' => $this->downtime->id, 
-                'redirect' => Url::fromPath('monitoring/list/downtimes')
-            )
-        );
-        if (! $this->isService) {
-            $delDowntimeForm->setAction(
-                $this->view->url('monitoring/host/delete-downtime',
-                array('host' => $this->downtime->host_name))
+        $this->assertPermission('monitoring/command/downtime/delete');
+        
+        $delDowntimeForm = new DeleteDowntimeQuickCommandForm();
+        $delDowntimeForm->setDowntimes(array($this->downtime))
+            ->populate(
+                array('redirect' => Url::fromPath('monitoring/list/downtimes'))
             );
-        } else {
-            $delDowntimeForm->setAction(
-                $this->view->url('monitoring/service/delete-downtime', array(
-                    'host'      => $this->downtime->host_name,
-                    'service'   => $this->downtime->service_description
-                ))
-            );
-        }
+        $delDowntimeForm->handleRequest();
         return $delDowntimeForm;
     }
 }

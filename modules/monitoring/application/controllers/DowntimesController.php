@@ -94,39 +94,28 @@ class Monitoring_DowntimesController extends Controller
     
     public function showAction()
     {
-        if (false === $this->downtimes) {
-            return;
-        }
         $this->view->downtimes = $this->downtimes;
         $this->view->listAllLink = Url::fromPath('monitoring/list/downtimes')
                 ->setQueryString($this->filter->toQueryString());
-        $this->view->removeAllLink = Url::fromPath('monitoring/downtimes/removeAll')
+        $this->view->removeAllLink = Url::fromPath('monitoring/downtimes/remove-all')
                 ->setParams($this->params);
     }
     
     public function removeAllAction()
     {
+        $this->assertPermission('monitoring/command/downtime/delete');
+        $this->view->downtimes = $this->downtimes;
+        $this->view->listAllLink = Url::fromPath('monitoring/list/downtimes')
+                ->setQueryString($this->filter->toQueryString());
         $delDowntimeForm = new DeleteDowntimeCommandForm();
-        $delDowntimeForm->setObjects($this->downtimes);
-        $delDowntimeForm->populate(
-            array(
-                'downtime_id' => $this->downtime->id, 
-                'redirect' => Url::fromPath('monitoring/list/downtimes')
-            )
-        );
-        if (! $this->isService) {
-            $delDowntimeForm->setAction(
-                $this->view->url('monitoring/host/delete-downtime',
-                array('host' => $this->downtime->host_name))
-            );
-        } else {
-            $delDowntimeForm->setAction(
-                $this->view->url('monitoring/service/delete-downtime', array(
-                    'host'      => $this->downtime->host_name,
-                    'service'   => $this->downtime->service_description
-                ))
-            );
-        }
-        return $delDowntimeForm;
+        $delDowntimeForm->setTitle($this->view->translate('Remove all Downtimes'));
+        $delDowntimeForm->addDescription(sprintf(
+            $this->translate('Confirm removal of %d downtimes.'),
+            count($this->downtimes)
+        ));
+        $delDowntimeForm->setDowntimes($this->downtimes)
+                ->setRedirectUrl(Url::fromPath('monitoring/list/downtimes'))
+                ->handleRequest();
+        $this->view->delDowntimeForm = $delDowntimeForm;
     }
 }
