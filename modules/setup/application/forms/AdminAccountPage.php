@@ -285,9 +285,7 @@ class AdminAccountPage extends Form
         }
 
         try {
-            $users = $backend->listUsers();
-            natsort ($users);
-            return $users;
+            return $backend->listUsers();
         } catch (Exception $e) {
             // No need to handle anything special here. Error means no users found.
             return array();
