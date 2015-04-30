@@ -12,8 +12,6 @@ use Icinga\Web\Notification;
  */
 class DeleteDowntimeCommandForm extends CommandForm
 {
-    protected $downtimes;
-    
     /**
      * (non-PHPDoc)
      * @see \Zend_Form::init() For the method documentation.
@@ -22,68 +20,81 @@ class DeleteDowntimeCommandForm extends CommandForm
     {
         $this->setAttrib('class', 'inline');
     }
-
-    /**
+    
+        /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::createElements() For the method documentation.
      */
     public function createElements(array $formData = array())
     {
-        $this->addElements(array(
+        $this->addElements(
             array(
-                'hidden',
-                'redirect',
                 array(
-                    'decorators' => array('ViewHelper')
+                    'hidden',
+                    'downtime_id',
+                    array(
+                        'decorators' => array('ViewHelper')
+                    )
+                ),
+                array(
+                    'hidden',
+                    'redirect',
+                    array(
+                        'decorators' => array('ViewHelper')
+                    )
                 )
             )
-        ));
+        );
         return $this;
-    }
- 
-    /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
-     */
-    public function getSubmitLabel()
-    {
-        return $this->translatePlural('Remove', 'Remove All', count($this->downtimes));
     }
     
     /**
      * (non-PHPDoc)
-     * @see \Icinga\Web\Form::onSuccess() For the method documentation.
+     * @see \Icinga\Web\Form::addSubmitButton() For the method documentation.
+     */
+    public function addSubmitButton()
+    {
+        $this->addElement(
+            'button',
+            'btn_submit',
+            array(
+                'ignore'        => true,
+                'escape'        => false,
+                'type'          => 'submit',
+                'class'         => 'link-like',
+                'label'         => $this->getView()->icon('trash'),
+                'title'         => $this->translate('Delete this downtime'),
+                'decorators'    => array('ViewHelper')
+            )
+        );
+        return $this;
+    }
+   
+    /**
+     * (non-PHPDoc)
+     * @see \Icinga\Web\Form::onSuccess() For  the method documentation.
      */
     public function onSuccess()
     {
-        foreach ($this->downtimes as $downtime) {
-            $delDowntime = new DeleteDowntimeCommand();
-            $delDowntime->setDowntimeId($downtime->id);
-            $delDowntime->setDowntimeType(
-                    isset($downtime->service_description) ? 
-                    DeleteDowntimeCommand::DOWNTIME_TYPE_SERVICE :
-                    DeleteDowntimeCommand::DOWNTIME_TYPE_HOST
-            );
-            $this->getTransport($this->request)->send($delDowntime);
-        }
+        $id = $this->getElement('downtime_id')->getValue();
+        
+        // Presence of downtime id, only delete this specific downtime
+        $firstDowntime = $this->downtimes[0];
+        
+        $delDowntime = new DeleteDowntimeCommand();
+        $delDowntime->setDowntimeId($id);
+        $delDowntime->setDowntimeType(
+            isset($firstDowntime->service_description) ? 
+            DeleteDowntimeCommand::DOWNTIME_TYPE_SERVICE :
+            DeleteDowntimeCommand::DOWNTIME_TYPE_HOST
+        );
+        $this->getTransport($this->request)->send($delDowntime);
+        
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);
         }
         Notification::success($this->translate('Deleting downtime.'));
         return true;
-    }
-    
-    /**
-     * Set the downtimes to be deleted upon success
-     * 
-     * @param type $downtimes
-     * 
-     * @return $this
-     */
-    public function setDowntimes($downtimes)
-    {
-        $this->downtimes = $downtimes;
-        return $this;
     }
 }

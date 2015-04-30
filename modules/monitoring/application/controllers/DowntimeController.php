@@ -4,7 +4,7 @@
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\Host;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeQuickCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 
@@ -100,11 +100,17 @@ class Monitoring_DowntimeController extends Controller
     {
         $this->assertPermission('monitoring/command/downtime/delete');
         
-        $delDowntimeForm = new DeleteDowntimeQuickCommandForm();
-        $delDowntimeForm->setDowntimes(array($this->downtime))
-            ->populate(
-                array('redirect' => Url::fromPath('monitoring/list/downtimes'))
-            );
+        $delDowntimeForm = new DeleteDowntimeCommandForm();
+        $delDowntimeForm->setAction(
+            Url::fromPath('monitoring/downtime/show')
+                ->setParam('downtime_id', $this->downtime->id)
+        );
+        $delDowntimeForm->populate(
+            array(
+                'redirect' => Url::fromPath('monitoring/list/downtimes'),
+                'downtime_id' => $this->downtime->id
+            )
+        );
         $delDowntimeForm->handleRequest();
         return $delDowntimeForm;
     }

@@ -5,7 +5,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\Host;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 
@@ -107,7 +107,7 @@ class Monitoring_DowntimesController extends Controller
         $this->view->downtimes = $this->downtimes;
         $this->view->listAllLink = Url::fromPath('monitoring/list/downtimes')
                 ->setQueryString($this->filter->toQueryString());
-        $delDowntimeForm = new DeleteDowntimeCommandForm();
+        $delDowntimeForm = new DeleteDowntimesCommandForm();
         $delDowntimeForm->setTitle($this->view->translate('Remove all Downtimes'));
         $delDowntimeForm->addDescription(sprintf(
             $this->translate('Confirm removal of %d downtimes.'),
