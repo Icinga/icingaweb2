@@ -32,7 +32,6 @@ p.pluginoutput {
 }
 
 div.pluginoutput {
-  border-right: solid 5px @colorPetrol;
   overflow: auto;
   color: black;
   margin-bottom: 1em;
@@ -173,15 +172,19 @@ form.instance-features span.description, form.object-features span.description {
   }
 }
 
-table.avp form.object-features div.header h4 {
+table.avp form.object-features div.header h4,
+table.avp h4.customvar {
   margin: 0;
 }
 
-table.avp .customvar ul {
+table.avp .customvar ul,
+table.avp .customvar ul li {
     list-style-type: none;
     margin: 0;
+    margin-top: -0.5em;
+    margin-bottom: -0.5em;
     padding: 0;
-    padding-left: 1.5em;
+    padding-left: 0.5em;
 }
 
 div.selection-info {
