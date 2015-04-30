@@ -29,7 +29,8 @@ class LdapResourceFormTest extends BaseTestCase
             Mockery::mock()->shouldReceive('testCredentials')->once()->andReturn(true)->getMock()
         );
 
-        $form = Mockery::mock('Icinga\Forms\Config\Resource\LdapResourceForm[getView]');
+        // Passing array(null) is required to make Mockery call the constructor...
+        $form = Mockery::mock('Icinga\Forms\Config\Resource\LdapResourceForm[getView]', array(null));
         $form->shouldReceive('getView->escape')
             ->with(Mockery::type('string'))
             ->andReturnUsing(function ($s) { return $s; });
@@ -51,7 +52,8 @@ class LdapResourceFormTest extends BaseTestCase
             Mockery::mock()->shouldReceive('testCredentials')->once()->andThrow('\Exception')->getMock()
         );
 
-        $form = Mockery::mock('Icinga\Forms\Config\Resource\LdapResourceForm[getView]');
+        // Passing array(null) is required to make Mockery call the constructor...
+        $form = Mockery::mock('Icinga\Forms\Config\Resource\LdapResourceForm[getView]', array(null));
         $form->shouldReceive('getView->escape')
             ->with(Mockery::type('string'))
             ->andReturnUsing(function ($s) { return $s; });
