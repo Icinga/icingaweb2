@@ -234,7 +234,8 @@ class Menu implements RecursiveIterator
 
             $section = $this->add(t('System'), array(
                 'icon'     => 'wrench',
-                'priority' => 200
+                'priority' => 200,
+                'renderer' => 'ProblemMenuItemRenderer'
             ));
             $section->add(t('Configuration'), array(
                 'url'           => 'config',
@@ -467,6 +468,26 @@ class Menu implements RecursiveIterator
     public function getPermission()
     {
         return $this->permission;
+    }
+
+    /**
+     * Get parent menu
+     *
+     * @return \Icinga\Web\Menu
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Get submenus
+     *
+     * @return array
+     */
+    public function getSubMenus()
+    {
+        return $this->subMenus;
     }
 
     /**

@@ -173,19 +173,15 @@ form.instance-features span.description, form.object-features span.description {
   }
 }
 
-table.avp form.object-features div.header h4,
-table.avp h4.customvar {
+table.avp form.object-features div.header h4 {
   margin: 0;
 }
 
-table.avp .customvar ul,
-table.avp .customvar ul li {
+table.avp .customvar ul {
     list-style-type: none;
     margin: 0;
-    margin-top: -0.5em;
-    margin-bottom: -0.5em;
     padding: 0;
-    padding-left: 0.5em;
+    padding-left: 1.5em;
 }
 
 div.selection-info {
@@ -218,4 +214,11 @@ div.selection-info {
 hr.command-separator {
   border: none;
   border-bottom: 2px solid @colorPetrol;
+}
+
+div.backend-not-running {
+  background: @colorCritical;
+  color: white;
+  text-align: center;
+  padding: 0.1em;
 }
