@@ -199,8 +199,8 @@ msgid "Authentication backend name missing"
 msgstr "Nome del Backend di autenticazione non specificato"
 
 #: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendReorderForm.php:54
-msgid "Authentication order updated!"
-msgstr "Ordine di autenticazione aggiornato!"
+msgid "Authentication order updated"
+msgstr "Ordine di autenticazione aggiornato"
 
 #: /usr/share/icingaweb2/application/forms/AutoRefreshForm.php:44
 msgid "Auto refresh successfully disabled"
