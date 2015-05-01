@@ -143,7 +143,9 @@ abstract class MonitoredObject implements Filterable
 
     public function applyFilter(Filter $filter)
     {
-        $this->getFilter()->addFilter($filter);
+		if (strlen($filter->toQueryString()) > 0){
+			$this->getFilter()->addFilter($filter);
+		}
         return $this;
     }
 
