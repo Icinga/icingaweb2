@@ -204,7 +204,7 @@ class Connection implements Selectable
      * @return string        Returns the distinguished name, or false when the given query yields no results
      * @throws LdapException When the query result is empty and contains no DN to fetch
      */
-    public function fetchDN(Query $query, $fields = array())
+    public function fetchDn(Query $query, $fields = array())
     {
         $rows = $this->fetchAll($query, $fields);
         if (count($rows) > 1) {
