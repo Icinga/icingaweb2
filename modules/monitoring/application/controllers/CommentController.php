@@ -11,17 +11,27 @@ use Icinga\Web\Widget\Tabextension\DashboardAction;
  */
 class Monitoring_CommentController extends Controller
 {
+    /**
+     * The fetched comment
+     *
+     * @var stdClass
+     */
     protected $comment;
 
+    /**
+     * Fetch the first comment with the given id and add tabs
+     *
+     * @throws Zend_Controller_Action_Exception
+     */
     public function init()
     {
         $commentId = $this->params->get('comment_id');
          
         $this->comment = $this->backend->select()->from('comment', array(
-            'id'         => 'comment_internal_id',      
+            'id'         => 'comment_internal_id',
             'objecttype' => 'comment_objecttype',
             'comment'    => 'comment_data',
-            'author'     => 'comment_author_name',    
+            'author'     => 'comment_author_name',
             'timestamp'  => 'comment_timestamp',
             'type'       => 'comment_type',
             'persistent' => 'comment_is_persistent',
@@ -35,21 +45,23 @@ class Monitoring_CommentController extends Controller
         if (false === $this->comment) {
             throw new Zend_Controller_Action_Exception($this->translate('Comment not found'));
         }
-         
-        $this->getTabs()
-            ->add(
-                'comment',
-                array(
-                    'title' => $this->translate(
-                        'Display detailed information about a comment.'
-                    ),
-                    'icon' => 'comment',
-                    'label' => $this->translate('Comment'),
-                    'url'   =>'monitoring/comments/show'
-                )
+
+        $this->getTabs()->add(
+            'comment',
+            array(
+                'title' => $this->translate(
+                    'Display detailed information about a comment.'
+                ),
+                'icon' => 'comment',
+                'label' => $this->translate('Comment'),
+                'url'   =>'monitoring/comments/show'
+            )
         )->activate('comment')->extend(new DashboardAction());
     }
-    
+
+    /**
+     * Display comment detail view
+     */
     public function showAction()
     {
         $this->view->comment = $this->comment;
@@ -57,7 +69,12 @@ class Monitoring_CommentController extends Controller
             $this->view->delCommentForm = $this->createDelCommentForm();
         }
     }
-    
+
+    /**
+     * Create a command form to delete a single comment
+     *
+     * @return DeleteCommentCommandForm
+     */
     private function createDelCommentForm()
     {
         $this->assertPermission('monitoring/command/comment/delete');

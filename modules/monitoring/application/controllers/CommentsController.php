@@ -12,14 +12,24 @@ use Icinga\Data\Filter\Filter;
  */
 class Monitoring_CommentsController extends Controller
 {
+    /**
+     * The fetched comments
+     *
+     * @var array
+     */
     protected $comments;
 
+    /**
+     * Fetch all comments matching the current filter and add tabs
+     *
+     * @throws Zend_Controller_Action_Exception
+     */
     public function init()
     {
         $this->filter = Filter::fromQueryString(str_replace(
-                'comment_id',
-                'comment_internal_id',
-                (string)$this->params
+            'comment_id',
+            'comment_internal_id',
+            (string)$this->params
         ));
         $this->comments = $this->backend->select()->from('comment', array(
             'id'         => 'comment_internal_id',
@@ -40,20 +50,22 @@ class Monitoring_CommentsController extends Controller
             throw new Zend_Controller_Action_Exception($this->translate('Comment not found'));
         }
          
-        $this->getTabs()
-            ->add(
-                'comments',
-                array(
-                    'title' => $this->translate(
-                        'Display detailed information about multiple comments.'
-                    ),
-                    'icon' => 'comment',
-                    'label' => $this->translate('Comments'),
-                    'url'   =>'monitoring/comments/show'
-                )
+        $this->getTabs()->add(
+            'comments',
+            array(
+                'title' => $this->translate(
+                    'Display detailed information about multiple comments.'
+                ),
+                'icon' => 'comment',
+                'label' => $this->translate('Comments'),
+                'url'   =>'monitoring/comments/show'
+            )
         )->activate('comments')->extend(new DashboardAction());
     }
-    
+
+    /**
+     * Display the detail view for a comment list
+     */
     public function showAction()
     {
         $this->view->comments = $this->comments;
@@ -63,6 +75,9 @@ class Monitoring_CommentsController extends Controller
                 ->setParams($this->params);
     }
 
+    /**
+     * Display the form for removing a comment list
+     */
     public function removeAllAction()
     {
         $this->assertPermission('monitoring/command/comment/delete');
