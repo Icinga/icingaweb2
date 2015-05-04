@@ -126,12 +126,11 @@ class ConnectionTest extends BaseTestCase
         return Mockery::mock('overload:Icinga\Protocol\Ldap\Query')
                 ->shouldReceive(array(
                     'from' => Mockery::self(),
-                    'create' => array('count' => 1),
-                    'listFields' => array('count' => 1),
+                    'getColumns' => array('count' => 1),
                     'getLimit' => 1,
                     'hasOffset' => false,
-                    'hasBase' => false,
-                    'getSortColumns' => array(),
+                    'getBase' => null,
+                    'hasOrder' => false,
                     'getUsePagedResults' => true
                 ));
     }
