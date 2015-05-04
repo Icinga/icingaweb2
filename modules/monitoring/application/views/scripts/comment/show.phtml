@@ -2,15 +2,17 @@
     <?php if (! $this->compact): ?>
         <?= $this->tabs; ?>
     <?php endif ?>
-    
-    <?= $this->render('partials/comment/comment-header.phtml'); ?>
+
+    <div data-base-target='_next'>
+        <?= $this->render('partials/comment/comment-header.phtml'); ?>
+    </div>
 </div>
 <div class="content">
     
 <h3><?= $this->translate('Comment detail information') ?></h3>
 <table class="avp"> 
   <tbody>
-    <tr>
+    <tr data-base-target='_next'>
       <?php if ($this->comment->objecttype === 'service'): ?>
         <th> <?= $this->translate('Service') ?> </th> 
         <td>
