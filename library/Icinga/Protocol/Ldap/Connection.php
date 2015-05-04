@@ -304,10 +304,6 @@ class Connection implements Selectable
             return array();
         }
 
-        foreach ($query->getSortColumns() as $col) {
-            ldap_sort($this->ds, $results, $col[0]);
-        }
-
         $count = 0;
         $entries = array();
         $entry = ldap_first_entry($this->ds, $results);
@@ -319,6 +315,10 @@ class Connection implements Selectable
                 );
             }
         } while (($limit === 0 || $limit !== count($entries)) && ($entry = ldap_next_entry($this->ds, $entry)));
+
+        if ($query->hasOrder()) {
+            uasort($entries, array($query, 'compare'));
+        }
 
         ldap_free_result($results);
         return $entries;
@@ -444,7 +444,11 @@ class Connection implements Selectable
             ldap_control_paged_result($this->ds, 0);
         }
 
-        return $entries; // TODO(7693): Sort entries post-processed
+        if ($query->hasOrder()) {
+            uasort($entries, array($query, 'compare'));
+        }
+
+        return $entries;
     }
 
     protected function cleanupAttributes($attributes, array $requestedFields)
