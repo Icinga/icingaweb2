@@ -315,7 +315,7 @@ class Connection implements Selectable
             $count += 1;
             if ($offset === 0 || $offset < $count) {
                 $entries[ldap_get_dn($this->ds, $entry)] = $this->cleanupAttributes(
-                    ldap_get_attributes($this->ds, $entry)
+                    ldap_get_attributes($this->ds, $entry), array_flip($fields)
                 );
             }
         } while (($limit === 0 || $limit !== count($entries)) && ($entry = ldap_next_entry($this->ds, $entry)));
@@ -412,7 +412,7 @@ class Connection implements Selectable
                 $count += 1;
                 if ($offset === 0 || $offset < $count) {
                     $entries[ldap_get_dn($this->ds, $entry)] = $this->cleanupAttributes(
-                        ldap_get_attributes($this->ds, $entry)
+                        ldap_get_attributes($this->ds, $entry), array_flip($fields)
                     );
                 }
             } while (($limit === 0 || $limit !== count($entries)) && ($entry = ldap_next_entry($this->ds, $entry)));
@@ -447,20 +447,48 @@ class Connection implements Selectable
         return $entries; // TODO(7693): Sort entries post-processed
     }
 
-    protected function cleanupAttributes($attrs)
+    protected function cleanupAttributes($attributes, array $requestedFields)
     {
-        $clean = (object) array();
-        for ($i = 0; $i < $attrs['count']; $i++) {
-            $attr_name = $attrs[$i];
-            if ($attrs[$attr_name]['count'] === 1) {
-                $clean->$attr_name = $attrs[$attr_name][0];
+        // In case the result contains attributes with a differing case than the requested fields, it is
+        // necessary to create another array to map attributes case insensitively to their requested counterparts.
+        // This does also apply the virtual alias handling. (Since an LDAP server does not handle such)
+        $loweredFieldMap = array();
+        foreach ($requestedFields as $name => $alias) {
+            $loweredFieldMap[strtolower($name)] = is_string($alias) ? $alias : $name;
+        }
+
+        $cleanedAttributes = array();
+        for ($i = 0; $i < $attributes['count']; $i++) {
+            $attribute_name = $attributes[$i];
+            if ($attributes[$attribute_name]['count'] === 1) {
+                $attribute_value = $attributes[$attribute_name][0];
             } else {
-                for ($j = 0; $j < $attrs[$attr_name]['count']; $j++) {
-                    $clean->{$attr_name}[] = $attrs[$attr_name][$j];
+                $attribute_value = array();
+                for ($j = 0; $j < $attributes[$attribute_name]['count']; $j++) {
+                    $attribute_value[] = $attributes[$attribute_name][$j];
                 }
             }
+
+            $requestedAttributeName = isset($loweredFieldMap[strtolower($attribute_name)])
+                ? $loweredFieldMap[strtolower($attribute_name)]
+                : $attribute_name;
+            $cleanedAttributes[$requestedAttributeName] = $attribute_value;
         }
-        return $clean;
+
+        // The result may not contain all requested fields, so populate the cleaned
+        // result with the missing fields and their value being set to null
+        foreach ($requestedFields as $name => $alias) {
+            if (! is_string($alias)) {
+                $alias = $name;
+            }
+
+            if (! array_key_exists($alias, $cleanedAttributes)) {
+                $cleanedAttributes[$alias] = null;
+                Logger::debug('LDAP query result does not provide the requested field "%s"', $name);
+            }
+        }
+
+        return (object) $cleanedAttributes;
     }
 
     public function testCredentials($username, $password)
@@ -608,30 +636,22 @@ class Connection implements Selectable
      */
     protected function discoverCapabilities($ds)
     {
-        $query = $this->select()->from(
-            '*',
-            array(
-                'defaultNamingContext',
-                'namingContexts',
-                'vendorName',
-                'vendorVersion',
-                'supportedSaslMechanisms',
-                'dnsHostName',
-                'schemaNamingContext',
-                'supportedLDAPVersion', // => array(3, 2)
-                'supportedCapabilities',
-                'supportedControl',
-                'supportedExtension',
-                '+'
-            )
-        );
-        $result = @ldap_read(
-            $ds,
-            '',
-            $query->create(),
-            $query->listFields()
+        $fields = array(
+            'defaultNamingContext',
+            'namingContexts',
+            'vendorName',
+            'vendorVersion',
+            'supportedSaslMechanisms',
+            'dnsHostName',
+            'schemaNamingContext',
+            'supportedLDAPVersion', // => array(3, 2)
+            'supportedCapabilities',
+            'supportedControl',
+            'supportedExtension',
+            '+'
         );
 
+        $result = @ldap_read($ds, '', (string) $this->select()->from('*', $fields), $fields);
         if (! $result) {
             throw new LdapException(
                 'Capability query failed (%s:%d): %s. Check if hostname and port of the'
@@ -641,6 +661,7 @@ class Connection implements Selectable
                 ldap_error($ds)
             );
         }
+
         $entry = ldap_first_entry($ds, $result);
         if ($entry === false) {
             throw new LdapException(
@@ -651,9 +672,7 @@ class Connection implements Selectable
             );
         }
 
-        $ldapAttributes = ldap_get_attributes($ds, $entry);
-        $result = $this->cleanupAttributes($ldapAttributes);
-        return new Capability($result);
+        return new Capability($this->cleanupAttributes(ldap_get_attributes($ds, $entry), array_flip($fields)));
     }
 
     /**
