@@ -9,13 +9,6 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Display detailed information about a downtime
  */
@@ -58,6 +51,7 @@ class Monitoring_DowntimesController extends Controller
             'host_display_name',
             'service_display_name'
         ))->addFilter($this->filter)->getQuery()->fetchAll();
+
         if (false === $this->downtimes) {
             throw new Zend_Controller_Action_Exception(
                     $this->translate('Downtime not found')
