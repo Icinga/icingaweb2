@@ -18,40 +18,14 @@ if (count($comments) === 0) {
   <table data-base-target="_next"
          class="action comments multiselect" 
          data-icinga-multiselect-url="/icingaweb2/monitoring/comments/show"
-         data-icinga-multiselect-data="downtime_id">
+         data-icinga-multiselect-data="comment_id">
     <tbody>
-    <?php foreach ($comments as $comment): ?>
-    <?php
-      switch ($comment->type) {
-        case 'flapping':
-          $icon = 'flapping';
-          $title = $this->translate('Flapping');
-          $tooltip = $this->translate('Comment was caused by a flapping host or service.');
-          break;
-        case 'comment':
-          $icon = 'user';
-          $title = $this->translate('User Comment');
-          $tooltip = $this->translate('Comment was created by an user.');
-          break;
-        case 'downtime':
-          $icon = 'plug';
-          $title = $this->translate('Downtime');
-          $tooltip = $this->translate('Comment was caused by a downtime.');
-          break;
-        case 'ack':
-          $icon = 'ok';
-          $title = $this->translate('Acknowledgement');
-          $tooltip = $this->translate('Comment was caused by an acknowledgement.');
-          break;
-      }
-    ?>
+    <?php foreach ($comments as $comment):
+        $this->comment = $comment; ?>
+
       <tr class="state invalid">
         <td class="state" style="width: 12em;">
-          <?= $this->icon($icon, $tooltip) ?>
-          <br>
-          <strong><?= $this->escape($title); ?></strong>
-          <br>
-          <?= $this->prefixedTimeSince($comment->timestamp); ?>
+          <?= $this->render('partials/comment/comment-description.phtml'); ?>
         </td>
         <td>
         <?php if ($comment->objecttype === 'service'): ?>
