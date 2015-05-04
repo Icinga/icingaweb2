@@ -13,6 +13,6 @@
 
 <br>
 <?= $this->icon('comment', $this->translate('Comment')); ?> <?= isset($comment->author)
-  ? '[' . $comment->author . '] '
+  ? '[' . $this->escape($comment->author) . '] '
   : '';
 ?><?= $this->escape($comment->comment); ?>

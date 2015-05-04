@@ -64,7 +64,7 @@ if (count($comments) === 0) {
         <?php endif ?>
           <br>
           <?= $this->icon('comment', $this->translate('Comment')); ?> <?= isset($comment->author)
-            ? '[' . $comment->author . '] '
+            ? '[' . $this->escape($comment->author) . '] '
             : '';
           ?><?= $this->escape($comment->comment); ?>
           <br>
