@@ -60,7 +60,7 @@ class Monitoring_CommentsController extends Controller
                 'label' => $this->translate('Comments'),
                 'url'   =>'monitoring/comments/show'
             )
-        )->activate('comments')->extend(new DashboardAction());
+        )->activate('comments');
     }
 
     /**
