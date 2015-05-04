@@ -1,0 +1,32 @@
+<div class="controls">
+    <?php if (! $this->compact): ?>
+        <?= $this->tabs; ?>
+    <?php endif ?>
+    
+    <?= $this->render('partials/comment/comments-header.phtml'); ?>
+</div>
+
+<div class="content">
+  <h3><?= $this->icon('reschedule') ?> <?= $this->translate('Commands') ?> </h3>
+  <p>
+    <?= sprintf(
+            $this->translate('Issue commands to all %s selected comments.'),
+            '<b>' . count($comments) . '</b>'
+        )
+    ?>
+    <div>
+    <?= $this->qlink(
+        sprintf(
+            $this->translate('Remove all %d scheduled comments'),
+            count($comments)
+        ),
+        $removeAllLink,
+        null,
+        array(
+            'icon' => 'trash',
+            'title' => $this->translate('Remove all selected comments.')
+        )
+    ) ?>
+    </div>
+  </p>
+</div>
