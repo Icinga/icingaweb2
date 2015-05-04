@@ -3,12 +3,13 @@
 
 namespace Icinga\Protocol\Ldap;
 
-use Icinga\Exception\ProgrammingError;
-use Icinga\Protocol\Ldap\Exception as LdapException;
-use Icinga\Application\Platform;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
+use Icinga\Application\Platform;
 use Icinga\Data\ConfigObject;
+use Icinga\Data\Selectable;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Protocol\Ldap\Exception as LdapException;
 
 /**
  * Backend class managing all the LDAP stuff for you.
@@ -24,7 +25,7 @@ use Icinga\Data\ConfigObject;
  * ));
  * </code>
  */
-class Connection
+class Connection implements Selectable
 {
     const LDAP_NO_SUCH_OBJECT = 32;
     const LDAP_SIZELIMIT_EXCEEDED = 4;
@@ -122,6 +123,11 @@ class Connection
         return $this->root;
     }
 
+    /**
+     * Provide a query on this connection
+     *
+     * @return  Query
+     */
     public function select()
     {
         return new Query($this);
