@@ -44,6 +44,15 @@ class SimpleQuery implements QueryInterface
     protected $columns = array();
 
     /**
+     * The columns and their aliases flipped in order to handle aliased sort columns
+     *
+     * Supposed to be used and populated by $this->compare *only*.
+     *
+     * @var array
+     */
+    protected $flippedColumns;
+
+    /**
      * The columns you're using to sort the query result
      *
      * @var array
@@ -219,32 +228,42 @@ class SimpleQuery implements QueryInterface
         return $this;
     }
 
-    public function compare($a, $b, $col_num = 0)
+    /**
+     * Compare $a with $b based on this query's sort rules and column aliases
+     *
+     * @param   object  $a
+     * @param   object  $b
+     * @param   int     $orderIndex
+     *
+     * @return  int
+     */
+    public function compare($a, $b, $orderIndex = 0)
     {
-        // Last column to sort reached, rows are considered being equal
-        if (! array_key_exists($col_num, $this->order)) {
-            return 0;
-        }
-        $col = $this->order[$col_num][0];
-        $dir = $this->order[$col_num][1];
-// TODO: throw Exception if column is missing
-        //$res = strnatcmp(strtolower($a->$col), strtolower($b->$col));
-        $res = @strcmp(strtolower($a->$col), strtolower($b->$col));
-        if ($res === 0) {
-//            return $this->compare($a, $b, $col_num++);
-
-            if (array_key_exists(++$col_num, $this->order)) {
-                return $this->compare($a, $b, $col_num);
-            } else {
-                return 0;
-            }
-
+        if (! array_key_exists($orderIndex, $this->order)) {
+            return 0; // Last column to sort reached, rows are considered being equal
         }
 
-        if ($dir === self::SORT_ASC) {
-            return $res;
+        if ($this->flippedColumns === null) {
+            $this->flippedColumns = array_flip($this->columns);
+        }
+
+        $column = $this->order[$orderIndex][0];
+        if (array_key_exists($column, $this->flippedColumns)) {
+            $column = $this->flippedColumns[$column];
+        }
+
+        // TODO: throw Exception if column is missing
+        //$res = strnatcmp(strtolower($a->$column), strtolower($b->$column));
+        $result = @strcmp(strtolower($a->$column), strtolower($b->$column));
+        if ($result === 0) {
+            return $this->compare($a, $b, $orderIndex);
+        }
+
+        $direction = $this->order[$orderIndex][1];
+        if ($direction === self::SORT_ASC) {
+            return $result;
         } else {
-            return $res * -1;
+            return $result * -1;
         }
     }
 
@@ -426,6 +445,7 @@ class SimpleQuery implements QueryInterface
     public function columns(array $columns)
     {
         $this->columns = $columns;
+        $this->flippedColumns = null; // Reset, due to updated columns
         return $this;
     }
 
