@@ -19,9 +19,11 @@ class SimpleQuery implements QueryInterface
     protected $ds;
 
     /**
-     * The table you are going to query
+     * The target you are going to query
+     *
+     * @var mixed
      */
-    protected $table;
+    protected $target;
 
     /**
      * The columns you asked for
@@ -101,11 +103,14 @@ class SimpleQuery implements QueryInterface
     }
 
     /**
-     * Choose a table and the colums you are interested in
+     * Choose a table and the columns you are interested in
      *
-     * Query will return all available columns if none are given here
+     * Query will return all available columns if none are given here.
      *
-     * @return $this
+     * @param   mixed   $target
+     * @param   array   $fields
+     *
+     * @return  $this
      */
     public function from($target, array $fields = null)
     {
