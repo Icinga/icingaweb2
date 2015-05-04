@@ -210,7 +210,7 @@ class Connection implements Selectable
         if (count($rows) > 1) {
             throw new LdapException(
                 'Cannot fetch single DN for %s',
-                $query->create()
+                $query
             );
         }
         return key($rows);
@@ -272,16 +272,20 @@ class Connection implements Selectable
      * @return array            The matched entries
      * @throws LdapException
      */
-    protected function runQuery(Query $query, $fields = array())
+    protected function runQuery(Query $query, array $fields = null)
     {
         $limit = $query->getLimit();
         $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
 
+        if (empty($fields)) {
+            $fields = $query->getColumns();
+        }
+
         $results = @ldap_search(
             $this->ds,
-            $query->hasBase() ? $query->getBase() : $this->root_dn,
-            $query->create(),
-            empty($fields) ? $query->listFields() : $fields,
+            $query->getBase() ?: $this->root_dn,
+            (string) $query,
+            array_values($fields),
             0, // Attributes and values
             $limit ? $offset + $limit : 0
         );
@@ -292,8 +296,8 @@ class Connection implements Selectable
 
             throw new LdapException(
                 'LDAP query "%s" (base %s) failed. Error: %s',
-                $query->create(),
-                $query->hasBase() ? $query->getBase() : $this->root_dn,
+                $query,
+                $query->getBase() ?: $this->root_dn,
                 ldap_error($this->ds)
             );
         } elseif (ldap_count_entries($this->ds, $results) === 0) {
@@ -336,28 +340,29 @@ class Connection implements Selectable
      *
      * @param Query $query      The query to execute
      * @param array $fields     The fields that will be fetched from the matches
-     * @param int   $page_size  The maximum page size, defaults to Connection::PAGE_SIZE
+     * @param int   $pageSize   The maximum page size, defaults to Connection::PAGE_SIZE
      *
      * @return array            The matched entries
      * @throws LdapException
      * @throws ProgrammingError When executed without available page controls (check with pageControlAvailable() )
      */
-    protected function runPagedQuery(Query $query, $fields = array(), $pageSize = null)
+    protected function runPagedQuery(Query $query, array $fields = null, $pageSize = null)
     {
         if (! $this->pageControlAvailable($query)) {
             throw new ProgrammingError('LDAP: Page control not available.');
         }
+
         if (! isset($pageSize)) {
             $pageSize = static::PAGE_SIZE;
         }
 
         $limit = $query->getLimit();
         $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
-        $queryString = $query->create();
-        $base = $query->hasBase() ? $query->getBase() : $this->root_dn;
+        $queryString = (string) $query;
+        $base = $query->getBase() ?: $this->root_dn;
 
         if (empty($fields)) {
-            $fields = $query->listFields();
+            $fields = $query->getColumns();
         }
 
         $count = 0;
@@ -368,7 +373,14 @@ class Connection implements Selectable
             // possibillity  server to return an answer in case the pagination extension is missing.
             ldap_control_paged_result($this->ds, $pageSize, false, $cookie);
 
-            $results = @ldap_search($this->ds, $base, $queryString, $fields, 0, $limit ? $offset + $limit : 0);
+            $results = @ldap_search(
+                $this->ds,
+                $base,
+                $queryString,
+                array_values($fields),
+                0, // Attributes and values
+                $limit ? $offset + $limit : 0
+            );
             if ($results === false) {
                 if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
                     break;
@@ -426,7 +438,7 @@ class Connection implements Selectable
             // pagedResultsControl with the size set to zero (0) and the cookie set to the last cookie returned by
             // the server: https://www.ietf.org/rfc/rfc2696.txt
             ldap_control_paged_result($this->ds, 0, false, $cookie);
-            ldap_search($this->ds, $base, $queryString, $fields); // Returns no entries, due to the page size
+            ldap_search($this->ds, $base, $queryString); // Returns no entries, due to the page size
         } else {
             // Reset the paged search request so that subsequent requests succeed
             ldap_control_paged_result($this->ds, 0);
