@@ -72,7 +72,7 @@ class DbConnection implements Selectable
     /**
      * Provide a query on this connection
      *
-     * @return Query
+     * @return  DbQuery
      */
     public function select()
     {
