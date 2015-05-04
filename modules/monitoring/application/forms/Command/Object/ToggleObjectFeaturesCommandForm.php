@@ -30,7 +30,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
      */
     public function createElements(array $formData = array())
     {
-        $toggleDisabled = $this->hasPermission('monitoring/command/feature/instance')  ? null : '';
+        $toggleDisabled = $this->hasPermission('monitoring/command/feature/object')  ? null : '';
         $this->addElements(array(
             array(
                 'checkbox',
