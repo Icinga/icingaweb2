@@ -170,13 +170,8 @@ class LdapBackendForm extends Form
     public static function isValidAuthenticationBackend(Form $form)
     {
         try {
-            $ldapUserBackend = new LdapUserBackend(
-                ResourceFactory::createResource($form->getResourceConfig()),
-                $form->getElement('user_class')->getValue(),
-                $form->getElement('user_name_attribute')->getValue(),
-                $form->getElement('base_dn')->getValue(),
-                $form->getElement('filter')->getValue()
-            );
+            $ldapUserBackend = new LdapUserBackend(ResourceFactory::createResource($form->getResourceConfig()));
+            $ldapUserBackend->setConfig(new ConfigObject($form->getValues()));
             $ldapUserBackend->assertAuthenticationPossible();
         } catch (AuthenticationException $e) {
             if (($previous = $e->getPrevious()) !== null) {

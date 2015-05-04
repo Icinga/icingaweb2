@@ -29,7 +29,8 @@ class LdapBackendFormTest extends BaseTestCase
     {
         $this->setUpResourceFactoryMock();
         Mockery::mock('overload:Icinga\Authentication\User\LdapUserBackend')
-            ->shouldReceive('assertAuthenticationPossible')->andReturnNull();
+            ->shouldReceive('assertAuthenticationPossible')->andReturnNull()
+            ->shouldReceive('setConfig')->andReturnNull();
 
         // Passing array(null) is required to make Mockery call the constructor...
         $form = Mockery::mock('Icinga\Forms\Config\Authentication\LdapBackendForm[getView]', array(null));

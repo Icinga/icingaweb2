@@ -268,13 +268,8 @@ class AdminAccountPage extends Form
         if ($this->backendConfig['backend'] === 'db') {
             $backend = new DbUserBackend(ResourceFactory::createResource(new ConfigObject($this->resourceConfig)));
         } elseif ($this->backendConfig['backend'] === 'ldap') {
-            $backend = new LdapUserBackend(
-                ResourceFactory::createResource(new ConfigObject($this->resourceConfig)),
-                $this->backendConfig['user_class'],
-                $this->backendConfig['user_name_attribute'],
-                $this->backendConfig['base_dn'],
-                $this->backendConfig['filter']
-            );
+            $backend = new LdapUserBackend(ResourceFactory::createResource(new ConfigObject($this->resourceConfig)));
+            $backend->setConfig($this->backendConfig);
         } else {
             throw new LogicException(
                 sprintf(
