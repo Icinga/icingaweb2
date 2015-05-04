@@ -280,8 +280,8 @@ class AdminAccountPage extends Form
         }
 
         try {
-            return $backend->listUsers();
-        } catch (Exception $e) {
+            return $backend->select(array('user_name'))->fetchColumn();
+        } catch (Exception $_) {
             // No need to handle anything special here. Error means no users found.
             return array();
         }
