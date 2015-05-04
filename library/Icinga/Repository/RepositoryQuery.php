@@ -66,6 +66,16 @@ class RepositoryQuery implements QueryInterface
     }
 
     /**
+     * Return the columns to fetch
+     *
+     * @return  array
+     */
+    public function getColumns()
+    {
+        return $this->query->getColumns();
+    }
+
+    /**
      * Set which columns to fetch
      *
      * This notifies the repository about each desired query column.
