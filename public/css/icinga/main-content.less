@@ -202,3 +202,23 @@ table.benchmark {
   border: 1px solid lightgrey;
   background-color: #fbfcc5;
 }
+
+table.user-list {
+  th {
+    &.user-state {
+      width: 6%;
+      padding-right: 0.5em;
+      text-align: right;
+    }
+
+    &.user-created, &.user-modified {
+      width: 12%;
+      padding-right: 0.5em;
+      text-align: right;
+    }
+  }
+
+  td.user-state, td.user-created, td.user-modified {
+    text-align: right;
+  }
+}

@@ -1,0 +1,49 @@
+<?php if (! $this->compact): ?>
+<div class="controls">
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
+</div>
+<?php endif ?>
+<div class="content">
+<?php
+
+if ($backend === null) {
+    echo $this->translate('No backend found which is able to list users') . '</div>';
+    return;
+}
+
+if (count($users) === 0) {
+    echo $this->translate('No users found matching the filter') . '</div>';
+    return;
+}
+?>
+
+<table data-base-target="_next" class="action user-list">
+  <thead>
+    <tr>
+      <th class="user-name"><?= $this->translate('Username'); ?></th>
+      <th class="user-state"><?= $this->translate('State'); ?></th>
+      <th class="user-created"><?= $this->translate('Created at'); ?></th>
+      <th class="user-modified"><?= $this->translate('Last modified'); ?></th>
+    </tr>
+  </thead>
+  <tbody>
+  <?php foreach ($users as $user): ?>
+    <tr>
+      <td clas="user-name"><?= $this->escape($user->user_name); ?></td>
+      <td class="user-state"><?= $user->is_active === null ? $this->translate('N/A') : (
+        $user->is_active ? $this->translate('Active') : $this->translate('Inactive')
+      ); ?></td>
+      <td class="user-created">
+        <?= $user->created_at === null ? $this->translate('N/A') : date('d/m/Y g:i A', $user->created_at); ?>
+      </td>
+      <td class="user-modified">
+        <?= $user->last_modified === null ? $this->translate('Never') : date('d/m/Y g:i A', $user->last_modified); ?>
+      </td>
+    </tr>
+  <?php endforeach ?>
+  </tbody>
+</table>

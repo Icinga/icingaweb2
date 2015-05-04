@@ -236,36 +236,41 @@ class Menu implements RecursiveIterator
                 'icon'     => 'wrench',
                 'priority' => 200
             ));
+            $section->add(t('User-Management'), array(
+                'url'           => 'user/list',
+                'permission'    => 'config/application/*',
+                'priority'      => 300
+            ));
             $section->add(t('Configuration'), array(
                 'url'           => 'config',
                 'permission'    => 'config/application/*',
-                'priority'      => 300
+                'priority'      => 400
             ));
             $section->add(t('Modules'), array(
                 'url'           => 'config/modules',
                 'permission'    => 'config/modules',
-                'priority'      => 400
+                'priority'      => 500
             ));
 
             if (Logger::writesToFile()) {
                 $section->add(t('Application Log'), array(
                     'url'      => 'list/applicationlog',
-                    'priority' => 500
+                    'priority' => 600
                 ));
             }
 
             $section = $this->add($auth->getUser()->getUsername(), array(
                 'icon'     => 'user',
-                'priority' => 600
+                'priority' => 700
             ));
             $section->add(t('Preferences'), array(
                 'url'      => 'preference',
-                'priority' => 601
+                'priority' => 701
             ));
 
             $section->add(t('Logout'), array(
                 'url'      => 'authentication/logout',
-                'priority' => 700,
+                'priority' => 800,
                 'renderer' => 'ForeignMenuItemRenderer'
             ));
         }
