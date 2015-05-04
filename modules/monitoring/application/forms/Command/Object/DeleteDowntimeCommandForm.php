@@ -84,7 +84,7 @@ class DeleteDowntimeCommandForm extends CommandForm
         $delDowntime = new DeleteDowntimeCommand();
         $delDowntime->setDowntimeId($id);
         $delDowntime->setDowntimeType(
-            isset($firstDowntime->service_description) ? 
+            isset($firstDowntime->service_description) ?
             DeleteDowntimeCommand::DOWNTIME_TYPE_SERVICE :
             DeleteDowntimeCommand::DOWNTIME_TYPE_HOST
         );

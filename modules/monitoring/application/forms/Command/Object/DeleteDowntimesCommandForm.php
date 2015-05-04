@@ -12,6 +12,11 @@ use Icinga\Web\Notification;
  */
 class DeleteDowntimesCommandForm extends CommandForm
 {
+    /**
+     * The downtimes to delete on success
+     *
+     * @var array
+     */
     protected $downtimes;
     
     /**
@@ -31,12 +36,12 @@ class DeleteDowntimesCommandForm extends CommandForm
     {
         $this->addElements(array(
             array(
-                    'hidden',
-                    'redirect',
-                    array(
-                        'decorators' => array('ViewHelper')
-                    )
+                'hidden',
+                'redirect',
+                array(
+                    'decorators' => array('ViewHelper')
                 )
+            )
         ));
         return $this;
     }
@@ -60,7 +65,7 @@ class DeleteDowntimesCommandForm extends CommandForm
             $delDowntime = new DeleteDowntimeCommand();
             $delDowntime->setDowntimeId($downtime->id);
             $delDowntime->setDowntimeType(
-                isset($downtime->service_description) ? 
+                isset($downtime->service_description) ?
                 DeleteDowntimeCommand::DOWNTIME_TYPE_SERVICE :
                 DeleteDowntimeCommand::DOWNTIME_TYPE_HOST
             );
@@ -76,9 +81,9 @@ class DeleteDowntimesCommandForm extends CommandForm
     
     /**
      * Set the downtimes to be deleted upon success
-     * 
+     *
      * @param type $downtimes
-     * 
+     *
      * @return $this
      */
     public function setDowntimes($downtimes)

@@ -36,9 +36,9 @@ class Monitoring_DowntimesController extends Controller
     public function init()
     {
         $this->filter = Filter::fromQueryString(str_replace(
-                'downtime_id', 
-                'downtime_internal_id', 
-                (string)$this->params
+            'downtime_id',
+            'downtime_internal_id',
+            (string)$this->params
         ));
         $this->downtimes = $this->backend->select()->from('downtime', array(
             'id'              => 'downtime_internal_id',
@@ -66,22 +66,21 @@ class Monitoring_DowntimesController extends Controller
 
         if (false === $this->downtimes) {
             throw new Zend_Controller_Action_Exception(
-                    $this->translate('Downtime not found')
+                $this->translate('Downtime not found')
             );
         }
         
-        $this->getTabs()
-            ->add(
-                'downtimes',
-                array(
-                    'title' => $this->translate(
-                        'Display detailed information about multiple downtimes.'
-                    ),
-                    'icon' => 'plug',
-                    'label' => $this->translate('Downtimes'),
-                    'url'   =>'monitoring/downtimes/show'
-                )
-        )->activate('downtimes')->extend(new DashboardAction());
+        $this->getTabs()->add(
+            'downtimes',
+            array(
+                'title' => $this->translate(
+                    'Display detailed information about multiple downtimes.'
+                ),
+                'icon' => 'plug',
+                'label' => $this->translate('Downtimes'),
+                'url'   =>'monitoring/downtimes/show'
+            )
+        )->activate('downtimes');
         
         foreach ($this->downtimes as $downtime) {
             if (isset($downtime->service_description)) {
