@@ -46,7 +46,10 @@ class DbUserBackend extends DbRepository implements UserBackendInterface
      */
     protected $sortRules = array(
         'user_name' => array(
-            'order' => 'asc'
+            'columns'   => array(
+                'user_name asc',
+                'is_active desc'
+            )
         )
     );
 
