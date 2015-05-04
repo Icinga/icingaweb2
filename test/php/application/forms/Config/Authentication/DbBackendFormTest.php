@@ -28,7 +28,7 @@ class DbBackendFormTest extends BaseTestCase
     {
         $this->setUpResourceFactoryMock();
         Mockery::mock('overload:Icinga\Authentication\User\DbUserBackend')
-            ->shouldReceive('count')
+            ->shouldReceive('select->where->count')
             ->andReturn(2);
 
         // Passing array(null) is required to make Mockery call the constructor...

@@ -3,15 +3,13 @@
 
 namespace Icinga\Authentication\User;
 
-use PDO;
-use Icinga\Data\Db\DbConnection;
-use Icinga\User;
-use Icinga\Exception\AuthenticationException;
 use Exception;
-use Zend_Db_Expr;
-use Zend_Db_Select;
+use PDO;
+use Icinga\Exception\AuthenticationException;
+use Icinga\Repository\DbRepository;
+use Icinga\User;
 
-class DbUserBackend extends UserBackend
+class DbUserBackend extends DbRepository implements UserBackendInterface
 {
     /**
      * The algorithm to use when hashing passwords
@@ -28,15 +26,38 @@ class DbUserBackend extends UserBackend
     const SALT_LENGTH = 12; // 12 is required by MD5
 
     /**
-     * Connection to the database
+     * The query columns being provided
      *
-     * @var DbConnection
+     * @var array
      */
-    protected $conn;
+    protected $queryColumns = array(
+        'user' => array(
+            'user_name'     => 'name',
+            'is_active'     => 'active',
+            'created_at'    => 'UNIX_TIMESTAMP(ctime)',
+            'last_modified' => 'UNIX_TIMESTAMP(mtime)'
+        )
+    );
 
-    public function __construct(DbConnection $conn)
+    /**
+     * The default sort rules to be applied on a query
+     *
+     * @var array
+     */
+    protected $sortRules = array(
+        'user_name' => array(
+            'order' => 'asc'
+        )
+    );
+
+    /**
+     * Initialize this database user backend
+     */
+    protected function init()
     {
-        $this->conn = $conn;
+        if (! $this->ds->getTablePrefix()) {
+            $this->ds->setTablePrefix('icingaweb_');
+        }
     }
 
     /**
@@ -50,7 +71,7 @@ class DbUserBackend extends UserBackend
     {
         $passwordHash = $this->hashPassword($password);
 
-        $stmt = $this->conn->getDbAdapter()->prepare(
+        $stmt = $this->ds->getDbAdapter()->prepare(
             'INSERT INTO icingaweb_user VALUES (:name, :active, :password_hash, now(), DEFAULT);'
         );
         $stmt->bindParam(':name', $username, PDO::PARAM_STR);
@@ -68,13 +89,13 @@ class DbUserBackend extends UserBackend
      */
     protected function getPasswordHash($username)
     {
-        if ($this->conn->getDbType() === 'pgsql') {
+        if ($this->ds->getDbType() === 'pgsql') {
             // Since PostgreSQL version 9.0 the default value for bytea_output is 'hex' instead of 'escape'
-            $stmt = $this->conn->getDbAdapter()->prepare(
+            $stmt = $this->ds->getDbAdapter()->prepare(
                 'SELECT ENCODE(password_hash, \'escape\') FROM icingaweb_user WHERE name = :name AND active = 1'
             );
         } else {
-            $stmt = $this->conn->getDbAdapter()->prepare(
+            $stmt = $this->ds->getDbAdapter()->prepare(
                 'SELECT password_hash FROM icingaweb_user WHERE name = :name AND active = 1'
             );
         }
@@ -86,18 +107,18 @@ class DbUserBackend extends UserBackend
             $lob = stream_get_contents($lob);
         }
 
-        return $this->conn->getDbType() === 'pgsql' ? pg_unescape_bytea($lob) : $lob;
+        return $this->ds->getDbType() === 'pgsql' ? pg_unescape_bytea($lob) : $lob;
     }
 
     /**
-     * Authenticate the given user and return true on success, false on failure and throw an exception on error
+     * Authenticate the given user
      *
      * @param   User        $user
      * @param   string      $password
      *
-     * @return  bool
+     * @return  bool                        True on success, false on failure
      *
-     * @throws  AuthenticationException
+     * @throws  AuthenticationException     In case authentication is not possible due to an error
      */
     public function authenticate(User $user, $password)
     {
@@ -151,38 +172,5 @@ class DbUserBackend extends UserBackend
     protected function hashPassword($password, $salt = null)
     {
         return crypt($password, self::HASH_ALGORITHM . ($salt !== null ? $salt : $this->generateSalt()));
-    }
-
-    /**
-     * Get the number of users available
-     *
-     * @return int
-     */
-    public function count()
-    {
-        $select = new Zend_Db_Select($this->conn->getDbAdapter());
-        $row = $select->from(
-            'icingaweb_user',
-            array('count' => 'COUNT(*)')
-        )->query()->fetchObject();
-
-        return ($row !== false) ? $row->count : 0;
-    }
-
-    /**
-     * Return the names of all available users
-     *
-     * @return  array
-     */
-    public function listUsers()
-    {
-        $query = $this->conn->select()->from('icingaweb_user', array('name'));
-
-        $users = array();
-        foreach ($query->fetchAll() as $row) {
-            $users[] = $row->name;
-        }
-
-        return $users;
     }
 }
