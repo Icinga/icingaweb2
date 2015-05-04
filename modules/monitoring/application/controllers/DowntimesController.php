@@ -18,9 +18,6 @@ class Monitoring_DowntimesController extends Controller
     
     protected $filter;
     
-    /**
-     * Add tabs
-     */
     public function init()
     {
         $this->filter = Filter::fromQueryString(str_replace(

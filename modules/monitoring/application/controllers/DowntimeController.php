@@ -8,12 +8,6 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Display detailed information about a downtime
  */
@@ -23,9 +17,6 @@ class Monitoring_DowntimeController extends Controller
     
     protected $isService;
     
-    /**
-     * Add tabs
-     */
     public function init()
     {
         $downtimeId = $this->params->get('downtime_id');

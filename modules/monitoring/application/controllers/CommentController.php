@@ -13,9 +13,6 @@ class Monitoring_CommentController extends Controller
 {
     protected $comment;
 
-    /**
-     * Add tabs
-     */
     public function init()
     {
         $commentId = $this->params->get('comment_id');

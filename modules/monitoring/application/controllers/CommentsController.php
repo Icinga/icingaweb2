@@ -14,9 +14,6 @@ class Monitoring_CommentsController extends Controller
 {
     protected $comments;
 
-    /**
-     * Add tabs
-     */
     public function init()
     {
         $this->filter = Filter::fromQueryString(str_replace(
