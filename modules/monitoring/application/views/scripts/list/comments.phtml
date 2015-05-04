@@ -1,6 +1,12 @@
 <?php if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
+  <div class="dontprint">
+     <?= $this->render('list/components/selectioninfo.phtml'); ?>
+  </div>
+  <div class="tinystatesummary">
+     <?= $comments->getTotalItemCount() ?> <?= $this->translate('Comments') ?>:
+  </div>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
   <?= $this->paginator; ?>

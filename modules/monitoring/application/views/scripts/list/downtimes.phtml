@@ -5,6 +5,12 @@ use Icinga\Module\Monitoring\Object\Service;
 if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
+    <div class="dontprint">
+        <?= $this->render('list/components/selectioninfo.phtml'); ?>
+    </div>
+    <div class="tinystatesummary">
+        <?= $downtimes->getTotalItemCount() ?> <?= $this->translate('Downtimes') ?>
+    </div>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
   <?= $this->paginator; ?>
