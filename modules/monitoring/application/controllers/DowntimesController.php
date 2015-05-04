@@ -7,7 +7,6 @@ use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
 use Icinga\Web\Url;
-use Icinga\Web\Widget\Tabextension\DashboardAction;
 
 /**
  * Display detailed information about a downtime

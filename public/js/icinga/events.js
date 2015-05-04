@@ -303,6 +303,10 @@
             var data     = self.icinga.ui.getSelectionKeys($table);
             var url      = $table.data('icinga-multiselect-url');
 
+            if ($(event.target).closest('form').length) {
+                // allow form actions in table rows to pass through
+                return;
+            }
             event.stopPropagation();
             event.preventDefault();
 

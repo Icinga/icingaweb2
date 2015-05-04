@@ -71,6 +71,15 @@ class Monitoring_CommentController extends Controller
     }
 
     /**
+     * Receive DeleteCommentCommandForm post from other controller
+     */
+    public function removeAction()
+    {
+        $this->assertHttpMethod('POST');
+        $this->createDelCommentForm();
+    }
+
+    /**
      * Create a command form to delete a single comment
      *
      * @return DeleteCommentCommandForm

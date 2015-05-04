@@ -84,16 +84,7 @@ if (count($comments) === 0) {
           <?php
           $delCommentForm = clone $delCommentForm;
           $delCommentForm->populate(array('comment_id' => $comment->id, 'redirect' => $this->url));
-          if ($comment->objecttype === 'host') {
-            $delCommentForm->setAction(
-                $this->url('monitoring/host/delete-comment', array('host' => $comment->host_name))
-            );
-          } else {
-            $delCommentForm->setAction($this->url('monitoring/service/delete-comment', array(
-                'host'      => $comment->host_name,
-                'service'   => $comment->service_description
-            )));
-          }
+          $delCommentForm->setAction($this->url('monitoring/comment/remove', array('comment_id' => $comment->id)));
           echo $delCommentForm;
           ?>
         </td>

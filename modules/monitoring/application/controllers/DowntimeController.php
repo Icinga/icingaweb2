@@ -106,6 +106,15 @@ class Monitoring_DowntimeController extends Controller
     }
 
     /**
+     * Receive DeleteDowntimeCommandForm post from other controller
+     */
+    public function removeAction()
+    {
+        $this->assertHttpMethod('POST');
+        $this->createDelDowntimeForm();
+    }
+
+    /**
      * Create a command form to delete a single comment
      *
      * @return DeleteDowntimeCommandForm
