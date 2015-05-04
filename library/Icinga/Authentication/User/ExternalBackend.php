@@ -9,14 +9,21 @@ use Icinga\User;
 /**
  * Test login with external authentication mechanism, e.g. Apache
  */
-class ExternalBackend extends UserBackend
+class ExternalBackend implements UserBackendInterface
 {
+    /**
+     * The name of this backend
+     *
+     * @var string
+     */
+    protected $name;
+
     /**
      * Regexp expression to strip values from a username
      *
      * @var string
      */
-    private $stripUsernameRegexp;
+    protected $stripUsernameRegexp;
 
     /**
      * Create new authentication backend of type "external"
@@ -29,24 +36,37 @@ class ExternalBackend extends UserBackend
     }
 
     /**
-     * Count the available users
+     * Set this backend's name
      *
-     * Authenticaton backends of type "external" will always return 1
+     * @param   string  $name
      *
-     * @return int
+     * @return  $this
      */
-    public function count()
+    public function setName($name)
     {
-        return 1;
+        $this->name = $name;
+        return $this;
     }
 
     /**
-     * Authenticate
+     * Return this backend's name
      *
-     * @param   User    $user
-     * @param   string  $password
+     * @return  string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Authenticate the given user
      *
-     * @return  bool
+     * @param   User        $user
+     * @param   string      $password
+     *
+     * @return  bool                        True on success, false on failure
+     *
+     * @throws  AuthenticationException     In case authentication is not possible due to an error
      */
     public function authenticate(User $user, $password = null)
     {
