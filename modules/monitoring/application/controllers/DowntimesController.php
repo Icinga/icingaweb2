@@ -14,10 +14,25 @@ use Icinga\Web\Widget\Tabextension\DashboardAction;
  */
 class Monitoring_DowntimesController extends Controller
 {
+    /**
+     * The fetched downtimes
+     *
+     * @var array
+     */
     protected $downtimes;
-    
+
+    /**
+     * A filter matching all current downtimes
+     *
+     * @var Filter
+     */
     protected $filter;
-    
+
+    /**
+     * Fetch all downtimes matching the current filter and add tabs
+     *
+     * @throws Zend_Controller_Action_Exception
+     */
     public function init()
     {
         $this->filter = Filter::fromQueryString(str_replace(
@@ -82,7 +97,10 @@ class Monitoring_DowntimesController extends Controller
             }
         }
     }
-    
+
+    /**
+     * Display the detail view for a downtime list
+     */
     public function showAction()
     {
         $this->view->downtimes = $this->downtimes;
@@ -91,7 +109,10 @@ class Monitoring_DowntimesController extends Controller
         $this->view->removeAllLink = Url::fromPath('monitoring/downtimes/remove-all')
                 ->setParams($this->params);
     }
-    
+
+    /**
+     * Display the form for removing a downtime list
+     */
     public function removeAllAction()
     {
         $this->assertPermission('monitoring/command/downtime/delete');

@@ -13,10 +13,25 @@ use Icinga\Web\Widget\Tabextension\DashboardAction;
  */
 class Monitoring_DowntimeController extends Controller
 {
+    /**
+     * The fetched downtime
+     *
+     * @var stdClass
+     */
     protected $downtime;
-    
+
+    /**
+     * If the downtime is a service or not
+     *
+     * @var boolean
+     */
     protected $isService;
-    
+
+    /**
+     * Fetch the downtime matching the given id and add tabs
+     *
+     * @throws Zend_Controller_Action_Exception
+     */
     public function init()
     {
         $downtimeId = $this->params->get('downtime_id');
@@ -54,7 +69,7 @@ class Monitoring_DowntimeController extends Controller
         } else {
             $this->isService = false;
         }
-         
+        
         $this->getTabs()
             ->add(
                 'downtime',
@@ -68,7 +83,10 @@ class Monitoring_DowntimeController extends Controller
                 )
         )->activate('downtime')->extend(new DashboardAction());
     }
-    
+
+    /**
+     * Display the detail view for a downtime
+     */
     public function showAction()
     {
         $this->view->downtime = $this->downtime;
@@ -86,7 +104,12 @@ class Monitoring_DowntimeController extends Controller
             $this->view->delDowntimeForm = $this->createDelDowntimeForm();
         }
     }
-    
+
+    /**
+     * Create a command form to delete a single comment
+     *
+     * @return DeleteDowntimeCommandForm
+     */
     private function createDelDowntimeForm()
     {
         $this->assertPermission('monitoring/command/downtime/delete');
