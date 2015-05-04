@@ -241,14 +241,9 @@ class Connection implements Selectable
         $this->connect();
         $this->bind();
 
-        $count = 0;
-        $results = $this->runQuery($query);
-        while (! empty($results)) {
-            $count += ldap_count_entries($this->ds, $results);
-            $results = $this->runQuery($query);
-        }
-
-        return $count;
+        // TODO: That's still not the best solution, this should probably not request any attributes
+        $res = $this->runQuery($query);
+        return count($res);
     }
 
     public function fetchAll(Query $query, $fields = array())
