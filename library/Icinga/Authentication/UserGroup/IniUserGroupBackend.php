@@ -3,61 +3,84 @@
 
 namespace Icinga\Authentication\UserGroup;
 
-use Icinga\Application\Config;
-use Icinga\Exception\ConfigurationError;
+use Icinga\Repository\Repository;
 use Icinga\User;
 use Icinga\Util\String;
 
-/**
- * INI user group backend
- */
-class IniUserGroupBackend extends UserGroupBackend
+class IniUserGroupBackend extends Repository implements UserGroupBackendInterface
 {
     /**
-     * Config
+     * The query columns being provided
      *
-     * @var Config
+     * @var array
      */
-    private $config;
+    protected $queryColumns = array(
+        'groups' => array(
+            'group'         => 'name',
+            'group_name'    => 'name',
+            'parent'        => 'parent',
+            'parent_name'   => 'parent',
+            'created_at'    => 'ctime',
+            'last_modified' => 'mtime',
+            'users'
+        )
+    );
 
     /**
-     * Create a new INI user group backend
+     * The columns which are not permitted to be queried
      *
-     * @param Config $config
+     * @var array
      */
-    public function __construct(Config $config)
-    {
-        $this->config = $config;
-    }
+    protected $filterColumns = array('group', 'parent');
 
     /**
-     * (non-PHPDoc)
-     * @see UserGroupBackend::getMemberships() For the method documentation.
+     * The default sort rules to be applied on a query
+     *
+     * @var array
+     */
+    protected $sortRules = array(
+        'group_name' => array(
+            'columns'   => array(
+                'group_name',
+                'parent_name'
+            )
+        )
+    );
+
+    /**
+     * Return the groups the given user is a member of
+     *
+     * @param   User    $user
+     *
+     * @return  array
      */
     public function getMemberships(User $user)
     {
-        $username = strtolower($user->getUsername());
+        $result = $this->select()->fetchAll();
+
         $groups = array();
-        foreach ($this->config as $name => $section) {
-            if (empty($section->users)) {
-                throw new ConfigurationError(
-                    'Membership section \'%s\' in \'%s\' is missing the \'users\' section',
-                    $name,
-                    $this->config->getConfigFile()
-                );
-            }
-            if (empty($section->groups)) {
-                throw new ConfigurationError(
-                    'Membership section \'%s\' in \'%s\' is missing the \'groups\' section',
-                    $name,
-                    $this->config->getConfigFile()
-                );
-            }
-            $users = array_map('strtolower', String::trimSplit($section->users));
-            if (in_array($username, $users)) {
-                $groups = array_merge($groups, array_diff(String::trimSplit($section->groups), $groups));
+        foreach ($result as $group) {
+            if ($group->group_name) { // TODO: Can we set this somehow automatically to the section's name??
+                $groups[$group->group_name] = $group->parent_name;
             }
         }
-        return $groups;
+
+        $username = strtolower($user->getUsername());
+        $memberships = array();
+        foreach ($result as $group) {
+            if ($group->group_name && $group->users) {
+                $users = array_map('strtolower', String::trimSplit($group->users));
+                if (! in_array($group->group_name, $memberships) && in_array($username, $users)) {
+                    $memberships[] = $group->group_name;
+                    $parent = $groups[$group->group_name];
+                    while ($parent !== null) {
+                        $memberships[] = $parent;
+                        $parent = isset($groups[$parent]) ? $groups[$parent] : null;
+                    }
+                }
+            }
+        }
+
+        return $memberships;
     }
 }
