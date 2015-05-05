@@ -26,6 +26,7 @@ class ProgramstatusQuery extends IdoQuery
                     END
                 END',
             'process_id'                        => 'process_id',
+            'endpoint_name'                     => 'endpoint_name',
             'daemon_mode'                       => 'daemon_mode',
             'last_command_check'                => 'UNIX_TIMESTAMP(programstatus.last_command_check)',
             'last_log_rotation'                 => 'UNIX_TIMESTAMP(programstatus.last_log_rotation)',

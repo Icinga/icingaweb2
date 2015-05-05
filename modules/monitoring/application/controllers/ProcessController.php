@@ -49,6 +49,7 @@ class Monitoring_ProcessController extends Controller
                 array(
                     'is_currently_running',
                     'process_id',
+                    'endpoint_name',
                     'program_start_time',
                     'status_update_time',
                     'last_command_check',
