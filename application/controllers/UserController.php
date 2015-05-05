@@ -12,6 +12,14 @@ use Icinga\Web\Widget;
 class UserController extends Controller
 {
     /**
+     * Initialize this controller
+     */
+    public function init()
+    {
+        $this->createTabs();
+    }
+
+    /**
      * Redirect to this controller's list action
      */
     public function indexAction()
@@ -45,6 +53,7 @@ class UserController extends Controller
         $query->applyFilter($filterEditor->getFilter());
         $this->setupFilterControl($filterEditor);
 
+        $this->getTabs()->activate('user/list');
         $this->view->backend = $backend;
         $this->view->users = $query->paginate();
 
@@ -98,5 +107,22 @@ class UserController extends Controller
         }
 
         return $backend;
+    }
+
+    /**
+     * Create the tabs
+     */
+    protected function createTabs()
+    {
+        $tabs = $this->getTabs();
+        $tabs->add(
+            'user/list',
+            array(
+                'title'     => $this->translate('List users of authentication backends'),
+                'label'     => $this->translate('Users'),
+                'icon'      => 'users',
+                'url'       => 'user/list'
+            )
+        );
     }
 }
