@@ -3,59 +3,80 @@
 
 namespace Icinga\Authentication\UserGroup;
 
-use Icinga\Data\Db\DbConnection;
+use Icinga\Repository\DbRepository;
 use Icinga\User;
 
-/**
- * Database user group backend
- */
-class DbUserGroupBackend extends UserGroupBackend
+class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterface
 {
     /**
-     * Connection to the database
+     * The query columns being provided
      *
-     * @var DbConnection
+     * @var array
      */
-    private $conn;
+    protected $queryColumns = array(
+        'group' => array(
+            'group_name'    => 'name',
+            'parent_name'   => 'parent',
+            'created_at'    => 'UNIX_TIMESTAMP(ctime)',
+            'last_modified' => 'UNIX_TIMESTAMP(mtime)'
+        )
+    );
 
     /**
-     * Create a new database user group backend
+     * The default sort rules to be applied on a query
      *
-     * @param DbConnection $conn
+     * @var array
      */
-    public function __construct(DbConnection $conn)
+    protected $sortRules = array(
+        'group_name' => array(
+            'columns'   => array(
+                'group_name',
+                'parent_name'
+            )
+        )
+    );
+
+    /**
+     * Initialize this database user group backend
+     */
+    protected function init()
     {
-        $this->conn = $conn;
+        if (! $this->ds->getTablePrefix()) {
+            $this->ds->setTablePrefix('icingaweb_');
+        }
     }
 
     /**
-     * (non-PHPDoc)
-     * @see UserGroupBackend::getMemberships() For the method documentation.
+     * Return the groups the given user is a member of
+     *
+     * @param   User    $user
+     *
+     * @return  array
      */
     public function getMemberships(User $user)
     {
         $groups = array();
-        $groupsStmt = $this->conn->getDbAdapter()
-            ->select()
-            ->from($this->conn->getTablePrefix() . 'group', array('name', 'parent'))
-            ->query();
+        $groupsStmt = $this->select(array('group_name', 'parent_name'))->getQuery()->getSelectQuery()->query();
         foreach ($groupsStmt as $group) {
-            $groups[$group->name] = $group->parent;
+            $groups[$group->group_name] = $group->parent_name;
         }
+
         $memberships = array();
-        $membershipsStmt = $this->conn->getDbAdapter()
+        $membershipsStmt = $this->ds->getDbAdapter() // TODO: Use the join feature, once available
             ->select()
-            ->from($this->conn->getTablePrefix() . 'group_membership', array('group_name'))
+            ->from($this->ds->getTablePrefix() . 'group_membership', array('group_name'))
             ->where('username = ?', $user->getUsername())
             ->query();
         foreach ($membershipsStmt as $membership) {
             $memberships[] = $membership->group_name;
             $parent = $groups[$membership->group_name];
-            while (isset($parent)) {
+            while ($parent !== null) {
                 $memberships[] = $parent;
-                $parent = $groups[$parent];
+                // Usually a parent is an existing group, but since we do not have a constraint on our table..
+                $parent = isset($groups[$parent]) ? $groups[$parent] : null;
             }
         }
+
         return $memberships;
     }
 }
