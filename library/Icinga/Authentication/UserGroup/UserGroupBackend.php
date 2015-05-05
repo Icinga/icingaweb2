@@ -8,19 +8,18 @@ use Icinga\Application\Icinga;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
-use Icinga\User;
 
 /**
- * Base class and factory for user group backends
+ * Factory for user group backends
  */
-abstract class UserGroupBackend
+class UserGroupBackend
 {
     /**
      * The default user group backend types provided by Icinga Web 2
      *
      * @var array
      */
-    private static $defaultBackends = array( // I would have liked it if I were able to declare this as constant :'(
+    protected static $defaultBackends = array(
         'db',
         'ini'
     );
@@ -33,39 +32,9 @@ abstract class UserGroupBackend
     protected static $customBackends;
 
     /**
-     * The name of this backend
-     *
-     * @var string
+     * Register all custom user group backends from all loaded modules
      */
-    protected $name;
-
-    /**
-     * Set this backend's name
-     *
-     * @param   string  $name
-     *
-     * @return  $this
-     */
-    public function setName($name)
-    {
-        $this->name = (string) $name;
-        return $this;
-    }
-
-    /**
-     * Return this backend's name
-     *
-     * @return  string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Fetch all custom user group backends from all loaded modules
-     */
-    public static function loadCustomUserGroupBackends()
+    public static function registerCustomUserGroupBackends()
     {
         if (static::$customBackends !== null) {
             return;
@@ -77,7 +46,7 @@ abstract class UserGroupBackend
             foreach ($module->getUserGroupBackends() as $identifier => $className) {
                 if (array_key_exists($identifier, $providedBy)) {
                     Logger::warning(
-                        'Cannot register UserGroupBackend of type "%s" provided by module "%s".'
+                        'Cannot register user group backend of type "%s" provided by module "%s".'
                         . ' The type is already provided by module "%s"',
                         $identifier,
                         $module->getName(),
@@ -85,7 +54,7 @@ abstract class UserGroupBackend
                     );
                 } elseif (in_array($identifier, static::$defaultBackends)) {
                     Logger::warning(
-                        'Cannot register UserGroupBackend of type "%s" provided by module "%s".'
+                        'Cannot register user group backend of type "%s" provided by module "%s".'
                         . ' The type is a default type provided by Icinga Web 2',
                         $identifier,
                         $module->getName()
@@ -99,29 +68,23 @@ abstract class UserGroupBackend
     }
 
     /**
-     * Validate and return the class for the given custom user group backend
+     * Return the class for the given custom user group backend
      *
      * @param   string  $identifier     The identifier of the custom user group backend
      *
      * @return  string|null             The name of the class or null in case there was no
      *                                   backend found with the given identifier
      *
-     * @throws  ConfigurationError      In case the class could not be successfully validated
+     * @throws  ConfigurationError      In case the class associated to the given identifier does not exist
      */
     protected static function getCustomUserGroupBackend($identifier)
     {
-        static::loadCustomUserGroupBackends();
+        static::registerCustomUserGroupBackends();
         if (array_key_exists($identifier, static::$customBackends)) {
             $className = static::$customBackends[$identifier];
             if (! class_exists($className)) {
                 throw new ConfigurationError(
-                    'Cannot utilize UserGroupBackend of type "%s". Class "%s" does not exist',
-                    $identifier,
-                    $className
-                );
-            } elseif (! is_subclass_of($className, __CLASS__)) {
-                throw new ConfigurationError(
-                    'Cannot utilize UserGroupBackend of type "%s". Class "%s" is not a sub-type of UserGroupBackend',
+                    'Cannot utilize user group backend of type "%s". Class "%s" does not exist',
                     $identifier,
                     $className
                 );
@@ -132,12 +95,12 @@ abstract class UserGroupBackend
     }
 
     /**
-     * Create and return a UserGroupBackend with the given name and given configuration applied to it
+     * Create and return a user group backend with the given name and given configuration applied to it
      *
      * @param   string          $name
      * @param   ConfigObject    $backendConfig
      *
-     * @return  UserGroupBackend
+     * @return  UserGroupBackendInterface
      *
      * @throws  ConfigurationError
      */
@@ -158,6 +121,15 @@ abstract class UserGroupBackend
             // Do not attempt to load a custom user group backend unless it's actually required
         } elseif (($customClass = static::getCustomUserGroupBackend($backendType)) !== null) {
             $backend = new $customClass($backendConfig);
+            if (! is_a($backend, 'Icinga\Authentication\UserGroup\UserGroupBackendInterface')) {
+                throw new ConfigurationError(
+                    'Cannot utilize user group backend of type "%s".'
+                    . ' Class "%s" does not implement UserGroupBackendInterface',
+                    $backendType,
+                    $customClass
+                );
+            }
+
             $backend->setName($name);
             return $backend;
         } else {
@@ -189,13 +161,4 @@ abstract class UserGroupBackend
         $backend->setName($name);
         return $backend;
     }
-
-    /**
-     * Get the groups the given user is a member of
-     *
-     * @param   User    $user
-     *
-     * @return  array
-     */
-    abstract public function getMemberships(User $user);
 }
