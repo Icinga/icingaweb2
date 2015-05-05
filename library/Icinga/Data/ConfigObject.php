@@ -4,22 +4,15 @@
 namespace Icinga\Data;
 
 use Iterator;
-use Countable;
 use ArrayAccess;
-use LogicException;
+use Icinga\Data\DataArray\ArrayDatasource;
+use Icinga\Exception\ProgrammingError;
 
 /**
  * Container for configuration values
  */
-class ConfigObject implements Countable, Iterator, ArrayAccess
+class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
 {
-    /**
-     * This config's data
-     *
-     * @var array
-     */
-    protected $data;
-
     /**
      * Create a new config
      *
@@ -27,15 +20,14 @@ class ConfigObject implements Countable, Iterator, ArrayAccess
      */
     public function __construct(array $data = array())
     {
-        $this->data = array();
-
-        foreach ($data as $key => $value) {
+        // Convert all embedded arrays to ConfigObjects as well
+        foreach ($data as & $value) {
             if (is_array($value)) {
-                $this->data[$key] = new static($value);
-            } else {
-                $this->data[$key] = $value;
+                $value = new static($value);
             }
         }
+
+        parent::__construct($data);
     }
 
     /**
@@ -53,16 +45,6 @@ class ConfigObject implements Countable, Iterator, ArrayAccess
         }
 
         $this->data = $array;
-    }
-
-    /**
-     * Return the count of available sections and properties
-     *
-     * @return  int
-     */
-    public function count()
-    {
-        return count($this->data);
     }
 
     /**
@@ -197,7 +179,7 @@ class ConfigObject implements Countable, Iterator, ArrayAccess
     public function offsetSet($key, $value)
     {
         if ($key === null) {
-            throw new LogicException('Appending values without an explicit key is not supported');
+            throw new ProgrammingError('Appending values without an explicit key is not supported');
         }
 
         $this->$key = $value;
