@@ -48,4 +48,13 @@ class ProgramstatusQuery extends IdoQuery
             'global_service_event_handler'      => 'global_service_event_handler',
         )
     );
+
+    protected function joinBaseTables()
+    {
+        parent::joinBaseTables();
+
+        if (version_compare($this->getIdoVersion(), '1.11.7', '<')) {
+            $this->columnMap['programstatus']['endpoint_name'] = '(0)';
+        }
+    }
 }
