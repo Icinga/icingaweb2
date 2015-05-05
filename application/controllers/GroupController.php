@@ -3,13 +3,13 @@
 
 use \Zend_Controller_Action_Exception;
 use Icinga\Application\Config;
-use Icinga\Authentication\User\UserBackend;
-use Icinga\Authentication\User\UserBackendInterface;
+use Icinga\Authentication\UserGroup\UserGroupBackend;
+use Icinga\Authentication\UserGroup\UserGroupBackendInterface;
 use Icinga\Data\Selectable;
 use Icinga\Web\Controller;
 use Icinga\Web\Widget;
 
-class UserController extends Controller
+class GroupController extends Controller
 {
     /**
      * Initialize this controller
@@ -24,23 +24,23 @@ class UserController extends Controller
      */
     public function indexAction()
     {
-        $this->redirectNow('user/list');
+        $this->redirectNow('group/list');
     }
 
     /**
-     * List all users of a single backend
+     * List all user groups of a single backend
      */
     public function listAction()
     {
-        $backend = $this->getUserBackend($this->params->get('backend'));
+        $backend = $this->getUserGroupBackend($this->params->get('backend'));
         if ($backend === null) {
             $this->view->backend = null;
             return;
         }
 
         $query = $backend->select(array(
-            'user_name',
-            'is_active',
+            'group_name',
+            'parent_name',
             'created_at',
             'last_modified'
         ));
@@ -53,44 +53,44 @@ class UserController extends Controller
         $query->applyFilter($filterEditor->getFilter());
         $this->setupFilterControl($filterEditor);
 
-        $this->getTabs()->activate('user/list');
+        $this->getTabs()->activate('group/list');
         $this->view->backend = $backend;
-        $this->view->users = $query->paginate();
+        $this->view->groups = $query->paginate();
 
         $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->users);
+        $this->setupPaginationControl($this->view->groups);
         $this->setupSortControl(array(
-            'user_name'     => $this->translate('Username'),
-            'is_active'     => $this->translate('Active'),
+            'group_name'    => $this->translate('Group'),
+            'parent_name'   => $this->translate('Parent'),
             'created_at'    => $this->translate('Created at'),
             'last_modified' => $this->translate('Last modified')
         ));
     }
 
     /**
-     * Return the given user backend or the first match in order
+     * Return the given user group backend or the first match in order
      *
      * @param   string  $name           The name of the backend, or null in case the first match should be returned
      * @param   bool    $selectable     Whether the backend should implement the Selectable interface
      *
-     * @return  UserBackendInterface
+     * @return  UserGroupBackendInterface
      *
      * @throws  Zend_Controller_Action_Exception    In case the given backend name is invalid
      */
-    protected function getUserBackend($name = null, $selectable = true)
+    protected function getUserGroupBackend($name = null, $selectable = true)
     {
-        $config = Config::app('authentication');
+        $config = Config::app('groups');
         if ($name !== null) {
             if (! $config->hasSection($name)) {
                 throw new Zend_Controller_Action_Exception(
-                    sprintf($this->translate('Authentication backend "%s" not found'), $name),
+                    sprintf($this->translate('User group backend "%s" not found'), $name),
                     404
                 );
             } else {
-                $backend = UserBackend::create($name, $config->getSection($name));
+                $backend = UserGroupBackend::create($name, $config->getSection($name));
                 if ($selectable && !$backend instanceof Selectable) {
                     throw new Zend_Controller_Action_Exception(
-                        sprintf($this->translate('Authentication backend "%s" is not able to list users'), $name),
+                        sprintf($this->translate('User group backend "%s" is not able to list groups'), $name),
                         400
                     );
                 }
@@ -98,7 +98,7 @@ class UserController extends Controller
         } else {
             $backend = null;
             foreach ($config as $backendName => $backendConfig) {
-                $candidate = UserBackend::create($backendName, $backendConfig);
+                $candidate = UserGroupBackend::create($backendName, $backendConfig);
                 if (! $selectable || $candidate instanceof Selectable) {
                     $backend = $candidate;
                     break;

@@ -1,0 +1,50 @@
+<?php if (! $this->compact): ?>
+<div class="controls">
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
+</div>
+<?php endif ?>
+<div class="content">
+<?php
+
+if ($backend === null) {
+    echo $this->translate('No backend found which is able to list groups') . '</div>';
+    return;
+}
+
+if (count($groups) === 0) {
+    echo $this->translate('No groups found matching the filter') . '</div>';
+    return;
+}
+?>
+
+<table data-base-target="_next" class="action group-list">
+  <thead>
+    <tr>
+      <th class="group-name"><?= $this->translate('Group'); ?></th>
+      <th class="group-parent"><?= $this->translate('Parent'); ?></th>
+      <th class="group-created"><?= $this->translate('Created at'); ?></th>
+      <th class="group-modified"><?= $this->translate('Last modified'); ?></th>
+    </tr>
+  </thead>
+  <tbody>
+  <?php foreach ($groups as $group): ?>
+    <tr>
+      <td clas="group-name"><?= $this->escape($group->group_name); ?></td>
+      <td class="group-parent">
+        <?= $group->parent_name === null ? $this->translate('None', 'user.group.parent') : $this->escape($group->parent_name); ?>
+      </td>
+      <td class="group-created">
+        <?= $group->created_at === null ? $this->translate('N/A') : date('d/m/Y g:i A', $group->created_at); ?>
+      </td>
+      <td class="group-modified">
+        <?= $group->last_modified === null ? $this->translate('Never') : date('d/m/Y g:i A', $group->last_modified); ?>
+      </td>
+    </tr>
+  <?php endforeach ?>
+  </tbody>
+</table>
+</div>
