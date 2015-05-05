@@ -15,12 +15,21 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      */
     protected $queryColumns = array(
         'group' => array(
+            'group'         => 'name COLLATE utf8_general_ci',
             'group_name'    => 'name',
+            'parent'        => 'parent COLLATE utf8_general_ci',
             'parent_name'   => 'parent',
             'created_at'    => 'UNIX_TIMESTAMP(ctime)',
             'last_modified' => 'UNIX_TIMESTAMP(mtime)'
         )
     );
+
+    /**
+     * The columns which are not permitted to be queried
+     *
+     * @var array
+     */
+    protected $filterColumns = array('group', 'parent');
 
     /**
      * The default sort rules to be applied on a query
