@@ -32,12 +32,20 @@ class DbUserBackend extends DbRepository implements UserBackendInterface
      */
     protected $queryColumns = array(
         'user' => array(
+            'user'          => 'name COLLATE utf8_general_ci',
             'user_name'     => 'name',
             'is_active'     => 'active',
             'created_at'    => 'UNIX_TIMESTAMP(ctime)',
             'last_modified' => 'UNIX_TIMESTAMP(mtime)'
         )
     );
+
+    /**
+     * The columns which are not permitted to be queried
+     *
+     * @var array
+     */
+    protected $filterColumns = array('user');
 
     /**
      * The default sort rules to be applied on a query
