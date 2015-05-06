@@ -426,13 +426,15 @@ class SimpleQuery implements QueryInterface
     }
 
     /**
-     * Count all rows of the result set
+     * Count all rows of the result set, ignoring limit and offset
      *
-     * @return int
+     * @return  int
      */
     public function count()
     {
-        return $this->ds->count($this);
+        $query = clone $this;
+        $query->limit(0, 0);
+        return $this->ds->count($query);
     }
 
     /**
