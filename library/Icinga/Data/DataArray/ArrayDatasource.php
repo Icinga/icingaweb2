@@ -13,6 +13,16 @@ class ArrayDatasource implements Selectable
     protected $result;
 
     /**
+     * The name of the column to map array keys on
+     *
+     * In case the array being used as data source provides keys of type string,this name
+     * will be used to set such as column on each row, if the column is not set already.
+     *
+     * @var string
+     */
+    protected $keyColumn;
+
+    /**
      * Constructor, create a new Datasource for the given Array
      *
      * @param array $array The array you're going to use as a data source
@@ -20,6 +30,29 @@ class ArrayDatasource implements Selectable
     public function __construct(array $array)
     {
         $this->data = (array) $array;
+    }
+
+    /**
+     * Set the name of the column to map array keys on
+     *
+     * @param   string  $name
+     *
+     * @return  $this
+     */
+    public function setKeyColumn($name)
+    {
+        $this->keyColumn = $name;
+        return $this;
+    }
+
+    /**
+     * Return the name of the column to map array keys on
+     *
+     * @return  string
+     */
+    public function getKeyColumn()
+    {
+        return $this->keyColumn;
     }
 
     /**
@@ -83,39 +116,52 @@ class ArrayDatasource implements Selectable
         if ($this->hasResult()) {
             return $this;
         }
-        $result = array();
 
         $columns = $query->getColumns();
         $filter = $query->getFilter();
-        foreach ($this->data as & $row) {
+        $foundStringKey = false;
+        $result = array();
+        foreach ($this->data as $key => $row) {
+            if (is_string($key) && $this->keyColumn !== null && !isset($row->{$this->keyColumn})) {
+                $row = clone $row; // Make sure that this won't affect the actual data
+                $row->{$this->keyColumn} = $key;
+            }
 
             if (! $filter->matches($row)) {
                 continue;
             }
 
             // Get only desired columns if asked so
-            if (empty($columns)) {
-                $result[] = $row;
-            } else {
-                $c_row = (object) array();
-                foreach ($columns as $alias => $key) {
-                    if (is_int($alias)) {
-                        $alias = $key;
+            if (! empty($columns)) {
+                $filteredRow = (object) array();
+                foreach ($columns as $alias => $name) {
+                    if (! is_string($alias)) {
+                        $alias = $name;
                     }
-                    if (isset($row->$key)) {
-                        $c_row->$alias = $row->$key;
+
+                    if (isset($row->$name)) {
+                        $filteredRow->$alias = $row->$name;
                     } else {
-                        $c_row->$alias = null;
+                        $filteredRow->$alias = null;
                     }
                 }
-                $result[] = $c_row;
+            } else {
+                $filteredRow = $row;
             }
+
+            $foundStringKey |= is_string($key);
+            $result[$key] = $filteredRow;
         }
 
         // Sort the result
-
         if ($query->hasOrder()) {
-            usort($result, array($query, 'compare'));
+            if ($foundStringKey) {
+                uasort($result, array($query, 'compare'));
+            } else {
+                usort($result, array($query, 'compare'));
+            }
+        } elseif (! $foundStringKey) {
+            $result = array_values($result);
         }
 
         $this->setResult($result);
