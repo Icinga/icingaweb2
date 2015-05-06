@@ -131,7 +131,7 @@ class Query extends SimpleQuery
         // TODO: This should be considered a quick fix only.
         //       Drop this entirely once support for Icinga\Data\Filter is available
         if ($filter->isExpression()) {
-            $this->where($filter->getColumn(), $filter->getValue());
+            $this->where($filter->getColumn(), $filter->getExpression());
         } elseif ($filter->isChain()) {
             foreach ($filter->filters() as $chainOrExpression) {
                 $this->addFilter($chainOrExpression);
