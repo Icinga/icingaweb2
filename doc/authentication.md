@@ -87,8 +87,8 @@ Directive               | Description
 **Example:**
 
 ```
-[auth_ad]
-backend  = ad
+[auth_db]
+backend  = db
 resource = icingaweb-mysql
 ```
 
