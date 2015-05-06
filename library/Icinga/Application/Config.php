@@ -88,6 +88,16 @@ class Config implements Countable, Iterator, Selectable
     }
 
     /**
+     * Return the internal ConfigObject
+     *
+     * @return  ConfigObject
+     */
+    public function getConfigObject()
+    {
+        return $this->config;
+    }
+
+    /**
      * Provide a query for the internal config object
      *
      * @return  SimpleQuery
