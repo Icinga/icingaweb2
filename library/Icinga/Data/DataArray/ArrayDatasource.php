@@ -23,6 +23,13 @@ class ArrayDatasource implements Selectable
     protected $result;
 
     /**
+     * The result of a counted query
+     *
+     * @var int
+     */
+    protected $count;
+
+    /**
      * The name of the column to map array keys on
      *
      * In case the array being used as data source provides keys of type string,this name
@@ -89,6 +96,7 @@ class ArrayDatasource implements Selectable
             $arr = (array) $row;
             $result[] = array_shift($arr);
         }
+
         return $result;
     }
 
@@ -110,8 +118,10 @@ class ArrayDatasource implements Selectable
                     $keys[1] = $keys[0];
                 }
             }
+
             $result[$row->{$keys[0]}] = $row->{$keys[1]};
         }
+
         return $result;
     }
 
@@ -152,27 +162,27 @@ class ArrayDatasource implements Selectable
      */
     public function count(SimpleQuery $query)
     {
-        $this->createResult($query);
-        return count($this->result);
+        if ($this->count === null) {
+            $this->count = count($this->createResult($query));
+        }
+
+        return $this->count;
     }
 
     /**
-     * Create the result for the given query, in case there is none yet
+     * Create and return the result for the given query
      *
      * @param   SimpleQuery     $query
      *
-     * @return  $this
+     * @return  array
      */
     protected function createResult(SimpleQuery $query)
     {
-        if ($this->hasResult()) {
-            return $this;
-        }
-
         $columns = $query->getColumns();
         $filter = $query->getFilter();
         $offset = $query->hasOffset() ? $query->getOffset() : 0;
         $limit = $query->hasLimit() ? $query->getLimit() : 0;
+
         $foundStringKey = false;
         $result = array();
         $skipped = 0;
@@ -226,8 +236,7 @@ class ArrayDatasource implements Selectable
             $result = array_values($result);
         }
 
-        $this->setResult($result);
-        return $this;
+        return $result;
     }
 
     /**
@@ -263,8 +272,9 @@ class ArrayDatasource implements Selectable
     protected function getResult(SimpleQuery $query)
     {
         if (! $this->hasResult()) {
-            $this->createResult($query);
+            $this->setResult($this->createResult($query));
         }
+
         return $this->result;
     }
 }
