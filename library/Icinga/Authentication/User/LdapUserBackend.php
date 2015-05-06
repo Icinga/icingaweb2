@@ -43,6 +43,13 @@ class LdapUserBackend extends Repository implements UserBackendInterface
     protected $filter;
 
     /**
+     * The columns which are not permitted to be queried
+     *
+     * @var array
+     */
+    protected $filterColumns = array('user');
+
+    /**
      * The default sort rules to be applied on a query
      *
      * @var array
@@ -250,6 +257,7 @@ class LdapUserBackend extends Repository implements UserBackendInterface
             }
 
             $this->queryColumns[$this->userClass] = array(
+                'user'          => $this->userNameAttribute,
                 'user_name'     => $this->userNameAttribute,
                 'is_active'     => 'unknown', // msExchUserAccountControl == 2/512/514? <- AD LDAP
                 'created_at'    => 'whenCreated', // That's AD LDAP,
