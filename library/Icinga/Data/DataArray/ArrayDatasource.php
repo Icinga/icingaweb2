@@ -138,7 +138,8 @@ class ArrayDatasource implements Selectable
         if (empty($result)) {
             return false;
         }
-        return $result[0];
+
+        return array_shift($result);
     }
 
     /**
