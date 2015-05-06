@@ -34,7 +34,11 @@ class ErrorController extends ActionController
                 $path = preg_split('~/~', $path);
                 $path = array_shift($path);
                 $this->getResponse()->setHttpResponseCode(404);
-                $this->view->message = $this->translate('Page not found.');
+                $title = preg_replace('/\r?\n.*$/s', '', $exception->getMessage());
+                $this->view->title = 'Server error: ' . $title;
+                if ($this->getInvokeArg('displayExceptions')) {
+                    $this->view->stackTrace = $exception->getTraceAsString();
+                }
                 if ($modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
                     $this->view->message .= ' ' . sprintf(
                         $this->translate('Enabling the "%s" module might help!'),
