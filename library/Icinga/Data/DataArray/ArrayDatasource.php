@@ -8,8 +8,18 @@ use Icinga\Data\SimpleQuery;
 
 class ArrayDatasource implements Selectable
 {
+    /**
+     * The array being used as data source
+     *
+     * @var array
+     */
     protected $data;
 
+    /**
+     * The current result
+     *
+     * @var array
+     */
     protected $result;
 
     /**
@@ -23,13 +33,13 @@ class ArrayDatasource implements Selectable
     protected $keyColumn;
 
     /**
-     * Constructor, create a new Datasource for the given Array
+     * Create a new data source for the given array
      *
-     * @param array $array The array you're going to use as a data source
+     * @param   array   $data   The array you're going to use as a data source
      */
-    public function __construct(array $array)
+    public function __construct(array $data)
     {
-        $this->data = (array) $array;
+        $this->data = $data;
     }
 
     /**
@@ -56,15 +66,22 @@ class ArrayDatasource implements Selectable
     }
 
     /**
-     * Instantiate a Query object
+     * Provide a query for this data source
      *
-     * @return SimpleQuery
+     * @return  SimpleQuery
      */
     public function select()
     {
         return new SimpleQuery($this);
     }
 
+    /**
+     * Fetch and return a column of all rows of the result set as an array
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  array
+     */
     public function fetchColumn(SimpleQuery $query)
     {
         $result = array();
@@ -75,6 +92,13 @@ class ArrayDatasource implements Selectable
         return $result;
     }
 
+    /**
+     * Fetch and return all rows of the given query's result as a flattened key/value based array
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  array
+     */
     public function fetchPairs(SimpleQuery $query)
     {
         $result = array();
@@ -91,6 +115,13 @@ class ArrayDatasource implements Selectable
         return $result;
     }
 
+    /**
+     * Fetch and return the first row of the given query's result
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  object|false    The row or false in case the result is empty
+     */
     public function fetchRow(SimpleQuery $query)
     {
         $result = $this->getResult($query);
@@ -100,17 +131,38 @@ class ArrayDatasource implements Selectable
         return $result[0];
     }
 
+    /**
+     * Fetch and return all rows of the given query's result as an array
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  array
+     */
     public function fetchAll(SimpleQuery $query)
     {
         return $this->getResult($query);
     }
 
+    /**
+     * Count all rows of the given query's result
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  int
+     */
     public function count(SimpleQuery $query)
     {
         $this->createResult($query);
         return count($this->result);
     }
 
+    /**
+     * Create the result for the given query, in case there is none yet
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  $this
+     */
     protected function createResult(SimpleQuery $query)
     {
         if ($this->hasResult()) {
@@ -168,7 +220,14 @@ class ArrayDatasource implements Selectable
         return $this;
     }
 
-    protected function getLimitedResult($query)
+    /**
+     * Apply the limit, if any, of the given query to the current result and return the result
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  array
+     */
+    protected function getLimitedResult(SimpleQuery $query)
     {
         if ($query->hasLimit()) {
             if ($query->hasOffset()) {
@@ -182,16 +241,36 @@ class ArrayDatasource implements Selectable
         }
     }
 
+    /**
+     * Return whether a query result exists
+     *
+     * @return  bool
+     */
     protected function hasResult()
     {
         return $this->result !== null;
     }
 
-    protected function setResult($result)
+    /**
+     * Set the current result
+     *
+     * @param   array   $result
+     *
+     * @return  $this
+     */
+    protected function setResult(array $result)
     {
-        return $this->result = $result;
+        $this->result = $result;
+        return $this;
     }
 
+    /**
+     * Return the result for the given query
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  array
+     */
     protected function getResult(SimpleQuery $query)
     {
         if (! $this->hasResult()) {
