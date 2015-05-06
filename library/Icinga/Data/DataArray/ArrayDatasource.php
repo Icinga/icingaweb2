@@ -171,8 +171,11 @@ class ArrayDatasource implements Selectable
 
         $columns = $query->getColumns();
         $filter = $query->getFilter();
+        $offset = $query->hasOffset() ? $query->getOffset() : 0;
+        $limit = $query->hasLimit() ? $query->getLimit() : 0;
         $foundStringKey = false;
         $result = array();
+        $skipped = 0;
         foreach ($this->data as $key => $row) {
             if (is_string($key) && $this->keyColumn !== null && !isset($row->{$this->keyColumn})) {
                 $row = clone $row; // Make sure that this won't affect the actual data
@@ -180,6 +183,9 @@ class ArrayDatasource implements Selectable
             }
 
             if (! $filter->matches($row)) {
+                continue;
+            } elseif ($skipped < $offset) {
+                $skipped++;
                 continue;
             }
 
@@ -203,6 +209,10 @@ class ArrayDatasource implements Selectable
 
             $foundStringKey |= is_string($key);
             $result[$key] = $filteredRow;
+
+            if (count($result) === $limit) {
+                break;
+            }
         }
 
         // Sort the result
@@ -218,27 +228,6 @@ class ArrayDatasource implements Selectable
 
         $this->setResult($result);
         return $this;
-    }
-
-    /**
-     * Apply the limit, if any, of the given query to the current result and return the result
-     *
-     * @param   SimpleQuery     $query
-     *
-     * @return  array
-     */
-    protected function getLimitedResult(SimpleQuery $query)
-    {
-        if ($query->hasLimit()) {
-            if ($query->hasOffset()) {
-                $offset = $query->getOffset();
-            } else {
-                $offset = 0;
-            }
-            return array_slice($this->result, $offset, $query->getLimit());
-        } else {
-            return $this->result;
-        }
     }
 
     /**
@@ -276,6 +265,6 @@ class ArrayDatasource implements Selectable
         if (! $this->hasResult()) {
             $this->createResult($query);
         }
-        return $this->getLimitedResult($query);
+        return $this->result;
     }
 }
