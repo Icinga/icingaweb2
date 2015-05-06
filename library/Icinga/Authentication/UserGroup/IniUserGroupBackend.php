@@ -48,6 +48,14 @@ class IniUserGroupBackend extends Repository implements UserGroupBackendInterfac
     );
 
     /**
+     * Initialize this ini user group backend
+     */
+    protected function init()
+    {
+        $this->ds->getConfigObject()->setKeyColumn('name');
+    }
+
+    /**
      * Return the groups the given user is a member of
      *
      * @param   User    $user
@@ -60,17 +68,15 @@ class IniUserGroupBackend extends Repository implements UserGroupBackendInterfac
 
         $groups = array();
         foreach ($result as $group) {
-            if ($group->group_name) { // TODO: Can we set this somehow automatically to the section's name??
-                $groups[$group->group_name] = $group->parent_name;
-            }
+            $groups[$group->group_name] = $group->parent_name;
         }
 
         $username = strtolower($user->getUsername());
         $memberships = array();
         foreach ($result as $group) {
-            if ($group->group_name && $group->users) {
+            if ($group->users && !in_array($group->group_name, $memberships)) {
                 $users = array_map('strtolower', String::trimSplit($group->users));
-                if (! in_array($group->group_name, $memberships) && in_array($username, $users)) {
+                if (in_array($username, $users)) {
                     $memberships[] = $group->group_name;
                     $parent = $groups[$group->group_name];
                     while ($parent !== null) {
