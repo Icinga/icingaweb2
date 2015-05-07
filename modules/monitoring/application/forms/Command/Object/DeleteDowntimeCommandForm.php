@@ -21,7 +21,7 @@ class DeleteDowntimeCommandForm extends CommandForm
         $this->setAttrib('class', 'inline');
     }
     
-        /**
+    /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::createElements() For the method documentation.
      */

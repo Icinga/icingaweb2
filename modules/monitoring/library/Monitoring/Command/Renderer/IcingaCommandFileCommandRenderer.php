@@ -332,14 +332,9 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
 
     public function renderDeleteDowntime(DeleteDowntimeCommand $command)
     {
-        if ($command->getDowntimeType() === 'host') {
-            $commandString = 'DEL_HOST_DOWNTIME';
-        } else {
-            $commandString = 'DEL_SVC_DOWNTIME';
-        }
         return sprintf(
             '%s;%u',
-            $commandString,
+            $command->getIsService() ? 'DEL_SVC_DOWNTIME' : 'DEL_HOST_DOWNTIME',
             $command->getDowntimeId()
         );
     }
