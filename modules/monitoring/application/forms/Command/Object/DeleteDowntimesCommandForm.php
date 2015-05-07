@@ -64,11 +64,7 @@ class DeleteDowntimesCommandForm extends CommandForm
         foreach ($this->downtimes as $downtime) {
             $delDowntime = new DeleteDowntimeCommand();
             $delDowntime->setDowntimeId($downtime->id);
-            $delDowntime->setDowntimeType(
-                isset($downtime->service_description) ?
-                DeleteDowntimeCommand::DOWNTIME_TYPE_SERVICE :
-                DeleteDowntimeCommand::DOWNTIME_TYPE_HOST
-            );
+            $delDowntime->setIsService(isset($downtime->service_description));
             $this->getTransport($this->request)->send($delDowntime);
         }
         $redirect = $this->getElement('redirect')->getValue();
@@ -86,7 +82,7 @@ class DeleteDowntimesCommandForm extends CommandForm
      *
      * @return $this
      */
-    public function setDowntimes($downtimes)
+    public function setDowntimes(array $downtimes)
     {
         $this->downtimes = $downtimes;
         return $this;

@@ -90,8 +90,8 @@ class Monitoring_CommentsController extends Controller
             $this->translate('Confirm removal of %d comments.'),
             count($this->comments)
         ));
-        $delCommentForm->setObjects($this->comments)
-                ->setRedirectUrl(Url::fromPath('monitoring/list/downtimes'))
+        $delCommentForm->setComments($this->comments)
+                ->setRedirectUrl(Url::fromPath('monitoring/list/comments'))
                 ->handleRequest();
         $this->view->delCommentForm = $delCommentForm;
     }
