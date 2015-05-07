@@ -376,7 +376,9 @@ class RepositoryQuery implements QueryInterface
      */
     public function paginate($itemsPerPage = null, $pageNumber = null)
     {
-        return $this->query->paginate($itemsPerPage, $pageNumber);
+        $paginator = $this->query->paginate($itemsPerPage, $pageNumber);
+        $paginator->getAdapter()->setQuery($this);
+        return $paginator;
     }
 
     /**
