@@ -89,9 +89,7 @@ abstract class MonitoredObjectController extends Controller
         }
         if (! empty($this->object->downtimes) && $auth->hasPermission('monitoring/command/downtime/delete')) {
             $delDowntimeForm = new DeleteDowntimeCommandForm();
-            $delDowntimeForm
-                ->setObjects($this->object)
-                ->handleRequest();
+            $delDowntimeForm->handleRequest();
             $this->view->delDowntimeForm = $delDowntimeForm;
         }
         $this->view->object = $this->object;
@@ -145,16 +143,6 @@ abstract class MonitoredObjectController extends Controller
         $this->assertHttpMethod('POST');
         $this->assertPermission('monitoring/command/comment/delete');
         $this->handleCommandForm(new DeleteCommentCommandForm());
-    }
-
-    /**
-     * Delete a downtime
-     */
-    public function deleteDowntimeAction()
-    {
-        $this->assertHttpMethod('POST');
-        $this->assertPermission('monitoring/command/downtime/delete');
-        $this->handleCommandForm(new DeleteDowntimeCommandForm());
     }
 
     /**
