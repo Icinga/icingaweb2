@@ -230,8 +230,6 @@ class LdapUserBackend extends Repository implements UserBackendInterface
      */
     public function select(array $columns = null)
     {
-        $this->initializeQueryColumns();
-
         $query = parent::select($columns);
         $query->getQuery()->setBase($this->baseDn);
         if ($this->filter) {
@@ -244,26 +242,28 @@ class LdapUserBackend extends Repository implements UserBackendInterface
     /**
      * Initialize this repository's query columns
      *
+     * @return  array
+     *
      * @throws  ProgrammingError    In case either $this->userNameAttribute or $this->userClass has not been set yet
      */
     protected function initializeQueryColumns()
     {
-        if ($this->queryColumns === null) {
-            if ($this->userClass === null) {
-                throw new ProgrammingError('It is required to set the objectClass where to look for users first');
-            }
-            if ($this->userNameAttribute === null) {
-                throw new ProgrammingError('It is required to set a attribute name where to find a user\'s name first');
-            }
+        if ($this->userClass === null) {
+            throw new ProgrammingError('It is required to set the objectClass where to look for users first');
+        }
+        if ($this->userNameAttribute === null) {
+            throw new ProgrammingError('It is required to set a attribute name where to find a user\'s name first');
+        }
 
-            $this->queryColumns[$this->userClass] = array(
+        return array(
+            $this->userClass => array(
                 'user'          => $this->userNameAttribute,
                 'user_name'     => $this->userNameAttribute,
                 'is_active'     => 'unknown', // msExchUserAccountControl == 2/512/514? <- AD LDAP
                 'created_at'    => 'whenCreated', // That's AD LDAP,
                 'last_modified' => 'whenChanged' // what's OpenLDAP?
-            );
-        }
+            )
+        );
     }
 
     /**

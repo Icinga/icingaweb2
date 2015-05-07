@@ -121,14 +121,6 @@ abstract class Repository implements Selectable
         $this->aliasColumnMap = array();
 
         $this->init();
-
-        if ($this->filterColumns === null) {
-            $this->filterColumns = $this->getFilterColumns();
-        }
-
-        if ($this->sortRules === null) {
-            $this->sortRules = $this->getSortRules();
-        }
     }
 
     /**
@@ -187,7 +179,7 @@ abstract class Repository implements Selectable
     public function getBaseTable()
     {
         if ($this->baseTable === null) {
-            $queryColumns = $this->queryColumns; // Copy because of reset()
+            $queryColumns = $this->getQueryColumns();
             reset($queryColumns);
             $this->baseTable = key($queryColumns);
             if (is_int($this->baseTable) || !is_array($queryColumns[$this->baseTable])) {
@@ -199,30 +191,80 @@ abstract class Repository implements Selectable
     }
 
     /**
+     * Return the query columns being provided
+     *
+     * Calls $this->initializeQueryColumns() in case $this->queryColumns is null.
+     *
+     * @return  array
+     */
+    public function getQueryColumns()
+    {
+        if ($this->queryColumns === null) {
+            $this->queryColumns = $this->initializeQueryColumns();
+        }
+
+        return $this->queryColumns;
+    }
+
+    /**
+     * Overwrite this in your repository implementation in case you need to initialize the query columns lazily
+     *
+     * @return  array
+     */
+    protected function initializeQueryColumns()
+    {
+        return array();
+    }
+
+    /**
      * Return the columns (or aliases) which are not permitted to be queried
+     *
+     * Calls $this->initializeFilterColumns() in case $this->filterColumns is null.
      *
      * @return  array
      */
     public function getFilterColumns()
     {
-        if ($this->filterColumns !== null) {
-            return $this->filterColumns;
+        if ($this->filterColumns === null) {
+            $this->filterColumns = $this->initializeFilterColumns();
         }
 
+        return $this->filterColumns;
+    }
+
+    /**
+     * Overwrite this in your repository implementation in case you need to initialize the filter columns lazily
+     *
+     * @return  array
+     */
+    protected function initializeFilterColumns()
+    {
         return array();
     }
 
     /**
      * Return the default sort rules to be applied on a query
      *
+     * Calls $this->initializeSortRules() in case $this->sortRules is null.
+     *
      * @return  array
      */
     public function getSortRules()
     {
-        if ($this->sortRules !== null) {
-            return $this->sortRules;
+        if ($this->sortRules === null) {
+            $this->sortRules = $this->initializeSortRules();
         }
 
+        return $this->sortRules;
+    }
+
+    /**
+     * Overwrite this in your repository implementation in case you need to initialize the sort rules lazily
+     *
+     * @return  array
+     */
+    protected function initializeSortRules()
+    {
         return array();
     }
 
@@ -232,15 +274,9 @@ abstract class Repository implements Selectable
      * @param   array   $columns    The desired columns, if null all columns will be queried
      *
      * @return  RepositoryQuery
-     *
-     * @throws  ProgrammingError    In case $this->queryColumns has not been initialized yet
      */
     public function select(array $columns = null)
     {
-        if (empty($this->queryColumns)) {
-            throw new ProgrammingError('Repositories are required to initialize $this->queryColumns first');
-        }
-
         $this->initializeAliasMaps();
 
         $query = new RepositoryQuery($this);
@@ -250,6 +286,8 @@ abstract class Repository implements Selectable
 
     /**
      * Initialize $this->aliasTableMap and $this->aliasColumnMap
+     *
+     * @throws  ProgrammingError    In case $this->queryColumns does not provide any column information
      */
     protected function initializeAliasMaps()
     {
@@ -257,7 +295,12 @@ abstract class Repository implements Selectable
             return;
         }
 
-        foreach ($this->queryColumns as $table => $columns) {
+        $queryColumns = $this->getQueryColumns();
+        if (empty($queryColumns)) {
+            throw new ProgrammingError('Repositories are required to initialize $this->queryColumns first');
+        }
+
+        foreach ($queryColumns as $table => $columns) {
             foreach ($columns as $alias => $column) {
                 if (! is_string($alias)) {
                     $this->aliasTableMap[$column] = $table;
@@ -297,7 +340,7 @@ abstract class Repository implements Selectable
      */
     public function hasQueryColumn($name)
     {
-        return array_key_exists($name, $this->aliasColumnMap) && !in_array($name, $this->filterColumns);
+        return array_key_exists($name, $this->aliasColumnMap) && !in_array($name, $this->getFilterColumns());
     }
 
     /**
@@ -311,7 +354,7 @@ abstract class Repository implements Selectable
      */
     public function requireQueryColumn($name)
     {
-        if (in_array($name, $this->filterColumns)) {
+        if (in_array($name, $this->getFilterColumns())) {
             throw new QueryException(t('Filter column "%s" cannot be queried'), $name);
         }
         if (! array_key_exists($name, $this->aliasColumnMap)) {
