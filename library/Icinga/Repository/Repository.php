@@ -45,7 +45,7 @@ abstract class Repository implements Selectable
     /**
      * The query columns being provided
      *
-     * This must be overwritten by concrete repository implementations, in the following format
+     * This must be initialized by concrete repository implementations, in the following format
      * <pre><code>
      *  array(
      *      'baseTable' => array(
@@ -70,7 +70,7 @@ abstract class Repository implements Selectable
     /**
      * The default sort rules to be applied on a query
      *
-     * This may be overwritten by concrete repository implementations, in the following format
+     * This may be initialized by concrete repository implementations, in the following format
      * <pre><code>
      *  array(
      *      'alias_or_column_name' => array(
