@@ -62,7 +62,7 @@ abstract class MonitoredObjectController extends Controller
                 ->handleRequest();
             $this->view->checkNowForm = $checkNowForm;
         }
-        if ( ! in_array((int) $this->object->state, array(0, 99))) {
+        if (! in_array((int) $this->object->state, array(0, 99))) {
             if ((bool) $this->object->acknowledged) {
                 if ($auth->hasPermission('monitoring/command/remove-acknowledgement')) {
                     $removeAckForm = new RemoveAcknowledgementCommandForm();

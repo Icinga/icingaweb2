@@ -18,11 +18,12 @@
         <td>
           <?= $this->icon('service', $this->translate('Service')); ?>
           <?= $this->link()->service(
-           $this->comment->service_description,
-           $this->comment->service_display_name,
-           $this->comment->host_name,
-           $this->comment->host_display_name
-          ); ?>
+                  $this->comment->service_description,
+                  $this->comment->service_display_name,
+                  $this->comment->host_name,
+                  $this->comment->host_display_name
+              );
+          ?>
         </td>
      <?php else: ?>
         <th> <?= $this->translate('Host') ?> </th> 
@@ -31,7 +32,8 @@
           <?= $this->link()->host(
                   $this->comment->host_name,
                   $this->comment->host_display_name
-              ); ?>
+              );
+          ?>
         </td> 
      <?php endif ?>
     </tr>
@@ -55,10 +57,11 @@
       <th><?= $this->translate('Expires') ?></th>
       <td>
           <?= $this->comment->expiration ? sprintf(
-              $this->translate('This comment expires on %s at %s.'),
-              date('d.m.y', $this->comment->expiration),
-              date('H:i', $this->comment->expiration)
-          ) : $this->translate('This comment does not expire.'); ?>
+                  $this->translate('This comment expires on %s at %s.'),
+                  date('d.m.y', $this->comment->expiration),
+                  date('H:i', $this->comment->expiration)
+              ) : $this->translate('This comment does not expire.');
+          ?>
       </td>
     </tr>
   

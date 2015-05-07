@@ -82,7 +82,7 @@ class Monitoring_DowntimeController extends Controller
                     'label' => $this->translate('Downtime'),
                     'url'   =>'monitoring/downtimes/show'
                 )
-        )->activate('downtime')->extend(new DashboardAction());
+            )->activate('downtime')->extend(new DashboardAction());
     }
 
     /**
@@ -92,7 +92,7 @@ class Monitoring_DowntimeController extends Controller
     {
         $this->view->downtime = $this->downtime;
         $this->view->isService = $this->isService;
-        $this->view->stateName = isset($this->downtime->service_description) ? 
+        $this->view->stateName = isset($this->downtime->service_description) ?
                 Service::getStateText($this->downtime->service_state) :
                 Host::getStateText($this->downtime->host_state);
         $this->view->listAllLink = Url::fromPath('monitoring/list/downtimes');
