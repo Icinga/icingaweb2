@@ -81,9 +81,8 @@ class Monitoring_CommentsController extends Controller
     {
         $this->assertPermission('monitoring/command/comment/delete');
 
-        $this->view->comments = $this->comments;
-        $this->view->listAllLink = Url::fromPath('monitoring/list/comments')
-                ->setQueryString($this->filter->toQueryString());
+        $listCommentsLink = Url::fromPath('monitoring/list/comments')
+            ->setQueryString('comment_type=(comment|ack)');
         $delCommentForm = new DeleteCommentsCommandForm();
         $delCommentForm->setTitle($this->view->translate('Remove all Comments'));
         $delCommentForm->addDescription(sprintf(
@@ -91,8 +90,11 @@ class Monitoring_CommentsController extends Controller
             count($this->comments)
         ));
         $delCommentForm->setComments($this->comments)
-                ->setRedirectUrl(Url::fromPath('monitoring/list/comments'))
-                ->handleRequest();
+            ->setRedirectUrl($listCommentsLink)
+            ->handleRequest();
         $this->view->delCommentForm = $delCommentForm;
+        $this->view->comments = $this->comments;
+        $this->view->listAllLink = Url::fromPath('monitoring/list/comments')
+                ->setQueryString($this->filter->toQueryString());
     }
 }

@@ -64,12 +64,15 @@ class Monitoring_CommentController extends Controller
      */
     public function showAction()
     {
+        $listCommentsLink = Url::fromPath('monitoring/list/comments')
+            ->setQueryString('comment_type=(comment|ack)');
+
         $this->view->comment = $this->comment;
         if ($this->hasPermission('monitoring/command/comment/delete')) {
             $this->view->delCommentForm = $this->createDelCommentForm();
             $this->view->delCommentForm->populate(
                 array(
-                    'redirect' => Url::fromPath('monitoring/list/comments'),
+                    'redirect' => $listCommentsLink,
                     'comment_id' => $this->comment->id,
                     'comment_is_service' => isset($this->comment->service_description)
                 )
