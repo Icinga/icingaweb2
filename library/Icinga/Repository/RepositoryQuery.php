@@ -132,7 +132,10 @@ class RepositoryQuery implements QueryInterface
      */
     public function where($column, $value = null)
     {
-        $this->query->where($this->repository->requireFilterColumn($column), $value);
+        $this->query->where(
+            $this->repository->requireFilterColumn($column),
+            $this->repository->persistColumn($column, $value)
+        );
         return $this;
     }
 
@@ -182,13 +185,15 @@ class RepositoryQuery implements QueryInterface
         return $this;
     }
 
-    /*+
+    /**
      * Recurse the given filter and notify the repository about each required filter column
      */
     protected function requireFilterColumns(Filter $filter)
     {
         if ($filter->isExpression()) {
-            $filter->setColumn($this->repository->requireFilterColumn($filter->getColumn()));
+            $column = $filter->getColumn();
+            $filter->setColumn($this->repository->requireFilterColumn($column));
+            $filter->setExpression($this->repository->persistColumn($column, $filter->getExpression()));
         } elseif ($filter->isChain()) {
             foreach ($filter->filters() as $chainOrExpression) {
                 $this->requireFilterColumns($chainOrExpression);
@@ -392,7 +397,14 @@ class RepositoryQuery implements QueryInterface
             $this->order();
         }
 
-        return $this->query->fetchOne();
+        $result = $this->query->fetchOne();
+        if ($this->repository->providesValueConversion()) {
+            $columns = $this->getColumns();
+            $column = isset($columns[0]) ? $columns[0] : key($columns);
+            return $this->repository->retrieveColumn($column, $result);
+        }
+
+        return $result;
     }
 
     /**
@@ -406,7 +418,18 @@ class RepositoryQuery implements QueryInterface
             $this->order();
         }
 
-        return $this->query->fetchRow();
+        $result = $this->query->fetchRow();
+        if ($this->repository->providesValueConversion()) {
+            foreach ($this->getColumns() as $alias => $column) {
+                if (! is_string($alias)) {
+                    $alias = $column;
+                }
+
+                $result->$alias = $this->repository->retrieveColumn($alias, $result->$alias);
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -422,11 +445,23 @@ class RepositoryQuery implements QueryInterface
             $this->order();
         }
 
-        return $this->query->fetchColumn($columnIndex);
+        $results = $this->query->fetchColumn($columnIndex);
+        if ($this->repository->providesValueConversion()) {
+            $columns = $this->getColumns();
+            $aliases = array_keys($columns);
+            $column = is_int($aliases[$columnIndex]) ? $columns[$columnIndex] : $aliases[$columnIndex];
+            foreach ($results as & $value) {
+                $value = $this->repository->retrieveColumn($column, $value);
+            }
+        }
+
+        return $results;
     }
 
     /**
-     * Fetch and return all rows of this query's result as a flattened key/value based array
+     * Fetch and return all rows of this query's result set as an array of key-value pairs
+     *
+     * The first column is the key, the second column is the value.
      *
      * @return  array
      */
@@ -436,7 +471,22 @@ class RepositoryQuery implements QueryInterface
             $this->order();
         }
 
-        return $this->query->fetchPairs();
+        $results = $this->query->fetchPairs();
+        if ($this->repository->providesValueConversion()) {
+            $columns = $this->getColumns();
+            $aliases = array_keys($columns);
+            $newResults = array();
+            foreach ($results as $colOneValue => $colTwoValue) {
+                $colOne = $aliases[0] !== 0 ? $aliases[0] : $columns[0];
+                $colTwo = count($aliases) < 2 ? $colOne : ($aliases[1] !== 1 ? $aliases[1] : $columns[1]);
+                $colOneValue = $this->repository->retrieveColumn($colOne, $colOneValue);
+                $newResults[$colOneValue] = $this->repository->retrieveColumn($colTwo, $colTwoValue);
+            }
+
+            $results = $newResults;
+        }
+
+        return $results;
     }
 
     /**
@@ -450,7 +500,21 @@ class RepositoryQuery implements QueryInterface
             $this->order();
         }
 
-        return $this->query->fetchAll();
+        $results = $this->query->fetchAll();
+        if ($this->repository->providesValueConversion()) {
+            $columns = $this->getColumns();
+            foreach ($results as $row) {
+                foreach ($columns as $alias => $column) {
+                    if (! is_string($alias)) {
+                        $alias = $column;
+                    }
+
+                    $row->$alias = $this->repository->retrieveColumn($alias, $row->$alias);
+                }
+            }
+        }
+
+        return $results;
     }
 
     /**

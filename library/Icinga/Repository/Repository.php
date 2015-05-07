@@ -3,6 +3,7 @@
 
 namespace Icinga\Repository;
 
+use Icinga\Application\Logger;
 use Icinga\Data\Selectable;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\QueryException;
@@ -94,6 +95,21 @@ abstract class Repository implements Selectable
      * @var array
      */
     protected $sortRules;
+
+    /**
+     * The value conversion rules to apply on a query
+     *
+     * This may be initialized by concrete repository implementations and describes for which aliases or column
+     * names what type of conversion is available. For entries, where the key is the alias/column and the value
+     * is the type identifier, the repository attempts to find a conversion method for the alias/column first and,
+     * if none is found, then for the type. If an entry only provides a value, which is the alias/column, the
+     * repository only attempts to find a conversion method for the alias/column. The name of a conversion method
+     * is expected to be declared using lowerCamelCase. (e.g. user_name will be translated to persistUserName and
+     * groupname will be translated to retrieveGroupname)
+     *
+     * @var array
+     */
+    protected $conversionRules;
 
     /**
      * An array to map table names to aliases
@@ -269,6 +285,32 @@ abstract class Repository implements Selectable
     }
 
     /**
+     * Return the value conversion rules to apply on a query
+     *
+     * Calls $this->initializeConversionRules() in case $this->conversionRules is null.
+     *
+     * @return  array
+     */
+    public function getConversionRules()
+    {
+        if ($this->conversionRules === null) {
+            $this->conversionRules = $this->initializeConversionRules();
+        }
+
+        return $this->conversionRules;
+    }
+
+    /**
+     * Overwrite this in your repository implementation in case you need to initialize the conversion rules lazily
+     *
+     * @return  array
+     */
+    protected function initializeConversionRules()
+    {
+        return array();
+    }
+
+    /**
      * Return an array to map table names to aliases
      *
      * @return  array
@@ -333,6 +375,100 @@ abstract class Repository implements Selectable
         $query = new RepositoryQuery($this);
         $query->from($this->getBaseTable(), $columns);
         return $query;
+    }
+
+    /**
+     * Return whether this repository is capable of converting values
+     *
+     * @return  bool
+     */
+    public function providesValueConversion()
+    {
+        $conversionRules = $this->getConversionRules();
+        return !empty($conversionRules);
+    }
+
+    /**
+     * Convert a value supposed to be transmitted to the data source
+     *
+     * @param   string  $name       The alias or column name
+     * @param   mixed   $value      The value to convert
+     *
+     * @return  mixed               If conversion was possible, the converted value, otherwise the unchanged value
+     */
+    public function persistColumn($name, $value)
+    {
+        $converter = $this->getConverter($name, 'persist');
+        if ($converter !== null) {
+            $value = $this->$converter($value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Convert a value which was fetched from the data source
+     *
+     * @param   string  $name       The alias or column name
+     * @param   mixed   $value      The value to convert
+     *
+     * @return  mixed               If conversion was possible, the converted value, otherwise the unchanged value
+     */
+    public function retrieveColumn($name, $value)
+    {
+        $converter = $this->getConverter($name, 'retrieve');
+        if ($converter !== null) {
+            $value = $this->$converter($value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Return the name of the conversion method for the given alias or column name and context
+     *
+     * @param   string  $name       The alias or column name for which to return a conversion method
+     * @param   string  $context    The context of the conversion: persist or retrieve
+     *
+     * @return  string
+     *
+     * @throws  ProgrammingError    In case a conversion rule is found but not any conversion method
+     */
+    protected function getConverter($name, $context)
+    {
+        $conversionRules = $this->getConversionRules();
+
+        // Check for a conversion method for the alias/column first
+        if (array_key_exists($name, $conversionRules) || in_array($name, $conversionRules)) {
+            $methodName = $context . join('', array_map('ucfirst', explode('_', $name)));
+            if (method_exists($this, $methodName)) {
+                return $methodName;
+            }
+        }
+
+        // The conversion method for the type is just a fallback, but it is required to exist if defined
+        if (isset($conversionRules[$name])) {
+            $identifier = join('', array_map('ucfirst', explode('_', $conversionRules[$name])));
+            if (! method_exists($this, $context . $identifier)) {
+                // Do not throw an error in case at least one conversion method exists
+                if (! method_exists($this, ($context === 'persist' ? 'retrieve' : 'persist') . $identifier)) {
+                    throw new ProgrammingError(
+                        'Cannot find any conversion method for type "%s"'
+                        . '. Add a proper conversion method or remove the type definition',
+                        $conversionRules[$name]
+                    );
+                }
+
+                Logger::debug(
+                    'Conversion method "%s" for type definition "%s" does not exist in repository "%s".',
+                    $context . $identifier,
+                    $conversionRules[$name],
+                    $this->getName()
+                );
+            } else {
+                return $context . $identifier;
+            }
+        }
     }
 
     /**
