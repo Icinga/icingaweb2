@@ -16,12 +16,12 @@
       <?php if ($this->comment->objecttype === 'service'): ?>
         <th> <?= $this->translate('Service') ?> </th> 
         <td>
-          <?= $this->icon('service', $this->translate('Service')); ?>  
+          <?= $this->icon('service', $this->translate('Service')); ?>
           <?= $this->link()->service(
            $this->comment->service_description,
            $this->comment->service_display_name,
            $this->comment->host_name,
-           $this->comment->host_display_names
+           $this->comment->host_display_name
           ); ?>
         </td>
      <?php else: ?>

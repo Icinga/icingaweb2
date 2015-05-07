@@ -3,7 +3,7 @@
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Backend;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentsCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -501,7 +501,7 @@ class Monitoring_ListController extends Controller
         );
 
         if ($this->Auth()->hasPermission('monitoring/command/comment/delete')) {
-            $this->view->delCommentForm = new DeleteCommentCommandForm();
+            $this->view->delCommentForm = new DeleteCommentsCommandForm();
         }
     }
 

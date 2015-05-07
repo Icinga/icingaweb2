@@ -65,7 +65,12 @@ foreach ($object->downtimes as $downtime) {
         <td data-base-target="_self">
             <?php if (isset($delDowntimeForm)) { // Form is unset if the current user lacks the respective permission
                 $delDowntimeForm = clone $delDowntimeForm;
-                $delDowntimeForm->populate(array('downtime_id' => $downtime->id));
+                $delDowntimeForm->populate(
+                    array(
+                        'downtime_id' => $downtime->id,
+                        'downtime_is_service' => $object->getType() === $object::TYPE_SERVICE
+                    )
+                );
                 echo $delDowntimeForm;
             } ?>
             <span class="sr-only"><?= $this->translate('Downtime'); ?></span>

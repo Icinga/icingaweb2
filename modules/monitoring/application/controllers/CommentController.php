@@ -67,6 +67,13 @@ class Monitoring_CommentController extends Controller
         $this->view->comment = $this->comment;
         if ($this->hasPermission('monitoring/command/comment/delete')) {
             $this->view->delCommentForm = $this->createDelCommentForm();
+            $this->view->delCommentForm->populate(
+                array(
+                    'redirect' => Url::fromPath('monitoring/list/comments'),
+                    'comment_id' => $this->comment->id,
+                    'comment_is_service' => isset($this->comment->service_description)
+                )
+            );
         }
     }
 
@@ -82,7 +89,7 @@ class Monitoring_CommentController extends Controller
     /**
      * Create a command form to delete a single comment
      *
-     * @return DeleteCommentCommandForm
+     * @return DeleteCommentsCommandForm
      */
     private function createDelCommentForm()
     {
@@ -92,12 +99,6 @@ class Monitoring_CommentController extends Controller
         $delCommentForm->setAction(
             Url::fromPath('monitoring/comment/show')
                 ->setParam('comment_id', $this->comment->id)
-        );
-        $delCommentForm->populate(
-            array(
-                'redirect' => Url::fromPath('monitoring/list/comments'),
-                'comment_id' => $this->comment->id
-            )
         );
         $delCommentForm->handleRequest();
         return $delCommentForm;

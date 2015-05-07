@@ -2,7 +2,7 @@
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentsCommandForm;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Data\Filter\Filter;
@@ -84,7 +84,7 @@ class Monitoring_CommentsController extends Controller
         $this->view->comments = $this->comments;
         $this->view->listAllLink = Url::fromPath('monitoring/list/comments')
                 ->setQueryString($this->filter->toQueryString());
-        $delCommentForm = new DeleteCommentCommandForm();
+        $delCommentForm = new DeleteCommentsCommandForm();
         $delCommentForm->setTitle($this->view->translate('Remove all Comments'));
         $delCommentForm->addDescription(sprintf(
             $this->translate('Confirm removal of %d comments.'),

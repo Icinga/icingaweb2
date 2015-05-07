@@ -5,7 +5,7 @@ namespace Icinga\Module\Monitoring\Web\Controller;
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentsCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ObjectsCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
@@ -81,7 +81,7 @@ abstract class MonitoredObjectController extends Controller
             ->handleRequest();
         $this->view->toggleFeaturesForm = $toggleFeaturesForm;
         if (! empty($this->object->comments) && $auth->hasPermission('monitoring/command/comment/delete')) {
-            $delCommentForm = new DeleteCommentCommandForm();
+            $delCommentForm = new DeleteCommentsCommandForm();
             $delCommentForm
                 ->setObjects($this->object)
                 ->handleRequest();
@@ -142,7 +142,7 @@ abstract class MonitoredObjectController extends Controller
     {
         $this->assertHttpMethod('POST');
         $this->assertPermission('monitoring/command/comment/delete');
-        $this->handleCommandForm(new DeleteCommentCommandForm());
+        $this->handleCommandForm(new DeleteCommentsCommandForm());
     }
 
     /**

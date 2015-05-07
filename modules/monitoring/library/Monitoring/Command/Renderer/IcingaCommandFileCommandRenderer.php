@@ -323,14 +323,9 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
 
     public function renderDeleteComment(DeleteCommentCommand $command)
     {
-        if ($command->getObject()->getType() === $command::TYPE_HOST) {
-            $commandString = 'DEL_HOST_COMMENT';
-        } else {
-            $commandString = 'DEL_SVC_COMMENT';
-        }
         return sprintf(
             '%s;%u',
-            $commandString,
+            $command->getIsService() ? 'DEL_SVC_COMMENT' : 'DEL_HOST_COMMENT',
             $command->getCommentId()
         );
     }
