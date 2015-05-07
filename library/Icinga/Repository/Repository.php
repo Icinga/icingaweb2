@@ -269,19 +269,31 @@ abstract class Repository implements Selectable
     }
 
     /**
-     * Return a new query for the given columns
+     * Return an array to map table names to aliases
      *
-     * @param   array   $columns    The desired columns, if null all columns will be queried
-     *
-     * @return  RepositoryQuery
+     * @return  array
      */
-    public function select(array $columns = null)
+    protected function getAliasTableMap()
     {
-        $this->initializeAliasMaps();
+        if (empty($this->aliasTableMap)) {
+            $this->initializeAliasMaps();
+        }
 
-        $query = new RepositoryQuery($this);
-        $query->from($this->getBaseTable(), $columns);
-        return $query;
+        return $this->aliasTableMap;
+    }
+
+    /**
+     * Return a flattened array to map query columns to aliases
+     *
+     * @return  array
+     */
+    protected function getAliasColumnMap()
+    {
+        if (empty($this->aliasColumnMap)) {
+            $this->initializeAliasMaps();
+        }
+
+        return $this->aliasColumnMap;
     }
 
     /**
@@ -291,10 +303,6 @@ abstract class Repository implements Selectable
      */
     protected function initializeAliasMaps()
     {
-        if (! empty($this->aliasColumnMap)) {
-            return;
-        }
-
         $queryColumns = $this->getQueryColumns();
         if (empty($queryColumns)) {
             throw new ProgrammingError('Repositories are required to initialize $this->queryColumns first');
@@ -314,6 +322,20 @@ abstract class Repository implements Selectable
     }
 
     /**
+     * Return a new query for the given columns
+     *
+     * @param   array   $columns    The desired columns, if null all columns will be queried
+     *
+     * @return  RepositoryQuery
+     */
+    public function select(array $columns = null)
+    {
+        $query = new RepositoryQuery($this);
+        $query->from($this->getBaseTable(), $columns);
+        return $query;
+    }
+
+    /**
      * Return this repository's query columns mapped to their respective aliases
      *
      * @return  array
@@ -321,7 +343,7 @@ abstract class Repository implements Selectable
     public function requireAllQueryColumns()
     {
         $map = array();
-        foreach ($this->aliasColumnMap as $alias => $_) {
+        foreach ($this->getAliasColumnMap() as $alias => $_) {
             if ($this->hasQueryColumn($alias)) {
                 // Just in case $this->requireQueryColumn has been overwritten and there is some magic going on
                 $map[$alias] = $this->requireQueryColumn($alias);
@@ -340,7 +362,7 @@ abstract class Repository implements Selectable
      */
     public function hasQueryColumn($name)
     {
-        return array_key_exists($name, $this->aliasColumnMap) && !in_array($name, $this->getFilterColumns());
+        return array_key_exists($name, $this->getAliasColumnMap()) && !in_array($name, $this->getFilterColumns());
     }
 
     /**
@@ -357,11 +379,13 @@ abstract class Repository implements Selectable
         if (in_array($name, $this->getFilterColumns())) {
             throw new QueryException(t('Filter column "%s" cannot be queried'), $name);
         }
-        if (! array_key_exists($name, $this->aliasColumnMap)) {
+
+        $aliasColumnMap = $this->getAliasColumnMap();
+        if (! array_key_exists($name, $aliasColumnMap)) {
             throw new QueryException(t('Query column "%s" not found'), $name);
         }
 
-        return $this->aliasColumnMap[$name];
+        return $aliasColumnMap[$name];
     }
 
     /**
@@ -373,7 +397,7 @@ abstract class Repository implements Selectable
      */
     public function hasFilterColumn($name)
     {
-        return array_key_exists($name, $this->aliasColumnMap);
+        return array_key_exists($name, $this->getAliasColumnMap());
     }
 
     /**
@@ -387,10 +411,11 @@ abstract class Repository implements Selectable
      */
     public function requireFilterColumn($name)
     {
-        if (! array_key_exists($name, $this->aliasColumnMap)) {
+        $aliasColumnMap = $this->getAliasColumnMap();
+        if (! array_key_exists($name, $aliasColumnMap)) {
             throw new QueryException(t('Filter column "%s" not found'), $name);
         }
 
-        return $this->aliasColumnMap[$name];
+        return $aliasColumnMap[$name];
     }
 }
