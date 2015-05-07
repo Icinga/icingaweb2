@@ -131,10 +131,9 @@ if (count($downtimes) === 0) {
           $delDowntimeForm->populate(
               array(
                   'downtime_id' => $downtime->id,
-                  'redirect' => $this->url
+                  'downtime_is_service' => isset($downtime->service_description)
               )
           );
-          $delDowntimeForm->setAction($this->url('monitoring/downtime/remove', array('downtime_id' => $downtime->id)));
           echo $delDowntimeForm;
           ?>
         </td>

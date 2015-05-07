@@ -48,7 +48,12 @@ foreach ($object->comments as $comment) {
         <td data-base-target="_self">
             <?php if (isset($delCommentForm)) { // Form is unset if the current user lacks the respective permission
                 $delCommentForm = clone $delCommentForm;
-                $delCommentForm->populate(array('comment_id' => $comment->id));
+                $delCommentForm->populate(
+                    array(
+                        'comment_id' => $comment->id,
+                        'comment_is_service' => isset($comment->service_description)
+                    )
+                );
                 echo $delCommentForm;
             } ?>
             <span class="sr-only">(<?= $this->translate('Comment'); ?>): </span><?= str_replace(array('\r\n', '\n'), '<br>', $commentText); ?>

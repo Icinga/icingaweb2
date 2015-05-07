@@ -86,11 +86,9 @@ if (count($comments) === 0) {
           $delCommentForm->populate(
               array(
                   'comment_id' => $comment->id,
-                  'comment_is_service' => isset($comment->service_description),
-                  'redirect' => $this->url
+                  'comment_is_service' => isset($comment->service_description)
               )
           );
-          $delCommentForm->setAction($this->url('monitoring/comment/remove', array('comment_id' => $comment->id)));
           echo $delCommentForm;
           ?>
         </td>

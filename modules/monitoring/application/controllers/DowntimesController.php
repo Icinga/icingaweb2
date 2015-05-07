@@ -123,9 +123,7 @@ class Monitoring_DowntimesController extends Controller
             $this->translate('Confirm removal of %d downtimes.'),
             count($this->downtimes)
         ));
-        $delDowntimeForm->setDowntimes($this->downtimes)
-                ->setRedirectUrl(Url::fromPath('monitoring/list/downtimes'))
-                ->handleRequest();
+        $delDowntimeForm->setDowntimes($this->downtimes)->handleRequest();
         $this->view->delDowntimeForm = $delDowntimeForm;
     }
 }
