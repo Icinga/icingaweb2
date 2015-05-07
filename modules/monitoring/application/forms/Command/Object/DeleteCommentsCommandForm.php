@@ -46,24 +46,11 @@ class DeleteCommentsCommandForm extends CommandForm
 
     /**
      * (non-PHPDoc)
-     * @see \Icinga\Web\Form::addSubmitButton() For the method documentation.
+     * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
      */
-    public function addSubmitButton()
+    public function getSubmitLabel()
     {
-        $this->addElement(
-            'button',
-            'btn_submit',
-            array(
-                'ignore'        => true,
-                'escape'        => false,
-                'type'          => 'submit',
-                'class'         => 'link-like',
-                'label'         => $this->getView()->icon('trash'),
-                'title'         => $this->translate('Delete this comment'),
-                'decorators'    => array('ViewHelper')
-            )
-        );
-        return $this;
+        return $this->translatePlural('Remove', 'Remove All', count($this->downtimes));
     }
 
     /**
