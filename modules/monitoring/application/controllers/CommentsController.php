@@ -2,9 +2,8 @@
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentsCommandForm;
 use Icinga\Web\Url;
-use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Data\Filter\Filter;
 
 /**
@@ -71,28 +70,31 @@ class Monitoring_CommentsController extends Controller
         $this->view->comments = $this->comments;
         $this->view->listAllLink = Url::fromPath('monitoring/list/comments')
                 ->setQueryString($this->filter->toQueryString());
-        $this->view->removeAllLink = Url::fromPath('monitoring/comments/remove-all')
+        $this->view->removeAllLink = Url::fromPath('monitoring/comments/delete-all')
                 ->setParams($this->params);
     }
 
     /**
      * Display the form for removing a comment list
      */
-    public function removeAllAction()
+    public function deleteAllAction()
     {
         $this->assertPermission('monitoring/command/comment/delete');
-        $this->view->comments = $this->comments;
-        $this->view->listAllLink = Url::fromPath('monitoring/list/comments')
-                ->setQueryString($this->filter->toQueryString());
-        $delCommentForm = new DeleteCommentCommandForm();
+
+        $listCommentsLink = Url::fromPath('monitoring/list/comments')
+            ->setQueryString('comment_type=(comment|ack)');
+        $delCommentForm = new DeleteCommentsCommandForm();
         $delCommentForm->setTitle($this->view->translate('Remove all Comments'));
         $delCommentForm->addDescription(sprintf(
             $this->translate('Confirm removal of %d comments.'),
             count($this->comments)
         ));
-        $delCommentForm->setObjects($this->comments)
-                ->setRedirectUrl(Url::fromPath('monitoring/list/downtimes'))
-                ->handleRequest();
+        $delCommentForm->setComments($this->comments)
+            ->setRedirectUrl($listCommentsLink)
+            ->handleRequest();
         $this->view->delCommentForm = $delCommentForm;
+        $this->view->comments = $this->comments;
+        $this->view->listAllLink = Url::fromPath('monitoring/list/comments')
+                ->setQueryString($this->filter->toQueryString());
     }
 }

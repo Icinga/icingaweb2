@@ -128,8 +128,12 @@ if (count($downtimes) === 0) {
         <td style="width: 2em" data-base-target="self">
           <?php
           $delDowntimeForm = clone $delDowntimeForm;
-          $delDowntimeForm->populate(array('downtime_id' => $downtime->id, 'redirect' => $this->url));
-          $delDowntimeForm->setAction($this->url('monitoring/downtime/remove', array('downtime_id' => $downtime->id)));
+          $delDowntimeForm->populate(
+              array(
+                  'downtime_id' => $downtime->id,
+                  'downtime_is_service' => isset($downtime->service_description)
+              )
+          );
           echo $delDowntimeForm;
           ?>
         </td>

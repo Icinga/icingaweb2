@@ -11,45 +11,37 @@ use Icinga\Module\Monitoring\Command\IcingaCommand;
 class DeleteDowntimeCommand extends IcingaCommand
 {
     /**
-     * Downtime for a host
-     */
-    const DOWNTIME_TYPE_HOST = 'host';
-
-    /**
-     * Downtime for a service
-     */
-    const DOWNTIME_TYPE_SERVICE = 'service';
-
-    /**
      * ID of the downtime that is to be deleted
      *
      * @var int
      */
     protected $downtimeId;
-    
+
     /**
+     * If the command affects a service downtime
      *
-     * @var type
+     * @var boolean
      */
-    protected $downtimeType = self::DOWNTIME_TYPE_HOST;
-    
+    protected $isService = false;
+
     /**
-     * Set the downtime type, either host or service
+     * Set if this command affects a service
      *
-     * @param string $type  the downtime type
+     * @param type $value
      */
-    public function setDowntimeType($type)
+    public function setIsService($value = true)
     {
-        $this->downtimeType = $type;
+        $this->isService = (bool) $value;
     }
     
     /**
-     * 
+     * Return whether the command affects a service
+     *
      * @return type
      */
-    public function getDowntimeType()
+    public function getIsService()
     {
-        return $this->downtimeType;
+        return $this->isService;
     }
 
     /**

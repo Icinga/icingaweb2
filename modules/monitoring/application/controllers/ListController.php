@@ -295,6 +295,7 @@ class Monitoring_ListController extends Controller
 
         if ($this->Auth()->hasPermission('monitoring/command/downtime/delete')) {
             $this->view->delDowntimeForm = new DeleteDowntimeCommandForm();
+            $this->view->delDowntimeForm->handleRequest();
         }
     }
 
@@ -502,6 +503,7 @@ class Monitoring_ListController extends Controller
 
         if ($this->Auth()->hasPermission('monitoring/command/comment/delete')) {
             $this->view->delCommentForm = new DeleteCommentCommandForm();
+            $this->view->delCommentForm->handleRequest();
         }
     }
 

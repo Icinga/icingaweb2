@@ -64,25 +64,26 @@ class Monitoring_CommentController extends Controller
      */
     public function showAction()
     {
+        $listCommentsLink = Url::fromPath('monitoring/list/comments')
+            ->setQueryString('comment_type=(comment|ack)');
+
         $this->view->comment = $this->comment;
         if ($this->hasPermission('monitoring/command/comment/delete')) {
             $this->view->delCommentForm = $this->createDelCommentForm();
+            $this->view->delCommentForm->populate(
+                array(
+                    'redirect' => $listCommentsLink,
+                    'comment_id' => $this->comment->id,
+                    'comment_is_service' => isset($this->comment->service_description)
+                )
+            );
         }
-    }
-
-    /**
-     * Receive DeleteCommentCommandForm post from other controller
-     */
-    public function removeAction()
-    {
-        $this->assertHttpMethod('POST');
-        $this->createDelCommentForm();
     }
 
     /**
      * Create a command form to delete a single comment
      *
-     * @return DeleteCommentCommandForm
+     * @return DeleteCommentsCommandForm
      */
     private function createDelCommentForm()
     {
@@ -92,12 +93,6 @@ class Monitoring_CommentController extends Controller
         $delCommentForm->setAction(
             Url::fromPath('monitoring/comment/show')
                 ->setParam('comment_id', $this->comment->id)
-        );
-        $delCommentForm->populate(
-            array(
-                'redirect' => Url::fromPath('monitoring/list/comments'),
-                'comment_id' => $this->comment->id
-            )
         );
         $delCommentForm->handleRequest();
         return $delCommentForm;

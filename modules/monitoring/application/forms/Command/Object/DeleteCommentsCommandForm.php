@@ -3,22 +3,22 @@
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
-use Icinga\Module\Monitoring\Command\Object\DeleteDowntimeCommand;
+use Icinga\Module\Monitoring\Command\Object\DeleteCommentCommand;
 use \Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 
 /**
- * Form for deleting host or service downtimes
+ * Form for deleting host or service comments
  */
-class DeleteDowntimesCommandForm extends CommandForm
+class DeleteCommentsCommandForm extends CommandForm
 {
     /**
-     * The downtimes to delete on success
+     * The comments deleted on success
      *
      * @var array
      */
-    protected $downtimes;
-    
+    protected $comments;
+
     /**
      * (non-PHPDoc)
      * @see \Zend_Form::init() For the method documentation.
@@ -43,7 +43,7 @@ class DeleteDowntimesCommandForm extends CommandForm
         ));
         return $this;
     }
- 
+
     /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
@@ -52,37 +52,37 @@ class DeleteDowntimesCommandForm extends CommandForm
     {
         return $this->translatePlural('Remove', 'Remove All', count($this->downtimes));
     }
-    
+
     /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
      */
     public function onSuccess()
     {
-        foreach ($this->downtimes as $downtime) {
-            $delDowntime = new DeleteDowntimeCommand();
-            $delDowntime->setDowntimeId($downtime->id);
-            $delDowntime->setIsService(isset($downtime->service_description));
-            $this->getTransport($this->request)->send($delDowntime);
+        foreach ($this->comments as $comment) {
+            $cmd = new DeleteCommentCommand();
+            $cmd->setCommentId($comment->id)
+                ->setIsService(isset($comment->service_description));
+            $this->getTransport($this->request)->send($cmd);
         }
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);
         }
-        Notification::success($this->translate('Deleting downtime.'));
+        Notification::success($this->translate('Deleting comment..'));
         return true;
     }
-    
+
     /**
-     * Set the downtimes to be deleted upon success
+     * Set the comments to be deleted upon success
      *
-     * @param type $downtimes
+     * @param array $comments
      *
-     * @return $this
+     * @return this             fluent interface
      */
-    public function setDowntimes(array $downtimes)
+    public function setComments(array $comments)
     {
-        $this->downtimes = $downtimes;
+        $this->comments = $comments;
         return $this;
     }
 }

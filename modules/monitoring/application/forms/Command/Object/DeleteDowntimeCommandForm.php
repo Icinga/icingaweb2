@@ -21,7 +21,7 @@ class DeleteDowntimeCommandForm extends CommandForm
         $this->setAttrib('class', 'inline');
     }
     
-        /**
+    /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::createElements() For the method documentation.
      */
@@ -33,6 +33,16 @@ class DeleteDowntimeCommandForm extends CommandForm
                     'hidden',
                     'downtime_id',
                     array(
+                        'required' => true,
+                        'validators' => array('NotEmpty'),
+                        'decorators' => array('ViewHelper')
+                    )
+                ),
+                array(
+                    'hidden',
+                    'downtime_is_service',
+                    array(
+                        'filters' => array('Boolean'),
                         'decorators' => array('ViewHelper')
                     )
                 ),
@@ -76,20 +86,11 @@ class DeleteDowntimeCommandForm extends CommandForm
      */
     public function onSuccess()
     {
-        $id = $this->getElement('downtime_id')->getValue();
-        
-        // Presence of downtime id, only delete this specific downtime
-        $firstDowntime = $this->downtimes[0];
-        
-        $delDowntime = new DeleteDowntimeCommand();
-        $delDowntime->setDowntimeId($id);
-        $delDowntime->setDowntimeType(
-            isset($firstDowntime->service_description) ?
-            DeleteDowntimeCommand::DOWNTIME_TYPE_SERVICE :
-            DeleteDowntimeCommand::DOWNTIME_TYPE_HOST
-        );
-        $this->getTransport($this->request)->send($delDowntime);
-        
+        $cmd = new DeleteDowntimeCommand();
+        $cmd->setDowntimeId($this->getElement('downtime_id')->getValue());
+        $cmd->setIsService($this->getElement('downtime_is_service')->getValue());
+        $this->getTransport($this->request)->send($cmd);
+    
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);
