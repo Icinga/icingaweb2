@@ -4,7 +4,6 @@
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentsCommandForm;
 use Icinga\Web\Url;
-use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Data\Filter\Filter;
 
 /**
@@ -81,6 +80,7 @@ class Monitoring_CommentsController extends Controller
     public function removeAllAction()
     {
         $this->assertPermission('monitoring/command/comment/delete');
+
         $this->view->comments = $this->comments;
         $this->view->listAllLink = Url::fromPath('monitoring/list/comments')
                 ->setQueryString($this->filter->toQueryString());

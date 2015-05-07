@@ -38,9 +38,7 @@ class DeleteDowntimesCommandForm extends CommandForm
             array(
                 'hidden',
                 'redirect',
-                array(
-                    'decorators' => array('ViewHelper')
-                )
+                array('decorators' => array('ViewHelper'))
             )
         ));
         return $this;
