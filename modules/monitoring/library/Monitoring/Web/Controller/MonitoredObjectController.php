@@ -134,16 +134,6 @@ abstract class MonitoredObjectController extends Controller
     abstract public function scheduleDowntimeAction();
 
     /**
-     * Delete a comment
-     */
-    public function deleteCommentAction()
-    {
-        $this->assertHttpMethod('POST');
-        $this->assertPermission('monitoring/command/comment/delete');
-        $this->handleCommandForm(new DeleteCommentsCommandForm());
-    }
-
-    /**
      * Create tabs
      */
     protected function createTabs()
