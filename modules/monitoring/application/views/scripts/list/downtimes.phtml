@@ -5,6 +5,12 @@ use Icinga\Module\Monitoring\Object\Service;
 if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
+    <div class="dontprint">
+        <?= $this->render('list/components/selectioninfo.phtml'); ?>
+    </div>
+    <div class="tinystatesummary">
+        <?= $downtimes->getTotalItemCount() ?> <?= $this->translate('Downtimes') ?>
+    </div>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
   <?= $this->paginator; ?>
@@ -123,14 +129,7 @@ if (count($downtimes) === 0) {
           <?php
           $delDowntimeForm = clone $delDowntimeForm;
           $delDowntimeForm->populate(array('downtime_id' => $downtime->id, 'redirect' => $this->url));
-          if (! $isService) {
-            $delDowntimeForm->setAction($this->url('monitoring/host/delete-downtime', array('host' => $downtime->host_name)));
-          } else {
-            $delDowntimeForm->setAction($this->url('monitoring/service/delete-downtime', array(
-                'host'      => $downtime->host_name,
-                'service'   => $downtime->service_description
-            )));
-          }
+          $delDowntimeForm->setAction($this->url('monitoring/downtime/remove', array('downtime_id' => $downtime->id)));
           echo $delDowntimeForm;
           ?>
         </td>

@@ -7,33 +7,37 @@ use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
 use Icinga\Web\Url;
-use Icinga\Web\Widget\Tabextension\DashboardAction;
-
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  * Display detailed information about a downtime
  */
 class Monitoring_DowntimesController extends Controller
 {
-    protected $downtimes;
-    
-    protected $filter;
-    
     /**
-     * Add tabs
+     * The fetched downtimes
+     *
+     * @var array
+     */
+    protected $downtimes;
+
+    /**
+     * A filter matching all current downtimes
+     *
+     * @var Filter
+     */
+    protected $filter;
+
+    /**
+     * Fetch all downtimes matching the current filter and add tabs
+     *
+     * @throws Zend_Controller_Action_Exception
      */
     public function init()
     {
         $this->filter = Filter::fromQueryString(str_replace(
-                'downtime_id', 
-                'downtime_internal_id', 
-                (string)$this->params
+            'downtime_id',
+            'downtime_internal_id',
+            (string)$this->params
         ));
         $this->downtimes = $this->backend->select()->from('downtime', array(
             'id'              => 'downtime_internal_id',
@@ -58,24 +62,24 @@ class Monitoring_DowntimesController extends Controller
             'host_display_name',
             'service_display_name'
         ))->addFilter($this->filter)->getQuery()->fetchAll();
+
         if (false === $this->downtimes) {
             throw new Zend_Controller_Action_Exception(
-                    $this->translate('Downtime not found')
+                $this->translate('Downtime not found')
             );
         }
         
-        $this->getTabs()
-            ->add(
-                'downtimes',
-                array(
-                    'title' => $this->translate(
-                        'Display detailed information about multiple downtimes.'
-                    ),
-                    'icon' => 'plug',
-                    'label' => $this->translate('Downtimes'),
-                    'url'   =>'monitoring/downtimes/show'
-                )
-        )->activate('downtimes')->extend(new DashboardAction());
+        $this->getTabs()->add(
+            'downtimes',
+            array(
+                'title' => $this->translate(
+                    'Display detailed information about multiple downtimes.'
+                ),
+                'icon' => 'plug',
+                'label' => $this->translate('Downtimes'),
+                'url'   =>'monitoring/downtimes/show'
+            )
+        )->activate('downtimes');
         
         foreach ($this->downtimes as $downtime) {
             if (isset($downtime->service_description)) {
@@ -91,7 +95,10 @@ class Monitoring_DowntimesController extends Controller
             }
         }
     }
-    
+
+    /**
+     * Display the detail view for a downtime list
+     */
     public function showAction()
     {
         $this->view->downtimes = $this->downtimes;
@@ -100,7 +107,10 @@ class Monitoring_DowntimesController extends Controller
         $this->view->removeAllLink = Url::fromPath('monitoring/downtimes/remove-all')
                 ->setParams($this->params);
     }
-    
+
+    /**
+     * Display the form for removing a downtime list
+     */
     public function removeAllAction()
     {
         $this->assertPermission('monitoring/command/downtime/delete');

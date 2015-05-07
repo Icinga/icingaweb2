@@ -1,6 +1,12 @@
 <?php if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
+  <div class="dontprint">
+     <?= $this->render('list/components/selectioninfo.phtml'); ?>
+  </div>
+  <div class="tinystatesummary">
+     <?= $comments->getTotalItemCount() ?> <?= $this->translate('Comments') ?>:
+  </div>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
   <?= $this->paginator; ?>
@@ -15,57 +21,50 @@ if (count($comments) === 0) {
     return;
 }
 ?>
-  <table data-base-target="_next" class="action comments">
+  <table data-base-target="_next"
+         class="action comments multiselect"
+         data-icinga-multiselect-url="/icingaweb2/monitoring/comments/show"
+         data-icinga-multiselect-data="comment_id">
     <tbody>
-    <?php foreach ($comments as $comment): ?>
-    <?php
-      switch ($comment->type) {
-        case 'flapping':
-          $icon = 'flapping';
-          $title = $this->translate('Flapping');
-          $tooltip = $this->translate('Comment was caused by a flapping host or service.');
-          break;
-        case 'comment':
-          $icon = 'user';
-          $title = $this->translate('User Comment');
-          $tooltip = $this->translate('Comment was created by an user.');
-          break;
-        case 'downtime':
-          $icon = 'plug';
-          $title = $this->translate('Downtime');
-          $tooltip = $this->translate('Comment was caused by a downtime.');
-          break;
-        case 'ack':
-          $icon = 'ok';
-          $title = $this->translate('Acknowledgement');
-          $tooltip = $this->translate('Comment was caused by an acknowledgement.');
-          break;
-      }
-    ?>
+    <?php foreach ($comments as $comment):
+        $this->comment = $comment; ?>
+
       <tr class="state invalid">
         <td class="state" style="width: 12em;">
-          <?= $this->icon($icon, $tooltip) ?>
-          <br>
-          <strong><?= $this->escape($title); ?></strong>
-          <br>
-          <?= $this->prefixedTimeSince($comment->timestamp); ?>
+          <?= $this->render('partials/comment/comment-description.phtml'); ?>
         </td>
         <td>
         <?php if ($comment->objecttype === 'service'): ?>
           <?= $this->icon('service', $this->translate('Service')); ?>
-          <?= $this->link()->service(
-              $comment->service_description,
-              $comment->service_display_name,
-              $comment->host_name,
-              $comment->host_display_name
-          ); ?>
+            
+          <?= $this->qlink(
+            sprintf(
+                $this->translate('%s on %s', 'Service running on host'),
+                $comment->service_display_name,
+                $comment->host_display_name
+            ),
+            'monitoring/comment/show',
+            array('comment_id' => $comment->id),
+            array('title' => sprintf(
+                $this->translate('Show detailed information for comment on %s for %s'),
+                $comment->service_display_name,
+                $comment->host_display_name
+          ))) ?>
         <?php else: ?>
           <?= $this->icon('host', $this->translate('Host')); ?>
-          <?= $this->link()->host($comment->host_name, $comment->host_display_name); ?>
+            
+          <?= $this->qlink(
+            $comment->host_display_name,
+            'monitoring/comment/show',
+            array('comment_id' => $comment->id),
+            array('title' => sprintf(
+                $this->translate('Show detailed information for comment on %s'),
+                $comment->host_display_name
+          ))) ?>
         <?php endif ?>
           <br>
           <?= $this->icon('comment', $this->translate('Comment')); ?> <?= isset($comment->author)
-            ? '[' . $comment->author . '] '
+            ? '[' . $this->escape($comment->author) . '] '
             : '';
           ?><?= $this->escape($comment->comment); ?>
           <br>
@@ -85,16 +84,7 @@ if (count($comments) === 0) {
           <?php
           $delCommentForm = clone $delCommentForm;
           $delCommentForm->populate(array('comment_id' => $comment->id, 'redirect' => $this->url));
-          if ($comment->objecttype === 'host') {
-            $delCommentForm->setAction(
-                $this->url('monitoring/host/delete-comment', array('host' => $comment->host_name))
-            );
-          } else {
-            $delCommentForm->setAction($this->url('monitoring/service/delete-comment', array(
-                'host'      => $comment->host_name,
-                'service'   => $comment->service_description
-            )));
-          }
+          $delCommentForm->setAction($this->url('monitoring/comment/remove', array('comment_id' => $comment->id)));
           echo $delCommentForm;
           ?>
         </td>

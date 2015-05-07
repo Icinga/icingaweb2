@@ -8,23 +8,29 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Display detailed information about a downtime
  */
 class Monitoring_DowntimeController extends Controller
 {
-    protected $downtime;
-    
-    protected $isService;
-    
     /**
-     * Add tabs
+     * The fetched downtime
+     *
+     * @var stdClass
+     */
+    protected $downtime;
+
+    /**
+     * If the downtime is a service or not
+     *
+     * @var boolean
+     */
+    protected $isService;
+
+    /**
+     * Fetch the downtime matching the given id and add tabs
+     *
+     * @throws Zend_Controller_Action_Exception
      */
     public function init()
     {
@@ -63,7 +69,7 @@ class Monitoring_DowntimeController extends Controller
         } else {
             $this->isService = false;
         }
-         
+        
         $this->getTabs()
             ->add(
                 'downtime',
@@ -77,7 +83,10 @@ class Monitoring_DowntimeController extends Controller
                 )
         )->activate('downtime')->extend(new DashboardAction());
     }
-    
+
+    /**
+     * Display the detail view for a downtime
+     */
     public function showAction()
     {
         $this->view->downtime = $this->downtime;
@@ -95,7 +104,21 @@ class Monitoring_DowntimeController extends Controller
             $this->view->delDowntimeForm = $this->createDelDowntimeForm();
         }
     }
-    
+
+    /**
+     * Receive DeleteDowntimeCommandForm post from other controller
+     */
+    public function removeAction()
+    {
+        $this->assertHttpMethod('POST');
+        $this->createDelDowntimeForm();
+    }
+
+    /**
+     * Create a command form to delete a single comment
+     *
+     * @return DeleteDowntimeCommandForm
+     */
     private function createDelDowntimeForm()
     {
         $this->assertPermission('monitoring/command/downtime/delete');
