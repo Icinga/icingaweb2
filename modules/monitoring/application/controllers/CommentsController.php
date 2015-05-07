@@ -70,14 +70,14 @@ class Monitoring_CommentsController extends Controller
         $this->view->comments = $this->comments;
         $this->view->listAllLink = Url::fromPath('monitoring/list/comments')
                 ->setQueryString($this->filter->toQueryString());
-        $this->view->removeAllLink = Url::fromPath('monitoring/comments/remove-all')
+        $this->view->removeAllLink = Url::fromPath('monitoring/comments/delete-all')
                 ->setParams($this->params);
     }
 
     /**
      * Display the form for removing a comment list
      */
-    public function removeAllAction()
+    public function deleteAllAction()
     {
         $this->assertPermission('monitoring/command/comment/delete');
 

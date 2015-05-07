@@ -104,14 +104,14 @@ class Monitoring_DowntimesController extends Controller
         $this->view->downtimes = $this->downtimes;
         $this->view->listAllLink = Url::fromPath('monitoring/list/downtimes')
                 ->setQueryString($this->filter->toQueryString());
-        $this->view->removeAllLink = Url::fromPath('monitoring/downtimes/remove-all')
+        $this->view->removeAllLink = Url::fromPath('monitoring/downtimes/delete-all')
                 ->setParams($this->params);
     }
 
     /**
      * Display the form for removing a downtime list
      */
-    public function removeAllAction()
+    public function deleteAllAction()
     {
         $this->assertPermission('monitoring/command/downtime/delete');
         $this->view->downtimes = $this->downtimes;
