@@ -4,6 +4,7 @@
 namespace Icinga\Repository;
 
 use Icinga\Application\Logger;
+use Icinga\Data\Filter\Filter;
 use Icinga\Data\Selectable;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\QueryException;
@@ -467,6 +468,24 @@ abstract class Repository implements Selectable
                 );
             } else {
                 return $context . $identifier;
+            }
+        }
+    }
+
+    /**
+     * Recurse the given filter, require each filter column and convert all values
+     *
+     * @param   Filter  $filter
+     */
+    public function requireFilter(Filter $filter)
+    {
+        if ($filter->isExpression()) {
+            $column = $filter->getColumn();
+            $filter->setColumn($this->requireFilterColumn($column));
+            $filter->setExpression($this->persistColumn($column, $filter->getExpression()));
+        } elseif ($filter->isChain()) {
+            foreach ($filter->filters() as $chainOrExpression) {
+                $this->requireFilter($chainOrExpression);
             }
         }
     }

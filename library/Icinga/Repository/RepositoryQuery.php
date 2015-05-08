@@ -164,7 +164,7 @@ class RepositoryQuery implements QueryInterface
      */
     public function setFilter(Filter $filter)
     {
-        $this->requireFilterColumns($filter);
+        $this->repository->requireFilter($filter);
         $this->query->setFilter($filter);
         return $this;
     }
@@ -180,25 +180,9 @@ class RepositoryQuery implements QueryInterface
      */
     public function addFilter(Filter $filter)
     {
-        $this->requireFilterColumns($filter);
+        $this->repository->requireFilter($filter);
         $this->query->addFilter($filter);
         return $this;
-    }
-
-    /**
-     * Recurse the given filter and notify the repository about each required filter column
-     */
-    protected function requireFilterColumns(Filter $filter)
-    {
-        if ($filter->isExpression()) {
-            $column = $filter->getColumn();
-            $filter->setColumn($this->repository->requireFilterColumn($column));
-            $filter->setExpression($this->repository->persistColumn($column, $filter->getExpression()));
-        } elseif ($filter->isChain()) {
-            foreach ($filter->filters() as $chainOrExpression) {
-                $this->requireFilterColumns($chainOrExpression);
-            }
-        }
     }
 
     /**
