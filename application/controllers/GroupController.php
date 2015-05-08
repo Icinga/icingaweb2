@@ -5,8 +5,8 @@ use \Zend_Controller_Action_Exception;
 use Icinga\Application\Config;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackendInterface;
-use Icinga\Data\Selectable;
 use Icinga\Web\Controller;
+use Icinga\Web\Form;
 use Icinga\Web\Widget;
 
 class GroupController extends Controller
@@ -32,6 +32,26 @@ class GroupController extends Controller
      */
     public function listAction()
     {
+        $backendNames = array_map(
+            function ($b) { return $b->getName(); },
+            $this->loadUserGroupBackends('Icinga\Data\Selectable')
+        );
+        $this->view->backendSelection = new Form();
+        $this->view->backendSelection->setAttrib('class', 'backend-selection');
+        $this->view->backendSelection->setUidDisabled();
+        $this->view->backendSelection->setMethod('GET');
+        $this->view->backendSelection->setTokenDisabled();
+        $this->view->backendSelection->addElement(
+            'select',
+            'backend',
+            array(
+                'autosubmit'    => true,
+                'label'         => $this->translate('Usergroup Backend'),
+                'multiOptions'  => array_combine($backendNames, $backendNames),
+                'value'         => $this->params->get('backend')
+            )
+        );
+
         $backend = $this->getUserGroupBackend($this->params->get('backend'));
         if ($backend === null) {
             $this->view->backend = null;
@@ -68,19 +88,39 @@ class GroupController extends Controller
     }
 
     /**
+     * Return all user group backends implementing the given interface
+     *
+     * @param   string  $interface      The class path of the interface, or null if no interface check should be made
+     *
+     * @return  array
+     */
+    protected function loadUserGroupBackends($interface = null)
+    {
+        $backends = array();
+        foreach (Config::app('groups') as $backendName => $backendConfig) {
+            $candidate = UserGroupBackend::create($backendName, $backendConfig);
+            if (! $interface || $candidate instanceof $interface) {
+                $backends[] = $candidate;
+            }
+        }
+
+        return $backends;
+    }
+
+    /**
      * Return the given user group backend or the first match in order
      *
      * @param   string  $name           The name of the backend, or null in case the first match should be returned
-     * @param   bool    $selectable     Whether the backend should implement the Selectable interface
+     * @param   string  $interface      The interface the backend should implement, no interface check if null
      *
      * @return  UserGroupBackendInterface
      *
      * @throws  Zend_Controller_Action_Exception    In case the given backend name is invalid
      */
-    protected function getUserGroupBackend($name = null, $selectable = true)
+    protected function getUserGroupBackend($name = null, $interface = 'Icinga\Data\Selectable')
     {
-        $config = Config::app('groups');
         if ($name !== null) {
+            $config = Config::app('groups');
             if (! $config->hasSection($name)) {
                 throw new Zend_Controller_Action_Exception(
                     sprintf($this->translate('User group backend "%s" not found'), $name),
@@ -88,22 +128,21 @@ class GroupController extends Controller
                 );
             } else {
                 $backend = UserGroupBackend::create($name, $config->getSection($name));
-                if ($selectable && !$backend instanceof Selectable) {
+                if ($interface && !$backend instanceof $interface) {
+                    $interfaceParts = explode('\\', strtolower($interface));
                     throw new Zend_Controller_Action_Exception(
-                        sprintf($this->translate('User group backend "%s" is not able to list groups'), $name),
+                        sprintf(
+                            $this->translate('User group backend "%s" is not %s'),
+                            $name,
+                            array_pop($interfaceParts)
+                        ),
                         400
                     );
                 }
             }
         } else {
-            $backend = null;
-            foreach ($config as $backendName => $backendConfig) {
-                $candidate = UserGroupBackend::create($backendName, $backendConfig);
-                if (! $selectable || $candidate instanceof Selectable) {
-                    $backend = $candidate;
-                    break;
-                }
-            }
+            $backends = $this->loadUserGroupBackends($interface);
+            $backend = array_shift($backends);
         }
 
         return $backend;
