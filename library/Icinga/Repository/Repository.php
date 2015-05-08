@@ -3,12 +3,14 @@
 
 namespace Icinga\Repository;
 
+use DateTime;
 use Icinga\Application\Logger;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Selectable;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\QueryException;
 use Icinga\Exception\StatementException;
+use Icinga\Util\String;
 
 /**
  * Abstract base class for concrete repository implementations
@@ -22,6 +24,11 @@ use Icinga\Exception\StatementException;
  */
 abstract class Repository implements Selectable
 {
+    /**
+     * The format to use when converting values of type date_time
+     */
+    const DATETIME_FORMAT = 'd/m/Y g:i A';
+
     /**
      * The name of this repository
      *
@@ -471,6 +478,99 @@ abstract class Repository implements Selectable
                 return $context . $identifier;
             }
         }
+    }
+
+    /**
+     * Convert a timestamp or DateTime object to a string formatted using static::DATETIME_FORMAT
+     *
+     * @param   mixed   $value
+     *
+     * @return  string
+     */
+    protected function persistDateTime($value)
+    {
+        if (is_numeric($value)) {
+            $value = date(static::DATETIME_FORMAT, $value);
+        } elseif ($value instanceof DateTime) {
+            $value = date(static::DATETIME_FORMAT, $value->getTimestamp()); // Using date here, to ignore any timezone
+        } elseif ($value !== null) {
+            throw new ProgrammingError(
+                'Cannot persist value "%s" as type date_time. It\'s not a timestamp or DateTime object',
+                $value
+            );
+        }
+
+        return $value;
+    }
+
+    /**
+     * Convert a string formatted using static::DATETIME_FORMAT to a unix timestamp
+     *
+     * @param   string  $value
+     *
+     * @return  int
+     */
+    protected function retrieveDateTime($value)
+    {
+        if (is_numeric($value)) {
+            $value = (int) $value;
+        } elseif (is_string($value)) {
+            $dateTime = DateTime::createFromFormat(static::DATETIME_FORMAT, $value);
+            if ($dateTime === false) {
+                Logger::debug(
+                    'Unable to parse string "%s" as type date_time with format "%s" in repository "%s"',
+                    $value,
+                    static::DATETIME_FORMAT,
+                    $this->getName()
+                );
+                $value = null;
+            } else {
+                $value = $dateTime->getTimestamp();
+            }
+        } elseif ($value !== null) {
+            throw new ProgrammingError(
+                'Cannot retrieve value "%s" as type date_time. It\'s not a integer or (numeric) string',
+                $value
+            );
+        }
+
+        return $value;
+    }
+
+    /**
+     * Convert the given array to an comma separated string
+     *
+     * @param   array|string    $value
+     *
+     * @return  string
+     */
+    protected function persistCommaSeparatedString($value)
+    {
+        if (is_array($value)) {
+            $value = join(',', array_map('trim', $value));
+        } elseif ($value !== null && !is_string($value)) {
+            throw new ProgrammingError('Cannot persist value "%s" as comma separated string', $value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Convert the given comma separated string to an array
+     *
+     * @param   string  $value
+     *
+     * @return  array
+     */
+    protected function retrieveCommaSeparatedString($value)
+    {
+        if ($value && is_string($value)) {
+            $value = String::trimSplit($value);
+        } elseif ($value !== null) {
+            throw new ProgrammingError('Cannot retrieve value "%s" as array. It\'s not a string', $value);
+        }
+
+        return $value;
     }
 
     /**

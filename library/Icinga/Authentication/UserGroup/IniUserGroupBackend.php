@@ -50,6 +50,17 @@ class IniUserGroupBackend extends IniRepository implements UserGroupBackendInter
     );
 
     /**
+     * The value conversion rules to apply on a query
+     *
+     * @var array
+     */
+    protected $conversionRules = array(
+        'created_at'    => 'date_time',
+        'last_modified' => 'date_time',
+        'users'         => 'comma_separated_string'
+    );
+
+    /**
      * Initialize this ini user group backend
      */
     protected function init()
