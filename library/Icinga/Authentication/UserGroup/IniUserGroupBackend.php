@@ -3,11 +3,13 @@
 
 namespace Icinga\Authentication\UserGroup;
 
-use Icinga\Repository\Repository;
+use Icinga\Exception\StatementException;
+use Icinga\Data\Filter\Filter;
+use Icinga\Repository\IniRepository;
 use Icinga\User;
 use Icinga\Util\String;
 
-class IniUserGroupBackend extends Repository implements UserGroupBackendInterface
+class IniUserGroupBackend extends IniRepository implements UserGroupBackendInterface
 {
     /**
      * The query columns being provided
@@ -53,6 +55,35 @@ class IniUserGroupBackend extends Repository implements UserGroupBackendInterfac
     protected function init()
     {
         $this->ds->getConfigObject()->setKeyColumn('name');
+    }
+
+    /**
+     * Add a new group to this backend
+     *
+     * @param   string  $target
+     * @param   array   $data
+     *
+     * @throws  StatementException  In case the operation has failed
+     */
+    public function insert($target, array $data)
+    {
+        $data['created_at'] = time();
+        parent::insert($target, $data);
+    }
+
+    /**
+     * Update groups of this backend, optionally limited using a filter
+     *
+     * @param   string  $target
+     * @param   array   $data
+     * @param   Filter  $filter
+     *
+     * @throws  StatementException  In case the operation has failed
+     */
+    public function update($target, array $data, Filter $filter = null)
+    {
+        $data['last_modified'] = time();
+        parent::update($target, $data, $filter);
     }
 
     /**
