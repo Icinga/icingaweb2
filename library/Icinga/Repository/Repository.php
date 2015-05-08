@@ -8,6 +8,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Data\Selectable;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\QueryException;
+use Icinga\Exception\StatementException;
 
 /**
  * Abstract base class for concrete repository implementations
@@ -572,5 +573,57 @@ abstract class Repository implements Selectable
         }
 
         return $aliasColumnMap[$name];
+    }
+
+    /**
+     * Return whether the given column name or alias is a valid statement column
+     *
+     * @param   string  $name   The column name or alias to check
+     *
+     * @return  bool
+     */
+    public function hasStatementColumn($name)
+    {
+        return $this->hasQueryColumn($name);
+    }
+
+    /**
+     * Validate that the given column is a valid statement column and return it or the actual name if it's an alias
+     *
+     * @param   string  $name       The name or alias of the column to validate
+     *
+     * @return  string              The given column's name
+     *
+     * @throws  StatementException  In case the given column is not a statement column
+     */
+    public function requireStatementColumn($name)
+    {
+        if (in_array($name, $this->filterColumns)) {
+            throw new StatementException('Filter column "%s" cannot be referenced in a statement', $name);
+        }
+
+        $aliasColumnMap = $this->getAliasColumnMap();
+        if (! array_key_exists($name, $aliasColumnMap)) {
+            throw new StatementException('Statement column "%s" not found', $name);
+        }
+
+        return $aliasColumnMap[$name];
+    }
+
+    /**
+     * Resolve the given aliases or column names supposed to be persisted and convert their values
+     *
+     * @param   array   $data
+     *
+     * @return  array
+     */
+    public function requireStatementColumns(array $data)
+    {
+        $resolved = array();
+        foreach ($data as $alias => $value) {
+            $resolved[$this->requireStatementColumn($alias)] = $this->persistColumn($alias, $value);
+        }
+
+        return $resolved;
     }
 }
