@@ -5,8 +5,8 @@ use \Zend_Controller_Action_Exception;
 use Icinga\Application\Config;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\UserBackendInterface;
-use Icinga\Data\Selectable;
 use Icinga\Web\Controller;
+use Icinga\Web\Form;
 use Icinga\Web\Widget;
 
 class UserController extends Controller
@@ -32,6 +32,26 @@ class UserController extends Controller
      */
     public function listAction()
     {
+        $backendNames = array_map(
+            function ($b) { return $b->getName(); },
+            $this->loadUserBackends('Icinga\Data\Selectable')
+        );
+        $this->view->backendSelection = new Form();
+        $this->view->backendSelection->setAttrib('class', 'backend-selection');
+        $this->view->backendSelection->setUidDisabled();
+        $this->view->backendSelection->setMethod('GET');
+        $this->view->backendSelection->setTokenDisabled();
+        $this->view->backendSelection->addElement(
+            'select',
+            'backend',
+            array(
+                'autosubmit'    => true,
+                'label'         => $this->translate('Authentication Backend'),
+                'multiOptions'  => array_combine($backendNames, $backendNames),
+                'value'         => $this->params->get('backend')
+            )
+        );
+
         $backend = $this->getUserBackend($this->params->get('backend'));
         if ($backend === null) {
             $this->view->backend = null;
@@ -68,19 +88,39 @@ class UserController extends Controller
     }
 
     /**
+     * Return all user backends implementing the given interface
+     *
+     * @param   string  $interface      The class path of the interface, or null if no interface check should be made
+     *
+     * @return  array
+     */
+    protected function loadUserBackends($interface = null)
+    {
+        $backends = array();
+        foreach (Config::app('authentication') as $backendName => $backendConfig) {
+            $candidate = UserBackend::create($backendName, $backendConfig);
+            if (! $interface || $candidate instanceof $interface) {
+                $backends[] = $candidate;
+            }
+        }
+
+        return $backends;
+    }
+
+    /**
      * Return the given user backend or the first match in order
      *
      * @param   string  $name           The name of the backend, or null in case the first match should be returned
-     * @param   bool    $selectable     Whether the backend should implement the Selectable interface
+     * @param   string  $interface      The interface the backend should implement, no interface check if null
      *
      * @return  UserBackendInterface
      *
      * @throws  Zend_Controller_Action_Exception    In case the given backend name is invalid
      */
-    protected function getUserBackend($name = null, $selectable = true)
+    protected function getUserBackend($name = null, $interface = 'Icinga\Data\Selectable')
     {
-        $config = Config::app('authentication');
         if ($name !== null) {
+            $config = Config::app('authentication');
             if (! $config->hasSection($name)) {
                 throw new Zend_Controller_Action_Exception(
                     sprintf($this->translate('Authentication backend "%s" not found'), $name),
@@ -88,22 +128,21 @@ class UserController extends Controller
                 );
             } else {
                 $backend = UserBackend::create($name, $config->getSection($name));
-                if ($selectable && !$backend instanceof Selectable) {
+                if ($interface && !$backend instanceof $interface) {
+                    $interfaceParts = explode('\\', strtolower($interface));
                     throw new Zend_Controller_Action_Exception(
-                        sprintf($this->translate('Authentication backend "%s" is not able to list users'), $name),
+                        sprintf(
+                            $this->translate('Authentication backend "%s" is not %s'),
+                            $name,
+                            array_pop($interfaceParts)
+                        ),
                         400
                     );
                 }
             }
         } else {
-            $backend = null;
-            foreach ($config as $backendName => $backendConfig) {
-                $candidate = UserBackend::create($backendName, $backendConfig);
-                if (! $selectable || $candidate instanceof Selectable) {
-                    $backend = $candidate;
-                    break;
-                }
-            }
+            $backends = $this->loadUserBackends($interface);
+            $backend = array_shift($backends);
         }
 
         return $backend;
