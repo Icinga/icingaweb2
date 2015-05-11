@@ -88,11 +88,12 @@ class AuthenticationStep extends Step
                 ResourceFactory::createResource(new ConfigObject($this->data['adminAccountData']['resourceConfig']))
             );
 
-            if (array_search($this->data['adminAccountData']['username'], $backend->listUsers()) === false) {
-                $backend->addUser(
-                    $this->data['adminAccountData']['username'],
-                    $this->data['adminAccountData']['password']
-                );
+            if ($backend->select()->where('user_name', $this->data['adminAccountData']['username'])->count() === 0) {
+                $backend->insert('user', array(
+                    'user_name' => $this->data['adminAccountData']['username'],
+                    'password'  => $this->data['adminAccountData']['password'],
+                    'is_active' => true
+                ));
             }
         } catch (Exception $e) {
             $this->dbError = $e;
