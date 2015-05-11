@@ -13,12 +13,8 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommand
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
-use Icinga\Module\Monitoring\Object\Host;
-use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\ServiceList;
-use Icinga\Util\String;
 use Icinga\Web\Url;
-use Icinga\Web\UrlParams;
 use Icinga\Web\Widget\Chart\InlinePie;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 
@@ -208,7 +204,6 @@ class Monitoring_ServicesController extends Controller
         $form = new AddCommentCommandForm();
         $form->setTitle($this->translate('Add Service Comments'));
         $this->handleCommandForm($form);
-
     }
 
 
