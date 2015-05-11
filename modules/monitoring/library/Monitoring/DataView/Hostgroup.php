@@ -1,7 +1,6 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-
 namespace Icinga\Module\Monitoring\DataView;
 
 /**
@@ -17,9 +16,10 @@ class Hostgroup extends DataView
     public function getColumns()
     {
         return array(
-            'host',
             'hostgroup_name',
-            'hostgroup_alias'
+            'hostgroup_alias',
+            'hostgroup_id',
+            'host_name'
         );
     }
 
@@ -33,7 +33,15 @@ class Hostgroup extends DataView
         return array(
             'hostgroup_name' => array(
                 'order' => self::SORT_ASC
+            ),
+            'hostgroup_alias' => array(
+                'order' => self::SORT_ASC
             )
         );
+    }
+
+    public function getFilterColumns()
+    {
+        return array('hostgroup', 'host');
     }
 }

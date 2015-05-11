@@ -245,14 +245,41 @@
             }
         },
 
+        /**
+         * Process the X-Icinga-Redirect HTTP Response Header
+         *
+         * If the response includes the X-Icinga-Redirect header, redirects to the URL associated with the header.
+         *
+         * @param   {object}    req     Current request
+         *
+         * @returns {boolean}           Whether we're about to redirect
+         */
         processRedirectHeader: function(req) {
-            var icinga = this.icinga;
-            var redirect = req.getResponseHeader('X-Icinga-Redirect');
-            if (! redirect) return false;
+            var icinga      = this.icinga,
+                redirect    = req.getResponseHeader('X-Icinga-Redirect');
+
+            if (! redirect) {
+                return false;
+            }
+
             redirect = decodeURIComponent(redirect);
             if (redirect.match(/__SELF__/)) {
-                redirect = redirect.replace(/__SELF__/, encodeURIComponent(document.location.pathname + document.location.search + document.location.hash));
+                if (req.autorefresh) {
+                    // Redirect to the current window's URL in case it's an auto-refresh request. If authenticated
+                    // externally this ensures seamless re-login if the session's expired
+                    redirect = redirect.replace(
+                        /__SELF__/,
+                        encodeURIComponent(
+                            document.location.pathname + document.location.search + document.location.hash
+                        )
+                    );
+                } else {
+                    // Redirect to the URL which required authentication. When clicking a link this ensures that we
+                    // redirect to the link's URL instead of the current window's URL (see above)
+                    redirect = redirect.replace(/__SELF__/, req.url);
+                }
             }
+
             icinga.logger.debug(
                 'Got redirect for ', req.$target, ', URL was ' + redirect
             );
@@ -265,6 +292,12 @@
                 r.url = redirect;
                 if (parts.length) {
                     r.loadNext = parts;
+                } else if (!! document.location.hash) {
+                    // Retain detail URL if the layout is rerendered
+                    parts = document.location.hash.split('#!').splice(1);
+                    if (parts.length) {
+                        r.loadNext = parts;
+                    }
                 }
 
             } else {
@@ -607,7 +640,7 @@
                 this.icinga.logger.error(
                     req.status,
                     errorThrown + ':',
-                    $(req.responseText).text().slice(0, 100)
+                    $(req.responseText).text().replace(/\s+/g, ' ').slice(0, 100)
                 );
                 this.renderContentToContainer(
                     req.responseText,
@@ -727,12 +760,8 @@
                 // $container.html(content);
 
             } else {
-                if ($container.closest('.dashboard').length
-                ) {
-                    if (! $('h1', $content).length) {
-                        var title = $('h1', $container).first().detach();
-                        $('h1', $content).first().detach();
-                    }
+                if ($container.closest('.dashboard').length) {
+                    var title = $('h1', $container).first().detach();
                     $container.html(title).append(content);
                 } else if (action === 'replace') {
                     $container.html(content);

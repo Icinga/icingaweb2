@@ -31,7 +31,11 @@ class DbBackendFormTest extends BaseTestCase
             ->shouldReceive('count')
             ->andReturn(2);
 
-        $form = new DbBackendForm();
+        // Passing array(null) is required to make Mockery call the constructor...
+        $form = Mockery::mock('Icinga\Forms\Config\Authentication\DbBackendForm[getView]', array(null));
+        $form->shouldReceive('getView->escape')
+            ->with(Mockery::type('string'))
+            ->andReturnUsing(function ($s) { return $s; });
         $form->setTokenDisabled();
         $form->setResources(array('test_db_backend'));
         $form->populate(array('resource' => 'test_db_backend'));
@@ -53,7 +57,11 @@ class DbBackendFormTest extends BaseTestCase
             ->shouldReceive('count')
             ->andReturn(0);
 
-        $form = new DbBackendForm();
+        // Passing array(null) is required to make Mockery call the constructor...
+        $form = Mockery::mock('Icinga\Forms\Config\Authentication\DbBackendForm[getView]', array(null));
+        $form->shouldReceive('getView->escape')
+            ->with(Mockery::type('string'))
+            ->andReturnUsing(function ($s) { return $s; });
         $form->setTokenDisabled();
         $form->setResources(array('test_db_backend'));
         $form->populate(array('resource' => 'test_db_backend'));

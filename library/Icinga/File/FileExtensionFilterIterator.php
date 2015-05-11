@@ -33,7 +33,7 @@ class FileExtensionFilterIterator extends FilterIterator
     /**
      * The extension to filter for
      *
-     * @type string
+     * @var string
      */
     protected $extension;
 
@@ -58,7 +58,7 @@ class FileExtensionFilterIterator extends FilterIterator
     public function accept()
     {
         $current = $this->current();
-        /** @type $current \SplFileInfo */
+        /** @var $current \SplFileInfo */
         if (! $current->isFile()) {
             return false;
         }

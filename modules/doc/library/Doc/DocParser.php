@@ -18,14 +18,14 @@ class DocParser
     /**
      * Path to the documentation
      *
-     * @type string
+     * @var string
      */
     protected $path;
 
     /**
      * Iterator over documentation files
      *
-     * @type DocIterator
+     * @var DocIterator
      */
     protected $docIterator;
 
@@ -130,7 +130,7 @@ class DocParser
         $tree = new SimpleTree();
         $stack = new SplStack();
         foreach ($this->docIterator as $fileInfo) {
-            /** @type $fileInfo \SplFileInfo */
+            /** @var $fileInfo \SplFileInfo */
             $file = $fileInfo->openFile();
             $lastLine = null;
             foreach ($file as $line) {
@@ -143,7 +143,7 @@ class DocParser
                     if ($id === null) {
                         $path = array();
                         foreach ($stack as $section) {
-                            /** @type $section DocSection */
+                            /** @var $section DocSection */
                             $path[] = $section->getTitle();
                         }
                         $path[] = $title;

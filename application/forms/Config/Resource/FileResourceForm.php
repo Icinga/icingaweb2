@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms\Config\Resource;
 
+use Zend_Validate_Callback;
 use Icinga\Web\Form;
 
 /**
@@ -42,13 +43,22 @@ class FileResourceForm extends Form
                 'validators'    => array('ReadablePathValidator')
             )
         );
+        $callbackValidator = new Zend_Validate_Callback(function ($value) {
+            return @preg_match($value, '') !== false;
+        });
+        $callbackValidator->setMessage(
+            $this->translate('"%value%" is not a valid regular expression.'),
+            Zend_Validate_Callback::INVALID_VALUE
+        );
         $this->addElement(
             'text',
             'fields',
             array(
                 'required'      => true,
                 'label'         => $this->translate('Pattern'),
-                'description'   => $this->translate('The regular expression by which to identify columns')
+                'description'   => $this->translate('The pattern by which to identify columns.'),
+                'requirement'   => $this->translate('The column pattern must be a valid regular expression.'),
+                'validators'    => array($callbackValidator)
             )
         );
 

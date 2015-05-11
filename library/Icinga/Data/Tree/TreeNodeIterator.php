@@ -14,7 +14,7 @@ class TreeNodeIterator implements RecursiveIterator
     /**
      * The node's children
      *
-     * @type array
+     * @var array
      */
     protected $children;
 

@@ -1,23 +1,24 @@
 <?php
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget\Chart\HistoryColorGrid;
-?>
-<?php if (! $compact): ?>
-    <div class="controls">
-        <?= $this->tabs->render($this); ?>
-        <div class="fake-controls">
-            <h2 tabindex="-1" class="sr-only">
-                <?= $this->translate('Filters'); ?>
-            </h2>
-            <?= $form ?>
-        </div>
-    </div>
-    <div class="content" data-base-target="_next">
-        <h1 tabindex="-1"><?= $this->translate('Event Grid'); ?></h1>
-<?php else: ?>
-    <div class="content" data-base-target="_next">
-<?php endif; ?>
+
+if (! $this->compact): ?>
+<div class="controls">
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
+  <?= $form; ?>
+</div>
+<?php endif ?>
+<div class="content" data-base-target="_next">
 <?php
+
+if (count($summary) === 0) {
+    echo $this->translate('No state changes in the selected time period.') . '</div>';
+    return;
+}
 
 $settings = array(
     'cnt_up' => array(
@@ -66,11 +67,8 @@ $to = intval($form->getValue('to', time()));
 if ($to - $from > 315360000) {
     $from = $to - 315360000;
 }
-$data = array();
 
-if (count($summary) === 0) {
-    echo $this->translate('No state changes in the selected time period.');
-}
+$data = array();
 foreach ($summary as $entry) {
     $day = $entry->day;
     $value = $entry->$column;

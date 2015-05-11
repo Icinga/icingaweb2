@@ -37,7 +37,7 @@ class Zend_View_Helper_DateFormat extends Zend_View_Helper_Abstract
     /**
      * Helper entry point
      *
-     * @return  self
+     * @return  $this
      */
     public function dateFormat()
     {

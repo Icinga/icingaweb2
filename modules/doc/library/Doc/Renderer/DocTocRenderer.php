@@ -19,7 +19,7 @@ class DocTocRenderer extends DocRenderer
     /**
      * Content to render
      *
-     * @type array
+     * @var array
      */
     protected $content = array();
 
@@ -85,7 +85,7 @@ class DocTocRenderer extends DocRenderer
                 false
             );
             $url = $view->url($path);
-            /** @type \Icinga\Web\Url $url */
+            /** @var \Icinga\Web\Url $url */
             $url->setAnchor($this->encodeAnchor($section->getId()));
             $urlAttributes = array(
                 'data-base-target'  => '_next',

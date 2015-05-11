@@ -20,7 +20,6 @@ class Tabs extends AbstractWidget implements Countable
      * @var string
      */
     private $baseTpl = <<< 'EOT'
-{HEADER}
 <ul class="tabs">
   {TABS}
   {DROPDOWN}
@@ -28,13 +27,6 @@ class Tabs extends AbstractWidget implements Countable
   {CLOSE}
 </ul>
 EOT;
-
-    /**
-     * Template used for the header
-     *
-     * @type string
-     */
-    private $headerTpl = '<h2 class="sr-only">{TITLE}</h2>';
 
     /**
      * Template used for the tabs dropdown
@@ -57,7 +49,7 @@ EOT;
      */
     private $closeTpl = <<< 'EOT'
 <li class="dropdown" style="float: right;">
-  <a href="#" class="dropdown-toggle close-toggle">X</a>
+  <a href="#" class="dropdown-toggle close-toggle"> <i aria-hidden="true" class="icon-cancel"></i> </a>
 </li>
 EOT;
 
@@ -110,13 +102,6 @@ EOT;
     private $closeTab = true;
 
     /**
-     * Title of the tab navigation
-     *
-     * @type string
-     */
-    private $title;
-
-    /**
      * Set whether the current tab is closable
      */
     public function hideCloseButton()
@@ -131,7 +116,7 @@ EOT;
      *
      * @param   string $name Name of the tab going to be activated
      *
-     * @return  self
+     * @return  $this
      *
      * @throws  ProgrammingError When the given tab name doesn't exist
      *
@@ -163,7 +148,7 @@ EOT;
      *
      * @param   string $name CSS class name(s)
      *
-     * @return  self
+     * @return  $this
      */
     public function setClass($name)
     {
@@ -207,9 +192,9 @@ EOT;
      * with tab properties or an instance of an existing Tab
      *
      * @param   string      $name   The new tab name
-     * @param   array|Tab   $tab    The tab itself of it's properties
+     * @param   array|Tab   $tab    The tab itself of its properties
      *
-     * @return  self
+     * @return  $this
      *
      * @throws  ProgrammingError When the tab name already exists
      */
@@ -232,9 +217,9 @@ EOT;
      * of an existing Tab
      *
      * @param   string      $name   The new tab name
-     * @param   array|Tab   $tab    The tab itself of it's properties
+     * @param   array|Tab   $tab    The tab itself of its properties
      *
-     * @return  self
+     * @return  $this
      */
     public function set($name, $tab)
     {
@@ -251,7 +236,7 @@ EOT;
      *
      * @param   string  $name
      *
-     * @return  self
+     * @return  $this
      */
     public function remove($name)
     {
@@ -279,7 +264,7 @@ EOT;
     }
 
     /**
-     * Render the dropdown area with it's tabs and return the resulting HTML
+     * Render the dropdown area with its tabs and return the resulting HTML
      *
      * @return  mixed|string
      */
@@ -381,15 +366,13 @@ EOT;
                 '{TABS}',
                 '{DROPDOWN}',
                 '{REFRESH}',
-                '{CLOSE}',
-                '{HEADER}'
+                '{CLOSE}'
             ),
             array(
                 $tabs,
                 $drop,
                 $close,
-                $refresh,
-                $this->renderHeader()
+                $refresh
             ),
             $this->baseTpl
         );
@@ -444,37 +427,11 @@ EOT;
      *
      * @param   Tabextension $tabextension
      *
-     * @return  self
+     * @return  $this
      */
     public function extend(Tabextension $tabextension)
     {
         $tabextension->apply($this);
         return $this;
-    }
-
-    /**
-     * Set the title of the tab navigation
-     *
-     * @param   string  $title
-     * @return  self
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-        return $this;
-    }
-
-    /**
-     * Render the title into the header template
-     *
-     * @return string
-     */
-    public function renderHeader()
-    {
-        if (! $this->title) {
-            return '';
-        }
-
-        return str_replace('{TITLE}', $this->title, $this->headerTpl);
     }
 }

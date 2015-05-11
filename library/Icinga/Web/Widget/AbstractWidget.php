@@ -26,7 +26,7 @@ abstract class AbstractWidget
 {
     /**
      * If you are going to access the current view with the view() function,
-     * it's instance is stored here for performance reasons.
+     * its instance is stored here for performance reasons.
      *
      * @var Zend_View_Abstract
      */

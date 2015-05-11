@@ -20,24 +20,24 @@ class RolesController extends ActionController
      */
     public function init()
     {
-        $this->assertPermission('system/config/roles');
+        $this->assertPermission('config/application/roles');
         $tabs = $this->getTabs();
         $auth = $this->Auth();
-        if ($auth->hasPermission('system/config/application')) {
+        if ($auth->hasPermission('config/application/general')) {
             $tabs->add('application', array(
                 'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
                 'label' => $this->translate('Application'),
                 'url'   => 'config'
             ));
         }
-        if ($auth->hasPermission('system/config/authentication')) {
+        if ($auth->hasPermission('config/application/authentication')) {
             $tabs->add('authentication', array(
                 'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
                 'label' => $this->translate('Authentication'),
                 'url'   => 'config/authentication'
             ));
         }
-        if ($auth->hasPermission('system/config/resources')) {
+        if ($auth->hasPermission('config/application/resources')) {
             $tabs->add('resource', array(
                 'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
                 'label' => $this->translate('Resources'),
@@ -51,7 +51,6 @@ class RolesController extends ActionController
             'label' => $this->translate('Roles'),
             'url'   => 'roles'
         ));
-        $this->getTabs()->setTitle($this->translate('Role Configuration'));
     }
 
     /**

@@ -11,14 +11,14 @@ class DocSearch
     /**
      * Search string
      *
-     * @type string
+     * @var string
      */
     protected $input;
 
     /**
      * Search criteria
      *
-     * @type array
+     * @var array
      */
     protected $search;
 

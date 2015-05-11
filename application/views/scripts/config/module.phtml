@@ -2,9 +2,6 @@
   <?= $this->tabs ?>
 </div>
 <div class="content">
-  <h1 tabindex="-1">
-    <?= $this->escape($module->getTitle()) ?>
-  </h1>
   <?php if (! $module): ?>
     <?= $this->translate('There is no such module installed.') ?>
   <?php return; endif ?>

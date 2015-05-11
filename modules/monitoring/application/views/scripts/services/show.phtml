@@ -15,7 +15,7 @@
     </h3>
 
     <?php if (($serviceCount = count($objects)) === 0): ?>
-        <?= $this->translate('No services matching the filter'); ?>
+        <?= $this->translate('No services found matching the filter'); ?>
     <?php else: ?>
         <?= sprintf($this->translatePlural(
             'Issue commands to %s selected service:',
@@ -63,6 +63,15 @@
                 array('icon' => 'comment')
             ); ?>
         </div>
+
+        <?php if ($this->hasPermission('monitoring/command/send-custom-notification')): ?>
+            <div><?= $this->qlink(
+                    sprintf($this->translate('Send a custom notification for all %u services'), $serviceCount),
+                    $sendCustomNotificationLink,
+                    null,
+                    array('icon' => 'comment')
+                ); ?></div>
+        <?php endif; ?>
         </p>
 
         <?php

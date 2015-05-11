@@ -1,12 +1,13 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 ul.tabs {
-  padding: 1em 0 0 0;
+  padding: 0;
   list-style-type: inside;
 }
 
 .controls ul.tabs {
-  margin-left: 0em;
+  margin-left: -1em;
+  margin-right: -1em;
   margin-top: -3.54em;
   height: 2.6em;
   overflow: hidden;
@@ -147,4 +148,20 @@ a.close-tab {
     // icon-spin6
     content: '\e874';
   }
+}
+
+span.display-on-hover {
+  font-size: 0.8em;
+  left: -9000px;
+  position: relative;
+  display: inline;
+  width: 0;
+  overflow: hidden;
+  color: #000000;
+  text-decoration: none;
+}
+
+:hover > span.display-on-hover, :focus > span.display-on-hover {
+  left:1em; width:12em;
+  text-align: center
 }

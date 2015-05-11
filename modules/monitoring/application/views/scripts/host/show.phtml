@@ -1,9 +1,11 @@
 <div class="controls">
+  <?php if (! $this->compact): ?>
+    <?= $this->tabs; ?>
+  <?php endif ?>
     <?= $this->render('partials/host/object-header.phtml') ?>
     <?= $this->render('partials/host/servicesummary.phtml') ?>
 </div>
 <div class="content" data-base-target="_next">
-    <h1 tabindex="-1"><?= $this->translate('Host Detail Information') ?></h1>
     <?= $this->render('show/components/output.phtml') ?>
     <?= $this->render('show/components/grapher.phtml') ?>
 

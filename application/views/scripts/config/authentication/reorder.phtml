@@ -2,20 +2,9 @@
   <?= $tabs; ?>
 </div>
 <div class="content" data-base-target="_next">
-  <h1 tabindex="-1" id="authentication-configuration">
-    <?= $this->translate('Authentication Configuration'); ?>
-  </h1>
-  <h2 tabindex="-1" id="authentication-new-backend" class="sr-only">
-    <?= t('New Authentication Backend'); ?>
-  </h2>
-  <p>
-    <a href="<?= $this->href('/config/createAuthenticationBackend'); ?>">
-      <?= $this->icon('plus'); ?><?= $this->translate('Create A New Authentication Backend'); ?>
-    </a>
-  </p>
-  <h2 tabindex="-1" id="authentication-reorder" class="sr-only">
-    <?= t('Reorder Authentication Backends'); ?>
-  </h2>
+  <a href="<?= $this->href('/config/createAuthenticationBackend'); ?>">
+    <?= $this->icon('plus'); ?><?= $this->translate('Create A New Authentication Backend'); ?>
+  </a>
   <div id="authentication-reorder-form">
     <?= $form; ?>
   </div>

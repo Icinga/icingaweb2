@@ -1,23 +1,20 @@
-<?php if ($this->compact): ?>
-<div class="content">
-<?php else: ?>
+<?php if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs ?>
-  <?= $this->sortControl->render($this); ?>
-  <?= $this->widget('limiter')->setMaxLimit(count($hostgroups)); ?>
-  <?= $this->paginationControl($hostgroups, null, null, array('preserve' => $this->preserve)); ?>
-</div>
-<div class="content">
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
   <?= $this->filterEditor; ?>
-  <h1 tabindex="-1"><?= $this->translate('Host Groups') ?></h1>
+</div>
 <?php endif ?>
-  <?php
-    if (count($hostgroups) === 0) {
-      echo $this->translate('No host groups matching the filter');
-      echo '</div>';
-      return;
-    }
-  ?>
+<div class="content">
+<?php
+
+if (count($hostgroups) === 0) {
+    echo $this->translate('No hostgroups found matching the filter') . '</div>';
+    return;
+}
+?>
   <table class="groupview" data-base-target="_next">
     <thead>
       <th><?= $this->translate('Last Problem'); ?></th>
@@ -27,7 +24,7 @@
     </thead>
     <tbody>
     <?php foreach ($hostgroups as $h): ?>
-      <tr href="<?= $this->href('monitoring/list/hosts', array('hostgroup' => $h->hostgroup)) ?>">
+      <tr href="<?= $this->href('monitoring/list/hosts', array('hostgroup_name' => $h->hostgroup_name)) ?>">
        <?php if ($h->services_critical_last_state_change_unhandled): ?>
         <td class="state change critical unhandled">
           <strong><?= $this->translate('CRITICAL'); ?></strong>
@@ -81,7 +78,7 @@
           <?= $this->qlink(
             $h->hostgroup_alias,
             'monitoring/list/hosts',
-            array('hostgroup' => $h->hostgroup),
+            array('hostgroup_name' => $h->hostgroup_name),
             array('title' => sprintf($this->translate('List all hosts in the group "%s"'), $h->hostgroup_alias))
           ); ?>
         </td>
@@ -89,7 +86,7 @@
           <?= $this->qlink(
             $h->services_total,
             'monitoring/list/services',
-            array('hostgroup' => $h->hostgroup),
+            array('hostgroup_name' => $h->hostgroup_name),
             array('title' => sprintf(
                 $this->translate('List all services of all hosts in host group "%s"'),
                 $h->hostgroup_alias
@@ -103,9 +100,9 @@
               $h->services_ok,
               'monitoring/list/services',
               array(
-                'service_state' => 0,
-                'hostgroup'     => $h->hostgroup,
-                'sort'          => 'service_severity'
+                'service_state'     => 0,
+                'hostgroup_name'    => $h->hostgroup_name,
+                'sort'              => 'service_severity'
               ),
               array(
                 'title' => sprintf(
@@ -131,7 +128,7 @@
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'hostgroup'             => $h->hostgroup,
+                'hostgroup_name'        => $h->hostgroup_name,
                 'sort'                  => 'service_severity'
               ),
               array(
@@ -155,7 +152,7 @@
                 array(
                   'service_state'     => 2,
                   'service_handled'   => 1,
-                  'hostgroup'         => $h->hostgroup,
+                  'hostgroup_name'    => $h->hostgroup_name,
                   'sort'              => 'service_severity'
                 ),
                 array(
@@ -185,7 +182,7 @@
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'hostgroup'             => $h->hostgroup,
+                'hostgroup_name'        => $h->hostgroup_name,
                 'sort'                  => 'service_severity'
               ),
               array(
@@ -209,7 +206,7 @@
                 array(
                   'service_state'     => 3,
                   'service_handled'   => 1,
-                  'hostgroup'         => $h->hostgroup,
+                  'hostgroup_name'    => $h->hostgroup_name,
                   'sort'              => 'service_severity'
                 ),
                 array(
@@ -239,7 +236,7 @@
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'hostgroup'             => $h->hostgroup,
+                'hostgroup_name'        => $h->hostgroup_name,
                 'sort'                  => 'service_severity'
               ),
               array(
@@ -263,7 +260,7 @@
                 array(
                   'service_state'     => 1,
                   'service_handled'   => 1,
-                  'hostgroup'         => $h->hostgroup,
+                  'hostgroup_name'    => $h->hostgroup_name,
                   'sort'              => 'service_severity'
                 ),
                 array(
@@ -289,9 +286,9 @@
               $h->services_pending,
               'monitoring/list/services',
               array(
-                'service_state' => 99,
-                'hostgroup'     => $h->hostgroup,
-                'sort'          => 'service_severity'
+                'service_state'     => 99,
+                'hostgroup_name'    => $h->hostgroup_name,
+                'sort'              => 'service_severity'
               ),
               array(
                 'title' => sprintf(

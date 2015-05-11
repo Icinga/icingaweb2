@@ -3,16 +3,12 @@ use Icinga\Web\Url;
 use Icinga\Util\Color;
 
 $groupInfo = $timeline->getGroupInfo();
-$firstRow = !$beingExtended;
+$firstRow = ! $beingExtended;
 
-?>
-<?php if (!$beingExtended): ?>
+if (! $beingExtended && !$this->compact): ?>
 <div class="controls">
-    <?= $this->tabs ?>
-    <div style="margin: 1em;" class="dontprint">
-        <h2 tabindex="-1" class="sr-only">
-            <?= $this->translate('Filters') ?>
-        </h2>
+    <?= $this->tabs; ?>
+    <div style="float: right;" class="dontprint">
         <?= $intervalBox; ?>
     </div>
     <div style="margin: 1em;" class="timeline-legend">
@@ -24,8 +20,9 @@ $firstRow = !$beingExtended;
 <?php endforeach ?>
     </div>
 </div>
+<?php endif ?>
+<?php if (! $beingExtended): ?>
 <div class="content" data-base-target="_next">
-    <h1 tabindex="-1"><?= $this->translate('Timeline'); ?></h1>
     <div class="timeline">
 <?php endif ?>
 <?php if ($switchedContext): ?>

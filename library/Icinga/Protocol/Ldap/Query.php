@@ -307,6 +307,19 @@ class Query
     }
 
     /**
+     * Add a filter expression to this query
+     *
+     * @param   Expression  $expression
+     *
+     * @return  Query
+     */
+    public function addFilter(Expression $expression)
+    {
+        $this->filters[] = $expression;
+        return $this;
+    }
+
+    /**
      * Returns the LDAP filter that will be applied
      *
      * @string
@@ -318,17 +331,26 @@ class Query
             throw new Exception('Object class is mandatory');
         }
         foreach ($this->filters as $key => $value) {
-            $parts[] = sprintf(
-                '%s=%s',
-                LdapUtils::quoteForSearch($key),
-                LdapUtils::quoteForSearch($value, true)
-            );
+            if ($value instanceof Expression) {
+                $parts[] = (string) $value;
+            } else {
+                $parts[] = sprintf(
+                    '%s=%s',
+                    LdapUtils::quoteForSearch($key),
+                    LdapUtils::quoteForSearch($value, true)
+                );
+            }
         }
         if (count($parts) > 1) {
             return '(&(' . implode(')(', $parts) . '))';
         } else {
             return '(' . $parts[0] . ')';
         }
+    }
+
+    public function __toString()
+    {
+        return $this->create();
     }
 
     /**

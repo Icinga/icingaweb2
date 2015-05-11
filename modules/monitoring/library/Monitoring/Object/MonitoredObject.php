@@ -120,7 +120,7 @@ abstract class MonitoredObject implements Filterable
     /**
      * Filter
      *
-     * @type Filter
+     * @var Filter
      */
     protected $filter;
 
@@ -248,15 +248,18 @@ abstract class MonitoredObject implements Filterable
         $comments = $this->backend->select()->from('comment', array(
             'id'        => 'comment_internal_id',
             'timestamp' => 'comment_timestamp',
-            'author'    => 'comment_author',
+            'author'    => 'comment_author_name',
             'comment'   => 'comment_data',
             'type'      => 'comment_type',
         ))
             ->where('comment_type', array('comment', 'ack'))
-            ->where('comment_objecttype', $this->type)
-            ->where('comment_host', $this->host_name);
+            ->where('comment_objecttype', $this->type);
         if ($this->type === self::TYPE_SERVICE) {
-            $comments->where('comment_service', $this->service_description);
+            $comments
+                ->where('service_host_name', $this->host_name)
+                ->where('service_description', $this->service_description);
+        } else {
+            $comments->where('host_name', $this->host_name);
         }
         $this->comments = $comments->getQuery()->fetchAll();
         return $this;
@@ -273,7 +276,7 @@ abstract class MonitoredObject implements Filterable
             'id'                => 'downtime_internal_id',
             'objecttype'        => 'downtime_objecttype',
             'comment'           => 'downtime_comment',
-            'author'            => 'downtime_author',
+            'author_name'       => 'downtime_author_name',
             'start'             => 'downtime_start',
             'scheduled_start'   => 'downtime_scheduled_start',
             'end'               => 'downtime_end',
@@ -281,16 +284,18 @@ abstract class MonitoredObject implements Filterable
             'is_flexible'       => 'downtime_is_flexible',
             'is_fixed'          => 'downtime_is_fixed',
             'is_in_effect'      => 'downtime_is_in_effect',
-            'entry_time'        => 'downtime_entry_time',
-            'host'              => 'downtime_host',
-            'service'           => 'downtime_service'
+            'entry_time'        => 'downtime_entry_time'
         ))
             ->where('downtime_objecttype', $this->type)
-            ->where('downtime_host', $this->host_name)
             ->order('downtime_is_in_effect', 'DESC')
             ->order('downtime_scheduled_start', 'ASC');
         if ($this->type === self::TYPE_SERVICE) {
-            $downtimes->where('downtime_service', $this->service_description);
+            $downtimes
+                ->where('service_host_name', $this->host_name)
+                ->where('service_description', $this->service_description);
+        } else {
+            $downtimes
+                ->where('host_name', $this->host_name);
         }
         $this->downtimes = $downtimes->getQuery()->fetchAll();
         return $this;
@@ -385,8 +390,9 @@ abstract class MonitoredObject implements Filterable
                 'contact_pager',
         ));
         if ($this->type === self::TYPE_SERVICE) {
-            $contacts->where('service_host_name', $this->host_name);
-            $contacts->where('service_description', $this->service_description);
+            $contacts
+                ->where('service_host_name', $this->host_name)
+                ->where('service_description', $this->service_description);
         } else {
             $contacts->where('host_name', $this->host_name);
         }
@@ -426,10 +432,13 @@ abstract class MonitoredObject implements Filterable
         $contactsGroups = $this->backend->select()->from('contactgroup', array(
                 'contactgroup_name',
                 'contactgroup_alias'
-        ))
-            ->where('host_name', $this->host_name);
+        ));
         if ($this->type === self::TYPE_SERVICE) {
-            $contactsGroups->where('service_description', $this->service_description);
+            $contactsGroups
+                ->where('service_host_name', $this->host_name)
+                ->where('service_description', $this->service_description);
+        } else {
+            $contactsGroups->where('host_name', $this->host_name);
         }
         $this->contactgroups = $contactsGroups->getQuery()->fetchAll();
         return $this;
@@ -455,7 +464,6 @@ abstract class MonitoredObject implements Filterable
                 'output',
                 'type'
         ))
-            ->order('timestamp', 'DESC')
             ->where('host_name', $this->host_name);
         if ($this->type === self::TYPE_SERVICE) {
             $eventHistory->where('service_description', $this->service_description);

@@ -4,7 +4,7 @@
 namespace Icinga\Module\Setup\Forms;
 
 use Icinga\Web\Form;
-use Icinga\Module\Setup\Requirements;
+use Icinga\Module\Setup\SetupWizard;
 
 /**
  * Wizard page to list setup requirements
@@ -12,11 +12,11 @@ use Icinga\Module\Setup\Requirements;
 class RequirementsPage extends Form
 {
     /**
-     * The requirements to list
+     * The wizard
      *
-     * @var Requirements
+     * @var SetupWizard
      */
-    protected $requirements;
+    protected $wizard;
 
     /**
      * Initialize this page
@@ -28,30 +28,30 @@ class RequirementsPage extends Form
     }
 
     /**
-     * Set the requirements to list
+     * Set the wizard
      *
-     * @param   Requirements    $requirements
+     * @param   SetupWizard    $wizard
      *
-     * @return  self
+     * @return  $this
      */
-    public function setRequirements(Requirements $requirements)
+    public function setWizard(SetupWizard $wizard)
     {
-        $this->requirements = $requirements;
+        $this->wizard = $wizard;
         return $this;
     }
 
     /**
-     * Return the requirements to list
+     * Return the wizard
      *
-     * @return  Requirements
+     * @return  SetupWizard
      */
-    public function getRequirements()
+    public function getWizard()
     {
-        return $this->requirements;
+        return $this->wizard;
     }
 
     /**
-     * Validate the given form data and check whether the requirements are fulfilled
+     * Validate the given form data and check whether the wizard's requirements are fulfilled
      *
      * @param   array   $data   The data to validate
      *
@@ -63,6 +63,6 @@ class RequirementsPage extends Form
             return false;
         }
 
-        return $this->requirements->fulfilled();
+        return $this->wizard->getRequirements()->fulfilled();
     }
 }

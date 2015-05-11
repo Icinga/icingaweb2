@@ -1,6 +1,8 @@
+<?php if (! $this->compact): ?>
 <div class="controls">
-    <?= $this->tabs ?>
+    <?= $this->tabs; ?>
 </div>
+<?php endif ?>
 <div class="content">
     <?= sprintf($this->translate('%s is currently not up and running'), $this->backendName) ?>
 </div>

@@ -72,7 +72,6 @@ class ServiceStatus extends DataView
             'host_action_url',
             'host_notes_url',
             'host_last_comment',
-            'host',
             'host_display_name',
             'host_alias',
             'host_ipv4',
@@ -87,7 +86,6 @@ class ServiceStatus extends DataView
             'host_last_time_down',
             'host_last_time_unreachable',
             'host_modified_host_attributes',
-            'service',
             'service_hard_state',
             'service_problem',
             'service_perfdata',
@@ -123,19 +121,28 @@ class ServiceStatus extends DataView
     public function getSortRules()
     {
         return array(
+            'service_display_name' => array(
+                'columns' => array(
+                    'service_display_name',
+                    'host_display_name'
+                ),
+                'order' => self::SORT_ASC
+            ),
             'service_severity' => array(
                 'columns' => array(
-                    'service_severity',
-                    'service_last_state_change'
-                ),
-                'order' => self::SORT_DESC
+                    'service_severity DESC',
+                    'service_last_state_change DESC',
+                    'service_display_name ASC',
+                    'host_display_name ASC'
+                )
             ),
             'host_severity' => array(
                 'columns' => array(
-                    'host_severity',
-                    'host_last_state_change',
-                ),
-                'order' => self::SORT_ASC
+                    'host_severity DESC',
+                    'host_last_state_change DESC',
+                    'host_display_name ASC',
+                    'service_display_name ASC'
+                )
             ),
             'host_display_name' => array(
                 'columns' => array(
@@ -156,7 +163,15 @@ class ServiceStatus extends DataView
 
     public function getFilterColumns()
     {
-        return array('hostgroup', 'servicegroup', 'service_problems');
+        return array(
+            'host',
+            'hostgroup',
+            'hostgroup_name',
+            'service',
+            'service_host',
+            'servicegroup',
+            'servicegroup_name'
+        );
     }
 
     public function isValidFilterTarget($column)

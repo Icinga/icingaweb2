@@ -26,7 +26,7 @@ abstract class UserBackend implements Countable
      *
      * @param   string $name
      *
-     * @return  self
+     * @return  $this
      */
     public function setName($name)
     {
@@ -103,6 +103,7 @@ abstract class UserBackend implements Countable
                     $backendConfig->get('user_class', 'user'),
                     $backendConfig->get('user_name_attribute', 'sAMAccountName'),
                     $backendConfig->get('base_dn', $resource->getDN()),
+                    $backendConfig->get('filter'),
                     $groupOptions
                 );
                 break;
@@ -130,6 +131,7 @@ abstract class UserBackend implements Countable
                     $backendConfig->user_class,
                     $backendConfig->user_name_attribute,
                     $backendConfig->get('base_dn', $resource->getDN()),
+                    $backendConfig->get('filter'),
                     $groupOptions
                 );
                 break;

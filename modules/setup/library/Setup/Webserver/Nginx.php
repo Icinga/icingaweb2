@@ -25,6 +25,7 @@ location ~ ^{urlPath}/index\.php(.*)$ {
   include fastcgi_params;
   fastcgi_param SCRIPT_FILENAME {documentRoot}/index.php;
   fastcgi_param ICINGAWEB_CONFIGDIR {configDir};
+  fastcgi_param REMOTE_USER $remote_user;
 }
 
 location ~ ^{urlPath}(.+)? {

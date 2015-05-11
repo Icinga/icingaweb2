@@ -3,6 +3,7 @@
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Exception\MissingParameterException;
 use Icinga\Security\SecurityException;
 use Icinga\Web\Controller\ActionController;
 
@@ -33,7 +34,11 @@ class ErrorController extends ActionController
                 $path = preg_split('~/~', $path);
                 $path = array_shift($path);
                 $this->getResponse()->setHttpResponseCode(404);
-                $this->view->message = $this->translate('Page not found.');
+                $title = preg_replace('/\r?\n.*$/s', '', $exception->getMessage());
+                $this->view->title = 'Server error: ' . $title;
+                if ($this->getInvokeArg('displayExceptions')) {
+                    $this->view->stackTrace = $exception->getTraceAsString();
+                }
                 if ($modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
                     $this->view->message .= ' ' . sprintf(
                         $this->translate('Enabling the "%s" module might help!'),
@@ -42,19 +47,26 @@ class ErrorController extends ActionController
                 }
 
                 break;
-            case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_OTHER:
-                if ($exception instanceof SecurityException) {
-                    $this->getResponse()->setHttpResponseCode(403);
-                    $this->view->message = $exception->getMessage();
-                    break;
-                }
-                // Move to default
             default:
+                switch (true) {
+                    case $exception instanceof SecurityException:
+                        $this->getResponse()->setHttpResponseCode(403);
+                        break;
+                    case $exception instanceof MissingParameterException:
+                        $this->getResponse()->setHttpResponseCode(400);
+                        $this->getResponse()->setHeader(
+                            'X-Status-Reason',
+                            'Missing parameter ' . $exception->getParameter()
+                        );
+                        break;
+                    default:
+                        $this->getResponse()->setHttpResponseCode(500);
+                        break;
+                }
                 $title = preg_replace('/\r?\n.*$/s', '', $exception->getMessage());
-                $this->getResponse()->setHttpResponseCode(500);
                 $this->view->title = 'Server error: ' . $title;
                 $this->view->message = $exception->getMessage();
-                if ($this->getInvokeArg('displayExceptions') == true) {
+                if ($this->getInvokeArg('displayExceptions')) {
                     $this->view->stackTrace = $exception->getTraceAsString();
                 }
                 break;

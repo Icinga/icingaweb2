@@ -9,7 +9,7 @@ class Zend_View_Helper_RuntimeVariables extends Zend_View_Helper_Abstract
     /**
      * Create dispatch instance
      *
-     * @return self
+     * @return $this
      */
     public function runtimeVariables()
     {

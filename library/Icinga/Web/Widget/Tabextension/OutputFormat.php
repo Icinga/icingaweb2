@@ -48,10 +48,9 @@ class OutputFormat implements Tabextension
         foreach ($this->getSupportedTypes() as $type => $tabConfig) {
             if (!in_array($type, $disabled)) {
                 $tabConfig['url'] = Url::fromRequest();
-                $tabConfig['tagParams'] = array(
-                    'target' => '_blank'
-                );
-                $this->tabs[] = new Tab($tabConfig);
+                $tab = new Tab($tabConfig);
+                $tab->setTargetBlank();
+                $this->tabs[] = $tab;
             }
         }
     }

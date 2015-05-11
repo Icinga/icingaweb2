@@ -726,7 +726,7 @@ EOD;
     }
 
     /**
-     * Write a INI-configuration string to a temporary file and return it's path
+     * Write a INI-configuration string to a temporary file and return its path
      *
      * @param   string      $config     The config string to write
      *

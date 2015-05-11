@@ -90,7 +90,7 @@ class icingaweb2_dev (
     source => $name,
   }
 
-  icingaweb2::config::general { [ 'config', 'resources' ]:
+  icingaweb2::config::general { [ 'config', 'resources', 'roles' ]:
     source  => $name,
     replace => false,
   }

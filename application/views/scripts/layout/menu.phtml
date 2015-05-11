@@ -5,7 +5,7 @@ use Icinga\Web\Widget\SearchDashboard;
 <? if (SearchDashboard::search('dummy')->getPane('search')->hasDashlets()): ?>
     <form action="<?= $this->href('search') ?>" method="get" role="search">
         <input
-            type="text" name="q" id="search" class="search" placeholder="<?= $this->translate('Search...') ?>"
+            type="text" name="q" id="search" class="search" placeholder="<?= $this->translate('Search') ?> &hellip;"
             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
         />
     </form>

@@ -3,8 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Command\Transport;
 
-use LogicException;
 use Icinga\Application\Logger;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Monitoring\Command\Exception\TransportException;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
 use Icinga\Module\Monitoring\Command\Renderer\IcingaCommandFileCommandRenderer;
@@ -71,7 +71,7 @@ class RemoteCommandFile implements CommandTransportInterface
      *
      * @param   string $host
      *
-     * @return  self
+     * @return  $this
      */
     public function setHost($host)
     {
@@ -94,7 +94,7 @@ class RemoteCommandFile implements CommandTransportInterface
      *
      * @param   int $port
      *
-     * @return  self
+     * @return  $this
      */
     public function setPort($port)
     {
@@ -117,7 +117,7 @@ class RemoteCommandFile implements CommandTransportInterface
      *
      * @param   string $user
      *
-     * @return  self
+     * @return  $this
      */
     public function setUser($user)
     {
@@ -142,7 +142,7 @@ class RemoteCommandFile implements CommandTransportInterface
      *
      * @param   string $path
      *
-     * @return  self
+     * @return  $this
      */
     public function setPath($path)
     {
@@ -166,16 +166,18 @@ class RemoteCommandFile implements CommandTransportInterface
      * @param   IcingaCommand   $command
      * @param   int|null        $now
      *
-     * @throws  LogicException
+     * @throws  ConfigurationError
      * @throws  TransportException
      */
     public function send(IcingaCommand $command, $now = null)
     {
         if (! isset($this->path)) {
-            throw new LogicException('Can\'t send external Icinga Command. Path to the remote command file is missing');
+            throw new ConfigurationError(
+                'Can\'t send external Icinga Command. Path to the remote command file is missing'
+            );
         }
         if (! isset($this->host)) {
-            throw new LogicException('Can\'t send external Icinga Command. Remote host is missing');
+            throw new ConfigurationError('Can\'t send external Icinga Command. Remote host is missing');
         }
         $commandString = $this->renderer->render($command, $now);
         Logger::debug(

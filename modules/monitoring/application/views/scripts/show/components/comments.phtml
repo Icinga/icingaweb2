@@ -2,7 +2,7 @@
     <th><?= $this->translate('Comments'); ?></th>
     <td>
         <?php if ($this->hasPermission('monitoring/command/comment/add')) {
-            /** @type \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+            /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             if ($object->getType() === $object::TYPE_HOST) {
                 echo $this->qlink(
                     $this->translate('Add comment'),
@@ -43,26 +43,20 @@ foreach ($object->comments as $comment) {
     ) : $this->escape($comment->comment);
 
     ?>
-
     <tr>
-        <th><?= $this->escape($comment->author) ?> (<?= $this->timeSince($comment->timestamp) ?>)</th>
-        <td>
-            <table>
-                <tr>
-                    <td style="vertical-align: top;" data-base-target="_self">
-                        <?php if (isset($delCommentForm)) { // Form is unset if the current user lacks the respective permission
-                            $delCommentForm = clone $delCommentForm;
-                            $delCommentForm->populate(array('comment_id' => $comment->id));
-                            echo $delCommentForm;
-                        } ?>
-                        (<?= ucfirst($comment->type) ?>):
-                    </td>
-                    <td style="padding-left: .5em;">
-                        <?= nl2br($commentText) ?>
-                    </td>
-                </tr>
-            </table>
+        <th><?= $this->escape($comment->author); ?> (<?= $this->timeSince($comment->timestamp); ?>)</th>
+        <td data-base-target="_self">
+            <?php if (isset($delCommentForm)) { // Form is unset if the current user lacks the respective permission
+                $delCommentForm = clone $delCommentForm;
+                $delCommentForm->populate(
+                    array(
+                        'comment_id' => $comment->id,
+                        'comment_is_service' => isset($comment->service_description)
+                    )
+                );
+                echo $delCommentForm;
+            } ?>
+            <span class="sr-only">(<?= $this->translate('Comment'); ?>): </span><?= str_replace(array('\r\n', '\n'), '<br>', $commentText); ?>
         </td>
     </tr>
-
 <?php } // endforeach ?>

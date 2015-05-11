@@ -1,14 +1,14 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Web\Menu;
+namespace Icinga\Module\Monitoring\Web\Menu;
 
+use Icinga\Web\Menu as Menu;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
-use Icinga\Web\Menu;
-use Icinga\Web\Url;
+use Icinga\Web\Menu\MenuItemRenderer;
 
-class MonitoringMenuItemRenderer implements MenuItemRenderer {
-
+class MonitoringMenuItemRenderer extends MenuItemRenderer
+{
     protected static $summary;
 
     protected $columns = array();
@@ -69,31 +69,18 @@ class MonitoringMenuItemRenderer implements MenuItemRenderer {
 
     public function render(Menu $menu)
     {
-        $count = $this->countItems();
-        $badge = '';
-        if ($count) {
-            $badge = sprintf(
+        return $this->getBadge() . $this->createLink($menu);
+    }
+
+    protected function getBadge()
+    {
+        if ($count = $this->countItems()) {
+            return sprintf(
                 '<div title="%s" class="badge-container"><span class="badge badge-critical">%s</span></div>',
                 $this->getBadgeTitle(),
                 $count
             );
         }
-        if ($menu->getIcon() && strpos($menu->getIcon(), '.') === false) {
-            return sprintf(
-                '%s <a href="%s"><i aria-hidden="true" class="icon-%s"></i>%s</a>',
-                $badge,
-                $menu->getUrl() ?: '#',
-                $menu->getIcon(),
-                htmlspecialchars($menu->getTitle())
-            );
-        }
-
-        return sprintf(
-            '%s<a href="%s">%s%s<span></span></a>',
-            $badge,
-            $menu->getUrl() ?: '#',
-            $menu->getIcon() ? '<img aria-hidden="true" src="' . Url::fromPath($menu->getIcon()) . '" class="icon" /> ' : '',
-            htmlspecialchars($menu->getTitle())
-        );
+        return '';
     }
 }

@@ -114,6 +114,13 @@ class Module
     private $triedToLaunchConfigScript = false;
 
     /**
+     * Whether this module has been registered
+     *
+     * @var bool
+     */
+    private $registered = false;
+
+    /**
      * Provided permissions
      *
      * @var array
@@ -177,14 +184,18 @@ class Module
     protected $searchUrls = array();
 
     /**
-     * @param string $title
-     * @param string $url
+     * Provide a search URL
+     *
+     * @param string    $title
+     * @param string    $url
+     * @param int       $priority
      */
-    public function provideSearchUrl($title, $url)
+    public function provideSearchUrl($title, $url, $priority = 0)
     {
         $searchUrl = (object) array(
-            'title' => $title,
-            'url'   => $url
+            'title'     => (string) $title,
+            'url'       => (string) $url,
+            'priority'  => (int) $priority
         );
 
         $this->searchUrls[] = $searchUrl;
@@ -279,6 +290,10 @@ class Module
      */
     public function register()
     {
+        if ($this->registered) {
+            return true;
+        }
+
         $this->registerAutoloader();
         try {
             $this->launchRunScript();
@@ -291,8 +306,20 @@ class Module
             );
             return false;
         }
+
         $this->registerWebIntegration();
+        $this->registered = true;
         return true;
+    }
+
+    /**
+     * Return whether this module has been registered
+     *
+     * @return  bool
+     */
+    public function isRegistered()
+    {
+        return $this->registered;
     }
 
     /**
@@ -725,7 +752,7 @@ class Module
      * @param string $name   Unique tab name
      * @param string $config Tab config
      *
-     * @return self
+     * @return $this
      */
     protected function provideConfigTab($name, $config = array())
     {
@@ -742,7 +769,7 @@ class Module
      *
      * @param   string  $className      The name of the class
      *
-     * @return  self
+     * @return  $this
      */
     protected function provideSetupWizard($className)
     {
@@ -753,7 +780,7 @@ class Module
     /**
      * Register new namespaces on the autoloader
      *
-     * @return self
+     * @return $this
      */
     protected function registerAutoloader()
     {
@@ -775,7 +802,7 @@ class Module
     /**
      * Bind text domain for i18n
      *
-     * @return self
+     * @return $this
      */
     protected function registerLocales()
     {
@@ -822,7 +849,7 @@ class Module
      *
      * Add controller directory to mvc
      *
-     * @return self
+     * @return $this
      */
     protected function registerWebIntegration()
     {
@@ -845,7 +872,7 @@ class Module
     /**
      * Add routes for static content and any route added via addRoute() to the route chain
      *
-     * @return  self
+     * @return  $this
      * @see     addRoute()
      */
     protected function registerRoutes()
@@ -885,7 +912,7 @@ class Module
     /**
      * Run module bootstrap script
      *
-     * @return self
+     * @return $this
      */
     protected function launchRunScript()
     {
@@ -897,7 +924,7 @@ class Module
      *
      * @param string $file File to include
      *
-     * @return self
+     * @return $this
      */
     protected function includeScript($file)
     {
@@ -913,7 +940,7 @@ class Module
      */
     protected function launchConfigScript()
     {
-        if ($this->triedToLaunchConfigScript) {
+        if ($this->triedToLaunchConfigScript || !$this->registered) {
             return;
         }
         $this->triedToLaunchConfigScript = true;
@@ -931,7 +958,7 @@ class Module
      * @param string $class
      * @param string $key
      *
-     * @return self
+     * @return $this
      */
     protected function registerHook($name, $class, $key = null)
     {
@@ -950,7 +977,7 @@ class Module
      * @param   string                                  $name   Name of the route
      * @param   Zend_Controller_Router_Route_Abstract   $route  Instance of the route
      *
-     * @return  self
+     * @return  $this
      * @see     registerRoutes()
      */
     protected function addRoute($name, Zend_Controller_Router_Route_Abstract $route)

@@ -1,5 +1,4 @@
 <div class="controls">
-
     <?php if (! $this->compact): ?>
         <?= $tabs; ?>
     <?php endif ?>
@@ -21,7 +20,7 @@
     ), '<b>' . count($objects) . '</b>') ?>
 
     <?php if (($hostCount = count($objects)) === 0): ?>
-        <?= $this->translate('No hosts matching the filter'); ?>
+        <?= $this->translate('No hosts found matching the filter'); ?>
     <?php else: ?>
 
       <p>
@@ -64,6 +63,15 @@
                 array('icon' => 'comment')
             ); ?>
         </div>
+
+        <?php if ($this->hasPermission('monitoring/command/send-custom-notification')): ?>
+            <div><?= $this->qlink(
+                    sprintf($this->translate('Send a custom notification for all %u hosts'), $hostCount),
+                    $sendCustomNotificationLink,
+                    null,
+                    array('icon' => 'comment')
+            ); ?></div>
+        <?php endif; ?>
       </p>
 
         <?php

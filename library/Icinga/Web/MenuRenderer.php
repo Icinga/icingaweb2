@@ -4,8 +4,10 @@
 namespace Icinga\Web;
 
 use Exception;
+use Icinga\Web\Menu\MenuItemRenderer;
 use RecursiveIteratorIterator;
 use Icinga\Application\Logger;
+use Icinga\Web\Menu\PermittedMenuItemFilter;
 
 /**
  * A renderer to draw a menu with its sub-menus using an unordered html list
@@ -32,6 +34,11 @@ class MenuRenderer extends RecursiveIteratorIterator
     protected $useCustomRenderer = false;
 
     /**
+     * @var MenuItemRenderer
+     */
+    protected $defaultRenderer;
+
+    /**
      * Create a new MenuRenderer
      *
      * @param   Menu    $menu   The menu to render
@@ -44,7 +51,8 @@ class MenuRenderer extends RecursiveIteratorIterator
         } else {
             $this->url = Url::fromPath($url);
         }
-        parent::__construct($menu, RecursiveIteratorIterator::CHILD_FIRST);
+        $this->defaultRenderer = new MenuItemRenderer();
+        parent::__construct(new PermittedMenuItemFilter($menu), RecursiveIteratorIterator::CHILD_FIRST);
     }
 
     /**
@@ -113,22 +121,8 @@ class MenuRenderer extends RecursiveIteratorIterator
                 Logger::error('Could not invoke custom renderer. Exception: '. $e->getMessage());
             }
         }
-        if ($child->getIcon() && strpos($child->getIcon(), '.') === false) {
-            return sprintf(
-                '<a href="%s"><i aria-hidden="true" class="icon-%s"></i>%s</a>',
-                $child->getUrl() ?: '#',
-                $child->getIcon(),
-                htmlspecialchars($child->getTitle())
-            );
-        }
-        return sprintf(
-            '<a href="%s">%s%s</a>',
-            $child->getUrl() ?: '#',
-            $child->getIcon()
-                ? '<img aria-hidden="true" src="' . Url::fromPath($child->getIcon()) . '" class="icon" /> '
-                : '',
-            htmlspecialchars($child->getTitle())
-        );
+
+        return $this->defaultRenderer->render($child);
     }
 
     /**

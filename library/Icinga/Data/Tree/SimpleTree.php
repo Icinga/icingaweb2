@@ -14,14 +14,14 @@ class SimpleTree implements IteratorAggregate
     /**
      * Root node
      *
-     * @type TreeNode
+     * @var TreeNode
      */
     protected $sentinel;
 
     /**
      * Nodes
      *
-     * @type array
+     * @var array
      */
     protected $nodes = array();
 

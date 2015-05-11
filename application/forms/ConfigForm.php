@@ -25,7 +25,7 @@ class ConfigForm extends Form
      *
      * @param   Config      $config     The configuration to use
      *
-     * @return  self
+     * @return  $this
      */
     public function setIniConfig(Config $config)
     {

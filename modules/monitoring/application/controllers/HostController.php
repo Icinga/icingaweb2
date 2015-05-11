@@ -1,11 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+use Icinga\Exception\MissingParameterException;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Web\Controller\MonitoredObjectController;
 use Icinga\Web\Hook;
@@ -25,12 +27,22 @@ class Monitoring_HostController extends MonitoredObjectController
      */
     public function init()
     {
+        if ($this->params->get('host') === null) {
+            throw new MissingParameterException(
+                $this->translate('Required parameter \'%s\' is missing'),
+                'host'
+            );
+        }
+
         $host = new Host($this->backend, $this->params->get('host'));
 
         $this->applyRestriction('monitoring/hosts/filter', $host);
 
         if ($host->fetch() === false) {
-            throw new Zend_Controller_Action_Exception($this->translate('Host not found'));
+            throw new Zend_Controller_Action_Exception(
+                sprintf($this->translate('Host \'%s\' not found'), $this->params->get('host')),
+                404
+            );
         }
         $this->object = $host;
         $this->createTabs();
@@ -116,6 +128,18 @@ class Monitoring_HostController extends MonitoredObjectController
 
         $form = new ProcessCheckResultCommandForm();
         $form->setTitle($this->translate('Submit Passive Host Check Result'));
+        $this->handleCommandForm($form);
+    }
+
+    /**
+     * Send a custom notification for host
+     */
+    public function sendCustomNotificationAction()
+    {
+        $this->assertPermission('monitoring/command/send-custom-notification');
+
+        $form = new SendCustomNotificationCommandForm();
+        $form->setTitle($this->translate('Send Custom Host Notification'));
         $this->handleCommandForm($form);
     }
 }

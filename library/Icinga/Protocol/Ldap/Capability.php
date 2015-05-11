@@ -121,7 +121,7 @@ class Capability
      *
      * @return      bool    Whether StartTLS is supported
      */
-    public function hasStartTLS()
+    public function hasStartTls()
     {
         return isset($this->oids[self::LDAP_SERVER_START_TLS_OID]);
     }

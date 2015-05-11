@@ -1,34 +1,58 @@
-<?php
-
-// We are not interested in notifications for OK or pending objects
-if (in_array((int) $object->state, array(0, 99))) {
-    return;
-}
-
-?>
 <tr>
   <th><?= $this->translate('Notifications') ?></th>
   <td>
+      <?php if ($this->hasPermission('monitoring/command/send-custom-notification')) {
+      if ($object->getType() === $object::TYPE_HOST) {
+          $ackLink = $this->href(
+              'monitoring/host/send-custom-notification',
+              array('host' => $object->getName())
+          );
+      } else {
+          $ackLink = $this->href(
+              'monitoring/service/send-custom-notification',
+              array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+          );
+      }
+      ?>
+      <?= $this->qlink(
+          $this->translate('Send notification'),
+          $ackLink,
+          null,
+          array(
+              'icon'              => 'bell',
+              'data-base-target'  => '_self',
+              'title'             => $this->translate(
+                  'Send a custom notification, share information about the'
+                  . ' object to contacts.'
+              )
+          )
+      ) ?><br />
+      <?php } ?>
 <?php
+// We are not interested in notifications for OK or pending objects
+if (! in_array((int) $object->state, array(0, 99))) {
 
-if ($object->current_notification_number > 0) {
-    if ((int) $object->current_notification_number === 1) {
-        $msg = sprintf(
-            $this->translate('A notication has been sent for this issue %s ago'),
-            $this->timeSince($object->last_notification)
-        );
+    if ($object->current_notification_number > 0) {
+        if ((int) $object->current_notification_number === 1) {
+            $msg = sprintf(
+                $this->translate('A notication has been sent for this issue %s ago'),
+                $this->timeSince($object->last_notification)
+            );
+        } else {
+            $msg = sprintf(
+                $this->translate('%s notications have been sent for this issue'),
+                $object->current_notification_number
+            ) . '<br />' . sprintf(
+                $this->translate('The last one occured %s ago'),
+                $this->timeSince($object->last_notification)
+            );
+        }
+        echo $msg;
     } else {
-        $msg = sprintf(
-            $this->translate('%s notications have been sent for this issue'),
-            $object->current_notification_number
-        ) . '<br />' . sprintf(
-            $this->translate('The last one occured %s ago'),
-            $this->timeSince($object->last_notification)
-        );
+        echo '('
+            . $this->translate('No notification has been sent for this issue')
+            . ')';
     }
-    echo $msg;
-} else {
-    echo $this->translate('No notification has been sent for this issue');
 }
 ?>
   </td>

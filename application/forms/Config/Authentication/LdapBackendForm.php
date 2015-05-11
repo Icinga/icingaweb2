@@ -35,7 +35,7 @@ class LdapBackendForm extends Form
      *
      * @param   array   $resources      The resources to choose from
      *
-     * @return  self
+     * @return  $this
      */
     public function setResources(array $resources)
     {
@@ -55,7 +55,7 @@ class LdapBackendForm extends Form
                 'required'      => true,
                 'label'         => $this->translate('Backend Name'),
                 'description'   => $this->translate(
-                    'The name of this authentication provider that is used to differentiate it from others'
+                    'The name of this authentication provider that is used to differentiate it from others.'
                 )
             )
         );
@@ -64,8 +64,10 @@ class LdapBackendForm extends Form
             'resource',
             array(
                 'required'      => true,
-                'label'         => $this->translate('LDAP Resource'),
-                'description'   => $this->translate('The resource to use for authenticating with this provider'),
+                'label'         => $this->translate('LDAP Connection'),
+                'description'   => $this->translate(
+                    'The LDAP connection to use for authenticating with this provider.'
+                ),
                 'multiOptions'  => false === empty($this->resources)
                     ? array_combine($this->resources, $this->resources)
                     : array()
@@ -77,8 +79,38 @@ class LdapBackendForm extends Form
             array(
                 'required'      => true,
                 'label'         => $this->translate('LDAP User Object Class'),
-                'description'   => $this->translate('The object class used for storing users on the ldap server'),
+                'description'   => $this->translate('The object class used for storing users on the LDAP server.'),
                 'value'         => 'inetOrgPerson'
+            )
+        );
+        $this->addElement(
+            'text',
+            'filter',
+            array(
+                'allowEmpty'    => true,
+                'label'         => $this->translate('LDAP Filter'),
+                'description'   => $this->translate(
+                    'An additional filter to use when looking up users using the specified connection. '
+                    . 'Leave empty to not to use any additional filter rules.'
+                ),
+                'requirement'   => $this->translate(
+                    'The filter needs to be expressed as standard LDAP expression, without'
+                    . ' outer parentheses. (e.g. &(foo=bar)(bar=foo) or foo=bar)'
+                ),
+                'validators'    => array(
+                    array(
+                        'Callback',
+                        false,
+                        array(
+                            'callback'  => function ($v) {
+                                return strpos($v, '(') !== 0;
+                            },
+                            'messages'  => array(
+                                'callbackValue' => $this->translate('The filter must not be wrapped in parantheses.')
+                            )
+                        )
+                    )
+                )
             )
         );
         $this->addElement(
@@ -88,7 +120,7 @@ class LdapBackendForm extends Form
                 'required'      => true,
                 'label'         => $this->translate('LDAP User Name Attribute'),
                 'description'   => $this->translate(
-                    'The attribute name used for storing the user name on the ldap server'
+                    'The attribute name used for storing the user name on the LDAP server.'
                 ),
                 'value'         => 'uid'
             )
@@ -106,10 +138,10 @@ class LdapBackendForm extends Form
             'base_dn',
             array(
                 'required'      => false,
-                'label'         => $this->translate('Base DN'),
+                'label'         => $this->translate('LDAP Base DN'),
                 'description'   => $this->translate(
-                    'The path where users can be found on the ldap server. Leave ' .
-                    'empty to select all users available on the specified resource.'
+                    'The path where users can be found on the LDAP server. Leave ' .
+                    'empty to select all users available using the specified connection.'
                 )
             )
         );
@@ -142,11 +174,17 @@ class LdapBackendForm extends Form
                 ResourceFactory::createResource($form->getResourceConfig()),
                 $form->getElement('user_class')->getValue(),
                 $form->getElement('user_name_attribute')->getValue(),
-                $form->getElement('base_dn')->getValue()
+                $form->getElement('base_dn')->getValue(),
+                $form->getElement('filter')->getValue()
             );
             $ldapUserBackend->assertAuthenticationPossible();
         } catch (AuthenticationException $e) {
-            $form->addError($e->getMessage());
+            if (($previous = $e->getPrevious()) !== null) {
+                $form->addError($previous->getMessage());
+            } else {
+                $form->addError($e->getMessage());
+            }
+
             return false;
         } catch (Exception $e) {
             $form->addError(sprintf($form->translate('Unable to validate authentication: %s'), $e->getMessage()));

@@ -35,7 +35,7 @@ class StatusQuery extends IdoQuery
     protected $columnMap = array(
         'hosts' => array(
             'host'                  => 'ho.name1 COLLATE latin1_general_ci',
-            'host_name'             => 'ho.name1 COLLATE latin1_general_ci',
+            'host_name'             => 'ho.name1',
             'host_display_name'     => 'h.display_name',
             'host_alias'            => 'h.alias',
             'host_address'          => 'h.address',
@@ -121,6 +121,7 @@ class StatusQuery extends IdoQuery
             'host_retry_check_interval' => 'hs.retry_check_interval',
             'host_check_timeperiod_object_id' => 'hs.check_timeperiod_object_id',
             'host_status_update_time' => 'hs.status_update_time',
+            'host_is_reachable' => 'hs.is_reachable',
             'host_severity' => 'CASE WHEN hs.current_state = 0
             THEN
                 CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
@@ -160,16 +161,19 @@ class StatusQuery extends IdoQuery
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup_name'    => 'hgo.name1',
             'hostgroup_alias'   => 'hg.alias'
         ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_name'     => 'sgo.name1',
             'servicegroup_alias'    => 'sg.alias'
         ),
         'services' => array(
-            'service_host_name'      => 'so.name1 COLLATE latin1_general_ci',
+            'service_host'           => 'so.name1 COLLATE latin1_general_ci',
+            'service_host_name'      => 'so.name1',
             'service'                => 'so.name2 COLLATE latin1_general_ci',
-            'service_description'    => 'so.name2 COLLATE latin1_general_ci',
+            'service_description'    => 'so.name2',
             'service_display_name'   => 's.display_name',
             'service_icon_image'     => 's.icon_image',
             'service_action_url'     => 's.action_url',
@@ -259,6 +263,7 @@ class StatusQuery extends IdoQuery
             'service_check_timeperiod_object_id' => 'ss.check_timeperiod_object_id',
             'service_status_update_time' => 'ss.status_update_time',
             'service_problem'  => 'CASE WHEN ss.current_state = 0 THEN 0 ELSE 1 END',
+            'service_is_reachable' => 'ss.is_reachable',
             'service_severity'  => 'CASE WHEN ss.current_state = 0
                 THEN
                     CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL
@@ -344,6 +349,10 @@ class StatusQuery extends IdoQuery
         if (version_compare($this->getIdoVersion(), '1.10.0', '<')) {
             $this->columnMap['hoststatus']['host_check_source'] = '(NULL)';
             $this->columnMap['servicestatus']['service_check_source'] = '(NULL)';
+        }
+        if (version_compare($this->getIdoVersion(), '1.13.0', '<')) {
+            $this->columnMap['hoststatus']['host_is_reachable'] = '(NULL)';
+            $this->columnMap['servicestatus']['service_is_reachable'] = '(NULL)';
         }
         $this->select->from(array('ho' => $this->prefix . 'objects'), array())
         ->join(
@@ -589,7 +598,7 @@ SQL;
     {
         $this->select->joinLeft(
             array('hlcd' => $this->getLastCommentSubQuery(2, 'last_downtime_data')),
-            'hlcg.object_id = hs.host_object_id',
+            'hlcd.object_id = hs.host_object_id',
             array()
         );
     }
@@ -601,7 +610,7 @@ SQL;
     {
         $this->select->joinLeft(
             array('hlcf' => $this->getLastCommentSubQuery(3, 'last_flapping_data')),
-            'hlcg.object_id = hs.host_object_id',
+            'hlcf.object_id = hs.host_object_id',
             array()
         );
     }

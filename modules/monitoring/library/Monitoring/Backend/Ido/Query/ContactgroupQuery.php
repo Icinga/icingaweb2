@@ -8,14 +8,14 @@ class ContactgroupQuery extends IdoQuery
     protected $columnMap = array(
         'contactgroups' => array(
             'contactgroup'          => 'cgo.name1 COLLATE latin1_general_ci',
-            'contactgroup_name'     => 'cgo.name1 COLLATE latin1_general_ci',
-            'contactgroup_alias'    => 'cg.alias',
+            'contactgroup_name'     => 'cgo.name1',
+            'contactgroup_alias'    => 'cg.alias COLLATE latin1_general_ci'
         ),
         'contacts' => array(
             'contact'                           => 'co.name1 COLLATE latin1_general_ci',
-            'contact_name'                      => 'co.name1 COLLATE latin1_general_ci',
-            'contact_alias'                     => 'c.alias',
-            'contact_email'                     => 'c.email_address',
+            'contact_name'                      => 'co.name1',
+            'contact_alias'                     => 'c.alias COLLATE latin1_general_ci',
+            'contact_email'                     => 'c.email_address COLLATE latin1_general_ci',
             'contact_pager'                     => 'c.pager_address',
             'contact_has_host_notfications'     => 'c.host_notifications_enabled',
             'contact_has_service_notfications'  => 'c.service_notifications_enabled',
@@ -33,13 +33,14 @@ class ContactgroupQuery extends IdoQuery
             'contact_notify_host_downtime'      => 'c.notify_host_downtime',
         ),
         'hosts' => array(
-            'host'      => 'ho.name1',
+            'host'      => 'ho.name1 COLLATE latin1_general_ci',
             'host_name' => 'ho.name1'
         ),
         'services' => array(
             'service'               => 'so.name2 COLLATE latin1_general_ci',
-            'service_description'   => 'so.name2 COLLATE latin1_general_ci',
-            'service_host_name'     => 'so.name1 COLLATE latin1_general_ci'
+            'service_description'   => 'so.name2',
+            'service_host'          => 'so.name1 COLLATE latin1_general_ci',
+            'service_host_name'     => 'so.name1'
         )
     );
 
@@ -95,10 +96,10 @@ class ContactgroupQuery extends IdoQuery
 
     protected function joinServices()
     {
-        $scgSub = $this->db->select()->distinct()->from(
-            $this->prefix . 'service_contactgroups',
-            array('contactgroup_object_id', 'service_id')
-        );
+//        $scgSub = $this->db->select()->distinct()->from(
+//            $this->prefix . 'service_contactgroups',
+//            array('contactgroup_object_id', 'service_id')
+//        );
 
             /*
             This subselect is a workaround for a fucking stupid bug. Other tables

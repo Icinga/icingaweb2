@@ -48,8 +48,22 @@ table.multiselect tr[href] td {
   -ms-user-select: none;
 }
 
-#main form.filterEditor input[type=text], #main form.filterEditor select {
-    width: 12em;
+#main div.filter {
+  margin-top: 1em;
+
+  form.editor {
+    input[type=text], select {
+      width: 12em;
+    }
+
+    ul.tree li.active {
+      background-color: #eee;
+    }
+
+    div.buttons {
+      float: right;
+    }
+  }
 }
 
 ul.datafilter li {
@@ -282,10 +296,6 @@ li li .badge {
 
 .badge-unknown {
   background-color: @colorUnknown;
-}
-
-.widgetFilter li.active {
-    background-color: #eee;
 }
 
 .sparkline-box {

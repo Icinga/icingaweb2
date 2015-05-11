@@ -9,9 +9,7 @@ namespace Icinga\Module\Monitoring\DataView;
 class Comment extends DataView
 {
     /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getColumns()
     {
@@ -19,24 +17,21 @@ class Comment extends DataView
             'comment_objecttype',
             'comment_internal_id',
             'comment_data',
-            'comment_author',
+            'comment_author_name',
             'comment_timestamp',
             'comment_type',
             'comment_is_persistent',
             'comment_expiration',
-            'comment_host',
-            'comment_service',
-            'host',
-            'service',
+            'host_name',
+            'service_description',
             'host_display_name',
-            'service_display_name'
+            'service_display_name',
+            'service_host_name'
         );
     }
 
     /**
-     * Retrieve default sorting rules for particular columns. These involve sort order and potential additional to sort
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getSortRules()
     {
@@ -59,5 +54,13 @@ class Comment extends DataView
                 'order' => self::SORT_ASC
             )
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilterColumns()
+    {
+        return array('comment_author', 'host', 'service', 'service_host');
     }
 }

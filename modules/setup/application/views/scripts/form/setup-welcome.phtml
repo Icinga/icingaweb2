@@ -5,6 +5,7 @@ use Icinga\Application\Config;
 use Icinga\Application\Platform;
 use Icinga\Web\Wizard;
 
+$phpUser = Platform::getPhpUser();
 $configDir = Icinga::app()->getConfigDir();
 $setupTokenPath = rtrim($configDir, '/') . '/setup.token';
 $cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
@@ -41,10 +42,15 @@ $cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
           'To run this wizard a user needs to authenticate using a token which is usually'
           . ' provided to him by an administrator who\'d followed the instructions below.'
       ); ?></p>
-      <p><?= $this->translate('In any case, make sure that a group called "icingaweb2" exists:'); ?></p>
-      <div class="code">
-        <span>groupadd icingaweb2;</span>
-      </div>
+      <p><?= $this->translate('In any case, make sure that all of the following applies to your environment:'); ?></p>
+      <ul>
+        <li><?= $this->translate('A system group called "icingaweb2" exists'); ?></li>
+        <?php if ($phpUser): ?>
+        <li><?= sprintf($this->translate('The user "%s" is a member of the system group "icingaweb2"'), $phpUser); ?></li>
+        <?php else: ?>
+        <li><?= $this->translate('Your webserver\'s user is a member of the system group "icingaweb2"'); ?></li>
+        <?php endif ?>
+      </ul>
       <p><?= $this->translate('If you\'ve got the IcingaCLI installed you can do the following:'); ?></p>
       <div class="code">
         <span><?= $cliPath ? $cliPath : 'icingacli'; ?> setup config directory --group icingaweb2<?= $configDir !== '/etc/icingaweb2' ? ' --config ' . $configDir : ''; ?>;</span>
@@ -52,7 +58,7 @@ $cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
       </div>
       <p><?= $this->translate('In case the IcingaCLI is missing you can create the token manually:'); ?></p>
       <div class="code">
-        <span>su <?= ($user = Platform::getPhpUser()) !== null ? $user : 'your_webserver_user'; ?> -c "mkdir -m 2770 <?= dirname($setupTokenPath); ?>; chgrp icingaweb2 <?= dirname($setupTokenPath); ?>; head -c 12 /dev/urandom | base64 | tee <?= $setupTokenPath; ?>; chmod 0660 <?= $setupTokenPath; ?>;";</span>
+        <span>su <?= $phpUser ?: $this->translate('<your-webserver-user>'); ?> -c "mkdir -m 2770 <?= dirname($setupTokenPath); ?>; chgrp icingaweb2 <?= dirname($setupTokenPath); ?>; head -c 12 /dev/urandom | base64 | tee <?= $setupTokenPath; ?>; chmod 0660 <?= $setupTokenPath; ?>;";</span>
       </div>
       <p><?= sprintf(
         $this->translate('Please see the %s for an extensive description on how to access and use this wizard.'),

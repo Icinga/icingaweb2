@@ -9,7 +9,6 @@ use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabs;
-use Icinga\Web\Widget\SortBox;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget;
 use Icinga\Module\Monitoring\Forms\StatehistoryForm;
@@ -22,11 +21,6 @@ class Monitoring_ListController extends Controller
     public function init()
     {
         $this->createTabs();
-        $this->view->compact = $this->_request->getParam('view') === 'compact';
-        if ($this->_request->getParam('view') === 'inline') {
-            $this->view->compact = true;
-            $this->view->inline = true;
-        }
     }
 
     /**
@@ -123,18 +117,8 @@ class Monitoring_ListController extends Controller
             'host_current_check_attempt',
             'host_max_check_attempts'
         ), $this->extraColumns()));
-
         $this->filterQuery($query);
-
         $this->applyRestriction('monitoring/hosts/filter', $query);
-
-        $this->setupSortControl(array(
-            'host_severity'     => $this->translate('Severity'),
-            'host_state'        => $this->translate('Current State'),
-            'host_display_name' => $this->translate('Hostname'),
-            'host_address'      => $this->translate('Address'),
-            'host_last_check'   => $this->translate('Last Check')
-        ));
         $this->view->hosts = $query->paginate();
 
         $this->view->stats = $this->backend->select()->from('statusSummary', array(
@@ -148,6 +132,16 @@ class Monitoring_ListController extends Controller
             'hosts_unreachable_unhandled',
             'hosts_pending',
         ))->getQuery()->fetchRow();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->hosts);
+        $this->setupSortControl(array(
+            'host_severity'     => $this->translate('Severity'),
+            'host_state'        => $this->translate('Current State'),
+            'host_display_name' => $this->translate('Hostname'),
+            'host_address'      => $this->translate('Address'),
+            'host_last_check'   => $this->translate('Last Check')
+        ));
     }
 
     /**
@@ -170,10 +164,8 @@ class Monitoring_ListController extends Controller
 
         $this->addTitleTab('services', $this->translate('Services'), $this->translate('List services'));
         $this->view->showHost = true;
-        if ($host = $this->_getParam('host')) {
-            if (strpos($host, '*') === false) {
-                $this->view->showHost = false;
-            }
+        if (strpos($this->params->get('host_name', '*'), '*') === false) {
+            $this->view->showHost = false;
         }
         $this->setAutorefreshInterval(10);
 
@@ -213,11 +205,12 @@ class Monitoring_ListController extends Controller
             'max_check_attempts'    => 'service_max_check_attempts'
         ), $this->extraColumns());
         $query = $this->backend->select()->from('serviceStatus', $columns);
-
         $this->filterQuery($query);
-
         $this->applyRestriction('monitoring/services/filter', $query);
+        $this->view->services = $query->paginate();
 
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->services);
         $this->setupSortControl(array(
             'service_severity'      => $this->translate('Service Severity'),
             'service_state'         => $this->translate('Current Service State'),
@@ -229,14 +222,6 @@ class Monitoring_ListController extends Controller
             'host_address'          => $this->translate('Host Address'),
             'host_last_check'       => $this->translate('Last Host Check')
         ));
-        $limit = $this->params->get('limit');
-        $this->view->limit = $limit;
-        if ($limit === 0) {
-            $this->view->services = $query->getQuery()->fetchAll();
-        } else {
-            // TODO: Workaround, paginate should be able to fetch limit from new params
-            $this->view->services = $query->paginate($this->params->get('limit'));
-        }
 
         $this->view->stats = $this->backend->select()->from('statusSummary', array(
             'services_total',
@@ -255,7 +240,6 @@ class Monitoring_ListController extends Controller
             'services_unknown_handled',
             'services_pending',
         ))->getQuery()->fetchRow();
-
     }
 
     /**
@@ -266,13 +250,15 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab('downtimes', $this->translate('Downtimes'), $this->translate('List downtimes'));
         $this->setAutorefreshInterval(12);
+
         $query = $this->backend->select()->from('downtime', array(
             'id'              => 'downtime_internal_id',
             'objecttype'      => 'downtime_objecttype',
             'comment'         => 'downtime_comment',
-            'author'          => 'downtime_author',
+            'author_name'     => 'downtime_author_name',
             'start'           => 'downtime_start',
             'scheduled_start' => 'downtime_scheduled_start',
             'scheduled_end'   => 'downtime_scheduled_end',
@@ -282,16 +268,18 @@ class Monitoring_ListController extends Controller
             'is_fixed'        => 'downtime_is_fixed',
             'is_in_effect'    => 'downtime_is_in_effect',
             'entry_time'      => 'downtime_entry_time',
-            'host'            => 'downtime_host',
-            'service'         => 'downtime_service',
             'host_state'      => 'downtime_host_state',
             'service_state'   => 'downtime_service_state',
+            'host_name',
+            'service_description',
             'host_display_name',
             'service_display_name'
         ));
-
         $this->filterQuery($query);
+        $this->view->downtimes = $query->paginate();
 
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->downtimes);
         $this->setupSortControl(array(
             'downtime_is_in_effect'     => $this->translate('Is In Effect'),
             'host_display_name'         => $this->translate('Host'),
@@ -305,10 +293,9 @@ class Monitoring_ListController extends Controller
             'downtime_duration'         => $this->translate('Duration')
         ));
 
-        $this->view->downtimes = $query->paginate();
-
         if ($this->Auth()->hasPermission('monitoring/command/downtime/delete')) {
             $this->view->delDowntimeForm = new DeleteDowntimeCommandForm();
+            $this->view->delDowntimeForm->handleRequest();
         }
     }
 
@@ -320,17 +307,19 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab(
             'notifications',
             $this->translate('Notifications'),
             $this->translate('List notifications')
         );
         $this->setAutorefreshInterval(15);
+
         $query = $this->backend->select()->from('notification', array(
-            'host',
-            'service',
+            'host_name',
+            'service_description',
             'notification_output',
-            'notification_contact',
+            'notification_contact_name',
             'notification_start_time',
             'notification_state',
             'host_display_name',
@@ -338,6 +327,9 @@ class Monitoring_ListController extends Controller
         ));
         $this->filterQuery($query);
         $this->view->notifications = $query->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->notifications);
         $this->setupSortControl(array(
             'notification_start_time' => $this->translate('Notification Start')
         ));
@@ -348,7 +340,9 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab('contacts', $this->translate('Contacts'), $this->translate('List contacts'));
+
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
             'contact_id',
@@ -372,6 +366,8 @@ class Monitoring_ListController extends Controller
         $this->filterQuery($query);
         $this->view->contacts = $query->paginate();
 
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->contacts);
         $this->setupSortControl(array(
             'contact_name' => $this->translate('Name'),
             'contact_alias' => $this->translate('Alias'),
@@ -429,11 +425,13 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab(
             'contactgroups',
             $this->translate('Contact Groups'),
             $this->translate('List contact groups')
         );
+
         $query = $this->backend->select()->from('contactgroup', array(
             'contactgroup_name',
             'contactgroup_alias',
@@ -441,7 +439,7 @@ class Monitoring_ListController extends Controller
             'contact_alias',
             'contact_email',
             'contact_pager',
-        ))->order('contactgroup_alias');
+        ));
         $this->filterQuery($query);
 
         // Fetch and prepare all contact groups:
@@ -458,6 +456,11 @@ class Monitoring_ListController extends Controller
         }
         // TODO: Find a better naming
         $this->view->groupData = $groupData;
+
+        $this->setupSortControl(array(
+            'contactgroup_name'     => $this->translate('Contactgroup Name'),
+            'contactgroup_alias'    => $this->translate('Contactgroup Alias')
+        ));
     }
 
     public function commentsAction()
@@ -465,25 +468,29 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab('comments', $this->translate('Comments'), $this->translate('List comments'));
         $this->setAutorefreshInterval(12);
+
         $query = $this->backend->select()->from('comment', array(
             'id'         => 'comment_internal_id',
             'objecttype' => 'comment_objecttype',
             'comment'    => 'comment_data',
-            'author'     => 'comment_author',
+            'author'     => 'comment_author_name',
             'timestamp'  => 'comment_timestamp',
             'type'       => 'comment_type',
             'persistent' => 'comment_is_persistent',
             'expiration' => 'comment_expiration',
-            'host'       => 'comment_host',
-            'service'    => 'comment_service',
+            'host_name',
+            'service_description',
             'host_display_name',
             'service_display_name'
         ));
         $this->filterQuery($query);
         $this->view->comments = $query->paginate();
 
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->comments);
         $this->setupSortControl(
             array(
                 'comment_timestamp'     => $this->translate('Comment Timestamp'),
@@ -496,6 +503,7 @@ class Monitoring_ListController extends Controller
 
         if ($this->Auth()->hasPermission('monitoring/command/comment/delete')) {
             $this->view->delCommentForm = new DeleteCommentCommandForm();
+            $this->view->delCommentForm->handleRequest();
         }
     }
 
@@ -504,14 +512,16 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab(
             'servicegroups',
             $this->translate('Service Groups'),
             $this->translate('List service groups')
         );
         $this->setAutorefreshInterval(12);
+
         $query = $this->backend->select()->from('groupsummary', array(
-            'servicegroup',
+            'servicegroup_name',
             'servicegroup_alias',
             'hosts_up',
             'hosts_unreachable_handled',
@@ -541,6 +551,9 @@ class Monitoring_ListController extends Controller
         // service groups. We should separate them.
         $this->filterQuery($query);
         $this->view->servicegroups = $query->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->servicegroups);
         $this->setupSortControl(array(
             'services_severity'     => $this->translate('Severity'),
             'servicegroup_alias'    => $this->translate('Service Group Name'),
@@ -558,10 +571,12 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab('hostgroups', $this->translate('Host Groups'), $this->translate('List host groups'));
         $this->setAutorefreshInterval(12);
+
         $query = $this->backend->select()->from('groupsummary', array(
-            'hostgroup',
+            'hostgroup_name',
             'hostgroup_alias',
             'hosts_up',
             'hosts_unreachable_handled',
@@ -591,6 +606,9 @@ class Monitoring_ListController extends Controller
         // service groups. We should separate them.
         $this->filterQuery($query);
         $this->view->hostgroups = $query->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->hostgroups);
         $this->setupSortControl(array(
             'services_severity' => $this->translate('Severity'),
             'hostgroup_alias'   => $this->translate('Host Group Name'),
@@ -608,6 +626,7 @@ class Monitoring_ListController extends Controller
         if ($url = $this->hasBetterUrl()) {
             return $this->redirectNow($url);
         }
+
         $this->addTitleTab(
             'eventhistory',
             $this->translate('Event Overview'),
@@ -625,17 +644,17 @@ class Monitoring_ListController extends Controller
             'attempt',
             'max_attempts',
             'output',
-            'type',
-            'host',
-            'service'
+            'type'
         ));
 
         $this->filterQuery($query);
+        $this->view->history = $query->paginate();
 
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->history);
         $this->setupSortControl(array(
             'timestamp' => $this->translate('Occurence')
         ));
-        $this->view->history = $query->paginate();
     }
 
     public function servicegridAction()
@@ -667,12 +686,15 @@ class Monitoring_ListController extends Controller
     {
         $editor = Widget::create('filterEditor')
             ->setQuery($query)
-            ->preserveParams('limit', 'sort', 'dir', 'format', 'view', 'backend', 'stateType', 'addColumns')
+            ->preserveParams(
+                'limit', 'sort', 'dir', 'format', 'view', 'backend',
+                'stateType', 'addColumns', '_dev'
+            )
             ->ignoreParams('page')
             ->handleRequest($this->getRequest());
         $query->applyFilter($editor->getFilter());
 
-        $this->view->filterEditor = $editor;
+        $this->setupFilterControl($editor);
         $this->view->filter = $editor->getFilter();
 
         if ($sort = $this->params->get('sort')) {
@@ -686,27 +708,12 @@ class Monitoring_ListController extends Controller
     {
         $columns = preg_split(
             '~,~',
-            $this->params->shift('addcolumns', ''),
+            $this->params->shift('addColumns', ''),
             -1,
             PREG_SPLIT_NO_EMPTY
         );
         $this->view->extraColumns = $columns;
         return $columns;
-    }
-
-    /**
-     * Create a sort control box at the 'sortControl' view parameter
-     *
-     * @param array $columns    An array containing the sort columns, with the
-     *                          submit value as the key and the value as the label
-     */
-    private function setupSortControl(array $columns)
-    {
-        $this->view->sortControl = new SortBox(
-            'sortbox-' . $this->getRequest()->getActionName(),
-            $columns
-        );
-        $this->view->sortControl->applyRequest($this->getRequest());
     }
 
     protected function addTitleTab($action, $title, $tip)
@@ -726,16 +733,6 @@ class Monitoring_ListController extends Controller
      */
     private function createTabs()
     {
-        $tabs = $this->getTabs();
-        $tabs->setTitle($this->translate('Monitoring Navigation'));
-        if (in_array($this->_request->getActionName(), array(
-            'hosts',
-            'services',
-            'eventhistory',
-            'eventgrid',
-            'notifications'
-        ))) {
-            $tabs->extend(new OutputFormat())->extend(new DashboardAction());
-        }
+        $this->getTabs()->extend(new OutputFormat())->extend(new DashboardAction());
     }
 }

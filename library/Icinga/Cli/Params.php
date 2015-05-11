@@ -3,6 +3,8 @@
 
 namespace Icinga\Cli;
 
+use Icinga\Exception\MissingParameterException;
+
 /**
  * Params
  *
@@ -156,12 +158,35 @@ class Params
     }
 
     /**
+     * Require a parameter
+     *
+     * @param   string  $name               Name of the parameter
+     * @param   bool    $strict             Whether the parameter's value must not be the empty string
+     *
+     * @return  mixed
+     *
+     * @throws  MissingParameterException   If the parameter was not given
+     */
+    public function req($name, $strict = true)
+    {
+        if ($this->has($name)) {
+            $value = $this->get($name);
+            if (! $strict || strlen($value) > 0) {
+                return $value;
+            }
+        }
+        $e = new MissingParameterException(t('Required parameter \'%s\' missing'), $name);
+        $e->setParameter($name);
+        throw $e;
+    }
+
+    /**
      * Set a value for the given option
      *
      * @param   string  $key    The option name
      * @param   mixed   $value  The value to set
      *
-     * @return  self
+     * @return  $this
      */
     public function set($key, $value)
     {
@@ -174,7 +199,7 @@ class Params
      *
      * @param   string|array    $keys   The option or options to remove
      *
-     * @return  self
+     * @return  $this
      */
     public function remove($keys = array())
     {
@@ -238,7 +263,7 @@ class Params
      *
      * @param   mixed   $key    The argument
      *
-     * @return  self
+     * @return  $this
      */
     public function unshift($key)
     {

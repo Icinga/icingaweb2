@@ -6,10 +6,23 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 use Zend_Db_Select;
 use Icinga\Data\Filter\Filter;
 
+/**
+ * Query for event history
+ */
 class EventHistoryQuery extends IdoQuery
 {
+    /**
+     * Subqueries used for the event history query
+     *
+     * @type    IdoQuery[]
+     *
+     * @see     EventHistoryQuery::joinBaseTables() For the used subqueries.
+     */
     protected $subQueries = array();
 
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'eventhistory' => array(
             'cnt_notification'      => "SUM(CASE eh.type WHEN 'notify' THEN 1 ELSE 0 END)",
@@ -19,19 +32,19 @@ class EventHistoryQuery extends IdoQuery
             'cnt_downtime_end'      => "SUM(CASE eh.type WHEN 'dt_end' THEN 1 ELSE 0 END)",
             'host'                  => 'eho.name1 COLLATE latin1_general_ci',
             'service'               => 'eho.name2 COLLATE latin1_general_ci',
-            'host_name'             => 'eho.name1 COLLATE latin1_general_ci',
-            'service_description'   => 'eho.name2 COLLATE latin1_general_ci',
+            'host_name'             => 'eho.name1',
+            'service_description'   => 'eho.name2',
             'object_type'           => 'eh.object_type',
             'timestamp'             => 'eh.timestamp',
             'state'                 => 'eh.state',
             'attempt'               => 'eh.attempt',
             'max_attempts'          => 'eh.max_attempts',
             'output'                => 'eh.output', // we do not want long_output
-            'type'                  => 'eh.type',
-            'service_host_name'     => 'eho.name1 COLLATE latin1_general_ci'
+            'type'                  => 'eh.type'
         ),
         'hostgroups' => array(
             'hostgroup'             => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup_name'        => 'hgo.name1'
         ),
         'hosts' => array(
             'host_display_name'     => 'CASE WHEN sh.display_name IS NOT NULL THEN sh.display_name ELSE h.display_name END'
@@ -41,8 +54,14 @@ class EventHistoryQuery extends IdoQuery
         )
     );
 
+    /**
+     * {@inheritdoc}
+     */
     protected $useSubqueryCount = true;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function joinBaseTables()
     {
         $columns = array(
@@ -77,15 +96,20 @@ class EventHistoryQuery extends IdoQuery
         $this->joinedVirtualTables = array('eventhistory' => true);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function order($columnOrAlias, $dir = null)
     {
         foreach ($this->subQueries as $sub) {
             $sub->requireColumn($columnOrAlias);
         }
-
         return parent::order($columnOrAlias, $dir);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function addFilter(Filter $filter)
     {
         foreach ($this->subQueries as $sub) {
@@ -94,6 +118,9 @@ class EventHistoryQuery extends IdoQuery
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function where($condition, $value = null)
     {
         $this->requireColumn($condition);
@@ -103,6 +130,11 @@ class EventHistoryQuery extends IdoQuery
         return $this;
     }
 
+    /**
+     * Join host groups
+     *
+     * @return $this
+     */
     protected function joinHostgroups()
     {
         $this->select->join(
@@ -121,6 +153,11 @@ class EventHistoryQuery extends IdoQuery
         return $this;
     }
 
+    /**
+     * Join hosts
+     *
+     * @return $this
+     */
     protected function joinHosts()
     {
         $this->select->joinLeft(
@@ -131,6 +168,11 @@ class EventHistoryQuery extends IdoQuery
         return $this;
     }
 
+    /**
+     * Join services
+     *
+     * @return $this
+     */
     protected function joinServices()
     {
         $this->select->joinLeft(

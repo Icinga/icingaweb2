@@ -1,27 +1,28 @@
 <?php
-
 use Icinga\Module\Monitoring\Object\Service;
 
-?>
-<?php if (!$this->compact): ?>
+if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
-  <?= $this->sortControl; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
 <?php endif ?>
 <div class="content" data-base-target="_next">
-  <h1 tabindex="-1"><?= $this->translate('Service Grid') ?></h1>
-  <table class="pivot servicestates">
 <?php
+
 $hasHeader = false;
 $pivotData = $this->pivot->toArray();
+if (count($pivotData) === 0) {
+    echo $this->translate('No services found matching the filter') . '</div>';
+    return;
+}
+
 $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . ')';
 ?>
-
-<?php if (count($pivotData) === 0): ?>
-    <?= $this->translate('No Services matching the filter'); ?>
-<?php endif ?>
-
+  <table class="pivot servicestates">
 <?php foreach ($pivotData as $host_name => $serviceStates): ?>
 <?php if (!$hasHeader): ?>
     <thead>

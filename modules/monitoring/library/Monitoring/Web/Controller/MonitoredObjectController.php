@@ -62,7 +62,7 @@ abstract class MonitoredObjectController extends Controller
                 ->handleRequest();
             $this->view->checkNowForm = $checkNowForm;
         }
-        if ( ! in_array((int) $this->object->state, array(0, 99))) {
+        if (! in_array((int) $this->object->state, array(0, 99))) {
             if ((bool) $this->object->acknowledged) {
                 if ($auth->hasPermission('monitoring/command/remove-acknowledgement')) {
                     $removeAckForm = new RemoveAcknowledgementCommandForm();
@@ -73,27 +73,24 @@ abstract class MonitoredObjectController extends Controller
                 }
             }
         }
-        if (count($this->object->comments) > 0 && $auth->hasPermission('monitoring/command/comment/delete')) {
-            $delCommentForm = new DeleteCommentCommandForm();
-            $delCommentForm
-                ->setObjects($this->object)
-                ->handleRequest();
-            $this->view->delCommentForm = $delCommentForm;
-        }
-        if (count($this->object->downtimes > 0) && $auth->hasPermission('monitoring/command/downtime/delete')) {
-            $delDowntimeForm = new DeleteDowntimeCommandForm();
-            $delDowntimeForm
-                ->setObjects($this->object)
-                ->handleRequest();
-            $this->view->delDowntimeForm = $delDowntimeForm;
-        }
+        $this->object->populate();
         $toggleFeaturesForm = new ToggleObjectFeaturesCommandForm();
         $toggleFeaturesForm
             ->load($this->object)
             ->setObjects($this->object)
             ->handleRequest();
         $this->view->toggleFeaturesForm = $toggleFeaturesForm;
-        $this->view->object = $this->object->populate();
+        if (! empty($this->object->comments) && $auth->hasPermission('monitoring/command/comment/delete')) {
+            $delCommentForm = new DeleteCommentCommandForm();
+            $delCommentForm->handleRequest();
+            $this->view->delCommentForm = $delCommentForm;
+        }
+        if (! empty($this->object->downtimes) && $auth->hasPermission('monitoring/command/downtime/delete')) {
+            $delDowntimeForm = new DeleteDowntimeCommandForm();
+            $delDowntimeForm->handleRequest();
+            $this->view->delDowntimeForm = $delDowntimeForm;
+        }
+        $this->view->object = $this->object;
     }
 
     /**
@@ -135,26 +132,6 @@ abstract class MonitoredObjectController extends Controller
      * Schedule a downtime
      */
     abstract public function scheduleDowntimeAction();
-
-    /**
-     * Delete a comment
-     */
-    public function deleteCommentAction()
-    {
-        $this->assertHttpMethod('POST');
-        $this->assertPermission('monitoring/command/comment/delete');
-        $this->handleCommandForm(new DeleteCommentCommandForm());
-    }
-
-    /**
-     * Delete a downtime
-     */
-    public function deleteDowntimeAction()
-    {
-        $this->assertHttpMethod('POST');
-        $this->assertPermission('monitoring/command/downtime/delete');
-        $this->handleCommandForm(new DeleteDowntimeCommandForm());
-    }
 
     /**
      * Create tabs

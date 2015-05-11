@@ -3,12 +3,18 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+/**
+ * Query for host and service downtimes
+ */
 class DowntimeQuery extends IdoQuery
 {
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'downtime' => array(
-            'downtime_author'           => 'sd.author_name',
-            'author'                    => 'sd.author_name',
+            'downtime_author_name'      => 'sd.author_name',
+            'author'                    => 'sd.author_name COLLATE latin1_general_ci',
             'downtime_comment'          => 'sd.comment_data',
             'downtime_entry_time'       => 'UNIX_TIMESTAMP(sd.entry_time)',
             'downtime_is_fixed'         => 'sd.is_fixed',
@@ -21,22 +27,31 @@ class DowntimeQuery extends IdoQuery
             'downtime_duration'         => 'sd.duration',
             'downtime_is_in_effect'     => 'sd.is_in_effect',
             'downtime_internal_id'      => 'sd.internal_downtime_id',
-            'downtime_host'             => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci', // #7278, #7279
+            'downtime_objecttype'       => "CASE WHEN ho.object_id IS NULL THEN 'service' ELSE 'host' END",
             'host'                      => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci',
-            'downtime_service'          => 'so.name2 COLLATE latin1_general_ci',
-            'service'                   => 'so.name2 COLLATE latin1_general_ci', // #7278, #7279
-            'downtime_objecttype'       => "CASE WHEN ho.object_id IS NOT NULL THEN 'host' ELSE CASE WHEN so.object_id IS NOT NULL THEN 'service' ELSE NULL END END",
-            'downtime_host_state'       => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
-            'downtime_service_state'    => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END'
+            'host_name'                 => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END',
+            'service'                   => 'so.name2 COLLATE latin1_general_ci',
+            'service_description'       => 'so.name2',
+            'service_host'              => 'so.name1 COLLATE latin1_general_ci',
+            'service_host_name'         => 'so.name1'
         ),
         'hosts' => array(
-            'host_display_name'         => 'CASE WHEN sh.display_name IS NOT NULL THEN sh.display_name ELSE h.display_name END'
+            'host_display_name'         => 'CASE WHEN h.display_name IS NULL THEN sh.display_name ELSE h.display_name END'
+        ),
+        'hoststatus' => array(
+            'downtime_host_state'       => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END'
         ),
         'services' => array(
             'service_display_name'      => 's.display_name'
+        ),
+        'servicestatus' => array(
+            'downtime_service_state'    => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END'
         )
     );
 
+    /**
+     * {@inheritdoc}
+     */
     protected function joinBaseTables()
     {
         $this->select->from(
@@ -53,19 +68,14 @@ class DowntimeQuery extends IdoQuery
             'sd.object_id = so.object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
-        $this->select->joinLeft(
-            array('hs' => $this->prefix . 'hoststatus'),
-            'ho.object_id = hs.host_object_id',
-            array()
-        );
-        $this->select->joinLeft(
-            array('ss' => $this->prefix . 'servicestatus'),
-            'so.object_id = ss.service_object_id',
-            array()
-        );
         $this->joinedVirtualTables = array('downtime' => true);
     }
 
+    /**
+     * Join downtimes' hosts
+     *
+     * @return $this
+     */
     protected function joinHosts()
     {
         $this->select->joinLeft(
@@ -76,6 +86,26 @@ class DowntimeQuery extends IdoQuery
         return $this;
     }
 
+    /**
+     * Join downtimes' hosts' status
+     *
+     * @return $this
+     */
+    protected function joinHoststatus()
+    {
+        $this->select->joinLeft(
+            array('hs' => $this->prefix . 'hoststatus'),
+            'ho.object_id = hs.host_object_id',
+            array()
+        );
+        return $this;
+    }
+
+    /**
+     * Join downtimes' services
+     *
+     * @return $this
+     */
     protected function joinServices()
     {
         $this->select->joinLeft(
@@ -86,6 +116,21 @@ class DowntimeQuery extends IdoQuery
         $this->select->joinLeft(
             array('sh' => $this->prefix . 'hosts'),
             'sh.host_object_id = s.host_object_id',
+            array()
+        );
+        return $this;
+    }
+
+    /**
+     * Join downtimes' services' status
+     *
+     * @return $this
+     */
+    protected function joinServicestatus()
+    {
+        $this->select->joinLeft(
+            array('ss' => $this->prefix . 'servicestatus'),
+            'so.object_id = ss.service_object_id',
             array()
         );
         return $this;

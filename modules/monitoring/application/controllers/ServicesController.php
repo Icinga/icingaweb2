@@ -12,6 +12,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceCheckCommandFor
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\ServiceList;
@@ -19,6 +20,7 @@ use Icinga\Util\String;
 use Icinga\Web\Url;
 use Icinga\Web\UrlParams;
 use Icinga\Web\Widget\Chart\InlinePie;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
 
 class Monitoring_ServicesController extends Controller
 {
@@ -30,7 +32,9 @@ class Monitoring_ServicesController extends Controller
     public function init()
     {
         $serviceList = new ServiceList($this->backend);
-        $serviceList->setFilter(Filter::fromQueryString((string) $this->params->without('service_problem', 'service_handled')));
+        $serviceList->setFilter(Filter::fromQueryString(
+            (string) $this->params->without(array('service_problem', 'service_handled', 'view'))
+        ));
         $this->serviceList = $serviceList;
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/services');
 
@@ -44,7 +48,7 @@ class Monitoring_ServicesController extends Controller
                 'url'   => Url::fromPath('monitoring/hosts/show')->setParams(Url::fromRequest()->getParams()),
                 'icon' => 'host'
             )
-        )->activate('show');
+        )->extend(new DashboardAction());
 
         $this->getTabs()->add(
             'show',
@@ -189,6 +193,9 @@ class Monitoring_ServicesController extends Controller
         $this->view->commentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
         $this->view->baseFilter = $this->serviceList->getFilter();
+        $this->view->sendCustomNotificationLink = Url::fromRequest()->setPath(
+            'monitoring/services/send-custom-notification'
+        );
     }
 
     /**
@@ -201,6 +208,7 @@ class Monitoring_ServicesController extends Controller
         $form = new AddCommentCommandForm();
         $form->setTitle($this->translate('Add Service Comments'));
         $this->handleCommandForm($form);
+
     }
 
 
@@ -262,6 +270,18 @@ class Monitoring_ServicesController extends Controller
 
         $form = new ProcessCheckResultCommandForm();
         $form->setTitle($this->translate('Submit Passive Service Check Results'));
+        $this->handleCommandForm($form);
+    }
+
+    /**
+     * Send a custom notification for services
+     */
+    public function sendCustomNotificationAction()
+    {
+        $this->assertPermission('monitoring/command/send-custom-notification');
+
+        $form = new SendCustomNotificationCommandForm();
+        $form->setTitle($this->translate('Send Custom Service Notification'));
         $this->handleCommandForm($form);
     }
 }

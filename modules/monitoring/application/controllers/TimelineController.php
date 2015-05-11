@@ -10,6 +10,7 @@ use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Timeline\TimeLine;
 use Icinga\Module\Monitoring\Timeline\TimeRange;
 use Icinga\Module\Monitoring\Web\Widget\SelectBox;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
 
 class Monitoring_TimelineController extends Controller
 {
@@ -22,7 +23,7 @@ class Monitoring_TimelineController extends Controller
                 'label' => $this->translate('Timeline'),
                 'url'   => Url::fromRequest()
             )
-        )->activate('timeline')->setTitle($this->translate('Timeline Navigation'));
+        )->extend(new DashboardAction())->activate('timeline');
         $this->view->title = $this->translate('Timeline');
 
         // TODO: filter for hard_states (precedence adjustments necessary!)

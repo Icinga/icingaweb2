@@ -53,7 +53,7 @@ class DatabaseCreationPage extends Form
      *
      * @param   array   $config
      *
-     * @return  self
+     * @return  $this
      */
     public function setResourceConfig(array $config)
     {
@@ -66,7 +66,7 @@ class DatabaseCreationPage extends Form
      *
      * @param   array   $privileges     The privileges
      *
-     * @return  self
+     * @return  $this
      */
     public function setDatabaseSetupPrivileges(array $privileges)
     {
@@ -79,7 +79,7 @@ class DatabaseCreationPage extends Form
      *
      * @param   array   $privileges     The privileges
      *
-     * @return  self
+     * @return  $this
      */
     public function setDatabaseUsagePrivileges(array $privileges)
     {

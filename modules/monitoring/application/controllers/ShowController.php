@@ -1,7 +1,6 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Application\Benchmark;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
@@ -10,8 +9,6 @@ use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Object\Host;
-use Icinga\Module\Monitoring\Object\Service;
 
 /**
  * Class Monitoring_ShowController
@@ -76,6 +73,9 @@ class Monitoring_ShowController extends Controller
         $this->view->history = $this->view->object->eventhistory->getQuery()->paginate($this->params->get('limit', 50));
         $this->handleFormatRequest($this->view->object->eventhistory);
         $this->fetchHostStats();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->history);
     }
 
     public function servicesAction()
@@ -115,11 +115,11 @@ class Monitoring_ShowController extends Controller
 
     public function contactAction()
     {
-        $contactName = $this->getParam('contact');
+        $contactName = $this->getParam('contact_name');
 
         if (! $contactName) {
             throw new Zend_Controller_Action_Exception(
-                $this->translate('The parameter `contact\' is required'),
+                $this->translate('The parameter `contact_name\' is required'),
                 404
             );
         }
@@ -145,9 +145,7 @@ class Monitoring_ShowController extends Controller
             'contact_notify_host_flapping',
             'contact_notify_host_downtime',
         ));
-
         $query->where('contact_name', $contactName);
-
         $contact = $query->getQuery()->fetchRow();
 
         if ($contact) {
@@ -159,10 +157,10 @@ class Monitoring_ShowController extends Controller
             $this->view->commands = $commands->paginate();
 
             $notifications = $this->backend->select()->from('notification', array(
-                'host',
-                'service',
+                'host_name',
+                'service_description',
                 'notification_output',
-                'notification_contact',
+                'notification_contact_name',
                 'notification_start_time',
                 'notification_state',
                 'host_display_name',
@@ -170,9 +168,9 @@ class Monitoring_ShowController extends Controller
             ));
 
             $notifications->where('contact_object_id', $contact->contact_object_id);
-
-            $this->view->compact = true;
             $this->view->notifications = $notifications->paginate();
+            $this->setupLimitControl();
+            $this->setupPaginationControl($this->view->notifications);
         }
 
         $this->view->contact = $contact;

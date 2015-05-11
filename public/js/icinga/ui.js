@@ -716,8 +716,9 @@
         },
 
         initializeControls: function (parent) {
-
-            var self = this;
+            if ($(parent).closest('.dashboard').length) {
+                return;
+            }
 
             $('.controls', parent).each(function (idx, el) {
                 var $el = $(el);
@@ -744,7 +745,6 @@
         },
 
         fixControls: function ($parent) {
-
             var self = this;
 
             if ('undefined' === typeof $parent) {
@@ -761,11 +761,20 @@
                 return;
             }
 
+            if ($parent.closest('.dashboard').length) {
+                return;
+            }
+
             // Enable this only in case you want to track down UI problems
             // self.icinga.logger.debug('Fixing controls for ', $parent);
 
             $('.controls', $parent).each(function (idx, el) {
                 var $el = $(el);
+
+                if ($el.closest('.dashboard').length) {
+                    return;
+                }
+
                 var $fake = $el.next('.fake-controls');
                 var y = $parent.scrollTop();
 

@@ -9,6 +9,7 @@ use Icinga\Protocol\Ldap\Query;
 use Icinga\Protocol\Ldap\Connection;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Protocol\Ldap\Exception as LdapException;
+use Icinga\Protocol\Ldap\Expression;
 
 class LdapUserBackend extends UserBackend
 {
@@ -25,15 +26,53 @@ class LdapUserBackend extends UserBackend
 
     protected $userNameAttribute;
 
+    protected $customFilter;
+
     protected $groupOptions;
 
-    public function __construct(Connection $conn, $userClass, $userNameAttribute, $baseDn, $groupOptions = null)
-    {
+    /**
+     * Normed attribute names based on known LDAP environments
+     *
+     * @var array
+     */
+    protected $normedAttributes = array(
+        'uid'               => 'uid',
+        'user'              => 'user',
+        'inetorgperson'     => 'inetOrgPerson',
+        'samaccountname'    => 'sAMAccountName'
+    );
+
+    public function __construct(
+        Connection $conn,
+        $userClass,
+        $userNameAttribute,
+        $baseDn,
+        $cutomFilter,
+        $groupOptions = null
+    ) {
         $this->conn = $conn;
-        $this->baseDn = trim($baseDn) !== '' ? $baseDn : $conn->getDN();
-        $this->userClass = $userClass;
-        $this->userNameAttribute = $userNameAttribute;
+        $this->baseDn = trim($baseDn) ?: $conn->getDN();
+        $this->userClass = $this->getNormedAttribute($userClass);
+        $this->userNameAttribute = $this->getNormedAttribute($userNameAttribute);
+        $this->customFilter = trim($cutomFilter);
         $this->groupOptions = $groupOptions;
+    }
+
+    /**
+     * Return the given attribute name normed to known LDAP enviroments, if possible
+     *
+     * @param   string  $name
+     *
+     * @return  string
+     */
+    protected function getNormedAttribute($name)
+    {
+        $loweredName = strtolower($name);
+        if (array_key_exists($loweredName, $this->normedAttributes)) {
+            return $this->normedAttributes[$loweredName];
+        }
+
+        return $name;
     }
 
     /**
@@ -43,12 +82,18 @@ class LdapUserBackend extends UserBackend
      */
     protected function selectUsers()
     {
-        return $this->conn->select()->setBase($this->baseDn)->from(
+        $query = $this->conn->select()->setBase($this->baseDn)->from(
             $this->userClass,
             array(
                 $this->userNameAttribute
             )
         );
+
+        if ($this->customFilter) {
+            $query->addFilter(new Expression($this->customFilter));
+        }
+
+        return $query;
     }
 
     /**
@@ -88,9 +133,10 @@ class LdapUserBackend extends UserBackend
 
         if ($result === null) {
             throw new AuthenticationException(
-                'No objects with objectClass="%s" in DN="%s" found.',
+                'No objects with objectClass="%s" in DN="%s" found. (Filter: %s)',
                 $this->userClass,
-                $this->baseDn
+                $this->baseDn,
+                $this->customFilter ?: 'None'
             );
         }
 

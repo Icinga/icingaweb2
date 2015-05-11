@@ -18,39 +18,39 @@ class RoleForm extends ConfigForm
     /**
      * Provided permissions by currently loaded modules
      *
-     * @type array
+     * @var array
      */
     protected $providedPermissions = array(
-        '*'                             => '*',
-        'system/config/*'               => 'system/config/*',
-        'system/config/application'     => 'system/config/application',
-        'system/config/authentication'  => 'system/config/authentication',
-        'system/config/modules'         => 'system/config/modules',
-        'system/config/resources'       => 'system/config/resources',
-        'system/config/roles'           => 'system/config/roles'
+        '*'                                 => '*',
+        'config/*'                          => 'config/*',
+        'config/application/*'              => 'config/application/*',
+        'config/application/general'        => 'config/application/general',
+        'config/application/authentication' => 'config/application/authentication',
+        'config/application/resources'      => 'config/application/resources',
+        'config/application/roles'          => 'config/application/roles',
+        'config/modules'                    => 'config/modules'
     );
 
     /**
      * Provided restrictions by currently loaded modules
      *
-     * @type array
+     * @var array
      */
     protected $providedRestrictions = array();
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::init() For the method documentation.
+     * {@inheritdoc}
      */
     public function init()
     {
         $helper = new Zend_Form_Element('bogus');
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
             foreach ($module->getProvidedPermissions() as $permission) {
-                /** @type object $permission */
+                /** @var object $permission */
                 $this->providedPermissions[$permission->name] = $permission->name . ': ' . $permission->description;
             }
             foreach ($module->getProvidedRestrictions() as $restriction) {
-                /** @type object $restriction */
+                /** @var object $restriction */
                 $name = $helper->filterName($restriction->name); // Zend only permits alphanumerics, the underscore,
                                                                  // the circumflex and any ASCII character in range
                                                                  // \x7f to \xff (127 to 255)
@@ -68,8 +68,7 @@ class RoleForm extends ConfigForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::createElements() For the method documentation.
+     * {@inheritdoc}
      */
     public function createElements(array $formData = array())
     {
@@ -253,8 +252,7 @@ class RoleForm extends ConfigForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Zend_Form::getValues() For the method documentation.
+     * {@inheritdoc}
      */
     public function getValues($suppressArrayNotation = false)
     {

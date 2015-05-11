@@ -106,7 +106,7 @@ class SimpleQuery implements QueryInterface, Queryable
      *
      * Query will return all available columns if none are given here
      *
-     * @return self
+     * @return $this
      */
     public function from($target, array $fields = null)
     {
@@ -125,7 +125,7 @@ class SimpleQuery implements QueryInterface, Queryable
      * @param   string  $condition
      * @param   mixed   $value
      *
-     * @return  self
+     * @return  $this
      */
     public function where($condition, $value = null)
     {
@@ -162,6 +162,26 @@ class SimpleQuery implements QueryInterface, Queryable
     }
 
     /**
+     * Split order field into its field and sort direction
+     *
+     * @param   string  $field
+     *
+     * @return  array
+     */
+    public function splitOrder($field)
+    {
+        $fieldAndDirection = explode(' ', $field, 2);
+        if (count($fieldAndDirection) === 1) {
+            $direction = null;
+        } else {
+            $field = $fieldAndDirection[0];
+            $direction = (strtoupper(trim($fieldAndDirection[1])) === 'DESC') ?
+                Sortable::SORT_DESC : Sortable::SORT_ASC;
+        }
+        return array($field, $direction);
+    }
+
+    /**
      * Sort result set by the given field (and direction)
      *
      * Preferred usage:
@@ -172,18 +192,14 @@ class SimpleQuery implements QueryInterface, Queryable
      * @param  string   $field
      * @param  string   $direction
      *
-     * @return self
+     * @return $this
      */
     public function order($field, $direction = null)
     {
         if ($direction === null) {
-            $fieldAndDirection = explode(' ', $field, 2);
-            if (count($fieldAndDirection) === 1) {
-                $direction = self::SORT_ASC;
-            } else {
-                $field = $fieldAndDirection[0];
-                $direction = (strtoupper(trim($fieldAndDirection[1])) === 'DESC') ?
-                    Sortable::SORT_DESC : Sortable::SORT_ASC;
+            list($field, $direction) = $this->splitOrder($field);
+            if ($direction === null) {
+                $direction = Sortable::SORT_ASC;
             }
         } else {
             switch (($direction = strtoupper($direction))) {
@@ -254,7 +270,7 @@ class SimpleQuery implements QueryInterface, Queryable
      * @param   int $count  Number of rows to return
      * @param   int $offset Start returning after this many rows
      *
-     * @return  self
+     * @return  $this
      */
     public function limit($count = null, $offset = null)
     {
@@ -401,7 +417,7 @@ class SimpleQuery implements QueryInterface, Queryable
      *
      * @param   array $columns
      *
-     * @return  self
+     * @return  $this
      */
     public function columns(array $columns)
     {

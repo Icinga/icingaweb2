@@ -17,12 +17,6 @@
 
     Icinga.Events.prototype = {
 
-        keyboard: {
-            ctrlKey:    false,
-            altKey:     false,
-            shiftKey:   false
-        },
-
         /**
          * Icinga will call our initialize() function once it's ready
          */
@@ -125,6 +119,10 @@
             $(document).on('change', 'form select.autosubmit', { self: this }, this.autoSubmitForm);
             $(document).on('change', 'form input.autosubmit', { self: this }, this.autoSubmitForm);
 
+            // Automatically check a radio button once a specific input is focused
+            $(document).on('focus', 'form select[data-related-radiobtn]', { self: this }, this.autoCheckRadioButton);
+            $(document).on('focus', 'form input[data-related-radiobtn]', { self: this }, this.autoCheckRadioButton);
+
             $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitSearch);
 
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
@@ -161,6 +159,15 @@
         onContainerScroll: function (event) {
             // Ugly. And PLEASE, not so often
             icinga.ui.fixControls();
+        },
+
+        autoCheckRadioButton: function (event) {
+            var $input = $(event.currentTarget);
+            var $radio = $('#' + $input.attr('data-related-radiobtn'));
+            if ($radio.length) {
+                $radio.prop('checked', true);
+            }
+            return true;
         },
 
         autoSubmitSearch: function(event) {
@@ -226,14 +233,23 @@
             event.stopPropagation();
             event.preventDefault();
 
-            // activate spinner indicator
-            if ($button.hasClass('spinner')) {
-                $button.addClass('active');
+            if ($button.length) {
+                // Activate spinner
+                if ($button.hasClass('spinner')) {
+                    $button.addClass('active');
+                }
+
+                $target = self.getLinkTargetFor($button);
+            } else {
+                $target = self.getLinkTargetFor($form);
+            }
+
+            if (! url) {
+                // Use the URL of the target container if the form's action is not set
+                url = $target.closest('.container').data('icinga-url');
             }
 
             icinga.logger.debug('Submitting form: ' + method + ' ' + url, method);
-
-            $target = self.getLinkTargetFor($button);
 
             if (method === 'GET') {
                 var dataObj = $form.serializeObject();
@@ -257,6 +273,7 @@
                     }
                 }
             }
+
             icinga.loader.loadUrl(url, $target, data, method);
 
             return false;
@@ -286,6 +303,10 @@
             var data     = self.icinga.ui.getSelectionKeys($table);
             var url      = $table.data('icinga-multiselect-url');
 
+            if ($(event.target).closest('form').length) {
+                // allow form actions in table rows to pass through
+                return;
+            }
             event.stopPropagation();
             event.preventDefault();
 
@@ -339,32 +360,16 @@
             return false;
         },
 
+        /**
+         * Handle anchor, i.e. focus the element which is referenced by the anchor
+         *
+         * @param {string} query jQuery selector
+         */
         handleAnchor: function(query) {
             var $element = $(query);
             if ($element.length > 0) {
-                // TODO(mh): Some elements are missing to place the right focus
-                // This is a fixed workarround until all header took place
-
-                var $item = $element.find(':header:first').nextUntil(':header:first').next();
-                if ($item.length > 0) {
-                    $element = $item;
-                }
-
-                /*
-                var focusQueries = ['h1:first', ':header:first', ':input:first'];
-                $.each(focusQueries, function(index,q) {
-                    var $item = $element.find(q);
-                    if ($item.length > 0) {
-                        $element = $item;
-                        return false;
-                    }
-                });
-                */
-
-                // If we want to focus an element which has no tabindex
-                // add one that we can focus is
-                if ($element.prop('tabindex') < 0) {
-                    $element.prop('tabindex', '-1');
+                if (typeof $element.attr('tabindex') === 'undefined') {
+                    $element.attr('tabindex', -1);
                 }
                 $element.focus();
             }
@@ -460,6 +465,9 @@
                             } else {
                                 icinga.ui.layout1col();
                             }
+                            $('table tr[href].active').removeClass('active');
+                            icinga.ui.storeSelectionData(null);
+                            icinga.ui.loadSelectionData();
                             icinga.history.pushCurrentState();
                         }
                     }
@@ -560,6 +568,8 @@
             $(document).off('submit', 'form', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
             $(document).off('change', 'form input.autosubmit', this.submitForm);
+            $(document).off('focus', 'form select[data-related-radiobtn]', this.autoCheckRadioButton);
+            $(document).off('focus', 'form input[data-related-radiobtn]', this.autoCheckRadioButton);
         },
 
         destroy: function() {

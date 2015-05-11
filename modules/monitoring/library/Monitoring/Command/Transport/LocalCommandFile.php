@@ -4,8 +4,8 @@
 namespace Icinga\Module\Monitoring\Command\Transport;
 
 use Exception;
-use LogicException;
 use Icinga\Application\Logger;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Monitoring\Command\Exception\TransportException;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
 use Icinga\Module\Monitoring\Command\Renderer\IcingaCommandFileCommandRenderer;
@@ -55,7 +55,7 @@ class LocalCommandFile implements CommandTransportInterface
      *
      * @param   string $path
      *
-     * @return  self
+     * @return  $this
      */
     public function setPath($path)
     {
@@ -78,7 +78,7 @@ class LocalCommandFile implements CommandTransportInterface
      *
      * @param   string $openMode
      *
-     * @return  self
+     * @return  $this
      */
     public function setOpenMode($openMode)
     {
@@ -102,13 +102,15 @@ class LocalCommandFile implements CommandTransportInterface
      * @param   IcingaCommand   $command
      * @param   int|null        $now
      *
-     * @throws  LogicException
+     * @throws  ConfigurationError
      * @throws  TransportException
      */
     public function send(IcingaCommand $command, $now = null)
     {
         if (! isset($this->path)) {
-            throw new LogicException('Can\'t send external Icinga Command. Path to the local command file is missing');
+            throw new ConfigurationError(
+                'Can\'t send external Icinga Command. Path to the local command file is missing'
+            );
         }
         $commandString = $this->renderer->render($command, $now);
         Logger::debug(

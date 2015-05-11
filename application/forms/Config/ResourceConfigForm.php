@@ -53,7 +53,7 @@ class ResourceConfigForm extends ConfigForm
      *
      * @param   array   $values             The values to extend the configuration with
      *
-     * @return  self
+     * @return  $this
      *
      * @thrwos  InvalidArgumentException    In case the resource does already exist
      */

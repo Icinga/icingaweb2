@@ -268,40 +268,28 @@ a:focus {
   outline: none;
 }
 
-/* Accessibility Skip Links */
 .skip-links {
   position: relative;
-  opacity: 1;
   ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     li {
-      display: inline;
-      margin: 0;
-      padding: 0;
+      display: block;
       a, button[type="submit"] {
-        position: absolute;
-        display: block;
+        background-color: #fff;
         left: -999em;
-        box-sizing: content-box;
-        width: 10.4em !important;
-        text-align: left !important;
         padding: 0.8em;
-        background-color: white;
-        z-index: 4;
-        border: 1px @colorGray solid;
+        position: absolute;
+        width: 100%;
         &:focus {
           left: 0;
-          outline: 1px dotted black !important;
+          outline: 1px dotted black;
         }
       }
+      button[type="submit"] {
+        text-align: left;
+      }
     }
-  }
-}
-.skip-links-inline {
-  ul > li > a {
-    width: 14em !important;
-    top: -3em;
   }
 }

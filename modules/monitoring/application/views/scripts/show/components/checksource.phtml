@@ -1,7 +1,20 @@
-<?php if (! $object->check_source) return ?>
+<?php if ($object->check_source !== null): ?>
 <tr>
-  <th><?= $this->translate('Check Source') ?></th>
-  <td>
-      <?= $this->escape($object->check_source) ?>
-  </td>
+    <th>
+        <?= $this->translate('Check Source') ?>
+    </th>
+    <td>
+        <?= $this->escape($object->check_source) ?>
+    </td>
 </tr>
+<?php endif ?>
+<?php if ($object->is_reachable !== null): ?>
+<tr>
+    <th>
+        <?= $this->translate('Reachable') ?>
+    </th>
+    <td>
+        <?= $object->is_reachable ? $this->translate('Yes') : $this->translate('No') ?>
+    </td>
+</tr>
+<?php endif ?>

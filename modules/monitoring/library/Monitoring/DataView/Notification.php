@@ -13,11 +13,11 @@ class Notification extends DataView
     public function getColumns()
     {
         return array(
-            'host',
-            'service',
+            'host_name',
+            'service_description',
             'notification_state',
             'notification_start_time',
-            'notification_contact',
+            'notification_contact_name',
             'notification_output',
             'notification_command',
             'host_display_name',
@@ -33,5 +33,10 @@ class Notification extends DataView
                 'title' => 'Notification Start'
             )
         );
+    }
+
+    public function getFilterColumns()
+    {
+        return array('host', 'service', 'contact');
     }
 }

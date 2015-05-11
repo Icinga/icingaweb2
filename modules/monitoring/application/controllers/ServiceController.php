@@ -1,11 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+use Icinga\Exception\MissingParameterException;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Web\Controller\MonitoredObjectController;
 
@@ -24,12 +26,22 @@ class Monitoring_ServiceController extends MonitoredObjectController
      */
     public function init()
     {
+        if ($this->params->get('host') === null || $this->params->get('service') === null) {
+            throw new MissingParameterException(
+                $this->translate('One of the required parameters \'%s\' is missing'),
+                'host or service'
+            );
+        }
+
         $service = new Service($this->backend, $this->params->get('host'), $this->params->get('service'));
 
         $this->applyRestriction('monitoring/services/filter', $service);
 
         if ($service->fetch() === false) {
-            throw new Zend_Controller_Action_Exception($this->translate('Service not found'));
+            throw new Zend_Controller_Action_Exception(
+                sprintf($this->translate('Service \'%s\' not found'), $this->params->get('service')),
+                404
+            );
         }
         $this->object = $service;
         $this->createTabs();
@@ -93,6 +105,18 @@ class Monitoring_ServiceController extends MonitoredObjectController
 
         $form = new ProcessCheckResultCommandForm();
         $form->setTitle($this->translate('Submit Passive Service Check Result'));
+        $this->handleCommandForm($form);
+    }
+
+    /**
+     * Send a custom notification for a service
+     */
+    public function sendCustomNotificationAction()
+    {
+        $this->assertPermission('monitoring/command/send-custom-notification');
+
+        $form = new SendCustomNotificationCommandForm();
+        $form->setTitle($this->translate('Send Custom Service Notification'));
         $this->handleCommandForm($form);
     }
 }

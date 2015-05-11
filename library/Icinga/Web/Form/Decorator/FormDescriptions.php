@@ -14,6 +14,29 @@ use Icinga\Web\Form;
 class FormDescriptions extends Zend_Form_Decorator_Abstract
 {
     /**
+     * A list of element class names to be ignored when detecting which message to use to describe required elements
+     *
+     * @var array
+     */
+    protected $blacklist;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct($options = null)
+    {
+        parent::__construct($options);
+        $this->blacklist = array(
+            'Zend_Form_Element_Hidden',
+            'Zend_Form_Element_Submit',
+            'Zend_Form_Element_Button',
+            'Icinga\Web\Form\Element\Note',
+            'Icinga\Web\Form\Element\Button',
+            'Icinga\Web\Form\Element\CsrfCounterMeasure'
+        );
+    }
+
+    /**
      * Render form descriptions
      *
      * @param   string      $content    The html rendered so far
@@ -32,9 +55,16 @@ class FormDescriptions extends Zend_Form_Decorator_Abstract
             return $content;
         }
 
-        $descriptions = $form->getDescriptions();
-        if (($requiredDesc = $this->getRequiredDescription($form)) !== null) {
-            $descriptions[] = $requiredDesc;
+        $descriptions = $this->recurseForm($form, $entirelyRequired);
+        if ($entirelyRequired) {
+            $descriptions[] = $form->getView()->translate(
+                'All fields are required and must be filled in to complete the form.'
+            );
+        } elseif ($entirelyRequired === false) {
+            $descriptions[] = $form->getView()->translate(sprintf(
+                'Required fields are marked with %s and must be filled in to complete the form.',
+                $form->getRequiredCue()
+            ));
         }
 
         if (empty($descriptions)) {
@@ -60,53 +90,57 @@ class FormDescriptions extends Zend_Form_Decorator_Abstract
     }
 
     /**
-     * Return the description for the given form's required elements
+     * Recurse the given form and return the descriptions for it and all of its subforms
      *
-     * @param   Form    $form
+     * @param   Form    $form               The form to recurse
+     * @param   mixed   $entirelyRequired   Set by reference, true means all elements in the hierarchy are
+     *                                       required, false only a partial subset and null none at all
+     * @param   bool    $elementsPassed     Whether there were any elements passed during the recursion until now
      *
-     * @return  string|null
+     * @return  array
      */
-    protected function getRequiredDescription(Form $form)
+    protected function recurseForm(Form $form, & $entirelyRequired = null, $elementsPassed = false)
     {
-        if (($cue = $form->getRequiredCue()) === null) {
-            return;
-        }
-
         $requiredLabels = array();
-        $entirelyRequired = true;
-        $partiallyRequired = false;
-        $blacklist = array(
-            'Zend_Form_Element_Hidden',
-            'Zend_Form_Element_Submit',
-            'Zend_Form_Element_Button',
-            'Icinga\Web\Form\Element\Note',
-            'Icinga\Web\Form\Element\Button',
-            'Icinga\Web\Form\Element\CsrfCounterMeasure'
-        );
-        foreach ($form->getElements() as $element) {
-            if (! in_array($element->getType(), $blacklist)) {
-                if (! $element->isRequired()) {
-                    $entirelyRequired = false;
-                } else {
-                    $partiallyRequired = true;
-                    if (($label = $element->getDecorator('label')) !== false) {
-                        $requiredLabels[] = $label;
+        if ($form->getRequiredCue() !== null) {
+            $partiallyRequired = $partiallyOptional = false;
+            foreach ($form->getElements() as $element) {
+                if (! in_array($element->getType(), $this->blacklist)) {
+                    if (! $element->isRequired()) {
+                        $partiallyOptional = true;
+                        if ($entirelyRequired) {
+                            $entirelyRequired = false;
+                        }
+                    } else {
+                        $partiallyRequired = true;
+                        if (($label = $element->getDecorator('label')) !== false) {
+                            $requiredLabels[] = $label;
+                        }
                     }
                 }
             }
+
+            if (! $elementsPassed) {
+                $elementsPassed = $partiallyRequired || $partiallyOptional;
+                if ($entirelyRequired === null && $partiallyRequired) {
+                    $entirelyRequired = ! $partiallyOptional;
+                }
+            } elseif ($entirelyRequired === null && $partiallyRequired) {
+                $entirelyRequired = false;
+            }
         }
 
-        if ($entirelyRequired && $partiallyRequired) {
+        $descriptions = array($form->getDescriptions());
+        foreach ($form->getSubForms() as $subForm) {
+            $descriptions[] = $this->recurseForm($subForm, $entirelyRequired, $elementsPassed);
+        }
+
+        if ($entirelyRequired) {
             foreach ($requiredLabels as $label) {
                 $label->setRequiredSuffix('');
             }
-
-            return $form->getView()->translate('All fields are required and must be filled in to complete the form.');
-        } elseif ($partiallyRequired) {
-            return $form->getView()->translate(sprintf(
-                'Required fields are marked with %s and must be filled in to complete the form.',
-                $cue
-            ));
         }
+
+        return call_user_func_array('array_merge', $descriptions);
     }
 }

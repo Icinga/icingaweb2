@@ -11,10 +11,12 @@ use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandFo
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\HostList;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Chart\InlinePie;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
 
 class Monitoring_HostsController extends Controller
 {
@@ -30,7 +32,7 @@ class Monitoring_HostsController extends Controller
         $filterString = preg_replace('/(service=[^)&]*)/', '', (string)$this->params);
 
         $hostList = new HostList($this->backend);
-        $hostList->setFilter(Filter::fromQueryString($filterString));
+        $hostList->setFilter(Filter::fromQueryString((string) $this->params->without('view')));
         $this->hostList = $hostList;
 
         $this->getTabs()->add(
@@ -44,7 +46,7 @@ class Monitoring_HostsController extends Controller
                 'url'   => Url::fromRequest(),
                 'icon'  => 'host'
             )
-        )->activate('show');
+        )->extend(new DashboardAction());
 
         $this->getTabs()->add(
             'services',
@@ -163,6 +165,7 @@ class Monitoring_HostsController extends Controller
 
         $this->view->commentsLink = Url::fromRequest()->setPath('monitoring/list/comments');
         $this->view->baseFilter = $this->hostList->getFilter();
+        $this->view->sendCustomNotificationLink = Url::fromRequest()->setPath('monitoring/hosts/send-custom-notification');
     }
 
     /**
@@ -234,6 +237,18 @@ class Monitoring_HostsController extends Controller
 
         $form = new ProcessCheckResultCommandForm();
         $form->setTitle($this->translate('Submit Passive Host Check Results'));
+        $this->handleCommandForm($form);
+    }
+
+    /**
+     * Send a custom notification for hosts
+     */
+    public function sendCustomNotificationAction()
+    {
+        $this->assertPermission('monitoring/command/send-custom-notification');
+
+        $form = new SendCustomNotificationCommandForm();
+        $form->setTitle($this->translate('Send Custom Host Notification'));
         $this->handleCommandForm($form);
     }
 }

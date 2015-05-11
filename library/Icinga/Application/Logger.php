@@ -68,6 +68,13 @@ class Logger
     protected $level;
 
     /**
+     * Error messages to be displayed prior to any other log message
+     *
+     * @var array
+     */
+    protected $configErrors = array();
+
+    /**
      * Create a new logger object
      *
      * @param   ConfigObject  $config
@@ -81,37 +88,69 @@ class Logger
             throw new ConfigurationError('Required logging configuration directive \'log\' missing');
         }
 
-        if (($level = $config->level) !== null) {
-            if (is_numeric($level)) {
-                $level = (int) $level;
-                if (! isset(static::$levels[$level])) {
-                    throw new ConfigurationError(
-                        'Can\'t set logging level %d. Logging level is not defined. Use one of %s or one of the'
-                        . ' Logger\'s constants.',
-                        $level,
-                        implode(', ', array_keys(static::$levels))
-                    );
-                }
-                $this->level = $level;
-            } else {
-                $level = strtoupper($level);
-                $levels = array_flip(static::$levels);
-                if (! isset($levels[$level])) {
-                    throw new ConfigurationError(
-                        'Can\'t set logging level "%s". Logging level is not defined. Use one of %s.',
-                        $level,
-                        implode(', ', array_keys($levels))
-                    );
-                }
-                $this->level = $levels[$level];
-            }
-        } else {
-            $this->level = static::ERROR;
-        }
+        $this->setLevel($config->get('level', static::ERROR));
 
         if (strtolower($config->get('log', 'syslog')) !== 'none') {
             $this->writer = $this->createWriter($config);
         }
+    }
+
+    /**
+     * Set the logging level to use
+     *
+     * @param   mixed   $level
+     *
+     * @return  $this
+     *
+     * @throws  ConfigurationError      In case the given level is invalid
+     */
+    public function setLevel($level)
+    {
+        if (is_numeric($level)) {
+            $level = (int) $level;
+            if (! isset(static::$levels[$level])) {
+                throw new ConfigurationError(
+                    'Can\'t set logging level %d. Logging level is invalid. Use one of %s or one of the'
+                    . ' Logger\'s constants.',
+                    $level,
+                    implode(', ', array_keys(static::$levels))
+                );
+            }
+
+            $this->level = $level;
+        } else {
+            $level = strtoupper($level);
+            $levels = array_flip(static::$levels);
+            if (! isset($levels[$level])) {
+                throw new ConfigurationError(
+                    'Can\'t set logging level "%s". Logging level is invalid. Use one of %s.',
+                    $level,
+                    implode(', ', array_keys($levels))
+                );
+            }
+
+            $this->level = $levels[$level];
+        }
+
+        return $this;
+    }
+
+    /**
+     * Register the given message as config error
+     *
+     * Config errors are logged every time a log message is being logged.
+     *
+     * @param   mixed   $arg,...    A string, exception or format-string + substitutions
+     *
+     * @return  $this
+     */
+    public function registerConfigError()
+    {
+        if (func_num_args() > 0) {
+            $this->configErrors[] = static::formatMessage(func_get_args());
+        }
+
+        return $this;
     }
 
     /**
@@ -156,6 +195,10 @@ class Logger
     public function log($level, $message)
     {
         if ($this->writer !== null && $this->level <= $level) {
+            foreach ($this->configErrors as $error_message) {
+                $this->writer->log(static::ERROR, $error_message);
+            }
+
             $this->writer->log($level, $message);
         }
     }
@@ -271,7 +314,7 @@ class Logger
      */
     public static function writesToSyslog()
     {
-        return static::$instance && static::$instance instanceof SyslogWriter;
+        return static::$instance && static::$instance->getWriter() instanceof SyslogWriter;
     }
 
     /**
@@ -281,7 +324,7 @@ class Logger
      */
     public static function writesToFile()
     {
-        return static::$instance && static::$instance instanceof FileWriter;
+        return static::$instance && static::$instance->getWriter() instanceof FileWriter;
     }
 
     /**
