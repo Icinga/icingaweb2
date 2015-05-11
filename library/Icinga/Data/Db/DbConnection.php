@@ -8,14 +8,22 @@ use Zend_Db;
 use Icinga\Application\Benchmark;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\Db\DbQuery;
+use Icinga\Data\Extensible;
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterAnd;
+use Icinga\Data\Filter\FilterNot;
+use Icinga\Data\Filter\FilterOr;
+use Icinga\Data\Reducible;
 use Icinga\Data\ResourceFactory;
 use Icinga\Data\Selectable;
+use Icinga\Data\Updatable;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\ProgrammingError;
 
 /**
  * Encapsulate database connections and query creation
  */
-class DbConnection implements Selectable
+class DbConnection implements Selectable, Extensible, Updatable, Reducible
 {
     /**
      * Connection config
@@ -258,5 +266,115 @@ class DbConnection implements Selectable
     public function fetchPairs(DbQuery $query)
     {
         return $this->dbAdapter->fetchPairs($query->getSelectQuery());
+    }
+
+    /**
+     * Insert a table row with the given data
+     *
+     * @param   string  $table
+     * @param   array   $bind
+     *
+     * @return  int             The number of affected rows
+     */
+    public function insert($table, array $bind)
+    {
+        return $this->dbAdapter->insert($table, $bind);
+    }
+
+    /**
+     * Update table rows with the given data, optionally limited by using a filter
+     *
+     * @param   string  $table
+     * @param   array   $bind
+     * @param   Filter  $filter
+     *
+     * @return  int             The number of affected rows
+     */
+    public function update($table, array $bind, Filter $filter = null)
+    {
+        return $this->dbAdapter->update($table, $bind, $filter ? $this->renderFilter($filter) : '');
+    }
+
+    /**
+     * Delete table rows, optionally limited by using a filter
+     *
+     * @param   string  $table
+     * @param   Filter  $filter
+     *
+     * @return  int             The number of affected rows
+     */
+    public function delete($table, Filter $filter = null)
+    {
+        return $this->dbAdapter->delete($table, $filter ? $this->renderFilter($filter) : '');
+    }
+
+    /**
+     * Render and return the given filter as SQL-WHERE clause
+     *
+     * @param   Filter  $filter
+     *
+     * @return  string
+     */
+    public function renderFilter(Filter $filter, $level = 0)
+    {
+        // TODO: This is supposed to supersede DbQuery::renderFilter()
+        $where = '';
+        if ($filter->isChain()) {
+            if ($filter instanceof FilterAnd) {
+                $operator = ' AND ';
+            } elseif ($filter instanceof FilterOr) {
+                $operator = ' OR ';
+            } elseif ($filter instanceof FilterNot) {
+                $operator = ' AND ';
+                $where .= ' NOT ';
+            } else {
+                throw new ProgrammingError('Cannot render filter: %s', get_class($filter));
+            }
+
+            if (! $filter->isEmpty()) {
+                $parts = array();
+                foreach ($filter->filters() as $filterPart) {
+                    $part = $this->renderFilter($filterPart, $level + 1);
+                    if ($part) {
+                        $parts[] = $part;
+                    }
+                }
+
+                if ($level > 0) {
+                    $where .= ' (' . implode($operator, $parts) . ') ';
+                } else {
+                    $where .= implode($operator, $parts);
+                }
+            }
+        } else {
+            $where .= $this->renderFilterExpression($filter);
+        }
+
+        return $where;
+    }
+
+    /**
+     * Render and return the given filter expression
+     *
+     * @param   Filter  $filter
+     *
+     * @return  string
+     */
+    protected function renderFilterExpression(Filter $filter)
+    {
+        $column = $filter->getColumn();
+        $sign = $filter->getSign();
+        $value = $filter->getExpression();
+
+        if (is_array($value) && $sign === '=') {
+            // TODO: Should we support this? Doesn't work for blub*
+            return $column . ' IN (' . $this->dbAdapter->quote($value) . ')';
+        } elseif ($sign === '=' && strpos($value, '*') !== false) {
+            return $column . ' LIKE ' . $this->dbAdapter->quote(preg_replace('~\*~', '%', $value));
+        } elseif ($sign === '!=' && strpos($value, '*') !== false) {
+            return $column . ' NOT LIKE ' . $this->dbAdapter->quote(preg_replace('~\*~', '%', $value));
+        } else {
+            return $column . ' ' . $sign . ' ' . $this->dbAdapter->quote($value);
+        }
     }
 }
