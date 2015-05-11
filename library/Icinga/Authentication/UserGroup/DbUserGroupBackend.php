@@ -3,6 +3,7 @@
 
 namespace Icinga\Authentication\UserGroup;
 
+use Icinga\Data\Filter\Filter;
 use Icinga\Repository\DbRepository;
 use Icinga\User;
 
@@ -21,6 +22,18 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
             'parent_name'   => 'parent',
             'created_at'    => 'UNIX_TIMESTAMP(ctime)',
             'last_modified' => 'UNIX_TIMESTAMP(mtime)'
+        )
+    );
+
+    /**
+     * The statement columns being provided
+     *
+     * @var array
+     */
+    protected $statementColumns = array(
+        'group' => array(
+            'created_at'    => 'ctime',
+            'last_modified' => 'mtime'
         )
     );
 
@@ -53,6 +66,31 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
         if (! $this->ds->getTablePrefix()) {
             $this->ds->setTablePrefix('icingaweb_');
         }
+    }
+
+    /**
+     * Insert a table row with the given data
+     *
+     * @param   string  $table
+     * @param   array   $bind
+     */
+    public function insert($table, array $bind)
+    {
+        $bind['created_at'] = date('Y-m-d H:i:s');
+        parent::insert($table, $bind);
+    }
+
+    /**
+     * Update table rows with the given data, optionally limited by using a filter
+     *
+     * @param   string  $table
+     * @param   array   $bind
+     * @param   Filter  $filter
+     */
+    public function update($table, array $bind, Filter $filter = null)
+    {
+        $bind['last_modified'] = date('Y-m-d H:i:s');
+        parent::update($table, $bind, $filter);
     }
 
     /**
