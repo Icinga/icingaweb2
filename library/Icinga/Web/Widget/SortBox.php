@@ -5,6 +5,7 @@ namespace Icinga\Web\Widget;
 
 use Icinga\Web\Form;
 use Icinga\Web\Request;
+use Icinga\Data\Sortable;
 
 /**
  * SortBox widget
@@ -50,6 +51,13 @@ class SortBox extends AbstractWidget
     protected $request;
 
     /**
+     * What to apply sort parameters on
+     *
+     * @var Sortable
+     */
+    protected $query = null;
+
+    /**
      * Create a SortBox with the entries from $sortFields
      *
      * @param   string  $name           The name for the SortBox
@@ -84,6 +92,17 @@ class SortBox extends AbstractWidget
     public function setRequest($request)
     {
         $this->request = $request;
+        return $this;
+    }
+
+    /**
+     * @param Sortable $query
+     *
+     * @return $this
+     */
+    public function setQuery(Sortable $query)
+    {
+        $this->query = $query;
         return $this;
     }
 
