@@ -79,19 +79,21 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
                 throw new StatementException(t('Cannot update. Section "%s" does not exist'), $target);
             }
 
-            $results = array($target => $this->ds->getSection($target));
+            $contents = array($target => $this->ds->getSection($target));
         } else {
-            $query = $this->ds->select();
             if ($filter) {
                 $this->requireFilter($filter);
-                $query->applyFilter($filter);
             }
 
-            $results = $query->fetchAll();
+            $contents = iterator_to_array($this->ds);
         }
 
         $newSection = null;
-        foreach ($results as $section => $config) {
+        foreach ($contents as $section => $config) {
+            if ($filter && !$filter->matches($config)) {
+                continue;
+            }
+
             if ($newSection !== null) {
                 throw new StatementException(
                     t('Cannot update. Column "%s" holds a section\'s name which must be unique'),
@@ -105,10 +107,6 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
                 } else {
                     $config->$column = $value;
                 }
-            }
-
-            if ($keyColumn && isset($config->$keyColumn) && $config->$keyColumn === $section) {
-                unset($config->$keyColumn);
             }
 
             if ($newSection) {
@@ -147,19 +145,17 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
                 return; // Nothing to do
             }
 
-            $results = array($target => $this->ds->getSection($target));
+            $this->ds->removeSection($target);
         } else {
-            $query = $this->ds->select();
             if ($filter) {
                 $this->requireFilter($filter);
-                $query->applyFilter($filter);
             }
 
-            $results = $query->fetchAll();
-        }
-
-        foreach ($results as $section => $_) {
-            $this->ds->removeSection($section);
+            foreach (iterator_to_array($this->ds) as $section => $config) {
+                if (! $filter || $filter->matches($config)) {
+                    $this->ds->removeSection($section);
+                }
+            }
         }
 
         try {
