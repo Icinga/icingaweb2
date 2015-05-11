@@ -53,7 +53,7 @@ class Controller extends ModuleActionController
             $this->view->sortBox = SortBox::create(
                 'sortbox-' . $req->getActionName(),
                 $columns
-            )->applyRequest($req);
+            )->setRequest($req);
         }
 
         return $this;

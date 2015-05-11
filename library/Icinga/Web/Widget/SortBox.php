@@ -14,7 +14,7 @@ use Icinga\Web\Request;
  * submission of sorting changes and draws an additional submit button when JavaScript is disabled.
  *
  * The constructor takes an string for the component name and an array containing the select options, where the key is
- * the value to be submitted and the value is the label that will be shown. You then should call applyRequest in order
+ * the value to be submitted and the value is the label that will be shown. You then should call setRequest in order
  * to  make sure the form is correctly populated when a request with a sort parameter is being made.
  *
  * Example:
@@ -23,7 +23,7 @@ use Icinga\Web\Request;
  *          $this->getRequest()->getActionName(),
  *          $columns
  *      );
- *      $this->view->sortControl->applyRequest($this->getRequest());
+ *      $this->view->sortControl->setRequest($this->getRequest());
  *  </code></pre>
  */
 class SortBox extends AbstractWidget
@@ -81,7 +81,7 @@ class SortBox extends AbstractWidget
      *
      * @return  $this
      */
-    public function applyRequest($request)
+    public function setRequest($request)
     {
         $this->request = $request;
         return $this;
