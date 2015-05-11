@@ -16,6 +16,27 @@ use Icinga\Web\Widget\Limiter;
 class Controller extends ModuleActionController
 {
     /**
+     * @see ActionController::init
+     */
+    public function init()
+    {
+        parent::init();
+
+        $request = $this->getRequest();
+        $url = Url::fromRequest();
+
+        if ($request->isPost() && ($sort = $request->getPost('sort'))) {
+            $url->setParam('sort', $sort);
+            if ($dir = $request->getPost('dir')) {
+                $url->setParam('dir', $dir);
+            } else {
+                $url->removeParam('dir');
+            }
+            $this->redirectNow($url);
+        }
+    }
+
+    /**
      * Create a SortBox widget at the `sortBox' view property
      *
      * In case the current view has been requested as compact this method does nothing.

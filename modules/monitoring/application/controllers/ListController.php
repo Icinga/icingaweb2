@@ -20,6 +20,7 @@ class Monitoring_ListController extends Controller
      */
     public function init()
     {
+        parent::init();
         $this->createTabs();
     }
 
@@ -41,25 +42,6 @@ class Monitoring_ListController extends Controller
         return $query;
     }
 
-    protected function hasBetterUrl()
-    {
-        $request = $this->getRequest();
-        $url = Url::fromRequest();
-
-        if ($this->getRequest()->isPost()) {
-            if ($request->getPost('sort')) {
-                $url->setParam('sort', $request->getPost('sort'));
-                if ($request->getPost('dir')) {
-                    $url->setParam('dir', $request->getPost('dir'));
-                } else {
-                    $url->removeParam('dir');
-                }
-                return $url;
-            }
-        }
-        return false;
-    }
-
     /**
      * Overwrite the backend to use (used for testing)
      *
@@ -75,10 +57,6 @@ class Monitoring_ListController extends Controller
      */
     public function hostsAction()
     {
-        if ($url = $this->hasBetterUrl()) {
-            return $this->redirectNow($url);
-        }
-
         // Handle soft and hard states
         if (strtolower($this->params->shift('stateType', 'soft')) === 'hard') {
             $stateColumn = 'host_hard_state';
@@ -149,10 +127,6 @@ class Monitoring_ListController extends Controller
      */
     public function servicesAction()
     {
-        if ($url = $this->hasBetterUrl()) {
-            return $this->redirectNow($url);
-        }
-
         // Handle soft and hard states
         if (strtolower($this->params->shift('stateType', 'soft')) === 'hard') {
             $stateColumn = 'service_hard_state';
@@ -247,10 +221,6 @@ class Monitoring_ListController extends Controller
      */
     public function downtimesAction()
     {
-        if ($url = $this->hasBetterUrl()) {
-            return $this->redirectNow($url);
-        }
-
         $this->addTitleTab('downtimes', $this->translate('Downtimes'), $this->translate('List downtimes'));
         $this->setAutorefreshInterval(12);
 
@@ -304,10 +274,6 @@ class Monitoring_ListController extends Controller
      */
     public function notificationsAction()
     {
-        if ($url = $this->hasBetterUrl()) {
-            return $this->redirectNow($url);
-        }
-
         $this->addTitleTab(
             'notifications',
             $this->translate('Notifications'),
@@ -337,10 +303,6 @@ class Monitoring_ListController extends Controller
 
     public function contactsAction()
     {
-        if ($url = $this->hasBetterUrl()) {
-            return $this->redirectNow($url);
-        }
-
         $this->addTitleTab('contacts', $this->translate('Contacts'), $this->translate('List contacts'));
 
         $query = $this->backend->select()->from('contact', array(
@@ -380,9 +342,6 @@ class Monitoring_ListController extends Controller
 
     public function eventgridAction()
     {
-        if ($url = $this->hasBetterUrl()) {
-            return $this->redirectNow($url);
-        }
         $this->addTitleTab('eventgrid', $this->translate('Event Grid'), $this->translate('Show the Event Grid'));
 
         $form = new StatehistoryForm();
@@ -422,10 +381,6 @@ class Monitoring_ListController extends Controller
 
     public function contactgroupsAction()
     {
-        if ($url = $this->hasBetterUrl()) {
-            return $this->redirectNow($url);
-        }
-
         $this->addTitleTab(
             'contactgroups',
             $this->translate('Contact Groups'),
@@ -465,10 +420,6 @@ class Monitoring_ListController extends Controller
 
     public function commentsAction()
     {
-        if ($url = $this->hasBetterUrl()) {
-            return $this->redirectNow($url);
-        }
-
         $this->addTitleTab('comments', $this->translate('Comments'), $this->translate('List comments'));
         $this->setAutorefreshInterval(12);
 
@@ -509,10 +460,6 @@ class Monitoring_ListController extends Controller
 
     public function servicegroupsAction()
     {
-        if ($url = $this->hasBetterUrl()) {
-            return $this->redirectNow($url);
-        }
-
         $this->addTitleTab(
             'servicegroups',
             $this->translate('Service Groups'),
@@ -568,10 +515,6 @@ class Monitoring_ListController extends Controller
 
     public function hostgroupsAction()
     {
-        if ($url = $this->hasBetterUrl()) {
-            return $this->redirectNow($url);
-        }
-
         $this->addTitleTab('hostgroups', $this->translate('Host Groups'), $this->translate('List host groups'));
         $this->setAutorefreshInterval(12);
 
@@ -623,10 +566,6 @@ class Monitoring_ListController extends Controller
 
     public function eventhistoryAction()
     {
-        if ($url = $this->hasBetterUrl()) {
-            return $this->redirectNow($url);
-        }
-
         $this->addTitleTab(
             'eventhistory',
             $this->translate('Event Overview'),
@@ -659,9 +598,6 @@ class Monitoring_ListController extends Controller
 
     public function servicegridAction()
     {
-        if ($url = $this->hasBetterUrl()) {
-            return $this->redirectNow($url);
-        }
         $this->addTitleTab('servicegrid', $this->translate('Service Grid'), $this->translate('Show the Service Grid'));
         $this->setAutorefreshInterval(15);
         $query = $this->backend->select()->from('serviceStatus', array(
