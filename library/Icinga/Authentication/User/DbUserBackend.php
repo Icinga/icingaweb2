@@ -5,6 +5,7 @@ namespace Icinga\Authentication\User;
 
 use Exception;
 use PDO;
+use Icinga\Data\Filter\Filter;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Repository\DbRepository;
 use Icinga\User;
@@ -41,6 +42,19 @@ class DbUserBackend extends DbRepository implements UserBackendInterface
     );
 
     /**
+     * The statement columns being provided
+     *
+     * @var array
+     */
+    protected $statementColumns = array(
+        'user' => array(
+            'password'      => 'password_hash',
+            'created_at'    => 'ctime',
+            'last_modified' => 'mtime'
+        )
+    );
+
+    /**
      * The columns which are not permitted to be queried
      *
      * @var array
@@ -62,6 +76,13 @@ class DbUserBackend extends DbRepository implements UserBackendInterface
     );
 
     /**
+     * The value conversion rules to apply on a query/statement
+     *
+     * @var array
+     */
+    protected $conversionRules = array('password');
+
+    /**
      * Initialize this database user backend
      */
     protected function init()
@@ -72,23 +93,91 @@ class DbUserBackend extends DbRepository implements UserBackendInterface
     }
 
     /**
-     * Add a new user
+     * Insert a table row with the given data
      *
-     * @param   string  $username   The name of the new user
-     * @param   string  $password   The new user's password
-     * @param   bool    $active     Whether the user is active
+     * @param   string  $table
+     * @param   array   $data
      */
-    public function addUser($username, $password, $active = true)
+    public function insert($table, array $data)
     {
-        $passwordHash = $this->hashPassword($password);
+        $newData['created_at'] = date('Y-m-d H:i:s');
+        $newData = $this->requireStatementColumns($data);
 
-        $stmt = $this->ds->getDbAdapter()->prepare(
-            'INSERT INTO icingaweb_user VALUES (:name, :active, :password_hash, now(), DEFAULT);'
-        );
-        $stmt->bindParam(':name', $username, PDO::PARAM_STR);
-        $stmt->bindParam(':active', $active, PDO::PARAM_INT);
-        $stmt->bindParam(':password_hash', $passwordHash, PDO::PARAM_LOB);
-        $stmt->execute();
+        $values = array();
+        foreach ($newData as $column => $_) {
+            $values[] = ':' . $column;
+        }
+
+        $sql = 'INSERT INTO '
+            . $this->prependTablePrefix($table)
+            . ' (' . join(', ', array_keys($newData)) . ') '
+            . 'VALUES (' . join(', ', $values) . ')';
+        $statement = $this->ds->getDbAdapter()->prepare($sql);
+
+        foreach ($newData as $column => $value) {
+            $type = PDO::PARAM_STR;
+            if ($column === 'password_hash') {
+                $type = PDO::PARAM_LOB;
+            } elseif ($column === 'active') {
+                $type = PDO::PARAM_INT;
+            }
+
+            $statement->bindValue(':' . $column, $value, $type);
+        }
+
+        $statement->execute();
+    }
+
+    /**
+     * Update table rows with the given data, optionally limited by using a filter
+     *
+     * @param   string  $table
+     * @param   array   $data
+     * @param   Filter  $filter
+     */
+    public function update($table, array $data, Filter $filter = null)
+    {
+        $newData['last_modified'] = date('Y-m-d H:i:s');
+        $newData = $this->requireStatementColumns($data);
+        if ($filter) {
+            $this->requireFilter($filter);
+        }
+
+        $set = array();
+        foreach ($newData as $column => $_) {
+            $set[] = $column . ' = :' . $column;
+        }
+
+        $sql = 'UPDATE '
+            . $this->prependTablePrefix($table)
+            . ' SET ' . join(', ', $set)
+            . ($filter ? ' WHERE ' . $this->ds->renderFilter($filter) : '');
+        $statement = $this->ds->getDbAdapter()->prepare($sql);
+
+        foreach ($newData as $column => $value) {
+            $type = PDO::PARAM_STR;
+            if ($column === 'password_hash') {
+                $type = PDO::PARAM_LOB;
+            } elseif ($column === 'active') {
+                $type = PDO::PARAM_INT;
+            }
+
+            $statement->bindValue(':' . $column, $value, $type);
+        }
+
+        $statement->execute();
+    }
+
+    /**
+     * Hash and return the given password
+     *
+     * @param   string  $value
+     *
+     * @return  string
+     */
+    protected function persistPassword($value)
+    {
+        return $this->hashPassword($value);
     }
 
     /**
