@@ -6,6 +6,7 @@ namespace Icinga\Web\Widget;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
 use Icinga\Data\Sortable;
+use Icinga\Application\Icinga;
 
 /**
  * SortBox widget
@@ -103,6 +104,17 @@ class SortBox extends AbstractWidget
     public function setQuery(Sortable $query)
     {
         $this->query = $query;
+        return $this;
+    }
+
+    public function handleRequest(Request $request = null)
+    {
+        if ($request === null) {
+            $request = Icinga::app()->getFrontController()->getRequest();
+        }
+        if ($sort = $request->getParam('sort')) {
+            $this->query->order($sort, $request->getParam('dir'));
+        }
         return $this;
     }
 
