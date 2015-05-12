@@ -16,6 +16,7 @@ class UserController extends Controller
      */
     public function init()
     {
+        parent::init();
         $this->createTabs();
     }
 
@@ -79,12 +80,15 @@ class UserController extends Controller
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->users);
-        $this->setupSortControl(array(
-            'user_name'     => $this->translate('Username'),
-            'is_active'     => $this->translate('Active'),
-            'created_at'    => $this->translate('Created at'),
-            'last_modified' => $this->translate('Last modified')
-        ));
+        $this->setupSortControl(
+            array(
+                'user_name'     => $this->translate('Username'),
+                'is_active'     => $this->translate('Active'),
+                'created_at'    => $this->translate('Created at'),
+                'last_modified' => $this->translate('Last modified')
+            ),
+            $query
+        );
     }
 
     /**
