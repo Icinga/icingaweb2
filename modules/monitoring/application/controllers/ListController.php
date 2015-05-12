@@ -119,7 +119,7 @@ class Monitoring_ListController extends Controller
             'host_display_name' => $this->translate('Hostname'),
             'host_address'      => $this->translate('Address'),
             'host_last_check'   => $this->translate('Last Check')
-        ));
+        ), $query);
     }
 
     /**
@@ -195,7 +195,7 @@ class Monitoring_ListController extends Controller
             'host_display_name'     => $this->translate('Hostname'),
             'host_address'          => $this->translate('Host Address'),
             'host_last_check'       => $this->translate('Last Host Check')
-        ));
+        ), $query);
 
         $this->view->stats = $this->backend->select()->from('statusSummary', array(
             'services_total',
@@ -261,7 +261,7 @@ class Monitoring_ListController extends Controller
             'downtime_scheduled_start'  => $this->translate('Scheduled Start'),
             'downtime_scheduled_end'    => $this->translate('Scheduled End'),
             'downtime_duration'         => $this->translate('Duration')
-        ));
+        ), $query);
 
         if ($this->Auth()->hasPermission('monitoring/command/downtime/delete')) {
             $this->view->delDowntimeForm = new DeleteDowntimeCommandForm();
@@ -298,7 +298,7 @@ class Monitoring_ListController extends Controller
         $this->setupPaginationControl($this->view->notifications);
         $this->setupSortControl(array(
             'notification_start_time' => $this->translate('Notification Start')
-        ));
+        ), $query);
     }
 
     public function contactsAction()
@@ -337,7 +337,7 @@ class Monitoring_ListController extends Controller
             'contact_pager' => $this->translate('Pager Address / Number'),
             'contact_notify_service_timeperiod' => $this->translate('Service Notification Timeperiod'),
             'contact_notify_host_timeperiod' => $this->translate('Host Notification Timeperiod')
-        ));
+        ), $query);
     }
 
     public function eventgridAction()
@@ -415,7 +415,7 @@ class Monitoring_ListController extends Controller
         $this->setupSortControl(array(
             'contactgroup_name'     => $this->translate('Contactgroup Name'),
             'contactgroup_alias'    => $this->translate('Contactgroup Alias')
-        ));
+        ), $query);
     }
 
     public function commentsAction()
@@ -449,7 +449,8 @@ class Monitoring_ListController extends Controller
                 'service_display_name'  => $this->translate('Service'),
                 'comment_type'          => $this->translate('Comment Type'),
                 'comment_expiration'    => $this->translate('Expiration')
-            )
+            ),
+            $query
         );
 
         if ($this->Auth()->hasPermission('monitoring/command/comment/delete')) {
@@ -510,7 +511,7 @@ class Monitoring_ListController extends Controller
             'services_critical'     => $this->translate('Services CRITICAL'),
             'services_warning'      => $this->translate('Services WARNING'),
             'services_pending'      => $this->translate('Services PENDING')
-        ));
+        ), $query);
     }
 
     public function hostgroupsAction()
@@ -561,7 +562,7 @@ class Monitoring_ListController extends Controller
             'services_critical' => $this->translate('Services CRITICAL'),
             'services_warning'  => $this->translate('Services WARNING'),
             'services_pending'  => $this->translate('Services PENDING')
-        ));
+        ), $query);
     }
 
     public function eventhistoryAction()
@@ -593,7 +594,7 @@ class Monitoring_ListController extends Controller
         $this->setupPaginationControl($this->view->history);
         $this->setupSortControl(array(
             'timestamp' => $this->translate('Occurence')
-        ));
+        ), $query);
     }
 
     public function servicegridAction()
@@ -611,7 +612,7 @@ class Monitoring_ListController extends Controller
         $this->setupSortControl(array(
             'host_name'           => $this->translate('Hostname'),
             'service_description' => $this->translate('Service description')
-        ));
+        ), $query);
         $pivot = $query->pivot('service_description', 'host_name');
         $this->view->pivot = $pivot;
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
@@ -633,9 +634,6 @@ class Monitoring_ListController extends Controller
         $this->setupFilterControl($editor);
         $this->view->filter = $editor->getFilter();
 
-        if ($sort = $this->params->get('sort')) {
-            $query->order($sort, $this->params->get('dir'));
-        }
         $this->handleFormatRequest($query);
         return $query;
     }
