@@ -152,3 +152,4 @@ class LogFileIterator implements Iterator
             $this->valid = false;
         }
     }
+}

@@ -22,7 +22,7 @@ class DashboardSettings implements Tabextension
             'dashboard_add',
             array(
                 'icon'      => 'img/icons/dashboard.png',
-                'label'     => t('Add To Dashboard'),
+                'label'     => t('Add New Pane Or Dashlet'),
                 'url'       => Url::fromPath('dashboard/new-dashlet')
             )
         );

@@ -1,0 +1,11 @@
+<div class="controls">
+       
+  <?php if (! $this->compact): ?>
+    <?= $this->tabs; ?>
+  <?php endif ?>
+
+  <?= $this->render('partials/downtime/downtime-header.phtml'); ?>
+</div>
+<div class="content object-command">
+    <?= $delDowntimeForm; ?>
+</div>

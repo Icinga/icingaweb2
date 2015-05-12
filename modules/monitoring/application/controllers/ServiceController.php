@@ -1,6 +1,7 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+use Icinga\Exception\MissingParameterException;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
@@ -25,12 +26,22 @@ class Monitoring_ServiceController extends MonitoredObjectController
      */
     public function init()
     {
+        if ($this->params->get('host') === null || $this->params->get('service') === null) {
+            throw new MissingParameterException(
+                $this->translate('One of the required parameters \'%s\' is missing'),
+                'host or service'
+            );
+        }
+
         $service = new Service($this->backend, $this->params->get('host'), $this->params->get('service'));
 
         $this->applyRestriction('monitoring/services/filter', $service);
 
         if ($service->fetch() === false) {
-            throw new Zend_Controller_Action_Exception($this->translate('Service not found'));
+            throw new Zend_Controller_Action_Exception(
+                sprintf($this->translate('Service \'%s\' not found'), $this->params->get('service')),
+                404
+            );
         }
         $this->object = $service;
         $this->createTabs();

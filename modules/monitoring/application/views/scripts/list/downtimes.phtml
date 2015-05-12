@@ -5,6 +5,12 @@ use Icinga\Module\Monitoring\Object\Service;
 if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
+    <div class="dontprint">
+        <?= $this->render('list/components/selectioninfo.phtml'); ?>
+    </div>
+    <div class="tinystatesummary">
+        <?= $downtimes->getTotalItemCount() ?> <?= $this->translate('Downtimes') ?>
+    </div>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
   <?= $this->paginator; ?>
@@ -15,12 +21,15 @@ if (! $this->compact): ?>
 <?php
 
 if (count($downtimes) === 0) {
-    echo $this->translate('No downtimes found matching the filter') . '</div>';
+    echo $this->translate('No downtimes found matching the filter,'
+            . ' maybe the downtime already expired.') . '</div>';
     return;
 }
 ?>
-
-  <table data-base-target="_next" class="action">
+  <table data-base-target="_next" 
+         class="action multiselect" 
+         data-icinga-multiselect-url="/icingaweb2/monitoring/downtimes/show"
+         data-icinga-multiselect-data="downtime_id">
     <tbody>
     <?php foreach ($downtimes as $downtime): ?>
     <?php
@@ -48,15 +57,22 @@ if (count($downtimes) === 0) {
             ?>
         </td>
         <td>
-        <?php if ($isService): ?>
-          <?= $this->icon('service', $this->translate('Service')); ?>
-          <?= $this->link()->service(
-              $downtime->service_description, $downtime->service_display_name, $downtime->host_name, $downtime->host_display_name
-          ) ?>
-        <?php else: ?>
-          <?= $this->icon('host', $this->translate('Host')); ?>
-          <?= $this->link()->host($downtime->host_name, $downtime->host_display_name) ?>
-        <?php endif ?>
+        <?php 
+            if ($isService) {
+                echo $this->icon('service');
+            } else {
+                echo $this->icon('host');
+            } 
+        ?>
+        <?= $this->qlink(
+            sprintf($this->translate('%s on %s', 'Service running on host'), $downtime->service_display_name, $downtime->host_display_name),
+                'monitoring/downtime/show',
+                array('downtime_id' => $downtime->id),
+                array('title' => sprintf(
+                $this->translate('Show detailed information for downtime on %s for %s'),
+                $downtime->service_display_name,
+                $downtime->host_display_name
+        ))) ?>
           <br>
           <?= $this->icon('comment', $this->translate('Comment')); ?> [<?= $this->escape($downtime->author_name) ?>] <?= $this->escape($downtime->comment) ?>
           <br>
@@ -112,15 +128,12 @@ if (count($downtimes) === 0) {
         <td style="width: 2em" data-base-target="self">
           <?php
           $delDowntimeForm = clone $delDowntimeForm;
-          $delDowntimeForm->populate(array('downtime_id' => $downtime->id, 'redirect' => $this->url));
-          if (! $isService) {
-            $delDowntimeForm->setAction($this->url('monitoring/host/delete-downtime', array('host' => $downtime->host_name)));
-          } else {
-            $delDowntimeForm->setAction($this->url('monitoring/service/delete-downtime', array(
-                'host'      => $downtime->host_name,
-                'service'   => $downtime->service_description
-            )));
-          }
+          $delDowntimeForm->populate(
+              array(
+                  'downtime_id' => $downtime->id,
+                  'downtime_is_service' => isset($downtime->service_description)
+              )
+          );
           echo $delDowntimeForm;
           ?>
         </td>

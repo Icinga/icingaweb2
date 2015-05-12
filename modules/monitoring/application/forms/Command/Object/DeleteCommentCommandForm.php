@@ -4,12 +4,13 @@
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\DeleteCommentCommand;
+use Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 
 /**
  * Form for deleting host or service comments
  */
-class DeleteCommentCommandForm extends ObjectsCommandForm
+class DeleteCommentCommandForm extends CommandForm
 {
     /**
      * (non-PHPDoc)
@@ -26,23 +27,34 @@ class DeleteCommentCommandForm extends ObjectsCommandForm
      */
     public function createElements(array $formData = array())
     {
-        $this->addElements(array(
+         $this->addElements(
             array(
-                'hidden',
-                'comment_id',
                 array(
-                    'required'      => true,
-                    'decorators'    => array('ViewHelper')
-                )
-            ),
-            array(
-                'hidden',
-                'redirect',
+                    'hidden',
+                    'comment_id',
+                    array(
+                        'required' => true,
+                        'validators' => array('NotEmpty'),
+                        'decorators' => array('ViewHelper')
+                    )
+                ),
                 array(
-                    'decorators' => array('ViewHelper')
+                    'hidden',
+                    'comment_is_service',
+                    array(
+                        'filters' => array('Boolean'),
+                        'decorators' => array('ViewHelper')
+                    )
+                ),
+                array(
+                    'hidden',
+                    'redirect',
+                    array(
+                        'decorators' => array('ViewHelper')
+                    )
                 )
             )
-        ));
+        );
         return $this;
     }
 
@@ -74,14 +86,10 @@ class DeleteCommentCommandForm extends ObjectsCommandForm
      */
     public function onSuccess()
     {
-        foreach ($this->objects as $object) {
-            /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
-            $delComment = new DeleteCommentCommand();
-            $delComment
-                ->setObject($object)
-                ->setCommentId($this->getElement('comment_id')->getValue());
-            $this->getTransport($this->request)->send($delComment);
-        }
+        $cmd = new DeleteCommentCommand();
+        $cmd->setIsService($this->getElement('comment_is_service')->getValue())
+             ->setCommentId($this->getElement('comment_id')->getValue());
+        $this->getTransport($this->request)->send($cmd);
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);
