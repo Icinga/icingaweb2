@@ -370,7 +370,11 @@ abstract class IdoQuery extends DbQuery
                 if ($count > 0) {
                     $this->columnsWithoutCollation[] = $this->getMappedField($key);
                 }
-                $value = preg_replace('/inet_aton\(([[:word:].]+)\)/i', '$1::inet - \'0.0.0.0\'', $value);
+                $value = preg_replace(
+                    '/inet_aton\(([[:word:].]+)\)/i',
+                    '(CASE WHEN $1 ~ \'(?:[0-9]{1,3}\\\\.){3}[0-9]{1,3}\' THEN $1::inet - \'0.0.0.0\' ELSE NULL END)',
+                    $value
+                );
                 $value = preg_replace(
                     '/UNIX_TIMESTAMP(\((?>[^()]|(?-1))*\))/i',
                     'CASE WHEN ($1 < \'1970-01-03 00:00:00+00\'::timestamp with time zone) THEN 0 ELSE UNIX_TIMESTAMP($1) END',
