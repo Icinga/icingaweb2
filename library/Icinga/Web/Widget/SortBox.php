@@ -109,11 +109,13 @@ class SortBox extends AbstractWidget
 
     public function handleRequest(Request $request = null)
     {
-        if ($request === null) {
-            $request = Icinga::app()->getFrontController()->getRequest();
-        }
-        if ($sort = $request->getParam('sort')) {
-            $this->query->order($sort, $request->getParam('dir'));
+        if ($this->query !== null) {
+            if ($request === null) {
+                $request = Icinga::app()->getFrontController()->getRequest();
+            }
+            if ($sort = $request->getParam('sort')) {
+                $this->query->order($sort, $request->getParam('dir'));
+            }
         }
         return $this;
     }
