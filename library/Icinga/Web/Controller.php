@@ -16,23 +16,49 @@ use Icinga\Web\Widget\Limiter;
 class Controller extends ModuleActionController
 {
     /**
+     * @see ActionController::init
+     */
+    public function init()
+    {
+        parent::init();
+
+        $request = $this->getRequest();
+        $url = Url::fromRequest();
+
+        if ($request->isPost() && ($sort = $request->getPost('sort'))) {
+            $url->setParam('sort', $sort);
+            if ($dir = $request->getPost('dir')) {
+                $url->setParam('dir', $dir);
+            } else {
+                $url->removeParam('dir');
+            }
+            $this->redirectNow($url);
+        }
+    }
+
+    /**
      * Create a SortBox widget at the `sortBox' view property
      *
      * In case the current view has been requested as compact this method does nothing.
      *
-     * @param   array   $columns    An array containing the sort columns, with the
+     * @param   array    $columns    An array containing the sort columns, with the
      *                               submit value as the key and the label as the value
+     * @param   Sortable $query      Query to set on the newly created SortBox
      *
      * @return  $this
      */
-    protected function setupSortControl(array $columns)
+    protected function setupSortControl(array $columns, Sortable $query = null)
     {
         if (! $this->view->compact) {
             $req = $this->getRequest();
-            $this->view->sortBox = SortBox::create(
+            $this->view->sortBox = $sortBox = SortBox::create(
                 'sortbox-' . $req->getActionName(),
                 $columns
-            )->applyRequest($req);
+            )->setRequest($req);
+            if ($query !== null) {
+                $sortBox->setQuery($query);
+            }
+            $sortBox->handleRequest();
         }
 
         return $this;
