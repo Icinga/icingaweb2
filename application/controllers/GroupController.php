@@ -16,6 +16,7 @@ class GroupController extends Controller
      */
     public function init()
     {
+        parent::init();
         $this->createTabs();
     }
 
@@ -79,12 +80,15 @@ class GroupController extends Controller
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->groups);
-        $this->setupSortControl(array(
-            'group_name'    => $this->translate('Group'),
-            'parent_name'   => $this->translate('Parent'),
-            'created_at'    => $this->translate('Created at'),
-            'last_modified' => $this->translate('Last modified')
-        ));
+        $this->setupSortControl(
+            array(
+                'group_name'    => $this->translate('Group'),
+                'parent_name'   => $this->translate('Parent'),
+                'created_at'    => $this->translate('Created at'),
+                'last_modified' => $this->translate('Last modified')
+            ),
+            $query
+        );
     }
 
     /**
