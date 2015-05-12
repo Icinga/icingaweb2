@@ -50,7 +50,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 if (! $compact) {
                     foreach ($perfdata->toArray() as $value) {
                         if ($value === '') {
-                            $value = '0';
+                            $value = '-';
                         }
                         $row .= '<td>' . (string) $value . '</td>';
                     }
