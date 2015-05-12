@@ -34,7 +34,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      */
     public function insert($target, array $data)
     {
-        $newData = $this->requireStatementColumns($data);
+        $newData = $this->requireStatementColumns($target, $data);
         $section = $this->extractSectionName($target, $newData);
 
         if ($this->ds->hasSection($section)) {
@@ -65,7 +65,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      */
     public function update($target, array $data, Filter $filter = null)
     {
-        $newData = $this->requireStatementColumns($data);
+        $newData = $this->requireStatementColumns($target, $data);
         $keyColumn = $this->ds->getConfigObject()->getKeyColumn();
         if ($keyColumn && $filter === null && isset($newData[$keyColumn]) && !$this->ds->hasSection($target)) {
             throw new StatementException(
@@ -82,7 +82,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
             $contents = array($target => $this->ds->getSection($target));
         } else {
             if ($filter) {
-                $this->requireFilter($filter);
+                $this->requireFilter($target, $filter);
             }
 
             $contents = iterator_to_array($this->ds);
@@ -148,7 +148,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
             $this->ds->removeSection($target);
         } else {
             if ($filter) {
-                $this->requireFilter($filter);
+                $this->requireFilter($target, $filter);
             }
 
             foreach (iterator_to_array($this->ds) as $section => $config) {

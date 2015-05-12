@@ -574,35 +574,38 @@ abstract class Repository implements Selectable
     }
 
     /**
-     * Recurse the given filter, require each filter column and convert all values
+     * Recurse the given filter, require each column for the given table and convert all values
      *
+     * @param   string  $table
      * @param   Filter  $filter
      */
-    public function requireFilter(Filter $filter)
+    public function requireFilter($table, Filter $filter)
     {
         if ($filter->isExpression()) {
             $column = $filter->getColumn();
-            $filter->setColumn($this->requireFilterColumn($column));
+            $filter->setColumn($this->requireFilterColumn($table, $column));
             $filter->setExpression($this->persistColumn($column, $filter->getExpression()));
         } elseif ($filter->isChain()) {
             foreach ($filter->filters() as $chainOrExpression) {
-                $this->requireFilter($chainOrExpression);
+                $this->requireFilter($table, $chainOrExpression);
             }
         }
     }
 
     /**
-     * Return this repository's query columns mapped to their respective aliases
+     * Return this repository's query columns of the given table mapped to their respective aliases
+     *
+     * @param   string  $table
      *
      * @return  array
      */
-    public function requireAllQueryColumns()
+    public function requireAllQueryColumns($table)
     {
         $map = array();
         foreach ($this->getAliasColumnMap() as $alias => $_) {
-            if ($this->hasQueryColumn($alias)) {
+            if ($this->hasQueryColumn($table, $alias)) {
                 // Just in case $this->requireQueryColumn has been overwritten and there is some magic going on
-                $map[$alias] = $this->requireQueryColumn($alias);
+                $map[$alias] = $this->requireQueryColumn($table, $alias);
             }
         }
 
@@ -610,27 +613,48 @@ abstract class Repository implements Selectable
     }
 
     /**
+     * Return whether the given query column name or alias is available in the given table
+     *
+     * @param   string  $table
+     * @param   string  $column
+     *
+     * @return  bool
+     */
+    public function validateQueryColumnAssociation($table, $column)
+    {
+        $aliasTableMap = $this->getAliasTableMap();
+        return $aliasTableMap[$column] === $table;
+    }
+
+    /**
      * Return whether the given column name or alias is a valid query column
      *
+     * @param   string  $table  The table where to look for the column or alias
      * @param   string  $name   The column name or alias to check
      *
      * @return  bool
      */
-    public function hasQueryColumn($name)
+    public function hasQueryColumn($table, $name)
     {
-        return array_key_exists($name, $this->getAliasColumnMap()) && !in_array($name, $this->getFilterColumns());
+        if (in_array($name, $this->getFilterColumns())) {
+            return false;
+        }
+
+        return array_key_exists($name, $this->getAliasColumnMap())
+            && $this->validateQueryColumnAssociation($table, $name);
     }
 
     /**
      * Validate that the given column is a valid query target and return it or the actual name if it's an alias
      *
+     * @param   string  $table      The table where to look for the column or alias
      * @param   string  $name       The name or alias of the column to validate
      *
      * @return  string              The given column's name
      *
      * @throws  QueryException      In case the given column is not a valid query column
      */
-    public function requireQueryColumn($name)
+    public function requireQueryColumn($table, $name)
     {
         if (in_array($name, $this->getFilterColumns())) {
             throw new QueryException(t('Filter column "%s" cannot be queried'), $name);
@@ -641,62 +665,75 @@ abstract class Repository implements Selectable
             throw new QueryException(t('Query column "%s" not found'), $name);
         }
 
-        return $aliasColumnMap[$name];
-    }
-
-    /**
-     * Return whether the given column name or alias is a valid filter column
-     *
-     * @param   string  $name   The column name or alias to check
-     *
-     * @return  bool
-     */
-    public function hasFilterColumn($name)
-    {
-        return array_key_exists($name, $this->getAliasColumnMap());
-    }
-
-    /**
-     * Validate that the given column is a valid filter target and return it or the actual name if it's an alias
-     *
-     * @param   string  $name       The name or alias of the column to validate
-     *
-     * @return  string              The given column's name
-     *
-     * @throws  QueryException      In case the given column is not a valid filter column
-     */
-    public function requireFilterColumn($name)
-    {
-        $aliasColumnMap = $this->getAliasColumnMap();
-        if (! array_key_exists($name, $aliasColumnMap)) {
-            throw new QueryException(t('Filter column "%s" not found'), $name);
+        if (! $this->validateQueryColumnAssociation($table, $name)) {
+            throw new QueryException(t('Query column "%s" not found in table "%s"'), $name, $table);
         }
 
         return $aliasColumnMap[$name];
     }
 
     /**
-     * Return whether the given column name or alias is a valid statement column
+     * Return whether the given column name or alias is a valid filter column
      *
+     * @param   string  $table  The table where to look for the column or alias
      * @param   string  $name   The column name or alias to check
      *
      * @return  bool
      */
-    public function hasStatementColumn($name)
+    public function hasFilterColumn($table, $name)
     {
-        return $this->hasQueryColumn($name);
+        return array_key_exists($name, $this->getAliasColumnMap())
+            && $this->validateQueryColumnAssociation($table, $name);
+    }
+
+    /**
+     * Validate that the given column is a valid filter target and return it or the actual name if it's an alias
+     *
+     * @param   string  $table      The table where to look for the column or alias
+     * @param   string  $name       The name or alias of the column to validate
+     *
+     * @return  string              The given column's name
+     *
+     * @throws  QueryException      In case the given column is not a valid filter column
+     */
+    public function requireFilterColumn($table, $name)
+    {
+        $aliasColumnMap = $this->getAliasColumnMap();
+        if (! array_key_exists($name, $aliasColumnMap)) {
+            throw new QueryException(t('Filter column "%s" not found'), $name);
+        }
+
+        if (! $this->validateQueryColumnAssociation($table, $name)) {
+            throw new QueryException(t('Filter column "%s" not found in table "%s"'), $name, $table);
+        }
+
+        return $aliasColumnMap[$name];
+    }
+
+    /**
+     * Return whether the given column name or alias of the given table is a valid statement column
+     *
+     * @param   string  $table  The table where to look for the column or alias
+     * @param   string  $name   The column name or alias to check
+     *
+     * @return  bool
+     */
+    public function hasStatementColumn($table, $name)
+    {
+        return $this->hasQueryColumn($table, $name);
     }
 
     /**
      * Validate that the given column is a valid statement column and return it or the actual name if it's an alias
      *
+     * @param   string  $table      The table for which to require the column
      * @param   string  $name       The name or alias of the column to validate
      *
      * @return  string              The given column's name
      *
      * @throws  StatementException  In case the given column is not a statement column
      */
-    public function requireStatementColumn($name)
+    public function requireStatementColumn($table, $name)
     {
         if (in_array($name, $this->filterColumns)) {
             throw new StatementException('Filter column "%s" cannot be referenced in a statement', $name);
@@ -707,21 +744,26 @@ abstract class Repository implements Selectable
             throw new StatementException('Statement column "%s" not found', $name);
         }
 
+        if (! $this->validateQueryColumnAssociation($table, $name)) {
+            throw new StatementException('Statement column "%s" not found in table "%s"', $name, $table);
+        }
+
         return $aliasColumnMap[$name];
     }
 
     /**
-     * Resolve the given aliases or column names supposed to be persisted and convert their values
+     * Resolve the given aliases or column names of the given table supposed to be persisted and convert their values
      *
+     * @param   string  $table
      * @param   array   $data
      *
      * @return  array
      */
-    public function requireStatementColumns(array $data)
+    public function requireStatementColumns($table, array $data)
     {
         $resolved = array();
         foreach ($data as $alias => $value) {
-            $resolved[$this->requireStatementColumn($alias)] = $this->persistColumn($alias, $value);
+            $resolved[$this->requireStatementColumn($table, $alias)] = $this->persistColumn($alias, $value);
         }
 
         return $resolved;

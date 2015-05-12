@@ -101,7 +101,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface
     public function insert($table, array $data)
     {
         $newData['created_at'] = date('Y-m-d H:i:s');
-        $newData = $this->requireStatementColumns($data);
+        $newData = $this->requireStatementColumns($table, $data);
 
         $values = array();
         foreach ($newData as $column => $_) {
@@ -138,9 +138,9 @@ class DbUserBackend extends DbRepository implements UserBackendInterface
     public function update($table, array $data, Filter $filter = null)
     {
         $newData['last_modified'] = date('Y-m-d H:i:s');
-        $newData = $this->requireStatementColumns($data);
+        $newData = $this->requireStatementColumns($table, $data);
         if ($filter) {
-            $this->requireFilter($filter);
+            $this->requireFilter($table, $filter);
         }
 
         $set = array();

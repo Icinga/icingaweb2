@@ -29,6 +29,13 @@ class RepositoryQuery implements QueryInterface
     protected $query;
 
     /**
+     * The current target to be queried
+     *
+     * @var mixed
+     */
+    protected $target;
+
+    /**
      * Create a new repository query
      *
      * @param   Repository  $repository     The repository to use
@@ -54,14 +61,15 @@ class RepositoryQuery implements QueryInterface
      *
      * This notifies the repository about each desired query column.
      *
-     * @param   mixed   $target     The type and purpose of this parameter depends on this query's repository
+     * @param   mixed   $target     The target from which to fetch the columns
      * @param   array   $columns    If null or an empty array, all columns will be fetched
      *
      * @return  $this
      */
     public function from($target, array $columns = null)
     {
-        $this->query->from($target, $this->prepareQueryColumns($columns));
+        $this->query->from($target, $this->prepareQueryColumns($target, $columns));
+        $this->target = $target;
         return $this;
     }
 
@@ -86,7 +94,7 @@ class RepositoryQuery implements QueryInterface
      */
     public function columns(array $columns)
     {
-        $this->query->columns($this->prepareQueryColumns($columns));
+        $this->query->columns($this->prepareQueryColumns($this->target, $columns));
         return $this;
     }
 
@@ -95,18 +103,19 @@ class RepositoryQuery implements QueryInterface
      *
      * This notifies the repository about each desired query column.
      *
+     * @param   mixed   $target             The target where to look for each column
      * @param   array   $desiredColumns     Pass null or an empty array to require all query columns
      *
      * @return  array                       The desired columns indexed by their respective alias
      */
-    protected function prepareQueryColumns(array $desiredColumns = null)
+    protected function prepareQueryColumns($target, array $desiredColumns = null)
     {
         if (empty($desiredColumns)) {
-            $columns = $this->repository->requireAllQueryColumns();
+            $columns = $this->repository->requireAllQueryColumns($target);
         } else {
             $columns = array();
             foreach ($desiredColumns as $customAlias => $columnAlias) {
-                $resolvedColumn = $this->repository->requireQueryColumn($columnAlias);
+                $resolvedColumn = $this->repository->requireQueryColumn($target, $columnAlias);
                 if ($resolvedColumn !== $columnAlias) {
                     $columns[is_string($customAlias) ? $customAlias : $columnAlias] = $resolvedColumn;
                 } elseif (is_string($customAlias)) {
@@ -133,7 +142,7 @@ class RepositoryQuery implements QueryInterface
     public function where($column, $value = null)
     {
         $this->query->where(
-            $this->repository->requireFilterColumn($column),
+            $this->repository->requireFilterColumn($this->target, $column),
             $this->repository->persistColumn($column, $value)
         );
         return $this;
@@ -164,7 +173,7 @@ class RepositoryQuery implements QueryInterface
      */
     public function setFilter(Filter $filter)
     {
-        $this->repository->requireFilter($filter);
+        $this->repository->requireFilter($this->target, $filter);
         $this->query->setFilter($filter);
         return $this;
     }
@@ -180,7 +189,7 @@ class RepositoryQuery implements QueryInterface
      */
     public function addFilter(Filter $filter)
     {
-        $this->repository->requireFilter($filter);
+        $this->repository->requireFilter($this->target, $filter);
         $this->query->addFilter($filter);
         return $this;
     }
@@ -245,7 +254,7 @@ class RepositoryQuery implements QueryInterface
 
             try {
                 $this->query->order(
-                    $this->repository->requireFilterColumn($column),
+                    $this->repository->requireFilterColumn($this->target, $column),
                     $direction ? $baseDirection : ($specificDirection ?: $baseDirection)
                 );
             } catch (QueryException $_) {

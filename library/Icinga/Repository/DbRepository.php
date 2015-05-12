@@ -9,6 +9,7 @@ use Icinga\Data\Reducible;
 use Icinga\Data\Updatable;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\StatementException;
 
 /**
  * Abstract base class for concrete database repository implementations
@@ -102,6 +103,37 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     }
 
     /**
+     * Remove the datasource's prefix from the given table name and return the remaining part
+     *
+     * @param   mixed   $table
+     *
+     * @return  mixed
+     */
+    protected function removeTablePrefix($table)
+    {
+        $prefix = $this->ds->getTablePrefix();
+        if (! $prefix) {
+            return $table;
+        }
+
+        if (is_array($table)) {
+            foreach ($table as & $tableName) {
+                if (strpos($tableName, $prefix) === 0) {
+                    $tableName = str_replace($prefix, '', $tableName);
+                }
+            }
+        } elseif (is_string($table)) {
+            if (strpos($table, $prefix) === 0) {
+                $table = str_replace($prefix, '', $table);
+            }
+        } else {
+            throw new IcingaException('Table prefix handling for type "%s" is not supported', type($table));
+        }
+
+        return $table;
+    }
+
+    /**
      * Insert a table row with the given data
      *
      * @param   string  $table
@@ -109,7 +141,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function insert($table, array $bind)
     {
-        $this->ds->insert($this->prependTablePrefix($table), $this->requireStatementColumns($bind));
+        $this->ds->insert($this->prependTablePrefix($table), $this->requireStatementColumns($table, $bind));
     }
 
     /**
@@ -122,10 +154,10 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     public function update($table, array $bind, Filter $filter = null)
     {
         if ($filter) {
-            $this->requireFilter($filter);
+            $this->requireFilter($table, $filter);
         }
 
-        $this->ds->update($this->prependTablePrefix($table), $this->requireStatementColumns($bind), $filter);
+        $this->ds->update($this->prependTablePrefix($table), $this->requireStatementColumns($table, $bind), $filter);
     }
 
     /**
@@ -137,7 +169,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     public function delete($table, Filter $filter = null)
     {
         if ($filter) {
-            $this->requireFilter($filter);
+            $this->requireFilter($table, $filter);
         }
 
         $this->ds->delete($this->prependTablePrefix($table), $filter);
@@ -216,17 +248,56 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     }
 
     /**
-     * Return whether the given column name or alias is a valid statement column
+     * Return whether the given query column name or alias is available in the given table
      *
+     * @param   mixed   $table
+     * @param   string  $column
+     *
+     * @return  bool
+     */
+    public function validateQueryColumnAssociation($table, $column)
+    {
+        if (is_array($table)) {
+            $table = array_shift($table);
+        }
+
+        return parent::validateQueryColumnAssociation($this->removeTablePrefix($table), $column);
+    }
+
+    /**
+     * Return whether the given statement column name or alias is available in the given table
+     *
+     * @param   mixed   $table
+     * @param   string  $column
+     *
+     * @return  bool
+     */
+    public function validateStatementColumnAssociation($table, $column)
+    {
+        if (is_array($table)) {
+            $table = array_shift($table);
+        }
+
+        $statementTableMap = $this->getStatementTableMap();
+        return $statementTableMap[$column] === $this->removeTablePrefix($table);
+    }
+
+    /**
+     * Return whether the given column name or alias of the given table is a valid statement column
+     *
+     * @param   mixed   $table  The table where to look for the column or alias
      * @param   string  $name   The column name or alias to check
      *
      * @return  bool
      */
-    public function hasStatementColumn($name)
+    public function hasStatementColumn($table, $name)
     {
         $statementColumnMap = $this->getStatementColumnMap();
-        if (! array_key_exists($name, $statementColumnMap)) {
-            return parent::hasStatementColumn($name);
+        if (
+            ! array_key_exists($name, $statementColumnMap)
+            || !$this->validateStatementColumnAssociation($table, $name)
+        ) {
+            return parent::hasStatementColumn($table, $name);
         }
 
         return true;
@@ -235,17 +306,22 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Validate that the given column is a valid statement column and return it or the actual name if it's an alias
      *
+     * @param   mixed   $table      The table for which to require the column
      * @param   string  $name       The name or alias of the column to validate
      *
      * @return  string              The given column's name
      *
-     * @throws  QueryException      In case the given column is not a statement column
+     * @throws  StatementException  In case the given column is not a statement column
      */
-    public function requireStatementColumn($name)
+    public function requireStatementColumn($table, $name)
     {
         $statementColumnMap = $this->getStatementColumnMap();
         if (! array_key_exists($name, $statementColumnMap)) {
-            return parent::requireStatementColumn($name);
+            return parent::requireStatementColumn($table, $name);
+        }
+
+        if (! $this->validateStatementColumnAssociation($table, $name)) {
+            throw new StatementException('Statement column "%s" not found in table "%s"', $name, $table);
         }
 
         return $statementColumnMap[$name];
