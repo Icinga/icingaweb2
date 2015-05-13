@@ -32,7 +32,7 @@ If your web server is not configured for authentication though the `autologin` s
 ### <a id="authentication-configuration-ad-or-ldap-authentication"></a> Active Directory or LDAP Authentication
 
 If you want to authenticate against Active Directory or LDAP, you have to define a
-[LDAP resource](#resources-configuration-ldap) which will be referenced as data source for the Active Directory
+[LDAP resource](resources.md#resources-configuration-ldap) which will be referenced as data source for the Active Directory
 or LDAP configuration method.
 
 #### <a id="authentication-configuration-ldap-authentication"></a> LDAP
@@ -40,7 +40,7 @@ or LDAP configuration method.
 Directive               | Description
 ------------------------|------------
 **backend**             | `ldap`
-**resource**            | The name of the LDAP resource defined in [resources.ini](#resources).
+**resource**            | The name of the LDAP resource defined in [resources.ini](resources.md#resources).
 **user_class**          | LDAP user class.
 **user_name_attribute** | LDAP attribute which contains the username.
 
