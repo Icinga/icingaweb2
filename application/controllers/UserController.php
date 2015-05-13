@@ -4,6 +4,7 @@
 use \Exception;
 use \Zend_Controller_Action_Exception;
 use Icinga\Application\Config;
+use Icinga\Application\Logger;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\UserBackendInterface;
 use Icinga\Web\Controller;
@@ -81,6 +82,7 @@ class UserController extends Controller
             $this->setupPaginationControl($this->view->users);
         } catch (Exception $e) {
             Notification::error($e->getMessage());
+            Logger::error($e);
         }
 
         $this->view->backend = $backend;
