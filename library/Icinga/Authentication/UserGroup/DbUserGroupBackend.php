@@ -102,19 +102,23 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      */
     public function getMemberships(User $user)
     {
+        $groupStmt = $this->ds->select()
+            ->from($this->prependTablePrefix('group'), array('name', 'parent'))
+            ->getSelectQuery()
+            ->query();
         $groups = array();
-        $groupsStmt = $this->select(array('group_name', 'parent_name'))->getQuery()->getSelectQuery()->query();
-        foreach ($groupsStmt as $group) {
-            $groups[$group->group_name] = $group->parent_name;
+        foreach ($groupStmt as $group) {
+            $groups[$group->name] = $group->parent;
         }
 
-        $memberships = array();
-        $membershipsStmt = $this->ds->getDbAdapter() // TODO: Use the join feature, once available
-            ->select()
-            ->from($this->ds->getTablePrefix() . 'group_membership', array('group_name'))
-            ->where('username = ?', $user->getUsername())
+        $membershipStmt = $this->ds->select() // TODO: Join this table
+            ->from($this->prependTablePrefix('group_membership'), array('group_name'))
+            ->where('username', $user->getUsername())
+            ->getSelectQuery()
             ->query();
-        foreach ($membershipsStmt as $membership) {
+        $memberships = array();
+
+        foreach ($membershipStmt as $membership) {
             $memberships[] = $membership->group_name;
             $parent = $groups[$membership->group_name];
             while ($parent !== null) {
