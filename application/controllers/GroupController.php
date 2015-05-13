@@ -1,12 +1,14 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+use \Exception;
 use \Zend_Controller_Action_Exception;
 use Icinga\Application\Config;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackendInterface;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
+use Icinga\Web\Notification;
 use Icinga\Web\Widget;
 
 class GroupController extends Controller
@@ -74,12 +76,17 @@ class GroupController extends Controller
         $query->applyFilter($filterEditor->getFilter());
         $this->setupFilterControl($filterEditor);
 
-        $this->getTabs()->activate('group/list');
+        try {
+            $this->view->groups = $query->paginate();
+            $this->setupPaginationControl($this->view->groups);
+        } catch (Exception $e) {
+            Notification::error($e->getMessage());
+        }
+
         $this->view->backend = $backend;
-        $this->view->groups = $query->paginate();
+        $this->getTabs()->activate('group/list');
 
         $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->groups);
         $this->setupSortControl(
             array(
                 'group_name'    => $this->translate('Group'),

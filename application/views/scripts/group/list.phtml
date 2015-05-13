@@ -18,6 +18,11 @@ if ($backend === null) {
     return;
 }
 
+if (! isset($groups)) {
+    echo $this->translate('Failed to fetch any groups') . '</div>';
+    return;
+}
+
 if (count($groups) === 0) {
     echo $this->translate('No groups found matching the filter') . '</div>';
     return;
