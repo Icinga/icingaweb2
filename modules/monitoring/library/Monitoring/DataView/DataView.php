@@ -238,11 +238,11 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
             };
         }
 
-        $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : static::SORT_ASC) : $order;
-        $order = (strtoupper($order) === static::SORT_ASC) ? 'ASC' : 'DESC';
+        $globalDefaultOrder = isset($sortColumns['order']) ? $sortColumns['order'] : static::SORT_ASC;
+        $globalDefaultOrder = (strtoupper($globalDefaultOrder) === static::SORT_ASC) ? 'ASC' : 'DESC';
 
         foreach ($sortColumns['columns'] as $column) {
-            list($column, $direction) = $this->query->splitOrder($column);
+            list($column, $specificDefaultOrder) = $this->query->splitOrder($column);
             if (! $this->isValidFilterTarget($column)) {
                 throw new QueryException(
                     mt('monitoring', 'The sort column "%s" is not allowed in "%s".'),
@@ -250,7 +250,10 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
                     get_class($this)
                 );
             }
-            $this->query->order($column, $direction !== null ? $direction : $order);
+            $this->query->order(
+                $column,
+                $order === null && $specificDefaultOrder !== null ? $specificDefaultOrder : $globalDefaultOrder
+            );
         }
         $this->isSorted = true;
         return $this;
