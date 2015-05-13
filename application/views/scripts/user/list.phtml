@@ -18,6 +18,11 @@ if ($backend === null) {
     return;
 }
 
+if (! isset($users)) {
+    echo $this->translate('Failed to fetch any users') . '</div>';
+    return;
+}
+
 if (count($users) === 0) {
     echo $this->translate('No users found matching the filter') . '</div>';
     return;

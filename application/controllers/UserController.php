@@ -1,12 +1,14 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+use \Exception;
 use \Zend_Controller_Action_Exception;
 use Icinga\Application\Config;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\UserBackendInterface;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
+use Icinga\Web\Notification;
 use Icinga\Web\Widget;
 
 class UserController extends Controller
@@ -74,12 +76,17 @@ class UserController extends Controller
         $query->applyFilter($filterEditor->getFilter());
         $this->setupFilterControl($filterEditor);
 
-        $this->getTabs()->activate('user/list');
+        try {
+            $this->view->users = $query->paginate();
+            $this->setupPaginationControl($this->view->users);
+        } catch (Exception $e) {
+            Notification::error($e->getMessage());
+        }
+
         $this->view->backend = $backend;
-        $this->view->users = $query->paginate();
+        $this->getTabs()->activate('user/list');
 
         $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->users);
         $this->setupSortControl(
             array(
                 'user_name'     => $this->translate('Username'),
