@@ -21,7 +21,7 @@ class UserGroupBackend
      */
     protected static $defaultBackends = array(
         'db',
-        'ini'
+        //'ini'
     );
 
     /**
