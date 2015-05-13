@@ -252,17 +252,64 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     protected function initializeStatementMaps()
     {
+        $this->statementTableMap = array();
+        $this->statementColumnMap = array();
         foreach ($this->getStatementColumns() as $table => $columns) {
             foreach ($columns as $alias => $column) {
-                if (! is_string($alias)) {
-                    $this->statementTableMap[$column] = $table;
-                    $this->statementColumnMap[$column] = $column;
+                $key = is_string($alias) ? $alias : $column;
+                if (array_key_exists($key, $this->statementTableMap)) {
+                    if ($this->statementTableMap[$key] !== null) {
+                        $existingTable = $this->statementTableMap[$key];
+                        $existingColumn = $this->statementColumnMap[$key];
+                        $this->statementTableMap[$existingTable . '.' . $key] = $existingTable;
+                        $this->statementColumnMap[$existingTable . '.' . $key] = $existingColumn;
+                        $this->statementTableMap[$key] = null;
+                        $this->statementColumnMap[$key] = null;
+                    }
+
+                    $this->statementTableMap[$table . '.' . $key] = $table;
+                    $this->statementColumnMap[$table . '.' . $key] = $column;
                 } else {
-                    $this->statementTableMap[$alias] = $table;
-                    $this->statementColumnMap[$alias] = $column;
+                    $this->statementTableMap[$key] = $table;
+                    $this->statementColumnMap[$key] = $column;
                 }
             }
         }
+    }
+
+    /**
+     * Return this repository's query columns of the given table mapped to their respective aliases
+     *
+     * @param   mixed   $table
+     *
+     * @return  array
+     *
+     * @throws  ProgrammingError    In case $table does not exist
+     */
+    public function requireAllQueryColumns($table)
+    {
+        if (is_array($table)) {
+            $table = array_shift($table);
+        }
+
+        return parent::requireAllQueryColumns($this->removeTablePrefix($table));
+    }
+
+    /**
+     * Return the query column name for the given alias or null in case the alias does not exist
+     *
+     * @param   mixed   $table
+     * @param   string  $alias
+     *
+     * @return  string|null
+     */
+    public function resolveQueryColumnAlias($table, $alias)
+    {
+        if (is_array($table)) {
+            $table = array_shift($table);
+        }
+
+        return parent::resolveQueryColumnAlias($this->removeTablePrefix($table), $alias);
     }
 
     /**
@@ -283,21 +330,51 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     }
 
     /**
-     * Return whether the given statement column name or alias is available in the given table
+     * Return the statement column name for the given alias or null in case the alias does not exist
      *
      * @param   mixed   $table
-     * @param   string  $column
+     * @param   string  $alias
+     *
+     * @return  string|null
+     */
+    public function resolveStatementColumnAlias($table, $alias)
+    {
+        if (is_array($table)) {
+            $table = array_shift($table);
+        }
+
+        $statementColumnMap = $this->getStatementColumnMap();
+        if (isset($statementColumnMap[$alias])) {
+            return $statementColumnMap[$alias];
+        }
+
+        $prefixedAlias = $table . '.' . $alias;
+        if (isset($statementColumnMap[$prefixedAlias])) {
+            return $statementColumnMap[$prefixedAlias];
+        }
+    }
+
+    /**
+     * Return whether the given alias or statement column name is available in the given table
+     *
+     * @param   mixed   $table
+     * @param   string  $alias
      *
      * @return  bool
      */
-    public function validateStatementColumnAssociation($table, $column)
+    public function validateStatementColumnAssociation($table, $alias)
     {
         if (is_array($table)) {
             $table = array_shift($table);
         }
 
         $statementTableMap = $this->getStatementTableMap();
-        return $statementTableMap[$column] === $this->removeTablePrefix($table);
+        if (isset($statementTableMap[$alias])) {
+            return $statementTableMap[$alias] === $this->removeTablePrefix($table);
+        }
+
+        $prefixedAlias = $this->removeTablePrefix($table) . '.' . $alias;
+        return isset($statementTableMap[$prefixedAlias]);
     }
 
     /**
@@ -310,9 +387,8 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function hasStatementColumn($table, $name)
     {
-        $statementColumnMap = $this->getStatementColumnMap();
         if (
-            ! array_key_exists($name, $statementColumnMap)
+            $this->resolveStatementColumnAlias($table, $name) === null
             || !$this->validateStatementColumnAssociation($table, $name)
         ) {
             return parent::hasStatementColumn($table, $name);
@@ -333,8 +409,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function requireStatementColumn($table, $name)
     {
-        $statementColumnMap = $this->getStatementColumnMap();
-        if (! array_key_exists($name, $statementColumnMap)) {
+        if (($column = $this->resolveStatementColumnAlias($table, $name)) === null) {
             return parent::requireStatementColumn($table, $name);
         }
 
@@ -342,6 +417,6 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             throw new StatementException('Statement column "%s" not found in table "%s"', $name, $table);
         }
 
-        return $statementColumnMap[$name];
+        return $column;
     }
 }
