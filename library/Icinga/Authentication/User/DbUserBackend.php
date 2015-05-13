@@ -159,18 +159,19 @@ class DbUserBackend extends DbRepository implements UserBackendInterface
     {
         if ($this->ds->getDbType() === 'pgsql') {
             // Since PostgreSQL version 9.0 the default value for bytea_output is 'hex' instead of 'escape'
-            $stmt = $this->ds->getDbAdapter()->prepare(
-                'SELECT ENCODE(password_hash, \'escape\') FROM icingaweb_user WHERE name = :name AND active = 1'
-            );
+            $columns = array('password_hash' => 'ENCODE(password_hash, \'escape\')');
         } else {
-            $stmt = $this->ds->getDbAdapter()->prepare(
-                'SELECT password_hash FROM icingaweb_user WHERE name = :name AND active = 1'
-            );
+            $columns = array('password_hash');
         }
 
-        $stmt->execute(array(':name' => $username));
-        $stmt->bindColumn(1, $lob, PDO::PARAM_LOB);
-        $stmt->fetch(PDO::FETCH_BOUND);
+        $query = $this->ds->select()
+            ->from($this->prependTablePrefix('user'), $columns)
+            ->where('name', $username)
+            ->where('active', true);
+        $statement = $this->ds->getDbAdapter()->prepare($query->getSelectQuery());
+        $statement->execute();
+        $statement->bindColumn(1, $lob, PDO::PARAM_LOB);
+        $statement->fetch(PDO::FETCH_BOUND);
         if (is_resource($lob)) {
             $lob = stream_get_contents($lob);
         }
