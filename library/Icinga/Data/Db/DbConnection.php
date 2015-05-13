@@ -271,28 +271,68 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible
     /**
      * Insert a table row with the given data
      *
+     * Pass an array with a column name (the same as in $bind) and a PDO::PARAM_* constant as value
+     * as third parameter $types to define a different type than string for a particular column.
+     *
      * @param   string  $table
      * @param   array   $bind
+     * @param   array   $types
      *
      * @return  int             The number of affected rows
      */
-    public function insert($table, array $bind)
+    public function insert($table, array $bind, array $types = array())
     {
-        return $this->dbAdapter->insert($table, $bind);
+        $values = array();
+        foreach ($bind as $column => $_) {
+            $values[] = ':' . $column;
+        }
+
+        $sql = 'INSERT INTO ' . $table
+            . ' (' . join(', ', array_keys($bind)) . ') '
+            . 'VALUES (' . join(', ', $values) . ')';
+        $statement = $this->dbAdapter->prepare($sql);
+
+        foreach ($bind as $column => $value) {
+            $type = isset($types[$column]) ? $types[$column] : PDO::PARAM_STR;
+            $statement->bindValue(':' . $column, $value, $type);
+        }
+
+        $statement->execute();
+        return $statement->rowCount();
     }
 
     /**
      * Update table rows with the given data, optionally limited by using a filter
      *
+     * Pass an array with a column name (the same as in $bind) and a PDO::PARAM_* constant as value
+     * as fourth parameter $types to define a different type than string for a particular column.
+     *
      * @param   string  $table
      * @param   array   $bind
      * @param   Filter  $filter
+     * @param   array   $types
      *
      * @return  int             The number of affected rows
      */
-    public function update($table, array $bind, Filter $filter = null)
+    public function update($table, array $bind, Filter $filter = null, array $types = array())
     {
-        return $this->dbAdapter->update($table, $bind, $filter ? $this->renderFilter($filter) : '');
+        $set = array();
+        foreach ($bind as $column => $_) {
+            $set[] = $column . ' = :' . $column;
+        }
+
+        $sql = 'UPDATE ' . $table
+            . ' SET ' . join(', ', $set)
+            . ($filter ? ' WHERE ' . $this->renderFilter($filter) : '');
+        $statement = $this->dbAdapter->prepare($sql);
+
+        foreach ($bind as $column => $value) {
+            $type = isset($types[$column]) ? $types[$column] : PDO::PARAM_STR;
+            $statement->bindValue(':' . $column, $value, $type);
+        }
+
+        $statement->execute();
+        return $statement->rowCount();
     }
 
     /**

@@ -96,76 +96,44 @@ class DbUserBackend extends DbRepository implements UserBackendInterface
      * Insert a table row with the given data
      *
      * @param   string  $table
-     * @param   array   $data
+     * @param   array   $bind
      */
-    public function insert($table, array $data)
+    public function insert($table, array $bind)
     {
-        $newData['created_at'] = date('Y-m-d H:i:s');
-        $newData = $this->requireStatementColumns($table, $data);
-
-        $values = array();
-        foreach ($newData as $column => $_) {
-            $values[] = ':' . $column;
-        }
-
-        $sql = 'INSERT INTO '
-            . $this->prependTablePrefix($table)
-            . ' (' . join(', ', array_keys($newData)) . ') '
-            . 'VALUES (' . join(', ', $values) . ')';
-        $statement = $this->ds->getDbAdapter()->prepare($sql);
-
-        foreach ($newData as $column => $value) {
-            $type = PDO::PARAM_STR;
-            if ($column === 'password_hash') {
-                $type = PDO::PARAM_LOB;
-            } elseif ($column === 'active') {
-                $type = PDO::PARAM_INT;
-            }
-
-            $statement->bindValue(':' . $column, $value, $type);
-        }
-
-        $statement->execute();
+        $bind['created_at'] = date('Y-m-d H:i:s');
+        $this->ds->insert(
+            $this->prependTablePrefix($table),
+            $this->requireStatementColumns($table, $bind),
+            array(
+                'active'        => PDO::PARAM_INT,
+                'password_hash' => PDO::PARAM_LOB
+            )
+        );
     }
 
     /**
      * Update table rows with the given data, optionally limited by using a filter
      *
      * @param   string  $table
-     * @param   array   $data
+     * @param   array   $bind
      * @param   Filter  $filter
      */
-    public function update($table, array $data, Filter $filter = null)
+    public function update($table, array $bind, Filter $filter = null)
     {
-        $newData['last_modified'] = date('Y-m-d H:i:s');
-        $newData = $this->requireStatementColumns($table, $data);
+        $bind['last_modified'] = date('Y-m-d H:i:s');
         if ($filter) {
             $this->requireFilter($table, $filter);
         }
 
-        $set = array();
-        foreach ($newData as $column => $_) {
-            $set[] = $column . ' = :' . $column;
-        }
-
-        $sql = 'UPDATE '
-            . $this->prependTablePrefix($table)
-            . ' SET ' . join(', ', $set)
-            . ($filter ? ' WHERE ' . $this->ds->renderFilter($filter) : '');
-        $statement = $this->ds->getDbAdapter()->prepare($sql);
-
-        foreach ($newData as $column => $value) {
-            $type = PDO::PARAM_STR;
-            if ($column === 'password_hash') {
-                $type = PDO::PARAM_LOB;
-            } elseif ($column === 'active') {
-                $type = PDO::PARAM_INT;
-            }
-
-            $statement->bindValue(':' . $column, $value, $type);
-        }
-
-        $statement->execute();
+        $this->ds->update(
+            $this->prependTablePrefix($table),
+            $this->requireStatementColumns($table, $bind),
+            $filter,
+            array(
+                'active'        => PDO::PARAM_INT,
+                'password_hash' => PDO::PARAM_LOB
+            )
+        );
     }
 
     /**
