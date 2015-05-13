@@ -22,6 +22,14 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
             'parent_name'   => 'parent',
             'created_at'    => 'UNIX_TIMESTAMP(ctime)',
             'last_modified' => 'UNIX_TIMESTAMP(mtime)'
+        ),
+        'group_membership' => array(
+            'group'         => 'group_name COLLATE utf8_general_ci',
+            'group_name',
+            'user'          => 'username COLLATE utf8_general_ci',
+            'user_name'     => 'username',
+            'created_at'    => 'UNIX_TIMESTAMP(ctime)',
+            'last_modified' => 'UNIX_TIMESTAMP(mtime)'
         )
     );
 
@@ -34,6 +42,10 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
         'group' => array(
             'created_at'    => 'ctime',
             'last_modified' => 'mtime'
+        ),
+        'group_membership' => array(
+            'created_at'    => 'ctime',
+            'last_modified' => 'mtime'
         )
     );
 
@@ -42,7 +54,7 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      *
      * @var array
      */
-    protected $filterColumns = array('group', 'parent');
+    protected $filterColumns = array('group', 'parent', 'user');
 
     /**
      * The default sort rules to be applied on a query
