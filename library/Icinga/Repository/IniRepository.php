@@ -4,6 +4,7 @@
 namespace Icinga\Repository;
 
 use Exception;
+use Icinga\Application\Config;
 use Icinga\Data\Extensible;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Updatable;
@@ -22,10 +23,32 @@ use Icinga\Exception\StatementException;
 abstract class IniRepository extends Repository implements Extensible, Updatable, Reducible
 {
     /**
+     * The datasource being used
+     *
+     * @var Config
+     */
+    protected $ds;
+
+    /**
+     * Create a new INI repository object
+     *
+     * @param   Config  $ds         The data source to use
+     *
+     * @throws  ProgrammingError    In case the given data source does not provide a valid key column
+     */
+    public function __construct(Config $ds)
+    {
+        parent::__construct($ds); // First! Due to init().
+
+        if (! $ds->getConfigObject()->getKeyColumn()) {
+            throw new ProgrammingError('INI repositories require their data source to provide a valid key column');
+        }
+    }
+
+    /**
      * Insert the given data for the given target
      *
-     * In case the data source provides a valid key column, $data must provide a proper
-     * value for it which is then being used as the section name instead of $target.
+     * $data must provide a proper value for the data source's key column.
      *
      * @param   string  $target
      * @param   array   $data
@@ -35,7 +58,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     public function insert($target, array $data)
     {
         $newData = $this->requireStatementColumns($target, $data);
-        $section = $this->extractSectionName($target, $newData);
+        $section = $this->extractSectionName($newData);
 
         if ($this->ds->hasSection($section)) {
             throw new StatementException(t('Cannot insert. Section "%s" does already exist'), $section);
@@ -53,10 +76,6 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     /**
      * Update the target with the given data and optionally limit the affected entries by using a filter
      *
-     * The section(s) to update are either identified by $filter or $target, in order. If neither of both
-     * is given, all sections provided by the data source are going to be updated. Uniqueness of a section's
-     * name will be ensured.
-     *
      * @param   string  $target
      * @param   array   $data
      * @param   Filter  $filter
@@ -67,30 +86,20 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     {
         $newData = $this->requireStatementColumns($target, $data);
         $keyColumn = $this->ds->getConfigObject()->getKeyColumn();
-        if ($keyColumn && $filter === null && isset($newData[$keyColumn]) && !$this->ds->hasSection($target)) {
+        if ($filter === null && isset($newData[$keyColumn])) {
             throw new StatementException(
                 t('Cannot update. Column "%s" holds a section\'s name which must be unique'),
                 $keyColumn
             );
         }
 
-        if ($target && !$filter) {
-            if (! $this->ds->hasSection($target)) {
-                throw new StatementException(t('Cannot update. Section "%s" does not exist'), $target);
-            }
-
-            $contents = array($target => $this->ds->getSection($target));
-        } else {
-            if ($filter) {
-                $this->requireFilter($target, $filter);
-            }
-
-            $contents = iterator_to_array($this->ds);
+        if ($filter !== null) {
+            $this->requireFilter($target, $filter);
         }
 
         $newSection = null;
-        foreach ($contents as $section => $config) {
-            if ($filter && !$filter->matches($config)) {
+        foreach (iterator_to_array($this->ds) as $section => $config) {
+            if ($filter !== null && !$filter->matches($config)) {
                 continue;
             }
 
@@ -102,7 +111,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
             }
 
             foreach ($newData as $column => $value) {
-                if ($keyColumn && $column === $keyColumn) {
+                if ($column === $keyColumn) {
                     $newSection = $value;
                 } else {
                     $config->$column = $value;
@@ -130,9 +139,6 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     /**
      * Delete entries in the given target, optionally limiting the affected entries by using a filter
      *
-     * The section(s) to delete are either identified by $filter or $target, in order. If neither of both
-     * is given, all sections provided by the data source are going to be deleted.
-     *
      * @param   string  $target
      * @param   Filter  $filter
      *
@@ -140,21 +146,13 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      */
     public function delete($target, Filter $filter = null)
     {
-        if ($target && !$filter) {
-            if (! $this->ds->hasSection($target)) {
-                return; // Nothing to do
-            }
+        if ($filter !== null) {
+            $this->requireFilter($target, $filter);
+        }
 
-            $this->ds->removeSection($target);
-        } else {
-            if ($filter) {
-                $this->requireFilter($target, $filter);
-            }
-
-            foreach (iterator_to_array($this->ds) as $section => $config) {
-                if (! $filter || $filter->matches($config)) {
-                    $this->ds->removeSection($section);
-                }
+        foreach (iterator_to_array($this->ds) as $section => $config) {
+            if ($filter === null || $filter->matches($config)) {
+                $this->ds->removeSection($section);
             }
         }
 
@@ -166,32 +164,23 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     }
 
     /**
-     * Extract and return the section name off of the given $data, if available, or validate $target
+     * Extract and return the section name off of the given $data
      *
-     * @param   string  $target
      * @param   array   $data
      *
      * @return  string
      *
      * @throws  ProgrammingError    In case no valid section name is available
      */
-    protected function extractSectionName($target, array & $data)
+    protected function extractSectionName(array & $data)
     {
-        if (($keyColumn = $this->ds->getConfigObject()->getKeyColumn())) {
-            if (! isset($data[$keyColumn])) {
-                throw new ProgrammingError('$data does not provide a value for key column "%s"', $keyColumn);
-            }
-
-            $target = $data[$keyColumn];
-            unset($data[$keyColumn]);
+        $keyColumn = $this->ds->getConfigObject()->getKeyColumn();
+        if (! isset($data[$keyColumn])) {
+            throw new ProgrammingError('$data does not provide a value for key column "%s"', $keyColumn);
         }
 
-        if (! is_string($target)) {
-            throw new ProgrammingError(
-                'Neither the data source nor the $target parameter provide a valid section name'
-            );
-        }
-
-        return $target;
+        $section = $data[$keyColumn];
+        unset($data[$keyColumn]);
+        return $section;
     }
 }
