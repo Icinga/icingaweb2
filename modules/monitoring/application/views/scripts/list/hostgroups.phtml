@@ -22,6 +22,7 @@ if (count($hostgroups) === 0) {
     <thead>
       <th><?= $this->translate('Last Problem'); ?></th>
       <th><?= $this->translate('Host Group'); ?></th>
+      <th><?= $this->translate('Total Hosts'); ?></th>
       <th><?= $this->translate('Total Services'); ?></th>
       <th><?= $this->translate('Service States'); ?></th>
     </thead>
@@ -66,6 +67,17 @@ if (count($hostgroups) === 0) {
             'monitoring/list/hosts',
             array('hostgroup_name' => $h->hostgroup_name),
             array('title' => sprintf($this->translate('List all hosts in the group "%s"'), $h->hostgroup_alias))
+          ); ?>
+        </td>
+        <td class="total">
+          <?= $this->qlink(
+            $h->hosts_total,
+            'monitoring/list/hosts',
+            array('hostgroup_name' => $h->hostgroup_name),
+            array('title' => sprintf(
+                $this->translate('List all hosts in host group "%s"'),
+                $h->hostgroup_alias
+            ))
           ); ?>
         </td>
         <td class="total">
