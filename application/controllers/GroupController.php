@@ -4,6 +4,7 @@
 use \Exception;
 use \Zend_Controller_Action_Exception;
 use Icinga\Application\Config;
+use Icinga\Application\Logger;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackendInterface;
 use Icinga\Web\Controller;
@@ -81,6 +82,7 @@ class GroupController extends Controller
             $this->setupPaginationControl($this->view->groups);
         } catch (Exception $e) {
             Notification::error($e->getMessage());
+            Logger::error($e);
         }
 
         $this->view->backend = $backend;
