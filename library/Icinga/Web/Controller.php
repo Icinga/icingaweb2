@@ -7,6 +7,7 @@ use Zend_Paginator;
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Widget\SortBox;
 use Icinga\Web\Widget\Limiter;
+use Icinga\Data\Sortable;
 
 /**
  * This is the controller all modules should inherit from
