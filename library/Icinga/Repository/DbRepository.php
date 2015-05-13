@@ -3,6 +3,7 @@
 
 namespace Icinga\Repository;
 
+use Icinga\Data\Db\DbConnection;
 use Icinga\Data\Extensible;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Reducible;
@@ -23,6 +24,13 @@ use Icinga\Exception\StatementException;
  */
 abstract class DbRepository extends Repository implements Extensible, Updatable, Reducible
 {
+    /**
+     * The datasource being used
+     *
+     * @var DbConnection
+     */
+    protected $ds;
+
     /**
      * The statement columns being provided
      *
@@ -55,6 +63,16 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * @var array
      */
     protected $statementColumnMap;
+
+    /**
+     * Create a new DB repository object
+     *
+     * @param   DbConnection    $ds     The datasource to use
+     */
+    public function __construct(DbConnection $ds)
+    {
+        parent::__construct($ds);
+    }
 
     /**
      * Return the base table name this repository is responsible for
