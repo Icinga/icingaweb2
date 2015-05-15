@@ -4,10 +4,12 @@
 namespace Icinga\Web;
 
 use Zend_Paginator;
-use Icinga\Web\Controller\ModuleActionController;
-use Icinga\Web\Widget\SortBox;
-use Icinga\Web\Widget\Limiter;
 use Icinga\Data\Sortable;
+use Icinga\Data\QueryInterface;
+use Icinga\Web\Paginator\Adapter\QueryAdapter;
+use Icinga\Web\Controller\ModuleActionController;
+use Icinga\Web\Widget\Limiter;
+use Icinga\Web\Widget\SortBox;
 
 /**
  * This is the controller all modules should inherit from
@@ -94,17 +96,28 @@ class Controller extends ModuleActionController
     }
 
     /**
-     * Set the view property `paginator' to the given Zend_Paginator
+     * Apply the given page limit and number on the given query and setup a paginator for it
      *
-     * In case the current view has been requested as compact this method does nothing.
+     * The $itemsPerPage and $pageNumber parameters are only applied if not available in the current request.
+     * The paginator is set on the `paginator' view property only if the current view has not been requested as compact.
      *
-     * @param   Zend_Paginator  $paginator  The Zend_Paginator for which to show a pagination control
+     * @param   QueryInterface  $query          The query to create a paginator for
+     * @param   int             $itemsPerPage   Number of items per page
+     * @param   int             $pageNumber     Current page number
      *
      * @return  $this
      */
-    protected function setupPaginationControl(Zend_Paginator $paginator)
+    protected function setupPaginationControl(QueryInterface $query, $itemsPerPage = 25, $pageNumber = 0)
     {
+        $request = $this->getRequest();
+        $limit = $request->getParam('limit', $itemsPerPage);
+        $page = $request->getParam('page', $pageNumber);
+        $query->limit($limit, $page * $limit);
+
         if (! $this->view->compact) {
+            $paginator = new Zend_Paginator(new QueryAdapter($query));
+            $paginator->setItemCountPerPage($limit);
+            $paginator->setCurrentPageNumber($page);
             $this->view->paginator = $paginator;
         }
 
