@@ -22,44 +22,56 @@ class Controller extends ModuleActionController
     public function init()
     {
         parent::init();
+        $this->handleSortControlSubmit();
+    }
 
+    /**
+     * Check whether the sort control has been submitted and redirect using GET parameters
+     */
+    protected function handleSortControlSubmit()
+    {
         $request = $this->getRequest();
-        $url = Url::fromRequest();
+        if (! $request->isPost()) {
+            return;
+        }
 
-        if ($request->isPost() && ($sort = $request->getPost('sort'))) {
+        if (($sort = $request->getPost('sort'))) {
+            $url = Url::fromRequest();
             $url->setParam('sort', $sort);
-            if ($dir = $request->getPost('dir')) {
+            if (($dir = $request->getPost('dir'))) {
                 $url->setParam('dir', $dir);
             } else {
                 $url->removeParam('dir');
             }
+
             $this->redirectNow($url);
         }
     }
 
     /**
-     * Create a SortBox widget at the `sortBox' view property
+     * Create a SortBox widget and apply its sort rules on the given query
      *
-     * In case the current view has been requested as compact this method does nothing.
+     * The widget is set on the `sortBox' view property only if the current view has not been requested as compact
      *
      * @param   array    $columns    An array containing the sort columns, with the
      *                               submit value as the key and the label as the value
-     * @param   Sortable $query      Query to set on the newly created SortBox
+     * @param   Sortable $query      Query to apply the user chosen sort rules on
      *
      * @return  $this
      */
     protected function setupSortControl(array $columns, Sortable $query = null)
     {
+        $request = $this->getRequest();
+        $sortBox = SortBox::create('sortbox-' . $request->getActionName(), $columns);
+        $sortBox->setRequest($request);
+
+        if ($query) {
+            $sortBox->setQuery($query);
+            $sortBox->handleRequest($request);
+        }
+
         if (! $this->view->compact) {
-            $req = $this->getRequest();
-            $this->view->sortBox = $sortBox = SortBox::create(
-                'sortbox-' . $req->getActionName(),
-                $columns
-            )->setRequest($req);
-            if ($query !== null) {
-                $sortBox->setQuery($query);
-            }
-            $sortBox->handleRequest();
+            $this->view->sortBox = $sortBox;
         }
 
         return $this;
