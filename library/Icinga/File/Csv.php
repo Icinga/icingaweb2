@@ -3,15 +3,13 @@
 
 namespace Icinga\File;
 
-use Icinga\Data\Browsable;
-
 class Csv
 {
     protected $query;
 
     protected function __construct() {}
 
-    public static function fromQuery(Browsable $query)
+    public static function fromQuery($query)
     {
         $csv = new Csv();
         $csv->query = $query;

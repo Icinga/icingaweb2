@@ -97,7 +97,7 @@ class Monitoring_ListController extends Controller
         ), $this->extraColumns()));
         $this->filterQuery($query);
         $this->applyRestriction('monitoring/hosts/filter', $query);
-        $this->view->hosts = $query->paginate();
+        $this->view->hosts = $query;
 
         $this->view->stats = $this->backend->select()->from('statusSummary', array(
             'hosts_total',
@@ -181,7 +181,7 @@ class Monitoring_ListController extends Controller
         $query = $this->backend->select()->from('serviceStatus', $columns);
         $this->filterQuery($query);
         $this->applyRestriction('monitoring/services/filter', $query);
-        $this->view->services = $query->paginate();
+        $this->view->services = $query;
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->services);
@@ -246,7 +246,7 @@ class Monitoring_ListController extends Controller
             'service_display_name'
         ));
         $this->filterQuery($query);
-        $this->view->downtimes = $query->paginate();
+        $this->view->downtimes = $query;
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->downtimes);
@@ -292,7 +292,7 @@ class Monitoring_ListController extends Controller
             'service_display_name'
         ));
         $this->filterQuery($query);
-        $this->view->notifications = $query->paginate();
+        $this->view->notifications = $query;
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->notifications);
@@ -326,7 +326,7 @@ class Monitoring_ListController extends Controller
             'contact_notify_host_downtime',
         ));
         $this->filterQuery($query);
-        $this->view->contacts = $query->paginate();
+        $this->view->contacts = $query;
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->contacts);
@@ -438,7 +438,7 @@ class Monitoring_ListController extends Controller
             'service_display_name'
         ));
         $this->filterQuery($query);
-        $this->view->comments = $query->paginate();
+        $this->view->comments = $query;
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->comments);
@@ -498,7 +498,7 @@ class Monitoring_ListController extends Controller
         // TODO(el): Can't default to the sort rules of the data view because it's meant for both host groups and
         // service groups. We should separate them.
         $this->filterQuery($query);
-        $this->view->servicegroups = $query->paginate();
+        $this->view->servicegroups = $query;
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->servicegroups);
@@ -555,7 +555,7 @@ class Monitoring_ListController extends Controller
         // TODO(el): Can't default to the sort rules of the data view because it's meant for both host groups and
         // service groups. We should separate them.
         $this->filterQuery($query);
-        $this->view->hostgroups = $query->paginate();
+        $this->view->hostgroups = $query;
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->hostgroups);
@@ -594,7 +594,7 @@ class Monitoring_ListController extends Controller
         ));
 
         $this->filterQuery($query);
-        $this->view->history = $query->paginate();
+        $this->view->history = $query;
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->history);

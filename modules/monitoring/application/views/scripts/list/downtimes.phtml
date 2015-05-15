@@ -9,7 +9,7 @@ if (! $this->compact): ?>
         <?= $this->render('list/components/selectioninfo.phtml'); ?>
     </div>
     <div class="tinystatesummary">
-        <?= $downtimes->getTotalItemCount() ?> <?= $this->translate('Downtimes') ?>
+        <?= count($downtimes) ?> <?= $this->translate('Downtimes') ?>
     </div>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>

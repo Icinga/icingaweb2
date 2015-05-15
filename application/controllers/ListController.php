@@ -51,7 +51,7 @@ class ListController extends Controller
                 . 'T[0-9]{2}(?::[0-9]{2}){2}(?:[\+\-][0-9]{2}:[0-9]{2})?)'  // time
                 . ' - (?<loglevel>[A-Za-z]+) - (?<message>.*)(?!.)/msS'     // loglevel, message
         )));
-        $this->view->logData = $resource->select()->order('DESC')->paginate();
+        $this->view->logData = $resource->select()->order('DESC');
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->logData);
