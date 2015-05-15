@@ -4,13 +4,15 @@
 namespace Icinga\Data;
 
 use Icinga\Application\Icinga;
+use ArrayIterator;
+use IteratorAggregate;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 use Zend_Paginator;
 use Exception;
 use Icinga\Exception\IcingaException;
 
-class SimpleQuery implements QueryInterface, Queryable
+class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
 {
     /**
      * Query data source
@@ -90,6 +92,16 @@ class SimpleQuery implements QueryInterface, Queryable
      * implement custom initialization logic on construction time
      */
     protected function init() {}
+
+    /**
+     * Return a iterable for this query's result
+     *
+     * @return  ArrayIterator
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->fetchAll());
+    }
 
     /**
      * Get the data source
