@@ -74,7 +74,7 @@ class Monitoring_ShowController extends Controller
         $this->handleFormatRequest($this->view->object->eventhistory);
         $this->fetchHostStats();
 
-        $this->setupLimitControl();
+        $this->setupLimitControl(50);
         $this->setupPaginationControl($this->view->history, 50);
     }
 
