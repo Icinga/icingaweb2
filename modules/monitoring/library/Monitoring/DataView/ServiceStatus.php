@@ -130,21 +130,19 @@ class ServiceStatus extends DataView
             ),
             'service_severity' => array(
                 'columns' => array(
-                    'service_severity',
-                    'service_last_state_change',
+                    'service_severity DESC',
+                    'service_last_state_change DESC',
                     'service_display_name ASC',
                     'host_display_name ASC'
-                ),
-                'order' => self::SORT_DESC
+                )
             ),
             'host_severity' => array(
                 'columns' => array(
-                    'host_severity',
-                    'host_last_state_change',
+                    'host_severity DESC',
+                    'host_last_state_change DESC',
                     'host_display_name ASC',
                     'service_display_name ASC'
-                ),
-                'order' => self::SORT_DESC
+                )
             ),
             'host_display_name' => array(
                 'columns' => array(
