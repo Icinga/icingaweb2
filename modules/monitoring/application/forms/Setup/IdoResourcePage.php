@@ -57,13 +57,19 @@ class IdoResourcePage extends Form
         if (false === isset($data['skip_validation']) || $data['skip_validation'] == 0) {
             $configObject = new ConfigObject($this->getValues());
             if (false === DbResourceForm::isValidResource($this, $configObject)) {
-                $this->addSkipValidationCheckbox();
+                $this->addSkipValidationCheckbox($this->translate(
+                    'Check this to not to validate connectivity with the given database server'
+                ));
                 return false;
             } elseif (false === BackendConfigForm::isValidIdoSchema($this, $configObject)) {
-                $this->addSkipValidationCheckbox();
+                $this->addSkipValidationCheckbox($this->translate(
+                    'Check this to not to validate the ido schema'
+                ));
                 return false;
             } elseif (false === BackendConfigForm::isValidIdoInstance($this, $configObject)) {
-                $this->addSkipValidationCheckbox();
+                $this->addSkipValidationCheckbox($this->translate(
+                    'Check this to not to validate the ido instance'
+                ));
                 return false;
             }
         }
@@ -74,17 +80,21 @@ class IdoResourcePage extends Form
     /**
      * Add a checkbox to the form by which the user can skip the connection validation
      */
-    protected function addSkipValidationCheckbox()
+    protected function addSkipValidationCheckbox($description = '')
     {
+        if (empty($description)) {
+            $description = $this->translate(
+                'Proceed without any further (custom) validation'
+            );
+        }
+
         $this->addElement(
             'checkbox',
             'skip_validation',
             array(
                 'required'      => true,
                 'label'         => $this->translate('Skip Validation'),
-                'description'   => $this->translate(
-                    'Check this to not to validate connectivity with the given database server'
-                )
+                'description'   => $description
             )
         );
     }
