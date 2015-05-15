@@ -165,6 +165,32 @@ form ul.form-errors {
   }
 }
 
+form ul.form-notifications {
+  .non-list-like-list;
+  margin-bottom: 1em;
+  padding: 0em;
+
+  li.info {
+    background: @colorFormNotificationInfo;
+  }
+
+  li.warning {
+    background: @colorFormNotificationWarning;
+  }
+
+  li.error {
+    background: @colorFormNotificationError;
+  }
+
+  li {
+    color: white;
+    font-weight: bold;
+    line-height: 1.5em;
+    padding: 0.5em;
+    margin-bottom: 0.5em;
+  }
+}
+
 form div.element {
   margin: 0.5em 0;
 }
