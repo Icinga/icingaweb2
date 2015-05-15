@@ -97,13 +97,6 @@ class Monitoring_ListController extends Controller
         ), $this->extraColumns()));
         $this->filterQuery($query);
         $this->applyRestriction('monitoring/hosts/filter', $query);
-        $this->setupSortControl(array(
-            'host_severity'     => $this->translate('Severity'),
-            'host_state'        => $this->translate('Current State'),
-            'host_display_name' => $this->translate('Hostname'),
-            'host_address'      => $this->translate('Address'),
-            'host_last_check'   => $this->translate('Last Check')
-        ), $query);
         $this->view->hosts = $query->paginate();
 
         $this->view->stats = $this->backend->select()->from('statusSummary', array(
@@ -120,6 +113,13 @@ class Monitoring_ListController extends Controller
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->hosts);
+        $this->setupSortControl(array(
+            'host_severity'     => $this->translate('Severity'),
+            'host_state'        => $this->translate('Current State'),
+            'host_display_name' => $this->translate('Hostname'),
+            'host_address'      => $this->translate('Address'),
+            'host_last_check'   => $this->translate('Last Check')
+        ), $query);
     }
 
     /**
@@ -181,6 +181,10 @@ class Monitoring_ListController extends Controller
         $query = $this->backend->select()->from('serviceStatus', $columns);
         $this->filterQuery($query);
         $this->applyRestriction('monitoring/services/filter', $query);
+        $this->view->services = $query->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->services);
         $this->setupSortControl(array(
             'service_severity'      => $this->translate('Service Severity'),
             'service_state'         => $this->translate('Current Service State'),
@@ -192,10 +196,6 @@ class Monitoring_ListController extends Controller
             'host_address'          => $this->translate('Host Address'),
             'host_last_check'       => $this->translate('Last Host Check')
         ), $query);
-        $this->view->services = $query->paginate();
-
-        $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->services);
 
         $this->view->stats = $this->backend->select()->from('statusSummary', array(
             'services_total',
@@ -246,6 +246,10 @@ class Monitoring_ListController extends Controller
             'service_display_name'
         ));
         $this->filterQuery($query);
+        $this->view->downtimes = $query->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->downtimes);
         $this->setupSortControl(array(
             'downtime_is_in_effect'     => $this->translate('Is In Effect'),
             'host_display_name'         => $this->translate('Host'),
@@ -258,10 +262,6 @@ class Monitoring_ListController extends Controller
             'downtime_scheduled_end'    => $this->translate('Scheduled End'),
             'downtime_duration'         => $this->translate('Duration')
         ), $query);
-        $this->view->downtimes = $query->paginate();
-
-        $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->downtimes);
 
         if ($this->Auth()->hasPermission('monitoring/command/downtime/delete')) {
             $this->view->delDowntimeForm = new DeleteDowntimeCommandForm();
@@ -292,13 +292,13 @@ class Monitoring_ListController extends Controller
             'service_display_name'
         ));
         $this->filterQuery($query);
-        $this->setupSortControl(array(
-            'notification_start_time' => $this->translate('Notification Start')
-        ), $query);
         $this->view->notifications = $query->paginate();
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->notifications);
+        $this->setupSortControl(array(
+            'notification_start_time' => $this->translate('Notification Start')
+        ), $query);
     }
 
     public function contactsAction()
@@ -326,6 +326,10 @@ class Monitoring_ListController extends Controller
             'contact_notify_host_downtime',
         ));
         $this->filterQuery($query);
+        $this->view->contacts = $query->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->contacts);
         $this->setupSortControl(array(
             'contact_name' => $this->translate('Name'),
             'contact_alias' => $this->translate('Alias'),
@@ -334,10 +338,6 @@ class Monitoring_ListController extends Controller
             'contact_notify_service_timeperiod' => $this->translate('Service Notification Timeperiod'),
             'contact_notify_host_timeperiod' => $this->translate('Host Notification Timeperiod')
         ), $query);
-        $this->view->contacts = $query->paginate();
-
-        $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->contacts);
     }
 
     public function eventgridAction()
@@ -397,11 +397,6 @@ class Monitoring_ListController extends Controller
         ));
         $this->filterQuery($query);
 
-        $this->setupSortControl(array(
-            'contactgroup_name'     => $this->translate('Contactgroup Name'),
-            'contactgroup_alias'    => $this->translate('Contactgroup Alias')
-        ), $query);
-
         // Fetch and prepare all contact groups:
         $contactgroups = $query->getQuery()->fetchAll();
         $groupData = array();
@@ -416,6 +411,11 @@ class Monitoring_ListController extends Controller
         }
         // TODO: Find a better naming
         $this->view->groupData = $groupData;
+
+        $this->setupSortControl(array(
+            'contactgroup_name'     => $this->translate('Contactgroup Name'),
+            'contactgroup_alias'    => $this->translate('Contactgroup Alias')
+        ), $query);
     }
 
     public function commentsAction()
@@ -438,6 +438,10 @@ class Monitoring_ListController extends Controller
             'service_display_name'
         ));
         $this->filterQuery($query);
+        $this->view->comments = $query->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->comments);
         $this->setupSortControl(
             array(
                 'comment_timestamp'     => $this->translate('Comment Timestamp'),
@@ -448,10 +452,6 @@ class Monitoring_ListController extends Controller
             ),
             $query
         );
-        $this->view->comments = $query->paginate();
-
-        $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->comments);
 
         if ($this->Auth()->hasPermission('monitoring/command/comment/delete')) {
             $this->view->delCommentForm = new DeleteCommentCommandForm();
@@ -498,6 +498,10 @@ class Monitoring_ListController extends Controller
         // TODO(el): Can't default to the sort rules of the data view because it's meant for both host groups and
         // service groups. We should separate them.
         $this->filterQuery($query);
+        $this->view->servicegroups = $query->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->servicegroups);
         $this->setupSortControl(array(
             'services_severity'     => $this->translate('Severity'),
             'servicegroup_alias'    => $this->translate('Service Group Name'),
@@ -508,10 +512,6 @@ class Monitoring_ListController extends Controller
             'services_warning'      => $this->translate('Services WARNING'),
             'services_pending'      => $this->translate('Services PENDING')
         ), $query);
-        $this->view->servicegroups = $query->paginate();
-
-        $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->servicegroups);
     }
 
     public function hostgroupsAction()
@@ -555,6 +555,10 @@ class Monitoring_ListController extends Controller
         // TODO(el): Can't default to the sort rules of the data view because it's meant for both host groups and
         // service groups. We should separate them.
         $this->filterQuery($query);
+        $this->view->hostgroups = $query->paginate();
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->hostgroups);
         $this->setupSortControl(array(
             'services_severity' => $this->translate('Severity'),
             'hostgroup_alias'   => $this->translate('Host Group Name'),
@@ -565,10 +569,6 @@ class Monitoring_ListController extends Controller
             'services_warning'  => $this->translate('Services WARNING'),
             'services_pending'  => $this->translate('Services PENDING')
         ), $query);
-        $this->view->hostgroups = $query->paginate();
-
-        $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->hostgroups);
     }
 
     public function eventhistoryAction()
@@ -594,13 +594,13 @@ class Monitoring_ListController extends Controller
         ));
 
         $this->filterQuery($query);
-        $this->setupSortControl(array(
-            'timestamp' => $this->translate('Occurence')
-        ), $query);
         $this->view->history = $query->paginate();
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->history);
+        $this->setupSortControl(array(
+            'timestamp' => $this->translate('Occurence')
+        ), $query);
     }
 
     public function servicegridAction()
