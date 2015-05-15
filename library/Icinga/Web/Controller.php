@@ -84,12 +84,15 @@ class Controller extends ModuleActionController
      *
      * In case the current view has been requested as compact this method does nothing.
      *
+     * @param   int             $itemsPerPage   Default number of items per page
+     *
      * @return  $this
      */
-    protected function setupLimitControl()
+    protected function setupLimitControl($itemsPerPage = 25)
     {
         if (! $this->view->compact) {
             $this->view->limiter = new Limiter();
+            $this->view->limiter->setDefaultLimit($itemsPerPage);
         }
 
         return $this;
@@ -102,8 +105,8 @@ class Controller extends ModuleActionController
      * The paginator is set on the `paginator' view property only if the current view has not been requested as compact.
      *
      * @param   QueryInterface  $query          The query to create a paginator for
-     * @param   int             $itemsPerPage   Number of items per page
-     * @param   int             $pageNumber     Current page number
+     * @param   int             $itemsPerPage   Default number of items per page
+     * @param   int             $pageNumber     Default page number
      *
      * @return  $this
      */
