@@ -318,15 +318,15 @@ class BackendConfigForm extends ConfigForm
         if (count($instances) === 1) {
             return true;
         } elseif (count($instances) > 1) {
-            $form->addError(
+            $form->warning(
                 $form->translate(
-                    'WARNING: IDO instance validation failed, because there are multiple instances available.'
+                    'IDO instance validation failed, because there are multiple instances available.'
                 )
             );
             return false;
         }
 
-        $form->addError(
+        $form->error(
             $form->translate(
                 'IDO instance validation failed, because there is no IDO instance available.'
             )
