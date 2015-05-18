@@ -76,7 +76,7 @@ class HostList extends ObjectList
     /**
      * Returns a Filter that matches all hosts in this list
      *
-     * @return array    An
+     * @return Filter
      */
     public function objectsFilter($columns = array('host' => 'host'))
     {

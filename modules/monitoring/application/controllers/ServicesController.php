@@ -15,7 +15,6 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\ServiceList;
 use Icinga\Web\Url;
-use Icinga\Web\Widget\Chart\InlinePie;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 
 class Monitoring_ServicesController extends Controller
@@ -35,29 +34,17 @@ class Monitoring_ServicesController extends Controller
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/services');
 
         $this->getTabs()->add(
-            'hosts',
-            array(
-                'title' => sprintf(
-                    $this->translate('Show summarized information for hosts')
-                ),
-                'label' => $this->translate('Hosts'),
-                'url'   => Url::fromPath('monitoring/hosts/show')->setParams(Url::fromRequest()->getParams()),
-                'icon' => 'host'
-            )
-        )->extend(new DashboardAction());
-
-        $this->getTabs()->add(
             'show',
             array(
                 'title' => sprintf(
                     $this->translate('Show summarized information for %u services'),
                     count($this->serviceList)
                 ),
-                'label' => $this->translate('Services'),
+                'label' => sprintf($this->translate('Services (%d)'), count($this->serviceList)),
                 'url'   => Url::fromRequest(),
-                'icon' => 'services'
+                'icon'  => 'services'
             )
-        )->activate('show');
+        )->extend(new DashboardAction())->activate('show');
     }
 
     protected function handleCommandForm(ObjectsCommandForm $form)

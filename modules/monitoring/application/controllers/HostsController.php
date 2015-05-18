@@ -15,7 +15,6 @@ use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\HostList;
 use Icinga\Web\Url;
-use Icinga\Web\Widget\Chart\InlinePie;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 
 class Monitoring_HostsController extends Controller
@@ -42,24 +41,12 @@ class Monitoring_HostsController extends Controller
                     $this->translate('Show summarized information for %u hosts'),
                     count($this->hostList)
                 ),
-                'label' => $this->translate('Hosts'),
+                'label' => sprintf($this->translate('Hosts (%d)'), count($this->hostList)),
                 'url'   => Url::fromRequest(),
                 'icon'  => 'host'
             )
-        )->extend(new DashboardAction());
-
-        $this->getTabs()->add(
-            'services',
-            array(
-                'title' => sprintf(
-                    $this->translate('Show summarized information for related services')
-                ),
-                'label' => $this->translate('Services'),
-                'url'   => Url::fromPath('monitoring/services/show')->setParams(Url::fromRequest()->getParams()),
-                'icon'  => 'services'
-            )
-        )->activate('show');
-
+        )->extend(new DashboardAction())->activate('show');
+        
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/hosts')->setQueryString($filterString);
     }
 
