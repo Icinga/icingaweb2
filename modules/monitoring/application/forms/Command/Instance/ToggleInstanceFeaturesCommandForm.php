@@ -215,8 +215,14 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 ->setFeature($feature)
                 ->setEnabled($enabled);
             $this->getTransport($this->request)->send($toggleFeature);
+
+            if ($this->status->{$feature} != $enabled) {
+                Notification::success($enabled
+                    ? $this->translate('Enabling feature..')
+                    : $this->translate('Disabling feature..')
+                );
+            }
         }
-        Notification::success($this->translate('Toggling feature..'));
         return true;
     }
 }

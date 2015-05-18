@@ -128,8 +128,7 @@ class ConfigController extends Controller
         $this->view->modules = Icinga::app()->getModuleManager()->select()
             ->from('modules')
             ->order('enabled', 'desc')
-            ->order('name')
-            ->paginate();
+            ->order('name');
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->modules);
         // TODO: Not working

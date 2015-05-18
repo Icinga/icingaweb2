@@ -3,6 +3,10 @@
 
 namespace Icinga\Module\Monitoring\Forms\Config;
 
+use Exception;
+use Icinga\Data\ConfigObject;
+use Icinga\Data\ResourceFactory;
+use Icinga\Web\Form;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
@@ -270,5 +274,64 @@ class BackendConfigForm extends ConfigForm
                 )
             )
         );
+    }
+
+    /**
+     * Validate the ido instance schema resource
+     *
+     * @param   Form            $form
+     * @param   ConfigObject    $resourceConfig
+     *
+     * @return  bool                                Whether validation succeeded or not
+     */
+    public static function isValidIdoSchema(Form $form, ConfigObject $resourceConfig)
+    {
+        try {
+            $resource = ResourceFactory::createResource($resourceConfig);
+            $result = $resource->select()->from('icinga_dbversion', array('version'));
+            $result->fetchOne();
+        } catch (Exception $e) {
+            $form->addError(
+                $form->translate(
+                    'IDO schema validation failed, it looks like that the IDO schema is missing in the given database.'
+                )
+            );
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Validate the ido instance availability
+     *
+     * @param   Form            $form
+     * @param   ConfigObject    $resourceConfig
+     *
+     * @return  bool                                Whether validation succeeded or not
+     */
+    public static function isValidIdoInstance(Form $form, ConfigObject $resourceConfig)
+    {
+        $resource = ResourceFactory::createResource($resourceConfig);
+        $result = $resource->select()->from('icinga_instances', array('instance_name'));
+        $instances = $result->fetchAll();
+
+        if (count($instances) === 1) {
+            return true;
+        } elseif (count($instances) > 1) {
+            $form->warning(
+                $form->translate(
+                    'IDO instance validation failed, because there are multiple instances available.'
+                )
+            );
+            return false;
+        }
+
+        $form->error(
+            $form->translate(
+                'IDO instance validation failed, because there is no IDO instance available.'
+            )
+        );
+
+        return false;
     }
 }

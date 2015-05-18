@@ -4,10 +4,12 @@
 namespace Icinga\Web;
 
 use Zend_Paginator;
-use Icinga\Web\Controller\ModuleActionController;
-use Icinga\Web\Widget\SortBox;
-use Icinga\Web\Widget\Limiter;
 use Icinga\Data\Sortable;
+use Icinga\Data\QueryInterface;
+use Icinga\Web\Paginator\Adapter\QueryAdapter;
+use Icinga\Web\Controller\ModuleActionController;
+use Icinga\Web\Widget\Limiter;
+use Icinga\Web\Widget\SortBox;
 
 /**
  * This is the controller all modules should inherit from
@@ -22,44 +24,56 @@ class Controller extends ModuleActionController
     public function init()
     {
         parent::init();
+        $this->handleSortControlSubmit();
+    }
 
+    /**
+     * Check whether the sort control has been submitted and redirect using GET parameters
+     */
+    protected function handleSortControlSubmit()
+    {
         $request = $this->getRequest();
-        $url = Url::fromRequest();
+        if (! $request->isPost()) {
+            return;
+        }
 
-        if ($request->isPost() && ($sort = $request->getPost('sort'))) {
+        if (($sort = $request->getPost('sort'))) {
+            $url = Url::fromRequest();
             $url->setParam('sort', $sort);
-            if ($dir = $request->getPost('dir')) {
+            if (($dir = $request->getPost('dir'))) {
                 $url->setParam('dir', $dir);
             } else {
                 $url->removeParam('dir');
             }
+
             $this->redirectNow($url);
         }
     }
 
     /**
-     * Create a SortBox widget at the `sortBox' view property
+     * Create a SortBox widget and apply its sort rules on the given query
      *
-     * In case the current view has been requested as compact this method does nothing.
+     * The widget is set on the `sortBox' view property only if the current view has not been requested as compact
      *
      * @param   array    $columns    An array containing the sort columns, with the
      *                               submit value as the key and the label as the value
-     * @param   Sortable $query      Query to set on the newly created SortBox
+     * @param   Sortable $query      Query to apply the user chosen sort rules on
      *
      * @return  $this
      */
     protected function setupSortControl(array $columns, Sortable $query = null)
     {
+        $request = $this->getRequest();
+        $sortBox = SortBox::create('sortbox-' . $request->getActionName(), $columns);
+        $sortBox->setRequest($request);
+
+        if ($query) {
+            $sortBox->setQuery($query);
+            $sortBox->handleRequest($request);
+        }
+
         if (! $this->view->compact) {
-            $req = $this->getRequest();
-            $this->view->sortBox = $sortBox = SortBox::create(
-                'sortbox-' . $req->getActionName(),
-                $columns
-            )->setRequest($req);
-            if ($query !== null) {
-                $sortBox->setQuery($query);
-            }
-            $sortBox->handleRequest();
+            $this->view->sortBox = $sortBox;
         }
 
         return $this;
@@ -70,29 +84,43 @@ class Controller extends ModuleActionController
      *
      * In case the current view has been requested as compact this method does nothing.
      *
+     * @param   int             $itemsPerPage   Default number of items per page
+     *
      * @return  $this
      */
-    protected function setupLimitControl()
+    protected function setupLimitControl($itemsPerPage = 25)
     {
         if (! $this->view->compact) {
             $this->view->limiter = new Limiter();
+            $this->view->limiter->setDefaultLimit($itemsPerPage);
         }
 
         return $this;
     }
 
     /**
-     * Set the view property `paginator' to the given Zend_Paginator
+     * Apply the given page limit and number on the given query and setup a paginator for it
      *
-     * In case the current view has been requested as compact this method does nothing.
+     * The $itemsPerPage and $pageNumber parameters are only applied if not available in the current request.
+     * The paginator is set on the `paginator' view property only if the current view has not been requested as compact.
      *
-     * @param   Zend_Paginator  $paginator  The Zend_Paginator for which to show a pagination control
+     * @param   QueryInterface  $query          The query to create a paginator for
+     * @param   int             $itemsPerPage   Default number of items per page
+     * @param   int             $pageNumber     Default page number
      *
      * @return  $this
      */
-    protected function setupPaginationControl(Zend_Paginator $paginator)
+    protected function setupPaginationControl(QueryInterface $query, $itemsPerPage = 25, $pageNumber = 0)
     {
+        $request = $this->getRequest();
+        $limit = $request->getParam('limit', $itemsPerPage);
+        $page = $request->getParam('page', $pageNumber);
+        $query->limit($limit, $page * $limit);
+
         if (! $this->view->compact) {
+            $paginator = new Zend_Paginator(new QueryAdapter($query));
+            $paginator->setItemCountPerPage($limit);
+            $paginator->setCurrentPageNumber($page);
             $this->view->paginator = $paginator;
         }
 

@@ -3,14 +3,13 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
-use Countable;
+use ArrayIterator;
+use IteratorAggregate;
+use Icinga\Data\QueryInterface;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterMatch;
-use Icinga\Data\Browsable;
 use Icinga\Data\PivotTable;
-use Icinga\Data\Sortable;
 use Icinga\Data\ConnectionInterface;
-use Icinga\Data\Filterable;
 use Icinga\Exception\QueryException;
 use Icinga\Web\Request;
 use Icinga\Web\Url;
@@ -19,12 +18,12 @@ use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 /**
  * A read-only view of an underlying query
  */
-abstract class DataView implements Browsable, Countable, Filterable, Sortable
+abstract class DataView implements QueryInterface, IteratorAggregate
 {
     /**
      * The query used to populate the view
      *
-     * @var \Icinga\Data\SimpleQuery
+     * @var QueryInterface
      */
     protected $query;
 
@@ -57,6 +56,16 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
      */
     public function init()
     {
+    }
+
+    /**
+     * Return a iterator for all rows of the result set
+     *
+     * @return  ArrayIterator
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->fetchAll());
     }
 
     /**
@@ -238,11 +247,11 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
             };
         }
 
-        $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : static::SORT_ASC) : $order;
-        $order = (strtoupper($order) === static::SORT_ASC) ? 'ASC' : 'DESC';
+        $globalDefaultOrder = isset($sortColumns['order']) ? $sortColumns['order'] : static::SORT_ASC;
+        $globalDefaultOrder = (strtoupper($globalDefaultOrder) === static::SORT_ASC) ? 'ASC' : 'DESC';
 
         foreach ($sortColumns['columns'] as $column) {
-            list($column, $direction) = $this->query->splitOrder($column);
+            list($column, $specificDefaultOrder) = $this->query->splitOrder($column);
             if (! $this->isValidFilterTarget($column)) {
                 throw new QueryException(
                     mt('monitoring', 'The sort column "%s" is not allowed in "%s".'),
@@ -250,7 +259,10 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
                     get_class($this)
                 );
             }
-            $this->query->order($column, $direction !== null ? $direction : $order);
+            $this->query->order(
+                $column,
+                $order === null && $specificDefaultOrder !== null ? $specificDefaultOrder : $globalDefaultOrder
+            );
         }
         $this->isSorted = true;
         return $this;
@@ -400,6 +412,114 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
      */
     public function count()
     {
-        return count($this->query);
+        return $this->query->count();
+    }
+
+    /**
+     * Set a limit count and offset
+     *
+     * @param   int $count  Number of rows to return
+     * @param   int $offset Start returning after this many rows
+     *
+     * @return  self
+     */
+    public function limit($count = null, $offset = null)
+    {
+        $this->query->limit($count, $offset);
+        return $this;
+    }
+
+    /**
+     * Whether a limit is set
+     *
+     * @return bool
+     */
+    public function hasLimit()
+    {
+        return $this->query->hasLimit();
+    }
+
+    /**
+     * Get the limit if any
+     *
+     * @return int|null
+     */
+    public function getLimit()
+    {
+        return $this->query->getLimit();
+    }
+
+    /**
+     * Whether an offset is set
+     *
+     * @return bool
+     */
+    public function hasOffset()
+    {
+        return $this->query->hasOffset();
+    }
+
+    /**
+     * Get the offset if any
+     *
+     * @return int|null
+     */
+    public function getOffset()
+    {
+        return $this->query->hasOffset();
+    }
+
+    /**
+     * Retrieve an array containing all rows of the result set
+     *
+     * @return  array
+     */
+    public function fetchAll()
+    {
+        return $this->getQuery()->fetchAll();
+    }
+
+    /**
+     * Fetch the first row of the result set
+     *
+     * @return  mixed
+     */
+    public function fetchRow()
+    {
+        return $this->getQuery()->fetchRow();
+    }
+
+    /**
+     * Fetch a column of all rows of the result set as an array
+     *
+     * @param   int $columnIndex Index of the column to fetch
+     *
+     * @return  array
+     */
+    public function fetchColumn($columnIndex = 0)
+    {
+        return $this->getQuery()->fetchColumn($columnIndex);
+    }
+
+    /**
+     * Fetch the first column of the first row of the result set
+     *
+     * @return  string
+     */
+    public function fetchOne()
+    {
+        return $this->getQuery()->fetchOne();
+    }
+
+    /**
+     * Fetch all rows of the result set as an array of key-value pairs
+     *
+     * The first column is the key, the second column is the value.
+     *
+     * @return  array
+     */
+    public function fetchPairs()
+    {
+        return $this->getQuery()->fetchPairs();
     }
 }

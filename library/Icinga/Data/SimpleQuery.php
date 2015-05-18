@@ -3,14 +3,12 @@
 
 namespace Icinga\Data;
 
-use Icinga\Application\Icinga;
+use ArrayIterator;
+use IteratorAggregate;
 use Icinga\Data\Filter\Filter;
-use Icinga\Web\Paginator\Adapter\QueryAdapter;
-use Zend_Paginator;
-use Exception;
 use Icinga\Exception\IcingaException;
 
-class SimpleQuery implements QueryInterface, Queryable
+class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
 {
     /**
      * Query data source
@@ -101,6 +99,16 @@ class SimpleQuery implements QueryInterface, Queryable
      * implement custom initialization logic on construction time
      */
     protected function init() {}
+
+    /**
+     * Return a iterable for this query's result
+     *
+     * @return  ArrayIterator
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->fetchAll());
+    }
 
     /**
      * Get the data source
@@ -341,35 +349,6 @@ class SimpleQuery implements QueryInterface, Queryable
     public function getOffset()
     {
         return $this->limitOffset;
-    }
-
-    /**
-     * Paginate data
-     *
-     * Auto-detects pagination parameters from request when unset
-     *
-     * @param   int $itemsPerPage   Number of items per page
-     * @param   int $pageNumber     Current page number
-     *
-     * @return  Zend_Paginator
-     */
-    public function paginate($itemsPerPage = null, $pageNumber = null)
-    {
-        if ($itemsPerPage === null || $pageNumber === null) {
-            // Detect parameters from request
-            $request = Icinga::app()->getFrontController()->getRequest();
-            if ($itemsPerPage === null) {
-                $itemsPerPage = $request->getParam('limit', 25);
-            }
-            if ($pageNumber === null) {
-                $pageNumber = $request->getParam('page', 0);
-            }
-        }
-        $this->limit($itemsPerPage, $pageNumber * $itemsPerPage);
-        $paginator = new Zend_Paginator(new QueryAdapter($this));
-        $paginator->setItemCountPerPage($itemsPerPage);
-        $paginator->setCurrentPageNumber($pageNumber);
-        return $paginator;
     }
 
     /**

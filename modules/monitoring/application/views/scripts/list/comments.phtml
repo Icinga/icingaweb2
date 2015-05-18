@@ -5,7 +5,7 @@
      <?= $this->render('list/components/selectioninfo.phtml'); ?>
   </div>
   <div class="tinystatesummary">
-     <?= $comments->getTotalItemCount() ?> <?= $this->translate('Comments') ?>:
+     <?= count($comments) ?> <?= $this->translate('Comments') ?>:
   </div>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
