@@ -3,7 +3,6 @@
 
 namespace Icinga\Data;
 
-use ArrayIterator;
 use IteratorAggregate;
 use Icinga\Data\Filter\Filter;
 use Icinga\Exception\IcingaException;
@@ -103,11 +102,11 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
     /**
      * Return a iterable for this query's result
      *
-     * @return  ArrayIterator
+     * @return  Iterator
      */
     public function getIterator()
     {
-        return new ArrayIterator($this->fetchAll());
+        return $this->ds->query($this);
     }
 
     /**

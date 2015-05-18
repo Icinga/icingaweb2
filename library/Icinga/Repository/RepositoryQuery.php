@@ -373,16 +373,6 @@ class RepositoryQuery implements QueryInterface, Iterator
     }
 
     /**
-     * Fetch and return all rows of the result set using an iterator
-     *
-     * @return  Iterator
-     */
-    public function fetch()
-    {
-        return $this;
-    }
-
-    /**
      * Fetch and return the first column of this query's first row
      *
      * @return  mixed
@@ -533,7 +523,7 @@ class RepositoryQuery implements QueryInterface, Iterator
                 $this->order();
             }
 
-            $iterator = $this->query->fetch();
+            $iterator = $this->repository->getDataSource()->query($this->query);
             if ($iterator instanceof IteratorAggregate) {
                 $this->iterator = $iterator->getIterator();
             } else {

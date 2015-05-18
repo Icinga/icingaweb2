@@ -3,6 +3,7 @@
 
 namespace Icinga\Protocol\Ldap;
 
+use ArrayIterator;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Application\Platform;
@@ -131,6 +132,11 @@ class Connection implements Selectable
     public function select()
     {
         return new Query($this);
+    }
+
+    public function query(Query $query)
+    {
+        return new ArrayIterator($this->fetchAll($query));
     }
 
     public function fetchOne($query, $fields = array())

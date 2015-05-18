@@ -3,6 +3,7 @@
 
 namespace Icinga\Data\DataArray;
 
+use ArrayIterator;
 use Icinga\Data\Selectable;
 use Icinga\Data\SimpleQuery;
 
@@ -80,6 +81,18 @@ class ArrayDatasource implements Selectable
     public function select()
     {
         return new SimpleQuery($this);
+    }
+
+    /**
+     * Fetch and return all rows of the given query's result set using an iterator
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  ArrayIterator
+     */
+    public function query(SimpleQuery $query)
+    {
+        return new ArrayIterator($this->fetchAll($query));
     }
 
     /**

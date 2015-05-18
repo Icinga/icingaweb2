@@ -4,6 +4,7 @@
 namespace Icinga\Data\Db;
 
 use PDO;
+use Iterator;
 use Zend_Db;
 use Icinga\Application\Benchmark;
 use Icinga\Data\ConfigObject;
@@ -85,6 +86,18 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible
     public function select()
     {
         return new DbQuery($this);
+    }
+
+    /**
+     * Fetch and return all rows of the given query's result set using an iterator
+     *
+     * @param   DbQuery     $query
+     *
+     * @return  Iterator
+     */
+    public function query(DbQuery $query)
+    {
+        return $query->getSelectQuery()->query();
     }
 
     /**
