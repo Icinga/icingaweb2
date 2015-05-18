@@ -3,13 +3,14 @@
 
 namespace Icinga\Data;
 
-use Zend_Paginator;
 use Icinga\Application\Icinga;
 use Icinga\Data\Filter\Filter;
-use Icinga\Exception\IcingaException;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
+use Zend_Paginator;
+use Exception;
+use Icinga\Exception\IcingaException;
 
-class SimpleQuery implements QueryInterface
+class SimpleQuery implements QueryInterface, Queryable
 {
     /**
      * Query data source
