@@ -43,7 +43,6 @@ class RepositoryQuery implements QueryInterface
     public function __construct(Repository $repository)
     {
         $this->repository = $repository;
-        $this->query = $repository->getDataSource()->select();
     }
 
     /**
@@ -68,7 +67,10 @@ class RepositoryQuery implements QueryInterface
      */
     public function from($target, array $columns = null)
     {
-        $this->query->from($target, $this->prepareQueryColumns($target, $columns));
+        $this->query = $this->repository
+            ->getDataSource()
+            ->select()
+            ->from($target, $this->prepareQueryColumns($target, $columns));
         $this->target = $target;
         return $this;
     }

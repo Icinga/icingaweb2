@@ -19,7 +19,7 @@ use Icinga\Util\String;
  * <ul>
  *  <li>Concrete implementations need to initialize Repository::$queryColumns</li>
  *  <li>The datasource passed to a repository must implement the Selectable interface</li>
- *  <li>The datasource must yield an instance of QueryInterface when its select() method is called</li>
+ *  <li>The datasource must yield an instance of Queryable when its select() method is called</li>
  * </ul>
  */
 abstract class Repository implements Selectable
