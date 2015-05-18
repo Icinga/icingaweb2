@@ -3,7 +3,7 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
-use ArrayIterator;
+use Iterator;
 use IteratorAggregate;
 use Icinga\Data\QueryInterface;
 use Icinga\Data\Filter\Filter;
@@ -61,11 +61,11 @@ abstract class DataView implements QueryInterface, IteratorAggregate
     /**
      * Return a iterator for all rows of the result set
      *
-     * @return  ArrayIterator
+     * @return  Iterator
      */
     public function getIterator()
     {
-        return new ArrayIterator($this->fetchAll());
+        return $this->fetch();
     }
 
     /**
@@ -467,6 +467,16 @@ abstract class DataView implements QueryInterface, IteratorAggregate
     public function getOffset()
     {
         return $this->query->hasOffset();
+    }
+
+    /**
+     * Fetch and return all rows of the result set using an iterator
+     *
+     * @return  Iterator
+     */
+    public function fetch()
+    {
+        return $this->getQuery()->fetch();
     }
 
     /**

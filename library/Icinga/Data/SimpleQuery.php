@@ -4,6 +4,7 @@
 namespace Icinga\Data;
 
 use ArrayIterator;
+use Iterator;
 use IteratorAggregate;
 use Icinga\Data\Filter\Filter;
 use Icinga\Exception\IcingaException;
@@ -103,11 +104,11 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
     /**
      * Return a iterable for this query's result
      *
-     * @return  ArrayIterator
+     * @return  Iterator
      */
     public function getIterator()
     {
-        return new ArrayIterator($this->fetchAll());
+        return $this->fetch();
     }
 
     /**
@@ -349,6 +350,16 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
     public function getOffset()
     {
         return $this->limitOffset;
+    }
+
+    /**
+     * Fetch and return all rows of the result set using an iterator
+     *
+     * @return  ArrayIterator
+     */
+    public function fetch()
+    {
+        return new ArrayIterator($this->fetchAll());
     }
 
     /**
