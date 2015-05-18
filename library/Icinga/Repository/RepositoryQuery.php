@@ -3,6 +3,8 @@
 
 namespace Icinga\Repository;
 
+use Iterator;
+use IteratorAggregate;
 use Icinga\Application\Logger;
 use Icinga\Data\QueryInterface;
 use Icinga\Data\Filter\Filter;
@@ -11,7 +13,7 @@ use Icinga\Exception\QueryException;
 /**
  * Query class supposed to mediate between a repository and its datasource's query
  */
-class RepositoryQuery implements QueryInterface
+class RepositoryQuery implements QueryInterface, Iterator
 {
     /**
      * The repository being used
@@ -33,6 +35,13 @@ class RepositoryQuery implements QueryInterface
      * @var mixed
      */
     protected $target;
+
+    /**
+     * The real query's iterator
+     *
+     * @var Iterator
+     */
+    protected $iterator;
 
     /**
      * Create a new repository query
@@ -364,6 +373,16 @@ class RepositoryQuery implements QueryInterface
     }
 
     /**
+     * Fetch and return all rows of the result set using an iterator
+     *
+     * @return  Iterator
+     */
+    public function fetch()
+    {
+        return $this;
+    }
+
+    /**
      * Fetch and return the first column of this query's first row
      *
      * @return  mixed
@@ -502,5 +521,75 @@ class RepositoryQuery implements QueryInterface
     public function count()
     {
         return $this->query->count();
+    }
+
+    /**
+     * Start or rewind the iteration
+     */
+    public function rewind()
+    {
+        if ($this->iterator === null) {
+            if (! $this->hasOrder()) {
+                $this->order();
+            }
+
+            $iterator = $this->query->fetch();
+            if ($iterator instanceof IteratorAggregate) {
+                $this->iterator = $iterator->getIterator();
+            } else {
+                $this->iterator = $iterator;
+            }
+        }
+
+        $this->iterator->rewind();
+    }
+
+    /**
+     * Fetch and return the current row of this query's result
+     *
+     * @return  object
+     */
+    public function current()
+    {
+        $row = $this->iterator->current();
+        if ($this->repository->providesValueConversion()) {
+            foreach ($this->getColumns() as $alias => $column) {
+                if (! is_string($alias)) {
+                    $alias = $column;
+                }
+
+                $row->$alias = $this->repository->retrieveColumn($alias, $row->$alias);
+            }
+        }
+
+        return $row;
+    }
+
+    /**
+     * Return whether the current row of this query's result is valid
+     *
+     * @return  bool
+     */
+    public function valid()
+    {
+        return $this->iterator->valid();
+    }
+
+    /**
+     * Return the key for the current row of this query's result
+     *
+     * @return  mixed
+     */
+    public function key()
+    {
+        return $this->iterator->key();
+    }
+
+    /**
+     * Advance to the next row of this query's result
+     */
+    public function next()
+    {
+        $this->iterator->next();
     }
 }
