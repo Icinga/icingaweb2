@@ -5,6 +5,7 @@ namespace Icinga\Repository;
 
 use Iterator;
 use IteratorAggregate;
+use Icinga\Application\Benchmark;
 use Icinga\Application\Logger;
 use Icinga\Data\QueryInterface;
 use Icinga\Data\Filter\Filter;
@@ -532,6 +533,7 @@ class RepositoryQuery implements QueryInterface, Iterator
         }
 
         $this->iterator->rewind();
+        Benchmark::measure('Query result iteration started');
     }
 
     /**
@@ -562,7 +564,12 @@ class RepositoryQuery implements QueryInterface, Iterator
      */
     public function valid()
     {
-        return $this->iterator->valid();
+        if (! $this->iterator->valid()) {
+            Benchmark::measure('Query result iteration finished');
+            return false;
+        }
+
+        return true;
     }
 
     /**
