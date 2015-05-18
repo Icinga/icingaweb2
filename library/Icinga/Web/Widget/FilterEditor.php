@@ -447,10 +447,10 @@ class FilterEditor extends AbstractWidget
         if ($this->addTo && $this->addTo === $filter->getId()) {
             return
                    preg_replace(
-            '/ class="autosubmit"/',
-            ' class="autofocus"',
-        $this->selectOperator()
-                )
+                       '/ class="autosubmit"/',
+                       ' class="autofocus"',
+                       $this->selectOperator()
+                   )
                   . '<ul><li>'
                   . $this->selectColumn($filter)
                   . $this->selectSign($filter)
@@ -697,7 +697,7 @@ class FilterEditor extends AbstractWidget
               . t('Search...')
               . '" /></form>';
 
-        if  ($this->filter->isEmpty()) {
+        if ($this->filter->isEmpty()) {
             $title = t('Filter this list');
         } else {
             $title = t('Modify this filter');

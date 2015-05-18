@@ -286,7 +286,6 @@ class LdapUserBackend extends UserBackend
                 $users[] = $row->{$this->userNameAttribute};
             }
         }
-
         return $users;
     }
 }

@@ -926,3 +926,44 @@ table.groupview {
 }
 
 /* End of monitoring groupsummary styles */
+
+/* compact table */
+table.statesummary {
+  text-align: left;
+  width: auto;
+  border-collapse: separate;
+
+  td {
+    padding: 0em 0.4em 0em 0.4em;
+    line-height: 1.2em;
+  }
+
+  tr.state td.state {
+    width: auto;
+    font-weight: bold;
+  }
+
+  td {
+    font-size: 0.9em;
+    line-height: 1.2em;
+    padding-left: 0.2em;
+    margin: 0;
+  }
+
+  td.state {
+    padding: 0.2em;
+    min-width: 75px;
+    font-size: 0.75em;
+    text-align: center;
+  }
+
+  td.name {
+    font-weight: bold;
+  }
+
+  td a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
