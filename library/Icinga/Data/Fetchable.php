@@ -3,20 +3,11 @@
 
 namespace Icinga\Data;
 
-use Iterator;
-
 /**
  * Interface for retrieving data
  */
 interface Fetchable
 {
-    /**
-     * Fetch and return all rows of the result set using an iterator
-     *
-     * @return  Iterator
-     */
-    public function fetch();
-
     /**
      * Retrieve an array containing all rows of the result set
      *
