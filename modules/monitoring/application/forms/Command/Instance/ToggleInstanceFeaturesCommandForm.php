@@ -85,7 +85,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_ACTIVE_HOST_CHECKS,
                 array(
-                    'label'         =>  $this->translate('Active Host Checks Being Executed'),
+                    'label'         =>  $this->translate('Active Host Checks'),
                     'autosubmit'    => true,
                     'disabled'      => $toggleDisabled
                 )
@@ -94,7 +94,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_ACTIVE_SERVICE_CHECKS,
                 array(
-                    'label'         =>  $this->translate('Active Service Checks Being Executed'),
+                    'label'         =>  $this->translate('Active Service Checks'),
                     'autosubmit'    => true,
                     'disabled'      => $toggleDisabled
                 )
@@ -103,7 +103,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_EVENT_HANDLERS,
                 array(
-                    'label'         => $this->translate('Event Handlers Enabled'),
+                    'label'         => $this->translate('Event Handlers'),
                     'autosubmit'    => true,
                     'disabled'      => $toggleDisabled
                 )
@@ -112,7 +112,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_FLAP_DETECTION,
                 array(
-                    'label'         => $this->translate('Flap Detection Enabled'),
+                    'label'         => $this->translate('Flap Detection'),
                     'autosubmit'    => true,
                     'disabled'      => $toggleDisabled
                 )
@@ -121,7 +121,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_NOTIFICATIONS,
                 array(
-                    'label'         => $this->translate('Notifications Enabled'),
+                    'label'         => $this->translate('Notifications'),
                     'autosubmit'    => true,
                     'description'   => $notificationDescription,
                     'decorators'    => array(
@@ -159,7 +159,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_PASSIVE_HOST_CHECKS,
                 array(
-                    'label'         =>  $this->translate('Passive Host Checks Being Accepted'),
+                    'label'         =>  $this->translate('Passive Host Checks'),
                     'autosubmit'    => true,
                     'disabled'      => $toggleDisabled
                 )
@@ -168,7 +168,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_PASSIVE_SERVICE_CHECKS,
                 array(
-                    'label'         =>  $this->translate('Passive Service Checks Being Accepted'),
+                    'label'         =>  $this->translate('Passive Service Checks'),
                     'autosubmit'    => true,
                     'disabled'      => $toggleDisabled
                 )
@@ -177,7 +177,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_PERFORMANCE_DATA,
                 array(
-                    'label'         =>  $this->translate('Performance Data Being Processed'),
+                    'label'         =>  $this->translate('Performance Data'),
                     'autosubmit'    => true,
                     'disabled'      => $toggleDisabled
                 )
