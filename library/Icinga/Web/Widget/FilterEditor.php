@@ -231,10 +231,11 @@ class FilterEditor extends AbstractWidget
                     if ($searchCol === null) {
                         throw new Exception('Cannot search here');
                     }
+                    $search = ltrim($search);
                     $filter = $this->mergeRootExpression($filter, $searchCol, '=', "*$search*");
                 } else {
                     list($k, $v) = preg_split('/=/', $search);
-                    $filter = $this->mergeRootExpression($filter, $k, '=', $v);
+                    $filter = $this->mergeRootExpression($filter, trim($k), '=', ltrim($v));
                 }
             } else {
                 if (false === $this->resetSearchColumns($filter)) {
@@ -242,6 +243,7 @@ class FilterEditor extends AbstractWidget
                 }
 
                 $filters = array();
+                $search = ltrim($search);
                 foreach ($this->searchColumns as $searchColumn) {
                     $filters[] = Filter::expression($searchColumn, '=', "*$search*");
                 }
