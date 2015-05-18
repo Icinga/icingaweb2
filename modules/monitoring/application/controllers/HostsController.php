@@ -2,6 +2,7 @@
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterEqual;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
@@ -140,7 +141,6 @@ class Monitoring_HostsController extends Controller
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/hosts/schedule-downtime');
         $this->view->processCheckResultAllLink = Url::fromRequest()->setPath('monitoring/hosts/process-check-result');
         $this->view->addCommentLink = Url::fromRequest()->setPath('monitoring/hosts/add-comment');
-        $this->view->deleteCommentLink = Url::fromRequest()->setPath('monitoring/hosts/delete-comment');
         $this->view->stats = $hostStates;
         $this->view->objects = $this->hostList;
         $this->view->unhandledObjects = $this->hostList->getUnhandledObjects();
@@ -154,9 +154,20 @@ class Monitoring_HostsController extends Controller
             ->setQueryString($this->hostList->getProblemObjects()->objectsFilter());
         $this->view->acknowledgedObjects = $this->hostList->getAcknowledgedObjects();
         $this->view->objectsInDowntime = $this->hostList->getObjectsInDowntime();
-        $this->view->inDowntimeLink = Url::fromPath('monitoring/list/downtimes')
-            ->setQueryString($this->hostList->getObjectsInDowntime()->objectsFilter(array('host' => 'downtime_host')));
-
+        $this->view->inDowntimeLink = Url::fromPath('monitoring/list/hosts')
+            ->setQueryString(
+                $this->hostList
+                    ->getObjectsInDowntime()
+                    ->objectsFilter()
+                    ->toQueryString()
+            );
+        $this->view->showDowntimesLink = Url::fromPath('monitoring/list/downtimes')
+            ->setQueryString(
+                $this->hostList
+                    ->objectsFilter()
+                    ->andFilter(FilterEqual::where('downtime_objecttype', 'host'))
+                    ->toQueryString()
+            );
         $this->view->commentsLink = Url::fromRequest()->setPath('monitoring/list/comments');
         $this->view->baseFilter = $this->hostList->getFilter();
         $this->view->sendCustomNotificationLink = Url::fromRequest()->setPath('monitoring/hosts/send-custom-notification');

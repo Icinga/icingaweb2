@@ -128,6 +128,16 @@ abstract class ObjectList implements Countable, IteratorAggregate
     }
 
     /**
+     * Get the scheduled downtimes
+     *
+     * @return type
+     */
+    public function getScheduledDowntimes()
+    {
+        return $this->backend->select()->from('downtime')->applyFilter($this->filter);
+    }
+
+    /**
      * @return ObjectList
      */
     public function getAcknowledgedObjects()

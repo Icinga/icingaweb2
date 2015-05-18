@@ -160,9 +160,14 @@ class Monitoring_ServicesController extends Controller
             ->setQueryString($this->serviceList->getProblemObjects()->objectsFilter()->toQueryString());
         $this->view->acknowledgedObjects = $acknowledgedObjects;
         $this->view->objectsInDowntime = $this->serviceList->getObjectsInDowntime();
-        $this->view->inDowntimeLink = Url::fromPath('monitoring/list/downtimes')
+        $this->view->inDowntimeLink = Url::fromPath('monitoring/list/services')
             ->setQueryString($this->serviceList->getObjectsInDowntime()
-            ->objectsFilter(array('host' => 'downtime_host', 'service' => 'downtime_service'))->toQueryString());
+            ->objectsFilter(array('host' => 'host_name', 'service' => 'service_description'))->toQueryString());
+        $this->view->showDowntimesLink = Url::fromPath('monitoring/downtimes/show')
+            ->setQueryString(
+                $this->serviceList->getObjectsInDowntime()
+                    ->objectsFilter()->toQueryString()
+            );
         $this->view->commentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
         $this->view->baseFilter = $this->serviceList->getFilter();

@@ -86,4 +86,17 @@ class HostList extends ObjectList
         }
         return FilterOr::matchAny($filterExpression);
     }
+
+    /**
+     * Get the scheduled downtimes
+     *
+     * @return type
+     */
+    public function getScheduledDowntimes()
+    {
+        return $this->backend->select()
+                ->from('downtime')
+                ->applyFilter(clone $this->filter)
+                ->where('downtime_objecttype', 'host');
+    }
 }
