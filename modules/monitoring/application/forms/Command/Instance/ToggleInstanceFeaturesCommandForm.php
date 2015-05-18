@@ -209,6 +209,50 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
     public function onSuccess()
     {
         $this->assertPermission('monitoring/command/feature/instance');
+
+        $notifications = array(
+            ToggleInstanceFeatureCommand::FEATURE_ACTIVE_HOST_CHECKS => array(
+                $this->translate('Enabling active host checks...'),
+                $this->translate('Disabling active host checks...')
+            ),
+            ToggleInstanceFeatureCommand::FEATURE_ACTIVE_SERVICE_CHECKS => array(
+                $this->translate('Enabling active service checks...'),
+                $this->translate('Disabling active service checks...')
+            ),
+            ToggleInstanceFeatureCommand::FEATURE_EVENT_HANDLERS => array(
+                $this->translate('Enabling event handlers...'),
+                $this->translate('Disabling event handlers...')
+            ),
+            ToggleInstanceFeatureCommand::FEATURE_FLAP_DETECTION => array(
+                $this->translate('Enabling flap detection...'),
+                $this->translate('Disabling flap detection...')
+            ),
+            ToggleInstanceFeatureCommand::FEATURE_NOTIFICATIONS => array(
+                $this->translate('Enabling notifications...'),
+                $this->translate('Disabling notifications...')
+            ),
+            ToggleInstanceFeatureCommand::FEATURE_HOST_OBSESSING => array(
+                $this->translate('Enabling obsessing over hosts...'),
+                $this->translate('Disabling obsessing over hosts...')
+            ),
+            ToggleInstanceFeatureCommand::FEATURE_SERVICE_OBSESSING => array(
+                $this->translate('Enabling obsessing over services...'),
+                $this->translate('Disabling obsessing over services...')
+            ),
+            ToggleInstanceFeatureCommand::FEATURE_PASSIVE_HOST_CHECKS => array(
+                $this->translate('Enabling passive host checks...'),
+                $this->translate('Disabling passive host checks...')
+            ),
+            ToggleInstanceFeatureCommand::FEATURE_PASSIVE_SERVICE_CHECKS => array(
+                $this->translate('Enabling passive service checks...'),
+                $this->translate('Disabling passive service checks...')
+            ),
+            ToggleInstanceFeatureCommand::FEATURE_PERFORMANCE_DATA => array(
+                $this->translate('Enabling performance data...'),
+                $this->translate('Disabling performance data...')
+            )
+        );
+
         foreach ($this->getValues() as $feature => $enabled) {
             $toggleFeature = new ToggleInstanceFeatureCommand();
             $toggleFeature
@@ -216,10 +260,9 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 ->setEnabled($enabled);
             $this->getTransport($this->request)->send($toggleFeature);
 
-            if ($this->status->{$feature} != $enabled) {
-                Notification::success($enabled
-                    ? $this->translate('Enabling feature..')
-                    : $this->translate('Disabling feature..')
+            if ((bool) $this->status->{$feature} !== (bool) $enabled) {
+                Notification::success(
+                    $notifications[$feature][$enabled ? 0 : 1]
                 );
             }
         }
