@@ -11,6 +11,9 @@ $this->addHelperFunction('format', function () {
 });
 
 $this->addHelperFunction('timeAgo', function ($timestamp) {
+    if (! $timestamp) {
+        return '';
+    }
     return sprintf(
         '<span class="time-ago" title="%s">%s</span>',
         date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
@@ -19,6 +22,9 @@ $this->addHelperFunction('timeAgo', function ($timestamp) {
 });
 
 $this->addHelperFunction('timeSince', function ($timestamp) {
+    if (! $timestamp) {
+        return '';
+    }
     return sprintf(
         '<span class="time-since" title="%s">%s</span>',
         date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
@@ -27,7 +33,9 @@ $this->addHelperFunction('timeSince', function ($timestamp) {
 });
 
 $this->addHelperFunction('timeUntil', function ($timestamp) {
-    if (! $timestamp) return '';
+    if (! $timestamp) {
+        return '';
+    }
     return sprintf(
         '<span class="time-until" title="%s">%s</span>',
         date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
