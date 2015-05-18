@@ -120,28 +120,28 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
 
         $notifications = array(
             ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS => array(
-                $this->translate('Enabling active checks...'),
-                $this->translate('Disabling active checks...')
+                $this->translate('Enabling active checks..'),
+                $this->translate('Disabling active checks..')
             ),
             ToggleObjectFeatureCommand::FEATURE_PASSIVE_CHECKS => array(
-                $this->translate('Enabling passive checks...'),
-                $this->translate('Disabling passive checks...')
+                $this->translate('Enabling passive checks..'),
+                $this->translate('Disabling passive checks..')
             ),
             ToggleObjectFeatureCommand::FEATURE_OBSESSING => array(
-                $this->translate('Enabling obsessing...'),
-                $this->translate('Disabling obsessing...')
+                $this->translate('Enabling obsessing..'),
+                $this->translate('Disabling obsessing..')
             ),
             ToggleObjectFeatureCommand::FEATURE_NOTIFICATIONS => array(
-                $this->translate('Enabling notifications...'),
-                $this->translate('Disabling notifications...')
+                $this->translate('Enabling notifications..'),
+                $this->translate('Disabling notifications..')
             ),
             ToggleObjectFeatureCommand::FEATURE_EVENT_HANDLER => array(
-                $this->translate('Enabling event handler...'),
-                $this->translate('Disabling event handler...')
+                $this->translate('Enabling event handler..'),
+                $this->translate('Disabling event handler..')
             ),
             ToggleObjectFeatureCommand::FEATURE_FLAP_DETECTION => array(
-                $this->translate('Enabling flap detection...'),
-                $this->translate('Disabling flap detection...')
+                $this->translate('Enabling flap detection..'),
+                $this->translate('Disabling flap detection..')
             )
         );
 
