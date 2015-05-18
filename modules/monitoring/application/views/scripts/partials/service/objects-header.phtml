@@ -27,14 +27,18 @@ $i = 0;
     <?php endforeach ?>
     </tbody>
     </table>
-    <div class="hbox-item">
-        <?php
-        echo $this->qlink(
-            sprintf($this->translate('List all %d services ...'), $i),
+    <div class="hbox-item multi-commands">
+        <?php if ($i > 5): ?>
+        <?= $this->qlink(
+            sprintf($this->translate('show all %d services'), $i),
             $listAllLink,
             null,
-            array('data-base-target' => '_next')
+            array(
+                'icon' => 'down-open',
+                'data-base-target' => '_next'
+            )
         );
         ?>
+        <?php endif ?>
     </div>
 <?php endif ?>

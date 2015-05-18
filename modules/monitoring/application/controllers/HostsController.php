@@ -41,7 +41,7 @@ class Monitoring_HostsController extends Controller
                     $this->translate('Show summarized information for %u hosts'),
                     count($this->hostList)
                 ),
-                'label' => sprintf($this->translate('Hosts (%d)'), count($this->hostList)),
+                'label' => $this->translate('Hosts') . sprintf(' (%d)', count($this->hostList)),
                 'url'   => Url::fromRequest(),
                 'icon'  => 'host'
             )

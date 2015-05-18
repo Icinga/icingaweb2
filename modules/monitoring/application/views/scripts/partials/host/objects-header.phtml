@@ -25,15 +25,20 @@ $i = 0;
         <?php endforeach ?>
     </tbody>
     </table>
-    <div class="hbox-item">
+    <div class="hbox-item multi-commands">
+        <?php if ($i > 5): ?>
         <?=
         $this->qlink(
-            sprintf($this->translate('list all %d hosts ...'), $i),
+            sprintf($this->translate('show all %d hosts'), $i),
             $listAllLink,
             null,
-            array('data-base-target' => '_next')
+            array(
+                'icon' => 'down-open',
+                'data-base-target' => '_next'
+            )
         );
         ?>
+        <?php endif ?>
     </div>
 <?php endif ?>
 

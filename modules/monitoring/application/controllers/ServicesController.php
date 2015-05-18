@@ -40,7 +40,7 @@ class Monitoring_ServicesController extends Controller
                     $this->translate('Show summarized information for %u services'),
                     count($this->serviceList)
                 ),
-                'label' => sprintf($this->translate('Services (%d)'), count($this->serviceList)),
+                'label' => $this->translate('Services') . sprintf(' (%d)', count($this->serviceList)),
                 'url'   => Url::fromRequest(),
                 'icon'  => 'services'
             )

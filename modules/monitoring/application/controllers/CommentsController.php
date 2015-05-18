@@ -55,8 +55,8 @@ class Monitoring_CommentsController extends Controller
                 'title' => $this->translate(
                     'Display detailed information about multiple comments.'
                 ),
-                'icon' => 'comment',
-                'label' => $this->translate('Comments'),
+                'icon'  => 'comment',
+                'label' => $this->translate('Comments') . sprintf(' (%d)', count($this->comments)),
                 'url'   =>'monitoring/comments/show'
             )
         )->activate('comments');

@@ -75,8 +75,8 @@ class Monitoring_DowntimesController extends Controller
                 'title' => $this->translate(
                     'Display detailed information about multiple downtimes.'
                 ),
-                'icon' => 'plug',
-                'label' => $this->translate('Downtimes'),
+                'icon'  => 'plug',
+                'label' => $this->translate('Downtimes') . sprintf(' (%d)', count($this->downtimes)),
                 'url'   =>'monitoring/downtimes/show'
             )
         )->activate('downtimes');
