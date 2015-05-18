@@ -4,15 +4,6 @@ use Icinga\Module\Monitoring\Object\Service;
 $i = 0;
 ?>
 <?php if (($serviceCount = count($objects)) > 0): ?>
-    <div class="hbox-item">
-        <?= $this->translate('Service states:') ?>
-        &nbsp;<?= $serviceStatesPieChart; ?>
-    </div>
-    <div class="hbox-item">
-        <?= $this->translate('Host states:') ?>
-        &nbsp;<?= $hostStatesPieChart; ?>
-    </div>
-    <p>
     <table class="state statesummary">
     <tbody>
     <?php foreach ($objects as $service): /** @var Service $service */ ?>
@@ -41,5 +32,4 @@ $i = 0;
         );
         ?>
     </div>
-    </p>
 <?php endif ?>

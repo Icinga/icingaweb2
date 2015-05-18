@@ -92,17 +92,7 @@ class Monitoring_ServicesController extends Controller
         $this->view->objects = $this->serviceList;
         $this->view->stats = $this->serviceList->getServiceStateSummary();
         $this->view->serviceStates = true;
-        $this->view->serviceStatesPieChart = InlinePie::createFromStateSummary(
-            $this->view->stats,
-            $this->translate('Service State'),
-            InlinePie::$colorsServiceStatesHandleUnhandled
-        );
         $this->view->hostStates = $this->serviceList->getHostStateSummary();
-        $this->view->hostStatesPieChart = InlinePie::createFromStateSummary(
-            $this->view->hostStates,
-            $this->translate('Service State'),
-            InlinePie::$colorsHostStatesHandledUnhandled
-        );
         $this->_helper->viewRenderer('partials/command/objects-command-form', null, true);
         return $form;
     }
@@ -149,19 +139,6 @@ class Monitoring_ServicesController extends Controller
             $this->view->removeAckForm = $removeAckForm;
         }
 
-        $serviceStates = $this->serviceList->getServiceStateSummary();
-        $this->view->serviceStatesPieChart = InlinePie::createFromStateSummary(
-            $serviceStates,
-            $this->translate('Service State'),
-            InlinePie::$colorsServiceStatesHandleUnhandled
-        );
-
-        $hostStates = $this->serviceList->getHostStateSummary();
-        $this->view->hostStatesPieChart = InlinePie::createFromStateSummary(
-            $hostStates,
-            $this->translate('Host State'),
-            InlinePie::$colorsHostStatesHandledUnhandled
-        );
         $this->setAutorefreshInterval(15);
         $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/services/reschedule-check');
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/services/schedule-downtime');
@@ -170,8 +147,8 @@ class Monitoring_ServicesController extends Controller
         );
         $this->view->addCommentLink = Url::fromRequest()->setPath('monitoring/services/add-comment');
         $this->view->deleteCommentLink = Url::fromRequest()->setPath('monitoring/services/delete-comment');
-        $this->view->stats = $serviceStates;
-        $this->view->hostStats = $hostStates;
+        $this->view->stats = $this->serviceList->getServiceStateSummary();
+        $this->view->hostStats = $this->serviceList->getHostStateSummary();
         $this->view->objects = $this->serviceList;
         $this->view->unhandledObjects = $this->serviceList->getUnhandledObjects();
         $this->view->problemObjects = $this->serviceList->getProblemObjects();

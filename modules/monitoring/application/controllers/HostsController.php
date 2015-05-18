@@ -134,11 +134,6 @@ class Monitoring_HostsController extends Controller
         }
 
         $hostStates = (object)$this->hostList->getStateSummary();
-        $this->view->hostStatesPieChart = InlinePie::createFromStateSummary(
-            $hostStates,
-            $this->translate('Host State'),
-            InlinePie::$colorsHostStatesHandledUnhandled
-        );
 
         $this->setAutorefreshInterval(15);
         $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/hosts/reschedule-check');

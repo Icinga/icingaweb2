@@ -5,11 +5,6 @@ $i = 0;
 ?>
 
 <?php if (($hostCount = count($objects)) > 0): ?>
-    <div class="hbox-item">
-        <?= $this->translate('States:') ?>
-        &nbsp;<?= $hostStatesPieChart; ?>
-    </div>
-<p>
     <table class="state statesummary">
 
         <tbody>
@@ -40,7 +35,5 @@ $i = 0;
         );
         ?>
     </div>
-</p>
-
 <?php endif ?>
 
