@@ -1,9 +1,12 @@
 <div class="controls">
+  <?php if (! $this->compact): ?>
+    <?= $tabs; ?>
+  <?php endif ?>
     <?= $this->render('partials/service/objects-header.phtml'); ?>
 </div>
 <div class="content">
     <?php if (($serviceCount = count($objects)) === 0): ?>
-        <?= $this->translate('No services matching the filter'); ?>
+        <?= $this->translate('No services found matching the filter'); ?>
     <?php else: ?>
         <h3><?= sprintf($this->translatePlural('%u Service', '%u Services', $serviceCount), $serviceCount); ?></h3>
         <div><?= $this->qlink(

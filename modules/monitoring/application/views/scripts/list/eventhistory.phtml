@@ -1,32 +1,23 @@
 <?php
-
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
-?>
-
-<?php if (false === $this->compact): ?>
+if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs ?>
-  <div style="margin: 1em" class="dontprint">
-    <div style="float: right">
-      <?= $this->translate('Sort by') ?> <?= $this->sortControl ?>
-    </div>
-  </div>
-
-  <?= $this->widget('limiter', array('url' => $this->url, 'max' => $this->history->count())); ?>
-  <?= $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
-
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
 <?php endif ?>
-
 <div class="content">
-<?= $this->filterEditor ?>
-<?php if (empty($history)): ?>
-  <?= $this->translate('No history events matching the filter') ?>
-</div>
-<?php return; endif ?>
-
+<?php
+if (count($history) === 0) {
+    echo $this->translate('No history events found matching the filter') . '</div>';
+    return;
+}
+?>
   <table data-base-target="_next" class="action">
     <tbody>
     <?php foreach ($history as $event): ?>
@@ -34,7 +25,7 @@ use Icinga\Module\Monitoring\Object\Service;
       $icon = 'help';
       $title = $event->type;
       $stateName = 'invalid';
-      $isService = isset($event->service);
+      $isService = isset($event->service_description);
       switch ($event->type) {
         case 'notify':
           $icon = 'bell';
@@ -99,10 +90,10 @@ use Icinga\Module\Monitoring\Object\Service;
         <td>
         <?php if ($isService): ?>
           <?= $this->link()->service(
-              $event->service, $event->service_display_name, $event->host, $event->host_display_name
+              $event->service_description, $event->service_display_name, $event->host_name, $event->host_display_name
           ) ?>
         <?php else: ?>
-          <?= $this->link()->host($event->host, $event->host_display_name) ?>
+          <?= $this->link()->host($event->host_name, $event->host_display_name) ?>
         <?php endif ?>
           <br>
           <div>

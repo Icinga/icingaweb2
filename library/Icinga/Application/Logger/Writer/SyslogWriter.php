@@ -67,6 +67,6 @@ class SyslogWriter extends LogWriter
     public function log($level, $message)
     {
         openlog($this->ident, LOG_PID, $this->facility);
-        syslog(static::$severityMap[$level], $message);
+        syslog(static::$severityMap[$level], str_replace("\n", '    ', $message));
     }
 }

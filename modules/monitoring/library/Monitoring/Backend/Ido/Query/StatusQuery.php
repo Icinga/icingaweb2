@@ -35,7 +35,7 @@ class StatusQuery extends IdoQuery
     protected $columnMap = array(
         'hosts' => array(
             'host'                  => 'ho.name1 COLLATE latin1_general_ci',
-            'host_name'             => 'ho.name1 COLLATE latin1_general_ci',
+            'host_name'             => 'ho.name1',
             'host_display_name'     => 'h.display_name',
             'host_alias'            => 'h.alias',
             'host_address'          => 'h.address',
@@ -161,16 +161,19 @@ class StatusQuery extends IdoQuery
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup_name'    => 'hgo.name1',
             'hostgroup_alias'   => 'hg.alias'
         ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_name'     => 'sgo.name1',
             'servicegroup_alias'    => 'sg.alias'
         ),
         'services' => array(
-            'service_host_name'      => 'so.name1 COLLATE latin1_general_ci',
+            'service_host'           => 'so.name1 COLLATE latin1_general_ci',
+            'service_host_name'      => 'so.name1',
             'service'                => 'so.name2 COLLATE latin1_general_ci',
-            'service_description'    => 'so.name2 COLLATE latin1_general_ci',
+            'service_description'    => 'so.name2',
             'service_display_name'   => 's.display_name',
             'service_icon_image'     => 's.icon_image',
             'service_action_url'     => 's.action_url',

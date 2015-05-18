@@ -7,24 +7,22 @@ class CommenthistoryQuery extends IdoQuery
 {
     protected $columnMap = array(
         'commenthistory' => array(
-            'state_time'    => 'h.comment_time',
-            'timestamp'     => 'UNIX_TIMESTAMP(h.comment_time)',
-            'raw_timestamp' => 'h.comment_time',
-            'object_id'     => 'h.object_id',
-            'type'          => "(CASE h.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)",
-            'state'         => '(NULL)',
-            'state_type'    => '(NULL)',
-            'output'        => "('[' || h.author_name || '] ' || h.comment_data)",
-            'attempt'       => '(NULL)',
-            'max_attempts'  => '(NULL)',
+            'state_time'            => 'h.comment_time',
+            'timestamp'             => 'UNIX_TIMESTAMP(h.comment_time)',
+            'raw_timestamp'         => 'h.comment_time',
+            'object_id'             => 'h.object_id',
+            'type'                  => "(CASE h.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)",
+            'state'                 => '(NULL)',
+            'state_type'            => '(NULL)',
+            'output'                => "('[' || h.author_name || '] ' || h.comment_data)",
+            'attempt'               => '(NULL)',
+            'max_attempts'          => '(NULL)',
 
-            'host'                => 'o.name1 COLLATE latin1_general_ci',
-            'service'             => 'o.name2 COLLATE latin1_general_ci',
-            'host_name'           => 'o.name1 COLLATE latin1_general_ci',
-            'service_description' => 'o.name2 COLLATE latin1_general_ci',
-            'service_host_name'   => 'o.name1 COLLATE latin1_general_ci',
-            'service_description' => 'o.name2 COLLATE latin1_general_ci',
-            'object_type'         => "CASE WHEN o.objecttype_id = 1 THEN 'host' ELSE 'service' END"
+            'host'                  => 'o.name1 COLLATE latin1_general_ci',
+            'service'               => 'o.name2 COLLATE latin1_general_ci',
+            'host_name'             => 'o.name1',
+            'service_description'   => 'o.name2',
+            'object_type'           => "CASE WHEN o.objecttype_id = 1 THEN 'host' ELSE 'service' END"
         )
     );
 

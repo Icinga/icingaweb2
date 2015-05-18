@@ -32,7 +32,6 @@ p.pluginoutput {
 }
 
 div.pluginoutput {
-  border-right: solid 5px @colorPetrol;
   overflow: auto;
   color: black;
   margin-bottom: 1em;
@@ -94,11 +93,14 @@ div.contacts div.notification-periods {
 div.tinystatesummary {
   .page-header();
   font-size: 1em;
+  margin-bottom: 0.5em;
+
   .badges {
     display: inline-block;
     margin-bottom: 4px;
     margin-left: 1em;
   }
+
   .state > a {
     color: white;
     font-size: 0.8em;
@@ -211,4 +213,11 @@ div.selection-info {
 hr.command-separator {
   border: none;
   border-bottom: 2px solid @colorPetrol;
+}
+
+div.backend-not-running {
+  background: @colorCritical;
+  color: white;
+  text-align: center;
+  padding: 0.1em;
 }

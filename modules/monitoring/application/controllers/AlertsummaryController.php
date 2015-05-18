@@ -6,6 +6,7 @@ use Icinga\Chart\Unit\LinearUnit;
 use Icinga\Chart\Unit\StaticAxis;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Web\Widget\SelectBox;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Url;
 
 class Monitoring_AlertsummaryController extends Controller
@@ -44,7 +45,7 @@ class Monitoring_AlertsummaryController extends Controller
                 'label' => $this->translate('Alert Summary'),
                 'url'   => Url::fromRequest()
             )
-        )->activate('alertsummary');
+        )->extend(new DashboardAction())->activate('alertsummary');
         $this->view->title = $this->translate('Alert Summary');
 
         $this->view->intervalBox = $this->createIntervalBox();
@@ -59,18 +60,20 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
+                'host_name',
                 'host_display_name',
-                'service',
+                'service_description',
                 'service_display_name',
                 'notification_output',
-                'notification_contact',
+                'notification_contact_name',
                 'notification_start_time',
                 'notification_state'
             )
         );
+        $this->view->notifications = $query;
 
-        $this->view->notifications = $query->paginate();
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->notifications);
     }
 
     /**
@@ -85,12 +88,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
-                'notification_output',
-                'notification_contact',
-                'notification_start_time',
-                'notification_state'
+                'notification_start_time'
             )
         );
 
@@ -138,12 +136,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
-                'notification_output',
-                'notification_contact',
-                'notification_start_time',
-                'notification_state'
+                'notification_start_time'
             )
         );
 
@@ -210,12 +203,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
-                'notification_output',
-                'notification_contact',
-                'notification_start_time',
-                'notification_state'
+                'notification_start_time'
             )
         );
 
@@ -263,20 +251,9 @@ class Monitoring_AlertsummaryController extends Controller
         $interval = $this->getInterval();
 
         $query = $this->backend->select()->from(
-            'EventHistory',
+            'eventHistory',
             array(
-                'host_name',
-                'service_description',
-                'object_type',
-                'timestamp',
-                'state',
-                'attempt',
-                'max_attempts',
-                'output',
-                'type',
-                'host',
-                'service',
-                'service_host_name'
+                'timestamp'
             )
         );
 
@@ -338,11 +315,7 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
                 'notification_object_id',
-                'notification_output',
-                'notification_contact',
                 'notification_start_time',
                 'notification_state',
                 'acknowledgement_entry_time'
@@ -507,12 +480,12 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
+                'host_name',
                 'host_display_name',
-                'service',
+                'service_description',
                 'service_display_name',
                 'notification_output',
-                'notification_contact',
+                'notification_contact_name',
                 'notification_start_time',
                 'notification_state'
             )
@@ -520,7 +493,7 @@ class Monitoring_AlertsummaryController extends Controller
 
         $query->order('notification_start_time', 'desc');
 
-        return $query->paginate(5);
+        return $query->limit(5);
     }
 
     /**

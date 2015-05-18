@@ -77,7 +77,7 @@ class PhpSession extends Session
             }
         }
 
-        $sessionSavePath = session_save_path();
+        $sessionSavePath = session_save_path() ?: sys_get_temp_dir();
         if (session_module_name() === 'files' && !is_writable($sessionSavePath)) {
             throw new ConfigurationError("Can't save session, path '$sessionSavePath' is not writable.");
         }

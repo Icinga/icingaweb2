@@ -506,12 +506,21 @@ abstract class ApplicationBootstrap
     protected function setupLogger()
     {
         if ($this->config->hasSection('logging')) {
+            $loggingConfig = $this->config->getSection('logging');
+
             try {
-                Logger::create($this->config->getSection('logging'));
+                Logger::create($loggingConfig);
             } catch (ConfigurationError $e) {
-                Logger::error($e);
+                Logger::getInstance()->registerConfigError($e->getMessage());
+
+                try {
+                    Logger::getInstance()->setLevel($loggingConfig->get('level', Logger::ERROR));
+                } catch (ConfigurationError $e) {
+                    Logger::getInstance()->registerConfigError($e->getMessage());
+                }
             }
         }
+
         return $this;
     }
 

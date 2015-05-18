@@ -31,7 +31,8 @@ class DbBackendFormTest extends BaseTestCase
             ->shouldReceive('count')
             ->andReturn(2);
 
-        $form = Mockery::mock('Icinga\Forms\Config\Authentication\DbBackendForm[getView]');
+        // Passing array(null) is required to make Mockery call the constructor...
+        $form = Mockery::mock('Icinga\Forms\Config\Authentication\DbBackendForm[getView]', array(null));
         $form->shouldReceive('getView->escape')
             ->with(Mockery::type('string'))
             ->andReturnUsing(function ($s) { return $s; });
@@ -56,7 +57,8 @@ class DbBackendFormTest extends BaseTestCase
             ->shouldReceive('count')
             ->andReturn(0);
 
-        $form = Mockery::mock('Icinga\Forms\Config\Authentication\DbBackendForm[getView]');
+        // Passing array(null) is required to make Mockery call the constructor...
+        $form = Mockery::mock('Icinga\Forms\Config\Authentication\DbBackendForm[getView]', array(null));
         $form->shouldReceive('getView->escape')
             ->with(Mockery::type('string'))
             ->andReturnUsing(function ($s) { return $s; });

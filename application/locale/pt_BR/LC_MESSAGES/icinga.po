@@ -130,8 +130,8 @@ msgid "Authentication backend name missing"
 msgstr "Falta o nome do backend de autenticação"
 
 #: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendReorderForm.php:55
-msgid "Authentication order updated!"
-msgstr "Ordem da autenticação atualizada!"
+msgid "Authentication order updated"
+msgstr "Ordem da autenticação atualizada"
 
 #: /usr/local/icingaweb/application/forms/Config/AuthenticationBackendConfigForm.php:307
 msgid "Autologin"

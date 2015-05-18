@@ -39,6 +39,28 @@ class Form extends Zend_Form
     const DEFAULT_SUFFIX = '_default';
 
     /**
+     * The type of the notification for the error
+     */
+    const NOTIFICATION_ERROR    = 0;
+
+    /**
+     * The type of the notification for the warning
+     */
+    const NOTIFICATION_WARNING  = 2;
+
+    /**
+     * The type of the notification for the info
+     */
+    const NOTIFICATION_INFO     = 4;
+
+    /**
+     * The notifications of the form
+     *
+     * @var array
+     */
+    protected $notifications = array();
+
+    /**
      * Whether this form has been created
      *
      * @var bool
@@ -1009,6 +1031,7 @@ class Form extends Zend_Form
                 }
 
                 $this->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
+                    ->addDecorator('FormNotifications')
                     ->addDecorator('FormDescriptions')
                     ->addDecorator('FormElements')
                     //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
@@ -1207,5 +1230,58 @@ class Form extends Zend_Form
         if (! $this->Auth()->hasPermission($permission)) {
             throw new SecurityException('No permission for %s', $permission);
         }
+    }
+
+    /**
+     * Return all form notifications
+     *
+     * @return array
+     */
+    public function getNotifications()
+    {
+        return $this->notifications;
+    }
+
+    /**
+     * Add a typed message to the notifications
+     *
+     * @param string    $message    The message which would be displayed to the user
+     *
+     * @param int       $type       The type of the message notification
+     */
+    public function addNotification($message, $type = self::NOTIFICATION_ERROR)
+    {
+        $this->notifications[$message] = $type;
+        $this->markAsError();
+    }
+
+    /**
+     * Add a error message to notifications
+     *
+     * @param string $message
+     */
+    public function error($message)
+    {
+        $this->addNotification($message, $type = self::NOTIFICATION_ERROR);
+    }
+
+    /**
+     * Add a warning message to notifications
+     *
+     * @param string $message
+     */
+    public function warning($message)
+    {
+        $this->addNotification($message, $type = self::NOTIFICATION_WARNING);
+    }
+
+    /**
+     * Add a info message to notifications
+     *
+     * @param string $message
+     */
+    public function info($message)
+    {
+        $this->addNotification($message, $type = self::NOTIFICATION_INFO);
     }
 }

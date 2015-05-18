@@ -4,12 +4,13 @@
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\DeleteDowntimeCommand;
+use \Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 
 /**
  * Form for deleting host or service downtimes
  */
-class DeleteDowntimeCommandForm extends ObjectsCommandForm
+class DeleteDowntimeCommandForm extends CommandForm
 {
     /**
      * (non-PHPDoc)
@@ -19,33 +20,44 @@ class DeleteDowntimeCommandForm extends ObjectsCommandForm
     {
         $this->setAttrib('class', 'inline');
     }
-
+    
     /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::createElements() For the method documentation.
      */
     public function createElements(array $formData = array())
     {
-        $this->addElements(array(
+        $this->addElements(
             array(
-                'hidden',
-                'downtime_id',
                 array(
-                    'required' => true,
-                    'decorators'    => array('ViewHelper')
-                )
-            ),
-            array(
-                'hidden',
-                'redirect',
+                    'hidden',
+                    'downtime_id',
+                    array(
+                        'required' => true,
+                        'validators' => array('NotEmpty'),
+                        'decorators' => array('ViewHelper')
+                    )
+                ),
                 array(
-                    'decorators' => array('ViewHelper')
+                    'hidden',
+                    'downtime_is_service',
+                    array(
+                        'filters' => array('Boolean'),
+                        'decorators' => array('ViewHelper')
+                    )
+                ),
+                array(
+                    'hidden',
+                    'redirect',
+                    array(
+                        'decorators' => array('ViewHelper')
+                    )
                 )
             )
-        ));
+        );
         return $this;
     }
-
+    
     /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::addSubmitButton() For the method documentation.
@@ -67,26 +79,23 @@ class DeleteDowntimeCommandForm extends ObjectsCommandForm
         );
         return $this;
     }
-
+   
     /**
      * (non-PHPDoc)
-     * @see \Icinga\Web\Form::onSuccess() For the method documentation.
+     * @see \Icinga\Web\Form::onSuccess() For  the method documentation.
      */
     public function onSuccess()
     {
-        foreach ($this->objects as $object) {
-            /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
-            $delDowntime = new DeleteDowntimeCommand();
-            $delDowntime
-                ->setObject($object)
-                ->setDowntimeId($this->getElement('downtime_id')->getValue());
-            $this->getTransport($this->request)->send($delDowntime);
-        }
+        $cmd = new DeleteDowntimeCommand();
+        $cmd->setDowntimeId($this->getElement('downtime_id')->getValue());
+        $cmd->setIsService($this->getElement('downtime_is_service')->getValue());
+        $this->getTransport($this->request)->send($cmd);
+    
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);
         }
-        Notification::success($this->translate('Deleting downtime..'));
+        Notification::success($this->translate('Deleting downtime.'));
         return true;
     }
 }

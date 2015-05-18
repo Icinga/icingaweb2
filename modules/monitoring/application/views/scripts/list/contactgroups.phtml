@@ -1,17 +1,22 @@
-<?php if (!$this->compact): ?>
+<?php if (! $this->compact): ?>
 <div class="controls">
-    <?= $this->tabs ?>
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
 <?php endif ?>
 <div class="content">
-    <div class="boxview" data-base-target="_next">
-
 <?php
-if (count($groupData) === 0) {
-    echo mt('monitoring', 'No contacts matching the filter');
-}
 
-foreach ($groupData as $groupName => $groupInfo): ?>
+if (count($groupData) === 0) {
+    echo $this->translate('No contactgroups found matching the filter') . '</div>';
+    return;
+}
+?>
+    <div class="boxview" data-base-target="_next">
+<?php foreach ($groupData as $groupName => $groupInfo): ?>
         <div class="box contactgroup">
             <h2><?= $groupInfo['alias']; ?></h2>
 <?php if ($groupInfo['alias'] !== $groupName): ?>
@@ -24,7 +29,7 @@ foreach ($groupData as $groupName => $groupInfo): ?>
                     <?= $this->qlink(
                         $c->contact_alias,
                         'monitoring/show/contact',
-                        array('contact' => $c->contact_name),
+                        array('contact_name' => $c->contact_name),
                         array('title' => sprintf(
                             $this->translate('Show detailed information about %s'),
                             $c->contact_alias

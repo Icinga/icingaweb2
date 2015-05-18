@@ -12,9 +12,9 @@ class StatehistoryQuery extends IdoQuery
 
     protected $columnMap = array(
         'statehistory' => array(
-            'raw_timestamp'         => 'sh.state_time',
-            'timestamp'             => 'UNIX_TIMESTAMP(sh.state_time)',
             'state_time'            => 'sh.state_time',
+            'timestamp'             => 'UNIX_TIMESTAMP(sh.state_time)',
+            'raw_timestamp'         => 'sh.state_time',
             'object_id'             => 'sho.object_id',
             'type'                  => "(CASE WHEN sh.state_type = 1 THEN 'hard_state' ELSE 'soft_state' END)",
             'state'                 => 'sh.state',
@@ -22,11 +22,11 @@ class StatehistoryQuery extends IdoQuery
             'output'                => 'sh.output',
             'attempt'               => 'sh.current_check_attempt',
             'max_attempts'          => 'sh.max_check_attempts',
+
             'host'                  => 'sho.name1 COLLATE latin1_general_ci',
-            'host_name'             => 'sho.name1 COLLATE latin1_general_ci',
             'service'               => 'sho.name2 COLLATE latin1_general_ci',
-            'service_description'   => 'sho.name2 COLLATE latin1_general_ci',
-            'service_host_name'     => 'sho.name1 COLLATE latin1_general_ci',
+            'host_name'             => 'sho.name1',
+            'service_description'   => 'sho.name2',
             'object_type'           => "CASE WHEN sho.objecttype_id = 1 THEN 'host' ELSE 'service' END"
         )
     );

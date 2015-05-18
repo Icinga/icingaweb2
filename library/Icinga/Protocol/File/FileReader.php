@@ -27,6 +27,13 @@ class FileReader implements Selectable, Countable
     protected $filename;
 
     /**
+     * Cache for static::count()
+     *
+     * @var int
+     */
+    protected $count = null;
+
+    /**
      * Create a new reader
      *
      * @param   ConfigObject $config
@@ -51,7 +58,7 @@ class FileReader implements Selectable, Countable
      */
     public function iterate()
     {
-        return new FileIterator($this->filename, $this->fields);
+        return new LogFileIterator($this->filename, $this->fields);
     }
 
     /**
@@ -71,7 +78,10 @@ class FileReader implements Selectable, Countable
      */
     public function count()
     {
-        return iterator_count($this->iterate());
+        if ($this->count === null) {
+            $this->count = iterator_count($this->iterate());
+        }
+        return $this->count;
     }
 
     /**

@@ -87,6 +87,7 @@ class ActionController extends Zend_Controller_Action
         $this->_helper->layout()->isIframe = $request->getUrl()->shift('isIframe');
         $this->_helper->layout()->moduleName = false;
 
+        $this->view->compact = $request->getParam('view') === 'compact';
         if ($this->rerenderLayout = $request->getUrl()->shift('renderLayout')) {
             $this->xhrLayout = 'body';
         }
@@ -315,13 +316,18 @@ class ActionController extends Zend_Controller_Action
             if ($redirect !== null) {
                 $login->setParam('redirect', '__SELF__');
             }
+
             $this->_response->setHttpResponseCode(403);
         } elseif ($redirect !== null) {
             if (! $redirect instanceof Url) {
                 $redirect = Url::fromPath($redirect);
             }
-            $login->setParam('redirect', $redirect->getRelativeUrl());
+
+            if (($relativeUrl = $redirect->getRelativeUrl())) {
+                $login->setParam('redirect', $relativeUrl);
+            }
         }
+
         $this->rerenderLayout()->redirectNow($login);
     }
 

@@ -16,6 +16,7 @@ use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\ServiceList;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Chart\InlinePie;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
 
 class Monitoring_ServicesController extends Controller
 {
@@ -27,7 +28,9 @@ class Monitoring_ServicesController extends Controller
     public function init()
     {
         $serviceList = new ServiceList($this->backend);
-        $serviceList->setFilter(Filter::fromQueryString((string) $this->params->without('service_problem', 'service_handled')));
+        $serviceList->setFilter(Filter::fromQueryString(
+            (string) $this->params->without(array('service_problem', 'service_handled', 'view'))
+        ));
         $this->serviceList = $serviceList;
     }
 
@@ -101,7 +104,7 @@ class Monitoring_ServicesController extends Controller
                 'label' => $this->translate('Services'),
                 'url'   => Url::fromRequest()
             )
-        )->activate('show');
+        )->extend(new DashboardAction())->activate('show');
         $this->setAutorefreshInterval(15);
         $checkNowForm = new CheckNowCommandForm();
         $checkNowForm
@@ -158,8 +161,8 @@ class Monitoring_ServicesController extends Controller
             if ((bool) $service->in_downtime === true) {
                 $objectsInDowntime[] = $service;
                 $downtimeFilterExpressions[] = Filter::matchAll(
-                    Filter::where('downtime_host', $service->getHost()->getName()),
-                    Filter::where('downtime_service', $service->getName())
+                    Filter::where('host_name', $service->getHost()->getName()),
+                    Filter::where('service_description', $service->getName())
                 );
             }
             ++$serviceStates[$service::getStateText($service->state)];

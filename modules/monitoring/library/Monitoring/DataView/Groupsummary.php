@@ -13,9 +13,9 @@ class Groupsummary extends DataView
     public function getColumns()
     {
         return array(
-            'servicegroup',
+            'servicegroup_name',
             'servicegroup_alias',
-            'hostgroup',
+            'hostgroup_name',
             'hostgroup_alias',
             'hosts_up',
             'hosts_unreachable',
@@ -25,6 +25,12 @@ class Groupsummary extends DataView
             'hosts_down_handled',
             'hosts_down_unhandled',
             'hosts_pending',
+            'hosts_up_last_state_change',
+            'hosts_pending_last_state_change',
+            'hosts_down_last_state_change_handled',
+            'hosts_unreachable_last_state_change_handled',
+            'hosts_down_last_state_change_unhandled',
+            'hosts_unreachable_last_state_change_unhandled',
             'services_total',
             'services_ok',
             'services_unknown',
@@ -57,5 +63,10 @@ class Groupsummary extends DataView
                 'order'     => self::SORT_DESC
             )
         );
+    }
+
+    public function getFilterColumns()
+    {
+        return array('hostgroup', 'servicegroup');
     }
 }

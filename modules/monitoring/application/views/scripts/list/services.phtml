@@ -4,41 +4,33 @@ use Icinga\Module\Monitoring\Object\Service;
 
 $selfUrl = 'monitoring/list/services';
 
-if (!$this->compact): ?>
+if (! $this->compact): ?>
 <div class="controls">
-<?= $this->tabs ?>
-<div style="margin: 1em;" class="dontprint">
-<?= $this->render('list/components/selectioninfo.phtml') ?>
-<?= $this->render('list/components/servicesummary.phtml') ?>
-<div style="float: right">
-<?= $this->translate('Sort by') ?> <?= $this->sortControl ?>
+  <?= $this->tabs; ?>
+  <div class="dontprint">
+    <?= $this->render('list/components/selectioninfo.phtml'); ?>
+    <?= $this->render('list/components/servicesummary.phtml'); ?>
+  </div>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
-</div>
-<?php if ($this->limit === 0): ?>
-<?= $this->widget('limiter') ?>
-<?php else: ?>
-<?= $this->widget('limiter')->setCurrentPageCount($this->services->count()) ?>
-<?= $this->paginationControl($services, null, null, array('preserve' => $this->preserve)) ?>
 <?php endif ?>
-</div>
-
 <div class="content">
-<?= $this->filterEditor ?>
-<?php else: ?>
+<?php
 
-<div class="content">
-<?php endif ?>
+if (count($services) === 0) {
+    echo $this->translate('No services found matching the filter') . '</div>';
+    return;
+}
+?>
 <table data-base-target="_next"
     class="action multiselect <?php if ($this->compact): ?> compact<?php endif ?>" style="table-layout: auto;"
     data-icinga-multiselect-url="<?= $this->href("monitoring/services/show") ?>"
     data-icinga-multiselect-data="service,host">
   <tbody>
-<?php
-
-if (count($services) === 0) {
-    echo mt('monitoring', 'No services matching the filter');
-}
-foreach ($services as $service):
+<?php foreach ($services as $service):
     $serviceLink = $this->href(
       'monitoring/service/show',
       array(
