@@ -3,7 +3,6 @@
 
 namespace Icinga\Repository;
 
-use Zend_Paginator;
 use Icinga\Application\Logger;
 use Icinga\Data\QueryInterface;
 use Icinga\Data\Filter\Filter;
@@ -362,23 +361,6 @@ class RepositoryQuery implements QueryInterface
     public function getOffset()
     {
         return $this->query->getOffset();
-    }
-
-    /**
-     * Return a paginator object for this query
-     *
-     * If not given, $itemsPerPage and $pageNumber will be set to their URL parameter counterparts.
-     *
-     * @param   int     $itemsPerPage   Number of items per page
-     * @param   int     $pageNumber     Current page number
-     *
-     * @return  Zend_Paginator
-     */
-    public function paginate($itemsPerPage = null, $pageNumber = null)
-    {
-        $paginator = $this->query->paginate($itemsPerPage, $pageNumber);
-        $paginator->getAdapter()->setQuery($this);
-        return $paginator;
     }
 
     /**

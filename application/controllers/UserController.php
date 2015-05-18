@@ -78,8 +78,8 @@ class UserController extends Controller
         $this->setupFilterControl($filterEditor);
 
         try {
-            $this->view->users = $query->paginate();
-            $this->setupPaginationControl($this->view->users);
+            $this->setupPaginationControl($query);
+            $this->view->users = $query;
         } catch (Exception $e) {
             Notification::error($e->getMessage());
             Logger::error($e);

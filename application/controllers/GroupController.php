@@ -78,8 +78,8 @@ class GroupController extends Controller
         $this->setupFilterControl($filterEditor);
 
         try {
-            $this->view->groups = $query->paginate();
-            $this->setupPaginationControl($this->view->groups);
+            $this->setupPaginationControl($query);
+            $this->view->groups = $query;
         } catch (Exception $e) {
             Notification::error($e->getMessage());
             Logger::error($e);
