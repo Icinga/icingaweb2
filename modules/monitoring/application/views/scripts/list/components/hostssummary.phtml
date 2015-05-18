@@ -14,7 +14,7 @@ function urlAddFilterOptional($url, $filter, $optional) {
 $this->baseFilter = isset($this->baseFilter) ? $this->baseFilter : null;
 $selfUrl = 'monitoring/list/hosts';
 $currentUrl = Url::fromRequest()->getRelativeUrl();
-?><div data-base-target='_next' class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
+?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
   <?= sprintf($this->translate('%s hosts:'), $this->stats->hosts_total); ?>
   <span class="badges">
     <?php if ($this->stats->hosts_up): ?>

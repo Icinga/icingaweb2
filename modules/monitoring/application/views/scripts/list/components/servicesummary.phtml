@@ -16,7 +16,7 @@ $this->baseFilter = isset($this->baseFilter) ? $this->baseFilter : null;
 
 $selfUrl = 'monitoring/list/services';
 $currentUrl = Url::fromRequest()->getRelativeUrl();
-?><div data-base-target='_next' class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
+?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
 <?= sprintf($this->translate('%s services:'), $this->stats->services_total); ?>
 <span class="badges">
 <?php if ($this->stats->services_ok): ?>
