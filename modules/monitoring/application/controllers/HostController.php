@@ -49,6 +49,11 @@ class Monitoring_HostController extends MonitoredObjectController
         $this->getTabs()->activate('host');
     }
 
+    /**
+     * Get host actions from hook
+     *
+     * @return array
+     */
     protected function getHostActions()
     {
         $urls = array();
@@ -67,7 +72,7 @@ class Monitoring_HostController extends MonitoredObjectController
      */
     public function showAction()
     {
-        $this->view->hostActions = $this->getHostActions();
+        $this->view->actions = $this->getHostActions();
         parent::showAction();
     }
 
