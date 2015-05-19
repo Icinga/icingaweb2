@@ -644,6 +644,12 @@ class Monitoring_ListController extends Controller
         return $query;
     }
 
+    /**
+     * Get columns to be added from URL parameter 'addColumns'
+     * and assign to $this->view->addColumns (as array)
+     *
+     * @return array
+     */
     protected function addColumns()
     {
         $columns = preg_split(
