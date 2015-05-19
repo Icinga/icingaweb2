@@ -282,31 +282,6 @@ class Query
     }
 
     /**
-     * Return a pagination adapter for the current query
-     *
-     * @return \Zend_Paginator
-     */
-    public function paginate($limit = null, $page = null)
-    {
-        if ($page === null || $limit === null) {
-            $request = \Zend_Controller_Front::getInstance()->getRequest();
-            if ($page === null) {
-                $page = $request->getParam('page', 0);
-            }
-            if ($limit === null) {
-                $limit = $request->getParam('limit', 20);
-            }
-        }
-        $paginator = new \Zend_Paginator(
-            // TODO: Adapter doesn't fit yet:
-            new \Icinga\Web\Paginator\Adapter\QueryAdapter($this)
-        );
-        $paginator->setItemCountPerPage($limit);
-        $paginator->setCurrentPageNumber($page);
-        return $paginator;
-    }
-
-    /**
      * Add a filter expression to this query
      *
      * @param   Expression  $expression
