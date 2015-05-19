@@ -4,7 +4,6 @@
 namespace Icinga\Date;
 
 use IntlDateFormatter;
-use InvalidArgumentException;
 
 /**
  * ICU date formatting
@@ -12,11 +11,11 @@ use InvalidArgumentException;
 class DateFormatter
 {
     /**
-     * Internal constant for relative time diffs
+     * Format relative
      *
      * @var int
      */
-    protected static $relative = 0;
+    const RELATIVE = 0;
 
     /**
      * Format time
@@ -40,67 +39,17 @@ class DateFormatter
     const DATETIME = 4;
 
     /**
-     * Format time diff as time ago
+     * Get the diff between the given time and the current time
      *
-     * @var int
-     */
-    const AGO = 8;
-
-    /**
-     * Format time diff as time until
+     * @param   int|float $time
      *
-     * @var int
+     * @return  array
      */
-    const UNTIL = 16;
-
-    /**
-     * Format time diff as time since
-     *
-     * @var int
-     */
-    const SINCE = 32;
-
-    /**
-     * Format used for the DateFormatter
-     *
-     * @var int
-     */
-    protected $format;
-
-    /**
-     * Create a date formatter
-     *
-     * @param int $format
-     */
-    public function __construct($format)
+    protected static function diff($time)
     {
-        $this->format = $format;
-    }
-
-    /**
-     * Create a date formatter
-     *
-     * @param   int $format
-     *
-     * @return  static
-     */
-    public static function create($format)
-    {
-        return new static($format);
-    }
-
-    /**
-     * Format the diff between two date/time values as a string
-     *
-     * @param   int|float   $time
-     * @param   int|float   $now
-     *
-     * @return  string              The formatted string
-     */
-    protected function diff($time, $now = null)
-    {
-        $now = $now === null ? time() : (float) $now;
         $invert = false;
+        $now = time();
+        $time = (float) $time;
         $diff = $time - $now;
         if ($diff < 0) {
             $diff = abs($diff);
@@ -113,7 +62,7 @@ class DateFormatter
         } else {
             $minutes = floor($diff / 60);
             if ($minutes < 60) {
-                $type = static::$relative;
+                $type = static::RELATIVE;
                 $formatted = sprintf('%dm %ds', $minutes, $diff % 60);
             } else {
                 $hours = floor($minutes / 60);
@@ -122,116 +71,156 @@ class DateFormatter
                     $fmt = new IntlDateFormatter(null, IntlDateFormatter::NONE, IntlDateFormatter::SHORT);
                     $formatted = $fmt->format($time);
                 } else {
-                    $type = static::$relative;
+                    $type = static::RELATIVE;
                     $formatted = sprintf('%dd %dh', floor($hours / 24), $hours % 24);
                 }
             }
         }
-        switch ($this->format) {
-            case static::AGO:
-                switch ($type) {
-                    case static::$relative:
-                        $formatted = sprintf(
-                            t('%s ago', 'An event that happened the given time interval ago'),
-                            $formatted
-                        );
-                        break;
-                    case static::TIME:
-                        $formatted = sprintf(t('at %s', 'An event happened at the given time'), $formatted);
-                        break;
-                    case static::DATE:
-                        // Move to next case
-                    case static::DATETIME:
-                        // TODO(el): Use own format string for date?
-                        $formatted = sprintf(
-                            t('on %s', 'An event happened on the given date or date and time'),
-                            $formatted
-                        );
-                        break;
-                }
+        return array($type, $formatted, $invert);
+    }
+
+    /**
+     * Format date
+     *
+     * @param   int|float time
+     *
+     * @return  string
+     */
+    public static function formatDate($time)
+    {
+        $fmt = new IntlDateFormatter(null, IntlDateFormatter::SHORT, IntlDateFormatter::NONE);
+        return $fmt->format((float) $time);
+    }
+
+    /**
+     * Format date and time
+     *
+     * @param   int|float time
+     *
+     * @return  string
+     */
+    public static function formatDateTime($time)
+    {
+        $fmt = new IntlDateFormatter(null, IntlDateFormatter::SHORT, IntlDateFormatter::SHORT);
+        return $fmt->format((float) $time);
+    }
+
+    /**
+     * Format time
+     *
+     * @param   int|float time
+     *
+     * @return  string
+     */
+    public static function formatTime($time)
+    {
+        $fmt = new IntlDateFormatter(null, IntlDateFormatter::NONE, IntlDateFormatter::SHORT);
+        return $fmt->format((float) $time);
+    }
+
+    /**
+     * Format time as time ago
+     *
+     * @param   int|float   $time
+     * @param   bool        $timeOnly
+     *
+     * @return  string
+     */
+    public static function timeAgo($time, $timeOnly = false)
+    {
+        list($type, $ago, $invert) = static::diff($time);
+        if ($timeOnly) {
+            return $ago;
+        }
+        switch ($type) {
+            case static::DATE:
+                // Move to next case
+            case static::DATETIME:
+                $formatted = sprintf(
+                    t('on %s', 'An event happened on the given date or date and time'),
+                    $ago
+                );
                 break;
-            case static::UNTIL:
-                switch ($type) {
-                    case static::$relative:
-                        $formatted = sprintf(
-                            t('in %s', 'An event will happen after the given time interval has elapsed'),
-                            $invert ? ('-' . $formatted) : $formatted
-                        );
-                        break;
-                    case static::TIME:
-                        $formatted = sprintf(t('at %s', 'An event will happen at the given time'), $formatted);
-                        break;
-                    case static::DATE:
-                        // Move to next case
-                    case static::DATETIME:
-                        // TODO(el): Use own format string for date?
-                        $formatted = sprintf(
-                            t('on %s', 'An event will happen on the given date or date and time'),
-                            $formatted
-                        );
-                        break;
-                }
+            case static::RELATIVE:
+                $formatted = sprintf(
+                    t('%s ago', 'An event that happened the given time interval ago'),
+                    $ago
+                );
                 break;
-            case static::SINCE;
-                switch ($type) {
-                    case static::$relative:
-                        $formatted = sprintf(
-                            t('for %s', 'A status is lasting for the given time interval'),
-                            $formatted
-                        );
-                        break;
-                    case static::TIME:
-                        // Move to next case
-                    case static::DATE:
-                        // Move to next case
-                    case static::DATETIME:
-                        // TODO(el): Use own format strings for time and date?
-                        $formatted = sprintf(
-                            t('since %s', 'A status is lasting since the given time, date or date and time'),
-                            $formatted
-                        );
-                        break;
-                }
-                break;
-            default:
+            case static::TIME:
+                $formatted = sprintf(t('at %s', 'An event happened at the given time'), $ago);
                 break;
         }
         return $formatted;
     }
 
     /**
-     * Format a date/time value as a string
+     * Format time as time since
      *
-     * @param   int|float   $time   Date/time to format
-     * @param   int|float   $now
+     * @param   int|float   $time
+     * @param   bool        $timeOnly
      *
-     * @return  string              The formatted string
+     * @return  string
      */
-    public function format($time, $now = null)
+    public static function timeSince($time, $timeOnly = false)
     {
-        $time = (float) $time;
-        switch ($this->format) {
+        list($type, $since, $invert) = static::diff($time);
+        if ($timeOnly) {
+            return $since;
+        }
+        switch ($type) {
+            case static::RELATIVE:
+                $formatted = sprintf(
+                    t('for %s', 'A status is lasting for the given time interval'),
+                    $since
+                );
+                break;
+            case static::DATE:
+                // Move to next case
+            case static::DATETIME:
+                // Move to next case
             case static::TIME:
-                $fmt = new IntlDateFormatter(null, IntlDateFormatter::NONE, IntlDateFormatter::SHORT);
-                $formatted = $fmt->format($time);
+                $formatted = sprintf(
+                    t('since %s', 'A status is lasting since the given time, date or date and time'),
+                    $since
+                );
                 break;
-            case static::DATE;
-                $fmt = new IntlDateFormatter(null, IntlDateFormatter::SHORT, IntlDateFormatter::NONE);
-                $formatted = $fmt->format($time);
-                break;
-            case static::DATETIME;
-                $fmt = new IntlDateFormatter(null, IntlDateFormatter::SHORT, IntlDateFormatter::SHORT);
-                $formatted = $fmt->format($time);
-                break;
-            case static::AGO:
+        }
+        return $formatted;
+    }
+
+    /**
+     * Format time as time until
+     *
+     * @param   int|float   $time
+     * @param   bool        $timeOnly
+     *
+     * @return  string
+     */
+    public static function timeUntil($time, $timeOnly = false)
+    {
+        list($type, $until, $invert) = static::diff($time);
+        if ($timeOnly) {
+            return $until;
+        }
+        switch ($type) {
+            case static::DATE:
                 // Move to next case
-            case static::UNTIL:
-                // Move to next case
-            case static::SINCE:
-                $formatted = $this->diff($time, $now);
+            case static::DATETIME:
+                $formatted = sprintf(
+                    t('on %s', 'An event will happen on the given date or date and time'),
+                    $until
+                );
                 break;
-            default:
-                throw new InvalidArgumentException('Invalid format');
+            case static::RELATIVE:
+                $formatted = sprintf(
+                    t('in %s', 'An event will happen after the given time interval has elapsed'),
+                    $invert ? ('-' . $until) : $until
+                );
+                break;
+            case static::TIME:
+                $formatted = sprintf(t('at %s', 'An event will happen at the given time'), $until);
+                break;
         }
         return $formatted;
     }
