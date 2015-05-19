@@ -3,43 +3,43 @@
 
 namespace Icinga\Web\View;
 
-use Icinga\Web\Url;
+use Icinga\Date\DateFormatter;
 use Icinga\Util\Format;
 
 $this->addHelperFunction('format', function () {
     return Format::getInstance();
 });
 
-$this->addHelperFunction('timeAgo', function ($timestamp) {
-    if (! $timestamp) {
+$this->addHelperFunction('timeAgo', function ($time, $timeOnly = false) {
+    if (! $time) {
         return '';
     }
     return sprintf(
         '<span class="time-ago" title="%s">%s</span>',
-        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
-        Format::timeAgo($timestamp)
+        date('Y-m-d H:i:s', $time), // TODO: internationalized format
+        DateFormatter::timeAgo($time, $timeOnly)
     );
 });
 
-$this->addHelperFunction('timeSince', function ($timestamp) {
-    if (! $timestamp) {
+$this->addHelperFunction('timeSince', function ($time, $timeOnly = false) {
+    if (! $time) {
         return '';
     }
     return sprintf(
         '<span class="time-since" title="%s">%s</span>',
-        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
-        Format::timeSince($timestamp)
+        date('Y-m-d H:i:s', $time), // TODO: internationalized format
+        DateFormatter::timeSince($time, $timeOnly)
     );
 });
 
-$this->addHelperFunction('timeUntil', function ($timestamp) {
-    if (! $timestamp) {
+$this->addHelperFunction('timeUntil', function ($time, $timeOnly = false) {
+    if (! $time) {
         return '';
     }
     return sprintf(
         '<span class="time-until" title="%s">%s</span>',
-        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
-        Format::timeUntil($timestamp)
+        date('Y-m-d H:i:s', $time), // TODO: internationalized format
+        DateFormatter::timeUntil($time, $timeOnly)
     );
 });
 
