@@ -10,6 +10,27 @@ $this->addHelperFunction('format', function () {
     return Format::getInstance();
 });
 
+$this->addHelperFunction('formatDate', function ($date) {
+    if (! $date) {
+        return '';
+    }
+    return DateFormatter::formatDate($date);
+});
+
+$this->addHelperFunction('formatDateTime', function ($dateTime) {
+    if (! $dateTime) {
+        return '';
+    }
+    return DateFormatter::formatDateTime($dateTime);
+});
+
+$this->addHelperFunction('formatTime', function ($time) {
+    if (! $time) {
+        return '';
+    }
+    return DateFormatter::formatTime($time);
+});
+
 $this->addHelperFunction('timeAgo', function ($time, $timeOnly = false) {
     if (! $time) {
         return '';
