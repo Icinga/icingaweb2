@@ -12,6 +12,7 @@ use Icinga\Web\Widget\Tabs;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget;
 use Icinga\Module\Monitoring\Forms\StatehistoryForm;
+use Icinga\Data\Filterable;
 
 class Monitoring_ListController extends Controller
 {
@@ -625,7 +626,15 @@ class Monitoring_ListController extends Controller
         $this->view->verticalPaginator   = $pivot->paginateYAxis();
     }
 
-    protected function filterQuery($query)
+    /**
+     * Apply filters on a query
+     *
+     * @param Filterable    $query          The query to apply filters on
+     * @param array         $searchColumns  Columns to search in
+     *
+     * @return Filterable   $query
+     */
+    protected function filterQuery(Filterable $query, array $searchColumns = null)
     {
         $editor = Widget::create('filterEditor')
             ->setQuery($query)
@@ -633,8 +642,11 @@ class Monitoring_ListController extends Controller
                 'limit', 'sort', 'dir', 'format', 'view', 'backend',
                 'stateType', 'addColumns', '_dev'
             )
-            ->ignoreParams('page')
-            ->handleRequest($this->getRequest());
+            ->ignoreParams('page');
+        if ($searchColumns !== null) {
+            $editor->setSearchColumns($searchColumns);
+        }
+        $editor->handleRequest($this->getRequest());
         $query->applyFilter($editor->getFilter());
 
         $this->setupFilterControl($editor);
