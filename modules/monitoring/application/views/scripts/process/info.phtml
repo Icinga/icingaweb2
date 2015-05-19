@@ -21,7 +21,7 @@ $cp = $this->checkPerformance()->create($this->checkperformance);
                 <tbody>
                 <tr>
                     <th><?= $this->translate('Program Start Time') ?></th>
-                    <td><?= $this->dateFormat()->formatDateTime($this->programStatus->program_start_time) ?></td>
+                    <td><?= $this->formatDateTime($this->programStatus->program_start_time) ?></td>
                 </tr>
                 <tr>
                     <th><?= $this->translate('Last Status Update'); ?></th>
