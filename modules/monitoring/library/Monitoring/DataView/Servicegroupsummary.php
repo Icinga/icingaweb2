@@ -9,4 +9,12 @@ class Servicegroupsummary extends Groupsummary
     {
         return array('servicegroup');
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('servicegroup', 'servicegroup_alias');
+    }
 }

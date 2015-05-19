@@ -125,4 +125,12 @@ class HostStatus extends DataView
         }
         return parent::isValidFilterTarget($column);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('host', 'host_display_name');
+    }
 }

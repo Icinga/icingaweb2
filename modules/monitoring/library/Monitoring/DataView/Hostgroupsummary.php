@@ -9,4 +9,12 @@ class Hostgroupsummary extends Groupsummary
     {
         return array('hostgroup');
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('hostgroup', 'hostgroup_alias');
+    }
 }
