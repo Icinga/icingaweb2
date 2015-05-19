@@ -12,6 +12,7 @@ use Icinga\Web\Widget\Tabs;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget;
 use Icinga\Module\Monitoring\Forms\StatehistoryForm;
+use Icinga\Data\Filterable;
 
 class Monitoring_ListController extends Controller
 {
@@ -95,7 +96,7 @@ class Monitoring_ListController extends Controller
             'host_current_check_attempt',
             'host_max_check_attempts'
         ), $this->addColumns()));
-        $this->filterQuery($query);
+        $this->filterQuery($query, array('host', 'host_display_name'));
         $this->applyRestriction('monitoring/hosts/filter', $query);
         $this->view->hosts = $query;
 
@@ -179,7 +180,7 @@ class Monitoring_ListController extends Controller
             'max_check_attempts'    => 'service_max_check_attempts'
         ), $this->addColumns());
         $query = $this->backend->select()->from('serviceStatus', $columns);
-        $this->filterQuery($query);
+        $this->filterQuery($query, array('service', 'service_display_name'));
         $this->applyRestriction('monitoring/services/filter', $query);
         $this->view->services = $query;
 
@@ -497,7 +498,7 @@ class Monitoring_ListController extends Controller
         ))->order('services_severity')->order('servicegroup_alias');
         // TODO(el): Can't default to the sort rules of the data view because it's meant for both host groups and
         // service groups. We should separate them.
-        $this->filterQuery($query);
+        $this->filterQuery($query, array('servicegroup', 'servicegroup_alias'));
         $this->view->servicegroups = $query;
 
         $this->setupLimitControl();
@@ -554,7 +555,7 @@ class Monitoring_ListController extends Controller
         ))->order('services_severity')->order('hostgroup_alias');
         // TODO(el): Can't default to the sort rules of the data view because it's meant for both host groups and
         // service groups. We should separate them.
-        $this->filterQuery($query);
+        $this->filterQuery($query, array('hostgroup', 'hostgroup_alias'));
         $this->view->hostgroups = $query;
 
         $this->setupLimitControl();
@@ -625,7 +626,15 @@ class Monitoring_ListController extends Controller
         $this->view->verticalPaginator   = $pivot->paginateYAxis();
     }
 
-    protected function filterQuery($query)
+    /**
+     * Apply filters on a query
+     *
+     * @param Filterable    $query          The query to apply filters on
+     * @param array         $searchColumns  Columns to search in
+     *
+     * @return Filterable   $query
+     */
+    protected function filterQuery(Filterable $query, array $searchColumns = null)
     {
         $editor = Widget::create('filterEditor')
             ->setQuery($query)
@@ -633,8 +642,11 @@ class Monitoring_ListController extends Controller
                 'limit', 'sort', 'dir', 'format', 'view', 'backend',
                 'stateType', 'addColumns', '_dev'
             )
-            ->ignoreParams('page')
-            ->handleRequest($this->getRequest());
+            ->ignoreParams('page');
+        if ($searchColumns !== null) {
+            $editor->setSearchColumns($searchColumns);
+        }
+        $editor->handleRequest($this->getRequest());
         $query->applyFilter($editor->getFilter());
 
         $this->setupFilterControl($editor);
