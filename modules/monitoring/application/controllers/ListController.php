@@ -470,7 +470,7 @@ class Monitoring_ListController extends Controller
         );
         $this->setAutorefreshInterval(12);
 
-        $query = $this->backend->select()->from('groupsummary', array(
+        $query = $this->backend->select()->from('servicegroupsummary', array(
             'servicegroup_name',
             'servicegroup_alias',
             'hosts_up',
@@ -521,7 +521,7 @@ class Monitoring_ListController extends Controller
         $this->addTitleTab('hostgroups', $this->translate('Host Groups'), $this->translate('List host groups'));
         $this->setAutorefreshInterval(12);
 
-        $query = $this->backend->select()->from('groupsummary', array(
+        $query = $this->backend->select()->from('hostgroupsummary', array(
             'hostgroup_name',
             'hostgroup_alias',
             'hosts_up',

@@ -64,9 +64,4 @@ class Groupsummary extends DataView
             )
         );
     }
-
-    public function getFilterColumns()
-    {
-        return array('hostgroup', 'servicegroup');
-    }
 }
