@@ -437,16 +437,14 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     }
 
     /**
-     * Fetch a column of all rows of the result set as an array
-     *
-     * @param   int $columnIndex Index of the column to fetch
+     * Fetch the first column of all rows of the result set as an array
      *
      * @return  array
      */
-    public function fetchColumn($columnIndex = 0)
+    public function fetchColumn()
     {
         Benchmark::measure('Fetching one column started');
-        $values = $this->ds->fetchColumn($this, $columnIndex);
+        $values = $this->ds->fetchColumn($this);
         Benchmark::measure('Fetching one column finished');
         return $values;
     }

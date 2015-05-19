@@ -420,23 +420,21 @@ class RepositoryQuery implements QueryInterface, Iterator
     }
 
     /**
-     * Fetch and return a column of all rows of the result set as an array
-     *
-     * @param   int     $columnIndex    Index of the column to fetch
+     * Fetch and return the first column of all rows of the result set as an array
      *
      * @return  array
      */
-    public function fetchColumn($columnIndex = 0)
+    public function fetchColumn()
     {
         if (! $this->hasOrder()) {
             $this->order();
         }
 
-        $results = $this->query->fetchColumn($columnIndex);
+        $results = $this->query->fetchColumn();
         if ($this->repository->providesValueConversion()) {
             $columns = $this->getColumns();
             $aliases = array_keys($columns);
-            $column = is_int($aliases[$columnIndex]) ? $columns[$columnIndex] : $aliases[$columnIndex];
+            $column = is_int($aliases[0]) ? $columns[0] : $aliases[0];
             foreach ($results as & $value) {
                 $value = $this->repository->retrieveColumn($column, $value);
             }

@@ -248,14 +248,13 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible
     }
 
     /**
-     * Fetch a column of all rows of the result set as an array
+     * Fetch the first column of all rows of the result set as an array
      *
      * @param   DbQuery   $query
-     * @param   int         $columnIndex Index of the column to fetch
      *
      * @return  array
      */
-    public function fetchColumn(DbQuery $query, $columnIndex = 0)
+    public function fetchColumn(DbQuery $query)
     {
         return $this->dbAdapter->fetchCol($query->getSelectQuery());
     }

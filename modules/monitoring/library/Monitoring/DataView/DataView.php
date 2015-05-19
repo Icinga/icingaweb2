@@ -490,15 +490,13 @@ abstract class DataView implements QueryInterface, IteratorAggregate
     }
 
     /**
-     * Fetch a column of all rows of the result set as an array
-     *
-     * @param   int $columnIndex Index of the column to fetch
+     * Fetch the first column of all rows of the result set as an array
      *
      * @return  array
      */
-    public function fetchColumn($columnIndex = 0)
+    public function fetchColumn()
     {
-        return $this->getQuery()->fetchColumn($columnIndex);
+        return $this->getQuery()->fetchColumn();
     }
 
     /**
