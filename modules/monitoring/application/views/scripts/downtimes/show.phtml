@@ -7,15 +7,8 @@
   <?= $this->render('partials/downtime/downtimes-header.phtml'); ?> 
 </p>
 </div>
-<div class="content">
-  <h3><?= $this->icon('reschedule') ?> <?= $this->translate('Commands') ?> </h3>
-  <p>
-    <?= sprintf(
-            $this->translate('Issue commands to all %s selected downtimes.'),
-            '<b>' . count($downtimes) . '</b>'
-        )
-    ?>
-    <div>
+<div class="content multi-commands">
+    <h3><?= $this->icon('reschedule') ?> <?= $this->translate('Commands') ?> </h3>
     <?= $this->qlink(
         sprintf(
             $this->translate('Remove all %d scheduled downtimes'),
@@ -28,6 +21,4 @@
             'title' => $this->translate('Remove all selected downtimes.')
         )
     ) ?>
-    </div>
-  </p>
 </div>

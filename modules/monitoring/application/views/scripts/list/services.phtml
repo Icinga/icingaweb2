@@ -59,39 +59,7 @@ if (count($services) === 0) {
       <td>
         <div class="sparkline-box"><?= $this->perfdata($service->service_perfdata, true, 8) ?> </div>
 
-        <?php if (!$service->service_handled && $service->service_state > 0): ?>
-        <?= $this->icon('attention-alt', $this->translate('Unhandled')) ?>
-        <?php endif ?>
-
-        <?php if ($service->service_acknowledged && !$service->service_in_downtime): ?>
-        <?= $this->icon('ok', $this->translate('Acknowledged') . (
-            $service->service_last_ack ? ': ' . $service->service_last_ack : ''
-        )) ?>
-        <?php endif ?>
-
-        <?php if ($service->service_is_flapping): ?>
-        <?= $this->icon('flapping', $this->translate('Flapping')) ?>
-        <?php endif ?>
-
-        <?php if (!$service->service_notifications_enabled): ?>
-        <?= $this->icon('bell-off-empty', $this->translate('Notifications Disabled')) ?>
-        <?php endif ?>
-
-        <?php if ($service->service_in_downtime): ?>
-        <?= $this->icon('plug', $this->translate('In Downtime')) ?>
-        <?php endif ?>
-
-        <?php if (isset($service->service_last_comment) && $service->service_last_comment !== null): ?>
-        <?= $this->icon('comment', $this->translate('Last Comment: ') . $service->service_last_comment) ?>
-        <?php endif ?>
-
-        <?php if (!$service->service_active_checks_enabled): ?>
-          <?php if (!$service->service_passive_checks_enabled): ?>
-            <?= $this->icon('eye-off', $this->translate('Active And Passive Checks Disabled')) ?>
-          <?php else: ?>
-            <?= $this->icon('eye-off', $this->translate('Active Checks Disabled')) ?>
-          <?php endif ?>
-        <?php endif ?>
+        <?= implode(' ', $this->serviceFlags($service)); ?>
 
       <?php if ($service->service_icon_image && ! preg_match('/[\'"]/', $service->service_icon_image)): ?>
         <?= $this->icon($this->resolveMacros($service->service_icon_image, $service)) ?>
@@ -113,7 +81,7 @@ if (count($services) === 0) {
         ); ?><?php endif ?><br>
         <p class="pluginoutput"><?= $this->escape($this->ellipsis($service->service_output, 10000)); ?></p>
       </td>
-<?php foreach($this->extraColumns as $col): ?>
+<?php foreach($this->addColumns as $col): ?>
       <td><?= $this->escape($service->$col) ?></td>
 <?php endforeach ?>
     </tr>

@@ -10,6 +10,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommand
 use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Web\Controller\MonitoredObjectController;
+use Icinga\Web\Hook;
 
 class Monitoring_ServiceController extends MonitoredObjectController
 {
@@ -47,6 +48,34 @@ class Monitoring_ServiceController extends MonitoredObjectController
         $this->createTabs();
         $this->getTabs()->activate('service');
     }
+
+    /**
+     * Get service actions from hook
+     *
+     * @return array
+     */
+    protected function getServiceActions()
+    {
+        $urls = array();
+
+        foreach (Hook::all('Monitoring\\ServiceActions') as $hook) {
+            foreach ($hook->getActionsForService($this->object) as $id => $url) {
+                $urls[$id] = $url;
+            }
+        }
+
+        return $urls;
+    }
+
+    /**
+     * Show a service
+     */
+    public function showAction()
+    {
+        $this->view->actions = $this->getServiceActions();
+        parent::showAction();
+    }
+
 
     /**
      * Acknowledge a service problem

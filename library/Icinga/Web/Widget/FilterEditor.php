@@ -76,6 +76,13 @@ class FilterEditor extends AbstractWidget
         return $this->filter;
     }
 
+    /**
+     * Set columns to search in
+     *
+     * @param array $searchColumns
+     *
+     * @return $this
+     */
     public function setSearchColumns(array $searchColumns)
     {
         $this->searchColumns = $searchColumns;
@@ -231,10 +238,11 @@ class FilterEditor extends AbstractWidget
                     if ($searchCol === null) {
                         throw new Exception('Cannot search here');
                     }
+                    $search = ltrim($search);
                     $filter = $this->mergeRootExpression($filter, $searchCol, '=', "*$search*");
                 } else {
                     list($k, $v) = preg_split('/=/', $search);
-                    $filter = $this->mergeRootExpression($filter, $k, '=', $v);
+                    $filter = $this->mergeRootExpression($filter, trim($k), '=', ltrim($v));
                 }
             } else {
                 if (false === $this->resetSearchColumns($filter)) {
@@ -242,6 +250,7 @@ class FilterEditor extends AbstractWidget
                 }
 
                 $filters = array();
+                $search = ltrim($search);
                 foreach ($this->searchColumns as $searchColumn) {
                     $filters[] = Filter::expression($searchColumn, '=', "*$search*");
                 }
@@ -445,10 +454,10 @@ class FilterEditor extends AbstractWidget
         if ($this->addTo && $this->addTo === $filter->getId()) {
             return
                    preg_replace(
-            '/ class="autosubmit"/',
-            ' class="autofocus"',
-        $this->selectOperator()
-                )
+                       '/ class="autosubmit"/',
+                       ' class="autofocus"',
+                       $this->selectOperator()
+                   )
                   . '<ul><li>'
                   . $this->selectColumn($filter)
                   . $this->selectSign($filter)
@@ -695,7 +704,7 @@ class FilterEditor extends AbstractWidget
               . t('Search...')
               . '" /></form>';
 
-        if  ($this->filter->isEmpty()) {
+        if ($this->filter->isEmpty()) {
             $title = t('Filter this list');
         } else {
             $title = t('Modify this filter');

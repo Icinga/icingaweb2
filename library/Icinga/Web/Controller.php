@@ -3,12 +3,11 @@
 
 namespace Icinga\Web;
 
-use Zend_Paginator;
 use Icinga\Data\Sortable;
 use Icinga\Data\QueryInterface;
-use Icinga\Web\Paginator\Adapter\QueryAdapter;
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Widget\Limiter;
+use Icinga\Web\Widget\Paginator;
 use Icinga\Web\Widget\SortBox;
 
 /**
@@ -115,12 +114,11 @@ class Controller extends ModuleActionController
         $request = $this->getRequest();
         $limit = $request->getParam('limit', $itemsPerPage);
         $page = $request->getParam('page', $pageNumber);
-        $query->limit($limit, $page * $limit);
+        $query->limit($limit, $page > 0 ? ($page - 1) * $limit : 0);
 
         if (! $this->view->compact) {
-            $paginator = new Zend_Paginator(new QueryAdapter($query));
-            $paginator->setItemCountPerPage($limit);
-            $paginator->setCurrentPageNumber($page);
+            $paginator = new Paginator();
+            $paginator->setQuery($query);
             $this->view->paginator = $paginator;
         }
 

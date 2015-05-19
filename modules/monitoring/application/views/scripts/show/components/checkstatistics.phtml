@@ -68,17 +68,8 @@ if ($object->getType() === $object::TYPE_HOST) {
 <?php if ($object->check_execution_time): ?>
     <tr>
         <th><?= $this->translate('Check execution time') ?></th>
-        <td><?php
-            $matches = array();
-            if (preg_match(
-                '/(?<!.)([0-9]+\.[0-9]{4,})(?!.)/ms',
-                $object->check_execution_time,
-                $matches
-            )) {
-                printf('%.3f', (float) $matches[1]);
-            } else {
-                echo $object->check_execution_time;
-            }
+        <td><?= $object->check_execution_time === null
+            ? '-' : round((float) $object->check_execution_time, 3)
         ?>s</td>
     </tr>
 <?php endif ?>

@@ -79,14 +79,16 @@
     </tbody>
   </table>
 
-  <p> 
+  <p>
+    <?php if ($i > 5): ?>
     <?= $this->qlink(
-        sprintf($this->translate('List all %d downtimes …'), count($downtimes)),
+        sprintf($this->translate('show all %d downtimes'), $i),
         $listAllLink,
         null,
         array(
-            'title' => $this->translate('List all'),
+            'icon' => $i > 5 ? 'down-open' : '',
             'data-base-target' => "_next"
         )
     ) ?>
+    <?php endif ?>
   </p>

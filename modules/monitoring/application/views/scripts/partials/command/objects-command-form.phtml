@@ -1,31 +1,19 @@
 <div class="controls">
+
+   <?php if (! $this->compact): ?>
+       <?= $tabs; ?>
+   <?php endif ?>
+
   <?php if (isset($serviceStates)): ?>
+    <?= $this->render('list/components/servicesummary.phtml') ?>
     <?= $this->render('partials/service/objects-header.phtml'); ?>
   <?php else: ?>
+    <?= $this->render('list/components/hostssummary.phtml') ?>
     <?= $this->render('partials/host/objects-header.phtml'); ?>
   <?php endif ?>
 </div>
+
 <div class="content objects-command">
-    <table class="objectlist">
-        <thead>
-            <tr>
-                <th><?= $this->icon('host'); ?> <?= $this->translate('Host'); ?></th>
-                <th><?= $this->icon('conf'); ?> <?= $this->translate('Service'); ?></th>
-            </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($form->getObjects() as $object): /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */ ?>
-            <tr>
-              <?php if ($object->getType() === $object::TYPE_HOST): ?>
-                <td colspan="2"><?= $this->escape($object->getName()); ?></td>
-              <?php else: ?>
-                <td><?= $this->escape($object->getHost()->getName()); ?></td>
-                <td><?= $this->escape($object->getName()); ?></td>
-              <?php endif ?>
-            </tr>
-          <?php endforeach ?>
-        </tbody>
-    </table>
     <hr class="command-separator">
     <?= $form; ?>
 </div>

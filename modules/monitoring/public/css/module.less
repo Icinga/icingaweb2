@@ -90,7 +90,7 @@ div.contacts div.notification-periods {
   margin-top: 0.5em;
 }
 
-div.tinystatesummary {
+.tinystatesummary {
   .page-header();
   font-size: 1em;
   margin-bottom: 0.5em;
@@ -99,6 +99,7 @@ div.tinystatesummary {
     display: inline-block;
     margin-bottom: 4px;
     margin-left: 1em;
+    height: auto;
   }
 
   .state > a {
@@ -130,12 +131,24 @@ span.state.ok {
     background: @colorOk;
 }
 
+span.state.up {
+  background: @colorOk;
+}
+
 span.state.critical {
     background: @colorCritical;
 }
 
+span.state.down {
+  background: @colorCritical;
+}
+
 span.state.handled.critical {
     background: @colorCriticalHandled;
+}
+
+span.state.handled.down {
+  background: @colorCriticalHandled;
 }
 
 span.state.warning {
@@ -198,7 +211,7 @@ div.selection-info {
 .optionbox label {
   max-width: 6.5em;
   text-align: left;
-  vertical-align: middle;
+  vertgical-align: middle;
   margin-right: 0em;
 }
 
