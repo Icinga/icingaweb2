@@ -167,7 +167,7 @@ class Params
      *
      * @throws  MissingParameterException   If the parameter was not given
      */
-    public function req($name, $strict = true)
+    public function getRequired($name, $strict = true)
     {
         if ($this->has($name)) {
             $value = $this->get($name);
