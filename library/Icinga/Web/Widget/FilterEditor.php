@@ -10,6 +10,7 @@ use Icinga\Data\Filter\FilterOr;
 use Icinga\Web\Url;
 use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Notification;
 use Exception;
 
 /**
@@ -217,7 +218,8 @@ class FilterEditor extends AbstractWidget
         if ($search !== null) {
             if ($this->searchColumns === null) {
                 if (strpos($search, '=') === false) {
-                    throw new Exception('Cannot search here');
+                    Notification::error(mt('monitoring', 'Cannot search here'));
+                    return $this;
                 } else {
                     list($k, $v) = preg_split('/=/', $search);
                     $filter = $this->mergeRootExpression($filter, trim($k), '=', ltrim($v));
