@@ -13,6 +13,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget;
 use Icinga\Module\Monitoring\Forms\StatehistoryForm;
 use Icinga\Data\Filterable;
+use Icinga\Module\Monitoring\DataView\DataView;
 
 class Monitoring_ListController extends Controller
 {
@@ -627,17 +628,17 @@ class Monitoring_ListController extends Controller
     }
 
     /**
-     * Apply filters on a query
+     * Apply filters on a DataView
      *
-     * @param Filterable    $query          The query to apply filters on
-     * @param array         $searchColumns  Columns to search in
+     * @param DataView  $dataView       The DataView to apply filters on
+     * @param array     $searchColumns  Columns to search in
      *
-     * @return Filterable   $query
+     * @return DataView $dataView
      */
-    protected function filterQuery(Filterable $query, array $searchColumns = null)
+    protected function filterQuery(DataView $dataView, array $searchColumns = null)
     {
         $editor = Widget::create('filterEditor')
-            ->setQuery($query)
+            ->setQuery($dataView)
             ->preserveParams(
                 'limit', 'sort', 'dir', 'format', 'view', 'backend',
                 'stateType', 'addColumns', '_dev'
@@ -647,13 +648,13 @@ class Monitoring_ListController extends Controller
             $editor->setSearchColumns($searchColumns);
         }
         $editor->handleRequest($this->getRequest());
-        $query->applyFilter($editor->getFilter());
+        $dataView->applyFilter($editor->getFilter());
 
         $this->setupFilterControl($editor);
         $this->view->filter = $editor->getFilter();
 
-        $this->handleFormatRequest($query);
-        return $query;
+        $this->handleFormatRequest($dataView);
+        return $dataView;
     }
 
     /**
