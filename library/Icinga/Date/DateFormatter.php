@@ -82,33 +82,33 @@ class DateFormatter
     /**
      * Format date
      *
-     * @param   int|float time
+     * @param   int|float $date
      *
      * @return  string
      */
-    public static function formatDate($time)
+    public static function formatDate($date)
     {
         $fmt = new IntlDateFormatter(null, IntlDateFormatter::SHORT, IntlDateFormatter::NONE);
-        return $fmt->format((float) $time);
+        return $fmt->format((float) $date);
     }
 
     /**
      * Format date and time
      *
-     * @param   int|float time
+     * @param   int|float $dateTime
      *
      * @return  string
      */
-    public static function formatDateTime($time)
+    public static function formatDateTime($dateTime)
     {
         $fmt = new IntlDateFormatter(null, IntlDateFormatter::SHORT, IntlDateFormatter::SHORT);
-        return $fmt->format((float) $time);
+        return $fmt->format((float) $dateTime);
     }
 
     /**
      * Format time
      *
-     * @param   int|float time
+     * @param   int|float $time
      *
      * @return  string
      */
