@@ -4,9 +4,7 @@
 namespace Icinga\Data\Db;
 
 use Icinga\Data\SimpleQuery;
-use Icinga\Application\Benchmark;
 use Icinga\Data\Filter\FilterChain;
-use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Filter\FilterOr;
 use Icinga\Data\Filter\FilterAnd;
 use Icinga\Data\Filter\FilterNot;
@@ -296,10 +294,9 @@ class DbQuery extends SimpleQuery
     public function count()
     {
         if ($this->count === null) {
-            Benchmark::measure('DB is counting');
             $this->count = parent::count();
-            Benchmark::measure('DB finished count');
         }
+
         return $this->count;
     }
 

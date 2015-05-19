@@ -6,7 +6,6 @@ namespace Icinga\Data\Db;
 use PDO;
 use Iterator;
 use Zend_Db;
-use Icinga\Application\Benchmark;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\Db\DbQuery;
 use Icinga\Data\Extensible;
@@ -233,10 +232,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible
      */
     public function fetchAll(DbQuery $query)
     {
-        Benchmark::measure('DB is fetching All');
-        $result = $this->dbAdapter->fetchAll($query->getSelectQuery());
-        Benchmark::measure('DB fetch done');
-        return $result;
+        return $this->dbAdapter->fetchAll($query->getSelectQuery());
     }
 
     /**
@@ -248,10 +244,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible
      */
     public function fetchRow(DbQuery $query)
     {
-        Benchmark::measure('DB is fetching row');
-        $result = $this->dbAdapter->fetchRow($query->getSelectQuery());
-        Benchmark::measure('DB row done');
-        return $result;
+        return $this->dbAdapter->fetchRow($query->getSelectQuery());
     }
 
     /**

@@ -4,6 +4,7 @@
 namespace Icinga\Data;
 
 use IteratorAggregate;
+use Icinga\Application\Benchmark;
 use Icinga\Data\Filter\Filter;
 use Icinga\Exception\IcingaException;
 
@@ -357,7 +358,10 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
      */
     public function fetchAll()
     {
-        return $this->ds->fetchAll($this);
+        Benchmark::measure('Fetching all results started');
+        $results = $this->ds->fetchAll($this);
+        Benchmark::measure('Fetching all results finished');
+        return $results;
     }
 
     /**
@@ -367,7 +371,10 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
      */
     public function fetchRow()
     {
-        return $this->ds->fetchRow($this);
+        Benchmark::measure('Fetching one row started');
+        $row = $this->ds->fetchRow($this);
+        Benchmark::measure('Fetching one row finished');
+        return $row;
     }
 
     /**
@@ -379,7 +386,10 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
      */
     public function fetchColumn($columnIndex = 0)
     {
-        return $this->ds->fetchColumn($this, $columnIndex);
+        Benchmark::measure('Fetching one column started');
+        $values = $this->ds->fetchColumn($this, $columnIndex);
+        Benchmark::measure('Fetching one column finished');
+        return $values;
     }
 
     /**
@@ -389,7 +399,10 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
      */
     public function fetchOne()
     {
-        return $this->ds->fetchOne($this);
+        Benchmark::measure('Fetching one value started');
+        $value = $this->ds->fetchOne($this);
+        Benchmark::measure('Fetching one value finished');
+        return $value;
     }
 
     /**
@@ -401,7 +414,10 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
      */
     public function fetchPairs()
     {
-        return $this->ds->fetchPairs($this);
+        Benchmark::measure('Fetching pairs started');
+        $pairs = $this->ds->fetchPairs($this);
+        Benchmark::measure('Fetching pairs finished');
+        return $pairs;
     }
 
     /**
@@ -413,7 +429,10 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
     {
         $query = clone $this;
         $query->limit(0, 0);
-        return $this->ds->count($query);
+        Benchmark::measure('Counting all results started');
+        $count = $this->ds->count($query);
+        Benchmark::measure('Counting all results finished');
+        return $count;
     }
 
     /**
