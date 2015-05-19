@@ -171,9 +171,6 @@ class DashboardController extends ActionController
                 $action->view->config = $dashboardConfig;
                 $action->render('error');
                 return false;
-            } catch (ProgrammingError $e) {
-                Notification::error($e->getMessage());
-                return false;
             }
             return false;
         });
@@ -210,9 +207,6 @@ class DashboardController extends ActionController
                 $action->view->error = $e;
                 $action->view->config = $dashboardConfig;
                 $action->render('error');
-                return false;
-            } catch (ProgrammingError $e) {
-                Notification::error($e->getMessage());
                 return false;
             }
             return false;
