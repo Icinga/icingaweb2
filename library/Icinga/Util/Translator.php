@@ -3,7 +3,6 @@
 
 namespace Icinga\Util;
 
-use Locale;
 use Icinga\Exception\IcingaException;
 
 /**
@@ -174,9 +173,7 @@ class Translator
                     $localeName
                 );
             }
-            Locale::setDefault(static::DEFAULT_LOCALE);
         } else {
-            Locale::setDefault($localeName);
             $locale = setlocale(LC_ALL, 0);
             putenv('LC_ALL=' . $locale); // Failsafe, Win and Unix
             putenv('LANG=' . $locale); // Windows fix, untested
