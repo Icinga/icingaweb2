@@ -217,29 +217,7 @@ class FilterEditor extends AbstractWidget
         if ($search !== null) {
             if ($this->searchColumns === null) {
                 if (strpos($search, '=') === false) {
-                    // TODO: Ask the view for (multiple) search columns
-                    switch($request->getActionName()) {
-                        case 'services':
-                            $searchCol = 'service';
-                            break;
-                        case 'hosts':
-                            $searchCol = 'host';
-                            break;
-                        case 'hostgroups':
-                            $searchCol = 'hostgroup';
-                            break;
-                        case 'servicegroups':
-                            $searchCol = 'servicegroup';
-                            break;
-                        default:
-                            $searchCol = null;
-                    }
-
-                    if ($searchCol === null) {
-                        throw new Exception('Cannot search here');
-                    }
-                    $search = ltrim($search);
-                    $filter = $this->mergeRootExpression($filter, $searchCol, '=', "*$search*");
+                    throw new Exception('Cannot search here');
                 } else {
                     list($k, $v) = preg_split('/=/', $search);
                     $filter = $this->mergeRootExpression($filter, trim($k), '=', ltrim($v));
