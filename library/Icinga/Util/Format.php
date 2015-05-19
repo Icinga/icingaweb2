@@ -113,33 +113,6 @@ class Format
         return $prefix . self::showHourMin(abs($diff), $includePrefix);
     }
 
-    /**
-     * (non-PHPDoc)
-     * @see \Icinga\Date\DateFormatter::timeAgo() For the method description.
-     */
-    public static function timeAgo($time)
-    {
-        return DateFormatter::create(DateFormatter::AGO)->format($time);
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see \Icinga\Date\DateFormatter::timeUntil() For the method description.
-     */
-    public static function timeUntil($time)
-    {
-        return DateFormatter::create(DateFormatter::UNTIL)->format($time);
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see \Icinga\Date\DateFormatter::timeSince() For the method description.
-     */
-    public static function timeSince($time)
-    {
-        return DateFormatter::create(DateFormatter::SINCE)->format($time);
-    }
-
     protected static function formatForUnits($value, & $units, $base)
     {
         $sign = '';
