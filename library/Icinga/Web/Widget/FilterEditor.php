@@ -76,6 +76,11 @@ class FilterEditor extends AbstractWidget
         return $this->filter;
     }
 
+    /**
+     * Set columns to search in
+     *
+     * @param array $searchColumns
+     */
     public function setSearchColumns(array $searchColumns)
     {
         $this->searchColumns = $searchColumns;
