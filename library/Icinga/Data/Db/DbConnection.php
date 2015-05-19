@@ -213,6 +213,18 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible
     }
 
     /**
+     * Count all rows of the result set
+     *
+     * @param   DbQuery     $query
+     *
+     * @return  int
+     */
+    public function count(DbQuery $query)
+    {
+        return $this->dbAdapter->fetchOne($query->getCountQuery());
+    }
+
+    /**
      * Retrieve an array containing all rows of the result set
      *
      * @param   DbQuery $query

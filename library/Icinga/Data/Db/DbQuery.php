@@ -297,7 +297,7 @@ class DbQuery extends SimpleQuery
     {
         if ($this->count === null) {
             Benchmark::measure('DB is counting');
-            $this->count = $this->db->fetchOne($this->getCountQuery());
+            $this->count = parent::count();
             Benchmark::measure('DB finished count');
         }
         return $this->count;
