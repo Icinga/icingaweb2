@@ -793,22 +793,16 @@
         },
 
         /**
-         * Cancel and dereference all pending requests and dereference this object
+         * On shutdown we kill all pending requests
          */
         destroy: function() {
-            this.icinga.loader.cancelRequests();
-            this.icinga = null;
-            this.requests = {};
-        },
-
-        /**
-         * Cancel all pendings ajax requests
-         */
-        cancelRequests: function() {
             $.each(this.requests, function(id, request) {
                 request.abort();
             });
+            this.icinga = null;
+            this.requests = {};
         }
+
     };
 
 }(Icinga, jQuery));
