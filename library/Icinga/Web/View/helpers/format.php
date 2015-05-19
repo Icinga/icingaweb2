@@ -42,7 +42,3 @@ $this->addHelperFunction('timeUntil', function ($time, $timeOnly = false) {
         DateFormatter::timeUntil($time, $timeOnly)
     );
 });
-
-$this->addHelperFunction('dateTimeRenderer', function ($dateTimeOrTimestamp, $future = false) {
-    return DateTimeRenderer::create($dateTimeOrTimestamp, $future);
-});
