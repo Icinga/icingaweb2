@@ -59,7 +59,7 @@ foreach ($services as $service):
         <strong><?= Service::getStateText($service->service_state, true); ?></strong>
         <?php if ((int) $service->service_state !== 99): ?>
           <br />
-          <?= $this->timeSince($service->service_last_state_change) ?>
+          <?= $this->timeSince($service->service_last_state_change, $this->compact) ?>
           <?php if ((int) $service->service_state > 0 && (int) $service->service_state_type === 0): ?>
             <br />
             <strong>Soft <?= $service->service_attempt ?></strong>

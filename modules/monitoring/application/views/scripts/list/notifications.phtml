@@ -34,7 +34,7 @@ use Icinga\Module\Monitoring\Object\Service;
     ?>
         <tr class="state <?= $stateName ?>">
             <td class="state">
-                <?= $this->timeAgo($notification->notification_start_time) ?>
+                <?= $this->timeAgo($notification->notification_start_time, $this->compact) ?>
             </td>
             <td style="font-size: 0.8em">
                 <?php if ($isService): ?>

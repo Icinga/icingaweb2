@@ -48,7 +48,7 @@
           <br>
           <strong><?= $this->escape($title); ?></strong>
           <br>
-          <?= $this->timeAgo($comment->timestamp); ?>
+          <?= $this->timeAgo($comment->timestamp, $this->compact); ?>
         </td>
         <td>
         <?php if ($comment->objecttype === 'service'): ?>

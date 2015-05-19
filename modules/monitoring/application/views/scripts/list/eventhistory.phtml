@@ -94,7 +94,7 @@ use Icinga\Module\Monitoring\Object\Service;
         <td class="state">
           <strong><?= $this->escape($title); ?></strong>
           <br>
-          <?= $this->timeAgo($event->timestamp); ?>
+          <?= $this->timeAgo($event->timestamp, $this->compact); ?>
         </td>
         <td>
         <?php if ($isService): ?>

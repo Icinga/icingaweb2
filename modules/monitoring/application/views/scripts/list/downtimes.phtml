@@ -42,7 +42,7 @@ use Icinga\Module\Monitoring\Object\Service;
         <td class="state">
           <strong><?= $downtime->is_in_effect ? $this->translate('Expires') : $this->translate('Starts'); ?></strong>
           <br>
-          <?= $downtime->is_in_effect ? $this->timeSince($downtime->start) : $this->timeUntil($downtime->start) ?>
+          <?= $downtime->is_in_effect ? $this->timeSince($downtime->start, $this->compact) : $this->timeUntil($downtime->start, $this->compact) ?>
         </td>
         <td>
         <?php if ($isService): ?>
