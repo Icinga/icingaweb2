@@ -94,7 +94,7 @@ class Monitoring_ListController extends Controller
             'host_passive_checks_enabled',
             'host_current_check_attempt',
             'host_max_check_attempts'
-        ), $this->extraColumns()));
+        ), $this->addColumns()));
         $this->filterQuery($query);
         $this->applyRestriction('monitoring/hosts/filter', $query);
         $this->view->hosts = $query;
@@ -177,7 +177,7 @@ class Monitoring_ListController extends Controller
             'service_passive_checks_enabled',
             'current_check_attempt' => 'service_current_check_attempt',
             'max_check_attempts'    => 'service_max_check_attempts'
-        ), $this->extraColumns());
+        ), $this->addColumns());
         $query = $this->backend->select()->from('serviceStatus', $columns);
         $this->filterQuery($query);
         $this->applyRestriction('monitoring/services/filter', $query);
@@ -644,7 +644,13 @@ class Monitoring_ListController extends Controller
         return $query;
     }
 
-    protected function extraColumns()
+    /**
+     * Get columns to be added from URL parameter 'addColumns'
+     * and assign to $this->view->addColumns (as array)
+     *
+     * @return array
+     */
+    protected function addColumns()
     {
         $columns = preg_split(
             '~,~',
@@ -652,7 +658,7 @@ class Monitoring_ListController extends Controller
             -1,
             PREG_SPLIT_NO_EMPTY
         );
-        $this->view->extraColumns = $columns;
+        $this->view->addColumns = $columns;
         return $columns;
     }
 

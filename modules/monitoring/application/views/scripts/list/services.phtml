@@ -81,7 +81,7 @@ if (count($services) === 0) {
         ); ?><?php endif ?><br>
         <p class="pluginoutput"><?= $this->escape($this->ellipsis($service->service_output, 10000)); ?></p>
       </td>
-<?php foreach($this->extraColumns as $col): ?>
+<?php foreach($this->addColumns as $col): ?>
       <td><?= $this->escape($service->$col) ?></td>
 <?php endforeach ?>
     </tr>
