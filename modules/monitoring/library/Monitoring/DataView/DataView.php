@@ -450,7 +450,7 @@ abstract class DataView implements QueryInterface, IteratorAggregate
      */
     public function getOffset()
     {
-        return $this->query->hasOffset();
+        return $this->query->getOffset();
     }
 
     /**
