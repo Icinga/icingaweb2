@@ -3,12 +3,13 @@
 
 namespace Icinga\Data;
 
+use Iterator;
 use IteratorAggregate;
 use Icinga\Application\Benchmark;
 use Icinga\Data\Filter\Filter;
 use Icinga\Exception\IcingaException;
 
-class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
+class SimpleQuery implements QueryInterface, Queryable, Iterator
 {
     /**
      * Query data source
@@ -16,6 +17,13 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
      * @var mixed
      */
     protected $ds;
+
+    /**
+     * This query's iterator
+     *
+     * @var Iterator
+     */
+    protected $iterator;
 
     /**
      * The target you are going to query
@@ -101,16 +109,6 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
     protected function init() {}
 
     /**
-     * Return a iterable for this query's result
-     *
-     * @return  Iterator
-     */
-    public function getIterator()
-    {
-        return $this->ds->query($this);
-    }
-
-    /**
      * Get the data source
      *
      * @return mixed
@@ -118,6 +116,67 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
     public function getDatasource()
     {
         return $this->ds;
+    }
+
+    /**
+     * Start or rewind the iteration
+     */
+    public function rewind()
+    {
+        if ($this->iterator === null) {
+            $iterator = $this->ds->query($this);
+            if ($iterator instanceof IteratorAggregate) {
+                $this->iterator = $iterator->getIterator();
+            } else {
+                $this->iterator = $iterator;
+            }
+        }
+
+        $this->iterator->rewind();
+        Benchmark::measure('Query result iteration started');
+    }
+
+    /**
+     * Fetch and return the current row of this query's result
+     *
+     * @return  object
+     */
+    public function current()
+    {
+        return $this->iterator->current();
+    }
+
+    /**
+     * Return whether the current row of this query's result is valid
+     *
+     * @return  bool
+     */
+    public function valid()
+    {
+        if (! $this->iterator->valid()) {
+            Benchmark::measure('Query result iteration finished');
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Return the key for the current row of this query's result
+     *
+     * @return  mixed
+     */
+    public function key()
+    {
+        return $this->iterator->key();
+    }
+
+    /**
+     * Advance to the next row of this query's result
+     */
+    public function next()
+    {
+        $this->iterator->next();
     }
 
     /**
