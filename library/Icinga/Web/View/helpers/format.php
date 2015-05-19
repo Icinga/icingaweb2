@@ -37,7 +37,7 @@ $this->addHelperFunction('timeAgo', function ($time, $timeOnly = false) {
     }
     return sprintf(
         '<span class="time-ago" title="%s">%s</span>',
-        DateFormatter::formatDate($time),
+        DateFormatter::formatDateTime($time),
         DateFormatter::timeAgo($time, $timeOnly)
     );
 });
@@ -48,7 +48,7 @@ $this->addHelperFunction('timeSince', function ($time, $timeOnly = false) {
     }
     return sprintf(
         '<span class="time-since" title="%s">%s</span>',
-        DateFormatter::formatDate($time),
+        DateFormatter::formatDateTime($time),
         DateFormatter::timeSince($time, $timeOnly)
     );
 });
@@ -59,7 +59,7 @@ $this->addHelperFunction('timeUntil', function ($time, $timeOnly = false) {
     }
     return sprintf(
         '<span class="time-until" title="%s">%s</span>',
-        DateFormatter::formatDate($time),
+        DateFormatter::formatDateTime($time),
         DateFormatter::timeUntil($time, $timeOnly)
     );
 });
