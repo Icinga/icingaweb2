@@ -58,13 +58,13 @@ class Format
         if ($value < 60) {
             return self::formatForUnits($value, self::$secondPrefix, self::$secondBase);
         } elseif ($value < 3600) {
-            return sprintf('0.2f m', $value / 60);
+            return sprintf('%0.2f m', $value / 60);
         } elseif ($value < 86400) {
-            return sprintf('0.2f h', $value / 3600);
+            return sprintf('%0.2f h', $value / 3600);
         }
 
         // TODO: Do we need weeks, months and years?
-        return sprintf('0.2f d', $value / 86400);
+        return sprintf('%0.2f d', $value / 86400);
     }
 
     public static function duration($duration)
