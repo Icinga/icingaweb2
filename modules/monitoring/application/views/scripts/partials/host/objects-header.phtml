@@ -18,6 +18,9 @@ $i = 0;
                 <td class="state"><?= Host::getStateText($host->host_state, true); ?><br /></td>
                 <td>
                 <?= implode(' ', $this->hostFlags($host)) ?>
+                <?php if ($host->host_icon_image && ! preg_match('/[\'"]/', $host->host_icon_image)): ?>
+                    <?= $this->icon($this->resolveMacros($host->host_icon_image, $host)) ?>
+                <?php endif ?>
                 <b><?= $this->escape($host->getName()); ?></b><br>
                 <?= $this->escape($host->host_output) ?>
                 </td>

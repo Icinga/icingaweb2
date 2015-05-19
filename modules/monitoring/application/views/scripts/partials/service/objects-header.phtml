@@ -16,6 +16,9 @@ $i = 0;
             <td class="state"><?= Service::getStateText($service->service_state, true); ?><br /></td>
             <td>
             <?= implode(' ', $this->serviceFlags($service)) ?>
+            <?php if ($service->service_icon_image && ! preg_match('/[\'"]/', $service->service_icon_image)): ?>
+                <?= $this->icon($this->resolveMacros($service->service_icon_image, $service)) ?>
+            <?php endif ?>
             <b>
                <?= $this->escape($service->getName()); ?>
                <?= $this->translate('on') ?>
