@@ -17,6 +17,7 @@ class Groupsummary extends DataView
             'servicegroup_alias',
             'hostgroup_name',
             'hostgroup_alias',
+            'hosts_total',
             'hosts_up',
             'hosts_unreachable',
             'hosts_unreachable_handled',

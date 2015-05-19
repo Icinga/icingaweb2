@@ -535,6 +535,7 @@ class Monitoring_ListController extends Controller
             'hosts_unreachable_last_state_change_handled',
             'hosts_down_last_state_change_unhandled',
             'hosts_unreachable_last_state_change_unhandled',
+            'hosts_total',
             'services_ok',
             'services_unknown_handled',
             'services_unknown_unhandled',
