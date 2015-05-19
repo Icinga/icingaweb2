@@ -16,6 +16,6 @@ class ConfirmRemovalForm extends Form
     public function init()
     {
         $this->setName('form_confirm_removal');
-        $this->setSubmitLabel($this->translate('Confirm Removal'));
+        $this->getSubmitLabel() ?: $this->setSubmitLabel($this->translate('Confirm Removal'));
     }
 }
