@@ -96,7 +96,7 @@ class Monitoring_ListController extends Controller
             'host_current_check_attempt',
             'host_max_check_attempts'
         ), $this->addColumns()));
-        $this->filterQuery($query);
+        $this->filterQuery($query, array('host', 'host_display_name'));
         $this->applyRestriction('monitoring/hosts/filter', $query);
         $this->view->hosts = $query;
 
@@ -180,7 +180,7 @@ class Monitoring_ListController extends Controller
             'max_check_attempts'    => 'service_max_check_attempts'
         ), $this->addColumns());
         $query = $this->backend->select()->from('serviceStatus', $columns);
-        $this->filterQuery($query);
+        $this->filterQuery($query, array('service', 'service_display_name'));
         $this->applyRestriction('monitoring/services/filter', $query);
         $this->view->services = $query;
 
@@ -498,7 +498,7 @@ class Monitoring_ListController extends Controller
         ))->order('services_severity')->order('servicegroup_alias');
         // TODO(el): Can't default to the sort rules of the data view because it's meant for both host groups and
         // service groups. We should separate them.
-        $this->filterQuery($query);
+        $this->filterQuery($query, array('servicegroup', 'servicegroup_alias'));
         $this->view->servicegroups = $query;
 
         $this->setupLimitControl();
@@ -555,7 +555,7 @@ class Monitoring_ListController extends Controller
         ))->order('services_severity')->order('hostgroup_alias');
         // TODO(el): Can't default to the sort rules of the data view because it's meant for both host groups and
         // service groups. We should separate them.
-        $this->filterQuery($query);
+        $this->filterQuery($query, array('hostgroup', 'hostgroup_alias'));
         $this->view->hostgroups = $query;
 
         $this->setupLimitControl();
