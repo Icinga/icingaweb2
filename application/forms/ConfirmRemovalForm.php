@@ -11,7 +11,7 @@ use Icinga\Web\Form;
 class ConfirmRemovalForm extends Form
 {
     /**
-     * Initalize this form
+     * Initialize this form
      */
     public function init()
     {
