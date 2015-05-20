@@ -5,9 +5,20 @@ namespace Icinga\Module\Monitoring\DataView;
 
 class Servicegroupsummary extends Groupsummary
 {
+    /**
+     * {@inheritdoc}
+     */
     public function getFilterColumns()
     {
         return array('servicegroup');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getQueryName()
+    {
+        return 'groupsummary';
     }
 
     /**
