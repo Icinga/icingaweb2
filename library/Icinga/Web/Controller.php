@@ -3,6 +3,7 @@
 
 namespace Icinga\Web;
 
+use Zend_Controller_Action_Exception;
 use Icinga\Data\Sortable;
 use Icinga\Data\QueryInterface;
 use Icinga\Web\Controller\ModuleActionController;
@@ -47,6 +48,18 @@ class Controller extends ModuleActionController
 
             $this->redirectNow($url);
         }
+    }
+
+    /**
+     * Immediately respond w/ HTTP 404
+     *
+     * @param   $message
+     *
+     * @throws  Zend_Controller_Action_Exception
+     */
+    public function httpNotFound($message)
+    {
+        throw new Zend_Controller_Action_Exception($message, 404);
     }
 
     /**
