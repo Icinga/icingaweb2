@@ -135,10 +135,7 @@ class GroupController extends Controller
         if ($name !== null) {
             $config = Config::app('groups');
             if (! $config->hasSection($name)) {
-                throw new Zend_Controller_Action_Exception(
-                    sprintf($this->translate('User group backend "%s" not found'), $name),
-                    404
-                );
+                $this->httpNotFound(sprintf($this->translate('User group backend "%s" not found'), $name));
             } else {
                 $backend = UserGroupBackend::create($name, $config->getSection($name));
                 if ($interface && !$backend instanceof $interface) {
