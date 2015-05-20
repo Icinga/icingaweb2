@@ -64,13 +64,7 @@ class GroupController extends Controller
             return;
         }
 
-        $query = $backend->select(array(
-            'group_name',
-            'parent_name',
-            'created_at',
-            'last_modified'
-        ));
-
+        $query = $backend->select(array('group_name'));
         $filterEditor = Widget::create('filterEditor')
             ->setQuery($query)
             ->preserveParams('limit', 'sort', 'dir', 'view', 'backend')

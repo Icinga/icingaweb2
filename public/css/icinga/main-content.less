@@ -243,27 +243,24 @@ div.controls div.user-header {
 
 div.content.groups {
   table.group-list {
-    th {
-      &.group-parent, &.group-remove {
-        width: 6%;
-        padding-right: 0.5em;
-        text-align: right;
-      }
-
-      &.group-created, &.group-modified {
-        width: 12%;
-        padding-right: 0.5em;
-        text-align: right;
-      }
+    th.group-remove {
+      width: 8em;
+      padding-right: 0.5em;
+      text-align: right;
     }
 
-    td.group-parent, td.group-created, td.group-modified, td.group-remove {
+    td.group-remove {
       text-align: right;
     }
   }
 
   p {
     margin-top: 0;
+  }
+
+  a.group-add {
+    display: block;
+    margin-top: 1em;
   }
 }
 

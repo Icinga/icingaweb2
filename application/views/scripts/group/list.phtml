@@ -36,9 +36,6 @@ if (count($groups) > 0): ?>
   <thead>
     <tr>
       <th class="group-name"><?= $this->translate('Group'); ?></th>
-      <th class="group-parent"><?= $this->translate('Parent'); ?></th>
-      <th class="group-created"><?= $this->translate('Created at'); ?></th>
-      <th class="group-modified"><?= $this->translate('Last modified'); ?></th>
      <?php if ($reducible): ?>
       <th class="group-remove"><?= $this->translate('Remove'); ?></th>
      <?php endif ?>
@@ -48,15 +45,6 @@ if (count($groups) > 0): ?>
   <?php foreach ($groups as $group): ?>
     <tr>
       <td clas="group-name"><?= $this->escape($group->group_name); ?></td>
-      <td class="group-parent">
-        <?= $group->parent_name === null ? $this->translate('None', 'user.group.parent') : $this->escape($group->parent_name); ?>
-      </td>
-      <td class="group-created">
-        <?= $group->created_at === null ? $this->translate('N/A') : date('d/m/Y g:i A', $group->created_at); ?>
-      </td>
-      <td class="group-modified">
-        <?= $group->last_modified === null ? $this->translate('Never') : date('d/m/Y g:i A', $group->last_modified); ?>
-      </td>
      <?php if ($reducible): ?>
       <td class="group-remove">
         <?= $this->qlink(
