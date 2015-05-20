@@ -7,6 +7,7 @@ use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\UserBackendInterface;
+use Icinga\Forms\Config\UserForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
@@ -98,6 +99,60 @@ class UserController extends Controller
             ),
             $query
         );
+    }
+
+    /**
+     * Add a user
+     */
+    public function addAction()
+    {
+        $form = new UserForm();
+        $form->setRepository($this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible'));
+        $form->add()->handleRequest();
+
+        $this->view->form = $form;
+        $this->render('form');
+    }
+
+    /**
+     * Edit a user
+     */
+    public function editAction()
+    {
+        $userName = $this->params->getRequired('user');
+        $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Updatable');
+
+        $row = $backend->select(array('user_name', 'is_active'))->where('user_name', $userName)->fetchRow();
+        if ($row === false) {
+            $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
+        }
+
+        $form = new UserForm();
+        $form->setRepository($backend);
+        $form->edit($userName, get_object_vars($row))->handleRequest();
+
+        $this->view->form = $form;
+        $this->render('form');
+    }
+
+    /**
+     * Remove a user
+     */
+    public function removeAction()
+    {
+        $userName = $this->params->getRequired('user');
+        $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
+
+        if ($backend->select()->where('user_name', $userName)->count() === 0) {
+            $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
+        }
+
+        $form = new UserForm();
+        $form->setRepository($backend);
+        $form->remove($userName)->handleRequest();
+
+        $this->view->form = $form;
+        $this->render('form');
     }
 
     /**
