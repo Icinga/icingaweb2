@@ -135,10 +135,7 @@ class UserController extends Controller
         if ($name !== null) {
             $config = Config::app('authentication');
             if (! $config->hasSection($name)) {
-                throw new Zend_Controller_Action_Exception(
-                    sprintf($this->translate('Authentication backend "%s" not found'), $name),
-                    404
-                );
+                $this->httpNotFound(sprintf($this->translate('Authentication backend "%s" not found'), $name));
             } else {
                 $backend = UserBackend::create($name, $config->getSection($name));
                 if ($interface && !$backend instanceof $interface) {
