@@ -22,6 +22,7 @@ class Hostgroupsummary extends DataView
             'hosts_down_unhandled',
             'hosts_pending',
             'hosts_pending_last_state_change',
+            'hosts_total',
             'hosts_unreachable_handled',
             'hosts_unreachable_last_state_change_handled',
             'hosts_unreachable_last_state_change_unhandled',
