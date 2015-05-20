@@ -21,17 +21,17 @@ class Monitoring_ServiceController extends MonitoredObjectController
 
     /**
      * Fetch the requested service from the monitoring backend
-     *
-     * @throws Zend_Controller_Action_Exception If the service was not found
      */
     public function init()
     {
-        $service = new Service($this->backend, $this->params->get('host'), $this->params->get('service'));
+        $service = new Service(
+            $this->backend, $this->params->getRequired('host'), $this->params->getRequired('service')
+        );
 
         $this->applyRestriction('monitoring/services/filter', $service);
 
         if ($service->fetch() === false) {
-            throw new Zend_Controller_Action_Exception($this->translate('Service not found'));
+            $this->httpNotFound($this->translate('Service not found'));
         }
         $this->object = $service;
         $this->createTabs();
