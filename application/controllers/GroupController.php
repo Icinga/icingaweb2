@@ -97,6 +97,28 @@ class GroupController extends Controller
     }
 
     /**
+     * Show a group
+     */
+    public function showAction()
+    {
+        $groupName = $this->params->getRequired('group');
+        $backend = $this->getUserGroupBackend($this->params->getRequired('backend'));
+
+        $group = $backend->select(array(
+            'group_name',
+            'parent_name',
+            'created_at',
+            'last_modified'
+        ))->where('group_name', $groupName)->fetchRow();
+        if ($group === false) {
+            $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
+        }
+
+        $this->view->group = $group;
+        $this->view->backend = $backend;
+    }
+
+    /**
      * Add a group
      */
     public function addAction()
@@ -125,6 +147,9 @@ class GroupController extends Controller
         }
 
         $form = new UserGroupForm();
+        $form->setRedirectUrl(
+            Url::fromPath('group/show', array('backend' => $backend->getName(), 'group' => $groupName))
+        );
         $form->setRepository($backend);
         $form->edit($groupName, get_object_vars($row))->handleRequest();
 
