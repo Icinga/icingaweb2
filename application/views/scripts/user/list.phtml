@@ -44,7 +44,12 @@ if (count($users) > 0): ?>
   <tbody>
   <?php foreach ($users as $user): ?>
     <tr>
-      <td clas="user-name"><?= $this->escape($user->user_name); ?></td>
+      <td class="user-name"><?= $this->qlink($user->user_name, 'user/show', array(
+        'backend'   => $backend->getName(),
+        'user'      => $user->user_name
+      ), array(
+        'title'     => sprintf($this->translate('Show detailed information about %s'), $user->user_name)
+      )); ?></td>
      <?php if ($reducible): ?>
       <td class="user-remove">
         <?= $this->qlink(

@@ -97,6 +97,28 @@ class UserController extends Controller
     }
 
     /**
+     * Show a user
+     */
+    public function showAction()
+    {
+        $userName = $this->params->getRequired('user');
+        $backend = $this->getUserBackend($this->params->getRequired('backend'));
+
+        $user = $backend->select(array(
+            'user_name',
+            'is_active',
+            'created_at',
+            'last_modified'
+        ))->where('user_name', $userName)->fetchRow();
+        if ($user === false) {
+            $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
+        }
+
+        $this->view->user = $user;
+        $this->view->backend = $backend;
+    }
+
+    /**
      * Add a user
      */
     public function addAction()
@@ -125,6 +147,7 @@ class UserController extends Controller
         }
 
         $form = new UserForm();
+        $form->setRedirectUrl(Url::fromPath('user/show', array('backend' => $backend->getName(), 'user' => $userName)));
         $form->setRepository($backend);
         $form->edit($userName, get_object_vars($row))->handleRequest();
 
