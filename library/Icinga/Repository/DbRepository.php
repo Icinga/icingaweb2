@@ -348,7 +348,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             return $statementColumnMap[$alias];
         }
 
-        $prefixedAlias = $table . '.' . $alias;
+        $prefixedAlias = $this->removeTablePrefix($table) . '.' . $alias;
         if (isset($statementColumnMap[$prefixedAlias])) {
             return $statementColumnMap[$prefixedAlias];
         }
