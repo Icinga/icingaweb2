@@ -7,6 +7,7 @@ use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackendInterface;
+use Icinga\Forms\Config\UserGroupForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
@@ -98,6 +99,62 @@ class GroupController extends Controller
             ),
             $query
         );
+    }
+
+    /**
+     * Add a group
+     */
+    public function addAction()
+    {
+        $form = new UserGroupForm();
+        $form->setRepository(
+            $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible')
+        );
+        $form->add()->handleRequest();
+
+        $this->view->form = $form;
+        $this->render('form');
+    }
+
+    /**
+     * Edit a group
+     */
+    public function editAction()
+    {
+        $groupName = $this->params->getRequired('group');
+        $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Updatable');
+
+        $row = $backend->select(array('group_name'))->where('group_name', $groupName)->fetchRow();
+        if ($row === false) {
+            $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
+        }
+
+        $form = new UserGroupForm();
+        $form->setRepository($backend);
+        $form->edit($groupName, get_object_vars($row))->handleRequest();
+
+        $this->view->form = $form;
+        $this->render('form');
+    }
+
+    /**
+     * Remove a group
+     */
+    public function removeAction()
+    {
+        $groupName = $this->params->getRequired('group');
+        $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
+
+        if ($backend->select()->where('group_name', $groupName)->count() === 0) {
+            $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
+        }
+
+        $form = new UserGroupForm();
+        $form->setRepository($backend);
+        $form->remove($groupName)->handleRequest();
+
+        $this->view->form = $form;
+        $this->render('form');
     }
 
     /**
