@@ -11,6 +11,7 @@ class GroupSummaryQuery extends IdoQuery
 
     protected $columnMap = array(
         'hoststatussummary' => array(
+            'hosts_total'                                   => 'SUM(CASE WHEN object_type = \'host\' THEN 1 ELSE 0 END)',
             'hosts_up'                                      => 'SUM(CASE WHEN object_type = \'host\' AND state = 0 THEN 1 ELSE 0 END)',
             'hosts_unreachable'                             => 'SUM(CASE WHEN object_type = \'host\' AND state = 2 THEN 1 ELSE 0 END)',
             'hosts_unreachable_handled'                     => 'SUM(CASE WHEN object_type = \'host\' AND state = 2 AND acknowledged + in_downtime != 0 THEN 1 ELSE 0 END)',

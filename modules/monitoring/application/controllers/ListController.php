@@ -12,7 +12,6 @@ use Icinga\Web\Widget\Tabs;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget;
 use Icinga\Module\Monitoring\Forms\StatehistoryForm;
-use Icinga\Data\Filterable;
 use Icinga\Module\Monitoring\DataView\DataView;
 
 class Monitoring_ListController extends Controller
@@ -530,6 +529,7 @@ class Monitoring_ListController extends Controller
             'hosts_down_unhandled',
             'hosts_pending',
             'hosts_pending_last_state_change',
+            'hosts_total',
             'hosts_unreachable_handled',
             'hosts_unreachable_last_state_change_handled',
             'hosts_unreachable_last_state_change_unhandled',
