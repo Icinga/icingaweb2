@@ -15,7 +15,7 @@ if (! $this->compact): ?>
   </div>
 </div>
 <?php endif ?>
-<div class="content">
+<div class="content users">
 <?php
 
 if ($backend === null) {
@@ -31,12 +31,7 @@ if (! isset($users)) {
     return;
 }
 
-if (count($users) === 0) {
-    echo $this->translate('No users found matching the filter') . '</div>';
-    return;
-}
-?>
-
+if (count($users) > 0): ?>
 <table data-base-target="_next" class="action user-list">
   <thead>
     <tr>
@@ -82,6 +77,9 @@ if (count($users) === 0) {
   <?php endforeach ?>
   </tbody>
 </table>
+<?php else: ?>
+<p><?= $this->translate('No users found matching the filter'); ?></p>
+<?php endif ?>
 <?php if ($extensible): ?>
 <?= $this->qlink($this->translate('Add a new user'), 'user/add', array('backend' => $backend->getName()), array(
   'icon'                => 'plus',

@@ -203,23 +203,29 @@ table.benchmark {
   background-color: #fbfcc5;
 }
 
-table.user-list {
-  th {
-    &.user-state, &.user-remove {
-      width: 6%;
-      padding-right: 0.5em;
-      text-align: right;
+div.content.users {
+  table.user-list {
+    th {
+      &.user-state, &.user-remove {
+        width: 6%;
+        padding-right: 0.5em;
+        text-align: right;
+      }
+
+      &.user-created, &.user-modified {
+        width: 12%;
+        padding-right: 0.5em;
+        text-align: right;
+      }
     }
 
-    &.user-created, &.user-modified {
-      width: 12%;
-      padding-right: 0.5em;
+    td.user-state, td.user-created, td.user-modified, td.user-remove {
       text-align: right;
     }
   }
 
-  td.user-state, td.user-created, td.user-modified, td.user-remove {
-    text-align: right;
+  p {
+    margin-top: 0;
   }
 }
 
