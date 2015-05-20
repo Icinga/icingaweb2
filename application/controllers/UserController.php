@@ -11,6 +11,7 @@ use Icinga\Forms\Config\UserForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
+use Icinga\Web\Url;
 use Icinga\Web\Widget;
 
 class UserController extends Controller
@@ -106,8 +107,10 @@ class UserController extends Controller
      */
     public function addAction()
     {
+        $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
         $form = new UserForm();
-        $form->setRepository($this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible'));
+        $form->setRedirectUrl(Url::fromPath('user/list', array('backend' => $backend->getName())));
+        $form->setRepository($backend);
         $form->add()->handleRequest();
 
         $this->view->form = $form;
@@ -148,6 +151,7 @@ class UserController extends Controller
         }
 
         $form = new UserForm();
+        $form->setRedirectUrl(Url::fromPath('user/list', array('backend' => $backend->getName())));
         $form->setRepository($backend);
         $form->remove($userName)->handleRequest();
 
