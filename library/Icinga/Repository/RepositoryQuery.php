@@ -385,7 +385,7 @@ class RepositoryQuery implements QueryInterface, Iterator
         }
 
         $result = $this->query->fetchOne();
-        if ($this->repository->providesValueConversion()) {
+        if ($result !== false && $this->repository->providesValueConversion()) {
             $columns = $this->getColumns();
             $column = isset($columns[0]) ? $columns[0] : key($columns);
             return $this->repository->retrieveColumn($column, $result);
@@ -406,7 +406,7 @@ class RepositoryQuery implements QueryInterface, Iterator
         }
 
         $result = $this->query->fetchRow();
-        if ($this->repository->providesValueConversion()) {
+        if ($result !== false && $this->repository->providesValueConversion()) {
             foreach ($this->getColumns() as $alias => $column) {
                 if (! is_string($alias)) {
                     $alias = $column;
@@ -431,7 +431,7 @@ class RepositoryQuery implements QueryInterface, Iterator
         }
 
         $results = $this->query->fetchColumn();
-        if ($this->repository->providesValueConversion()) {
+        if ($results !== false && $this->repository->providesValueConversion()) {
             $columns = $this->getColumns();
             $aliases = array_keys($columns);
             $column = is_int($aliases[0]) ? $columns[0] : $aliases[0];
@@ -457,7 +457,7 @@ class RepositoryQuery implements QueryInterface, Iterator
         }
 
         $results = $this->query->fetchPairs();
-        if ($this->repository->providesValueConversion()) {
+        if (! empty($results) && $this->repository->providesValueConversion()) {
             $columns = $this->getColumns();
             $aliases = array_keys($columns);
             $newResults = array();
@@ -486,7 +486,7 @@ class RepositoryQuery implements QueryInterface, Iterator
         }
 
         $results = $this->query->fetchAll();
-        if ($this->repository->providesValueConversion()) {
+        if (! empty($results) && $this->repository->providesValueConversion()) {
             $columns = $this->getColumns();
             foreach ($results as $row) {
                 foreach ($columns as $alias => $column) {
