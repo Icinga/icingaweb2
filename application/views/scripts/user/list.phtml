@@ -36,9 +36,6 @@ if (count($users) > 0): ?>
   <thead>
     <tr>
       <th class="user-name"><?= $this->translate('Username'); ?></th>
-      <th class="user-state"><?= $this->translate('State'); ?></th>
-      <th class="user-created"><?= $this->translate('Created at'); ?></th>
-      <th class="user-modified"><?= $this->translate('Last modified'); ?></th>
      <?php if ($reducible): ?>
       <th class="user-remove"><?= $this->translate('Remove'); ?></th>
      <?php endif ?>
@@ -48,15 +45,6 @@ if (count($users) > 0): ?>
   <?php foreach ($users as $user): ?>
     <tr>
       <td clas="user-name"><?= $this->escape($user->user_name); ?></td>
-      <td class="user-state"><?= $user->is_active === null ? $this->translate('N/A') : (
-        $user->is_active ? $this->translate('Active') : $this->translate('Inactive')
-      ); ?></td>
-      <td class="user-created">
-        <?= $user->created_at === null ? $this->translate('N/A') : date('d/m/Y g:i A', $user->created_at); ?>
-      </td>
-      <td class="user-modified">
-        <?= $user->last_modified === null ? $this->translate('Never') : date('d/m/Y g:i A', $user->last_modified); ?>
-      </td>
      <?php if ($reducible): ?>
       <td class="user-remove">
         <?= $this->qlink(

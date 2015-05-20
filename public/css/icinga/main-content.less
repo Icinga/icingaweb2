@@ -205,27 +205,24 @@ table.benchmark {
 
 div.content.users {
   table.user-list {
-    th {
-      &.user-state, &.user-remove {
-        width: 6%;
-        padding-right: 0.5em;
-        text-align: right;
-      }
-
-      &.user-created, &.user-modified {
-        width: 12%;
-        padding-right: 0.5em;
-        text-align: right;
-      }
+    th.user-remove {
+      width: 8em;
+      padding-right: 0.5em;
+      text-align: right;
     }
 
-    td.user-state, td.user-created, td.user-modified, td.user-remove {
+    td.user-remove {
       text-align: right;
     }
   }
 
   p {
     margin-top: 0;
+  }
+
+  a.user-add {
+    display: block;
+    margin-top: 1em;
   }
 }
 

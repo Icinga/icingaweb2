@@ -64,13 +64,7 @@ class UserController extends Controller
             return;
         }
 
-        $query = $backend->select(array(
-            'user_name',
-            'is_active',
-            'created_at',
-            'last_modified'
-        ));
-
+        $query = $backend->select(array('user_name'));
         $filterEditor = Widget::create('filterEditor')
             ->setQuery($query)
             ->preserveParams('limit', 'sort', 'dir', 'view', 'backend')
