@@ -553,7 +553,7 @@ class Monitoring_ListController extends Controller
             'services_critical_last_state_change_unhandled',
             'services_unknown_last_state_change_unhandled',
             'services_total'
-        ))->order('services_severity')->order('hostgroup_alias');
+        ))->order('hostgroup_alias');
         // TODO(el): Can't default to the sort rules of the data view because it's meant for both host groups and
         // service groups. We should separate them.
         $this->filterQuery($query);
