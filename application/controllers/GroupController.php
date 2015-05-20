@@ -11,6 +11,7 @@ use Icinga\Forms\Config\UserGroupForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
+use Icinga\Web\Url;
 use Icinga\Web\Widget;
 
 class GroupController extends Controller
@@ -106,10 +107,10 @@ class GroupController extends Controller
      */
     public function addAction()
     {
+        $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
         $form = new UserGroupForm();
-        $form->setRepository(
-            $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible')
-        );
+        $form->setRedirectUrl(Url::fromPath('group/list', array('backend' => $backend->getName())));
+        $form->setRepository($backend);
         $form->add()->handleRequest();
 
         $this->view->form = $form;
@@ -150,6 +151,7 @@ class GroupController extends Controller
         }
 
         $form = new UserGroupForm();
+        $form->setRedirectUrl(Url::fromPath('group/list', array('backend' => $backend->getName())));
         $form->setRepository($backend);
         $form->remove($groupName)->handleRequest();
 
