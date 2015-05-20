@@ -1,4 +1,9 @@
-<?php if (! $this->compact): ?>
+<?php
+
+use Icinga\Data\Extensible;
+use Icinga\Data\Reducible;
+
+if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
   <?= $this->sortBox; ?>
@@ -10,12 +15,15 @@
   </div>
 </div>
 <?php endif ?>
-<div class="content">
+<div class="content groups">
 <?php
 
 if ($backend === null) {
     echo $this->translate('No backend found which is able to list groups') . '</div>';
     return;
+} else {
+    $extensible = $backend instanceof Extensible;
+    $reducible = $backend instanceof Reducible;
 }
 
 if (! isset($groups)) {
@@ -23,12 +31,7 @@ if (! isset($groups)) {
     return;
 }
 
-if (count($groups) === 0) {
-    echo $this->translate('No groups found matching the filter') . '</div>';
-    return;
-}
-?>
-
+if (count($groups) > 0): ?>
 <table data-base-target="_next" class="action group-list">
   <thead>
     <tr>
@@ -36,6 +39,9 @@ if (count($groups) === 0) {
       <th class="group-parent"><?= $this->translate('Parent'); ?></th>
       <th class="group-created"><?= $this->translate('Created at'); ?></th>
       <th class="group-modified"><?= $this->translate('Last modified'); ?></th>
+     <?php if ($reducible): ?>
+      <th class="group-remove"><?= $this->translate('Remove'); ?></th>
+     <?php endif ?>
     </tr>
   </thead>
   <tbody>
@@ -51,8 +57,34 @@ if (count($groups) === 0) {
       <td class="group-modified">
         <?= $group->last_modified === null ? $this->translate('Never') : date('d/m/Y g:i A', $group->last_modified); ?>
       </td>
+     <?php if ($reducible): ?>
+      <td class="group-remove">
+        <?= $this->qlink(
+          null,
+          'group/remove',
+          array(
+            'backend'   => $backend->getName(),
+            'group'     => $group->group_name
+          ),
+          array(
+            'title'     => sprintf($this->translate('Remove group %s'), $group->group_name),
+            'icon'      => 'trash'
+          )
+        ); ?>
+      </td>
+     <?php endif ?>
     </tr>
   <?php endforeach ?>
   </tbody>
 </table>
+<?php else: ?>
+<p><?= $this->translate('No groups found matching the filter'); ?></p>
+<?php endif ?>
+<?php if ($extensible): ?>
+<?= $this->qlink($this->translate('Add a new group'), 'group/add', array('backend' => $backend->getName()), array(
+  'icon'                => 'plus',
+  'data-base-target'    => '_next',
+  'class'               => 'group-add'
+)); ?>
+<?php endif ?>
 </div>
