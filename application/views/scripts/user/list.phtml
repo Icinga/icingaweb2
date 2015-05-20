@@ -1,4 +1,9 @@
-<?php if (! $this->compact): ?>
+<?php
+
+use Icinga\Data\Extensible;
+use Icinga\Data\Reducible;
+
+if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
   <?= $this->sortBox; ?>
@@ -16,6 +21,9 @@
 if ($backend === null) {
     echo $this->translate('No backend found which is able to list users') . '</div>';
     return;
+} else {
+    $extensible = $backend instanceof Extensible;
+    $reducible = $backend instanceof Reducible;
 }
 
 if (! isset($users)) {
@@ -36,6 +44,9 @@ if (count($users) === 0) {
       <th class="user-state"><?= $this->translate('State'); ?></th>
       <th class="user-created"><?= $this->translate('Created at'); ?></th>
       <th class="user-modified"><?= $this->translate('Last modified'); ?></th>
+     <?php if ($reducible): ?>
+      <th class="user-remove"><?= $this->translate('Remove'); ?></th>
+     <?php endif ?>
     </tr>
   </thead>
   <tbody>
@@ -51,8 +62,31 @@ if (count($users) === 0) {
       <td class="user-modified">
         <?= $user->last_modified === null ? $this->translate('Never') : date('d/m/Y g:i A', $user->last_modified); ?>
       </td>
+     <?php if ($reducible): ?>
+      <td class="user-remove">
+        <?= $this->qlink(
+          null,
+          'user/remove',
+          array(
+            'backend'   => $backend->getName(),
+            'user'      => $user->user_name
+          ),
+          array(
+            'title'     => sprintf($this->translate('Remove user %s'), $user->user_name),
+            'icon'      => 'trash'
+          )
+        ); ?>
+      </td>
+     <?php endif ?>
     </tr>
   <?php endforeach ?>
   </tbody>
 </table>
+<?php if ($extensible): ?>
+<?= $this->qlink($this->translate('Add a new user'), 'user/add', array('backend' => $backend->getName()), array(
+  'icon'                => 'plus',
+  'data-base-target'    => '_next',
+  'class'               => 'user-add'
+)); ?>
+<?php endif ?>
 </div>
