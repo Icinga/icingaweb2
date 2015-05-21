@@ -3,7 +3,7 @@
 
 namespace Icinga\Web;
 
-use Zend_Controller_Action_Exception;
+use Icinga\Exception\HttpNotFoundException;
 use Icinga\Data\Sortable;
 use Icinga\Data\QueryInterface;
 use Icinga\Web\Controller\ModuleActionController;
@@ -55,11 +55,11 @@ class Controller extends ModuleActionController
      *
      * @param   $message
      *
-     * @throws  Zend_Controller_Action_Exception
+     * @throws  HttpNotFoundException
      */
     public function httpNotFound($message)
     {
-        throw new Zend_Controller_Action_Exception($message, 404);
+        throw new HttpNotFoundException($message);
     }
 
     /**
