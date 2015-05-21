@@ -63,8 +63,6 @@ class ErrorController extends ActionController
                         $this->getResponse()->setHttpResponseCode(500);
                         break;
                 }
-                $title = preg_replace('/\r?\n.*$/s', '', $exception->getMessage());
-                $this->view->title = 'Server error: ' . $title;
                 $this->view->message = $exception->getMessage();
                 if ($this->getInvokeArg('displayExceptions')) {
                     $this->view->stackTrace = $exception->getTraceAsString();
