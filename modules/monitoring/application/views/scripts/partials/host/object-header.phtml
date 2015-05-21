@@ -9,9 +9,7 @@ use Icinga\Module\Monitoring\Object\Host;
             <?= $this->prefixedTimeSince($object->host_last_state_change, true); ?>
         </td>
         <td>
-          <?php if ($object->host_icon_image && ! preg_match('/[\'"]/', $object->host_icon_image)): ?>
-            <?= $this->icon($this->resolveMacros($object->host_icon_image, $object)) ?>
-          <?php endif ?>
+          <?= $this->iconImage()->host($object) ?>
             <strong><?= $this->escape($object->host_display_name); ?></strong>
           <?php if ($object->host_display_name !== $object->host_name): ?>
             <small>(<?= $this->escape($object->host_name); ?>)</small>
