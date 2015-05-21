@@ -15,7 +15,7 @@ $command = array_shift($parts);
                 echo $this->qlink(
                     $this->translate('Process check result'),
                     'monitoring/host/process-check-result',
-                    array('host_name' => $object->getName()),
+                    array('host' => $object->getName()),
                     array(
                         'icon'              => 'reply',
                         'data-base-target'  => '_self',
@@ -26,7 +26,7 @@ $command = array_shift($parts);
                 echo $this->qlink(
                     $this->translate('Process check result'),
                     'monitoring/service/process-check-result',
-                    array('host_name' => $object->getHost()->getName(), 'service_description' => $object->getName()),
+                    array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
                     array(
                         'icon'              => 'reply',
                         'data-base-target'  => '_self',

@@ -16,11 +16,6 @@ use Icinga\Chart\Unit\LinearUnit;
 
 class Monitoring_ChartController extends Controller
 {
-    public function init()
-    {
-        $this->view->compact = $this->_request->getParam('view') === 'compact';
-    }
-
     private function drawLogChart1()
     {
         $chart = new GridChart();
@@ -168,7 +163,7 @@ class Monitoring_ChartController extends Controller
     public function hostgroupAction()
     {
         $query = $this->backend->select()->from(
-            'groupsummary',
+            'hostgroupsummary',
             array(
                 'hostgroup',
                 'hosts_up',
@@ -199,7 +194,7 @@ class Monitoring_ChartController extends Controller
     public function servicegroupAction()
     {
         $query = $this->backend->select()->from(
-            'groupsummary',
+            'servicegroupsummary',
             array(
                 'servicegroup',
                 'services_ok',

@@ -62,7 +62,7 @@ abstract class MonitoredObjectController extends Controller
                 ->handleRequest();
             $this->view->checkNowForm = $checkNowForm;
         }
-        if ( ! in_array((int) $this->object->state, array(0, 99))) {
+        if (! in_array((int) $this->object->state, array(0, 99))) {
             if ((bool) $this->object->acknowledged) {
                 if ($auth->hasPermission('monitoring/command/remove-acknowledgement')) {
                     $removeAckForm = new RemoveAcknowledgementCommandForm();
@@ -82,16 +82,12 @@ abstract class MonitoredObjectController extends Controller
         $this->view->toggleFeaturesForm = $toggleFeaturesForm;
         if (! empty($this->object->comments) && $auth->hasPermission('monitoring/command/comment/delete')) {
             $delCommentForm = new DeleteCommentCommandForm();
-            $delCommentForm
-                ->setObjects($this->object)
-                ->handleRequest();
+            $delCommentForm->handleRequest();
             $this->view->delCommentForm = $delCommentForm;
         }
         if (! empty($this->object->downtimes) && $auth->hasPermission('monitoring/command/downtime/delete')) {
             $delDowntimeForm = new DeleteDowntimeCommandForm();
-            $delDowntimeForm
-                ->setObjects($this->object)
-                ->handleRequest();
+            $delDowntimeForm->handleRequest();
             $this->view->delDowntimeForm = $delDowntimeForm;
         }
         $this->view->object = $this->object;
@@ -138,26 +134,6 @@ abstract class MonitoredObjectController extends Controller
     abstract public function scheduleDowntimeAction();
 
     /**
-     * Delete a comment
-     */
-    public function deleteCommentAction()
-    {
-        $this->assertHttpMethod('POST');
-        $this->assertPermission('monitoring/command/comment/delete');
-        $this->handleCommandForm(new DeleteCommentCommandForm());
-    }
-
-    /**
-     * Delete a downtime
-     */
-    public function deleteDowntimeAction()
-    {
-        $this->assertHttpMethod('POST');
-        $this->assertPermission('monitoring/command/downtime/delete');
-        $this->handleCommandForm(new DeleteDowntimeCommandForm());
-    }
-
-    /**
      * Create tabs
      */
     protected function createTabs()
@@ -167,13 +143,13 @@ abstract class MonitoredObjectController extends Controller
         if ($object->getType() === $object::TYPE_HOST) {
             $isService = false;
             $params = array(
-                'host_name' => $object->getName()
+                'host' => $object->getName()
             );
         } else {
             $isService = true;
             $params = array(
-                'host_name'             => $object->getHost()->getName(),
-                'service_description'   => $object->getName()
+                'host'      => $object->getHost()->getName(),
+                'service'   => $object->getName()
             );
         }
         $tabs->add(

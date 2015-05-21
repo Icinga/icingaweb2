@@ -11,14 +11,14 @@ use Icinga\Forms\Config\GeneralConfigForm;
 use Icinga\Forms\Config\ResourceConfigForm;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Security\SecurityException;
-use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Controller;
 use Icinga\Web\Notification;
 use Icinga\Web\Widget;
 
 /**
  * Application and module configuration
  */
-class ConfigController extends ActionController
+class ConfigController extends Controller
 {
     /**
      * The first allowed config action according to the user's permissions
@@ -128,8 +128,15 @@ class ConfigController extends ActionController
         $this->view->modules = Icinga::app()->getModuleManager()->select()
             ->from('modules')
             ->order('enabled', 'desc')
-            ->order('name')
-            ->paginate();
+            ->order('name');
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->modules);
+        // TODO: Not working
+        /*$this->setupSortControl(array(
+            'name'      => $this->translate('Modulename'),
+            'path'      => $this->translate('Installation Path'),
+            'enabled'   => $this->translate('State')
+        ));*/
     }
 
     public function moduleAction()

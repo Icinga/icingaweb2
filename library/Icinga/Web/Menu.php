@@ -117,13 +117,18 @@ class Menu implements RecursiveIterator
             foreach ($props as $key => $value) {
                 $method = 'set' . implode('', array_map('ucfirst', explode('_', strtolower($key))));
                 if ($key === 'renderer') {
-                    $class = '\Icinga\Web\Menu\\' . $value;
-                    if (!class_exists($class)) {
-                        throw new ConfigurationError(
-                            sprintf('ItemRenderer with class "%s" does not exist', $class)
-                        );
+                    $value = '\\' . ltrim($value, '\\');
+                    if (class_exists($value)) {
+                        $value = new $value;
+                    } else {
+                        $class = '\Icinga\Web\Menu' . $value;
+                        if (!class_exists($class)) {
+                            throw new ConfigurationError(
+                                sprintf('ItemRenderer with class "%s" does not exist', $class)
+                            );
+                        }
+                        $value = new $class;
                     }
-                    $value = new $class;
                 }
                 if (method_exists($this, $method)) {
                     $this->{$method}($value);
@@ -229,7 +234,8 @@ class Menu implements RecursiveIterator
 
             $section = $this->add(t('System'), array(
                 'icon'     => 'wrench',
-                'priority' => 200
+                'priority' => 200,
+                'renderer' => 'ProblemMenuItemRenderer'
             ));
             $section->add(t('Configuration'), array(
                 'url'           => 'config',
@@ -462,6 +468,26 @@ class Menu implements RecursiveIterator
     public function getPermission()
     {
         return $this->permission;
+    }
+
+    /**
+     * Get parent menu
+     *
+     * @return \Icinga\Web\Menu
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Get submenus
+     *
+     * @return array
+     */
+    public function getSubMenus()
+    {
+        return $this->subMenus;
     }
 
     /**

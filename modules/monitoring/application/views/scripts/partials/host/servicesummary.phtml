@@ -3,7 +3,16 @@
 use Icinga\Web\Url;
 use Icinga\Module\Monitoring\Object\Service;
 
-$selfUrl = Url::fromPath('monitoring/show/services', array('host_name' => $object->host_name));
+function urlAddFilterOptional($url, $filter, $optional) {
+    $url = Url::fromPath($url);
+    $f = $filter;
+    if (isset($optional)) {
+        $f = Filter::matchAll($filter, $optional);
+    }
+    return $url->setQueryString($f->toQueryString());
+}
+
+$selfUrl = Url::fromPath('monitoring/show/services', array('host' => $object->host_name));
 $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
 ?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
 <?php if ($object->stats->services_total): ?>
@@ -31,6 +40,7 @@ $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
 <?php else: ?>
 <?= $this->translate('No services configured on this host'); ?>
 <?php endif; ?>
+
 <span class="badges">
 <?php if ($object->stats->services_ok): ?>
 <span class="state ok<?= $currentUrl === $selfUrl->with('service_state', 0)->getRelativeUrl() ? ' active' : ''; ?>">

@@ -30,7 +30,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
      */
     public function createElements(array $formData = array())
     {
-        $toggleDisabled = $this->hasPermission('monitoring/command/feature/instance')  ? null : '';
+        $toggleDisabled = $this->hasPermission('monitoring/command/feature/object')  ? null : '';
         $this->addElements(array(
             array(
                 'checkbox',
@@ -117,6 +117,34 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
     public function onSuccess()
     {
         $this->assertPermission('monitoring/command/feature/object');
+
+        $notifications = array(
+            ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS => array(
+                $this->translate('Enabling active checks..'),
+                $this->translate('Disabling active checks..')
+            ),
+            ToggleObjectFeatureCommand::FEATURE_PASSIVE_CHECKS => array(
+                $this->translate('Enabling passive checks..'),
+                $this->translate('Disabling passive checks..')
+            ),
+            ToggleObjectFeatureCommand::FEATURE_OBSESSING => array(
+                $this->translate('Enabling obsessing..'),
+                $this->translate('Disabling obsessing..')
+            ),
+            ToggleObjectFeatureCommand::FEATURE_NOTIFICATIONS => array(
+                $this->translate('Enabling notifications..'),
+                $this->translate('Disabling notifications..')
+            ),
+            ToggleObjectFeatureCommand::FEATURE_EVENT_HANDLER => array(
+                $this->translate('Enabling event handler..'),
+                $this->translate('Disabling event handler..')
+            ),
+            ToggleObjectFeatureCommand::FEATURE_FLAP_DETECTION => array(
+                $this->translate('Enabling flap detection..'),
+                $this->translate('Disabling flap detection..')
+            )
+        );
+
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             foreach ($this->getValues() as $feature => $enabled) {
@@ -127,10 +155,13 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                         ->setObject($object)
                         ->setEnabled($enabled);
                     $this->getTransport($this->request)->send($toggleFeature);
+
+                    Notification::success(
+                        $notifications[$feature][$enabled ? 0 : 1]
+                    );
                 }
             }
         }
-        Notification::success($this->translate('Toggling feature..'));
         return true;
     }
 }

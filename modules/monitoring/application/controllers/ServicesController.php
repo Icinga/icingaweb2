@@ -10,12 +10,12 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
-use Icinga\Module\Monitoring\Object\Host;
-use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Object\ServiceList;
 use Icinga\Web\Url;
-use Icinga\Web\Widget\Chart\InlinePie;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
 
 class Monitoring_ServicesController extends Controller
 {
@@ -27,70 +27,12 @@ class Monitoring_ServicesController extends Controller
     public function init()
     {
         $serviceList = new ServiceList($this->backend);
-        $serviceList->setFilter(Filter::fromQueryString((string) $this->params->without('service_problem', 'service_handled')));
-        $this->serviceList = $serviceList;
-    }
-
-    protected function handleCommandForm(ObjectsCommandForm $form)
-    {
-        $this->serviceList->setColumns(array(
-            'host_name',
-            'host_state',
-            'service_description',
-            'service_state',
-            'service_problem',
-            'service_handled',
-            'service_acknowledged',
-            'service_in_downtime'
+        $serviceList->setFilter(Filter::fromQueryString(
+            (string) $this->params->without(array('service_problem', 'service_handled', 'view'))
         ));
+        $this->serviceList = $serviceList;
+        $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/services');
 
-        $form
-            ->setObjects($this->serviceList)
-            ->setRedirectUrl(Url::fromPath('monitoring/services/show')->setParams($this->params))
-            ->handleRequest();
-
-        $serviceStates = array(
-            Service::getStateText(Service::STATE_OK) => 0,
-            Service::getStateText(Service::STATE_WARNING) => 0,
-            Service::getStateText(Service::STATE_CRITICAL) => 0,
-            Service::getStateText(Service::STATE_UNKNOWN) => 0,
-            Service::getStateText(Service::STATE_PENDING) => 0
-        );
-        $knownHostStates = array();
-        $hostStates = array(
-            Host::getStateText(Host::STATE_UP) => 0,
-            Host::getStateText(Host::STATE_DOWN) => 0,
-            Host::getStateText(Host::STATE_UNREACHABLE) => 0,
-            Host::getStateText(Host::STATE_PENDING) => 0,
-        );
-        foreach ($this->serviceList as $service) {
-            ++$serviceStates[$service::getStateText($service->state)];
-            if (! isset($knownHostStates[$service->getHost()->getName()])) {
-                $knownHostStates[$service->getHost()->getName()] = true;
-                ++$hostStates[$service->getHost()->getStateText($service->host_state)];
-            }
-        }
-
-        $this->view->form = $form;
-        $this->view->objects = $this->serviceList;
-        $this->view->serviceStates = $serviceStates;
-        $this->view->hostStates = $hostStates;
-        $this->view->serviceStatesPieChart = $this->createPieChart(
-            $serviceStates,
-            $this->translate('Service State'),
-            array('#44bb77', '#FFCC66', '#FF5566', '#E066FF', '#77AAFF')
-        );
-        $this->view->hostStatesPieChart = $this->createPieChart(
-            $hostStates,
-            $this->translate('Host State'),
-            array('#44bb77', '#FF5566', '#E066FF', '#77AAFF')
-        );
-        $this->_helper->viewRenderer('partials/command/objects-command-form', null, true);
-        return $form;
-    }
-
-    public function showAction()
-    {
         $this->getTabs()->add(
             'show',
             array(
@@ -98,10 +40,54 @@ class Monitoring_ServicesController extends Controller
                     $this->translate('Show summarized information for %u services'),
                     count($this->serviceList)
                 ),
-                'label' => $this->translate('Services'),
-                'url'   => Url::fromRequest()
+                'label' => $this->translate('Services') . sprintf(' (%d)', count($this->serviceList)),
+                'url'   => Url::fromRequest(),
+                'icon'  => 'services'
             )
-        )->activate('show');
+        )->extend(new DashboardAction())->activate('show');
+    }
+
+    protected function handleCommandForm(ObjectsCommandForm $form)
+    {
+        $this->serviceList->setColumns(array(
+            'host_icon_image',
+            'host_name',
+            'host_output',
+            'host_state',
+            'host_problem',
+            'host_handled',
+            'service_icon_image',
+            'service_description',
+            'service_state',
+            'service_problem',
+            'service_handled',
+            'service_acknowledged',
+            'service_in_downtime',
+            'service_is_flapping',
+            'service_output',
+            'service_last_ack',
+            'service_last_comment',
+            'service_notifications_enabled',
+            'service_active_checks_enabled',
+            'service_passive_checks_enabled'
+        ));
+
+        $form
+            ->setObjects($this->serviceList)
+            ->setRedirectUrl(Url::fromPath('monitoring/services/show')->setParams($this->params))
+            ->handleRequest();
+
+        $this->view->form = $form;
+        $this->view->objects = $this->serviceList;
+        $this->view->stats = $this->serviceList->getServiceStateSummary();
+        $this->view->serviceStates = true;
+        $this->view->hostStates = $this->serviceList->getHostStateSummary();
+        $this->_helper->viewRenderer('partials/command/objects-command-form', null, true);
+        return $form;
+    }
+
+    public function showAction()
+    {
         $this->setAutorefreshInterval(15);
         $checkNowForm = new CheckNowCommandForm();
         $checkNowForm
@@ -109,65 +95,33 @@ class Monitoring_ServicesController extends Controller
             ->handleRequest();
         $this->view->checkNowForm = $checkNowForm;
         $this->serviceList->setColumns(array(
+            'host_icon_image',
             'host_name',
+            'host_output',
             'host_state',
+            'host_problem',
+            'host_handled',
+            'service_icon_image',
+            'service_output',
             'service_description',
             'service_state',
             'service_problem',
             'service_handled',
             'service_acknowledged',
-            'service_in_downtime'/*,
-            'service_passive_checks_enabled',
+            'service_in_downtime',
+            'service_is_flapping',
+            'service_last_comment',
+            'service_last_ack',
             'service_notifications_enabled',
+            'service_active_checks_enabled',
+            'service_passive_checks_enabled'
+            /*
             'service_event_handler_enabled',
             'service_flap_detection_enabled',
-            'service_active_checks_enabled',
             'service_obsessing'*/
         ));
-        $unhandledObjects = array();
-        $unhandledFilterExpressions = array();
-        $acknowledgedObjects = array();
-        $objectsInDowntime = array();
-        $downtimeFilterExpressions = array();
-        $serviceStates = array(
-            Service::getStateText(Service::STATE_OK) => 0,
-            Service::getStateText(Service::STATE_WARNING) => 0,
-            Service::getStateText(Service::STATE_CRITICAL) => 0,
-            Service::getStateText(Service::STATE_UNKNOWN) => 0,
-            Service::getStateText(Service::STATE_PENDING) => 0
-        );
-        $knownHostStates = array();
-        $hostStates = array(
-            Host::getStateText(Host::STATE_UP) => 0,
-            Host::getStateText(Host::STATE_DOWN) => 0,
-            Host::getStateText(Host::STATE_UNREACHABLE) => 0,
-            Host::getStateText(Host::STATE_PENDING) => 0,
-        );
-        foreach ($this->serviceList as $service) {
-            /** @var Service $service */
-            if ((bool) $service->problem === true && (bool) $service->handled === false) {
-                $unhandledObjects[] = $service;
-                $unhandledFilterExpressions[] = Filter::matchAll(
-                    Filter::where('host', $service->getHost()->getName()),
-                    Filter::where('service', $service->getName())
-                );
-            }
-            if ((bool) $service->acknowledged === true) {
-                $acknowledgedObjects[] = $service;
-            }
-            if ((bool) $service->in_downtime === true) {
-                $objectsInDowntime[] = $service;
-                $downtimeFilterExpressions[] = Filter::matchAll(
-                    Filter::where('host_name', $service->getHost()->getName()),
-                    Filter::where('service_description', $service->getName())
-                );
-            }
-            ++$serviceStates[$service::getStateText($service->state)];
-            if (! isset($knownHostStates[$service->getHost()->getName()])) {
-                $knownHostStates[$service->getHost()->getName()] = true;
-                ++$hostStates[$service->getHost()->getStateText($service->host_state)];
-            }
-        }
+
+        $acknowledgedObjects = $this->serviceList->getAcknowledgedObjects();
         if (! empty($acknowledgedObjects)) {
             $removeAckForm = new RemoveAcknowledgementCommandForm();
             $removeAckForm
@@ -175,52 +129,69 @@ class Monitoring_ServicesController extends Controller
                 ->handleRequest();
             $this->view->removeAckForm = $removeAckForm;
         }
+
         $this->setAutorefreshInterval(15);
-        $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/services');
         $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/services/reschedule-check');
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/services/schedule-downtime');
         $this->view->processCheckResultAllLink = Url::fromRequest()->setPath(
             'monitoring/services/process-check-result'
         );
-        $this->view->hostStates = $hostStates;
-        $this->view->serviceStates = $serviceStates;
+        $this->view->addCommentLink = Url::fromRequest()->setPath('monitoring/services/add-comment');
+        $this->view->deleteCommentLink = Url::fromRequest()->setPath('monitoring/services/delete-comment');
+        $this->view->stats = $this->serviceList->getServiceStateSummary();
+        $this->view->hostStats = $this->serviceList->getHostStateSummary();
         $this->view->objects = $this->serviceList;
-        $this->view->unhandledObjects = $unhandledObjects;
-        $unhandledFilterQueryString = Filter::matchAny($unhandledFilterExpressions)->toQueryString();
+        $this->view->unhandledObjects = $this->serviceList->getUnhandledObjects();
+        $this->view->problemObjects = $this->serviceList->getProblemObjects();
         $this->view->acknowledgeUnhandledLink = Url::fromPath('monitoring/services/acknowledge-problem')
-            ->setQueryString($unhandledFilterQueryString);
+            ->setQueryString($this->serviceList->getUnhandledObjects()->objectsFilter()->toQueryString());
         $this->view->downtimeUnhandledLink = Url::fromPath('monitoring/services/schedule-downtime')
-            ->setQueryString($unhandledFilterQueryString);
+            ->setQueryString($this->serviceList->getUnhandledObjects()->objectsFilter()->toQueryString());
+        $this->view->downtimeLink = Url::fromPath('monitoring/services/schedule-downtime')
+            ->setQueryString($this->serviceList->getProblemObjects()->objectsFilter()->toQueryString());
         $this->view->acknowledgedObjects = $acknowledgedObjects;
-        $this->view->objectsInDowntime = $objectsInDowntime;
-        $this->view->inDowntimeLink = Url::fromPath('monitoring/list/downtimes')
-            ->setQueryString(Filter::matchAny($downtimeFilterExpressions)->toQueryString());
+        $this->view->objectsInDowntime = $this->serviceList->getObjectsInDowntime();
+        $this->view->inDowntimeLink = Url::fromPath('monitoring/list/services')
+            ->setQueryString($this->serviceList->getObjectsInDowntime()
+            ->objectsFilter(array('host' => 'host_name', 'service' => 'service_description'))->toQueryString());
+        $this->view->showDowntimesLink = Url::fromPath('monitoring/downtimes/show')
+            ->setQueryString(
+                $this->serviceList->getObjectsInDowntime()
+                    ->objectsFilter()->toQueryString()
+            );
         $this->view->commentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
-        $this->view->serviceStatesPieChart = $this->createPieChart(
-            $serviceStates,
-            $this->translate('Service State'),
-            array('#44bb77', '#FFCC66', '#FF5566', '#E066FF', '#77AAFF')
+        $this->view->baseFilter = $this->serviceList->getFilter();
+        $this->view->sendCustomNotificationLink = Url::fromRequest()->setPath(
+            'monitoring/services/send-custom-notification'
         );
-        $this->view->hostStatesPieChart = $this->createPieChart(
-            $hostStates,
-            $this->translate('Host State'),
-            array('#44bb77', '#FF5566', '#E066FF', '#77AAFF')
-        );
-        $this->view->sendCustomNotificationLink =
-            Url::fromRequest()->setPath(
-                'monitoring/services/send-custom-notification'
-            );
     }
 
-    protected function createPieChart(array $states, $title, array $colors)
+    /**
+     * Add a service comment
+     */
+    public function addCommentAction()
     {
-        $chart = new InlinePie(array_values($states), $title, $colors);
-        return $chart
-            ->setSize(75)
-            ->setTitle('')
-            ->setSparklineClass('sparkline-multi');
+        $this->assertPermission('monitoring/command/comment/add');
+
+        $form = new AddCommentCommandForm();
+        $form->setTitle($this->translate('Add Service Comments'));
+        $this->handleCommandForm($form);
     }
+
+
+    /**
+     * Delete a comment
+     */
+    public function deleteCommentAction()
+    {
+        $this->assertPermission('monitoring/command/comment/delete');
+
+        $form = new DeleteCommentCommandForm();
+        $form->setTitle($this->translate('Delete Service Comments'));
+        $this->handleCommandForm($form);
+    }
+
 
     /**
      * Acknowledge service problems

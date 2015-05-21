@@ -21,6 +21,8 @@ class Limiter extends AbstractWidget
 
     private $pages;
 
+    private $default;
+
     public function setUrl(Url $url)
     {
         $this->url = $url;
@@ -39,13 +41,19 @@ class Limiter extends AbstractWidget
         return $this;
     }
 
+    public function setDefaultLimit($limit)
+    {
+        $this->default = $limit;
+        return $this;
+    }
+
     public function render()
     {
         if ($this->url === null) {
             $this->url = Url::fromRequest();
         }
 
-        $currentLimit = (int) $this->url->getParam('limit', 25); // Default??
+        $currentLimit = (int) $this->url->getParam('limit', $this->default);
         $availableLimits = array(
             10 => '10',
             25 => '25',

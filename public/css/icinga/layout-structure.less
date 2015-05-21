@@ -119,12 +119,12 @@ html {
 .container .controls {
   top: 0;
   background-color: white;
-  padding: 0;
+  padding: 1em 1em 0;
   z-index: 100;
 }
 
 .container .fake-controls {
-  padding: 0;
+  padding: 1em 1em 0;
 }
 
 .container .controls .pagination {
@@ -149,10 +149,6 @@ html {
   font-size: 0.9em;
 }
 
-.container .controls > * {
-  margin-left: 1em;
-}
-
 .container .controls .pagination {
   margin-left: 1.2em;
 }
@@ -167,7 +163,7 @@ html {
 }
 
 .dashboard .controls {
-  display: none;
+  padding: 0;
 }
 
 /* Not growing larger than 3840px at 1em=16px right now */
@@ -350,6 +346,7 @@ html {
 .hbox-item {
   display: inline-block;
   vertical-align: top;
+  margin-top: 0.5em;
   margin-bottom: 0.25em;
   margin-left: 1em;
   margin-right: 1em;
@@ -374,4 +371,9 @@ html {
   padding: 0;
   position: absolute;
   width: 1px;
+}
+
+.multi-commands {
+  padding-top: 0em;
+  font-size: 0.9em;
 }

@@ -70,9 +70,12 @@ class Monitoring_ShowController extends Controller
     {
         $this->getTabs()->activate('history');
         $this->view->object->fetchEventHistory();
-        $this->view->history = $this->view->object->eventhistory->getQuery()->paginate($this->params->get('limit', 50));
+        $this->view->history = $this->view->object->eventhistory;
         $this->handleFormatRequest($this->view->object->eventhistory);
         $this->fetchHostStats();
+
+        $this->setupLimitControl(50);
+        $this->setupPaginationControl($this->view->history, 50);
     }
 
     public function servicesAction()
@@ -142,9 +145,7 @@ class Monitoring_ShowController extends Controller
             'contact_notify_host_flapping',
             'contact_notify_host_downtime',
         ));
-
         $query->where('contact_name', $contactName);
-
         $contact = $query->getQuery()->fetchRow();
 
         if ($contact) {
@@ -153,7 +154,7 @@ class Monitoring_ShowController extends Controller
                 'command_name'
             ))->where('contact_id', $contact->contact_id);
 
-            $this->view->commands = $commands->paginate();
+            $this->view->commands = $commands;
 
             $notifications = $this->backend->select()->from('notification', array(
                 'host_name',
@@ -167,9 +168,9 @@ class Monitoring_ShowController extends Controller
             ));
 
             $notifications->where('contact_object_id', $contact->contact_object_id);
-
-            $this->view->compact = true;
-            $this->view->notifications = $notifications->paginate();
+            $this->view->notifications = $notifications;
+            $this->setupLimitControl();
+            $this->setupPaginationControl($this->view->notifications);
         }
 
         $this->view->contact = $contact;
@@ -188,13 +189,13 @@ class Monitoring_ShowController extends Controller
         if ($object->getType() === $object::TYPE_HOST) {
             $isService = false;
             $params = array(
-                'host_name' => $object->getName()
+                'host' => $object->getName()
             );
         } else {
             $isService = true;
             $params = array(
-                'host_name'             => $object->getHost()->getName(),
-                'service_description'   => $object->getName()
+                'host'      => $object->getHost()->getName(),
+                'service'   => $object->getName()
             );
         }
         $tabs = $this->getTabs();
@@ -207,7 +208,7 @@ class Monitoring_ShowController extends Controller
                 ),
                 'label'     => $this->translate('Host'),
                 'icon'      => 'host',
-                'url'       => 'monitoring/host/show',
+                'url'       => 'monitoring/show/host',
                 'urlParams' => $params,
             )
         );
@@ -222,7 +223,7 @@ class Monitoring_ShowController extends Controller
                     ),
                     'label'     => $this->translate('Service'),
                     'icon'      => 'service',
-                    'url'       => 'monitoring/service/show',
+                    'url'       => 'monitoring/show/service',
                     'urlParams' => $params,
                 )
             );

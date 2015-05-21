@@ -1,29 +1,33 @@
 <?php
-
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
 $self = $this;
 $hostContext = $object->getType() === 'host';
 
-?>
-
+if (! $this->compact): ?>
 <div class="controls">
-<?php if ($hostContext): ?>
+  <?= $this->tabs; ?>
+ <?php if ($hostContext): ?>
   <?= $this->render('partials/host/object-header.phtml'); ?>
-<?php else: ?>
+ <?php else: ?>
   <?= $this->render('partials/service/object-header.phtml'); ?>
-<?php endif ?>
+ <?php endif ?>
   <h1><?= $this->translate('This Object\'s Event History'); ?></h1>
-  <?= $this->widget('limiter', array('url' => $url, 'max' => $history->count())); ?>
-  <?= $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
-
+<?php endif ?>
 <div class="content">
-<?php if (count($history) === 0): ?>
-  <?= $this->translate('No history available for this object'); ?>
-</div>
-<?php return; endif ?>
+<?php
+
+if (count($history) === 0) {
+    echo $this->translate('No history available for this object') . '</div>';
+    return;
+}
+?>
 
 <?php
 function contactsLink($match, $view) {
@@ -142,10 +146,10 @@ $output = $this->tickets ? preg_replace_callback(
               $this->translate('%s on %s', 'Service running on host'),
               $hostContext ? $this->qlink(
                   $event->service_display_name,
-                  'monitoring/service/show',
+                  'monitoring/show/service',
                   array(
-                      'host_name'           => $event->host_name,
-                      'service_description' => $event->service_description
+                      'host' => $event->host_name,
+                      'service' => $event->service_description
                   ),
                   array('title' => sprintf(
                       $this->translate('Show detailed information for service %s on host %s'),

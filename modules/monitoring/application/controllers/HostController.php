@@ -1,6 +1,7 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+use Icinga\Exception\MissingParameterException;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
@@ -26,18 +27,33 @@ class Monitoring_HostController extends MonitoredObjectController
      */
     public function init()
     {
-        $host = new Host($this->backend, $this->params->get('host_name'));
+        if ($this->params->get('host') === null) {
+            throw new MissingParameterException(
+                $this->translate('Required parameter \'%s\' is missing'),
+                'host'
+            );
+        }
+
+        $host = new Host($this->backend, $this->params->get('host'));
 
         $this->applyRestriction('monitoring/hosts/filter', $host);
 
         if ($host->fetch() === false) {
-            throw new Zend_Controller_Action_Exception($this->translate('Host not found'));
+            throw new Zend_Controller_Action_Exception(
+                sprintf($this->translate('Host \'%s\' not found'), $this->params->get('host')),
+                404
+            );
         }
         $this->object = $host;
         $this->createTabs();
         $this->getTabs()->activate('host');
     }
 
+    /**
+     * Get host actions from hook
+     *
+     * @return array
+     */
     protected function getHostActions()
     {
         $urls = array();
@@ -56,7 +72,7 @@ class Monitoring_HostController extends MonitoredObjectController
      */
     public function showAction()
     {
-        $this->view->hostActions = $this->getHostActions();
+        $this->view->actions = $this->getHostActions();
         parent::showAction();
     }
 

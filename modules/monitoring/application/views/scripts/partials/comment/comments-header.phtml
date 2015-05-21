@@ -1,0 +1,32 @@
+<table class="action">
+    <?php $i = 0; foreach ($comments as $comment):
+        if (++ $i > 5) {
+            continue;
+        }
+        $this->comment = $comment;
+    ?>
+
+        <tr class="state invalid">
+          <td class="state" style="width: 12em;">
+            <?= $this->render('partials/comment/comment-description.phtml'); ?>
+          </td>
+          <td>
+            <?= $this->render('partials/comment/comment-detail.phtml'); ?>
+          </td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+
+<p>
+    <?php if ($i > 5): ?>
+    <?= $this->qlink(
+        sprintf($this->translate('show all %d comments'), $i),
+        $listAllLink,
+        null,
+        array(
+            'icon' => $i > 5 ? 'down-open' : '',
+            'data-base-target' => "_next"
+        )
+    ) ?>
+    <?php endif ?>
+</p>

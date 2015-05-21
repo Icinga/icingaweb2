@@ -3,6 +3,8 @@
 
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Web\Url;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
@@ -29,7 +31,7 @@ class ListController extends Controller
                     'list/'
                     . str_replace(' ', '', $action)
                 )
-        ))->activate($action);
+        ))->extend(new OutputFormat())->extend(new DashboardAction())->activate($action);
     }
 
     /**
@@ -42,15 +44,16 @@ class ListController extends Controller
         }
 
         $this->addTitleTab('application log');
-        $pattern = '/^(?<datetime>[0-9]{4}(-[0-9]{2}){2}'                 // date
-                 . 'T[0-9]{2}(:[0-9]{2}){2}([\\+\\-][0-9]{2}:[0-9]{2})?)' // time
-                 . ' - (?<loglevel>[A-Za-z]+)'                            // loglevel
-                 . ' - (?<message>.*)$/';
 
         $resource = new FileReader(new ConfigObject(array(
             'filename'  => Config::app()->get('logging', 'file'),
-            'fields'    => $pattern
+            'fields'    => '/(?<!.)(?<datetime>[0-9]{4}(?:-[0-9]{2}){2}'    // date
+                . 'T[0-9]{2}(?::[0-9]{2}){2}(?:[\+\-][0-9]{2}:[0-9]{2})?)'  // time
+                . ' - (?<loglevel>[A-Za-z]+) - (?<message>.*)(?!.)/msS'     // loglevel, message
         )));
-        $this->view->logData = $resource->select()->order('DESC')->paginate();
+        $this->view->logData = $resource->select()->order('DESC');
+
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->logData);
     }
 }

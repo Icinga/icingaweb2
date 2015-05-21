@@ -1,7 +1,17 @@
 <?php
 
 use Icinga\Web\Url;
+use Icinga\Data\Filter\Filter;
 
+function urlAddFilterOptional($url, $filter, $optional) {
+    $url = Url::fromPath($url);
+    $f = $filter;
+    if (isset($optional)) {
+        $f = Filter::matchAll($filter, $optional);
+    }
+    return $url->setQueryString($f->toQueryString());
+}
+$this->baseFilter = isset($this->baseFilter) ? $this->baseFilter : null;
 $selfUrl = 'monitoring/list/hosts';
 $currentUrl = Url::fromRequest()->getRelativeUrl();
 ?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
@@ -10,17 +20,22 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     <?php if ($this->stats->hosts_up): ?>
     <span class="state ok<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 0))->getRelativeUrl() ? ' active' : ''; ?>">
         <?= $this->qlink(
-            $this->stats->hosts_up,
-            $selfUrl,
-            array('host_state' => 0),
-            array('title' => sprintf(
-                $this->translatePlural(
-                    'List %u host that is currently in state UP',
-                    'List %u hosts which are currently in state UP',
-                    $this->stats->hosts_up
+                $this->stats->hosts_up,
+                urlAddFilterOptional(
+                    $selfUrl,
+                    Filter::where('host_state', 0),
+                    $this->baseFilter
                 ),
-                $this->stats->hosts_up
-            ))
+                null,
+                array('title' => sprintf(
+                    $this->translatePlural(
+                        'List %u host that is currently in state UP',
+                        'List %u hosts which are currently in state UP',
+                        $this->stats->hosts_up
+                    ),
+                    $this->stats->hosts_up
+                )
+            )
         ); ?>
     </span>
     <?php endif; ?>
@@ -29,11 +44,12 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     <span class="state critical<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 1, 'host_unhandled' => 1))->getRelativeUrl() ? ' active' : ''; ?>">
         <?= $this->qlink(
             $this->stats->hosts_down_unhandled,
-            $selfUrl,
-            array(
-                'host_state'        => 1,
-                'host_unhandled'    => 1
+            urlAddFilterOptional(
+                $selfUrl,
+                Filter::matchAll(Filter::where('host_state', 1), Filter::where('host_unhandled', 1)),
+                $this->baseFilter
             ),
+            null,
             array('title' => sprintf(
                 $this->translatePlural(
                     'List %u host that is currently in state DOWN',
@@ -49,11 +65,12 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     <span class="state handled critical<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 1, 'host_unhandled' =>0))->getRelativeUrl() ? ' active' : ''; ?>">
         <?= $this->qlink(
             $this->stats->hosts_down_handled,
-            $selfUrl,
-            array(
-                'host_state'        => 1,
-                'host_unhandled'    => 0
+            urlAddFilterOptional(
+                $selfUrl,
+                Filter::matchAll(Filter::where('host_state', 1), Filter::where('host_unhandled', 0)),
+                $this->baseFilter
             ),
+            null,
             array('title' => sprintf(
                 $this->translatePlural(
                     'List %u host that is currently in state DOWN (Acknowledged)',
@@ -74,11 +91,12 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     <span class="state unknown<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 2, 'host_unhandled' => 1))->getRelativeUrl() ? ' active' : ''; ?>">
         <?= $this->qlink(
             $this->stats->hosts_unreachable_unhandled,
-            $selfUrl,
-            array(
-                'host_state'        => 2,
-                'host_unhandled'    => 1
+            urlAddFilterOptional(
+                $selfUrl,
+                Filter::matchAll(Filter::where('host_state', 2), Filter::where('host_unhandled', 1)),
+                $this->baseFilter
             ),
+            null,
             array('title' => sprintf(
                 $this->translatePlural(
                     'List %u host that is currently in state UNREACHABLE',
@@ -94,11 +112,12 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     <span class="state handled unknown<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 2, 'host_unhandled' => 0))->getRelativeUrl() ? ' active' : '' ?>">
         <?= $this->qlink(
             $this->stats->hosts_unreachable_handled,
-            $selfUrl,
-            array(
-                'host_state'        => 2,
-                'host_unhandled'    => 0
+            urlAddFilterOptional(
+                $selfUrl,
+                Filter::matchAll(Filter::where('host_state', 2), Filter::where('host_unhandled', 0)),
+                $this->baseFilter
             ),
+            null,
             array('title' => sprintf(
                 $this->translatePlural(
                     'List %u host that is currently in state UNREACHABLE (Acknowledged)',
@@ -119,8 +138,12 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     <span class="state pending<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 99))->getRelativeUrl() ? ' active' : ''; ?>">
         <?= $this->qlink(
             $this->stats->hosts_pending,
-            $selfUrl,
-            array('host_state' => 99),
+            urlAddFilterOptional(
+                $selfUrl,
+                Filter::where('host_state', 99),
+                $this->baseFilter
+            ),
+            null,
             array('title' => sprintf(
                 $this->translatePlural(
                     'List %u host that is currently in state PENDING',

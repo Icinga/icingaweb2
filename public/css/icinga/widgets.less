@@ -48,8 +48,22 @@ table.multiselect tr[href] td {
   -ms-user-select: none;
 }
 
-#main form.filterEditor input[type=text], #main form.filterEditor select {
-    width: 12em;
+#main div.filter {
+  margin-top: 1em;
+
+  form.editor {
+    input[type=text], select {
+      width: 12em;
+    }
+
+    ul.tree li.active {
+      background-color: #eee;
+    }
+
+    div.buttons {
+      float: right;
+    }
+  }
 }
 
 ul.datafilter li {
@@ -203,23 +217,13 @@ li li .badge-container {
   margin-right: 0.75em;
 }
 
-/*
-#layout.hoveredmenu .active > .badge-container {
-  display: none;
-}
-
-#layout.hoveredmenu .hover > .badge-container {
-  //margin-right: 14.15em;
-  display: none;
-}
-*/
-
 .badge {
   position: relative;
-  top: 0.3em;
+  top: -0.15em;
   display: inline-block;
   min-width: 1em;
   padding: 3px 7px;
+  margin: 0 0.2em 0 0.2em;
   font-size: 0.8em;
   font-weight: 700;
   line-height: 1.1em;
@@ -228,6 +232,11 @@ li li .badge-container {
   white-space: nowrap;
   vertical-align: baseline;
   background-color: @colorInvalid;
+}
+
+#menu nav ul .badge {
+  margin-right: 0em;
+  top: 0.3em;
 }
 
 #menu nav > ul > li.active > .badge-container {
@@ -265,6 +274,10 @@ li li .badge {
   background-color: @colorCritical;
 }
 
+.badge-down {
+  background-color: @colorCritical;
+}
+
 .badge-warning {
   background-color: @colorWarning;
 }
@@ -273,16 +286,16 @@ li li .badge {
   background-color: @colorOk;
 }
 
+.badge-up {
+  background-color: @colorOk;
+}
+
 .badge-pending {
   background-color: @colorPending;
 }
 
-.badge-pending {
+.badge-unknown {
   background-color: @colorUnknown;
-}
-
-.widgetFilter li.active {
-    background-color: #eee;
 }
 
 .sparkline-box {
@@ -303,3 +316,25 @@ li li .badge {
 
   margin: 0em 0em 0em 0.1em;
 }
+
+.tipsy .tipsy-inner {
+  // overwrite tooltip max width, we need them to grow bigger
+  max-width: 300px;
+  text-align: left;
+}
+
+.color-box {
+  position: relative;
+  top: 2px;
+  margin: 0px 3px 0px 3px;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+}
+
+.oneline {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+

@@ -5,4 +5,4 @@ namespace Icinga\Data;
 
 use Countable;
 
-interface QueryInterface extends Browsable, Fetchable, Filterable, Limitable, Sortable, Countable {};
+interface QueryInterface extends Fetchable, Filterable, Limitable, Sortable, Countable {};

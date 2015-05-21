@@ -1,33 +1,24 @@
 <?php
 use Icinga\Module\Monitoring\Object\Host;
 
-if ($this->compact): ?>
-<div class="content">
-<?php else: ?>
+if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs ?>
-  <div style="margin: 1em;" class="dontprint">
-    <?= $this->render('list/components/selectioninfo.phtml') ?>
-    <?= $this->render('list/components/hostssummary.phtml') ?>
-    <?= $this->translate('Sort by') ?> <?= $this->sortControl->render($this) ?>
+  <?= $this->tabs; ?>
+  <div class="dontprint">
+    <?= $this->render('list/components/selectioninfo.phtml'); ?>
+    <?= $this->render('list/components/hostssummary.phtml'); ?>
   </div>
-
-<?= $this->widget('limiter')->setMaxLimit($this->hosts->count()) ?>
-<?= $this->paginationControl($hosts, null, null, array('preserve' => $this->preserve)) ?>
-<?= $this->selectionToolbar('multi', $this->href('monitoring/hosts/show?' . $this->filter->toQueryString())) ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
-
+<?php endif ?>
 <div class="content">
-<?= $this->filterEditor ?>
 <?php
 
-endif;
-
-if ($hosts->count() === 0) {
-    echo $this->translate('No hosts matching the filter');
-    if (! $this->compact) {
-        echo '</div>';
-    }
+if (count($hosts) === 0) {
+    echo $this->translate('No hosts found matching the filter') . '</div>';
     return;
 }
 ?>
@@ -36,46 +27,15 @@ if ($hosts->count() === 0) {
     data-base-target="_next"
     class="action multiselect"
     data-icinga-multiselect-url="<?= $this->href('monitoring/hosts/show') ?>"
-    data-icinga-multiselect-data="host_name"
+    data-icinga-multiselect-data="host"
 >
   <tbody>
   <?php foreach($hosts as $host):
 
     $hostStateName = Host::getStateText($host->host_state);
-    $hostLink = $this->href('monitoring/host/show', array('host_name' => $host->host_name));
+    $hostLink = $this->href('monitoring/host/show', array('host' => $host->host_name));
 
-    $icons = array();
-    if (! $host->host_handled && $host->host_state > 0){
-        $icons[] = $this->icon('attention-alt', $this->translate('Unhandled'));
-    }
 
-    if ($host->host_acknowledged) {
-        $icons[] = $this->icon('ok', $this->translate('Acknowledged'));
-    }
-
-    if ($host->host_is_flapping) {
-        $icons[] = $this->icon('flapping', $this->translate('Flapping'));
-    }
-
-    if (! $host->host_notifications_enabled) {
-        $icons[] = $this->icon('bell-off-empty', $this->translate('Notifications Disabled'));
-    }
-
-    if ($host->host_in_downtime) {
-        $icons[] = $this->icon('plug', $this->translate('In Downtime'));
-    }
-
-    if (! $host->host_active_checks_enabled) {
-        if (! $host->host_passive_checks_enabled) {
-            $icons[] = $this->icon('eye-off', $this->translate('Active And Passive Checks Disabled'));
-        } else {
-            $icons[] = $this->icon('eye-off', $this->translate('Active Checks Disabled'));
-        }
-    }
-
-    if (isset($host->host_last_comment) && $host->host_last_comment !== null) {
-        $icons[] = $this->icon('comment', $this->translate('Last Comment: ') . $host->host_last_comment);
-    }
     ?>
     <tr class="state <?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
       <!-- State -->
@@ -93,10 +53,8 @@ if ($hosts->count() === 0) {
 
       <!-- Host / Status / Output -->
       <td>
-        <?php if ($host->host_icon_image && ! preg_match('/[\'"]/', $host->host_icon_image)): ?>
-        <?= $this->icon($this->resolveMacros($host->host_icon_image, $host)) ?>
-        <?php endif ?>
-        <?= implode(' ', $icons) ?>
+        <?= $this->iconImage()->host($host) ?>
+        <?= implode(' ', $this->hostFlags($host)) ?>
         <?= $this->qlink(
           $host->host_display_name,
           $hostLink,
@@ -113,10 +71,10 @@ if ($hosts->count() === 0) {
           ),
           'monitoring/show/services',
           array(
-            'host_name'          => $host->host_name,
+            'host'               => $host->host_name,
             'service_problem'    => 1,
             'service_handled'    => 0
-           ),
+          ),
           array(
             'style' => 'font-weight: normal',
             'title' => sprintf(
@@ -133,7 +91,7 @@ if ($hosts->count() === 0) {
         <?php endif ?>
         <p class="pluginoutput"><?= $this->escape($this->ellipsis($host->host_output, 10000)) ?></p>
       </td>
-      <?php foreach($this->extraColumns as $col): ?>
+      <?php foreach($this->addColumns as $col): ?>
       <td><?= $this->escape($host->$col) ?></td>
       <?php endforeach ?>
     </tr>

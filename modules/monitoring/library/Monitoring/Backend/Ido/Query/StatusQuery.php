@@ -36,7 +36,7 @@ class StatusQuery extends IdoQuery
         'hosts' => array(
             'host'                  => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'             => 'ho.name1',
-            'host_display_name'     => 'h.display_name',
+            'host_display_name'     => 'h.display_name COLLATE latin1_general_ci',
             'host_alias'            => 'h.alias',
             'host_address'          => 'h.address',
             'host_ipv4'             => 'INET_ATON(h.address)',
@@ -162,19 +162,19 @@ class StatusQuery extends IdoQuery
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_name'    => 'hgo.name1',
-            'hostgroup_alias'   => 'hg.alias'
+            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci'
         ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
             'servicegroup_name'     => 'sgo.name1',
-            'servicegroup_alias'    => 'sg.alias'
+            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
         ),
         'services' => array(
             'service_host'           => 'so.name1 COLLATE latin1_general_ci',
             'service_host_name'      => 'so.name1',
             'service'                => 'so.name2 COLLATE latin1_general_ci',
             'service_description'    => 'so.name2',
-            'service_display_name'   => 's.display_name',
+            'service_display_name'   => 's.display_name COLLATE latin1_general_ci',
             'service_icon_image'     => 's.icon_image',
             'service_action_url'     => 's.action_url',
             'service_notes_url'      => 's.notes_url',

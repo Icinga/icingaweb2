@@ -31,7 +31,8 @@ class LdapBackendFormTest extends BaseTestCase
         Mockery::mock('overload:Icinga\Authentication\Backend\LdapUserBackend')
             ->shouldReceive('assertAuthenticationPossible')->andReturnNull();
 
-        $form = Mockery::mock('Icinga\Forms\Config\Authentication\LdapBackendForm[getView]');
+        // Passing array(null) is required to make Mockery call the constructor...
+        $form = Mockery::mock('Icinga\Forms\Config\Authentication\LdapBackendForm[getView]', array(null));
         $form->shouldReceive('getView->escape')
             ->with(Mockery::type('string'))
             ->andReturnUsing(function ($s) { return $s; });
@@ -55,7 +56,8 @@ class LdapBackendFormTest extends BaseTestCase
         Mockery::mock('overload:Icinga\Authentication\Backend\LdapUserBackend')
             ->shouldReceive('assertAuthenticationPossible')->andThrow(new AuthenticationException);
 
-        $form = Mockery::mock('Icinga\Forms\Config\Authentication\LdapBackendForm[getView]');
+        // Passing array(null) is required to make Mockery call the constructor...
+        $form = Mockery::mock('Icinga\Forms\Config\Authentication\LdapBackendForm[getView]', array(null));
         $form->shouldReceive('getView->escape')
             ->with(Mockery::type('string'))
             ->andReturnUsing(function ($s) { return $s; });

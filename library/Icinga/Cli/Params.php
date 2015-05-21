@@ -167,7 +167,7 @@ class Params
      *
      * @throws  MissingParameterException   If the parameter was not given
      */
-    public function req($name, $strict = true)
+    public function getRequired($name, $strict = true)
     {
         if ($this->has($name)) {
             $value = $this->get($name);
@@ -256,6 +256,30 @@ class Params
             $this->remove($key);
         }
         return $result;
+    }
+
+    /**
+     * Require and remove a parameter
+     *
+     * @param   string  $name               Name of the parameter
+     * @param   bool    $strict             Whether the parameter's value must not be the empty string
+     *
+     * @return  mixed
+     *
+     * @throws  MissingParameterException   If the parameter was not given
+     */
+    public function shiftRequired($name, $strict = true)
+    {
+        if ($this->has($name)) {
+            $value = $this->get($name);
+            if (! $strict || strlen($value) > 0) {
+                $this->shift($name);
+                return $value;
+            }
+        }
+        $e = new MissingParameterException(t('Required parameter \'%s\' missing'), $name);
+        $e->setParameter($name);
+        throw $e;
     }
 
     /**
