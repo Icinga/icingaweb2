@@ -87,6 +87,18 @@ abstract class IdoQuery extends DbQuery
     protected $customVars = array();
 
     /**
+     * Printf compatible string to joins custom vars
+     *
+     * - %1$s   Source field, contain the object_id
+     * - %2$s   Alias used for the relation
+     * - %3$s   Name of the CustomVariable
+     *
+     * @var string
+     */
+    private $customVarsJoinTemplate =
+        '%1$s = %2$s.object_id AND %2$s.varname = %3$s';
+
+    /**
      * An array with all 'virtual' tables that are already joined
      *
      * Virtual tables are the keys  of the columnMap array and require a
@@ -393,14 +405,17 @@ abstract class IdoQuery extends DbQuery
     {
         parent::init();
         $this->prefix = $this->ds->getTablePrefix();
-
-        if ($this->ds->getDbType() === 'oracle') {
+        $dbType = $this->ds->getDbType();
+        if ($dbType === 'oracle') {
             $this->initializeForOracle();
-        } elseif ($this->ds->getDbType() === 'pgsql') {
+        } elseif ($dbType === 'pgsql') {
             $this->initializeForPostgres();
+            $this->customVarsJoinTemplate =
+                '%1$s = %2$s.object_id AND LOWER(%2$s.varname) = %3$s';
+        } elseif ($dbType === 'mysql') {
+            $this->customVarsJoinTemplate .= ' COLLATE latin1_general_ci';
         }
         $this->dbSelect();
-
         $this->select->columns($this->columns);
         //$this->joinBaseTables();
         $this->prepareAliasIndexes();
@@ -604,14 +619,14 @@ abstract class IdoQuery extends DbQuery
 
     protected function hasCustomvar($customvar)
     {
-        return array_key_exists($customvar, $this->customVars);
+        return array_key_exists(strtolower($customvar), $this->customVars);
     }
 
     protected function joinCustomvar($customvar)
     {
         // TODO: This is not generic enough yet
         list($type, $name) = $this->customvarNameToTypeName($customvar);
-        $alias = ($type === 'host' ? 'hcv_' : 'scv_') . strtolower($name);
+        $alias = ($type === 'host' ? 'hcv_' : 'scv_') . $name;
 
         $this->customVars[$customvar] = $alias;
 
@@ -622,12 +637,12 @@ abstract class IdoQuery extends DbQuery
         } else {
             $leftcol = 'h.' . $type . '_object_id';
         }
+
         $joinOn = sprintf(
-            '%s = %s.object_id AND %s.varname = %s',
+            $this->customVarsJoinTemplate,
             $leftcol,
             $alias,
-            $alias,
-            $this->db->quote(strtoupper($name))
+            $this->db->quote($name)
         );
 
         $this->select->joinLeft(
@@ -641,6 +656,7 @@ abstract class IdoQuery extends DbQuery
 
     protected function customvarNameToTypeName($customvar)
     {
+        $customvar = strtolower($customvar);
         // TODO: Improve this:
         if (! preg_match('~^_(host|service)_([a-zA-Z0-9_]+)$~', $customvar, $m)) {
             throw new ProgrammingError(
@@ -658,7 +674,7 @@ abstract class IdoQuery extends DbQuery
 
     protected function getCustomvarColumnName($customvar)
     {
-        return $this->customVars[$customvar] . '.varvalue';
+        return $this->customVars[strtolower($customvar)] . '.varvalue';
     }
 
     public function aliasToColumnName($alias)
