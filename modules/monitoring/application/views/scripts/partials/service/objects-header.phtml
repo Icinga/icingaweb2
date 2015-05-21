@@ -15,6 +15,7 @@ $i = 0;
         <tr class="state <?= Service::getStateText($service->service_state); ?><?= $service->service_handled ? ' handled' : '' ?>">
             <td class="state"><?= Service::getStateText($service->service_state, true); ?><br /></td>
             <td>
+            <?= $this->iconImage()->service($service) ?>
             <?= implode(' ', $this->serviceFlags($service)) ?>
             <b>
                <?= $this->escape($service->getName()); ?>

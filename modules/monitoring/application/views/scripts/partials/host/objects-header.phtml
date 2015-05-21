@@ -17,6 +17,7 @@ $i = 0;
             <tr class="state <?= Host::getStateText($host->host_state); ?><?= $host->host_handled ? ' handled' : '' ?>">
                 <td class="state"><?= Host::getStateText($host->host_state, true); ?><br /></td>
                 <td>
+                <?= $this->iconImage()->host($host) ?>
                 <?= implode(' ', $this->hostFlags($host)) ?>
                 <b><?= $this->escape($host->getName()); ?></b><br>
                 <?= $this->escape($host->host_output) ?>

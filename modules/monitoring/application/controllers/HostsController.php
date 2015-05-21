@@ -53,6 +53,7 @@ class Monitoring_HostsController extends Controller
     protected function handleCommandForm(ObjectsCommandForm $form)
     {
         $this->hostList->setColumns(array(
+            'host_icon_image',
             'host_name',
             'host_state',
             'host_problem',
@@ -94,6 +95,7 @@ class Monitoring_HostsController extends Controller
             ->handleRequest();
         $this->view->checkNowForm = $checkNowForm;
         $this->hostList->setColumns(array(
+            'host_icon_image',
             'host_name',
             'host_state',
             'host_problem',

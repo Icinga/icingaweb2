@@ -58,12 +58,8 @@ if (count($services) === 0) {
 
       <td>
         <div class="sparkline-box"><?= $this->perfdata($service->service_perfdata, true, 8) ?> </div>
-
+        <?= $this->iconImage()->service($service) ?>
         <?= implode(' ', $this->serviceFlags($service)); ?>
-
-      <?php if ($service->service_icon_image && ! preg_match('/[\'"]/', $service->service_icon_image)): ?>
-        <?= $this->icon($this->resolveMacros($service->service_icon_image, $service)) ?>
-      <?php endif ?>
         <?= $this->qlink(
           $service->service_display_name,
           $serviceLink,

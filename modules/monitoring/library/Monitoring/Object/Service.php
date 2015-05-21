@@ -106,6 +106,7 @@ class Service extends MonitoredObject
     protected function getDataView()
     {
         return $this->backend->select()->from('serviceStatus', array(
+            'host_icon_image',
             'host_acknowledged',
             'host_active_checks_enabled',
             'host_address',
@@ -118,6 +119,7 @@ class Service extends MonitoredObject
             'host_notifications_enabled',
             'host_passive_checks_enabled',
             'host_state',
+            'service_icon_image',
             'service_acknowledged',
             'service_action_url',
             'service_active_checks_enabled',
