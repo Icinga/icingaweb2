@@ -22,6 +22,7 @@ class Hostgroupsummary extends DataView
             'hosts_down_unhandled',
             'hosts_pending',
             'hosts_pending_last_state_change',
+            'hosts_severity',
             'hosts_total',
             'hosts_unreachable_handled',
             'hosts_unreachable_last_state_change_handled',
@@ -52,16 +53,16 @@ class Hostgroupsummary extends DataView
     /**
      * {@inheritdoc}
      */
-    public function getSearchColumns()
+    public static function getQueryName()
     {
-        return array('hostgroup', 'hostgroup_alias');
+        return 'groupsummary';
     }
 
     /**
      * {@inheritdoc}
      */
-    public static function getQueryName()
+    public function getSearchColumns()
     {
-        return 'groupsummary';
+        return array('hostgroup', 'hostgroup_alias');
     }
 }
