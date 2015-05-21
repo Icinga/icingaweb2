@@ -600,7 +600,7 @@ class Module
      *
      * @return Config
      */
-    public function getConfig($file = null)
+    public function getConfig($file = 'config')
     {
         return $this->app->getConfig()->module($this->name, $file);
     }
