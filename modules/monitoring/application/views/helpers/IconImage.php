@@ -30,7 +30,8 @@ class Zend_View_Helper_IconImage extends Zend_View_Helper_Abstract
                 null,
                 array(
                     'alt' => $object->host_icon_image_alt,
-                    'title' => $object->host_icon_image_alt
+                    'title' => $object->host_icon_image_alt,
+                    'data-tooltip-delay' => 0
                 )
             );
         }
@@ -51,7 +52,8 @@ class Zend_View_Helper_IconImage extends Zend_View_Helper_Abstract
                 null,
                 array(
                     'alt' => $object->service_icon_image_alt,
-                    'title' => $object->service_icon_image_alt
+                    'title' => $object->service_icon_image_alt,
+                    'data-tooltip-delay' => 0
                 )
             );
         }
