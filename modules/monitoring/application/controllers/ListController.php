@@ -71,6 +71,7 @@ class Monitoring_ListController extends Controller
         $this->setAutorefreshInterval(10);
         $query = $this->backend->select()->from('hostStatus', array_merge(array(
             'host_icon_image',
+            'host_icon_image_alt',
             'host_name',
             'host_display_name',
             'host_state' => $stateColumn,
@@ -163,6 +164,7 @@ class Monitoring_ListController extends Controller
             'service_attempt',
             'service_last_state_change' => $stateChangeColumn,
             'service_icon_image',
+            'service_icon_image_alt',
             'service_is_flapping',
             'service_state_type',
             'service_handled',

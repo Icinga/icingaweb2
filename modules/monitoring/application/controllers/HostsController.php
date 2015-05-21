@@ -54,6 +54,7 @@ class Monitoring_HostsController extends Controller
     {
         $this->hostList->setColumns(array(
             'host_icon_image',
+            'host_icon_image_alt',
             'host_name',
             'host_state',
             'host_problem',
@@ -96,6 +97,7 @@ class Monitoring_HostsController extends Controller
         $this->view->checkNowForm = $checkNowForm;
         $this->hostList->setColumns(array(
             'host_icon_image',
+            'host_icon_image_alt',
             'host_name',
             'host_state',
             'host_problem',
