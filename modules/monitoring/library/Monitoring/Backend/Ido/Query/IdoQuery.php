@@ -96,7 +96,7 @@ abstract class IdoQuery extends DbQuery
      * @var string
      */
     private $customVarsJoinTemplate =
-        '%1$s = %2$s.object_id AND %2$s.varname = %3$s';
+        '%1$s = %2$s.object_id AND %2$s.varname = %3$s COLLATE latin1_general_ci';
 
     /**
      * An array with all 'virtual' tables that are already joined
@@ -363,6 +363,8 @@ abstract class IdoQuery extends DbQuery
         $this->object_id = $this->host_id = $this->service_id
             = $this->hostgroup_id = $this->servicegroup_id
             = $this->contact_id = $this->contactgroup_id = 'id';
+        $this->customVarsJoinTemplate =
+            '%1$s = %2$s.object_id AND LOWER(%2$s.varname) = %3$s';
         foreach ($this->columnMap as &$columns) {
             foreach ($columns as &$value) {
                 $value = preg_replace('/UNIX_TIMESTAMP/', 'localts2unixts', $value);
@@ -376,6 +378,8 @@ abstract class IdoQuery extends DbQuery
      */
     private function initializeForPostgres()
     {
+        $this->customVarsJoinTemplate =
+            '%1$s = %2$s.object_id AND LOWER(%2$s.varname) = %3$s';
         foreach ($this->columnMap as $table => & $columns) {
             foreach ($columns as $key => & $value) {
                 $value = preg_replace('/ COLLATE .+$/', '', $value, -1, $count);
@@ -410,10 +414,6 @@ abstract class IdoQuery extends DbQuery
             $this->initializeForOracle();
         } elseif ($dbType === 'pgsql') {
             $this->initializeForPostgres();
-            $this->customVarsJoinTemplate =
-                '%1$s = %2$s.object_id AND LOWER(%2$s.varname) = %3$s';
-        } elseif ($dbType === 'mysql') {
-            $this->customVarsJoinTemplate .= ' COLLATE latin1_general_ci';
         }
         $this->dbSelect();
         $this->select->columns($this->columns);
