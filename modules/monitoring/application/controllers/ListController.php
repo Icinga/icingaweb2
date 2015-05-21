@@ -545,9 +545,7 @@ class Monitoring_ListController extends Controller
             'services_unknown_unhandled',
             'services_warning_handled',
             'services_warning_unhandled'
-        ))->order('hostgroup_alias');
-        // TODO(el): Can't default to the sort rules of the data view because it's meant for both host groups and
-        // service groups. We should separate them.
+        ));
         $this->filterQuery($query);
         $this->view->hostgroups = $query;
 
