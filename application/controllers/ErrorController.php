@@ -3,6 +3,7 @@
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Exception\HttpNotFoundException;
 use Icinga\Exception\MissingParameterException;
 use Icinga\Security\SecurityException;
 use Icinga\Web\Controller\ActionController;
@@ -45,8 +46,8 @@ class ErrorController extends ActionController
                 break;
             default:
                 switch (true) {
-                    case $exception instanceof SecurityException:
-                        $this->getResponse()->setHttpResponseCode(403);
+                    case $exception instanceof HttpNotFoundException:
+                        $this->getResponse()->setHttpResponseCode(404);
                         break;
                     case $exception instanceof MissingParameterException:
                         $this->getResponse()->setHttpResponseCode(400);
@@ -54,6 +55,9 @@ class ErrorController extends ActionController
                             'X-Status-Reason',
                             'Missing parameter ' . $exception->getParameter()
                         );
+                        break;
+                    case $exception instanceof SecurityException:
+                        $this->getResponse()->setHttpResponseCode(403);
                         break;
                     default:
                         $this->getResponse()->setHttpResponseCode(500);
