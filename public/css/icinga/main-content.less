@@ -266,6 +266,7 @@ div.content.groups {
 
 div.controls div.group-header {
   border-bottom: 2px solid @colorPetrol;
+  margin-bottom: 1em;
 
   .group-name {
     display: inline-block;
@@ -276,6 +277,33 @@ div.controls div.group-header {
   .group-parent, .group-created, .group-modified {
     margin: 0 0 0.2em;
     font-size: 0.8em;
+  }
+}
+
+div.content.members {
+  table.member-list {
+    th.member-remove {
+      width: 8em;
+      padding-right: 0.5em;
+      text-align: right;
+    }
+
+    td.member-remove {
+      text-align: right;
+
+      form button.link-like {
+        color: inherit;
+      }
+    }
+  }
+
+  p {
+    margin-top: 0;
+  }
+
+  a.member-add {
+    display: block;
+    margin-top: 1em;
   }
 }
 

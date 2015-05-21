@@ -7,6 +7,7 @@ use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackendInterface;
+use Icinga\Data\Reducible;
 use Icinga\Forms\Config\UserGroupForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
@@ -114,8 +115,52 @@ class GroupController extends Controller
             $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
         }
 
+        $members = $backend
+            ->select()
+            ->from('group_membership', array('user_name'))
+            ->where('group_name', $groupName);
+
+        $filterEditor = Widget::create('filterEditor')
+            ->setQuery($members)
+            ->preserveParams('limit', 'sort', 'dir', 'view', 'backend', 'group')
+            ->ignoreParams('page')
+            ->handleRequest($this->getRequest());
+        $members->applyFilter($filterEditor->getFilter());
+
+        $this->setupFilterControl($filterEditor);
+        $this->setupPaginationControl($members);
+        $this->setupLimitControl();
+        $this->setupSortControl(
+            array(
+                'user_name'     => $this->translate('Username'),
+                'created_at'    => $this->translate('Created at'),
+                'last_modified' => $this->translate('Last modified')
+            ),
+            $members
+        );
+
         $this->view->group = $group;
         $this->view->backend = $backend;
+        $this->view->members = $members;
+
+        if ($backend instanceof Reducible) {
+            $removeForm = new Form();
+            $removeForm->setName('removemember');
+            $removeForm->setAction(
+                Url::fromPath('group/removemember', array('backend' => $backend->getName(), 'group' => $groupName))
+            );
+            $removeForm->addElement('hidden', 'user_name', array('decorators' => array('ViewHelper')));
+            $removeForm->addElement('button', 'btn_submit', array(
+                'escape'        => false,
+                'type'          => 'submit',
+                'class'         => 'link-like',
+                'value'         => 'btn_submit',
+                'decorators'    => array('ViewHelper'),
+                'label'         => $this->view->icon('trash'),
+                'title'         => $this->translate('Remove this member')
+            ));
+            $this->view->removeForm = $removeForm;
+        }
     }
 
     /**
