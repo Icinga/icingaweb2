@@ -36,20 +36,6 @@ class IniUserGroupBackend extends IniRepository implements UserGroupBackendInter
     protected $filterColumns = array('group', 'parent');
 
     /**
-     * The default sort rules to be applied on a query
-     *
-     * @var array
-     */
-    protected $sortRules = array(
-        'group_name' => array(
-            'columns'   => array(
-                'group_name',
-                'parent_name'
-            )
-        )
-    );
-
-    /**
      * The value conversion rules to apply on a query
      *
      * @var array
