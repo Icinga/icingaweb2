@@ -202,6 +202,9 @@ class DateFormatter
     public static function timeUntil($time, $timeOnly = false)
     {
         list($type, $until, $invert) = static::diff($time);
+        if ($invert) {
+            $until = '-' . $until;
+        }
         if ($timeOnly) {
             return $until;
         }
@@ -217,7 +220,7 @@ class DateFormatter
             case static::RELATIVE:
                 $formatted = sprintf(
                     t('in %s', 'An event will happen after the given time interval has elapsed'),
-                    $invert ? ('-' . $until) : $until
+                    $until
                 );
                 break;
             case static::TIME:
