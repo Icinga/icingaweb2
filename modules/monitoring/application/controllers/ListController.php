@@ -504,12 +504,7 @@ class Monitoring_ListController extends Controller
         $this->setupSortControl(array(
             'services_severity'     => $this->translate('Severity'),
             'servicegroup_alias'    => $this->translate('Service Group Name'),
-            'services_total'        => $this->translate('Total Services'),
-            'services_ok'           => $this->translate('Services OK'),
-            'services_unknown'      => $this->translate('Services UNKNOWN'),
-            'services_critical'     => $this->translate('Services CRITICAL'),
-            'services_warning'      => $this->translate('Services WARNING'),
-            'services_pending'      => $this->translate('Services PENDING')
+            'services_total'        => $this->translate('Total Services')
         ), $query);
     }
 
