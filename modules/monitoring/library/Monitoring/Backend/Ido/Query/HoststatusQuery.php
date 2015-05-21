@@ -11,7 +11,7 @@ class HoststatusQuery extends IdoQuery
         'hosts' => array(
             'host'              => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'         => 'ho.name1 COLLATE latin1_general_ci',
-            'host_display_name' => 'h.display_name',
+            'host_display_name' => 'h.display_name COLLATE latin1_general_ci',
             'host_alias'        => 'h.alias',
             'host_address'      => 'h.address',
             'host_ipv4'         => 'INET_ATON(h.address)',
