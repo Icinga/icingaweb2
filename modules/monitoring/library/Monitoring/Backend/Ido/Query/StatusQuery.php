@@ -41,6 +41,7 @@ class StatusQuery extends IdoQuery
             'host_address'          => 'h.address',
             'host_ipv4'             => 'INET_ATON(h.address)',
             'host_icon_image'       => 'h.icon_image',
+            'host_icon_image_alt'   => 'h.icon_image_alt',
             'host_action_url'       => 'h.action_url',
             'host_notes_url'        => 'h.notes_url'
         ),
@@ -176,6 +177,7 @@ class StatusQuery extends IdoQuery
             'service_description'    => 'so.name2',
             'service_display_name'   => 's.display_name',
             'service_icon_image'     => 's.icon_image',
+            'service_icon_image_alt' => 's.icon_image_alt',
             'service_action_url'     => 's.action_url',
             'service_notes_url'      => 's.notes_url',
             'object_type'            => '(\'service\')'
