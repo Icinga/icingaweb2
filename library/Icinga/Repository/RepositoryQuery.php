@@ -379,7 +379,7 @@ class RepositoryQuery implements QueryInterface, Iterator
     /**
      * Fetch and return the first column of this query's first row
      *
-     * @return  mixed
+     * @return  mixed|false     False in case of no result
      */
     public function fetchOne()
     {
@@ -400,7 +400,7 @@ class RepositoryQuery implements QueryInterface, Iterator
     /**
      * Fetch and return the first row of this query's result
      *
-     * @return  object
+     * @return  object|false    False in case of no result
      */
     public function fetchRow()
     {
@@ -434,7 +434,7 @@ class RepositoryQuery implements QueryInterface, Iterator
         }
 
         $results = $this->query->fetchColumn();
-        if ($results !== false && $this->repository->providesValueConversion()) {
+        if (! empty($results) && $this->repository->providesValueConversion()) {
             $columns = $this->getColumns();
             $aliases = array_keys($columns);
             $column = is_int($aliases[0]) ? $columns[0] : $aliases[0];
