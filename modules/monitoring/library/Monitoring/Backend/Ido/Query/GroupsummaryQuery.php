@@ -18,7 +18,6 @@ class GroupSummaryQuery extends IdoQuery
             'hostgroup'                                     => 'hostgroup',
             'hostgroup_alias'                               => 'hostgroup_alias',
             'hostgroup_name'                                => 'hostgroup_name',
-            'hosts_total'                                   => 'SUM(CASE WHEN object_type = \'host\' THEN 1 ELSE 0 END)',
             'hosts_up'                                      => 'SUM(CASE WHEN object_type = \'host\' AND state = 0 THEN 1 ELSE 0 END)',
             'hosts_unreachable'                             => 'SUM(CASE WHEN object_type = \'host\' AND state = 2 THEN 1 ELSE 0 END)',
             'hosts_unreachable_handled'                     => 'SUM(CASE WHEN object_type = \'host\' AND state = 2 AND acknowledged + in_downtime != 0 THEN 1 ELSE 0 END)',
@@ -30,6 +29,8 @@ class GroupSummaryQuery extends IdoQuery
             'hosts_down_unhandled'                          => 'SUM(CASE WHEN object_type = \'host\' AND state = 1 AND acknowledged + in_downtime = 0 THEN 1 ELSE 0 END)',
             'hosts_pending'                                 => 'SUM(CASE WHEN object_type = \'host\' AND state = 99 THEN 1 ELSE 0 END)',
             'hosts_pending_last_state_change'               => 'MAX(CASE WHEN object_type = \'host\' AND state = 99 THEN state_change ELSE 0 END)',
+            'hosts_severity'                                => 'MAX(CASE WHEN object_type = \'host\' THEN severity ELSE 0 END)',
+            'hosts_total'                                   => 'SUM(CASE WHEN object_type = \'host\' THEN 1 ELSE 0 END)',
             'hosts_unreachable_last_state_change_handled'   => 'MAX(CASE WHEN object_type = \'host\' AND state = 2 AND acknowledged + in_downtime != 0 THEN state_change ELSE 0 END)',
             'hosts_unreachable_last_state_change_unhandled' => 'MAX(CASE WHEN object_type = \'host\' AND state = 2 AND acknowledged + in_downtime = 0 THEN state_change ELSE 0 END)',
             'hosts_up_last_state_change'                    => 'MAX(CASE WHEN object_type = \'host\' AND state = 0 THEN state_change ELSE 0 END)'
