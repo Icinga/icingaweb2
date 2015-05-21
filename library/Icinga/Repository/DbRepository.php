@@ -75,21 +75,6 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     }
 
     /**
-     * Return the base table name this repository is responsible for
-     *
-     * This prepends the datasource's table prefix, if available and required.
-     *
-     * @return  mixed
-     *
-     * @throws  ProgrammingError    In case no base table name has been set and
-     *                               $this->queryColumns does not provide one either
-     */
-    public function getBaseTable()
-    {
-        return $this->prependTablePrefix(parent::getBaseTable());
-    }
-
-    /**
      * Return the given table with the datasource's prefix being prepended
      *
      * @param   array|string    $table
@@ -275,6 +260,25 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
                 }
             }
         }
+    }
+
+    /**
+     * Validate that the requested table exists
+     *
+     * @param   string  $table
+     *
+     * @return  string              The table's name, with the table prefix being prepended
+     *
+     * @throws  ProgrammingError    In case the given table does not exist
+     */
+    public function requireTable($table)
+    {
+        $statementColumns = $this->getStatementColumns();
+        if (! isset($statementColumns[$table])) {
+            $table = parent::requireTable($table);
+        }
+
+        return $this->prependTablePrefix($table);
     }
 
     /**

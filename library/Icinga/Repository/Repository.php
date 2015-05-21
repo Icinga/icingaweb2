@@ -590,6 +590,25 @@ abstract class Repository implements Selectable
     }
 
     /**
+     * Validate that the requested table exists
+     *
+     * @param   string  $table
+     *
+     * @return  string              The table's name, may differ from the given one
+     *
+     * @throws  ProgrammingError    In case the given table does not exist
+     */
+    public function requireTable($table)
+    {
+        $queryColumns = $this->getQueryColumns();
+        if (! isset($queryColumns[$table])) {
+            throw new ProgrammingError('Table "%s" not found', $table);
+        }
+
+        return $table;
+    }
+
+    /**
      * Recurse the given filter, require each column for the given table and convert all values
      *
      * @param   string  $table
