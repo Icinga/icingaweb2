@@ -216,7 +216,7 @@ class FilterEditor extends AbstractWidget
         $filter = $this->getFilter();
 
         if ($search !== null) {
-            if ($this->searchColumns === null) {
+            if (empty($this->searchColumns)) {
                 if (strpos($search, '=') === false) {
                     Notification::error(mt('monitoring', 'Cannot search here'));
                     return $this;
