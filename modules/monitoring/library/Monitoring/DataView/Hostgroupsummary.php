@@ -88,6 +88,13 @@ class Hostgroupsummary extends DataView
                     'hostgroup_alias ASC'
                 ),
                 'order' => self::SORT_ASC
+            ),
+            'services_total' => array(
+                'columns' => array(
+                    'services_total',
+                    'hostgroup_alias ASC'
+                ),
+                'order' => self::SORT_ASC
             )
         );
     }
