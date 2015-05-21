@@ -63,4 +63,30 @@ class Servicegroupsummary extends DataView
     {
         return array('servicegroup', 'servicegroup_alias');
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSortRules()
+    {
+        return array(
+            'servicegroup_alias' => array(
+                'order' => self::SORT_ASC
+            ),
+            'services_severity' => array(
+                'columns' => array(
+                    'services_severity',
+                    'servicegroup_alias ASC'
+                ),
+                'order' => self::SORT_DESC
+            ),
+            'services_total' => array(
+                'columns' => array(
+                    'services_total',
+                    'servicegroup_alias ASC'
+                ),
+                'order' => self::SORT_ASC
+            )
+        );
+    }
 }
