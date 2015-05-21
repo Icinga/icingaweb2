@@ -162,12 +162,12 @@ class StatusQuery extends IdoQuery
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_name'    => 'hgo.name1',
-            'hostgroup_alias'   => 'hg.alias'
+            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci'
         ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
             'servicegroup_name'     => 'sgo.name1',
-            'servicegroup_alias'    => 'sg.alias'
+            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
         ),
         'services' => array(
             'service_host'           => 'so.name1 COLLATE latin1_general_ci',
