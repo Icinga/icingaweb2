@@ -376,6 +376,16 @@ abstract class DataView implements QueryInterface, IteratorAggregate
     }
 
     /**
+     * Get the view's search columns
+     *
+     * @return string[]
+     */
+    public function getSearchColumns()
+    {
+        return array();
+    }
+
+    /**
      * @deprecated(EL): Only use DataView::applyFilter() for applying filter because all other functions are missing
      * column validation.
      */

@@ -163,7 +163,7 @@ class Monitoring_ChartController extends Controller
     public function hostgroupAction()
     {
         $query = $this->backend->select()->from(
-            'groupsummary',
+            'hostgroupsummary',
             array(
                 'hostgroup',
                 'hosts_up',
@@ -194,7 +194,7 @@ class Monitoring_ChartController extends Controller
     public function servicegroupAction()
     {
         $query = $this->backend->select()->from(
-            'groupsummary',
+            'servicegroupsummary',
             array(
                 'servicegroup',
                 'services_ok',

@@ -185,4 +185,12 @@ class ServiceStatus extends DataView
         }
         return parent::isValidFilterTarget($column);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('service', 'service_display_name');
+    }
 }
