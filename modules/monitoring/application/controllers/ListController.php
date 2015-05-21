@@ -554,12 +554,8 @@ class Monitoring_ListController extends Controller
         $this->setupSortControl(array(
             'hosts_severity'    => $this->translate('Severity'),
             'hostgroup_alias'   => $this->translate('Host Group Name'),
-            'services_total'    => $this->translate('Total Services'),
-            'services_ok'       => $this->translate('Services OK'),
-            'services_unknown'  => $this->translate('Services UNKNOWN'),
-            'services_critical' => $this->translate('Services CRITICAL'),
-            'services_warning'  => $this->translate('Services WARNING'),
-            'services_pending'  => $this->translate('Services PENDING')
+            'hosts_total'       => $this->translate('Total Hosts'),
+            'services_total'    => $this->translate('Total Services')
         ), $query);
     }
 
