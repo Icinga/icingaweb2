@@ -1,11 +1,10 @@
 <?php if ($comment->objecttype === 'service'): ?>
     <?= $this->icon('service', $this->translate('Service')); ?>
-    <?= $this->link()->service(
-        $comment->service_description,
+    <?= sprintf(
+        $this->translate('%s on %s', 'Service running on host'),
         $comment->service_display_name,
-        $comment->host_name,
         $comment->host_display_name
-    ); ?>
+    ) ?>
 <?php else: ?>
     <?= $this->icon('host', $this->translate('Host')); ?>
     <?= $this->link()->host($comment->host_name, $comment->host_display_name); ?>
