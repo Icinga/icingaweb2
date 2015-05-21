@@ -266,7 +266,9 @@ class RepositoryQuery implements QueryInterface, Iterator
             try {
                 $this->query->order(
                     $this->repository->requireFilterColumn($this->target, $column),
-                    $direction ? $baseDirection : ($specificDirection ?: $baseDirection)
+                    $specificDirection ?: $baseDirection
+                    // I would have liked the following solution, but hey, a coder should be allowed to produce crap...
+                    // $specificDirection && (! $direction || $column !== $field) ? $specificDirection : $baseDirection
                 );
             } catch (QueryException $_) {
                 Logger::info('Cannot order by column "%s" in repository "%s"', $column, $this->repository->getName());
