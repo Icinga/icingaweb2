@@ -27,6 +27,7 @@ class Servicegroupsummary extends DataView
             'services_ok_last_state_change',
             'services_pending',
             'services_pending_last_state_change',
+            'services_severity',
             'services_total',
             'services_unknown_handled',
             'services_unknown_last_state_change_handled',
