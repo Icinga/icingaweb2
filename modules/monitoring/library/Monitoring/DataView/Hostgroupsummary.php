@@ -65,4 +65,30 @@ class Hostgroupsummary extends DataView
     {
         return array('hostgroup', 'hostgroup_alias');
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSortRules()
+    {
+        return array(
+            'hostgroup_alias' => array(
+                'order' => self::SORT_ASC
+            ),
+            'hosts_severity' => array(
+                'columns' => array(
+                    'hosts_severity',
+                    'hostgroup_alias ASC'
+                ),
+                'order' => self::SORT_DESC
+            ),
+            'hosts_total' => array(
+                'columns' => array(
+                    'hosts_total',
+                    'hostgroup_alias ASC'
+                ),
+                'order' => self::SORT_ASC
+            )
+        );
+    }
 }
