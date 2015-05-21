@@ -57,20 +57,6 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
     protected $filterColumns = array('group', 'parent', 'user');
 
     /**
-     * The default sort rules to be applied on a query
-     *
-     * @var array
-     */
-    protected $sortRules = array(
-        'group_name' => array(
-            'columns'   => array(
-                'group_name',
-                'parent_name'
-            )
-        )
-    );
-
-    /**
      * Initialize this database user group backend
      */
     protected function init()
