@@ -247,11 +247,11 @@ abstract class DataView implements QueryInterface, IteratorAggregate
             };
         }
 
-        $globalDefaultOrder = isset($sortColumns['order']) ? $sortColumns['order'] : static::SORT_ASC;
-        $globalDefaultOrder = (strtoupper($globalDefaultOrder) === static::SORT_ASC) ? 'ASC' : 'DESC';
+        $order = $order === null ? (isset($sortColumns['order']) ? $sortColumns['order'] : static::SORT_ASC) : $order;
+        $order = (strtoupper($order) === static::SORT_ASC) ? 'ASC' : 'DESC';
 
         foreach ($sortColumns['columns'] as $column) {
-            list($column, $specificDefaultOrder) = $this->query->splitOrder($column);
+            list($column, $direction) = $this->query->splitOrder($column);
             if (! $this->isValidFilterTarget($column)) {
                 throw new QueryException(
                     mt('monitoring', 'The sort column "%s" is not allowed in "%s".'),
@@ -259,10 +259,7 @@ abstract class DataView implements QueryInterface, IteratorAggregate
                     get_class($this)
                 );
             }
-            $this->query->order(
-                $column,
-                $order === null && $specificDefaultOrder !== null ? $specificDefaultOrder : $globalDefaultOrder
-            );
+            $this->query->order($column, $direction !== null ? $direction : $order);
         }
         $this->isSorted = true;
         return $this;
