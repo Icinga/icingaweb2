@@ -554,7 +554,7 @@ class Monitoring_ListController extends Controller
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->hostgroups);
         $this->setupSortControl(array(
-            'services_severity' => $this->translate('Severity'),
+            'hosts_severity'    => $this->translate('Severity'),
             'hostgroup_alias'   => $this->translate('Host Group Name'),
             'services_total'    => $this->translate('Total Services'),
             'services_ok'       => $this->translate('Services OK'),
