@@ -268,8 +268,7 @@ class Monitoring_TimelineController extends Controller
      */
     private function getTimeFormat()
     {
-        // TODO(mh): Missing localized format (#6077)
-        return 'g:i A';
+        return 'H:i';
     }
 
     /**
@@ -279,7 +278,6 @@ class Monitoring_TimelineController extends Controller
      */
     private function getDateFormat()
     {
-        // TODO(mh): Missing localized format (#6077)
-        return 'd/m/Y';
+        return 'Y-m-d';
     }
 }
