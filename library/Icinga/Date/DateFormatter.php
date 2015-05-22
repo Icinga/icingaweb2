@@ -109,6 +109,29 @@ class DateFormatter
     }
 
     /**
+     * Format a duration
+     *
+     * @param   int|float $seconds Duration in seconds
+     *
+     * @return  string
+     */
+    public static function formatDuration($seconds)
+    {
+        $minutes = floor((float) $seconds / 60);
+        if ($minutes < 60) {
+            $formatted = sprintf('%dm %ds', $minutes, $seconds % 60);
+        } else {
+            $hours = floor($minutes / 60);
+            if ($hours < 24) {
+                $formatted = sprintf('%dh %dm', $hours, $minutes % 60);
+            } else {
+                $formatted = sprintf('%dd %dh', floor($hours / 24), $hours % 24);
+            }
+        }
+        return $formatted;
+    }
+
+    /**
      * Format time
      *
      * @param   int|float $time
