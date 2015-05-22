@@ -11,7 +11,7 @@ class HoststatusQuery extends IdoQuery
         'hosts' => array(
             'host'              => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'         => 'ho.name1 COLLATE latin1_general_ci',
-            'host_display_name' => 'h.display_name',
+            'host_display_name' => 'h.display_name COLLATE latin1_general_ci',
             'host_alias'        => 'h.alias',
             'host_address'      => 'h.address',
             'host_ipv4'         => 'INET_ATON(h.address)',
@@ -85,7 +85,7 @@ class HoststatusQuery extends IdoQuery
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_name'    => 'hgo.name1',
-            'hostgroup_alias'   => 'hg.alias'
+            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci'
         ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',

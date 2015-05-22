@@ -89,6 +89,8 @@ class Host extends MonitoredObject
     protected function getDataView()
     {
         $columns = array(
+            'host_icon_image',
+            'host_icon_image_alt',
             'host_acknowledged',
             'host_action_url',
             'host_active_checks_enabled',

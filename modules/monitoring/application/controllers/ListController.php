@@ -12,6 +12,7 @@ use Icinga\Web\Widget\Tabs;
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget;
 use Icinga\Module\Monitoring\Forms\StatehistoryForm;
+use Icinga\Module\Monitoring\DataView\DataView;
 
 class Monitoring_ListController extends Controller
 {
@@ -70,6 +71,7 @@ class Monitoring_ListController extends Controller
         $this->setAutorefreshInterval(10);
         $query = $this->backend->select()->from('hostStatus', array_merge(array(
             'host_icon_image',
+            'host_icon_image_alt',
             'host_name',
             'host_display_name',
             'host_state' => $stateColumn,
@@ -162,6 +164,7 @@ class Monitoring_ListController extends Controller
             'service_attempt',
             'service_last_state_change' => $stateChangeColumn,
             'service_icon_image',
+            'service_icon_image_alt',
             'service_is_flapping',
             'service_state_type',
             'service_handled',
@@ -468,35 +471,33 @@ class Monitoring_ListController extends Controller
         );
         $this->setAutorefreshInterval(12);
 
-        $query = $this->backend->select()->from('groupsummary', array(
-            'servicegroup_name',
-            'servicegroup_alias',
-            'hosts_up',
-            'hosts_unreachable_handled',
-            'hosts_unreachable_unhandled',
+        $query = $this->backend->select()->from('servicegroupsummary', array(
             'hosts_down_handled',
             'hosts_down_unhandled',
             'hosts_pending',
-            'services_ok',
-            'services_unknown_handled',
-            'services_unknown_unhandled',
+            'hosts_unreachable_handled',
+            'hosts_unreachable_unhandled',
+            'hosts_up',
+            'servicegroup_alias',
+            'servicegroup_name',
             'services_critical_handled',
-            'services_critical_unhandled',
-            'services_warning_handled',
-            'services_warning_unhandled',
-            'services_pending',
-            'services_ok_last_state_change',
-            'services_pending_last_state_change',
-            'services_warning_last_state_change_handled',
             'services_critical_last_state_change_handled',
-            'services_unknown_last_state_change_handled',
-            'services_warning_last_state_change_unhandled',
             'services_critical_last_state_change_unhandled',
+            'services_critical_unhandled',
+            'services_ok',
+            'services_ok_last_state_change',
+            'services_pending',
+            'services_pending_last_state_change',
+            'services_total',
+            'services_unknown_handled',
+            'services_unknown_last_state_change_handled',
             'services_unknown_last_state_change_unhandled',
-            'services_total'
-        ))->order('services_severity')->order('servicegroup_alias');
-        // TODO(el): Can't default to the sort rules of the data view because it's meant for both host groups and
-        // service groups. We should separate them.
+            'services_unknown_unhandled',
+            'services_warning_handled',
+            'services_warning_last_state_change_handled',
+            'services_warning_last_state_change_unhandled',
+            'services_warning_unhandled'
+        ));
         $this->filterQuery($query);
         $this->view->servicegroups = $query;
 
@@ -505,12 +506,7 @@ class Monitoring_ListController extends Controller
         $this->setupSortControl(array(
             'services_severity'     => $this->translate('Severity'),
             'servicegroup_alias'    => $this->translate('Service Group Name'),
-            'services_total'        => $this->translate('Total Services'),
-            'services_ok'           => $this->translate('Services OK'),
-            'services_unknown'      => $this->translate('Services UNKNOWN'),
-            'services_critical'     => $this->translate('Services CRITICAL'),
-            'services_warning'      => $this->translate('Services WARNING'),
-            'services_pending'      => $this->translate('Services PENDING')
+            'services_total'        => $this->translate('Total Services')
         ), $query);
     }
 
@@ -519,56 +515,42 @@ class Monitoring_ListController extends Controller
         $this->addTitleTab('hostgroups', $this->translate('Host Groups'), $this->translate('List host groups'));
         $this->setAutorefreshInterval(12);
 
-        $query = $this->backend->select()->from('groupsummary', array(
-            'hostgroup_name',
+        $query = $this->backend->select()->from('hostgroupsummary', array(
             'hostgroup_alias',
-            'hosts_up',
-            'hosts_unreachable_handled',
-            'hosts_unreachable_unhandled',
+            'hostgroup_name',
             'hosts_down_handled',
+            'hosts_down_last_state_change_handled',
+            'hosts_down_last_state_change_unhandled',
             'hosts_down_unhandled',
             'hosts_pending',
-            'hosts_up_last_state_change',
             'hosts_pending_last_state_change',
-            'hosts_down_last_state_change_handled',
-            'hosts_unreachable_last_state_change_handled',
-            'hosts_down_last_state_change_unhandled',
-            'hosts_unreachable_last_state_change_unhandled',
             'hosts_total',
-            'services_ok',
-            'services_unknown_handled',
-            'services_unknown_unhandled',
+            'hosts_unreachable_handled',
+            'hosts_unreachable_last_state_change_handled',
+            'hosts_unreachable_last_state_change_unhandled',
+            'hosts_unreachable_unhandled',
+            'hosts_up',
+            'hosts_up_last_state_change',
             'services_critical_handled',
             'services_critical_unhandled',
-            'services_warning_handled',
-            'services_warning_unhandled',
+            'services_ok',
             'services_pending',
-            'services_ok_last_state_change',
-            'services_pending_last_state_change',
-            'services_warning_last_state_change_handled',
-            'services_critical_last_state_change_handled',
-            'services_unknown_last_state_change_handled',
-            'services_warning_last_state_change_unhandled',
-            'services_critical_last_state_change_unhandled',
-            'services_unknown_last_state_change_unhandled',
-            'services_total'
-        ))->order('services_severity')->order('hostgroup_alias');
-        // TODO(el): Can't default to the sort rules of the data view because it's meant for both host groups and
-        // service groups. We should separate them.
+            'services_total',
+            'services_unknown_handled',
+            'services_unknown_unhandled',
+            'services_warning_handled',
+            'services_warning_unhandled'
+        ));
         $this->filterQuery($query);
         $this->view->hostgroups = $query;
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->hostgroups);
         $this->setupSortControl(array(
-            'services_severity' => $this->translate('Severity'),
+            'hosts_severity'    => $this->translate('Severity'),
             'hostgroup_alias'   => $this->translate('Host Group Name'),
-            'services_total'    => $this->translate('Total Services'),
-            'services_ok'       => $this->translate('Services OK'),
-            'services_unknown'  => $this->translate('Services UNKNOWN'),
-            'services_critical' => $this->translate('Services CRITICAL'),
-            'services_warning'  => $this->translate('Services WARNING'),
-            'services_pending'  => $this->translate('Services PENDING')
+            'hosts_total'       => $this->translate('Total Hosts'),
+            'services_total'    => $this->translate('Total Services')
         ), $query);
     }
 
@@ -626,23 +608,31 @@ class Monitoring_ListController extends Controller
         $this->view->verticalPaginator   = $pivot->paginateYAxis();
     }
 
-    protected function filterQuery($query)
+    /**
+     * Apply filters on a DataView
+     *
+     * @param DataView  $dataView       The DataView to apply filters on
+     *
+     * @return DataView $dataView
+     */
+    protected function filterQuery(DataView $dataView)
     {
         $editor = Widget::create('filterEditor')
-            ->setQuery($query)
+            ->setQuery($dataView)
             ->preserveParams(
                 'limit', 'sort', 'dir', 'format', 'view', 'backend',
                 'stateType', 'addColumns', '_dev'
             )
             ->ignoreParams('page')
+            ->setSearchColumns($dataView->getSearchColumns())
             ->handleRequest($this->getRequest());
-        $query->applyFilter($editor->getFilter());
+        $dataView->applyFilter($editor->getFilter());
 
         $this->setupFilterControl($editor);
         $this->view->filter = $editor->getFilter();
 
-        $this->handleFormatRequest($query);
-        return $query;
+        $this->handleFormatRequest($dataView);
+        return $dataView;
     }
 
     /**

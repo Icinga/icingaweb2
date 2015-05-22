@@ -30,13 +30,11 @@ class Monitoring_DowntimeController extends Controller
 
     /**
      * Fetch the downtime matching the given id and add tabs
-     *
-     * @throws Zend_Controller_Action_Exception
      */
     public function init()
     {
-        $downtimeId = $this->params->get('downtime_id');
-         
+        $downtimeId = $this->params->getRequired('downtime_id');
+
         $this->downtime = $this->backend->select()->from('downtime', array(
             'id'              => 'downtime_internal_id',
             'objecttype'      => 'downtime_objecttype',
@@ -60,17 +58,17 @@ class Monitoring_DowntimeController extends Controller
             'host_display_name',
             'service_display_name'
         ))->where('downtime_internal_id', $downtimeId)->getQuery()->fetchRow();
-        
-        if (false === $this->downtime) {
-            throw new Zend_Controller_Action_Exception($this->translate('Downtime not found'));
+
+        if ($this->downtime === false) {
+            $this->httpNotFound($this->translate('Downtime not found'));
         }
-        
+
         if (isset($this->downtime->service_description)) {
             $this->isService = true;
         } else {
             $this->isService = false;
         }
-        
+
         $this->getTabs()
             ->add(
                 'downtime',

@@ -40,7 +40,6 @@ class ServiceStatus extends DataView
             'service_unhandled',
             'service_output',
             'service_last_state_change',
-            'service_icon_image',
             'service_long_output',
             'service_is_flapping',
             'service_state_type',
@@ -60,7 +59,6 @@ class ServiceStatus extends DataView
             'service_last_notification',
             'service_check_command',
             'service_current_notification_number',
-            'host_icon_image',
             'host_acknowledged',
             'host_output',
             'host_long_output',
@@ -130,19 +128,21 @@ class ServiceStatus extends DataView
             ),
             'service_severity' => array(
                 'columns' => array(
-                    'service_severity DESC',
+                    'service_severity',
                     'service_last_state_change DESC',
                     'service_display_name ASC',
                     'host_display_name ASC'
-                )
+                ),
+                'order' => self::SORT_DESC
             ),
             'host_severity' => array(
                 'columns' => array(
-                    'host_severity DESC',
+                    'host_severity',
                     'host_last_state_change DESC',
                     'host_display_name ASC',
                     'service_display_name ASC'
-                )
+                ),
+                'order' => self::SORT_DESC
             ),
             'host_display_name' => array(
                 'columns' => array(
@@ -182,5 +182,13 @@ class ServiceStatus extends DataView
             return true;
         }
         return parent::isValidFilterTarget($column);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('service', 'service_display_name');
     }
 }

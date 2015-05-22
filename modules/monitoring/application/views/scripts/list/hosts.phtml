@@ -52,9 +52,7 @@ if (count($hosts) === 0) {
 
       <!-- Host / Status / Output -->
       <td>
-        <?php if ($host->host_icon_image && ! preg_match('/[\'"]/', $host->host_icon_image)): ?>
-        <?= $this->icon($this->resolveMacros($host->host_icon_image, $host)) ?>
-        <?php endif ?>
+        <?= $this->iconImage()->host($host) ?>
         <?= implode(' ', $this->hostFlags($host)) ?>
         <?= $this->qlink(
           $host->host_display_name,
@@ -75,7 +73,7 @@ if (count($hosts) === 0) {
             'host'               => $host->host_name,
             'service_problem'    => 1,
             'service_handled'    => 0
-           ),
+          ),
           array(
             'style' => 'font-weight: normal',
             'title' => sprintf(

@@ -50,11 +50,15 @@ class Monitoring_ServicesController extends Controller
     protected function handleCommandForm(ObjectsCommandForm $form)
     {
         $this->serviceList->setColumns(array(
+            'host_icon_image',
+            'host_icon_image_alt',
             'host_name',
             'host_output',
             'host_state',
             'host_problem',
             'host_handled',
+            'service_icon_image',
+            'service_icon_image_alt',
             'service_description',
             'service_state',
             'service_problem',
@@ -93,11 +97,15 @@ class Monitoring_ServicesController extends Controller
             ->handleRequest();
         $this->view->checkNowForm = $checkNowForm;
         $this->serviceList->setColumns(array(
+            'host_icon_image',
+            'host_icon_image_alt',
             'host_name',
             'host_output',
             'host_state',
             'host_problem',
             'host_handled',
+            'service_icon_image',
+            'service_icon_image_alt',
             'service_output',
             'service_description',
             'service_state',

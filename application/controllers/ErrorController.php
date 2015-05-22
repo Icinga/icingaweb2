@@ -3,6 +3,8 @@
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Exception\Http\HttpMethodNotAllowedException;
+use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Exception\MissingParameterException;
 use Icinga\Security\SecurityException;
 use Icinga\Web\Controller\ActionController;
@@ -34,11 +36,7 @@ class ErrorController extends ActionController
                 $path = preg_split('~/~', $path);
                 $path = array_shift($path);
                 $this->getResponse()->setHttpResponseCode(404);
-                $title = preg_replace('/\r?\n.*$/s', '', $exception->getMessage());
-                $this->view->title = 'Server error: ' . $title;
-                if ($this->getInvokeArg('displayExceptions')) {
-                    $this->view->stackTrace = $exception->getTraceAsString();
-                }
+                $this->view->message = $this->translate('Page not found.');
                 if ($modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
                     $this->view->message .= ' ' . sprintf(
                         $this->translate('Enabling the "%s" module might help!'),
@@ -49,8 +47,12 @@ class ErrorController extends ActionController
                 break;
             default:
                 switch (true) {
-                    case $exception instanceof SecurityException:
-                        $this->getResponse()->setHttpResponseCode(403);
+                    case $exception instanceof HttpMethodNotAllowedException:
+                        $this->getResponse()->setHttpResponseCode(405);
+                        $this->getResponse()->setHeader('Allow', $exception->getAllowedMethods());
+                        break;
+                    case $exception instanceof HttpNotFoundException:
+                        $this->getResponse()->setHttpResponseCode(404);
                         break;
                     case $exception instanceof MissingParameterException:
                         $this->getResponse()->setHttpResponseCode(400);
@@ -59,12 +61,13 @@ class ErrorController extends ActionController
                             'Missing parameter ' . $exception->getParameter()
                         );
                         break;
+                    case $exception instanceof SecurityException:
+                        $this->getResponse()->setHttpResponseCode(403);
+                        break;
                     default:
                         $this->getResponse()->setHttpResponseCode(500);
                         break;
                 }
-                $title = preg_replace('/\r?\n.*$/s', '', $exception->getMessage());
-                $this->view->title = 'Server error: ' . $title;
                 $this->view->message = $exception->getMessage();
                 if ($this->getInvokeArg('displayExceptions')) {
                     $this->view->stackTrace = $exception->getTraceAsString();

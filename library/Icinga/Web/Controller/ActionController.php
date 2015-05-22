@@ -7,6 +7,7 @@ use Exception;
 use Icinga\Application\Benchmark;
 use Icinga\Application\Config;
 use Icinga\Authentication\Manager;
+use Icinga\Exception\Http\HttpMethodNotAllowedException;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\File\Pdf;
@@ -192,16 +193,17 @@ class ActionController extends Zend_Controller_Action
     /**
      * Respond with HTTP 405 if the current request's method is not one of the given methods
      *
-     * @param   string $httpMethod                  Unlimited number of allowed HTTP methods
+     * @param   string $httpMethod              Unlimited number of allowed HTTP methods
      *
-     * @throws  \Zend_Controller_Action_Exception   If the request method is not one of the given methods
+     * @throws  HttpMethodNotAllowedException   If the request method is not one of the given methods
      */
     public function assertHttpMethod($httpMethod)
     {
         $httpMethods = array_flip(array_map('strtoupper', func_get_args()));
         if (! isset($httpMethods[$this->getRequest()->getMethod()])) {
-            $this->getResponse()->setHeader('Allow', implode(', ', array_keys($httpMethods)));
-            throw new \Zend_Controller_Action_Exception($this->translate('Method Not Allowed'), 405);
+            $e = new HttpMethodNotAllowedException($this->translate('Method Not Allowed'));
+            $e->setAllowedMethods(implode(', ', array_keys($httpMethods)));
+            throw $e;
         }
     }
 
