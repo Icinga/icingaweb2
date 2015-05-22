@@ -39,7 +39,7 @@ class ErrorLabeller extends Zend_Translate_Adapter
 
     protected function createMessages($element)
     {
-        $label = $element->getLabel();
+        $label = $element->getLabel() ?: $element->getName();
 
         return array(
             Zend_Validate_NotEmpty::IS_EMPTY    => sprintf(t('%s is required and must not be empty'), $label),
