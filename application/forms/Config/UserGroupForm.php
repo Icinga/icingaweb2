@@ -34,6 +34,24 @@ class UserGroupForm extends RepositoryForm
     }
 
     /**
+     * Update a group
+     *
+     * @return  bool
+     */
+    protected function onUpdateSuccess()
+    {
+        if (parent::onUpdateSuccess()) {
+            if (($newName = $this->getValue('group_name')) !== $this->getIdentifier()) {
+                $this->getRedirectUrl()->setParam('group', $newName);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Create and add elements to this form to delete a group
      *
      * @param   array   $formData   The data sent by the user
