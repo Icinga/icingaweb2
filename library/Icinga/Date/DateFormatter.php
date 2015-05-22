@@ -202,7 +202,7 @@ class DateFormatter
     public static function timeUntil($time, $timeOnly = false)
     {
         list($type, $until, $invert) = static::diff($time);
-        if ($invert) {
+        if ($invert && $type === static::RELATIVE) {
             $until = '-' . $until;
         }
         if ($timeOnly) {
