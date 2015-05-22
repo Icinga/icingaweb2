@@ -19,15 +19,6 @@ use Icinga\Web\Widget;
 class GroupController extends Controller
 {
     /**
-     * Initialize this controller
-     */
-    public function init()
-    {
-        parent::init();
-        $this->createTabs();
-    }
-
-    /**
      * Redirect to this controller's list action
      */
     public function indexAction()
@@ -84,7 +75,7 @@ class GroupController extends Controller
         }
 
         $this->view->backend = $backend;
-        $this->getTabs()->activate('group/list');
+        $this->createListTabs()->activate('group/list');
 
         $this->setupLimitControl();
         $this->setupSortControl(
@@ -143,6 +134,7 @@ class GroupController extends Controller
         $this->view->group = $group;
         $this->view->backend = $backend;
         $this->view->members = $members;
+        $this->createShowTabs($backend->getName(), $groupName)->activate('group/show');
 
         if ($backend instanceof Reducible) {
             $removeForm = new Form();
@@ -342,9 +334,9 @@ class GroupController extends Controller
     }
 
     /**
-     * Create the tabs
+     * Create the tabs to list users and groups
      */
-    protected function createTabs()
+    protected function createListTabs()
     {
         $tabs = $this->getTabs();
         $tabs->add(
@@ -352,7 +344,7 @@ class GroupController extends Controller
             array(
                 'title'     => $this->translate('List users of authentication backends'),
                 'label'     => $this->translate('Users'),
-                'icon'      => 'users',
+                'icon'      => 'user',
                 'url'       => 'user/list'
             )
         );
@@ -361,9 +353,33 @@ class GroupController extends Controller
             array(
                 'title'     => $this->translate('List groups of user group backends'),
                 'label'     => $this->translate('Groups'),
-                'icon'      => 'cubes',
+                'icon'      => 'users',
                 'url'       => 'group/list'
             )
         );
+
+        return $tabs;
+    }
+
+    /**
+     * Create the tabs to display when showing a group
+     *
+     * @param   string  $backendName
+     * @param   string  $groupName
+     */
+    protected function createShowTabs($backendName, $groupName)
+    {
+        $tabs = $this->getTabs();
+        $tabs->add(
+            'group/show',
+            array(
+                'title'     => sprintf($this->translate('Show group %s'), $groupName),
+                'label'     => $this->translate('Group'),
+                'icon'      => 'users',
+                'url'       => Url::fromPath('group/show', array('backend' => $backendName, 'group' => $groupName))
+            )
+        );
+
+        return $tabs;
     }
 }
