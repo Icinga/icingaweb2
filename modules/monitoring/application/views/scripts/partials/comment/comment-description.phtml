@@ -24,4 +24,4 @@
 ?>
 <strong><?= $this->escape($title); ?></strong><br>
 <?= $this->icon($icon, $tooltip) ?>
-<?= $this->prefixedTimeSince($comment->timestamp); ?>
+<?= $this->timeAgo($comment->timestamp, $this->compact); ?>
