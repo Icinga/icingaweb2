@@ -12,7 +12,6 @@ use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Application\Logger;
-use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
 use Icinga\Exception\IcingaException;
 
@@ -568,7 +567,6 @@ abstract class ApplicationBootstrap
                 date_default_timezone_set($timezone);
             }
         }
-        DateTimeFactory::setConfig(array('timezone' => $timezone));
         return $this;
     }
 

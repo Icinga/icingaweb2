@@ -44,7 +44,7 @@ foreach ($object->comments as $comment) {
 
     ?>
     <tr>
-        <th><?= $this->escape($comment->author); ?> (<?= $this->timeSince($comment->timestamp); ?>)</th>
+        <th><?= $this->escape($comment->author); ?> (<?= $this->timeAgo($comment->timestamp); ?>)</th>
         <td data-base-target="_self">
             <?php if (isset($delCommentForm)) { // Form is unset if the current user lacks the respective permission
                 $delCommentForm = clone $delCommentForm;

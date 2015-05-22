@@ -3,10 +3,10 @@
 
 namespace Icinga\Web\Widget\Chart;
 
-use Icinga\Util\DateTimeFactory;
+use DateInterval;
+use DateTime;
 use Icinga\Util\Color;
 use Icinga\Web\Widget\AbstractWidget;
-use DateInterval;
 
 /**
  * Display a colored grid that visualizes a set of values for each day
@@ -313,7 +313,7 @@ class HistoryColorGrid extends AbstractWidget {
     private function monthName($month, $year)
     {
         // TODO: find a way to render years without messing up the layout
-        $dt = DateTimeFactory::create($year . '-' . $month . '-01');
+        $dt = new DateTime($year . '-' . $month . '-01');
         return $dt->format('M');
     }
 
@@ -324,7 +324,7 @@ class HistoryColorGrid extends AbstractWidget {
      */
     private function weekdayName($weekday)
     {
-        $sun = DateTimeFactory::create('last Sunday');
+        $sun = new DateTime('last Sunday');
         $interval = new DateInterval('P' .  $weekday . 'D');
         $sun->add($interval);
         return substr($sun->format('D'), 0, 2);

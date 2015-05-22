@@ -29,49 +29,49 @@ if (count($servicegroups) === 0) {
         <td class="state change critical unhandled">
           <strong><?= $this->translate('CRITICAL'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_critical_last_state_change_unhandled); ?>
+          <?= $this->timeSince($s->services_critical_last_state_change_unhandled); ?>
         </td>
        <?php elseif ($s->services_unknown_last_state_change_unhandled): ?>
         <td class="state change unknown unhandled">
           <strong><?= $this->translate('UNKNOWN'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_unknown_last_state_change_unhandled); ?>
+          <?= $this->timeSince($s->services_unknown_last_state_change_unhandled); ?>
         </td>
        <?php elseif ($s->services_warning_last_state_change_unhandled): ?>
         <td class="state change warning unhandled">
           <strong><?= $this->translate('WARNING'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_warning_last_state_change_unhandled); ?>
+          <?= $this->timeSince($s->services_warning_last_state_change_unhandled); ?>
         </td>
        <?php elseif ($s->services_critical_last_state_change_handled): ?>
         <td class="state change critical">
           <strong><?= $this->translate('CRITICAL'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_critical_last_state_change_handled); ?>
+          <?= $this->timeSince($s->services_critical_last_state_change_handled); ?>
         </td>
        <?php elseif ($s->services_unknown_last_state_change_handled): ?>
         <td class="state change unknown">
           <strong><?= $this->translate('UNKNOWN'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_unknown_last_state_change_handled); ?>
+          <?= $this->timeSince($s->services_unknown_last_state_change_handled); ?>
         </td>
        <?php elseif ($s->services_warning_last_state_change_handled): ?>
         <td class="state change warning">
           <strong><?= $this->translate('WARNING'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_warning_last_state_change_handled); ?>
+          <?= $this->timeSince($s->services_warning_last_state_change_handled); ?>
         </td>
        <?php elseif ($s->services_ok_last_state_change): ?>
         <td class="state change ok">
           <strong><?= $this->translate('OK'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_ok_last_state_change); ?>
+          <?= $this->timeSince($s->services_ok_last_state_change); ?>
         </td>
        <?php else: ?>
         <td class="state change pending">
           <strong><?= $this->translate('PENDING'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_pending_last_state_change); ?>
+          <?= $this->timeSince($s->services_pending_last_state_change); ?>
         </td>
        <?php endif ?>
         <td class="groupname">

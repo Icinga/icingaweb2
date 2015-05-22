@@ -6,7 +6,7 @@ use Icinga\Module\Monitoring\Object\Host;
     <tr class="state <?= Host::getStateText($object->host_state); ?><?= $object->host_handled ? ' handled' : ''; ?>">
         <td class="state">
             <strong><?= Host::getStateText($object->host_state, true); ?></strong><br>
-            <?= $this->prefixedTimeSince($object->host_last_state_change, true); ?>
+            <?= $this->timeSince($object->host_last_state_change); ?>
         </td>
         <td>
           <?= $this->iconImage()->host($object) ?>

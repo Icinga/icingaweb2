@@ -5,7 +5,6 @@ namespace Icinga\Web\Form\Validator;
 
 use DateTime;
 use Zend_Validate_Abstract;
-use Icinga\Util\DateTimeFactory;
 
 /**
  * Validator for date-and-time input controls
@@ -68,7 +67,7 @@ class DateTimeValidator extends Zend_Validate_Abstract
             }
 
             if ($dateTime === false || $dateTime->format($format) !== $value) {
-                $this->_error(self::INVALID_DATETIME_FORMAT, DateTimeFactory::create()->format($baseFormat));
+                $this->_error(self::INVALID_DATETIME_FORMAT, $baseFormat);
                 return false;
             }
         }

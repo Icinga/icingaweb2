@@ -577,70 +577,60 @@
             );
         },
 
+        /**
+         * Refresh partial time counters
+         *
+         * This function runs every second.
+         */
         refreshTimeSince: function () {
-
-            $('.timesince').each(function (idx, el) {
-
-                // todo remove after replace timeSince
-                var mp = el.innerHTML.match(/^(.*?)(-?\d+)d\s(-?\d+)h/);
-                if (mp !== null) {
-                    return true;
-                }
-
-                var m = el.innerHTML.match(/^(.*?)(-?\d+)(.+\s)(-?\d+)(.+)/);
-                if (m !== null) {
-                    var nm = parseInt(m[2]);
-                    var ns = parseInt(m[4]);
-                    if (ns < 59) {
-                        ns++;
+            $('.time-ago, .time-since').each(function (idx, el) {
+                var partialTime = /(\d{1,2})m (\d{1,2})s/.exec(el.innerHTML);
+                if (partialTime !== null) {
+                    var minute = parseInt(partialTime[1], 10),
+                        second = parseInt(partialTime[2], 10);
+                    if (second < 59) {
+                        ++second;
                     } else {
-                        ns = 0;
-                        nm++;
+                        ++minute;
+                        second = 0;
                     }
-                    $(el).html(m[1] + nm + m[3] + ns + m[5]);
+                    el.innerHTML = el.innerHTML.substr(0, partialTime.index) + minute.toString() + 'm '
+                        + second.toString() + 's' + el.innerHTML.substr(partialTime.index + partialTime[0].length);
                 }
             });
 
-            $('.timeuntil').each(function (idx, el) {
-
-                // todo remove after replace timeUntil
-                var mp = el.innerHTML.match(/^(.*?)(-?\d+)d\s(-?\d+)h/);
-                if (mp !== null) {
-                    return true;
-                }
-
-                var m = el.innerHTML.match(/^(.*?)(-?\d+)(.+\s)(-?\d+)(.+)/);
-                if (m !== null) {
-                    var nm = parseInt(m[2]);
-                    var ns = parseInt(m[4]);
-                    var signed = '';
-                    var sec = 0;
-
-                    if (nm < 0) {
-                        signed = '-';
-                        nm = nm * -1;
-                        sec = nm * 60 + ns;
-                        sec++;
-                    } else if (nm == 0 && ns == 0) {
-                        signed = '-';
-                        sec = 1;
-                    } else if (nm == 0 && m[2][0] == '-') {
-                        signed = '-';
-                        sec = ns;
-                        sec++;
-                    } else if (nm == 0 && m[2][0] != '-') {
-                        sec = ns;
-                        sec--;
+            $('.time-until').each(function (idx, el) {
+                var partialTime = /(-?)(\d{1,2})m (\d{1,2})s/.exec(el.innerHTML);
+                if (partialTime !== null) {
+                    var minute = parseInt(partialTime[2], 10),
+                        second = parseInt(partialTime[3], 10),
+                        invert = partialTime[1];
+                    if (invert.length) {
+                        // Count up because partial time is negative
+                        if (second < 59) {
+                            ++second;
+                        } else {
+                            ++minute;
+                            second = 0;
+                        }
                     } else {
-                        signed = '';
-                        sec = nm * 60 + ns;
-                        sec--;
+                        // Count down because partial time is positive
+                        if (second === 0) {
+                            if (minute === 0) {
+                                // Invert counter
+                                minute = 0;
+                                second = 1;
+                                invert = '-';
+                            } else {
+                                --minute;
+                                second = 59;
+                            }
+                        } else {
+                            --second;
+                        }
                     }
-
-                    nm = Math.floor(sec/60);
-                    ns = sec - nm * 60;
-
-                    $(el).html(m[1] + signed + nm + m[3] + ns + m[5]);
+                    el.innerHTML = el.innerHTML.substr(0, partialTime.index) + invert + minute.toString() + 'm '
+                        + second.toString() + 's' + el.innerHTML.substr(partialTime.index + partialTime[0].length);
                 }
             });
         },

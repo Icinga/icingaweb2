@@ -85,7 +85,7 @@ if (count($history) === 0) {
         <td class="state">
           <strong><?= $this->escape($title); ?></strong>
           <br>
-          <?= date('d.m. H:i', $event->timestamp); ?>
+          <?= $this->timeAgo($event->timestamp, $this->compact); ?>
         </td>
         <td>
         <?php if ($isService): ?>
