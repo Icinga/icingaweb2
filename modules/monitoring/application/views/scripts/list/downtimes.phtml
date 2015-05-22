@@ -45,7 +45,7 @@ if (count($downtimes) === 0) {
         <td class="state">
           <strong><?= $downtime->is_in_effect ? $this->translate('Expires') : $this->translate('Starts'); ?></strong>
           <br>
-          <?= $downtime->is_in_effect ? $this->timeSince($downtime->start, $this->compact) : $this->timeUntil($downtime->start, $this->compact) ?>
+          <?= $this->timeUntil($downtime->is_in_effect ? $downtime->end : $downtime->start, $this->compact) ?>
         </td>
         <td>
         <?php
