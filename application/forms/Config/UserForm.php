@@ -68,6 +68,24 @@ class UserForm extends RepositoryForm
     }
 
     /**
+     * Update a user
+     *
+     * @return  bool
+     */
+    protected function onUpdateSuccess()
+    {
+        if (parent::onUpdateSuccess()) {
+            if (($newName = $this->getValue('user_name')) !== $this->getIdentifier()) {
+                $this->getRedirectUrl()->setParam('user', $newName);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Retrieve all form element values
      *
      * Strips off the password if null or the empty string.
