@@ -310,7 +310,7 @@
                 } else {
 
                     if (req.$target.attr('id') === 'col2') { // TODO: multicol
-                        if ($('#col1').data('icingaUrl') === redirect) {
+                        if ($('#col1').data('icingaUrl').split('?')[0] === redirect.split('?')[0]) {
                             icinga.ui.layout1col();
                             req.$target = $('#col1');
                             delete(this.requests['col2']);
