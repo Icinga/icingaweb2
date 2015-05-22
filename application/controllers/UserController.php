@@ -7,7 +7,10 @@ use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\UserBackendInterface;
+use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Forms\Config\UserForm;
+use Icinga\Data\DataArray\ArrayDatasource;
+use Icinga\User;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
@@ -114,8 +117,53 @@ class UserController extends Controller
             $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
         }
 
+        $memberships = $this->loadMemberships(new User($userName))->select();
+
+        $filterEditor = Widget::create('filterEditor')
+            ->setQuery($memberships)
+            ->preserveParams('limit', 'sort', 'dir', 'view', 'backend', 'user')
+            ->ignoreParams('page')
+            ->handleRequest($this->getRequest());
+        $memberships->applyFilter($filterEditor->getFilter());
+
+        $this->setupFilterControl($filterEditor);
+        $this->setupPaginationControl($memberships);
+        $this->setupLimitControl();
+        $this->setupSortControl(
+            array(
+                'group_name' => $this->translate('Group')
+            ),
+            $memberships
+        );
+
         $this->view->user = $user;
         $this->view->backend = $backend;
+        $this->view->memberships = $memberships;
+
+        $removeForm = new Form();
+        $removeForm->setUidDisabled();
+        $removeForm->addElement('hidden', 'user_name', array(
+            'isArray'       => true,
+            'value'         => $userName,
+            'decorators'    => array('ViewHelper')
+        ));
+        $removeForm->addElement('hidden', 'redirect', array(
+            'value'         => Url::fromPath('user/show', array(
+                'backend'   => $backend->getName(),
+                'user'      => $userName
+            )),
+            'decorators'    => array('ViewHelper')
+        ));
+        $removeForm->addElement('button', 'btn_submit', array(
+            'escape'        => false,
+            'type'          => 'submit',
+            'class'         => 'link-like',
+            'value'         => 'btn_submit',
+            'decorators'    => array('ViewHelper'),
+            'label'         => $this->view->icon('trash'),
+            'title'         => $this->translate('Cancel this membership')
+        ));
+        $this->view->removeForm = $removeForm;
     }
 
     /**
@@ -174,6 +222,29 @@ class UserController extends Controller
 
         $this->view->form = $form;
         $this->render('form');
+    }
+
+    /**
+     * Fetch and return the given user's groups from all user group backends
+     *
+     * @param   User    $user
+     *
+     * @return  ArrayDatasource
+     */
+    protected function loadMemberships(User $user)
+    {
+        $groups = array();
+        foreach (Config::app('groups') as $backendName => $backendConfig) {
+            $backend = UserGroupBackend::create($backendName, $backendConfig);
+            foreach ($backend->getMemberships($user) as $groupName) {
+                $groups[] = (object) array(
+                    'group_name'    => $groupName,
+                    'backend'       => $backend
+                );
+            }
+        }
+
+        return new ArrayDatasource($groups);
     }
 
     /**

@@ -228,6 +228,7 @@ div.content.users {
 
 div.controls div.user-header {
   border-bottom: 2px solid @colorPetrol;
+  margin-bottom: 1em;
 
   .user-name {
     display: inline-block;
@@ -238,6 +239,33 @@ div.controls div.user-header {
   .user-state, .user-created, .user-modified {
     margin: 0 0 0.2em;
     font-size: 0.8em;
+  }
+}
+
+div.content.memberships {
+  table.membership-list {
+    th.membership-cancel {
+      width: 8em;
+      padding-right: 0.5em;
+      text-align: right;
+    }
+
+    td.membership-cancel {
+      text-align: right;
+
+      form button.link-like {
+        color: inherit;
+      }
+    }
+  }
+
+  p {
+    margin-top: 0;
+  }
+
+  a.membership-create {
+    display: block;
+    margin-top: 1em;
   }
 }
 
