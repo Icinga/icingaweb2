@@ -1,4 +1,4 @@
-<div class="controls">   
+<div class="controls">
     <?php if (! $this->compact): ?>
         <?= $this->tabs; ?>
     <?php endif ?>
@@ -8,13 +8,13 @@
     </div>
 </div>
 <div class="content">
-    
+
 <h3><?= $this->translate('Comment detail information') ?></h3>
-<table class="avp"> 
+<table class="avp">
   <tbody>
     <tr data-base-target='_next'>
       <?php if ($this->comment->objecttype === 'service'): ?>
-        <th> <?= $this->translate('Service') ?> </th> 
+        <th> <?= $this->translate('Service') ?> </th>
         <td>
           <?= $this->icon('service', $this->translate('Service')); ?>
           <?= $this->link()->service(
@@ -26,7 +26,7 @@
           ?>
         </td>
      <?php else: ?>
-        <th> <?= $this->translate('Host') ?> </th> 
+        <th> <?= $this->translate('Host') ?> </th>
         <td>
           <?= $this->icon('host', $this->translate('Host')); ?>
           <?= $this->link()->host(
@@ -34,7 +34,7 @@
                   $this->comment->host_display_name
               );
           ?>
-        </td> 
+        </td>
      <?php endif ?>
     </tr>
 
@@ -42,29 +42,29 @@
       <th><?= $this->translate('Author') ?></th>
       <td><?= $this->icon('user', $this->translate('User')) ?> <?= $this->escape($this->comment->author) ?></td>
     </tr>
-    
+
     <tr>
       <th><?= $this->translate('Persistent') ?></th>
       <td><?= $this->escape($this->comment->persistent) ? $this->translate('Yes') : $this->translate('No') ?></td>
     </tr>
-    
+
     <tr>
       <th><?= $this->translate('Created') ?></th>
-      <td><?= date('d.m.y H:i' ,$this->escape($this->comment->timestamp)) ?></td>
+      <td><?= $this->formatDateTime($this->comment->timestamp) ?></td>
     </tr>
-  
+
     <tr>
       <th><?= $this->translate('Expires') ?></th>
       <td>
           <?= $this->comment->expiration ? sprintf(
                   $this->translate('This comment expires on %s at %s.'),
-                  date('d.m.y', $this->comment->expiration),
-                  date('H:i', $this->comment->expiration)
+                  $this->formatDate($this->comment->expiration),
+                  $this->formatTime($this->comment->expiration)
               ) : $this->translate('This comment does not expire.');
           ?>
       </td>
     </tr>
-  
+
     <?php if (isset($delCommentForm)): // Form is unset if the current user lacks the respective permission ?>
     <tr class="newsection">
       <th><?= $this->translate('Commands') ?></th>
@@ -73,7 +73,7 @@
       </td>
     </tr>
     <?php endif ?>
-  
+
   </tbody>
 </table>
 
