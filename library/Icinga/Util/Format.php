@@ -68,51 +68,6 @@ class Format
         return sprintf('0.2f d', $value / 86400);
     }
 
-    public static function duration($duration)
-    {
-        if ($duration === null || $duration === false) {
-            return '-';
-        }
-        return self::showHourMin($duration);
-    }
-
-    protected static function showHourMin($sec, $includePrefix = false)
-    {
-        $min = floor($sec / 60);
-        if ($min < 60) {
-            return ($includePrefix ? t('for') . ' ' : '') . $min . 'm ' . ($sec % 60) . 's';
-        }
-        $hour = floor($min / 60);
-        if ($hour < 24) {
-            return ($includePrefix ? t('since') . ' ' : '') . date('H:i', time() - $sec);
-        }
-        return ($includePrefix ? t('for') . ' ' : '') . floor($hour / 24) . 'd ' . ($hour % 24) . 'h';
-    }
-
-    protected static function smartTimeDiff($diff, $timestamp, $includePrefix = false)
-    {
-        if ($timestamp === null || $timestamp === false) {
-            return '-';
-        }
-        if (! preg_match('~^\d+$~', $timestamp)) {
-            throw new ProgrammingError(
-                '"%s" is not a number',
-                $timestamp
-            );
-        }
-        $prefix = '';
-        if ($diff < 0) {
-            $prefix = '-';
-        }
-        if (abs($diff) > 3600 * 24 * 3) {
-            if (date('Y') === date('Y', $timestamp)) {
-                return ($includePrefix ? t('since') . ' ' : '') . date('d.m.', $timestamp);
-            }
-            return ($includePrefix ? t('since') . ' ' : '') . date('m.Y', $timestamp);
-        }
-        return $prefix . self::showHourMin(abs($diff), $includePrefix);
-    }
-
     protected static function formatForUnits($value, & $units, $base)
     {
         $sign = '';
