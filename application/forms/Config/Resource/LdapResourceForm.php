@@ -113,7 +113,7 @@ class LdapResourceForm extends Form
             'text',
             'bind_dn',
             array(
-                'required'      => true,
+                'required'      => false,
                 'label'         => $this->translate('Bind DN'),
                 'description'   => $this->translate('The user dn to use for querying the ldap server')
             )
@@ -122,7 +122,7 @@ class LdapResourceForm extends Form
             'password',
             'bind_pw',
             array(
-                'required'          => true,
+                'required'          => false,
                 'renderPassword'    => true,
                 'label'             => $this->translate('Bind Password'),
                 'description'       => $this->translate('The password to use for querying the ldap server')
