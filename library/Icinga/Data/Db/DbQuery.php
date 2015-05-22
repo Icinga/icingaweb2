@@ -166,10 +166,12 @@ class DbQuery extends SimpleQuery
                         $parts[] = $filterPart;
                     }
                 }
-                if ($level > 0) {
-                    $str .= ' (' . implode($op, $parts) . ') ';
-                } else {
-                    $str .= implode($op, $parts);
+                if (! empty($parts)) {
+                    if ($level > 0) {
+                        $str .= ' (' . implode($op, $parts) . ') ';
+                    } else {
+                        $str .= implode($op, $parts);
+                    }
                 }
             }
         } else {
