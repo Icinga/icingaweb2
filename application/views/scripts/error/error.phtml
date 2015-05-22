@@ -1,13 +1,8 @@
 <div class="controls">
 <?= $this->tabs->showOnlyCloseButton() ?>
-<?php if ($this->title): ?>
-<h1><?= $this->escape($title) ?></h1>
-<?php endif ?>
 </div>
 <div class="content">
-<?php if ($this->message): ?>
   <p><strong><?= nl2br($this->escape($message)) ?></strong></p>
-<?php endif ?>
 <?php if (isset($stackTrace)) : ?>
   <hr />
   <pre><?= $this->escape($stackTrace) ?></pre>
