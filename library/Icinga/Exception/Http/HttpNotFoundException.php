@@ -1,11 +1,11 @@
 <?php
 
-namespace Icinga\Exception;
+namespace Icinga\Exception\Http;
 
 /**
  * Exception thrown for sending a HTTP 404 response w/ a custom message
  */
-class HttpNotFoundException extends IcingaException
+class HttpNotFoundException extends HttpException
 {
 
 }

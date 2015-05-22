@@ -2,12 +2,10 @@
 
 namespace Icinga\Exception\Http;
 
-use Icinga\Exception\IcingaException;
-
 /**
  * Exception thrown if the HTTP method is not allowed
  */
-class HttpMethodNotAllowedException extends IcingaException
+class HttpMethodNotAllowedException extends HttpException
 {
     /**
      * Allowed HTTP methods

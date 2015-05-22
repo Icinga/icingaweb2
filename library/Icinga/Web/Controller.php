@@ -3,9 +3,9 @@
 
 namespace Icinga\Web;
 
-use Icinga\Exception\HttpNotFoundException;
 use Icinga\Data\Sortable;
 use Icinga\Data\QueryInterface;
+use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Widget\Limiter;
 use Icinga\Web\Widget\Paginator;

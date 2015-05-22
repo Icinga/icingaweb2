@@ -4,7 +4,7 @@
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Exception\Http\HttpMethodNotAllowedException;
-use Icinga\Exception\HttpNotFoundException;
+use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Exception\MissingParameterException;
 use Icinga\Security\SecurityException;
 use Icinga\Web\Controller\ActionController;
