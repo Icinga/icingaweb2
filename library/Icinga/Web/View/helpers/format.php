@@ -24,6 +24,13 @@ $this->addHelperFunction('formatDateTime', function ($dateTime) {
     return DateFormatter::formatDateTime($dateTime);
 });
 
+$this->addHelperFunction('formatDuration', function ($seconds) {
+    if (! $seconds) {
+        return '';
+    }
+    return DateFormatter::formatDuration($seconds);
+});
+
 $this->addHelperFunction('formatTime', function ($time) {
     if (! $time) {
         return '';
