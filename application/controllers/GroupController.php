@@ -8,6 +8,7 @@ use Icinga\Application\Logger;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackendInterface;
 use Icinga\Data\Reducible;
+use Icinga\Data\Filter\Filter;
 use Icinga\Forms\Config\UserGroupForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
@@ -145,11 +146,21 @@ class GroupController extends Controller
 
         if ($backend instanceof Reducible) {
             $removeForm = new Form();
-            $removeForm->setName('removemember');
+            $removeForm->setUidDisabled();
             $removeForm->setAction(
                 Url::fromPath('group/removemember', array('backend' => $backend->getName(), 'group' => $groupName))
             );
-            $removeForm->addElement('hidden', 'user_name', array('decorators' => array('ViewHelper')));
+            $removeForm->addElement('hidden', 'user_name', array(
+                'isArray'       => true,
+                'decorators'    => array('ViewHelper')
+            ));
+            $removeForm->addElement('hidden', 'redirect', array(
+                'value'         => Url::fromPath('group/show', array(
+                    'backend'   => $backend->getName(),
+                    'group'     => $groupName
+                )),
+                'decorators'    => array('ViewHelper')
+            ));
             $removeForm->addElement('button', 'btn_submit', array(
                 'escape'        => false,
                 'type'          => 'submit',
@@ -221,6 +232,55 @@ class GroupController extends Controller
 
         $this->view->form = $form;
         $this->render('form');
+    }
+
+    /**
+     * Remove a group member
+     */
+    public function removememberAction()
+    {
+        $this->assertHttpMethod('POST');
+        $groupName = $this->params->getRequired('group');
+        $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
+
+        if ($backend->select()->where('group_name', $groupName)->count() === 0) {
+            $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
+        }
+
+        $form = new Form(array(
+            'onSuccess' => function ($form) use ($groupName, $backend) {
+                foreach ($form->getValue('user_name') as $userName) {
+                    try {
+                        $backend->delete(
+                            'group_membership',
+                            Filter::matchAll(
+                                Filter::where('group_name', $groupName),
+                                Filter::where('user_name', $userName)
+                            )
+                        );
+                        Notification::success(sprintf(
+                            t('User "%s" has been removed from group "%s"'),
+                            $userName,
+                            $groupName
+                        ));
+                    } catch (Exception $e) {
+                        Notification::error($e->getMessage());
+                    }
+                }
+
+                $redirect = $form->getValue('redirect');
+                if (! empty($redirect)) {
+                    $form->setRedirectUrl(htmlspecialchars_decode($redirect));
+                }
+
+                return true;
+            }
+        ));
+        $form->setUidDisabled();
+        $form->setSubmitLabel('btn_submit'); // Required to ensure that isSubmitted() is called
+        $form->addElement('hidden', 'user_name', array('required' => true, 'isArray' => true));
+        $form->addElement('hidden', 'redirect');
+        $form->handleRequest();
     }
 
     /**

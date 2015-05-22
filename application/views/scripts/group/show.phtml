@@ -68,7 +68,7 @@ if ($backend instanceof Updatable) {
       <tr>
         <td class="member-name"><?= $this->escape($member->user_name); ?></td>
        <?php if (isset($removeForm)): ?>
-        <td class="member-remove">
+        <td class="member-remove" data-base-target="_self">
           <?php $removeForm->getElement('user_name')->setValue($member->user_name); echo $removeForm; ?>
         </td>
        <?php endif ?>
