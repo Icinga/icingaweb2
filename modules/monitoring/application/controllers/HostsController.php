@@ -46,7 +46,7 @@ class Monitoring_HostsController extends Controller
                 'icon'  => 'host'
             )
         )->extend(new DashboardAction())->activate('show');
-        
+
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/hosts')->setQueryString($filterString);
     }
 
@@ -78,11 +78,6 @@ class Monitoring_HostsController extends Controller
         $this->view->form = $form;
         $this->view->objects = $this->hostList;
         $this->view->stats = $this->hostList->getStateSummary();
-        $this->view->hostStatesPieChart = InlinePie::createFromStateSummary(
-            $this->view->stats,
-            $this->translate('Host State'),
-            InlinePie::$colorsHostStatesHandledUnhandled
-        );
         $this->_helper->viewRenderer('partials/command/objects-command-form', null, true);
         return $form;
     }
