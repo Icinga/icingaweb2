@@ -20,13 +20,11 @@ class Monitoring_CommentController extends Controller
 
     /**
      * Fetch the first comment with the given id and add tabs
-     *
-     * @throws Zend_Controller_Action_Exception
      */
     public function init()
     {
-        $commentId = $this->params->get('comment_id');
-         
+        $commentId = $this->params->getRequired('comment_id');
+
         $this->comment = $this->backend->select()->from('comment', array(
             'id'         => 'comment_internal_id',
             'objecttype' => 'comment_objecttype',
@@ -41,9 +39,9 @@ class Monitoring_CommentController extends Controller
             'host_display_name',
             'service_display_name'
         ))->where('comment_internal_id', $commentId)->getQuery()->fetchRow();
-        
-        if (false === $this->comment) {
-            throw new Zend_Controller_Action_Exception($this->translate('Comment not found'));
+
+        if ($this->comment === false) {
+            $this->httpNotFound($this->translate('Comment not found'));
         }
 
         $this->getTabs()->add(
@@ -88,7 +86,7 @@ class Monitoring_CommentController extends Controller
     private function createDelCommentForm()
     {
         $this->assertPermission('monitoring/command/comment/delete');
-        
+
         $delCommentForm = new DeleteCommentCommandForm();
         $delCommentForm->setAction(
             Url::fromPath('monitoring/comment/show')

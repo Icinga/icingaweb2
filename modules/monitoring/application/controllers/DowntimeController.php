@@ -30,8 +30,6 @@ class Monitoring_DowntimeController extends Controller
 
     /**
      * Fetch the downtime matching the given id and add tabs
-     *
-     * @throws Zend_Controller_Action_Exception
      */
     public function init()
     {
