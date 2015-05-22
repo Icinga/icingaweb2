@@ -63,7 +63,7 @@ with Icinga Web 2 (e.g. an alias) no matter what the primary user id might actua
 Directive               | Description
 ------------------------|------------
 **backend**             | `ad`
-**resource**            | The name of the LDAP resource defined in [resources.ini](#resources).
+**resource**            | The name of the LDAP resource defined in [resources.ini](resources.md#resources).
 
 **Example:**
 
@@ -76,13 +76,13 @@ resource = my_ad
 ### <a id="authentication-configuration-db-authentication"></a> Database Authentication
 
 If you want to authenticate against a MySQL or a PostgreSQL database, you have to define a
-[database resource](#resources-configuration-database) which will be referenced as data source for the database
+[database resource](resources.md#resources-configuration-database) which will be referenced as data source for the database
 authentication method.
 
 Directive               | Description
 ------------------------|------------
 **backend**             | `db`
-**resource**            | The name of the database resource defined in [resources.ini](#resources).
+**resource**            | The name of the database resource defined in [resources.ini](resources.md#resources).
 
 **Example:**
 
@@ -99,7 +99,7 @@ For authenticating against a database, you have to import one of the following d
 * **etc/schema/preferences.mysql.sql** (for **MySQL** database)
 * **etc/schema/preferences.pgsql.sql** (for **PostgreSQL** databases)
 
-After that you have to define the [database resource](#resources-configuration-database).
+After that you have to define the [database resource](resources.md#resources-configuration-database).
 
 **Manually Creating Users**
 
