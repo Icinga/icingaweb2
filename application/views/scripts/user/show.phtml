@@ -23,7 +23,7 @@ if ($backend instanceof Updatable) {
 ?>
 <div class="controls">
  <?php if (! $this->compact): ?>
-   <?= $tabs->showOnlyCloseButton(); ?>
+   <?= $tabs; ?>
  <?php endif ?>
   <div class="user-header">
     <p class="user-name"><strong><?= $this->escape($user->user_name); ?></strong></p> <?= $editLink; ?>

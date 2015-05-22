@@ -20,15 +20,6 @@ use Icinga\Web\Widget;
 class UserController extends Controller
 {
     /**
-     * Initialize this controller
-     */
-    public function init()
-    {
-        parent::init();
-        $this->createTabs();
-    }
-
-    /**
      * Redirect to this controller's list action
      */
     public function indexAction()
@@ -85,7 +76,7 @@ class UserController extends Controller
         }
 
         $this->view->backend = $backend;
-        $this->getTabs()->activate('user/list');
+        $this->createListTabs()->activate('user/list');
 
         $this->setupLimitControl();
         $this->setupSortControl(
@@ -139,6 +130,7 @@ class UserController extends Controller
         $this->view->user = $user;
         $this->view->backend = $backend;
         $this->view->memberships = $memberships;
+        $this->createShowTabs($backend->getName(), $userName)->activate('user/show');
 
         $removeForm = new Form();
         $removeForm->setUidDisabled();
@@ -306,9 +298,9 @@ class UserController extends Controller
     }
 
     /**
-     * Create the tabs
+     * Create the tabs to list users and groups
      */
-    protected function createTabs()
+    protected function createListTabs()
     {
         $tabs = $this->getTabs();
         $tabs->add(
@@ -316,7 +308,7 @@ class UserController extends Controller
             array(
                 'title'     => $this->translate('List users of authentication backends'),
                 'label'     => $this->translate('Users'),
-                'icon'      => 'users',
+                'icon'      => 'user',
                 'url'       => 'user/list'
             )
         );
@@ -325,9 +317,33 @@ class UserController extends Controller
             array(
                 'title'     => $this->translate('List groups of user group backends'),
                 'label'     => $this->translate('Groups'),
-                'icon'      => 'cubes',
+                'icon'      => 'users',
                 'url'       => 'group/list'
             )
         );
+
+        return $tabs;
+    }
+
+    /**
+     * Create the tabs to display when showing a user
+     *
+     * @param   string  $backendName
+     * @param   string  $userName
+     */
+    protected function createShowTabs($backendName, $userName)
+    {
+        $tabs = $this->getTabs();
+        $tabs->add(
+            'user/show',
+            array(
+                'title'     => sprintf($this->translate('Show user %s'), $userName),
+                'label'     => $this->translate('User'),
+                'icon'      => 'user',
+                'url'       => Url::fromPath('user/show', array('backend' => $backendName, 'user' => $userName))
+            )
+        );
+
+        return $tabs;
     }
 }
