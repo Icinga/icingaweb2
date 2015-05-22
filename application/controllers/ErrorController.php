@@ -3,6 +3,7 @@
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Exception\Http\HttpMethodNotAllowedException;
 use Icinga\Exception\HttpNotFoundException;
 use Icinga\Exception\MissingParameterException;
 use Icinga\Security\SecurityException;
@@ -46,6 +47,10 @@ class ErrorController extends ActionController
                 break;
             default:
                 switch (true) {
+                    case $exception instanceof HttpMethodNotAllowedException:
+                        $this->getResponse()->setHttpResponseCode(405);
+                        $this->getResponse()->setHeader('Allow', $exception->getAllowedMethods());
+                        break;
                     case $exception instanceof HttpNotFoundException:
                         $this->getResponse()->setHttpResponseCode(404);
                         break;
