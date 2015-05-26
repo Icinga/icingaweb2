@@ -43,6 +43,7 @@ class StatusQuery extends IdoQuery
             'host_icon_image'       => 'h.icon_image',
             'host_icon_image_alt'   => 'h.icon_image_alt',
             'host_action_url'       => 'h.action_url',
+            'host_notes'            => 'h.notes',
             'host_notes_url'        => 'h.notes_url'
         ),
         'hoststatus' => array(
@@ -179,6 +180,7 @@ class StatusQuery extends IdoQuery
             'service_icon_image'     => 's.icon_image',
             'service_icon_image_alt' => 's.icon_image_alt',
             'service_action_url'     => 's.action_url',
+            'service_notes'          => 's.notes',
             'service_notes_url'      => 's.notes_url',
             'object_type'            => '(\'service\')'
         ),

@@ -147,6 +147,7 @@ class Service extends MonitoredObject
             'service_last_state_change',
             'service_long_output',
             'service_next_check',
+            'service_notes',
             'service_notes_url',
             'service_notifications_enabled',
             'service_notifications_enabled_changed',
@@ -197,5 +198,15 @@ class Service extends MonitoredObject
                 throw new InvalidArgumentException('Invalid service state \'%s\'', $state);
         }
         return $text;
+    }
+
+    public function getNotesUrls()
+    {
+        return MonitoredObject::parseAttributeUrls($this->service_notes_url);
+    }
+
+    public function getNotes()
+    {
+        return $this->service_notes;
     }
 }

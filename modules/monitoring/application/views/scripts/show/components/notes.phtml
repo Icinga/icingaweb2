@@ -1,0 +1,28 @@
+<?php
+$notes = trim($object->getNotes());
+$links = $object->getNotesUrls();
+?>
+
+<?php if (! empty($links) || ! empty($notes)): ?>
+<tr>
+    <th><?= $this->translate('Notes') ?></th>
+    <td>
+        <?php
+            if (! empty($notes)) {
+                echo $notes . '<br>';
+            }
+            // add warning to links that open in new tabs to improve accessibility, as recommended by WCAG20 G201
+            $newTabInfo = sprintf(
+                '<span class="info-box display-on-hover"> %s </span>',
+                $this->translate('opens in new window')
+            );
+            $linkText = '<a href="%s" target="_blank">%s ' . $newTabInfo . '</a>';
+            foreach ($links as $i => $link) {
+                $resolved = $this->resolveMacros($link, $object);
+                $links[$i] = sprintf($linkText, $this->escape($resolved), $this->escape($resolved));
+            }
+            echo implode('<br>', $links);
+        ?>
+    </td>
+</tr>
+<?php endif ?>
