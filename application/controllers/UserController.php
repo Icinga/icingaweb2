@@ -3,7 +3,7 @@
 
 use \Exception;
 use Icinga\Application\Logger;
-use Icinga\Forms\Config\UserForm;
+use Icinga\Forms\Config\User\UserForm;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\User;
 use Icinga\Web\Controller\AuthBackendController;
