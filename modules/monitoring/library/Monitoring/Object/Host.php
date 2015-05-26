@@ -119,6 +119,7 @@ class Host extends MonitoredObject
             'host_max_check_attempts',
             'host_name',
             'host_next_check',
+            'host_notes',
             'host_notes_url',
             'host_notifications_enabled',
             'host_notifications_enabled_changed',
@@ -187,5 +188,15 @@ class Host extends MonitoredObject
                 throw new InvalidArgumentException('Invalid host state \'%s\'', $state);
         }
         return $text;
+    }
+
+    public function getNotesUrls()
+    {
+        return MonitoredObject::parseAttributeUrls($this->host_notes_url);
+    }
+
+    public function getNotes()
+    {
+        return $this->host_notes;
     }
 }
