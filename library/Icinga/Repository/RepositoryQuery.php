@@ -185,6 +185,7 @@ class RepositoryQuery implements QueryInterface, Iterator
      */
     public function setFilter(Filter $filter)
     {
+        $filter = clone $filter;
         $this->repository->requireFilter($this->target, $filter);
         $this->query->setFilter($filter);
         return $this;
@@ -201,6 +202,7 @@ class RepositoryQuery implements QueryInterface, Iterator
      */
     public function addFilter(Filter $filter)
     {
+        $filter = clone $filter;
         $this->repository->requireFilter($this->target, $filter);
         $this->query->addFilter($filter);
         return $this;
