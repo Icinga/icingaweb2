@@ -2,22 +2,17 @@
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 use \Exception;
-use \Zend_Controller_Action_Exception;
-use Icinga\Application\Config;
 use Icinga\Application\Logger;
-use Icinga\Authentication\User\UserBackend;
-use Icinga\Authentication\User\UserBackendInterface;
-use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Forms\Config\UserForm;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\User;
-use Icinga\Web\Controller;
+use Icinga\Web\Controller\AuthBackendController;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 use Icinga\Web\Url;
 use Icinga\Web\Widget;
 
-class UserController extends Controller
+class UserController extends AuthBackendController
 {
     /**
      * Redirect to this controller's list action
@@ -226,8 +221,7 @@ class UserController extends Controller
     protected function loadMemberships(User $user)
     {
         $groups = array();
-        foreach (Config::app('groups') as $backendName => $backendConfig) {
-            $backend = UserGroupBackend::create($backendName, $backendConfig);
+        foreach ($this->loadUserGroupBackends() as $backend) {
             foreach ($backend->getMemberships($user) as $groupName) {
                 $groups[] = (object) array(
                     'group_name'    => $groupName,
@@ -237,92 +231,6 @@ class UserController extends Controller
         }
 
         return new ArrayDatasource($groups);
-    }
-
-    /**
-     * Return all user backends implementing the given interface
-     *
-     * @param   string  $interface      The class path of the interface, or null if no interface check should be made
-     *
-     * @return  array
-     */
-    protected function loadUserBackends($interface = null)
-    {
-        $backends = array();
-        foreach (Config::app('authentication') as $backendName => $backendConfig) {
-            $candidate = UserBackend::create($backendName, $backendConfig);
-            if (! $interface || $candidate instanceof $interface) {
-                $backends[] = $candidate;
-            }
-        }
-
-        return $backends;
-    }
-
-    /**
-     * Return the given user backend or the first match in order
-     *
-     * @param   string  $name           The name of the backend, or null in case the first match should be returned
-     * @param   string  $interface      The interface the backend should implement, no interface check if null
-     *
-     * @return  UserBackendInterface
-     *
-     * @throws  Zend_Controller_Action_Exception    In case the given backend name is invalid
-     */
-    protected function getUserBackend($name = null, $interface = 'Icinga\Data\Selectable')
-    {
-        if ($name !== null) {
-            $config = Config::app('authentication');
-            if (! $config->hasSection($name)) {
-                $this->httpNotFound(sprintf($this->translate('Authentication backend "%s" not found'), $name));
-            } else {
-                $backend = UserBackend::create($name, $config->getSection($name));
-                if ($interface && !$backend instanceof $interface) {
-                    $interfaceParts = explode('\\', strtolower($interface));
-                    throw new Zend_Controller_Action_Exception(
-                        sprintf(
-                            $this->translate('Authentication backend "%s" is not %s'),
-                            $name,
-                            array_pop($interfaceParts)
-                        ),
-                        400
-                    );
-                }
-            }
-        } else {
-            $backends = $this->loadUserBackends($interface);
-            $backend = array_shift($backends);
-        }
-
-        return $backend;
-    }
-
-    /**
-     * Create the tabs to list users and groups
-     */
-    protected function createListTabs()
-    {
-        $tabs = $this->getTabs();
-        $tabs->add(
-            'user/list',
-            array(
-                'title'     => $this->translate('List users of authentication backends'),
-                'label'     => $this->translate('Users'),
-                'icon'      => 'user',
-                'url'       => 'user/list'
-            )
-        );
-        $tabs->add(
-            'group/list',
-            array(
-                'title'     => $this->translate('List groups of user group backends'),
-                'label'     => $this->translate('Groups'),
-                'icon'      => 'users',
-                'url'       => 'group/list'
-            )
-        );
-
-        return $tabs;
     }
 
     /**
