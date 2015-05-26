@@ -9,6 +9,7 @@ $links = $object->getNotesUrls();
     <td>
         <?php
             if (! empty($notes)) {
+                $notes = $this->resolveMacros($notes, $object);
                 echo $notes . '<br>';
             }
             // add warning to links that open in new tabs to improve accessibility, as recommended by WCAG20 G201
