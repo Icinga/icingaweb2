@@ -3,6 +3,8 @@
 
 use \Exception;
 use Icinga\Application\Logger;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Forms\Config\User\CreateMembershipForm;
 use Icinga\Forms\Config\User\UserForm;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\User;
@@ -122,6 +124,9 @@ class UserController extends AuthBackendController
             $memberships
         );
 
+        $extensibleBackends = $this->loadUserGroupBackends('Icinga\Data\Extensible');
+        $this->view->showCreateMembershipLink = ! empty($extensibleBackends);
+
         $this->view->user = $user;
         $this->view->backend = $backend;
         $this->view->memberships = $memberships;
@@ -206,6 +211,35 @@ class UserController extends AuthBackendController
         $form->setRedirectUrl(Url::fromPath('user/list', array('backend' => $backend->getName())));
         $form->setRepository($backend);
         $form->remove($userName)->handleRequest();
+
+        $this->view->form = $form;
+        $this->render('form');
+    }
+
+    /**
+     * Create a membership for a user
+     */
+    public function createmembershipAction()
+    {
+        $userName = $this->params->getRequired('user');
+        $backend = $this->getUserBackend($this->params->getRequired('backend'));
+
+        if ($backend->select()->where('user_name', $userName)->count() === 0) {
+            $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
+        }
+
+        $backends = $this->loadUserGroupBackends('Icinga\Data\Extensible');
+        if (empty($backends)) {
+            throw new ConfigurationError($this->translate(
+                'You\'ll need to configure at least one user group backend first that allows to create new memberships'
+            ));
+        }
+
+        $form = new CreateMembershipForm();
+        $form->setBackends($backends)
+            ->setUsername($userName)
+            ->setRedirectUrl(Url::fromPath('user/show', array('backend' => $backend->getName(), 'user' => $userName)))
+            ->handleRequest();
 
         $this->view->form = $form;
         $this->render('form');

@@ -75,11 +75,14 @@ if ($backend instanceof Updatable) {
 <?php else: ?>
   <p><?= $this->translate('No memberships found matching the filter'); ?></p>
 <?php endif ?>
+<?php if ($showCreateMembershipLink): ?>
 <?= $this->qlink($this->translate('Create new membership'), 'user/createmembership', array(
-  'user'              => $user->user_name
+  'backend'             => $backend->getName(),
+  'user'                => $user->user_name
 ), array(
-  'icon'              => 'plus',
-  'data-base-target'  => '_next',
-  'class'             => 'membership-create'
+  'icon'                => 'plus',
+  'data-base-target'    => '_next',
+  'class'               => 'membership-create'
 )); ?>
+<?php endif ?>
 </div>
