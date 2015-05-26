@@ -6,17 +6,7 @@ namespace Icinga\Module\Monitoring\DataView;
 class HostStatus extends DataView
 {
     /**
-     * @see DataView::init()
-     */
-    public function init()
-    {
-        $this->query->setMode('host');
-    }
-
-    /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getColumns()
     {
@@ -76,11 +66,6 @@ class HostStatus extends DataView
         );
     }
 
-    public static function getQueryName()
-    {
-        return 'status';
-    }
-
     /**
      * The sort rules for this query
      *
@@ -112,11 +97,17 @@ class HostStatus extends DataView
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFilterColumns()
     {
         return array('host', 'hostgroup', 'hostgroup_name', 'service', 'servicegroup', 'servicegroup_name');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isValidFilterTarget($column)
     {
         if ($column[0] === '_'
