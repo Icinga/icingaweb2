@@ -229,7 +229,7 @@ class Monitoring_ListController extends Controller
 
         $query = $this->backend->select()->from('downtime', array(
             'id'              => 'downtime_internal_id',
-            'objecttype'      => 'downtime_objecttype',
+            'objecttype'      => 'object_type',
             'comment'         => 'downtime_comment',
             'author_name'     => 'downtime_author_name',
             'start'           => 'downtime_start',
@@ -241,8 +241,8 @@ class Monitoring_ListController extends Controller
             'is_fixed'        => 'downtime_is_fixed',
             'is_in_effect'    => 'downtime_is_in_effect',
             'entry_time'      => 'downtime_entry_time',
-            'host_state'      => 'downtime_host_state',
-            'service_state'   => 'downtime_service_state',
+            'host_state',
+            'service_state',
             'host_name',
             'service_description',
             'host_display_name',
