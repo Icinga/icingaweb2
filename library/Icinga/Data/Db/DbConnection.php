@@ -397,11 +397,15 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible
                     }
                 }
 
-                if ($level > 0) {
-                    $where .= ' (' . implode($operator, $parts) . ') ';
-                } else {
-                    $where .= implode($operator, $parts);
+                if (! empty($parts)) {
+                    if ($level > 0) {
+                        $where .= ' (' . implode($operator, $parts) . ') ';
+                    } else {
+                        $where .= implode($operator, $parts);
+                    }
                 }
+            } else {
+                return ''; // Explicitly return the empty string due to the FilterNot case
             }
         } else {
             $where .= $this->renderFilterExpression($filter);
