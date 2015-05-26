@@ -274,7 +274,7 @@ abstract class MonitoredObject implements Filterable
     {
         $downtimes = $this->backend->select()->from('downtime', array(
             'id'                => 'downtime_internal_id',
-            'objecttype'        => 'downtime_objecttype',
+            'objecttype'        => 'object_type',
             'comment'           => 'downtime_comment',
             'author_name'       => 'downtime_author_name',
             'start'             => 'downtime_start',
@@ -286,7 +286,7 @@ abstract class MonitoredObject implements Filterable
             'is_in_effect'      => 'downtime_is_in_effect',
             'entry_time'        => 'downtime_entry_time'
         ))
-            ->where('downtime_objecttype', $this->type)
+            ->where('object_type', $this->type)
             ->order('downtime_is_in_effect', 'DESC')
             ->order('downtime_scheduled_start', 'ASC');
         if ($this->type === self::TYPE_SERVICE) {
