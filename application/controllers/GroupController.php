@@ -5,7 +5,7 @@ use \Exception;
 use Icinga\Application\Logger;
 use Icinga\Data\Reducible;
 use Icinga\Data\Filter\Filter;
-use Icinga\Forms\Config\UserGroupForm;
+use Icinga\Forms\Config\UserGroup\UserGroupForm;
 use Icinga\Web\Controller\AuthBackendController;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
