@@ -3,8 +3,10 @@
 
 use \Exception;
 use Icinga\Application\Logger;
+use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\Reducible;
 use Icinga\Data\Filter\Filter;
+use Icinga\Forms\Config\UserGroup\AddMemberForm;
 use Icinga\Forms\Config\UserGroup\UserGroupForm;
 use Icinga\Web\Controller\AuthBackendController;
 use Icinga\Web\Form;
@@ -223,6 +225,32 @@ class GroupController extends AuthBackendController
     }
 
     /**
+     * Add a group member
+     */
+    public function addmemberAction()
+    {
+        $groupName = $this->params->getRequired('group');
+        $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
+
+        if ($backend->select()->where('group_name', $groupName)->count() === 0) {
+            $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
+        }
+
+        $form = new AddMemberForm();
+        $form->setDataSource($this->fetchUsers())
+            ->setBackend($backend)
+            ->setGroupName($groupName)
+            ->setRedirectUrl(
+                Url::fromPath('group/show', array('backend' => $backend->getName(), 'group' => $groupName))
+            )
+            ->setUidDisabled()
+            ->handleRequest();
+
+        $this->view->form = $form;
+        $this->render('form');
+    }
+
+    /**
      * Remove a group member
      */
     public function removememberAction()
@@ -269,6 +297,23 @@ class GroupController extends AuthBackendController
         $form->addElement('hidden', 'user_name', array('required' => true, 'isArray' => true));
         $form->addElement('hidden', 'redirect');
         $form->handleRequest();
+    }
+
+    /**
+     * Fetch and return all users from all user backends
+     *
+     * @return  ArrayDatasource
+     */
+    protected function fetchUsers()
+    {
+        $users = array();
+        foreach ($this->loadUserBackends('Icinga\Data\Selectable') as $backend) {
+            foreach ($backend->select(array('user_name')) as $row) {
+                $users[] = $row;
+            }
+        }
+
+        return new ArrayDatasource($users);
     }
 
     /**
