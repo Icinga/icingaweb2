@@ -6,9 +6,20 @@ namespace Icinga\Module\Monitoring\DataView;
 class Downtime extends DataView
 {
     /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
+     */
+    public function isValidFilterTarget($column)
+    {
+        if ($column[0] === '_'
+            && preg_match('/^_(?:host|service)_/', $column)
+        ) {
+            return true;
+        }
+        return parent::isValidFilterTarget($column);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getColumns()
     {
@@ -37,6 +48,17 @@ class Downtime extends DataView
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilterColumns()
+    {
+        return array('hostgroup', 'hostgroup_alias', 'hostgroup_name', 'servicegroup', 'servicegroup_alias', 'servicegroup_name');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getSortRules()
     {
         return array(
@@ -65,10 +87,5 @@ class Downtime extends DataView
                 'order' => self::SORT_ASC
             )
         );
-    }
-
-    public function getFilterColumns()
-    {
-        return array('author', 'host', 'service', 'service_host');
     }
 }
