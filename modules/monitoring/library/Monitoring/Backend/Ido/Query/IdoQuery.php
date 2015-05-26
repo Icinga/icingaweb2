@@ -3,14 +3,15 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-use Icinga\Exception\IcingaException;
+use Zend_Db_Expr;
+use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Data\Db\DbQuery;
-use Icinga\Exception\ProgrammingError;
-use Icinga\Application\Icinga;
-use Icinga\Web\Session;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
+use Icinga\Exception\IcingaException;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Session;
 
 /**
  * Base class for Ido Queries
@@ -471,6 +472,11 @@ abstract class IdoQuery extends DbQuery
         $resolvedColumns = array();
 
         foreach ($columns as $alias => $col) {
+            if ($col instanceof Zend_Db_Expr) {
+                // Support selecting NULL as column for example
+                $resolvedColumns[$alias] = $col;
+                continue;
+            }
             $this->requireColumn($col);
             if ($this->isCustomvar($col)) {
                 $name = $this->getCustomvarColumnName($col);
@@ -682,6 +688,14 @@ abstract class IdoQuery extends DbQuery
         return $this->idxAliasColumn[$alias];
     }
 
+    /**
+     * Create a sub query
+     *
+     * @param   string  $queryName
+     * @param   array   $columns
+     *
+     * @return  static
+     */
     protected function createSubQuery($queryName, $columns = array())
     {
         $class = '\\'
