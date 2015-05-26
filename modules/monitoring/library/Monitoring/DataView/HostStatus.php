@@ -8,6 +8,19 @@ class HostStatus extends DataView
     /**
      * {@inheritdoc}
      */
+    public function isValidFilterTarget($column)
+    {
+        if ($column[0] === '_'
+            && preg_match('/^_host_/', $column)
+        ) {
+            return true;
+        }
+        return parent::isValidFilterTarget($column);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getColumns()
     {
         return array(
@@ -67,6 +80,22 @@ class HostStatus extends DataView
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getFilterColumns()
+    {
+        return array('host', 'hostgroup', 'hostgroup_name');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('host', 'host_display_name');
+    }
+
+    /**
      * The sort rules for this query
      *
      * @return array
@@ -95,34 +124,5 @@ class HostStatus extends DataView
                 'order' => self::SORT_ASC
             )
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFilterColumns()
-    {
-        return array('host', 'hostgroup', 'hostgroup_name', 'service', 'servicegroup', 'servicegroup_name');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_'
-            && preg_match('/^_(?:host|service)_/', $column)
-        ) {
-            return true;
-        }
-        return parent::isValidFilterTarget($column);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSearchColumns()
-    {
-        return array('host', 'host_display_name');
     }
 }
