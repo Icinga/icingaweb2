@@ -32,7 +32,7 @@ If your web server is not configured for authentication though the `autologin` s
 ### <a id="authentication-configuration-ad-or-ldap-authentication"></a> Active Directory or LDAP Authentication
 
 If you want to authenticate against Active Directory or LDAP, you have to define a
-[LDAP resource](#resources-configuration-ldap) which will be referenced as data source for the Active Directory
+[LDAP resource](resources.md#resources-configuration-ldap) which will be referenced as data source for the Active Directory
 or LDAP configuration method.
 
 #### <a id="authentication-configuration-ldap-authentication"></a> LDAP
@@ -40,7 +40,7 @@ or LDAP configuration method.
 Directive               | Description
 ------------------------|------------
 **backend**             | `ldap`
-**resource**            | The name of the LDAP resource defined in [resources.ini](#resources).
+**resource**            | The name of the LDAP resource defined in [resources.ini](resources.md#resources).
 **user_class**          | LDAP user class.
 **user_name_attribute** | LDAP attribute which contains the username.
 
@@ -63,7 +63,7 @@ with Icinga Web 2 (e.g. an alias) no matter what the primary user id might actua
 Directive               | Description
 ------------------------|------------
 **backend**             | `ad`
-**resource**            | The name of the LDAP resource defined in [resources.ini](#resources).
+**resource**            | The name of the LDAP resource defined in [resources.ini](resources.md#resources).
 
 **Example:**
 
@@ -76,19 +76,19 @@ resource = my_ad
 ### <a id="authentication-configuration-db-authentication"></a> Database Authentication
 
 If you want to authenticate against a MySQL or a PostgreSQL database, you have to define a
-[database resource](#resources-configuration-database) which will be referenced as data source for the database
+[database resource](resources.md#resources-configuration-database) which will be referenced as data source for the database
 authentication method.
 
 Directive               | Description
 ------------------------|------------
 **backend**             | `db`
-**resource**            | The name of the database resource defined in [resources.ini](#resources).
+**resource**            | The name of the database resource defined in [resources.ini](resources.md#resources).
 
 **Example:**
 
 ```
-[auth_ad]
-backend  = ad
+[auth_db]
+backend  = db
 resource = icingaweb-mysql
 ```
 
@@ -99,7 +99,7 @@ For authenticating against a database, you have to import one of the following d
 * **etc/schema/preferences.mysql.sql** (for **MySQL** database)
 * **etc/schema/preferences.pgsql.sql** (for **PostgreSQL** databases)
 
-After that you have to define the [database resource](#resources-configuration-database).
+After that you have to define the [database resource](resources.md#resources-configuration-database).
 
 **Manually Creating Users**
 

@@ -3,47 +3,70 @@
 
 namespace Icinga\Web\View;
 
-use Icinga\Web\Url;
+use Icinga\Date\DateFormatter;
 use Icinga\Util\Format;
 
 $this->addHelperFunction('format', function () {
     return Format::getInstance();
 });
 
-$this->addHelperFunction('timeSince', function ($timestamp) {
+$this->addHelperFunction('formatDate', function ($date) {
+    if (! $date) {
+        return '';
+    }
+    return DateFormatter::formatDate($date);
+});
+
+$this->addHelperFunction('formatDateTime', function ($dateTime) {
+    if (! $dateTime) {
+        return '';
+    }
+    return DateFormatter::formatDateTime($dateTime);
+});
+
+$this->addHelperFunction('formatDuration', function ($seconds) {
+    if (! $seconds) {
+        return '';
+    }
+    return DateFormatter::formatDuration($seconds);
+});
+
+$this->addHelperFunction('formatTime', function ($time) {
+    if (! $time) {
+        return '';
+    }
+    return DateFormatter::formatTime($time);
+});
+
+$this->addHelperFunction('timeAgo', function ($time, $timeOnly = false) {
+    if (! $time) {
+        return '';
+    }
     return sprintf(
-        '<span class="timesince" title="%s">%s</span>',
-        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
-        Format::timeSince($timestamp)
+        '<span class="time-ago" title="%s">%s</span>',
+        DateFormatter::formatDateTime($time),
+        DateFormatter::timeAgo($time, $timeOnly)
     );
 });
 
-$this->addHelperFunction('prefixedTimeSince', function ($timestamp, $ucfirst = false) {
+$this->addHelperFunction('timeSince', function ($time, $timeOnly = false) {
+    if (! $time) {
+        return '';
+    }
     return sprintf(
-        '<span class="timesince" title="%s">%s</span>',
-        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
-        Format::prefixedTimeSince($timestamp, $ucfirst)
+        '<span class="time-since" title="%s">%s</span>',
+        DateFormatter::formatDateTime($time),
+        DateFormatter::timeSince($time, $timeOnly)
     );
 });
 
-$this->addHelperFunction('timeUntil', function ($timestamp) {
-    if (! $timestamp) return '';
+$this->addHelperFunction('timeUntil', function ($time, $timeOnly = false) {
+    if (! $time) {
+        return '';
+    }
     return sprintf(
-        '<span class="timeuntil" title="%s">%s</span>',
-        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
-        Format::timeUntil($timestamp)
+        '<span class="time-until" title="%s">%s</span>',
+        DateFormatter::formatDateTime($time),
+        DateFormatter::timeUntil($time, $timeOnly)
     );
-});
-
-$this->addHelperFunction('prefixedTimeUntil', function ($timestamp, $ucfirst = false) {
-    if (! $timestamp) return '';
-    return sprintf(
-        '<span class="timeuntil" title="%s">%s</span>',
-        date('Y-m-d H:i:s', $timestamp), // TODO: internationalized format
-        Format::prefixedTimeUntil($timestamp, $ucfirst)
-    );
-});
-
-$this->addHelperFunction('dateTimeRenderer', function ($dateTimeOrTimestamp, $future = false) {
-    return DateTimeRenderer::create($dateTimeOrTimestamp, $future);
 });

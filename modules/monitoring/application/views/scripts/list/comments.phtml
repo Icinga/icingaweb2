@@ -36,7 +36,7 @@ if (count($comments) === 0) {
         <td>
         <?php if ($comment->objecttype === 'service'): ?>
           <?= $this->icon('service', $this->translate('Service')); ?>
-            
+
           <?= $this->qlink(
             sprintf(
                 $this->translate('%s on %s', 'Service running on host'),
@@ -52,7 +52,7 @@ if (count($comments) === 0) {
           ))) ?>
         <?php else: ?>
           <?= $this->icon('host', $this->translate('Host')); ?>
-            
+
           <?= $this->qlink(
             $comment->host_display_name,
             'monitoring/comment/show',
@@ -74,10 +74,9 @@ if (count($comments) === 0) {
           ?>
           <br>
           <?= $comment->expiration ? sprintf(
-              $this->translate('This comment expires on %s at %s.'),
-              date('d.m.y', $comment->expiration),
-              date('H:i', $comment->expiration)
-            ) : $this->translate('This comment does not expire.'); ?>
+              $this->translate('This comment expires %s.'),
+              $this->timeUntil($comment->expiration)
+          ) : $this->translate('This comment does not expire.'); ?>
         </td>
         <?php if (isset($delCommentForm)): // Form is unset if the current user lacks the respective permission ?>
         <td style="width: 2em" data-base-target="self">

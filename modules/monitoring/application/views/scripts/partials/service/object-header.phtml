@@ -7,7 +7,7 @@ use Icinga\Module\Monitoring\Object\Service;
     <tr class="state <?= Host::getStateText($object->host_state); ?><?= $object->host_handled ? ' handled' : ''; ?>">
         <td class="state">
             <strong><?= Host::getStateText($object->host_state, true); ?></strong><br>
-            <?= $this->prefixedTimeSince($object->host_last_state_change, true); ?>
+            <?= $this->timeSince($object->host_last_state_change) ?>
         </td>
         <td>
           <?= $this->iconImage()->service($object) ?>
@@ -25,7 +25,7 @@ use Icinga\Module\Monitoring\Object\Service;
     <tr class="state <?= Service::getStateText($object->service_state); ?><?= $object->service_handled ? ' handled' : ''; ?>">
         <td class="state">
             <strong><?= Service::getStateText($object->service_state, true); ?></strong><br>
-            <?= $this->prefixedTimeSince($object->service_last_state_change, true); ?>
+            <?= $this->timeSince($object->service_last_state_change) ?>
         </td>
         <td>
             <?= $this->iconImage()->host($object) ?>

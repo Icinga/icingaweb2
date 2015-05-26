@@ -60,7 +60,7 @@ if (count($hostgroups) === 0) {
         <td class="state">
           <strong><?= Host::getStateText($state, true); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($lastStateChange); ?>
+          <?= $this->timeSince($lastStateChange, $this->compact); ?>
         </td>
         <td class="groupname">
           <?= $this->qlink(

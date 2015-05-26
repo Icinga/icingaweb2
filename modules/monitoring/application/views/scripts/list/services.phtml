@@ -48,12 +48,15 @@ if (count($services) === 0) {
 ?>
     <tr class="state <?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
       <td class="state">
-        <strong><?= Service::getStateText($service->service_state, true); ?></strong><br />
-            <?php if (!$this->compact): ?><?= $this->prefixedTimeSince($service->service_last_state_change); ?><?php else: ?><?= $this->timeSince($service->service_last_state_change); ?><?php endif ?>
-            <?php if ($service->service_state > 0 && (int) $service->service_state_type === 0): ?>
-              <br />
-              <strong>Soft <?= $service->service_attempt ?></strong>
-            <?php endif ?>
+        <strong><?= Service::getStateText($service->service_state, true); ?></strong>
+        <?php if ((int) $service->service_state !== 99): ?>
+          <br />
+          <?= $this->timeSince($service->service_last_state_change, $this->compact) ?>
+          <?php if ((int) $service->service_state > 0 && (int) $service->service_state_type === 0): ?>
+            <br />
+            <strong>Soft <?= $service->service_attempt ?></strong>
+          <?php endif ?>
+        <?php endif ?>
       </td>
 
       <td>

@@ -1,11 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use \DateTime;
-use \DateInterval;
 use Icinga\Web\Url;
 use Icinga\Util\Format;
-use Icinga\Util\DateTimeFactory;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Timeline\TimeLine;
 use Icinga\Module\Monitoring\Timeline\TimeRange;
@@ -234,7 +231,7 @@ class Monitoring_TimelineController extends Controller
      */
     private function buildTimeRanges()
     {
-        $startTime = DateTimeFactory::create();
+        $startTime = new DateTime();
         $startParam = $this->_request->getParam('start');
         $startTimestamp = is_numeric($startParam) ? intval($startParam) : strtotime($startParam);
         if ($startTimestamp !== false) {
@@ -271,8 +268,7 @@ class Monitoring_TimelineController extends Controller
      */
     private function getTimeFormat()
     {
-        // TODO(mh): Missing localized format (#6077)
-        return 'g:i A';
+        return 'H:i';
     }
 
     /**
@@ -282,7 +278,6 @@ class Monitoring_TimelineController extends Controller
      */
     private function getDateFormat()
     {
-        // TODO(mh): Missing localized format (#6077)
-        return 'd/m/Y';
+        return 'Y-m-d';
     }
 }

@@ -27,13 +27,13 @@ type = ini
 ### <a id="preferences-configuration-db"></a> Store Preferences in a Database
 
 In order to be more flexible in distributed setups you can store preferences in a MySQL or in a PostgreSQL database.
-For storing preferences in a database, you have to define a [database resource](#resources-configuration-database)
+For storing preferences in a database, you have to define a [database resource](resources.md#resources-configuration-database)
 which will be referenced as resource for the preferences storage.
 
 Directive               | Description
 ------------------------|------------
 **type**                | `db`
-**resource**            | The name of the database resource defined in [resources.ini](resources).
+**resource**            | The name of the database resource defined in [resources.ini](resources.md#resources).
 
 **Example:**
 
@@ -50,4 +50,4 @@ For storing preferences in a database, you have to import one of the following d
 * **etc/schema/preferences.mysql.sql** (for **MySQL** database)
 * **etc/schema/preferences.pgsql.sql** (for **PostgreSQL** databases)
 
-After that you have to define the [database resource](#resources-configuration-database).
+After that you have to define the [database resource](resources.md#resources-configuration-database).

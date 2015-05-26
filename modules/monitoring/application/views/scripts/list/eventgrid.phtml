@@ -75,7 +75,7 @@ foreach ($summary as $entry) {
     $caption = sprintf(
         $settings[$column]['tooltip'],
         $value,
-        $this->dateFormat()->formatDate(strtotime($day))
+        $this->formatDate(strtotime($day))
     );
     $linkFilter = Filter::matchAll(
         Filter::expression('timestamp', '<', strtotime($day . ' 23:59:59')),

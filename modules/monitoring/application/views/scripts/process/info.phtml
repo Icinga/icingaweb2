@@ -27,15 +27,15 @@ if (! $this->compact): ?>
                 </tr>
                 <tr>
                     <th><?= $this->translate('Program Start Time') ?></th>
-                    <td><?= $this->dateFormat()->formatDateTime($this->programStatus->program_start_time) ?></td>
+                    <td><?= $this->formatDateTime($this->programStatus->program_start_time) ?></td>
                 </tr>
                 <tr>
                     <th><?= $this->translate('Last Status Update'); ?></th>
-                    <td><?= sprintf($this->translate('%s ago'), $this->timeSince($this->programStatus->status_update_time)); ?></td>
+                    <td><?= $this->timeAgo($this->programStatus->status_update_time); ?></td>
                 </tr>
                 <tr>
                     <th><?= $this->translate('Last External Command Check'); ?></th>
-                    <td><?= sprintf($this->translate('%s ago'), $this->timeSince($this->programStatus->last_command_check)); ?></td>
+                    <td><?= $this->timeAgo($this->programStatus->last_command_check); ?></td>
                 </tr>
                 <tr>
                     <th><?= $this->translate('Last Log File Rotation'); ?></th>
@@ -66,7 +66,10 @@ if (! $this->compact): ?>
             <?php if ((bool) $this->programStatus->is_currently_running === true): ?>
                 <div class="backend-running">
                     <?= sprintf(
-                        $this->translate('Backend %s has been up and running with PID %d since %s'),
+                        $this->translate(
+                            '%1$s has been up and running with PID %2$d %3$s',
+                            'Last format parameter represents the time running'
+                        ),
                         $this->backendName,
                         $this->programStatus->process_id,
                         $this->timeSince($this->programStatus->program_start_time)) ?>
