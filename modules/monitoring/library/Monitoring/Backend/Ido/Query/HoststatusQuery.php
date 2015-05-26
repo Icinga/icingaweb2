@@ -16,6 +16,27 @@ class HoststatusQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
+        'downtimes' => array(
+            'downtime_author'           => 'sd.author_name COLLATE latin1_general_ci',
+            'downtime_author_name'      => 'sd.author_name',
+            'downtime_comment'          => 'sd.comment_data',
+            'downtime_duration'         => 'sd.duration',
+            'downtime_end'              => 'CASE WHEN sd.is_fixed > 0 THEN UNIX_TIMESTAMP(sd.scheduled_end_time) ELSE UNIX_TIMESTAMP(sd.trigger_time) + sd.duration END',
+            'downtime_entry_time'       => 'UNIX_TIMESTAMP(sd.entry_time)',
+            'downtime_internal_id'      => 'sd.internal_downtime_id',
+            'downtime_is_fixed'         => 'sd.is_fixed',
+            'downtime_is_flexible'      => 'CASE WHEN sd.is_fixed = 0 THEN 1 ELSE 0 END',
+            'downtime_is_in_effect'     => 'sd.is_in_effect',
+            'downtime_scheduled_end'    => 'UNIX_TIMESTAMP(sd.scheduled_end_time)',
+            'downtime_scheduled_start'  => 'UNIX_TIMESTAMP(sd.scheduled_start_time)',
+            'downtime_start'            => 'UNIX_TIMESTAMP(CASE WHEN UNIX_TIMESTAMP(sd.trigger_time) > 0 then sd.trigger_time ELSE sd.scheduled_start_time END)',
+            'downtime_triggered_by_id'  => 'sd.triggered_by_id'
+        ),
+        'hostgroups' => array(
+            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
+            'hostgroup_name'    => 'hgo.name1'
+        ),
         'hosts' => array(
             'host'                  => 'ho.name1 COLLATE latin1_general_ci',
             'host_action_url'       => 'h.action_url',
@@ -123,11 +144,6 @@ class HoststatusQuery extends IdoQuery
             'host_status_update_time'   => 'hs.status_update_time',
             'host_unhandled'            => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END'
         ),
-        'hostgroups' => array(
-            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
-            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
-            'hostgroup_name'    => 'hgo.name1'
-        ),
         'serviceproblemsummary' => array(
             'host_unhandled_services' => 'sps.unhandled_services_count'
         )
@@ -143,31 +159,32 @@ class HoststatusQuery extends IdoQuery
             array()
         )->join(
             array('h' => $this->prefix . 'hosts'),
-            'h.host_object_id = ho.object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
+            'h.host_object_id = ho.object_id',
             array()
+        )->where(
+            'ho.is_active = ?',
+            1
+        )->where(
+            'ho.objecttype_id = ?',
+            1
         );
         $this->joinedVirtualTables['hosts'] = true;
     }
 
     /**
-     * Join host status
-     *
-     * @return $this
+     * Join downtimes
      */
-    protected function joinHoststatus()
+    protected function joinDowntimes()
     {
         $this->select->join(
-            array('hs' => $this->prefix . 'hoststatus'),
-            'hs.host_object_id = ho.object_id',
+            array('sd' => $this->prefix . 'scheduleddowntime'),
+            'sd.object_id = ho.object_id',
             array()
         );
-        return $this;
     }
 
     /**
      * Join host groups
-     *
-     * @return $this
      */
     protected function joinHostgroups()
     {
@@ -181,16 +198,33 @@ class HoststatusQuery extends IdoQuery
             array()
         )->join(
             array('hgo' => $this->prefix . 'objects'),
-            'hgo.object_id = hg.hostgroup_object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
+            'hgo.object_id = hg.hostgroup_object_id',
+            array()
+        )->where(
+            'hgo.is_active = ?',
+            1
+        )
+            ->where(
+                'hgo.objecttype_id = ?',
+                3
+            );
+        $this->distinct();
+    }
+
+    /**
+     * Join host status
+     */
+    protected function joinHoststatus()
+    {
+        $this->select->join(
+            array('hs' => $this->prefix . 'hoststatus'),
+            'hs.host_object_id = ho.object_id',
             array()
         );
-        return $this;
     }
 
     /**
      * Join service problem summary
-     *
-     * @return $this
      */
     protected function joinServiceproblemsummary()
     {
@@ -226,6 +260,5 @@ SQL;
             'sps.host_object_id = ho.object_id',
             array()
         );
-        return $this;
     }
 }
