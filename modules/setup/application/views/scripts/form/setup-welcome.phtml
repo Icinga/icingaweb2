@@ -10,6 +10,39 @@ $configDir = Icinga::app()->getConfigDir();
 $setupTokenPath = rtrim($configDir, '/') . '/setup.token';
 $cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
 
+$groupadd = null;
+$usermod = null;
+if (! (false === ($distro = Platform::getLinuxDistro(1)) || $distro === 'linux')) {
+    foreach (array(
+        'groupadd -r icingaweb2' => array(
+            'redhat', 'rhel', 'centos', 'fedora',
+            'suse', 'sles', 'sled', 'opensuse'
+        ),
+        'addgroup --system icingaweb2' => array('debian', 'ubuntu')
+    ) as $groupadd_ => $distros) {
+        if (in_array($distro, $distros)) {
+            $groupadd = $groupadd_;
+            break;
+        }
+    }
+
+    foreach (array(
+        'usermod -a -G icingaweb2 apache' => array(
+            'redhat', 'rhel', 'centos', 'fedora'
+        ),
+        'usermod -A icingaweb2 wwwrun' => array(
+            'suse', 'sles', 'sled', 'opensuse'
+        ),
+        'usermod -a -G icingaweb2 www-data' => array(
+            'debian', 'ubuntu'
+        )
+    ) as $usermod_ => $distros) {
+        if (in_array($distro, $distros)) {
+            $usermod = $usermod_;
+            break;
+        }
+    }
+}
 ?>
 <div class="welcome-page">
   <h2><?= $this->translate('Welcome to the configuration of Icinga Web 2!') ?></h2>
@@ -51,6 +84,12 @@ $cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
         <li><?= $this->translate('Your webserver\'s user is a member of the system group "icingaweb2"'); ?></li>
         <?php endif ?>
       </ul>
+      <?php if (! ($groupadd === null || $usermod === null)) { ?>
+      <div class="code">
+        <span><?= $this->escape($groupadd . ';') ?></span>
+        <span><?= $this->escape($usermod . ';') ?></span>
+      </div>
+      <?php } ?>
       <p><?= $this->translate('If you\'ve got the IcingaCLI installed you can do the following:'); ?></p>
       <div class="code">
         <span><?= $cliPath ? $cliPath : 'icingacli'; ?> setup config directory --group icingaweb2<?= $configDir !== '/etc/icingaweb2' ? ' --config ' . $configDir : ''; ?>;</span>
