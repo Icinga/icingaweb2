@@ -64,17 +64,11 @@ class GroupController extends AuthBackendController
         $query->applyFilter($filterEditor->getFilter());
         $this->setupFilterControl($filterEditor);
 
-        try {
-            $this->setupPaginationControl($query);
-            $this->view->groups = $query;
-        } catch (Exception $e) {
-            Notification::error($e->getMessage());
-            Logger::error($e);
-        }
-
+        $this->view->groups = $query;
         $this->view->backend = $backend;
         $this->createListTabs()->activate('group/list');
 
+        $this->setupPaginationControl($query);
         $this->setupLimitControl();
         $this->setupSortControl(
             array(
