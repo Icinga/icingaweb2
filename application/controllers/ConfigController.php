@@ -352,7 +352,7 @@ class ConfigController extends Controller
                     $configForm->remove($resource);
                 } catch (InvalidArgumentException $e) {
                     Notification::error($e->getMessage());
-                    return;
+                    return false;
                 }
 
                 if ($configForm->save()) {
