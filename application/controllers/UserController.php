@@ -64,17 +64,11 @@ class UserController extends AuthBackendController
         $query->applyFilter($filterEditor->getFilter());
         $this->setupFilterControl($filterEditor);
 
-        try {
-            $this->setupPaginationControl($query);
-            $this->view->users = $query;
-        } catch (Exception $e) {
-            Notification::error($e->getMessage());
-            Logger::error($e);
-        }
-
+        $this->view->users = $query;
         $this->view->backend = $backend;
         $this->createListTabs()->activate('user/list');
 
+        $this->setupPaginationControl($query);
         $this->setupLimitControl();
         $this->setupSortControl(
             array(

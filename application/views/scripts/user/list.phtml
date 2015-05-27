@@ -26,11 +26,6 @@ if ($backend === null) {
     $reducible = $backend instanceof Reducible;
 }
 
-if (! isset($users)) {
-    echo $this->translate('Failed to fetch any users') . '</div>';
-    return;
-}
-
 if (count($users) > 0): ?>
 <table data-base-target="_next" class="action user-list">
   <thead>
