@@ -29,6 +29,7 @@ class UserController extends AuthBackendController
      */
     public function listAction()
     {
+        $this->assertPermission('config/application/users/show');
         $backendNames = array_map(
             function ($b) { return $b->getName(); },
             $this->loadUserBackends('Icinga\Data\Selectable')
@@ -86,6 +87,7 @@ class UserController extends AuthBackendController
      */
     public function showAction()
     {
+        $this->assertPermission('config/application/users/show');
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'));
 
