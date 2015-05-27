@@ -250,11 +250,19 @@ class UserController extends AuthBackendController
     {
         $groups = array();
         foreach ($this->loadUserGroupBackends() as $backend) {
-            foreach ($backend->getMemberships($user) as $groupName) {
-                $groups[] = (object) array(
-                    'group_name'    => $groupName,
-                    'backend'       => $backend
-                );
+            try {
+                foreach ($backend->getMemberships($user) as $groupName) {
+                    $groups[] = (object) array(
+                        'group_name'    => $groupName,
+                        'backend'       => $backend
+                    );
+                }
+            } catch (Exception $e) {
+                Logger::error($e);
+                Notification::warning(sprintf(
+                    $this->translate('Failed to fetch memberships from backend %s. Please check your log'),
+                    $backend->getName()
+                ));
             }
         }
 
