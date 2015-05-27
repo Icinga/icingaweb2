@@ -138,24 +138,30 @@ class AuthBackendController extends Controller
     protected function createListTabs()
     {
         $tabs = $this->getTabs();
-        $tabs->add(
-            'user/list',
-            array(
-                'title'     => $this->translate('List users of authentication backends'),
-                'label'     => $this->translate('Users'),
-                'icon'      => 'user',
-                'url'       => 'user/list'
-            )
-        );
-        $tabs->add(
-            'group/list',
-            array(
-                'title'     => $this->translate('List groups of user group backends'),
-                'label'     => $this->translate('Groups'),
-                'icon'      => 'users',
-                'url'       => 'group/list'
-            )
-        );
+
+        if ($this->hasPermission('config/application/users/show')) {
+            $tabs->add(
+                'user/list',
+                array(
+                    'title'     => $this->translate('List users of authentication backends'),
+                    'label'     => $this->translate('Users'),
+                    'icon'      => 'user',
+                    'url'       => 'user/list'
+                )
+            );
+        }
+
+        if ($this->hasPermission('config/application/groups/show')) {
+            $tabs->add(
+                'group/list',
+                array(
+                    'title'     => $this->translate('List groups of user group backends'),
+                    'label'     => $this->translate('Groups'),
+                    'icon'      => 'users',
+                    'url'       => 'group/list'
+                )
+            );
+        }
 
         return $tabs;
     }
