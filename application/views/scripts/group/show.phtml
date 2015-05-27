@@ -6,7 +6,7 @@ use Icinga\Data\Updatable;
 $extensible = $this->hasPermission('config/application/groups/add') && $backend instanceof Extensible;
 
 $editLink = null;
-if ($backend instanceof Updatable) {
+if ($this->hasPermission('config/application/groups/edit') && $backend instanceof Updatable) {
     $editLink = $this->qlink(
         null,
         'group/edit',

@@ -181,6 +181,7 @@ class GroupController extends AuthBackendController
      */
     public function editAction()
     {
+        $this->assertPermission('config/application/groups/edit');
         $groupName = $this->params->getRequired('group');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Updatable');
 
