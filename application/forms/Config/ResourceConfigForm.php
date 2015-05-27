@@ -149,7 +149,7 @@ class ResourceConfigForm extends ConfigForm
             }
         } catch (InvalidArgumentException $e) {
             Notification::error($e->getMessage());
-            return;
+            return false;
         }
 
         if ($this->save()) {
