@@ -132,30 +132,32 @@ class UserController extends AuthBackendController
         $this->view->memberships = $memberships;
         $this->createShowTabs($backend->getName(), $userName)->activate('user/show');
 
-        $removeForm = new Form();
-        $removeForm->setUidDisabled();
-        $removeForm->addElement('hidden', 'user_name', array(
-            'isArray'       => true,
-            'value'         => $userName,
-            'decorators'    => array('ViewHelper')
-        ));
-        $removeForm->addElement('hidden', 'redirect', array(
-            'value'         => Url::fromPath('user/show', array(
-                'backend'   => $backend->getName(),
-                'user'      => $userName
-            )),
-            'decorators'    => array('ViewHelper')
-        ));
-        $removeForm->addElement('button', 'btn_submit', array(
-            'escape'        => false,
-            'type'          => 'submit',
-            'class'         => 'link-like',
-            'value'         => 'btn_submit',
-            'decorators'    => array('ViewHelper'),
-            'label'         => $this->view->icon('trash'),
-            'title'         => $this->translate('Cancel this membership')
-        ));
-        $this->view->removeForm = $removeForm;
+        if ($this->hasPermission('config/application/groups/member/remove')) {
+            $removeForm = new Form();
+            $removeForm->setUidDisabled();
+            $removeForm->addElement('hidden', 'user_name', array(
+                'isArray'       => true,
+                'value'         => $userName,
+                'decorators'    => array('ViewHelper')
+            ));
+            $removeForm->addElement('hidden', 'redirect', array(
+                'value'         => Url::fromPath('user/show', array(
+                    'backend'   => $backend->getName(),
+                    'user'      => $userName
+                )),
+                'decorators'    => array('ViewHelper')
+            ));
+            $removeForm->addElement('button', 'btn_submit', array(
+                'escape'        => false,
+                'type'          => 'submit',
+                'class'         => 'link-like',
+                'value'         => 'btn_submit',
+                'decorators'    => array('ViewHelper'),
+                'label'         => $this->view->icon('trash'),
+                'title'         => $this->translate('Cancel this membership')
+            ));
+            $this->view->removeForm = $removeForm;
+        }
     }
 
     /**
