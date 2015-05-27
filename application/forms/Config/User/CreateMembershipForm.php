@@ -4,6 +4,7 @@
 namespace Icinga\Forms\Config\User;
 
 use Exception;
+use Icinga\Application\Logger;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
@@ -153,18 +154,35 @@ class CreateMembershipForm extends Form
      */
     protected function createDataSource()
     {
-        $groups = array();
+        $groups = $failures = array();
         foreach ($this->backends as $backend) {
-            $memberships = $backend
-                ->select()
-                ->from('group_membership', array('group_name'))
-                ->where('user_name', $this->userName)
-                ->fetchColumn();
-            foreach ($backend->select(array('group_name')) as $row) {
-                if (! in_array($row->group_name, $memberships)) { // TODO(jom): Apply this as native query filter
-                    $row->backend_name = $backend->getName();
-                    $groups[] = $row;
+            try {
+                $memberships = $backend
+                    ->select()
+                    ->from('group_membership', array('group_name'))
+                    ->where('user_name', $this->userName)
+                    ->fetchColumn();
+                foreach ($backend->select(array('group_name')) as $row) {
+                    if (! in_array($row->group_name, $memberships)) { // TODO(jom): Apply this as native query filter
+                        $row->backend_name = $backend->getName();
+                        $groups[] = $row;
+                    }
                 }
+            } catch (Exception $e) {
+                $failures[] = array($backend->getName(), $e);
+            }
+        }
+
+        if (empty($groups) && !empty($failures)) {
+            // In case there are only failures, throw the very first exception again
+            throw $failures[0][1];
+        } elseif (! empty($failures)) {
+            foreach ($failures as $failure) {
+                Logger::error($failure[1]);
+                Notification::warning(sprintf(
+                    $this->translate('Failed to fetch any groups from backend %s. Please check your log'),
+                    $failure[0]
+                ));
             }
         }
 
