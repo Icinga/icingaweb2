@@ -228,6 +228,7 @@ class GroupController extends AuthBackendController
      */
     public function addmemberAction()
     {
+        $this->assertPermission('config/application/groups/member/add');
         $groupName = $this->params->getRequired('group');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
 

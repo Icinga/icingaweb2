@@ -120,8 +120,12 @@ class UserController extends AuthBackendController
             $memberships
         );
 
-        $extensibleBackends = $this->loadUserGroupBackends('Icinga\Data\Extensible');
-        $this->view->showCreateMembershipLink = ! empty($extensibleBackends);
+        if ($this->hasPermission('config/application/groups/member/add')) {
+            $extensibleBackends = $this->loadUserGroupBackends('Icinga\Data\Extensible');
+            $this->view->showCreateMembershipLink = ! empty($extensibleBackends);
+        } else {
+            $this->view->showCreateMembershipLink = false;
+        }
 
         $this->view->user = $user;
         $this->view->backend = $backend;
@@ -220,6 +224,7 @@ class UserController extends AuthBackendController
      */
     public function createmembershipAction()
     {
+        $this->assertPermission('config/application/groups/member/add');
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'));
 
