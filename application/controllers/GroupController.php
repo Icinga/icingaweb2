@@ -29,6 +29,7 @@ class GroupController extends AuthBackendController
      */
     public function listAction()
     {
+        $this->assertPermission('config/application/groups/show');
         $backendNames = array_map(
             function ($b) { return $b->getName(); },
             $this->loadUserGroupBackends('Icinga\Data\Selectable')
@@ -86,6 +87,7 @@ class GroupController extends AuthBackendController
      */
     public function showAction()
     {
+        $this->assertPermission('config/application/groups/show');
         $groupName = $this->params->getRequired('group');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'));
 

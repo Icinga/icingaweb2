@@ -2,6 +2,7 @@
 
 use Icinga\Data\Updatable;
 use Icinga\Data\Reducible;
+use Icinga\Data\Selectable;
 
 $editLink = null;
 if ($this->hasPermission('config/application/users/edit') && $backend instanceof Updatable) {
@@ -52,12 +53,18 @@ if ($this->hasPermission('config/application/users/edit') && $backend instanceof
     <tbody>
     <?php foreach ($memberships as $membership): ?>
       <tr>
-        <td class="membership-group"><?= $this->qlink($membership->group_name, 'group/show', array(
-          'backend' => $membership->backend->getName(),
-          'group'   => $membership->group_name
-        ), array(
-          'title'   => sprintf($this->translate('Show detailed information for group %s'), $membership->group_name)
-        )); ?></td>
+        <td class="membership-group">
+         <?php if ($this->hasPermission('config/application/groups/show') && $membership->backend instanceof Selectable): ?>
+          <?= $this->qlink($membership->group_name, 'group/show', array(
+            'backend' => $membership->backend->getName(),
+            'group'   => $membership->group_name
+          ), array(
+            'title'   => sprintf($this->translate('Show detailed information for group %s'), $membership->group_name)
+          )); ?>
+         <?php else: ?>
+          <?= $this->escape($membership->group_name); ?>
+         <?php endif ?>
+        </td>
         <td class="membership-cancel" data-base-target="_self">
        <?php if ($membership->backend instanceof Reducible): ?>
           <?= $removeForm->setAction($this->url('group/removemember', array(
