@@ -78,7 +78,7 @@ class DashboardController extends ActionController
         $dashboard = $this->dashboard;
         $form = new DashletForm();
         $form->setDashboard($dashboard);
-        $form->setSubmitLabel(t('Update Dashlet'));
+        $form->setSubmitLabel($this->translate('Update Dashlet'));
         if (! $this->_request->getParam('pane')) {
             throw new Zend_Controller_Action_Exception(
                 'Missing parameter "pane"',
