@@ -65,13 +65,71 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     protected $statementColumnMap;
 
     /**
+     * List of columns where the COLLATE SQL-instruction has been removed
+     *
+     * This list is being populated in case of a PostgreSQL backend only,
+     * to ensure case-insensitive string comparison in WHERE clauses.
+     *
+     * @var array
+     */
+    protected $columnsWithoutCollation;
+
+    /**
      * Create a new DB repository object
+     *
+     * In case $this->queryColumns has already been initialized, this initializes
+     * $this->columnsWithoutCollation in case of a PostgreSQL connection.
      *
      * @param   DbConnection    $ds     The datasource to use
      */
     public function __construct(DbConnection $ds)
     {
         parent::__construct($ds);
+
+        $this->columnsWithoutCollation = array();
+        if ($ds->getDbType() === 'pgsql' && $this->queryColumns !== null) {
+            $this->queryColumns = $this->removeCollateInstruction($this->queryColumns);
+        }
+    }
+
+    /**
+     * Return the query columns being provided
+     *
+     * Initializes $this->columnsWithoutCollation in case of a PostgreSQL connection.
+     *
+     * @return  array
+     */
+    public function getQueryColumns()
+    {
+        if ($this->queryColumns === null) {
+            $this->queryColumns = parent::getQueryColumns();
+            if ($this->ds->getDbType() === 'pgsql') {
+                $this->queryColumns = $this->removeCollateInstruction($this->queryColumns);
+            }
+        }
+
+        return $this->queryColumns;
+    }
+
+    /**
+     * Remove each COLLATE SQL-instruction from all given query columns
+     *
+     * @param   array   $queryColumns
+     *
+     * @return  array                   $queryColumns, the updated version
+     */
+    protected function removeCollateInstruction($queryColumns)
+    {
+        foreach ($queryColumns as & $columns) {
+            foreach ($columns as & $column) {
+                $column = preg_replace('/ COLLATE .+$/', '', $column, -1, $count);
+                if ($count > 0) {
+                    $this->columnsWithoutCollation[] = $column;
+                }
+            }
+        }
+
+        return $queryColumns;
     }
 
     /**
@@ -279,6 +337,33 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
         }
 
         return $this->prependTablePrefix($table);
+    }
+
+    /**
+     * Recurse the given filter, require each column for the given table and convert all values
+     *
+     * In case of a PostgreSQL connection, this applies LOWER() on the column and strtolower()
+     * on the value if a COLLATE SQL-instruction is part of the resolved column.
+     *
+     * @param   string  $table
+     * @param   Filter  $filter
+     */
+    public function requireFilter($table, Filter $filter)
+    {
+        parent::requireFilter($table, $filter);
+
+        if ($filter->isExpression()) {
+            $column = $filter->getColumn();
+            if (in_array($column, $this->columnsWithoutCollation) && strpos($column, 'LOWER') !== 0) {
+                $filter->setColumn('LOWER(' . $column . ')');
+                $expression = $filter->getExpression();
+                if (is_array($expression)) {
+                    $filter->setExpression(array_map('strtolower', $expression));
+                } else {
+                    $filter->setExpression(strtolower($expression));
+                }
+            }
+        }
     }
 
     /**
