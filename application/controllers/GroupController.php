@@ -302,8 +302,16 @@ class GroupController extends AuthBackendController
     {
         $users = array();
         foreach ($this->loadUserBackends('Icinga\Data\Selectable') as $backend) {
-            foreach ($backend->select(array('user_name')) as $row) {
-                $users[] = $row;
+            try {
+                foreach ($backend->select(array('user_name')) as $row) {
+                    $users[] = $row;
+                }
+            } catch (Exception $e) {
+                Logger::error($e);
+                Notification::warning(sprintf(
+                    $this->translate('Failed to fetch any users from backend %s. Please check your log'),
+                    $backend->getName()
+                ));
             }
         }
 
