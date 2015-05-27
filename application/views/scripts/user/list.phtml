@@ -22,8 +22,8 @@ if ($backend === null) {
     echo $this->translate('No backend found which is able to list users') . '</div>';
     return;
 } else {
-    $reducible = $backend instanceof Reducible;
     $extensible = $this->hasPermission('config/application/users/add') && $backend instanceof Extensible;
+    $reducible = $this->hasPermission('config/application/users/remove') && $backend instanceof Reducible;
 }
 
 if (count($users) > 0): ?>

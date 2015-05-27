@@ -198,6 +198,7 @@ class UserController extends AuthBackendController
      */
     public function removeAction()
     {
+        $this->assertPermission('config/application/users/remove');
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
 
