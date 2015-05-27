@@ -248,10 +248,15 @@ class UserController extends AuthBackendController
      */
     protected function loadMemberships(User $user)
     {
-        $groups = array();
+        $groups = $alreadySeen = array();
         foreach ($this->loadUserGroupBackends() as $backend) {
             try {
                 foreach ($backend->getMemberships($user) as $groupName) {
+                    if (array_key_exists($groupName, $alreadySeen)) {
+                        continue; // Ignore duplicate memberships
+                    }
+
+                    $alreadySeen[$groupName] = null;
                     $groups[] = (object) array(
                         'group_name'    => $groupName,
                         'backend'       => $backend
