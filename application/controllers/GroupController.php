@@ -165,6 +165,7 @@ class GroupController extends AuthBackendController
      */
     public function addAction()
     {
+        $this->assertPermission('config/application/groups/add');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
         $form = new UserGroupForm();
         $form->setRedirectUrl(Url::fromPath('group/list', array('backend' => $backend->getName())));

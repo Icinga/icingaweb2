@@ -3,7 +3,7 @@
 use Icinga\Data\Extensible;
 use Icinga\Data\Updatable;
 
-$extensible = $backend instanceof Extensible;
+$extensible = $this->hasPermission('config/application/groups/add') && $backend instanceof Extensible;
 
 $editLink = null;
 if ($backend instanceof Updatable) {
