@@ -271,7 +271,7 @@ class ConfigController extends Controller
                     $configForm->remove($authBackend);
                 } catch (InvalidArgumentException $e) {
                     Notification::error($e->getMessage());
-                    return;
+                    return false;
                 }
 
                 if ($configForm->save()) {
