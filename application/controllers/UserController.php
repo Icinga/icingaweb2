@@ -159,6 +159,7 @@ class UserController extends AuthBackendController
      */
     public function addAction()
     {
+        $this->assertPermission('config/application/users/add');
         $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
         $form = new UserForm();
         $form->setRedirectUrl(Url::fromPath('user/list', array('backend' => $backend->getName())));
