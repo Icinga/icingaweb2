@@ -175,6 +175,7 @@ class UserController extends AuthBackendController
      */
     public function editAction()
     {
+        $this->assertPermission('config/application/users/edit');
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Updatable');
 

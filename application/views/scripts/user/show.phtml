@@ -4,7 +4,7 @@ use Icinga\Data\Updatable;
 use Icinga\Data\Reducible;
 
 $editLink = null;
-if ($backend instanceof Updatable) {
+if ($this->hasPermission('config/application/users/edit') && $backend instanceof Updatable) {
     $editLink = $this->qlink(
         null,
         'user/edit',
