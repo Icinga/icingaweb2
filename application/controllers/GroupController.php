@@ -130,7 +130,7 @@ class GroupController extends AuthBackendController
         $this->view->members = $members;
         $this->createShowTabs($backend->getName(), $groupName)->activate('group/show');
 
-        if ($backend instanceof Reducible) {
+        if ($this->hasPermission('config/application/groups/remove') && $backend instanceof Reducible) {
             $removeForm = new Form();
             $removeForm->setUidDisabled();
             $removeForm->setAction(
@@ -206,6 +206,7 @@ class GroupController extends AuthBackendController
      */
     public function removeAction()
     {
+        $this->assertPermission('config/application/groups/remove');
         $groupName = $this->params->getRequired('group');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
 

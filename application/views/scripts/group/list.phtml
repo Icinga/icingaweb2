@@ -22,8 +22,8 @@ if ($backend === null) {
     echo $this->translate('No backend found which is able to list groups') . '</div>';
     return;
 } else {
-    $reducible = $backend instanceof Reducible;
     $extensible = $this->hasPermission('config/application/groups/add') && $backend instanceof Extensible;
+    $reducible = $this->hasPermission('config/application/groups/remove') && $backend instanceof Reducible;
 }
 
 if (count($groups) > 0): ?>
