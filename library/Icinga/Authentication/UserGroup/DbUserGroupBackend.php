@@ -5,6 +5,7 @@ namespace Icinga\Authentication\UserGroup;
 
 use Icinga\Data\Filter\Filter;
 use Icinga\Repository\DbRepository;
+use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
 
 class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterface
@@ -16,21 +17,31 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      */
     protected $queryColumns = array(
         'group' => array(
-            'group'         => 'name COLLATE utf8_general_ci',
-            'group_name'    => 'name',
-            'parent'        => 'parent COLLATE utf8_general_ci',
-            'parent_name'   => 'parent',
-            'created_at'    => 'UNIX_TIMESTAMP(ctime)',
-            'last_modified' => 'UNIX_TIMESTAMP(mtime)'
+            'group_id'      => 'g.id',
+            'group'         => 'g.name COLLATE utf8_general_ci',
+            'group_name'    => 'g.name',
+            'parent'        => 'g.parent COLLATE utf8_general_ci',
+            'parent_name'   => 'g.parent',
+            'created_at'    => 'UNIX_TIMESTAMP(g.ctime)',
+            'last_modified' => 'UNIX_TIMESTAMP(g.mtime)'
         ),
         'group_membership' => array(
-            'group'         => 'group_name COLLATE utf8_general_ci',
-            'group_name',
-            'user'          => 'username COLLATE utf8_general_ci',
-            'user_name'     => 'username',
-            'created_at'    => 'UNIX_TIMESTAMP(ctime)',
-            'last_modified' => 'UNIX_TIMESTAMP(mtime)'
+            'group_id'      => 'gm.group_id',
+            'user'          => 'gm.username COLLATE utf8_general_ci',
+            'user_name'     => 'gm.username',
+            'created_at'    => 'UNIX_TIMESTAMP(gm.ctime)',
+            'last_modified' => 'UNIX_TIMESTAMP(gm.mtime)'
         )
+    );
+
+    /**
+     * The table aliases being applied
+     *
+     * @var array
+     */
+    protected $tableAliases = array(
+        'group'             => 'g',
+        'group_membership'  => 'gm'
     );
 
     /**
@@ -40,10 +51,15 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      */
     protected $statementColumns = array(
         'group' => array(
+            'group_id'      => 'id',
+            'group_name'    => 'name',
+            'parent_name'   => 'parent',
             'created_at'    => 'ctime',
             'last_modified' => 'mtime'
         ),
         'group_membership' => array(
+            'group_id'      => 'group_id',
+            'user_name'     => 'username',
             'created_at'    => 'ctime',
             'last_modified' => 'mtime'
         )
@@ -100,23 +116,19 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      */
     public function getMemberships(User $user)
     {
-        $groupStmt = $this->ds->select()
-            ->from($this->prependTablePrefix('group'), array('name', 'parent'))
-            ->getSelectQuery()
-            ->query();
         $groups = array();
-        foreach ($groupStmt as $group) {
+        foreach ($this->ds->select()->from($this->prependTablePrefix('group'), array('name', 'parent')) as $group) {
+            // Using the raw query here due to the non-existent necessity to join, convert, or...
             $groups[$group->name] = $group->parent;
         }
 
-        $membershipStmt = $this->ds->select() // TODO: Join this table
-            ->from($this->prependTablePrefix('group_membership'), array('group_name'))
-            ->where('username', $user->getUsername())
-            ->getSelectQuery()
-            ->query();
-        $memberships = array();
+        $membershipQuery = $this
+            ->select()
+            ->from('group_membership', array('group_name'))
+            ->where('user_name', $user->getUsername());
 
-        foreach ($membershipStmt as $membership) {
+        $memberships = array();
+        foreach ($membershipQuery as $membership) {
             $memberships[] = $membership->group_name;
             $parent = $groups[$membership->group_name];
             while ($parent !== null) {
@@ -127,5 +139,33 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
         }
 
         return $memberships;
+    }
+
+    /**
+     * Join group into group_membership
+     *
+     * @param   RepositoryQuery     $query
+     */
+    protected function joinGroup(RepositoryQuery $query)
+    {
+        $query->getQuery()->join(
+            $this->requireTable('group'),
+            'gm.group_id = g.id',
+            array()
+        );
+    }
+
+    /**
+     * Join group_membership into group
+     *
+     * @param   RepositoryQuery     $query
+     */
+    protected function joinGroupMembership(RepositoryQuery $query)
+    {
+        $query->getQuery()->join(
+            $this->requireTable('group_membership'),
+            'g.id = gm.group_id',
+            array()
+        );
     }
 }
