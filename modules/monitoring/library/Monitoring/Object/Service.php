@@ -7,7 +7,7 @@ use InvalidArgumentException;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
 /**
- * A Icinga service
+ * An Icinga service
  */
 class Service extends MonitoredObject
 {

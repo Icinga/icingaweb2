@@ -7,7 +7,7 @@ use InvalidArgumentException;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
 /**
- * A Icinga host
+ * An Icinga host
  */
 class Host extends MonitoredObject
 {
