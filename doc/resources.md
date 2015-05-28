@@ -73,7 +73,7 @@ Directive           | Description
 --------------------|------------
 **type**            | `ssh`
 **user**            | The username to use when connecting to the server.
-**identity_key**    | The path to the private key of the user.
+**private_key**    | The path to the private key of the user.
 
 **Example:**
 
@@ -81,7 +81,7 @@ Directive           | Description
 [ssh]
 type                = "ssh"
 user                = "ssh-user"
-identity_key        = "/etc/icingaweb2/ssh/ssh-user"
+private_key        = "/etc/icingaweb2/ssh/ssh-user"
 ````
 
 ### <a id="resources-configuration-livestatus"></a> Livestatus

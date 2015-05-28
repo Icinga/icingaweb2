@@ -48,7 +48,7 @@ And the associated ssh resource:
     [ssh]
     type                = "ssh"
     user                = "ssh-user"
-    identity_key        = "/etc/icingaweb2/ssh/ssh-user"
+    private_key        = "/etc/icingaweb2/ssh/ssh-user"
 
 
 
