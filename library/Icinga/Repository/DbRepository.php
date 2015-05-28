@@ -17,6 +17,7 @@ use Icinga\Exception\StatementException;
  *
  * Additionally provided features:
  * <ul>
+ *  <li>Support for table aliases</li>
  *  <li>Automatic table prefix handling</li>
  *  <li>Insert, update and delete capabilities</li>
  *  <li>Differentiation between statement and query columns</li>
@@ -30,6 +31,17 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * @var DbConnection
      */
     protected $ds;
+
+    /**
+     * The table aliases being applied
+     *
+     * This must be initialized by repositories which are going to make use of table aliases. Every table for which
+     * aliased columns are provided must be defined in this array using its name as key and the alias being used as
+     * value. Failure to do so will result in invalid queries.
+     *
+     * @var array
+     */
+    protected $tableAliases;
 
     /**
      * The statement columns being provided
@@ -112,6 +124,32 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     }
 
     /**
+     * Return the table aliases to be applied
+     *
+     * Calls $this->initializeTableAliases() in case $this->tableAliases is null.
+     *
+     * @return  array
+     */
+    public function getTableAliases()
+    {
+        if ($this->tableAliases === null) {
+            $this->tableAliases = $this->initializeTableAliases();
+        }
+
+        return $this->tableAliases;
+    }
+
+    /**
+     * Overwrite this in your repository implementation in case you need to initialize the table aliases lazily
+     *
+     * @return  array
+     */
+    protected function initializeTableAliases()
+    {
+        return array();
+    }
+
+    /**
      * Remove each COLLATE SQL-instruction from all given query columns
      *
      * @param   array   $queryColumns
@@ -166,9 +204,11 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Remove the datasource's prefix from the given table name and return the remaining part
      *
-     * @param   mixed   $table
+     * @param   array|string    $table
      *
-     * @return  mixed
+     * @return  array|string
+     *
+     * @throws  IcingaException         In case $table is not of a supported type
      */
     protected function removeTablePrefix($table)
     {
@@ -192,6 +232,45 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
         }
 
         return $table;
+    }
+
+    /**
+     * Return the given table with its alias being applied
+     *
+     * @param   array|string    $table
+     *
+     * @return  array|string
+     */
+    protected function applyTableAlias($table)
+    {
+        $tableAliases = $this->getTableAliases();
+        if (is_array($table) || !isset($tableAliases[($nonPrefixedTable = $this->removeTablePrefix($table))])) {
+            return $table;
+        }
+
+        return array($tableAliases[$nonPrefixedTable] => $table);
+    }
+
+    /**
+     * Return the given table with its alias being cleared
+     *
+     * @param   array|string    $table
+     *
+     * @return  string
+     *
+     * @throws  IcingaException         In case $table is not of a supported type
+     */
+    protected function clearTableAlias($table)
+    {
+        if (is_string($table)) {
+            return $table;
+        }
+
+        if (is_array($table)) {
+            return reset($table);
+        }
+
+        throw new IcingaException('Table alias handling for type "%s" is not supported', type($table));
     }
 
     /**
@@ -323,11 +402,13 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Validate that the requested table exists
      *
+     * This will prepend the datasource's table prefix and will apply the table's alias, if any.
+     *
      * @param   string              $table      The table to validate
      * @param   RepositoryQuery     $query      An optional query to pass as context
      *                                          (unused by the base implementation)
      *
-     * @return  string              The table's name, with the table prefix being prepended
+     * @return  array|string
      *
      * @throws  ProgrammingError                In case the given table does not exist
      */
@@ -338,7 +419,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             $table = parent::requireTable($table);
         }
 
-        return $this->prependTablePrefix($table);
+        return $this->prependTablePrefix($this->applyTableAlias($table));
     }
 
     /**
@@ -373,7 +454,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Return this repository's query columns of the given table mapped to their respective aliases
      *
-     * @param   mixed   $table
+     * @param   array|string    $table
      *
      * @return  array
      *
@@ -381,61 +462,48 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function requireAllQueryColumns($table)
     {
-        if (is_array($table)) {
-            $table = array_shift($table);
-        }
-
-        return parent::requireAllQueryColumns($this->removeTablePrefix($table));
+        return parent::requireAllQueryColumns($this->removeTablePrefix($this->clearTableAlias($table)));
     }
 
     /**
      * Return the query column name for the given alias or null in case the alias does not exist
      *
-     * @param   mixed   $table
-     * @param   string  $alias
+     * @param   array|string    $table
+     * @param   string          $alias
      *
      * @return  string|null
      */
     public function resolveQueryColumnAlias($table, $alias)
     {
-        if (is_array($table)) {
-            $table = array_shift($table);
-        }
-
-        return parent::resolveQueryColumnAlias($this->removeTablePrefix($table), $alias);
+        return parent::resolveQueryColumnAlias($this->removeTablePrefix($this->clearTableAlias($table)), $alias);
     }
 
     /**
      * Return whether the given query column name or alias is available in the given table
      *
-     * @param   mixed   $table
-     * @param   string  $column
+     * @param   array|string    $table
+     * @param   string          $column
      *
      * @return  bool
      */
     public function validateQueryColumnAssociation($table, $column)
     {
-        if (is_array($table)) {
-            $table = array_shift($table);
-        }
-
-        return parent::validateQueryColumnAssociation($this->removeTablePrefix($table), $column);
+        return parent::validateQueryColumnAssociation(
+            $this->removeTablePrefix($this->clearTableAlias($table)),
+            $column
+        );
     }
 
     /**
      * Return the statement column name for the given alias or null in case the alias does not exist
      *
-     * @param   mixed   $table
+     * @param   string  $table
      * @param   string  $alias
      *
      * @return  string|null
      */
     public function resolveStatementColumnAlias($table, $alias)
     {
-        if (is_array($table)) {
-            $table = array_shift($table);
-        }
-
         $statementColumnMap = $this->getStatementColumnMap();
         if (isset($statementColumnMap[$alias])) {
             return $statementColumnMap[$alias];
@@ -450,17 +518,13 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Return whether the given alias or statement column name is available in the given table
      *
-     * @param   mixed   $table
+     * @param   string  $table
      * @param   string  $alias
      *
      * @return  bool
      */
     public function validateStatementColumnAssociation($table, $alias)
     {
-        if (is_array($table)) {
-            $table = array_shift($table);
-        }
-
         $statementTableMap = $this->getStatementTableMap();
         if (isset($statementTableMap[$alias])) {
             return $statementTableMap[$alias] === $this->removeTablePrefix($table);
@@ -473,7 +537,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Return whether the given column name or alias of the given table is a valid statement column
      *
-     * @param   mixed   $table  The table where to look for the column or alias
+     * @param   string  $table  The table where to look for the column or alias
      * @param   string  $name   The column name or alias to check
      *
      * @return  bool
@@ -493,7 +557,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Validate that the given column is a valid statement column and return it or the actual name if it's an alias
      *
-     * @param   mixed   $table      The table for which to require the column
+     * @param   string  $table      The table for which to require the column
      * @param   string  $name       The name or alias of the column to validate
      *
      * @return  string              The given column's name

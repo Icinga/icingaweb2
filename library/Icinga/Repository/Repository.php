@@ -48,7 +48,7 @@ abstract class Repository implements Selectable
      *
      * This will be automatically set to the first key of $queryColumns if not explicitly set.
      *
-     * @var mixed
+     * @var string
      */
     protected $baseTable;
 
@@ -196,7 +196,7 @@ abstract class Repository implements Selectable
     /**
      * Return the base table name this repository is responsible for
      *
-     * @return  mixed
+     * @return  string
      *
      * @throws  ProgrammingError    In case no base table name has been set and
      *                               $this->queryColumns does not provide one either
