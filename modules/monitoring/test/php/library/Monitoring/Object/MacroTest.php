@@ -35,7 +35,7 @@ class MacroTest extends BaseTestCase
         $this->assertEquals(Macro::resolveMacros('$SERVICEDESC$', $svcMock), $svcMock->service_description);
         $this->assertEquals(Macro::resolveMacros('$host.name$', $svcMock), $svcMock->host_name);
         $this->assertEquals(Macro::resolveMacros('$host.address$', $svcMock), $svcMock->host_address);
-        $this->assertEquals(Macro::resolveMacros('$service.description', $svcMock), $svcMock->service_description);
+        $this->assertEquals(Macro::resolveMacros('$service.description$', $svcMock), $svcMock->service_description);
     }
 
     public function testCustomvars()
