@@ -77,10 +77,8 @@ class RepositoryQuery implements QueryInterface, Iterator
     public function from($target, array $columns = null)
     {
         $target = $this->repository->requireTable($target, $this);
-        $this->query = $this->repository
-            ->getDataSource()
-            ->select()
-            ->from($target, $this->prepareQueryColumns($target, $columns));
+        $this->query = $this->repository->getDataSource()->select()->from($target);
+        $this->query->columns($this->prepareQueryColumns($target, $columns));
         $this->target = $target;
         return $this;
     }
