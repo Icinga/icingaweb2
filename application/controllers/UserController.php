@@ -4,6 +4,7 @@
 use \Exception;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Config\User\CreateMembershipForm;
 use Icinga\Forms\Config\User\UserForm;
 use Icinga\Data\DataArray\ArrayDatasource;
@@ -185,15 +186,15 @@ class UserController extends AuthBackendController
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Updatable');
 
-        $row = $backend->select(array('user_name', 'is_active'))->where('user_name', $userName)->fetchRow();
-        if ($row === false) {
-            $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
-        }
-
         $form = new UserForm();
         $form->setRedirectUrl(Url::fromPath('user/show', array('backend' => $backend->getName(), 'user' => $userName)));
         $form->setRepository($backend);
-        $form->edit($userName, get_object_vars($row))->handleRequest();
+
+        try {
+            $form->edit($userName)->handleRequest();
+        } catch (NotFoundError $_) {
+            $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
+        }
 
         $this->view->form = $form;
         $this->render('form');
@@ -208,14 +209,15 @@ class UserController extends AuthBackendController
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
 
-        if ($backend->select()->where('user_name', $userName)->count() === 0) {
-            $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
-        }
-
         $form = new UserForm();
         $form->setRedirectUrl(Url::fromPath('user/list', array('backend' => $backend->getName())));
         $form->setRepository($backend);
-        $form->remove($userName)->handleRequest();
+
+        try {
+            $form->remove($userName)->handleRequest();
+        } catch (NotFoundError $_) {
+            $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
+        }
 
         $this->view->form = $form;
         $this->render('form');
