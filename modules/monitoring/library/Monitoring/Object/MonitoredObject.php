@@ -579,7 +579,20 @@ abstract class MonitoredObject implements Filterable
     public function getNotesUrls() {}
 
     /**
+     * Get all action urls configured for this monitored object
+     *
+     * @return array    All note urls as a string
+     */
+    public function getActionUrls()
+    {
+        return MonitoredObject::parseAttributeUrls($this->action_url);
+    }
+
+    /**
      * Parse the content of the action_url or notes_url attributes
+     *
+     * Find all occurences of http links, separated by whitespaces and quoted
+     * by single or double-ticks.
      *
      * @link http://docs.icinga.org/latest/de/objectdefinitions.html
      *
