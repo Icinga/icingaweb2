@@ -12,7 +12,7 @@ function urlAddFilterOptional($url, $filter, $optional) {
     return $url->setQueryString($f->toQueryString());
 }
 
-$selfUrl = Url::fromPath('monitoring/show/services', array('host' => $object->host_name));
+$selfUrl = Url::fromPath('monitoring/list/services', array('host' => $object->host_name));
 $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
 ?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
 <?php if ($object->stats->services_total): ?>
@@ -27,15 +27,18 @@ $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
     ),
     $selfUrl,
     null,
-    array('title' => sprintf(
-        $this->translatePlural(
-            'List all %u service on host %s',
-            'List all %u services on host %s',
-            $object->stats->services_total
+    array(
+        'title' => sprintf(
+            $this->translatePlural(
+                'List all %u service on host %s',
+                'List all %u services on host %s',
+                $object->stats->services_total
+            ),
+            $object->stats->services_total,
+            $object->host_name
         ),
-        $object->stats->services_total,
-        $object->host_name
-    ))
+        'data-base-target' => '_next'
+    )
 ); ?>
 <?php else: ?>
 <?= $this->translate('No services configured on this host'); ?>
