@@ -7,7 +7,7 @@ use InvalidArgumentException;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
 /**
- * A Icinga service
+ * An Icinga service
  */
 class Service extends MonitoredObject
 {
@@ -202,7 +202,9 @@ class Service extends MonitoredObject
 
     public function getNotesUrls()
     {
-        return MonitoredObject::parseAttributeUrls($this->service_notes_url);
+        return $this->resolveAllStrings(
+            MonitoredObject::parseAttributeUrls($this->service_notes_url)
+        );
     }
 
     public function getNotes()

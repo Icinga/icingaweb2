@@ -7,7 +7,7 @@ use InvalidArgumentException;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
 /**
- * A Icinga host
+ * An Icinga host
  */
 class Host extends MonitoredObject
 {
@@ -192,7 +192,9 @@ class Host extends MonitoredObject
 
     public function getNotesUrls()
     {
-        return MonitoredObject::parseAttributeUrls($this->host_notes_url);
+        return $this->resolveAllStrings(
+            MonitoredObject::parseAttributeUrls($this->host_notes_url)
+        );
     }
 
     public function getNotes()
