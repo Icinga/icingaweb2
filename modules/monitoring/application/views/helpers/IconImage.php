@@ -28,7 +28,7 @@ class Zend_View_Helper_IconImage extends Zend_View_Helper_Abstract
     {
         if ($object->host_icon_image && ! preg_match('/[\'"]/', $object->host_icon_image)) {
             return $this->view->img(
-                'img/icons/' . Macro::resolveMacro($object->host_icon_image, $object),
+                'img/icons/' . Macro::resolveMacros($object->host_icon_image, $object),
                 null,
                 array(
                     'alt' => $object->host_icon_image_alt,
