@@ -6,6 +6,7 @@ use Icinga\Application\Logger;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\Reducible;
 use Icinga\Data\Filter\Filter;
+use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Config\UserGroup\AddMemberForm;
 use Icinga\Forms\Config\UserGroup\UserGroupForm;
 use Icinga\Web\Controller\AuthBackendController;
@@ -185,17 +186,17 @@ class GroupController extends AuthBackendController
         $groupName = $this->params->getRequired('group');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Updatable');
 
-        $row = $backend->select(array('group_name'))->where('group_name', $groupName)->fetchRow();
-        if ($row === false) {
-            $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
-        }
-
         $form = new UserGroupForm();
         $form->setRedirectUrl(
             Url::fromPath('group/show', array('backend' => $backend->getName(), 'group' => $groupName))
         );
         $form->setRepository($backend);
-        $form->edit($groupName, get_object_vars($row))->handleRequest();
+
+        try {
+            $form->edit($groupName)->handleRequest();
+        } catch (NotFoundError $_) {
+            $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
+        }
 
         $this->view->form = $form;
         $this->render('form');
@@ -210,14 +211,15 @@ class GroupController extends AuthBackendController
         $groupName = $this->params->getRequired('group');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
 
-        if ($backend->select()->where('group_name', $groupName)->count() === 0) {
-            $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
-        }
-
         $form = new UserGroupForm();
         $form->setRedirectUrl(Url::fromPath('group/list', array('backend' => $backend->getName())));
         $form->setRepository($backend);
-        $form->remove($groupName)->handleRequest();
+
+        try {
+            $form->remove($groupName)->handleRequest();
+        } catch (NotFoundError $_) {
+            $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
+        }
 
         $this->view->form = $form;
         $this->render('form');
