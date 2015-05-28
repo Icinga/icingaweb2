@@ -11,6 +11,7 @@ use Icinga\Data\Updatable;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\StatementException;
+use Icinga\Util\String;
 
 /**
  * Abstract base class for concrete database repository implementations
@@ -21,6 +22,7 @@ use Icinga\Exception\StatementException;
  *  <li>Automatic table prefix handling</li>
  *  <li>Insert, update and delete capabilities</li>
  *  <li>Differentiation between statement and query columns</li>
+ *  <li>Capability to join additional tables depending on the columns being selected or used in a filter</li>
  * </ul>
  */
 abstract class DbRepository extends Repository implements Extensible, Updatable, Reducible
@@ -495,6 +497,54 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     }
 
     /**
+     * Validate that the given column is a valid query target and return it or the actual name if it's an alias
+     *
+     * Attempts to join the given column from a different table if its association to the given table cannot be
+     * verified.
+     *
+     * @param   string              $table  The table where to look for the column or alias
+     * @param   string              $name   The name or alias of the column to validate
+     * @param   RepositoryQuery     $query  An optional query to pass as context,
+     *                                      if not given no join will be attempted
+     *
+     * @return  string                      The given column's name
+     *
+     * @throws  QueryException              In case the given column is not a valid query column
+     */
+    public function requireQueryColumn($table, $name, RepositoryQuery $query = null)
+    {
+        if ($query === null || $this->validateQueryColumnAssociation($table, $name)) {
+            return parent::requireQueryColumn($table, $name, $query);
+        }
+
+        return $this->joinColumn($name, $table, $query);
+    }
+
+    /**
+     * Validate that the given column is a valid filter target and return it or the actual name if it's an alias
+     *
+     * Attempts to join the given column from a different table if its association to the given table cannot be
+     * verified.
+     *
+     * @param   string              $table  The table where to look for the column or alias
+     * @param   string              $name   The name or alias of the column to validate
+     * @param   RepositoryQuery     $query  An optional query to pass as context,
+     *                                      if not given no join will be attempted
+     *
+     * @return  string                      The given column's name
+     *
+     * @throws  QueryException              In case the given column is not a valid filter column
+     */
+    public function requireFilterColumn($table, $name, RepositoryQuery $query = null)
+    {
+        if ($query === null || $this->validateQueryColumnAssociation($table, $name)) {
+            return parent::requireFilterColumn($table, $name, $query);
+        }
+
+        return $this->joinColumn($name, $table, $query);
+    }
+
+    /**
      * Return the statement column name for the given alias or null in case the alias does not exist
      *
      * @param   string  $table
@@ -575,5 +625,76 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
         }
 
         return $column;
+    }
+
+    /**
+     * Join alias or column $name into $table using $query
+     *
+     * Attempts to find a valid table for the given alias or column name and a method labelled join<TableName>
+     * to process the actual join logic. If neither of those is found, ProgrammingError will be thrown.
+     * The method is called with the same parameters but in reversed order.
+     *
+     * @param   string              $name       The alias or column name to join into $target
+     * @param   array|string        $target     The table to join $name into
+     * @param   RepositoryQUery     $query      The query to apply the JOIN-clause on
+     *
+     * @return  string                          The resolved alias or $name
+     *
+     * @throws  ProgrammingError                In case no valid table or join<TableName>-method is found
+     */
+    public function joinColumn($name, $target, RepositoryQuery $query)
+    {
+        $tableName = $this->findTableName($name);
+        if (! $tableName) {
+            throw new ProgrammingError(
+                'Unable to find a valid table for column "%s" to join into "%s"',
+                $name,
+                $this->removeTablePrefix($this->clearTableAlias($target))
+            );
+        }
+
+        $column = $this->resolveQueryColumnAlias($tableName, $name);
+
+        $prefixedTableName = $this->prependTablePrefix($tableName);
+        if ($query->getQuery()->hasJoinedTable($prefixedTableName)) {
+            return $column;
+        }
+
+        $joinMethod = 'join' . String::cname($tableName);
+        if (! method_exists($this, $joinMethod)) {
+            throw new ProgrammingError(
+                'Unable to join table "%s" into "%s". Method "%s" not found',
+                $tableName,
+                $this->removeTablePrefix($this->clearTableAlias($target)),
+                $joinMethod
+            );
+        }
+
+        $this->$joinMethod($query, $target, $name);
+        return $column;
+    }
+
+    /**
+     * Return the table name for the given alias or column name
+     *
+     * @param   string  $column
+     *
+     * @return  string|null         null in case no table is found
+     */
+    protected function findTableName($column)
+    {
+        $aliasTableMap = $this->getAliasTableMap();
+        if (isset($aliasTableMap[$column])) {
+            return $aliasTableMap[$column];
+        }
+
+        foreach ($aliasTableMap as $alias => $table) {
+            if (strpos($alias, '.') !== false) {
+                list($_, $alias) = split('.', $column, 2);
+                if ($alias === $column) {
+                    return $table;
+                }
+            }
+        }
     }
 }
