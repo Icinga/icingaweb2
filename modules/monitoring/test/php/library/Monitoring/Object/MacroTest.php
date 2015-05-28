@@ -9,7 +9,7 @@ use Icinga\Module\Monitoring\Object\Macro;
 
 require_once realpath(BaseTestCase::$moduleDir . '/monitoring/library/Monitoring/Object/Macro.php');
 
-class ResolveMacrosTest extends BaseTestCase
+class MacroTest extends BaseTestCase
 {
     public function testHostMacros()
     {
