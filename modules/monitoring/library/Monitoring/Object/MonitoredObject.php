@@ -569,14 +569,14 @@ abstract class MonitoredObject implements Filterable
      *
      * @return string   The notes as a string
      */
-    public function getNotes() {}
+    public abstract function getNotes();
 
     /**
      * Get all note urls configured for this monitored object
      *
      * @return array    All note urls as a string
      */
-    public function getNotesUrls() {}
+    public abstract function getNotesUrls();
 
     /**
      * Get all action urls configured for this monitored object
@@ -585,7 +585,23 @@ abstract class MonitoredObject implements Filterable
      */
     public function getActionUrls()
     {
-        return MonitoredObject::parseAttributeUrls($this->action_url);
+        return $this->resolveAllStrings(
+            MonitoredObject::parseAttributeUrls($this->action_url)
+        );
+    }
+
+    /**
+     * Resolve macros in all given strings in the current object context
+     *
+     * @param   array   $strs   An array of urls as string
+     * @return  type
+     */
+    protected function resolveAllStrings(array $strs)
+    {
+        foreach ($strs as $i => $str) {
+            $strs[$i] = Macro::resolveMacros($str, $this);
+        }
+        return $strs;
     }
 
     /**

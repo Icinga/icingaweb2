@@ -202,7 +202,9 @@ class Service extends MonitoredObject
 
     public function getNotesUrls()
     {
-        return MonitoredObject::parseAttributeUrls($this->service_notes_url);
+        return $this->resolveAllStrings(
+            MonitoredObject::parseAttributeUrls($this->service_notes_url)
+        );
     }
 
     public function getNotes()

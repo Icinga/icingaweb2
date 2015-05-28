@@ -1,16 +1,11 @@
 <?php
-use Icinga\Module\Monitoring\Object\MonitoredObject;
 
 // add warning to links that open in new tabs to improve accessibility, as recommended by WCAG20 G201
 $newTabInfo = sprintf('<span class="info-box display-on-hover"> %s </span>', $this->translate('opens in new window'));
 
-$links = MonitoredObject::parseAttributeUrls($object->action_url);
+$links = $object->getActionUrls();
 foreach ($links as $i => $link) {
-    $links[$i] = sprintf(
-        '<a href="%s" target="_blank">%s ' . $newTabInfo . '</a>',
-        $this->resolveMacros($object->action_url, $object),
-        'Action'
-    );
+    $links[$i] = sprintf('<a href="%s" target="_blank">%s ' . $newTabInfo . '</a>', $link, 'Action');
 }
 
 if (isset($this->actions)) {
