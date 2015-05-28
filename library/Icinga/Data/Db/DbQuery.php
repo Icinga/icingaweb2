@@ -8,7 +8,7 @@ use Icinga\Data\Filter\FilterChain;
 use Icinga\Data\Filter\FilterOr;
 use Icinga\Data\Filter\FilterAnd;
 use Icinga\Data\Filter\FilterNot;
-use Icinga\Exception\IcingaException;
+use Icinga\Exception\QueryException;
 use Zend_Db_Select;
 
 /**
@@ -66,12 +66,20 @@ class DbQuery extends SimpleQuery
     protected function init()
     {
         $this->db = $this->ds->getDbAdapter();
+        $this->select = $this->db->select();
         parent::init();
     }
 
     public function setUseSubqueryCount($useSubqueryCount = true)
     {
         $this->useSubqueryCount = $useSubqueryCount;
+        return $this;
+    }
+
+    public function from($target, array $fields = null)
+    {
+        parent::from($target, $fields);
+        $this->select->from($this->target, array());
         return $this;
     }
 
@@ -83,9 +91,6 @@ class DbQuery extends SimpleQuery
 
     protected function dbSelect()
     {
-        if ($this->select === null) {
-            $this->select = $this->db->select()->from($this->target, array());
-        }
         return clone $this->select;
     }
 
@@ -151,7 +156,7 @@ class DbQuery extends SimpleQuery
                 $op = ' AND ';
                 $str .= ' NOT ';
             } else {
-                throw new IcingaException(
+                throw new QueryException(
                     'Cannot render filter: %s',
                     $filter
                 );
@@ -212,7 +217,7 @@ class DbQuery extends SimpleQuery
         if (! $value) {
             /*
             NOTE: It's too late to throw exceptions, we might finish in __toString
-            throw new IcingaException(sprintf(
+            throw new QueryException(sprintf(
                 '"%s" is not a valid time expression',
                 $value
             ));
@@ -318,9 +323,7 @@ class DbQuery extends SimpleQuery
 
     public function __clone()
     {
-        if ($this->select) {
-            $this->select = clone $this->select;
-        }
+        $this->select = clone $this->select;
     }
 
     /**
