@@ -323,13 +323,15 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Validate that the requested table exists
      *
-     * @param   string  $table
+     * @param   string              $table      The table to validate
+     * @param   RepositoryQuery     $query      An optional query to pass as context
+     *                                          (unused by the base implementation)
      *
      * @return  string              The table's name, with the table prefix being prepended
      *
-     * @throws  ProgrammingError    In case the given table does not exist
+     * @throws  ProgrammingError                In case the given table does not exist
      */
-    public function requireTable($table)
+    public function requireTable($table, RepositoryQuery $query = null)
     {
         $statementColumns = $this->getStatementColumns();
         if (! isset($statementColumns[$table])) {
@@ -345,12 +347,14 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * In case of a PostgreSQL connection, this applies LOWER() on the column and strtolower()
      * on the value if a COLLATE SQL-instruction is part of the resolved column.
      *
-     * @param   string  $table
-     * @param   Filter  $filter
+     * @param   string              $table      The table being filtered
+     * @param   Filter              $filter     The filter to recurse
+     * @param   RepositoryQuery     $query      An optional query to pass as context
+     *                                          (Directly passed through to $this->requireFilterColumn)
      */
-    public function requireFilter($table, Filter $filter)
+    public function requireFilter($table, Filter $filter, RepositoryQuery $query = null)
     {
-        parent::requireFilter($table, $filter);
+        parent::requireFilter($table, $filter, $query);
 
         if ($filter->isExpression()) {
             $column = $filter->getColumn();

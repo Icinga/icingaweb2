@@ -592,13 +592,15 @@ abstract class Repository implements Selectable
     /**
      * Validate that the requested table exists
      *
-     * @param   string  $table
+     * @param   string              $table      The table to validate
+     * @param   RepositoryQuery     $query      An optional query to pass as context
+     *                                          (unused by the base implementation)
      *
-     * @return  string              The table's name, may differ from the given one
+     * @return  string                          The table's name, may differ from the given one
      *
-     * @throws  ProgrammingError    In case the given table does not exist
+     * @throws  ProgrammingError                In case the given table does not exist
      */
-    public function requireTable($table)
+    public function requireTable($table, RepositoryQuery $query = null)
     {
         $queryColumns = $this->getQueryColumns();
         if (! isset($queryColumns[$table])) {
@@ -611,18 +613,20 @@ abstract class Repository implements Selectable
     /**
      * Recurse the given filter, require each column for the given table and convert all values
      *
-     * @param   string  $table
-     * @param   Filter  $filter
+     * @param   string              $table      The table being filtered
+     * @param   Filter              $filter     The filter to recurse
+     * @param   RepositoryQuery     $query      An optional query to pass as context
+     *                                          (Directly passed through to $this->requireFilterColumn)
      */
-    public function requireFilter($table, Filter $filter)
+    public function requireFilter($table, Filter $filter, RepositoryQuery $query = null)
     {
         if ($filter->isExpression()) {
             $column = $filter->getColumn();
-            $filter->setColumn($this->requireFilterColumn($table, $column));
+            $filter->setColumn($this->requireFilterColumn($table, $column, $query));
             $filter->setExpression($this->persistColumn($column, $filter->getExpression()));
         } elseif ($filter->isChain()) {
             foreach ($filter->filters() as $chainOrExpression) {
-                $this->requireFilter($table, $chainOrExpression);
+                $this->requireFilter($table, $chainOrExpression, $query);
             }
         }
     }
@@ -707,14 +711,15 @@ abstract class Repository implements Selectable
     /**
      * Validate that the given column is a valid query target and return it or the actual name if it's an alias
      *
-     * @param   string  $table      The table where to look for the column or alias
-     * @param   string  $name       The name or alias of the column to validate
+     * @param   string              $table  The table where to look for the column or alias
+     * @param   string              $name   The name or alias of the column to validate
+     * @param   RepositoryQuery     $query  An optional query to pass as context (unused by the base implementation)
      *
-     * @return  string              The given column's name
+     * @return  string                      The given column's name
      *
-     * @throws  QueryException      In case the given column is not a valid query column
+     * @throws  QueryException              In case the given column is not a valid query column
      */
-    public function requireQueryColumn($table, $name)
+    public function requireQueryColumn($table, $name, RepositoryQuery $query = null)
     {
         if (in_array($name, $this->getFilterColumns())) {
             throw new QueryException(t('Filter column "%s" cannot be queried'), $name);
@@ -748,14 +753,15 @@ abstract class Repository implements Selectable
     /**
      * Validate that the given column is a valid filter target and return it or the actual name if it's an alias
      *
-     * @param   string  $table      The table where to look for the column or alias
-     * @param   string  $name       The name or alias of the column to validate
+     * @param   string              $table  The table where to look for the column or alias
+     * @param   string              $name   The name or alias of the column to validate
+     * @param   RepositoryQuery     $query  An optional query to pass as context (unused by the base implementation)
      *
-     * @return  string              The given column's name
+     * @return  string                      The given column's name
      *
-     * @throws  QueryException      In case the given column is not a valid filter column
+     * @throws  QueryException              In case the given column is not a valid filter column
      */
-    public function requireFilterColumn($table, $name)
+    public function requireFilterColumn($table, $name, RepositoryQuery $query = null)
     {
         if (($column = $this->resolveQueryColumnAlias($table, $name)) === null) {
             throw new QueryException(t('Filter column "%s" not found'), $name);

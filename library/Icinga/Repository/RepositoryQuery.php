@@ -76,7 +76,7 @@ class RepositoryQuery implements QueryInterface, Iterator
      */
     public function from($target, array $columns = null)
     {
-        $target = $this->repository->requireTable($target);
+        $target = $this->repository->requireTable($target, $this);
         $this->query = $this->repository
             ->getDataSource()
             ->select()
@@ -127,7 +127,7 @@ class RepositoryQuery implements QueryInterface, Iterator
         } else {
             $columns = array();
             foreach ($desiredColumns as $customAlias => $columnAlias) {
-                $resolvedColumn = $this->repository->requireQueryColumn($target, $columnAlias);
+                $resolvedColumn = $this->repository->requireQueryColumn($target, $columnAlias, $this);
                 if ($resolvedColumn !== $columnAlias) {
                     $columns[is_string($customAlias) ? $customAlias : $columnAlias] = $resolvedColumn;
                 } elseif (is_string($customAlias)) {
@@ -154,7 +154,7 @@ class RepositoryQuery implements QueryInterface, Iterator
     public function where($column, $value = null)
     {
         $this->query->where(
-            $this->repository->requireFilterColumn($this->target, $column),
+            $this->repository->requireFilterColumn($this->target, $column, $this),
             $this->repository->persistColumn($column, $value)
         );
         return $this;
@@ -186,7 +186,7 @@ class RepositoryQuery implements QueryInterface, Iterator
     public function setFilter(Filter $filter)
     {
         $filter = clone $filter;
-        $this->repository->requireFilter($this->target, $filter);
+        $this->repository->requireFilter($this->target, $filter, $this);
         $this->query->setFilter($filter);
         return $this;
     }
@@ -203,7 +203,7 @@ class RepositoryQuery implements QueryInterface, Iterator
     public function addFilter(Filter $filter)
     {
         $filter = clone $filter;
-        $this->repository->requireFilter($this->target, $filter);
+        $this->repository->requireFilter($this->target, $filter, $this);
         $this->query->addFilter($filter);
         return $this;
     }
@@ -268,7 +268,7 @@ class RepositoryQuery implements QueryInterface, Iterator
 
             try {
                 $this->query->order(
-                    $this->repository->requireFilterColumn($this->target, $column),
+                    $this->repository->requireFilterColumn($this->target, $column, $this),
                     $specificDirection ?: $baseDirection
                     // I would have liked the following solution, but hey, a coder should be allowed to produce crap...
                     // $specificDirection && (! $direction || $column !== $field) ? $specificDirection : $baseDirection
