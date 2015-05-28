@@ -78,20 +78,6 @@ class Monitoring_ShowController extends Controller
         $this->setupPaginationControl($this->view->history, 50);
     }
 
-    public function servicesAction()
-    {
-        $this->setAutorefreshInterval(15);
-        $this->getTabs()->activate('services');
-        $this->_setParam('service', '');
-        // TODO: This used to be a hack and still is. Modifying query string here.
-        $_SERVER['QUERY_STRING'] = (string) $this->params->without('service')->set('limit', '');
-        $this->view->services = $this->view->action('services', 'list', 'monitoring', array(
-            'view'  => 'compact',
-            'sort'  => 'service_description',
-        ));
-        $this->fetchHostStats();
-    }
-
     protected function fetchHostStats()
     {
         $this->view->stats = $this->backend->select()->from('statusSummary', array(
