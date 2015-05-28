@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Command\Transport;
 
 use Icinga\Application\Logger;
+use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Monitoring\Command\Exception\TransportException;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
@@ -43,6 +44,13 @@ class RemoteCommandFile implements CommandTransportInterface
      * @var string
      */
     protected $user;
+
+    /**
+     * Path to the identity (private key) file for the key-based authentication
+     *
+     * @var string
+     */
+    protected $identityKey;
 
     /**
      * Path to the Icinga command file on the remote host
@@ -138,6 +146,55 @@ class RemoteCommandFile implements CommandTransportInterface
     }
 
     /**
+     * Set the path to the identity file
+     *
+     * @param string $identityKey
+     *
+     * @return $this
+     */
+    public function setIdentityKey($identityKey)
+    {
+        $this->identityKey = (string) $identityKey;
+        return $this;
+    }
+
+    /**
+     * Get the path to the identity path
+     *
+     * @return string
+     */
+    public function getIdentityKey()
+    {
+        return $this->identityKey;
+    }
+
+    /**
+     * Use a given resource to set the user and the key
+     *
+     * @param string
+     *
+     * @throws ConfigurationError
+     */
+    public function setResource($resource = null)
+    {
+        $config = ResourceFactory::getResourceConfig($resource);
+
+        if (! isset($config->user)) {
+            throw new ConfigurationError(
+                t("Can't send external Icinga Command. Remote user is missing")
+            );
+        }
+        if (! isset($config->identity_key)) {
+            throw new ConfigurationError(
+                t("Can't send external Icinga Command. The identity key for the remote user is missing")
+            );
+        }
+
+        $this->setUser($config->user);
+        $this->setIdentityKey($config->identity_key);
+    }
+
+    /**
      * Set the path to the Icinga command file on the remote host
      *
      * @param   string $path
@@ -191,6 +248,9 @@ class RemoteCommandFile implements CommandTransportInterface
         // -o BatchMode=yes for disabling interactive authentication methods
         if (isset($this->user)) {
             $ssh .= sprintf(' -l %s', escapeshellarg($this->user));
+        }
+        if (isset($this->identityKey)) {
+            $ssh .= sprintf(' -o StrictHostKeyChecking=no -i %s', escapeshellarg($this->identityKey));
         }
         $ssh .= sprintf(
             ' %s "echo %s > %s" 2>&1', // Redirect stderr to stdout
