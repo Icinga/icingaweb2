@@ -65,7 +65,7 @@ class SshResourceForm extends Form
 
             $this->addElement(
                 'textarea',
-                'identity_key',
+                'private_key',
                 array(
                     'required'      => true,
                     'label'         => $this->translate('Private Key'),
@@ -78,7 +78,7 @@ class SshResourceForm extends Form
             $resourceName = $formData['name'];
             $this->addElement(
                 'note',
-                'identity_key_note',
+                'private_key_note',
                 array(
                     'escape'        => false,
                     'label'         => $this->translate('Private Key'),
@@ -106,7 +106,7 @@ class SshResourceForm extends Form
      */
     public static function beforeRemove(ConfigObject $config)
     {
-        $file = $config->identity_key;
+        $file = $config->private_key;
 
         if (file_exists($file)) {
             unlink($file);
@@ -138,9 +138,9 @@ class SshResourceForm extends Form
             return false;
         }
 
-        $file->fwrite($form->getElement('identity_key')->getValue());
+        $file->fwrite($form->getElement('private_key')->getValue());
 
-        $form->getElement('identity_key')->setValue($configDir . '/ssh/' . $user);
+        $form->getElement('private_key')->setValue($configDir . '/ssh/' . $user);
 
         return true;
     }
