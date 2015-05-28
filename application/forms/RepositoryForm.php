@@ -5,6 +5,7 @@ namespace Icinga\Forms;
 
 use Exception;
 use Icinga\Data\Filter\Filter;
+use Icinga\Exception\NotFoundError;
 use Icinga\Repository\Repository;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
@@ -181,13 +182,65 @@ abstract class RepositoryForm extends Form
     }
 
     /**
-     * Populate the data of the entry being handled
+     * Prepare the form for the requested mode
      */
     public function onRequest()
+    {
+        if ($this->shouldInsert()) {
+            $this->onInsertRequest();
+        } elseif ($this->shouldUpdate()) {
+            $this->onUpdateRequest();
+        } elseif ($this->shouldDelete()) {
+            $this->onDeleteRequest();
+        }
+    }
+
+    /**
+     * Prepare the form for mode insert
+     *
+     * Populates the form with the data passed to add().
+     */
+    protected function onInsertRequest()
     {
         $data = $this->getData();
         if (! empty($data)) {
             $this->populate($data);
+        }
+    }
+
+    /**
+     * Prepare the form for mode update
+     *
+     * Populates the form with either the data passed to edit() or tries to fetch it from the repository.
+     *
+     * @throws  NotFoundError   In case the entry to update cannot be found
+     */
+    protected function onUpdateRequest()
+    {
+        $data = $this->getData();
+        if (empty($data)) {
+            $row = $this->repository->select()->applyFilter($this->createFilter())->fetchRow();
+            if ($row === false) {
+                throw new NotFoundError('Entry "%s" not found', $this->getIdentifier());
+            }
+
+            $data = get_object_vars($row);
+        }
+
+        $this->populate($data);
+    }
+
+    /**
+     * Prepare the form for mode delete
+     *
+     * Verifies that the repository contains the entry to delete.
+     *
+     * @throws  NotFoundError   In case the entry to delete cannot be found
+     */
+    protected function onDeleteRequest()
+    {
+        if ($this->repository->select()->addFilter($this->createFilter())->count() === 0) {
+            throw new NotFoundError('Entry "%s" not found', $this->getIdentifier());
         }
     }
 
