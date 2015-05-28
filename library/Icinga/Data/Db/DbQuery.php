@@ -346,4 +346,137 @@ class DbQuery extends SimpleQuery
         $this->group = $group;
         return $this;
     }
+
+    /**
+     * Return whether the given table has been joined
+     *
+     * @param   string  $table
+     *
+     * @return  bool
+     */
+    public function hasJoinedTable($table)
+    {
+        $fromPart = $this->select->getPart(Zend_Db_Select::FROM);
+        if (isset($fromPart[$table])) {
+            return true;
+        }
+
+        foreach ($fromPart as $options) {
+            if ($options['tableName'] === $table && $options['joinType'] !== Zend_Db_Select::FROM) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Add an INNER JOIN table and colums to the query
+     *
+     * @param   array|string|Zend_Db_Expr   $name   The table name
+     * @param   string                      $cond   Join on this condition
+     * @param   array|string                $cols   The columns to select from the joined table
+     * @param   string                      $schema The database name to specify, if any
+     *
+     * @return  $this
+     */
+    public function join($name, $cond, $cols = Zend_Db_Select::SQL_WILDCARD, $schema = null)
+    {
+        $this->select->joinInner($name, $cond, $cols, $schema);
+        return $this;
+    }
+
+    /**
+     * Add an INNER JOIN table and colums to the query
+     *
+     * @param   array|string|Zend_Db_Expr   $name   The table name
+     * @param   string                      $cond   Join on this condition
+     * @param   array|string                $cols   The columns to select from the joined table
+     * @param   string                      $schema The database name to specify, if any
+     *
+     * @return  $this
+     */
+    public function joinInner($name, $cond, $cols = Zend_Db_Select::SQL_WILDCARD, $schema = null)
+    {
+        $this->select->joinInner($name, $cond, $cols, $schema);
+        return $this;
+    }
+
+    /**
+     * Add a LEFT OUTER JOIN table and colums to the query
+     *
+     * @param   array|string|Zend_Db_Expr   $name   The table name
+     * @param   string                      $cond   Join on this condition
+     * @param   array|string                $cols   The columns to select from the joined table
+     * @param   string                      $schema The database name to specify, if any
+     *
+     * @return  $this
+     */
+    public function joinLeft($name, $cond, $cols = Zend_Db_Select::SQL_WILDCARD, $schema = null)
+    {
+        $this->select->joinLeft($name, $cond, $cols, $schema);
+        return $this;
+    }
+
+    /**
+     * Add a RIGHT OUTER JOIN table and colums to the query
+     *
+     * @param   array|string|Zend_Db_Expr   $name   The table name
+     * @param   string                      $cond   Join on this condition
+     * @param   array|string                $cols   The columns to select from the joined table
+     * @param   string                      $schema The database name to specify, if any
+     *
+     * @return  $this
+     */
+    public function joinRight($name, $cond, $cols = Zend_Db_Select::SQL_WILDCARD, $schema = null)
+    {
+        $this->select->joinRight($name, $cond, $cols, $schema);
+        return $this;
+    }
+
+    /**
+     * Add a FULL OUTER JOIN table and colums to the query
+     *
+     * @param   array|string|Zend_Db_Expr   $name   The table name
+     * @param   string                      $cond   Join on this condition
+     * @param   array|string                $cols   The columns to select from the joined table
+     * @param   string                      $schema The database name to specify, if any
+     *
+     * @return  $this
+     */
+    public function joinFull($name, $cond, $cols = Zend_Db_Select::SQL_WILDCARD, $schema = null)
+    {
+        $this->select->joinFull($name, $cond, $cols, $schema);
+        return $this;
+    }
+
+    /**
+     * Add a CROSS JOIN table and colums to the query
+     *
+     * @param   array|string|Zend_Db_Expr   $name   The table name
+     * @param   array|string                $cols   The columns to select from the joined table
+     * @param   string                      $schema The database name to specify, if any
+     *
+     * @return  $this
+     */
+    public function joinCross($name, $cols = Zend_Db_Select::SQL_WILDCARD, $schema = null)
+    {
+        $this->select->joinCross($name, $cols, $schema);
+        return $this;
+    }
+
+    /**
+     * Add a NATURAL JOIN table and colums to the query
+     *
+     * @param   array|string|Zend_Db_Expr   $name   The table name
+     * @param   array|string                $cols   The columns to select from the joined table
+     * @param   string                      $schema The database name to specify, if any
+     *
+     * @return  $this
+     */
+    public function joinNatural($name, $cols = Zend_Db_Select::SQL_WILDCARD, $schema = null)
+    {
+        $this->select->joinNatural($name, $cols, $schema);
+        return $this;
+    }
 }
