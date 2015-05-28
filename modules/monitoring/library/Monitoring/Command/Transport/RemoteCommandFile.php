@@ -201,8 +201,7 @@ class RemoteCommandFile implements CommandTransportInterface
         exec($ssh, $output, $status);
         if ($status !== 0) {
             throw new TransportException(
-                'Can\'t send external Icinga command "%s": %s',
-                $ssh,
+                'Can\'t send external Icinga command: %s',
                 implode(' ', $output)
             );
         }
