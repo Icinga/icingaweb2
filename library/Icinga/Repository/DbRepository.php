@@ -402,15 +402,19 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     }
 
     /**
-     * Return whether this repository is capable of converting values for the given table
+     * Return whether this repository is capable of converting values
+     *
+     * This does not check whether any conversion for the given table is available, as it may be possible
+     * that columns from another table where joined in which would otherwise not being converted.
      *
      * @param   array|string    $table
      *
      * @return  bool
      */
-    public function providesValueConversion($table)
+    public function providesValueConversion($_)
     {
-        return parent::providesValueConversion($this->removeTablePrefix($this->clearTableAlias($table)));
+        $conversionRules = $this->getConversionRules();
+        return !empty($conversionRules);
     }
 
     /**
