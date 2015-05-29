@@ -4,6 +4,7 @@
 namespace Icinga\Authentication\UserGroup;
 
 use Icinga\Data\Filter\Filter;
+use Icinga\Exception\NotFoundError;
 use Icinga\Repository\DbRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
@@ -58,6 +59,7 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
         ),
         'group_membership' => array(
             'group_id'      => 'group_id',
+            'group_name'    => 'group_id',
             'user_name'     => 'username',
             'created_at'    => 'ctime',
             'last_modified' => 'mtime'
@@ -70,6 +72,20 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      * @var array
      */
     protected $filterColumns = array('group', 'user');
+
+    /**
+     * The value conversion rules to apply on a query or statement
+     *
+     * @var array
+     */
+    protected $conversionRules = array(
+        'group'             => array(
+            'parent'        => 'group_id'
+        ),
+        'group_membership'  => array(
+            'group_name'    => 'group_id'
+        )
+    );
 
     /**
      * Initialize this database user group backend
@@ -179,5 +195,32 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
             'g.id = gm.group_id',
             array()
         );
+    }
+
+    /**
+     * Fetch and return the corresponding id for the given group's name
+     *
+     * @param   string  $groupName
+     *
+     * @return  int
+     *
+     * @throws  NotFoundError       In case no group with the given name is found
+     */
+    protected function persistGroupId($groupName)
+    {
+        if (is_int($groupName)) {
+            return $groupName; // It's obviously already an id
+        }
+
+        $groupId = $this->ds
+            ->select()
+            ->from($this->prependTablePrefix('group'), array('id'))
+            ->where('name', $groupName)
+            ->fetchOne();
+        if ($groupId === false) {
+            throw new NotFoundError('Group "%s" does not exist', $groupName);
+        }
+
+        return $groupId;
     }
 }
