@@ -16,22 +16,6 @@ class HoststatusQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
-        'downtimes' => array(
-            'downtime_author'           => 'sd.author_name COLLATE latin1_general_ci',
-            'downtime_author_name'      => 'sd.author_name',
-            'downtime_comment'          => 'sd.comment_data',
-            'downtime_duration'         => 'sd.duration',
-            'downtime_end'              => 'CASE WHEN sd.is_fixed > 0 THEN UNIX_TIMESTAMP(sd.scheduled_end_time) ELSE UNIX_TIMESTAMP(sd.trigger_time) + sd.duration END',
-            'downtime_entry_time'       => 'UNIX_TIMESTAMP(sd.entry_time)',
-            'downtime_internal_id'      => 'sd.internal_downtime_id',
-            'downtime_is_fixed'         => 'sd.is_fixed',
-            'downtime_is_flexible'      => 'CASE WHEN sd.is_fixed = 0 THEN 1 ELSE 0 END',
-            'downtime_is_in_effect'     => 'sd.is_in_effect',
-            'downtime_scheduled_end'    => 'UNIX_TIMESTAMP(sd.scheduled_end_time)',
-            'downtime_scheduled_start'  => 'UNIX_TIMESTAMP(sd.scheduled_start_time)',
-            'downtime_start'            => 'UNIX_TIMESTAMP(CASE WHEN UNIX_TIMESTAMP(sd.trigger_time) > 0 then sd.trigger_time ELSE sd.scheduled_start_time END)',
-            'downtime_triggered_by_id'  => 'sd.triggered_by_id'
-        ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
@@ -179,18 +163,6 @@ class HoststatusQuery extends IdoQuery
             1
         );
         $this->joinedVirtualTables['hosts'] = true;
-    }
-
-    /**
-     * Join downtimes
-     */
-    protected function joinDowntimes()
-    {
-        $this->select->join(
-            array('sd' => $this->prefix . 'scheduleddowntime'),
-            'sd.object_id = ho.object_id',
-            array()
-        );
     }
 
     /**
