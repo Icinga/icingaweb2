@@ -72,41 +72,6 @@ class DowntimeQuery extends IdoQuery
     }
 
     /**
-     * Apply host restrictions to a query
-     *
-     * @param IdoQuery $query
-     */
-    protected function applyHostRestrictions(IdoQuery $query)
-    {
-        $hostRestrictions = Filter::matchAny();
-        foreach (Manager::getInstance()->getRestrictions('monitoring/hosts/filter') as $restriction) {
-            $hostRestrictions->addFilter(Filter::fromQueryString($restriction));
-        }
-        $query->addFilter($hostRestrictions);
-    }
-
-    /**
-     * Apply host and service restrictions to a query
-     *
-     * @param IdoQuery $query
-     */
-    protected function applyServiceRestrictions(IdoQuery $query)
-    {
-        $hostAndServiceRestrictions = Filter::matchAll();
-        $hostRestrictions = Filter::matchAny();
-        $serviceRestrictions = Filter::matchAny();
-        foreach (Manager::getInstance()->getRestrictions('monitoring/hosts/filter') as $restriction) {
-            $hostRestrictions->addFilter(Filter::fromQueryString($restriction));
-        }
-        foreach (Manager::getInstance()->getRestrictions('monitoring/services/filter') as $restriction) {
-            $serviceRestrictions->addFilter(Filter::fromQueryString($restriction));
-        }
-        $hostAndServiceRestrictions->addFilter($hostRestrictions);
-        $hostAndServiceRestrictions->addFilter($serviceRestrictions);
-        $query->addFilter($hostAndServiceRestrictions);
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function joinBaseTables()
@@ -129,7 +94,6 @@ class DowntimeQuery extends IdoQuery
             $columns[$column] = new Zend_Db_Expr('NULL');
         }
         $hosts = $this->createSubQuery('hoststatus', $columns);
-        $this->applyHostRestrictions($hosts);
         $this->subQueries[] = $hosts;
         $this->downtimeQuery->union(array($hosts), Zend_Db_Select::SQL_UNION_ALL);
     }
@@ -141,7 +105,6 @@ class DowntimeQuery extends IdoQuery
     {
         $columns = array_keys($this->columnMap['downtimes'] + $this->columnMap['hosts'] + $this->columnMap['services']);
         $services = $this->createSubQuery('servicestatus', $columns);
-        $this->applyServiceRestrictions($services);
         $this->subQueries[] = $services;
         $this->downtimeQuery->union(array($services), Zend_Db_Select::SQL_UNION_ALL);
     }
