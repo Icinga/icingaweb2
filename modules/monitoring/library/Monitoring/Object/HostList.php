@@ -88,6 +88,19 @@ class HostList extends ObjectList
     }
 
     /**
+     * Get the comments
+     *
+     * @return \Icinga\Module\Monitoring\DataView\Hostcomment
+     */
+    public function getComments()
+    {
+        return $this->backend
+            ->select()
+            ->from('hostcomment', array('host_name'))
+            ->applyFilter(clone $this->filter);
+    }
+
+    /**
      * Get the scheduled downtimes
      *
      * @return \Icinga\Module\Monitoring\DataView\Hostdowntime

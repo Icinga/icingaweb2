@@ -253,7 +253,7 @@ abstract class MonitoredObject implements Filterable
             'type'      => 'comment_type',
         ))
             ->where('comment_type', array('comment', 'ack'))
-            ->where('comment_objecttype', $this->type);
+            ->where('object_type', $this->type);
         if ($this->type === self::TYPE_SERVICE) {
             $comments
                 ->where('service_host_name', $this->host_name)

@@ -136,6 +136,19 @@ class ServiceList extends ObjectList
     }
 
     /**
+     * Get the comments
+     *
+     * @return \Icinga\Module\Monitoring\DataView\Hostcomment
+     */
+    public function getComments()
+    {
+        return $this->backend
+            ->select()
+            ->from('servicecomment', array('host_name', 'service_description'))
+            ->applyFilter(clone $this->filter);
+    }
+
+    /**
      * Get the scheduled downtimes
      *
      * @return \Icinga\Module\Monitoring\DataView\Servicedowntime
