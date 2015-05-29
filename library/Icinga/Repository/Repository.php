@@ -653,7 +653,15 @@ abstract class Repository implements Selectable
             throw new ProgrammingError('Table name "%s" not found', $table);
         }
 
-        return $queryColumns[$table];
+        $filterColumns = $this->getFilterColumns();
+        $columns = array();
+        foreach ($queryColumns[$table] as $alias => $column) {
+            if (! in_array(is_string($alias) ? $alias : $column, $filterColumns)) {
+                $columns[$alias] = $column;
+            }
+        }
+
+        return $columns;
     }
 
     /**
