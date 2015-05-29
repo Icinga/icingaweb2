@@ -144,8 +144,18 @@ class HoststatusQuery extends IdoQuery
             'host_status_update_time'   => 'hs.status_update_time',
             'host_unhandled'            => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END'
         ),
+        'servicegroups' => array(
+            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_name'     => 'sgo.name1',
+            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
+        ),
         'serviceproblemsummary' => array(
             'host_unhandled_services' => 'sps.unhandled_services_count'
+        ),
+        'services' => array(
+            'service'                => 'so.name2 COLLATE latin1_general_ci',
+            'service_description'    => 'so.name2',
+            'service_display_name'   => 's.display_name COLLATE latin1_general_ci',
         )
     );
 
@@ -204,10 +214,10 @@ class HoststatusQuery extends IdoQuery
             'hgo.is_active = ?',
             1
         )
-            ->where(
-                'hgo.objecttype_id = ?',
-                3
-            );
+        ->where(
+            'hgo.objecttype_id = ?',
+            3
+        );
         $this->distinct();
     }
 
@@ -221,6 +231,59 @@ class HoststatusQuery extends IdoQuery
             'hs.host_object_id = ho.object_id',
             array()
         );
+    }
+
+    /**
+     * Join service groups
+     */
+    protected function joinServicegroups()
+    {
+        $this->requireVirtualTable('services');
+        $this->select->join(
+            array('sgm' => $this->prefix . 'servicegroup_members'),
+            'sgm.service_object_id = s.service_object_id',
+            array()
+        )->join(
+            array('sg' => $this->prefix . 'servicegroups'),
+            'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
+            array()
+        )->join(
+            array('sgo' => $this->prefix . 'objects'),
+            'sgo.object_id = sg.servicegroup_object_id',
+            array()
+        )->where(
+            'sgo.is_active = ?',
+            1
+        )
+        ->where(
+            'sgo.objecttype_id = ?',
+            4
+        );
+        $this->distinct();
+    }
+
+    /**
+     * Join services
+     */
+    protected function joinServices()
+    {
+        $this->select->join(
+            array('s' => $this->prefix . 'services'),
+            's.host_object_id = h.host_object_id',
+            array()
+        )->join(
+            array('so' => $this->prefix . 'objects'),
+            'so.object_id = s.service_object_id AND so.is_active = 1',
+            array()
+        )->where(
+            'so.is_active = ?',
+            1
+        )
+        ->where(
+            'so.objecttype_id = ?',
+            2
+        );
+        $this->distinct();
     }
 
     /**
