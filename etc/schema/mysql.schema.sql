@@ -3,11 +3,13 @@
 CREATE TABLE `icingaweb_group`(
   `id`     int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name`   varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  `parent` varchar(64) COLLATE utf8_unicode_ci NULL DEFAULT NULL,
+  `parent` int(10) unsigned NULL DEFAULT NULL,
   `ctime`  timestamp NULL DEFAULT NULL,
   `mtime`  timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_name` (`name`)
+  UNIQUE KEY `idx_name` (`name`),
+  CONSTRAINT `fk_icingaweb_group_parent_id` FOREIGN KEY (`parent`)
+    REFERENCES `icingaweb_group` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `icingaweb_group_membership`(
