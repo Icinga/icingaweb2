@@ -480,4 +480,34 @@ class Perfdata
 
         return Service::STATE_OK;
     }
+
+    /**
+     * Return whether the state indicated by this perfdata is worse than
+     * the state indicated by the other perfdata
+     * CRITICAL > UNKNOWN > WARNING > OK
+     *
+     * @param Perfdata $rhs     the other perfdata
+     *
+     * @return bool
+     */
+    public function worseThan(Perfdata $rhs)
+    {
+        if (($state = $this->getState()) === ($rhsState = $rhs->getState())) {
+            return $this->getPercentage() > $rhs->getPercentage();
+        }
+
+        if ($state === Service::STATE_CRITICAL) {
+            return true;
+        }
+
+        if ($state === Service::STATE_UNKNOWN) {
+            return $rhsState !== Service::STATE_CRITICAL;
+        }
+
+        if ($state === Service::STATE_WARNING) {
+            return $rhsState === Service::STATE_OK;
+        }
+
+        return false;
+    }
 }
