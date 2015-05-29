@@ -153,7 +153,7 @@ class RepositoryQuery implements QueryInterface, Iterator
     {
         $this->query->where(
             $this->repository->requireFilterColumn($this->target, $column, $this),
-            $this->repository->persistColumn($column, $value)
+            $this->repository->persistColumn($this->target, $column, $value)
         );
         return $this;
     }
@@ -388,10 +388,10 @@ class RepositoryQuery implements QueryInterface, Iterator
         }
 
         $result = $this->query->fetchOne();
-        if ($result !== false && $this->repository->providesValueConversion()) {
+        if ($result !== false && $this->repository->providesValueConversion($this->target)) {
             $columns = $this->getColumns();
             $column = isset($columns[0]) ? $columns[0] : key($columns);
-            return $this->repository->retrieveColumn($column, $result);
+            return $this->repository->retrieveColumn($this->target, $column, $result);
         }
 
         return $result;
@@ -409,13 +409,13 @@ class RepositoryQuery implements QueryInterface, Iterator
         }
 
         $result = $this->query->fetchRow();
-        if ($result !== false && $this->repository->providesValueConversion()) {
+        if ($result !== false && $this->repository->providesValueConversion($this->target)) {
             foreach ($this->getColumns() as $alias => $column) {
                 if (! is_string($alias)) {
                     $alias = $column;
                 }
 
-                $result->$alias = $this->repository->retrieveColumn($alias, $result->$alias);
+                $result->$alias = $this->repository->retrieveColumn($this->target, $alias, $result->$alias);
             }
         }
 
@@ -434,12 +434,12 @@ class RepositoryQuery implements QueryInterface, Iterator
         }
 
         $results = $this->query->fetchColumn();
-        if (! empty($results) && $this->repository->providesValueConversion()) {
+        if (! empty($results) && $this->repository->providesValueConversion($this->target)) {
             $columns = $this->getColumns();
             $aliases = array_keys($columns);
             $column = is_int($aliases[0]) ? $columns[0] : $aliases[0];
             foreach ($results as & $value) {
-                $value = $this->repository->retrieveColumn($column, $value);
+                $value = $this->repository->retrieveColumn($this->target, $column, $value);
             }
         }
 
@@ -460,15 +460,15 @@ class RepositoryQuery implements QueryInterface, Iterator
         }
 
         $results = $this->query->fetchPairs();
-        if (! empty($results) && $this->repository->providesValueConversion()) {
+        if (! empty($results) && $this->repository->providesValueConversion($this->target)) {
             $columns = $this->getColumns();
             $aliases = array_keys($columns);
             $newResults = array();
             foreach ($results as $colOneValue => $colTwoValue) {
                 $colOne = $aliases[0] !== 0 ? $aliases[0] : $columns[0];
                 $colTwo = count($aliases) < 2 ? $colOne : ($aliases[1] !== 1 ? $aliases[1] : $columns[1]);
-                $colOneValue = $this->repository->retrieveColumn($colOne, $colOneValue);
-                $newResults[$colOneValue] = $this->repository->retrieveColumn($colTwo, $colTwoValue);
+                $colOneValue = $this->repository->retrieveColumn($this->target, $colOne, $colOneValue);
+                $newResults[$colOneValue] = $this->repository->retrieveColumn($this->target, $colTwo, $colTwoValue);
             }
 
             $results = $newResults;
@@ -489,7 +489,7 @@ class RepositoryQuery implements QueryInterface, Iterator
         }
 
         $results = $this->query->fetchAll();
-        if (! empty($results) && $this->repository->providesValueConversion()) {
+        if (! empty($results) && $this->repository->providesValueConversion($this->target)) {
             $columns = $this->getColumns();
             foreach ($results as $row) {
                 foreach ($columns as $alias => $column) {
@@ -497,7 +497,7 @@ class RepositoryQuery implements QueryInterface, Iterator
                         $alias = $column;
                     }
 
-                    $row->$alias = $this->repository->retrieveColumn($alias, $row->$alias);
+                    $row->$alias = $this->repository->retrieveColumn($this->target, $alias, $row->$alias);
                 }
             }
         }
@@ -545,13 +545,13 @@ class RepositoryQuery implements QueryInterface, Iterator
     public function current()
     {
         $row = $this->iterator->current();
-        if ($this->repository->providesValueConversion()) {
+        if ($this->repository->providesValueConversion($this->target)) {
             foreach ($this->getColumns() as $alias => $column) {
                 if (! is_string($alias)) {
                     $alias = $column;
                 }
 
-                $row->$alias = $this->repository->retrieveColumn($alias, $row->$alias);
+                $row->$alias = $this->repository->retrieveColumn($this->target, $alias, $row->$alias);
             }
         }
 

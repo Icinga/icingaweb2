@@ -402,6 +402,46 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     }
 
     /**
+     * Return whether this repository is capable of converting values for the given table
+     *
+     * @param   array|string    $table
+     *
+     * @return  bool
+     */
+    public function providesValueConversion($table)
+    {
+        return parent::providesValueConversion($this->removeTablePrefix($this->clearTableAlias($table)));
+    }
+
+    /**
+     * Return the name of the conversion method for the given alias or column name and context
+     *
+     * @param   array|string    $table      The datasource's table
+     * @param   string          $name       The alias or column name for which to return a conversion method
+     * @param   string          $context    The context of the conversion: persist or retrieve
+     *
+     * @return  string
+     *
+     * @throws  ProgrammingError    In case a conversion rule is found but not any conversion method
+     */
+    protected function getConverter($table, $name, $context)
+    {
+        if (
+            $this->validateQueryColumnAssociation($table, $name)
+            || $this->validateStatementColumnAssociation($table, $name)
+        ) {
+            $table = $this->removeTablePrefix($this->clearTableAlias($table));
+        } else {
+            $table = $this->findTableName($name);
+            if (! $table) {
+                throw new ProgrammingError('Column name validation seems to have failed. Did you require the column?');
+            }
+        }
+
+        return parent::getConverter($table, $name, $context);
+    }
+
+    /**
      * Validate that the requested table exists
      *
      * This will prepend the datasource's table prefix and will apply the table's alias, if any.
@@ -692,6 +732,8 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             return $aliasTableMap[$column];
         }
 
+        // TODO(jom): Elaborate whether it makes sense to throw ProgrammingError
+        //            instead (duplicate aliases in different tables?)
         foreach ($aliasTableMap as $alias => $table) {
             if (strpos($alias, '.') !== false) {
                 list($_, $alias) = split('.', $column, 2);

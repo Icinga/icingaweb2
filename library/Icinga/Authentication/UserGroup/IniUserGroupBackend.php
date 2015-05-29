@@ -35,14 +35,16 @@ class IniUserGroupBackend extends IniRepository implements UserGroupBackendInter
     protected $filterColumns = array('group');
 
     /**
-     * The value conversion rules to apply on a query
+     * The value conversion rules to apply on a query or statement
      *
      * @var array
      */
     protected $conversionRules = array(
-        'created_at'    => 'date_time',
-        'last_modified' => 'date_time',
-        'users'         => 'comma_separated_string'
+        'groups' => array(
+            'created_at'    => 'date_time',
+            'last_modified' => 'date_time',
+            'users'         => 'comma_separated_string'
+        )
     );
 
     /**

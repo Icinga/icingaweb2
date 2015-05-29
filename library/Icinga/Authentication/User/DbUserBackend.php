@@ -76,11 +76,15 @@ class DbUserBackend extends DbRepository implements UserBackendInterface
     );
 
     /**
-     * The value conversion rules to apply on a query/statement
+     * The value conversion rules to apply on a query or statement
      *
      * @var array
      */
-    protected $conversionRules = array('password');
+    protected $conversionRules = array(
+        'user' => array(
+            'password'
+        )
+    );
 
     /**
      * Initialize this database user backend

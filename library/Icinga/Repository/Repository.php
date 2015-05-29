@@ -106,7 +106,7 @@ abstract class Repository implements Selectable
     protected $sortRules;
 
     /**
-     * The value conversion rules to apply on a query
+     * The value conversion rules to apply on a query or statement
      *
      * This may be initialized by concrete repository implementations and describes for which aliases or column
      * names what type of conversion is available. For entries, where the key is the alias/column and the value
@@ -403,27 +403,30 @@ abstract class Repository implements Selectable
     }
 
     /**
-     * Return whether this repository is capable of converting values
+     * Return whether this repository is capable of converting values for the given table
+     *
+     * @param   string  $table
      *
      * @return  bool
      */
-    public function providesValueConversion()
+    public function providesValueConversion($table)
     {
         $conversionRules = $this->getConversionRules();
-        return !empty($conversionRules);
+        return !empty($conversionRules) && isset($conversionRules[$table]);
     }
 
     /**
      * Convert a value supposed to be transmitted to the data source
      *
+     * @param   string  $table      The table where to persist the value
      * @param   string  $name       The alias or column name
      * @param   mixed   $value      The value to convert
      *
      * @return  mixed               If conversion was possible, the converted value, otherwise the unchanged value
      */
-    public function persistColumn($name, $value)
+    public function persistColumn($table, $name, $value)
     {
-        $converter = $this->getConverter($name, 'persist');
+        $converter = $this->getConverter($table, $name, 'persist');
         if ($converter !== null) {
             $value = $this->$converter($value);
         }
@@ -434,14 +437,15 @@ abstract class Repository implements Selectable
     /**
      * Convert a value which was fetched from the data source
      *
+     * @param   string  $table      The table the value has been fetched from
      * @param   string  $name       The alias or column name
      * @param   mixed   $value      The value to convert
      *
      * @return  mixed               If conversion was possible, the converted value, otherwise the unchanged value
      */
-    public function retrieveColumn($name, $value)
+    public function retrieveColumn($table, $name, $value)
     {
-        $converter = $this->getConverter($name, 'retrieve');
+        $converter = $this->getConverter($table, $name, 'retrieve');
         if ($converter !== null) {
             $value = $this->$converter($value);
         }
@@ -452,6 +456,7 @@ abstract class Repository implements Selectable
     /**
      * Return the name of the conversion method for the given alias or column name and context
      *
+     * @param   string  $table      The datasource's table
      * @param   string  $name       The alias or column name for which to return a conversion method
      * @param   string  $context    The context of the conversion: persist or retrieve
      *
@@ -459,12 +464,13 @@ abstract class Repository implements Selectable
      *
      * @throws  ProgrammingError    In case a conversion rule is found but not any conversion method
      */
-    protected function getConverter($name, $context)
+    protected function getConverter($table, $name, $context)
     {
         $conversionRules = $this->getConversionRules();
+        $tableRules = $conversionRules[$table];
 
         // Check for a conversion method for the alias/column first
-        if (array_key_exists($name, $conversionRules) || in_array($name, $conversionRules)) {
+        if (array_key_exists($name, $tableRules) || in_array($name, $tableRules)) {
             $methodName = $context . join('', array_map('ucfirst', explode('_', $name)));
             if (method_exists($this, $methodName)) {
                 return $methodName;
@@ -472,22 +478,22 @@ abstract class Repository implements Selectable
         }
 
         // The conversion method for the type is just a fallback, but it is required to exist if defined
-        if (isset($conversionRules[$name])) {
-            $identifier = join('', array_map('ucfirst', explode('_', $conversionRules[$name])));
+        if (isset($tableRules[$name])) {
+            $identifier = join('', array_map('ucfirst', explode('_', $tableRules[$name])));
             if (! method_exists($this, $context . $identifier)) {
                 // Do not throw an error in case at least one conversion method exists
                 if (! method_exists($this, ($context === 'persist' ? 'retrieve' : 'persist') . $identifier)) {
                     throw new ProgrammingError(
                         'Cannot find any conversion method for type "%s"'
                         . '. Add a proper conversion method or remove the type definition',
-                        $conversionRules[$name]
+                        $tableRules[$name]
                     );
                 }
 
                 Logger::debug(
                     'Conversion method "%s" for type definition "%s" does not exist in repository "%s".',
                     $context . $identifier,
-                    $conversionRules[$name],
+                    $tableRules[$name],
                     $this->getName()
                 );
             } else {
@@ -623,7 +629,7 @@ abstract class Repository implements Selectable
         if ($filter->isExpression()) {
             $column = $filter->getColumn();
             $filter->setColumn($this->requireFilterColumn($table, $column, $query));
-            $filter->setExpression($this->persistColumn($column, $filter->getExpression()));
+            $filter->setExpression($this->persistColumn($table, $column, $filter->getExpression()));
         } elseif ($filter->isChain()) {
             foreach ($filter->filters() as $chainOrExpression) {
                 $this->requireFilter($table, $chainOrExpression, $query);
@@ -826,7 +832,7 @@ abstract class Repository implements Selectable
     {
         $resolved = array();
         foreach ($data as $alias => $value) {
-            $resolved[$this->requireStatementColumn($table, $alias)] = $this->persistColumn($alias, $value);
+            $resolved[$this->requireStatementColumn($table, $alias)] = $this->persistColumn($table, $alias, $value);
         }
 
         return $resolved;
