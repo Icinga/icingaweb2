@@ -115,10 +115,23 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      */
     public function getMemberships(User $user)
     {
+        $groupQuery = $this->ds
+            ->select()
+            ->from(
+                array('g' => $this->prependTablePrefix('group')),
+                array(
+                    'group_name'    => 'g.name',
+                    'parent_name'   => 'gg.name'
+                )
+            )->joinLeft(
+                array('gg' => $this->prependTablePrefix('group')),
+                'g.parent = gg.id',
+                array()
+            );
+
         $groups = array();
-        foreach ($this->ds->select()->from($this->prependTablePrefix('group'), array('name', 'parent')) as $group) {
-            // Using the raw query here due to the non-existent necessity to join, convert, or...
-            $groups[$group->name] = $group->parent;
+        foreach ($groupQuery as $group) {
+            $groups[$group->group_name] = $group->parent_name;
         }
 
         $membershipQuery = $this
