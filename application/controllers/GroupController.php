@@ -232,10 +232,6 @@ class GroupController extends AuthBackendController
         $groupName = $this->params->getRequired('group');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
 
-        if ($backend->select()->where('group_name', $groupName)->count() === 0) {
-            $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
-        }
-
         $form = new AddMemberForm();
         $form->setDataSource($this->fetchUsers())
             ->setBackend($backend)
@@ -243,8 +239,13 @@ class GroupController extends AuthBackendController
             ->setRedirectUrl(
                 Url::fromPath('group/show', array('backend' => $backend->getName(), 'group' => $groupName))
             )
-            ->setUidDisabled()
-            ->handleRequest();
+            ->setUidDisabled();
+
+        try {
+            $form->handleRequest();
+        } catch (NotFoundError $_) {
+            $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
+        }
 
         $this->view->form = $form;
         $this->render('form');
@@ -259,10 +260,6 @@ class GroupController extends AuthBackendController
         $this->assertHttpMethod('POST');
         $groupName = $this->params->getRequired('group');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
-
-        if ($backend->select()->where('group_name', $groupName)->count() === 0) {
-            $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
-        }
 
         $form = new Form(array(
             'onSuccess' => function ($form) use ($groupName, $backend) {
@@ -280,6 +277,8 @@ class GroupController extends AuthBackendController
                             $userName,
                             $groupName
                         ));
+                    } catch (NotFoundError $e) {
+                        throw $e;
                     } catch (Exception $e) {
                         Notification::error($e->getMessage());
                     }
@@ -297,7 +296,12 @@ class GroupController extends AuthBackendController
         $form->setSubmitLabel('btn_submit'); // Required to ensure that isSubmitted() is called
         $form->addElement('hidden', 'user_name', array('required' => true, 'isArray' => true));
         $form->addElement('hidden', 'redirect');
-        $form->handleRequest();
+
+        try {
+            $form->handleRequest();
+        } catch (NotFoundError $_) {
+            $this->httpNotFound(sprintf($this->translate('Group "%s" not found'), $groupName));
+        }
     }
 
     /**

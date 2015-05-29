@@ -7,6 +7,7 @@ use Exception;
 use Icinga\Data\Extensible;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Selectable;
+use Icinga\Exception\NotFoundError;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 
@@ -155,6 +156,8 @@ class AddMemberForm extends Form
                         'user_name'     => $userName
                     )
                 );
+            } catch (NotFoundError $e) {
+                throw $e; // Trigger 404, the group name is initially accessed as GET parameter
             } catch (Exception $e) {
                 Notification::error(sprintf(
                     $this->translate('Failed to add "%s" as group member for "%s"'),
