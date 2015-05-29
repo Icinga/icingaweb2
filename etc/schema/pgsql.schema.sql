@@ -3,7 +3,7 @@
 CREATE TABLE "icingaweb_group" (
   "id"     serial,
   "name"   character varying(64) NOT NULL,
-  "parent" character varying(64) NULL DEFAULT NULL,
+  "parent" int NULL DEFAULT NULL,
   "ctime"  timestamp NULL DEFAULT NULL,
   "mtime"  timestamp NULL DEFAULT NULL
 );
@@ -18,6 +18,15 @@ CREATE UNIQUE INDEX idx_icingaweb_group
   ON "icingaweb_group"
   USING btree (
     lower((name)::text)
+);
+
+ALTER TABLE ONLY "icingaweb_group"
+  ADD CONSTRAINT fk_icingaweb_group_parent_id
+  FOREIGN KEY (
+    "parent"
+  )
+  REFERENCES "icingaweb_group" (
+    "id"
 );
 
 CREATE TABLE "icingaweb_group_membership" (
