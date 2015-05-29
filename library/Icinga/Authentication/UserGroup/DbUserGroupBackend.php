@@ -20,8 +20,7 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
             'group_id'      => 'g.id',
             'group'         => 'g.name COLLATE utf8_general_ci',
             'group_name'    => 'g.name',
-            'parent'        => 'g.parent COLLATE utf8_general_ci',
-            'parent_name'   => 'g.parent',
+            'parent'        => 'g.parent',
             'created_at'    => 'UNIX_TIMESTAMP(g.ctime)',
             'last_modified' => 'UNIX_TIMESTAMP(g.mtime)'
         ),
@@ -53,7 +52,7 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
         'group' => array(
             'group_id'      => 'id',
             'group_name'    => 'name',
-            'parent_name'   => 'parent',
+            'parent'        => 'parent',
             'created_at'    => 'ctime',
             'last_modified' => 'mtime'
         ),
@@ -70,7 +69,7 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      *
      * @var array
      */
-    protected $filterColumns = array('group', 'parent', 'user');
+    protected $filterColumns = array('group', 'user');
 
     /**
      * Initialize this database user group backend

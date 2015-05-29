@@ -75,7 +75,6 @@ class GroupController extends AuthBackendController
         $this->setupSortControl(
             array(
                 'group_name'    => $this->translate('Group'),
-                'parent_name'   => $this->translate('Parent'),
                 'created_at'    => $this->translate('Created at'),
                 'last_modified' => $this->translate('Last modified')
             ),
@@ -94,7 +93,6 @@ class GroupController extends AuthBackendController
 
         $group = $backend->select(array(
             'group_name',
-            'parent_name',
             'created_at',
             'last_modified'
         ))->where('group_name', $groupName)->fetchRow();

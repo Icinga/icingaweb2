@@ -29,17 +29,6 @@ if ($this->hasPermission('config/application/groups/edit') && $backend instanceo
  <?php endif ?>
   <div class="group-header">
     <p class="group-name"><strong><?= $this->escape($group->group_name); ?></strong></p> <?= $editLink; ?>
-    <p class="group-parent"><strong><?= $this->translate('Parent'); ?>:</strong> <?= $group->parent_name === null ? '-' : $this->qlink(
-      $group->parent_name,
-      'group/show',
-      array(
-        'backend'   => $backend->getName(),
-        'group'     => $group->parent_name
-      ),
-      array(
-        'title'     => sprintf($this->translate('Show detailed information for group %s'), $group->parent_name)
-      )
-    ); ?></p>
     <p class="group-created"><strong><?= $this->translate('Created at'); ?>:</strong> <?= $group->created_at === null ? '-' : $this->formatDateTime($group->created_at); ?></p>
     <p class="group-modified"><strong><?= $this->translate('Last modified'); ?>:</strong> <?= $group->last_modified === null ? '-' : $this->formatDateTime($group->last_modified); ?></p>
   </div>

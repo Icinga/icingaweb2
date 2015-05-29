@@ -21,7 +21,6 @@ class IniUserGroupBackend extends IniRepository implements UserGroupBackendInter
             'group'         => 'name',
             'group_name'    => 'name',
             'parent'        => 'parent',
-            'parent_name'   => 'parent',
             'created_at'    => 'ctime',
             'last_modified' => 'mtime',
             'users'
@@ -33,7 +32,7 @@ class IniUserGroupBackend extends IniRepository implements UserGroupBackendInter
      *
      * @var array
      */
-    protected $filterColumns = array('group', 'parent');
+    protected $filterColumns = array('group');
 
     /**
      * The value conversion rules to apply on a query
@@ -96,7 +95,7 @@ class IniUserGroupBackend extends IniRepository implements UserGroupBackendInter
 
         $groups = array();
         foreach ($result as $group) {
-            $groups[$group->group_name] = $group->parent_name;
+            $groups[$group->group_name] = $group->parent;
         }
 
         $username = strtolower($user->getUsername());
