@@ -3,6 +3,9 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
+/**
+ * Host and service downtimes view
+ */
 class Downtime extends DataView
 {
     /**
@@ -24,7 +27,6 @@ class Downtime extends DataView
     public function getColumns()
     {
         return array(
-            'downtime_author',
             'downtime_author_name',
             'downtime_comment',
             'downtime_duration',
@@ -52,6 +54,7 @@ class Downtime extends DataView
     public function getFilterColumns()
     {
         return array(
+            'downtime_author',
             'host', 'hostgroup', 'hostgroup_alias', 'hostgroup_name',
             'service', 'servicegroup', 'servicegroup_alias', 'servicegroup_name'
         );
