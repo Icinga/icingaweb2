@@ -90,13 +90,13 @@ class HostList extends ObjectList
     /**
      * Get the scheduled downtimes
      *
-     * @return type
+     * @return \Icinga\Module\Monitoring\DataView\Hostdowntime
      */
     public function getScheduledDowntimes()
     {
-        return $this->backend->select()
-                ->from('downtime')
-                ->applyFilter(clone $this->filter)
-                ->where('downtime_objecttype', 'host');
+        return $this->backend
+            ->select()
+            ->from('hostdowntime', array('host_name'))
+            ->applyFilter(clone $this->filter);
     }
 }
