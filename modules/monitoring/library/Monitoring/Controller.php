@@ -58,9 +58,11 @@ class Controller extends IcingaWebController
      */
     protected function applyRestriction($restriction, Filterable $view)
     {
+        $restrictions = Filter::matchAny();
         foreach ($this->getRestrictions($restriction) as $filter) {
-            $view->applyFilter(Filter::fromQueryString($filter));
+            $restrictions->addFilter(Filter::fromQueryString($filter));
         }
+        $view->applyFilter($restrictions);
         return $view;
     }
 }
