@@ -529,7 +529,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * @param   string              $table  The table where to look for the column or alias
      * @param   string              $name   The name or alias of the column to validate
      * @param   RepositoryQuery     $query  An optional query to pass as context,
-     *                                      if not given no join will be attempted
+     *                                      if not given the column is considered being used for a statement filter
      *
      * @return  string                      The given column's name
      *
@@ -537,7 +537,11 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function requireFilterColumn($table, $name, RepositoryQuery $query = null)
     {
-        if ($query === null || $this->validateQueryColumnAssociation($table, $name)) {
+        if ($query === null) {
+            return $this->requireStatementColumn($table, $name);
+        }
+
+        if ($this->validateQueryColumnAssociation($table, $name)) {
             return parent::requireFilterColumn($table, $name, $query);
         }
 
