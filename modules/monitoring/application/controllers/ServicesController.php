@@ -32,7 +32,6 @@ class Monitoring_ServicesController extends Controller
         ));
         $this->serviceList = $serviceList;
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/services');
-
         $this->getTabs()->add(
             'show',
             array(
