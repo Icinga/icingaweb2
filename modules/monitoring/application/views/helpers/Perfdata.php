@@ -19,6 +19,19 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
     public function perfdata($perfdataStr, $compact = false, $limit = 0, $color = Perfdata::PERFDATA_OK)
     {
         $pieChartData = PerfdataSet::fromString($perfdataStr)->asArray();
+
+        if (1 < ($i = count($pieChartData))) {
+            while (--$i) {
+                for ($j = 0, $k = 1; $j < $i; ++$j, ++$k) {
+                    if ($pieChartData[$k]->worseThan($pieChartData[$j])) {
+                        $perfdata = $pieChartData[$k];
+                        $pieChartData[$k] = $pieChartData[$j];
+                        $pieChartData[$j] = $perfdata;
+                    }
+                }
+            }
+        }
+
         $results = array();
         $table = array(
             '<td><b>' . implode(
