@@ -5,7 +5,6 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 use Zend_Db_Expr;
 use Zend_Db_Select;
-use Icinga\Authentication\Manager;
 use Icinga\Data\Filter\Filter;
 
 /**
