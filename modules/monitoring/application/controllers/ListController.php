@@ -249,6 +249,9 @@ class Monitoring_ListController extends Controller
             'service_display_name'
         ));
         $this->filterQuery($query);
+
+        $this->applyRestriction('monitoring/filter/objects', $query);
+
         $this->view->downtimes = $query;
 
         $this->setupLimitControl();
