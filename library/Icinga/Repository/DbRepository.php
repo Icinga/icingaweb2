@@ -736,7 +736,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
         //            instead (duplicate aliases in different tables?)
         foreach ($aliasTableMap as $alias => $table) {
             if (strpos($alias, '.') !== false) {
-                list($_, $alias) = split('.', $column, 2);
+                list($_, $alias) = explode('.', $column, 2);
                 if ($alias === $column) {
                     return $table;
                 }
