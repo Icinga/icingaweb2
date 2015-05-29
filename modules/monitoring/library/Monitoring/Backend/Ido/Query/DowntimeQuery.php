@@ -93,7 +93,7 @@ class DowntimeQuery extends IdoQuery
         foreach (array_keys($this->columnMap['services']) as $column) {
             $columns[$column] = new Zend_Db_Expr('NULL');
         }
-        $hosts = $this->createSubQuery('hoststatus', $columns);
+        $hosts = $this->createSubQuery('hostdowntime', $columns);
         $this->subQueries[] = $hosts;
         $this->downtimeQuery->union(array($hosts), Zend_Db_Select::SQL_UNION_ALL);
     }
@@ -104,7 +104,7 @@ class DowntimeQuery extends IdoQuery
     protected function joinServices()
     {
         $columns = array_keys($this->columnMap['downtimes'] + $this->columnMap['hosts'] + $this->columnMap['services']);
-        $services = $this->createSubQuery('servicestatus', $columns);
+        $services = $this->createSubQuery('servicedowntime', $columns);
         $this->subQueries[] = $services;
         $this->downtimeQuery->union(array($services), Zend_Db_Select::SQL_UNION_ALL);
     }
