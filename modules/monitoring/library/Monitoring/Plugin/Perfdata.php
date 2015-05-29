@@ -7,6 +7,7 @@ use Icinga\Util\Format;
 use InvalidArgumentException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Widget\Chart\InlinePie;
+use Icinga\Module\Monitoring\Object\Service;
 use Zend_Controller_Front;
 
 class Perfdata
@@ -452,5 +453,31 @@ class Perfdata
             'crit' => isset($this->criticalThreshold) ? $this->format(self::convert($this->criticalThreshold, $this->unit)) : ''
         );
         return $parts;
+    }
+
+    /**
+     * Return the state indicated by this perfdata
+     *
+     * @see Service
+     *
+     * @return int
+     */
+    public function getState()
+    {
+        if ($this->value === null) {
+            return Service::STATE_UNKNOWN;
+        }
+
+        if (! ($this->criticalThreshold === null
+            || $this->value < $this->criticalThreshold)) {
+            return Service::STATE_CRITICAL;
+        }
+
+        if (! ($this->warningThreshold === null
+            || $this->value < $this->warningThreshold)) {
+            return Service::STATE_WARNING;
+        }
+
+        return Service::STATE_OK;
     }
 }
