@@ -467,6 +467,10 @@ abstract class Repository implements Selectable
     protected function getConverter($table, $name, $context)
     {
         $conversionRules = $this->getConversionRules();
+        if (! isset($conversionRules[$table])) {
+            return;
+        }
+
         $tableRules = $conversionRules[$table];
 
         // Check for a conversion method for the alias/column first
