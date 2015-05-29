@@ -242,6 +242,11 @@ class Menu implements RecursiveIterator
                 'permission'    => 'config/application/*',
                 'priority'      => 300
             ));
+            $section->add(t('UserGroupBackends'), array(
+                'url'           => 'usergroupbackend/list',
+                'permission'    => 'config/application/usergroupbackend/*',
+                'priority'      => 301
+            ));
             $section->add(t('Configuration'), array(
                 'url'           => 'config',
                 'permission'    => 'config/application/*',
