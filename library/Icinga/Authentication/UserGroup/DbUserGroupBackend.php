@@ -123,6 +123,27 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
     }
 
     /**
+     * Delete table rows, optionally limited by using a filter
+     *
+     * @param   string  $table
+     * @param   Filter  $filter
+     */
+    public function delete($table, Filter $filter = null)
+    {
+        if ($table === 'group') {
+            parent::delete('group_membership', $filter);
+            $idQuery = $this->select(array('group_id'));
+            if ($filter !== null) {
+                $idQuery->applyFilter($filter);
+            }
+
+            $this->update('group', array('parent' => null), Filter::where('parent', $idQuery->fetchColumn()));
+        }
+
+        parent::delete($table, $filter);
+    }
+
+    /**
      * Return the groups the given user is a member of
      *
      * @param   User    $user
