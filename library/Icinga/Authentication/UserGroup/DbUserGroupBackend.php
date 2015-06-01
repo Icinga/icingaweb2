@@ -200,16 +200,33 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
     /**
      * Fetch and return the corresponding id for the given group's name
      *
-     * @param   string  $groupName
+     * @param   string|array    $groupName
      *
      * @return  int
      *
-     * @throws  NotFoundError       In case no group with the given name is found
+     * @throws  NotFoundError
      */
     protected function persistGroupId($groupName)
     {
-        if (! $groupName || is_int($groupName)) {
-            return $groupName; // It's obviously already an id or NULL
+        if (! $groupName || empty($groupName) || is_int($groupName)) {
+            return $groupName;
+        }
+
+        if (is_array($groupName)) {
+            if (is_int($groupName[0])) {
+                return $groupName; // In case the array contains mixed types...
+            }
+
+            $groupIds = $this->ds
+                ->select()
+                ->from($this->prependTablePrefix('group'), array('id'))
+                ->where('name', $groupName)
+                ->fetchColumn();
+            if (empty($groupIds)) {
+                throw new NotFoundError('No groups found matching one of: %s', implode(', ', $groupName));
+            }
+
+            return $groupIds;
         }
 
         $groupId = $this->ds
