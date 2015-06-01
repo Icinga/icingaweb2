@@ -94,7 +94,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
         }
 
         if ($filter !== null) {
-            $this->requireFilter($target, $filter);
+            $filter = $this->requireFilter($target, $filter);
         }
 
         $newSection = null;
@@ -147,7 +147,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     public function delete($target, Filter $filter = null)
     {
         if ($filter !== null) {
-            $this->requireFilter($target, $filter);
+            $filter = $this->requireFilter($target, $filter);
         }
 
         foreach (iterator_to_array($this->ds) as $section => $config) {

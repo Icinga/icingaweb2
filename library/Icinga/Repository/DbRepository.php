@@ -296,7 +296,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     public function update($table, array $bind, Filter $filter = null)
     {
         if ($filter) {
-            $this->requireFilter($table, $filter);
+            $filter = $this->requireFilter($table, $filter);
         }
 
         $this->ds->update($this->prependTablePrefix($table), $this->requireStatementColumns($table, $bind), $filter);
@@ -311,7 +311,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     public function delete($table, Filter $filter = null)
     {
         if ($filter) {
-            $this->requireFilter($table, $filter);
+            $filter = $this->requireFilter($table, $filter);
         }
 
         $this->ds->delete($this->prependTablePrefix($table), $filter);
@@ -478,10 +478,13 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * @param   Filter              $filter     The filter to recurse
      * @param   RepositoryQuery     $query      An optional query to pass as context
      *                                          (Directly passed through to $this->requireFilterColumn)
+     * @param   bool                $clone      Whether to clone $filter first
+     *
+     * @return  Filter                          The udpated filter
      */
-    public function requireFilter($table, Filter $filter, RepositoryQuery $query = null)
+    public function requireFilter($table, Filter $filter, RepositoryQuery $query = null, $clone = true)
     {
-        parent::requireFilter($table, $filter, $query);
+        $filter = parent::requireFilter($table, $filter, $query, $clone);
 
         if ($filter->isExpression()) {
             $column = $filter->getColumn();
@@ -495,6 +498,8 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
                 }
             }
         }
+
+        return $filter;
     }
 
     /**

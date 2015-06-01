@@ -126,7 +126,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface
     {
         $bind['last_modified'] = date('Y-m-d H:i:s');
         if ($filter) {
-            $this->requireFilter($table, $filter);
+            $filter = $this->requireFilter($table, $filter);
         }
 
         $this->ds->update(

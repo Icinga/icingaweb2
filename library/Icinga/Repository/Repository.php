@@ -627,18 +627,27 @@ abstract class Repository implements Selectable
      * @param   Filter              $filter     The filter to recurse
      * @param   RepositoryQuery     $query      An optional query to pass as context
      *                                          (Directly passed through to $this->requireFilterColumn)
+     * @param   bool                $clone      Whether to clone $filter first
+     *
+     * @return  Filter                          The udpated filter
      */
-    public function requireFilter($table, Filter $filter, RepositoryQuery $query = null)
+    public function requireFilter($table, Filter $filter, RepositoryQuery $query = null, $clone = true)
     {
+        if ($clone) {
+            $filter = clone $filter;
+        }
+
         if ($filter->isExpression()) {
             $column = $filter->getColumn();
             $filter->setColumn($this->requireFilterColumn($table, $column, $query));
             $filter->setExpression($this->persistColumn($table, $column, $filter->getExpression()));
         } elseif ($filter->isChain()) {
             foreach ($filter->filters() as $chainOrExpression) {
-                $this->requireFilter($table, $chainOrExpression, $query);
+                $this->requireFilter($table, $chainOrExpression, $query, false);
             }
         }
+
+        return $filter;
     }
 
     /**
