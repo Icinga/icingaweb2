@@ -617,6 +617,10 @@ class Connection implements Selectable
      */
     public function getCapabilities()
     {
+        if ($this->capabilities === null) {
+            $this->connect(); // Populates $this->capabilities
+        }
+
         return $this->capabilities;
     }
 
