@@ -59,6 +59,10 @@ class UserGroupForm extends RepositoryForm
     protected function createDeleteElements(array $formData)
     {
         $this->setTitle(sprintf($this->translate('Remove group %s?'), $this->getIdentifier()));
+        $this->addDescription($this->translate(
+            'Note that all users that are currently a member of this group will'
+            . ' have their membership cleared automatically.'
+        ));
         $this->setSubmitLabel($this->translate('Yes'));
     }
 
