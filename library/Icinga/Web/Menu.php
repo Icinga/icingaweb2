@@ -234,64 +234,54 @@ class Menu implements RecursiveIterator
 
             $section = $this->add(t('System'), array(
                 'icon'     => 'services',
-                'priority' => 200,
+                'priority' => 700,
                 'renderer' => 'ProblemMenuItemRenderer'
             ));
             if (Logger::writesToFile()) {
                 $section->add(t('Application Log'), array(
                     'url'      => 'list/applicationlog',
-                    'priority' => 300
+                    'priority' => 710
                 ));
             }
 
             $section = $this->add(t('Configuration'), array(
                 'icon'          => 'wrench',
                 'permission'    => 'config/*',
-                'priority'      => 400
+                'priority'      => 800
             ));
             $section->add(t('Application'), array(
                 'url'           => 'config',
                 'permission'    => 'config/application/*',
-                'priority'      => 450
+                'priority'      => 810
             ));
-            $section->add(t('Users'), array(
-                'url'           => 'user/list',
-                'permission'    => 'config/application/user/show',
-                'priority'      => 500
-            ));
-            $section->add(t('Groups'), array(
-                'url'           => 'group/list',
-                'permission'    => 'config/application/group/show',
-                'priority'      => 550
-            ));
-            $section->add(t('Roles'), array(
-                'url'           => 'roles',
-                'permission'    => 'config/application/roles',
-                'priority'      => 600
+            $section->add(t('Authentication'), array(
+                'url'           => 'user',
+                'permission'    => 'config/authentication/*',
+                'priority'      => 820
             ));
             $section->add(t('UserGroupBackends'), array(
                 'url'           => 'usergroupbackend/list',
                 'permission'    => 'config/application/usergroupbackend/*',
-                'priority'      => 650
+                'priority'      => 830
             ));
             $section->add(t('Modules'), array(
                 'url'           => 'config/modules',
                 'permission'    => 'config/modules',
-                'priority'      => 700
+                'priority'      => 890
             ));
 
             $section = $this->add($auth->getUser()->getUsername(), array(
                 'icon'     => 'user',
-                'priority' => 800
+                'priority' => 900
             ));
             $section->add(t('Preferences'), array(
                 'url'      => 'preference',
-                'priority' => 810
+                'priority' => 910
             ));
 
             $section->add(t('Logout'), array(
                 'url'      => 'authentication/logout',
-                'priority' => 890,
+                'priority' => 990,
                 'renderer' => 'ForeignMenuItemRenderer'
             ));
         }

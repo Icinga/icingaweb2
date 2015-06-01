@@ -7,7 +7,7 @@ $section = $this->menuSection($this->translate('Documentation'), array(
     'title'    => 'Documentation',
     'icon'     => 'book',
     'url'      => 'doc',
-    'priority' => 390
+    'priority' => 700
 ));
 
 $section->add('Icinga Web 2', array(
@@ -18,7 +18,7 @@ $section->add('Module documentations', array(
 ));
 $section->add($this->translate('Developer - Style'), array(
     'url' => 'doc/style/guide',
-    'priority' => 399
+    'priority' => 790
 ));
 
 $this->provideSearchUrl($this->translate('Doc'), 'doc/search', -10);
