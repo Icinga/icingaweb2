@@ -163,6 +163,19 @@ class AuthBackendController extends Controller
             );
         }
 
+        if ($this->hasPermission('config/application/roles')) {
+            $tabs->add(
+                'roles',
+                array(
+                    'title' => $this->translate(
+                        'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
+                    ),
+                    'label' => $this->translate('Roles'),
+                    'url'   => 'roles'
+                )
+            );
+        }
+
         return $tabs;
     }
 }

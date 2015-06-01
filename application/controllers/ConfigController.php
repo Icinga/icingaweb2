@@ -61,16 +61,6 @@ class ConfigController extends Controller
             ));
             $allowedActions[] = 'resource';
         }
-        if ($auth->hasPermission('config/application/roles')) {
-            $tabs->add('roles', array(
-                'title' => $this->translate(
-                    'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
-                ),
-                'label' => $this->translate('Roles'),
-                'url'   => 'roles'
-            ));
-            $allowedActions[] = 'roles';
-        }
         $this->firstAllowedAction = array_shift($allowedActions);
     }
 
