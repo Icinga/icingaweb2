@@ -51,15 +51,18 @@ $currentUrl = Url::fromRequest()->without('limit')->getRelativeUrl();
         $object->stats->services_ok,
         $selfUrl,
         array('service_state' => 0),
-        array('title' => sprintf(
-            $this->translatePlural(
-                'List %u service that is currently in state OK on host %s',
-                'List %u services which are currently in state OK on host %s',
-                $object->stats->services_ok
+        array(
+            'title' => sprintf(
+                $this->translatePlural(
+                    'List %u service that is currently in state OK on host %s',
+                    'List %u services which are currently in state OK on host %s',
+                    $object->stats->services_ok
+                ),
+                $object->stats->services_ok,
+                $object->host_name
             ),
-            $object->stats->services_ok,
-            $object->host_name
-        ))
+            'data-base-target' => '_next'
+        )
     ); ?>
 </span>
 <?php endif ?>
@@ -90,16 +93,19 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
                 $object->stats->$unhandled,
                 $selfUrl,
                 $paramsUnhandled,
-                array('title' => sprintf(
-                    $this->translatePlural(
-                        'List %u service that is currently in state %s on host %s',
-                        'List %u services which are currently in state %s on host %s',
-                        $object->stats->$unhandled
+                array(
+                    'title' => sprintf(
+                        $this->translatePlural(
+                            'List %u service that is currently in state %s on host %s',
+                            'List %u services which are currently in state %s on host %s',
+                            $object->stats->$unhandled
+                        ),
+                        $object->stats->$unhandled,
+                        Service::getStateText($stateId, true),
+                        $object->host_name
                     ),
-                    $object->stats->$unhandled,
-                    Service::getStateText($stateId, true),
-                    $object->host_name
-                ))
+                    'data-base-target' => '_next'
+                )
             );
         }
         if ($object->stats->$handled) {
@@ -116,16 +122,19 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
                 $object->stats->$handled,
                 $selfUrl,
                 $paramsHandled,
-                array('title' => sprintf(
-                    $this->translatePlural(
-                        'List %u service that is currently in state %s (Acknowledged) on host %s',
-                        'List %u services which are currently in state %s (Acknowledged) on host %s',
-                        $object->stats->$handled
+                array(
+                    'title' => sprintf(
+                        $this->translatePlural(
+                            'List %u service that is currently in state %s (Acknowledged) on host %s',
+                            'List %u services which are currently in state %s (Acknowledged) on host %s',
+                            $object->stats->$handled
+                        ),
+                        $object->stats->$handled,
+                        Service::getStateText($stateId, true),
+                        $object->host_name
                     ),
-                    $object->stats->$handled,
-                    Service::getStateText($stateId, true),
-                    $object->host_name
-                ))
+                    'data-base-target' => '_next'
+                )
             );
             if ($object->stats->$unhandled) {
                 echo "</span>\n";
@@ -141,15 +150,18 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
         $object->stats->services_pending,
         $selfUrl,
         array('service_state' => 99),
-        array('title' => sprintf(
-            $this->translatePlural(
-                'List %u service that is currently in state PENDING on host %s',
-                'List %u services which are currently in state PENDING on host %s',
-                $object->stats->services_pending
+        array(
+            'title' => sprintf(
+                $this->translatePlural(
+                    'List %u service that is currently in state PENDING on host %s',
+                    'List %u services which are currently in state PENDING on host %s',
+                    $object->stats->services_pending
+                ),
+                $object->stats->services_pending,
+                $object->host_name
             ),
-            $object->stats->services_pending,
-            $object->host_name
-        ))
+            'data-base-target' => '_next'
+        )
     ) ?>
 </span>
 <?php endif ?>
