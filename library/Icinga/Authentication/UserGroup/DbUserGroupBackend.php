@@ -208,8 +208,8 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      */
     protected function persistGroupId($groupName)
     {
-        if (is_int($groupName)) {
-            return $groupName; // It's obviously already an id
+        if (! $groupName || is_int($groupName)) {
+            return $groupName; // It's obviously already an id or NULL
         }
 
         $groupId = $this->ds
