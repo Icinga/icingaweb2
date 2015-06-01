@@ -228,7 +228,7 @@ class FilterEditor extends AbstractWidget
                 foreach ($this->searchColumns as $searchColumn) {
                     $filters[] = Filter::expression($searchColumn, '=', "*$search*");
                 }
-                $filter->andFilter(new FilterOr($filters));
+                $filter = $filter->andFilter(new FilterOr($filters));
             } else {
                 Notification::error(mt('monitoring', 'Cannot search here'));
                 return $this;
