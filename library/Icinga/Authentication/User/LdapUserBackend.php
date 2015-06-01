@@ -262,9 +262,11 @@ class LdapUserBackend extends Repository implements UserBackendInterface
             $createdAtAttribute = 'whenCreated';
             $lastModifiedAttribute = 'whenChanged';
         } else {
-            $isActiveAttribute = 'unknown';
-            $createdAtAttribute = 'unknown';
-            $lastModifiedAttribute = 'unknown';
+            // TODO(jom): Elaborate whether it is possible to add dynamic support for the ppolicy
+            $isActiveAttribute = 'shadowExpire';
+
+            $createdAtAttribute = 'createTimestamp';
+            $lastModifiedAttribute = 'modifyTimestamp';
         }
 
         return array(
@@ -293,17 +295,15 @@ class LdapUserBackend extends Repository implements UserBackendInterface
 
         if ($this->ds->getCapabilities()->hasAdOid()) {
             $stateConverter = 'user_account_control';
-            $timeConverter = 'generalized_time';
         } else {
-            $timeConverter = null;
-            $stateConverter = null;
+            $stateConverter = 'shadow_expire';
         }
 
         return array(
             $this->userClass => array(
                 'is_active'     => $stateConverter,
-                'created_at'    => $timeConverter,
-                'last_modified' => $timeConverter
+                'created_at'    => 'generalized_time',
+                'last_modified' => 'generalized_time'
             )
         );
     }
@@ -342,6 +342,9 @@ class LdapUserBackend extends Repository implements UserBackendInterface
             ($dateTime = DateTime::createFromFormat('YmdHis.uO', $value)) !== false
             || ($dateTime = DateTime::createFromFormat('YmdHis.uZ', $value)) !== false
             || ($dateTime = DateTime::createFromFormat('YmdHis.u', $value)) !== false
+            || ($dateTime = DateTime::createFromFormat('YmdHis', $value)) !== false
+            || ($dateTime = DateTime::createFromFormat('YmdHi', $value)) !== false
+            || ($dateTime = DateTime::createFromFormat('YmdH', $value)) !== false
         ) {
             return $dateTime->getTimeStamp();
         } else {
@@ -351,6 +354,25 @@ class LdapUserBackend extends Repository implements UserBackendInterface
                 $this->getName()
             ));
         }
+    }
+
+    /**
+     * Return whether the given shadowExpire value defines that a user is permitted to login
+     *
+     * @param   string|null     $value
+     *
+     * @return  bool
+     */
+    protected function retrieveShadowExpire($value)
+    {
+        if ($value === null) {
+            return $value;
+        }
+
+        $now = new DateTime();
+        $bigBang = clone $now;
+        $bigBang->setTimestamp(0);
+        return ((int) $value) >= $bigBang->diff($now)->days;
     }
 
     /**
