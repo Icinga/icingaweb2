@@ -3,6 +3,8 @@
 
 namespace Icinga\Authentication\User;
 
+use DateTime;
+use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ProgrammingError;
@@ -255,15 +257,100 @@ class LdapUserBackend extends Repository implements UserBackendInterface
             throw new ProgrammingError('It is required to set a attribute name where to find a user\'s name first');
         }
 
+        if ($this->ds->getCapabilities()->hasAdOid()) {
+            $isActiveAttribute = 'userAccountControl';
+            $createdAtAttribute = 'whenCreated';
+            $lastModifiedAttribute = 'whenChanged';
+        } else {
+            $isActiveAttribute = 'unknown';
+            $createdAtAttribute = 'unknown';
+            $lastModifiedAttribute = 'unknown';
+        }
+
         return array(
             $this->userClass => array(
                 'user'          => $this->userNameAttribute,
                 'user_name'     => $this->userNameAttribute,
-                'is_active'     => 'unknown', // msExchUserAccountControl == 2/512/514? <- AD LDAP
-                'created_at'    => 'whenCreated', // That's AD LDAP,
-                'last_modified' => 'whenChanged' // what's OpenLDAP?
+                'is_active'     => $isActiveAttribute,
+                'created_at'    => $createdAtAttribute,
+                'last_modified' => $lastModifiedAttribute
             )
         );
+    }
+
+    /**
+     * Initialize this repository's conversion rules
+     *
+     * @return  array
+     *
+     * @throws  ProgrammingError    In case $this->userClass has not been set yet
+     */
+    protected function initializeConversionRules()
+    {
+        if ($this->userClass === null) {
+            throw new ProgrammingError('It is required to set the objectClass where to look for users first');
+        }
+
+        if ($this->ds->getCapabilities()->hasAdOid()) {
+            $stateConverter = 'user_account_control';
+            $timeConverter = 'generalized_time';
+        } else {
+            $timeConverter = null;
+            $stateConverter = null;
+        }
+
+        return array(
+            $this->userClass => array(
+                'is_active'     => $stateConverter,
+                'created_at'    => $timeConverter,
+                'last_modified' => $timeConverter
+            )
+        );
+    }
+
+    /**
+     * Return whether the given userAccountControl value defines that a user is permitted to login
+     *
+     * @param   string|null     $value
+     *
+     * @return  bool
+     */
+    protected function retrieveUserAccountControl($value)
+    {
+        if ($value === null) {
+            return $value;
+        }
+
+        $ADS_UF_ACCOUNTDISABLE = 2;
+        return ((int) $value & $ADS_UF_ACCOUNTDISABLE) === 0;
+    }
+
+    /**
+     * Parse the given value based on the ASN.1 standard (GeneralizedTime) and return its timestamp representation
+     *
+     * @param   string|null     $value
+     *
+     * @return  int
+     */
+    protected function retrieveGeneralizedTime($value)
+    {
+        if ($value === null) {
+            return $value;
+        }
+
+        if (
+            ($dateTime = DateTime::createFromFormat('YmdHis.uO', $value)) !== false
+            || ($dateTime = DateTime::createFromFormat('YmdHis.uZ', $value)) !== false
+            || ($dateTime = DateTime::createFromFormat('YmdHis.u', $value)) !== false
+        ) {
+            return $dateTime->getTimeStamp();
+        } else {
+            Logger::debug(sprintf(
+                'Failed to parse "%s" based on the ASN.1 standard (GeneralizedTime) for user backend "%s".',
+                $value,
+                $this->getName()
+            ));
+        }
     }
 
     /**
