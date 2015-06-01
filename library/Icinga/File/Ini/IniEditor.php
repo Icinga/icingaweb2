@@ -62,7 +62,7 @@ class IniEditor
         $this->commentIndentation = array_key_exists('commentIndentation', $options)
             ? $options['commentIndentation'] : 43;
         $this->sectionSeparators = array_key_exists('sectionSeparators', $options)
-            ? $options['sectionSeparators'] : 2;
+            ? $options['sectionSeparators'] : 1;
     }
 
     /**
@@ -323,6 +323,12 @@ class IniEditor
     private function cleanUpWhitespaces()
     {
         $i = count($this->text) - 1;
+
+        // remove all trailing whitespaces
+        while ($i > 0 && preg_match('/^\s*$/', $this->text[$i]) === 1) {
+            $this->deleteLine($i);
+            $i--;
+        }
         for (; $i > 0; $i--) {
             $line = $this->text[$i];
             if ($this->isSectionDeclaration($line) && $i > 0) {
@@ -351,6 +357,8 @@ class IniEditor
                 }
             }
         }
+        // always end file with a linebreak
+        $this->insertAtLine(count($this->text) + 1, "");
     }
 
     /**
