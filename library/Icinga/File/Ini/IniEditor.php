@@ -314,7 +314,7 @@ class IniEditor
     public function getText()
     {
         $this->cleanUpWhitespaces();
-        return implode(PHP_EOL, $this->text);
+        return rtrim(implode(PHP_EOL, $this->text)) . PHP_EOL;
     }
 
     /**
@@ -323,12 +323,6 @@ class IniEditor
     private function cleanUpWhitespaces()
     {
         $i = count($this->text) - 1;
-
-        // remove all trailing whitespaces
-        while ($i > 0 && preg_match('/^\s*$/', $this->text[$i]) === 1) {
-            $this->deleteLine($i);
-            $i--;
-        }
         for (; $i > 0; $i--) {
             $line = $this->text[$i];
             if ($this->isSectionDeclaration($line) && $i > 0) {
@@ -357,8 +351,6 @@ class IniEditor
                 }
             }
         }
-        // always end file with a linebreak
-        $this->insertAtLine(count($this->text) + 1, "");
     }
 
     /**
