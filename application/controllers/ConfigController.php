@@ -38,12 +38,12 @@ class ConfigController extends Controller
         $auth = $this->Auth();
         $allowedActions = array();
         if ($auth->hasPermission('config/application/general')) {
-            $tabs->add('application', array(
+            $tabs->add('general', array(
                 'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
-                'label' => $this->translate('Application'),
-                'url'   => 'config/application'
+                'label' => $this->translate('General'),
+                'url'   => 'config/general'
             ));
-            $allowedActions[] = 'application';
+            $allowedActions[] = 'general';
         }
         if ($auth->hasPermission('config/application/authentication')) {
             $tabs->add('authentication', array(
@@ -96,11 +96,11 @@ class ConfigController extends Controller
     }
 
     /**
-     * Application configuration
+     * General configuration
      *
-     * @throws SecurityException    If the user lacks the permission for configuring the application
+     * @throws SecurityException    If the user lacks the permission for configuring the general configuration
      */
-    public function applicationAction()
+    public function generalAction()
     {
         $this->assertPermission('config/application/general');
         $form = new GeneralConfigForm();
@@ -108,7 +108,7 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->view->tabs->activate('application');
+        $this->view->tabs->activate('general');
     }
 
     /**

@@ -250,7 +250,7 @@ class Menu implements RecursiveIterator
                 'priority'      => 400
             ));
             $section->add(t('Application'), array(
-                'url'           => 'config/application',
+                'url'           => 'config',
                 'permission'    => 'config/application/*',
                 'priority'      => 450
             ));
