@@ -233,50 +233,55 @@ class Menu implements RecursiveIterator
             ));
 
             $section = $this->add(t('System'), array(
-                'icon'     => 'wrench',
+                'icon'     => 'services',
                 'priority' => 200,
                 'renderer' => 'ProblemMenuItemRenderer'
+            ));
+            if (Logger::writesToFile()) {
+                $section->add(t('Application Log'), array(
+                    'url'      => 'list/applicationlog',
+                    'priority' => 300
+                ));
+            }
+
+            $section = $this->add(t('Configuration'), array(
+                'icon'          => 'wrench',
+                'permission'    => 'config/*',
+                'priority'      => 400
             ));
             $section->add(t('User-Management'), array(
                 'url'           => 'user/list',
                 'permission'    => 'config/application/*',
-                'priority'      => 300
+                'priority'      => 500
             ));
             $section->add(t('UserGroupBackends'), array(
                 'url'           => 'usergroupbackend/list',
                 'permission'    => 'config/application/usergroupbackend/*',
-                'priority'      => 301
+                'priority'      => 510
             ));
             $section->add(t('Configuration'), array(
                 'url'           => 'config',
                 'permission'    => 'config/application/*',
-                'priority'      => 400
+                'priority'      => 600
             ));
             $section->add(t('Modules'), array(
                 'url'           => 'config/modules',
                 'permission'    => 'config/modules',
-                'priority'      => 500
+                'priority'      => 700
             ));
-
-            if (Logger::writesToFile()) {
-                $section->add(t('Application Log'), array(
-                    'url'      => 'list/applicationlog',
-                    'priority' => 600
-                ));
-            }
 
             $section = $this->add($auth->getUser()->getUsername(), array(
                 'icon'     => 'user',
-                'priority' => 700
+                'priority' => 800
             ));
             $section->add(t('Preferences'), array(
                 'url'      => 'preference',
-                'priority' => 701
+                'priority' => 810
             ));
 
             $section->add(t('Logout'), array(
                 'url'      => 'authentication/logout',
-                'priority' => 800,
+                'priority' => 890,
                 'renderer' => 'ForeignMenuItemRenderer'
             ));
         }
