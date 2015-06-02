@@ -3,151 +3,154 @@
 
 namespace Icinga\Protocol\Ldap;
 
+use Icinga\Data\SimpleQuery;
+use Icinga\Data\Filter\Filter;
+use Icinga\Exception\NotImplementedError;
+
 /**
- * Search class
- *
- * @package Icinga\Protocol\Ldap
+ * LDAP query class
  */
-/**
- * Search abstraction class
- *
- * Usage example:
- *
- * <code>
- * $connection->select()->from('user')->where('sAMAccountName = ?', 'icinga');
- * </code>
- *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
- * @package    Icinga\Protocol\Ldap
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
- */
-class Query
+class Query extends SimpleQuery
 {
-    protected $connection;
-    protected $filters = array();
-    protected $fields = array();
-    protected $limit_count = 0;
-    protected $limit_offset = 0;
-    protected $sort_columns = array();
-    protected $count;
-    protected $base;
-    protected $usePagedResults = true;
+    /**
+     * This query's filters
+     *
+     * Currently just a basic key/value pair based array. Can be removed once Icinga\Data\Filter is supported.
+     *
+     * @var array
+     */
+    protected $filters;
 
     /**
-     * Constructor
+     * The base dn being used for this query
      *
-     * @param Connection LDAP Connection object
-     * @return void
+     * @var string
      */
-    public function __construct(Connection $connection)
+    protected $base;
+
+    /**
+     * Whether this query is permitted to utilize paged results
+     *
+     * @var bool
+     */
+    protected $usePagedResults;
+
+    /**
+     * Initialize this query
+     */
+    protected function init()
     {
-        $this->connection = $connection;
+        $this->filters = array();
+        $this->usePagedResults = true;
     }
 
+    /**
+     * Set the base dn to be used for this query
+     *
+     * @param   string  $base
+     *
+     * @return  $this
+     */
     public function setBase($base)
     {
         $this->base = $base;
         return $this;
     }
 
-    public function hasBase()
-    {
-        return $this->base !== null;
-    }
-
+    /**
+     * Return the base dn being used for this query
+     *
+     * @return  string
+     */
     public function getBase()
     {
         return $this->base;
     }
 
+    /**
+     * Set whether this query is permitted to utilize paged results
+     *
+     * @param   bool    $state
+     *
+     * @return  $this
+     */
     public function setUsePagedResults($state = true)
     {
         $this->usePagedResults = (bool) $state;
         return $this;
     }
 
+    /**
+     * Return whether this query is permitted to utilize paged results
+     *
+     * @return  bool
+     */
     public function getUsePagedResults()
     {
         return $this->usePagedResults;
     }
 
     /**
-     * Count result set, ignoring limits
+     * Choose an objectClass and the columns you are interested in
      *
-     * @return int
+     * {@inheritdoc} This creates an objectClass filter.
      */
-    public function count()
+    public function from($target, array $fields = null)
     {
-        if ($this->count === null) {
-            $this->count = $this->connection->count($this);
-        }
-        return $this->count;
+        $this->filters['objectClass'] = $target;
+        return parent::from($target, $fields);
     }
 
     /**
-     * Count result set, ignoring limits
+     * Add a new filter to the query
      *
-     * @return int
+     * @param   string      $condition  Column to search in
+     * @param   mixed       $value      Value to look for (asterisk wildcards are allowed)
+     *
+     * @return  $this
      */
-    public function limit($count = null, $offset = null)
+    public function where($condition, $value = null)
     {
-        if (! preg_match('~^\d+~', $count . $offset)) {
-            throw new Exception(
-                'Got invalid limit: %s, %s',
-                $count,
-                $offset
-            );
+        // TODO: Adjust this once support for Icinga\Data\Filter is available
+        if ($condition instanceof Expression) {
+            $this->filters[] = $condition;
+        } else {
+            $this->filters[$condition] = $value;
         }
-        $this->limit_count  = (int) $count;
-        $this->limit_offset = (int) $offset;
+
         return $this;
     }
 
-    /**
-     * Whether a limit has been set
-     *
-     * @return boolean
-     */
-    public function hasLimit()
+    public function getFilter()
     {
-        return $this->limit_count > 0;
+        throw new NotImplementedError('Support for Icinga\Data\Filter is still missing. Use $this->where() instead');
     }
 
-    /**
-     * Whether an offset (limit) has been set
-     *
-     * @return boolean
-     */
-    public function hasOffset()
+    public function addFilter(Filter $filter)
     {
-        return $this->limit_offset > 0;
+        // TODO: This should be considered a quick fix only.
+        //       Drop this entirely once support for Icinga\Data\Filter is available
+        if ($filter->isExpression()) {
+            $this->where($filter->getColumn(), $filter->getExpression());
+        } elseif ($filter->isChain()) {
+            foreach ($filter->filters() as $chainOrExpression) {
+                $this->addFilter($chainOrExpression);
+            }
+        }
     }
 
-    /**
-     * Retrieve result limit
-     *
-     * @return int
-     */
-    public function getLimit()
+    public function setFilter(Filter $filter)
     {
-        return $this->limit_count;
-    }
-
-    /**
-     * Retrieve result offset
-     *
-     * @return int
-     */
-    public function getOffset()
-    {
-        return $this->limit_offset;
+        throw new NotImplementedError('Support for Icinga\Data\Filter is still missing. Use $this->where() instead');
     }
 
     /**
      * Fetch result as tree
      *
-     * @return Node
+     * @return  Root
+     *
+     * @todo    This is untested waste, not being used anywhere and ignores the query's order and base dn.
+     *           Evaluate whether it's reasonable to properly implement and test it.
      */
     public function fetchTree()
     {
@@ -179,132 +182,32 @@ class Query
     }
 
     /**
-     * Fetch result as an array of objects
+     * Fetch the distinguished name of the first result
      *
-     * @return array
+     * @return  string|false    The distinguished name or false in case it's not possible to fetch a result
+     *
+     * @throws  Exception       In case the query returns multiple results
+     *                          (i.e. it's not possible to fetch a unique DN)
      */
-    public function fetchAll()
+    public function fetchDn()
     {
-        return $this->connection->fetchAll($this);
+        return $this->ds->fetchDn($this);
     }
 
     /**
-     * Fetch first result row
+     * Return the LDAP filter to be applied on this query
      *
-     * @return object
+     * @return  string
+     *
+     * @throws  Exception   In case the objectClass filter does not exist
      */
-    public function fetchRow()
+    protected function renderFilter()
     {
-        return $this->connection->fetchRow($this);
-    }
-
-    /**
-     * Fetch first column value from first result row
-     *
-     * @return mixed
-     */
-    public function fetchOne()
-    {
-        return $this->connection->fetchOne($this);
-    }
-
-    /**
-     * Fetch a key/value list, first column is key, second is value
-     *
-     * @return array
-     */
-    public function fetchPairs()
-    {
-        // STILL TODO!!
-        return $this->connection->fetchPairs($this);
-    }
-
-    /**
-     * Where to select (which fields) from
-     *
-     * This creates an objectClass filter
-     *
-     * @return Query
-     */
-    public function from($objectClass, $fields = array())
-    {
-        $this->filters['objectClass'] = $objectClass;
-        $this->fields = $fields;
-        return $this;
-    }
-
-    /**
-     * Add a new filter to the query
-     *
-     * @param  string  Column to search in
-     * @param  string  Filter text (asterisks are allowed)
-     * @return Query
-     */
-    public function where($key, $val)
-    {
-        $this->filters[$key] = $val;
-        return $this;
-    }
-
-    /**
-     * Sort by given column
-     *
-     * TODO: Sort direction is not implemented yet
-     *
-     * @param  string  Order column
-     * @param  string  Order direction
-     * @return Query
-     */
-    public function order($column, $direction = 'ASC')
-    {
-        $this->sort_columns[] = array($column, $direction);
-        return $this;
-    }
-
-    /**
-     * Retrieve a list of the desired fields
-     *
-     * @return array
-     */
-    public function listFields()
-    {
-        return $this->fields;
-    }
-
-    /**
-     * Retrieve a list containing current sort columns
-     *
-     * @return array
-     */
-    public function getSortColumns()
-    {
-        return $this->sort_columns;
-    }
-
-    /**
-     * Add a filter expression to this query
-     *
-     * @param   Expression  $expression
-     *
-     * @return  Query
-     */
-    public function addFilter(Expression $expression)
-    {
-        $this->filters[] = $expression;
-        return $this;
-    }
-
-    /**
-     * Returns the LDAP filter that will be applied
-     *
-     * @string
-     */
-    public function create()
-    {
-        $parts = array();
-        if (! isset($this->filters['objectClass']) || $this->filters['objectClass'] === null) {
+        if (! isset($this->filters['objectClass'])) {
             throw new Exception('Object class is mandatory');
         }
+
+        $parts = array();
         foreach ($this->filters as $key => $value) {
             if ($value instanceof Expression) {
                 $parts[] = (string) $value;
@@ -316,6 +219,7 @@ class Query
                 );
             }
         }
+
         if (count($parts) > 1) {
             return '(&(' . implode(')(', $parts) . '))';
         } else {
@@ -323,17 +227,13 @@ class Query
         }
     }
 
+    /**
+     * Return the LDAP filter to be applied on this query
+     *
+     * @return  string
+     */
     public function __toString()
     {
-        return $this->create();
-    }
-
-    /**
-     * Descructor
-     */
-    public function __destruct()
-    {
-        // To be on the safe side:
-        unset($this->connection);
+        return $this->renderFilter();
     }
 }

@@ -208,7 +208,7 @@ $section->add($this->translate('Alert Summary'), array(
 $section = $this->menuSection($this->translate('System'));
 $section->add($this->translate('Monitoring Health'), array(
     'url'      => 'monitoring/process/info',
-    'priority' => 120,
+    'priority' => 720,
     'renderer'  => 'Icinga\Module\Monitoring\Web\Menu\BackendAvailabilityMenuItemRenderer'
 ));
 

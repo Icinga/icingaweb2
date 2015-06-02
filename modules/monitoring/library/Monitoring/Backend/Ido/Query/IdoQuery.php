@@ -415,19 +415,9 @@ abstract class IdoQuery extends DbQuery
         } elseif ($dbType === 'pgsql') {
             $this->initializeForPostgres();
         }
-        $this->dbSelect();
+        $this->joinBaseTables();
         $this->select->columns($this->columns);
-        //$this->joinBaseTables();
         $this->prepareAliasIndexes();
-    }
-
-    protected function dbSelect()
-    {
-        if ($this->select === null) {
-            $this->select = $this->db->select();
-            $this->joinBaseTables();
-        }
-        return clone $this->select;
     }
 
     /**
