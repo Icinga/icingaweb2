@@ -4,6 +4,7 @@
 namespace Icinga\Protocol\File;
 
 use Countable;
+use ArrayIterator;
 use Icinga\Data\Selectable;
 use Icinga\Data\ConfigObject;
 
@@ -69,6 +70,18 @@ class FileReader implements Selectable, Countable
     public function select()
     {
         return new FileQuery($this);
+    }
+
+    /**
+     * Fetch and return all rows of the given query's result set using an iterator
+     *
+     * @param   FileQuery   $query
+     *
+     * @return  ArrayIterator
+     */
+    public function query(FileQuery $query)
+    {
+        return new ArrayIterator($this->fetchAll($query));
     }
 
     /**
