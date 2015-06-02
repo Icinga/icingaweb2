@@ -84,7 +84,7 @@ class ConfigController extends Controller
     public function indexAction()
     {
         if ($this->firstAllowedAction === null) {
-            throw new SecurityException($this->translate('No permission for configuration'));
+            throw new SecurityException($this->translate('No permission for application configuration'));
         }
         $action = $this->getTabs()->get($this->firstAllowedAction);
         if (substr($action->getUrl()->getPath(), 0, 7) === 'config/') {

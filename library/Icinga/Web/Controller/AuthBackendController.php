@@ -9,6 +9,7 @@ use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\UserBackendInterface;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackendInterface;
+use Icinga\Security\SecurityException;
 use Icinga\Web\Controller;
 
 /**
@@ -16,6 +17,22 @@ use Icinga\Web\Controller;
  */
 class AuthBackendController extends Controller
 {
+    /**
+     * Redirect to the first permitted list action
+     */
+    final public function indexAction()
+    {
+        if ($this->hasPermission('config/authentication/users/show')) {
+            $this->redirectNow('user/list');
+        } elseif ($this->hasPermission('config/authentication/groups/show')) {
+            $this->redirectNow('group/list');
+        } elseif ($this->hasPermission('config/authentication/roles/show')) {
+            $this->redirectNow('role/list');
+        } else {
+            throw new SecurityException($this->translate('No permission for authentication configuration'));
+        }
+    }
+
     /**
      * Return all user backends implementing the given interface
      *

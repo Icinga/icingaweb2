@@ -18,14 +18,6 @@ use Icinga\Web\Widget;
 class GroupController extends AuthBackendController
 {
     /**
-     * Redirect to this controller's list action
-     */
-    public function indexAction()
-    {
-        $this->redirectNow('group/list');
-    }
-
-    /**
      * List all user groups of a single backend
      */
     public function listAction()

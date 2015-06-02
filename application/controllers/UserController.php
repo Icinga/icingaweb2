@@ -18,14 +18,6 @@ use Icinga\Web\Widget;
 class UserController extends AuthBackendController
 {
     /**
-     * Redirect to this controller's list action
-     */
-    public function indexAction()
-    {
-        $this->redirectNow('user/list');
-    }
-
-    /**
      * List all users of a single backend
      */
     public function listAction()
