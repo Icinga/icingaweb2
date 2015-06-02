@@ -3,6 +3,7 @@
 
 use Icinga\Module\Monitoring\Plugin\Perfdata;
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
+use Icinga\Util\String;
 
 class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 {
@@ -47,7 +48,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 $columns[$column] = $labels[$column];
             }
         }
-        // restore original column array sorting sorting
+        // restore original column array sorting
         $headers = array();
         foreach ($keys as $i => $column) {
             if (isset($columns[$column])) {
@@ -70,7 +71,12 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                         if (! isset($columns[$column])) {
                             continue;
                         }
-                        $data []= empty($value) ? '-' : (string) $value;
+                        $text = $this->view->escape(empty($value) ? '-' : $value);
+                        $data []= sprintf(
+                            '<span title="%s">%s</span>',
+                            $text,
+                            String::ellipsisCenter($text, 24)
+                        );
                     }
                 }
                 $table []= '<tr><td>' . implode('</td><td>', $data) . '</td></tr>';
