@@ -50,7 +50,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         }
         // restore original column array sorting
         $headers = array();
-        foreach ($keys as $i => $column) {
+        foreach ($keys as $column) {
             if (isset($columns[$column])) {
                 $headers[$column] = $labels[$column];
             }
@@ -63,7 +63,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 $data = array();
                 if ($perfdata->isVisualizable()) {
                     $data []= $perfdata->asInlinePie($color)->render() . '&nbsp;';
-                } else if (isset($columns[''])) {
+                } elseif (isset($columns[''])) {
                     $data []= '';
                 }
                 if (! $compact) {
