@@ -458,11 +458,11 @@ class ActionController extends Zend_Controller_Action
             foreach ($notifications->getMessages() as $m) {
                 $notificationList[] = rawurlencode($m->type . ' ' . $m->message);
             }
-            $resp->setHeader('X-Icinga-Notification', implode('&', $notificationList));
+            $resp->setHeader('X-Icinga-Notification', implode('&', $notificationList), true);
         }
 
         if ($this->reloadCss) {
-            $resp->setHeader('X-Icinga-CssReload', 'now');
+            $resp->setHeader('X-Icinga-CssReload', 'now', true);
         }
 
         if ($this->view->title) {
@@ -472,18 +472,18 @@ class ActionController extends Zend_Controller_Action
             }
             $resp->setHeader(
                 'X-Icinga-Title',
-                rawurlencode($this->view->title . ' :: Icinga Web')
+                rawurlencode($this->view->title . ' :: Icinga Web', true)
             );
         } else {
-            $resp->setHeader('X-Icinga-Title', rawurlencode('Icinga Web'));
+            $resp->setHeader('X-Icinga-Title', rawurlencode('Icinga Web'), true);
         }
 
         if ($this->rerenderLayout) {
-            $this->getResponse()->setHeader('X-Icinga-Container', 'layout');
+            $this->getResponse()->setHeader('X-Icinga-Container', 'layout', true);
         }
 
         if ($this->autorefreshInterval !== null) {
-            $resp->setHeader('X-Icinga-Refresh', $this->autorefreshInterval);
+            $resp->setHeader('X-Icinga-Refresh', $this->autorefreshInterval, true);
         }
     }
 
