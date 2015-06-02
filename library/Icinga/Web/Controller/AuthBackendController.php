@@ -151,7 +151,7 @@ class AuthBackendController extends Controller
             );
         }
 
-        if ($this->hasPermission('config/application/groups/show')) {
+        if ($this->hasPermission('config/authentication/groups/show')) {
             $tabs->add(
                 'group/list',
                 array(

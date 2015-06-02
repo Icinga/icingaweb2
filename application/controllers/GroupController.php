@@ -30,7 +30,7 @@ class GroupController extends AuthBackendController
      */
     public function listAction()
     {
-        $this->assertPermission('config/application/groups/show');
+        $this->assertPermission('config/authentication/groups/show');
         $backendNames = array_map(
             function ($b) { return $b->getName(); },
             $this->loadUserGroupBackends('Icinga\Data\Selectable')
@@ -87,7 +87,7 @@ class GroupController extends AuthBackendController
      */
     public function showAction()
     {
-        $this->assertPermission('config/application/groups/show');
+        $this->assertPermission('config/authentication/groups/show');
         $groupName = $this->params->getRequired('group');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'));
 
@@ -164,7 +164,7 @@ class GroupController extends AuthBackendController
      */
     public function addAction()
     {
-        $this->assertPermission('config/application/groups/add');
+        $this->assertPermission('config/authentication/groups/add');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
         $form = new UserGroupForm();
         $form->setRedirectUrl(Url::fromPath('group/list', array('backend' => $backend->getName())));
@@ -180,7 +180,7 @@ class GroupController extends AuthBackendController
      */
     public function editAction()
     {
-        $this->assertPermission('config/application/groups/edit');
+        $this->assertPermission('config/authentication/groups/edit');
         $groupName = $this->params->getRequired('group');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Updatable');
 
@@ -205,7 +205,7 @@ class GroupController extends AuthBackendController
      */
     public function removeAction()
     {
-        $this->assertPermission('config/application/groups/remove');
+        $this->assertPermission('config/authentication/groups/remove');
         $groupName = $this->params->getRequired('group');
         $backend = $this->getUserGroupBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
 

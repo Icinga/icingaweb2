@@ -3,10 +3,10 @@
 use Icinga\Data\Extensible;
 use Icinga\Data\Updatable;
 
-$extensible = $this->hasPermission('config/application/groups/add') && $backend instanceof Extensible;
+$extensible = $this->hasPermission('config/authentication/groups/add') && $backend instanceof Extensible;
 
 $editLink = null;
-if ($this->hasPermission('config/application/groups/edit') && $backend instanceof Updatable) {
+if ($this->hasPermission('config/authentication/groups/edit') && $backend instanceof Updatable) {
     $editLink = $this->qlink(
         null,
         'group/edit',
