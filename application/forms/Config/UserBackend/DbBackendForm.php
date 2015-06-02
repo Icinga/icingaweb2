@@ -1,7 +1,7 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Forms\Config\Authentication;
+namespace Icinga\Forms\Config\UserBackend;
 
 use Exception;
 use Icinga\Web\Form;
@@ -10,7 +10,7 @@ use Icinga\Data\ResourceFactory;
 use Icinga\Authentication\User\DbUserBackend;
 
 /**
- * Form class for adding/modifying database authentication backends
+ * Form class for adding/modifying database user backends
  */
 class DbBackendForm extends Form
 {
@@ -85,13 +85,13 @@ class DbBackendForm extends Form
     }
 
     /**
-     * Validate that the selected resource is a valid database authentication backend
+     * Validate that the selected resource is a valid database user backend
      *
      * @see Form::onSuccess()
      */
     public function onSuccess()
     {
-        if (false === static::isValidAuthenticationBackend($this)) {
+        if (false === static::isValidUserBackend($this)) {
             return false;
         }
     }
@@ -103,7 +103,7 @@ class DbBackendForm extends Form
      *
      * @return  bool            Whether validation succeeded or not
      */
-    public static function isValidAuthenticationBackend(Form $form)
+    public static function isValidUserBackend(Form $form)
     {
         try {
             $dbUserBackend = new DbUserBackend(ResourceFactory::createResource($form->getResourceConfig()));

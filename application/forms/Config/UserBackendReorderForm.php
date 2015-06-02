@@ -7,7 +7,7 @@ use InvalidArgumentException;
 use Icinga\Web\Notification;
 use Icinga\Forms\ConfigForm;
 
-class AuthenticationBackendReorderForm extends ConfigForm
+class UserBackendReorderForm extends ConfigForm
 {
     /**
      * Initialize this form
@@ -38,7 +38,7 @@ class AuthenticationBackendReorderForm extends ConfigForm
     }
 
     /**
-     * Update the authentication backend order and save the configuration
+     * Update the user backend order and save the configuration
      *
      * @see Form::onSuccess()
      */
@@ -62,13 +62,13 @@ class AuthenticationBackendReorderForm extends ConfigForm
     }
 
     /**
-     * Return the config form for authentication backends
+     * Return the config form for user backends
      *
      * @return  ConfigForm
      */
     protected function getConfigForm()
     {
-        $form = new AuthenticationBackendConfigForm();
+        $form = new UserBackendConfigForm();
         $form->setIniConfig($this->config);
         return $form;
     }

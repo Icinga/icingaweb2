@@ -5,10 +5,10 @@ namespace Tests\Icinga\Forms\Config;
 
 use Icinga\Test\BaseTestCase;
 use Icinga\Application\Config;
-use Icinga\Forms\Config\AuthenticationBackendConfigForm;
-use Icinga\Forms\Config\AuthenticationBackendReorderForm;
+use Icinga\Forms\Config\UserBackendConfigForm;
+use Icinga\Forms\Config\UserBackendReorderForm;
 
-class AuthenticationBackendConfigFormWithoutSave extends AuthenticationBackendConfigForm
+class UserBackendConfigFormWithoutSave extends UserBackendConfigForm
 {
     public static $newConfig;
 
@@ -19,11 +19,11 @@ class AuthenticationBackendConfigFormWithoutSave extends AuthenticationBackendCo
     }
 }
 
-class AuthenticationBackendReorderFormProvidingConfigFormWithoutSave extends AuthenticationBackendReorderForm
+class UserBackendReorderFormProvidingConfigFormWithoutSave extends UserBackendReorderForm
 {
     public function getConfigForm()
     {
-        $form = new AuthenticationBackendConfigFormWithoutSave();
+        $form = new UserBackendConfigFormWithoutSave();
         $form->setIniConfig($this->config);
         return $form;
     }
@@ -45,7 +45,7 @@ class AuthenticationBackendReorderFormTest extends BaseTestCase
             ->shouldReceive('isPost')->andReturn(true)
             ->shouldReceive('getPost')->andReturn(array('backend_newpos' => 'test3|1'));
 
-        $form = new AuthenticationBackendReorderFormProvidingConfigFormWithoutSave();
+        $form = new UserBackendReorderFormProvidingConfigFormWithoutSave();
         $form->setIniConfig($config);
         $form->setTokenDisabled();
         $form->setUidDisabled();
@@ -53,8 +53,8 @@ class AuthenticationBackendReorderFormTest extends BaseTestCase
 
         $this->assertEquals(
             array('test1', 'test3', 'test2'),
-            AuthenticationBackendConfigFormWithoutSave::$newConfig->keys(),
-            'Moving elements with AuthenticationBackendReorderForm does not seem to properly work'
+            UserBackendConfigFormWithoutSave::$newConfig->keys(),
+            'Moving elements with UserBackendReorderForm does not seem to properly work'
         );
     }
 }

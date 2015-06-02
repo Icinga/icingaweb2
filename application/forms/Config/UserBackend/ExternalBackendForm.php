@@ -1,13 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Forms\Config\Authentication;
+namespace Icinga\Forms\Config\UserBackend;
 
 use Zend_Validate_Callback;
 use Icinga\Web\Form;
 
 /**
- * Form class for adding/modifying authentication backends of type "external"
+ * Form class for adding/modifying user backends of type "external"
  */
 class ExternalBackendForm extends Form
 {
@@ -90,7 +90,7 @@ class ExternalBackendForm extends Form
      *
      * @return  bool            Whether validation succeeded or not
      */
-    public static function isValidAuthenticationBackend(Form $form)
+    public static function isValidUserBackend(Form $form)
     {
         return true;
     }

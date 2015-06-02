@@ -1,7 +1,7 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Tests\Icinga\Forms\Config\Authentication;
+namespace Tests\Icinga\Forms\Config\UserBackend;
 
 // Necessary as some of these tests disable phpunit's preservation
 // of the global state (e.g. autoloaders are in the global state)
@@ -10,10 +10,9 @@ require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
 use Mockery;
 use Icinga\Data\ConfigObject;
 use Icinga\Test\BaseTestCase;
-use Icinga\Forms\Config\Authentication\LdapBackendForm;
-use Icinga\Exception\AuthenticationException;
+use Icinga\Forms\Config\UserBackend\DbBackendForm;
 
-class LdapBackendFormTest extends BaseTestCase
+class DbBackendFormTest extends BaseTestCase
 {
     public function tearDown()
     {
@@ -28,22 +27,22 @@ class LdapBackendFormTest extends BaseTestCase
     public function testValidBackendIsValid()
     {
         $this->setUpResourceFactoryMock();
-        Mockery::mock('overload:Icinga\Authentication\User\LdapUserBackend')
-            ->shouldReceive('assertAuthenticationPossible')->andReturnNull()
-            ->shouldReceive('setConfig')->andReturnNull();
+        Mockery::mock('overload:Icinga\Authentication\User\DbUserBackend')
+            ->shouldReceive('select->where->count')
+            ->andReturn(2);
 
         // Passing array(null) is required to make Mockery call the constructor...
-        $form = Mockery::mock('Icinga\Forms\Config\Authentication\LdapBackendForm[getView]', array(null));
+        $form = Mockery::mock('Icinga\Forms\Config\UserBackend\DbBackendForm[getView]', array(null));
         $form->shouldReceive('getView->escape')
             ->with(Mockery::type('string'))
             ->andReturnUsing(function ($s) { return $s; });
         $form->setTokenDisabled();
-        $form->setResources(array('test_ldap_backend'));
-        $form->populate(array('resource' => 'test_ldap_backend'));
+        $form->setResources(array('test_db_backend'));
+        $form->populate(array('resource' => 'test_db_backend'));
 
         $this->assertTrue(
-            LdapBackendForm::isValidAuthenticationBackend($form),
-            'LdapBackendForm claims that a valid authentication backend with users is not valid'
+            DbBackendForm::isValidUserBackend($form),
+            'DbBackendForm claims that a valid user backend with users is not valid'
         );
     }
 
@@ -54,21 +53,22 @@ class LdapBackendFormTest extends BaseTestCase
     public function testInvalidBackendIsNotValid()
     {
         $this->setUpResourceFactoryMock();
-        Mockery::mock('overload:Icinga\Authentication\User\LdapUserBackend')
-            ->shouldReceive('assertAuthenticationPossible')->andThrow(new AuthenticationException);
+        Mockery::mock('overload:Icinga\Authentication\User\DbUserBackend')
+            ->shouldReceive('count')
+            ->andReturn(0);
 
         // Passing array(null) is required to make Mockery call the constructor...
-        $form = Mockery::mock('Icinga\Forms\Config\Authentication\LdapBackendForm[getView]', array(null));
+        $form = Mockery::mock('Icinga\Forms\Config\UserBackend\DbBackendForm[getView]', array(null));
         $form->shouldReceive('getView->escape')
             ->with(Mockery::type('string'))
             ->andReturnUsing(function ($s) { return $s; });
         $form->setTokenDisabled();
-        $form->setResources(array('test_ldap_backend'));
-        $form->populate(array('resource' => 'test_ldap_backend'));
+        $form->setResources(array('test_db_backend'));
+        $form->populate(array('resource' => 'test_db_backend'));
 
         $this->assertFalse(
-            LdapBackendForm::isValidAuthenticationBackend($form),
-            'LdapBackendForm claims that an invalid authentication backend without users is valid'
+            DbBackendForm::isValidUserBackend($form),
+            'DbBackendForm claims that an invalid user backend without users is valid'
         );
     }
 
@@ -76,7 +76,7 @@ class LdapBackendFormTest extends BaseTestCase
     {
         Mockery::mock('alias:Icinga\Data\ResourceFactory')
             ->shouldReceive('createResource')
-            ->andReturn(Mockery::mock('Icinga\Protocol\Ldap\Connection'))
+            ->andReturn(Mockery::mock('Icinga\Data\Db\DbConnection'))
             ->shouldReceive('getResourceConfig')
             ->andReturn(new ConfigObject());
     }

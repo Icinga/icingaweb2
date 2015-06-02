@@ -1,7 +1,7 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Forms\Config\Authentication;
+namespace Icinga\Forms\Config\UserBackend;
 
 use Exception;
 use Icinga\Web\Form;
@@ -11,7 +11,7 @@ use Icinga\Exception\AuthenticationException;
 use Icinga\Authentication\User\LdapUserBackend;
 
 /**
- * Form class for adding/modifying LDAP authentication backends
+ * Form class for adding/modifying LDAP user backends
  */
 class LdapBackendForm extends Form
 {
@@ -149,13 +149,13 @@ class LdapBackendForm extends Form
     }
 
     /**
-     * Validate that the selected resource is a valid ldap authentication backend
+     * Validate that the selected resource is a valid ldap user backend
      *
      * @see Form::onSuccess()
      */
     public function onSuccess()
     {
-        if (false === static::isValidAuthenticationBackend($this)) {
+        if (false === static::isValidUserBackend($this)) {
             return false;
         }
     }
@@ -167,7 +167,7 @@ class LdapBackendForm extends Form
      *
      * @return  bool            Whether validation succeeded or not
      */
-    public static function isValidAuthenticationBackend(Form $form)
+    public static function isValidUserBackend(Form $form)
     {
         try {
             $ldapUserBackend = new LdapUserBackend(ResourceFactory::createResource($form->getResourceConfig()));

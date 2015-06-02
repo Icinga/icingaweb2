@@ -11,11 +11,11 @@ use Icinga\Application\Platform;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Forms\Config\Authentication\DbBackendForm;
-use Icinga\Forms\Config\Authentication\LdapBackendForm;
-use Icinga\Forms\Config\Authentication\ExternalBackendForm;
+use Icinga\Forms\Config\UserBackend\DbBackendForm;
+use Icinga\Forms\Config\UserBackend\LdapBackendForm;
+use Icinga\Forms\Config\UserBackend\ExternalBackendForm;
 
-class AuthenticationBackendConfigForm extends ConfigForm
+class UserBackendConfigForm extends ConfigForm
 {
     /**
      * The available resources split by type
@@ -76,7 +76,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
     }
 
     /**
-     * Add a particular authentication backend
+     * Add a particular user backend
      *
      * The backend to add is identified by the array-key `name'.
      *
@@ -90,9 +90,9 @@ class AuthenticationBackendConfigForm extends ConfigForm
     {
         $name = isset($values['name']) ? $values['name'] : '';
         if (! $name) {
-            throw new InvalidArgumentException($this->translate('Authentication backend name missing'));
+            throw new InvalidArgumentException($this->translate('User backend name missing'));
         } elseif ($this->config->hasSection($name)) {
-            throw new InvalidArgumentException($this->translate('Authentication backend already exists'));
+            throw new InvalidArgumentException($this->translate('User backend already exists'));
         }
 
         unset($values['name']);
@@ -101,7 +101,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
     }
 
     /**
-     * Edit a particular authentication backend
+     * Edit a particular user backend
      *
      * @param   string  $name               The name of the backend to edit
      * @param   array   $values             The values to edit the configuration with
@@ -113,11 +113,11 @@ class AuthenticationBackendConfigForm extends ConfigForm
     public function edit($name, array $values)
     {
         if (! $name) {
-            throw new InvalidArgumentException($this->translate('Old authentication backend name missing'));
+            throw new InvalidArgumentException($this->translate('Old user backend name missing'));
         } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
-            throw new InvalidArgumentException($this->translate('New authentication backend name missing'));
+            throw new InvalidArgumentException($this->translate('New user backend name missing'));
         } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException($this->translate('Unknown authentication backend provided'));
+            throw new InvalidArgumentException($this->translate('Unknown user backend provided'));
         }
 
         $backendConfig = $this->config->getSection($name);
@@ -132,7 +132,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
     }
 
     /**
-     * Remove the given authentication backend
+     * Remove the given user backend
      *
      * @param   string      $name           The name of the backend to remove
      *
@@ -143,9 +143,9 @@ class AuthenticationBackendConfigForm extends ConfigForm
     public function remove($name)
     {
         if (! $name) {
-            throw new InvalidArgumentException($this->translate('Authentication backend name missing'));
+            throw new InvalidArgumentException($this->translate('user backend name missing'));
         } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException($this->translate('Unknown authentication backend provided'));
+            throw new InvalidArgumentException($this->translate('Unknown user backend provided'));
         }
 
         $backendConfig = $this->config->getSection($name);
@@ -154,7 +154,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
     }
 
     /**
-     * Move the given authentication backend up or down in order
+     * Move the given user backend up or down in order
      *
      * @param   string      $name           The name of the backend to be moved
      * @param   int         $position       The new (absolute) position of the backend
@@ -166,9 +166,9 @@ class AuthenticationBackendConfigForm extends ConfigForm
     public function move($name, $position)
     {
         if (! $name) {
-            throw new InvalidArgumentException($this->translate('Authentication backend name missing'));
+            throw new InvalidArgumentException($this->translate('User backend name missing'));
         } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException($this->translate('Unknown authentication backend provided'));
+            throw new InvalidArgumentException($this->translate('Unknown user backend provided'));
         }
 
         $backendOrder = $this->config->keys();
@@ -186,7 +186,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
     }
 
     /**
-     * Add or edit an authentication backend and save the configuration
+     * Add or edit an user backend and save the configuration
      *
      * Performs a connectivity validation using the submitted values. A checkbox is
      * added to the form to skip the check if it fails and redirection is aborted.
@@ -197,20 +197,20 @@ class AuthenticationBackendConfigForm extends ConfigForm
     {
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
             $backendForm = $this->getBackendForm($this->getElement('type')->getValue());
-            if (false === $backendForm::isValidAuthenticationBackend($this)) {
+            if (false === $backendForm::isValidUserBackend($this)) {
                 $this->addElement($this->getForceCreationCheckbox());
                 return false;
             }
         }
 
-        $authBackend = $this->request->getQuery('auth_backend');
+        $authBackend = $this->request->getQuery('backend');
         try {
             if ($authBackend === null) { // create new backend
                 $this->add($this->getValues());
-                $message = $this->translate('Authentication backend "%s" has been successfully created');
+                $message = $this->translate('User backend "%s" has been successfully created');
             } else { // edit existing backend
                 $this->edit($authBackend, $this->getValues());
-                $message = $this->translate('Authentication backend "%s" has been successfully changed');
+                $message = $this->translate('User backend "%s" has been successfully changed');
             }
         } catch (InvalidArgumentException $e) {
             Notification::error($e->getMessage());
@@ -225,7 +225,7 @@ class AuthenticationBackendConfigForm extends ConfigForm
     }
 
     /**
-     * Populate the form in case an authentication backend is being edited
+     * Populate the form in case an user backend is being edited
      *
      * @see Form::onRequest()
      *
@@ -233,12 +233,12 @@ class AuthenticationBackendConfigForm extends ConfigForm
      */
     public function onRequest()
     {
-        $authBackend = $this->request->getQuery('auth_backend');
+        $authBackend = $this->request->getQuery('backend');
         if ($authBackend !== null) {
             if ($authBackend === '') {
-                throw new ConfigurationError($this->translate('Authentication backend name missing'));
+                throw new ConfigurationError($this->translate('User backend name missing'));
             } elseif (! $this->config->hasSection($authBackend)) {
-                throw new ConfigurationError($this->translate('Unknown authentication backend provided'));
+                throw new ConfigurationError($this->translate('Unknown user backend provided'));
             } elseif ($this->config->getSection($authBackend)->backend === null) {
                 throw new ConfigurationError(
                     sprintf($this->translate('Backend "%s" has no `backend\' setting'), $authBackend)
