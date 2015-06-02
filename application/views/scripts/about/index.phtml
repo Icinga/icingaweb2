@@ -1,0 +1,20 @@
+<div class="content">
+    <h1>Icinga Web 2</h1>
+    <?php
+    $versionInfo = array();
+    foreach (array(
+        array($this->translate('Version: %s'),          $appVersion),
+        array($this->translate('Git commit ID: %s'),    $gitCommitID),
+        array($this->translate('Git commit date: %s'),  $gitCommitDate)
+    ) as $version) {
+        list($label, $value) = $version;
+        if ($value !== null) {
+            $versionInfo[] = sprintf($label, htmlspecialchars($value));
+        }
+    }
+    ?>
+    <p><?= 0 === count($versionInfo)
+        ? $this->translate('unknown version')
+        : nl2br(implode("\n", $versionInfo), false)
+    ?></p>
+</div>
