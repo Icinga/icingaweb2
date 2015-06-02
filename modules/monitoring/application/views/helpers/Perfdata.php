@@ -94,8 +94,14 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         if ($compact) {
             return join('', $results);
         } else {
-            $pieCharts = empty($table) ? '' : '<table class="perfdata">' . implode("\n", $table) . '</table>';
-            return $pieCharts;
+            if (empty($table)) {
+                return '';
+            }
+            return sprintf(
+                '<table class="perfdata %s">%s</table>',
+                isset($columns['']) ? 'perfdata-piecharts' : '',
+                implode("\n", $table)
+            );
         }
     }
 }
