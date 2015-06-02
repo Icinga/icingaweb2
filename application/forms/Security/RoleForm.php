@@ -28,6 +28,7 @@ class RoleForm extends ConfigForm
         'config/application/authentication'             => 'config/application/authentication',
         'config/application/resources'                  => 'config/application/resources',
         'config/application/usergroupbackend'           => 'config/application/usergroupbackend',
+        'config/authentication/*'                       => 'config/authentication/*',
         'config/authentication/users/*'                 => 'config/authentication/users/*',
         'config/authentication/users/show'              => 'config/authentication/users/show',
         'config/authentication/users/add'               => 'config/authentication/users/add',
