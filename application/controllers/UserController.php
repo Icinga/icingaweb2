@@ -121,7 +121,7 @@ class UserController extends AuthBackendController
             $memberships
         );
 
-        if ($this->hasPermission('config/application/groups/member/add')) {
+        if ($this->hasPermission('config/authentication/groups/edit')) {
             $extensibleBackends = $this->loadUserGroupBackends('Icinga\Data\Extensible');
             $this->view->showCreateMembershipLink = ! empty($extensibleBackends);
         } else {
@@ -133,7 +133,7 @@ class UserController extends AuthBackendController
         $this->view->memberships = $memberships;
         $this->createShowTabs($backend->getName(), $userName)->activate('user/show');
 
-        if ($this->hasPermission('config/application/groups/member/remove')) {
+        if ($this->hasPermission('config/authentication/groups/edit')) {
             $removeForm = new Form();
             $removeForm->setUidDisabled();
             $removeForm->addElement('hidden', 'user_name', array(
@@ -228,7 +228,7 @@ class UserController extends AuthBackendController
      */
     public function createmembershipAction()
     {
-        $this->assertPermission('config/application/groups/member/add');
+        $this->assertPermission('config/authentication/groups/edit');
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'));
 

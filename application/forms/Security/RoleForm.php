@@ -38,8 +38,6 @@ class RoleForm extends ConfigForm
         'config/authentication/groups/add'              => 'config/authentication/groups/add',
         'config/authentication/groups/edit'             => 'config/authentication/groups/edit',
         'config/authentication/groups/remove'           => 'config/authentication/groups/remove',
-        'config/application/groups/member/add'          => 'config/application/groups/member/add',
-        'config/application/groups/member/remove'       => 'config/application/groups/member/remove',
         'config/authentication/roles/*'                 => 'config/authentication/roles/*',
         'config/authentication/roles/show'              => 'config/authentication/roles/show',
         'config/authentication/roles/add'               => 'config/authentication/roles/add',
