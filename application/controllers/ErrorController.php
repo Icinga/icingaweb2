@@ -37,7 +37,7 @@ class ErrorController extends ActionController
                 $path = array_shift($path);
                 $this->getResponse()->setHttpResponseCode(404);
                 $this->view->message = $this->translate('Page not found.');
-                if ($modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
+                if ($this->Auth()->isAuthenticated() && $modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
                     $this->view->message .= ' ' . sprintf(
                         $this->translate('Enabling the "%s" module might help!'),
                         $path

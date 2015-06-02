@@ -1,41 +1,16 @@
 <?php
 
-$links = array();
-
 // add warning to links that open in new tabs to improve accessibility, as recommended by WCAG20 G201
 $newTabInfo = sprintf('<span class="info-box display-on-hover"> %s </span>', $this->translate('opens in new window'));
 
-$linkText = '<a href="%s" target="_blank">%s ' . $newTabInfo . '</a>';
-$localLinkText = '<a href="%s">%s</a>';
-
-if ($object->notes_url) {
-    if (strpos($object->notes_url, "' ") === false) {
-        $links[] = sprintf($linkText, $this->resolveMacros($object->notes_url, $object), 'Notes');
-    } else {
-        // TODO: We should find out document what's going on here. Looks strange :p
-        foreach(explode("' ", $object->notes_url) as $url) {
-            $url = strpos($url, "'") === 0 ? substr($url, 1) : $url;
-            $url = strrpos($url, "'") === strlen($url) - 1 ? substr($url, 0, strlen($url) - 1) : $url;
-            $links[] = sprintf($linkText, $this->resolveMacros($url, $object), 'Notes');
-        }
-    }
-}
-if ($object->action_url) {
-    if (strpos($object->action_url, "' ") === false) {
-        $links[] = sprintf($linkText, $this->resolveMacros($object->action_url, $object), 'Action');
-    } else {
-        // TODO: We should find out document what's going on here. Looks strange :p
-        foreach(explode("' ", $object->action_url) as $url) {
-            $url = strpos($url, "'") === 0 ? substr($url, 1) : $url;
-            $url = strrpos($url, "'") === strlen($url) - 1 ? substr($url, 0, strlen($url) - 1) : $url;
-            $links[] = sprintf($linkText, $this->resolveMacros($url, $object), 'Action');
-        }
-    }
+$links = $object->getActionUrls();
+foreach ($links as $i => $link) {
+    $links[$i] = sprintf('<a href="%s" target="_blank">%s ' . $newTabInfo . '</a>', $link, 'Action');
 }
 
 if (isset($this->actions)) {
     foreach ($this->actions as $id => $action) {
-        $links[] = sprintf($localLinkText, $action, $id);
+        $links[] = sprintf('<a href="%s">%s</a>', $action, $id);
     }
 }
 
@@ -46,5 +21,5 @@ if (empty($links)) {
 ?>
 <tr>
   <th><?= $this->translate('Actions') ?></th>
-  <td><?= implode("\n ", $links) . "\n" ?></td>
+  <td><?= implode("<br>", $links) ?></td>
 </tr>

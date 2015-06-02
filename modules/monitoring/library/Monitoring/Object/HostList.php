@@ -99,4 +99,19 @@ class HostList extends ObjectList
                 ->applyFilter(clone $this->filter)
                 ->where('downtime_objecttype', 'host');
     }
+
+    /**
+     * @return ObjectList
+     */
+    public function getUnacknowledgedObjects()
+    {
+        $unhandledObjects = array();
+        foreach ($this as $object) {
+            if (! in_array((int) $object->state, array(0, 99)) &&
+                (bool) $object->host_acknowledged === false) {
+                $unhandledObjects[] = $object;
+            }
+        }
+        return $this->newFromArray($unhandledObjects);
+    }
 }

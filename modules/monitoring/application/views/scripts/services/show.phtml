@@ -70,9 +70,10 @@
         <?php
             $unhandledCount = count($unhandledObjects);
             $problemCount = count($problemObjects);
+            $unackCount = count($unacknowledgedObjects);
         ?>
 
-        <?php if ($problemCount || $unhandledCount): ?>
+        <?php if ($problemCount || $unhandledCount || $unackCount): ?>
         <div>
             <h3>
                 <?= $this->icon('attention-alt') ?>
@@ -105,6 +106,23 @@
                 ); ?>
             <?php endif ?>
 
+            <?php if ($unackCount > 0): ?>
+                <br>
+                <?= $this->qlink(
+                    sprintf(
+                        $this->translatePlural(
+                            'Acknowledge %u unacknowledged problem service',
+                            'Acknowledge %u unacknowledged problem services',
+                            $unackCount
+                        ),
+                        $unackCount
+                    ),
+                    $acknowledgeLink,
+                    null,
+                    array('icon' => 'ok')
+                ); ?>
+            <?php endif; ?>
+
             <?php if ($unhandledCount): ?>
                 <p>
                 <?= sprintf($this->translate('There are %s unhandled problem services. ' .
@@ -126,20 +144,6 @@
                     array('icon' => 'plug')
                 ); ?>
 
-                <br>
-                <?= $this->qlink(
-                    sprintf(
-                        $this->translatePlural(
-                            'Acknowledge %u unhandled problem service',
-                            'Acknowledge %u unhandled problem services',
-                            $unhandledCount
-                        ),
-                        $unhandledCount
-                    ),
-                    $acknowledgeUnhandledLink,
-                    null,
-                    array('icon' => 'ok')
-                ); ?>
             <?php endif ?>
 
         </div>

@@ -71,7 +71,7 @@ class Manager
                     $user
                 );
                 $preferences = new Preferences($preferencesStore->load());
-            } catch (NotReadableError $e) {
+            } catch (Exception $e) {
                 Logger::error(
                     new IcingaException(
                         'Cannot load preferences for user "%s". An exception was thrown: %s',
