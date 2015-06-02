@@ -20,44 +20,51 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
     {
         $pieChartData = PerfdataSet::fromString($perfdataStr)->asArray();
         $results = array();
-        $table = array(
-            '<td><b>' . implode(
-                '</b></td><td><b>',
-                array(
-                    '',
-                    $this->view->translate('Label'),
-                    $this->view->translate('Value'),
-                    $this->view->translate('Min'),
-                    $this->view->translate('Max'),
-                    $this->view->translate('Warning'),
-                    $this->view->translate('Critical')
-                )
-            ) . '<b></td>'
+        $columns = array();
+        $labels = array_combine(
+            array('', 'label', 'value', 'min', 'max', 'warn', 'crit'),
+            array(
+                '',
+                $this->view->translate('Label'),
+                $this->view->translate('Value'),
+                $this->view->translate('Min'),
+                $this->view->translate('Max'),
+                $this->view->translate('Warning'),
+                $this->view->translate('Critical')
+            )
         );
         foreach ($pieChartData as $perfdata) {
-
+            if ($perfdata->isVisualizable()) {
+                $columns[''] = '';
+            }
+        }
+        foreach ($pieChartData as $perfdata) {
+            foreach ($perfdata->toArray() as $column => $value) {
+                if (! empty($value)) {
+                    $columns[$column] = $labels[$column];
+                }
+            }
+        }
+        $table = array('<td><b>' . implode('</b></td><td><b>', $columns) . '<b></td>');
+        foreach ($pieChartData as $perfdata) {
             if ($compact && $perfdata->isVisualizable()) {
                 $results[] = $perfdata->asInlinePie($color)->render();
             } else {
-                $row = '<tr>';
-
-                $row .= '<td>';
+                $data = array();
                 if ($perfdata->isVisualizable()) {
-                    $row .= $perfdata->asInlinePie($color)->render() . '&nbsp;';
+                    $data []= $perfdata->asInlinePie($color)->render() . '&nbsp;';
+                } else if (isset($columns[''])) {
+                    $data []= '';
                 }
-                $row .= '</td>';
-
                 if (! $compact) {
-                    foreach ($perfdata->toArray() as $value) {
-                        if ($value === '') {
-                            $value = '-';
+                    foreach ($perfdata->toArray() as $column => $value) {
+                        if (! isset($columns[$column])) {
+                            continue;
                         }
-                        $row .= '<td>' . (string) $value . '</td>';
+                        $data []= empty($value) ? '-' : (string) $value;
                     }
                 }
-
-                $row .= '</tr>';
-                $table[] = $row;
+                $table []= '<tr><td>' . implode('</td><td>', $data) . '</td></tr>';
             }
         }
         if ($limit > 0) {
