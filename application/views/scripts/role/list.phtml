@@ -22,7 +22,7 @@
                         <td>
                             <?= $this->qlink(
                                 $name,
-                                'roles/update',
+                                'role/edit',
                                 array('role' => $name),
                                 array('title' => sprintf($this->translate('Edit role %s'), $name))
                             ); ?>
@@ -54,7 +54,7 @@
                         <td>
                             <?= $this->qlink(
                                 '',
-                                'roles/remove',
+                                'role/remove',
                                 array('role' => $name),
                                 array(
                                     'icon'  => 'trash',
@@ -67,7 +67,7 @@
                 </tbody>
             </table>
         <?php endif ?>
-        <a data-base-target="_next" href="<?= $this->href('roles/new') ?>">
+        <a data-base-target="_next" href="<?= $this->href('role/new') ?>">
             <?= $this->translate('Create a New Role') ?>
         </a>
     </div>

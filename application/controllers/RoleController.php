@@ -7,25 +7,22 @@ use Icinga\Forms\Security\RoleForm;
 use Icinga\Web\Controller\AuthBackendController;
 use Icinga\Web\Notification;
 
-/**
- * Roles configuration
- */
-class RolesController extends AuthBackendController
+class RoleController extends AuthBackendController
 {
     /**
      * List roles
      */
-    public function indexAction()
+    public function listAction()
     {
         $this->assertPermission('config/authentication/roles/show');
-        $this->createListTabs()->activate('roles');
+        $this->createListTabs()->activate('role/list');
         $this->view->roles = Config::app('roles', true);
     }
 
     /**
      * Create a new role
      */
-    public function newAction()
+    public function addAction()
     {
         $this->assertPermission('config/authentication/roles/add');
         $role = new RoleForm(array(
@@ -49,9 +46,10 @@ class RolesController extends AuthBackendController
             ->setTitle($this->translate('New Role'))
             ->setSubmitLabel($this->translate('Create Role'))
             ->setIniConfig(Config::app('roles', true))
-            ->setRedirectUrl('roles')
+            ->setRedirectUrl('role/list')
             ->handleRequest();
         $this->view->form = $role;
+        $this->render('form');
     }
 
     /**
@@ -59,7 +57,7 @@ class RolesController extends AuthBackendController
      *
      * @throws Zend_Controller_Action_Exception If the required parameter 'role' is missing or the role does not exist
      */
-    public function updateAction()
+    public function editAction()
     {
         $this->assertPermission('config/authentication/roles/edit');
         $name = $this->_request->getParam('role');
@@ -99,9 +97,10 @@ class RolesController extends AuthBackendController
                 }
                 return false;
             })
-            ->setRedirectUrl('roles')
+            ->setRedirectUrl('role/list')
             ->handleRequest();
         $this->view->form = $role;
+        $this->render('form');
     }
 
     /**
@@ -148,8 +147,9 @@ class RolesController extends AuthBackendController
         $confirmation
             ->setTitle(sprintf($this->translate('Remove Role %s'), $name))
             ->setSubmitLabel($this->translate('Remove Role'))
-            ->setRedirectUrl('roles')
+            ->setRedirectUrl('role/list')
             ->handleRequest();
         $this->view->form = $confirmation;
+        $this->render('form');
     }
 }
