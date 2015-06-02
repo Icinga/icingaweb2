@@ -20,9 +20,10 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
     {
         $pieChartData = PerfdataSet::fromString($perfdataStr)->asArray();
         $results = array();
+        $keys = array('', 'label', 'value', 'min', 'max', 'warn', 'crit');
         $columns = array();
         $labels = array_combine(
-            array('', 'label', 'value', 'min', 'max', 'warn', 'crit'),
+            $keys,
             array(
                 '',
                 $this->view->translate('Label'),
@@ -37,15 +38,23 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
             if ($perfdata->isVisualizable()) {
                 $columns[''] = '';
             }
-        }
-        foreach ($pieChartData as $perfdata) {
             foreach ($perfdata->toArray() as $column => $value) {
-                if (! empty($value)) {
-                    $columns[$column] = $labels[$column];
+                if (empty($value) ||
+                    $column === 'min' && floatval($value) === 0.0 ||
+                    $column === 'max' && $perfdata->isPercentage() && floatval($value) === 100) {
+                    continue;
                 }
+                $columns[$column] = $labels[$column];
             }
         }
-        $table = array('<td><b>' . implode('</b></td><td><b>', $columns) . '<b></td>');
+        // restore original column array sorting sorting
+        $headers = array();
+        foreach ($keys as $i => $column) {
+            if (isset($columns[$column])) {
+                $headers[$column] = $labels[$column];
+            }
+        }
+        $table = array('<td><b>' . implode('</b></td><td><b>', $headers) . '<b></td>');
         foreach ($pieChartData as $perfdata) {
             if ($compact && $perfdata->isVisualizable()) {
                 $results[] = $perfdata->asInlinePie($color)->render();
