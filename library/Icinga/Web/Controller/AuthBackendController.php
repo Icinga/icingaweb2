@@ -139,7 +139,7 @@ class AuthBackendController extends Controller
     {
         $tabs = $this->getTabs();
 
-        if ($this->hasPermission('config/application/users/show')) {
+        if ($this->hasPermission('config/authentication/users/show')) {
             $tabs->add(
                 'user/list',
                 array(

@@ -30,7 +30,7 @@ class UserController extends AuthBackendController
      */
     public function listAction()
     {
-        $this->assertPermission('config/application/users/show');
+        $this->assertPermission('config/authentication/users/show');
         $backendNames = array_map(
             function ($b) { return $b->getName(); },
             $this->loadUserBackends('Icinga\Data\Selectable')
@@ -88,7 +88,7 @@ class UserController extends AuthBackendController
      */
     public function showAction()
     {
-        $this->assertPermission('config/application/users/show');
+        $this->assertPermission('config/authentication/users/show');
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'));
 
@@ -166,7 +166,7 @@ class UserController extends AuthBackendController
      */
     public function addAction()
     {
-        $this->assertPermission('config/application/users/add');
+        $this->assertPermission('config/authentication/users/add');
         $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
         $form = new UserForm();
         $form->setRedirectUrl(Url::fromPath('user/list', array('backend' => $backend->getName())));
@@ -182,7 +182,7 @@ class UserController extends AuthBackendController
      */
     public function editAction()
     {
-        $this->assertPermission('config/application/users/edit');
+        $this->assertPermission('config/authentication/users/edit');
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Updatable');
 
@@ -205,7 +205,7 @@ class UserController extends AuthBackendController
      */
     public function removeAction()
     {
-        $this->assertPermission('config/application/users/remove');
+        $this->assertPermission('config/authentication/users/remove');
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
 
