@@ -17,7 +17,7 @@ class RolesController extends AuthBackendController
      */
     public function indexAction()
     {
-        $this->assertPermission('config/application/roles');
+        $this->assertPermission('config/authentication/roles/show');
         $this->createListTabs()->activate('roles');
         $this->view->roles = Config::app('roles', true);
     }
@@ -27,7 +27,7 @@ class RolesController extends AuthBackendController
      */
     public function newAction()
     {
-        $this->assertPermission('config/application/roles');
+        $this->assertPermission('config/authentication/roles/add');
         $role = new RoleForm(array(
             'onSuccess' => function (RoleForm $role) {
                 $name = $role->getElement('name')->getValue();
@@ -61,7 +61,7 @@ class RolesController extends AuthBackendController
      */
     public function updateAction()
     {
-        $this->assertPermission('config/application/roles');
+        $this->assertPermission('config/authentication/roles/edit');
         $name = $this->_request->getParam('role');
         if (empty($name)) {
             throw new Zend_Controller_Action_Exception(
@@ -111,7 +111,7 @@ class RolesController extends AuthBackendController
      */
     public function removeAction()
     {
-        $this->assertPermission('config/application/roles');
+        $this->assertPermission('config/authentication/roles/remove');
         $name = $this->_request->getParam('role');
         if (empty($name)) {
             throw new Zend_Controller_Action_Exception(

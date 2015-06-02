@@ -163,7 +163,7 @@ class AuthBackendController extends Controller
             );
         }
 
-        if ($this->hasPermission('config/application/roles')) {
+        if ($this->hasPermission('config/authentication/roles/show')) {
             $tabs->add(
                 'roles',
                 array(
