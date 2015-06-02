@@ -37,14 +37,7 @@ class UsergroupbackendController extends Controller
     public function listAction()
     {
         $this->view->backendNames = Config::app('groups')->keys();
-        $this->getTabs()->add(
-            'usergroupbackend/list',
-            array(
-                'title' => $this->translate('List all user group backends'),
-                'label' => $this->translate('User group backends'),
-                'url'   => 'usergroupbackend/list'
-            )
-        )->activate('usergroupbackend/list');
+        $this->createListTabs()->activate('usergroupbackend');
     }
 
     /**
@@ -148,5 +141,43 @@ class UsergroupbackendController extends Controller
 
         $this->view->form = $form;
         $this->render('form');
+    }
+
+    /**
+     * Create the tabs for the application configuration
+     */
+    protected function createListTabs()
+    {
+        $tabs = $this->getTabs();
+        if ($this->hasPermission('config/application/general')) {
+            $tabs->add('general', array(
+                'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
+                'label' => $this->translate('General'),
+                'url'   => 'config/general'
+            ));
+        }
+        if ($this->hasPermission('config/application/resources')) {
+            $tabs->add('resource', array(
+                'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
+                'label' => $this->translate('Resources'),
+                'url'   => 'config/resource'
+            ));
+        }
+        if ($this->hasPermission('config/application/userbackend')) {
+            $tabs->add('userbackend', array(
+                'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
+                'label' => $this->translate('Authentication'),
+                'url'   => 'config/userbackend'
+            ));
+        }
+        if ($this->hasPermission('config/application/usergroupbackend')) {
+            $tabs->add('usergroupbackend', array(
+                'title' => $this->translate('Configure how users are associated with groups by Icinga Web 2'),
+                'label' => $this->translate('User Groups'),
+                'url'   => 'usergroupbackend/list'
+            ));
+        }
+
+        return $tabs;
     }
 }

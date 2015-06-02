@@ -46,6 +46,14 @@ class ConfigController extends Controller
             ));
             $allowedActions[] = 'general';
         }
+        if ($auth->hasPermission('config/application/resources')) {
+            $tabs->add('resource', array(
+                'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
+                'label' => $this->translate('Resources'),
+                'url'   => 'config/resource'
+            ));
+            $allowedActions[] = 'resource';
+        }
         if ($auth->hasPermission('config/application/userbackend')) {
             $tabs->add('userbackend', array(
                 'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
@@ -54,13 +62,13 @@ class ConfigController extends Controller
             ));
             $allowedActions[] = 'userbackend';
         }
-        if ($auth->hasPermission('config/application/resources')) {
-            $tabs->add('resource', array(
-                'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
-                'label' => $this->translate('Resources'),
-                'url'   => 'config/resource'
+        if ($auth->hasPermission('config/application/usergroupbackend')) {
+            $tabs->add('usergroupbackend', array(
+                'title' => $this->translate('Configure how users are associated with groups by Icinga Web 2'),
+                'label' => $this->translate('User Groups'),
+                'url'   => 'usergroupbackend/list'
             ));
-            $allowedActions[] = 'resource';
+            $allowedActions[] = 'usergroupbackend';
         }
         $this->firstAllowedAction = array_shift($allowedActions);
     }
