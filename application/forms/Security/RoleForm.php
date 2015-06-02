@@ -27,6 +27,7 @@ class RoleForm extends ConfigForm
         'config/application/general'                    => 'config/application/general',
         'config/application/authentication'             => 'config/application/authentication',
         'config/application/resources'                  => 'config/application/resources',
+        'config/application/usergroupbackend'           => 'config/application/usergroupbackend',
         'config/application/roles'                      => 'config/application/roles',
         'config/application/users/*'                    => 'config/application/users/*',
         'config/application/users/show'                 => 'config/application/users/show',
@@ -40,10 +41,6 @@ class RoleForm extends ConfigForm
         'config/application/groups/remove'              => 'config/application/groups/remove',
         'config/application/groups/member/add'          => 'config/application/groups/member/add',
         'config/application/groups/member/remove'       => 'config/application/groups/member/remove',
-        'config/application/usergroupbackend/*'         => 'config/application/usergroupbackend/*',
-        'config/application/usergroupbackend/create'    => 'config/application/usergroupbackend/create',
-        'config/application/usergroupbackend/edit'      => 'config/application/usergroupbackend/edit',
-        'config/application/usergroupbackend/remove'    => 'config/application/usergroupbackend/remove',
         'config/modules'                                => 'config/modules'
     );
 

@@ -16,6 +16,14 @@ use Icinga\Web\Url;
 class UsergroupbackendController extends Controller
 {
     /**
+     * Initialize this controller
+     */
+    public function init()
+    {
+        $this->assertPermission('config/application/usergroupbackend');
+    }
+
+    /**
      * Redirect to this controller's list action
      */
     public function indexAction()
@@ -28,7 +36,6 @@ class UsergroupbackendController extends Controller
      */
     public function listAction()
     {
-        $this->assertPermission('config/application/usergroupbackend/*');
         $this->view->backendNames = Config::app('groups')->keys();
         $this->getTabs()->add(
             'usergroupbackend/list',
@@ -45,8 +52,6 @@ class UsergroupbackendController extends Controller
      */
     public function createAction()
     {
-        $this->assertPermission('config/application/usergroupbackend/create');
-
         $form = new UserGroupBackendForm();
         $form->setRedirectUrl('usergroupbackend/list');
         $form->setTitle($this->translate('Create New User Group Backend'));
@@ -78,7 +83,6 @@ class UsergroupbackendController extends Controller
      */
     public function editAction()
     {
-        $this->assertPermission('config/application/usergroupbackend/edit');
         $backendName = $this->params->getRequired('backend');
 
         $form = new UserGroupBackendForm();
@@ -118,7 +122,6 @@ class UsergroupbackendController extends Controller
      */
     public function removeAction()
     {
-        $this->assertPermission('config/application/usergroupbackend/remove');
         $backendName = $this->params->getRequired('backend');
 
         $backendForm = new UserGroupBackendForm();

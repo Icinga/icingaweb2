@@ -1,15 +1,7 @@
-<?php
-
-$createPermitted = $this->hasPermission('config/application/usergroupbackend/create');
-$editPermitted = $this->hasPermission('config/application/usergroupbackend/edit');
-$removePermitted = $this->hasPermission('config/application/usergroupbackend/remove');
-
-?>
 <div class="controls">
   <?= $tabs; ?>
 </div>
 <div class="content" data-base-target="_next">
-<?php if ($createPermitted): ?>
 <?= $this->qlink(
   $this->translate('Create A New User Group Backend'),
   'usergroupbackend/create',
@@ -18,33 +10,25 @@ $removePermitted = $this->hasPermission('config/application/usergroupbackend/rem
     'icon' => 'plus'
   )
 ); ?>
-<?php endif ?>
 <?php if (count($backendNames) > 0): ?>
 <table class="action usergroupbackend-list">
   <thead>
     <tr>
       <th class="backend-name"><?= $this->translate('Backend'); ?></th>
-     <?php if ($removePermitted): ?>
       <th class="backend-remove"><?= $this->translate('Remove'); ?></th>
-     <?php endif ?>
     <tr>
   </thead>
   <tbody>
 <?php foreach ($backendNames as $backendName): ?>
     <tr>
       <td class="backend-name">
-       <?php if ($editPermitted): ?>
         <?= $this->qlink(
           $backendName,
           'usergroupbackend/edit',
           array('backend' => $backendName),
           array('title' => sprintf($this->translate('Edit user group backend %s'), $backendName))
         ); ?>
-       <?php else: ?>
-        <?= $this->escape($backendName); ?>
-       <?php endif ?>
       </td>
-     <?php if ($removePermitted): ?>
       <td class="backend-remove"><?= $this->qlink(
         null,
         'usergroupbackend/remove',
@@ -54,7 +38,6 @@ $removePermitted = $this->hasPermission('config/application/usergroupbackend/rem
           'icon'  => 'trash'
         )
       ); ?></td>
-     <?php endif ?>
     </tr>
 <?php endforeach ?>
   </tbody>
