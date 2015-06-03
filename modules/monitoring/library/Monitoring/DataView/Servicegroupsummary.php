@@ -11,12 +11,6 @@ class Servicegroupsummary extends DataView
     public function getColumns()
     {
         return array(
-            'hosts_down_handled',
-            'hosts_down_unhandled',
-            'hosts_pending',
-            'hosts_unreachable_handled',
-            'hosts_unreachable_unhandled',
-            'hosts_up',
             'servicegroup_alias',
             'servicegroup_name',
             'services_critical_handled',
@@ -53,7 +47,7 @@ class Servicegroupsummary extends DataView
      */
     public static function getQueryName()
     {
-        return 'groupsummary';
+        return 'servicestatussummary';
     }
 
     /**
