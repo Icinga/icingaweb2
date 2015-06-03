@@ -24,6 +24,15 @@ class DbQuery extends SimpleQuery
     protected $db;
 
     /**
+     * Whether or not the query is a sub query
+     *
+     * Sub queries are automatically wrapped in parentheses
+     *
+     * @var bool
+     */
+    protected $isSubQuery = false;
+
+    /**
      * Select query
      *
      * @var Zend_Db_Select
@@ -69,6 +78,27 @@ class DbQuery extends SimpleQuery
     {
         $this->db = $this->ds->getDbAdapter();
         parent::init();
+    }
+
+    /**
+     * Get whether or not the query is a sub query
+     */
+    public function getIsSubQuery()
+    {
+        return $this->isSubQuery;
+    }
+
+    /**
+     * Set whether or not the query is a sub query
+     *
+     * @param   bool $isSubQuery
+     *
+     * @return  $this
+     */
+    public function setIsSubQuery($isSubQuery = true)
+    {
+        $this->isSubQuery = (bool) $isSubQuery;
+        return $this;
     }
 
     public function setUseSubqueryCount($useSubqueryCount = true)
@@ -331,7 +361,8 @@ class DbQuery extends SimpleQuery
      */
     public function __toString()
     {
-        return (string) $this->getSelectQuery();
+        $select = (string) $this->getSelectQuery();
+        return $this->getIsSubQuery() ? ('(' . $select . ')') : $select;
     }
 
     /**
