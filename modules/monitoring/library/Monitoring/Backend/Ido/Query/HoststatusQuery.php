@@ -336,7 +336,7 @@ SQL;
             array()
         )->join(
             array('so' => $this->prefix . 'objects'),
-            'so.object_id = s.service_object_id AND so.is_active = 1',
+            'so.object_id = s.service_object_id',
             array()
         )->where(
             'so.is_active = ?',
