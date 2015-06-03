@@ -8,7 +8,7 @@ use Zend_Db_Expr;
 use Zend_Db_Select;
 
 /**
- * Query for host and service group summaries
+ * Query for host group summary
  */
 class HostgroupsummaryQuery extends IdoQuery
 {
@@ -38,25 +38,17 @@ class HostgroupsummaryQuery extends IdoQuery
             'hosts_up_last_state_change'                    => 'MAX(CASE WHEN object_type = \'host\' AND state = 0 THEN state_change ELSE 0 END)',
             'services_critical'                             => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 THEN 1 ELSE 0 END)',
             'services_critical_handled'                     => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 AND handled + host_state > 0 THEN 1 ELSE 0 END)',
-            'services_critical_handled_last_state_change'   => 'MAX(CASE WHEN object_type = \'service\' AND state = 2 AND handled + host_state > 0 THEN state_change ELSE 0 END)',
             'services_critical_unhandled'                   => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 AND handled + host_state = 0 THEN 1 ELSE 0 END)',
-            'services_critical_unhandled_last_state_change' => 'MAX(CASE WHEN object_type = \'service\' AND state = 2 AND handled + host_state = 0 THEN state_change ELSE 0 END)',
             'services_ok'                                   => 'SUM(CASE WHEN object_type = \'service\' AND state = 0 THEN 1 ELSE 0 END)',
-            'services_ok_last_state_change'                 => 'MAX(CASE WHEN object_type = \'service\' AND state = 0 THEN state_change ELSE 0 END)',
             'services_pending'                              => 'SUM(CASE WHEN object_type = \'service\' AND state = 99 THEN 1 ELSE 0 END)',
-            'services_pending_last_state_change'            => 'MAX(CASE WHEN object_type = \'service\' AND state = 99 THEN state_change ELSE 0 END)',
             'services_severity'                             => 'MAX(CASE WHEN object_type = \'service\' THEN severity ELSE 0 END)',
             'services_total'                                => 'SUM(CASE WHEN object_type = \'service\' THEN 1 ELSE 0 END)',
             'services_unknown'                              => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 THEN 1 ELSE 0 END)',
             'services_unknown_handled'                      => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 AND handled + host_state > 0 THEN 1 ELSE 0 END)',
-            'services_unknown_handled_last_state_change'    => 'MAX(CASE WHEN object_type = \'service\' AND state = 3 AND handled + host_state > 0 THEN state_change ELSE 0 END)',
             'services_unknown_unhandled'                    => 'SUM(CASE WHEN object_type = \'service\' AND state = 3 AND handled + host_state = 0 THEN 1 ELSE 0 END)',
-            'services_unknown_unhandled_last_state_change'  => 'MAX(CASE WHEN object_type = \'service\' AND state = 3 AND handled + host_state = 0 THEN state_change ELSE 0 END)',
             'services_warning'                              => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 THEN 1 ELSE 0 END)',
             'services_warning_handled'                      => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 AND handled + host_state > 0 THEN 1 ELSE 0 END)',
-            'services_warning_handled_last_state_change'    => 'MAX(CASE WHEN object_type = \'service\' AND state = 1 AND handled + host_state > 0 THEN state_change ELSE 0 END)',
             'services_warning_unhandled'                    => 'SUM(CASE WHEN object_type = \'service\' AND state = 1 AND handled + host_state = 0 THEN 1 ELSE 0 END)',
-            'services_warning_unhandled_last_state_change'  => 'MAX(CASE WHEN object_type = \'service\' AND state = 1 AND handled + host_state = 0 THEN state_change ELSE 0 END)'
         )
     );
 
