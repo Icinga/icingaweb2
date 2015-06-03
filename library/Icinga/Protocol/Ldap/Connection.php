@@ -283,7 +283,7 @@ class Connection implements Selectable
             $fields = $query->getColumns();
         }
 
-        $serverSorting = $this->capabilities->hasOid(Capability::LDAP_SERVER_SORT_OID);
+        $serverSorting = false;//$this->capabilities->hasOid(Capability::LDAP_SERVER_SORT_OID);
         if ($serverSorting && $query->hasOrder()) {
             ldap_set_option($this->ds, LDAP_OPT_SERVER_CONTROLS, array(
                 array(
@@ -379,7 +379,7 @@ class Connection implements Selectable
             $fields = $query->getColumns();
         }
 
-        $serverSorting = $this->capabilities->hasOid(Capability::LDAP_SERVER_SORT_OID);
+        $serverSorting = false;//$this->capabilities->hasOid(Capability::LDAP_SERVER_SORT_OID);
         if ($serverSorting && $query->hasOrder()) {
             ldap_set_option($this->ds, LDAP_OPT_SERVER_CONTROLS, array(
                 array(
@@ -531,6 +531,8 @@ class Connection implements Selectable
      * @param   array   $sortRules
      *
      * @return  string
+     *
+     * @todo    Produces an invalid stream, obviously
      */
     protected function encodeSortRules(array $sortRules)
     {
