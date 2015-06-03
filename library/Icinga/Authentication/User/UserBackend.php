@@ -165,12 +165,6 @@ class UserBackend
                 $backend->setUserClass($backendConfig->get('user_class', 'user'));
                 $backend->setUserNameAttribute($backendConfig->get('user_name_attribute', 'sAMAccountName'));
                 $backend->setFilter($backendConfig->filter);
-                $backend->setGroupOptions(array(
-                    'group_base_dn'             => $backendConfig->get('group_base_dn', $resource->getDN()),
-                    'group_attribute'           => $backendConfig->get('group_attribute', 'sAMAccountName'),
-                    'group_member_attribute'    => $backendConfig->get('group_member_attribute', 'member'),
-                    'group_class'               => $backendConfig->get('group_class', 'group')
-                ));
                 break;
             case 'ldap':
                 $backend = new LdapUserBackend($resource);
@@ -178,12 +172,6 @@ class UserBackend
                 $backend->setUserClass($backendConfig->get('user_class', 'inetOrgPerson'));
                 $backend->setUserNameAttribute($backendConfig->get('user_name_attribute', 'uid'));
                 $backend->setFilter($backendConfig->filter);
-                $backend->setGroupOptions(array(
-                    'group_base_dn'             => $backendConfig->group_base_dn,
-                    'group_attribute'           => $backendConfig->group_attribute,
-                    'group_member_attribute'    => $backendConfig->group_member_attribute,
-                    'group_class'               => $backendConfig->group_class
-                ));
                 break;
         }
 

@@ -64,8 +64,6 @@ class LdapUserBackend extends Repository implements UserBackendInterface
         )
     );
 
-    protected $groupOptions;
-
     /**
      * Normed attribute names based on known LDAP environments
      *
@@ -176,17 +174,6 @@ class LdapUserBackend extends Repository implements UserBackendInterface
     public function getFilter()
     {
         return $this->filter;
-    }
-
-    public function setGroupOptions(array $options)
-    {
-        $this->groupOptions = $options;
-        return $this;
-    }
-
-    public function getGroupOptions()
-    {
-        return $this->groupOptions;
     }
 
     /**
@@ -382,41 +369,6 @@ class LdapUserBackend extends Repository implements UserBackendInterface
     }
 
     /**
-     * Retrieve the user groups
-     *
-     * @TODO: Subject to change, see #7343
-     *
-     * @param string $dn
-     *
-     * @return array
-     */
-    public function getGroups($dn)
-    {
-        if (empty($this->groupOptions) || ! isset($this->groupOptions['group_base_dn'])) {
-            return array();
-        }
-
-        $result = $this->ds->select()
-            ->setBase($this->groupOptions['group_base_dn'])
-            ->from(
-                $this->groupOptions['group_class'],
-                array($this->groupOptions['group_attribute'])
-            )
-            ->where(
-                $this->groupOptions['group_member_attribute'],
-                $dn
-            )
-            ->fetchAll();
-
-        $groups = array();
-        foreach ($result as $group) {
-            $groups[] = $group->{$this->groupOptions['group_attribute']};
-        }
-
-        return $groups;
-    }
-
-    /**
      * Authenticate the given user
      *
      * @param   User        $user
@@ -440,15 +392,7 @@ class LdapUserBackend extends Repository implements UserBackendInterface
                 return false;
             }
 
-            $authenticated = $this->ds->testCredentials($userDn, $password);
-            if ($authenticated) {
-                $groups = $this->getGroups($userDn);
-                if ($groups !== null) {
-                    $user->setGroups($groups);
-                }
-            }
-
-            return $authenticated;
+            return $this->ds->testCredentials($userDn, $password);
         } catch (LdapException $e) {
             throw new AuthenticationException(
                 'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
