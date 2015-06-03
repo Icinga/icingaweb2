@@ -8,7 +8,7 @@ use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
 
-class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInterface
+class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBackendInterface
 {
     /**
      * The base DN to use for a user query
@@ -76,6 +76,70 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             'order' => 'asc'
         )
     );
+
+    /**
+     * Normed attribute names based on known LDAP environments
+     *
+     * @var array
+     */
+    protected $normedAttributes = array(
+        'uid'               => 'uid',
+        'gid'               => 'gid',
+        'user'              => 'user',
+        'group'             => 'group',
+        'member'            => 'member',
+        'inetorgperson'     => 'inetOrgPerson',
+        'samaccountname'    => 'sAMAccountName'
+    );
+
+    /**
+     * The name of this repository
+     *
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * Return the given attribute name normed to known LDAP enviroments, if possible
+     *
+     * @param   string  $name
+     *
+     * @return  string
+     */
+    protected function getNormedAttribute($name)
+    {
+        $loweredName = strtolower($name);
+        if (array_key_exists($loweredName, $this->normedAttributes)) {
+            return $this->normedAttributes[$loweredName];
+        }
+
+        return $name;
+    }
+
+    /**
+     * Set this repository's name
+     *
+     * @param   string  $name
+     *
+     * @return  $this
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * Return this repository's name
+     *
+     * In case no name has been explicitly set yet, the class name is returned.
+     *
+     * @return  string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 
     /**
      * Set the base DN to use for a user query
@@ -284,6 +348,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             $lastModifiedAttribute = 'modifyTimestamp';
         }
 
+        // TODO(jom): Fetching memberships does not work currently, we'll need some aggregate functionality!
         $columns = array(
             'group'         => $this->groupNameAttribute,
             'group_name'    => $this->groupNameAttribute,
