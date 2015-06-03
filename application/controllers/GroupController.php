@@ -23,6 +23,7 @@ class GroupController extends AuthBackendController
     public function listAction()
     {
         $this->assertPermission('config/authentication/groups/show');
+        $this->createListTabs()->activate('group/list');
         $backendNames = array_map(
             function ($b) { return $b->getName(); },
             $this->loadUserGroupBackends('Icinga\Data\Selectable')
@@ -60,7 +61,6 @@ class GroupController extends AuthBackendController
 
         $this->view->groups = $query;
         $this->view->backend = $backend;
-        $this->createListTabs()->activate('group/list');
 
         $this->setupPaginationControl($query);
         $this->setupLimitControl();

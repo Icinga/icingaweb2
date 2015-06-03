@@ -23,6 +23,7 @@ class UserController extends AuthBackendController
     public function listAction()
     {
         $this->assertPermission('config/authentication/users/show');
+        $this->createListTabs()->activate('user/list');
         $backendNames = array_map(
             function ($b) { return $b->getName(); },
             $this->loadUserBackends('Icinga\Data\Selectable')
@@ -60,7 +61,6 @@ class UserController extends AuthBackendController
 
         $this->view->users = $query;
         $this->view->backend = $backend;
-        $this->createListTabs()->activate('user/list');
 
         $this->setupPaginationControl($query);
         $this->setupLimitControl();
