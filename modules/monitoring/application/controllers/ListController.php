@@ -182,7 +182,7 @@ class Monitoring_ListController extends Controller
         ), $this->addColumns());
         $query = $this->backend->select()->from('serviceStatus', $columns);
         $this->filterQuery($query);
-        $this->applyRestriction('monitoring/services/filter', $query);
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->services = $query;
 
         $this->setupLimitControl();
