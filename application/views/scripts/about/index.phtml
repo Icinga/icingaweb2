@@ -8,7 +8,7 @@
             'gitCommitID'   => $this->translate('Git commit ID: %s'),
             'gitCommitDate' => $this->translate('Git commit date: %s')
         ) as $key => $label) {
-            if (null !== ($value = $version[$key])) {
+            if (array_key_exists($key, $version) && null !== ($value = $version[$key])) {
                 $versionInfo[] = sprintf($label, htmlspecialchars($value));
             }
         }

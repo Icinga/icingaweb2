@@ -1,2 +1,1 @@
-GitCommitID: $Format:%H%d$
-GitCommitDate: $Format:%ci$
+$Format:%H%d %ci$
