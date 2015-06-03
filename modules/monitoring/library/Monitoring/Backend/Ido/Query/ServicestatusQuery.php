@@ -3,6 +3,9 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+/**
+ * Query for service status
+ */
 class ServicestatusQuery extends IdoQuery
 {
     /**
@@ -20,17 +23,14 @@ class ServicestatusQuery extends IdoQuery
             'hostgroup_name'    => 'hgo.name1'
         ),
         'hosts' => array(
-            'host'                  => 'so.name1 COLLATE latin1_general_ci',
             'host_action_url'       => 'h.action_url',
             'host_address'          => 'h.address',
-            'host_alias'            => 'h.alias',
+            'host_alias'            => 'h.alias COLLATE latin1_general_ci',
             'host_display_name'     => 'h.display_name COLLATE latin1_general_ci',
             'host_icon_image'       => 'h.icon_image',
             'host_icon_image_alt'   => 'h.icon_image_alt',
             'host_ipv4'             => 'INET_ATON(h.address)',
-            'host_name'             => 'so.name1',
-            'host_notes_url'        => 'h.notes_url',
-            'object_type'           => '(\'host\')'
+            'host_notes_url'        => 'h.notes_url'
         ),
         'hoststatus' => array(
             'host_acknowledged'                     => 'hs.problem_has_been_acknowledged',
@@ -127,16 +127,18 @@ class ServicestatusQuery extends IdoQuery
             'host_unhandled'            => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END'
         ),
         'services' => array(
-            'object_type'            => '(\'service\')',
-            'service'                => 'so.name2 COLLATE latin1_general_ci',
-            'service_action_url'     => 's.action_url',
-            'service_description'    => 'so.name2',
-            'service_display_name'   => 's.display_name COLLATE latin1_general_ci',
-            'service_host'           => 'so.name1 COLLATE latin1_general_ci',
-            'service_host_name'      => 'so.name1',
-            'service_icon_image'     => 's.icon_image',
-            'service_icon_image_alt' => 's.icon_image_alt',
-            'service_notes_url'      => 's.notes_url'
+            'host'                      => 'so.name1 COLLATE latin1_general_ci',
+            'host_name'                 => 'so.name1',
+            'object_type'               => '(\'service\')',
+            'service'                   => 'so.name2 COLLATE latin1_general_ci',
+            'service_action_url'        => 's.action_url',
+            'service_description'       => 'so.name2',
+            'service_display_name'      => 's.display_name COLLATE latin1_general_ci',
+            'service_host'              => 'so.name1 COLLATE latin1_general_ci',
+            'service_host_name'         => 'so.name1',
+            'service_icon_image'        => 's.icon_image',
+            'service_icon_image_alt'    => 's.icon_image_alt',
+            'service_notes_url'         => 's.notes_url'
         ),
         'servicestatus' => array(
             'service_handled'                   => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
