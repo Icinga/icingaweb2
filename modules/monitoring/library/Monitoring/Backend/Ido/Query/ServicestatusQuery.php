@@ -139,7 +139,11 @@ class ServicestatusQuery extends IdoQuery
             'service_notes_url'      => 's.notes_url'
         ),
         'servicestatus' => array(
-            'service_state'          => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END'
+            'service_handled'                   => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
+            'service_hard_state'                => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE CASE WHEN ss.state_type = 1 THEN ss.current_state ELSE ss.last_hard_state END END',
+            'service_last_hard_state_change'    => 'UNIX_TIMESTAMP(ss.last_hard_state_change)',
+            'service_state'                     => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
+            'service_unhandled'                 => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END'
         )
     );
 
