@@ -2,14 +2,15 @@
     <h1>Icinga Web 2</h1>
     <?php
     $versionInfo = array();
-    foreach (array(
-        array($this->translate('Version: %s'),          $appVersion),
-        array($this->translate('Git commit ID: %s'),    $gitCommitID),
-        array($this->translate('Git commit date: %s'),  $gitCommitDate)
-    ) as $version) {
-        list($label, $value) = $version;
-        if ($value !== null) {
-            $versionInfo[] = sprintf($label, htmlspecialchars($value));
+    if ($version !== false) {
+        foreach (array(
+            'appVersion'    => $this->translate('Version: %s'),
+            'gitCommitID'   => $this->translate('Git commit ID: %s'),
+            'gitCommitDate' => $this->translate('Git commit date: %s')
+        ) as $key => $label) {
+            if (null !== ($value = $version[$key])) {
+                $versionInfo[] = sprintf($label, htmlspecialchars($value));
+            }
         }
     }
     ?>
