@@ -2,7 +2,7 @@
 use Icinga\Module\Monitoring\Object\Host;
 
 if (! $this->compact): ?>
-<div class="controls">
+<div class="controls separated">
   <?= $this->tabs; ?>
   <div class="dontprint">
     <?= $this->render('list/components/selectioninfo.phtml'); ?>
