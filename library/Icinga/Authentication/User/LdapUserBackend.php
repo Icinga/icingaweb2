@@ -4,7 +4,6 @@
 namespace Icinga\Authentication\User;
 
 use DateTime;
-use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ProgrammingError;
@@ -323,37 +322,6 @@ class LdapUserBackend extends Repository implements UserBackendInterface
 
         $ADS_UF_ACCOUNTDISABLE = 2;
         return ((int) $value & $ADS_UF_ACCOUNTDISABLE) === 0;
-    }
-
-    /**
-     * Parse the given value based on the ASN.1 standard (GeneralizedTime) and return its timestamp representation
-     *
-     * @param   string|null     $value
-     *
-     * @return  int
-     */
-    protected function retrieveGeneralizedTime($value)
-    {
-        if ($value === null) {
-            return $value;
-        }
-
-        if (
-            ($dateTime = DateTime::createFromFormat('YmdHis.uO', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis.uZ', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis.u', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHi', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdH', $value)) !== false
-        ) {
-            return $dateTime->getTimeStamp();
-        } else {
-            Logger::debug(sprintf(
-                'Failed to parse "%s" based on the ASN.1 standard (GeneralizedTime) for user backend "%s".',
-                $value,
-                $this->getName()
-            ));
-        }
     }
 
     /**
