@@ -478,12 +478,6 @@ class Monitoring_ListController extends Controller
         $this->setAutorefreshInterval(12);
 
         $query = $this->backend->select()->from('servicegroupsummary', array(
-            'hosts_down_handled',
-            'hosts_down_unhandled',
-            'hosts_pending',
-            'hosts_unreachable_handled',
-            'hosts_unreachable_unhandled',
-            'hosts_up',
             'servicegroup_alias',
             'servicegroup_name',
             'services_critical_handled',
