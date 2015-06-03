@@ -53,14 +53,6 @@ class Hostgroupsummary extends DataView
     /**
      * {@inheritdoc}
      */
-    public static function getQueryName()
-    {
-        return 'groupsummary';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getSearchColumns()
     {
         return array('hostgroup', 'hostgroup_alias');
