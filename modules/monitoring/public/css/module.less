@@ -189,6 +189,33 @@ table.avp form.object-features div.header h4 {
   margin: 0;
 }
 
+table.avp {
+    th {
+        font-weight: normal;
+        font-size: 0.9em;
+        padding-top: 0.2em;
+        padding-bottom: 0.3em;
+    }
+
+    td {
+        color: #666;
+        padding-bottom: 0.3em;
+        th, td {
+            padding: 0;
+        }
+    }
+
+    a, button.link-like {
+        color: @colorPetrol;
+    }
+
+    .go-ahead {
+        a, button.link-like {
+            color: #222;
+        }
+    }
+}
+
 table.avp .customvar ul {
     list-style-type: none;
     margin: 0;
@@ -241,4 +268,56 @@ td.state {
   .time-until {
     text-transform: capitalize;
   }
+}
+
+.inline-comments {
+    padding: 0;
+    margin: 0;
+
+    .time-ago {
+        font-style: italic;
+        color: #919191;
+    }
+
+    li {
+        list-style-type: none;
+        margin-bottom: 8px;
+    }
+
+    h4 {
+        border-bottom: 1px solid gray;
+        font-weight: normal;
+        font-size: inherit;
+        color: inherit;
+        margin: 0;
+    }
+
+    h4 .author {
+        font-weight: bold;
+    }
+
+    h4 form {
+        display: none;
+    }
+
+    h4 form {
+        float: right;
+    }
+
+    li:hover h4 {
+        background: #F9F9F9;
+        position: relative;
+
+        form {
+            display: inline;
+        }
+    }
+
+    p {
+        margin: 0;
+
+        a {
+            color: #222;
+        }
+    }
 }
