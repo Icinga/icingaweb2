@@ -100,6 +100,23 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
     protected $name;
 
     /**
+     * The datasource being used
+     *
+     * @var Connection
+     */
+    protected $ds;
+
+    /**
+     * Create a new LDAP repository object
+     *
+     * @param   Connection  $ds     The data source to use
+     */
+    public function __construct($ds)
+    {
+        $this->ds = $ds;
+    }
+
+    /**
      * Return the given attribute name normed to known LDAP enviroments, if possible
      *
      * @param   string  $name
