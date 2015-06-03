@@ -53,6 +53,7 @@ class UserController extends AuthBackendController
         $query = $backend->select(array('user_name'));
         $filterEditor = Widget::create('filterEditor')
             ->setQuery($query)
+            ->setSearchColumns(array('user'))
             ->preserveParams('limit', 'sort', 'dir', 'view', 'backend')
             ->ignoreParams('page')
             ->handleRequest($this->getRequest());
