@@ -66,10 +66,9 @@ class Monitoring_ListController extends Controller
             $stateColumn = 'host_state';
             $stateChangeColumn = 'host_last_state_change';
         }
-
         $this->addTitleTab('hosts', $this->translate('Hosts'), $this->translate('List hosts'));
         $this->setAutorefreshInterval(10);
-        $query = $this->backend->select()->from('hostStatus', array_merge(array(
+        $query = $this->backend->select()->from('hoststatus', array_merge(array(
             'host_icon_image',
             'host_icon_image_alt',
             'host_name',
@@ -98,10 +97,9 @@ class Monitoring_ListController extends Controller
             'host_max_check_attempts'
         ), $this->addColumns()));
         $this->filterQuery($query);
-        $this->applyRestriction('monitoring/hosts/filter', $query);
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->hosts = $query;
-
-        $this->view->stats = $this->backend->select()->from('statusSummary', array(
+        $stats = $this->backend->select()->from('hoststatussummary', array(
             'hosts_total',
             'hosts_up',
             'hosts_down',
@@ -111,8 +109,9 @@ class Monitoring_ListController extends Controller
             'hosts_unreachable_handled',
             'hosts_unreachable_unhandled',
             'hosts_pending',
-        ))->getQuery()->fetchRow();
-
+        ));
+        $this->applyRestriction('monitoring/filter/objects', $stats);
+        $this->view->stats = $stats->fetchRow();
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->hosts);
         $this->setupSortControl(array(
