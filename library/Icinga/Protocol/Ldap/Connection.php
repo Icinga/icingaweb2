@@ -9,6 +9,7 @@ use Icinga\Application\Logger;
 use Icinga\Application\Platform;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\Selectable;
+use Icinga\Data\Sortable;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Ldap\Exception as LdapException;
 
@@ -282,13 +283,23 @@ class Connection implements Selectable
             $fields = $query->getColumns();
         }
 
+        $serverSorting = $this->capabilities->hasOid(Capability::LDAP_SERVER_SORT_OID);
+        if ($serverSorting && $query->hasOrder()) {
+            ldap_set_option($this->ds, LDAP_OPT_SERVER_CONTROLS, array(
+                array(
+                    'oid'           => Capability::LDAP_SERVER_SORT_OID,
+                    'value'         => $this->encodeSortRules($query->getOrder())
+                )
+            ));
+        }
+
         $results = @ldap_search(
             $this->ds,
             $query->getBase() ?: $this->root_dn,
             (string) $query,
             array_values($fields),
             0, // Attributes and values
-            $limit ? $offset + $limit : 0
+            $serverSorting && $limit ? $offset + $limit : 0
         );
         if ($results === false) {
             if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
@@ -310,15 +321,21 @@ class Connection implements Selectable
         $entry = ldap_first_entry($this->ds, $results);
         do {
             $count += 1;
-            if ($offset === 0 || $offset < $count) {
+            if (! $serverSorting || $offset === 0 || $offset < $count) {
                 $entries[ldap_get_dn($this->ds, $entry)] = $this->cleanupAttributes(
                     ldap_get_attributes($this->ds, $entry), array_flip($fields)
                 );
             }
-        } while (($limit === 0 || $limit !== count($entries)) && ($entry = ldap_next_entry($this->ds, $entry)));
+        } while (
+            (! $serverSorting || $limit === 0 || $limit !== count($entries))
+            && ($entry = ldap_next_entry($this->ds, $entry))
+        );
 
-        if ($query->hasOrder()) {
+        if (! $serverSorting && $query->hasOrder()) {
             uasort($entries, array($query, 'compare'));
+            if ($limit && $count > $limit) {
+                $entries = array_splice($entries, $query->hasOffset() ? $query->getOffset() : 0, $limit);
+            }
         }
 
         ldap_free_result($results);
@@ -349,10 +366,6 @@ class Connection implements Selectable
      */
     protected function runPagedQuery(Query $query, array $fields = null, $pageSize = null)
     {
-        if (! $this->pageControlAvailable($query)) {
-            throw new ProgrammingError('LDAP: Page control not available.');
-        }
-
         if (! isset($pageSize)) {
             $pageSize = static::PAGE_SIZE;
         }
@@ -364,6 +377,16 @@ class Connection implements Selectable
 
         if (empty($fields)) {
             $fields = $query->getColumns();
+        }
+
+        $serverSorting = $this->capabilities->hasOid(Capability::LDAP_SERVER_SORT_OID);
+        if ($serverSorting && $query->hasOrder()) {
+            ldap_set_option($this->ds, LDAP_OPT_SERVER_CONTROLS, array(
+                array(
+                    'oid'           => Capability::LDAP_SERVER_SORT_OID,
+                    'value'         => $this->encodeSortRules($query->getOrder())
+                )
+            ));
         }
 
         $count = 0;
@@ -380,7 +403,7 @@ class Connection implements Selectable
                 $queryString,
                 array_values($fields),
                 0, // Attributes and values
-                $limit ? $offset + $limit : 0
+                $serverSorting && $limit ? $offset + $limit : 0
             );
             if ($results === false) {
                 if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
@@ -411,19 +434,22 @@ class Connection implements Selectable
             $entry = ldap_first_entry($this->ds, $results);
             do {
                 $count += 1;
-                if ($offset === 0 || $offset < $count) {
+                if (! $serverSorting || $offset === 0 || $offset < $count) {
                     $entries[ldap_get_dn($this->ds, $entry)] = $this->cleanupAttributes(
                         ldap_get_attributes($this->ds, $entry), array_flip($fields)
                     );
                 }
-            } while (($limit === 0 || $limit !== count($entries)) && ($entry = ldap_next_entry($this->ds, $entry)));
+            } while (
+                (! $serverSorting || $limit === 0 || $limit !== count($entries))
+                && ($entry = ldap_next_entry($this->ds, $entry))
+            );
 
             if (false === @ldap_control_paged_result_response($this->ds, $results, $cookie)) {
                 // If the page size is greater than or equal to the sizeLimit value, the server should ignore the
                 // control as the request can be satisfied in a single page: https://www.ietf.org/rfc/rfc2696.txt
                 // This applies no matter whether paged search requests are permitted or not. You're done once you
                 // got everything you were out for.
-                if (count($entries) !== $limit) {
+                if ($serverSorting && count($entries) !== $limit) {
 
                     // The server does not support pagination, but still returned a response by ignoring the
                     // pagedResultsControl. We output a warning to indicate that the pagination control was ignored.
@@ -432,7 +458,7 @@ class Connection implements Selectable
             }
 
             ldap_free_result($results);
-        } while ($cookie && ($limit === 0 || count($entries) < $limit));
+        } while ($cookie && (! $serverSorting || $limit === 0 || count($entries) < $limit));
 
         if ($cookie) {
             // A sequence of paged search requests is abandoned by the client sending a search request containing a
@@ -445,8 +471,11 @@ class Connection implements Selectable
             ldap_control_paged_result($this->ds, 0);
         }
 
-        if ($query->hasOrder()) {
+        if (! $serverSorting && $query->hasOrder()) {
             uasort($entries, array($query, 'compare'));
+            if ($limit && $count > $limit) {
+                $entries = array_splice($entries, $query->hasOffset() ? $query->getOffset() : 0, $limit);
+            }
         }
 
         return $entries;
@@ -494,6 +523,32 @@ class Connection implements Selectable
         }
 
         return (object) $cleanedAttributes;
+    }
+
+    /**
+     * Encode the given array of sort rules as ASN.1 octet stream according to RFC 2891
+     *
+     * @param   array   $sortRules
+     *
+     * @return  string
+     */
+    protected function encodeSortRules(array $sortRules)
+    {
+        if (count($sortRules) > 127) {
+            throw new ProgrammingError(
+                'Cannot encode more than 127 sort rules. Only length octets in short form are supported'
+            );
+        }
+
+        $seq = '30' . str_pad(dechex(count($sortRules)), 2, '0', STR_PAD_LEFT);
+        foreach ($sortRules as $rule) {
+            $hexdAttribute = unpack('H*', $rule[0]);
+            $seq .= '3002'
+                . '04' . str_pad(dechex(strlen($rule[0])), 2, '0', STR_PAD_LEFT) . $hexdAttribute[1]
+                . '0101' . ($rule[1] === Sortable::SORT_DESC ? 'ff' : '00');
+        }
+
+        return $seq;
     }
 
     public function testCredentials($username, $password)
