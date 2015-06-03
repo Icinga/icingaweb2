@@ -7,13 +7,13 @@ use DateTime;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Repository\Repository;
+use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Protocol\Ldap\Expression;
 use Icinga\User;
 
-class LdapUserBackend extends Repository implements UserBackendInterface
+class LdapUserBackend extends LdapRepository implements UserBackendInterface
 {
     /**
      * The base DN to use for a query
@@ -62,18 +62,6 @@ class LdapUserBackend extends Repository implements UserBackendInterface
                 'user_name'
             )
         )
-    );
-
-    /**
-     * Normed attribute names based on known LDAP environments
-     *
-     * @var array
-     */
-    protected $normedAttributes = array(
-        'uid'               => 'uid',
-        'user'              => 'user',
-        'inetorgperson'     => 'inetOrgPerson',
-        'samaccountname'    => 'sAMAccountName'
     );
 
     /**
@@ -174,23 +162,6 @@ class LdapUserBackend extends Repository implements UserBackendInterface
     public function getFilter()
     {
         return $this->filter;
-    }
-
-    /**
-     * Return the given attribute name normed to known LDAP enviroments, if possible
-     *
-     * @param   string  $name
-     *
-     * @return  string
-     */
-    protected function getNormedAttribute($name)
-    {
-        $loweredName = strtolower($name);
-        if (array_key_exists($loweredName, $this->normedAttributes)) {
-            return $this->normedAttributes[$loweredName];
-        }
-
-        return $name;
     }
 
     /**
