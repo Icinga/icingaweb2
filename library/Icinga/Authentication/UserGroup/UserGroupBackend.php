@@ -21,6 +21,8 @@ class UserGroupBackend
      */
     protected static $defaultBackends = array(
         'db',
+        'ldap',
+        'msldap',
         //'ini'
     );
 
@@ -155,6 +157,28 @@ class UserGroupBackend
                 break;
             case 'ini':
                 $backend = new IniUserGroupBackend($resource);
+                break;
+            case 'ldap':
+                $backend = new LdapUserGroupBackend($resource);
+                $backend
+                    ->setGroupBaseDn($backendConfig->base_dn)
+                    ->setUserBaseDn($backendConfig->get('user_base_dn', $backend->getGroupBaseDn()))
+                    ->setGroupClass($backendConfig->get('group_class', 'group'))
+                    ->setUserClass($backendConfig->get('user_class', 'inetOrgPerson'))
+                    ->setGroupNameAttribute($backendConfig->get('group_name_attribute', 'gid'))
+                    ->setUserNameAttribute($backendConfig->get('user_name_attribute', 'uid'))
+                    ->setGroupMemberAttribute($backendConfig->get('group_member_attribute', 'member'));
+                break;
+            case 'msldap':
+                $backend = new LdapUserGroupBackend($resource);
+                $backend
+                    ->setGroupBaseDn($backendConfig->base_dn)
+                    ->setUserBaseDn($backendConfig->get('user_base_dn', $backend->getGroupBaseDn()))
+                    ->setGroupClass($backendConfig->get('group_class', 'group'))
+                    ->setUserClass($backendConfig->get('user_class', 'user'))
+                    ->setGroupNameAttribute($backendConfig->get('group_name_attribute', 'sAMAccountName'))
+                    ->setUserNameAttribute($backendConfig->get('user_name_attribute', $backend->getGroupNameAttribute()))
+                    ->setGroupMemberAttribute($backendConfig->get('group_member_attribute', 'member'));
                 break;
         }
 
