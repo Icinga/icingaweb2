@@ -183,8 +183,8 @@ class UserGroupBackendForm extends ConfigForm
         // TODO(jom): We did not think about how to configure custom group backends yet!
         $backendTypes = array(
             'db'        => $this->translate('Database'),
-            'ldap'      => $this->translate('LDAP'),
-            'msldap'    => $this->translate('ActiveDirectory')
+            'ldap'      => 'LDAP',
+            'msldap'    => 'ActiveDirectory'
         );
 
         $backendType = isset($formData['type']) ? $formData['type'] : null;
