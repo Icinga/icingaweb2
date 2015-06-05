@@ -51,14 +51,6 @@ class Servicegroupsummary extends DataView
     /**
      * {@inheritdoc}
      */
-    public static function getQueryName()
-    {
-        return 'servicestatussummary';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getSearchColumns()
     {
         return array('servicegroup', 'servicegroup_alias');
