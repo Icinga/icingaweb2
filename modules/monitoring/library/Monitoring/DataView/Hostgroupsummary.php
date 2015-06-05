@@ -50,7 +50,7 @@ class Hostgroupsummary extends DataView
             'hosts_severity',
             'host', 'host_alias', 'host_display_name', 'host_name',
             'hostgroup',
-            'service', 'service_description',
+            'service', 'service_description', 'service_display_name',
             'servicegroup', 'servicegroup_alias', 'servicegroup_name'
         );
     }
