@@ -14,6 +14,13 @@ use Icinga\Forms\ConfigForm;
 class UserGroupBackendForm extends ConfigForm
 {
     /**
+     * The backend to load when displaying the form for the first time
+     *
+     * @var string
+     */
+    protected $backendToLoad;
+
+    /**
      * Initialize this form
      */
     public function init()
@@ -53,10 +60,7 @@ class UserGroupBackendForm extends ConfigForm
             throw new NotFoundError('No user group backend called "%s" found', $name);
         }
 
-        $data = $this->config->getSection($name)->toArray();
-        $data['type'] = $data['backend'];
-        $data['name'] = $name;
-        $this->populate($data);
+        $this->backendToLoad = $name;
         return $this;
     }
 
@@ -187,12 +191,26 @@ class UserGroupBackendForm extends ConfigForm
                 'autosubmit'        => true,
                 'label'             => $this->translate('Backend Type'),
                 'description'       => $this->translate('The type of this user group backend'),
-                'multiOptions'      => $backendTypes
+                'multiOptions'      => $backendTypes,
+                'value'             => $backendType
             )
         );
 
         $backendForm = $this->getBackendForm($backendType);
         $backendForm->createElements($formData);
         $this->addElements($backendForm->getElements());
+    }
+
+    /**
+     * Populate the configuration of the backend to load
+     */
+    public function onRequest()
+    {
+        if ($this->backendToLoad) {
+            $data = $this->config->getSection($this->backendToLoad)->toArray();
+            $data['type'] = $data['backend'];
+            $data['name'] = $this->backendToLoad;
+            $this->populate($data);
+        }
     }
 }
