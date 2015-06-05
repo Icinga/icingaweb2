@@ -80,12 +80,9 @@ class Monitoring_ShowController extends Controller
 
     protected function fetchHostStats()
     {
-        $this->view->stats = $this->backend->select()->from('statusSummary', array(
+        $this->view->stats = $this->backend->select()->from('servicestatussummary', array(
             'services_total',
             'services_ok',
-            'services_problem',
-            'services_problem_handled',
-            'services_problem_unhandled',
             'services_critical',
             'services_critical_unhandled',
             'services_critical_handled',
