@@ -13,11 +13,6 @@ class HoststatussummaryQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $allowCustomVars = true;
-
-    /**
-     * {@inheritdoc}
-     */
     protected $columnMap = array(
         'hoststatussummary' => array(
             'hosts_down'                    => 'SUM(CASE WHEN state = 1 THEN 1 ELSE 0 END)',
