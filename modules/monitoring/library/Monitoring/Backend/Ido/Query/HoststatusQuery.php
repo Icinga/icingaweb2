@@ -57,6 +57,7 @@ class HoststatusQuery extends IdoQuery
             'host_hard_state'                       => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE CASE WHEN hs.state_type = 1 THEN hs.current_state ELSE hs.last_hard_state END END',
             'host_in_downtime'                      => 'CASE WHEN (hs.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
             'host_is_flapping'                      => 'hs.is_flapping',
+            'host_is_passive_checked'               => 'CASE WHEN hs.active_checks_enabled = 0 AND hs.passive_checks_enabled = 1 THEN 1 ELSE 0 END',
             'host_is_reachable'                     => 'hs.is_reachable',
             'host_last_check'                       => 'UNIX_TIMESTAMP(hs.last_check)',
             'host_last_hard_state'                  => 'hs.last_hard_state',
