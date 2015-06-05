@@ -3,7 +3,10 @@
 
 namespace Icinga\Authentication\UserGroup;
 
+use Icinga\Authentication\User\UserBackend;
+use Icinga\Authentication\User\LdapUserBackend;
 use Icinga\Data\ConfigObject;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Ldap\Expression;
 use Icinga\Repository\LdapRepository;
@@ -540,6 +543,8 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
      * @param   ConfigObject    $config
      *
      * @return  $this
+     *
+     * @throws  ConfigurationError      In case a linked user backend does not exist or is not a LdapUserBackend
      */
     public function setConfig(ConfigObject $config)
     {
@@ -549,6 +554,20 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
             $defaults = $this->getActiveDirectoryDefaults();
         } else {
             $defaults = new ConfigObject();
+        }
+
+        if ($config->user_backend) {
+            $userBackend = UserBackend::create($config->user_backend);
+            if (! $userBackend instanceof LdapUserBackend) {
+                throw new ConfigurationError('User backend "%s" is not of type LDAP', $config->user_backend);
+            }
+
+            $defaults->merge(array(
+                'user_base_dn'          => $userBackend->getBaseDn(),
+                'user_class'            => $userBackend->getUserClass(),
+                'user_name_attribute'   => $userBackend->getUserNameAttribute(),
+                'user_filter'           => $userBackend->getFilter()
+            ));
         }
 
         return $this
