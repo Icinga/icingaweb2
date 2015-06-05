@@ -8,6 +8,8 @@ namespace Icinga\Application;
  */
 class Version
 {
+    const VERSION = '2.0.0-rc1';
+
     /**
      * Get the version of this instance of Icinga Web 2
      *
@@ -28,6 +30,7 @@ class Version
             if (false !== $gitCommitID) {
                 $matches = array();
                 if (@preg_match('/(?<!.)(?P<gitCommitID>[0-9a-f]+)$/ms', $gitCommitID, $matches)) {
+                    $matches['appVersion'] = self::VERSION;
                     return $matches;
                 }
             }
@@ -38,21 +41,11 @@ class Version
         }
 
         $matches = array();
-        if (! @preg_match('/^(?P<gitCommitID>\S+)(?: \((.+?)\))? (?P<gitCommitDate>\S+)/', $appVersion, $matches)) {
+        if (! @preg_match('/^(?P<gitCommitID>\w+) (?P<gitCommitDate>\S+)/', $appVersion, $matches)) {
             return false;
         }
 
-        if (array_key_exists(1, $matches)) {
-            $tagMatches = array();
-            foreach (explode(', ', $matches[1]) as $gitRef) {
-                if (@preg_match('/^tag: v(.+)/', $gitRef, $tagMatches)) {
-                    $matches['appVersion'] = $tagMatches[1];
-                    break;
-                }
-            }
-            unset($matches[1]);
-        }
-
+        $matches['appVersion'] = self::VERSION;
         return $matches;
     }
 }
