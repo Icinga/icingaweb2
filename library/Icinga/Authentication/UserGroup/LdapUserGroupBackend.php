@@ -4,6 +4,7 @@
 namespace Icinga\Authentication\UserGroup;
 
 use Icinga\Exception\ProgrammingError;
+use Icinga\Protocol\Ldap\Expression;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
@@ -58,6 +59,20 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
      * @var string
      */
     protected $groupMemberAttribute;
+
+    /**
+     * The custom LDAP filter to apply on a user query
+     *
+     * @var string
+     */
+    protected $userFilter;
+
+    /**
+     * The custom LDAP filter to apply on a group query
+     *
+     * @var string
+     */
+    protected $groupFilter;
 
     /**
      * The columns which are not permitted to be queried
@@ -328,6 +343,58 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
     }
 
     /**
+     * Set the custom LDAP filter to apply on a user query
+     *
+     * @param   string  $filter
+     *
+     * @return  $this
+     */
+    public function setUserFilter($filter)
+    {
+        if (($filter = trim($filter))) {
+            $this->userFilter = $filter;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return the custom LDAP filter to apply on a user query
+     *
+     * @return  string
+     */
+    public function getUserFilter()
+    {
+        return $this->userFilter;
+    }
+
+    /**
+     * Set the custom LDAP filter to apply on a group query
+     *
+     * @param   string  $filter
+     *
+     * @return  $this
+     */
+    public function setGroupFilter($filter)
+    {
+        if (($filter = trim($filter))) {
+            $this->groupFilter = $filter;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return the custom LDAP filter to apply on a group query
+     *
+     * @return  string
+     */
+    public function getGroupFilter()
+    {
+        return $this->groupFilter;
+    }
+
+    /**
      * Return a new query for the given columns
      *
      * @param   array   $columns    The desired columns, if null all columns will be queried
@@ -338,6 +405,11 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
     {
         $query = parent::select($columns);
         $query->getQuery()->setBase($this->groupBaseDn);
+        if ($this->groupFilter) {
+            // TODO(jom): This should differentiate between groups and their memberships
+            $query->getQuery()->where(new Expression($this->groupFilter));
+        }
+
         return $query;
     }
 
@@ -430,15 +502,17 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
      */
     public function getMemberships(User $user)
     {
-        $userDn = $this->ds
+        $userQuery = $this->ds
             ->select()
             ->from($this->userClass)
             ->where($this->userNameAttribute, $user->getUsername())
             ->setBase($this->userBaseDn)
-            ->setUsePagedResults(false)
-            ->fetchDn();
+            ->setUsePagedResults(false);
+        if ($this->userFilter) {
+            $userQuery->where(new Expression($this->userFilter));
+        }
 
-        if ($userDn === null) {
+        if (($userDn = $userQuery->fetchDn()) === null) {
             return array();
         }
 
@@ -447,6 +521,9 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
             ->from($this->groupClass, array($this->groupNameAttribute))
             ->where($this->groupMemberAttribute, $userDn)
             ->setBase($this->groupBaseDn);
+        if ($this->groupFilter) {
+            $groupQuery->where(new Expression($this->groupFilter));
+        }
 
         $groups = array();
         foreach ($groupQuery as $row) {
