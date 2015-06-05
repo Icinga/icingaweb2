@@ -544,7 +544,7 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
      *
      * @return  $this
      *
-     * @throws  ConfigurationError      In case a linked user backend does not exist or is not a LdapUserBackend
+     * @throws  ConfigurationError      In case a linked user backend does not exist or is invalid
      */
     public function setConfig(ConfigObject $config)
     {
@@ -560,6 +560,17 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
             $userBackend = UserBackend::create($config->user_backend);
             if (! $userBackend instanceof LdapUserBackend) {
                 throw new ConfigurationError('User backend "%s" is not of type LDAP', $config->user_backend);
+            }
+
+            if (
+                $this->ds->getHostname() !== $userBackend->getDataSource()->getHostname()
+                || $this->ds->getPort() !== $userBackend->getDataSource()->getPort()
+            ) {
+                // TODO(jom): Elaborate whether it makes sense to link directories on different hosts
+                throw new ConfigurationError(
+                    'It is required that a linked user backend refers to the '
+                    . 'same directory as it\'s user group backend counterpart'
+                );
             }
 
             $defaults->merge(array(
