@@ -479,12 +479,9 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetchStats()
     {
-        $this->stats = $this->backend->select()->from('statusSummary', array(
+        $this->stats = $this->backend->select()->from('servicestatussummary', array(
             'services_total',
             'services_ok',
-            'services_problem',
-            'services_problem_handled',
-            'services_problem_unhandled',
             'services_critical',
             'services_critical_unhandled',
             'services_critical_handled',
@@ -497,7 +494,7 @@ abstract class MonitoredObject implements Filterable
             'services_pending',
         ))
             ->where('service_host_name', $this->host_name)
-            ->getQuery()
+            ->applyFilter($this->getFilter())
             ->fetchRow();
         return $this;
     }
