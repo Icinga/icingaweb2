@@ -38,10 +38,17 @@ class UserGroupBackendForm extends ConfigForm
      */
     public function getBackendForm($type)
     {
-        if ($type === 'db') {
-            return new DbUserGroupBackendForm();
-        } else {
-            throw new InvalidArgumentException(sprintf($this->translate('Invalid backend type "%s" provided'), $type));
+        switch ($type)
+        {
+            case 'db':
+                return new DbUserGroupBackendForm();
+            case 'ldap':
+            case 'msldap':
+                return new LdapUserGroupBackendForm();
+            default:
+                throw new InvalidArgumentException(
+                    sprintf($this->translate('Invalid backend type "%s" provided'), $type)
+                );
         }
     }
 
@@ -165,7 +172,9 @@ class UserGroupBackendForm extends ConfigForm
 
         // TODO(jom): We did not think about how to configure custom group backends yet!
         $backendTypes = array(
-            'db'    => $this->translate('Database')
+            'db'        => $this->translate('Database'),
+            'ldap'      => $this->translate('LDAP'),
+            'msldap'    => $this->translate('ActiveDirectory')
         );
 
         $backendType = isset($formData['type']) ? $formData['type'] : null;
@@ -191,14 +200,11 @@ class UserGroupBackendForm extends ConfigForm
                 'autosubmit'        => true,
                 'label'             => $this->translate('Backend Type'),
                 'description'       => $this->translate('The type of this user group backend'),
-                'multiOptions'      => $backendTypes,
-                'value'             => $backendType
+                'multiOptions'      => $backendTypes
             )
         );
 
-        $backendForm = $this->getBackendForm($backendType);
-        $backendForm->createElements($formData);
-        $this->addElements($backendForm->getElements());
+        $this->addSubForm($this->getBackendForm($backendType)->create($formData), 'backend_form');
     }
 
     /**
@@ -212,5 +218,20 @@ class UserGroupBackendForm extends ConfigForm
             $data['name'] = $this->backendToLoad;
             $this->populate($data);
         }
+    }
+
+    /**
+     * Retrieve all form element values
+     *
+     * @param   bool    $suppressArrayNotation  Ignored
+     *
+     * @return  array
+     */
+    public function getValues($suppressArrayNotation = false)
+    {
+        $values = parent::getValues();
+        $values = array_merge($values, $values['backend_form']);
+        unset($values['backend_form']);
+        return $values;
     }
 }

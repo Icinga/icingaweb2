@@ -556,7 +556,7 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
             $defaults = new ConfigObject();
         }
 
-        if ($config->user_backend) {
+        if ($config->user_backend && $config->user_backend !== 'none') {
             $userBackend = UserBackend::create($config->user_backend);
             if (! $userBackend instanceof LdapUserBackend) {
                 throw new ConfigurationError('User backend "%s" is not of type LDAP', $config->user_backend);
