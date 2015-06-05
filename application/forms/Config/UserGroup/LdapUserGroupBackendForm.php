@@ -76,6 +76,7 @@ class LdapUserGroupBackendForm extends Form
             $groupConfigDisabled = $userConfigDisabled = true;
         }
 
+        $dnDisabled = null; // MUST BE null
         if (isset($formData['user_backend']) && $formData['user_backend'] !== 'none') {
             $userBackend = UserBackend::create($formData['user_backend']);
             $defaults->merge(array(
@@ -84,11 +85,11 @@ class LdapUserGroupBackendForm extends Form
                 'user_name_attribute'   => $userBackend->getUserNameAttribute(),
                 'user_filter'           => $userBackend->getFilter()
             ));
-            $userConfigDisabled = true;
+            $userConfigDisabled = $dnDisabled = true;
         }
 
         $this->createGroupConfigElements($defaults, $groupConfigDisabled);
-        $this->createUserConfigElements($defaults, $userConfigDisabled);
+        $this->createUserConfigElements($defaults, $userConfigDisabled, $dnDisabled);
     }
 
     /**
@@ -161,7 +162,6 @@ class LdapUserGroupBackendForm extends Form
             'base_dn',
             array(
                 'preserveDefault'   => true,
-                'disabled'          => $disabled,
                 'label'             => $this->translate('LDAP Group Base DN'),
                 'description'       => $this->translate(
                     'The path where groups can be found on the LDAP server. Leave ' .
@@ -177,8 +177,9 @@ class LdapUserGroupBackendForm extends Form
      *
      * @param   ConfigObject    $defaults
      * @param   null|bool       $disabled
+     * @param   null|bool       $dnDisabled
      */
-    protected function createUserConfigElements(ConfigObject $defaults, $disabled)
+    protected function createUserConfigElements(ConfigObject $defaults, $disabled, $dnDisabled)
     {
         $this->addElement(
             'text',
@@ -242,7 +243,7 @@ class LdapUserGroupBackendForm extends Form
             'user_base_dn',
             array(
                 'preserveDefault'   => true,
-                'disabled'          => $disabled,
+                'disabled'          => $dnDisabled,
                 'label'             => $this->translate('LDAP User Base DN'),
                 'description'       => $this->translate(
                     'The path where users can be found on the LDAP server. Leave ' .
