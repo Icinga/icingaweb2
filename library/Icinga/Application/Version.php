@@ -3,8 +3,6 @@
 
 namespace Icinga\Application;
 
-use Icinga\Exception\IcingaException;
-
 class Version
 {
     /**
@@ -25,10 +23,7 @@ class Version
             '/(?<!.)\s*(?P<gitCommitID>\w+)(?:\s*\(.*?(?:(?<=[\(,])\s*tag\s*:\s*v(?P<appVersion>.+?)\s*(?=[\),]).*?)?\))?\s*(?P<gitCommitDate>\S+)/ms',
             $appVersion,
             $matches
-        ))) {
-            throw new IcingaException('Failed at preg_match()');
-        }
-        if ($res === 0) {
+        )) || $res === 0) {
             return false;
         }
 
