@@ -26,7 +26,7 @@ class Monitoring_HostController extends MonitoredObjectController
     {
         $host = new Host($this->backend, $this->params->getRequired('host'));
 
-        $this->applyRestriction('monitoring/hosts/filter', $host);
+        $this->applyRestriction('monitoring/filter/objects', $host);
 
         if ($host->fetch() === false) {
             $this->httpNotFound($this->translate('Host not found'));
