@@ -60,16 +60,24 @@ class UserBackendConfigForm extends ConfigForm
      */
     public function getBackendForm($type)
     {
-        if ($type === 'db') {
-            $form = new DbBackendForm();
-            $form->setResources(isset($this->resources['db']) ? $this->resources['db'] : array());
-        } elseif ($type === 'ldap') {
-            $form = new LdapBackendForm();
-            $form->setResources(isset($this->resources['ldap']) ? $this->resources['ldap'] : array());
-        } elseif ($type === 'external') {
-            $form = new ExternalBackendForm();
-        } else {
-            throw new InvalidArgumentException(sprintf($this->translate('Invalid backend type "%s" provided'), $type));
+        switch ($type)
+        {
+            case 'db':
+                $form = new DbBackendForm();
+                $form->setResources(isset($this->resources['db']) ? $this->resources['db'] : array());
+                break;
+            case 'ldap':
+            case 'msldap':
+                $form = new LdapBackendForm();
+                $form->setResources(isset($this->resources['ldap']) ? $this->resources['ldap'] : array());
+                break;
+            case 'external':
+                $form = new ExternalBackendForm();
+                break;
+            default:
+                throw new InvalidArgumentException(
+                    sprintf($this->translate('Invalid backend type "%s" provided'), $type)
+                );
         }
 
         return $form;
@@ -296,6 +304,7 @@ class UserBackendConfigForm extends ConfigForm
         }
         if (isset($this->resources['ldap']) && ($backendType === 'ldap' || Platform::extensionLoaded('ldap'))) {
             $backendTypes['ldap'] = 'LDAP';
+            $backendTypes['msldap'] = 'ActiveDirectory';
         }
 
         $externalBackends = array_filter(

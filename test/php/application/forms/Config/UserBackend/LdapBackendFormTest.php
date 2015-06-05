@@ -27,10 +27,9 @@ class LdapBackendFormTest extends BaseTestCase
      */
     public function testValidBackendIsValid()
     {
-        $this->setUpResourceFactoryMock();
-        Mockery::mock('overload:Icinga\Authentication\User\LdapUserBackend')
-            ->shouldReceive('assertAuthenticationPossible')->andReturnNull()
-            ->shouldReceive('setConfig')->andReturnNull();
+        $ldapUserBackendMock = Mockery::mock('overload:Icinga\Authentication\User\LdapUserBackend');
+        $ldapUserBackendMock->shouldReceive('assertAuthenticationPossible')->andReturnNull();
+        $this->setUpUserBackendMock($ldapUserBackendMock);
 
         // Passing array(null) is required to make Mockery call the constructor...
         $form = Mockery::mock('Icinga\Forms\Config\UserBackend\LdapBackendForm[getView]', array(null));
@@ -53,9 +52,9 @@ class LdapBackendFormTest extends BaseTestCase
      */
     public function testInvalidBackendIsNotValid()
     {
-        $this->setUpResourceFactoryMock();
-        Mockery::mock('overload:Icinga\Authentication\User\LdapUserBackend')
-            ->shouldReceive('assertAuthenticationPossible')->andThrow(new AuthenticationException);
+        $ldapUserBackendMock = Mockery::mock('overload:Icinga\Authentication\User\LdapUserBackend');
+        $ldapUserBackendMock->shouldReceive('assertAuthenticationPossible')->andThrow(new AuthenticationException);
+        $this->setUpUserBackendMock($ldapUserBackendMock);
 
         // Passing array(null) is required to make Mockery call the constructor...
         $form = Mockery::mock('Icinga\Forms\Config\UserBackend\LdapBackendForm[getView]', array(null));
@@ -72,12 +71,10 @@ class LdapBackendFormTest extends BaseTestCase
         );
     }
 
-    protected function setUpResourceFactoryMock()
+    protected function setUpUserBackendMock($ldapUserBackendMock)
     {
-        Mockery::mock('alias:Icinga\Data\ResourceFactory')
-            ->shouldReceive('createResource')
-            ->andReturn(Mockery::mock('Icinga\Protocol\Ldap\Connection'))
-            ->shouldReceive('getResourceConfig')
-            ->andReturn(new ConfigObject());
+        Mockery::mock('alias:Icinga\Authentication\User\UserBackend')
+            ->shouldReceive('create')
+            ->andReturn($ldapUserBackendMock);
     }
 }
