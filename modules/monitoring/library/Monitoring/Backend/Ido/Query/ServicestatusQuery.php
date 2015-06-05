@@ -140,6 +140,11 @@ class ServicestatusQuery extends IdoQuery
             'service_icon_image_alt'    => 's.icon_image_alt',
             'service_notes_url'         => 's.notes_url'
         ),
+        'servicegroups' => array(
+            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_name'     => 'sgo.name1',
+            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
+        ),
         'servicestatus' => array(
             'service_handled'                   => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
             'service_hard_state'                => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE CASE WHEN ss.state_type = 1 THEN ss.current_state ELSE ss.last_hard_state END END',
@@ -219,6 +224,34 @@ class ServicestatusQuery extends IdoQuery
             'hs.host_object_id = s.host_object_id',
             array()
         );
+    }
+
+    /**
+     * Join service groups
+     */
+    protected function joinServicegroups()
+    {
+        $this->select->join(
+            array('sgm' => $this->prefix . 'servicegroup_members'),
+            'sgm.service_object_id = so.object_id',
+            array()
+        )->join(
+            array('sg' => $this->prefix . 'servicegroups'),
+            'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
+            array()
+        )->join(
+            array('sgo' => $this->prefix . 'objects'),
+            'sgo.object_id = sg.servicegroup_object_id',
+            array()
+        )->where(
+            'sgo.is_active = ?',
+            1
+        )
+            ->where(
+                'sgo.objecttype_id = ?',
+                4
+            );
+        $this->distinct();
     }
 
     /**
