@@ -598,7 +598,7 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
      *
      * @return  ConfigObject
      */
-    protected function getOpenLdapDefaults()
+    public function getOpenLdapDefaults()
     {
         return new ConfigObject(array(
             'group_class'               => 'group',
@@ -614,7 +614,7 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
      *
      * @return  ConfigObject
      */
-    protected function getActiveDirectoryDefaults()
+    public function getActiveDirectoryDefaults()
     {
         return new ConfigObject(array(
             'group_class'               => 'group',
