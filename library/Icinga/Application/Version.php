@@ -1,9 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga;
+namespace Icinga\Application;
 
-use Icinga\Application\Icinga;
 use Icinga\Exception\IcingaException;
 
 class Version

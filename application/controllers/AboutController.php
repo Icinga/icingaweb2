@@ -4,7 +4,7 @@
 # namespace Icinga\Application\Controllers;
 
 use Icinga\Web\Controller\ActionController;
-use Icinga\Version;
+use Icinga\Application\Version;
 
 class AboutController extends ActionController
 {
