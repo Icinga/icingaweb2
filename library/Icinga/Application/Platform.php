@@ -3,8 +3,6 @@
 
 namespace Icinga\Application;
 
-use Icinga\Exception\IcingaException;
-
 /**
  * Platform tests for icingaweb
  */
@@ -95,7 +93,7 @@ class Platform
 
             foreach ($osRelease as $osInfo) {
                 if (false === ($res = @preg_match('/(?<!.)[ \t]*#/ms', $osInfo))) {
-                    throw new IcingaException('Failed at preg_match()');
+                    return false;
                 }
                 if ($res === 1) {
                     continue;
@@ -107,7 +105,7 @@ class Platform
                     $osInfo,
                     $matches
                 ))) {
-                    throw new IcingaException('Failed at preg_match()');
+                    return false;
                 }
                 if (! ($res === 0 || $matches[2] === '' || $matches[2] === 'linux')) {
                     return $matches[2];
@@ -159,7 +157,7 @@ class Platform
 
         if ($reliable < 1) {
             if (false === ($procVersion = @file_get_contents('/proc/version'))) {
-                throw new IcingaException('Failed at file_get_contents(/proc/version)');
+                return false;
             }
             $procVersion = strtolower($procVersion);
             foreach (array(
