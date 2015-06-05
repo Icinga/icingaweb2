@@ -444,7 +444,7 @@ class Perfdata
     public function toArray()
     {
         $parts = array(
-            $this->getLabel(),
+            'label' => $this->getLabel(),
             'value' => $this->format($this->getvalue()),
             'min' => isset($this->minValue) && !$this->isPercentage() ? $this->format($this->minValue) : '',
             'max' => isset($this->maxValue) && !$this->isPercentage() ? $this->format($this->maxValue) : '',

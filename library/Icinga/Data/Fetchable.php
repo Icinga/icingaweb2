@@ -23,13 +23,11 @@ interface Fetchable
     public function fetchRow();
 
     /**
-     * Fetch a column of all rows of the result set as an array
-     *
-     * @param   int $columnIndex Index of the column to fetch
+     * Fetch the first column of all rows of the result set as an array
      *
      * @return  array
      */
-    public function fetchColumn($columnIndex = 0);
+    public function fetchColumn();
 
     /**
      * Fetch the first column of the first row of the result set

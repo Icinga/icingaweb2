@@ -179,9 +179,25 @@ class Module
     protected $paneItems = array();
 
     /**
+     * A set of objects representing a searchUrl configuration
+     *
      * @var array
      */
     protected $searchUrls = array();
+
+    /**
+     * This module's user backends providing several authentication mechanisms
+     *
+     * @var array
+     */
+    protected $userBackends = array();
+
+    /**
+     * This module's user group backends
+     *
+     * @var array
+     */
+    protected $userGroupBackends = array();
 
     /**
      * Provide a search URL
@@ -201,6 +217,11 @@ class Module
         $this->searchUrls[] = $searchUrl;
     }
 
+    /**
+     * Return this module's search urls
+     *
+     * @return  array
+     */
     public function getSearchUrls()
     {
         $this->launchConfigScript();
@@ -703,6 +724,28 @@ class Module
     }
 
     /**
+     * Return this module's user backends
+     *
+     * @return  array
+     */
+    public function getUserBackends()
+    {
+        $this->launchConfigScript();
+        return $this->userBackends;
+    }
+
+    /**
+     * Return this module's user group backends
+     *
+     * @return  array
+     */
+    public function getUserGroupBackends()
+    {
+        $this->launchConfigScript();
+        return $this->userGroupBackends;
+    }
+
+    /**
      * Provide a named permission
      *
      * @param string $name Unique permission name
@@ -774,6 +817,34 @@ class Module
     protected function provideSetupWizard($className)
     {
         $this->setupWizard = $className;
+        return $this;
+    }
+
+    /**
+     * Provide a user backend capable of authenticating users
+     *
+     * @param   string  $identifier     The identifier of the new backend type
+     * @param   string  $className      The name of the class
+     *
+     * @return  $this
+     */
+    protected function provideUserBackend($identifier, $className)
+    {
+        $this->userBackends[strtolower($identifier)] = $className;
+        return $this;
+    }
+
+    /**
+     * Provide a user group backend
+     *
+     * @param   string  $identifier     The identifier of the new backend type
+     * @param   string  $className      The name of the class
+     *
+     * @return  $this
+     */
+    protected function provideUserGroupBackend($identifier, $className)
+    {
+        $this->userGroupBackends[strtolower($identifier)] = $className;
         return $this;
     }
 

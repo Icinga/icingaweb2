@@ -7,7 +7,7 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
-use Icinga\Authentication\Backend\DbUserBackend;
+use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Module\Setup\Step;
 
 class AuthenticationStep extends Step
@@ -88,11 +88,12 @@ class AuthenticationStep extends Step
                 ResourceFactory::createResource(new ConfigObject($this->data['adminAccountData']['resourceConfig']))
             );
 
-            if (array_search($this->data['adminAccountData']['username'], $backend->listUsers()) === false) {
-                $backend->addUser(
-                    $this->data['adminAccountData']['username'],
-                    $this->data['adminAccountData']['password']
-                );
+            if ($backend->select()->where('user_name', $this->data['adminAccountData']['username'])->count() === 0) {
+                $backend->insert('user', array(
+                    'user_name' => $this->data['adminAccountData']['username'],
+                    'password'  => $this->data['adminAccountData']['password'],
+                    'is_active' => true
+                ));
             }
         } catch (Exception $e) {
             $this->dbError = $e;

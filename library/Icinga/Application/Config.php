@@ -9,13 +9,15 @@ use LogicException;
 use UnexpectedValueException;
 use Icinga\Util\File;
 use Icinga\Data\ConfigObject;
+use Icinga\Data\Selectable;
+use Icinga\Data\SimpleQuery;
 use Icinga\File\Ini\IniWriter;
 use Icinga\Exception\NotReadableError;
 
 /**
  * Container for INI like configuration and global registry of application and module related configuration.
  */
-class Config implements Countable, Iterator
+class Config implements Countable, Iterator, Selectable
 {
     /**
      * Configuration directory where ALL (application and module) configuration is located
@@ -86,13 +88,33 @@ class Config implements Countable, Iterator
     }
 
     /**
+     * Return the internal ConfigObject
+     *
+     * @return  ConfigObject
+     */
+    public function getConfigObject()
+    {
+        return $this->config;
+    }
+
+    /**
+     * Provide a query for the internal config object
+     *
+     * @return  SimpleQuery
+     */
+    public function select()
+    {
+        return $this->config->select();
+    }
+
+    /**
      * Return the count of available sections
      *
      * @return  int
      */
     public function count()
     {
-        return $this->config->count();
+        return $this->select()->count();
     }
 
     /**

@@ -67,13 +67,15 @@ class UserTest extends BaseTestCase
             'test',
             'test/some/specific',
             'test/more/*',
-            'test/wildcard-with-wildcard/*'
+            'test/wildcard-with-wildcard/*',
+            'test/even-more/specific-with-wildcard/*'
         ));
         $this->assertTrue($user->can('test'));
         $this->assertTrue($user->can('test/some/specific'));
         $this->assertTrue($user->can('test/more/everything'));
         $this->assertTrue($user->can('test/wildcard-with-wildcard/*'));
         $this->assertTrue($user->can('test/wildcard-with-wildcard/sub/sub'));
+        $this->assertTrue($user->can('test/even-more/*'));
         $this->assertFalse($user->can('not/test'));
         $this->assertFalse($user->can('test/some/not/so/specific'));
         $this->assertFalse($user->can('test/wildcard2/*'));

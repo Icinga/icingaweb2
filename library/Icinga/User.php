@@ -426,7 +426,7 @@ class User
         // matches
         $any = strpos($requiredPermission, '*');
         foreach ($this->permissions as $grantedPermission) {
-            if ($any !== false && strpos($grantedPermission, '*') === false) {
+            if ($any !== false) {
                 $wildcard = $any;
             } else {
                 // If the permit contains a wildcard, grant the permission if it's related to the permit
