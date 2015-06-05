@@ -308,12 +308,11 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetchHostgroups()
     {
-        $hostGroups = $this->backend->select()->from('hostgroup', array(
-            'hostgroup_name',
-            'hostgroup_alias'
-        ))
-            ->where('host_name', $this->host);
-        $this->hostgroups = $hostGroups->getQuery()->fetchPairs();
+        $this->hostgroups = $this->backend->select()
+            ->from('hostgroup', array('hostgroup_name', 'hostgroup_alias'))
+            ->where('host_name', $this->host_name)
+            ->applyFilter($this->filter)
+            ->fetchPairs();
         return $this;
     }
 
@@ -407,13 +406,12 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetchServicegroups()
     {
-        $serviceGroups = $this->backend->select()->from('servicegroup', array(
-                'servicegroup_name',
-                'servicegroup_alias'
-        ))
-            ->where('service_host_name', $this->host_name)
-            ->where('service_description', $this->service_description);
-        $this->servicegroups = $serviceGroups->getQuery()->fetchPairs();
+        $this->servicegroups = $this->backend->select()
+            ->from('servicegroup', array('servicegroup_name', 'servicegroup_alias'))
+            ->where('host_name', $this->host_name)
+            ->where('service_description', $this->service_description)
+            ->applyFilter($this->getFilter())
+            ->fetchPairs();
         return $this;
     }
 
