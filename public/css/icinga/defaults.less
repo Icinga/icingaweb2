@@ -1,6 +1,13 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 /* Color definitions */
+@colorMainLayout: #049baf;
+@colorMainBackground: #fff;
+@colorMainForeground: #666;
+@colorMainLink: #222;
+@colorSecondary: #f9f9f9;
+
+
 @colorGray: #f9f9f9;
 @colorLinkDefault: #049baf;
 @colorTextDefault: #666;
@@ -87,13 +94,12 @@ body {
 }
 
 a {
-  color: #333;
-  text-decoration: underline;
-}
+  @colorMainLink;
+  text-decoration: none;
 
-a:hover {
-  color: black;
-  text-decoration: underline;
+  :hover {
+    text-decoration: underline;
+  }
 }
 
 /* W3C Recommendation <http://www.w3.org/TR/CSS21/sample.html> (except h4) */
