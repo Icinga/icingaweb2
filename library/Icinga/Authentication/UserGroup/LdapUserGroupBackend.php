@@ -3,6 +3,7 @@
 
 namespace Icinga\Authentication\UserGroup;
 
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Ldap\Expression;
 use Icinga\Repository\LdapRepository;
@@ -531,5 +532,66 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
         }
 
         return $groups;
+    }
+
+    /**
+     * Apply the given configuration on this backend
+     *
+     * @param   ConfigObject    $config
+     *
+     * @return  $this
+     */
+    public function setConfig(ConfigObject $config)
+    {
+        if ($config->backend === 'ldap') {
+            $defaults = $this->getOpenLdapDefaults();
+        } elseif ($config->backend === 'msldap') {
+            $defaults = $this->getActiveDirectoryDefaults();
+        } else {
+            $defaults = new ConfigObject();
+        }
+
+        return $this
+            ->setGroupBaseDn($config->base_dn)
+            ->setUserBaseDn($config->get('user_base_dn', $this->getGroupBaseDn()))
+            ->setGroupClass($config->get('group_class', $defaults->group_class))
+            ->setUserClass($config->get('user_class', $defaults->user_class))
+            ->setGroupNameAttribute($config->get('group_name_attribute', $defaults->group_name_attribute))
+            ->setUserNameAttribute($config->get('user_name_attribute', $defaults->user_name_attribute))
+            ->setGroupMemberAttribute($config->get('group_member_attribute', $defaults->group_member_attribute))
+            ->setGroupFilter($config->filter)
+            ->setUserFilter($config->user_filter);
+    }
+
+    /**
+     * Return the configuration defaults for an OpenLDAP environment
+     *
+     * @return  ConfigObject
+     */
+    protected function getOpenLdapDefaults()
+    {
+        return new ConfigObject(array(
+            'group_class'               => 'group',
+            'user_class'                => 'inetOrgPerson',
+            'group_name_attribute'      => 'gid',
+            'user_name_attribute'       => 'uid',
+            'group_member_attribute'    => 'member'
+        ));
+    }
+
+    /**
+     * Return the configuration defaults for an ActiveDirectory environment
+     *
+     * @return  ConfigObject
+     */
+    protected function getActiveDirectoryDefaults()
+    {
+        return new ConfigObject(array(
+            'group_class'               => 'group',
+            'user_class'                => 'user',
+            'group_name_attribute'      => 'sAMAccountName',
+            'user_name_attribute'       => 'sAMAccountName',
+            'group_member_attribute'    => 'member'
+        ));
     }
 }
