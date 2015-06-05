@@ -181,19 +181,6 @@ abstract class MonitoredObjectController extends Controller
                 )
             );
         }
-        $tabs->add(
-            'services',
-            array(
-                'title'     => sprintf(
-                    $this->translate('List all services on host %s'),
-                    $isService ? $object->getHost()->getName() : $object->getName()
-                ),
-                'label'     => $this->translate('Services'),
-                'icon'      => 'services',
-                'url'       => 'monitoring/show/services',
-                'urlParams' => $params
-            )
-        );
         if ($this->backend->hasQuery('eventHistory')) {
             $tabs->add(
                 'history',
