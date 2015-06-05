@@ -70,10 +70,10 @@ class LdapUserGroupBackendForm extends Form
         $groupBackend = new LdapUserGroupBackend($resource);
         if ($formData['type'] === 'ldap') {
             $defaults = $groupBackend->getOpenLdapDefaults();
-            $disabled = null; // MUST BE null, do NOT change this to false!
+            $groupConfigDisabled = $userConfigDisabled = null; // MUST BE null, do NOT change this to false!
         } else { // $formData['type'] === 'msldap'
             $defaults = $groupBackend->getActiveDirectoryDefaults();
-            $disabled = true;
+            $groupConfigDisabled = $userConfigDisabled = true;
         }
 
         if (isset($formData['user_backend']) && $formData['user_backend'] !== 'none') {
@@ -84,11 +84,11 @@ class LdapUserGroupBackendForm extends Form
                 'user_name_attribute'   => $userBackend->getUserNameAttribute(),
                 'user_filter'           => $userBackend->getFilter()
             ));
-            $disabled = true;
+            $userConfigDisabled = true;
         }
 
-        $this->createGroupConfigElements($defaults, $disabled);
-        $this->createUserConfigElements($defaults, $disabled);
+        $this->createGroupConfigElements($defaults, $groupConfigDisabled);
+        $this->createUserConfigElements($defaults, $userConfigDisabled);
     }
 
     /**
