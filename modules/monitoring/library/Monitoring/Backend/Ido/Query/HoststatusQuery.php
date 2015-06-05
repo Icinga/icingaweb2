@@ -31,6 +31,7 @@ class HoststatusQuery extends IdoQuery
             'host_icon_image_alt'   => 'h.icon_image_alt',
             'host_ipv4'             => 'INET_ATON(h.address)',
             'host_name'             => 'ho.name1',
+            'host_notes'            => 'h.notes',
             'host_notes_url'        => 'h.notes_url',
             'object_type'           => '(\'host\')'
         ),
