@@ -11,19 +11,6 @@ class Hostcomment extends DataView
     /**
      * {@inheritdoc}
      */
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_'
-            && preg_match('/^_(?:host|service)_/', $column)
-        ) {
-            return true;
-        }
-        return parent::isValidFilterTarget($column);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getColumns()
     {
         return array(
@@ -47,8 +34,23 @@ class Hostcomment extends DataView
     public function getFilterColumns()
     {
         return array(
-            'host', 'hostgroup', 'hostgroup_alias', 'hostgroup_name',
-            'service', 'servicegroup', 'servicegroup_alias', 'servicegroup_name'
+            'host', 'host_alias',
+            'hostgroup', 'hostgroup_alias', 'hostgroup_name',
+            'service', 'service_description', 'service_display_name',
+            'servicegroup', 'servicegroup_alias', 'servicegroup_name'
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isValidFilterTarget($column)
+    {
+        if ($column[0] === '_'
+            && preg_match('/^_(?:host|service)_/', $column)
+        ) {
+            return true;
+        }
+        return parent::isValidFilterTarget($column);
     }
 }
