@@ -92,8 +92,8 @@ class HostgroupsummaryQuery extends IdoQuery
                 'hostgroup_name',
                 'object_type',
                 'severity'      => 'host_severity',
-                'state'         => 'host_hard_state',
-                'state_change'  => 'host_last_hard_state_change'
+                'state'         => 'host_state',
+                'state_change'  => 'host_last_state_change'
             )
         );
         $this->subQueries[] = $hosts;
@@ -106,8 +106,8 @@ class HostgroupsummaryQuery extends IdoQuery
                 'hostgroup_name',
                 'object_type',
                 'severity'      => new Zend_Db_Expr('NULL'),
-                'state'         => 'service_hard_state',
-                'state_change'  => 'service_last_hard_state_change'
+                'state'         => 'service_state',
+                'state_change'  => 'service_last_state_change'
             )
         );
         $this->subQueries[] = $services;
