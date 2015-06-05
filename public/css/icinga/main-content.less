@@ -222,6 +222,64 @@ table.benchmark {
   background-color: #fbfcc5;
 }
 
+/* Action table */
+table.action {
+  font-size: 0.9em;
+  border-collapse: separate;
+  border-spacing: 1px;
+  width: 100%;
+  table-layout: fixed !important;
+  margin: 0;
+  color: @colorTextDefault;
+}
+
+table.action th {
+  text-align: left;
+  overflow: hidden;
+}
+
+table.action.wide td {
+  line-height: 2.5em;
+}
+
+table.action td {
+  padding: 0.3em 0.5em 0.3em 0.5em;
+  line-height: 1.5em;
+  overflow: hidden;
+}
+
+.dashboard table.action td {
+  line-height: 1.2em;
+  padding: 0.2 0.4em 0.2em 0.5em;
+}
+
+table.action td .pluginoutput {
+  font-size: 0.8em;
+  line-height: 1.2em;
+  padding: 0;
+  margin: 0;
+}
+
+table.action td a {
+  color: inherit;
+  text-decoration: none;
+}
+
+table.action td a:hover {
+  text-decoration: underline;
+}
+
+/* END of Action table */
+
+/* Table behaviour */
+
+tr[href] {
+  cursor: pointer;
+}
+
+/* End of table behaviour */
+
+
 div.content.users {
   table.user-list {
     th.user-remove {
