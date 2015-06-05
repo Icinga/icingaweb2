@@ -114,9 +114,12 @@ class UserGroupBackendForm extends ConfigForm
         }
 
         $backendConfig = $this->config->getSection($name);
-        if (isset($data['name']) && $data['name'] !== $name) {
-            $this->config->removeSection($name);
-            $name = $data['name'];
+        if (isset($data['name'])) {
+            if ($data['name'] !== $name) {
+                $this->config->removeSection($name);
+                $name = $data['name'];
+            }
+
             unset($data['name']);
         }
 
