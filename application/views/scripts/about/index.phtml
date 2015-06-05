@@ -2,26 +2,18 @@
     <h1>Icinga Web 2</h1>
     <?php
     $versionInfo = array();
-    if ($version !== false) {
-        foreach (array(
-            'appVersion'    => $this->translate('Version: %s'),
-            'gitCommitID'   => $this->translate('Git commit ID: %s'),
-            'gitCommitDate' => $this->translate('Git commit date: %s')
-        ) as $key => $label) {
-            if (array_key_exists($key, $version) && null !== ($value = $version[$key])) {
-                $versionInfo[] = sprintf($label, htmlspecialchars($value));
-            }
+    foreach (array(
+        'appVersion'    => $this->translate('Version: %s'),
+        'gitCommitID'   => $this->translate('Git commit ID: %s'),
+        'gitCommitDate' => $this->translate('Git commit date: %s')
+    ) as $key => $label) {
+        if (array_key_exists($key, $version) && null !== ($value = $version[$key])) {
+            $versionInfo[] = sprintf($label, htmlspecialchars($value));
         }
     }
 
-    echo (
-        0 === count($versionInfo)
-            ? '<p class="message-error">' . $this->translate(
-                'Can\'t determine Icinga Web 2\'s version'
-            )
-            : '<p>' . nl2br(implode("\n", $versionInfo), false)
-    ) . '</p>';
     ?>
+    <p><?= implode('<br>', $versionInfo) ?></p>
     <p>Copyright &copy; 2013-2015&emsp;<a href="https://www.icinga.org"><?=
         $this->translate('The Icinga Project')
     ?></a><br>License: GNU GPL v2 or later</p>

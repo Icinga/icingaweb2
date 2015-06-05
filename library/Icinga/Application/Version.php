@@ -13,15 +13,16 @@ class Version
     /**
      * Get the version of this instance of Icinga Web 2
      *
-     * @return array|false array on success, false otherwise
+     * @return array
      */
     public static function get()
     {
+        $version = array('appVersion' => self::VERSION);
+
         if (false !== ($appVersion = @file_get_contents(Icinga::app()->getApplicationDir('GITCOMMIT')))) {
             $matches = array();
             if (@preg_match('/^(?P<gitCommitID>\w+) (?P<gitCommitDate>\S+)/', $appVersion, $matches)) {
-                $matches['appVersion'] = self::VERSION;
-                return $matches;
+                return array_merge($version, $matches);
             }
         }
 
@@ -38,12 +39,11 @@ class Version
             if (false !== $gitCommitID) {
                 $matches = array();
                 if (@preg_match('/(?<!.)(?P<gitCommitID>[0-9a-f]+)$/ms', $gitCommitID, $matches)) {
-                    $matches['appVersion'] = self::VERSION;
-                    return $matches;
+                    return array_merge($version, $matches);
                 }
             }
         }
 
-        return false;
+        return $version;
     }
 }
