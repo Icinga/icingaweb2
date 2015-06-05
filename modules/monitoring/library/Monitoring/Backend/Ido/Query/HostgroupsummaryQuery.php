@@ -112,7 +112,8 @@ class HostgroupsummaryQuery extends IdoQuery
         );
         $this->subQueries[] = $services;
         $this->summaryQuery = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);
-        $this->select->from(array('statussummary' => $this->summaryQuery), array())->group('hostgroup_name');
+        $this->select->from(array('statussummary' => $this->summaryQuery), array());
+        $this->group('hostgroup_name');
         $this->joinedVirtualTables['hoststatussummary'] = true;
     }
 
