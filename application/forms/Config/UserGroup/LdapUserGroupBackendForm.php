@@ -105,6 +105,7 @@ class LdapUserGroupBackendForm extends Form
             'group_class',
             array(
                 'preserveDefault'   => true,
+                'ignore'            => $disabled,
                 'disabled'          => $disabled,
                 'label'             => $this->translate('LDAP Group Object Class'),
                 'description'       => $this->translate('The object class used for storing groups on the LDAP server.'),
@@ -117,6 +118,7 @@ class LdapUserGroupBackendForm extends Form
             array(
                 'preserveDefault'   => true,
                 'allowEmpty'        => true,
+                'ignore'            => $disabled,
                 'disabled'          => $disabled,
                 'label'             => $this->translate('LDAP Group Filter'),
                 'description'       => $this->translate(
@@ -149,6 +151,7 @@ class LdapUserGroupBackendForm extends Form
             'group_name_attribute',
             array(
                 'preserveDefault'   => true,
+                'ignore'            => $disabled,
                 'disabled'          => $disabled,
                     'label'         => $this->translate('LDAP Group Name Attribute'),
                 'description'       => $this->translate(
@@ -186,6 +189,7 @@ class LdapUserGroupBackendForm extends Form
             'user_class',
             array(
                 'preserveDefault'   => true,
+                'ignore'            => $disabled,
                 'disabled'          => $disabled,
                 'label'             => $this->translate('LDAP User Object Class'),
                 'description'       => $this->translate('The object class used for storing users on the LDAP server.'),
@@ -198,6 +202,7 @@ class LdapUserGroupBackendForm extends Form
             array(
                 'preserveDefault'   => true,
                 'allowEmpty'        => true,
+                'ignore'            => $disabled,
                 'disabled'          => $disabled,
                 'label'             => $this->translate('LDAP User Filter'),
                 'description'       => $this->translate(
@@ -230,6 +235,7 @@ class LdapUserGroupBackendForm extends Form
             'user_name_attribute',
             array(
                 'preserveDefault'   => true,
+                'ignore'            => $disabled,
                 'disabled'          => $disabled,
                     'label'         => $this->translate('LDAP User Name Attribute'),
                 'description'       => $this->translate(
@@ -243,6 +249,7 @@ class LdapUserGroupBackendForm extends Form
             'user_base_dn',
             array(
                 'preserveDefault'   => true,
+                'ignore'            => $dnDisabled,
                 'disabled'          => $dnDisabled,
                 'label'             => $this->translate('LDAP User Base DN'),
                 'description'       => $this->translate(
