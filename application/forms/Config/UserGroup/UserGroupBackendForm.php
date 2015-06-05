@@ -14,6 +14,13 @@ use Icinga\Forms\ConfigForm;
 class UserGroupBackendForm extends ConfigForm
 {
     /**
+     * The backend to load when displaying the form for the first time
+     *
+     * @var string
+     */
+    protected $backendToLoad;
+
+    /**
      * Initialize this form
      */
     public function init()
@@ -31,10 +38,17 @@ class UserGroupBackendForm extends ConfigForm
      */
     public function getBackendForm($type)
     {
-        if ($type === 'db') {
-            return new DbUserGroupBackendForm();
-        } else {
-            throw new InvalidArgumentException(sprintf($this->translate('Invalid backend type "%s" provided'), $type));
+        switch ($type)
+        {
+            case 'db':
+                return new DbUserGroupBackendForm();
+            case 'ldap':
+            case 'msldap':
+                return new LdapUserGroupBackendForm();
+            default:
+                throw new InvalidArgumentException(
+                    sprintf($this->translate('Invalid backend type "%s" provided'), $type)
+                );
         }
     }
 
@@ -53,10 +67,7 @@ class UserGroupBackendForm extends ConfigForm
             throw new NotFoundError('No user group backend called "%s" found', $name);
         }
 
-        $data = $this->config->getSection($name)->toArray();
-        $data['type'] = $data['backend'];
-        $data['name'] = $name;
-        $this->populate($data);
+        $this->backendToLoad = $name;
         return $this;
     }
 
@@ -103,13 +114,23 @@ class UserGroupBackendForm extends ConfigForm
         }
 
         $backendConfig = $this->config->getSection($name);
-        if (isset($data['name']) && $data['name'] !== $name) {
-            $this->config->removeSection($name);
-            $name = $data['name'];
+        if (isset($data['name'])) {
+            if ($data['name'] !== $name) {
+                $this->config->removeSection($name);
+                $name = $data['name'];
+            }
+
             unset($data['name']);
         }
 
-        $this->config->setSection($name, $backendConfig->merge($data));
+        $backendConfig->merge($data);
+        foreach ($backendConfig->toArray() as $k => $v) {
+            if ($v === null) {
+                unset($backendConfig->$k);
+            }
+        }
+
+        $this->config->setSection($name, $backendConfig);
         return $this;
     }
 
@@ -161,7 +182,9 @@ class UserGroupBackendForm extends ConfigForm
 
         // TODO(jom): We did not think about how to configure custom group backends yet!
         $backendTypes = array(
-            'db'    => $this->translate('Database')
+            'db'        => $this->translate('Database'),
+            'ldap'      => $this->translate('LDAP'),
+            'msldap'    => $this->translate('ActiveDirectory')
         );
 
         $backendType = isset($formData['type']) ? $formData['type'] : null;
@@ -191,8 +214,34 @@ class UserGroupBackendForm extends ConfigForm
             )
         );
 
-        $backendForm = $this->getBackendForm($backendType);
-        $backendForm->createElements($formData);
-        $this->addElements($backendForm->getElements());
+        $this->addSubForm($this->getBackendForm($backendType)->create($formData), 'backend_form');
+    }
+
+    /**
+     * Populate the configuration of the backend to load
+     */
+    public function onRequest()
+    {
+        if ($this->backendToLoad) {
+            $data = $this->config->getSection($this->backendToLoad)->toArray();
+            $data['type'] = $data['backend'];
+            $data['name'] = $this->backendToLoad;
+            $this->populate($data);
+        }
+    }
+
+    /**
+     * Retrieve all form element values
+     *
+     * @param   bool    $suppressArrayNotation  Ignored
+     *
+     * @return  array
+     */
+    public function getValues($suppressArrayNotation = false)
+    {
+        $values = parent::getValues();
+        $values = array_merge($values, $values['backend_form']);
+        unset($values['backend_form']);
+        return $values;
     }
 }
