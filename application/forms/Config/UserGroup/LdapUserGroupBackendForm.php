@@ -118,8 +118,6 @@ class LdapUserGroupBackendForm extends Form
             array(
                 'preserveDefault'   => true,
                 'allowEmpty'        => true,
-                'ignore'            => $disabled,
-                'disabled'          => $disabled,
                 'label'             => $this->translate('LDAP Group Filter'),
                 'description'       => $this->translate(
                     'An additional filter to use when looking up groups using the specified connection. '
@@ -202,8 +200,8 @@ class LdapUserGroupBackendForm extends Form
             array(
                 'preserveDefault'   => true,
                 'allowEmpty'        => true,
-                'ignore'            => $disabled,
-                'disabled'          => $disabled,
+                'ignore'            => $dnDisabled,
+                'disabled'          => $dnDisabled,
                 'label'             => $this->translate('LDAP User Filter'),
                 'description'       => $this->translate(
                     'An additional filter to use when looking up users using the specified connection. '
