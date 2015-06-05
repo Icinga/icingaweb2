@@ -16,12 +16,12 @@ class HoststatussummaryQuery extends IdoQuery
     protected $columnMap = array(
         'hoststatussummary' => array(
             'hosts_down'                    => 'SUM(CASE WHEN state = 1 THEN 1 ELSE 0 END)',
-            'hosts_down_handled'            => 'SUM(CASE WHEN state = 1 AND handled != 0 THEN 1 ELSE 0 END)',
+            'hosts_down_handled'            => 'SUM(CASE WHEN state = 1 AND handled = 1 THEN 1 ELSE 0 END)',
             'hosts_down_unhandled'          => 'SUM(CASE WHEN state = 1 AND handled = 0 THEN 1 ELSE 0 END)',
             'hosts_pending'                 => 'SUM(CASE WHEN state = 99 THEN 1 ELSE 0 END)',
             'hosts_total'                   => 'SUM(1)',
             'hosts_unreachable'             => 'SUM(CASE WHEN state = 2 THEN 1 ELSE 0 END)',
-            'hosts_unreachable_handled'     => 'SUM(CASE WHEN state = 2 AND handled != 0 THEN 1 ELSE 0 END)',
+            'hosts_unreachable_handled'     => 'SUM(CASE WHEN state = 2 AND handled = 1 THEN 1 ELSE 0 END)',
             'hosts_unreachable_unhandled'   => 'SUM(CASE WHEN state = 2 AND handled = 0 THEN 1 ELSE 0 END)',
             'hosts_up'                      => 'SUM(CASE WHEN state = 0 THEN 1 ELSE 0 END)'
         )
@@ -53,8 +53,8 @@ class HoststatussummaryQuery extends IdoQuery
             'Hoststatus',
             array(
                 'handled'       => 'host_handled',
-                'state'         => 'host_hard_state',
-                'state_change'  => 'host_last_hard_state_change'
+                'state'         => 'host_state',
+                'state_change'  => 'host_last_state_change'
             )
         );
         $this->select->from(
