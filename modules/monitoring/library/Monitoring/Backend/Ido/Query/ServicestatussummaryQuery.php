@@ -24,24 +24,20 @@ class ServicestatussummaryQuery extends IdoQuery
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
             'hostgroup_name'    => 'hgo.name1'
         ),
-        'hosts' => array(
-            'host'              => 'so.name1 COLLATE latin1_general_ci',
-            'host_alias'        => 'h.alias COLLATE latin1_general_ci',
-            'host_display_name' => 'h.display_name COLLATE latin1_general_ci',
-            'host_name'         => 'so.name1'
-        ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
             'servicegroup_name'     => 'sgo.name1',
             'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
         ),
-        'services' => array(
-            'service_display_name' => 's.display_name COLLATE latin1_general_ci'
-        ),
         'servicestatussummary' => array(
+            'host'                                          => 'so.name1 COLLATE latin1_general_ci',
+            'host_alias'                                    => 'h.alias COLLATE latin1_general_ci',
+            'host_display_name'                             => 'h.display_name COLLATE latin1_general_ci',
+            'host_name'                                     => 'so.name1',
             'object_type'                                   => '(\'service\')',
             'service'                                       => 'so.name2 COLLATE latin1_general_ci',
             'service_description'                           => 'so.name2',
+            'service_display_name'                          => 's.display_name COLLATE latin1_general_ci',
             'service_host'                                  => 'so.name1 COLLATE latin1_general_ci',
             'service_host_name'                             => 'so.name1',
             'services_critical'                             => 'SUM(CASE WHEN ss.has_been_checked != 1 THEN 0 ELSE CASE WHEN ss.current_state = 2 THEN 1 ELSE 0 END END)',
@@ -76,8 +72,16 @@ class ServicestatussummaryQuery extends IdoQuery
             array('so' => $this->prefix . 'objects'),
             array()
         )->join(
+            array('s' => $this->prefix . 'services'),
+            's.service_object_id = so.object_id',
+            array()
+        )->join(
             array('ss' => $this->prefix . 'servicestatus'),
             'ss.service_object_id = so.object_id',
+            array()
+        )->join(
+            array('h' => $this->prefix . 'hosts'),
+            'h.host_object_id = s.host_object_id',
             array()
         )->where(
             'so.is_active = ?',
@@ -87,6 +91,8 @@ class ServicestatussummaryQuery extends IdoQuery
             2
         );
         $this->joinedVirtualTables['servicestatussummary'] = true;
+        // Provide table services for custom var joins
+        $this->joinedVirtualTables['services'] = true;
     }
 
     /**
@@ -94,7 +100,6 @@ class ServicestatussummaryQuery extends IdoQuery
      */
     protected function joinHostgroups()
     {
-        $this->requireVirtualTable('services');
         $this->select->join(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.host_object_id = s.host_object_id',
@@ -117,20 +122,6 @@ class ServicestatussummaryQuery extends IdoQuery
     }
 
     /**
-     * Join hosts
-     */
-    protected function joinHosts()
-    {
-        $this->requireVirtualTable('services');
-        $this->select->join(
-            array('h' => $this->prefix . 'hosts'),
-            'h.host_object_id = s.host_object_id',
-            array()
-        );
-        // TODO(el): Join host objects for is_active check?
-    }
-
-    /**
      * Join host status
      */
     protected function joinHoststatus()
@@ -138,10 +129,9 @@ class ServicestatussummaryQuery extends IdoQuery
         $this->requireVirtualTable('services');
         $this->select->join(
             array('hs' => $this->prefix . 'hoststatus'),
-            'hs.host_object_id = s.host_object_id',
+            'hs.host_object_id = so.object_id',
             array()
         );
-        // TODO(el): Join host objects for is_active check?
     }
 
     /**
@@ -170,17 +160,5 @@ class ServicestatussummaryQuery extends IdoQuery
             4
         )
         ->group('sgo.name1');
-    }
-
-    /**
-     * Join services
-     */
-    protected function joinServices()
-    {
-        $this->select->join(
-            array('s' => $this->prefix . 'services'),
-            's.service_object_id = so.object_id',
-            array()
-        );
     }
 }
