@@ -146,12 +146,12 @@ class ServicestatusQuery extends IdoQuery
             'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
         ),
         'servicestatus' => array(
-            'service_handled'                   => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
+            'service_handled'                   => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END',
             'service_hard_state'                => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE CASE WHEN ss.state_type = 1 THEN ss.current_state ELSE ss.last_hard_state END END',
             'service_last_hard_state_change'    => 'UNIX_TIMESTAMP(ss.last_hard_state_change)',
             'service_last_state_change'         => 'UNIX_TIMESTAMP(ss.last_state_change)',
             'service_state'                     => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
-            'service_unhandled'                 => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END'
+            'service_unhandled'                 => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END',
         )
     );
 
@@ -201,6 +201,7 @@ class ServicestatusQuery extends IdoQuery
             'hgo.objecttype_id = ?',
             3
         );
+        $this->group(array('so.name2', 'so.name1'));
     }
 
     /**
@@ -248,11 +249,11 @@ class ServicestatusQuery extends IdoQuery
             'sgo.is_active = ?',
             1
         )
-            ->where(
-                'sgo.objecttype_id = ?',
-                4
-            );
-        $this->distinct();
+        ->where(
+            'sgo.objecttype_id = ?',
+            4
+        );
+        $this->group(array('so.name2', 'so.name1'));
     }
 
     /**
@@ -260,6 +261,7 @@ class ServicestatusQuery extends IdoQuery
      */
     protected function joinServicestatus()
     {
+        $this->requireVirtualTable('hoststatus');
         $this->select->join(
             array('ss' => $this->prefix . 'servicestatus'),
             'ss.service_object_id = so.object_id',
