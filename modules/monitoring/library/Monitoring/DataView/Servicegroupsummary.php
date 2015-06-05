@@ -44,7 +44,7 @@ class Servicegroupsummary extends DataView
         return array(
             'services_severity',
             'host', 'hostgroup', 'hostgroup_alias', 'hostgroup_name',
-            'service', 'servicegroup', 'servicegroup_alias', 'servicegroup_name'
+            'service', 'servicegroup'
         );
     }
 
@@ -88,5 +88,19 @@ class Servicegroupsummary extends DataView
                 'order' => self::SORT_ASC
             )
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isValidFilterTarget($column)
+    {
+        if ($column[0] === '_'
+            && preg_match('/^_(?:host|service)_/', $column)
+        ) {
+            return true;
+        } else {
+            return parent::isValidFilterTarget($column);
+        }
     }
 }
