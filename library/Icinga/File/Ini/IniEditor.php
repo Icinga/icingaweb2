@@ -62,7 +62,7 @@ class IniEditor
         $this->commentIndentation = array_key_exists('commentIndentation', $options)
             ? $options['commentIndentation'] : 43;
         $this->sectionSeparators = array_key_exists('sectionSeparators', $options)
-            ? $options['sectionSeparators'] : 2;
+            ? $options['sectionSeparators'] : 1;
     }
 
     /**
@@ -314,7 +314,7 @@ class IniEditor
     public function getText()
     {
         $this->cleanUpWhitespaces();
-        return implode(PHP_EOL, $this->text);
+        return rtrim(implode(PHP_EOL, $this->text)) . PHP_EOL;
     }
 
     /**

@@ -1,0 +1,46 @@
+<div class="controls">
+  <?= $tabs; ?>
+</div>
+<div class="content" data-base-target="_next">
+<?= $this->qlink(
+  $this->translate('Create A New User Group Backend'),
+  'usergroupbackend/create',
+  null,
+  array(
+    'icon' => 'plus'
+  )
+); ?>
+<?php if (count($backendNames) > 0): ?>
+<table class="action usergroupbackend-list">
+  <thead>
+    <tr>
+      <th class="backend-name"><?= $this->translate('Backend'); ?></th>
+      <th class="backend-remove"><?= $this->translate('Remove'); ?></th>
+    <tr>
+  </thead>
+  <tbody>
+<?php foreach ($backendNames as $backendName): ?>
+    <tr>
+      <td class="backend-name">
+        <?= $this->qlink(
+          $backendName,
+          'usergroupbackend/edit',
+          array('backend' => $backendName),
+          array('title' => sprintf($this->translate('Edit user group backend %s'), $backendName))
+        ); ?>
+      </td>
+      <td class="backend-remove"><?= $this->qlink(
+        null,
+        'usergroupbackend/remove',
+        array('backend' => $backendName),
+        array(
+          'title' => sprintf($this->translate('Remove user group backend %s'), $backendName),
+          'icon'  => 'trash'
+        )
+      ); ?></td>
+    </tr>
+<?php endforeach ?>
+  </tbody>
+</table>
+<?php endif ?>
+</div>

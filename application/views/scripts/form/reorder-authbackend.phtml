@@ -12,22 +12,22 @@
         <td class="action">
           <?= $this->qlink(
             $backendNames[$i],
-            'config/editAuthenticationBackend',
-            array('auth_backend' => $backendNames[$i]),
+            'config/edituserbackend',
+            array('backend' => $backendNames[$i]),
             array(
                 'icon'  => 'edit',
-                'title' => sprintf($this->translate('Edit authentication backend %s'), $backendNames[$i])
+                'title' => sprintf($this->translate('Edit user backend %s'), $backendNames[$i])
             )
           ); ?>
         </td>
         <td>
           <?= $this->qlink(
             '',
-            'config/removeAuthenticationBackend',
-            array('auth_backend' => $backendNames[$i]),
+            'config/removeuserbackend',
+            array('backend' => $backendNames[$i]),
             array(
                 'icon'  => 'trash',
-                'title' => sprintf($this->translate('Remove authentication backend %s'), $backendNames[$i])
+                'title' => sprintf($this->translate('Remove user backend %s'), $backendNames[$i])
             )
           ); ?>
         </td>
@@ -40,7 +40,7 @@
           ); ?>" title="<?= $this->translate(
             'Move up in authentication order'
           ); ?>" aria-label="<?= sprintf(
-            $this->translate('Move authentication backend %s upwards'),
+            $this->translate('Move user backend %s upwards'),
             $backendNames[$i]
           ); ?>">
             <?= $this->icon('up-big'); ?>
@@ -54,7 +54,7 @@
           ); ?>" title="<?= $this->translate(
             'Move down in authentication order'
           ); ?>" aria-label="<?= sprintf(
-            $this->translate('Move authentication backend %s downwards'),
+            $this->translate('Move user backend %s downwards'),
             $backendNames[$i]
           ); ?>">
             <?= $this->icon('down-big'); ?>

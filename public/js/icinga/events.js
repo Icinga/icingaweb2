@@ -274,6 +274,10 @@
                 }
             }
 
+            // Disable all form controls to prevent resubmission except for our search input
+            // Note that disabled form inputs will not be enabled via JavaScript again
+            $form.find(':input:not(#search):not(:disabled)').prop('disabled', true);
+
             icinga.loader.loadUrl(url, $target, data, method);
 
             return false;

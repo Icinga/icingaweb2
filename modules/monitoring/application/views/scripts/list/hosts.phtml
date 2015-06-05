@@ -69,7 +69,7 @@ if (count($hosts) === 0) {
             $this->translatePlural('%u unhandled service', '%u unhandled services', $host->host_unhandled_services),
             $host->host_unhandled_services
           ),
-          'monitoring/show/services',
+          'monitoring/list/services',
           array(
             'host'               => $host->host_name,
             'service_problem'    => 1,

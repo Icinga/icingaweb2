@@ -17,7 +17,18 @@ $this->baseFilter = isset($this->baseFilter) ? $this->baseFilter : null;
 $selfUrl = 'monitoring/list/services';
 $currentUrl = Url::fromRequest()->getRelativeUrl();
 ?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
-<?= sprintf($this->translate('%s services:'), $this->stats->services_total); ?>
+<?= $this->qlink(
+    sprintf($this->translatePlural(
+        '%u Service', '%u Services', $this->stats->services_total),
+        $this->stats->services_total
+    ),
+    $selfUrl,
+    null,
+    array('title' => sprintf(
+        $this->translatePlural('List %u service', 'List all %u services', $this->stats->services_total),
+        $this->stats->services_total
+    ))
+) ?>&#58;
 <span class="badges">
 <?php if ($this->stats->services_ok): ?>
 <span class="state ok<?= $currentUrl === Url::fromPath($selfUrl, array('service_state' => 0))->getRelativeUrl() ? ' active' : ''; ?>">
@@ -63,7 +74,7 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
         } else {
             $active = '';
         }
-        
+
         echo '<span class="state ' . $state . $active . ($this->stats->$unhandled ? '' : ' handled') . '">';
         if ($this->stats->$unhandled) {
 

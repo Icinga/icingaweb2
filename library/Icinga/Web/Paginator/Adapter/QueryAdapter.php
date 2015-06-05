@@ -4,44 +4,64 @@
 namespace Icinga\Web\Paginator\Adapter;
 
 use Zend_Paginator_Adapter_Interface;
-
-/**
- * @see Zend_Paginator_Adapter_Interface
- */
+use Icinga\Data\QueryInterface;
 
 class QueryAdapter implements Zend_Paginator_Adapter_Interface
 {
     /**
-     * Array
+     * The query being paginated
      *
-     * @var array
+     * @var QueryInterface
      */
-    protected $query = null;
+    protected $query;
 
     /**
      * Item count
      *
-     * @var integer
+     * @var int
      */
-    protected $count = null;
+    protected $count;
 
     /**
-     * Constructor.
+     * Create a new QueryAdapter
      *
-     * @param array $query Query to paginate
+     * @param   QueryInterface  $query      The query to paginate
      */
-    // TODO: This might be ready for (QueryInterface $query)
-    public function __construct($query)
+    public function __construct(QueryInterface $query)
     {
-        $this->query = $query;
+        $this->setQuery($query);
     }
 
     /**
-     * Returns an array of items for a page.
+     * Set the query to paginate
      *
-     * @param  integer $offset Page offset
-     * @param  integer $itemCountPerPage Number of items per page
-     * @return array
+     * @param   QueryInterface  $query
+     *
+     * @return  $this
+     */
+    public function setQuery(QueryInterface $query)
+    {
+        $this->query = $query;
+        return $this;
+    }
+
+    /**
+     * Return the query being paginated
+     *
+     * @return  QueryInterface
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
+     * Fetch and return the rows in the given range of the query result
+     *
+     * @param   int     $offset             Page offset
+     * @param   int     $itemCountPerPage   Number of items per page
+     *
+     * @return  array
      */
     public function getItems($offset, $itemCountPerPage)
     {
@@ -49,15 +69,16 @@ class QueryAdapter implements Zend_Paginator_Adapter_Interface
     }
 
     /**
-     * Returns the total number of items in the query result.
+     * Return the total number of items in the query result
      *
-     * @return integer
+     * @return  int
      */
     public function count()
     {
         if ($this->count === null) {
             $this->count = $this->query->count();
         }
+
         return $this->count;
     }
 }

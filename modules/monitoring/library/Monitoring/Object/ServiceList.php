@@ -160,4 +160,19 @@ class ServiceList extends ObjectList
             ->from('servicedowntime', array('host_name', 'service_description'))
             ->applyFilter(clone $this->filter);
     }
+
+    /**
+     * @return ObjectList
+     */
+    public function getUnacknowledgedObjects()
+    {
+        $unhandledObjects = array();
+        foreach ($this as $object) {
+            if (! in_array((int) $object->state, array(0, 99)) &&
+                  (bool) $object->service_acknowledged === false) {
+                $unhandledObjects[] = $object;
+            }
+        }
+        return $this->newFromArray($unhandledObjects);
+    }
 }

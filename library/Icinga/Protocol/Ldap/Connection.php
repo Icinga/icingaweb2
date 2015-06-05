@@ -3,12 +3,15 @@
 
 namespace Icinga\Protocol\Ldap;
 
-use Icinga\Exception\ProgrammingError;
-use Icinga\Protocol\Ldap\Exception as LdapException;
-use Icinga\Application\Platform;
+use ArrayIterator;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
+use Icinga\Application\Platform;
 use Icinga\Data\ConfigObject;
+use Icinga\Data\Selectable;
+use Icinga\Data\Sortable;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Protocol\Ldap\Exception as LdapException;
 
 /**
  * Backend class managing all the LDAP stuff for you.
@@ -24,7 +27,7 @@ use Icinga\Data\ConfigObject;
  * ));
  * </code>
  */
-class Connection
+class Connection implements Selectable
 {
     const LDAP_NO_SUCH_OBJECT = 32;
     const LDAP_SIZELIMIT_EXCEEDED = 4;
@@ -122,9 +125,19 @@ class Connection
         return $this->root;
     }
 
+    /**
+     * Provide a query on this connection
+     *
+     * @return  Query
+     */
     public function select()
     {
         return new Query($this);
+    }
+
+    public function query(Query $query)
+    {
+        return new ArrayIterator($this->fetchAll($query));
     }
 
     public function fetchOne($query, $fields = array())
@@ -198,13 +211,13 @@ class Connection
      * @return string        Returns the distinguished name, or false when the given query yields no results
      * @throws LdapException When the query result is empty and contains no DN to fetch
      */
-    public function fetchDN(Query $query, $fields = array())
+    public function fetchDn(Query $query, $fields = array())
     {
         $rows = $this->fetchAll($query, $fields);
-        if (count($rows) !== 1) {
+        if (count($rows) > 1) {
             throw new LdapException(
                 'Cannot fetch single DN for %s',
-                $query->create()
+                $query
             );
         }
         return key($rows);
@@ -235,14 +248,9 @@ class Connection
         $this->connect();
         $this->bind();
 
-        $count = 0;
-        $results = $this->runQuery($query);
-        while (! empty($results)) {
-            $count += ldap_count_entries($this->ds, $results);
-            $results = $this->runQuery($query);
-        }
-
-        return $count;
+        // TODO: That's still not the best solution, this should probably not request any attributes
+        $res = $this->runQuery($query);
+        return count($res);
     }
 
     public function fetchAll(Query $query, $fields = array())
@@ -266,18 +274,32 @@ class Connection
      * @return array            The matched entries
      * @throws LdapException
      */
-    protected function runQuery(Query $query, $fields = array())
+    protected function runQuery(Query $query, array $fields = null)
     {
         $limit = $query->getLimit();
         $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
 
+        if (empty($fields)) {
+            $fields = $query->getColumns();
+        }
+
+        $serverSorting = false;//$this->capabilities->hasOid(Capability::LDAP_SERVER_SORT_OID);
+        if ($serverSorting && $query->hasOrder()) {
+            ldap_set_option($this->ds, LDAP_OPT_SERVER_CONTROLS, array(
+                array(
+                    'oid'           => Capability::LDAP_SERVER_SORT_OID,
+                    'value'         => $this->encodeSortRules($query->getOrder())
+                )
+            ));
+        }
+
         $results = @ldap_search(
             $this->ds,
-            $query->hasBase() ? $query->getBase() : $this->root_dn,
-            $query->create(),
-            empty($fields) ? $query->listFields() : $fields,
+            $query->getBase() ?: $this->root_dn,
+            (string) $query,
+            array_values($fields),
             0, // Attributes and values
-            $limit ? $offset + $limit : 0
+            $serverSorting && $limit ? $offset + $limit : 0
         );
         if ($results === false) {
             if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
@@ -286,16 +308,12 @@ class Connection
 
             throw new LdapException(
                 'LDAP query "%s" (base %s) failed. Error: %s',
-                $query->create(),
-                $query->hasBase() ? $query->getBase() : $this->root_dn,
+                $query,
+                $query->getBase() ?: $this->root_dn,
                 ldap_error($this->ds)
             );
         } elseif (ldap_count_entries($this->ds, $results) === 0) {
             return array();
-        }
-
-        foreach ($query->getSortColumns() as $col) {
-            ldap_sort($this->ds, $results, $col[0]);
         }
 
         $count = 0;
@@ -303,12 +321,22 @@ class Connection
         $entry = ldap_first_entry($this->ds, $results);
         do {
             $count += 1;
-            if ($offset === 0 || $offset < $count) {
+            if (! $serverSorting || $offset === 0 || $offset < $count) {
                 $entries[ldap_get_dn($this->ds, $entry)] = $this->cleanupAttributes(
-                    ldap_get_attributes($this->ds, $entry)
+                    ldap_get_attributes($this->ds, $entry), array_flip($fields)
                 );
             }
-        } while (($limit === 0 || $limit !== count($entries)) && ($entry = ldap_next_entry($this->ds, $entry)));
+        } while (
+            (! $serverSorting || $limit === 0 || $limit !== count($entries))
+            && ($entry = ldap_next_entry($this->ds, $entry))
+        );
+
+        if (! $serverSorting && $query->hasOrder()) {
+            uasort($entries, array($query, 'compare'));
+            if ($limit && $count > $limit) {
+                $entries = array_splice($entries, $query->hasOffset() ? $query->getOffset() : 0, $limit);
+            }
+        }
 
         ldap_free_result($results);
         return $entries;
@@ -330,28 +358,35 @@ class Connection
      *
      * @param Query $query      The query to execute
      * @param array $fields     The fields that will be fetched from the matches
-     * @param int   $page_size  The maximum page size, defaults to Connection::PAGE_SIZE
+     * @param int   $pageSize   The maximum page size, defaults to Connection::PAGE_SIZE
      *
      * @return array            The matched entries
      * @throws LdapException
      * @throws ProgrammingError When executed without available page controls (check with pageControlAvailable() )
      */
-    protected function runPagedQuery(Query $query, $fields = array(), $pageSize = null)
+    protected function runPagedQuery(Query $query, array $fields = null, $pageSize = null)
     {
-        if (! $this->pageControlAvailable($query)) {
-            throw new ProgrammingError('LDAP: Page control not available.');
-        }
         if (! isset($pageSize)) {
             $pageSize = static::PAGE_SIZE;
         }
 
         $limit = $query->getLimit();
         $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
-        $queryString = $query->create();
-        $base = $query->hasBase() ? $query->getBase() : $this->root_dn;
+        $queryString = (string) $query;
+        $base = $query->getBase() ?: $this->root_dn;
 
         if (empty($fields)) {
-            $fields = $query->listFields();
+            $fields = $query->getColumns();
+        }
+
+        $serverSorting = false;//$this->capabilities->hasOid(Capability::LDAP_SERVER_SORT_OID);
+        if ($serverSorting && $query->hasOrder()) {
+            ldap_set_option($this->ds, LDAP_OPT_SERVER_CONTROLS, array(
+                array(
+                    'oid'           => Capability::LDAP_SERVER_SORT_OID,
+                    'value'         => $this->encodeSortRules($query->getOrder())
+                )
+            ));
         }
 
         $count = 0;
@@ -362,7 +397,14 @@ class Connection
             // possibillity  server to return an answer in case the pagination extension is missing.
             ldap_control_paged_result($this->ds, $pageSize, false, $cookie);
 
-            $results = @ldap_search($this->ds, $base, $queryString, $fields, 0, $limit ? $offset + $limit : 0);
+            $results = @ldap_search(
+                $this->ds,
+                $base,
+                $queryString,
+                array_values($fields),
+                0, // Attributes and values
+                $serverSorting && $limit ? $offset + $limit : 0
+            );
             if ($results === false) {
                 if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
                     break;
@@ -392,19 +434,22 @@ class Connection
             $entry = ldap_first_entry($this->ds, $results);
             do {
                 $count += 1;
-                if ($offset === 0 || $offset < $count) {
+                if (! $serverSorting || $offset === 0 || $offset < $count) {
                     $entries[ldap_get_dn($this->ds, $entry)] = $this->cleanupAttributes(
-                        ldap_get_attributes($this->ds, $entry)
+                        ldap_get_attributes($this->ds, $entry), array_flip($fields)
                     );
                 }
-            } while (($limit === 0 || $limit !== count($entries)) && ($entry = ldap_next_entry($this->ds, $entry)));
+            } while (
+                (! $serverSorting || $limit === 0 || $limit !== count($entries))
+                && ($entry = ldap_next_entry($this->ds, $entry))
+            );
 
             if (false === @ldap_control_paged_result_response($this->ds, $results, $cookie)) {
                 // If the page size is greater than or equal to the sizeLimit value, the server should ignore the
                 // control as the request can be satisfied in a single page: https://www.ietf.org/rfc/rfc2696.txt
                 // This applies no matter whether paged search requests are permitted or not. You're done once you
                 // got everything you were out for.
-                if (count($entries) !== $limit) {
+                if ($serverSorting && count($entries) !== $limit) {
 
                     // The server does not support pagination, but still returned a response by ignoring the
                     // pagedResultsControl. We output a warning to indicate that the pagination control was ignored.
@@ -413,36 +458,99 @@ class Connection
             }
 
             ldap_free_result($results);
-        } while ($cookie && ($limit === 0 || count($entries) < $limit));
+        } while ($cookie && (! $serverSorting || $limit === 0 || count($entries) < $limit));
 
         if ($cookie) {
             // A sequence of paged search requests is abandoned by the client sending a search request containing a
             // pagedResultsControl with the size set to zero (0) and the cookie set to the last cookie returned by
             // the server: https://www.ietf.org/rfc/rfc2696.txt
             ldap_control_paged_result($this->ds, 0, false, $cookie);
-            ldap_search($this->ds, $base, $queryString, $fields); // Returns no entries, due to the page size
+            ldap_search($this->ds, $base, $queryString); // Returns no entries, due to the page size
         } else {
             // Reset the paged search request so that subsequent requests succeed
             ldap_control_paged_result($this->ds, 0);
         }
 
+        if (! $serverSorting && $query->hasOrder()) {
+            uasort($entries, array($query, 'compare'));
+            if ($limit && $count > $limit) {
+                $entries = array_splice($entries, $query->hasOffset() ? $query->getOffset() : 0, $limit);
+            }
+        }
+
         return $entries;
     }
 
-    protected function cleanupAttributes($attrs)
+    protected function cleanupAttributes($attributes, array $requestedFields)
     {
-        $clean = (object) array();
-        for ($i = 0; $i < $attrs['count']; $i++) {
-            $attr_name = $attrs[$i];
-            if ($attrs[$attr_name]['count'] === 1) {
-                $clean->$attr_name = $attrs[$attr_name][0];
+        // In case the result contains attributes with a differing case than the requested fields, it is
+        // necessary to create another array to map attributes case insensitively to their requested counterparts.
+        // This does also apply the virtual alias handling. (Since an LDAP server does not handle such)
+        $loweredFieldMap = array();
+        foreach ($requestedFields as $name => $alias) {
+            $loweredFieldMap[strtolower($name)] = is_string($alias) ? $alias : $name;
+        }
+
+        $cleanedAttributes = array();
+        for ($i = 0; $i < $attributes['count']; $i++) {
+            $attribute_name = $attributes[$i];
+            if ($attributes[$attribute_name]['count'] === 1) {
+                $attribute_value = $attributes[$attribute_name][0];
             } else {
-                for ($j = 0; $j < $attrs[$attr_name]['count']; $j++) {
-                    $clean->{$attr_name}[] = $attrs[$attr_name][$j];
+                $attribute_value = array();
+                for ($j = 0; $j < $attributes[$attribute_name]['count']; $j++) {
+                    $attribute_value[] = $attributes[$attribute_name][$j];
                 }
             }
+
+            $requestedAttributeName = isset($loweredFieldMap[strtolower($attribute_name)])
+                ? $loweredFieldMap[strtolower($attribute_name)]
+                : $attribute_name;
+            $cleanedAttributes[$requestedAttributeName] = $attribute_value;
         }
-        return $clean;
+
+        // The result may not contain all requested fields, so populate the cleaned
+        // result with the missing fields and their value being set to null
+        foreach ($requestedFields as $name => $alias) {
+            if (! is_string($alias)) {
+                $alias = $name;
+            }
+
+            if (! array_key_exists($alias, $cleanedAttributes)) {
+                $cleanedAttributes[$alias] = null;
+                Logger::debug('LDAP query result does not provide the requested field "%s"', $name);
+            }
+        }
+
+        return (object) $cleanedAttributes;
+    }
+
+    /**
+     * Encode the given array of sort rules as ASN.1 octet stream according to RFC 2891
+     *
+     * @param   array   $sortRules
+     *
+     * @return  string
+     *
+     * @todo    Produces an invalid stream, obviously
+     */
+    protected function encodeSortRules(array $sortRules)
+    {
+        if (count($sortRules) > 127) {
+            throw new ProgrammingError(
+                'Cannot encode more than 127 sort rules. Only length octets in short form are supported'
+            );
+        }
+
+        $seq = '30' . str_pad(dechex(count($sortRules)), 2, '0', STR_PAD_LEFT);
+        foreach ($sortRules as $rule) {
+            $hexdAttribute = unpack('H*', $rule[0]);
+            $seq .= '3002'
+                . '04' . str_pad(dechex(strlen($rule[0])), 2, '0', STR_PAD_LEFT) . $hexdAttribute[1]
+                . '0101' . ($rule[1] === Sortable::SORT_DESC ? 'ff' : '00');
+        }
+
+        return $seq;
     }
 
     public function testCredentials($username, $password)
@@ -566,6 +674,10 @@ class Connection
      */
     public function getCapabilities()
     {
+        if ($this->capabilities === null) {
+            $this->connect(); // Populates $this->capabilities
+        }
+
         return $this->capabilities;
     }
 
@@ -590,30 +702,22 @@ class Connection
      */
     protected function discoverCapabilities($ds)
     {
-        $query = $this->select()->from(
-            '*',
-            array(
-                'defaultNamingContext',
-                'namingContexts',
-                'vendorName',
-                'vendorVersion',
-                'supportedSaslMechanisms',
-                'dnsHostName',
-                'schemaNamingContext',
-                'supportedLDAPVersion', // => array(3, 2)
-                'supportedCapabilities',
-                'supportedControl',
-                'supportedExtension',
-                '+'
-            )
-        );
-        $result = @ldap_read(
-            $ds,
-            '',
-            $query->create(),
-            $query->listFields()
+        $fields = array(
+            'defaultNamingContext',
+            'namingContexts',
+            'vendorName',
+            'vendorVersion',
+            'supportedSaslMechanisms',
+            'dnsHostName',
+            'schemaNamingContext',
+            'supportedLDAPVersion', // => array(3, 2)
+            'supportedCapabilities',
+            'supportedControl',
+            'supportedExtension',
+            '+'
         );
 
+        $result = @ldap_read($ds, '', (string) $this->select()->from('*', $fields), $fields);
         if (! $result) {
             throw new LdapException(
                 'Capability query failed (%s:%d): %s. Check if hostname and port of the'
@@ -623,6 +727,7 @@ class Connection
                 ldap_error($ds)
             );
         }
+
         $entry = ldap_first_entry($ds, $result);
         if ($entry === false) {
             throw new LdapException(
@@ -633,9 +738,7 @@ class Connection
             );
         }
 
-        $ldapAttributes = ldap_get_attributes($ds, $entry);
-        $result = $this->cleanupAttributes($ldapAttributes);
-        return new Capability($result);
+        return new Capability($this->cleanupAttributes(ldap_get_attributes($ds, $entry), array_flip($fields)));
     }
 
     /**

@@ -3,35 +3,105 @@
 
 namespace Icinga\Data\DataArray;
 
+use ArrayIterator;
 use Icinga\Data\Selectable;
 use Icinga\Data\SimpleQuery;
 
 class ArrayDatasource implements Selectable
 {
+    /**
+     * The array being used as data source
+     *
+     * @var array
+     */
     protected $data;
 
+    /**
+     * The current result
+     *
+     * @var array
+     */
     protected $result;
 
     /**
-     * Constructor, create a new Datasource for the given Array
+     * The result of a counted query
      *
-     * @param array $array The array you're going to use as a data source
+     * @var int
      */
-    public function __construct(array $array)
+    protected $count;
+
+    /**
+     * The name of the column to map array keys on
+     *
+     * In case the array being used as data source provides keys of type string,this name
+     * will be used to set such as column on each row, if the column is not set already.
+     *
+     * @var string
+     */
+    protected $keyColumn;
+
+    /**
+     * Create a new data source for the given array
+     *
+     * @param   array   $data   The array you're going to use as a data source
+     */
+    public function __construct(array $data)
     {
-        $this->data = (array) $array;
+        $this->data = $data;
     }
 
     /**
-     * Instantiate a Query object
+     * Set the name of the column to map array keys on
      *
-     * @return SimpleQuery
+     * @param   string  $name
+     *
+     * @return  $this
+     */
+    public function setKeyColumn($name)
+    {
+        $this->keyColumn = $name;
+        return $this;
+    }
+
+    /**
+     * Return the name of the column to map array keys on
+     *
+     * @return  string
+     */
+    public function getKeyColumn()
+    {
+        return $this->keyColumn;
+    }
+
+    /**
+     * Provide a query for this data source
+     *
+     * @return  SimpleQuery
      */
     public function select()
     {
         return new SimpleQuery($this);
     }
 
+    /**
+     * Fetch and return all rows of the given query's result set using an iterator
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  ArrayIterator
+     */
+    public function query(SimpleQuery $query)
+    {
+        return new ArrayIterator($this->fetchAll($query));
+    }
+
+    /**
+     * Fetch and return a column of all rows of the result set as an array
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  array
+     */
     public function fetchColumn(SimpleQuery $query)
     {
         $result = array();
@@ -39,9 +109,17 @@ class ArrayDatasource implements Selectable
             $arr = (array) $row;
             $result[] = array_shift($arr);
         }
+
         return $result;
     }
 
+    /**
+     * Fetch and return all rows of the given query's result as a flattened key/value based array
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  array
+     */
     public function fetchPairs(SimpleQuery $query)
     {
         $result = array();
@@ -53,104 +131,164 @@ class ArrayDatasource implements Selectable
                     $keys[1] = $keys[0];
                 }
             }
+
             $result[$row->{$keys[0]}] = $row->{$keys[1]};
         }
+
         return $result;
     }
 
+    /**
+     * Fetch and return the first row of the given query's result
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  object|false    The row or false in case the result is empty
+     */
     public function fetchRow(SimpleQuery $query)
     {
         $result = $this->getResult($query);
         if (empty($result)) {
             return false;
         }
-        return $result[0];
+
+        return array_shift($result);
     }
 
+    /**
+     * Fetch and return all rows of the given query's result as an array
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  array
+     */
     public function fetchAll(SimpleQuery $query)
     {
         return $this->getResult($query);
     }
 
+    /**
+     * Count all rows of the given query's result
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  int
+     */
     public function count(SimpleQuery $query)
     {
-        $this->createResult($query);
-        return count($this->result);
+        if ($this->count === null) {
+            $this->count = count($this->createResult($query));
+        }
+
+        return $this->count;
     }
 
+    /**
+     * Create and return the result for the given query
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  array
+     */
     protected function createResult(SimpleQuery $query)
     {
-        if ($this->hasResult()) {
-            return $this;
-        }
-        $result = array();
-
         $columns = $query->getColumns();
         $filter = $query->getFilter();
-        foreach ($this->data as & $row) {
+        $offset = $query->hasOffset() ? $query->getOffset() : 0;
+        $limit = $query->hasLimit() ? $query->getLimit() : 0;
+
+        $foundStringKey = false;
+        $result = array();
+        $skipped = 0;
+        foreach ($this->data as $key => $row) {
+            if (is_string($key) && $this->keyColumn !== null && !isset($row->{$this->keyColumn})) {
+                $row = clone $row; // Make sure that this won't affect the actual data
+                $row->{$this->keyColumn} = $key;
+            }
 
             if (! $filter->matches($row)) {
+                continue;
+            } elseif ($skipped < $offset) {
+                $skipped++;
                 continue;
             }
 
             // Get only desired columns if asked so
-            if (empty($columns)) {
-                $result[] = $row;
-            } else {
-                $c_row = (object) array();
-                foreach ($columns as $alias => $key) {
-                    if (is_int($alias)) {
-                        $alias = $key;
+            if (! empty($columns)) {
+                $filteredRow = (object) array();
+                foreach ($columns as $alias => $name) {
+                    if (! is_string($alias)) {
+                        $alias = $name;
                     }
-                    if (isset($row->$key)) {
-                        $c_row->$alias = $row->$key;
+
+                    if (isset($row->$name)) {
+                        $filteredRow->$alias = $row->$name;
                     } else {
-                        $c_row->$alias = null;
+                        $filteredRow->$alias = null;
                     }
                 }
-                $result[] = $c_row;
+            } else {
+                $filteredRow = $row;
+            }
+
+            $foundStringKey |= is_string($key);
+            $result[$key] = $filteredRow;
+
+            if (count($result) === $limit) {
+                break;
             }
         }
 
         // Sort the result
-
         if ($query->hasOrder()) {
-            usort($result, array($query, 'compare'));
-        }
-
-        $this->setResult($result);
-        return $this;
-    }
-
-    protected function getLimitedResult($query)
-    {
-        if ($query->hasLimit()) {
-            if ($query->hasOffset()) {
-                $offset = $query->getOffset();
+            if ($foundStringKey) {
+                uasort($result, array($query, 'compare'));
             } else {
-                $offset = 0;
+                usort($result, array($query, 'compare'));
             }
-            return array_slice($this->result, $offset, $query->getLimit());
-        } else {
-            return $this->result;
+        } elseif (! $foundStringKey) {
+            $result = array_values($result);
         }
+
+        return $result;
     }
 
+    /**
+     * Return whether a query result exists
+     *
+     * @return  bool
+     */
     protected function hasResult()
     {
         return $this->result !== null;
     }
 
-    protected function setResult($result)
+    /**
+     * Set the current result
+     *
+     * @param   array   $result
+     *
+     * @return  $this
+     */
+    protected function setResult(array $result)
     {
-        return $this->result = $result;
+        $this->result = $result;
+        return $this;
     }
 
+    /**
+     * Return the result for the given query
+     *
+     * @param   SimpleQuery     $query
+     *
+     * @return  array
+     */
     protected function getResult(SimpleQuery $query)
     {
         if (! $this->hasResult()) {
-            $this->createResult($query);
+            $this->setResult($this->createResult($query));
         }
-        return $this->getLimitedResult($query);
+
+        return $this->result;
     }
 }

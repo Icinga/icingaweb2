@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Command\Transport;
 
 use Exception;
+use RuntimeException;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Monitoring\Command\Exception\TransportException;
@@ -123,11 +124,15 @@ class LocalCommandFile implements CommandTransportInterface
             $file->fwrite($commandString . "\n");
             $file->fflush();
         } catch (Exception $e) {
+            $message = $e->getMessage();
+            if ($e instanceof RuntimeException && ($pos = strrpos($message, ':')) !== false) {
+                // Assume RuntimeException thrown by SplFileObject in the format: __METHOD__ . "({$filename}): Message"
+                $message = substr($message, $pos + 1);
+            }
             throw new TransportException(
-                'Can\'t send external Icinga command "%s" to the local command file "%s": %s',
-                $commandString,
+                'Can\'t send external Icinga command to the local command file "%s": %s',
                 $this->path,
-                $e
+                $message
             );
         }
     }

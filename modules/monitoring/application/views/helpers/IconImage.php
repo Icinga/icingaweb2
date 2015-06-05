@@ -1,6 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+use Icinga\Module\Monitoring\Object\Macro;
+
 /**
  * Generate icons to describe a given hosts state
  */
@@ -26,7 +28,7 @@ class Zend_View_Helper_IconImage extends Zend_View_Helper_Abstract
     {
         if ($object->host_icon_image && ! preg_match('/[\'"]/', $object->host_icon_image)) {
             return $this->view->img(
-                'img/icons/' . $this->view->resolveMacros($object->host_icon_image, $object),
+                'img/icons/' . Macro::resolveMacros($object->host_icon_image, $object),
                 null,
                 array(
                     'alt' => $object->host_icon_image_alt,
@@ -48,7 +50,7 @@ class Zend_View_Helper_IconImage extends Zend_View_Helper_Abstract
     {
         if ($object->service_icon_image && ! preg_match('/[\'"]/', $object->service_icon_image)) {
             return $this->view->img(
-                'img/icons/' . $this->view->resolveMacros($object->service_icon_image, $object),
+                'img/icons/' . Macro::resolveMacros($object->service_icon_image, $object),
                 null,
                 array(
                     'alt' => $object->service_icon_image_alt,

@@ -55,6 +55,26 @@ class String
     }
 
     /**
+     * Add ellipsis in the center of a string when a string is longer than max length
+     *
+     * @param   string  $string
+     * @param   int     $maxLength
+     * @param   string  $ellipsis
+     *
+     * @return  string
+     */
+    public static function ellipsisCenter($string, $maxLength, $ellipsis = '...')
+    {
+        $start = ceil($maxLength / 2.0);
+        $end = floor($maxLength / 2.0);
+        if (strlen($string) > $maxLength) {
+            return substr($string, 0, $start - strlen($ellipsis)) . $ellipsis . substr($string, - $end);
+        }
+
+        return $string;
+    }
+
+    /**
      * Find and return all similar strings in $possibilites matching $string with the given minimum $similarity
      *
      * @param   string  $string
