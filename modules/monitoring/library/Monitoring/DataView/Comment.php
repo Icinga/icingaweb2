@@ -50,8 +50,10 @@ class Comment extends DataView
     {
         return array(
             'comment_author ',
-            'host', 'hostgroup', 'hostgroup_alias', 'hostgroup_name',
-            'service', 'servicegroup', 'servicegroup_alias', 'servicegroup_name'
+            'host', 'host_alias',
+            'hostgroup', 'hostgroup_alias', 'hostgroup_name',
+            'service',
+            'servicegroup', 'servicegroup_alias', 'servicegroup_name'
         );
     }
 
