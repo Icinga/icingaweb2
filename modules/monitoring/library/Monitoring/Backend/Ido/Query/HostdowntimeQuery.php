@@ -37,26 +37,26 @@ class HostdowntimeQuery extends IdoQuery
             'object_type'               => '(\'host\')'
         ),
         'hostgroups' => array(
-            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
-            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
-            'hostgroup_name'    => 'hgo.name1'
+            'hostgroup'                 => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup_alias'           => 'hg.alias COLLATE latin1_general_ci',
+            'hostgroup_name'            => 'hgo.name1'
         ),
         'hosts' => array(
-            'host_alias'            => 'h.alias',
-            'host_display_name'     => 'h.display_name COLLATE latin1_general_ci'
+            'host_alias'                => 'h.alias',
+            'host_display_name'         => 'h.display_name COLLATE latin1_general_ci'
         ),
         'hoststatus' => array(
-            'host_state' => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END'
+            'host_state'                => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END'
         ),
         'servicegroups' => array(
-            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
-            'servicegroup_name'     => 'sgo.name1',
-            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
+            'servicegroup'              => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_name'         => 'sgo.name1',
+            'servicegroup_alias'        => 'sg.alias COLLATE latin1_general_ci'
         ),
         'services' => array(
-            'service'                => 'so.name2 COLLATE latin1_general_ci',
-            'service_description'    => 'so.name2',
-            'service_display_name'   => 's.display_name COLLATE latin1_general_ci',
+            'service'                   => 'so.name2 COLLATE latin1_general_ci',
+            'service_description'       => 'so.name2',
+            'service_display_name'      => 's.display_name COLLATE latin1_general_ci',
         )
     );
 
@@ -160,7 +160,6 @@ class HostdowntimeQuery extends IdoQuery
             'sgo.objecttype_id = ?',
             4
         );
-        $this->group('ho.name1');
     }
 
     /**
