@@ -146,10 +146,57 @@ class ServicestatusQuery extends IdoQuery
             'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
         ),
         'servicestatus' => array(
+            'service_active_checks_enabled'     => 'ss.active_checks_enabled',
+            'service_event_handler_enabled'     => 'ss.event_handler_enabled',
+            'service_flap_detection_enabled'    => 'ss.flap_detection_enabled',
             'service_handled'                   => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END',
             'service_hard_state'                => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE CASE WHEN ss.state_type = 1 THEN ss.current_state ELSE ss.last_hard_state END END',
+            'service_is_flapping'               => 'ss.is_flapping',
+            'service_is_passive_checked'        => 'CASE WHEN ss.active_checks_enabled = 0 AND ss.passive_checks_enabled = 1 THEN 1 ELSE 0 END',
             'service_last_hard_state_change'    => 'UNIX_TIMESTAMP(ss.last_hard_state_change)',
             'service_last_state_change'         => 'UNIX_TIMESTAMP(ss.last_state_change)',
+            'service_notifications_enabled'     => 'ss.notifications_enabled',
+            'service_severity'                  => 'CASE WHEN ss.current_state = 0
+            THEN
+                CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL
+                     THEN 16
+                     ELSE 0
+                END
+                +
+                CASE WHEN ss.problem_has_been_acknowledged = 1
+                     THEN 2
+                     ELSE
+                        CASE WHEN ss.scheduled_downtime_depth > 0
+                            THEN 1
+                            ELSE 4
+                        END
+                END
+            ELSE
+                CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 16
+                     WHEN ss.current_state = 1 THEN 32
+                     WHEN ss.current_state = 2 THEN 128
+                     WHEN ss.current_state = 3 THEN 64
+                     ELSE 256
+                END
+                +
+                CASE WHEN hs.current_state > 0
+                     THEN 1024
+                     ELSE
+                         CASE WHEN ss.problem_has_been_acknowledged = 1
+                              THEN 512
+                              ELSE
+                                 CASE WHEN ss.scheduled_downtime_depth > 0
+                                     THEN 256
+                                     ELSE 2048
+                                 END
+                         END
+                     END
+            END
+            +
+            CASE WHEN ss.state_type = 1
+                THEN 8
+                ELSE 0
+            END',
             'service_state'                     => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
             'service_unhandled'                 => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END',
         )
