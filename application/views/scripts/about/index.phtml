@@ -16,7 +16,7 @@
 
     echo (
         0 === count($versionInfo)
-            ? '<p class="fileNotReadable">' . $this->translate(
+            ? '<p class="message-error">' . $this->translate(
                 'Can\'t determine Icinga Web 2\'s version'
             )
             : '<p>' . nl2br(implode("\n", $versionInfo), false)
