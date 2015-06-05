@@ -3,6 +3,7 @@
 
 namespace Icinga\Authentication\User;
 
+use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Application\Icinga;
 use Icinga\Data\ConfigObject;
@@ -106,8 +107,17 @@ class UserBackend
      *
      * @throws  ConfigurationError
      */
-    public static function create($name, ConfigObject $backendConfig)
+    public static function create($name, ConfigObject $backendConfig = null)
     {
+        if ($backendConfig === null) {
+            $authConfig = Config::app('authentication');
+            if ($authConfig->hasSection($name)) {
+                $backendConfig = $authConfig->getSection($name);
+            } else {
+                throw new ConfigurationError('User backend "%s" does not exist', $name);
+            }
+        }
+
         if ($backendConfig->name !== null) {
             $name = $backendConfig->name;
         }
