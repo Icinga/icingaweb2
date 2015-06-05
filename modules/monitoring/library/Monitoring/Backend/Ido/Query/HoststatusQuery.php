@@ -323,6 +323,7 @@ SQL;
             4
         );
         $this->distinct();
+        $this->setUseSubqueryCount(true);
     }
 
     /**
@@ -330,6 +331,7 @@ SQL;
      */
     protected function joinServices()
     {
+        $this->requireVirtualTable('hosts');
         $this->select->join(
             array('s' => $this->prefix . 'services'),
             's.host_object_id = h.host_object_id',
@@ -347,6 +349,7 @@ SQL;
             2
         );
         $this->distinct();
+        $this->setUseSubqueryCount(true);
     }
 
     /**
