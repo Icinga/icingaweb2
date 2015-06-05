@@ -17,6 +17,14 @@ class Version
      */
     public static function get()
     {
+        if (false !== ($appVersion = @file_get_contents(Icinga::app()->getApplicationDir('VERSION')))) {
+            $matches = array();
+            if (@preg_match('/^(?P<gitCommitID>\w+) (?P<gitCommitDate>\S+)/', $appVersion, $matches)) {
+                $matches['appVersion'] = self::VERSION;
+                return $matches;
+            }
+        }
+
         $gitDir = Icinga::app()->getBaseDir('.git');
         $gitHead = @file_get_contents($gitDir . DIRECTORY_SEPARATOR . 'HEAD');
         if (false !== $gitHead) {
@@ -36,16 +44,6 @@ class Version
             }
         }
 
-        if (false === ($appVersion = @file_get_contents(Icinga::app()->getApplicationDir('VERSION')))) {
-            return false;
-        }
-
-        $matches = array();
-        if (! @preg_match('/^(?P<gitCommitID>\w+) (?P<gitCommitDate>\S+)/', $appVersion, $matches)) {
-            return false;
-        }
-
-        $matches['appVersion'] = self::VERSION;
-        return $matches;
+        return false;
     }
 }
