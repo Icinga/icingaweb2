@@ -17,7 +17,7 @@ class Version
      */
     public static function get()
     {
-        if (false !== ($appVersion = @file_get_contents(Icinga::app()->getApplicationDir('VERSION')))) {
+        if (false !== ($appVersion = @file_get_contents(Icinga::app()->getApplicationDir('GITCOMMIT')))) {
             $matches = array();
             if (@preg_match('/^(?P<gitCommitID>\w+) (?P<gitCommitDate>\S+)/', $appVersion, $matches)) {
                 $matches['appVersion'] = self::VERSION;
