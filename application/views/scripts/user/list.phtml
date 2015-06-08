@@ -18,7 +18,7 @@ if (! $this->compact): ?>
 <div class="content users">
 <?php
 
-if ($backend === null) {
+if (! isset($backend)) {
     echo $this->translate('No backend found which is able to list users') . '</div>';
     return;
 } else {
