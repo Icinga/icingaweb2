@@ -1,0 +1,40 @@
+# <a id="about"></a> About Icinga Web 2
+
+## <a id="about-installation"></a> Installation
+
+Icinga Web 2 can be installed easily from packages from the official package repositories.
+Setting it up is also easy with the web based setup wizard.
+
+See [here](installation#installation) for more information about installation.
+
+## <a id="about-configuration"></a> Configuration
+
+See [here](configuration#configuration) for more information about configuration.
+
+## <a id="about-authentication"></a> Authentication
+
+See [here](authentication#authentication) for more information about authentication.
+
+## <a id="about-authorization"></a> Authorization
+
+See [here](security#security) for more information about authorization.
+
+## <a id="about-preferences"></a> User preferences
+
+See [here](preferences#preferences) for more information about user preferences.
+
+## <a id="about-documentation"></a> Documentation
+
+With the documentation module you can read the documentation of the framework (and any module) directly in the user interface.
+
+The module can also export the documentation to PDF.
+
+## <a id="about-translation"></a> Translation
+
+With the translation module every piece of text in the user interface (of the framework itself and any module) can be translated to a language of your choise.
+
+Currently provided languages:
+
+* German
+* Italian
+* Portuguese
