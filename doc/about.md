@@ -19,21 +19,21 @@ Most such actions (like rescheduling a check) can be done with just a single cli
 Icinga Web 2 can be installed easily from packages from the official package repositories.
 Setting it up is also easy with the web based setup wizard.
 
-See [here](installation#installation) for more information about installation.
+See [here](installation#installation) for more information about the installation.
 
 ## <a id="about-configuration"></a> Configuration
 
-Icinga Web 2 can be configured via the user interface and the .ini files (in /etc/icingaweb2).
+Icinga Web 2 can be configured via the user interface and .ini files.
 
-See [here](configuration#configuration) for more information about configuration.
+See [here](configuration#configuration) for more information about the configuration.
 
 ## <a id="about-authentication"></a> Authentication
 
 With Icinga Web 2 you can authenticate against relational databases, LDAP and more.
-These authentication methods can be configured easily (via the corresponding .ini file).
+These authentication methods can be easily configured (via the corresponding .ini file).
 
-See [here](authentication#authentication) for more information about authentication
-and how to configure authentication methods.
+See [here](authentication#authentication) for more information about
+the different authentication methods available and how to configure them.
 
 ## <a id="about-authorization"></a> Authorization
 
@@ -46,12 +46,12 @@ and how to configure roles.
 
 ## <a id="about-preferences"></a> User preferences
 
-Besides the global configuration (like data/authentication backends)
-each user has individual configuration options like the interface's language or the current timezone.
+Besides the global configuration each user has individual configuration options
+like the interface's language or the current timezone.
 They can be stored either in a database or in .ini files.
 
-See [here](preferences#preferences) for more information about user preferences
-and how to configure where to store them.
+See [here](preferences#preferences) for more information about a user's preferences
+and how to configure their storage type.
 
 ## <a id="about-documentation"></a> Documentation
 
@@ -61,7 +61,7 @@ The module can also export the documentation to PDF.
 
 ## <a id="about-translation"></a> Translation
 
-With the translation module every piece of text in the user interface (of the framework itself and any module) can be translated to a language of your choise.
+With the translation module every piece of text in the user interface (of the framework itself and any module) can be translated to a language of your choice.
 
 Currently provided languages:
 
