@@ -3,6 +3,17 @@
 Icinga Web 2 is a powerful PHP framework for web applications that comes in a clean and reduced design.
 It's fast, responsive, accessible and easily extensible with modules.
 
+## <a id="about-monitoring"></a> The monitoring module
+
+This is the core module for most Icinga Web 2 users.
+
+It provides an intuitive user interface for monitoring with Icinga (1 and 2).
+Especially there are lots of list and detail views (e.g. for hosts and services)
+you can sort and filter depending on what you want to see.
+
+You can also control the monitoring process itself by sending external commands to Icinga.
+Most such actions (like rescheduling a check) can be done with just a single click.
+
 ## <a id="about-installation"></a> Installation
 
 Icinga Web 2 can be installed easily from packages from the official package repositories.
