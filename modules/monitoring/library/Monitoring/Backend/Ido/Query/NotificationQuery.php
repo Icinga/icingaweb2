@@ -3,136 +3,127 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Zend_Db_Expr;
+use Zend_Db_Select;
+use Icinga\Data\Filter\Filter;
+
+/**
+ * Query for host and service notifications
+ */
 class NotificationQuery extends IdoQuery
 {
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
-        'notification' => array(
-            'notification_output'           => 'n.output',
-            'notification_start_time'       => 'UNIX_TIMESTAMP(n.start_time)',
-            'notification_state'            => 'n.state',
-            'notification_object_id'        => 'n.object_id'
-        ),
-        'objects' => array(
-            'host'                          => 'o.name1 COLLATE latin1_general_ci',
-            'host_name'                     => 'o.name1',
-            'service'                       => 'o.name2 COLLATE latin1_general_ci',
-            'service_description'           => 'o.name2'
-        ),
-        'contact' => array(
-            'contact'                       => 'c_o.name1 COLLATE latin1_general_ci',
-            'notification_contact_name'     => 'c_o.name1',
-            'contact_object_id'             => 'c_o.object_id'
-        ),
-        'command' => array(
-            'notification_command'          => 'cmd_o.name1'
-        ),
-        'acknowledgement' => array(
-            'acknowledgement_entry_time'    => 'UNIX_TIMESTAMP(a.entry_time)',
-            'acknowledgement_author_name'   => 'a.author_name',
-            'acknowledgement_comment_data'  => 'a.comment_data'
+        'notifications' => array(
+            'notification_state'            => 'n.notification_state',
+            'notification_start_time'       => 'n.notification_start_time',
+            'notification_contact_name'     => 'n.notification_contact_name',
+            'notification_output'           => 'n.notification_output',
+            'notification_object_id'        => 'n.notification_object_id',
+            'contact_object_id'             => 'n.contact_object_id',
+            'acknowledgement_entry_time'    => 'n.acknowledgement_entry_time',
+            'acknowledgement_author_name'   => 'n.acknowledgement_author_name',
+            'acknowledgement_comment_data'  => 'n.acknowledgement_comment_data',
+            'object_type'                   => 'n.object_type'
         ),
         'hosts' => array(
-            'host_display_name'             => 'CASE WHEN sh.display_name IS NOT NULL THEN sh.display_name ELSE h.display_name END'
+            'host_display_name' => 'n.host_display_name',
+            'host_name'         => 'n.host_name'
         ),
         'services' => array(
-            'service_display_name'          => 's.display_name'
+            'service_description'   => 'n.service_description',
+            'service_display_name'  => 'n.service_display_name',
+            'service_host_name'     => 'n.service_host_name'
         )
     );
 
     /**
-     * Fetch basic information about notifications
+     * The union
+     *
+     * @var Zend_Db_Select
+     */
+    protected $notificationQuery;
+
+    /**
+     * Subqueries used for the notification query
+     *
+     * @var IdoQuery[]
+     */
+    protected $subQueries = array();
+
+    /**
+     * {@inheritdoc}
      */
     protected function joinBaseTables()
     {
+        $this->notificationQuery = $this->db->select();
         $this->select->from(
-            array('n' => $this->prefix . 'notifications'),
+            array('n' => $this->notificationQuery),
             array()
         );
-        $this->joinedVirtualTables = array('notification' => true);
+        $this->joinedVirtualTables['notifications'] = true;
     }
 
     /**
-     * Fetch description of each affected host/service
+     * Join hosts
      */
-    protected function joinObjects()
-    {
-        $this->select->join(
-            array('o' => $this->prefix . 'objects'),
-            'n.object_id = o.object_id AND o.is_active = 1 AND o.objecttype_id IN (1, 2)',
-            array()
-        );
-    }
-
-    /**
-     * Fetch name of involved contacts and/or contact groups
-     */
-    protected function joinContact()
-    {
-        $this->select->join(
-            array('c' => $this->prefix . 'contactnotifications'),
-            'n.notification_id = c.notification_id',
-            array()
-        );
-        $this->select->join(
-            array('c_o' => $this->prefix . 'objects'),
-            'c.contact_object_id = c_o.object_id',
-            array()
-        );
-    }
-
-    /**
-     * Fetch name of the command which was used to send out a notification
-     */
-    protected function joinCommand()
-    {
-        $this->select->join(
-            array('cmd_c' => $this->prefix . 'contactnotifications'),
-            'n.notification_id = cmd_c.notification_id',
-            array()
-        );
-        $this->select->joinLeft(
-            array('cmd_m' => $this->prefix . 'contactnotificationmethods'),
-            'cmd_c.contactnotification_id = cmd_m.contactnotification_id',
-            array()
-        );
-        $this->select->joinLeft(
-            array('cmd_o' => $this->prefix . 'objects'),
-            'cmd_m.command_object_id = cmd_o.object_id',
-            array()
-        );
-    }
-
-    protected function joinAcknowledgement()
-    {
-        $this->select->joinLeft(
-            array('a' => $this->prefix . 'acknowledgements'),
-            'n.object_id = a.object_id',
-            array()
-        );
-    }
-
     protected function joinHosts()
     {
-        $this->select->joinLeft(
-            array('h' => $this->prefix . 'hosts'),
-            'h.host_object_id = o.object_id',
-            array()
+        $columns = array_keys($this->columnMap['notifications'] + $this->columnMap['hosts']);
+        foreach (array_keys($this->columnMap['services']) as $column) {
+            $columns[$column] = new Zend_Db_Expr('NULL');
+        }
+        $hosts = $this->createSubQuery('hostnotification', $columns);
+        $this->subQueries[] = $hosts;
+        $this->notificationQuery->union(array($hosts), Zend_Db_Select::SQL_UNION_ALL);
+    }
+
+    /**
+     * Join services
+     */
+    protected function joinServices()
+    {
+        $columns = array_keys(
+            $this->columnMap['notifications'] + $this->columnMap['hosts'] + $this->columnMap['services']
         );
+        $services = $this->createSubQuery('servicenotification', $columns);
+        $this->subQueries[] = $services;
+        $this->notificationQuery->union(array($services), Zend_Db_Select::SQL_UNION_ALL);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function order($columnOrAlias, $dir = null)
+    {
+        foreach ($this->subQueries as $sub) {
+            $sub->requireColumn($columnOrAlias);
+        }
+        return parent::order($columnOrAlias, $dir);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function where($condition, $value = null)
+    {
+        $this->requireColumn($condition);
+        foreach ($this->subQueries as $sub) {
+            $sub->where($condition, $value);
+        }
         return $this;
     }
 
-    protected function joinServices()
+    /**
+     * {@inheritdoc}
+     */
+    public function addFilter(Filter $filter)
     {
-        $this->select->joinLeft(
-            array('s' => $this->prefix . 'services'),
-            's.service_object_id = o.object_id',
-            array()
-        );
-        $this->select->joinLeft(
-            array('sh' => $this->prefix . 'hosts'),
-            'sh.host_object_id = s.host_object_id',
-            array()
-        );
+        foreach ($this->subQueries as $sub) {
+            $sub->applyFilter(clone $filter);
+        }
         return $this;
     }
 }
