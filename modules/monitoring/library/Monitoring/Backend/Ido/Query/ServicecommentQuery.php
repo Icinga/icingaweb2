@@ -106,7 +106,7 @@ class ServicecommentQuery extends IdoQuery
             'hgo.objecttype_id = ?',
             3
         );
-        $this->group(array('so.name2', 'so.name1'));
+        $this->group(array('c.comment_id', 'so.name2', 'so.name1'));
     }
 
     /**
@@ -160,7 +160,7 @@ class ServicecommentQuery extends IdoQuery
             'sgo.objecttype_id = ?',
             4
         );
-        $this->group(array('so.name2', 'so.name1'));
+        $this->group(array('c.comment_id', 'so.name2', 'so.name1'));
     }
 
     /**

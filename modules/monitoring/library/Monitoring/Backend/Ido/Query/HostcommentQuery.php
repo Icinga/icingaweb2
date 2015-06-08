@@ -101,7 +101,7 @@ class HostcommentQuery extends IdoQuery
             'hgo.objecttype_id = ?',
             3
         );
-        $this->group('ho.name1');
+        $this->group(array('c.comment_id', 'ho.name1'));
     }
 
     /**
@@ -177,6 +177,6 @@ class HostcommentQuery extends IdoQuery
             'so.objecttype_id = ?',
             2
         );
-        $this->group('ho.name1');
+        $this->group(array('c.comment_id', 'ho.name1'));
     }
 }
