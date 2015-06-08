@@ -1,5 +1,8 @@
 # <a id="about"></a> About Icinga Web 2
 
+Icinga Web 2 is a powerful PHP framework for web applications that comes in a clean and reduced design.
+It's fast, responsive, accessible and easily extensible with modules.
+
 ## <a id="about-installation"></a> Installation
 
 Icinga Web 2 can be installed easily from packages from the official package repositories.
