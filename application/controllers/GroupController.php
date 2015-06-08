@@ -28,6 +28,10 @@ class GroupController extends AuthBackendController
             function ($b) { return $b->getName(); },
             $this->loadUserGroupBackends('Icinga\Data\Selectable')
         );
+        if (empty($backendNames)) {
+            return;
+        }
+
         $this->view->backendSelection = new Form();
         $this->view->backendSelection->setAttrib('class', 'backend-selection');
         $this->view->backendSelection->setUidDisabled();
