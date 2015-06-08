@@ -107,7 +107,7 @@ class HostdowntimeQuery extends IdoQuery
             'hgo.objecttype_id = ?',
             3
         );
-        $this->group('ho.name1');
+        $this->group(array('sd.scheduleddowntime_id', 'ho.name1'));
     }
 
     /**
@@ -183,6 +183,6 @@ class HostdowntimeQuery extends IdoQuery
             'so.objecttype_id = ?',
             2
         );
-        $this->group('ho.name1');
+        $this->group(array('sd.scheduleddowntime_id', 'ho.name1'));
     }
 }
