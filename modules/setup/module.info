@@ -1,0 +1,4 @@
+Module: setup
+Version: 2.0.0-rc1
+Description: Setup module
+ Sets up Icinga Web 2.
