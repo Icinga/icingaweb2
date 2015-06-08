@@ -30,8 +30,12 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
     <p class="user-name"><strong><?= $this->escape($user->user_name); ?></strong></p> <?= $editLink; ?>
     <p class="user-state"><strong><?= $this->translate('State'); ?>:</strong> <?= $user->is_active === null ? '-' : ($user->is_active ? $this->translate('Active') : $this->translate('Inactive')); ?></p>
     <p class="user-created"><strong><?= $this->translate('Created at'); ?>:</strong> <?= $user->created_at === null ? '-' : $this->formatDateTime($user->created_at); ?></p>
-    <p class="user-modified"><strong><?= $this->translate('Last modified'); ?>:</strong> <?= $user->last_modified === null ? '-' : $this->formatDateTime($user->last_modified); ?></p>
+    <p class="user-modified"><strong><?= $this->translate('Last modified'); ?>:</strong> <?= $user->last_modified === null ? '-' : $this->formatDateTime($user->last_modified); ?></p> 
+    <h5><?= $this->translate('Group Memberships'); ?></h5>
   </div>
+</div>
+<div class="content memberships" data-base-target="_next">
+ <?php if (count($memberships) > 0): ?>
  <?php if (! $this->compact): ?>
   <?= $this->sortBox; ?>
  <?php endif ?>
@@ -40,9 +44,6 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
  <?php if (! $this->compact): ?>
   <?= $this->filterEditor; ?>
  <?php endif ?>
-</div>
-<div class="content memberships" data-base-target="_next">
-<?php if (count($memberships) > 0): ?>
   <table data-base-target="_next" class="action membership-list">
     <thead>
       <tr>
@@ -80,7 +81,7 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
     </tbody>
   </table>
 <?php else: ?>
-  <p><?= $this->translate('No memberships found matching the filter'); ?></p>
+  <?= $this->translate('User has no group memberships.'); ?>
 <?php endif ?>
 <?php if ($showCreateMembershipLink): ?>
 <?= $this->qlink($this->translate('Create new membership'), 'user/createmembership', array(

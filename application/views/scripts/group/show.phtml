@@ -30,8 +30,12 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
   <div class="group-header">
     <p class="group-name"><strong><?= $this->escape($group->group_name); ?></strong></p> <?= $editLink; ?>
     <p class="group-created"><strong><?= $this->translate('Created at'); ?>:</strong> <?= $group->created_at === null ? '-' : $this->formatDateTime($group->created_at); ?></p>
-    <p class="group-modified"><strong><?= $this->translate('Last modified'); ?>:</strong> <?= $group->last_modified === null ? '-' : $this->formatDateTime($group->last_modified); ?></p>
+    <p class="group-modified"><strong><?= $this->translate('Last modified'); ?>:</strong> <?= $group->last_modified === null ? '-' : $this->formatDateTime($group->last_modified); ?></p> 
+    <h5><?= $this->translate('Members'); ?></h5>
   </div>
+</div>
+<div class="content members" data-base-target="_next">
+<?php if (count($members) > 0): ?>
  <?php if (! $this->compact): ?>
   <?= $this->sortBox; ?>
  <?php endif ?>
@@ -40,9 +44,6 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
  <?php if (! $this->compact): ?>
   <?= $this->filterEditor; ?>
  <?php endif ?>
-</div>
-<div class="content members" data-base-target="_next">
-<?php if (count($members) > 0): ?>
   <table data-base-target="_next" class="action member-list">
     <thead>
       <tr>
@@ -66,7 +67,7 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
     </tbody>
   </table>
 <?php else: ?>
-  <p><?= $this->translate('No group member found matching the filter'); ?></p>
+  <p><?= $this->translate('Group has no members.'); ?></p>
 <?php endif ?>
 <?php if ($extensible): ?>
   <?= $this->qlink($this->translate('Add a new member'), 'group/addmember', array(
