@@ -620,6 +620,6 @@ class IniEditor
 
     private function sanitize($value)
     {
-        return str_replace('\n', '', $value);
+        return str_replace("\n", '', $value);
     }
 }

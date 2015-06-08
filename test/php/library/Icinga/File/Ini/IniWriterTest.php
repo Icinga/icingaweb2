@@ -719,6 +719,34 @@ EOD;
         );
     }
 
+    public function testWhetherLinebreaksAreRemoved()
+    {
+        $target = $this->writeConfigToTemporaryFile('');
+        $writer = new IniWriter(
+            array(
+                'config' => Config::fromArray(
+                    array(
+                        'section' => array(
+                            'foo' => 'linebreak
+in line',
+                            'linebreak
+inkey' => 'blarg'
+                        )
+                    )
+                ),
+                'filename' => $target
+            )
+        );
+
+        $rendered = $writer->render();
+        var_dump($rendered);
+        $this->assertEquals(
+            count(explode("\n", $rendered)),
+            4,
+            'generated config should not contain more than three line breaks'
+        );
+    }
+
     /**
      * Write a INI-configuration string to a temporary file and return its path
      *
