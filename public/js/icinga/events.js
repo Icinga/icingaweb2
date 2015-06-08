@@ -17,12 +17,6 @@
 
     Icinga.Events.prototype = {
 
-        keyboard: {
-            ctrlKey:    false,
-            altKey:     false,
-            shiftKey:   false
-        },
-
         /**
          * Icinga will call our initialize() function once it's ready
          */
@@ -280,6 +274,10 @@
                 }
             }
 
+            // Disable all form controls to prevent resubmission except for our search input
+            // Note that disabled form inputs will not be enabled via JavaScript again
+            $form.find(':input:not(#search):not(:disabled)').prop('disabled', true);
+
             icinga.loader.loadUrl(url, $target, data, method);
 
             return false;
@@ -309,6 +307,10 @@
             var data     = self.icinga.ui.getSelectionKeys($table);
             var url      = $table.data('icinga-multiselect-url');
 
+            if ($(event.target).closest('form').length) {
+                // allow form actions in table rows to pass through
+                return;
+            }
             event.stopPropagation();
             event.preventDefault();
 
@@ -467,6 +469,9 @@
                             } else {
                                 icinga.ui.layout1col();
                             }
+                            $('table tr[href].active').removeClass('active');
+                            icinga.ui.storeSelectionData(null);
+                            icinga.ui.loadSelectionData();
                             icinga.history.pushCurrentState();
                         }
                     }

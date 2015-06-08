@@ -5,6 +5,8 @@ namespace Icinga\Authentication;
 
 use Iterator;
 use Icinga\Data\ConfigObject;
+use Icinga\Authentication\User\UserBackend;
+use Icinga\Authentication\User\UserBackendInterface;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
@@ -24,7 +26,7 @@ class AuthChain implements Iterator
     /**
      * The consecutive user backend while looping
      *
-     * @var UserBackend
+     * @var UserBackendInterface
      */
     private $currentBackend;
 
@@ -52,7 +54,7 @@ class AuthChain implements Iterator
     /**
      * Return the current user backend
      *
-     * @return UserBackend
+     * @return UserBackendInterface
      */
     public function current()
     {

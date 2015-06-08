@@ -413,30 +413,30 @@ class User
     /**
      * Whether the user has a given permission
      *
-     * @param   string $permission
+     * @param   string $requiredPermission
      *
      * @return  bool
      */
-    public function can($permission)
+    public function can($requiredPermission)
     {
-        if (isset($this->permissions['*']) || isset($this->permissions[$permission])) {
+        if (isset($this->permissions['*']) || isset($this->permissions[$requiredPermission])) {
             return true;
         }
         // If the permission to check contains a wildcard, grant the permission if any permit related to the permission
         // matches
-        $any = strpos($permission, '*');
-        foreach ($this->permissions as $permitted) {
+        $any = strpos($requiredPermission, '*');
+        foreach ($this->permissions as $grantedPermission) {
             if ($any !== false) {
                 $wildcard = $any;
             } else {
                 // If the permit contains a wildcard, grant the permission if it's related to the permit
-                $wildcard = strpos($permitted, '*');
+                $wildcard = strpos($grantedPermission, '*');
             }
             if ($wildcard !== false) {
-                if (substr($permission, 0, $wildcard) === substr($permitted, 0, $wildcard)) {
+                if (substr($requiredPermission, 0, $wildcard) === substr($grantedPermission, 0, $wildcard)) {
                     return true;
                 }
-            } elseif ($permission === $permitted) {
+            } elseif ($requiredPermission === $grantedPermission) {
                 return true;
             }
         }

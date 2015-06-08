@@ -60,7 +60,7 @@ class InstanceConfigForm extends ConfigForm
      *
      * @param   array   $values             The values to extend the configuration with
      *
-     * @return  self
+     * @return  $this
      *
      * @throws  InvalidArgumentException    In case the resource already exists
      */

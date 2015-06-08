@@ -16,11 +16,6 @@ use Icinga\Chart\Unit\LinearUnit;
 
 class Monitoring_ChartController extends Controller
 {
-    public function init()
-    {
-        $this->view->compact = $this->_request->getParam('view') === 'compact';
-    }
-
     private function drawLogChart1()
     {
         $chart = new GridChart();
@@ -168,7 +163,7 @@ class Monitoring_ChartController extends Controller
     public function hostgroupAction()
     {
         $query = $this->backend->select()->from(
-            'groupsummary',
+            'hostgroupsummary',
             array(
                 'hostgroup',
                 'hosts_up',
@@ -199,7 +194,7 @@ class Monitoring_ChartController extends Controller
     public function servicegroupAction()
     {
         $query = $this->backend->select()->from(
-            'groupsummary',
+            'servicegroupsummary',
             array(
                 'servicegroup',
                 'services_ok',
@@ -236,39 +231,39 @@ class Monitoring_ChartController extends Controller
             $unknownBars[] = array($servicegroup->servicegroup, $servicegroup->services_unknown_unhandled);
         }
         $this->view->chart = new GridChart();
-        $this->view->chart->title = t('Service Group Chart');
-        $this->view->chart->description = t('Contains service states for each service group.');
+        $this->view->chart->title = $this->translate('Service Group Chart');
+        $this->view->chart->description = $this->translate('Contains service states for each service group.');
 
         $this->view->chart->alignTopLeft();
-        $this->view->chart->setAxisLabel('', mt('monitoring', 'Services'))
+        $this->view->chart->setAxisLabel('', $this->translate('Services'))
             ->setXAxis(new StaticAxis())
             ->setAxisMin(null, 0);
 
-        $tooltip = mt('monitoring', '<b>{title}:</b><br>{value} of {sum} services are {label}');
+        $tooltip = $this->translate('<b>{title}:</b><br>{value} of {sum} services are {label}');
         $this->view->chart->drawBars(
             array(
-                'label' => mt('monitoring', 'Ok'),
+                'label' => $this->translate('Ok'),
                 'color' => '#44bb77',
                 'stack' => 'stack1',
                 'data'  => $okBars,
                 'tooltip' => $tooltip
             ),
             array(
-                'label' => mt('monitoring', 'Warning'),
+                'label' => $this->translate('Warning'),
                 'color' => '#ffaa44',
                 'stack' => 'stack1',
                 'data'  => $warningBars,
                 'tooltip' => $tooltip
             ),
             array(
-                'label' => mt('monitoring', 'Critical'),
+                'label' => $this->translate('Critical'),
                 'color' => '#ff5566',
                 'stack' => 'stack1',
                 'data'  => $critBars,
                 'tooltip' => $tooltip
             ),
             array(
-                'label' => mt('monitoring', 'Unknown'),
+                'label' => $this->translate('Unknown'),
                 'color' => '#dd66ff',
                 'stack' => 'stack1',
                 'data'  => $unknownBars,
@@ -293,32 +288,32 @@ class Monitoring_ChartController extends Controller
                 (string)$i, rand(1, 200), rand(1, 200)
             );
         }
-        $tooltip = mt('monitoring', '<b>{title}:</b><br> {value} of {sum} hosts are {label}');
+        $tooltip = $this->translate('<b>{title}:</b><br> {value} of {sum} hosts are {label}');
         $this->view->chart = new GridChart();
-        $this->view->chart->title = t('Host Group Chart');
-        $this->view->chart->description = t('Contains host states of each service group.');
+        $this->view->chart->title = $this->translate('Host Group Chart');
+        $this->view->chart->description = $this->translate('Contains host states of each service group.');
 
         $this->view->chart->alignTopLeft();
-        $this->view->chart->setAxisLabel('', mt('monitoring', 'Hosts'))
+        $this->view->chart->setAxisLabel('', $this->translate('Hosts'))
             ->setXAxis(new StaticAxis())
             ->setAxisMin(null, 0);
         $this->view->chart->drawBars(
             array(
-                'label' => mt('monitoring', 'Up'),
+                'label' => $this->translate('Up'),
                 'color' => '#44bb77',
                 'stack' => 'stack1',
                 'data'  => $upBars,
                 'tooltip' => $tooltip
             ),
             array(
-                'label' => mt('monitoring', 'Down'),
+                'label' => $this->translate('Down'),
                 'color' => '#ff5566',
                 'stack' => 'stack1',
                 'data'  => $downBars,
                 'tooltip' => $tooltip
             ),
             array(
-                'label' => mt('monitoring', 'Unreachable'),
+                'label' => $this->translate('Unreachable'),
                 'color' => '#dd66ff',
                 'stack' => 'stack1',
                 'data'  => $unreachableBars,
@@ -345,13 +340,13 @@ class Monitoring_ChartController extends Controller
             'colors' => array('#44bb77', '#ff4444', '#ff0000', '#ffff00', '#ffff33', '#E066FF', '#f099FF', '#fefefe'),
             'labels'=> array(
                 $query->services_ok . ' Up Services',
-                $query->services_warning_handled . mt('monitoring', ' Warning Services (Handled)'),
-                $query->services_warning_unhandled . mt('monitoring', ' Warning Services (Unhandled)'),
-                $query->services_critical_handled . mt('monitoring', ' Down Services (Handled)'),
-                $query->services_critical_unhandled . mt('monitoring', ' Down Services (Unhandled)'),
-                $query->services_unknown_handled . mt('monitoring', ' Unreachable Services (Handled)'),
-                $query->services_unknown_unhandled . mt('monitoring', ' Unreachable Services (Unhandled)'),
-                $query->services_pending . mt('monitoring', ' Pending Services')
+                $query->services_warning_handled . $this->translate(' Warning Services (Handled)'),
+                $query->services_warning_unhandled . $this->translate(' Warning Services (Unhandled)'),
+                $query->services_critical_handled . $this->translate(' Down Services (Handled)'),
+                $query->services_critical_unhandled . $this->translate(' Down Services (Unhandled)'),
+                $query->services_unknown_handled . $this->translate(' Unreachable Services (Handled)'),
+                $query->services_unknown_unhandled . $this->translate(' Unreachable Services (Unhandled)'),
+                $query->services_pending . $this->translate(' Pending Services')
             )
         ));
     }
@@ -378,12 +373,12 @@ class Monitoring_ChartController extends Controller
                 '#fefefe'
             ),
             'labels'=> array(
-                (int) $query->hosts_up . mt('monitoring', ' Up Hosts'),
-                (int) $query->hosts_down_handled . mt('monitoring', ' Down Hosts (Handled)'),
-                (int) $query->hosts_down_unhandled . mt('monitoring', ' Down Hosts (Unhandled)'),
-                (int) $query->hosts_unreachable_handled . mt('monitoring', ' Unreachable Hosts (Handled)'),
-                (int) $query->hosts_unreachable_unhandled . mt('monitoring', ' Unreachable Hosts (Unhandled)'),
-                (int) $query->hosts_pending . mt('monitoring', ' Pending Hosts')
+                (int) $query->hosts_up . $this->translate(' Up Hosts'),
+                (int) $query->hosts_down_handled . $this->translate(' Down Hosts (Handled)'),
+                (int) $query->hosts_down_unhandled . $this->translate(' Down Hosts (Unhandled)'),
+                (int) $query->hosts_unreachable_handled . $this->translate(' Unreachable Hosts (Handled)'),
+                (int) $query->hosts_unreachable_unhandled . $this->translate(' Unreachable Hosts (Unhandled)'),
+                (int) $query->hosts_pending . $this->translate(' Pending Hosts')
             )
         ), array(
             'data' => array(
@@ -398,14 +393,14 @@ class Monitoring_ChartController extends Controller
             ),
             'colors' => array('#44bb77', '#ff4444', '#ff0000', '#ffff00', '#ffff33', '#E066FF', '#f099FF', '#fefefe'),
             'labels'=> array(
-                $query->services_ok . mt('monitoring', ' Up Services'),
-                $query->services_warning_handled . mt('monitoring', ' Warning Services (Handled)'),
-                $query->services_warning_unhandled . mt('monitoring', ' Warning Services (Unhandled)'),
-                $query->services_critical_handled . mt('monitoring', ' Down Services (Handled)'),
-                $query->services_critical_unhandled . mt('monitoring', ' Down Services (Unhandled)'),
-                $query->services_unknown_handled . mt('monitoring', ' Unreachable Services (Handled)'),
-                $query->services_unknown_unhandled . mt('monitoring', ' Unreachable Services (Unhandled)'),
-                $query->services_pending . mt('monitoring', ' Pending Services')
+                $query->services_ok . $this->translate(' Up Services'),
+                $query->services_warning_handled . $this->translate(' Warning Services (Handled)'),
+                $query->services_warning_unhandled . $this->translate(' Warning Services (Unhandled)'),
+                $query->services_critical_handled . $this->translate(' Down Services (Handled)'),
+                $query->services_critical_unhandled . $this->translate(' Down Services (Unhandled)'),
+                $query->services_unknown_handled . $this->translate(' Unreachable Services (Handled)'),
+                $query->services_unknown_unhandled . $this->translate(' Unreachable Services (Unhandled)'),
+                $query->services_pending . $this->translate(' Pending Services')
             )
         ));
     }

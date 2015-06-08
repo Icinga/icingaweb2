@@ -4,6 +4,7 @@
 namespace Icinga\Protocol\File;
 
 use Countable;
+use ArrayIterator;
 use Icinga\Data\Selectable;
 use Icinga\Data\ConfigObject;
 
@@ -25,6 +26,13 @@ class FileReader implements Selectable, Countable
      * @var string
      */
     protected $filename;
+
+    /**
+     * Cache for static::count()
+     *
+     * @var int
+     */
+    protected $count = null;
 
     /**
      * Create a new reader
@@ -51,7 +59,7 @@ class FileReader implements Selectable, Countable
      */
     public function iterate()
     {
-        return new FileIterator($this->filename, $this->fields);
+        return new LogFileIterator($this->filename, $this->fields);
     }
 
     /**
@@ -65,13 +73,28 @@ class FileReader implements Selectable, Countable
     }
 
     /**
+     * Fetch and return all rows of the given query's result set using an iterator
+     *
+     * @param   FileQuery   $query
+     *
+     * @return  ArrayIterator
+     */
+    public function query(FileQuery $query)
+    {
+        return new ArrayIterator($this->fetchAll($query));
+    }
+
+    /**
      * Return the number of available valid lines.
      *
      * @return int
      */
     public function count()
     {
-        return iterator_count($this->iterate());
+        if ($this->count === null) {
+            $this->count = iterator_count($this->iterate());
+        }
+        return $this->count;
     }
 
     /**

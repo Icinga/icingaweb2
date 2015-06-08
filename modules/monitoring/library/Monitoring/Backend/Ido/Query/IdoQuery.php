@@ -87,6 +87,18 @@ abstract class IdoQuery extends DbQuery
     protected $customVars = array();
 
     /**
+     * Printf compatible string to joins custom vars
+     *
+     * - %1$s   Source field, contain the object_id
+     * - %2$s   Alias used for the relation
+     * - %3$s   Name of the CustomVariable
+     *
+     * @var string
+     */
+    private $customVarsJoinTemplate =
+        '%1$s = %2$s.object_id AND %2$s.varname = %3$s COLLATE latin1_general_ci';
+
+    /**
      * An array with all 'virtual' tables that are already joined
      *
      * Virtual tables are the keys  of the columnMap array and require a
@@ -199,7 +211,7 @@ abstract class IdoQuery extends DbQuery
      * @param string $columnOrAlias         The column or column alias to order by
      * @param int $dir                      The sort direction or null to use default direction
      *
-     * @return self                         Fluent interface
+     * @return $this                         Fluent interface
      */
     public function order($columnOrAlias, $dir = null)
     {
@@ -351,6 +363,8 @@ abstract class IdoQuery extends DbQuery
         $this->object_id = $this->host_id = $this->service_id
             = $this->hostgroup_id = $this->servicegroup_id
             = $this->contact_id = $this->contactgroup_id = 'id';
+        $this->customVarsJoinTemplate =
+            '%1$s = %2$s.object_id AND LOWER(%2$s.varname) = %3$s';
         foreach ($this->columnMap as &$columns) {
             foreach ($columns as &$value) {
                 $value = preg_replace('/UNIX_TIMESTAMP/', 'localts2unixts', $value);
@@ -364,13 +378,19 @@ abstract class IdoQuery extends DbQuery
      */
     private function initializeForPostgres()
     {
+        $this->customVarsJoinTemplate =
+            '%1$s = %2$s.object_id AND LOWER(%2$s.varname) = %3$s';
         foreach ($this->columnMap as $table => & $columns) {
             foreach ($columns as $key => & $value) {
                 $value = preg_replace('/ COLLATE .+$/', '', $value, -1, $count);
                 if ($count > 0) {
                     $this->columnsWithoutCollation[] = $this->getMappedField($key);
                 }
-                $value = preg_replace('/inet_aton\(([[:word:].]+)\)/i', '$1::inet - \'0.0.0.0\'', $value);
+                $value = preg_replace(
+                    '/inet_aton\(([[:word:].]+)\)/i',
+                    '(CASE WHEN $1 ~ \'(?:[0-9]{1,3}\\\\.){3}[0-9]{1,3}\' THEN $1::inet - \'0.0.0.0\' ELSE NULL END)',
+                    $value
+                );
                 $value = preg_replace(
                     '/UNIX_TIMESTAMP(\((?>[^()]|(?-1))*\))/i',
                     'CASE WHEN ($1 < \'1970-01-03 00:00:00+00\'::timestamp with time zone) THEN 0 ELSE UNIX_TIMESTAMP($1) END',
@@ -389,26 +409,15 @@ abstract class IdoQuery extends DbQuery
     {
         parent::init();
         $this->prefix = $this->ds->getTablePrefix();
-
-        if ($this->ds->getDbType() === 'oracle') {
+        $dbType = $this->ds->getDbType();
+        if ($dbType === 'oracle') {
             $this->initializeForOracle();
-        } elseif ($this->ds->getDbType() === 'pgsql') {
+        } elseif ($dbType === 'pgsql') {
             $this->initializeForPostgres();
         }
-        $this->dbSelect();
-
+        $this->joinBaseTables();
         $this->select->columns($this->columns);
-        //$this->joinBaseTables();
         $this->prepareAliasIndexes();
-    }
-
-    protected function dbSelect()
-    {
-        if ($this->select === null) {
-            $this->select = $this->db->select();
-            $this->joinBaseTables();
-        }
-        return clone $this->select;
     }
 
     /**
@@ -487,7 +496,7 @@ abstract class IdoQuery extends DbQuery
      *
      * @param $alias                                The alias of the column to require
      *
-     * @return self                                 Fluent interface
+     * @return $this                                 Fluent interface
      * @see    IdoQuery::requireVirtualTable        The method initializing required joins
      * @throws \Icinga\Exception\ProgrammingError   When an unknown column is requested
      */
@@ -522,7 +531,7 @@ abstract class IdoQuery extends DbQuery
      * Require a virtual table for the given table name if not already required
      *
      * @param  String $name         The table name to require
-     * @return self                 Fluent interface
+     * @return $this                 Fluent interface
      */
     protected function requireVirtualTable($name)
     {
@@ -549,7 +558,7 @@ abstract class IdoQuery extends DbQuery
      * This requires a join$Table() method to exist
      *
      * @param  String $table        The table to join by calling join$Table() in the concrete implementation
-     * @return self                 Fluent interface
+     * @return $this                 Fluent interface
      *
      * @throws \Icinga\Exception\ProgrammingError   If the join method for this table does not exist
      */
@@ -600,14 +609,14 @@ abstract class IdoQuery extends DbQuery
 
     protected function hasCustomvar($customvar)
     {
-        return array_key_exists($customvar, $this->customVars);
+        return array_key_exists(strtolower($customvar), $this->customVars);
     }
 
     protected function joinCustomvar($customvar)
     {
         // TODO: This is not generic enough yet
         list($type, $name) = $this->customvarNameToTypeName($customvar);
-        $alias = ($type === 'host' ? 'hcv_' : 'scv_') . strtolower($name);
+        $alias = ($type === 'host' ? 'hcv_' : 'scv_') . $name;
 
         $this->customVars[$customvar] = $alias;
 
@@ -618,12 +627,12 @@ abstract class IdoQuery extends DbQuery
         } else {
             $leftcol = 'h.' . $type . '_object_id';
         }
+
         $joinOn = sprintf(
-            '%s = %s.object_id AND %s.varname = %s',
+            $this->customVarsJoinTemplate,
             $leftcol,
             $alias,
-            $alias,
-            $this->db->quote(strtoupper($name))
+            $this->db->quote($name)
         );
 
         $this->select->joinLeft(
@@ -637,6 +646,7 @@ abstract class IdoQuery extends DbQuery
 
     protected function customvarNameToTypeName($customvar)
     {
+        $customvar = strtolower($customvar);
         // TODO: Improve this:
         if (! preg_match('~^_(host|service)_([a-zA-Z0-9_]+)$~', $customvar, $m)) {
             throw new ProgrammingError(
@@ -654,7 +664,7 @@ abstract class IdoQuery extends DbQuery
 
     protected function getCustomvarColumnName($customvar)
     {
-        return $this->customVars[$customvar] . '.varvalue';
+        return $this->customVars[strtolower($customvar)] . '.varvalue';
     }
 
     public function aliasToColumnName($alias)
@@ -676,7 +686,7 @@ abstract class IdoQuery extends DbQuery
      *
      * @param   array $columns
      *
-     * @return  self
+     * @return  $this
      */
     public function columns(array $columns)
     {

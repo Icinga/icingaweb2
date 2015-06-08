@@ -6,13 +6,13 @@ namespace Icinga\Module\Monitoring;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 use Icinga\File\Csv;
-use Icinga\Web\Controller\ModuleActionController;
+use Icinga\Web\Controller as IcingaWebController;
 use Icinga\Web\Url;
 
 /**
  * Base class for all monitoring action controller
  */
-class Controller extends ModuleActionController
+class Controller extends IcingaWebController
 {
     /**
      * The backend used for this controller
@@ -20,16 +20,6 @@ class Controller extends ModuleActionController
      * @var Backend
      */
     protected $backend;
-
-    /**
-     * Compact layout name
-     *
-     * Set to a string containing the compact layout name to use when
-     * 'compact' is set as the layout parameter, otherwise null
-     *
-     * @var string
-     */
-    protected $compactView;
 
     protected function moduleInit()
     {
@@ -39,10 +29,6 @@ class Controller extends ModuleActionController
 
     protected function handleFormatRequest($query)
     {
-        if ($this->compactView !== null && ($this->_getParam('view', false) === 'compact')) {
-            $this->_helper->viewRenderer($this->compactView);
-        }
-
         if ($this->_getParam('format') === 'sql') {
             echo '<pre>'
                 . htmlspecialchars(wordwrap($query->dump()))

@@ -1,0 +1,58 @@
+<table class="action">
+  <tr class="state <?= $stateName; ?><?= $downtime->is_in_effect ? ' handled' : ''; ?>">
+    <td class="state">
+      <strong><?= $downtime->is_in_effect ? $this->translate('Expires') : $this->translate('Starts'); ?></strong>
+      <br>
+      <?= $this->timeUntil($downtime->is_in_effect ? $downtime->end : $downtime->start, $this->compact) ?>
+    </td>
+    <td>
+      <small>
+        <?php if ($downtime->is_flexible): ?>
+            <?php if ($downtime->is_in_effect): ?>
+              <?= sprintf(
+                $this->isService
+                  ? $this->translate('This flexible service downtime was started on %s at %s and lasts for %s until %s at %s.')
+                  : $this->translate('This flexible host downtime was started on %s at %s and lasts for %s until %s at %s.'),
+                $this->formatDate($downtime->start),
+                $this->formatTime($downtime->start),
+                $this->formatDuration($downtime->duration),
+                $this->formatDate($downtime->end),
+                $this->formatTime($downtime->end)
+              ); ?>
+            <?php else: ?>
+              <?= sprintf(
+                $this->isService
+                  ? $this->translate('This flexible service downtime has been scheduled to start between %s - %s and to last for %s.')
+                  : $this->translate('This flexible host downtime has been scheduled to start between %s - %s and to last for %s.'),
+                $this->formatDateTime($downtime->scheduled_start),
+                $this->formatDateTime($downtime->scheduled_end),
+                $this->formatDuration($downtime->duration)
+              ); ?>
+            <?php endif ?>
+            <?php else: ?>
+              <?php if ($downtime->is_in_effect): ?>
+                <?= sprintf(
+                  $this->isService
+                    ? $this->translate('This fixed service downtime was started on %s at %s and expires on %s at %s.')
+                    : $this->translate('This fixed host downtime was started on %s at %s and expires on %s at %s.'),
+                    $this->formatDate($downtime->start),
+                    $this->formatTime($downtime->start),
+                    $this->formatDate($downtime->end),
+                    $this->formatTime($downtime->end)
+                ); ?>
+              <?php else: ?>
+                <?= sprintf(
+                  $this->isService
+                    ? $this->translate('This fixed service downtime has been scheduled to start on %s at %s and to end on %s at %s.')
+                    : $this->translate('This fixed host downtime has been scheduled to start on %s at %s and to end on %s at %s.'),
+                    $this->formatDate($downtime->start),
+                    $this->formatTime($downtime->start),
+                    $this->formatDate($downtime->end),
+                    $this->formatTime($downtime->end)
+                ); ?>
+              <?php endif ?>
+            <?php endif ?>
+      </small>
+    </td>
+  </tr>
+</table>

@@ -310,7 +310,7 @@
                 } else {
 
                     if (req.$target.attr('id') === 'col2') { // TODO: multicol
-                        if ($('#col1').data('icingaUrl') === redirect) {
+                        if ($('#col1').data('icingaUrl').split('?')[0] === redirect.split('?')[0]) {
                             icinga.ui.layout1col();
                             req.$target = $('#col1');
                             delete(this.requests['col2']);
@@ -640,7 +640,7 @@
                 this.icinga.logger.error(
                     req.status,
                     errorThrown + ':',
-                    $(req.responseText).text().slice(0, 100)
+                    $(req.responseText).text().replace(/\s+/g, ' ').slice(0, 100)
                 );
                 this.renderContentToContainer(
                     req.responseText,
@@ -760,12 +760,8 @@
                 // $container.html(content);
 
             } else {
-                if ($container.closest('.dashboard').length
-                ) {
-                    if (! $('h1', $content).length) {
-                        var title = $('h1', $container).first().detach();
-                        $('h1', $content).first().detach();
-                    }
+                if ($container.closest('.dashboard').length) {
+                    var title = $('h1', $container).first().detach();
                     $container.html(title).append(content);
                 } else if (action === 'replace') {
                     $container.html(content);

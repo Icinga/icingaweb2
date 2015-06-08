@@ -429,12 +429,12 @@ class Perfdata
      *
      * @param bool $html
      *
-     * @return stringS
+     * @return string
      */
     public function formatLabel($html = false)
     {
         return sprintf(
-            $html ? t('<b>%s %s</b> (%s%%)') : t('%s %s (%s%%)'),
+            $html ? '<b>%s %s</b> (%s%%)' : '%s %s (%s%%)',
             htmlspecialchars($this->getLabel()),
             $this->format($this->value),
             number_format($this->getPercentage(), 2)
@@ -444,7 +444,7 @@ class Perfdata
     public function toArray()
     {
         $parts = array(
-            $this->getLabel(),
+            'label' => $this->getLabel(),
             'value' => $this->format($this->getvalue()),
             'min' => isset($this->minValue) && !$this->isPercentage() ? $this->format($this->minValue) : '',
             'max' => isset($this->maxValue) && !$this->isPercentage() ? $this->format($this->maxValue) : '',

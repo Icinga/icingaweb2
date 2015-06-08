@@ -179,9 +179,25 @@ class Module
     protected $paneItems = array();
 
     /**
+     * A set of objects representing a searchUrl configuration
+     *
      * @var array
      */
     protected $searchUrls = array();
+
+    /**
+     * This module's user backends providing several authentication mechanisms
+     *
+     * @var array
+     */
+    protected $userBackends = array();
+
+    /**
+     * This module's user group backends
+     *
+     * @var array
+     */
+    protected $userGroupBackends = array();
 
     /**
      * Provide a search URL
@@ -201,6 +217,11 @@ class Module
         $this->searchUrls[] = $searchUrl;
     }
 
+    /**
+     * Return this module's search urls
+     *
+     * @return  array
+     */
     public function getSearchUrls()
     {
         $this->launchConfigScript();
@@ -600,7 +621,7 @@ class Module
      *
      * @return Config
      */
-    public function getConfig($file = null)
+    public function getConfig($file = 'config')
     {
         return $this->app->getConfig()->module($this->name, $file);
     }
@@ -703,6 +724,28 @@ class Module
     }
 
     /**
+     * Return this module's user backends
+     *
+     * @return  array
+     */
+    public function getUserBackends()
+    {
+        $this->launchConfigScript();
+        return $this->userBackends;
+    }
+
+    /**
+     * Return this module's user group backends
+     *
+     * @return  array
+     */
+    public function getUserGroupBackends()
+    {
+        $this->launchConfigScript();
+        return $this->userGroupBackends;
+    }
+
+    /**
      * Provide a named permission
      *
      * @param string $name Unique permission name
@@ -752,7 +795,7 @@ class Module
      * @param string $name   Unique tab name
      * @param string $config Tab config
      *
-     * @return self
+     * @return $this
      */
     protected function provideConfigTab($name, $config = array())
     {
@@ -769,7 +812,7 @@ class Module
      *
      * @param   string  $className      The name of the class
      *
-     * @return  self
+     * @return  $this
      */
     protected function provideSetupWizard($className)
     {
@@ -778,9 +821,37 @@ class Module
     }
 
     /**
+     * Provide a user backend capable of authenticating users
+     *
+     * @param   string  $identifier     The identifier of the new backend type
+     * @param   string  $className      The name of the class
+     *
+     * @return  $this
+     */
+    protected function provideUserBackend($identifier, $className)
+    {
+        $this->userBackends[strtolower($identifier)] = $className;
+        return $this;
+    }
+
+    /**
+     * Provide a user group backend
+     *
+     * @param   string  $identifier     The identifier of the new backend type
+     * @param   string  $className      The name of the class
+     *
+     * @return  $this
+     */
+    protected function provideUserGroupBackend($identifier, $className)
+    {
+        $this->userGroupBackends[strtolower($identifier)] = $className;
+        return $this;
+    }
+
+    /**
      * Register new namespaces on the autoloader
      *
-     * @return self
+     * @return $this
      */
     protected function registerAutoloader()
     {
@@ -802,7 +873,7 @@ class Module
     /**
      * Bind text domain for i18n
      *
-     * @return self
+     * @return $this
      */
     protected function registerLocales()
     {
@@ -849,7 +920,7 @@ class Module
      *
      * Add controller directory to mvc
      *
-     * @return self
+     * @return $this
      */
     protected function registerWebIntegration()
     {
@@ -872,7 +943,7 @@ class Module
     /**
      * Add routes for static content and any route added via addRoute() to the route chain
      *
-     * @return  self
+     * @return  $this
      * @see     addRoute()
      */
     protected function registerRoutes()
@@ -912,7 +983,7 @@ class Module
     /**
      * Run module bootstrap script
      *
-     * @return self
+     * @return $this
      */
     protected function launchRunScript()
     {
@@ -924,7 +995,7 @@ class Module
      *
      * @param string $file File to include
      *
-     * @return self
+     * @return $this
      */
     protected function includeScript($file)
     {
@@ -958,7 +1029,7 @@ class Module
      * @param string $class
      * @param string $key
      *
-     * @return self
+     * @return $this
      */
     protected function registerHook($name, $class, $key = null)
     {
@@ -977,7 +1048,7 @@ class Module
      * @param   string                                  $name   Name of the route
      * @param   Zend_Controller_Router_Route_Abstract   $route  Instance of the route
      *
-     * @return  self
+     * @return  $this
      * @see     registerRoutes()
      */
     protected function addRoute($name, Zend_Controller_Router_Route_Abstract $route)

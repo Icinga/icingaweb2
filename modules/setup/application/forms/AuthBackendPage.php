@@ -4,9 +4,9 @@
 namespace Icinga\Module\Setup\Forms;
 
 use Icinga\Web\Form;
-use Icinga\Forms\Config\Authentication\DbBackendForm;
-use Icinga\Forms\Config\Authentication\LdapBackendForm;
-use Icinga\Forms\Config\Authentication\ExternalBackendForm;
+use Icinga\Forms\Config\UserBackend\DbBackendForm;
+use Icinga\Forms\Config\UserBackend\LdapBackendForm;
+use Icinga\Forms\Config\UserBackend\ExternalBackendForm;
 use Icinga\Data\ConfigObject;
 
 /**
@@ -35,7 +35,7 @@ class AuthBackendPage extends Form
      *
      * @param   array   $config
      *
-     * @return  self
+     * @return  $this
      */
     public function setResourceConfig(array $config)
     {
@@ -105,7 +105,7 @@ class AuthBackendPage extends Form
         }
 
         if (false === isset($data['skip_validation']) || $data['skip_validation'] == 0) {
-            if ($this->config['type'] === 'ldap' && false === LdapBackendForm::isValidAuthenticationBackend($this)) {
+            if ($this->config['type'] === 'ldap' && false === LdapBackendForm::isValidUserBackend($this)) {
                 $this->addSkipValidationCheckbox();
                 return false;
             }

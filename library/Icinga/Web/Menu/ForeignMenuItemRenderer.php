@@ -9,15 +9,9 @@ use Icinga\Web\Url;
 /**
  * A menu item with a link that surpasses the regular navigation link behavior
  */
-class ForeignMenuItemRenderer implements MenuItemRenderer {
-
-    public function render(Menu $menu)
-    {
-        return sprintf(
-            '<a href="%s" target="_self">%s%s<span></span></a>',
-            $menu->getUrl() ?: '#',
-            $menu->getIcon() ? '<img aria-hidden="true" src="' . Url::fromPath($menu->getIcon()) . '" class="icon" /> ' : '',
-            htmlspecialchars($menu->getTitle())
-        );
-    }
+class ForeignMenuItemRenderer extends MenuItemRenderer
+{
+    protected $attributes = array(
+        'target' => '_self'
+    );
 }

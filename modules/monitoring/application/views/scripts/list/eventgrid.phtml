@@ -1,20 +1,24 @@
 <?php
 use Icinga\Data\Filter\Filter;
 use Icinga\Web\Widget\Chart\HistoryColorGrid;
-?>
 
-
-<? if (! $compact): ?>
-    <div class="controls">
-        <?= $this->tabs->render($this); ?>
-        <div class="fake-controls">
-            <?= $form ?>
-        </div>
-    </div>
-<? endif; ?>
-
+if (! $this->compact): ?>
+<div class="controls">
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
+  <?= $form; ?>
+</div>
+<?php endif ?>
 <div class="content" data-base-target="_next">
 <?php
+
+if (count($summary) === 0) {
+    echo $this->translate('No state changes in the selected time period.') . '</div>';
+    return;
+}
 
 $settings = array(
     'cnt_up' => array(
@@ -63,18 +67,15 @@ $to = intval($form->getValue('to', time()));
 if ($to - $from > 315360000) {
     $from = $to - 315360000;
 }
-$data = array();
 
-if (count($summary) === 0) {
-    echo $this->translate('No state changes in the selected time period.');
-}
+$data = array();
 foreach ($summary as $entry) {
     $day = $entry->day;
     $value = $entry->$column;
     $caption = sprintf(
         $settings[$column]['tooltip'],
         $value,
-        $this->dateFormat()->formatDate(strtotime($day))
+        $this->formatDate(strtotime($day))
     );
     $linkFilter = Filter::matchAll(
         Filter::expression('timestamp', '<', strtotime($day . ' 23:59:59')),

@@ -9,6 +9,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommand
 use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Web\Controller\MonitoredObjectController;
+use Icinga\Web\Hook;
 
 class Monitoring_ServiceController extends MonitoredObjectController
 {
@@ -20,22 +21,50 @@ class Monitoring_ServiceController extends MonitoredObjectController
 
     /**
      * Fetch the requested service from the monitoring backend
-     *
-     * @throws Zend_Controller_Action_Exception If the service was not found
      */
     public function init()
     {
-        $service = new Service($this->backend, $this->params->get('host'), $this->params->get('service'));
+        $service = new Service(
+            $this->backend, $this->params->getRequired('host'), $this->params->getRequired('service')
+        );
 
         $this->applyRestriction('monitoring/services/filter', $service);
 
         if ($service->fetch() === false) {
-            throw new Zend_Controller_Action_Exception($this->translate('Service not found'));
+            $this->httpNotFound($this->translate('Service not found'));
         }
         $this->object = $service;
         $this->createTabs();
         $this->getTabs()->activate('service');
     }
+
+    /**
+     * Get service actions from hook
+     *
+     * @return array
+     */
+    protected function getServiceActions()
+    {
+        $urls = array();
+
+        foreach (Hook::all('Monitoring\\ServiceActions') as $hook) {
+            foreach ($hook->getActionsForService($this->object) as $id => $url) {
+                $urls[$id] = $url;
+            }
+        }
+
+        return $urls;
+    }
+
+    /**
+     * Show a service
+     */
+    public function showAction()
+    {
+        $this->view->actions = $this->getServiceActions();
+        parent::showAction();
+    }
+
 
     /**
      * Acknowledge a service problem

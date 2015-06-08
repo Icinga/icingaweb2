@@ -115,7 +115,7 @@ class Axis implements Drawable
      *
      * @param   AxisUnit $unit      The AxisUnit implementation to use for the x axis
      *
-     * @return  self                This Axis Object
+     * @return  $this                This Axis Object
      * @see     Axis::CalendarUnit
      * @see     Axis::LinearUnit
      */
@@ -130,7 +130,7 @@ class Axis implements Drawable
      *
      * @param   AxisUnit $unit      The AxisUnit implementation to use for the y axis
      *
-     * @return  self                This Axis Object
+     * @return  $this                This Axis Object
      * @see     Axis::CalendarUnit
      * @see     Axis::LinearUnit
      */
@@ -331,7 +331,7 @@ class Axis implements Drawable
      *
      * @param   string $label   The label to use for the y axis
      *
-     * @return  self            Fluid interface
+     * @return  $this            Fluid interface
      */
     public function setYLabel($label)
     {
@@ -346,7 +346,7 @@ class Axis implements Drawable
     *
     * @param    int $xMin   The minimum value to use for the x axis
     *
-    * @return   self        Fluid interface
+    * @return   $this        Fluid interface
     */
     public function setXMin($xMin)
     {
@@ -361,7 +361,7 @@ class Axis implements Drawable
      *
      * @param   int $yMin   The minimum value to use for the x axis
      *
-     * @return  self        Fluid interface
+     * @return  $this        Fluid interface
      */
     public function setYMin($yMin)
     {
@@ -376,7 +376,7 @@ class Axis implements Drawable
      *
      * @param   int $xMax   The minimum value to use for the x axis
      *
-     * @return  self        Fluid interface
+     * @return  $this        Fluid interface
      */
     public function setXMax($xMax)
     {
@@ -391,7 +391,7 @@ class Axis implements Drawable
      *
      * @param   int $yMax   The minimum value to use for the y axis
      *
-     * @return  self        Fluid interface
+     * @return  $this        Fluid interface
      */
     public function setYMax($yMax)
     {

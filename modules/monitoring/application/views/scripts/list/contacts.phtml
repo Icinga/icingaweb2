@@ -1,24 +1,27 @@
+<?php if (! $this->compact): ?>
 <div class="controls">
-    <?= $this->tabs ?>
-    <div style="margin: 1em">
-        <?= $this->sortControl->render($this); ?>
-    </div>
-    <?= $this->paginationControl($contacts, null, null, array('preserve' => $this->preserve)); ?>
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
-
+<?php endif ?>
 <div data-base-target="_next" class="content contacts">
-    <?php
-    if (count($contacts) === 0) {
-        echo $this->translate('No contacts matching the filter');
-        return;
-    }
-    foreach ($contacts as $contact): ?>
+<?php
+
+if (count($contacts) === 0) {
+    echo $this->translate('No contacts found matching the filter') . '</div>';
+    return;
+}
+?>
+<?php foreach ($contacts as $contact): ?>
         <div class="contact">
             <?= $this->img('/static/gravatar', array('email' => $contact->contact_email)); ?>
             <strong><?= $this->qlink(
                 $contact->contact_name,
                 'monitoring/show/contact',
-                array('contact' => $contact->contact_name),
+                array('contact_name' => $contact->contact_name),
                 array('title' => sprintf(
                     $this->translate('Show detailed information about %s'),
                     $contact->contact_alias

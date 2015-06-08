@@ -3,28 +3,27 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
-use Countable;
+use IteratorAggregate;
+use Icinga\Data\QueryInterface;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterMatch;
-use Icinga\Data\Browsable;
 use Icinga\Data\PivotTable;
-use Icinga\Data\Sortable;
 use Icinga\Data\ConnectionInterface;
-use Icinga\Data\Filterable;
 use Icinga\Exception\QueryException;
 use Icinga\Web\Request;
 use Icinga\Web\Url;
+use Icinga\Module\Monitoring\Backend\Ido\Query\IdoQuery;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
 /**
  * A read-only view of an underlying query
  */
-abstract class DataView implements Browsable, Countable, Filterable, Sortable
+abstract class DataView implements QueryInterface, IteratorAggregate
 {
     /**
      * The query used to populate the view
      *
-     * @var \Icinga\Data\SimpleQuery
+     * @var IdoQuery
      */
     protected $query;
 
@@ -57,6 +56,16 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
      */
     public function init()
     {
+    }
+
+    /**
+     * Return a iterator for all rows of the result set
+     *
+     * @return  IdoQuery
+     */
+    public function getIterator()
+    {
+        return $this->getQuery();
     }
 
     /**
@@ -367,6 +376,16 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
     }
 
     /**
+     * Get the view's search columns
+     *
+     * @return string[]
+     */
+    public function getSearchColumns()
+    {
+        return array();
+    }
+
+    /**
      * @deprecated(EL): Only use DataView::applyFilter() for applying filter because all other functions are missing
      * column validation.
      */
@@ -378,28 +397,118 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
     }
 
     /**
-     * Paginate data
-     *
-     * @param   int $itemsPerPage   Number of items per page
-     * @param   int $pageNumber     Current page number
-     *
-     * @return  Zend_Paginator
-     */
-    public function paginate($itemsPerPage = null, $pageNumber = null)
-    {
-        if (! $this->isSorted) {
-            $this->order();
-        }
-        return $this->query->paginate($itemsPerPage, $pageNumber);
-    }
-
-    /**
      * Count result set
      *
      * @return int
      */
     public function count()
     {
-        return count($this->query);
+        return $this->query->count();
+    }
+
+    /**
+     * Set a limit count and offset
+     *
+     * @param   int $count  Number of rows to return
+     * @param   int $offset Start returning after this many rows
+     *
+     * @return  self
+     */
+    public function limit($count = null, $offset = null)
+    {
+        $this->query->limit($count, $offset);
+        return $this;
+    }
+
+    /**
+     * Whether a limit is set
+     *
+     * @return bool
+     */
+    public function hasLimit()
+    {
+        return $this->query->hasLimit();
+    }
+
+    /**
+     * Get the limit if any
+     *
+     * @return int|null
+     */
+    public function getLimit()
+    {
+        return $this->query->getLimit();
+    }
+
+    /**
+     * Whether an offset is set
+     *
+     * @return bool
+     */
+    public function hasOffset()
+    {
+        return $this->query->hasOffset();
+    }
+
+    /**
+     * Get the offset if any
+     *
+     * @return int|null
+     */
+    public function getOffset()
+    {
+        return $this->query->getOffset();
+    }
+
+    /**
+     * Retrieve an array containing all rows of the result set
+     *
+     * @return  array
+     */
+    public function fetchAll()
+    {
+        return $this->getQuery()->fetchAll();
+    }
+
+    /**
+     * Fetch the first row of the result set
+     *
+     * @return  mixed
+     */
+    public function fetchRow()
+    {
+        return $this->getQuery()->fetchRow();
+    }
+
+    /**
+     * Fetch the first column of all rows of the result set as an array
+     *
+     * @return  array
+     */
+    public function fetchColumn()
+    {
+        return $this->getQuery()->fetchColumn();
+    }
+
+    /**
+     * Fetch the first column of the first row of the result set
+     *
+     * @return  string
+     */
+    public function fetchOne()
+    {
+        return $this->getQuery()->fetchOne();
+    }
+
+    /**
+     * Fetch all rows of the result set as an array of key-value pairs
+     *
+     * The first column is the key, the second column is the value.
+     *
+     * @return  array
+     */
+    public function fetchPairs()
+    {
+        return $this->getQuery()->fetchPairs();
     }
 }

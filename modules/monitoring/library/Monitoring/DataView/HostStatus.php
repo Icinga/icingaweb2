@@ -21,7 +21,6 @@ class HostStatus extends DataView
     public function getColumns()
     {
         return array(
-            'host',
             'host_name',
             'host_display_name',
             'host_alias',
@@ -95,10 +94,11 @@ class HostStatus extends DataView
             ),
             'host_severity' => array(
                 'columns' => array(
-                    'host_severity DESC',
+                    'host_severity',
                     'host_last_state_change DESC',
                     'host_display_name ASC'
-                )
+                ),
+                'order' => self::SORT_DESC
             ),
             'host_address' => array(
                 'columns' => array(
@@ -114,7 +114,7 @@ class HostStatus extends DataView
 
     public function getFilterColumns()
     {
-        return array('hostgroup', 'service_problems', 'servicegroup');
+        return array('host', 'hostgroup', 'hostgroup_name', 'service', 'servicegroup', 'servicegroup_name');
     }
 
     public function isValidFilterTarget($column)
@@ -125,5 +125,13 @@ class HostStatus extends DataView
             return true;
         }
         return parent::isValidFilterTarget($column);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('host', 'host_display_name');
     }
 }

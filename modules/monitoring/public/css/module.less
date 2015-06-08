@@ -32,7 +32,6 @@ p.pluginoutput {
 }
 
 div.pluginoutput {
-  border-right: solid 5px @colorPetrol;
   overflow: auto;
   color: black;
   margin-bottom: 1em;
@@ -91,14 +90,18 @@ div.contacts div.notification-periods {
   margin-top: 0.5em;
 }
 
-div.tinystatesummary {
+.tinystatesummary {
   .page-header();
   font-size: 1em;
+  margin-bottom: 0.5em;
+
   .badges {
     display: inline-block;
     margin-bottom: 4px;
     margin-left: 1em;
+    height: auto;
   }
+
   .state > a {
     color: white;
     font-size: 0.8em;
@@ -128,12 +131,24 @@ span.state.ok {
     background: @colorOk;
 }
 
+span.state.up {
+  background: @colorOk;
+}
+
 span.state.critical {
     background: @colorCritical;
 }
 
+span.state.down {
+  background: @colorCritical;
+}
+
 span.state.handled.critical {
     background: @colorCriticalHandled;
+}
+
+span.state.handled.down {
+  background: @colorCriticalHandled;
 }
 
 span.state.warning {
@@ -196,7 +211,7 @@ div.selection-info {
 .optionbox label {
   max-width: 6.5em;
   text-align: left;
-  vertical-align: middle;
+  vertgical-align: middle;
   margin-right: 0em;
 }
 
@@ -211,4 +226,19 @@ div.selection-info {
 hr.command-separator {
   border: none;
   border-bottom: 2px solid @colorPetrol;
+}
+
+div.backend-not-running {
+  background: @colorCritical;
+  color: white;
+  text-align: center;
+  padding: 0.1em;
+}
+
+td.state {
+  .time-ago,
+  .time-since,
+  .time-until {
+    text-transform: capitalize;
+  }
 }

@@ -27,6 +27,10 @@ class LdapResourceForm extends Form
      */
     public function createElements(array $formData)
     {
+        $defaultPort = ! array_key_exists('encryption', $formData) || $formData['encryption'] !== Connection::LDAPS
+            ? 389
+            : 636;
+
         $this->addElement(
             'text',
             'name',
@@ -52,10 +56,11 @@ class LdapResourceForm extends Form
             'number',
             'port',
             array(
-                'required'      => true,
-                'label'         => $this->translate('Port'),
-                'description'   => $this->translate('The port of the LDAP server to use for authentication'),
-                'value'         => 389
+                'required'          => true,
+                'preserveDefault'   => true,
+                'label'             => $this->translate('Port'),
+                'description'       => $this->translate('The port of the LDAP server to use for authentication'),
+                'value'             => $defaultPort
             )
         );
         $this->addElement(
@@ -108,16 +113,17 @@ class LdapResourceForm extends Form
             'text',
             'bind_dn',
             array(
-                'required'      => true,
                 'label'         => $this->translate('Bind DN'),
-                'description'   => $this->translate('The user dn to use for querying the ldap server')
+                'description'   => $this->translate(
+                    'The user dn to use for querying the ldap server. Leave the dn and password empty for attempting'
+                    . ' an anonymous bind'
+                )
             )
         );
         $this->addElement(
             'password',
             'bind_pw',
             array(
-                'required'          => true,
                 'renderPassword'    => true,
                 'label'             => $this->translate('Bind Password'),
                 'description'       => $this->translate('The password to use for querying the ldap server')

@@ -95,7 +95,7 @@ class SessionNamespace implements IteratorAggregate
      * @param   string      $key        Name of value
      * @param   mixed       $value      Value to set
      *
-     * @return  self
+     * @return  $this
      */
     public function set($key, $value)
     {

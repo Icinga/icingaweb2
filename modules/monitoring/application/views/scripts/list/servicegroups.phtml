@@ -1,24 +1,20 @@
-<?php if ($this->compact): ?>
-<div class="content">
-<?php else: ?>
+<?php if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs ?>
-  <div style="margin: 1em;" class="dontprint">
-    <?= $this->translate('Sort by'); ?> <?= $this->sortControl->render($this); ?>
-  </div>
-  <?= $this->widget('limiter')->setMaxLimit(count($servicegroups)); ?>
-  <?= $this->paginationControl($servicegroups, null, null, array('preserve' => $this->preserve)); ?>
-</div>
-<div class="content">
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
   <?= $this->filterEditor; ?>
+</div>
 <?php endif ?>
-  <?php
-    if (count($servicegroups) === 0) {
-      echo $this->translate('No service groups matching the filter');
-      echo '</div>';
-      return;
-    }
-  ?>
+<div class="content">
+<?php
+
+if (count($servicegroups) === 0) {
+    echo $this->translate('No servicegroups found matching the filter') . '</div>';
+    return;
+}
+?>
   <table class="groupview" data-base-target="_next">
     <thead>
       <th><?= $this->translate('Last Problem'); ?></th>
@@ -28,61 +24,61 @@
     </thead>
     <tbody>
     <?php foreach ($servicegroups as $s): ?>
-      <tr href="<?= $this->href('monitoring/list/services', array('servicegroup' => $s->servicegroup)); ?>">
+      <tr href="<?= $this->href('monitoring/list/services', array('servicegroup_name' => $s->servicegroup_name)); ?>">
        <?php if ($s->services_critical_last_state_change_unhandled): ?>
         <td class="state change critical unhandled">
           <strong><?= $this->translate('CRITICAL'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_critical_last_state_change_unhandled); ?>
+          <?= $this->timeSince($s->services_critical_last_state_change_unhandled); ?>
         </td>
        <?php elseif ($s->services_unknown_last_state_change_unhandled): ?>
         <td class="state change unknown unhandled">
           <strong><?= $this->translate('UNKNOWN'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_unknown_last_state_change_unhandled); ?>
+          <?= $this->timeSince($s->services_unknown_last_state_change_unhandled); ?>
         </td>
        <?php elseif ($s->services_warning_last_state_change_unhandled): ?>
         <td class="state change warning unhandled">
           <strong><?= $this->translate('WARNING'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_warning_last_state_change_unhandled); ?>
+          <?= $this->timeSince($s->services_warning_last_state_change_unhandled); ?>
         </td>
        <?php elseif ($s->services_critical_last_state_change_handled): ?>
         <td class="state change critical">
           <strong><?= $this->translate('CRITICAL'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_critical_last_state_change_handled); ?>
+          <?= $this->timeSince($s->services_critical_last_state_change_handled); ?>
         </td>
        <?php elseif ($s->services_unknown_last_state_change_handled): ?>
         <td class="state change unknown">
           <strong><?= $this->translate('UNKNOWN'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_unknown_last_state_change_handled); ?>
+          <?= $this->timeSince($s->services_unknown_last_state_change_handled); ?>
         </td>
        <?php elseif ($s->services_warning_last_state_change_handled): ?>
         <td class="state change warning">
           <strong><?= $this->translate('WARNING'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_warning_last_state_change_handled); ?>
+          <?= $this->timeSince($s->services_warning_last_state_change_handled); ?>
         </td>
        <?php elseif ($s->services_ok_last_state_change): ?>
         <td class="state change ok">
           <strong><?= $this->translate('OK'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_ok_last_state_change); ?>
+          <?= $this->timeSince($s->services_ok_last_state_change); ?>
         </td>
        <?php else: ?>
         <td class="state change pending">
           <strong><?= $this->translate('PENDING'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_pending_last_state_change); ?>
+          <?= $this->timeSince($s->services_pending_last_state_change); ?>
         </td>
        <?php endif ?>
         <td class="groupname">
           <?= $this->qlink(
             $s->servicegroup_alias,
             'monitoring/list/services',
-            array('servicegroup' => $s->servicegroup),
+            array('servicegroup_name' => $s->servicegroup_name),
             array('title' => sprintf($this->translate('List all services in the group "%s"'), $s->servicegroup_alias))
           ); ?>
         </td>
@@ -96,9 +92,9 @@
               $s->services_ok,
               'monitoring/list/services',
               array(
-                'service_state' => 0,
-                'servicegroup'  => $s->servicegroup,
-                'sort'          => 'service_severity'
+                'service_state'     => 0,
+                'servicegroup_name' => $s->servicegroup_name,
+                'sort'              => 'service_severity'
               ),
               array(
                 'title' => sprintf(
@@ -124,7 +120,7 @@
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'servicegroup'          => $s->servicegroup,
+                'servicegroup_name'     => $s->servicegroup_name,
                 'sort'                  => 'service_severity'
               ),
               array(
@@ -148,7 +144,7 @@
                 array(
                   'service_state'     => 2,
                   'service_handled'   => 1,
-                  'servicegroup'      => $s->servicegroup,
+                  'servicegroup_name' => $s->servicegroup_name,
                   'sort'              => 'service_severity'
                 ),
                 array(
@@ -178,7 +174,7 @@
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'servicegroup'          => $s->servicegroup,
+                'servicegroup_name'     => $s->servicegroup_name,
                 'sort'                  => 'service_severity'
               ),
               array(
@@ -202,7 +198,7 @@
                 array(
                   'service_state'     => 3,
                   'service_handled'   => 1,
-                  'servicegroup'      => $s->servicegroup,
+                  'servicegroup_name' => $s->servicegroup_name,
                   'sort'              => 'service_severity'
                 ),
                 array(
@@ -232,7 +228,7 @@
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'servicegroup'          => $s->servicegroup,
+                'servicegroup_name'     => $s->servicegroup_name,
                 'sort'                  => 'service_severity'
               ),
               array(
@@ -256,7 +252,7 @@
                 array(
                     'service_state'     => 1,
                     'service_handled'   => 1,
-                    'servicegroup'      => $s->servicegroup,
+                    'servicegroup_name' => $s->servicegroup_name,
                     'sort'              => 'service_severity'
                 ),
                 array(
@@ -282,9 +278,9 @@
               $s->services_pending,
               'monitoring/list/services',
               array(
-                'service_state' => 99,
-                'servicegroup'  => $s->servicegroup,
-                'sort'          => 'service_severity'
+                'service_state'     => 99,
+                'servicegroup_name' => $s->servicegroup_name,
+                'sort'              => 'service_severity'
               ),
               array(
                 'title' => sprintf(

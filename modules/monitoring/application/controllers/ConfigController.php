@@ -4,7 +4,7 @@
 use Icinga\Web\Notification;
 use Icinga\Data\ResourceFactory;
 use Icinga\Forms\ConfirmRemovalForm;
-use Icinga\Web\Controller\ModuleActionController;
+use Icinga\Web\Controller;
 use Icinga\Module\Monitoring\Forms\Config\BackendConfigForm;
 use Icinga\Module\Monitoring\Forms\Config\InstanceConfigForm;
 use Icinga\Module\Monitoring\Forms\Config\SecurityConfigForm;
@@ -12,7 +12,7 @@ use Icinga\Module\Monitoring\Forms\Config\SecurityConfigForm;
 /**
  * Configuration controller for editing monitoring resources
  */
-class Monitoring_ConfigController extends ModuleActionController
+class Monitoring_ConfigController extends Controller
 {
     /**
      * Display a list of available backends and instances

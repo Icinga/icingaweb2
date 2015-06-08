@@ -1,12 +1,13 @@
+<?php if (! $this->compact): ?>
 <div class="controls">
-    <?= $this->tabs ?>
-    <div style="margin: 1em;" class="dontprint">
+    <?= $this->tabs; ?>
+    <div style="float: right;" class="dontprint">
         <?= $intervalBox; ?>
     </div>
-    <?= $this->widget('limiter') ?>
-    <?= $this->paginationControl($notifications, null, null, array('preserve' => $this->preserve)) ?>
+    <?= $this->limiter; ?>
+    <?= $this->paginator; ?>
 </div>
-
+<?php endif ?>
 <div class="content alertsummary">
     <!-- <h1><?= $this->translate('Alert summary'); ?></h1> -->
 
@@ -59,8 +60,7 @@
             <div class="alertsummary-flex">
                 <?= $this->partial('list/notifications.phtml', array(
                     'notifications' => $this->recentAlerts,
-                    'compact'       => true,
-                    'inline'        => true
+                    'compact'       => true
                 )); ?>
             </div>
         </div>
@@ -71,8 +71,7 @@
         <div class="alertsummary-flex">
             <?= $this->partial('list/notifications.phtml', array(
                 'notifications' => $this->notifications,
-                'compact'       => true,
-                'inline'        => true
+                'compact'       => true
             )); ?>
         </div>
     </div>

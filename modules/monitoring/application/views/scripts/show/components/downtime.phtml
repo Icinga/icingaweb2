@@ -47,25 +47,39 @@ foreach ($object->downtimes as $downtime) {
     ) : $this->escape($downtime->comment);
 
     if ((bool) $downtime->is_in_effect) {
-        $state = 'in downtime since ' . $this->timeSince($downtime->start);
+        $state = sprintf(
+            $this->translate('in downtime %s', 'Last format parameter represents the time in downtime'),
+            $this->timeSince($downtime->start)
+        );
     } else {
         if ((bool) $downtime->is_fixed) {
-            $state = 'scheduled ' . $this->timeUntil($downtime->start);
+            $state = sprintf(
+                $this->translate('scheduled %s', 'Last format parameter represents the time scheduled'),
+                $this->timeUntil($downtime->start)
+            );
         } else {
-            $state = 'scheduled flexible ' . $this->timeUntil($downtime->start);
+            $state = sprintf(
+                $this->translate('scheduled flexible %s', 'Last format parameter represents the time scheduled'),
+                $this->timeUntil($downtime->start)
+            );
         }
     }
 
     ?>
     <tr>
-        <th><?= $this->escape($downtime->author); ?></th>
+        <th><?= $this->escape($downtime->author_name); ?> (<?= $this->timeAgo($downtime->entry_time); ?>)</th>
         <td data-base-target="_self">
             <?php if (isset($delDowntimeForm)) { // Form is unset if the current user lacks the respective permission
                 $delDowntimeForm = clone $delDowntimeForm;
-                $delDowntimeForm->populate(array('downtime_id' => $downtime->id));
+                $delDowntimeForm->populate(
+                    array(
+                        'downtime_id' => $downtime->id,
+                        'downtime_is_service' => $object->getType() === $object::TYPE_SERVICE
+                    )
+                );
                 echo $delDowntimeForm;
             } ?>
-            <span class="sr-only"><?= $this->translate('Downtime'); ?></span><?= $state; ?><?= str_replace(array('\r\n', '\n'), '<br>', $commentText); ?>
+            <span class="sr-only"><?= $this->translate('Downtime'); ?></span><?= $state; ?> - <?= str_replace(array('\r\n', '\n'), '<br>', $commentText); ?>
         </td>
     </tr>
 <?php } // endforeach ?>

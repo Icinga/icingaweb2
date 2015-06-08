@@ -71,7 +71,7 @@ class RemoteCommandFile implements CommandTransportInterface
      *
      * @param   string $host
      *
-     * @return  self
+     * @return  $this
      */
     public function setHost($host)
     {
@@ -94,7 +94,7 @@ class RemoteCommandFile implements CommandTransportInterface
      *
      * @param   int $port
      *
-     * @return  self
+     * @return  $this
      */
     public function setPort($port)
     {
@@ -117,7 +117,7 @@ class RemoteCommandFile implements CommandTransportInterface
      *
      * @param   string $user
      *
-     * @return  self
+     * @return  $this
      */
     public function setUser($user)
     {
@@ -142,7 +142,7 @@ class RemoteCommandFile implements CommandTransportInterface
      *
      * @param   string $path
      *
-     * @return  self
+     * @return  $this
      */
     public function setPath($path)
     {
@@ -201,8 +201,7 @@ class RemoteCommandFile implements CommandTransportInterface
         exec($ssh, $output, $status);
         if ($status !== 0) {
             throw new TransportException(
-                'Can\'t send external Icinga command "%s": %s',
-                $ssh,
+                'Can\'t send external Icinga command: %s',
                 implode(' ', $output)
             );
         }

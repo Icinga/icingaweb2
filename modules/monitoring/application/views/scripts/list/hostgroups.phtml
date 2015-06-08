@@ -1,112 +1,263 @@
-<?php if ($this->compact): ?>
-<div class="content">
-<?php else: ?>
+<?php
+use Icinga\Module\Monitoring\Object\Host;
+
+if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs ?>
-  <div style="margin: 1em;" class="dontprint">
-    <?= $this->translate('Sort by'); ?> <?= $this->sortControl->render($this); ?>
-  </div>
-  <?= $this->widget('limiter')->setMaxLimit(count($hostgroups)); ?>
-  <?= $this->paginationControl($hostgroups, null, null, array('preserve' => $this->preserve)); ?>
-</div>
-<div class="content">
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
   <?= $this->filterEditor; ?>
+</div>
 <?php endif ?>
-  <?php
-    if (count($hostgroups) === 0) {
-      echo $this->translate('No host groups matching the filter');
-      echo '</div>';
-      return;
-    }
-  ?>
-  <table class="groupview" data-base-target="_next">
+<div class="content">
+<?php
+
+if (count($hostgroups) === 0) {
+    echo $this->translate('No hostgroups found matching the filter') . '</div>';
+    return;
+}
+?>
+  <table class="groupview action" data-base-target="_next">
     <thead>
       <th><?= $this->translate('Last Problem'); ?></th>
       <th><?= $this->translate('Host Group'); ?></th>
+      <th><?= $this->translate('Total Hosts'); ?></th>
+      <th><?= $this->translate('Host States'); ?></th>
       <th><?= $this->translate('Total Services'); ?></th>
       <th><?= $this->translate('Service States'); ?></th>
     </thead>
     <tbody>
-    <?php foreach ($hostgroups as $h): ?>
-      <tr href="<?= $this->href('monitoring/list/hosts', array('hostgroup' => $h->hostgroup)) ?>">
-       <?php if ($h->services_critical_last_state_change_unhandled): ?>
-        <td class="state change critical unhandled">
-          <strong><?= $this->translate('CRITICAL'); ?></strong>
+    <?php foreach ($hostgroups as $h):
+        if ($h->hosts_down_unhandled) {
+            $handled = false;
+            $state = Host::STATE_DOWN;
+            $lastStateChange = $h->hosts_down_last_state_change_unhandled;
+        } elseif ($h->hosts_unreachable_unhandled) {
+            $handled = false;
+            $state = Host::STATE_UNREACHABLE;
+            $lastStateChange = $h->hosts_unreachable_last_state_change_unhandled;
+        } else {
+            $handled = true;
+            if ($h->hosts_down_handled) {
+                $state = Host::STATE_DOWN;
+                $lastStateChange = $h->hosts_down_last_state_change_handled;
+            } elseif ($h->hosts_unreachable_handled) {
+                $state = Host::STATE_UNREACHABLE;
+                $lastStateChange = $h->hosts_unreachable_last_state_change_handled;
+            } elseif ($h->hosts_up) {
+                $state = Host::STATE_UP;
+                $lastStateChange = $h->hosts_up_last_state_change;
+            } else {
+                $state = Host::STATE_PENDING;
+                $lastStateChange = $h->hosts_pending_last_state_change;
+            }
+        }
+    ?>
+      <tr class="state <?= Host::getStateText($state) ?><?= $handled ? ' handled' : '' ?>" href="<?=
+        $this->href('monitoring/list/hosts', array('hostgroup_name' => $h->hostgroup_name))
+      ?>">
+        <td class="state">
+          <strong><?= Host::getStateText($state, true); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($h->services_critical_last_state_change_unhandled); ?>
+          <?= $this->timeSince($lastStateChange, $this->compact); ?>
         </td>
-       <?php elseif ($h->services_unknown_last_state_change_unhandled): ?>
-        <td class="state change unknown unhandled">
-          <strong><?= $this->translate('UNKNOWN'); ?></strong>
-          <br>
-          <?= $this->prefixedTimeSince($h->services_unknown_last_state_change_unhandled); ?>
-        </td>
-       <?php elseif ($h->services_warning_last_state_change_unhandled): ?>
-        <td class="state change warning unhandled">
-          <strong><?= $this->translate('WARNING'); ?></strong>
-          <br>
-          <?= $this->prefixedTimeSince($h->services_warning_last_state_change_unhandled); ?>
-        </td>
-       <?php elseif ($h->services_critical_last_state_change_handled): ?>
-        <td class="state change critical">
-          <strong><?= $this->translate('CRITICAL'); ?></strong>
-          <br>
-          <?= $this->prefixedTimeSince($h->services_critical_last_state_change_handled); ?>
-        </td>
-       <?php elseif ($h->services_unknown_last_state_change_handled): ?>
-        <td class="state change unknown">
-          <strong><?= $this->translate('UNKNOWN'); ?></strong>
-          <br>
-          <?= $this->prefixedTimeSince($h->services_unknown_last_state_change_handled); ?>
-        </td>
-       <?php elseif ($h->services_warning_last_state_change_handled): ?>
-        <td class="state change warning">
-          <strong><?= $this->translate('WARNING'); ?></strong>
-          <br>
-          <?= $this->prefixedTimeSince($h->services_warning_last_state_change_handled); ?>
-        </td>
-       <?php elseif ($h->services_ok_last_state_change): ?>
-        <td class="state change ok">
-          <strong><?= $this->translate('OK'); ?></strong>
-          <br>
-          <?= $this->prefixedTimeSince($h->services_ok_last_state_change); ?>
-        </td>
-       <?php else: ?>
-        <td class="state change pending">
-          <strong><?= $this->translate('PENDING'); ?></strong>
-          <br>
-          <?= $this->prefixedTimeSince($h->services_pending_last_state_change); ?>
-        </td>
-       <?php endif ?>
         <td class="groupname">
           <?= $this->qlink(
             $h->hostgroup_alias,
             'monitoring/list/hosts',
-            array('hostgroup' => $h->hostgroup),
+            array('hostgroup_name' => $h->hostgroup_name),
             array('title' => sprintf($this->translate('List all hosts in the group "%s"'), $h->hostgroup_alias))
           ); ?>
         </td>
         <td class="total">
           <?= $this->qlink(
+            $h->hosts_total,
+            'monitoring/list/hosts',
+            array('hostgroup_name' => $h->hostgroup_name),
+            array('title' => sprintf(
+                $this->translate('List all hosts in host group "%s"'),
+                $h->hostgroup_alias
+            ))
+          ); ?>
+        </td>
+        <td>
+        <?php if ($h->hosts_up): ?>
+          <span class="state ok">
+            <?= $this->qlink(
+              $h->hosts_up,
+              'monitoring/list/hosts',
+              array(
+                'host_state'        => 0,
+                'hostgroup_name'    => $h->hostgroup_name,
+                'sort'              => 'host_severity'
+              ),
+              array(
+                'title' => sprintf(
+                  $this->translatePlural(
+                    'List %u host that is currently in state UP in the host group "%s"',
+                    'List %u hosts which are currently in state UP in the host group "%s"',
+                    $h->hosts_up
+                  ),
+                  $h->hosts_up,
+                  $h->hostgroup_alias
+                )
+              )
+            ); ?>
+          </span>
+        <?php endif ?>
+        <?php if ($h->hosts_down_unhandled): ?>
+          <span class="state critical">
+            <?= $this->qlink(
+              $h->hosts_down_unhandled,
+              'monitoring/list/hosts',
+              array(
+                'host_state'        => 1,
+                'host_acknowledged' => 0,
+                'host_in_downtime'  => 0,
+                'hostgroup_name'    => $h->hostgroup_name,
+                'sort'              => 'host_severity'
+              ),
+              array(
+                'title' => sprintf(
+                  $this->translatePlural(
+                    'List %u host that is currently in state DOWN in the host group "%s"',
+                    'List %u hosts which are currently in state DOWN in the host group "%s"',
+                    $h->hosts_down_unhandled
+                  ),
+                  $h->hosts_down_unhandled,
+                  $h->hostgroup_alias
+                )
+              )
+            ); ?>
+        <?php endif ?>
+          <?php if ($h->hosts_down_handled): ?>
+            <span class="state critical handled">
+              <?= $this->qlink(
+                $h->hosts_down_handled,
+                'monitoring/list/hosts',
+                array(
+                  'host_state'      => 1,
+                  'host_handled'    => 1,
+                  'hostgroup_name'  => $h->hostgroup_name,
+                  'sort'            => 'host_severity'
+                ),
+                array(
+                  'title' => sprintf(
+                    $this->translatePlural(
+                      'List %u host that is currently in state DOWN (Acknowledged) in the host group "%s"',
+                      'List %u hosts which are currently in state DOWN (Acknowledged) in the host group "%s"',
+                      $h->hosts_down_handled
+                    ),
+                    $h->hosts_down_handled,
+                    $h->hostgroup_alias
+                  )
+                )
+              ); ?>
+            </span>
+          <?php endif ?>
+        <?php if ($h->hosts_down_unhandled): ?>
+          </span>
+        <?php endif ?>
+        <?php if ($h->hosts_unreachable_unhandled): ?>
+          <span class="state unknown">
+            <?= $this->qlink(
+              $h->hosts_unreachable_unhandled,
+              'monitoring/list/hosts',
+              array(
+                'host_state'        => 2,
+                'host_acknowledged' => 0,
+                'host_in_downtime'  => 0,
+                'hostgroup_name'    => $h->hostgroup_name,
+                'sort'              => 'host_severity'
+              ),
+              array(
+                'title' => sprintf(
+                  $this->translatePlural(
+                    'List %u host that is currently in state UNREACHABLE in the host group "%s"',
+                    'List %u hosts which are currently in state UNREACHABLE in the host group "%s"',
+                    $h->hosts_unreachable_unhandled
+                  ),
+                  $h->hosts_unreachable_unhandled,
+                  $h->hostgroup_alias
+                )
+              )
+            ); ?>
+        <?php endif ?>
+          <?php if ($h->hosts_unreachable_handled): ?>
+            <span class="state unknown handled">
+              <?= $this->qlink(
+                $h->hosts_unreachable_handled,
+                'monitoring/list/hosts',
+                array(
+                  'host_state'      => 2,
+                  'host_handled'    => 1,
+                  'hostgroup_name'  => $h->hostgroup_name,
+                  'sort'            => 'host_severity'
+                ),
+                array(
+                  'title' => sprintf(
+                    $this->translatePlural(
+                      'List %u host that is currently in state UNREACHABLE (Acknowledged) in the host group "%s"',
+                      'List %u hosts which are currently in state UNREACHABLE (Acknowledged) in the host group "%s"',
+                      $h->hosts_unreachable_handled
+                    ),
+                    $h->hosts_unreachable_handled,
+                    $h->hostgroup_alias
+                  )
+                )
+              ); ?>
+            </span>
+          <?php endif ?>
+        <?php if ($h->hosts_unreachable_unhandled): ?>
+          </span>
+        <?php endif ?>
+        <?php if ($h->hosts_pending): ?>
+          <span class="state pending">
+            <?= $this->qlink(
+              $h->hosts_pending,
+              'monitoring/list/hosts',
+              array(
+                'host_state'        => 99,
+                'hostgroup_name'    => $h->hostgroup_name,
+                'sort'              => 'host_severity'
+              ),
+              array(
+                'title' => sprintf(
+                  $this->translatePlural(
+                    'List %u host that is currently in state PENDING in the host group "%s"',
+                    'List %u hosts which are currently in state PENDING in the host group "%s"',
+                    $h->hosts_pending
+                  ),
+                  $h->hosts_pending,
+                  $h->hostgroup_alias
+                )
+              )
+            ); ?>
+          </span>
+        <?php endif ?>
+        </td>
+        <td class="total">
+          <?= $this->qlink(
             $h->services_total,
             'monitoring/list/services',
-            array('hostgroup' => $h->hostgroup),
+            array('hostgroup_name' => $h->hostgroup_name),
             array('title' => sprintf(
                 $this->translate('List all services of all hosts in host group "%s"'),
                 $h->hostgroup_alias
             ))
           ); ?>
         </td>
-        <td class="state">
+        <td>
         <?php if ($h->services_ok): ?>
           <span class="state ok">
             <?= $this->qlink(
               $h->services_ok,
               'monitoring/list/services',
               array(
-                'service_state' => 0,
-                'hostgroup'     => $h->hostgroup,
-                'sort'          => 'service_severity'
+                'service_state'     => 0,
+                'hostgroup_name'    => $h->hostgroup_name,
+                'sort'              => 'service_severity'
               ),
               array(
                 'title' => sprintf(
@@ -132,7 +283,7 @@
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'hostgroup'             => $h->hostgroup,
+                'hostgroup_name'        => $h->hostgroup_name,
                 'sort'                  => 'service_severity'
               ),
               array(
@@ -156,7 +307,7 @@
                 array(
                   'service_state'     => 2,
                   'service_handled'   => 1,
-                  'hostgroup'         => $h->hostgroup,
+                  'hostgroup_name'    => $h->hostgroup_name,
                   'sort'              => 'service_severity'
                 ),
                 array(
@@ -186,7 +337,7 @@
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'hostgroup'             => $h->hostgroup,
+                'hostgroup_name'        => $h->hostgroup_name,
                 'sort'                  => 'service_severity'
               ),
               array(
@@ -210,7 +361,7 @@
                 array(
                   'service_state'     => 3,
                   'service_handled'   => 1,
-                  'hostgroup'         => $h->hostgroup,
+                  'hostgroup_name'    => $h->hostgroup_name,
                   'sort'              => 'service_severity'
                 ),
                 array(
@@ -240,7 +391,7 @@
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'hostgroup'             => $h->hostgroup,
+                'hostgroup_name'        => $h->hostgroup_name,
                 'sort'                  => 'service_severity'
               ),
               array(
@@ -264,7 +415,7 @@
                 array(
                   'service_state'     => 1,
                   'service_handled'   => 1,
-                  'hostgroup'         => $h->hostgroup,
+                  'hostgroup_name'    => $h->hostgroup_name,
                   'sort'              => 'service_severity'
                 ),
                 array(
@@ -290,9 +441,9 @@
               $h->services_pending,
               'monitoring/list/services',
               array(
-                'service_state' => 99,
-                'hostgroup'     => $h->hostgroup,
-                'sort'          => 'service_severity'
+                'service_state'     => 99,
+                'hostgroup_name'    => $h->hostgroup_name,
+                'sort'              => 'service_severity'
               ),
               array(
                 'title' => sprintf(

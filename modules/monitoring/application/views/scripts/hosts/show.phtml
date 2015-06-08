@@ -1,124 +1,235 @@
-<div class="controls">
+<div data-base-target='_next' class="controls">
+    <?php if (! $this->compact): ?>
+        <?= $tabs; ?>
+    <?php endif ?>
+
+    <?= $this->render('list/components/hostssummary.phtml') ?>
     <?= $this->render('partials/host/objects-header.phtml'); ?>
+
 </div>
-<div class="content">
+
+<div class="content multi-commands">
+    <h3>
+        <?= $this->icon('reschedule') ?>
+        <?= $this->translate('Commands') ?>
+    </h3>
+
+    <p>
+    <?= sprintf($this->translatePlural(
+        'Issue commands to %s selected host:',
+        'Issue commands to all %s selected hosts:',
+        count($objects)
+    ), '<b>' . count($objects) . '</b>') ?>
+    </p>
+
     <?php if (($hostCount = count($objects)) === 0): ?>
-        <?= $this->translate('No hosts matching the filter'); ?>
+        <?= $this->translate('No hosts found matching the filter'); ?>
     <?php else: ?>
-        <h3><?= sprintf($this->translatePlural('%u Host', '%u Hosts', $hostCount), $hostCount); ?></h3>
-        <div><?= $this->qlink(
-            sprintf($this->translate('List all %u hosts'), $hostCount),
-            $listAllLink
-        ); ?></div>
-        <div>
-            <?= $checkNowForm; ?>
-        </div>
-        <div><?= $this->qlink(
-            sprintf($this->translate('Reschedule the next check for all %u hosts'), $hostCount),
+        <?= $checkNowForm; ?>
+
+        <br>
+        <?= $this->qlink(
+            $this->translate('Reschedule next checks'),
             $rescheduleAllLink,
             null,
             array('icon' => 'reschedule')
-        ); ?></div>
-        <div><?= $this->qlink(
-            sprintf($this->translate('Schedule a downtime for all %u hosts'), $hostCount),
+        ); ?>
+
+        <br>
+        <?= $this->qlink(
+            $this->translate('Schedule downtimes'),
             $downtimeAllLink,
             null,
             array('icon' => 'plug')
-        ); ?></div>
-        <div><?= $this->qlink(
-            sprintf($this->translate('Submit a passive check result for all %u hosts'), $hostCount),
+        ); ?>
+
+        <br>
+        <?= $this->qlink(
+            $this->translate('Submit passive check results'),
             $processCheckResultAllLink,
             null,
             array('icon' => 'reply')
-        ); ?></div>
+        ); ?>
+
+        <br>
+        <?= $this->qlink(
+            $this->translate('Add comments'),
+            $addCommentLink,
+            null,
+            array('icon' => 'comment')
+        ); ?>
+
         <?php if ($this->hasPermission('monitoring/command/send-custom-notification')): ?>
-        <div><?= $this->qlink(
-                sprintf($this->translate('Send a custom notification for all %u hosts'), $hostCount),
-                $sendCustomNotificationLink,
-                null,
-                array('icon' => 'comment')
-            ); ?></div>
+            <br>
+            <?= $this->qlink(
+                    sprintf($this->translate('Send a custom notification for all %u hosts'), $hostCount),
+                    $sendCustomNotificationLink,
+                    null,
+                    array('icon' => 'comment')
+            ); ?>
         <?php endif; ?>
-      <?php if (($unhandledCount = count($unhandledObjects)) > 0): ?>
-        <div>
-            <h3><?= sprintf(
-                $this->translatePlural(
-                    '%u Unhandled Host Problem',
-                    '%u Unhandled Host Problems',
-                    $unhandledCount
-                ),
-                $unhandledCount
-            ); ?></h3>
-            <div><?= $this->qlink(
-                sprintf(
+
+        <?php
+            $unhandledCount = count($unhandledObjects);
+            $problemCount = count($problemObjects);
+            $unackCount = count($unacknowledgedObjects);
+        ?>
+
+        <?php if ($problemCount || $unhandledCount || $unackCount): ?>
+            <h3>
+                <?= $this->icon('attention-alt') ?>
+                <?= $this->translatePlural(
+                    'Problem',
+                    'Problems',
+                    $unhandledCount + $problemCount
+                ) ?>
+            </h3>
+
+            <?php if ($problemCount): ?>
+                <p>
+                <?= sprintf(
                     $this->translatePlural(
-                        'Schedule a downtime for %u unhandled host problem',
-                        'Schedule a downtime for %u unhandled host problems',
-                        $unhandledCount
+                        'There is %s problem.',
+                        'There are %s problems.',
+                        $problemCount
                     ),
-                    $unhandledCount
-                ),
-                $downtimeUnhandledLink,
-                null,
-                array('icon' => 'plug')
-            ); ?></div>
-            <div><?= $this->qlink(
-                sprintf(
-                    $this->translatePlural(
-                        'Acknowledge %u unhandled host problem',
-                        'Acknowledge %u unhandled host problems',
-                        $unhandledCount
-                    ),
-                    $unhandledCount
-                ),
-                $acknowledgeUnhandledLink,
-                null,
-                array('icon' => 'ok')
-            ); ?></div>
-        </div>
-      <?php endif ?>
+                    '<b>' . $problemCount . '</b>'
+                ); ?>
+                </p>
+                <?= $this->qlink(
+                        sprintf(
+                            $this->translatePlural(
+                                'Schedule a downtime for %u problem host',
+                                'Schedule a downtime for %u problem hosts',
+                                $problemCount
+                            ),
+                            $problemCount
+                        ),
+                        $downtimeLink,
+                        null,
+                        array('icon' => 'plug')
+                ); ?>
+            <?php endif; ?>
+
+            <?php
+                if ($unackCount > 0): ?>
+                <br>
+                    <?= $this->qlink(
+                        sprintf(
+                            $this->translatePlural(
+                                'Acknowledge %u unacknowledged problem hosts',
+                                'Acknowledge %u unacknowledged problem hosts',
+                                $unackCount
+                            ),
+                            $unackCount
+                        ),
+                        $acknowledgeLink,
+                        null,
+                        array('icon' => 'ok')
+                    ); ?>
+            <?php endif; ?>
+
+            <?php if ($unhandledCount): ?>
+              <p>
+              <?= sprintf(
+                  $this->translatePlural(
+                      'There is %s unhandled problem host, issue commands to the problematic host:',
+                      'There are %s unhandled problem hosts, issue commands to the problematic hosts:',
+                      $unhandledCount
+                  ),
+                  '<span class="badge badge-critical">' . $unhandledCount . '</span>'
+              ); ?>
+              </p>
+
+              <?= $this->qlink(
+                  sprintf(
+                      $this->translatePlural(
+                          'Schedule a downtime for %u unhandled problem host',
+                          'Schedule a downtime for %u unhandled problem hosts',
+                          $unhandledCount
+                      ),
+                      $unhandledCount
+                  ),
+                  $downtimeUnhandledLink,
+                  null,
+                  array('icon' => 'plug')
+              ); ?>
+
+            <?php endif; ?>
+        <?php endif;?>
+
       <?php if (($acknowledgedCount = count($acknowledgedObjects)) > 0): ?>
         <div>
-            <h2><?= sprintf(
+            <h3><?= $this->icon('ok', $this->translate('Acknowledgements')) ?> <?= $this->translate('Acknowledgements') ?></h3>
+
+            <?= sprintf(
                 $this->translatePlural(
-                    '%u Acknowledged Host Problem',
-                    '%u Acknowledged Host Problems',
+                    '%s Acknowledged Host Problem',
+                    '%s Acknowledged Host Problems',
                     $acknowledgedCount
                 ),
-                $acknowledgedCount
-            ); ?></h2>
+                '<b>' . $acknowledgedCount . '</b>'
+            ); ?>
+
             <?= $removeAckForm ?>
         </div>
       <?php endif ?>
-      <?php if (($inDowntimeCount = count($objectsInDowntime)) > 0): ?>
-        <h2><?= $this->qlink(
-            sprintf(
-                $this->translatePlural(
-                    'List %u host currently in downtime',
-                    'List %u hosts currently in downtime',
-                    $inDowntimeCount
+
+      <?php $scheduledDowntimeCount = count($objects->getScheduledDowntimes()) ?>
+
+      <?php if ($scheduledDowntimeCount): ?>
+          <h3><?= $this->icon('plug', $this->translate('Downtimes'))?> <?=$this->translate('Downtimes')?></h3>
+            <?= $this->qlink(
+                sprintf(
+                    $this->translatePlural(
+                        '%s scheduled downtime',
+                        '%s scheduled downtimes',
+                        $scheduledDowntimeCount
+                    ),
+                    $scheduledDowntimeCount
                 ),
-                $inDowntimeCount
-            ),
-            $inDowntimeLink,
-            null,
-            array('icon' => 'plug')
-        ); ?></h2>
+                $showDowntimesLink,
+                null,
+                array('data-base-target' => '_next')
+            );?>
+            <?= sprintf($this->translate('on all selected hosts.')) ?>
+
+            <?php if (($inDowntimeCount = count($objectsInDowntime)) > 0): ?>
+                <br>
+                <?= $this->qlink(
+                    sprintf(
+                        $this->translatePlural(
+                            '%s host',
+                            '%s hosts',
+                            $inDowntimeCount
+                        ),
+                        $inDowntimeCount
+                    ),
+                    $inDowntimeLink,
+                    null,
+                    array('data-base-target' => '_next')
+                ); ?>
+            <?= $this->translate('are currently in downtime.') ?>
+            <?php endif; ?>
       <?php endif ?>
+
       <?php if (($commentCount = count($objects->getComments())) > 0): ?>
-        <h2><?= $this->qlink(
+        <h3> <?= $this->icon('comment', $this->translate('Comments'))?> <?=$this->translate('Comments') ?></h3>
+        <?= $this->qlink(
             sprintf(
                 $this->translatePlural(
-                    'List %u host comment',
-                    'List %u host comments',
+                    '%s comment',
+                    '%s comments',
                     $commentCount
                 ),
                 $commentCount
             ),
             $commentsLink,
             null,
-            array('icon' => 'comment')
-        ); ?></h2>
+            array('data-base-target' => '_next')
+        ); ?>
+        <?= $this->translate('on all selected hosts.') ?>
       <?php endif ?>
+
     <?php endif ?>
 </div>

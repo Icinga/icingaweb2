@@ -6,7 +6,8 @@ namespace Icinga\Util;
 /**
  * Provide functions to change and convert colors.
  */
-class Color {
+class Color
+{
     /**
      * Convert a given color string to an rgb-array containing
      * each color as a decimal value.

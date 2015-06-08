@@ -4,7 +4,7 @@
 
 namespace Icinga\Chart\Unit;
 
-use Icinga\Util\DateTimeFactory;
+use DateTime;
 
 /**
  * Calendar Axis Unit that transforms timestamps into user-readable values
@@ -81,7 +81,7 @@ class CalendarUnit extends LinearUnit
      */
     private function calculateLabels($unit)
     {
-        $fac = DateTimeFactory::create();
+        $fac = new DateTime();
 
         $duration = $this->getMax() - $this->getMin();
 
@@ -110,7 +110,7 @@ class CalendarUnit extends LinearUnit
      * @param   array   $dataset    The dataset to update
      * @param   int     $idx        The index to use for determining the data
      *
-     * @return  self                Fluid interface
+     * @return  $this                Fluid interface
      */
     public function addValues(array $dataset, $idx = 0)
     {

@@ -12,7 +12,6 @@ use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Application\Logger;
-use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
 use Icinga\Exception\IcingaException;
 
@@ -506,12 +505,21 @@ abstract class ApplicationBootstrap
     protected function setupLogger()
     {
         if ($this->config->hasSection('logging')) {
+            $loggingConfig = $this->config->getSection('logging');
+
             try {
-                Logger::create($this->config->getSection('logging'));
+                Logger::create($loggingConfig);
             } catch (ConfigurationError $e) {
-                Logger::error($e);
+                Logger::getInstance()->registerConfigError($e->getMessage());
+
+                try {
+                    Logger::getInstance()->setLevel($loggingConfig->get('level', Logger::ERROR));
+                } catch (ConfigurationError $e) {
+                    Logger::getInstance()->registerConfigError($e->getMessage());
+                }
             }
         }
+
         return $this;
     }
 
@@ -559,7 +567,6 @@ abstract class ApplicationBootstrap
                 date_default_timezone_set($timezone);
             }
         }
-        DateTimeFactory::setConfig(array('timezone' => $timezone));
         return $this;
     }
 

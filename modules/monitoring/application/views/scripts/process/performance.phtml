@@ -1,7 +1,8 @@
+<?php if (! $this->compact): ?>
 <div class="controls">
-<?= $this->tabs ?>
+    <?= $this->tabs; ?>
 </div>
-<?php
+<?php endif;
 
 $rv = $this->runtimeVariables()->create($this->runtimevariables);
 $cp = $this->checkPerformance()->create($this->checkperformance);

@@ -4,6 +4,7 @@
 namespace Icinga\Authentication;
 
 use Exception;
+use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Application\Config;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
@@ -55,7 +56,7 @@ class Manager
         } catch (NotReadableError $e) {
             Logger::error(
                 new IcingaException(
-                    'Cannot load preferences for user "%s". An exception was thrown',
+                    'Cannot load preferences for user "%s". An exception was thrown: %s',
                     $username,
                     $e
                 )
@@ -70,10 +71,10 @@ class Manager
                     $user
                 );
                 $preferences = new Preferences($preferencesStore->load());
-            } catch (NotReadableError $e) {
+            } catch (Exception $e) {
                 Logger::error(
                     new IcingaException(
-                        'Cannot load preferences for user "%s". An exception was thrown',
+                        'Cannot load preferences for user "%s". An exception was thrown: %s',
                         $username,
                         $e
                     )
@@ -91,7 +92,7 @@ class Manager
                 $groupsFromBackend = $groupBackend->getMemberships($user);
             } catch (Exception $e) {
                 Logger::error(
-                    'Can\'t get group memberships for user \'%s\' from backend \'%s\'. An exception was thrown:',
+                    'Can\'t get group memberships for user \'%s\' from backend \'%s\'. An exception was thrown: %s',
                     $username,
                     $name,
                     $e

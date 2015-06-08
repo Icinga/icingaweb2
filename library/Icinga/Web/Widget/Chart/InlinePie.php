@@ -5,11 +5,13 @@ namespace Icinga\Web\Widget\Chart;
 
 use Icinga\Chart\PieChart;
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
+use Icinga\Util\String;
 use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Url;
 use Icinga\Util\Format;
 use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
+use stdClass;
 
 /**
  * A SVG-PieChart intended to be displayed as a small icon next to labels, to offer a better visualization of the
@@ -26,6 +28,45 @@ class InlinePie extends AbstractWidget
     const NUMBER_FORMAT_TIME = 'time';
     const NUMBER_FORMAT_BYTES = 'bytes';
     const NUMBER_FORMAT_RATIO = 'ratio';
+
+    public static $colorsHostStates = array(
+        '#44bb77', // up
+        '#ff99aa', // down
+        '#cc77ff', // unreachable
+        '#77aaff'  // pending
+    );
+
+    public static $colorsHostStatesHandledUnhandled = array(
+        '#44bb77', // up
+        '#44bb77',
+        '#ff99aa', // down
+        '#ff5566',
+        '#cc77ff', // unreachable
+        '#aa44ff',
+        '#77aaff', // pending
+        '#77aaff'
+    );
+
+    public static $colorsServiceStates = array(
+        '#44bb77', // Ok
+        '#ffaa44', // Warning
+        '#ff99aa', // Critical
+        '#aa44ff', // Unknown
+        '#77aaff'  // Pending
+    );
+
+    public static $colorsServiceStatesHandleUnhandled = array(
+        '#44bb77', // Ok
+        '#44bb77',
+        '#ffaa44', // Warning
+        '#ffcc66',
+        '#ff99aa', // Critical
+        '#ff5566',
+        '#cc77ff', // Unknown
+        '#aa44ff',
+        '#77aaff', // Pending
+        '#77aaff'
+    );
 
     /**
      * The template string used for rendering this widget
@@ -230,5 +271,20 @@ EOD;
 
         $template = str_replace('{data}', htmlspecialchars(implode(',', $data)), $template);
         return $template;
+    }
+
+    public static function createFromStateSummary(stdClass $states, $title, array $colors)
+    {
+        $handledUnhandledStates = array();
+        foreach ($states as $key => $value) {
+            if (String::endsWith($key, '_handled') || String::endsWith($key, '_unhandled')) {
+                $handledUnhandledStates[$key] = $value;
+            }
+        }
+        $chart = new self(array_values($handledUnhandledStates), $title, $colors);
+        return $chart
+            ->setSize(50)
+            ->setTitle('')
+            ->setSparklineClass('sparkline-multi');
     }
 }

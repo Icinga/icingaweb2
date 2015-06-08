@@ -25,17 +25,19 @@ class EventgridQuery extends IdoQuery
             'cnt_ok'               => 'SUM(CASE WHEN sho.objecttype_id = 2 AND sh.state = 0 THEN 1 ELSE 0 END)',
             'host'                => 'sho.name1 COLLATE latin1_general_ci',
             'service'             => 'sho.name2 COLLATE latin1_general_ci',
-            'host_name'           => 'sho.name1 COLLATE latin1_general_ci',
-            'service_description' => 'sho.name2 COLLATE latin1_general_ci',
+            'host_name'           => 'sho.name1',
+            'service_description' => 'sho.name2',
             'timestamp'           => 'UNIX_TIMESTAMP(sh.state_time)'
         ),
 
         'servicegroups' => array(
-            'servicegroup' => 'sgo.name1'
+            'servicegroup'      => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_name' => 'sgo.name1'
         ),
 
         'hostgroups' => array(
-            'hostgroup'  => 'hgo.name1'
+            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup_name'    => 'hgo.name1'
         )
     );
 

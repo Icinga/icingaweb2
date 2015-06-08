@@ -416,7 +416,7 @@ if ($col > $size - 1) return $res;
     /**
      * Disconnect in case we are connected to a Livestatus socket
      *
-     * @return self
+     * @return $this
      */
     public function disconnect()
     {

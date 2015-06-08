@@ -1,0 +1,78 @@
+<?php
+
+use Icinga\Data\Extensible;
+use Icinga\Data\Reducible;
+
+if (! $this->compact): ?>
+<div class="controls">
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <div>
+    <?= $this->backendSelection; ?>
+    <?= $this->filterEditor; ?>
+  </div>
+</div>
+<?php endif ?>
+<div class="content groups">
+<?php
+
+if (! isset($backend)) {
+    echo $this->translate('No backend found which is able to list groups') . '</div>';
+    return;
+} else {
+    $extensible = $this->hasPermission('config/authentication/groups/add') && $backend instanceof Extensible;
+    $reducible = $this->hasPermission('config/authentication/groups/remove') && $backend instanceof Reducible;
+}
+
+if (count($groups) > 0): ?>
+<table data-base-target="_next" class="action group-list">
+  <thead>
+    <tr>
+      <th class="group-name"><?= $this->translate('Group'); ?></th>
+     <?php if ($reducible): ?>
+      <th class="group-remove"><?= $this->translate('Remove'); ?></th>
+     <?php endif ?>
+    </tr>
+  </thead>
+  <tbody>
+  <?php foreach ($groups as $group): ?>
+    <tr>
+      <td class="group-name"><?= $this->qlink($group->group_name, 'group/show', array(
+        'backend'   => $backend->getName(),
+        'group'     => $group->group_name
+      ), array(
+        'title'     => sprintf($this->translate('Show detailed information for group %s'), $group->group_name)
+      )); ?></td>
+     <?php if ($reducible): ?>
+      <td class="group-remove">
+        <?= $this->qlink(
+          null,
+          'group/remove',
+          array(
+            'backend'   => $backend->getName(),
+            'group'     => $group->group_name
+          ),
+          array(
+            'title'     => sprintf($this->translate('Remove group %s'), $group->group_name),
+            'icon'      => 'trash'
+          )
+        ); ?>
+      </td>
+     <?php endif ?>
+    </tr>
+  <?php endforeach ?>
+  </tbody>
+</table>
+<?php else: ?>
+<p><?= $this->translate('No groups found matching the filter'); ?></p>
+<?php endif ?>
+<?php if ($extensible): ?>
+<?= $this->qlink($this->translate('Add a new group'), 'group/add', array('backend' => $backend->getName()), array(
+  'icon'                => 'plus',
+  'data-base-target'    => '_next',
+  'class'               => 'group-add'
+)); ?>
+<?php endif ?>
+</div>

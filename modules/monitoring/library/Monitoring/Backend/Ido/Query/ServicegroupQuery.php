@@ -7,15 +7,16 @@ class ServicegroupQuery extends IdoQuery
 {
     protected $columnMap = array(
         'servicegroups' => array(
-            'servicegroup_name'  => 'sgo.name1 COLLATE latin1_general_ci',
-            'servicegroup_alias' => 'sg.alias',
+            'servicegroup'       => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_name'  => 'sgo.name1',
+            'servicegroup_alias' => 'sg.alias COLLATE latin1_general_ci'
         ),
         'services' => array(
             'host'                => 'so.name1 COLLATE latin1_general_ci',
-            'host_name'           => 'so.name1 COLLATE latin1_general_ci',
+            'host_name'           => 'so.name1',
             'service'             => 'so.name2 COLLATE latin1_general_ci',
-            'service_host_name'   => 'so.name1 COLLATE latin1_general_ci',
-            'service_description' => 'so.name2 COLLATE latin1_general_ci'
+            'service_host_name'   => 'so.name1',
+            'service_description' => 'so.name2'
         )
     );
 

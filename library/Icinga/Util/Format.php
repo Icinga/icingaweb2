@@ -4,6 +4,7 @@
 namespace Icinga\Util;
 
 use DateTime;
+use Icinga\Date\DateFormatter;
 use Icinga\Exception\ProgrammingError;
 
 class Format
@@ -58,86 +59,13 @@ class Format
         if ($value < 60) {
             return self::formatForUnits($value, self::$secondPrefix, self::$secondBase);
         } elseif ($value < 3600) {
-            return sprintf('0.2f m', $value / 60);
+            return sprintf('%0.2f m', $value / 60);
         } elseif ($value < 86400) {
-            return sprintf('0.2f h', $value / 3600);
+            return sprintf('%0.2f h', $value / 3600);
         }
 
         // TODO: Do we need weeks, months and years?
-        return sprintf('0.2f d', $value / 86400);
-    }
-
-    public static function duration($duration)
-    {
-        if ($duration === null || $duration === false) {
-            return '-';
-        }
-        return self::showHourMin($duration);
-    }
-
-    protected static function showHourMin($sec, $includePrefix = false)
-    {
-        $min = floor($sec / 60);
-        if ($min < 60) {
-            return ($includePrefix ? t('for') . ' ' : '') . $min . 'm ' . ($sec % 60) . 's';
-        }
-        $hour = floor($min / 60);
-        if ($hour < 24) {
-            return ($includePrefix ? t('since') . ' ' : '') . date('H:i', time() - $sec);
-        }
-        return ($includePrefix ? t('for') . ' ' : '') . floor($hour / 24) . 'd ' . ($hour % 24) . 'h';
-    }
-
-    protected static function smartTimeDiff($diff, $timestamp, $includePrefix = false)
-    {
-        if ($timestamp === null || $timestamp === false) {
-            return '-';
-        }
-        if (! preg_match('~^\d+$~', $timestamp)) {
-            throw new ProgrammingError(
-                '"%s" is not a number',
-                $timestamp
-            );
-        }
-        $prefix = '';
-        if ($diff < 0) {
-            $prefix = '-';
-        }
-        if (abs($diff) > 3600 * 24 * 3) {
-            if (date('Y') === date('Y', $timestamp)) {
-                return ($includePrefix ? t('since') . ' ' : '') . date('d.m.', $timestamp);
-            }
-            return ($includePrefix ? t('since') . ' ' : '') . date('m.Y', $timestamp);
-        }
-        return $prefix . self::showHourMin(abs($diff), $includePrefix);
-    }
-
-    public static function timeSince($timestamp)
-    {
-        return self::smartTimeDiff(time() - $timestamp, $timestamp);
-    }
-
-    public static function prefixedTimeSince($timestamp, $ucfirst = false)
-    {
-        $result = self::smartTimeDiff(time() - $timestamp, $timestamp, true);
-        if ($ucfirst) {
-            $result = ucfirst($result);
-        }
-        return $result;
-    }
-
-    public static function timeUntil($timestamp)
-    {
-        return self::smartTimeDiff($timestamp - time(), $timestamp);
-    }
-
-    public static function prefixedTimeUntil($timestamp, $ucfirst)
-    {
-        $result = self::smartTimeDiff($timestamp - time(), $timestamp, true);
-        if ($ucfirst) {
-            $result = ucfirst($result);
-        }
-        return $result;
+        return sprintf('%0.2f d', $value / 86400);
     }
 
     protected static function formatForUnits($value, & $units, $base)

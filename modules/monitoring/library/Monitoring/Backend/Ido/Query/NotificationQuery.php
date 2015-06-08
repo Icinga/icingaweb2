@@ -13,11 +13,14 @@ class NotificationQuery extends IdoQuery
             'notification_object_id'        => 'n.object_id'
         ),
         'objects' => array(
-            'host'                          => 'o.name1',
-            'service'                       => 'o.name2'
+            'host'                          => 'o.name1 COLLATE latin1_general_ci',
+            'host_name'                     => 'o.name1',
+            'service'                       => 'o.name2 COLLATE latin1_general_ci',
+            'service_description'           => 'o.name2'
         ),
         'contact' => array(
-            'notification_contact'          => 'c_o.name1',
+            'contact'                       => 'c_o.name1 COLLATE latin1_general_ci',
+            'notification_contact_name'     => 'c_o.name1',
             'contact_object_id'             => 'c_o.object_id'
         ),
         'command' => array(

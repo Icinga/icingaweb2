@@ -1,28 +1,28 @@
 <?php
-
 use Icinga\Module\Monitoring\Object\Service;
 
-?>
-<?php if (!$this->compact): ?>
+if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
-  <div style="margin: 1em;" class="dontprint">
-    <?= $this->translate('Sort by'); ?> <?= $this->sortControl; ?>
-  </div>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
 <?php endif ?>
 <div class="content" data-base-target="_next">
-  <table class="pivot servicestates">
 <?php
+
 $hasHeader = false;
 $pivotData = $this->pivot->toArray();
+if (count($pivotData) === 0) {
+    echo $this->translate('No services found matching the filter') . '</div>';
+    return;
+}
+
 $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . ')';
 ?>
-
-<?php if (count($pivotData) === 0): ?>
-    <?= $this->translate('No Services matching the filter'); ?>
-<?php endif ?>
-
+  <table class="pivot servicestates">
 <?php foreach ($pivotData as $host_name => $serviceStates): ?>
 <?php if (!$hasHeader): ?>
     <thead>
@@ -67,7 +67,7 @@ foreach ($serviceDescriptions as $service_description): ?>
         <th>
           <?= $this->qlink(
             $host_name,
-            'monitoring/show/services?' . $serviceFilter,
+            'monitoring/list/services?' . $serviceFilter,
             array('host' => $host_name),
             array('title' => sprintf($this->translate('List all reported services on host %s'), $host_name))
           ); ?>

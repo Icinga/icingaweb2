@@ -1,6 +1,8 @@
 <?php $contactHelper = $this->getHelper('ContactFlags') ?>
 <div class="controls">
-  <?= $this->tabs ?>
+ <?php if (! $this->compact): ?>
+  <?= $this->tabs; ?>
+ <?php endif ?>
   <h1><?= $this->translate('Contact details') ?></h1>
   <div class="circular" style="background-image: url('<?=
       $this->href('static/gravatar', array('email' => $contact->contact_email))
@@ -54,10 +56,15 @@
   </ul>
   <?php endif ?>
   <h1><?= $this->translate('Notifications sent to this contact') ?></h1>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
 </div>
 
 <?php if (count($notifications)): ?>
-<?= $this->render('list/notifications.phtml') ?>
+<?= $this->partial('list/notifications.phtml', array(
+    'notifications' => $notifications,
+    'compact' => true
+)); ?>
 <?php else: ?>
 <div class="content"><?= $this->translate('No notifications have been sent for this contact') ?></div>
 <?php endif ?>

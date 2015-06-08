@@ -44,7 +44,8 @@
       /**
        * Prepare the timer to handle the timeline's infinite loading
        */
-      if ($('div.timeline').length) {
+      var $timeline = $('div.timeline');
+      if ($timeline.length && !$timeline.closest('.dashboard').length) {
         if (this.scrollCheckTimer === null) {
           this.scrollCheckTimer = this.module.icinga.timer.register(
             this.checkTimelinePosition,

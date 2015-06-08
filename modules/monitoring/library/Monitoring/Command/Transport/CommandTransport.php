@@ -51,6 +51,7 @@ abstract class CommandTransport
      */
     public static function fromConfig(ConfigObject $config)
     {
+        $config = clone $config;
         switch (strtolower($config->transport)) {
             case RemoteCommandFile::TRANSPORT:
                 $transport = new RemoteCommandFile();
@@ -107,7 +108,8 @@ abstract class CommandTransport
      */
     public static function first()
     {
-        $config = self::getConfig()->current();
-        return self::fromConfig($config);
+        $config = self::getConfig();
+        $config->rewind();
+        return self::fromConfig($config->current());
     }
 }

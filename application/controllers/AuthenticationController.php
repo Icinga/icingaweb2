@@ -7,7 +7,7 @@ use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\AuthChain;
-use Icinga\Authentication\Backend\ExternalBackend;
+use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;

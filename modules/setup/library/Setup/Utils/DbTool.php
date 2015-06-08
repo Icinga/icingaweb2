@@ -78,7 +78,7 @@ class DbTool
         'INSERT'                    => 29,
         'LOCK TABLES'               => 5,
         'PROCESS'                   => 1,
-        'REFERENCES'                => 0,
+        'REFERENCES'                => 12,
         'RELOAD'                    => 1,
         'REPLICATION CLIENT'        => 1,
         'REPLICATION SLAVE'         => 1,
@@ -127,7 +127,7 @@ class DbTool
     /**
      * Connect to the server
      *
-     * @return  self
+     * @return  $this
      */
     public function connectToHost()
     {
@@ -150,7 +150,7 @@ class DbTool
     /**
      * Connect to the database
      *
-     * @return  self
+     * @return  $this
      */
     public function connectToDb()
     {
@@ -629,10 +629,6 @@ EOD;
         $mysqlPrivileges = array_intersect($privileges, array_keys($this->mysqlGrantContexts));
         list($_, $host) = explode('@', $this->query('select current_user()')->fetchColumn());
         $grantee = "'" . ($username === null ? $this->config['username'] : $username) . "'@'" . $host . "'";
-        $privilegeCondition = sprintf(
-            'privilege_type IN (%s)',
-            join(',', array_map(array($this, 'quote'), $mysqlPrivileges))
-        );
 
         if (isset($this->config['dbname'])) {
             $dbPrivileges = array();
@@ -653,7 +649,7 @@ EOD;
                     . ' FROM information_schema.schema_privileges'
                     . ' WHERE grantee = :grantee'
                     . ' AND table_schema = :dbname'
-                    . ' AND ' . $privilegeCondition
+                    . ' AND privilege_type IN (' . join(',', array_map(array($this, 'quote'), $dbPrivileges)) . ')'
                     . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
                     array(':grantee' => $grantee, ':dbname' => $this->config['dbname'])
                 );
@@ -666,14 +662,13 @@ EOD;
                     !$dbPrivilegesGranted || array_intersect($dbPrivileges, $tablePrivileges) != $tablePrivileges
                 )
             ) {
-                $tableCondition = 'table_name IN (' . join(',', array_map(array($this, 'quote'), $context)) . ')';
                 $query = $this->query(
                     'SELECT COUNT(*) as matches'
                     . ' FROM information_schema.table_privileges'
                     . ' WHERE grantee = :grantee'
                     . ' AND table_schema = :dbname'
-                    . ' AND ' . $tableCondition
-                    . ' AND ' . $privilegeCondition
+                    . ' AND table_name IN (' . join(',', array_map(array($this, 'quote'), $context)) . ')'
+                    . ' AND privilege_type IN (' . join(',', array_map(array($this, 'quote'), $tablePrivileges)) . ')'
                     . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
                     array(':grantee' => $grantee, ':dbname' => $this->config['dbname'])
                 );
@@ -688,7 +683,8 @@ EOD;
 
         $query = $this->query(
             'SELECT COUNT(*) as matches FROM information_schema.user_privileges WHERE grantee = :grantee'
-            . ' AND ' . $privilegeCondition . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
+            . ' AND privilege_type IN (' . join(',', array_map(array($this, 'quote'), $mysqlPrivileges)) . ')'
+            . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
             array(':grantee' => $grantee)
         );
         return (int) $query->fetchObject()->matches === count($mysqlPrivileges);
@@ -721,7 +717,8 @@ EOD;
             foreach (array_intersect($privileges, array_keys($this->pgsqlGrantContexts)) as $privilege) {
                 if (false === empty($context) && $this->pgsqlGrantContexts[$privilege] & static::TABLE_LEVEL) {
                     $tablePrivileges[] = $privilege;
-                } elseif ($this->pgsqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
+                }
+                if ($this->pgsqlGrantContexts[$privilege] & static::DATABASE_LEVEL) {
                     $dbPrivileges[] = $privilege;
                 }
             }
@@ -760,14 +757,14 @@ EOD;
             // connected to the database defined in the resource configuration it is safe to just ignore them
             // as the chances are very high that the database is created later causing the current user being
             // the owner with ALL privileges. (Which in turn can be granted to others.)
-        }
 
-        if (array_search('CREATE', $privileges) !== false) {
-            $query = $this->query(
-                'select rolcreatedb from pg_roles where rolname = :user',
-                array(':user' => $username !== null ? $username : $this->config['username'])
-            );
-            $privilegesGranted &= $query->fetchColumn() !== false;
+            if (array_search('CREATE', $privileges) !== false) {
+                $query = $this->query(
+                    'select rolcreatedb from pg_roles where rolname = :user',
+                    array(':user' => $username !== null ? $username : $this->config['username'])
+                );
+                $privilegesGranted &= $query->fetchColumn() !== false;
+            }
         }
 
         if (array_search('CREATEROLE', $privileges) !== false) {
@@ -786,6 +783,6 @@ EOD;
             $privilegesGranted &= $query->fetchColumn() !== false;
         }
 
-        return $privilegesGranted;
+        return (bool) $privilegesGranted;
     }
 }
