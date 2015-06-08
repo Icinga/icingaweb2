@@ -53,7 +53,8 @@ class HostnotificationQuery extends IdoQuery
         'services' => array(
             'service'               => 'so.name2 COLLATE latin1_general_ci',
             'service_description'   => 'so.name2',
-            'service_display_name'  => 's.display_name COLLATE latin1_general_ci'
+            'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
+            'service_host_name'     => 'so.name1'
         )
     );
 
