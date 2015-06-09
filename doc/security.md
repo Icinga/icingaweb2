@@ -12,14 +12,14 @@ and how apply permissions and restrictions to users or groups of users.
 
 ## Basics
 
-IW2 has powerful tools to configure those restrictions for each **user** or **group**.
+IW2 permissions are managed by defining **roles** that grant permissions or restrictions to **users** and **group**.
 There are two general kinds of objects whose access can be managed in IW2:
 **actions** and **objects**.
 
 ### Actions
 
 Actions are all the things an IW2 user can do, like changing a certain configuration,
-changing permissions or sending a command to the Icinga2-Core through the (Command Pipe)[http://docs.icinga.org/icinga2/latest/doc/module/icinga2/toc#!/icinga2/latest/doc/module/icinga2/chapter/getting-started#setting-up-external-command-pipe]. in the monitoring module. All actions must be be **allowed explicitly** using permissions.
+changing permissions or sending a command to the Icinga2-Core through the <a href="http://docs.icinga.org/icinga2/latest/doc/module/icinga2/toc#!/icinga2/latest/doc/module/icinga2/chapter/getting-started#setting-up-external-command-pipe">Command Pipe</a> in the monitoring module. All actions must be be **allowed explicitly** using permissions.
 
 ### Objects
 
@@ -28,7 +28,7 @@ There are all kinds of different objects in IW2, like Hosts, Services, Notificat
 
 ### Users
 
-Anyone that can **log into IW2** is considered a user and can be referenced to by the
+Anyone that can **login** to IW2 is considered a user and can be referenced to by the
 **login name**, independently of which mechanism was used to authenticate that user.
 For example, there might be user called **jdoe**, which is authenticated
 using Active Directory, and one user **icingaadmin**, that is authenticated using a MySQL-Database as backend, both users can be referenced to using their the login **icingaadmin** or **jdoe** in configuration.
@@ -49,8 +49,7 @@ If there is a big amounts of users to manage, it would be tedious to specify eac
 separately when referring to a bigger group of users at once. For this reasons, it
 is possible to group users in groups.
 
-Like with users, groups are identified solely by their unique group name, and provided
-by different kind of backend called "group backends". This means, that how groups are defined depends entirely on the used group backend. For extended information on setting up group backends, please read the chapter [authentication](authentication.md#authentication).
+Like with users, groups are identified solely by their **name**, and provided by backends called **group backends**. Like with users, it depends entirely on the used backend how groups are created and managed. For extended information on setting up group backends, please read the chapter [authentication](authentication.md#authentication).
 
 
 TODO: example
@@ -80,14 +79,19 @@ configuration file:
 
 ### Example
 
+
     [winadmin]
-    users = "johndoe, janedoe"  
+    users = "jdoe, janedoe"  
     groups = "admin"
     permissions = "config/application/*, monitoring/commands/schedule-check"
     monitoring/hosts/filter = "host=*win*"
     monitoring/services/filter = "host=*win*"
 
 
+This example creates a role called **winadmin**, that grants the permission **config/application/* ** and ** monitoring/commands/schedule-check ** and additonally only
+allows the hosts and services that match the filter ** host=\*win* ** to be displayed. The users
+**jdoe** and **janedoe** and all members of the group **admin** will be affected
+by this role.
 
 ### Syntax
 
@@ -167,40 +171,87 @@ through a group, all permissions will be combined to get the users actual permis
 | monitoring/command/feature/object | Allow processing commands for toggling features on host and service objects |
 | monitoring/command/send-custom-notification | Allow sending custom notifications for hosts and services |
 
+
+
 ### Restrictions
 
 Restrictions can be used to define what a user or group can see, by specifying
-a filter expression. This filter expression will be **implicitly** added as an AND-Clause
-to the used filter expression.
+a filter expression. By default, when no filter is defined, a user will be able
+to see every object available. When a filter is specified for a certain object type
+the user will only be able to see objects applied
 
-Any URL filter **?foo=bar&baz=bar** in IW2, would therefore implicitly
-become ** ?(foo=bar&baz=bar)&( $RESTRICTION_FILTER )**, depending on the users current restrictions.
+The filter expression will be **implicitly** added as an **AND-Clause**
+to each query. Any URL filter **?foo=bar&baz=bar** in IW2, would therefore implicitly
+become ** ?(foo=bar&baz=bar)&($FILTER)**, depending on the users current restrictions.
 
-##### Filter Expressions
+When multiple roles assign restrictions to the same user, either directly or indirectly
+through a group, all filters will be combined using an **AND-Clause**, resulting in the final
+expression ** ?(foo=bar&baz=bar)&$ FILTER1 & $FILTER2 & $FILTER3** appended to each query.
 
-Any filter expression that is allowed in
+
+##### Monitoring module filters
+
+The monitoring module provides **hosts** and **services** as filterable objects:
 
 
-###### Monitoring module filters
+| Keys                       | Restricts                                        |
+|----------------------------|--------------------------------------------------|
+| monitoring/hosts/filter    | Only display **hosts** that match this filter    |
+| monitoring/services/filter | Only display **services** that match this filter |
 
-Restrictions can apply to services, hosts or custom keys defined by any module.
-The monitoring module provides the following restrictions:
 
-| Keys | Filters |
-|------|---------|
-| monitoring/hosts/filter | Restrict hosts view to the hosts that match the filter |
-| monitoring/services/filter | Restrict services view to the services that match the filter |
-
-Restrictions on hosts or services will automatically apply to all notifications, events
+Filters on hosts or services will automatically apply to all notifications, events
 or downtimes that belong to those objects.
+
 
 ** ATTENTION ! **
 
-Specifying a host filter will **not** automatically apply to all services on that host. If this behavior is desired, it is always necessary to filter the host for those services too.
+Unlike with notifications or downtimes, a host filter will **not** automatically apply to all services on that host. If this behavior is desired, it is always necessary to add the
+filter expression to both, **services and hosts**.
+
+
+##### Filter Expressions
+
+Any filter expression that is allowed in the filtered view, is also an allowed filter expression.
+This means, that it is possible to define negations, wildcards, and even nested
+filter expressions containing AND and OR-Clauses.
+
+The following examples will show some examples for more complex filters:
+
+###### Example 1: Negation
+
+    [onlywin]
+    groups = "windows-admins"
+    monitoring/hosts/filter = "host=*win*"
+    monitoring/services/filter = "host=*win*"
+
+Will display only hosts and services whose hosts contains the **win**.
+
+    [nowin]
+    groups = "unix-admins"  
+    monitoring/hosts/filter = "host!=*win*"
+    monitoring/services/filter = "host!=*win*"
+
+Will only match hosts and services whose host does **not** contain **win**
+
+Also notice that if a user that is member of both groups, **windows-admins** and **unix-admins**,
+he wont be able to see any hosts, as both filters will be applied and remove any object from the query.
+
+
+###### Example 2: Hostgroups
+
+    [only-unix]
+    groups = "unix-admins"  
+    monitoring/hosts/filter = "(hostgroup_name=bsd-servers|hostgroup_name=linux-servers)"
+    monitoring/services/filter = "(hostgroup_name=bsd-servers|hostgroup_name=linux-servers)"
+
+
+This role allows all members of the group unix-admins to only see hosts and services
+that are part of the host-group linux-servers or the host-group bsd-servers.
 
 ## Modules
 
-When creating IW2 modules, it might be necessary to define new actions that can be granted or revoked to certain users. One example for this, is the monitoring module, that is the heart of the monitoring functionality of IW2.
+When creating IW2 modules, it might be necessary to define new actions that can be granted or revoked to certain users. One example for this, is the monitoring module, that is the heart of the monitoring functionality of IW2.while
 
 ## Troubleshooting
 
