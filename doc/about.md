@@ -29,7 +29,11 @@ See [here](configuration#configuration) for more information about configuration
 
 ## <a id="about-authentication"></a> Authentication
 
-See [here](authentication#authentication) for more information about authentication.
+With Icinga Web 2 you can authenticate against relational databases, LDAP and more.
+These authentication methods can be configured easily (via the corresponding .ini file).
+
+See [here](authentication#authentication) for more information about authentication
+and how to configure authentication methods.
 
 ## <a id="about-authorization"></a> Authorization
 
