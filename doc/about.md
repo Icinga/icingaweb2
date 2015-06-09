@@ -41,7 +41,12 @@ See [here](security#security) for more information about authorization.
 
 ## <a id="about-preferences"></a> User preferences
 
-See [here](preferences#preferences) for more information about user preferences.
+Besides the global configuration (like data/authentication backends)
+each user has individual configuration options like the interface's language or the current timezone.
+They can be stored either in a database or in .ini files.
+
+See [here](preferences#preferences) for more information about user preferences
+and how to configure where to store them.
 
 ## <a id="about-documentation"></a> Documentation
 
