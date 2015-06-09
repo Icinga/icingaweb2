@@ -20,7 +20,12 @@ $this->addHelperFunction('url', function ($path = null, $params = null) {
     } else {
         $url = Url::fromPath($path);
     }
+
     if ($params !== null) {
+        if ($url === $path) {
+            $url = clone $url;
+        }
+
         $url->overwriteParams($params);
     }
 

@@ -279,6 +279,11 @@ class Menu implements RecursiveIterator
                 'priority' => 990,
                 'renderer' => 'ForeignMenuItemRenderer'
             ));
+
+            $this->add(t('About'), array(
+                'url'       => 'about',
+                'priority'  => 1000
+            ));
         }
     }
 

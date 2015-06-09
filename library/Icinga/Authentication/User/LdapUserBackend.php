@@ -4,17 +4,16 @@
 namespace Icinga\Authentication\User;
 
 use DateTime;
-use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Repository\Repository;
+use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\Protocol\Ldap\Exception as LdapException;
 use Icinga\Protocol\Ldap\Expression;
 use Icinga\User;
 
-class LdapUserBackend extends Repository implements UserBackendInterface
+class LdapUserBackend extends LdapRepository implements UserBackendInterface
 {
     /**
      * The base DN to use for a query
@@ -63,20 +62,6 @@ class LdapUserBackend extends Repository implements UserBackendInterface
                 'user_name'
             )
         )
-    );
-
-    protected $groupOptions;
-
-    /**
-     * Normed attribute names based on known LDAP environments
-     *
-     * @var array
-     */
-    protected $normedAttributes = array(
-        'uid'               => 'uid',
-        'user'              => 'user',
-        'inetorgperson'     => 'inetOrgPerson',
-        'samaccountname'    => 'sAMAccountName'
     );
 
     /**
@@ -177,34 +162,6 @@ class LdapUserBackend extends Repository implements UserBackendInterface
     public function getFilter()
     {
         return $this->filter;
-    }
-
-    public function setGroupOptions(array $options)
-    {
-        $this->groupOptions = $options;
-        return $this;
-    }
-
-    public function getGroupOptions()
-    {
-        return $this->groupOptions;
-    }
-
-    /**
-     * Return the given attribute name normed to known LDAP enviroments, if possible
-     *
-     * @param   string  $name
-     *
-     * @return  string
-     */
-    protected function getNormedAttribute($name)
-    {
-        $loweredName = strtolower($name);
-        if (array_key_exists($loweredName, $this->normedAttributes)) {
-            return $this->normedAttributes[$loweredName];
-        }
-
-        return $name;
     }
 
     /**
@@ -326,37 +283,6 @@ class LdapUserBackend extends Repository implements UserBackendInterface
     }
 
     /**
-     * Parse the given value based on the ASN.1 standard (GeneralizedTime) and return its timestamp representation
-     *
-     * @param   string|null     $value
-     *
-     * @return  int
-     */
-    protected function retrieveGeneralizedTime($value)
-    {
-        if ($value === null) {
-            return $value;
-        }
-
-        if (
-            ($dateTime = DateTime::createFromFormat('YmdHis.uO', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis.uZ', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis.u', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHi', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdH', $value)) !== false
-        ) {
-            return $dateTime->getTimeStamp();
-        } else {
-            Logger::debug(sprintf(
-                'Failed to parse "%s" based on the ASN.1 standard (GeneralizedTime) for user backend "%s".',
-                $value,
-                $this->getName()
-            ));
-        }
-    }
-
-    /**
      * Return whether the given shadowExpire value defines that a user is permitted to login
      *
      * @param   string|null     $value
@@ -414,41 +340,6 @@ class LdapUserBackend extends Repository implements UserBackendInterface
     }
 
     /**
-     * Retrieve the user groups
-     *
-     * @TODO: Subject to change, see #7343
-     *
-     * @param string $dn
-     *
-     * @return array
-     */
-    public function getGroups($dn)
-    {
-        if (empty($this->groupOptions) || ! isset($this->groupOptions['group_base_dn'])) {
-            return array();
-        }
-
-        $result = $this->ds->select()
-            ->setBase($this->groupOptions['group_base_dn'])
-            ->from(
-                $this->groupOptions['group_class'],
-                array($this->groupOptions['group_attribute'])
-            )
-            ->where(
-                $this->groupOptions['group_member_attribute'],
-                $dn
-            )
-            ->fetchAll();
-
-        $groups = array();
-        foreach ($result as $group) {
-            $groups[] = $group->{$this->groupOptions['group_attribute']};
-        }
-
-        return $groups;
-    }
-
-    /**
      * Authenticate the given user
      *
      * @param   User        $user
@@ -472,15 +363,7 @@ class LdapUserBackend extends Repository implements UserBackendInterface
                 return false;
             }
 
-            $authenticated = $this->ds->testCredentials($userDn, $password);
-            if ($authenticated) {
-                $groups = $this->getGroups($userDn);
-                if ($groups !== null) {
-                    $user->setGroups($groups);
-                }
-            }
-
-            return $authenticated;
+            return $this->ds->testCredentials($userDn, $password);
         } catch (LdapException $e) {
             throw new AuthenticationException(
                 'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',

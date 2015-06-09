@@ -8,7 +8,7 @@ use Icinga\Web\Form;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\AuthenticationException;
-use Icinga\Authentication\User\LdapUserBackend;
+use Icinga\Authentication\User\UserBackend;
 
 /**
  * Form class for adding/modifying LDAP user backends
@@ -48,6 +48,8 @@ class LdapBackendForm extends Form
      */
     public function createElements(array $formData)
     {
+        $isAd = isset($formData['type']) ? $formData['type'] === 'msldap' : false;
+
         $this->addElement(
             'text',
             'name',
@@ -77,10 +79,13 @@ class LdapBackendForm extends Form
             'text',
             'user_class',
             array(
-                'required'      => true,
-                'label'         => $this->translate('LDAP User Object Class'),
-                'description'   => $this->translate('The object class used for storing users on the LDAP server.'),
-                'value'         => 'inetOrgPerson'
+                'preserveDefault'   => true,
+                'required'          => ! $isAd,
+                'ignore'            => $isAd,
+                'disabled'          => $isAd ?: null,
+                'label'             => $this->translate('LDAP User Object Class'),
+                'description'       => $this->translate('The object class used for storing users on the LDAP server.'),
+                'value'             => $isAd ? 'user' : 'inetOrgPerson'
             )
         );
         $this->addElement(
@@ -117,12 +122,15 @@ class LdapBackendForm extends Form
             'text',
             'user_name_attribute',
             array(
-                'required'      => true,
-                'label'         => $this->translate('LDAP User Name Attribute'),
-                'description'   => $this->translate(
+                'preserveDefault'   => true,
+                'required'          => ! $isAd,
+                'ignore'            => $isAd,
+                'disabled'          => $isAd ?: null,
+                'label'             => $this->translate('LDAP User Name Attribute'),
+                'description'       => $this->translate(
                     'The attribute name used for storing the user name on the LDAP server.'
                 ),
-                'value'         => 'uid'
+                'value'             => $isAd ? 'sAMAccountName' : 'uid'
             )
         );
         $this->addElement(
@@ -130,7 +138,7 @@ class LdapBackendForm extends Form
             'backend',
             array(
                 'disabled'  => true,
-                'value'     => 'ldap'
+                'value'     => $isAd ? 'msldap' : 'ldap'
             )
         );
         $this->addElement(
@@ -170,8 +178,7 @@ class LdapBackendForm extends Form
     public static function isValidUserBackend(Form $form)
     {
         try {
-            $ldapUserBackend = new LdapUserBackend(ResourceFactory::createResource($form->getResourceConfig()));
-            $ldapUserBackend->setConfig(new ConfigObject($form->getValues()));
+            $ldapUserBackend = UserBackend::create(null, new ConfigObject($form->getValues()));
             $ldapUserBackend->assertAuthenticationPossible();
         } catch (AuthenticationException $e) {
             if (($previous = $e->getPrevious()) !== null) {
@@ -193,6 +200,8 @@ class LdapBackendForm extends Form
      * Return the configuration for the chosen resource
      *
      * @return  ConfigObject
+     *
+     * @todo    Check whether it's possible to drop this (Or even all occurences!)
      */
     public function getResourceConfig()
     {

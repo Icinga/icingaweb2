@@ -21,6 +21,8 @@ class UserGroupBackend
      */
     protected static $defaultBackends = array(
         'db',
+        'ldap',
+        'msldap',
         //'ini'
     );
 
@@ -155,6 +157,11 @@ class UserGroupBackend
                 break;
             case 'ini':
                 $backend = new IniUserGroupBackend($resource);
+                break;
+            case 'ldap':
+            case 'msldap':
+                $backend = new LdapUserGroupBackend($resource);
+                $backend->setConfig($backendConfig);
                 break;
         }
 
