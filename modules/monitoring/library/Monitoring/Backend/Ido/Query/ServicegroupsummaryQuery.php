@@ -83,7 +83,7 @@ class ServicegroupsummaryQuery extends IdoQuery
                 'servicegroup_alias',
                 'servicegroup_name',
                 'object_type',
-                'severity'      => 'host_severity',
+                'severity'      => new Zend_Db_Expr('NULL'),
                 'state'         => 'host_state',
                 'state_change'  => 'host_last_state_change'
             )
@@ -97,7 +97,7 @@ class ServicegroupsummaryQuery extends IdoQuery
                 'servicegroup_alias',
                 'servicegroup_name',
                 'object_type',
-                'severity'      => new Zend_Db_Expr('NULL'),
+                'severity'      => 'service_severity',
                 'state'         => 'service_state',
                 'state_change'  => 'service_last_state_change'
             )
