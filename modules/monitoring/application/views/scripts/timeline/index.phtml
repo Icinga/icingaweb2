@@ -132,8 +132,8 @@ $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$g
 <?php endforeach ?>
         <a aria-hidden="true" id="end" href="<?= Url::fromRequest()->remove(
             array(
-                'raw_timestamp<',
-                'raw_timestamp>'
+                'timestamp<',
+                'timestamp>'
             )
         )->overwriteParams(
             array(
