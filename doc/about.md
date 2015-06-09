@@ -37,7 +37,12 @@ and how to configure authentication methods.
 
 ## <a id="about-authorization"></a> Authorization
 
-See [here](security#security) for more information about authorization.
+In Icinga Web 2 there are permissions and restrictions to allow and deny (respectively)
+roles to view or to do certain things.
+These roles can be assigned to users and groups.
+
+See [here](security#security) for more information about authorization
+and how to configure roles.
 
 ## <a id="about-preferences"></a> User preferences
 
