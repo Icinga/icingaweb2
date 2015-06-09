@@ -31,15 +31,16 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
     <p class="user-state"><strong><?= $this->translate('State'); ?>:</strong> <?= $user->is_active === null ? '-' : ($user->is_active ? $this->translate('Active') : $this->translate('Inactive')); ?></p>
     <p class="user-created"><strong><?= $this->translate('Created at'); ?>:</strong> <?= $user->created_at === null ? '-' : $this->formatDateTime($user->created_at); ?></p>
     <p class="user-modified"><strong><?= $this->translate('Last modified'); ?>:</strong> <?= $user->last_modified === null ? '-' : $this->formatDateTime($user->last_modified); ?></p>
+    <h3><?= $this->translate('Group Memberships'); ?></h3>
+    <?php if (! $this->compact): ?>
+     <?= $this->sortBox; ?>
+    <?php endif ?>
+     <?= $this->limiter; ?>
+     <?= $this->paginator; ?>
+    <?php if (! $this->compact): ?>
+     <?= $this->filterEditor; ?>
+    <?php endif ?>
   </div>
- <?php if (! $this->compact): ?>
-  <?= $this->sortBox; ?>
- <?php endif ?>
-  <?= $this->limiter; ?>
-  <?= $this->paginator; ?>
- <?php if (! $this->compact): ?>
-  <?= $this->filterEditor; ?>
- <?php endif ?>
 </div>
 <div class="content memberships" data-base-target="_next">
 <?php if (count($memberships) > 0): ?>
