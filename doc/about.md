@@ -23,6 +23,8 @@ See [here](installation#installation) for more information about installation.
 
 ## <a id="about-configuration"></a> Configuration
 
+Icinga Web 2 can be configured via the user interface and the .ini files (in /etc/icingaweb2).
+
 See [here](configuration#configuration) for more information about configuration.
 
 ## <a id="about-authentication"></a> Authentication
