@@ -104,6 +104,7 @@ class GroupController extends AuthBackendController
 
         $filterEditor = Widget::create('filterEditor')
             ->setQuery($members)
+            ->setSearchColumns(array('user'))
             ->preserveParams('limit', 'sort', 'dir', 'view', 'backend', 'group')
             ->ignoreParams('page')
             ->handleRequest($this->getRequest());
