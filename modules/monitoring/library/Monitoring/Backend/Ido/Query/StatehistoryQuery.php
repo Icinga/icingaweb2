@@ -18,10 +18,7 @@ class StatehistoryQuery extends IdoQuery
             'object_id'             => 'sho.object_id',
             'type'                  => "(CASE WHEN sh.state_type = 1 THEN 'hard_state' ELSE 'soft_state' END)",
             'state'                 => 'sh.state',
-            'state_type'            => 'sh.state_type',
-            'output'                => 'sh.output',
-            'attempt'               => 'sh.current_check_attempt',
-            'max_attempts'          => 'sh.max_check_attempts',
+            'output'                => "('[ ' || sh.current_check_attempt || '/' || sh.max_check_attempts || ' ] ' || sh.output)",
 
             'host'                  => 'sho.name1 COLLATE latin1_general_ci',
             'service'               => 'sho.name2 COLLATE latin1_general_ci',

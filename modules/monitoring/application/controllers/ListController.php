@@ -575,8 +575,6 @@ class Monitoring_ListController extends Controller
             'object_type',
             'timestamp',
             'state',
-            'attempt',
-            'max_attempts',
             'output',
             'type'
         ));

@@ -37,9 +37,7 @@ class EventHistoryQuery extends IdoQuery
             'object_type'           => 'eh.object_type',
             'timestamp'             => 'eh.timestamp',
             'state'                 => 'eh.state',
-            'attempt'               => 'eh.attempt',
-            'max_attempts'          => 'eh.max_attempts',
-            'output'                => 'eh.output', // we do not want long_output
+            'output'                => 'eh.output',
             'type'                  => 'eh.type'
         ),
         'hostgroups' => array(
@@ -70,10 +68,7 @@ class EventHistoryQuery extends IdoQuery
             'type',
             'output',
             'state',
-            'state_type',
-            'object_type',
-            'attempt',
-            'max_attempts',
+            'object_type'
         );
         $this->subQueries = array(
             $this->createSubQuery('Statehistory', $columns),

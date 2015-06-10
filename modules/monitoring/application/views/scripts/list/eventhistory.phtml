@@ -23,6 +23,7 @@ if (count($history) === 0) {
     <?php foreach ($history as $event): ?>
     <?php
       $icon = 'help';
+      $msg = $event->output;
       $title = $event->type;
       $stateName = 'invalid';
       $isService = isset($event->service_description);
@@ -30,54 +31,44 @@ if (count($history) === 0) {
         case 'notify':
           $icon = 'bell';
           $title = $this->translate('Notification');
-          $msg = $event->output;
           break;
         case 'comment':
           $icon = 'comment';
           $title = $this->translate('Comment');
-          $msg = $event->output;
           break;
         case 'ack':
           $icon = 'ok';
           $title = $this->translate('Acknowledgement');
-          $msg = $event->output;
           break;
         case 'dt_comment':
           $icon = 'plug';
           $title = $this->translate('In Downtime');
-          $msg = $event->output;
           break;
         case 'flapping':
           $icon = 'flapping';
           $title = $this->translate('Flapping');
-          $msg = $event->output;
           break;
         case 'flapping_deleted':
           $icon = 'ok';
           $title = $this->translate('Flapping Stopped');
-          $msg = $event->output;
           break;
         case 'hard_state':
           $icon = $isService ? 'service' : 'host';
-          $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $event->output;
           $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
           $title = $isService ? Service::getStateText($event->state, true) : Host::getStateText($event->state, true);
           break;
         case 'soft_state':
           $icon = 'lightbulb';
-          $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $event->output;
           $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
           $title = $isService ? Service::getStateText($event->state, true) : Host::getStateText($event->state, true);
           break;
         case 'dt_start':
           $icon = 'starttime';
           $title = $this->translate('Downtime Start');
-          $msg = $event->output;
           break;
         case 'dt_end':
           $icon = 'endtime';
           $title = $this->translate('Downtime End');
-          $msg = $event->output;
           break;
         }
       ?>

@@ -457,8 +457,6 @@ abstract class MonitoredObject implements Filterable
                 'service_display_name',
                 'timestamp',
                 'state',
-                'attempt',
-                'max_attempts',
                 'output',
                 'type'
         ))
