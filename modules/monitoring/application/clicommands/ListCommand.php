@@ -124,19 +124,19 @@ class ListCommand extends Command
      *   --verbose  Show detailled output
      *   --showsql  Dump generated SQL query (DB backend only)
      *
-     *   --format <csv|json|<custom>>
+     *   --format=<csv|json|<custom>>
      *     Dump columns in the given format. <custom> format allows $column$
-     *     placeholders, e.g. --format '$host$: $service$'
+     *     placeholders, e.g. --format='$host$: $service$'
      *
-     *   --<column> [filter]
+     *   --<column>[=filter]
      *     Filter given column by optional filter. Boolean (1/0) columns are
      *     true if no filter value is given.
      *
      * EXAMPLES
      *
      *   icingacli monitoring list --unhandled
-     *   icingacli monitoring list --host local* --service *disk*
-     *   icingacli monitoring list --format '$host$: $service$'
+     *   icingacli monitoring list --host=local* --service=*disk*
+     *   icingacli monitoring list --format='$host$: $service$'
      */
     public function statusAction()
     {
