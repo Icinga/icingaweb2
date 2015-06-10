@@ -74,12 +74,12 @@ class ServicenotificationQuery extends IdoQuery
         switch ($this->ds->getDbType()) {
             case 'mysql':
                 $concattedContacts = "GROUP_CONCAT("
-                    . "cno.name1 ORDER BY cno.name1 SEPARATOR ', '"
+                    . "DISTINCT cno.name1 ORDER BY cno.name1 SEPARATOR ', '"
                     . ") COLLATE latin1_general_ci";
                 break;
             case 'pgsql':
                 // TODO: Find a way to order the contact alias list:
-                $concattedContacts = "ARRAY_TO_STRING(ARRAY_AGG(cno.name1), ', ')";
+                $concattedContacts = "ARRAY_TO_STRING(ARRAY_AGG(DISTINCT cno.name1), ', ')";
                 break;
             case 'oracle':
                 // TODO: This is only valid for Oracle >= 11g Release 2
@@ -178,6 +178,10 @@ class ServicenotificationQuery extends IdoQuery
             'hgo.objecttype_id = ?',
             3
         );
+
+        if (! $this->hasJoinedVirtualTable('contactnotifications') && !$this->hasJoinedVirtualTable('history')) {
+            $this->group(array('sn.notification_id', 'so.name2', 'so.name1'));
+        }
     }
 
     /**
@@ -219,7 +223,7 @@ class ServicenotificationQuery extends IdoQuery
             4
         );
 
-        if (! $this->hasJoinedVirtualTable('contactnotifications')) {
+        if (! $this->hasJoinedVirtualTable('contactnotifications') && !$this->hasJoinedVirtualTable('history')) {
             $this->group(array('sn.notification_id', 'so.name2', 'so.name1'));
         }
     }
@@ -234,9 +238,5 @@ class ServicenotificationQuery extends IdoQuery
             's.service_object_id = so.object_id',
             array()
         );
-
-        if (! $this->hasJoinedVirtualTable('contactnotifications')) {
-            $this->group(array('sn.notification_id', 'so.name2', 'so.name1'));
-        }
     }
 }
