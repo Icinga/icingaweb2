@@ -9,7 +9,7 @@
                 echo $this->qlink(
                     $this->translate('Send notification'),
                     'monitoring/host/send-custom-notification',
-                    array('host_name' => $object->getName()),
+                    array('host' => $object->getName()),
                     array(
                         'icon'              => 'bell',
                         'data-base-target'  => '_self',
@@ -23,7 +23,7 @@
                 echo $this->qlink(
                     $this->translate('Send notification'),
                     'monitoring/service/send-custom-notification',
-                    array('host_name' => $object->getHost()->getName(), 'service_description' => $object->getName()),
+                    array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
                     array(
                         'icon'              => 'bell',
                         'data-base-target'  => '_self',
