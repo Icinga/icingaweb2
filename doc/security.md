@@ -1,257 +1,285 @@
 # <a id="security"></a> Security
 
-In certain situations it is useful to allow someone access to IW2, but
-to prevent him from doing certain actions or from seeing specific objects.
-For example, it might be a good idea, to allow the configuration of IW2 to
-a certain group of administrators to prevent misconfiguration or security-breaches.
-Another important use case is the creation groups of users that can only see the
-fraction of hosts and services of the monitoring environment they are in charge of.
+Access control is a vital part of configuring Icinga Web 2 in a secure way.
+It is important that not every user that has access to Icinga Web 2 is able
+to do any action or see any host and service. For example, it is useful to allow
+only a small group of administrators to change the Icinga Web 2 configuration, to prevent misconfiguration or security breaches. Another important use case is the creation groups of
+users that can only see the fraction of hosts and services of the monitoring
+ environment they are in charge of.
 
-The following chapter will describe how to do the security configuration of IW2
+This chapter will describe how to do the security configuration of Icinga Web 2
 and how apply permissions and restrictions to users or groups of users.
 
 ## Basics
 
-IW2 permissions are managed by defining **roles** that grant permissions or restrictions to **users** and **group**.
-There are two general kinds of objects whose access can be managed in IW2:
-**actions** and **objects**.
+Icinga Web 2 access control is done by defining **roles** that relate permissions or restrictions to **users** and **group**.
+There are two general kinds of things to which access can be managed: actions and objects.
+
 
 ### Actions
 
-Actions are all the things an IW2 user can do, like changing a certain configuration,
-changing permissions or sending a command to the Icinga2-Core through the <a href="http://docs.icinga.org/icinga2/latest/doc/module/icinga2/toc#!/icinga2/latest/doc/module/icinga2/chapter/getting-started#setting-up-external-command-pipe">Command Pipe</a> in the monitoring module. All actions must be be **allowed explicitly** using permissions.
+Actions are all the things an Icinga Web 2 user can do, like changing a certain configuration,
+changing permissions or sending a command to the Icinga instance through the <a href="http://docs.icinga.org/icinga2/latest/doc/module/icinga2/toc#!/icinga2/latest/doc/module/icinga2/chapter/getting-started#setting-up-external-command-pipe">Command Pipe</a> in the monitoring module. All actions must be be **allowed explicitly** using permissions.
+
+A permission is a simple list of identifiers of actions a user is
+allowed to do. Permissions are described in greater detail in the
+section [Permissions](#permissions).
 
 ### Objects
 
-There are all kinds of different objects in IW2, like Hosts, Services, Notifications and many more. **By default, a user can see all objects that are available in IW2**, but it is possible to define filters to restrict what each user can see.
+There are all kinds of different objects in Icinga Web 2: Hosts, Services, Notifications, Downtimes and Events.
 
+By default, a user can **see everything**, but it is possible to **explicitly restrict** what each user can see using Restrictions.
+
+Restrictions are complex filter queries that describe what objects should be displayed to a user. Restrictions are described
+in greater detail in the section [Restrictions](#restrictions).
 
 ### Users
 
-Anyone that can **login** to IW2 is considered a user and can be referenced to by the
-**login name**, independently of which mechanism was used to authenticate that user.
-For example, there might be user called **jdoe**, which is authenticated
-using Active Directory, and one user **icingaadmin**, that is authenticated using a MySQL-Database as backend, both users can be referenced to using their the login **icingaadmin** or **jdoe** in configuration.
+Anyone who can **login** to Icinga Web 2 is considered a user and can be referenced to by the
+**user name** used during login.
+For example, there might be user called **jdoe** authenticated
+using Active Directory, and a user **icingaadmin** that is authenticated using a MySQL-Database as backend. Both can be referenced by using their the user names **icingaadmin** or **jdoe**, when referring to those users in the configuration.
 
-IW2 users and groups are not configured by an IW2 configuration file, but provided by
-an authentication backend. This means that how creating and deleting users works depends entirely on the backend. For extended information on setting up authentication backends, please read the chapter [authentication](authentication.md#authentication).
+Icinga Web 2 users and groups are not configured by a configuration file, but provided by
+an **authentication backend**. For extended information on setting up authentication backends and managing users, please read the chapter [authentication](authentication.md#authentication).
 
-**ATTENTION !**
 
-It is important to distinct between the "contacts" defined in the Icinga2-Core
-configuration and the "users" that can access IW2. In this guide and for
-handling security in IW2 in general only the latter ones are of importance.
+<div class="info-box">
+  Since Icinga Web 2, users in the Icinga configuration and the web authentication are separated, to allow
+  use of external authentication providers. This means that users and groups defined in the Icinga configuration are not available to Icinga Web 2. Instead it uses its own authentication
+  backend to fetch users and groups from, which must be configured separately.
+</div>
 
+#### Managing Users
+
+When using a [Database
+as authentication backend](authentication.md#authentication-configuration-db-authentication), it is possible to create, add and delete users directly in the frontend. This configuration
+can be found at **Configuration > Authentication > Users **.
 
 ### Groups
 
 If there is a big amounts of users to manage, it would be tedious to specify each user
-separately when referring to a bigger group of users at once. For this reasons, it
-is possible to group users in groups.
+separately when referring to a bigger group of users at once. Because of that, any user can be a member of multiple groups, and will inherit all permissions and restrictions.
 
-Like with users, groups are identified solely by their **name**, and provided by backends called **group backends**. Like with users, it depends entirely on the used backend how groups are created and managed. For extended information on setting up group backends, please read the chapter [authentication](authentication.md#authentication).
+Like users, groups are identified solely by their **name** that is provided by
+ a **group backend**. For extended information on setting up group backends,
+ please read the chapter [authentication](authentication.md#authentication).
 
 
-TODO: example
+#### Managing Groups
+
+When using a [Database as an authentication backend](#authentication.md#authentication-configuration-db-authentication),
+it is possible manage groups and group memberships directly in the frontend. This configuration
+can be found at **Configuration > Authentication > Groups **.
 
 ## Roles
 
-A role defines a set of **permissions** and **restrictions** in IW2, and assigns
-those to users and user groups. For example, a role **admins** could define that certain
+A role defines a set of **permissions** and **restrictions** and assigns
+those to **users** and **groups**. For example, a role **admins** could define that certain
 users have access to all configuration options, or another role **support**
 could define that a list of users or groups is restricted to see only hosts and services
 that match a specific query.
 
-Roles can be assigned to groups and users. In the end, the actual permission of a certain user
-will be determined by the sum of all roles that are assigned to the user, or to
-groups the user is part of.
-
+The actual permission of a certain user will be determined by merging the permissions and restrictions of the user itself and all the groups the user is part of. Permissions can
+be simply added up, while restrictions follow a slighty more complex pattern, that is described
+in the section [Stacking Filters](#stacking-filters).
 
 ### Configuration
 
 Roles can be changed either through the icingaweb2 interface, by navigation
-to the page **Configuration > Authentication > Roles**, or through editing
+to the page **Configuration > Authentication > Roles**, or through editing the
 configuration file:
 
 
         /etc/icingaweb2/roles.ini
 
 
-### Example
+#### Introducing Example
+
+To get you a quick start, here is an example of how a role definition could look like:
 
 
     [winadmin]
     users = "jdoe, janedoe"  
     groups = "admin"
     permissions = "config/application/*, monitoring/commands/schedule-check"
-    monitoring/hosts/filter = "host=*win*"
-    monitoring/services/filter = "host=*win*"
+    monitoring/filter/objects = "host=*win*"
 
 
-This example creates a role called **winadmin**, that grants the permission **config/application/* ** and ** monitoring/commands/schedule-check ** and additonally only
+This example creates a role called **winadmin**, that grants all permissions in **config/application/** and ** monitoring/commands/schedule-check ** and additionally only
 allows the hosts and services that match the filter ** host=\*win* ** to be displayed. The users
 **jdoe** and **janedoe** and all members of the group **admin** will be affected
 by this role.
 
-### Syntax
+
+#### Syntax
 
 Each role is defined as a section, with the name of the role as section name. The following
-attributes can be defined for each role:
+attributes can be defined for each role in a default Icinga Web 2 installation:
 
 
-| Key         | Value                                                            |
-|-----------  |------------------------------------------------------------------|
-| users       | A comma-separated list of user **login names** that are affected by this role   |
-| groups      | A comma-separated list of **groups names** that are affected by this role  |
-| permissions | A comma-separated list of permissions granted by this role       |
-| module/monitoring/host | A filter expression applied to all hosts              |
-| module/monitoring/serivce |  A fuilter expression applied to all services      |
+| Key                       | Value                                                                           |
+|---------------------------|---------------------------------------------------------------------------------|
+| users                     | A comma-separated list of user **user names** that are affected by this role    |
+| groups                    | A comma-separated list of **group names** that are affected by this role        |
+| permissions               | A comma-separated list of **permissions** granted by this role                  |
+| monitoring/filter/objects | A **filter expression** that restricts the access to services and hosts         |
 
 
-### Permissions
+
+## <a id="permissions"></a> Permissions
 
 Permissions can be used to allow users or groups certain **actions**. By default,
 all actions are **prohibited** and must be allowed explicitly by a role for any user.
 
-Each action in IW2 is denoted by a **namespaced key**, which is used to order and
-group those actions. All actions that affect the configuration of IW2, are in a
+Each action in Icinga Web 2 is denoted by a **namespaced key**, which is used to order and
+group those actions. All actions that affect the configuration of Icinga Web 2, are in a
 namespace called **config**, while all configurations that affect authentication
 are in the namespace **config/authentication**
 
 **Wildcards** can be used to grant permission for all actions in a certain namespace.
-The permission **config/* ** would grant permission to all configuration actions,
+The permission **config/ ** would grant permission to all configuration actions,
 while just specifying a wildcard ** * ** would give permission for all actions.
 
 When multiple roles assign permissions to the same user, either directly or indirectly
 through a group, all permissions will be combined to get the users actual permission set.
 
-###### Global permissions
+#### Global permissions
 
-| Keys | Permits |
-|------|---------|
-| *    |  Everything, including module-specific permissions |
-| config/* | All configuration actions |
-| config/application/* | Configuring IcingaWeb2 |
-| config/application/general | General settings, like logging or preferences |
-| config/application/resources | Change resources for retrieving data |
-| config/application/userbackend | Change backends for retrieving available users |
-| config/application/usergroupbackend | Change backends for retrieving available groups |
-| config/authentication/* | Configure IcingaWeb2 authentication mechanisms |
-| config/authentication/users/* | All user actions |
-| config/authentication/users/show  | Display avilable users |
-| config/authentication/users/add | Add a new user to the backend |
-| config/authentication/users/edit | Edit existing user in the backend |
-| config/authentication/users/remove | Remove existing user from the backend |
-| config/authentication/groups/* | All group actions |
-| config/authentication/groups/show | Display available groups |
-| config/authentication/groups/add | Add a new group to the backend |
-| config/authentication/groups/edit | Edit existing group in a backend |
-| config/authentication/groups/remove | Remove existing group from the backend |
-| config/authentication/roles/* | All role actions |
-| config/authentication/roles/add | Add a new role |
-| config/authentication/roles/show | Display available roles |
-| config/authentication/roles/edit | Change an existing role |
-| config/authentication/roles/remove | Remove an existing row |
-| config/modules | Enable or disable modules and module settings |
+| Name                                | Permits                                                         |
+|-------------------------------------|-----------------------------------------------------------------|
+| *                                   | Allow everything, including module-specific permissions         |
+| config/*                            | Allow all configuration actions                                 |
+| config/application/*                | Allow configuring IcingaWeb2                                    |
+| config/application/general          | Allow general settings, like logging or preferences             |
+| config/application/resources        | Allow changing resources for retrieving data                    |
+| config/application/userbackend      | Allow changing backends for retrieving available users          |
+| config/application/usergroupbackend | Allow changing backends for retrieving available groups         |
+| config/authentication/*             | Allow configuring IcingaWeb2 authentication mechanisms          |
+| config/authentication/users/*       | Allow all user actions                                          |
+| config/authentication/users/show    | Allow displaying avilable users                                 |
+| config/authentication/users/add     | Allow adding a new user to the backend                          |
+| config/authentication/users/edit    | Allow editing an existing user in the backend                   |
+| config/authentication/users/remove  | Allow removing an existing user from the backend                |
+| config/authentication/groups/*      | Allow all group actions                                         |
+| config/authentication/groups/show   | Allow displaying all available groups                           |
+| config/authentication/groups/add    | Allow adding a new group to the backend                         |
+| config/authentication/groups/edit   | Allow editing existing groups in a backend                      |
+| config/authentication/groups/remove | Allow removing existing groups from the backend                 |
+| config/authentication/roles/*       | Allow all role actions                                          |
+| config/authentication/roles/add     | Allow adding a new role                                         |
+| config/authentication/roles/show    | Allow displaying available roles                                |
+| config/authentication/roles/edit    | Allow changing an existing role                                 |
+| config/authentication/roles/remove  | Allow removing an existing row                                  |
+| config/modules                      | Allow enabling or disable modules and module changing settings  |
 
 
-###### Monitoring module permissions
+#### Monitoring module permissions
 
-| Keys | Permits |
-|------|---------|
-| monitoring/command/* | Allow all commands |
-| monitoring/command/schedule-check | Allow scheduling host and service checks' |
-| monitoring/command/acknowledge-problem | Allow acknowledging host and service problems |
-| monitoring/command/remove-acknowledgement | Allow removing problem acknowledgements |
-| monitoring/command/comment/* | Allow adding and deleting host and service comments |
-| monitoring/command/comment/add | Allow commenting on hosts and services |
-| monitoring/command/downtime/delete | Allow deleting host and service downtimes' |
-| monitoring/command/process-check-result | Allow processing host and service check results |
-| monitoring/command/feature/instance | Allow processing commands for toggling features on an instance-wide basis |
-| monitoring/command/feature/object | Allow processing commands for toggling features on host and service objects |
-| monitoring/command/send-custom-notification | Allow sending custom notifications for hosts and services |
+The built-in monitoring module defines an additional set of permissions, that
+are described in detail in [monitoring module documentation](/icingaweb2/doc/module/doc/chapter/monitoring-security#monitoring-security).
 
 
 
-### Restrictions
+## <a id="restrictions"></a> Restrictions
 
-Restrictions can be used to define what a user or group can see, by specifying
-a filter expression. By default, when no filter is defined, a user will be able
-to see every object available. When a filter is specified for a certain object type
-the user will only be able to see objects applied
-
-The filter expression will be **implicitly** added as an **AND-Clause**
-to each query. Any URL filter **?foo=bar&baz=bar** in IW2, would therefore implicitly
-become ** ?(foo=bar&baz=bar)&($FILTER)**, depending on the users current restrictions.
-
-When multiple roles assign restrictions to the same user, either directly or indirectly
-through a group, all filters will be combined using an **AND-Clause**, resulting in the final
-expression ** ?(foo=bar&baz=bar)&$ FILTER1 & $FILTER2 & $FILTER3** appended to each query.
+Restrictions can be used to define what a user or group can see by specifying
+a filter expression. By default, when no restrictions are defined, a user will be able
+to see every object available. When a restriction is specified for a certain object type
+the user will only be able to see objects applied.
 
 
-##### Monitoring module filters
+### Filterable Objects
 
-The monitoring module provides **hosts** and **services** as filterable objects:
+Each filter expression consists of two parts: The **key** that defines **which** objects
+to filter and the filter, that defines **what** to filter.
 
-
-| Keys                       | Restricts                                        |
-|----------------------------|--------------------------------------------------|
-| monitoring/hosts/filter    | Only display **hosts** that match this filter    |
-| monitoring/services/filter | Only display **services** that match this filter |
-
-
-Filters on hosts or services will automatically apply to all notifications, events
-or downtimes that belong to those objects.
+In a default Icinga Web 2 installations, the only objects that are filterable
+are the objects provided by the monitoring module. The monitoring module provides
+**hosts** and **services** as filterable objects:
 
 
-** ATTENTION ! **
+| Keys                       | Restricts                                     |
+|----------------------------|-----------------------------------------------|
+| monitoring/filter/objects  | Applies host and service filters to all hosts |
 
-Unlike with notifications or downtimes, a host filter will **not** automatically apply to all services on that host. If this behavior is desired, it is always necessary to add the
-filter expression to both, **services and hosts**.
 
+A complete list of all available filter columns can be found in
+the [monitoring module documentation](/icingaweb2/doc/module/doc/chapter/monitoring-security#monitoring-security-restrictions).
 
-##### Filter Expressions
+### Filter Expressions
 
 Any filter expression that is allowed in the filtered view, is also an allowed filter expression.
 This means, that it is possible to define negations, wildcards, and even nested
 filter expressions containing AND and OR-Clauses.
 
-The following examples will show some examples for more complex filters:
+The filter expression will be **implicitly** added as an **AND-Clause** to each query on the filtered objects. The following shows the filter expression **host = \*win* ** being applied on ** monitoring/filter/objects  **.
 
-###### Example 1: Negation
 
-    [onlywin]
+Regular filter query:
+
+    AND-- service_problem = 1
+     |
+     +--- service_handled = 0
+
+
+With our restriction applied, any user affected by this restrictions will see the
+results of this query instead:
+
+
+    AND-- host = *win*
+     |
+     +--AND-- service_problem = 1
+         |
+         +--- service_handled = 0
+
+
+#### <a id="stacking-filters"></a> Stacking Filters
+
+When multiple roles assign restrictions to the same user, either directly or indirectly
+through a group, all filters will be combined using an **OR-Clause**, resulting in the final
+expression:
+
+
+       AND --  OR-- $FILTER1
+        |    |
+        |    +-- $FILTER2
+        |    |
+        |    +-- $FILTER3
+        |
+        +--AND-- service_problem = 1
+            |
+            +--- service_handled = 0
+
+
+As a result, a user is be able to see hosts that are matched by **ANY** of
+the filter expressions. The following examples will show the usefulness of this behavior:
+
+#### Example 1: Negation
+
+    [winadmin]
     groups = "windows-admins"
-    monitoring/hosts/filter = "host=*win*"
-    monitoring/services/filter = "host=*win*"
+    monitoring/filter/objects = "host=*win*"
 
-Will display only hosts and services whose hosts contains the **win**.
+Will display only hosts and services whose host name contains  **win**.
 
-    [nowin]
+    [webadmin]
+    groups = "web-admins"  
+    monitoring/filter/objects = "host!=*win*"
+
+Will only match hosts and services whose host name does **not** contain **win**
+
+Notice that because of the behavior of two stacking filters, a user that is member of **windows-admins** and **web-admins**, will now be able to see both, Windows and non-Windows hosts and services.
+
+#### Example 2: Hostgroups
+
+    [unix-server]
     groups = "unix-admins"  
-    monitoring/hosts/filter = "host!=*win*"
-    monitoring/services/filter = "host!=*win*"
+    monitoring/filter/objects = "(hostgroup_name=bsd-servers|hostgroup_name=linux-servers)"
 
-Will only match hosts and services whose host does **not** contain **win**
-
-Also notice that if a user that is member of both groups, **windows-admins** and **unix-admins**,
-he wont be able to see any hosts, as both filters will be applied and remove any object from the query.
-
-
-###### Example 2: Hostgroups
-
-    [only-unix]
-    groups = "unix-admins"  
-    monitoring/hosts/filter = "(hostgroup_name=bsd-servers|hostgroup_name=linux-servers)"
-    monitoring/services/filter = "(hostgroup_name=bsd-servers|hostgroup_name=linux-servers)"
-
-
-This role allows all members of the group unix-admins to only see hosts and services
+This role allows all members of the group unix-admins to see hosts and services
 that are part of the host-group linux-servers or the host-group bsd-servers.
-
-## Modules
-
-When creating IW2 modules, it might be necessary to define new actions that can be granted or revoked to certain users. One example for this, is the monitoring module, that is the heart of the monitoring functionality of IW2.while
 
 ## Troubleshooting
 
