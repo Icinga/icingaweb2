@@ -47,7 +47,12 @@ class Params
                 $noOptionFlag = true;
             } elseif (!$noOptionFlag && substr($argv[$i], 0, 2) === '--') {
                 $key = substr($argv[$i], 2);
-                if (! isset($argv[$i + 1]) || substr($argv[$i + 1], 0, 2) === '--') {
+                $matches = array();
+                if (1 === preg_match(
+                    '/(?<!.)([^=]+)=(.*)(?!.)/ms', $key, $matches
+                )) {
+                    $this->params[$matches[1]] = $matches[2];
+                } elseif (! isset($argv[$i + 1]) || substr($argv[$i + 1], 0, 2) === '--') {
                     $this->params[$key] = true;
                 } elseif (array_key_exists($key, $this->params)) {
                     if (!is_array($this->params[$key])) {
