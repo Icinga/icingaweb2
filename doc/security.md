@@ -29,7 +29,7 @@ section [Permissions](#permissions).
 
 There are all kinds of different objects in Icinga Web 2: Hosts, Services, Notifications, Downtimes and Events.
 
-By default, a user can **see everything**, but it is possible to **explicitly restrict** what each user can see using Restrictions.
+By default, a user can **see everything**, but it is possible to **explicitly restrict** what each user can see using restrictions.
 
 Restrictions are complex filter queries that describe what objects should be displayed to a user. Restrictions are described
 in greater detail in the section [Restrictions](#restrictions).
@@ -42,7 +42,7 @@ For example, there might be user called **jdoe** authenticated
 using Active Directory, and a user **icingaadmin** that is authenticated using a MySQL-Database as backend. Both can be referenced by using their the user names **icingaadmin** or **jdoe**, when referring to those users in the configuration.
 
 Icinga Web 2 users and groups are not configured by a configuration file, but provided by
-an **authentication backend**. For extended information on setting up authentication backends and managing users, please read the chapter [authentication](authentication.md#authentication).
+an **authentication backend**. For extended information on setting up authentication backends and managing users, please read the chapter [Authentication](authentication.md#authentication).
 
 
 <div class="info-box">
@@ -59,12 +59,13 @@ can be found at **Configuration > Authentication > Users **.
 
 ### Groups
 
-If there is a big amounts of users to manage, it would be tedious to specify each user
-separately when referring to a bigger group of users at once. Because of that, any user can be a member of multiple groups, and will inherit all permissions and restrictions.
+If there is a big amount of users to manage, it would be tedious to specify each user
+separately when referring to a bigger group of users often. Because of that, it is possible to group users together into groups.
+A user can be member of multiple groups and will inherit all permissions and restrictions.
 
 Like users, groups are identified solely by their **name** that is provided by
  a **group backend**. For extended information on setting up group backends,
- please read the chapter [authentication](authentication.md#authentication).
+ please read the chapter [Authentication](authentication.md#authentication).
 
 
 #### Managing Groups
@@ -140,10 +141,10 @@ are in the namespace **config/authentication**
 
 **Wildcards** can be used to grant permission for all actions in a certain namespace.
 The permission **config/ ** would grant permission to all configuration actions,
-while just specifying a wildcard ** * ** would give permission for all actions.
+while just specifying a wildcard * would give permission for all actions.
 
-When multiple roles assign permissions to the same user, either directly or indirectly
-through a group, all permissions will be combined to get the users actual permission set.
+When multiple roles assign permissions to the same user (either directly or indirectly
+through a group) all permissions can simply be added together to get the users actual permission set.
 
 #### Global permissions
 
@@ -187,7 +188,7 @@ are described in detail in [monitoring module documentation](/icingaweb2/doc/mod
 Restrictions can be used to define what a user or group can see by specifying
 a filter expression. By default, when no restrictions are defined, a user will be able
 to see every object available. When a restriction is specified for a certain object type
-the user will only be able to see objects applied.
+the user will only be able to see objects matched by those filters.
 
 
 ### Filterable Objects
@@ -200,12 +201,14 @@ are the objects provided by the monitoring module. The monitoring module provide
 **hosts** and **services** as filterable objects:
 
 
-| Keys                       | Restricts                                     |
+| Keys                       | Restricsts                                     |
 |----------------------------|-----------------------------------------------|
 | monitoring/filter/objects  | Applies host and service filters to all hosts |
 
 
-A complete list of all available filter columns can be found in
+#### Filter Columns
+
+Filters operate on object attributes. A complete list of all available filter columns on hosts and services can be found in
 the [monitoring module documentation](/icingaweb2/doc/module/doc/chapter/monitoring-security#monitoring-security-restrictions).
 
 ### Filter Expressions
@@ -287,4 +290,4 @@ Q: I cannot see the menu for changing roles in Icinga Web 2
 
 A: Your user lacks the permission to change the authentication configuration,
    add a new role in roles.ini that gives your current user
-   the permission to access **config/authentication/* **
+   the permission to access **config/authentication/**
