@@ -5,7 +5,7 @@ namespace Icinga\Module\Monitoring\Clicommands;
 
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Cli\CliUtils;
-use Icinga\Util\Format;
+use Icinga\Date\DateFormatter;
 use Icinga\Cli\Command;
 use Icinga\File\Csv;
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
@@ -299,7 +299,7 @@ class ListCommand extends Command
                 $leaf,
                 $screen->underline($row->service_description),
                 $screen->colorize($utils->objectStateFlags('service', $row) . $perf, 'lightblue'),
-                ucfirst(Format::timeSince($row->service_last_state_change))
+                ucfirst(DateFormatter::timeSince($row->service_last_state_change))
             );
             if ($this->isVerbose) {
                 $out .= $emptyLine . preg_replace(
