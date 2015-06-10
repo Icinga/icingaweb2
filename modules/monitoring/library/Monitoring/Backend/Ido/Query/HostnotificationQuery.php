@@ -73,12 +73,12 @@ class HostnotificationQuery extends IdoQuery
         switch ($this->ds->getDbType()) {
             case 'mysql':
                 $concattedContacts = "GROUP_CONCAT("
-                    . "cno.name1 ORDER BY cno.name1 SEPARATOR ', '"
+                    . "DISTINCT cno.name1 ORDER BY cno.name1 SEPARATOR ', '"
                     . ") COLLATE latin1_general_ci";
                 break;
             case 'pgsql':
                 // TODO: Find a way to order the contact alias list:
-                $concattedContacts = "ARRAY_TO_STRING(ARRAY_AGG(cno.name1), ', ')";
+                $concattedContacts = "ARRAY_TO_STRING(ARRAY_AGG(DISTINCT cno.name1), ', ')";
                 break;
             case 'oracle':
                 // TODO: This is only valid for Oracle >= 11g Release 2
@@ -177,7 +177,7 @@ class HostnotificationQuery extends IdoQuery
             3
         );
 
-        if (! $this->hasJoinedVirtualTable('contactnotifications')) {
+        if (! $this->hasJoinedVirtualTable('contactnotifications') && !$this->hasJoinedVirtualTable('history')) {
             $this->group(array('hn.notification_id', 'ho.name1'));
         }
     }
@@ -244,7 +244,7 @@ class HostnotificationQuery extends IdoQuery
             2
         );
 
-        if (! $this->hasJoinedVirtualTable('contactnotifications')) {
+        if (! $this->hasJoinedVirtualTable('contactnotifications') && !$this->hasJoinedVirtualTable('history')) {
             $this->group(array('hn.notification_id', 'ho.name1'));
         }
     }
