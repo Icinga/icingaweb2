@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Zend_Db_Expr;
 use Zend_Db_Select;
 use Icinga\Data\Filter\Filter;
 
@@ -96,8 +97,11 @@ class NotificationQuery extends IdoQuery
     protected function joinHosts()
     {
         $columns = array_keys(
-            $this->columnMap['notifications'] + $this->columnMap['hosts'] + $this->columnMap['services']
+            $this->columnMap['notifications'] + $this->columnMap['hosts']
         );
+        foreach ($this->columnMap['services'] as $column => $_) {
+            $columns[$column] = new Zend_Db_Expr('NULL');
+        }
         if ($this->fetchHistoryColumns) {
             $columns = array_merge($columns, array_keys($this->columnMap['history']));
         }
