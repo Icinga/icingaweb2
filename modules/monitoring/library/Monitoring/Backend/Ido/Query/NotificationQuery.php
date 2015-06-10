@@ -27,6 +27,13 @@ class NotificationQuery extends IdoQuery
             'acknowledgement_comment_data'  => 'n.acknowledgement_comment_data',
             'object_type'                   => 'n.object_type'
         ),
+        'history' => array(
+            'type'      => 'n.type',
+            'timestamp' => 'n.timestamp',
+            'object_id' => 'n.object_id',
+            'state'     => 'n.state',
+            'output'    => 'n.output'
+        ),
         'hosts' => array(
             'host_display_name' => 'n.host_display_name',
             'host_name'         => 'n.host_name'
@@ -53,6 +60,13 @@ class NotificationQuery extends IdoQuery
     protected $subQueries = array();
 
     /**
+     * Whether to additionally select all history columns
+     *
+     * @var bool
+     */
+    protected $fetchHistoryColumns = false;
+
+    /**
      * {@inheritdoc}
      */
     protected function joinBaseTables()
@@ -66,6 +80,17 @@ class NotificationQuery extends IdoQuery
     }
 
     /**
+     * Join history related columns and tables
+     */
+    protected function joinHistory()
+    {
+        // TODO: Ensure that one is selecting the history columns first...
+        $this->fetchHistoryColumns = true;
+        $this->requireVirtualTable('hosts');
+        $this->requireVirtualTable('services');
+    }
+
+    /**
      * Join hosts
      */
     protected function joinHosts()
@@ -73,6 +98,9 @@ class NotificationQuery extends IdoQuery
         $columns = array_keys(
             $this->columnMap['notifications'] + $this->columnMap['hosts'] + $this->columnMap['services']
         );
+        if ($this->fetchHistoryColumns) {
+            $columns = array_merge($columns, array_keys($this->columnMap['history']));
+        }
         $hosts = $this->createSubQuery('hostnotification', $columns);
         $this->subQueries[] = $hosts;
         $this->notificationQuery->union(array($hosts), Zend_Db_Select::SQL_UNION_ALL);
@@ -86,6 +114,9 @@ class NotificationQuery extends IdoQuery
         $columns = array_keys(
             $this->columnMap['notifications'] + $this->columnMap['hosts'] + $this->columnMap['services']
         );
+        if ($this->fetchHistoryColumns) {
+            $columns = array_merge($columns, array_keys($this->columnMap['history']));
+        }
         $services = $this->createSubQuery('servicenotification', $columns);
         $this->subQueries[] = $services;
         $this->notificationQuery->union(array($services), Zend_Db_Select::SQL_UNION_ALL);

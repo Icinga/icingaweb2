@@ -26,6 +26,13 @@ class HostnotificationQuery extends IdoQuery
             'host_name'                 => 'ho.name1',
             'object_type'               => '(\'host\')'
         ),
+        'history' => array(
+            'type'      => "('notify')",
+            'timestamp' => 'UNIX_TIMESTAMP(hn.start_time)',
+            'object_id' => 'hn.object_id',
+            'state'     => 'hn.state',
+            'output'    => null
+        ),
         'contactnotifications' => array(
             'contact'                   => 'cno.name1 COLLATE latin1_general_ci',
             'notification_contact_name' => 'cno.name1',
@@ -63,6 +70,31 @@ class HostnotificationQuery extends IdoQuery
      */
     protected function joinBaseTables()
     {
+        switch ($this->ds->getDbType()) {
+            case 'mysql':
+                $concattedContacts = "GROUP_CONCAT("
+                    . "cno.name1 ORDER BY cno.name1 SEPARATOR ', '"
+                    . ") COLLATE latin1_general_ci";
+                break;
+            case 'pgsql':
+                // TODO: Find a way to order the contact alias list:
+                $concattedContacts = "ARRAY_TO_STRING(ARRAY_AGG(cno.name1), ', ')";
+                break;
+            case 'oracle':
+                // TODO: This is only valid for Oracle >= 11g Release 2
+                $concattedContacts = "LISTAGG(cno.name1, ', ') WITHIN GROUP (ORDER BY cno.name1)";
+                // Alternatives:
+                //
+                //   RTRIM(XMLAGG(XMLELEMENT(e, column_name, ',').EXTRACT('//text()')),
+                //
+                //   not supported and not documented but works since 10.1,
+                //   however it is NOT always present:
+                //   WM_CONCAT(c.alias)
+                break;
+        }
+
+        $this->columnMap['history']['output'] = "('[' || $concattedContacts || '] ' || hn.output)";
+
         $this->select->from(
             array('hn' => $this->prefix . 'notifications'),
             array()
@@ -81,6 +113,15 @@ class HostnotificationQuery extends IdoQuery
     }
 
     /**
+     * Join virtual table history
+     */
+    protected function joinHistory()
+    {
+        $this->requireVirtualTable('contactnotifications');
+        $this->group(array('hn.notification_id', 'ho.name1'));
+    }
+
+    /**
      * Join contact notifications
      */
     protected function joinContactnotifications()
@@ -95,6 +136,7 @@ class HostnotificationQuery extends IdoQuery
             'cno.object_id = cn.contact_object_id',
             array()
         );
+        $this->group(array('cn.contactnotification_id', 'ho.name1'));
     }
 
     /**
@@ -134,7 +176,10 @@ class HostnotificationQuery extends IdoQuery
             'hgo.objecttype_id = ?',
             3
         );
-        $this->group(array('hn.notification_id', 'ho.name1'));
+
+        if (! $this->hasJoinedVirtualTable('contactnotifications')) {
+            $this->group(array('hn.notification_id', 'ho.name1'));
+        }
     }
 
     /**
@@ -184,7 +229,7 @@ class HostnotificationQuery extends IdoQuery
     {
         $this->select->join(
             array('s' => $this->prefix . 'services'),
-            's.host_object_id = h.host_object_id',
+            's.host_object_id = ho.object_id',
             array()
         )->join(
             array('so' => $this->prefix . 'objects'),
@@ -198,6 +243,9 @@ class HostnotificationQuery extends IdoQuery
             'so.objecttype_id = ?',
             2
         );
-        $this->group(array('hn.notification_id', 'ho.name1'));
+
+        if (! $this->hasJoinedVirtualTable('contactnotifications')) {
+            $this->group(array('hn.notification_id', 'ho.name1'));
+        }
     }
 }
