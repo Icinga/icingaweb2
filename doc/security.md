@@ -245,11 +245,11 @@ through a group, all filters will be combined using an **OR-Clause**, resulting 
 expression:
 
 
-       AND --  OR-- $FILTER1
-        |    |
-        |    +-- $FILTER2
-        |    |
-        |    +-- $FILTER3
+       AND-- OR-- $FILTER1
+        |     |
+        |     +-- $FILTER2
+        |     |
+        |     +-- $FILTER3
         |
         +--AND-- service_problem = 1
             |
