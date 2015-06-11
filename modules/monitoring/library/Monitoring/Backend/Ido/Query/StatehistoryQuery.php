@@ -3,55 +3,151 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Zend_Db_Expr;
+use Zend_Db_Select;
+use Icinga\Data\Filter\Filter;
+
+/**
+ * Query for host and service state history records
+ */
 class StatehistoryQuery extends IdoQuery
 {
-    protected $types = array(
-        'soft_state' => 0,
-        'hard_state' => 1
-    );
-
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'statehistory' => array(
-            'state_time'            => 'sh.state_time',
-            'timestamp'             => 'UNIX_TIMESTAMP(sh.state_time)',
-            'raw_timestamp'         => 'sh.state_time',
-            'object_id'             => 'sho.object_id',
-            'type'                  => "(CASE WHEN sh.state_type = 1 THEN 'hard_state' ELSE 'soft_state' END)",
-            'state'                 => 'sh.state',
-            'output'                => "('[ ' || sh.current_check_attempt || '/' || sh.max_check_attempts || ' ] ' || sh.output)",
-
-            'host'                  => 'sho.name1 COLLATE latin1_general_ci',
-            'service'               => 'sho.name2 COLLATE latin1_general_ci',
-            'host_name'             => 'sho.name1',
-            'service_description'   => 'sho.name2',
-            'object_type'           => "CASE WHEN sho.objecttype_id = 1 THEN 'host' ELSE 'service' END"
+            'object_type' => 'sth.object_type'
+        ),
+        'history' => array(
+            'type'      => 'sth.type',
+            'timestamp' => 'sth.timestamp',
+            'object_id' => 'sth.object_id',
+            'state'     => 'sth.state',
+            'output'    => 'sth.output'
+        ),
+        'hosts' => array(
+            'host_display_name' => 'sth.host_display_name',
+            'host_name'         => 'sth.host_name'
+        ),
+        'services' => array(
+            'service_description'   => 'sth.service_description',
+            'service_display_name'  => 'sth.service_display_name',
+            'service_host_name'     => 'sth.service_host_name'
         )
     );
 
-    public function whereToSql($col, $sign, $expression)
-    {
-        if ($col === 'UNIX_TIMESTAMP(sh.state_time)') {
-            return 'sh.state_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } elseif ($col === $this->columnMap['statehistory']['type']
-            && is_array($expression) === false
-            && array_key_exists($expression, $this->types) === true
-        ) {
-                return 'sh.state_type ' . $sign . ' ' . $this->types[$expression];
-        } else {
-            return parent::whereToSql($col, $sign, $expression);
-        }
-    }
+    /**
+     * The union
+     *
+     * @var Zend_Db_Select
+     */
+    protected $stateHistoryQuery;
 
+    /**
+     * Subqueries used for the state history query
+     *
+     * @var IdoQuery[]
+     */
+    protected $subQueries = array();
+
+    /**
+     * Whether to additionally select all history columns
+     *
+     * @var bool
+     */
+    protected $fetchHistoryColumns = false;
+
+    /**
+     * {@inheritdoc}
+     */
     protected function joinBaseTables()
     {
+        $this->stateHistoryQuery = $this->db->select();
         $this->select->from(
-            array('sho' => $this->prefix . 'objects'),
-            array()
-        )->join(
-            array('sh' => $this->prefix . 'statehistory'),
-            'sho.' . $this->object_id . ' = sh.' . $this->object_id . ' AND sho.is_active = 1',
+            array('sth' => $this->stateHistoryQuery),
             array()
         );
-        $this->joinedVirtualTables = array('statehistory' => true);
+        $this->joinedVirtualTables['statehistory'] = true;
+    }
+
+    /**
+     * Join history related columns and tables
+     */
+    protected function joinHistory()
+    {
+        // TODO: Ensure that one is selecting the history columns first...
+        $this->fetchHistoryColumns = true;
+        $this->requireVirtualTable('hosts');
+        $this->requireVirtualTable('services');
+    }
+
+    /**
+     * Join hosts
+     */
+    protected function joinHosts()
+    {
+        $columns = array_keys(
+            $this->columnMap['statehistory'] + $this->columnMap['hosts']
+        );
+        foreach ($this->columnMap['services'] as $column => $_) {
+            $columns[$column] = new Zend_Db_Expr('NULL');
+        }
+        if ($this->fetchHistoryColumns) {
+            $columns = array_merge($columns, array_keys($this->columnMap['history']));
+        }
+        $hosts = $this->createSubQuery('Hoststatehistory', $columns);
+        $this->subQueries[] = $hosts;
+        $this->stateHistoryQuery->union(array($hosts), Zend_Db_Select::SQL_UNION_ALL);
+    }
+
+    /**
+     * Join services
+     */
+    protected function joinServices()
+    {
+        $columns = array_keys(
+            $this->columnMap['statehistory'] + $this->columnMap['hosts'] + $this->columnMap['services']
+        );
+        if ($this->fetchHistoryColumns) {
+            $columns = array_merge($columns, array_keys($this->columnMap['history']));
+        }
+        $services = $this->createSubQuery('Servicestatehistory', $columns);
+        $this->subQueries[] = $services;
+        $this->stateHistoryQuery->union(array($services), Zend_Db_Select::SQL_UNION_ALL);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function order($columnOrAlias, $dir = null)
+    {
+        foreach ($this->subQueries as $sub) {
+            $sub->requireColumn($columnOrAlias);
+        }
+        return parent::order($columnOrAlias, $dir);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function where($condition, $value = null)
+    {
+        $this->requireColumn($condition);
+        foreach ($this->subQueries as $sub) {
+            $sub->where($condition, $value);
+        }
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addFilter(Filter $filter)
+    {
+        foreach ($this->subQueries as $sub) {
+            $sub->applyFilter(clone $filter);
+        }
+        return $this;
     }
 }
