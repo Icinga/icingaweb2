@@ -68,6 +68,18 @@ class HostnotificationQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    public function whereToSql($col, $sign, $expression)
+    {
+        if ($col === 'UNIX_TIMESTAMP(hn.start_time)') {
+            return 'hn.start_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
+        } else {
+            return parent::whereToSql($col, $sign, $expression);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function joinBaseTables()
     {
         switch ($this->ds->getDbType()) {
