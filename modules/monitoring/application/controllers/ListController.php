@@ -378,6 +378,7 @@ class Monitoring_ListController extends Controller
         $this->params->remove(array('objecttype', 'from', 'to', 'state', 'btn_submit'));
         $this->view->filter = Filter::fromQuerystring((string) $this->params);
         $query->applyFilter($this->view->filter);
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->summary = $query->getQuery()->fetchAll();
         $this->view->column = $form->getValue('state');
 //        $this->view->orientationBox = $orientationBox;
