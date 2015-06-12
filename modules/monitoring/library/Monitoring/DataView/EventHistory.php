@@ -22,17 +22,17 @@ class EventHistory extends DataView
             'host_display_name',
             'service_description',
             'service_display_name',
-            'hostgroup_name',
             'object_type',
             'timestamp',
             'state',
-            'attempt',
-            'max_attempts',
             'output',
             'type'
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSortRules()
     {
         return array(
@@ -43,8 +43,16 @@ class EventHistory extends DataView
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFilterColumns()
     {
-        return array('host', 'service', 'hostgroup');
+        return array(
+            'host', 'host_alias',
+            'hostgroup', 'hostgroup_alias', 'hostgroup_name',
+            'service',
+            'servicegroup', 'servicegroup_alias', 'servicegroup_name'
+        );
     }
 }
