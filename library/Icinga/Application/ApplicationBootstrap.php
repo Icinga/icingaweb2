@@ -134,19 +134,17 @@ abstract class ApplicationBootstrap
         $this->vendorDir = $baseDir . '/library/vendor';
         $this->libDir = realpath(__DIR__ . '/../..');
 
-        $this->setupAutoloader();
-
         if ($configDir === null) {
             if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
                 $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
             } else {
-                $configDir = Platform::isWindows()
-                    ? $baseDir . DIRECTORY_SEPARATOR . 'config'
-                    : '/etc/icingaweb2';
+                $configDir = '/etc/icingaweb2';
             }
         }
         $canonical = realpath($configDir);
         $this->configDir = $canonical ? $canonical : $configDir;
+
+        $this->setupAutoloader();
 
         set_include_path(
             implode(
