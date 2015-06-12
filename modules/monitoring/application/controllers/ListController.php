@@ -579,6 +579,7 @@ class Monitoring_ListController extends Controller
             'type'
         ));
 
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->filterQuery($query);
         $this->view->history = $query;
 
