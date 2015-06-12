@@ -14,8 +14,6 @@ class Eventgrid extends DataView
     {
         return array(
             'day',
-            'cnt_events',
-            'objecttype_id',
             'cnt_up',
             'cnt_down_hard',
             'cnt_down',
@@ -29,13 +27,16 @@ class Eventgrid extends DataView
             'cnt_warning_hard',
             'cnt_ok',
             'host_name',
+            'host_display_name',
             'service_description',
-            'timestamp',
-            'servicegroup_name',
-            'hostgroup_name'
+            'service_display_name',
+            'timestamp'
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSortRules()
     {
         return array(
@@ -45,8 +46,16 @@ class Eventgrid extends DataView
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFilterColumns()
     {
-        return array('host', 'service', 'hostgroup', 'servicegroup');
+        return array(
+            'host', 'host_alias',
+            'hostgroup', 'hostgroup_alias', 'hostgroup_name',
+            'service', 'service_host_name',
+            'servicegroup', 'servicegroup_alias', 'servicegroup_name'
+        );
     }
 }
