@@ -180,7 +180,7 @@ class Monitoring_ListController extends Controller
             'current_check_attempt' => 'service_current_check_attempt',
             'max_check_attempts'    => 'service_max_check_attempts'
         ), $this->addColumns());
-        $query = $this->backend->select()->from('serviceStatus', $columns);
+        $query = $this->backend->select()->from('servicestatus', $columns);
         $this->filterQuery($query);
         $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->services = $query;
@@ -567,7 +567,7 @@ class Monitoring_ListController extends Controller
             $this->translate('List event records')
         );
 
-        $query = $this->backend->select()->from('eventHistory', array(
+        $query = $this->backend->select()->from('eventhistory', array(
             'host_name',
             'host_display_name',
             'service_description',
@@ -594,7 +594,7 @@ class Monitoring_ListController extends Controller
     {
         $this->addTitleTab('servicegrid', $this->translate('Service Grid'), $this->translate('Show the Service Grid'));
         $this->setAutorefreshInterval(15);
-        $query = $this->backend->select()->from('serviceStatus', array(
+        $query = $this->backend->select()->from('servicestatus', array(
             'host_name',
             'service_description',
             'service_state',

@@ -449,7 +449,7 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetchEventhistory()
     {
-        $eventHistory = $this->backend->select()->from('eventHistory', array(
+        $eventHistory = $this->backend->select()->from('eventhistory', array(
                 'object_type',
                 'host_name',
                 'host_display_name',

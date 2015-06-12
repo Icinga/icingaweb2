@@ -38,7 +38,7 @@ class MonitoringMenuItemRenderer extends MenuItemRenderer
     {
         if (self::$summary === null) {
             $summary = MonitoringBackend::instance()->select()->from(
-                'statusSummary',
+                'statussummary',
                 array(
                     'hosts_down_unhandled',
                     'services_critical_unhandled'

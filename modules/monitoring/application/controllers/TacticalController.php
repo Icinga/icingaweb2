@@ -21,7 +21,7 @@ class Monitoring_TacticalController extends MonitoringController
             )
         )->extend(new DashboardAction())->activate('tactical_overview');
         $stats = $this->backend->select()->from(
-            'statusSummary',
+            'statussummary',
             array(
                 'hosts_up',
                 'hosts_pending',

@@ -12,7 +12,7 @@ use Icinga\Util\String;
  */
 class HostList extends ObjectList
 {
-    protected $dataViewName = 'hostStatus';
+    protected $dataViewName = 'hoststatus';
 
     protected $columns = array('host_name');
 

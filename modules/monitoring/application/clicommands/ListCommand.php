@@ -156,7 +156,7 @@ class ListCommand extends Command
             'service_perfdata',
             'service_last_state_change'
         );
-        $query = $this->getQuery('serviceStatus', $columns)
+        $query = $this->getQuery('servicestatus', $columns)
             ->order('host_name');
         echo $this->renderStatusQuery($query);
     }

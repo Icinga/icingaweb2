@@ -211,7 +211,7 @@ class Monitoring_ShowController extends Controller
                 )
             );
         }
-        if ($this->backend->hasQuery('eventHistory')) {
+        if ($this->backend->hasQuery('eventhistory')) {
             $tabs->add(
                 'history',
                 array(

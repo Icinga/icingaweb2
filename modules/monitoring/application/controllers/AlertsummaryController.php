@@ -251,7 +251,7 @@ class Monitoring_AlertsummaryController extends Controller
         $interval = $this->getInterval();
 
         $query = $this->backend->select()->from(
-            'eventHistory',
+            'eventhistory',
             array(
                 'timestamp'
             )

@@ -137,7 +137,7 @@ class Host extends MonitoredObject
         if ($this->backend->getType() === 'livestatus') {
             $columns[] = 'host_contacts';
         }
-        return $this->backend->select()->from('hostStatus', $columns)
+        return $this->backend->select()->from('hoststatus', $columns)
             ->where('host_name', $this->host);
     }
 
@@ -149,7 +149,7 @@ class Host extends MonitoredObject
     public function fetchServices()
     {
         $services = array();
-        foreach ($this->backend->select()->from('serviceStatus', array('service_description'))
+        foreach ($this->backend->select()->from('servicestatus', array('service_description'))
                 ->where('host_name', $this->host)
                 ->getQuery()
                 ->fetchAll() as $service) {

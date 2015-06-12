@@ -16,7 +16,7 @@ class ServiceList extends ObjectList
 
     protected $serviceStateSummary;
 
-    protected $dataViewName = 'serviceStatus';
+    protected $dataViewName = 'servicestatus';
 
     protected $columns = array('host_name', 'service_description');
 
