@@ -67,11 +67,11 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
     }
 
     /**
-     * @param $filter
+     * @param Filter $filter
      *
      * @return $this
      */
-    public function setFilter($filter)
+    public function setFilter(Filter $filter)
     {
         $this->filter = $filter;
         return $this;
