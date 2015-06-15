@@ -312,25 +312,14 @@ class Monitoring_ListController extends Controller
 
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
-            'contact_id',
             'contact_alias',
             'contact_email',
             'contact_pager',
             'contact_notify_service_timeperiod',
-            'contact_notify_service_recovery',
-            'contact_notify_service_warning',
-            'contact_notify_service_critical',
-            'contact_notify_service_unknown',
-            'contact_notify_service_flapping',
-            'contact_notify_service_downtime',
-            'contact_notify_host_timeperiod',
-            'contact_notify_host_recovery',
-            'contact_notify_host_down',
-            'contact_notify_host_unreachable',
-            'contact_notify_host_flapping',
-            'contact_notify_host_downtime',
+            'contact_notify_host_timeperiod'
         ));
         $this->filterQuery($query);
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->contacts = $query;
 
         $this->setupLimitControl();
