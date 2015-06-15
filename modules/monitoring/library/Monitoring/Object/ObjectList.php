@@ -6,10 +6,11 @@ namespace Icinga\Module\Monitoring\Object;
 use ArrayIterator;
 use Countable;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filterable;
 use IteratorAggregate;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
-abstract class ObjectList implements Countable, IteratorAggregate
+abstract class ObjectList implements Countable, IteratorAggregate, Filterable
 {
     /**
      * @var string
@@ -81,7 +82,27 @@ abstract class ObjectList implements Countable, IteratorAggregate
      */
     public function getFilter()
     {
+        if ($this->filter === null) {
+            $this->filter = Filter::matchAny();
+        }
+
         return $this->filter;
+    }
+
+    public function applyFilter(Filter $filter)
+    {
+        $this->getFilter()->addFilter($filter);
+        return $this;
+    }
+
+    public function addFilter(Filter $filter)
+    {
+        $this->getFilter()->addFilter($filter);
+    }
+
+    public function where($condition, $value = null)
+    {
+        $this->getFilter()->addFilter(Filter::where($condition, $value));
     }
 
     abstract protected function fetchObjects();
