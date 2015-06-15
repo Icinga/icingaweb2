@@ -375,7 +375,11 @@ tr.state img.icon {
 }
 
 tr.state a {
-  font-weight: bold;
+  color: #222;
+}
+
+tr.state:hover a {
+  color: inherit;
 }
 
 tr.state a.active {
@@ -486,6 +490,7 @@ tr.state.handled[href]:hover, tr.state.handled[href]:hover td.state {
 
 tr.state.warning[href]:hover {
   background-color: @colorWarning;
+  color: white;
 }
 
 tr.state.warning.handled[href]:hover {
@@ -494,6 +499,7 @@ tr.state.warning.handled[href]:hover {
 
 tr.state.critical[href]:hover, tr.state.down[href]:hover {
   background-color: @colorCritical;
+  color: white;
 }
 
 tr.state.critical.handled[href]:hover, tr.state.down.handled[href]:hover {
@@ -503,6 +509,7 @@ tr.state.critical.handled[href]:hover, tr.state.down.handled[href]:hover {
 
 tr.state.unknown[href]:hover {
   background-color: @colorUnknown;
+  color: white;
 }
 
 tr.state.unknown.handled[href]:hover {
@@ -515,6 +522,7 @@ tr.state.pending[href]:hover {
 
 tr.state.invalid[href]:hover {
   background-color: @colorInvalid;
+  color: white;
 }
 
 tr.state.unreachable[href]:hover {
