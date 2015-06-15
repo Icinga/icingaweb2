@@ -285,12 +285,27 @@ class DbQuery extends SimpleQuery
         if ($this->isTimestamp($col)) {
             $expression = $this->valueToTimestamp($expression);
         }
+
         if (is_array($expression) && $sign === '=') {
             // TODO: Should we support this? Doesn't work for blub*
             return $col . ' IN (' . $this->escapeForSql($expression) . ')';
         } elseif ($sign === '=' && strpos($expression, '*') !== false) {
+            if ($expression === '*') {
+                // We'll ignore such filters as it prevents index usage and because "*" means anything, anything means
+                // all whereas all means that whether we use a filter to match anything or no filter at all makes no
+                // difference, except for performance reasons...
+                return '';
+            }
+
             return $col . ' LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
         } elseif ($sign === '!=' && strpos($expression, '*') !== false) {
+            if ($expression === '*') {
+                // We'll ignore such filters as it prevents index usage and because "*" means nothing, so whether we're
+                // using a real column with a valid comparison here or just an expression which cannot be evaluated to
+                // true makes no difference, except for performance reasons...
+                return $this->escapeForSql(0);
+            }
+
             return $col . ' NOT LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
         } else {
             return $col . ' ' . $sign . ' ' . $this->escapeForSql($expression);

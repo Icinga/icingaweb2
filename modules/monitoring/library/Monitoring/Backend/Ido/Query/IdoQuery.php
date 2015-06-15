@@ -267,6 +267,10 @@ abstract class IdoQuery extends DbQuery
     protected function requireFilterColumns(Filter $filter)
     {
         if ($filter instanceof FilterExpression) {
+            if ($filter->getExpression() === '*') {
+                return; // Wildcard only filters are ignored so stop early here to avoid joining a table for nothing
+            }
+
             $col = $filter->getColumn();
             $this->requireColumn($col);
 
@@ -328,6 +332,10 @@ abstract class IdoQuery extends DbQuery
 
     public function where($condition, $value = null)
     {
+        if ($value === '*') {
+            return $this; // Wildcard only filters are ignored so stop early here to avoid joining a table for nothing
+        }
+
         $this->requireColumn($condition);
         $col = $this->getMappedField($condition);
         if ($col === null) {
