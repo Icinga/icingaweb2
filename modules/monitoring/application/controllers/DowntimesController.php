@@ -39,7 +39,7 @@ class Monitoring_DowntimesController extends Controller
             'downtime_internal_id',
             (string)$this->params
         ));
-        $this->downtimes = $this->backend->select()->from('downtime', array(
+        $query = $this->backend->select()->from('downtime', array(
             'id'              => 'downtime_internal_id',
             'objecttype'      => 'object_type',
             'comment'         => 'downtime_comment',
@@ -59,8 +59,10 @@ class Monitoring_DowntimesController extends Controller
             'service_description',
             'host_display_name',
             'service_display_name'
-        ))->addFilter($this->filter)->getQuery()->fetchAll();
+        ))->addFilter($this->filter);
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
+        $this->downtimes = $query->getQuery()->fetchAll();
         if (false === $this->downtimes) {
             throw new Zend_Controller_Action_Exception(
                 $this->translate('Downtime not found')
