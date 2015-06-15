@@ -10,20 +10,13 @@
 
 @colorGray: #f9f9f9;
 @colorLinkDefault: #049baf;
-@colorTextDefault: #666;
+@colorTextDefault: @colorMainForeground;
 @colorTextDarkDefault: #555;
-@colorPetrol: #049baf;
 @colorOk: #44bb77;
 @colorWarning: #ffaa44;
 @colorWarningHandled: #ffcc66;
 @colorCritical: #ff5566;
 @colorCriticalHandled: #ff99aa;
-/*
-@colorUnknown: #dd66ff;
-@colorUnknownHandled: #ee99ff;
-@colorUnreachable: #dd66ff;
-@colorUnreachableHandled: #ee99ff;
-*/
 @colorUnknown: #aa44ff;
 @colorUnknownHandled: #cc77ff;
 @colorUnreachable: #aa44ff;
@@ -33,6 +26,9 @@
 @colorFormNotificationInfo: #77aaff;
 @colorFormNotificationWarning: #ffaa44;
 @colorFormNotificationError: #ff5566;
+
+/* deprecated */
+@colorPetrol: @colorMainLayout;
 
 /*** Base rules ***/
 * {
