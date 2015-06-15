@@ -67,7 +67,7 @@ foreach ($serviceDescriptions as $service_description): ?>
         <th>
           <?= $this->qlink(
             $host_name,
-            'monitoring/show/services?' . $serviceFilter,
+            'monitoring/list/services?' . $serviceFilter,
             array('host' => $host_name),
             array('title' => sprintf($this->translate('List all reported services on host %s'), $host_name))
           ); ?>

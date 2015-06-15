@@ -143,6 +143,11 @@ class InstanceConfigForm extends ConfigForm
 
             $instanceConfig = $this->config->getSection($instanceName)->toArray();
             $instanceConfig['name'] = $instanceName;
+
+            if (isset($instanceConfig['resource'])) {
+                $instanceConfig['use_resource'] = true;
+            }
+
             $this->populate($instanceConfig);
         }
     }

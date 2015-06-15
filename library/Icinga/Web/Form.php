@@ -855,8 +855,19 @@ class Form extends Zend_Form
     public function populate(array $defaults)
     {
         $this->create($defaults);
+        $this->preserveDefaults($this, $defaults);
+        return parent::populate($defaults);
+    }
 
-        foreach ($this->getElements() as $name => $_) {
+    /**
+     * Recurse the given form and unset all unchanged default values
+     *
+     * @param   Zend_Form   $form
+     * @param   array       $defaults
+     */
+    protected function preserveDefaults(Zend_Form $form, array & $defaults)
+    {
+        foreach ($form->getElements() as $name => $_) {
             if (
                 array_key_exists($name, $defaults)
                 && array_key_exists($name . static::DEFAULT_SUFFIX, $defaults)
@@ -866,7 +877,9 @@ class Form extends Zend_Form
             }
         }
 
-        return parent::populate($defaults);
+        foreach ($form->getSubForms() as $_ => $subForm) {
+            $this->preserveDefaults($subForm, $defaults);
+        }
     }
 
     /**

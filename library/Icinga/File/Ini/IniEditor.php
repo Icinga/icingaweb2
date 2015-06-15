@@ -313,14 +313,19 @@ class IniEditor
      */
     public function getText()
     {
-        $this->cleanUpWhitespaces();
-        return rtrim(implode(PHP_EOL, $this->text)) . PHP_EOL;
+        $this->normalizeSectionSpacing();
+
+        // trim leading and trailing whitespaces from generated file
+        $txt = trim(implode(PHP_EOL, $this->text)) . PHP_EOL;
+
+        // replace linebreaks, unless they preceed a comment or a section
+        return preg_replace("/\n[\n]*([^;\[])/", "\n$1", $txt);
     }
 
     /**
-     * Remove all unneeded line breaks between sections
+     * normalize section spacing according to the current settings
      */
-    private function cleanUpWhitespaces()
+    private function normalizeSectionSpacing()
     {
         $i = count($this->text) - 1;
         for (; $i > 0; $i--) {
@@ -328,24 +333,18 @@ class IniEditor
             if ($this->isSectionDeclaration($line) && $i > 0) {
                 $i--;
                 $line = $this->text[$i];
-                /*
-                 * Ignore comments that are glued to the section declaration
-                 */
+                // ignore comments that are glued to the section declaration
                 while ($i > 0 && $this->isComment($line)) {
                     $i--;
                     $line = $this->text[$i];
                 }
-                /*
-                 * Remove whitespaces between the sections
-                 */
+                // remove whitespaces between the sections
                 while ($i > 0 && preg_match('/^\s*$/', $line) === 1) {
                     $this->deleteLine($i);
                     $i--;
                     $line = $this->text[$i];
                 }
-                /*
-                 * Refresh section separators
-                 */
+                // refresh section separators
                 if ($i !== 0 && $this->sectionSeparators > 0) {
                     $this->insertAtLine($i + 1, str_repeat(PHP_EOL, $this->sectionSeparators - 1));
                 }
@@ -621,6 +620,6 @@ class IniEditor
 
     private function sanitize($value)
     {
-        return str_replace('\n', '', $value);
+        return str_replace("\n", '', $value);
     }
 }

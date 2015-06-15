@@ -28,6 +28,10 @@ class GroupController extends AuthBackendController
             function ($b) { return $b->getName(); },
             $this->loadUserGroupBackends('Icinga\Data\Selectable')
         );
+        if (empty($backendNames)) {
+            return;
+        }
+
         $this->view->backendSelection = new Form();
         $this->view->backendSelection->setAttrib('class', 'backend-selection');
         $this->view->backendSelection->setUidDisabled();
@@ -100,6 +104,7 @@ class GroupController extends AuthBackendController
 
         $filterEditor = Widget::create('filterEditor')
             ->setQuery($members)
+            ->setSearchColumns(array('user'))
             ->preserveParams('limit', 'sort', 'dir', 'view', 'backend', 'group')
             ->ignoreParams('page')
             ->handleRequest($this->getRequest());

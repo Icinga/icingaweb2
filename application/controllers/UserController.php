@@ -28,6 +28,10 @@ class UserController extends AuthBackendController
             function ($b) { return $b->getName(); },
             $this->loadUserBackends('Icinga\Data\Selectable')
         );
+        if (empty($backendNames)) {
+            return;
+        }
+
         $this->view->backendSelection = new Form();
         $this->view->backendSelection->setAttrib('class', 'backend-selection');
         $this->view->backendSelection->setUidDisabled();
@@ -99,6 +103,7 @@ class UserController extends AuthBackendController
 
         $filterEditor = Widget::create('filterEditor')
             ->setQuery($memberships)
+            ->setSearchColumns(array('group_name'))
             ->preserveParams('limit', 'sort', 'dir', 'view', 'backend', 'user')
             ->ignoreParams('page')
             ->handleRequest($this->getRequest());

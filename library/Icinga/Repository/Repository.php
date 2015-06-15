@@ -600,6 +600,37 @@ abstract class Repository implements Selectable
     }
 
     /**
+     * Parse the given value based on the ASN.1 standard (GeneralizedTime) and return its timestamp representation
+     *
+     * @param   string|null     $value
+     *
+     * @return  int
+     */
+    protected function retrieveGeneralizedTime($value)
+    {
+        if ($value === null) {
+            return $value;
+        }
+
+        if (
+            ($dateTime = DateTime::createFromFormat('YmdHis.uO', $value)) !== false
+            || ($dateTime = DateTime::createFromFormat('YmdHis.uZ', $value)) !== false
+            || ($dateTime = DateTime::createFromFormat('YmdHis.u', $value)) !== false
+            || ($dateTime = DateTime::createFromFormat('YmdHis', $value)) !== false
+            || ($dateTime = DateTime::createFromFormat('YmdHi', $value)) !== false
+            || ($dateTime = DateTime::createFromFormat('YmdH', $value)) !== false
+        ) {
+            return $dateTime->getTimeStamp();
+        } else {
+            Logger::debug(sprintf(
+                'Failed to parse "%s" based on the ASN.1 standard (GeneralizedTime) in repository "%s".',
+                $value,
+                $this->getName()
+            ));
+        }
+    }
+
+    /**
      * Validate that the requested table exists
      *
      * @param   string              $table      The table to validate
