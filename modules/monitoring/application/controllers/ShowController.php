@@ -80,7 +80,7 @@ class Monitoring_ShowController extends Controller
 
     protected function fetchHostStats()
     {
-        $this->view->stats = $this->backend->select()->from('servicestatussummary', array(
+        $query = $this->backend->select()->from('servicestatussummary', array(
             'services_total',
             'services_ok',
             'services_critical',
@@ -93,7 +93,9 @@ class Monitoring_ShowController extends Controller
             'services_unknown_unhandled',
             'services_unknown_handled',
             'services_pending',
-        ))->where('service_host_name', $this->params->get('host'))->getQuery()->fetchRow();
+        ))->where('service_host_name', $this->params->get('host'));
+        $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->view->stats = $query->getQuery()->fetchRow();
     }
 
     public function contactAction()
