@@ -159,4 +159,14 @@ class NotificationQuery extends IdoQuery
         }
         return $this;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function columns(array $columns)
+    {
+        parent::columns($columns);
+        $this->requireVirtualTable('hosts');
+        $this->requireVirtualTable('services');
+    }
 }
