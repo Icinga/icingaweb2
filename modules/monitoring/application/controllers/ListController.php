@@ -390,8 +390,8 @@ class Monitoring_ListController extends Controller
             'contact_email',
             'contact_pager'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->filterQuery($query);
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
         $this->setupSortControl(array(
             'contactgroup_name'     => $this->translate('Contactgroup Name'),
