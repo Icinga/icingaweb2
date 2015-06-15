@@ -139,9 +139,8 @@ class ContactQuery extends IdoQuery
             array('ho' => $this->prefix . 'objects'),
             'ho.object_id = h.host_object_id AND ho.is_active = 1',
             array()
-        )->group(
-            array('c.contact_id')
         );
+        $this->group(array('c.contact_id'));
     }
 
     /**
@@ -182,8 +181,7 @@ class ContactQuery extends IdoQuery
             array('so' => $this->prefix . 'objects'),
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
-        )->group(
-            array('c.contact_id')
         );
+        $this->group(array('c.contact_id'));
     }
 }
