@@ -10,6 +10,7 @@ use Icinga\Forms\Config\Resource\DbResourceForm;
 use Icinga\Forms\Config\Resource\FileResourceForm;
 use Icinga\Forms\Config\Resource\LdapResourceForm;
 use Icinga\Forms\Config\Resource\LivestatusResourceForm;
+use Icinga\Forms\Config\Resource\SshResourceForm;
 use Icinga\Application\Platform;
 use Icinga\Exception\ConfigurationError;
 
@@ -41,6 +42,8 @@ class ResourceConfigForm extends ConfigForm
             return new LivestatusResourceForm();
         } elseif ($type === 'file') {
             return new FileResourceForm();
+        } elseif ($type === 'ssh') {
+            return new SshResourceForm();
         } else {
             throw new InvalidArgumentException(sprintf($this->translate('Invalid resource type "%s" provided'), $type));
         }
@@ -55,7 +58,7 @@ class ResourceConfigForm extends ConfigForm
      *
      * @return  $this
      *
-     * @thrwos  InvalidArgumentException    In case the resource does already exist
+     * @throws  InvalidArgumentException    In case the resource does already exist
      */
     public function add(array $values)
     {
@@ -116,6 +119,11 @@ class ResourceConfigForm extends ConfigForm
         }
 
         $resourceConfig = $this->config->getSection($name);
+        $resourceForm = $this->getResourceForm($resourceConfig->type);
+        if (method_exists($resourceForm, 'beforeRemove')) {
+            $resourceForm::beforeRemove($resourceConfig);
+        }
+
         $this->config->removeSection($name);
         return $resourceConfig;
     }
@@ -130,8 +138,9 @@ class ResourceConfigForm extends ConfigForm
      */
     public function onSuccess()
     {
+        $resourceForm = $this->getResourceForm($this->getElement('type')->getValue());
+
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
-            $resourceForm = $this->getResourceForm($this->getElement('type')->getValue());
             if (method_exists($resourceForm, 'isValidResource') && false === $resourceForm::isValidResource($this)) {
                 $this->addElement($this->getForceCreationCheckbox());
                 return false;
@@ -141,6 +150,11 @@ class ResourceConfigForm extends ConfigForm
         $resource = $this->request->getQuery('resource');
         try {
             if ($resource === null) { // create new resource
+                if (method_exists($resourceForm, 'beforeAdd')) {
+                    if (! $resourceForm::beforeAdd($this)) {
+                        return false;
+                    }
+                }
                 $this->add($this->getValues());
                 $message = $this->translate('Resource "%s" has been successfully created');
             } else { // edit existing resource
@@ -212,6 +226,7 @@ class ResourceConfigForm extends ConfigForm
         $resourceTypes = array(
             'file'          => $this->translate('File'),
             'livestatus'    => 'Livestatus',
+            'ssh'           => $this->translate('SSH Identity'),
         );
         if ($resourceType === 'ldap' || Platform::extensionLoaded('ldap')) {
             $resourceTypes['ldap'] = 'LDAP';
