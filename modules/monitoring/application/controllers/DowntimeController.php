@@ -35,7 +35,7 @@ class Monitoring_DowntimeController extends Controller
     {
         $downtimeId = $this->params->getRequired('downtime_id');
 
-        $this->downtime = $this->backend->select()->from('downtime', array(
+        $query = $this->backend->select()->from('downtime', array(
             'id'              => 'downtime_internal_id',
             'objecttype'      => 'object_type',
             'comment'         => 'downtime_comment',
@@ -55,8 +55,10 @@ class Monitoring_DowntimeController extends Controller
             'service_description',
             'host_display_name',
             'service_display_name'
-        ))->where('downtime_internal_id', $downtimeId)->getQuery()->fetchRow();
+        ))->where('downtime_internal_id', $downtimeId);
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
+        $this->downtime = $query->getQuery()->fetchRow();
         if ($this->downtime === false) {
             $this->httpNotFound($this->translate('Downtime not found'));
         }
