@@ -73,7 +73,7 @@ Directive           | Description
 --------------------|------------
 **type**            | `ssh`
 **user**            | The username to use when connecting to the server.
-**private_key**    | The path to the private key of the user.
+**private_key**     | The path to the private key of the user.
 
 **Example:**
 
