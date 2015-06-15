@@ -30,6 +30,7 @@ class Monitoring_ServicesController extends Controller
         $serviceList->setFilter(Filter::fromQueryString(
             (string) $this->params->without(array('service_problem', 'service_handled', 'view'))
         ));
+        $this->applyRestriction('monitoring/filter/objects', $serviceList);
         $this->serviceList = $serviceList;
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/services');
         $this->getTabs()->add(
