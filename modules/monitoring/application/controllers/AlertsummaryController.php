@@ -94,7 +94,7 @@ class Monitoring_AlertsummaryController extends Controller
 
         $query->setFilter(
             new Icinga\Data\Filter\FilterExpression(
-                'n.start_time',
+                'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
             )
@@ -142,7 +142,7 @@ class Monitoring_AlertsummaryController extends Controller
 
         $query->setFilter(
             new Icinga\Data\Filter\FilterExpression(
-                'n.start_time',
+                'notification_start_time',
                 '>=',
                 $beginDate->format('Y-m-d H:i:s')
             )
@@ -209,7 +209,7 @@ class Monitoring_AlertsummaryController extends Controller
 
         $query->setFilter(
             new Icinga\Data\Filter\FilterExpression(
-                'n.start_time',
+                'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
             )
@@ -324,7 +324,7 @@ class Monitoring_AlertsummaryController extends Controller
 
         $query->setFilter(
             new Icinga\Data\Filter\FilterExpression(
-                'n.start_time',
+                'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
             )
