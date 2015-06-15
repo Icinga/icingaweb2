@@ -16,7 +16,7 @@ $this->baseFilter = isset($this->baseFilter) ? $this->baseFilter : null;
 
 $selfUrl = 'monitoring/list/services';
 $currentUrl = Url::fromRequest()->getRelativeUrl();
-?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
+?><h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
 <?= $this->qlink(
     sprintf($this->translatePlural(
         '%u Service', '%u Services', $this->stats->services_total),
@@ -143,4 +143,4 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
 </span>
 <?php endif ?>
 </span>
-</div>
+</h1>
