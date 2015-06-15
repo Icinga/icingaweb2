@@ -75,11 +75,11 @@ if (isset($delCommentForm)) {
 
  ?>
 	    <li class="comment-item">
-	    	<h4>
+	    	<h3>
 		    	<span class="author"><?= $this->escape($comment->author) ?></span>
 		    	<?= $this->timeAgo($comment->timestamp) ?>
                 <?= $deleteButton ?>
-		    </h4>
+		    </h3>
 		    <p><span class="sr-only">(<?= $this->translate('Comment'); ?>): </span><?= str_replace(array('\r\n', '\n'), '<br>', $commentText) ?></p>
          </li>
  <?php endforeach ?>
