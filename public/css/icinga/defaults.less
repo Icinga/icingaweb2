@@ -36,14 +36,13 @@
 
 /* Mixins */
 
-.page-header(@borderSize: 2px; @fontSize: 2em; @textColor: @colorTextDarkDefault) {
+.page-header(@borderSize: 2px; @fontSize: 2em; @textColor: @colorMainForeground) {
   font-size: @fontSize;
   color: @textColor;
-  /* border-bottom: @borderSize solid @colorPetrol; */
-  background-color: #888;
-  color: white;
+  border-left: 1em solid #888;
+  border-bottom: 3px solid #888;
   font-weight: normal;
-  padding: 0.2em 1em;
+  padding: 0.3em 1em;
   text-transform: uppercase;
   font-size: 0.8em;
   a {
