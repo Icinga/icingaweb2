@@ -388,8 +388,9 @@ class Monitoring_ListController extends Controller
             'contact_name',
             'contact_alias',
             'contact_email',
-            'contact_pager',
+            'contact_pager'
         ));
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->filterQuery($query);
 
         $this->setupSortControl(array(
@@ -409,6 +410,7 @@ class Monitoring_ListController extends Controller
             }
             $groupData[$c->contactgroup_name]['contacts'][] = $c;
         }
+
         // TODO: Find a better naming
         $this->view->groupData = $groupData;
     }
