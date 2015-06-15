@@ -60,9 +60,8 @@ if (count($services) === 0) {
       </td>
 
       <td>
-        <div class="sparkline-box"><?= $this->perfdata($service->service_perfdata, true, 8) ?> </div>
         <?= $this->iconImage()->service($service) ?>
-        <?= implode(' ', $this->serviceFlags($service)); ?>
+        <span class="objectflags"><?= implode(' ', $this->serviceFlags($service)) ?></span>
         <?= $this->qlink(
           $service->service_display_name,
           $serviceLink,
@@ -78,6 +77,7 @@ if (count($services) === 0) {
           null,
           array('title' => sprintf($this->translate('Show detailed information for host %s'), $service->host_display_name))
         ); ?><?php endif ?><br>
+        <div class="sparkline-box"><?= $this->perfdata($service->service_perfdata, true, 8) ?> </div>
         <p class="pluginoutput"><?= $this->escape($this->ellipsis($service->service_output, 10000)); ?></p>
       </td>
 <?php foreach($this->addColumns as $col): ?>
