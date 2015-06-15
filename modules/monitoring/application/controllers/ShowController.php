@@ -131,6 +131,7 @@ class Monitoring_ShowController extends Controller
             'contact_notify_host_downtime',
         ));
         $query->where('contact_name', $contactName);
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $contact = $query->getQuery()->fetchRow();
 
         if ($contact) {
@@ -153,6 +154,7 @@ class Monitoring_ShowController extends Controller
             ));
 
             $notifications->where('contact_object_id', $contact->contact_object_id);
+            $this->applyRestriction('monitoring/filter/objects', $notifications);
             $this->view->notifications = $notifications;
             $this->setupLimitControl();
             $this->setupPaginationControl($this->view->notifications);
