@@ -392,6 +392,11 @@ class Monitoring_ListController extends Controller
         ));
         $this->filterQuery($query);
 
+        $this->setupSortControl(array(
+            'contactgroup_name'     => $this->translate('Contactgroup Name'),
+            'contactgroup_alias'    => $this->translate('Contactgroup Alias')
+        ), $query);
+
         // Fetch and prepare all contact groups:
         $contactgroups = $query->getQuery()->fetchAll();
         $groupData = array();
@@ -406,11 +411,6 @@ class Monitoring_ListController extends Controller
         }
         // TODO: Find a better naming
         $this->view->groupData = $groupData;
-
-        $this->setupSortControl(array(
-            'contactgroup_name'     => $this->translate('Contactgroup Name'),
-            'contactgroup_alias'    => $this->translate('Contactgroup Alias')
-        ), $query);
     }
 
     public function commentsAction()
