@@ -6,6 +6,18 @@ namespace Icinga\Module\Monitoring\DataView;
 class EventHistory extends DataView
 {
     /**
+     * {@inheritdoc}
+     */
+    public function isValidFilterTarget($column)
+    {
+        if ($column[0] === '_' && preg_match('/^_(?:host|service)_/', $column)) {
+            return true;
+        }
+
+        return parent::isValidFilterTarget($column);
+    }
+
+    /**
      * Retrieve columns provided by this view
      *
      * @return array
