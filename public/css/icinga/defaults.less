@@ -34,26 +34,6 @@
 @colorFormNotificationWarning: #ffaa44;
 @colorFormNotificationError: #ff5566;
 
-/* Mixins */
-
-.page-header(@borderSize: 2px; @fontSize: 2em; @textColor: @colorMainForeground) {
-  font-size: @fontSize;
-  color: @textColor;
-  border-left: 1em solid #888;
-  border-bottom: 3px solid #888;
-  font-weight: normal;
-  padding: 0.3em 1em;
-  text-transform: uppercase;
-  font-size: 0.8em;
-  a {
-    text-decoration: none;
-    color: inherit;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
-
 /*** Base rules ***/
 * {
   font-size: 100%;
@@ -101,33 +81,10 @@ a {
   }
 }
 
-/* W3C Recommendation <http://www.w3.org/TR/CSS21/sample.html> (except h4) */
-h1 {
-    .page-header();
-}
-
-h2 {
-    font-size:  1.5em;
-}
-
-h3 {
-  .page-header(1px, 1.17em);
-}
-
-h4 {
-  font-size:    1em;
-}
-
-h5 {
-  .page-header(1px, .83em);
-}
-
-h6 {
-    font-size:  .75em;
-    color: @colorPetrol;
-}
-
 h1, h2, h3, h4, h5, h6 {
+  font-size: 1em;
+  padding: 0.3em 1em;
+
   a {
     text-decoration: none;
     color: inherit;
@@ -136,6 +93,33 @@ h1, h2, h3, h4, h5, h6 {
       text-decoration: underline;
     }
   }
+}
+
+h5 {
+  font-size: 0.83em;
+}
+
+h6 {
+  font-size: 0.75em;
+}
+
+h1 {
+  border-left: 1em solid #888;
+  border-bottom: 3px solid #888;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+h2 {
+  border-left: 1em solid #888;
+  border-bottom: 1px solid #888;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+
+h3 {
+  border-left: 1em solid #888;
+  border-bottom: 1px solid #888;
 }
 
 button {
