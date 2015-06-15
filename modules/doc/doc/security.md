@@ -7,9 +7,9 @@ restrictions and permissions in detail:
 
 ## Permissions
 
-The Icinga Web 2 monitoring plugin can send commands to the current Icinga2 instance
+The Icinga Web 2 monitoring module can send commands to the current Icinga2 instance
 through the command pipe. A user needs specific permissions to be able to send those  
-commands when using the monitoring plugin.
+commands when using the monitoring module.
 
 
 | Name                                        | Permits                                                                     |
