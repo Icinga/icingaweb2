@@ -4,9 +4,7 @@
   <div class="dontprint">
      <?= $this->render('list/components/selectioninfo.phtml'); ?>
   </div>
-  <div class="tinystatesummary">
-     <?= count($comments) ?> <?= $this->translate('Comments') ?>:
-  </div>
+  <h1><?= count($comments) ?> <?= $this->translate('Comments') ?></h1>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
   <?= $this->paginator; ?>

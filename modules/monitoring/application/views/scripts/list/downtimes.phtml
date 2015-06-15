@@ -8,9 +8,7 @@ if (! $this->compact): ?>
     <div class="dontprint">
         <?= $this->render('list/components/selectioninfo.phtml'); ?>
     </div>
-    <div class="tinystatesummary">
-        <?= count($downtimes) ?> <?= $this->translate('Downtimes') ?>
-    </div>
+    <h1><?= count($downtimes) ?> <?= $this->translate('Downtimes') ?></h1>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
   <?= $this->paginator; ?>
