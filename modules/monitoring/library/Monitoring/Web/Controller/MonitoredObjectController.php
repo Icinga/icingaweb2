@@ -145,6 +145,9 @@ abstract class MonitoredObjectController extends Controller
             $params = array(
                 'host' => $object->getName()
             );
+            if ($this->params->has('service')) {
+                $params['service'] = $this->params->get('service');
+            }
         } else {
             $isService = true;
             $params = array(
@@ -165,14 +168,14 @@ abstract class MonitoredObjectController extends Controller
                 'urlParams' => $params
             )
         );
-        if ($isService) {
+        if ($isService || $this->params->has('service')) {
             $tabs->add(
                 'service',
                 array(
                     'title'     => sprintf(
                         $this->translate('Show detailed information for service %s on host %s'),
-                        $object->getName(),
-                        $object->getHost()->getName()
+                        $isService ? $object->getName() : $this->params->get('service'),
+                        $isService ? $object->getHost()->getName() : $object->getName()
                     ),
                     'label'     => $this->translate('Service'),
                     'icon'      => 'service',
