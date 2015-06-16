@@ -1,8 +1,6 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use \Zend_View_Helper_FormElement;
-
 /**
  * Render number input controls
  */
