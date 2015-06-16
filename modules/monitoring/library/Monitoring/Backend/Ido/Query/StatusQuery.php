@@ -434,7 +434,7 @@ class StatusQuery extends IdoQuery
             array('so' => $this->prefix . 'objects'),
             'so.' . $this->object_id . ' = s.service_object_id AND so.is_active = 1',
             array()
-        )->joinLeft(
+        )->join(
             array('ss' => $this->prefix . 'servicestatus'),
             'so.' . $this->object_id . ' = ss.service_object_id',
             array()
@@ -452,15 +452,15 @@ class StatusQuery extends IdoQuery
 
     protected function joinHostHostgroups()
     {
-        $this->select->join(
+        $this->select->joinLeft(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.host_object_id = h.host_object_id',
             array()
-        )->join(
+        )->joinLeft(
             array('hg' => $this->prefix . 'hostgroups'),
             'hgm.hostgroup_id = hg.' . $this->hostgroup_id,
             array()
-        )->join(
+        )->joinLeft(
             array('hgo' => $this->prefix . 'objects'),
             'hgo.' . $this->object_id . ' = hg.hostgroup_object_id AND hgo.is_active = 1',
             array()
@@ -477,15 +477,15 @@ class StatusQuery extends IdoQuery
 
     protected function joinServiceHostgroups()
     {
-        $this->select->join(
+        $this->select->joinLeft(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.host_object_id = s.host_object_id',
             array()
-        )->join(
+        )->joinLeft(
             array('hg' => $this->prefix . 'hostgroups'),
             'hgm.hostgroup_id = hg.' . $this->hostgroup_id,
             array()
-        )->join(
+        )->joinLeft(
             array('hgo' => $this->prefix . 'objects'),
             'hgo.' . $this->object_id . ' = hg.hostgroup_object_id'
             . ' AND hgo.is_active = 1',
@@ -502,15 +502,15 @@ class StatusQuery extends IdoQuery
     protected function joinServicegroups()
     {
         $this->requireVirtualTable('services');
-        $this->select->join(
+        $this->select->joinLeft(
             array('sgm' => $this->prefix . 'servicegroup_members'),
             'sgm.service_object_id = s.service_object_id',
             array()
-        )->join(
+        )->joinLeft(
             array('sg' => $this->prefix . 'servicegroups'),
             'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
             array()
-        )->join(
+        )->joinLeft(
             array('sgo' => $this->prefix . 'objects'),
             'sgo.' . $this->object_id. ' = sg.servicegroup_object_id'
           . ' AND sgo.is_active = 1',
