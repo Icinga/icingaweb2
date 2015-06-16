@@ -75,14 +75,8 @@ class HostdowntimestarthistoryQuery extends IdoQuery
             array()
         )->join(
             array('ho' => $this->prefix . 'objects'),
-            'ho.object_id = hdh.object_id',
+            'ho.object_id = hdh.object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
             array()
-        )->where(
-            'ho.is_active = ?',
-            1
-        )->where(
-            'ho.objecttype_id = ?',
-            1
         );
 
         if (@func_get_arg(0) === false) {
@@ -110,15 +104,8 @@ class HostdowntimestarthistoryQuery extends IdoQuery
             array()
         )->join(
             array('hgo' => $this->prefix . 'objects'),
-            'hgo.object_id = hg.hostgroup_object_id',
+            'hgo.object_id = hg.hostgroup_object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
             array()
-        )->where(
-            'hgo.is_active = ?',
-            1
-        )
-        ->where(
-            'hgo.objecttype_id = ?',
-            3
         );
         $this->select->group(array('hdh.downtimehistory_id', 'ho.name1'));
     }
@@ -151,15 +138,8 @@ class HostdowntimestarthistoryQuery extends IdoQuery
             array()
         )->join(
             array('sgo' => $this->prefix . 'objects'),
-            'sgo.object_id = sg.servicegroup_object_id',
+            'sgo.object_id = sg.servicegroup_object_id AND sgo.is_active = 1 AND sgo.objecttype_id = 4',
             array()
-        )->where(
-            'sgo.is_active = ?',
-            1
-        )
-        ->where(
-            'sgo.objecttype_id = ?',
-            4
         );
     }
 
@@ -174,15 +154,8 @@ class HostdowntimestarthistoryQuery extends IdoQuery
             array()
         )->join(
             array('so' => $this->prefix . 'objects'),
-            'so.object_id = s.service_object_id',
+            'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
-        )->where(
-            'so.is_active = ?',
-            1
-        )
-        ->where(
-            'so.objecttype_id = ?',
-            2
         );
         $this->select->group(array('hdh.downtimehistory_id', 'ho.name1'));
     }
