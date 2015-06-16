@@ -86,15 +86,15 @@ class ServicedowntimeQuery extends IdoQuery
     protected function joinHostgroups()
     {
         $this->requireVirtualTable('services');
-        $this->select->join(
+        $this->select->joinLeft(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.host_object_id = s.host_object_id',
             array()
-        )->join(
+        )->joinLeft(
             array('hg' => $this->prefix . 'hostgroups'),
             'hg.hostgroup_id = hgm.hostgroup_id',
             array()
-        )->join(
+        )->joinLeft(
             array('hgo' => $this->prefix . 'objects'),
             'hgo.object_id = hg.hostgroup_object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
             array()
@@ -133,15 +133,15 @@ class ServicedowntimeQuery extends IdoQuery
      */
     protected function joinServicegroups()
     {
-        $this->select->join(
+        $this->select->joinLeft(
             array('sgm' => $this->prefix . 'servicegroup_members'),
             'sgm.service_object_id = so.object_id',
             array()
-        )->join(
+        )->joinLeft(
             array('sg' => $this->prefix . 'servicegroups'),
             'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
             array()
-        )->join(
+        )->joinLeft(
             array('sgo' => $this->prefix . 'objects'),
             'sgo.object_id = sg.servicegroup_object_id AND sgo.is_active = 1 AND sgo.objecttype_id = 4',
             array()
