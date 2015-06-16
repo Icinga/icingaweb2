@@ -264,10 +264,6 @@ class Menu implements RecursiveIterator
                 'permission'    => 'config/modules',
                 'priority'      => 890
             ));
-            $section->add(t('About'), array(
-                'url'       => 'about',
-                'priority'  => 895
-            ));
 
             $section = $this->add($auth->getUser()->getUsername(), array(
                 'icon'     => 'user',
@@ -282,6 +278,11 @@ class Menu implements RecursiveIterator
                 'url'      => 'authentication/logout',
                 'priority' => 990,
                 'renderer' => 'ForeignMenuItemRenderer'
+            ));
+
+            $this->add(t('About'), array(
+                'url'       => 'about',
+                'priority'  => 1000
             ));
         }
     }
