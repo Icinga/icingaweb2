@@ -61,15 +61,15 @@ class ServicegroupQuery extends IdoQuery
     protected function joinHostgroups()
     {
         $this->requireVirtualTable('services');
-        $this->select->join(
+        $this->select->joinLeft(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.host_object_id = s.host_object_id',
             array()
-        )->join(
+        )->joinLeft(
             array('hg' => $this->prefix . 'hostgroups'),
             'hg.hostgroup_id = hgm.hostgroup_id',
             array()
-        )->join(
+        )->joinLeft(
             array('hgo' => $this->prefix . 'objects'),
             'hgo.object_id = hg.hostgroup_object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
             array()
@@ -82,7 +82,7 @@ class ServicegroupQuery extends IdoQuery
     protected function joinHosts()
     {
         $this->requireVirtualTable('services');
-        $this->select->join(
+        $this->select->joinLeft(
             array('h' => $this->prefix . 'hosts'),
             'h.host_object_id = s.host_object_id',
             array()
@@ -94,11 +94,11 @@ class ServicegroupQuery extends IdoQuery
      */
     protected function joinServiceobjects()
     {
-        $this->select->join(
+        $this->select->joinLeft(
             array('sgm' => $this->prefix . 'servicegroup_members'),
             'sgm.' . $this->servicegroup_id . ' = sg.' . $this->servicegroup_id,
             array()
-        )->join(
+        )->joinLeft(
             array('so' => $this->prefix . 'objects'),
             'sgm.service_object_id = so.object_id',
             array()
@@ -112,7 +112,7 @@ class ServicegroupQuery extends IdoQuery
     protected function joinServices()
     {
         $this->requireVirtualTable('serviceobjects');
-        $this->select->join(
+        $this->select->joinLeft(
             array('s' => $this->prefix . 'services'),
             's.service_object_id = so.object_id',
             array()
