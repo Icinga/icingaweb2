@@ -31,6 +31,7 @@ if (count($history) === 0) {
         case 'notify':
           $icon = 'bell';
           $title = $this->translate('Notification');
+          $msg = $msg ?: $this->translate('This notification was not sent out to any contact.');
           break;
         case 'comment':
           $icon = 'comment';

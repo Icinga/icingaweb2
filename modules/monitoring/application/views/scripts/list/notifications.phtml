@@ -52,6 +52,7 @@ if (count($notifications) === 0) {
                 <br>
                 <?php if (! $this->contact): ?>
                     <small>
+                    <?php if ($notification->notification_contact_name): ?>
                         <?= sprintf(
                             $this->translate('Sent to %s'),
                             $this->qlink(
@@ -60,6 +61,9 @@ if (count($notifications) === 0) {
                                 array('contact_name' => $notification->notification_contact_name)
                             )
                         ) ?>
+                    <?php else: ?>
+                        <?= $this->translate('This notification was not sent out to any contact.'); ?>
+                    <?php endif ?>
                     </small>
                 <?php endif ?>
             </td>

@@ -57,11 +57,11 @@ function contactsLink($match, $view) {
           $title = $this->translate('Notification');
           $stateClass = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
 
-          $msg = preg_replace_callback(
+          $msg = $msg ? preg_replace_callback(
               '/^\[([^\]]+)\]/',
               function($match) use ($self) { return contactsLink($match, $self); },
               $msg
-          );
+          ) : $this->translate('This notification was not sent out to any contact.');
           break;
         case 'comment':
           $icon = 'comment';
