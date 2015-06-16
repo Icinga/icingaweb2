@@ -94,6 +94,19 @@ abstract class MonitoredObjectController extends Controller
     }
 
     /**
+     * Show the history for a host or service
+     */
+    public function historyAction()
+    {
+        $this->getTabs()->activate('history');
+        $this->view->history = $this->object->fetchEventHistory()->eventhistory;
+
+        $this->setupLimitControl(50);
+        $this->setupPaginationControl($this->view->history, 50);
+        $this->view->object = $this->object;
+    }
+
+    /**
      * Handle a command form
      *
      * @param   ObjectsCommandForm $form
@@ -211,7 +224,7 @@ abstract class MonitoredObjectController extends Controller
                     ,
                     'label'     => $this->translate('History'),
                     'icon'      => 'rewind',
-                    'url'       => 'monitoring/show/history',
+                    'url'       => $isService ? 'monitoring/service/history' : 'monitoring/host/history',
                     'urlParams' => $params
                 )
             );
