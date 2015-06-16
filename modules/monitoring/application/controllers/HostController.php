@@ -10,7 +10,6 @@ use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandF
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Web\Controller\MonitoredObjectController;
 use Icinga\Web\Hook;
-use Icinga\Web\Widget;
 
 class Monitoring_HostController extends MonitoredObjectController
 {
@@ -107,9 +106,8 @@ class Monitoring_HostController extends MonitoredObjectController
             'current_check_attempt' => 'service_current_check_attempt',
             'max_check_attempts'    => 'service_max_check_attempts'
         ));
-        $query->applyFilter(Widget::create('filterEditor')->setQuery($query)->getFilter());
         $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->view->services = $query;
+        $this->view->services = $query->where('host_name', $this->object->getName());
         $this->view->object = $this->object;
     }
 
