@@ -1,0 +1,17 @@
+<div class="controls">
+  <?php if (! $this->compact): ?>
+    <?= $this->tabs; ?>
+  <?php endif ?>
+  <?= $this->render('partials/host/object-header.phtml') ?>
+  <?= $this->render('partials/host/servicesummary.phtml') ?>
+</div>
+<?= $this->partial(
+  'list/services.phtml',
+  'monitoring',
+  array(
+    'compact'       => true,
+    'showHost'      => false,
+    'services'      => $services,
+    'addColumns'    => array()
+  )
+); ?>
