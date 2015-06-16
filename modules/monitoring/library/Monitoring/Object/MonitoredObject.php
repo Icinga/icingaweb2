@@ -155,7 +155,7 @@ abstract class MonitoredObject implements Filterable
     public function getFilter()
     {
         if ($this->filter === null) {
-            $this->filter = Filter::matchAny();
+            $this->filter = Filter::matchAll();
         }
         return $this->filter;
     }
@@ -261,7 +261,7 @@ abstract class MonitoredObject implements Filterable
         } else {
             $comments->where('host_name', $this->host_name);
         }
-        $this->comments = $comments->getQuery()->fetchAll();
+        $this->comments = $comments->applyFilter($this->getFilter())->getQuery()->fetchAll();
         return $this;
     }
 
@@ -297,7 +297,7 @@ abstract class MonitoredObject implements Filterable
             $downtimes
                 ->where('host_name', $this->host_name);
         }
-        $this->downtimes = $downtimes->getQuery()->fetchAll();
+        $this->downtimes = $downtimes->applyFilter($this->getFilter())->getQuery()->fetchAll();
         return $this;
     }
 
@@ -311,7 +311,7 @@ abstract class MonitoredObject implements Filterable
         $this->hostgroups = $this->backend->select()
             ->from('hostgroup', array('hostgroup_name', 'hostgroup_alias'))
             ->where('host_name', $this->host_name)
-            ->applyFilter($this->filter)
+            ->applyFilter($this->getFilter())
             ->fetchPairs();
         return $this;
     }
@@ -395,7 +395,7 @@ abstract class MonitoredObject implements Filterable
         } else {
             $contacts->where('host_name', $this->host_name);
         }
-        $this->contacts = $contacts->getQuery()->fetchAll();
+        $this->contacts = $contacts->applyFilter($this->getFilter())->getQuery()->fetchAll();
         return $this;
     }
 
@@ -438,7 +438,7 @@ abstract class MonitoredObject implements Filterable
         } else {
             $contactsGroups->where('host_name', $this->host_name);
         }
-        $this->contactgroups = $contactsGroups->getQuery()->fetchAll();
+        $this->contactgroups = $contactsGroups->applyFilter($this->getFilter())->getQuery()->fetchAll();
         return $this;
     }
 
@@ -464,7 +464,7 @@ abstract class MonitoredObject implements Filterable
         if ($this->type === self::TYPE_SERVICE) {
             $eventHistory->where('service_description', $this->service_description);
         }
-        $this->eventhistory = $eventHistory;
+        $this->eventhistory = $eventHistory->applyFilter($this->getFilter());
         return $this;
     }
 

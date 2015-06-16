@@ -151,8 +151,8 @@ class Host extends MonitoredObject
         $services = array();
         foreach ($this->backend->select()->from('servicestatus', array('service_description'))
                 ->where('host_name', $this->host)
-                ->getQuery()
-                ->fetchAll() as $service) {
+                ->applyFilter($this->getFilter())
+                ->getQuery() as $service) {
             $services[] = new Service($this->backend, $this->host, $service->service_description);
         }
         $this->services = $services;
