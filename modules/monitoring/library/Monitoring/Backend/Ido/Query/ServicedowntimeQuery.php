@@ -75,14 +75,8 @@ class ServicedowntimeQuery extends IdoQuery
             array()
         )->join(
             array('so' => $this->prefix . 'objects'),
-            'sd.object_id = so.object_id',
+            'sd.object_id = so.object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
-        )->where(
-            'so.is_active = ?',
-            1
-        )->where(
-            'so.objecttype_id = 2',
-            1
         );
         $this->joinedVirtualTables['downtimes'] = true;
     }
@@ -102,15 +96,8 @@ class ServicedowntimeQuery extends IdoQuery
             array()
         )->join(
             array('hgo' => $this->prefix . 'objects'),
-            'hgo.object_id = hg.hostgroup_object_id',
+            'hgo.object_id = hg.hostgroup_object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
             array()
-        )->where(
-            'hgo.is_active = ?',
-            1
-        )
-        ->where(
-            'hgo.objecttype_id = ?',
-            3
         );
         $this->group(array('sd.scheduleddowntime_id', 'so.name2', 'so.name1'));
     }
@@ -156,15 +143,8 @@ class ServicedowntimeQuery extends IdoQuery
             array()
         )->join(
             array('sgo' => $this->prefix . 'objects'),
-            'sgo.object_id = sg.servicegroup_object_id',
+            'sgo.object_id = sg.servicegroup_object_id AND sgo.is_active = 1 AND sgo.objecttype_id = 4',
             array()
-        )->where(
-            'sgo.is_active = ?',
-            1
-        )
-        ->where(
-            'sgo.objecttype_id = ?',
-            4
         );
         $this->group(array('sd.scheduleddowntime_id', 'so.name2', 'so.name1'));
     }
