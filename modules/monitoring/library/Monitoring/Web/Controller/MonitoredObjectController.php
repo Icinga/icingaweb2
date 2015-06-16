@@ -100,6 +100,7 @@ abstract class MonitoredObjectController extends Controller
     {
         $this->getTabs()->activate('history');
         $this->view->history = $this->object->fetchEventHistory()->eventhistory;
+        $this->applyRestriction('monitoring/filter/objects', $this->view->history);
 
         $this->setupLimitControl(50);
         $this->setupPaginationControl($this->view->history, 50);
