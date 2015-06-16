@@ -64,11 +64,11 @@ class HostgroupQuery extends IdoQuery
      */
     protected function joinHostobjects()
     {
-        $this->select->join(
+        $this->select->joinLeft(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.hostgroup_id = hg.hostgroup_id',
             array()
-        )->join(
+        )->joinLeft(
             array('ho' => $this->prefix . 'objects'),
             'hgm.host_object_id = ho.object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
             array()
@@ -82,7 +82,7 @@ class HostgroupQuery extends IdoQuery
     protected function joinHosts()
     {
         $this->requireVirtualTable('hostobjects');
-        $this->select->join(
+        $this->select->joinLeft(
             array('h' => $this->prefix . 'hosts'),
             'h.host_object_id = ho.object_id',
             array()
@@ -95,15 +95,15 @@ class HostgroupQuery extends IdoQuery
     protected function joinServicegroups()
     {
         $this->requireVirtualTable('services');
-        $this->select->join(
+        $this->select->joinLeft(
             array('sgm' => $this->prefix . 'servicegroup_members'),
             'sgm.service_object_id = s.service_object_id',
             array()
-        )->join(
+        )->joinLeft(
             array('sg' => $this->prefix . 'servicegroups'),
             'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
             array()
-        )->join(
+        )->joinLeft(
             array('sgo' => $this->prefix . 'objects'),
             'sgo.object_id = sg.servicegroup_object_id AND sgo.is_active = 1 AND sgo.objecttype_id = 4',
             array()
@@ -116,11 +116,11 @@ class HostgroupQuery extends IdoQuery
     protected function joinServices()
     {
         $this->requireVirtualTable('hosts');
-        $this->select->join(
+        $this->select->joinLeft(
             array('s' => $this->prefix . 'services'),
             's.host_object_id = h.host_object_id',
             array()
-        )->join(
+        )->joinLeft(
             array('so' => $this->prefix . 'objects'),
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
