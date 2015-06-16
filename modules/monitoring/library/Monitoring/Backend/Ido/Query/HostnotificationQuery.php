@@ -132,12 +132,12 @@ class HostnotificationQuery extends IdoQuery
      */
     protected function joinContactnotifications()
     {
-        $this->select->join(
+        $this->select->joinLeft(
             array('cn' => $this->prefix . 'contactnotifications'),
             'cn.notification_id = hn.notification_id',
             array()
         );
-        $this->select->join(
+        $this->select->joinLeft(
             array('cno' => $this->prefix . 'objects'),
             'cno.object_id = cn.contact_object_id',
             array()
