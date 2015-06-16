@@ -190,7 +190,7 @@ abstract class MonitoredObjectController extends Controller
                 ),
                 'label'     => $this->translate('Services'),
                 'icon'      => 'services',
-                'url'       => 'monitoring/show/services',
+                'url'       => 'monitoring/host/services',
                 'urlParams' => $params
             )
         );
