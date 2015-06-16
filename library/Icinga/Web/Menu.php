@@ -237,6 +237,10 @@ class Menu implements RecursiveIterator
                 'priority' => 700,
                 'renderer' => 'ProblemMenuItemRenderer'
             ));
+            $section->add(t('About'), array(
+                'url'       => 'about',
+                'priority'  => 701
+            ));
             if (Logger::writesToFile()) {
                 $section->add(t('Application Log'), array(
                     'url'      => 'list/applicationlog',
@@ -278,11 +282,6 @@ class Menu implements RecursiveIterator
                 'url'      => 'authentication/logout',
                 'priority' => 990,
                 'renderer' => 'ForeignMenuItemRenderer'
-            ));
-
-            $this->add(t('About'), array(
-                'url'       => 'about',
-                'priority'  => 1000
             ));
         }
     }
