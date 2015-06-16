@@ -223,7 +223,7 @@ class Monitoring_ShowController extends Controller
                 ),
                 'label'     => $this->translate('Services'),
                 'icon'      => 'services',
-                'url'       => 'monitoring/show/services',
+                'url'       => 'monitoring/host/services',
                 'urlParams' => $params,
             )
         );
