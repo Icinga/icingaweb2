@@ -6,15 +6,15 @@ $selfUrl = 'monitoring/list/services';
 
 if (! $this->compact): ?>
 <div class="controls separated">
-  <?= $this->tabs; ?>
+  <?= $this->tabs ?>
   <div class="dontprint">
-    <?= $this->render('list/components/selectioninfo.phtml'); ?>
-    <?= $this->render('list/components/servicesummary.phtml'); ?>
+    <?= $this->render('list/components/selectioninfo.phtml') ?>
+    <?= $this->render('list/components/servicesummary.phtml') ?>
   </div>
-  <?= $this->sortBox; ?>
-  <?= $this->limiter; ?>
-  <?= $this->paginator; ?>
-  <?= $this->filterEditor; ?>
+  <?= $this->sortBox ?>
+  <?= $this->limiter ?>
+  <?= $this->paginator ?>
+  <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content">
@@ -48,7 +48,7 @@ if (count($services) === 0) {
 ?>
     <tr class="state <?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
       <td class="state">
-        <strong><?= Service::getStateText($service->service_state, true); ?></strong>
+        <strong><?= Service::getStateText($service->service_state, true) ?></strong>
         <?php if ((int) $service->service_state !== 99): ?>
           <br />
           <?= $this->timeSince($service->service_last_state_change, $this->compact) ?>
@@ -62,23 +62,27 @@ if (count($services) === 0) {
       <td>
         <?= $this->iconImage()->service($service) ?>
         <span class="objectflags"><?= implode(' ', $this->serviceFlags($service)) ?></span>
-        <?= $this->qlink(
-          $service->service_display_name,
-          $serviceLink,
-          null,
-          array('title' => sprintf(
-            $this->translate('Show detailed information for service %s on host %s'),
-            $service->service_display_name,
-            $service->host_display_name
-          ))
-        ); ?><?php if ($this->showHost): ?> on <?= $this->qlink(
+<?php if ($this->showHost): ?><?= $this->qlink(
           $service->host_display_name . ($service->host_state != 0 ? ' (' . Host::getStateText($service->host_state, true) . ')' : ''),
           $hostLink,
           null,
           array('title' => sprintf($this->translate('Show detailed information for host %s'), $service->host_display_name))
-        ); ?><?php endif ?><br>
+        ) ?>: 
+<?php endif ?><?= $this->qlink(
+    $service->service_display_name,
+    $serviceLink,
+    null,
+    array(
+        'title' => sprintf(
+            $this->translate('Show detailed information for service %s on host %s'),
+            $service->service_display_name,
+            $service->host_display_name
+        ),
+        'class' => 'rowaction'
+    )
+) ?><br />
         <div class="sparkline-box"><?= $this->perfdata($service->service_perfdata, true, 8) ?> </div>
-        <p class="pluginoutput"><?= $this->escape($this->ellipsis($service->service_output, 10000)); ?></p>
+        <p class="pluginoutput"><?= $this->escape($this->ellipsis($service->service_output, 10000)) ?></p>
       </td>
 <?php foreach($this->addColumns as $col): ?>
       <td><?= $this->escape($service->$col) ?></td>
