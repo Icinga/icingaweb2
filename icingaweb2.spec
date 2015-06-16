@@ -201,7 +201,7 @@ cp -prv packages/files/config/modules/setup %{buildroot}/%{configdir}/modules/
 
 %pre
 getent group icingacmd >/dev/null || groupadd -r icingacmd
-%if 0%{?suse_version}
+%if 0%{?suse_version} && 0%{?suse_version} < 01200
 usermod -A icingacmd,%{icingawebgroup} %{wwwuser}
 %else
 usermod -a -G icingacmd,%{icingawebgroup} %{wwwuser}
