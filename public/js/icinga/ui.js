@@ -739,11 +739,13 @@
 
             if ('undefined' === typeof $parent) {
 
-                $('#header').css({height: 'auto'});
-                $('#main').css({top: $('#header').css('height')});
-                $('#sidebar').css({top: $('#header').height() + 'px'});
-                $('#header').css({height: $('#header').height() + 'px'});
-                $('#inner-layout').css({top: $('#header').css('height')});
+                if (! $('#layout').hasClass('fullscreen-layout')) {
+                    $('#header').css({height: 'auto'});
+                    $('#main').css({top: $('#header').css('height')});
+                    $('#sidebar').css({top: $('#header').height() + 'px'});
+                    $('#header').css({height: $('#header').height() + 'px'});
+                    $('#inner-layout').css({top: $('#header').css('height')});
+                }
                 $('.container').each(function (idx, container) {
                     self.fixControls($(container));
                 });

@@ -81,13 +81,25 @@ html {
 
 /** Fullscreen layout **/
 #layout.fullscreen-layout {
-  #header, #sidebar, .controls > .tabs {
+  #header, #sidebar {
     display: none;
+  }
+
+  .controls > ul.tabs {
+    margin-top: 0;
+    height: 1.5em;
+    background-color: @colorPetrol;
+    font-size: 0.8em;
+    padding: 0.2em 0 0;
+  }
+
+  .controls > ul.tabs > li > a {
+    line-height: 1.5em;
   }
 
   #main {
     left: 0;
-    top: 0;
+    top: 0 !important;
   }
 }
 
