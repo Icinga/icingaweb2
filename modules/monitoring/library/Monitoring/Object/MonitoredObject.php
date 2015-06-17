@@ -261,7 +261,7 @@ abstract class MonitoredObject implements Filterable
         } else {
             $comments->where('host_name', $this->host_name);
         }
-        $this->comments = $comments->applyFilter($this->getFilter())->getQuery()->fetchAll();
+        $this->comments = $comments->getQuery()->fetchAll();
         return $this;
     }
 
@@ -297,7 +297,7 @@ abstract class MonitoredObject implements Filterable
             $downtimes
                 ->where('host_name', $this->host_name);
         }
-        $this->downtimes = $downtimes->applyFilter($this->getFilter())->getQuery()->fetchAll();
+        $this->downtimes = $downtimes->getQuery()->fetchAll();
         return $this;
     }
 
