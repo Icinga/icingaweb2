@@ -140,6 +140,9 @@ class Monitoring_HostsController extends Controller
         $this->view->downtimeLink = Url::fromPath('monitoring/hosts/schedule-downtime')
             ->setQueryString($this->hostList->getProblemObjects()->objectsFilter()->toQueryString());
         $this->view->acknowledgedObjects = $this->hostList->getAcknowledgedObjects();
+        $this->view->acknowledgeLink = Url::fromPath('monitoring/hosts/acknowledge-problem')
+            ->setQueryString($this->hostList->getUnacknowledgedObjects()->objectsFilter()->toQueryString());
+        $this->view->unacknowledgedObjects = $this->hostList->getUnacknowledgedObjects();
         $this->view->objectsInDowntime = $this->hostList->getObjectsInDowntime();
         $this->view->inDowntimeLink = Url::fromPath('monitoring/list/hosts')
             ->setQueryString(

@@ -60,6 +60,122 @@ class Platform
     }
 
     /**
+     * Return the Linux distribution's name
+     * or 'linux' if the name could not be found out
+     * or false if the OS isn't Linux or an error occurred
+     *
+     * @param int $reliable
+     *      3: Only parse /etc/os-release (or /usr/lib/os-release).
+     *          For the paranoid ones.
+     *      2: If that (3) doesn't help, check /etc/*-release, too.
+     *          If something is unclear, return 'linux'.
+     *      1: Almost equal to mode 2. The possible return values also include:
+     *          'redhat' -- unclear whether RHEL/Fedora/...
+     *          'suse' -- unclear whether SLES/openSUSE/...
+     *      0: If even that (1) doesn't help, check /proc/version, too.
+     *          This may not work (as expected) on LXC containers!
+     *          (No reliability at all!)
+     *
+     * @return string|bool
+     */
+    public static function getLinuxDistro($reliable = 2)
+    {
+        if (! self::isLinux()) {
+            return false;
+        }
+
+        foreach (array('/etc/os-release', '/usr/lib/os-release') as $osReleaseFile) {
+            if (false === ($osRelease = @file(
+                $osReleaseFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+            ))) {
+                continue;
+            }
+
+            foreach ($osRelease as $osInfo) {
+                if (false === ($res = @preg_match('/(?<!.)[ \t]*#/ms', $osInfo))) {
+                    return false;
+                }
+                if ($res === 1) {
+                    continue;
+                }
+
+                $matches = array();
+                if (false === ($res = @preg_match(
+                    '/(?<!.)[ \t]*ID[ \t]*=[ \t]*(\'|"|)(.*?)(?:\1)[ \t]*(?!.)/msi',
+                    $osInfo,
+                    $matches
+                ))) {
+                    return false;
+                }
+                if (! ($res === 0 || $matches[2] === '' || $matches[2] === 'linux')) {
+                    return $matches[2];
+                }
+            }
+        }
+
+        if ($reliable > 2) {
+            return 'linux';
+        }
+
+        foreach (array(
+            'fedora' => '/etc/fedora-release',
+            'centos' => '/etc/centos-release'
+        ) as $distro => $releaseFile) {
+            if (! (false === (
+                $release = @file_get_contents($releaseFile)
+            ) || false === strpos(strtolower($release), $distro))) {
+                return $distro;
+            }
+        }
+
+        if (false !== ($release = @file_get_contents('/etc/redhat-release'))) {
+            $release = strtolower($release);
+            if (false !== strpos($release, 'red hat enterprise linux')) {
+                return 'rhel';
+            }
+            foreach (array('fedora', 'centos') as $distro) {
+                if (false !== strpos($release, $distro)) {
+                    return $distro;
+                }
+            }
+            return $reliable < 2 ? 'redhat' : 'linux';
+        }
+
+        if (false !== ($release = @file_get_contents('/etc/SuSE-release'))) {
+            $release = strtolower($release);
+            foreach (array(
+                'opensuse'  => 'opensuse',
+                'sles'      => 'suse linux enterprise server',
+                'sled'      => 'suse linux enterprise desktop'
+            ) as $distro => $name) {
+                if (false !== strpos($release, $name)) {
+                    return $distro;
+                }
+            }
+            return $reliable < 2 ? 'suse' : 'linux';
+        }
+
+        if ($reliable < 1) {
+            if (false === ($procVersion = @file_get_contents('/proc/version'))) {
+                return false;
+            }
+            $procVersion = strtolower($procVersion);
+            foreach (array(
+                'redhat'    => 'red hat',
+                'suse'      => 'suse linux',
+                'ubuntu'    => 'ubuntu',
+                'debian'    => 'debian'
+            ) as $distro => $name) {
+                if (false !== strpos($procVersion, $name)) {
+                    return $distro;
+                }
+            }
+        }
+
+        return 'linux';
+    }
+
+    /**
      * Test of CLI environment
      *
      * @return bool

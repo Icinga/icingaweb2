@@ -3,12 +3,16 @@
 
 namespace Icinga\Data;
 
-use ArrayIterator;
+use Iterator;
 use IteratorAggregate;
+use Zend_Paginator;
+use Icinga\Application\Icinga;
+use Icinga\Application\Benchmark;
 use Icinga\Data\Filter\Filter;
 use Icinga\Exception\IcingaException;
+use Icinga\Web\Paginator\Adapter\QueryAdapter;
 
-class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
+class SimpleQuery implements QueryInterface, Queryable, Iterator
 {
     /**
      * Query data source
@@ -18,9 +22,18 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
     protected $ds;
 
     /**
-     * The table you are going to query
+     * This query's iterator
+     *
+     * @var Iterator
      */
-    protected $table;
+    protected $iterator;
+
+    /**
+     * The target you are going to query
+     *
+     * @var mixed
+     */
+    protected $target;
 
     /**
      * The columns you asked for
@@ -39,6 +52,15 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
      * @var array
      */
     protected $columns = array();
+
+    /**
+     * The columns and their aliases flipped in order to handle aliased sort columns
+     *
+     * Supposed to be used and populated by $this->compare *only*.
+     *
+     * @var array
+     */
+    protected $flippedColumns;
 
     /**
      * The columns you're using to sort the query result
@@ -90,16 +112,6 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
     protected function init() {}
 
     /**
-     * Return a iterable for this query's result
-     *
-     * @return  ArrayIterator
-     */
-    public function getIterator()
-    {
-        return new ArrayIterator($this->fetchAll());
-    }
-
-    /**
      * Get the data source
      *
      * @return mixed
@@ -110,11 +122,75 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
     }
 
     /**
-     * Choose a table and the colums you are interested in
+     * Start or rewind the iteration
+     */
+    public function rewind()
+    {
+        if ($this->iterator === null) {
+            $iterator = $this->ds->query($this);
+            if ($iterator instanceof IteratorAggregate) {
+                $this->iterator = $iterator->getIterator();
+            } else {
+                $this->iterator = $iterator;
+            }
+        }
+
+        $this->iterator->rewind();
+        Benchmark::measure('Query result iteration started');
+    }
+
+    /**
+     * Fetch and return the current row of this query's result
      *
-     * Query will return all available columns if none are given here
+     * @return  object
+     */
+    public function current()
+    {
+        return $this->iterator->current();
+    }
+
+    /**
+     * Return whether the current row of this query's result is valid
      *
-     * @return $this
+     * @return  bool
+     */
+    public function valid()
+    {
+        if (! $this->iterator->valid()) {
+            Benchmark::measure('Query result iteration finished');
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Return the key for the current row of this query's result
+     *
+     * @return  mixed
+     */
+    public function key()
+    {
+        return $this->iterator->key();
+    }
+
+    /**
+     * Advance to the next row of this query's result
+     */
+    public function next()
+    {
+        $this->iterator->next();
+    }
+
+    /**
+     * Choose a table and the columns you are interested in
+     *
+     * Query will return all available columns if none are given here.
+     *
+     * @param   mixed   $target
+     * @param   array   $fields
+     *
+     * @return  $this
      */
     public function from($target, array $fields = null)
     {
@@ -223,32 +299,42 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
         return $this;
     }
 
-    public function compare($a, $b, $col_num = 0)
+    /**
+     * Compare $a with $b based on this query's sort rules and column aliases
+     *
+     * @param   object  $a
+     * @param   object  $b
+     * @param   int     $orderIndex
+     *
+     * @return  int
+     */
+    public function compare($a, $b, $orderIndex = 0)
     {
-        // Last column to sort reached, rows are considered being equal
-        if (! array_key_exists($col_num, $this->order)) {
-            return 0;
-        }
-        $col = $this->order[$col_num][0];
-        $dir = $this->order[$col_num][1];
-// TODO: throw Exception if column is missing
-        //$res = strnatcmp(strtolower($a->$col), strtolower($b->$col));
-        $res = @strcmp(strtolower($a->$col), strtolower($b->$col));
-        if ($res === 0) {
-//            return $this->compare($a, $b, $col_num++);
-
-            if (array_key_exists(++$col_num, $this->order)) {
-                return $this->compare($a, $b, $col_num);
-            } else {
-                return 0;
-            }
-
+        if (! array_key_exists($orderIndex, $this->order)) {
+            return 0; // Last column to sort reached, rows are considered being equal
         }
 
-        if ($dir === self::SORT_ASC) {
-            return $res;
+        if ($this->flippedColumns === null) {
+            $this->flippedColumns = array_flip($this->columns);
+        }
+
+        $column = $this->order[$orderIndex][0];
+        if (array_key_exists($column, $this->flippedColumns)) {
+            $column = $this->flippedColumns[$column];
+        }
+
+        // TODO: throw Exception if column is missing
+        //$res = strnatcmp(strtolower($a->$column), strtolower($b->$column));
+        $result = @strcmp(strtolower($a->$column), strtolower($b->$column));
+        if ($result === 0) {
+            return $this->compare($a, $b, ++$orderIndex);
+        }
+
+        $direction = $this->order[$orderIndex][1];
+        if ($direction === self::SORT_ASC) {
+            return $result;
         } else {
-            return $res * -1;
+            return $result * -1;
         }
     }
 
@@ -328,13 +414,53 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
     }
 
     /**
+     * Paginate data
+     *
+     * Auto-detects pagination parameters from request when unset
+     *
+     * @param   int $itemsPerPage   Number of items per page
+     * @param   int $pageNumber     Current page number
+     *
+     * @return  Zend_Paginator
+     *
+     * @deprecated      Use Icinga\Web\Controller::setupPaginationControl() and/or Icinga\Web\Widget\Paginator instead
+     */
+    public function paginate($itemsPerPage = null, $pageNumber = null)
+    {
+        trigger_error(
+            'SimpleQuery::paginate() is deprecated. Use Icinga\Web\Controller::setupPaginationControl()'
+            . ' and/or Icinga\Web\Widget\Paginator instead',
+            E_USER_DEPRECATED
+        );
+
+        if ($itemsPerPage === null || $pageNumber === null) {
+            // Detect parameters from request
+            $request = Icinga::app()->getFrontController()->getRequest();
+            if ($itemsPerPage === null) {
+                $itemsPerPage = $request->getParam('limit', 25);
+            }
+            if ($pageNumber === null) {
+                $pageNumber = $request->getParam('page', 0);
+            }
+        }
+        $this->limit($itemsPerPage, $pageNumber * $itemsPerPage);
+        $paginator = new Zend_Paginator(new QueryAdapter($this));
+        $paginator->setItemCountPerPage($itemsPerPage);
+        $paginator->setCurrentPageNumber($pageNumber);
+        return $paginator;
+    }
+
+    /**
      * Retrieve an array containing all rows of the result set
      *
      * @return array
      */
     public function fetchAll()
     {
-        return $this->ds->fetchAll($this);
+        Benchmark::measure('Fetching all results started');
+        $results = $this->ds->fetchAll($this);
+        Benchmark::measure('Fetching all results finished');
+        return $results;
     }
 
     /**
@@ -344,19 +470,23 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
      */
     public function fetchRow()
     {
-        return $this->ds->fetchRow($this);
+        Benchmark::measure('Fetching one row started');
+        $row = $this->ds->fetchRow($this);
+        Benchmark::measure('Fetching one row finished');
+        return $row;
     }
 
     /**
-     * Fetch a column of all rows of the result set as an array
-     *
-     * @param   int $columnIndex Index of the column to fetch
+     * Fetch the first column of all rows of the result set as an array
      *
      * @return  array
      */
-    public function fetchColumn($columnIndex = 0)
+    public function fetchColumn()
     {
-        return $this->ds->fetchColumn($this, $columnIndex);
+        Benchmark::measure('Fetching one column started');
+        $values = $this->ds->fetchColumn($this);
+        Benchmark::measure('Fetching one column finished');
+        return $values;
     }
 
     /**
@@ -366,7 +496,10 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
      */
     public function fetchOne()
     {
-        return $this->ds->fetchOne($this);
+        Benchmark::measure('Fetching one value started');
+        $value = $this->ds->fetchOne($this);
+        Benchmark::measure('Fetching one value finished');
+        return $value;
     }
 
     /**
@@ -378,17 +511,25 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
      */
     public function fetchPairs()
     {
-        return $this->ds->fetchPairs($this);
+        Benchmark::measure('Fetching pairs started');
+        $pairs = $this->ds->fetchPairs($this);
+        Benchmark::measure('Fetching pairs finished');
+        return $pairs;
     }
 
     /**
-     * Count all rows of the result set
+     * Count all rows of the result set, ignoring limit and offset
      *
-     * @return int
+     * @return  int
      */
     public function count()
     {
-        return $this->ds->count($this);
+        $query = clone $this;
+        $query->limit(0, 0);
+        Benchmark::measure('Counting all results started');
+        $count = $this->ds->count($query);
+        Benchmark::measure('Counting all results finished');
+        return $count;
     }
 
     /**
@@ -401,6 +542,7 @@ class SimpleQuery implements QueryInterface, Queryable, IteratorAggregate
     public function columns(array $columns)
     {
         $this->columns = $columns;
+        $this->flippedColumns = null; // Reset, due to updated columns
         return $this;
     }
 

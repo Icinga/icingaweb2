@@ -1,0 +1,74 @@
+<div class="controls" data-base-target="_main">
+    <?= $tabs ?>
+</div>
+<div class="content">
+    <div>
+        <?php /** @var \Icinga\Application\Config $roles */ if ($roles->isEmpty()): ?>
+            <?= $this->translate('No roles found.') ?>
+        <?php else: ?>
+            <table class="avp action" data-base-target="_next">
+                <thead>
+                <tr>
+                    <th><?= $this->translate('Name') ?></th>
+<!--                    <th>--><?//= $this->translate('Permissions') ?><!--</th>-->
+<!--                    <th>--><?//= $this->translate('Restrictions') ?><!--</th>-->
+                    <th><?= $this->translate('Users') ?></th>
+                    <th><?= $this->translate('Groups') ?></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($roles as $name => $role): /** @var object $role */ ?>
+                    <tr>
+                        <td>
+                            <?= $this->qlink(
+                                $name,
+                                'role/edit',
+                                array('role' => $name),
+                                array('title' => sprintf($this->translate('Edit role %s'), $name))
+                            ); ?>
+                        </td>
+<!--                        <td>--><?//= $this->escape($role->permissions, 0, 50) ?><!--</td>-->
+<!--                        <td>-->
+<!--                            --><?php
+//                            // TODO(el): $role->without(...) or $role->shift(...) would be nice!
+//                            $restrictions = clone $role;
+//                            unset($restrictions['users']);
+//                            unset($restrictions['groups']);
+//                            unset($restrictions['permissions']);
+//                            ?>
+<!--                            --><?php //if (! empty($restrictions)): ?>
+<!--                            <table>-->
+<!--                                <tbody>-->
+<!--                                --><?php //foreach ($restrictions as $restrictionName => $restriction): ?>
+<!--                                    <tr>-->
+<!--                                        <th>--><?//= $this->escape($restrictionName) ?><!--</th>-->
+<!--                                        <td>--><?//= $this->escape($restriction) ?><!--</td>-->
+<!--                                    </tr>-->
+<!--                                --><?php //endforeach ?>
+<!--                                </tbody>-->
+<!--                            </table>-->
+<!--                            --><?php //endif ?>
+<!--                        </td>-->
+                        <td><?= $this->escape($role->users) ?></td>
+                        <td><?= $this->escape($role->groups) ?></td>
+                        <td>
+                            <?= $this->qlink(
+                                '',
+                                'role/remove',
+                                array('role' => $name),
+                                array(
+                                    'icon'  => 'trash',
+                                    'title' => sprintf($this->translate('Remove role %s'), $name)
+                                )
+                            ); ?>
+                        </td>
+                    </tr>
+                <?php endforeach ?>
+                </tbody>
+            </table>
+        <?php endif ?>
+        <a data-base-target="_next" href="<?= $this->href('role/add') ?>">
+            <?= $this->translate('Create a New Role') ?>
+        </a>
+    </div>
+</div>

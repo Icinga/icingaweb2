@@ -3,7 +3,8 @@
 ## Abstract
 
 The instance.ini defines how icingaweb accesses the command pipe of your icinga process in order to submit external
-commands. When you are at the root of your icingaweb installation you can find it under ./config/modules/monitoring/instances.ini.
+commands. Depending on the config path (default: /etc/icingaweb2) of your icingaweb installation you can find it
+under ./modules/monitoring/instances.ini.
 
 ## Syntax
 
@@ -32,6 +33,23 @@ setup key authentication at the endpoint and allow your icingweb's user to acces
     host=my.remote.machine.com               ; the hostname or address of the remote machine
     port=22                                  ; the port to use (22 if none is given)
     user=jdoe                                ; the user to authenticate with
+
+You can also make use of the ssh resource for accessing an icinga pipe with key-based authentication, which will give
+you the possibility to define the location of the private key for a specific user, let's have a look:
+
+    [icinga]
+    path=/usr/local/icinga/var/rw/icinga.cmd ; the path on the remote machine where the icinga.cmd can be found
+    host=my.remote.machine.com               ; the hostname or address of the remote machine
+    port=22                                  ; the port to use (22 if none is given)
+    resource=ssh                             ; the ssh resource which contains the username and the location of the private key
+
+And the associated ssh resource:
+
+    [ssh]
+    type                = "ssh"
+    user                = "ssh-user"
+    private_key        = "/etc/icingaweb2/ssh/ssh-user"
+
 
 
 

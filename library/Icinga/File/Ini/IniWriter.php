@@ -60,7 +60,7 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
     {
         if (file_exists($this->_filename)) {
             $oldconfig = new Zend_Config_Ini($this->_filename);
-            $content = file_get_contents($this->_filename);
+            $content = trim(file_get_contents($this->_filename));
         } else {
             $oldconfig = new Zend_Config(array());
             $content = '';

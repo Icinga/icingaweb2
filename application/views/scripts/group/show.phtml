@@ -1,0 +1,82 @@
+<?php 
+
+use Icinga\Data\Extensible;
+use Icinga\Data\Updatable;
+
+$extensible = $this->hasPermission('config/authentication/groups/add') && $backend instanceof Extensible;
+
+$editLink = null;
+if ($this->hasPermission('config/authentication/groups/edit') && $backend instanceof Updatable) {
+    $editLink = $this->qlink(
+        null,
+        'group/edit',
+        array(
+            'backend'   => $backend->getName(),
+            'group'     => $group->group_name
+        ),
+        array(
+            'title' => sprintf($this->translate('Edit group %s'), $group->group_name),
+            'class' => 'group-edit',
+            'icon'  => 'edit'
+        )
+    );
+}
+
+?>
+<div class="controls">
+ <?php if (! $this->compact): ?>
+  <?= $tabs; ?>
+ <?php endif ?>
+  <div class="group-header">
+    <p class="group-name"><strong><?= $this->escape($group->group_name); ?></strong></p> <?= $editLink; ?>
+    <p class="group-created"><strong><?= $this->translate('Created at'); ?>:</strong> <?= $group->created_at === null ? '-' : $this->formatDateTime($group->created_at); ?></p>
+    <p class="group-modified"><strong><?= $this->translate('Last modified'); ?>:</strong> <?= $group->last_modified === null ? '-' : $this->formatDateTime($group->last_modified); ?></p>
+    <h3><?= $this->translate('Members'); ?></h3>
+    <?php if (! $this->compact): ?>
+     <?= $this->sortBox; ?>
+    <?php endif ?>
+     <?= $this->limiter; ?>
+     <?= $this->paginator; ?>
+    <?php if (! $this->compact): ?>
+     <?= $this->filterEditor; ?>
+    <?php endif ?>
+  </div>
+</div>
+<div class="content members" data-base-target="_next">
+<?php if (count($members) > 0): ?>
+  <table data-base-target="_next" class="action member-list">
+    <thead>
+      <tr>
+        <th class="member-name"><?= $this->translate('Username'); ?></th>
+       <?php if (isset($removeForm)): ?>
+        <th class="member-remove"><?= $this->translate('Remove'); ?></th>
+       <?php endif ?>
+      </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($members as $member): ?>
+      <tr>
+        <td class="member-name"><?= $this->escape($member->user_name); ?></td>
+       <?php if (isset($removeForm)): ?>
+        <td class="member-remove" data-base-target="_self">
+          <?php $removeForm->getElement('user_name')->setValue($member->user_name); echo $removeForm; ?>
+        </td>
+       <?php endif ?>
+      </tr>
+    <?php endforeach ?>
+    </tbody>
+  </table>
+<?php else: ?>
+  <p><?= $this->translate('No group member found matching the filter'); ?></p>
+<?php endif ?>
+<?php if ($extensible): ?>
+  <?= $this->qlink($this->translate('Add a new member'), 'group/addmember', array(
+    'backend'           => $backend->getName(),
+    'group'             => $group->group_name
+  ), array(
+    'icon'              => 'plus',
+    'data-base-target'  => '_next',
+    'class'             => 'member-add'
+  )); ?>
+ <?php endif ?>
+</div>

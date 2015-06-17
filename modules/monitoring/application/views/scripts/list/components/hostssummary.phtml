@@ -15,7 +15,15 @@ $this->baseFilter = isset($this->baseFilter) ? $this->baseFilter : null;
 $selfUrl = 'monitoring/list/hosts';
 $currentUrl = Url::fromRequest()->getRelativeUrl();
 ?><div class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
-  <?= sprintf($this->translate('%s hosts:'), $this->stats->hosts_total); ?>
+  <?= $this->qlink(
+      sprintf($this->translatePlural('%u Host', '%u Hosts', $this->stats->hosts_total), $this->stats->hosts_total),
+      $selfUrl,
+      null,
+      array('title' => sprintf(
+          $this->translatePlural('List %u host', 'List all %u hosts', $this->stats->hosts_total),
+          $this->stats->hosts_total
+      ))
+  ) ?>&#58;
   <span class="badges">
     <?php if ($this->stats->hosts_up): ?>
     <span class="state ok<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 0))->getRelativeUrl() ? ' active' : ''; ?>">

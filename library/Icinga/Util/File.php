@@ -63,7 +63,7 @@ class File extends SplFileObject
             throw new NotWritableError(sprintf('Path "%s" is not writable', $dirPath));
         }
 
-        $file = new static($path, 'x');
+        $file = new static($path, 'x+');
 
         if (! @chmod($path, $accessMode)) {
             $error = error_get_last();

@@ -243,7 +243,9 @@ class Logger
         return vsprintf(
             array_shift($arguments),
             array_map(
-                function ($a) { return is_string($a) ? $a : json_encode($a); },
+                function ($a) {
+                    return is_string($a) ? $a : ($a instanceof Exception ? $a->getMessage() : json_encode($a));
+                },
                 $arguments
             )
         );

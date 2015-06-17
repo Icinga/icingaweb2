@@ -3,6 +3,7 @@
 
 use Icinga\Module\Monitoring\Plugin\Perfdata;
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
+use Icinga\Util\String;
 
 class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 {
@@ -19,45 +20,72 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
     public function perfdata($perfdataStr, $compact = false, $limit = 0, $color = Perfdata::PERFDATA_OK)
     {
         $pieChartData = PerfdataSet::fromString($perfdataStr)->asArray();
+        uasort(
+            $pieChartData,
+            function($a, $b) {
+                return $a->worseThan($b) ? -1 : ($b->worseThan($a) ? 1 : 0);
+            }
+        );
         $results = array();
-        $table = array(
-            '<td><b>' . implode(
-                '</b></td><td><b>',
-                array(
-                    '',
-                    $this->view->translate('Label'),
-                    $this->view->translate('Value'),
-                    $this->view->translate('Min'),
-                    $this->view->translate('Max'),
-                    $this->view->translate('Warning'),
-                    $this->view->translate('Critical')
-                )
-            ) . '<b></td>'
+        $keys = array('', 'label', 'value', 'min', 'max', 'warn', 'crit');
+        $columns = array();
+        $labels = array_combine(
+            $keys,
+            array(
+                '',
+                $this->view->translate('Label'),
+                $this->view->translate('Value'),
+                $this->view->translate('Min'),
+                $this->view->translate('Max'),
+                $this->view->translate('Warning'),
+                $this->view->translate('Critical')
+            )
         );
         foreach ($pieChartData as $perfdata) {
-
+            if ($perfdata->isVisualizable()) {
+                $columns[''] = '';
+            }
+            foreach ($perfdata->toArray() as $column => $value) {
+                if (empty($value) ||
+                    $column === 'min' && floatval($value) === 0.0 ||
+                    $column === 'max' && $perfdata->isPercentage() && floatval($value) === 100) {
+                    continue;
+                }
+                $columns[$column] = $labels[$column];
+            }
+        }
+        // restore original column array sorting
+        $headers = array();
+        foreach ($keys as $column) {
+            if (isset($columns[$column])) {
+                $headers[$column] = $labels[$column];
+            }
+        }
+        $table = array('<td><b>' . implode('</b></td><td><b>', $headers) . '<b></td>');
+        foreach ($pieChartData as $perfdata) {
             if ($compact && $perfdata->isVisualizable()) {
                 $results[] = $perfdata->asInlinePie($color)->render();
             } else {
-                $row = '<tr>';
-
-                $row .= '<td>';
+                $data = array();
                 if ($perfdata->isVisualizable()) {
-                    $row .= $perfdata->asInlinePie($color)->render() . '&nbsp;';
+                    $data []= $perfdata->asInlinePie($color)->render() . '&nbsp;';
+                } elseif (isset($columns[''])) {
+                    $data []= '';
                 }
-                $row .= '</td>';
-
                 if (! $compact) {
-                    foreach ($perfdata->toArray() as $value) {
-                        if ($value === '') {
-                            $value = '-';
+                    foreach ($perfdata->toArray() as $column => $value) {
+                        if (! isset($columns[$column])) {
+                            continue;
                         }
-                        $row .= '<td>' . (string) $value . '</td>';
+                        $text = $this->view->escape(empty($value) ? '-' : $value);
+                        $data []= sprintf(
+                            '<span title="%s">%s</span>',
+                            $text,
+                            String::ellipsisCenter($text, 24)
+                        );
                     }
                 }
-
-                $row .= '</tr>';
-                $table[] = $row;
+                $table []= '<tr><td>' . implode('</td><td>', $data) . '</td></tr>';
             }
         }
         if ($limit > 0) {
@@ -72,8 +100,14 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         if ($compact) {
             return join('', $results);
         } else {
-            $pieCharts = empty($table) ? '' : '<table class="perfdata">' . implode("\n", $table) . '</table>';
-            return $pieCharts;
+            if (empty($table)) {
+                return '';
+            }
+            return sprintf(
+                '<table class="perfdata %s">%s</table>',
+                isset($columns['']) ? 'perfdata-piecharts' : '',
+                implode("\n", $table)
+            );
         }
     }
 }

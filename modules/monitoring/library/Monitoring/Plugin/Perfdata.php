@@ -7,6 +7,7 @@ use Icinga\Util\Format;
 use InvalidArgumentException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Widget\Chart\InlinePie;
+use Icinga\Module\Monitoring\Object\Service;
 use Zend_Controller_Front;
 
 class Perfdata
@@ -444,7 +445,7 @@ class Perfdata
     public function toArray()
     {
         $parts = array(
-            $this->getLabel(),
+            'label' => $this->getLabel(),
             'value' => $this->format($this->getvalue()),
             'min' => isset($this->minValue) && !$this->isPercentage() ? $this->format($this->minValue) : '',
             'max' => isset($this->maxValue) && !$this->isPercentage() ? $this->format($this->maxValue) : '',
@@ -452,5 +453,61 @@ class Perfdata
             'crit' => isset($this->criticalThreshold) ? $this->format(self::convert($this->criticalThreshold, $this->unit)) : ''
         );
         return $parts;
+    }
+
+    /**
+     * Return the state indicated by this perfdata
+     *
+     * @see Service
+     *
+     * @return int
+     */
+    public function getState()
+    {
+        if ($this->value === null) {
+            return Service::STATE_UNKNOWN;
+        }
+
+        if (! ($this->criticalThreshold === null
+            || $this->value < $this->criticalThreshold)) {
+            return Service::STATE_CRITICAL;
+        }
+
+        if (! ($this->warningThreshold === null
+            || $this->value < $this->warningThreshold)) {
+            return Service::STATE_WARNING;
+        }
+
+        return Service::STATE_OK;
+    }
+
+    /**
+     * Return whether the state indicated by this perfdata is worse than
+     * the state indicated by the other perfdata
+     * CRITICAL > UNKNOWN > WARNING > OK
+     *
+     * @param Perfdata $rhs     the other perfdata
+     *
+     * @return bool
+     */
+    public function worseThan(Perfdata $rhs)
+    {
+        if (($state = $this->getState()) === ($rhsState = $rhs->getState())) {
+            return $this->getPercentage() > $rhs->getPercentage();
+        }
+
+        if ($state === Service::STATE_CRITICAL) {
+            return true;
+        }
+
+        if ($state === Service::STATE_UNKNOWN) {
+            return $rhsState !== Service::STATE_CRITICAL;
+        }
+
+        if ($state === Service::STATE_WARNING) {
+            return $rhsState === Service::STATE_OK;
+        }
+
+        return false;
     }
 }

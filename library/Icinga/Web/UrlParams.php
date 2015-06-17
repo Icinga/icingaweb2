@@ -374,9 +374,29 @@ class UrlParams
         }
     }
 
-    public function toArray()
+    /**
+     * Return the parameters of this url as sequenced or associative array
+     *
+     * @param   bool    $sequenced
+     *
+     * @return  array
+     */
+    public function toArray($sequenced = true)
     {
-        return $this->params;
+        if ($sequenced) {
+            return $this->params;
+        }
+
+        $params = array();
+        foreach ($this->params as $param) {
+            if ($param[1] === true) {
+                $params[] = $param[0];
+            } else {
+                $params[$param[0]] = $param[1];
+            }
+        }
+
+        return $params;
     }
 
     public function toString($separator = null)

@@ -27,8 +27,8 @@ class NrpeCommand extends Command
      *
      * EXAMPLE
      *
-     * icingacli monitoring nrpe 127.0.0.1 CheckMEM --ssl --MaxWarn 80% \
-     *   --MaxCrit 90% --type physical
+     * icingacli monitoring nrpe 127.0.0.1 CheckMEM --ssl --MaxWarn=80% \
+     *   --MaxCrit=90% --type=physical
      */
     public function checkAction()
     {

@@ -194,6 +194,11 @@ abstract class ObjectList implements Countable, IteratorAggregate
     }
 
     /**
+     * @return ObjectList
+     */
+    public abstract function getUnacknowledgedObjects();
+
+    /**
      * Create a ObjectList from an array of hosts without querying a backend
      *
      * @return ObjectList

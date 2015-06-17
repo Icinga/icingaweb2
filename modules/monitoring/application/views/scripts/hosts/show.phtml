@@ -72,9 +72,10 @@
         <?php
             $unhandledCount = count($unhandledObjects);
             $problemCount = count($problemObjects);
+            $unackCount = count($unacknowledgedObjects);
         ?>
 
-        <?php if ($problemCount || $unhandledCount): ?>
+        <?php if ($problemCount || $unhandledCount || $unackCount): ?>
             <h3>
                 <?= $this->icon('attention-alt') ?>
                 <?= $this->translatePlural(
@@ -110,6 +111,24 @@
                 ); ?>
             <?php endif; ?>
 
+            <?php
+                if ($unackCount > 0): ?>
+                <br>
+                    <?= $this->qlink(
+                        sprintf(
+                            $this->translatePlural(
+                                'Acknowledge %u unacknowledged problem hosts',
+                                'Acknowledge %u unacknowledged problem hosts',
+                                $unackCount
+                            ),
+                            $unackCount
+                        ),
+                        $acknowledgeLink,
+                        null,
+                        array('icon' => 'ok')
+                    ); ?>
+            <?php endif; ?>
+
             <?php if ($unhandledCount): ?>
               <p>
               <?= sprintf(
@@ -134,21 +153,6 @@
                   $downtimeUnhandledLink,
                   null,
                   array('icon' => 'plug')
-              ); ?>
-
-              <br>
-              <?= $this->qlink(
-                    sprintf(
-                        $this->translatePlural(
-                            'Acknowledge %u unhandled problem host',
-                            'Acknowledge %u unhandled problem hosts',
-                            $unhandledCount
-                        ),
-                        $unhandledCount
-                    ),
-                    $acknowledgeUnhandledLink,
-                    null,
-                    array('icon' => 'ok')
               ); ?>
 
             <?php endif; ?>

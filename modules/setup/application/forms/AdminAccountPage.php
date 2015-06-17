@@ -8,8 +8,8 @@ use LogicException;
 use Icinga\Web\Form;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
-use Icinga\Authentication\Backend\DbUserBackend;
-use Icinga\Authentication\Backend\LdapUserBackend;
+use Icinga\Authentication\User\DbUserBackend;
+use Icinga\Authentication\User\LdapUserBackend;
 
 /**
  * Wizard page to define the initial administrative account
@@ -268,13 +268,8 @@ class AdminAccountPage extends Form
         if ($this->backendConfig['backend'] === 'db') {
             $backend = new DbUserBackend(ResourceFactory::createResource(new ConfigObject($this->resourceConfig)));
         } elseif ($this->backendConfig['backend'] === 'ldap') {
-            $backend = new LdapUserBackend(
-                ResourceFactory::createResource(new ConfigObject($this->resourceConfig)),
-                $this->backendConfig['user_class'],
-                $this->backendConfig['user_name_attribute'],
-                $this->backendConfig['base_dn'],
-                $this->backendConfig['filter']
-            );
+            $backend = new LdapUserBackend(ResourceFactory::createResource(new ConfigObject($this->resourceConfig)));
+            $backend->setConfig($this->backendConfig);
         } else {
             throw new LogicException(
                 sprintf(
@@ -285,10 +280,8 @@ class AdminAccountPage extends Form
         }
 
         try {
-            $users = $backend->listUsers();
-            natsort ($users);
-            return $users;
-        } catch (Exception $e) {
+            return $backend->select(array('user_name'))->fetchColumn();
+        } catch (Exception $_) {
             // No need to handle anything special here. Error means no users found.
             return array();
         }
