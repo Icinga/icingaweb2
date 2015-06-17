@@ -634,12 +634,14 @@ abstract class IdoQuery extends DbQuery
 
         $this->customVars[$customvar] = $alias;
 
-        // TODO: extend if we allow queries with only hosts / only services
-        //       ($leftcol s.host_object_id vs h.host_object_id
         if ($this->hasJoinedVirtualTable('services')) {
             $leftcol = 's.' . $type . '_object_id';
+        } elseif ($type === 'service') {
+            $this->requireVirtualTable('services');
+            $leftcol = 's.service_object_id';
         } else {
-            $leftcol = 'h.' . $type . '_object_id';
+            $this->requireVirtualTable('hosts');
+            $leftcol = 'h.host_object_id';
         }
 
         $joinOn = sprintf(
