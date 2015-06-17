@@ -25,7 +25,7 @@ if (count($services) === 0) {
     return;
 }
 ?>
-<table data-base-target="_next"
+<table data-base-target="<?= isset($baseTarget) ? $baseTarget : '_next'; ?>"
     class="action multiselect <?php if ($this->compact): ?> compact<?php endif ?>" style="table-layout: auto;"
     data-icinga-multiselect-url="<?= $this->href("monitoring/services/show") ?>"
     data-icinga-multiselect-data="service,host">
