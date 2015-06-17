@@ -193,6 +193,14 @@ SQL;
      */
     protected function joinBaseTables()
     {
+        if (version_compare($this->getIdoVersion(), '1.10.0', '<')) {
+            $this->columnMap['hoststatus']['host_check_source'] = '(NULL)';
+        }
+
+        if (version_compare($this->getIdoVersion(), '1.13.0', '<')) {
+            $this->columnMap['hoststatus']['host_is_reachable'] = '(NULL)';
+        }
+
         $this->select->from(
             array('h' => $this->prefix . 'hosts'),
             array()
