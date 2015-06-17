@@ -54,7 +54,7 @@ if (count($downtimes) === 0) {
             }
         ?>
         <?= $this->qlink(
-            sprintf($this->translate('%s on %s', 'Service running on host'), $downtime->service_display_name, $downtime->host_display_name),
+            sprintf('%s: %s', $downtime->host_display_name, $downtime->service_display_name),
                 'monitoring/downtime/show',
                 array('downtime_id' => $downtime->id),
                 array('title' => sprintf(

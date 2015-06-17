@@ -51,7 +51,8 @@ class Zend_View_Helper_Link extends Zend_View_Helper_Abstract
     public function service($service, $serviceLinkText, $host, $hostLinkText)
     {
         return sprintf(
-            $this->view->translate('%s on %s', 'Service running on host'),
+            '%s: %s',
+            $this->host($host, $hostLinkText),
             $this->view->qlink(
                 $serviceLinkText,
                 'monitoring/service/show',
@@ -61,8 +62,7 @@ class Zend_View_Helper_Link extends Zend_View_Helper_Abstract
                     $service,
                     $host
                 ))
-            ),
-            $this->host($host, $hostLinkText)
+            )
         );
     }
 }

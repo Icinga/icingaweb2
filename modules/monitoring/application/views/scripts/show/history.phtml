@@ -143,7 +143,8 @@ $output = $this->tickets ? preg_replace_callback(
 ?>
         <?php if ($isService): ?>
           <?= sprintf(
-              $this->translate('%s on %s', 'Service running on host'),
+              '%s: %s',
+              $event->host_display_name,
               $hostContext ? $this->qlink(
                   $event->service_display_name,
                   'monitoring/show/service',
@@ -156,8 +157,7 @@ $output = $this->tickets ? preg_replace_callback(
                       $event->service_display_name,
                       $event->host_display_name
                   ))
-              ) : $this->escape($event->service_display_name),
-              $event->host_display_name
+              ) : $this->escape($event->service_display_name)
           ) ?>
         <?php else: ?>
           <?= $this->escape($event->host_name); ?>
