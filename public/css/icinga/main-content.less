@@ -202,14 +202,31 @@ tr[href].active {
   background-color: #eee;
   color: black;
 }
+
+table.alternating {
+  tr[href].active:nth-child(even), tr[href].active:nth-child(odd) {
+    background-color: #E5E5E5;
+    color: black;
+  }
+  tr[href]:nth-child(even) {
+    background-color: #FDFDFD;
+  }
+  tr[href]:nth-child(odd) {
+    background-color: #f5f5f5;
+  }
+  tr[href]:hover {
+    color: black;
+    background-color: #DDDDDD;
+  }
+}
 /* End of table behaviour */
 
 
 /* HOVER colors */
-
+ 
 tr[href]:hover {
   color: black;
-  background-color: #eee;
+  background-color: #DDDDDD;
 }
 /* END of HOVER colors */
 
