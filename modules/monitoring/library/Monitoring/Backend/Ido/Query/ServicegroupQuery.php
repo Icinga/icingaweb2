@@ -103,7 +103,6 @@ class ServicegroupQuery extends IdoQuery
             'sgm.service_object_id = so.object_id',
             array()
         );
-        $this->group('sgo.name1');
     }
 
     /**
@@ -117,5 +116,18 @@ class ServicegroupQuery extends IdoQuery
             's.service_object_id = so.object_id',
             array()
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGroup()
+    {
+        $group = array();
+        if ($this->hasJoinedVirtualTable('serviceobjects')) {
+            $group = array('sg.servicegroup_id', 'sgo.object_id');
+        }
+
+        return $group;
     }
 }
