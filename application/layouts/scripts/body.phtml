@@ -5,29 +5,20 @@ use Icinga\Web\Notification;
 use Icinga\Authentication\Manager as Auth;
 
 
-if (Auth::getInstance()->isAuthenticated()): ?>
- <div id="header">
-   <ul id="notifications"><?php
-
-$moduleName = $this->layout()->moduleName;
-if ($moduleName) {
-    $moduleClass = ' icinga-module module-' . $moduleName;
-} else {
-    $moduleClass = '';
-}
-
-$refresh = '';
-if ($this->layout()->autorefreshInterval) {
-    $refresh = ' data-icinga-refresh="' . $this->layout()->autorefreshInterval . '"';
-}
-
-$notifications = Notification::getInstance();
-if ($notifications->hasMessages()) {
-    foreach ($notifications->getMessages() as $m) {
-        echo '<li class="' . $m->type . '">' . $this->escape($m->message) . '</li>';
+if (Auth::getInstance()->isAuthenticated()):
+    $moduleName = $this->layout()->moduleName;
+    if ($moduleName) {
+        $moduleClass = ' icinga-module module-' . $moduleName;
+    } else {
+        $moduleClass = '';
     }
-}
-   ?></ul>
+
+    $refresh = '';
+    if ($this->layout()->autorefreshInterval) {
+        $refresh = ' data-icinga-refresh="' . $this->layout()->autorefreshInterval . '"';
+    }
+?>
+ <div id="header">
    <div id="logo" data-base-target="_main">
        <?= $this->qlink(
            '',
@@ -56,6 +47,16 @@ if ($notifications->hasMessages()) {
   <div id="col3" class="container">
   </div>
  </div><!-- END of main -->
+ <div id="footer">
+   <ul id="notifications"><?php
+$notifications = Notification::getInstance();
+if ($notifications->hasMessages()) {
+    foreach ($notifications->getMessages() as $m) {
+        echo '<li class="' . $m->type . '">' . $this->escape($m->message) . '</li>';
+    }
+}
+   ?></ul>
+ </div>
 <?php else: ?>
 <?= $this->render('inline.phtml') ?>
 <?php endif ?>

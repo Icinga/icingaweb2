@@ -156,7 +156,7 @@ class Query extends SimpleQuery
     {
         $result = $this->fetchAll();
         $sorted = array();
-        $quotedDn = preg_quote($this->connection->getDN(), '/');
+        $quotedDn = preg_quote($this->ds->getDN(), '/');
         foreach ($result as $key => & $item) {
             $new_key = LdapUtils::implodeDN(
                 array_reverse(
@@ -170,7 +170,7 @@ class Query extends SimpleQuery
         unset($groups);
         ksort($sorted);
 
-        $tree = Root::forConnection($this->connection);
+        $tree = Root::forConnection($this->ds);
         $root_dn = $tree->getDN();
         foreach ($sorted as $sort_key => & $key) {
             if ($key === $root_dn) {
