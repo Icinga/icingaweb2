@@ -26,7 +26,7 @@ class HostcommenthistoryQuery extends IdoQuery
             'type'      => "(CASE hch.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)",
             'timestamp' => 'UNIX_TIMESTAMP(hch.comment_time)',
             'object_id' => 'hch.object_id',
-            'state'     => '(NULL)',
+            'state'     => '(-1)',
             'output'    => "('[' || hch.author_name || '] ' || hch.comment_data)",
         ),
         'hostgroups' => array(

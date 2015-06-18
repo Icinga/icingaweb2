@@ -30,7 +30,7 @@ class ServicecommenthistoryQuery extends IdoQuery
             'type'      => "(CASE sch.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)",
             'timestamp' => 'UNIX_TIMESTAMP(sch.comment_time)',
             'object_id' => 'sch.object_id',
-            'state'     => '(NULL)',
+            'state'     => '(-1)',
             'output'    => "('[' || sch.author_name || '] ' || sch.comment_data)",
         ),
         'hostgroups' => array(

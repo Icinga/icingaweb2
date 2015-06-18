@@ -30,7 +30,7 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
             'type'      => "('dt_start')",
             'timestamp' => 'UNIX_TIMESTAMP(sdh.actual_start_time)',
             'object_id' => 'sdh.object_id',
-            'state'     => '(NULL)',
+            'state'     => '(-1)',
             'output'    => "('[' || sdh.author_name || '] ' || sdh.comment_data)",
         ),
         'hostgroups' => array(

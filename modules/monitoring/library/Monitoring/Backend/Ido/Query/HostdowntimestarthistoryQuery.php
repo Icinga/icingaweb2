@@ -26,7 +26,7 @@ class HostdowntimestarthistoryQuery extends IdoQuery
             'type'      => "('dt_start')",
             'timestamp' => 'UNIX_TIMESTAMP(hdh.actual_start_time)',
             'object_id' => 'hdh.object_id',
-            'state'     => '(NULL)',
+            'state'     => '(-1)',
             'output'    => "('[' || hdh.author_name || '] ' || hdh.comment_data)",
         ),
         'hostgroups' => array(
