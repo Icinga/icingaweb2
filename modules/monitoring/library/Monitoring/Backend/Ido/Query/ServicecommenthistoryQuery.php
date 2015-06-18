@@ -100,7 +100,6 @@ class ServicecommenthistoryQuery extends IdoQuery
             'hgo.object_id = hg.hostgroup_object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
             array()
         );
-        $this->select->group(array('sch.commenthistory_id', 'so.name1', 'so.name2'));
     }
 
     /**
@@ -134,7 +133,6 @@ class ServicecommenthistoryQuery extends IdoQuery
             'sgo.object_id = sg.servicegroup_object_id AND sgo.is_active = 1 AND sgo.objecttype_id = 4',
             array()
         );
-        $this->select->group(array('sch.commenthistory_id', 'so.name1', 'so.name2'));
     }
 
     /**
@@ -147,5 +145,22 @@ class ServicecommenthistoryQuery extends IdoQuery
             's.service_object_id = so.object_id',
             array()
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGroup()
+    {
+        $group = array();
+        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('servicegroups')) {
+            $group = array('sch.commenthistory_id', 'so.object_id');
+            if ($this->hasJoinedVirtualTable('services')) {
+                $group[] = 'h.host_id';
+                $group[] = 's.service_id';
+            }
+        }
+
+        return $group;
     }
 }
