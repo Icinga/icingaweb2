@@ -105,6 +105,9 @@
             // We catch scroll events in our containers
             $('.container').on('scroll', { self: this }, this.icinga.events.onContainerScroll);
 
+            // Remove notifications on click
+            $(document).on('click', '#notifications li', function () { $(this).remove(); });
+
             // We want to catch each link click
             $(document).on('click', 'a', { self: this }, this.linkClicked);
             $(document).on('click', 'tr[href]', { self: this }, this.linkClicked);
