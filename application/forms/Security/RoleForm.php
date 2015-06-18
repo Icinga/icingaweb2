@@ -21,8 +21,10 @@ class RoleForm extends ConfigForm
      * @var array
      */
     protected $providedPermissions = array(
-        '*'                                             => '*',
-        'config/*'                                      => 'config/*',
+        '*'                                             => 'Allow everything (*)',
+        'config/*'                                      => 'Allow config access (config/*)',
+/*
+        // [tg] seems excessive for me, hidden for rc1, tbd
         'config/application/*'                          => 'config/application/*',
         'config/application/general'                    => 'config/application/general',
         'config/application/resources'                  => 'config/application/resources',
@@ -45,6 +47,7 @@ class RoleForm extends ConfigForm
         'config/authentication/roles/edit'              => 'config/authentication/roles/edit',
         'config/authentication/roles/remove'            => 'config/authentication/roles/remove',
         'config/modules'                                => 'config/modules'
+*/
     );
 
     /**
@@ -63,7 +66,7 @@ class RoleForm extends ConfigForm
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
             foreach ($module->getProvidedPermissions() as $permission) {
                 /** @var object $permission */
-                $this->providedPermissions[$permission->name] = $permission->name . ': ' . $permission->description;
+                $this->providedPermissions[$permission->name] = $permission->description . ' (' . $permission->name . ')';
             }
             foreach ($module->getProvidedRestrictions() as $restriction) {
                 /** @var object $restriction */
