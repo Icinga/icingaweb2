@@ -8,9 +8,7 @@ if (! $this->compact): ?>
     <div class="dontprint">
         <?= $this->render('list/components/selectioninfo.phtml'); ?>
     </div>
-    <div class="tinystatesummary">
-        <?= count($downtimes) ?> <?= $this->translate('Downtimes') ?>
-    </div>
+    <h1><?= count($downtimes) ?> <?= $this->translate('Downtimes') ?></h1>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
   <?= $this->paginator; ?>
@@ -56,7 +54,7 @@ if (count($downtimes) === 0) {
             }
         ?>
         <?= $this->qlink(
-            sprintf($this->translate('%s on %s', 'Service running on host'), $downtime->service_display_name, $downtime->host_display_name),
+            sprintf('%s: %s', $downtime->host_display_name, $downtime->service_display_name),
                 'monitoring/downtime/show',
                 array('downtime_id' => $downtime->id),
                 array('title' => sprintf(

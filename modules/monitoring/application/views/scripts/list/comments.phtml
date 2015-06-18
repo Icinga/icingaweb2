@@ -4,9 +4,7 @@
   <div class="dontprint">
      <?= $this->render('list/components/selectioninfo.phtml'); ?>
   </div>
-  <div class="tinystatesummary">
-     <?= count($comments) ?> <?= $this->translate('Comments') ?>:
-  </div>
+  <h1><?= count($comments) ?> <?= $this->translate('Comments') ?></h1>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
   <?= $this->paginator; ?>
@@ -39,9 +37,9 @@ if (count($comments) === 0) {
 
           <?= $this->qlink(
             sprintf(
-                $this->translate('%s on %s', 'Service running on host'),
-                $comment->service_display_name,
-                $comment->host_display_name
+                '%s: %s',
+                $comment->host_display_name,
+                $comment->service_display_name
             ),
             'monitoring/comment/show',
             array('comment_id' => $comment->id),

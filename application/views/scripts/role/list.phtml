@@ -6,7 +6,7 @@
         <?php /** @var \Icinga\Application\Config $roles */ if ($roles->isEmpty()): ?>
             <?= $this->translate('No roles found.') ?>
         <?php else: ?>
-            <table class="avp action" data-base-target="_next">
+            <table class="avp action alternating" data-base-target="_next">
                 <thead>
                 <tr>
                     <th><?= $this->translate('Name') ?></th>

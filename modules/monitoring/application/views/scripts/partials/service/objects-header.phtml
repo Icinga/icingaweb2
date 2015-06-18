@@ -18,9 +18,8 @@ $i = 0;
             <?= $this->iconImage()->service($service) ?>
             <?= implode(' ', $this->serviceFlags($service)) ?>
             <b>
-               <?= $this->escape($service->getName()); ?>
-               <?= $this->translate('on') ?>
-               <?= $this->escape($service->getHost()->getName()); ?><br>
+               <?= $this->escape($service->getHost()->getName()); ?>:
+               <?= $this->escape($service->getName()); ?> <br>
             </b>
             <?= $this->escape($service->service_output) ?>
             </td>
