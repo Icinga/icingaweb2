@@ -54,7 +54,7 @@ if (count($hosts) === 0) {
       <!-- Host / Status / Output -->
       <td>
         <?= $this->iconImage()->host($host) ?>
-        <span="objectflags"><?= implode(' ', $this->hostFlags($host)) ?></span>
+        <span class="objectflags"><?= implode(' ', $this->hostFlags($host)) ?></span>
         <?= $this->qlink(
           $host->host_display_name,
           $hostLink,
