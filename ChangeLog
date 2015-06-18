@@ -3,6 +3,7 @@
 ### Changes
 
 * Improve layout and look and feel in many ways
+* Apply host, service and custom variable restrictions to all monitoring objects
 * Add fullscreen mode (?showFullscreen)
 * User and group management
 * Comment and Downtime Detail View
