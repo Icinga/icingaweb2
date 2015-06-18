@@ -872,7 +872,9 @@ abstract class IdoQuery extends DbQuery
 
     protected function getCustomvarColumnName($customvar)
     {
-        return $this->customVars[strtolower($customvar)] . '.varvalue';
+        if (isset($this->customVars[($customvar = strtolower($customvar))])) {
+            $this->customVars[strtolower($customvar)] . '.varvalue';
+        }
     }
 
     public function aliasToColumnName($alias)
