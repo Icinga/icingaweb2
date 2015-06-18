@@ -73,7 +73,6 @@ class HostgroupQuery extends IdoQuery
             'hgm.host_object_id = ho.object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
             array()
         );
-        $this->group('hgo.name1');
     }
 
     /**
@@ -125,6 +124,18 @@ class HostgroupQuery extends IdoQuery
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
-        $this->group('hgo.name1');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGroup()
+    {
+        $group = array();
+        if ($this->hasJoinedVirtualTable('hostobjects')) {
+            $group = array('hg.hostgroup_id', 'hgo.object_id');
+        }
+
+        return $group;
     }
 }
