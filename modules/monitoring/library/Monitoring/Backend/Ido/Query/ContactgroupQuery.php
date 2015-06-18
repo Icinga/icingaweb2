@@ -103,7 +103,6 @@ class ContactgroupQuery extends IdoQuery
             'c.contact_object_id = co.object_id',
             array()
         );
-        $this->group(array('cg.contactgroup_id', 'c.contact_id'));
     }
 
     /**
@@ -145,12 +144,6 @@ class ContactgroupQuery extends IdoQuery
             'ho.object_id = h.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
             array()
         );
-
-        if ($this->hasJoinedVirtualTable('contacts')) {
-            $this->group(array('cg.contactgroup_id', 'c.contact_id'));
-        } else {
-            $this->group(array('cg.contactgroup_id'));
-        }
     }
 
     /**
@@ -192,11 +185,29 @@ class ContactgroupQuery extends IdoQuery
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
+    }
 
-        if ($this->hasJoinedVirtualTable('contacts')) {
-            $this->group(array('cg.contactgroup_id', 'c.contact_id'));
-        } else {
-            $this->group(array('cg.contactgroup_id'));
+    /**
+     * {@inheritdoc}
+     */
+    public function getGroup()
+    {
+        $group = array();
+        if ($this->hasJoinedVirtualTable('hosts') || $this->hasJoinedVirtualTable('services')) {
+            $group = array('cg.contactgroup_id', 'cgo.object_id');
+            if ($this->hasJoinedVirtualTable('contacts')) {
+                $group[] = 'c.contact_id';
+                $group[] = 'co.object_id';
+            }
+        } elseif ($this->hasJoinedVirtualTable('contacts')) {
+            $group = array(
+                'cg.contactgroup_id',
+                'cgo.object_id',
+                'c.contact_id',
+                'co.object_id'
+            );
         }
+
+        return $group;
     }
 }
