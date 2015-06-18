@@ -400,6 +400,50 @@ SQL;
             if ($this->hasJoinedVirtualTable('lasthostflappingcomment')) {
                 $group[] = 'hlfc.last_flapping_data';
             }
+
+            if ($this->hasJoinedVirtualTable('hostgroups')) {
+                $selected = false;
+                foreach ($this->columns as $alias => $column) {
+                    if ($column instanceof Zend_Db_Expr) {
+                        continue;
+                    }
+
+                    $table = $this->aliasToTableName(
+                        $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
+                    );
+                    if ($table === 'hostgroups') {
+                        $selected = true;
+                        break;
+                    }
+                }
+
+                if ($selected) {
+                    $group[] = 'hg.hostgroup_id';
+                    $group[] = 'hgo.object_id';
+                }
+            }
+
+            if ($this->hasJoinedVirtualTable('servicegroups')) {
+                $selected = false;
+                foreach ($this->columns as $alias => $column) {
+                    if ($column instanceof Zend_Db_Expr) {
+                        continue;
+                    }
+
+                    $table = $this->aliasToTableName(
+                        $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
+                    );
+                    if ($table === 'servicegroups') {
+                        $selected = true;
+                        break;
+                    }
+                }
+
+                if ($selected) {
+                    $group[] = 'sg.servicegroup_id';
+                    $group[] = 'sgo.object_id';
+                }
+            }
         }
 
         return $group;
