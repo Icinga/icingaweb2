@@ -35,9 +35,9 @@ class Monitoring_DowntimeController extends Controller
     {
         $downtimeId = $this->params->getRequired('downtime_id');
 
-        $this->downtime = $this->backend->select()->from('downtime', array(
+        $query = $this->backend->select()->from('downtime', array(
             'id'              => 'downtime_internal_id',
-            'objecttype'      => 'downtime_objecttype',
+            'objecttype'      => 'object_type',
             'comment'         => 'downtime_comment',
             'author_name'     => 'downtime_author_name',
             'start'           => 'downtime_start',
@@ -49,16 +49,16 @@ class Monitoring_DowntimeController extends Controller
             'is_fixed'        => 'downtime_is_fixed',
             'is_in_effect'    => 'downtime_is_in_effect',
             'entry_time'      => 'downtime_entry_time',
-            'host_state'      => 'downtime_host_state',
-            'service_state'   => 'downtime_service_state',
+            'host_state',
+            'service_state',
             'host_name',
-            'host',
-            'service',
             'service_description',
             'host_display_name',
             'service_display_name'
-        ))->where('downtime_internal_id', $downtimeId)->getQuery()->fetchRow();
+        ))->where('downtime_internal_id', $downtimeId);
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
+        $this->downtime = $query->getQuery()->fetchRow();
         if ($this->downtime === false) {
             $this->httpNotFound($this->translate('Downtime not found'));
         }
@@ -95,9 +95,9 @@ class Monitoring_DowntimeController extends Controller
                 Host::getStateText($this->downtime->host_state);
         $this->view->listAllLink = Url::fromPath('monitoring/list/downtimes');
         $this->view->showHostLink = Url::fromPath('monitoring/host/show')
-                ->setParam('host', $this->downtime->host);
+                ->setParam('host', $this->downtime->host_name);
         $this->view->showServiceLink = Url::fromPath('monitoring/service/show')
-                ->setParam('host', $this->downtime->host)
+                ->setParam('host', $this->downtime->host_name)
                 ->setParam('service', $this->downtime->service_description);
         if ($this->hasPermission('monitoring/command/downtime/delete')) {
             $this->view->delDowntimeForm = $this->createDelDowntimeForm();

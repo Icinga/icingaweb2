@@ -30,9 +30,9 @@ class Monitoring_CommentsController extends Controller
             'comment_internal_id',
             (string)$this->params
         ));
-        $this->comments = $this->backend->select()->from('comment', array(
+        $query = $this->backend->select()->from('comment', array(
             'id'         => 'comment_internal_id',
-            'objecttype' => 'comment_objecttype',
+            'objecttype' => 'object_type',
             'comment'    => 'comment_data',
             'author'     => 'comment_author_name',
             'timestamp'  => 'comment_timestamp',
@@ -43,12 +43,14 @@ class Monitoring_CommentsController extends Controller
             'service_description',
             'host_display_name',
             'service_display_name'
-        ))->addFilter($this->filter)->getQuery()->fetchAll();
-        
+        ))->addFilter($this->filter);
+        $this->applyRestriction('monitoring/filter/objects', $query);
+
+        $this->comments = $query->getQuery()->fetchAll();
         if (false === $this->comments) {
             throw new Zend_Controller_Action_Exception($this->translate('Comment not found'));
         }
-         
+
         $this->getTabs()->add(
             'comments',
             array(

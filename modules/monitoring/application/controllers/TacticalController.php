@@ -20,9 +20,8 @@ class Monitoring_TacticalController extends MonitoringController
                 'url'   => Url::fromRequest()
             )
         )->extend(new DashboardAction())->activate('tactical_overview');
-
-        $this->view->statusSummary = $this->backend->select()->from(
-            'statusSummary',
+        $stats = $this->backend->select()->from(
+            'statussummary',
             array(
                 'hosts_up',
                 'hosts_pending',
@@ -79,6 +78,8 @@ class Monitoring_TacticalController extends MonitoringController
                 'hosts_flapping',
                 'services_flapping'
             )
-        )->getQuery()->fetchRow();
+        );
+        $this->applyRestriction('monitoring/filter/objects', $stats);
+        $this->view->statusSummary = $stats->fetchRow();
     }
 }

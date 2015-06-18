@@ -25,9 +25,9 @@ class Monitoring_CommentController extends Controller
     {
         $commentId = $this->params->getRequired('comment_id');
 
-        $this->comment = $this->backend->select()->from('comment', array(
+        $query = $this->backend->select()->from('comment', array(
             'id'         => 'comment_internal_id',
-            'objecttype' => 'comment_objecttype',
+            'objecttype' => 'object_type',
             'comment'    => 'comment_data',
             'author'     => 'comment_author_name',
             'timestamp'  => 'comment_timestamp',
@@ -38,8 +38,10 @@ class Monitoring_CommentController extends Controller
             'service_description',
             'host_display_name',
             'service_display_name'
-        ))->where('comment_internal_id', $commentId)->getQuery()->fetchRow();
+        ))->where('comment_internal_id', $commentId);
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
+        $this->comment = $query->getQuery()->fetchRow();
         if ($this->comment === false) {
             $this->httpNotFound($this->translate('Comment not found'));
         }

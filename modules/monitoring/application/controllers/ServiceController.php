@@ -28,7 +28,7 @@ class Monitoring_ServiceController extends MonitoredObjectController
             $this->backend, $this->params->getRequired('host'), $this->params->getRequired('service')
         );
 
-        $this->applyRestriction('monitoring/services/filter', $service);
+        $this->applyRestriction('monitoring/filter/objects', $service);
 
         if ($service->fetch() === false) {
             $this->httpNotFound($this->translate('Service not found'));
