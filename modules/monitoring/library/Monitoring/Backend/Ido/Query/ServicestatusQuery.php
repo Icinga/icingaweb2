@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Zend_Db_Expr;
+
 /**
  * Query for service status
  */
@@ -313,6 +315,50 @@ class ServicestatusQuery extends IdoQuery
 
             if ($this->hasJoinedVirtualTable('servicestatus')) {
                 $group[] = 'ss.servicestatus_id';
+            }
+
+            if ($this->hasJoinedVirtualTable('hostgroups')) {
+                $selected = false;
+                foreach ($this->columns as $alias => $column) {
+                    if ($column instanceof Zend_Db_Expr) {
+                        continue;
+                    }
+
+                    $table = $this->aliasToTableName(
+                        $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
+                    );
+                    if ($table === 'hostgroups') {
+                        $selected = true;
+                        break;
+                    }
+                }
+
+                if ($selected) {
+                    $group[] = 'hg.hostgroup_id';
+                    $group[] = 'hgo.object_id';
+                }
+            }
+
+            if ($this->hasJoinedVirtualTable('servicegroups')) {
+                $selected = false;
+                foreach ($this->columns as $alias => $column) {
+                    if ($column instanceof Zend_Db_Expr) {
+                        continue;
+                    }
+
+                    $table = $this->aliasToTableName(
+                        $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
+                    );
+                    if ($table === 'servicegroups') {
+                        $selected = true;
+                        break;
+                    }
+                }
+
+                if ($selected) {
+                    $group[] = 'sg.servicegroup_id';
+                    $group[] = 'sgo.object_id';
+                }
             }
         }
 
