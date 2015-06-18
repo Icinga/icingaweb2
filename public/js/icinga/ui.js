@@ -706,7 +706,7 @@
         },
 
         initializeControls: function (parent) {
-            if ($(parent).closest('.dashboard').length) {
+            if ($(parent).closest('.dashboard').length || $('#layout').hasClass('fullscreen-layout')) {
                 return;
             }
 
@@ -736,6 +736,9 @@
 
         fixControls: function ($parent) {
             var self = this;
+            if ($('#layout').hasClass('fullscreen-layout')) {
+                return;
+            }
 
             if ('undefined' === typeof $parent) {
 
