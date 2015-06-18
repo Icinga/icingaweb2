@@ -145,8 +145,9 @@ class DbQuery extends SimpleQuery
             }
         }
 
-        if ($this->group) {
-            $select->group($this->group);
+        $group = $this->getGroup();
+        if ($group) {
+            $select->group($group);
         }
 
         $select->columns($this->columns);
@@ -321,8 +322,9 @@ class DbQuery extends SimpleQuery
     {
         // TODO: there may be situations where we should clone the "select"
         $count = $this->dbSelect();
-        if ($this->group) {
-            $count->group($this->group);
+        $group = $this->getGroup();
+        if ($group) {
+            $count->group($group);
         }
         $this->applyFilterSql($count);
         if ($this->useSubqueryCount || $this->group) {
@@ -391,6 +393,16 @@ class DbQuery extends SimpleQuery
     {
         $this->group = $group;
         return $this;
+    }
+
+    /**
+     * Return the GROUP BY clause
+     *
+     * @return  string|array
+     */
+    public function getGroup()
+    {
+        return $this->group;
     }
 
     /**
