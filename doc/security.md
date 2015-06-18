@@ -110,11 +110,11 @@ To get you a quick start, here is an example of what a role definition could loo
     [winadmin]
     users = "jdoe, janedoe"
     groups = "admin"
-    permissions = "config/application/*, monitoring/commands/schedule-check"
+    permissions = "config/*, monitoring/commands/schedule-check"
     monitoring/filter/objects = "host_name=*win*"
 
 
-This example creates a role called **winadmin**, that grants all permissions in `config/application/*` and `monitoring/commands/schedule-check` and additionally only
+This example creates a role called **winadmin**, that grants all permissions in `config/*` and `monitoring/commands/schedule-check` and additionally only
 allows the hosts and services that match the filter `host_name=*win*` to be displayed. The users
 **jdoe** and **janedoe** and all members of the group **admin** will be affected
 by this role.
@@ -142,8 +142,8 @@ all actions are **prohibited** and must be allowed explicitly by a role for any 
 
 Each action in Icinga Web 2 is denoted by a **namespaced key**, which is used to order and
 group those actions. All actions that affect the configuration of Icinga Web 2, are in a
-namespace called **config**, while all configurations that affect authentication
-are in the namespace `config/authentication`
+namespace called **config**, while all configurations that affect modules
+are in the namespace `config/modules`
 
 **Wildcards** can be used to grant permission for all actions in a certain namespace.
 The permission `config/*` would grant permission to all configuration actions,
@@ -158,27 +158,6 @@ through a group) all permissions can simply be added together to get the users a
 -------------------------------------|-----------------------------------------------------------------
  *                                   | Allow everything, including module-specific permissions         
  config/*                            | Allow all configuration actions                                 
- config/application/*                | Allow configuring IcingaWeb2                                    
- config/application/general          | Allow general settings, like logging or preferences             
- config/application/resources        | Allow changing resources for retrieving data                    
- config/application/userbackend      | Allow changing backends for retrieving available users          
- config/application/usergroupbackend | Allow changing backends for retrieving available groups         
- config/authentication/*             | Allow configuring IcingaWeb2 authentication mechanisms          
- config/authentication/users/*       | Allow all user actions                                          
- config/authentication/users/show    | Allow displaying avilable users                                 
- config/authentication/users/add     | Allow adding a new user to the backend                          
- config/authentication/users/edit    | Allow editing an existing user in the backend                   
- config/authentication/users/remove  | Allow removing an existing user from the backend                
- config/authentication/groups/*      | Allow all group actions                                         
- config/authentication/groups/show   | Allow displaying all available groups                           
- config/authentication/groups/add    | Allow adding a new group to the backend                         
- config/authentication/groups/edit   | Allow editing existing groups in a backend                      
- config/authentication/groups/remove | Allow removing existing groups from the backend                 
- config/authentication/roles/*       | Allow all role actions                                          
- config/authentication/roles/add     | Allow adding a new role                                         
- config/authentication/roles/show    | Allow displaying available roles                                
- config/authentication/roles/edit    | Allow changing an existing role                                 
- config/authentication/roles/remove  | Allow removing an existing row                                  
  config/modules                      | Allow enabling or disabling modules  
 
 
