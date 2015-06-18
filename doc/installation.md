@@ -259,7 +259,7 @@ The first release candidate of Icinga Web 2 introduces the following non-backwar
 
 * The database schema has been adjusted and the tables `icingaweb_group` and
   `icingaweb_group_membership` were altered to ensure referential integrity.
-  Please use the update script located in **etc/schema/upgrade** to update your
+  Please use the upgrade script located in **etc/schema/** to update your
   database schema
 * Users who are using PostgreSQL < v9.1 are required to upgrade their
   environment to v9.1+ as this is the new minimum required version
