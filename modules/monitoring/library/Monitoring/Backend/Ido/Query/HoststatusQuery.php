@@ -230,7 +230,6 @@ SQL;
             'hgo.object_id = hg.hostgroup_object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
             array()
         );
-        $this->group('ho.name1');
     }
 
     /**
@@ -312,7 +311,6 @@ SQL;
             'sgo.object_id = sg.servicegroup_object_id AND sgo.is_active = 1 AND sgo.objecttype_id = 4',
             array()
         );
-        $this->group('ho.name1');
     }
 
     /**
@@ -330,7 +328,6 @@ SQL;
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
-        $this->group('ho.name1');
     }
 
     /**
@@ -370,5 +367,41 @@ SQL;
             'sps.host_object_id = ho.object_id',
             array()
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGroup()
+    {
+        $group = array();
+        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('services')) {
+            $group = array('h.host_id', 'ho.object_id');
+            if ($this->hasJoinedVirtualTable('hoststatus')) {
+                $group[] = 'hs.hoststatus_id';
+            }
+
+            if ($this->hasJoinedVirtualTable('serviceproblemsummary')) {
+                $group[] = 'sps.unhandled_services_count';
+            }
+
+            if ($this->hasJoinedVirtualTable('lasthostackcomment')) {
+                $group[] = 'hlac.last_ack_data';
+            }
+
+            if ($this->hasJoinedVirtualTable('lasthostcomment')) {
+                $group[] = 'hlc.last_comment_data';
+            }
+
+            if ($this->hasJoinedVirtualTable('lasthostdowntimecomment')) {
+                $group[] = 'hldc.last_downtime_data';
+            }
+
+            if ($this->hasJoinedVirtualTable('lasthostflappingcomment')) {
+                $group[] = 'hlfc.last_flapping_data';
+            }
+        }
+
+        return $group;
     }
 }
