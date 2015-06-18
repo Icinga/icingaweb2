@@ -124,7 +124,6 @@ class HostnotificationQuery extends IdoQuery
     protected function joinHistory()
     {
         $this->requireVirtualTable('contactnotifications');
-        $this->group(array('hn.notification_id', 'ho.name1'));
     }
 
     /**
@@ -142,7 +141,6 @@ class HostnotificationQuery extends IdoQuery
             'cno.object_id = cn.contact_object_id',
             array()
         );
-        $this->group(array('cn.contactnotification_id', 'ho.name1'));
     }
 
     /**
@@ -175,10 +173,6 @@ class HostnotificationQuery extends IdoQuery
             'hgo.object_id = hg.hostgroup_object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
             array()
         );
-
-        if (! $this->hasJoinedVirtualTable('contactnotifications') && !$this->hasJoinedVirtualTable('history')) {
-            $this->group(array('hn.notification_id', 'ho.name1'));
-        }
     }
 
     /**
@@ -228,9 +222,36 @@ class HostnotificationQuery extends IdoQuery
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
+    }
 
-        if (! $this->hasJoinedVirtualTable('contactnotifications') && !$this->hasJoinedVirtualTable('history')) {
-            $this->group(array('hn.notification_id', 'ho.name1'));
+    /**
+     * {@inheritdoc}
+     */
+    public function getGroup()
+    {
+        if (
+            $this->hasJoinedVirtualTable('history')
+            || $this->hasJoinedVirtualTable('services')
+            || $this->hasJoinedVirtualTable('hostgroups')
+        ) {
+            $group = array('hn.notification_id', 'ho.object_id');
+            if ($this->hasJoinedVirtualTable('contactnotifications') && !$this->hasJoinedVirtualTable('history')) {
+                $group[] = 'cno.object_id';
+            }
+        } elseif ($this->hasJoinedVirtualTable('contactnotifications')) {
+            $group = array('hn.notification_id', 'cno.object_id', 'ho.object_id');
         }
+
+        if (! empty($group)) {
+            if ($this->hasJoinedVirtualTable('hosts')) {
+                $group[] = 'h.host_id';
+            }
+
+            if ($this->hasJoinedVirtualTable('acknowledgements')) {
+                $group[] = 'a.acknowledgement_id';
+            }
+        }
+
+        return $group;
     }
 }
