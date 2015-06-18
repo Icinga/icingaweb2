@@ -86,12 +86,8 @@ class ConfigController extends Controller
         if ($this->firstAllowedAction === null) {
             throw new SecurityException($this->translate('No permission for application configuration'));
         }
-        $action = $this->getTabs()->get($this->firstAllowedAction);
-        if (substr($action->getUrl()->getPath(), 0, 7) === 'config/') {
-            $this->forward($this->firstAllowedAction);
-        } else {
-            $this->redirectNow($action->getUrl());
-        }
+
+        $this->redirectNow($this->getTabs()->get($this->firstAllowedAction)->getUrl());
     }
 
     /**

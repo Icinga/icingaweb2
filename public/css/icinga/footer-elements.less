@@ -1,0 +1,46 @@
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
+
+div#footer {
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  z-index: 9999;
+}
+
+/** Notifications **/
+
+#notifications {
+  margin: 0;
+  padding: 0;
+}
+
+#notifications > li {
+  list-style-type: none;
+  display: block;
+  border-top: 1px solid #999;
+  color: white;
+  line-height: 2.5em;
+  padding-left: 3em;
+  background-repeat: no-repeat;
+  background-position: 1em center;
+}
+
+#notifications > li.info {
+  background-color: @colorFormNotificationInfo;
+}
+
+#notifications > li.warning {
+  background-color: @colorWarningHandled;
+}
+#notifications > li.error {
+  background-color: @colorCritical;
+  background-image: url(../img/icons/error_white.png);
+}
+
+#notifications > li.success {
+  background-color: #fe6;
+  background-image: url(../img/icons/success.png);
+  color: #333;
+}
+/** END of Notifications **/

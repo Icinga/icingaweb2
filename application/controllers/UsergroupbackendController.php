@@ -1,7 +1,6 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use \Exception;
 use Icinga\Application\Config;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfirmRemovalForm;
