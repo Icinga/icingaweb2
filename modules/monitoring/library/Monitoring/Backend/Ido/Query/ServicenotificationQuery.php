@@ -125,7 +125,6 @@ class ServicenotificationQuery extends IdoQuery
     protected function joinHistory()
     {
         $this->requireVirtualTable('contactnotifications');
-        $this->group(array('sn.notification_id', 'so.name2', 'so.name1'));
     }
 
     /**
@@ -143,7 +142,6 @@ class ServicenotificationQuery extends IdoQuery
             'cno.object_id = cn.contact_object_id',
             array()
         );
-        $this->group(array('cn.contactnotification_id', 'so.name2', 'so.name1'));
     }
 
     /**
@@ -177,10 +175,6 @@ class ServicenotificationQuery extends IdoQuery
             'hgo.object_id = hg.hostgroup_object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
             array()
         );
-
-        if (! $this->hasJoinedVirtualTable('contactnotifications') && !$this->hasJoinedVirtualTable('history')) {
-            $this->group(array('sn.notification_id', 'so.name2', 'so.name1'));
-        }
     }
 
     /**
@@ -214,10 +208,6 @@ class ServicenotificationQuery extends IdoQuery
             'sgo.object_id = sg.servicegroup_object_id AND sgo.is_active = 1 AND sgo.objecttype_id = 4',
             array()
         );
-
-        if (! $this->hasJoinedVirtualTable('contactnotifications') && !$this->hasJoinedVirtualTable('history')) {
-            $this->group(array('sn.notification_id', 'so.name2', 'so.name1'));
-        }
     }
 
     /**
@@ -230,5 +220,41 @@ class ServicenotificationQuery extends IdoQuery
             's.service_object_id = so.object_id',
             array()
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGroup()
+    {
+        $group = array();
+        if (
+            $this->hasJoinedVirtualTable('history')
+            || $this->hasJoinedVirtualTable('hostgroups')
+            || $this->hasJoinedVirtualTable('servicegroups')
+        ) {
+            $group = array('sn.notification_id', 'so.object_id');
+            if ($this->hasJoinedVirtualTable('contactnotifications') && !$this->hasJoinedVirtualTable('history')) {
+                $group[] = 'cno.object_id';
+            }
+        } elseif ($this->hasJoinedVirtualTable('contactnotifications')) {
+            $group = array('sn.notification_id', 'cno.object_id', 'so.object_id');
+        }
+
+        if (! empty($group)) {
+            if ($this->hasJoinedVirtualTable('hosts')) {
+                $group[] = 'h.host_id';
+            }
+
+            if ($this->hasJoinedVirtualTable('services')) {
+                $group[] = 's.service_id';
+            }
+
+            if ($this->hasJoinedVirtualTable('acknowledgements')) {
+                $group[] = 'a.acknowledgement_id';
+            }
+        }
+
+        return $group;
     }
 }
