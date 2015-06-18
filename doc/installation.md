@@ -252,3 +252,21 @@ affects environments that opted for not storing preferences, your new backend is
 
 Because Icinga Web 2 Beta 3 does not introduce any backward incompatible change you don't have to change your
 configuration files after upgrading to Icinga Web 2 Beta 3.
+
+## <a id="upgrading-to-rc1"></a> Upgrading to Icinga Web 2 Release Candidate 1
+
+The first release candidate of Icinga Web 2 introduces the following non-backward compatible changes:
+
+* The database schema has been adjusted and the tables `icingaweb_group` and
+  `icingaweb_group_membership` were altered to ensure referential integrity.
+  Please use the update script located in **etc/schema/upgrade** to update your
+  database schema
+* Users who are using PostgreSQL < v9.1 are required to upgrade their
+  environment to v9.1+ as this is the new minimum required version
+  for utilizing PostgreSQL as database backend
+* The restrictions `monitoring/hosts/filter` and `monitoring/services/filter`
+  provided by the monitoring module were merged together. The new
+  restriction is called `monitoring/filter/objects` and supports only a
+  predefined subset of filter columns. Please see the module's security
+  related documentation for more details.
+
