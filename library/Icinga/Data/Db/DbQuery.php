@@ -3,13 +3,14 @@
 
 namespace Icinga\Data\Db;
 
-use Icinga\Data\SimpleQuery;
-use Icinga\Data\Filter\FilterChain;
-use Icinga\Data\Filter\FilterOr;
-use Icinga\Data\Filter\FilterAnd;
-use Icinga\Data\Filter\FilterNot;
-use Icinga\Exception\QueryException;
 use Zend_Db_Select;
+use Icinga\Data\Filter\FilterAnd;
+use Icinga\Data\Filter\FilterChain;
+use Icinga\Data\Filter\FilterNot;
+use Icinga\Data\Filter\FilterOr;
+use Icinga\Data\SimpleQuery;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\QueryException;
 
 /**
  * Database query class
@@ -426,6 +427,35 @@ class DbQuery extends SimpleQuery
         }
 
         return false;
+    }
+
+    /**
+     * Return the alias used for joining the given table
+     *
+     * @param   string      $table
+     *
+     * @return  string|null         null in case no alias is being used
+     *
+     * @throws  ProgrammingError    In case the given table has not been joined
+     */
+    public function getJoinedTableAlias($table)
+    {
+        $fromPart = $this->select->getPart(Zend_Db_Select::FROM);
+        if (isset($fromPart[$table])) {
+            if ($fromPart[$table]['joinType'] === Zend_Db_Select::FROM) {
+                throw new ProgrammingError('Table "%s" has not been joined', $table);
+            }
+
+            return; // No alias in use
+        }
+
+        foreach ($fromPart as $alias => $options) {
+            if ($options['tableName'] === $table && $options['joinType'] !== Zend_Db_Select::FROM) {
+                return $alias;
+            }
+        }
+
+        throw new ProgrammingError('Table "%s" has not been joined', $table);
     }
 
     /**
