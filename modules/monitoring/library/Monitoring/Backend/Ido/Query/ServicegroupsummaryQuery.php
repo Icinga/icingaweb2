@@ -105,7 +105,7 @@ class ServicegroupsummaryQuery extends IdoQuery
         $this->subQueries[] = $services;
         $this->summaryQuery = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);
         $this->select->from(array('statussummary' => $this->summaryQuery), array());
-        $this->group('servicegroup_name');
+        $this->group(array('servicegroup_name', 'servicegroup_alias'));
         $this->joinedVirtualTables['servicestatussummary'] = true;
     }
 
