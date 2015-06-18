@@ -44,6 +44,7 @@ function contactsLink($match, $view) {
     <?php foreach ($history as $event): ?>
     <?php
       $stateClass = 'invalid';
+      $msg = $this->escape($event->output);
       $isService = isset($event->service_description);
       switch ($event->type) {
         case 'notify':
@@ -51,73 +52,61 @@ function contactsLink($match, $view) {
           $title = $this->translate('Notification');
           $stateClass = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
 
-          $msg = preg_replace_callback(
+          $msg = $msg ? preg_replace_callback(
               '/^\[([^\]]+)\]/',
               function($match) use ($self) { return contactsLink($match, $self); },
-              $this->escape($event->output)
-          );
+              $msg
+          ) : $this->translate('This notification was not sent out to any contact.');
           break;
         case 'comment':
           $icon = 'comment';
           $title = $this->translate('Comment');
-          $msg = $this->escape($event->output);
           break;
         case 'comment_deleted':
           $icon = 'remove';
           $title = $this->translate('Comment deleted');
-          $msg = $this->escape($event->output);
           break;
         case 'ack':
           $icon = 'acknowledgement';
           $title = $this->translate('Acknowledge');
-          $msg = $this->escape($event->output);
           break;
         case 'ack_deleted':
           $icon = 'remove';
           $title = $this->translate('Ack removed');
-          $msg = $this->escape($event->output);
           break;
         case 'dt_comment':
           $icon = 'in_downtime';
           $title = $this->translate('In Downtime');
-          $msg = $this->escape($event->output);
           break;
         case 'dt_comment_deleted':
           $icon = 'remove';
           $title = $this->translate('Downtime removed');
-          $msg = $this->escape($event->output);
           break;
         case 'flapping':
           $icon = 'flapping';
           $title = $this->translate('Flapping');
-          $msg = $this->escape($event->output);
           break;
         case 'flapping_deleted':
           $icon = 'remove';
           $title = $this->translate('Flapping stopped');
-          $msg = $this->escape($event->output);
           break;
         case 'hard_state':
-          $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $this->escape($event->output);
           $stateClass = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
           $icon = 'attention-alt';
           $title = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
           break;
         case 'soft_state':
           $icon = 'spinner';
-          $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $this->escape($event->output);
           $stateClass = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
           $title = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
           break;
         case 'dt_start':
           $icon = 'downtime_start';
           $title = $this->translate('Downtime Start');
-          $msg = $this->escape($event->output);
           break;
         case 'dt_end':
           $icon = 'downtime_end';
           $title = $this->translate('Downtime End');
-          $msg = $this->escape($event->output);
           break;
       }
     ?>

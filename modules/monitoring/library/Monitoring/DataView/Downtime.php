@@ -3,40 +3,70 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
+/**
+ * Host and service downtimes view
+ */
 class Downtime extends DataView
 {
     /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
+     */
+    public function isValidFilterTarget($column)
+    {
+        if ($column[0] === '_'
+            && preg_match('/^_(?:host|service)_/', $column)
+        ) {
+            return true;
+        }
+        return parent::isValidFilterTarget($column);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getColumns()
     {
         return array(
-            'downtime_objecttype',
             'downtime_author_name',
             'downtime_comment',
+            'downtime_duration',
+            'downtime_end',
             'downtime_entry_time',
+            'downtime_internal_id',
             'downtime_is_fixed',
             'downtime_is_flexible',
-            'downtime_start',
-            'downtime_scheduled_start',
-            'downtime_scheduled_end',
-            'downtime_end',
-            'downtime_duration',
             'downtime_is_in_effect',
-            'downtime_triggered_by_id',
-            'downtime_internal_id',
-            'downtime_host_state',
-            'downtime_service_state',
+            'downtime_scheduled_end',
+            'downtime_scheduled_start',
+            'downtime_start',
             'host_display_name',
-            'service_display_name',
             'host_name',
+            'host_state',
+            'object_type',
+            'service_description',
+            'service_display_name',
             'service_host_name',
-            'service_description'
+            'service_state'
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilterColumns()
+    {
+        return array(
+            'downtime_author',
+            'host', 'host_alias',
+            'hostgroup', 'hostgroup_alias', 'hostgroup_name',
+            'service',
+            'servicegroup', 'servicegroup_alias', 'servicegroup_name'
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getSortRules()
     {
         return array(
@@ -65,10 +95,5 @@ class Downtime extends DataView
                 'order' => self::SORT_ASC
             )
         );
-    }
-
-    public function getFilterColumns()
-    {
-        return array('author', 'host', 'service', 'service_host');
     }
 }

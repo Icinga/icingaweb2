@@ -66,10 +66,9 @@ class Monitoring_ListController extends Controller
             $stateColumn = 'host_state';
             $stateChangeColumn = 'host_last_state_change';
         }
-
         $this->addTitleTab('hosts', $this->translate('Hosts'), $this->translate('List hosts'));
         $this->setAutorefreshInterval(10);
-        $query = $this->backend->select()->from('hostStatus', array_merge(array(
+        $query = $this->backend->select()->from('hoststatus', array_merge(array(
             'host_icon_image',
             'host_icon_image_alt',
             'host_name',
@@ -98,10 +97,9 @@ class Monitoring_ListController extends Controller
             'host_max_check_attempts'
         ), $this->addColumns()));
         $this->filterQuery($query);
-        $this->applyRestriction('monitoring/hosts/filter', $query);
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->hosts = $query;
-
-        $this->view->stats = $this->backend->select()->from('statusSummary', array(
+        $stats = $this->backend->select()->from('hoststatussummary', array(
             'hosts_total',
             'hosts_up',
             'hosts_down',
@@ -111,8 +109,9 @@ class Monitoring_ListController extends Controller
             'hosts_unreachable_handled',
             'hosts_unreachable_unhandled',
             'hosts_pending',
-        ))->getQuery()->fetchRow();
-
+        ));
+        $this->applyRestriction('monitoring/filter/objects', $stats);
+        $this->view->stats = $stats->fetchRow();
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->hosts);
         $this->setupSortControl(array(
@@ -181,9 +180,9 @@ class Monitoring_ListController extends Controller
             'current_check_attempt' => 'service_current_check_attempt',
             'max_check_attempts'    => 'service_max_check_attempts'
         ), $this->addColumns());
-        $query = $this->backend->select()->from('serviceStatus', $columns);
+        $query = $this->backend->select()->from('servicestatus', $columns);
         $this->filterQuery($query);
-        $this->applyRestriction('monitoring/services/filter', $query);
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->services = $query;
 
         $this->setupLimitControl();
@@ -200,23 +199,22 @@ class Monitoring_ListController extends Controller
             'host_last_check'       => $this->translate('Last Host Check')
         ), $query);
 
-        $this->view->stats = $this->backend->select()->from('statusSummary', array(
-            'services_total',
-            'services_ok',
-            'services_problem',
-            'services_problem_handled',
-            'services_problem_unhandled',
+        $stats = $this->backend->select()->from('servicestatussummary', array(
             'services_critical',
-            'services_critical_unhandled',
             'services_critical_handled',
-            'services_warning',
-            'services_warning_unhandled',
-            'services_warning_handled',
-            'services_unknown',
-            'services_unknown_unhandled',
-            'services_unknown_handled',
+            'services_critical_unhandled',
+            'services_ok',
             'services_pending',
-        ))->getQuery()->fetchRow();
+            'services_total',
+            'services_unknown',
+            'services_unknown_handled',
+            'services_unknown_unhandled',
+            'services_warning',
+            'services_warning_handled',
+            'services_warning_unhandled'
+        ));
+        $this->applyRestriction('monitoring/filter/objects', $stats);
+        $this->view->stats = $stats->fetchRow();
     }
 
     /**
@@ -229,7 +227,7 @@ class Monitoring_ListController extends Controller
 
         $query = $this->backend->select()->from('downtime', array(
             'id'              => 'downtime_internal_id',
-            'objecttype'      => 'downtime_objecttype',
+            'objecttype'      => 'object_type',
             'comment'         => 'downtime_comment',
             'author_name'     => 'downtime_author_name',
             'start'           => 'downtime_start',
@@ -241,14 +239,17 @@ class Monitoring_ListController extends Controller
             'is_fixed'        => 'downtime_is_fixed',
             'is_in_effect'    => 'downtime_is_in_effect',
             'entry_time'      => 'downtime_entry_time',
-            'host_state'      => 'downtime_host_state',
-            'service_state'   => 'downtime_service_state',
+            'host_state',
+            'service_state',
             'host_name',
             'service_description',
             'host_display_name',
             'service_display_name'
         ));
         $this->filterQuery($query);
+
+        $this->applyRestriction('monitoring/filter/objects', $query);
+
         $this->view->downtimes = $query;
 
         $this->setupLimitControl();
@@ -295,6 +296,7 @@ class Monitoring_ListController extends Controller
             'service_display_name'
         ));
         $this->filterQuery($query);
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->notifications = $query;
 
         $this->setupLimitControl();
@@ -310,25 +312,14 @@ class Monitoring_ListController extends Controller
 
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
-            'contact_id',
             'contact_alias',
             'contact_email',
             'contact_pager',
             'contact_notify_service_timeperiod',
-            'contact_notify_service_recovery',
-            'contact_notify_service_warning',
-            'contact_notify_service_critical',
-            'contact_notify_service_unknown',
-            'contact_notify_service_flapping',
-            'contact_notify_service_downtime',
-            'contact_notify_host_timeperiod',
-            'contact_notify_host_recovery',
-            'contact_notify_host_down',
-            'contact_notify_host_unreachable',
-            'contact_notify_host_flapping',
-            'contact_notify_host_downtime',
+            'contact_notify_host_timeperiod'
         ));
         $this->filterQuery($query);
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->contacts = $query;
 
         $this->setupLimitControl();
@@ -376,6 +367,7 @@ class Monitoring_ListController extends Controller
         $this->params->remove(array('objecttype', 'from', 'to', 'state', 'btn_submit'));
         $this->view->filter = Filter::fromQuerystring((string) $this->params);
         $query->applyFilter($this->view->filter);
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->summary = $query->getQuery()->fetchAll();
         $this->view->column = $form->getValue('state');
 //        $this->view->orientationBox = $orientationBox;
@@ -396,9 +388,15 @@ class Monitoring_ListController extends Controller
             'contact_name',
             'contact_alias',
             'contact_email',
-            'contact_pager',
+            'contact_pager'
         ));
         $this->filterQuery($query);
+        $this->applyRestriction('monitoring/filter/objects', $query);
+
+        $this->setupSortControl(array(
+            'contactgroup_name'     => $this->translate('Contactgroup Name'),
+            'contactgroup_alias'    => $this->translate('Contactgroup Alias')
+        ), $query);
 
         // Fetch and prepare all contact groups:
         $contactgroups = $query->getQuery()->fetchAll();
@@ -412,13 +410,9 @@ class Monitoring_ListController extends Controller
             }
             $groupData[$c->contactgroup_name]['contacts'][] = $c;
         }
+
         // TODO: Find a better naming
         $this->view->groupData = $groupData;
-
-        $this->setupSortControl(array(
-            'contactgroup_name'     => $this->translate('Contactgroup Name'),
-            'contactgroup_alias'    => $this->translate('Contactgroup Alias')
-        ), $query);
     }
 
     public function commentsAction()
@@ -428,7 +422,7 @@ class Monitoring_ListController extends Controller
 
         $query = $this->backend->select()->from('comment', array(
             'id'         => 'comment_internal_id',
-            'objecttype' => 'comment_objecttype',
+            'objecttype' => 'object_type',
             'comment'    => 'comment_data',
             'author'     => 'comment_author_name',
             'timestamp'  => 'comment_timestamp',
@@ -441,6 +435,9 @@ class Monitoring_ListController extends Controller
             'service_display_name'
         ));
         $this->filterQuery($query);
+
+        $this->applyRestriction('monitoring/filter/objects', $query);
+
         $this->view->comments = $query;
 
         $this->setupLimitControl();
@@ -472,17 +469,11 @@ class Monitoring_ListController extends Controller
         $this->setAutorefreshInterval(12);
 
         $query = $this->backend->select()->from('servicegroupsummary', array(
-            'hosts_down_handled',
-            'hosts_down_unhandled',
-            'hosts_pending',
-            'hosts_unreachable_handled',
-            'hosts_unreachable_unhandled',
-            'hosts_up',
             'servicegroup_alias',
             'servicegroup_name',
             'services_critical_handled',
-            'services_critical_last_state_change_handled',
-            'services_critical_last_state_change_unhandled',
+            'services_critical_last_state_change_handled' => 'services_critical_handled_last_state_change',
+            'services_critical_last_state_change_unhandled' => 'services_critical_unhandled_last_state_change',
             'services_critical_unhandled',
             'services_ok',
             'services_ok_last_state_change',
@@ -490,15 +481,18 @@ class Monitoring_ListController extends Controller
             'services_pending_last_state_change',
             'services_total',
             'services_unknown_handled',
-            'services_unknown_last_state_change_handled',
-            'services_unknown_last_state_change_unhandled',
+            'services_unknown_last_state_change_handled' => 'services_unknown_handled_last_state_change',
+            'services_unknown_last_state_change_unhandled' => 'services_unknown_unhandled_last_state_change',
             'services_unknown_unhandled',
             'services_warning_handled',
-            'services_warning_last_state_change_handled',
-            'services_warning_last_state_change_unhandled',
+            'services_warning_last_state_change_handled' => 'services_warning_handled_last_state_change',
+            'services_warning_last_state_change_unhandled' => 'services_warning_unhandled_last_state_change',
             'services_warning_unhandled'
         ));
         $this->filterQuery($query);
+
+        $this->applyRestriction('monitoring/filter/objects', $query);
+
         $this->view->servicegroups = $query;
 
         $this->setupLimitControl();
@@ -519,15 +513,15 @@ class Monitoring_ListController extends Controller
             'hostgroup_alias',
             'hostgroup_name',
             'hosts_down_handled',
-            'hosts_down_last_state_change_handled',
-            'hosts_down_last_state_change_unhandled',
+            'hosts_down_last_state_change_handled'  => 'hosts_down_handled_last_state_change',
+            'hosts_down_last_state_change_unhandled' => 'hosts_down_unhandled_last_state_change',
             'hosts_down_unhandled',
             'hosts_pending',
             'hosts_pending_last_state_change',
             'hosts_total',
             'hosts_unreachable_handled',
-            'hosts_unreachable_last_state_change_handled',
-            'hosts_unreachable_last_state_change_unhandled',
+            'hosts_unreachable_last_state_change_handled' => 'hosts_unreachable_handled_last_state_change',
+            'hosts_unreachable_last_state_change_unhandled' => 'hosts_unreachable_unhandled_last_state_change',
             'hosts_unreachable_unhandled',
             'hosts_up',
             'hosts_up_last_state_change',
@@ -542,6 +536,9 @@ class Monitoring_ListController extends Controller
             'services_warning_unhandled'
         ));
         $this->filterQuery($query);
+
+        $this->applyRestriction('monitoring/filter/objects', $query);
+
         $this->view->hostgroups = $query;
 
         $this->setupLimitControl();
@@ -562,7 +559,7 @@ class Monitoring_ListController extends Controller
             $this->translate('List event records')
         );
 
-        $query = $this->backend->select()->from('eventHistory', array(
+        $query = $this->backend->select()->from('eventhistory', array(
             'host_name',
             'host_display_name',
             'service_description',
@@ -570,12 +567,11 @@ class Monitoring_ListController extends Controller
             'object_type',
             'timestamp',
             'state',
-            'attempt',
-            'max_attempts',
             'output',
             'type'
         ));
 
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->filterQuery($query);
         $this->view->history = $query;
 
@@ -590,7 +586,7 @@ class Monitoring_ListController extends Controller
     {
         $this->addTitleTab('servicegrid', $this->translate('Service Grid'), $this->translate('Show the Service Grid'));
         $this->setAutorefreshInterval(15);
-        $query = $this->backend->select()->from('serviceStatus', array(
+        $query = $this->backend->select()->from('servicestatus', array(
             'host_name',
             'service_description',
             'service_state',
@@ -598,6 +594,7 @@ class Monitoring_ListController extends Controller
             'service_handled'
         ));
         $this->filterQuery($query);
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->setupSortControl(array(
             'host_name'           => $this->translate('Hostname'),
             'service_description' => $this->translate('Service description')

@@ -16,7 +16,7 @@ class ServiceList extends ObjectList
 
     protected $serviceStateSummary;
 
-    protected $dataViewName = 'serviceStatus';
+    protected $dataViewName = 'servicestatus';
 
     protected $columns = array('host_name', 'service_description');
 
@@ -136,16 +136,29 @@ class ServiceList extends ObjectList
     }
 
     /**
+     * Get the comments
+     *
+     * @return \Icinga\Module\Monitoring\DataView\Hostcomment
+     */
+    public function getComments()
+    {
+        return $this->backend
+            ->select()
+            ->from('servicecomment', array('host_name', 'service_description'))
+            ->applyFilter(clone $this->filter);
+    }
+
+    /**
      * Get the scheduled downtimes
      *
-     * @return type
+     * @return \Icinga\Module\Monitoring\DataView\Servicedowntime
      */
     public function getScheduledDowntimes()
     {
-        return $this->backend->select()
-                ->from('downtime')
-                ->applyFilter(clone $this->filter)
-                ->where('downtime_objecttype', 'service');
+        return $this->backend
+            ->select()
+            ->from('servicedowntime', array('host_name', 'service_description'))
+            ->applyFilter(clone $this->filter);
     }
 
     /**

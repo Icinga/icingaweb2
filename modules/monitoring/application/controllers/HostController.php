@@ -26,7 +26,7 @@ class Monitoring_HostController extends MonitoredObjectController
     {
         $host = new Host($this->backend, $this->params->getRequired('host'));
 
-        $this->applyRestriction('monitoring/hosts/filter', $host);
+        $this->applyRestriction('monitoring/filter/objects', $host);
 
         if ($host->fetch() === false) {
             $this->httpNotFound($this->translate('Host not found'));
@@ -70,7 +70,7 @@ class Monitoring_HostController extends MonitoredObjectController
     {
         $this->setAutorefreshInterval(10);
         $this->getTabs()->activate('services');
-        $query = $this->backend->select()->from('serviceStatus', array(
+        $query = $this->backend->select()->from('servicestatus', array(
             'host_name',
             'host_display_name',
             'host_state',

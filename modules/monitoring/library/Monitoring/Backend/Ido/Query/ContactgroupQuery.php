@@ -3,8 +3,19 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+/**
+ * Query for contact groups
+ */
 class ContactgroupQuery extends IdoQuery
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected $allowCustomVars = true;
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'contactgroups' => array(
             'contactgroup'          => 'cgo.name1 COLLATE latin1_general_ci',
@@ -12,11 +23,13 @@ class ContactgroupQuery extends IdoQuery
             'contactgroup_alias'    => 'cg.alias COLLATE latin1_general_ci'
         ),
         'contacts' => array(
+            'contact_id'                        => 'c.contact_id',
             'contact'                           => 'co.name1 COLLATE latin1_general_ci',
             'contact_name'                      => 'co.name1',
             'contact_alias'                     => 'c.alias COLLATE latin1_general_ci',
             'contact_email'                     => 'c.email_address COLLATE latin1_general_ci',
             'contact_pager'                     => 'c.pager_address',
+            'contact_object_id'                 => 'c.contact_object_id',
             'contact_has_host_notfications'     => 'c.host_notifications_enabled',
             'contact_has_service_notfications'  => 'c.service_notifications_enabled',
             'contact_can_submit_commands'       => 'c.can_submit_commands',
@@ -30,22 +43,35 @@ class ContactgroupQuery extends IdoQuery
             'contact_notify_host_down'          => 'c.notify_host_down',
             'contact_notify_host_unreachable'   => 'c.notify_host_unreachable',
             'contact_notify_host_flapping'      => 'c.notify_host_flapping',
-            'contact_notify_host_downtime'      => 'c.notify_host_downtime',
+            'contact_notify_host_downtime'      => 'c.notify_host_downtime'
+        ),
+        'hostgroups' => array(
+            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
+            'hostgroup_name'    => 'hgo.name1'
         ),
         'hosts' => array(
-            'host'      => 'ho.name1 COLLATE latin1_general_ci',
-            'host_name' => 'ho.name1'
+            'host'              => 'ho.name1 COLLATE latin1_general_ci',
+            'host_name'         => 'ho.name1',
+            'host_alias'        => 'h.alias',
+            'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
+        ),
+        'servicegroups' => array(
+            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_name'     => 'sgo.name1',
+            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
         ),
         'services' => array(
             'service'               => 'so.name2 COLLATE latin1_general_ci',
             'service_description'   => 'so.name2',
-            'service_host'          => 'so.name1 COLLATE latin1_general_ci',
+            'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
             'service_host_name'     => 'so.name1'
         )
     );
 
-    protected $useSubqueryCount = true;
-
+    /**
+     * {@inheritdoc}
+     */
     protected function joinBaseTables()
     {
         $this->select->from(
@@ -53,81 +79,135 @@ class ContactgroupQuery extends IdoQuery
             array()
         )->join(
             array('cgo' => $this->prefix . 'objects'),
-            'cg.contactgroup_object_id = cgo.' . $this->object_id . ' AND cgo.is_active = 1',
+            'cgo.object_id = cg.contactgroup_object_id AND cgo.is_active = 1 AND cgo.objecttype_id = 11',
             array()
         );
-
-        $this->joinedVirtualTables = array('contactgroups' => true);
+        $this->joinedVirtualTables['contactgroups'] = true;
     }
 
+    /**
+     * Join contacts
+     */
     protected function joinContacts()
     {
-        $this->select->distinct()->join(
+        $this->select->joinLeft(
             array('cgm' => $this->prefix . 'contactgroup_members'),
             'cgm.contactgroup_id = cg.contactgroup_id',
             array()
-        )->join(
+        )->joinLeft(
             array('co' => $this->prefix . 'objects'),
-            'cgm.contact_object_id = co.object_id AND co.is_active = 1',
+            'co.object_id = cgm.contact_object_id AND co.is_active = 1 AND co.objecttype_id = 10',
             array()
-        )->join(
+        )->joinLeft(
             array('c' => $this->prefix . 'contacts'),
             'c.contact_object_id = co.object_id',
             array()
         );
     }
 
-    protected function joinHosts()
+    /**
+     * Join host groups
+     */
+    protected function joinHostgroups()
     {
-        $this->select->distinct()->join(
-            array('hcg' => $this->prefix . 'host_contactgroups'),
-            'hcg.contactgroup_object_id = cg.contactgroup_object_id',
+        $this->requireVirtualTable('hosts');
+        $this->select->joinLeft(
+            array('hgm' => $this->prefix . 'hostgroup_members'),
+            'hgm.host_object_id = ho.object_id',
             array()
-        )->join(
-            array('h' => $this->prefix . 'hosts'),
-            'hcg.host_id = h.host_id',
+        )->joinLeft(
+            array('hg' => $this->prefix . 'hostgroups'),
+            'hg.hostgroup_id = hgm.hostgroup_id',
             array()
-        )->join(
-            array('ho' => $this->prefix . 'objects'),
-            'h.host_object_id = ho.' . $this->object_id . ' AND ho.is_active = 1',
+        )->joinLeft(
+            array('hgo' => $this->prefix . 'objects'),
+            'hgo.object_id = hg.hostgroup_object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
             array()
         );
     }
 
-    protected function joinServices()
+    /**
+     * Join hosts
+     */
+    protected function joinHosts()
     {
-//        $scgSub = $this->db->select()->distinct()->from(
-//            $this->prefix . 'service_contactgroups',
-//            array('contactgroup_object_id', 'service_id')
-//        );
-
-            /*
-            This subselect is a workaround for a fucking stupid bug. Other tables
-            may be affected too. We absolutely need uniqueness here.
-
-            mysql> SELECT * FROM icinga_service_contactgroups WHERE
-                   contactgroup_object_id = 143 AND service_id = 2079564;
-            +-------------------------+-------------+------------+------------------------+
-            | service_contactgroup_id | instance_id | service_id | contactgroup_object_id |
-            +-------------------------+-------------+------------+------------------------+
-            |                 4904240 |           1 |    2079564 |                    143 |
-            |                 4904244 |           1 |    2079564 |                    143 |
-            +-------------------------+-------------+------------+------------------------+
-            */
-
-        $this->select->distinct()->join(
-            array('scg' => $this->prefix . 'service_contactgroups'),
-            // array('scg' => $scgSub),
-            'scg.contactgroup_object_id = cg.contactgroup_object_id',
+        $this->select->joinLeft(
+            array('hcg' => $this->prefix . 'host_contactgroups'),
+            'hcg.contactgroup_object_id = cg.contactgroup_object_id',
             array()
-        )->join(
-            array('s' => $this->prefix . 'services'),
-            'scg.service_id = s.service_id',
+        )->joinLeft(
+            array('h' => $this->prefix . 'hosts'),
+            'h.host_id = hcg.host_id',
             array()
-        )->join(
-            array('so' => $this->prefix . 'objects'),
-            's.service_object_id = so.' . $this->object_id . ' AND so.is_active = 1',
+        )->joinLeft(
+            array('ho' => $this->prefix . 'objects'),
+            'ho.object_id = h.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
             array()
         );
+    }
+
+    /**
+     * Join service groups
+     */
+    protected function joinServicegroups()
+    {
+        $this->requireVirtualTable('services');
+        $this->select->joinLeft(
+            array('sgm' => $this->prefix . 'servicegroup_members'),
+            'sgm.service_object_id = s.service_object_id',
+            array()
+        )->joinLeft(
+            array('sg' => $this->prefix . 'servicegroups'),
+            'sg.servicegroup_id = sgm.servicegroup_id',
+            array()
+        )->joinLeft(
+            array('sgo' => $this->prefix . 'objects'),
+            'sgo.object_id = sg.servicegroup_object_id AND sgo.is_active = 1 AND sgo.objecttype_id = 4',
+            array()
+        );
+    }
+
+    /**
+     * Join services
+     */
+    protected function joinServices()
+    {
+        $this->select->joinLeft(
+            array('scg' => $this->prefix . 'service_contactgroups'),
+            'scg.contactgroup_object_id = cg.contactgroup_object_id',
+            array()
+        )->joinLeft(
+            array('s' => $this->prefix . 'services'),
+            's.service_id = scg.service_id',
+            array()
+        )->joinLeft(
+            array('so' => $this->prefix . 'objects'),
+            'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
+            array()
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGroup()
+    {
+        $group = array();
+        if ($this->hasJoinedVirtualTable('hosts') || $this->hasJoinedVirtualTable('services')) {
+            $group = array('cg.contactgroup_id', 'cgo.object_id');
+            if ($this->hasJoinedVirtualTable('contacts')) {
+                $group[] = 'c.contact_id';
+                $group[] = 'co.object_id';
+            }
+        } elseif ($this->hasJoinedVirtualTable('contacts')) {
+            $group = array(
+                'cg.contactgroup_id',
+                'cgo.object_id',
+                'c.contact_id',
+                'co.object_id'
+            );
+        }
+
+        return $group;
     }
 }

@@ -6,17 +6,7 @@ namespace Icinga\Module\Monitoring\DataView;
 class HostStatus extends DataView
 {
     /**
-     * @see DataView::init()
-     */
-    public function init()
-    {
-        $this->query->setMode('host');
-    }
-
-    /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getColumns()
     {
@@ -76,9 +66,25 @@ class HostStatus extends DataView
         );
     }
 
-    public static function getQueryName()
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilterColumns()
     {
-        return 'status';
+        return array(
+            'host',
+            'hostgroup', 'hostgroup_alias', 'hostgroup_name',
+            'service', 'service_description', 'service_display_name',
+            'servicegroup', 'servicegroup_alias', 'servicegroup_name'
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('host', 'host_display_name');
     }
 
     /**
@@ -112,11 +118,9 @@ class HostStatus extends DataView
         );
     }
 
-    public function getFilterColumns()
-    {
-        return array('host', 'hostgroup', 'hostgroup_name', 'service', 'servicegroup', 'servicegroup_name');
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function isValidFilterTarget($column)
     {
         if ($column[0] === '_'
@@ -125,13 +129,5 @@ class HostStatus extends DataView
             return true;
         }
         return parent::isValidFilterTarget($column);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSearchColumns()
-    {
-        return array('host', 'host_display_name');
     }
 }

@@ -70,6 +70,7 @@ class Monitoring_AlertsummaryController extends Controller
                 'notification_state'
             )
         );
+        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->notifications = $query;
 
         $this->setupLimitControl();
@@ -91,10 +92,11 @@ class Monitoring_AlertsummaryController extends Controller
                 'notification_start_time'
             )
         );
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
-        $query->setFilter(
+        $query->addFilter(
             new Icinga\Data\Filter\FilterExpression(
-                'n.start_time',
+                'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
             )
@@ -139,10 +141,11 @@ class Monitoring_AlertsummaryController extends Controller
                 'notification_start_time'
             )
         );
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
-        $query->setFilter(
+        $query->addFilter(
             new Icinga\Data\Filter\FilterExpression(
-                'n.start_time',
+                'notification_start_time',
                 '>=',
                 $beginDate->format('Y-m-d H:i:s')
             )
@@ -206,10 +209,11 @@ class Monitoring_AlertsummaryController extends Controller
                 'notification_start_time'
             )
         );
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
-        $query->setFilter(
+        $query->addFilter(
             new Icinga\Data\Filter\FilterExpression(
-                'n.start_time',
+                'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
             )
@@ -251,11 +255,12 @@ class Monitoring_AlertsummaryController extends Controller
         $interval = $this->getInterval();
 
         $query = $this->backend->select()->from(
-            'eventHistory',
+            'eventhistory',
             array(
                 'timestamp'
             )
         );
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
         $query->addFilter(
             new Icinga\Data\Filter\FilterExpression(
@@ -321,10 +326,11 @@ class Monitoring_AlertsummaryController extends Controller
                 'acknowledgement_entry_time'
             )
         );
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
-        $query->setFilter(
+        $query->addFilter(
             new Icinga\Data\Filter\FilterExpression(
-                'n.start_time',
+                'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
             )
@@ -490,6 +496,7 @@ class Monitoring_AlertsummaryController extends Controller
                 'notification_state'
             )
         );
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
         $query->order('notification_start_time', 'desc');
 
