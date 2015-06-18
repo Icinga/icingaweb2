@@ -140,7 +140,6 @@ class ContactQuery extends IdoQuery
             'ho.object_id = h.host_object_id AND ho.is_active = 1',
             array()
         );
-        $this->group(array('c.contact_id'));
     }
 
     /**
@@ -182,6 +181,22 @@ class ContactQuery extends IdoQuery
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
-        $this->group(array('c.contact_id'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGroup()
+    {
+        $group = array();
+        if ($this->hasJoinedVirtualTable('hosts') || $this->hasJoinedVirtualTable('services')) {
+            $group = array('c.contact_id', 'co.object_id');
+            if ($this->hasJoinedVirtualTable('timeperiods')) {
+                $group[] = 'ht.timeperiod_id';
+                $group[] = 'st.timeperiod_id';
+            }
+        }
+
+        return $group;
     }
 }
