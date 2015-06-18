@@ -96,14 +96,15 @@ class NotificationQuery extends IdoQuery
      */
     protected function joinHosts()
     {
-        $columns = array_keys(
-            $this->columnMap['notifications'] + $this->columnMap['hosts']
-        );
+        $columns = array_keys($this->columnMap['hosts']);
         foreach ($this->columnMap['services'] as $column => $_) {
             $columns[$column] = new Zend_Db_Expr('NULL');
         }
         if ($this->fetchHistoryColumns) {
             $columns = array_merge($columns, array_keys($this->columnMap['history']));
+            $columns[] = 'object_type';
+        } else {
+            $columns = array_merge($columns, array_keys($this->columnMap['notifications']));
         }
         $hosts = $this->createSubQuery('hostnotification', $columns);
         $this->subQueries[] = $hosts;
@@ -115,11 +116,12 @@ class NotificationQuery extends IdoQuery
      */
     protected function joinServices()
     {
-        $columns = array_keys(
-            $this->columnMap['notifications'] + $this->columnMap['hosts'] + $this->columnMap['services']
-        );
+        $columns = array_keys($this->columnMap['hosts'] + $this->columnMap['services']);
         if ($this->fetchHistoryColumns) {
             $columns = array_merge($columns, array_keys($this->columnMap['history']));
+            $columns[] = 'object_type';
+        } else {
+            $columns = array_merge($columns, array_keys($this->columnMap['notifications']));
         }
         $services = $this->createSubQuery('servicenotification', $columns);
         $this->subQueries[] = $services;
