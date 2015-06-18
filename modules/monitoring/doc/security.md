@@ -38,7 +38,7 @@ The monitoring module allows filtering objects:
 
 
 This filter will affect all hosts and services. Furthermore, it will also
-affect all related objects, like notifications, downtimes or events. If a
+affect all related objects, like notifications, downtimes and events. If a
 service is hidden, all notifications, downtimes on that service will be hidden too.
 
 
@@ -47,19 +47,10 @@ service is hidden, all notifications, downtimes on that service will be hidden t
 The following filter column names are available in filter expressions:
 
 
-| Column                                               |
-|------------------------------------------------------|
-| host                                                 |
-| host_alias                                           |
-| host_display_name                                    |
-| host_name                                            |
-| hostgroup                                            |
-| hostgroup_alias                                      |
-| hostgroup_name                                       |
-| service                                              |
-| service_description                                  |
-| service_display_name                                 |
-| service_group                                        |
-| service_group_alias                                  |
-| service_group_name                                   |
-| + all custom variables prefixed with host or service |
+| Column                                                       |
+|--------------------------------------------------------------|
+| host_name                                                    |
+| hostgroup_name                                               |
+| service_description                                          |
+| servicegroup_name                                            |
+| + all custom variables prefixed with `_host_` or `_service_` |

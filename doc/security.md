@@ -108,14 +108,14 @@ To get you a quick start, here is an example of what a role definition could loo
 
 
     [winadmin]
-    users = "jdoe, janedoe"  
+    users = "jdoe, janedoe"
     groups = "admin"
     permissions = "config/application/*, monitoring/commands/schedule-check"
-    monitoring/filter/objects = "host=*win*"
+    monitoring/filter/objects = "host_name=*win*"
 
 
 This example creates a role called **winadmin**, that grants all permissions in `config/application/*` and `monitoring/commands/schedule-check` and additionally only
-allows the hosts and services that match the filter `host=*win*` to be displayed. The users
+allows the hosts and services that match the filter `host_name=*win*` to be displayed. The users
 **jdoe** and **janedoe** and all members of the group **admin** will be affected
 by this role.
 
@@ -210,8 +210,8 @@ Any filter expression that is allowed in the filtered view, is also an allowed f
 This means, that it is possible to define negations, wildcards, and even nested
 filter expressions containing AND and OR-Clauses.
 
-The filter expression will be **implicitly** added as an **AND-Clause** to each query on 
-the filtered data. The following shows the filter expression `host=*win*` being applied on `monitoring/filter/objects`.
+The filter expression will be **implicitly** added as an **AND-Clause** to each query on
+the filtered data. The following shows the filter expression `host_name=*win*` being applied on `monitoring/filter/objects`.
 
 
 Regular filter query:
@@ -225,7 +225,7 @@ With our restriction applied, any user affected by this restrictions will see th
 results of this query instead:
 
 
-    AND-- host = *win*
+    AND-- host_name = *win*
      |
      +--AND-- service_problem = 1
          |
@@ -257,13 +257,13 @@ the filter expressions. The following examples will show the usefulness of this 
 
     [winadmin]
     groups = "windows-admins"
-    monitoring/filter/objects = "host=*win*"
+    monitoring/filter/objects = "host_name=*win*"
 
 Will display only hosts and services whose host name contains  **win**.
 
     [webadmin]
-    groups = "web-admins"  
-    monitoring/filter/objects = "host!=*win*"
+    groups = "web-admins"
+    monitoring/filter/objects = "host_name!=*win*"
 
 Will only match hosts and services whose host name does **not** contain **win**
 
