@@ -18,10 +18,12 @@ if (count($groupData) === 0) {
     <div class="boxview" data-base-target="_next">
 <?php foreach ($groupData as $groupName => $groupInfo): ?>
         <div class="box contactgroup">
-            <h2><?= $groupInfo['alias']; ?></h2>
+            <div class="box header">
+                <h2><?= $groupInfo['alias']; ?></h2>
 <?php if ($groupInfo['alias'] !== $groupName): ?>
-            <h2><?= $groupName; ?></h2>
+                <h2><?= $groupName; ?></h2>
 <?php endif ?>
+            </div>
             <div class="box contents">
 <?php foreach ($groupInfo['contacts'] as $c): ?>
                 <div class="box entry">

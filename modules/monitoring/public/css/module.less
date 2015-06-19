@@ -531,39 +531,39 @@ a.critical {
   background: #eee;
 }
 
-/* Box caption */
-.boxview div.box h2 {
-  margin-top: 0;
-  margin-bottom: 0.6em;
+/* Box header */
+.boxview div.box.header {
+  padding-bottom: 0.5em;
+  margin-bottom: 0.5em;
+  border-bottom: 1px solid #888;
+}
+
+.boxview div.box.header h2 {
+  margin-top: 0.1em;
+  margin-bottom: 0;
   font-size: 0.8em;
+  border-bottom: none;
   color: @colorTextDefault;
 }
 
-.boxview div.box h2:first-child {
+.boxview div.box.header h2:first-child {
   margin-top: 0.2em;
-  padding-bottom: 0.5em;
   font-size: inherit;
   color: @colorTextDefault;
-  border-bottom: 1px solid #d9d9d9;
 }
 
-.boxview div.box h2 > a {
+.boxview div.box.header h2 > a {
   color: inherit;
-  margin-bottom: 0.2em;
 }
 
-.boxview div.box h2 > a:hover {
+.boxview div.box.header h2 > a:hover {
   text-decoration: underline;
 }
 
-.boxview div.box h2:first-child > a:hover {
-}
-
-.boxview div.box h3 {
+.boxview div.box.header h3 {
   line-height: 1.5em;
   font-size: 0.9em;
   color: #555;
-  border-bottom: 1px solid #d9d9d9;
 }
 
 /* Box body of contents */
