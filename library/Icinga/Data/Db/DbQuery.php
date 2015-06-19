@@ -126,6 +126,16 @@ class DbQuery extends SimpleQuery
     }
 
     /**
+     * Return the underlying select
+     *
+     * @return  Zend_Db_Select
+     */
+    public function select()
+    {
+        return $this->select;
+    }
+
+    /**
      * Get the select query
      *
      * Applies order and limit if any
