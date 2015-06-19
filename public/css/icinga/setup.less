@@ -103,8 +103,6 @@
     form {
       h2 {
         font-size: 2.0em;
-        color: @colorTextDefault;
-        border-bottom: 2px solid @colorPetrol;
       }
     }
   }
@@ -171,7 +169,7 @@
 form#setup_requirements {
   margin-top: 2em;
   padding-top: 0.5em;
-  border-top: 2px solid @colorPetrol;
+  border-top: 1px solid #888;
 
   div.buttons div.requirements-refresh {
     width: 25%;
@@ -198,6 +196,8 @@ form#setup_requirements {
 
     h2 {
       margin: 0 1em 0 0;
+      font-variant: normal;
+      border-bottom: 0;
     }
 
     table {
@@ -353,10 +353,7 @@ form#setup_requirements {
 
   h2 {
     font-size: 2.0em;
-    color: @colorTextDefault;
-    border-bottom: 2px solid @colorPetrol;
     margin-bottom: 2em;
-
   }
 
   div.info {
@@ -377,14 +374,12 @@ form#setup_requirements {
     font-size: 0.9em;
     border: 1px solid lightgrey;
 
-    div.title {
-      color: white;
+    h3 {
       padding: 0.2em;
       margin: -1em -1em 1em;
       text-align: center;
       color: @colorTextDefault;
-      border-bottom: 2px solid @colorPetrol;
-
+      background-color: #f6fafa;
     }
 
     img {
