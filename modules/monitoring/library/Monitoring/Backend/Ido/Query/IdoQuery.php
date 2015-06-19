@@ -481,7 +481,7 @@ abstract class IdoQuery extends DbQuery
     public function addFilter(Filter $filter)
     {
         $this->requireFilterColumns($filter);
-        parent::addFilter($filter);
+        return parent::addFilter($filter);
     }
 
     /**
