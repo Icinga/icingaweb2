@@ -88,6 +88,7 @@ class ServicegroupsummaryQuery extends IdoQuery
                 'state_change'  => 'host_last_state_change'
             )
         );
+        $hosts->select()->where('sgo.name1 IS NOT NULL'); // TODO(9458): Should be possible using our filters!
         $this->subQueries[] = $hosts;
         $services = $this->createSubQuery(
             'Servicestatus',
@@ -102,6 +103,7 @@ class ServicegroupsummaryQuery extends IdoQuery
                 'state_change'  => 'service_last_state_change'
             )
         );
+        $services->select()->where('sgo.name1 IS NOT NULL'); // TODO(9458): Should be possible using our filters!
         $this->subQueries[] = $services;
         $this->summaryQuery = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);
         $this->select->from(array('statussummary' => $this->summaryQuery), array());
