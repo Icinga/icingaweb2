@@ -90,21 +90,22 @@ The packages for RHEL/CentOS depend on other packages which are distributed as p
 ### <a id="installing-from-package-example"></a> Installing Icinga Web 2
 
 You can install Icinga Web 2 by using your distribution's package manager to install the `icingaweb2` package.
-Below is a list with examples for various distributions.
+Below is a list with examples for various distributions. The additional package `icingacli` is necessary
+for being able to follow further steps in this guide.
 
 Debian and Ubuntu:
 ````
-apt-get install icingaweb2
+apt-get install icingaweb2 icingacli
 ````
 
 RHEL, CentOS and Fedora:
 ````
-yum install icingaweb2
+yum install icingaweb2 icingacli
 ````
 
 SLES and openSUSE:
 ````
-zypper install icingaweb2
+zypper install icingaweb2 icingacli
 ````
 
 ### <a id="preparing-web-setup-from-package"></a> Preparing Web Setup
