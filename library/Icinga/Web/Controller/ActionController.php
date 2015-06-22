@@ -505,7 +505,7 @@ class ActionController extends Zend_Controller_Action
      */
     protected function renderBenchmark()
     {
-        $this->render();
+        $this->_helper->viewRenderer->postDispatch();
         Benchmark::measure('Response ready');
         return Benchmark::renderToHtml();
     }
