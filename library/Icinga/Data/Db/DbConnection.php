@@ -71,9 +71,6 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible
     public function __construct(ConfigObject $config = null)
     {
         $this->config = $config;
-        if (isset($config->prefix)) {
-            $this->tablePrefix = $config->prefix;
-        }
         $this->connect();
     }
 
