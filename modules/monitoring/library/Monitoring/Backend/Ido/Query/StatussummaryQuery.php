@@ -151,8 +151,6 @@ We have to find a better solution here.
             'Hoststatus',
             array(
                 'handled'                       => 'host_handled',
-                'hostgroup_alias',
-                'hostgroup_name',
                 'host_problem',
                 'host_state'                    => new Zend_Db_Expr('NULL'),
                 'is_active_checked'             => 'host_active_checks_enabled',
@@ -172,8 +170,6 @@ We have to find a better solution here.
             'Servicestatus',
             array(
                 'handled'                       => 'service_handled',
-                'hostgroup_alias',
-                'hostgroup_name',
                 'host_problem',
                 'host_state'                    => 'host_hard_state',
                 'is_active_checked'             => 'service_active_checks_enabled',
