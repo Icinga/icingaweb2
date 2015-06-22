@@ -259,9 +259,24 @@ class Menu implements RecursiveIterator
                 'priority'      => 810
             ));
             $section->add(t('Authentication'), array(
-                'url'           => 'user',
+                'url'           => 'config/userbackend',
                 'permission'    => 'config/authentication/*',
                 'priority'      => 820
+            ));
+            $section->add(t('Roles'), array(
+                'url'           => 'role/list',
+                'permission'    => 'config/authentication/roles/show',
+                'priority'      => 830
+            ));
+            $section->add(t('Users'), array(
+                'url'           => 'user/list',
+                'permission'    => 'config/authentication/users/show',
+                'priority'      => 840
+            ));
+            $section->add(t('Usergroups'), array(
+                'url'           => 'group/list',
+                'permission'    => 'config/authentication/groups/show',
+                'priority'      => 850
             ));
             $section->add(t('Modules'), array(
                 'url'           => 'config/modules',

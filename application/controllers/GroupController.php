@@ -347,4 +347,23 @@ class GroupController extends AuthBackendController
 
         return $tabs;
     }
+
+    /**
+     * Create the tabs to display when listing groups
+     */
+    protected function createListTabs()
+    {
+        $tabs = $this->getTabs();
+        $tabs->add(
+            'group/list',
+            array(
+                'title'     => $this->translate('List groups of user group backends'),
+                'label'     => $this->translate('Usergroups'),
+                'icon'      => 'users',
+                'url'       => 'group/list'
+            )
+        );
+
+        return $tabs;
+    }
 }

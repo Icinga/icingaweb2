@@ -306,4 +306,23 @@ class UserController extends AuthBackendController
 
         return $tabs;
     }
+
+    /**
+     * Create the tabs to display when listing users
+     */
+    protected function createListTabs()
+    {
+        $tabs = $this->getTabs();
+        $tabs->add(
+            'user/list',
+            array(
+                'title'     => $this->translate('List users of authentication backends'),
+                'label'     => $this->translate('Users'),
+                'icon'      => 'user',
+                'url'       => 'user/list'
+            )
+        );
+
+        return $tabs;
+    }
 }
