@@ -205,7 +205,7 @@ class Connection implements Selectable
         return $pairs;
     }
 
-    public function hasDN($dn)
+    public function hasDn($dn)
     {
         $this->connect();
         $this->bind();
