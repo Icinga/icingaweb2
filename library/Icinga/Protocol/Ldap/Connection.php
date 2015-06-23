@@ -238,10 +238,10 @@ class Connection implements Selectable
                 throw new LdapException('Recursively deleting "%s" failed', $dn);
             }
         }
-        return $this->deleteDN($dn);
+        return $this->deleteDn($dn);
     }
 
-    public function deleteDN($dn)
+    public function deleteDn($dn)
     {
         $this->connect();
         $this->bind();
