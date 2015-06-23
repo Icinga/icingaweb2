@@ -111,7 +111,7 @@ class Monitoring_ListController extends Controller
             'hosts_pending',
         ));
         $this->applyRestriction('monitoring/filter/objects', $stats);
-        $this->view->stats = $stats->fetchRow();
+        $this->view->stats = $stats;
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->hosts);
         $this->setupSortControl(array(
@@ -214,7 +214,7 @@ class Monitoring_ListController extends Controller
             'services_warning_unhandled'
         ));
         $this->applyRestriction('monitoring/filter/objects', $stats);
-        $this->view->stats = $stats->fetchRow();
+        $this->view->stats = $stats;
     }
 
     /**
