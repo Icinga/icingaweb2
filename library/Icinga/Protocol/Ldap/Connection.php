@@ -93,7 +93,6 @@ class Connection implements Selectable
     protected $bind_dn;
     protected $bind_pw;
     protected $root_dn;
-    protected $count;
     protected $reqCert = true;
 
     /**
