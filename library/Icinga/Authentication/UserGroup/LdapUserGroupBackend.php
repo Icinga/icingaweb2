@@ -356,6 +356,10 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
     public function setUserFilter($filter)
     {
         if (($filter = trim($filter))) {
+            if ($filter[0] === '(') {
+                $filter = substr($filter, 1, -1);
+            }
+
             $this->userFilter = $filter;
         }
 

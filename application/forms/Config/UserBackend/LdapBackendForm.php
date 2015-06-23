@@ -99,8 +99,8 @@ class LdapBackendForm extends Form
                     . 'Leave empty to not to use any additional filter rules.'
                 ),
                 'requirement'   => $this->translate(
-                    'The filter needs to be expressed as standard LDAP expression, without'
-                    . ' outer parentheses. (e.g. &(foo=bar)(bar=foo) or foo=bar)'
+                    'The filter needs to be expressed as standard LDAP expression.'
+                    . ' (e.g. &(foo=bar)(bar=foo) or foo=bar)'
                 ),
                 'validators'    => array(
                     array(
@@ -108,10 +108,15 @@ class LdapBackendForm extends Form
                         false,
                         array(
                             'callback'  => function ($v) {
-                                return strpos($v, '(') !== 0;
+                                // This is not meant to be a full syntax check. It will just
+                                // ensure that we can safely strip unnecessary parentheses.
+                                $v = trim($v);
+                                return ! $v || $v[0] !== '(' || (
+                                    strpos($v, ')(') !== false ? substr($v, -2) === '))' : substr($v, -1) === ')'
+                                );
                             },
                             'messages'  => array(
-                                'callbackValue' => $this->translate('The filter must not be wrapped in parantheses.')
+                                'callbackValue' => $this->translate('The filter is invalid. Please check your syntax.')
                             )
                         )
                     )

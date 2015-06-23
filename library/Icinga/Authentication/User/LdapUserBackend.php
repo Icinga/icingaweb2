@@ -148,6 +148,10 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface
     public function setFilter($filter)
     {
         if (($filter = trim($filter))) {
+            if ($filter[0] === '(') {
+                $filter = substr($filter, 1, -1);
+            }
+
             $this->filter = $filter;
         }
 
