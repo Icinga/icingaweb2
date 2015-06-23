@@ -32,6 +32,7 @@ class Connection implements Selectable
     const LDAP_NO_SUCH_OBJECT = 32;
     const LDAP_SIZELIMIT_EXCEEDED = 4;
     const LDAP_ADMINLIMIT_EXCEEDED = 11;
+    const LDAP_INVALID_CREDENTIALS = 49;
     const PAGE_SIZE = 1000;
 
     /**
@@ -557,23 +558,22 @@ class Connection implements Selectable
     {
         $this->connect();
 
-        $r = @ldap_bind($this->ds, $username, $password);
-        if ($r) {
-            Logger::debug(
-                'Successfully tested LDAP credentials (%s / %s)',
-                $username,
-                '***'
-            );
-            return true;
-        } else {
-            Logger::debug(
-                'Testing LDAP credentials (%s / %s) failed: %s',
-                $username,
-                '***',
-                ldap_error($this->ds)
-            );
-            return false;
+        $success = @ldap_bind($this->ds, $username, $password);
+        if (! $success) {
+            if (ldap_errno($this->ds) === self::LDAP_INVALID_CREDENTIALS) {
+                Logger::debug(
+                    'Testing LDAP credentials (%s / %s) failed: %s',
+                    $username,
+                    '***',
+                    ldap_error($this->ds)
+                );
+                return false;
+            }
+
+            throw new LdapException(ldap_error($this->ds));
         }
+
+        return true;
     }
 
     /**
