@@ -89,18 +89,18 @@ class Connection implements Selectable
      * @var string
      */
     protected $hostname;
-    protected $port = 389;
-    protected $bind_dn;
-    protected $bind_pw;
-    protected $root_dn;
-    protected $reqCert = true;
+    protected $port;
+    protected $bindDn;
+    protected $bindPw;
+    protected $rootDn;
+    protected $validateCertificate;
 
     /**
      * Whether the bind on this connection has already been performed
      *
      * @var bool
      */
-    protected $bound = false;
+    protected $bound;
 
     /**
      * The current connection's root node
@@ -121,7 +121,7 @@ class Connection implements Selectable
      *
      * @var bool
      */
-    protected $discoverySuccess = false;
+    protected $discoverySuccess;
 
     /**
      * Create a new connection object
@@ -131,15 +131,16 @@ class Connection implements Selectable
     public function __construct(ConfigObject $config)
     {
         $this->hostname = $config->hostname;
-        $this->bind_dn  = $config->bind_dn;
-        $this->bind_pw  = $config->bind_pw;
-        $this->root_dn  = $config->root_dn;
-        $this->port = $config->get('port', $this->port);
-        $this->encryption = $config->get('encryption');
+        $this->bindDn = $config->bind_dn;
+        $this->bindPw = $config->bind_pw;
+        $this->rootDn = $config->root_dn;
+        $this->port = $config->get('port', 389);
+        $this->validateCertificate = (bool) $config->get('reqcert', true);
+
+        $this->encryption = $config->encryption;
         if ($this->encryption !== null) {
             $this->encryption = strtolower($this->encryption);
         }
-        $this->reqCert = (bool) $config->get('reqcert', $this->reqCert);
     }
 
     /**
@@ -169,7 +170,7 @@ class Connection implements Selectable
      */
     public function getDn()
     {
-        return $this->root_dn;
+        return $this->rootDn;
     }
 
     /**
@@ -445,7 +446,7 @@ class Connection implements Selectable
 
         $results = @ldap_search(
             $this->ds,
-            $query->getBase() ?: $this->root_dn,
+            $query->getBase() ?: $this->rootDn,
             (string) $query,
             array_values($fields),
             0, // Attributes and values
@@ -459,7 +460,7 @@ class Connection implements Selectable
             throw new LdapException(
                 'LDAP query "%s" (base %s) failed. Error: %s',
                 $query,
-                $query->getBase() ?: $this->root_dn,
+                $query->getBase() ?: $this->rootDn,
                 ldap_error($this->ds)
             );
         } elseif (ldap_count_entries($this->ds, $results) === 0) {
@@ -524,7 +525,7 @@ class Connection implements Selectable
         $limit = $query->getLimit();
         $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
         $queryString = (string) $query;
-        $base = $query->getBase() ?: $this->root_dn;
+        $base = $query->getBase() ?: $this->rootDn;
 
         if (empty($fields)) {
             $fields = $query->getColumns();
@@ -820,7 +821,7 @@ class Connection implements Selectable
         if (Platform::isWindows()) {
             putenv('LDAPTLS_REQCERT=never');
         } else {
-            if ($this->reqCert) {
+            if ($this->validateCertificate) {
                 $ldap_conf = $this->getConfigDir('ldap_ca.conf');
             } else {
                 $ldap_conf = $this->getConfigDir('ldap_nocert.conf');
