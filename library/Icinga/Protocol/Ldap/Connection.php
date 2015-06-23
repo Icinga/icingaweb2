@@ -213,6 +213,7 @@ class Connection implements Selectable
         if ($this->root === null) {
             $this->root = Root::forConnection($this);
         }
+
         return $this->root;
     }
 
@@ -359,20 +360,19 @@ class Connection implements Selectable
             if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
                 return false;
             }
-            throw new LdapException(
-                'LDAP list for "%s" failed: %s',
-                $dn,
-                ldap_error($this->ds)
-            );
+
+            throw new LdapException('LDAP list for "%s" failed: %s', $dn, ldap_error($this->ds));
         }
+
         $children = ldap_get_entries($this->ds, $result);
         for ($i = 0; $i < $children['count']; $i++) {
             $result = $this->deleteRecursively($children[$i]['dn']);
-            if (!$result) {
-                //return result code, if delete fails
+            if (! $result) {
+                // TODO: return result code, if delete fails
                 throw new LdapException('Recursively deleting "%s" failed', $dn);
             }
         }
+
         return $this->deleteDn($dn);
     }
 
@@ -393,13 +393,10 @@ class Connection implements Selectable
         $result = @ldap_delete($this->ds, $dn);
         if ($result === false) {
             if (ldap_errno($this->ds) === self::LDAP_NO_SUCH_OBJECT) {
-                return false;
+                return false; // TODO: Isn't it a success if something i'd like to remove is not existing at all???
             }
-            throw new LdapException(
-                'LDAP delete for "%s" failed: %s',
-                $dn,
-                ldap_error($this->ds)
-            );
+
+            throw new LdapException('LDAP delete for "%s" failed: %s', $dn, ldap_error($this->ds));
         }
 
         return true;
@@ -418,10 +415,7 @@ class Connection implements Selectable
     {
         $rows = $this->fetchAll($query, array());
         if (count($rows) > 1) {
-            throw new LdapException(
-                'Cannot fetch single DN for %s',
-                $query
-            );
+            throw new LdapException('Cannot fetch single DN for %s', $query);
         }
         return key($rows);
     }
@@ -482,7 +476,7 @@ class Connection implements Selectable
         $limit = $query->getLimit();
         $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
 
-        if (empty($fields)) {
+        if ($fields === null) {
             $fields = $query->getColumns();
         }
 
@@ -490,8 +484,8 @@ class Connection implements Selectable
         if ($serverSorting && $query->hasOrder()) {
             ldap_set_option($this->ds, LDAP_OPT_SERVER_CONTROLS, array(
                 array(
-                    'oid'           => Capability::LDAP_SERVER_SORT_OID,
-                    'value'         => $this->encodeSortRules($query->getOrder())
+                    'oid'   => Capability::LDAP_SERVER_SORT_OID,
+                    'value' => $this->encodeSortRules($query->getOrder())
                 )
             ));
         }
@@ -570,7 +564,7 @@ class Connection implements Selectable
      */
     protected function runPagedQuery(Query $query, array $fields = null, $pageSize = null)
     {
-        if (! isset($pageSize)) {
+        if ($pageSize === null) {
             $pageSize = static::PAGE_SIZE;
         }
 
@@ -579,7 +573,7 @@ class Connection implements Selectable
         $queryString = (string) $query;
         $base = $query->getBase() ?: $this->rootDn;
 
-        if (empty($fields)) {
+        if ($fields === null) {
             $fields = $query->getColumns();
         }
 
@@ -587,8 +581,8 @@ class Connection implements Selectable
         if ($serverSorting && $query->hasOrder()) {
             ldap_set_option($this->ds, LDAP_OPT_SERVER_CONTROLS, array(
                 array(
-                    'oid'           => Capability::LDAP_SERVER_SORT_OID,
-                    'value'         => $this->encodeSortRules($query->getOrder())
+                    'oid'   => Capability::LDAP_SERVER_SORT_OID,
+                    'value' => $this->encodeSortRules($query->getOrder())
                 )
             ));
         }
@@ -597,8 +591,8 @@ class Connection implements Selectable
         $cookie = '';
         $entries = array();
         do {
-            // do not set controlPageResult as a critical extension, since we still want the
-            // possibillity  server to return an answer in case the pagination extension is missing.
+            // Do not request the pagination control as a critical extension, as we want the
+            // server to return results even if the paged search request cannot be satisfied
             ldap_control_paged_result($this->ds, $pageSize, false, $cookie);
 
             $results = @ldap_search(
@@ -654,10 +648,11 @@ class Connection implements Selectable
                 // This applies no matter whether paged search requests are permitted or not. You're done once you
                 // got everything you were out for.
                 if ($serverSorting && count($entries) !== $limit) {
-
                     // The server does not support pagination, but still returned a response by ignoring the
                     // pagedResultsControl. We output a warning to indicate that the pagination control was ignored.
-                    Logger::warning('Unable to request paged LDAP results. Does the server allow paged search requests?');
+                    Logger::warning(
+                        'Unable to request paged LDAP results. Does the server allow paged search requests?'
+                    );
                 }
             }
 
@@ -821,14 +816,17 @@ class Connection implements Selectable
         }
 
         $ds = ldap_connect($hostname, $this->port);
+
         try {
             $this->capabilities = $this->discoverCapabilities($ds);
             $this->discoverySuccess = true;
         } catch (LdapException $e) {
             Logger::debug($e);
-            Logger::warning('LADP discovery failed, assuming default LDAP settings.');
+            Logger::warning('LADP discovery failed, assuming default LDAP capabilities.');
             $this->capabilities = new Capability(); // create empty default capabilities
+            $this->discoverySuccess = false;
         }
+
         if ($this->encryption === static::STARTTLS) {
             $force_tls = false;
             if ($this->capabilities->hasStartTls()) {
@@ -878,6 +876,7 @@ class Connection implements Selectable
             } else {
                 $ldap_conf = $this->getConfigDir('ldap_nocert.conf');
             }
+
             putenv('LDAPRC=' . $ldap_conf); // TODO: Does not have any effect
             if (getenv('LDAPRC') !== $ldap_conf) {
                 throw new LdapException('putenv failed');
