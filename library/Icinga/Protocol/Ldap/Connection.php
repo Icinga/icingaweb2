@@ -169,6 +169,42 @@ class Connection implements Selectable
         return $values;
     }
 
+    public function fetchPairs(Query $query, array $fields = null)
+    {
+        if ($fields === null) {
+            $fields = $query->getColumns();
+        }
+
+        if (count($fields) < 2) {
+            throw new ProgrammingError('You are required to request at least two attributes');
+        }
+
+        $columns = $desiredColumnNames = array();
+        foreach ($fields as $alias => $column) {
+            if (is_int($alias)) {
+                $columns[] = $column;
+                $desiredColumnNames[] = $column;
+            } else {
+                $columns[$alias] = $column;
+                $desiredColumnNames[] = $alias;
+            }
+
+            if (count($desiredColumnNames) === 2) {
+                break;
+            }
+        }
+
+        $results = $this->fetchAll($query, $columns);
+        $pairs = array();
+        foreach ($results as $row) {
+            $colOne = $desiredColumnNames[0];
+            $colTwo = $desiredColumnNames[1];
+            $pairs[$row->$colOne] = $row->$colTwo;
+        }
+
+        return $pairs;
+    }
+
     public function hasDN($dn)
     {
         $this->connect();
