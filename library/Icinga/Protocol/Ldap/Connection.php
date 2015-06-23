@@ -581,14 +581,14 @@ class Connection implements Selectable
     }
 
     /**
+     * Run the given LDAP query and return the resulting entries
      *
-     * Execute the given LDAP query and return the resulting entries
+     * @param   Query   $query      The query to fetch results with
+     * @param   array   $fields     Request these attributes instead of the ones registered in the given query
      *
-     * @param Query $query      The query to execute
-     * @param array $fields     The fields that will be fetched from the matches
+     * @return  array
      *
-     * @return array            The matched entries
-     * @throws LdapException
+     * @throws  LdapException       In case an error occured while fetching the results
      */
     protected function runQuery(Query $query, array $fields = null)
     {
@@ -872,11 +872,11 @@ class Connection implements Selectable
     }
 
     /**
+     * Prepare and establish a connection with the LDAP server
      *
-     * Connect to the given ldap server and apply settings depending on the discovered capabilities
+     * @return  resource        A positive LDAP link identifier
      *
-     * @return resource        A positive LDAP link identifier
-     * @throws LdapException   When the connection is not possible
+     * @throws  LdapException   In case the connection is not possible
      */
     protected function prepareNewConnection()
     {
@@ -959,13 +959,13 @@ class Connection implements Selectable
     }
 
     /**
+     * Discover the capabilities of the given LDAP server
      *
-     * Discover the capabilities of the given ldap-server
+     * @param   resource    $ds     The link identifier of the current LDAP connection
      *
-     * @param  resource     $ds     The link identifier of the current ldap connection
+     * @return  Capability
      *
-     * @return Capability           The capabilities
-     * @throws LdapException        When the capability query fails
+     * @throws  LdapException       In case the capability query has failed
      */
     protected function discoverCapabilities($ds)
     {
