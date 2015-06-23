@@ -156,7 +156,7 @@ class Query extends SimpleQuery
     {
         $result = $this->fetchAll();
         $sorted = array();
-        $quotedDn = preg_quote($this->ds->getDN(), '/');
+        $quotedDn = preg_quote($this->ds->getDn(), '/');
         foreach ($result as $key => & $item) {
             $new_key = LdapUtils::implodeDN(
                 array_reverse(

@@ -215,7 +215,7 @@ class Root
      */
     public function getDN()
     {
-        return $this->connection->getDN();
+        return $this->connection->getDn();
     }
 
     /**

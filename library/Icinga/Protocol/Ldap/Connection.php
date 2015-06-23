@@ -113,7 +113,7 @@ class Connection implements Selectable
         return $this->port;
     }
 
-    public function getDN()
+    public function getDn()
     {
         return $this->root_dn;
     }
