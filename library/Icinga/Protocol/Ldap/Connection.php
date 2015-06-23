@@ -14,18 +14,7 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Ldap\Exception as LdapException;
 
 /**
- * Backend class managing all the LDAP stuff for you.
- *
- * Usage example:
- *
- * <code>
- * $lconf = new Connection((object) array(
- *     'hostname' => 'localhost',
- *     'root_dn'  => 'dc=monitoring,dc=...',
- *     'bind_dn'  => 'cn=Mangager,dc=monitoring,dc=...',
- *     'bind_pw'  => '***'
- * ));
- * </code>
+ * Encapsulate LDAP connections and query creation
  */
 class Connection implements Selectable
 {
@@ -83,7 +72,7 @@ class Connection implements Selectable
     /**
      * Encryption for the connection if any
      *
-     * @var string|null
+     * @var string
      */
     protected $encryption;
 
@@ -108,7 +97,7 @@ class Connection implements Selectable
     protected $reqCert = true;
 
     /**
-     * Whether the bind on this connection was already performed
+     * Whether the bind on this connection has already been performed
      *
      * @var bool
      */
@@ -136,9 +125,9 @@ class Connection implements Selectable
     protected $discoverySuccess = false;
 
     /**
-     * Constructor
+     * Create a new connection object
      *
-     * @param ConfigObject $config
+     * @param   ConfigObject    $config
      */
     public function __construct(ConfigObject $config)
     {
@@ -365,12 +354,13 @@ class Connection implements Selectable
     }
 
     /**
-     * Fetch the distinguished name of the first result of the given query
+     * Fetch the distinguished name of the result of the given query
      *
-     * @param Query $query   The query returning the result set
+     * @param   Query   $query  The query returning the result set
      *
-     * @return string        Returns the distinguished name, or false when the given query yields no results
-     * @throws LdapException When the query result is empty and contains no DN to fetch
+     * @return  string          The distinguished name, or false when the given query yields no results
+     *
+     * @throws  LdapException   In case the query yields multiple results
      */
     public function fetchDn(Query $query)
     {
@@ -514,16 +504,17 @@ class Connection implements Selectable
     }
 
     /**
-     * Execute the given LDAP query while requesting pagination control to separate
-     * big responses into smaller chunks
+     * Run the given LDAP query and return the resulting entries
      *
-     * @param Query $query      The query to execute
-     * @param array $fields     The fields that will be fetched from the matches
-     * @param int   $pageSize   The maximum page size, defaults to Connection::PAGE_SIZE
+     * This utilizes paged search requests as defined in RFC 2696.
      *
-     * @return array            The matched entries
-     * @throws LdapException
-     * @throws ProgrammingError When executed without available page controls (check with pageControlAvailable() )
+     * @param   Query   $query      The query to fetch results with
+     * @param   array   $fields     Request these attributes instead of the ones registered in the given query
+     * @param   int     $pageSize   The maximum page size, defaults to self::PAGE_SIZE
+     *
+     * @return  array
+     *
+     * @throws  LdapException       In case an error occured while fetching the results
      */
     protected function runPagedQuery(Query $query, array $fields = null, $pageSize = null)
     {
