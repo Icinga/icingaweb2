@@ -147,6 +147,28 @@ class Connection implements Selectable
         return array_shift($row) ?: false;
     }
 
+    public function fetchColumn(Query $query, array $fields = null)
+    {
+        if ($fields === null) {
+            $fields = $query->getColumns();
+        }
+
+        $column = current($fields);
+        if (! $column) {
+            throw new ProgrammingError('You must request at least one attribute when fetching a single column');
+        }
+
+        $results = $this->fetchAll($query, array($column));
+        $values = array();
+        foreach ($results as $row) {
+            if (isset($row->$column)) {
+                $values[] = $row->$column;
+            }
+        }
+
+        return $values;
+    }
+
     public function hasDN($dn)
     {
         $this->connect();
