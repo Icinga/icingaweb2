@@ -143,7 +143,7 @@ class Connection implements Selectable
     public function fetchOne($query, $fields = array())
     {
         $row = (array) $this->fetchRow($query, $fields);
-        return array_shift($row);
+        return array_shift($row) ?: false;
     }
 
     public function hasDN($dn)
