@@ -218,6 +218,68 @@ class Connection implements Selectable
     }
 
     /**
+     * Return the capabilities of the current connection
+     *
+     * @return  Capability
+     */
+    public function getCapabilities()
+    {
+        if ($this->capabilities === null) {
+            $this->connect(); // Populates $this->capabilities
+        }
+
+        return $this->capabilities;
+    }
+
+    /**
+     * Return whether discovery was successful or not
+     *
+     * @return  bool    true if the capabilities were successfully determined, false if the capabilities were guessed
+     */
+    public function discoverySuccessful()
+    {
+        return $this->discoverySuccess;
+    }
+
+    /**
+     * Establish a connection
+     *
+     * @throws  LdapException   In case the connection could not be established
+     */
+    public function connect()
+    {
+        if ($this->ds === null) {
+            $this->ds = $this->prepareNewConnection();
+        }
+    }
+
+    /**
+     * Perform a LDAP bind on the current connection
+     *
+     * @throws  LdapException   In case the LDAP bind was unsuccessful
+     */
+    public function bind()
+    {
+        if ($this->bound) {
+            return;
+        }
+
+        $success = @ldap_bind($this->ds, $this->bindDn, $this->bindPw);
+        if (! $success) {
+            throw new LdapException(
+                'LDAP connection to %s:%s (%s / %s) failed: %s',
+                $this->hostname,
+                $this->port,
+                $this->bindDn,
+                '***' /* $this->bindPw */,
+                ldap_error($this->ds)
+            );
+        }
+
+        $this->bound = true;
+    }
+
+    /**
      * Provide a query on this connection
      *
      * @return  Query
@@ -239,10 +301,61 @@ class Connection implements Selectable
         return new ArrayIterator($this->fetchAll($query));
     }
 
-    public function fetchOne($query, $fields = array())
+    /**
+     * Count all rows of the given query's result set
+     *
+     * @param   Query   $query  The query returning the result set
+     *
+     * @return  int
+     */
+    public function count(Query $query)
     {
-        $row = (array) $this->fetchRow($query, $fields);
-        return array_shift($row) ?: false;
+        $this->connect();
+        $this->bind();
+
+        $res = $this->runQuery($query, array());
+        return count($res);
+    }
+
+    /**
+     * Retrieve an array containing all rows of the result set
+     *
+     * @param   Query   $query      The query returning the result set
+     * @param   array   $fields     Request these attributes instead of the ones registered in the given query
+     *
+     * @return  array
+     */
+    public function fetchAll(Query $query, array $fields = null)
+    {
+        $this->connect();
+        $this->bind();
+
+        if (
+            $query->getUsePagedResults()
+            && version_compare(PHP_VERSION, '5.4.0') >= 0
+            && $this->getCapabilities()->hasPagedResult()
+        ) {
+            return $this->runPagedQuery($query, $fields);
+        } else {
+            return $this->runQuery($query, $fields);
+        }
+    }
+
+    /**
+     * Fetch the first row of the result set
+     *
+     * @param   Query   $query      The query returning the result set
+     * @param   array   $fields     Request these attributes instead of the ones registered in the given query
+     *
+     * @return  mixed
+     */
+    public function fetchRow(Query $query, array $fields = null)
+    {
+        $clonedQuery = clone $query;
+        $clonedQuery->limit(1);
+        $clonedQuery->setUsePagedResults(false);
+        $results = $this->fetchAll($clonedQuery, $fields);
+        return array_shift($results) ?: false;
     }
 
     /**
@@ -275,6 +388,20 @@ class Connection implements Selectable
         }
 
         return $values;
+    }
+
+    /**
+     * Fetch the first column of the first row of the result set
+     *
+     * @param   Query   $query      The query returning the result set
+     * @param   array   $fields     Request these attributes instead of the ones registered in the given query
+     *
+     * @return  string
+     */
+    public function fetchOne(Query $query, array $fields = null)
+    {
+        $row = (array) $this->fetchRow($query, $fields);
+        return array_shift($row) ?: false;
     }
 
     /**
@@ -323,6 +450,38 @@ class Connection implements Selectable
         }
 
         return $pairs;
+    }
+
+    /**
+     * Test the given LDAP credentials by establishing a connection and attempting a LDAP bind
+     *
+     * @param   string  $bindDn
+     * @param   string  $bindPw
+     *
+     * @return  bool                Whether the given credentials are valid
+     *
+     * @throws  LdapException       In case an error occured while establishing the connection or attempting the bind
+     */
+    public function testCredentials($bindDn, $bindPw)
+    {
+        $this->connect();
+
+        $success = @ldap_bind($this->ds, $bindDn, $bindPw);
+        if (! $success) {
+            if (ldap_errno($this->ds) === self::LDAP_INVALID_CREDENTIALS) {
+                Logger::debug(
+                    'Testing LDAP credentials (%s / %s) failed: %s',
+                    $bindDn,
+                    '***',
+                    ldap_error($this->ds)
+                );
+                return false;
+            }
+
+            throw new LdapException(ldap_error($this->ds));
+        }
+
+        return true;
     }
 
     /**
@@ -417,52 +576,12 @@ class Connection implements Selectable
         if (count($rows) > 1) {
             throw new LdapException('Cannot fetch single DN for %s', $query);
         }
+
         return key($rows);
     }
 
     /**
-     * @param       $query
-     * @param array $fields
      *
-     * @return mixed
-     */
-    public function fetchRow($query, $fields = array())
-    {
-        $query = clone $query;
-        $query->limit(1);
-        $query->setUsePagedResults(false);
-        $results = $this->fetchAll($query, $fields);
-        return array_shift($results) ?: false;
-    }
-
-    /**
-     * @param Query $query
-     *
-     * @return int
-     */
-    public function count(Query $query)
-    {
-        $this->connect();
-        $this->bind();
-
-        // TODO: That's still not the best solution, this should probably not request any attributes
-        $res = $this->runQuery($query);
-        return count($res);
-    }
-
-    public function fetchAll(Query $query, $fields = array())
-    {
-        $this->connect();
-        $this->bind();
-
-        if ($this->pageControlAvailable($query)) {
-            return $this->runPagedQuery($query, $fields);
-        } else {
-            return $this->runQuery($query, $fields);
-        }
-    }
-
-    /**
      * Execute the given LDAP query and return the resulting entries
      *
      * @param Query $query      The query to execute
@@ -537,16 +656,6 @@ class Connection implements Selectable
 
         ldap_free_result($results);
         return $entries;
-    }
-
-    /**
-     * Returns whether requesting the page control is available
-     */
-    protected function pageControlAvailable(Query $query)
-    {
-        return $this->capabilities->hasPagedResult() &&
-               $query->getUsePagedResults() &&
-               version_compare(PHP_VERSION, '5.4.0') >= 0;
     }
 
     /**
@@ -762,43 +871,8 @@ class Connection implements Selectable
         return $seq;
     }
 
-    public function testCredentials($username, $password)
-    {
-        $this->connect();
-
-        $success = @ldap_bind($this->ds, $username, $password);
-        if (! $success) {
-            if (ldap_errno($this->ds) === self::LDAP_INVALID_CREDENTIALS) {
-                Logger::debug(
-                    'Testing LDAP credentials (%s / %s) failed: %s',
-                    $username,
-                    '***',
-                    ldap_error($this->ds)
-                );
-                return false;
-            }
-
-            throw new LdapException(ldap_error($this->ds));
-        }
-
-        return true;
-    }
-
     /**
-     * @param null $sub
      *
-     * @return string
-     */
-    protected function getConfigDir($sub = null)
-    {
-        $dir = Config::$configDir . '/ldap';
-        if ($sub !== null) {
-            $dir .= '/' . $sub;
-        }
-        return $dir;
-    }
-
-    /**
      * Connect to the given ldap server and apply settings depending on the discovered capabilities
      *
      * @return resource        A positive LDAP link identifier
@@ -885,31 +959,7 @@ class Connection implements Selectable
     }
 
     /**
-     * Get the capabilities of the connected server
      *
-     * @return Capability   The capability object
-     */
-    public function getCapabilities()
-    {
-        if ($this->capabilities === null) {
-            $this->connect(); // Populates $this->capabilities
-        }
-
-        return $this->capabilities;
-    }
-
-    /**
-     * Whether service discovery was successful
-     *
-     * @return boolean  True when ldap settings were discovered, false when
-     *                   settings were guessed
-     */
-    public function discoverySuccessful()
-    {
-        return $this->discoverySuccess;
-    }
-
-    /**
      * Discover the capabilities of the given ldap-server
      *
      * @param  resource     $ds     The link identifier of the current ldap connection
@@ -959,88 +1009,67 @@ class Connection implements Selectable
     }
 
     /**
-     * Try to connect to the given ldap server
+     * Create an LDAP entry
      *
-     * @throws LdapException   When connecting is not possible
+     * @param   string  $dn             The distinguished name to use
+     * @param   array   $attributes     The entry's attributes
+     *
+     * @return  bool                    Whether the operation was successful
      */
-    public function connect()
+    public function addEntry($dn, array $attributes)
     {
-        if ($this->ds !== null) {
-            return;
-        }
-        $this->ds = $this->prepareNewConnection();
+        return ldap_add($this->ds, $dn, $attributes);
     }
 
     /**
-     * Try to bind to the current ldap domain using the provided bind_dn and bind_pw
+     * Modify an LDAP entry
      *
-     * @throws LdapException   When binding is not possible
+     * @param   string  $dn             The distinguished name to use
+     * @param   array   $attributes     The attributes to update the entry with
+     *
+     * @return  bool                    Whether the operation was successful
      */
-    public function bind()
+    public function modifyEntry($dn, array $attributes)
     {
-        if ($this->bound) {
-            return;
-        }
-
-        $r = @ldap_bind($this->ds, $this->bind_dn, $this->bind_pw);
-        if (! $r) {
-            throw new LdapException(
-                'LDAP connection to %s:%s (%s / %s) failed: %s',
-                $this->hostname,
-                $this->port,
-                $this->bind_dn,
-                '***' /* $this->bind_pw */,
-                ldap_error($this->ds)
-            );
-        }
-        $this->bound = true;
+        return ldap_modify($this->ds, $dn, $attributes);
     }
 
     /**
-     * Create an ldap entry
+     * Change the distinguished name of an LDAP entry
      *
-     * @param   string  $dn     DN to add
-     * @param   array   $entry  Entry description
+     * @param   string  $dn             The entry's current distinguished name
+     * @param   string  $newRdn         The new relative distinguished name
+     * @param   string  $newParentDn    The new parent or superior entry's distinguished name
      *
-     * @return bool             True on success
-     */
-    public function addEntry($dn, array $entry)
-    {
-        return ldap_add($this->ds, $dn, $entry);
-    }
-
-    /**
-     * Modify a ldap entry
+     * @return  resource                The resulting search result identifier
      *
-     * @param string $dn        DN of the entry to change
-     * @param array  $entry     Change values
-     *
-     * @return bool             True on success
-     */
-    public function modifyEntry($dn, array $entry)
-    {
-        return ldap_modify($this->ds, $dn, $entry);
-    }
-
-    /**
-     * Move entry to a new DN
-     *
-     * @param   string $dn          DN of the object
-     * @param   string $newRdn      Relative DN identifier
-     * @param   string $newParentDn Parent or superior entry
-     * @throws  LdapException       Thrown then rename failed
-     *
-     * @return bool                 True on success
+     * @throws  LdapException           In case an error occured
      */
     public function moveEntry($dn, $newRdn, $newParentDn)
     {
-        $returnValue = ldap_rename($this->ds, $dn, $newRdn, $newParentDn, false);
-
-        if ($returnValue === false) {
-            throw new LdapException('Could not move entry: ' . ldap_error($this->ds));
+        $result = ldap_rename($this->ds, $dn, $newRdn, $newParentDn, false);
+        if ($result === false) {
+            throw new LdapException('Could not move entry "%s" to "%s": %s', $dn, $newRdn, ldap_error($this->ds));
         }
 
-        return $returnValue;
+        return $result;
+    }
+
+    /**
+     * Return the LDAP specific configuration directory with the given relative path being appended
+     *
+     * @param   string  $sub
+     *
+     * @return  string
+     */
+    protected function getConfigDir($sub = null)
+    {
+        $dir = Config::$configDir . '/ldap';
+        if ($sub !== null) {
+            $dir .= '/' . $sub;
+        }
+
+        return $dir;
     }
 
     /**
