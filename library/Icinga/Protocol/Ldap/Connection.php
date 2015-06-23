@@ -235,7 +235,7 @@ class Connection implements Selectable
         $query->limit(1);
         $query->setUsePagedResults(false);
         $results = $this->fetchAll($query, $fields);
-        return array_shift($results);
+        return array_shift($results) ?: false;
     }
 
     /**

@@ -325,7 +325,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface
             throw new AuthenticationException('Connection not possible.', $e);
         }
 
-        if ($result === null) {
+        if ($result === false) {
             throw new AuthenticationException(
                 'No objects with objectClass "%s" in DN "%s" found. (Filter: %s)',
                 $this->userClass,
