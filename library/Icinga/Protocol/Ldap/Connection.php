@@ -89,10 +89,40 @@ class Connection implements Selectable
      * @var string
      */
     protected $hostname;
+
+    /**
+     * The port being used to connect with the LDAP server
+     *
+     * @var int
+     */
     protected $port;
+
+    /**
+     * The distinguished name being used to bind to the LDAP server
+     *
+     * @var string
+     */
     protected $bindDn;
+
+    /**
+     * The password being used to bind to the LDAP server
+     *
+     * @var string
+     */
     protected $bindPw;
+
+    /**
+     * The distinguished name being used as the base path for queries which do not provide one theirselves
+     *
+     * @var string
+     */
     protected $rootDn;
+
+    /**
+     * Whether to load the configuration for strict certificate validation or the one for non-strict validation
+     *
+     * @var bool
+     */
     protected $validateCertificate;
 
     /**
@@ -214,6 +244,16 @@ class Connection implements Selectable
         return array_shift($row) ?: false;
     }
 
+    /**
+     * Fetch the first column of all rows of the result set as an array
+     *
+     * @param   Query   $query      The query returning the result set
+     * @param   array   $fields     Request these attributes instead of the ones registered in the given query
+     *
+     * @return  array
+     *
+     * @throws  ProgrammingError    In case no attribute is being requested
+     */
     public function fetchColumn(Query $query, array $fields = null)
     {
         if ($fields === null) {
@@ -236,6 +276,18 @@ class Connection implements Selectable
         return $values;
     }
 
+    /**
+     * Fetch all rows of the result set as an array of key-value pairs
+     *
+     * The first column is the key, the second column is the value.
+     *
+     * @param   Query   $query      The query returning the result set
+     * @param   array   $fields     Request these attributes instead of the ones registered in the given query
+     *
+     * @return  array
+     *
+     * @throws  ProgrammingError    In case there are less than two attributes being requested
+     */
     public function fetchPairs(Query $query, array $fields = null)
     {
         if ($fields === null) {
