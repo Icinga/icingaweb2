@@ -265,14 +265,13 @@ class Connection implements Selectable
      * Fetch the distinguished name of the first result of the given query
      *
      * @param Query $query   The query returning the result set
-     * @param array $fields  The fields to fetch
      *
      * @return string        Returns the distinguished name, or false when the given query yields no results
      * @throws LdapException When the query result is empty and contains no DN to fetch
      */
-    public function fetchDn(Query $query, $fields = array())
+    public function fetchDn(Query $query)
     {
-        $rows = $this->fetchAll($query, $fields);
+        $rows = $this->fetchAll($query, array());
         if (count($rows) > 1) {
             throw new LdapException(
                 'Cannot fetch single DN for %s',
