@@ -29,10 +29,41 @@ use Icinga\Protocol\Ldap\Exception as LdapException;
  */
 class Connection implements Selectable
 {
+    /**
+     * Indicates that the target object cannot be found
+     *
+     * @var int
+     */
     const LDAP_NO_SUCH_OBJECT = 32;
+
+    /**
+     * Indicates that in a search operation, the size limit specified by the client or the server has been exceeded
+     *
+     * @var int
+     */
     const LDAP_SIZELIMIT_EXCEEDED = 4;
+
+    /**
+     * Indicates that an LDAP server limit set by an administrative authority has been exceeded
+     *
+     * @var int
+     */
     const LDAP_ADMINLIMIT_EXCEEDED = 11;
+
+    /**
+     * Indicates that during a bind operation one of the following occurred: The client passed either an incorrect DN
+     * or password, or the password is incorrect because it has expired, intruder detection has locked the account, or
+     * another similar reason.
+     *
+     * @var int
+     */
     const LDAP_INVALID_CREDENTIALS = 49;
+
+    /**
+     * The default page size to use for paged queries
+     *
+     * @var int
+     */
     const PAGE_SIZE = 1000;
 
     /**
@@ -56,7 +87,18 @@ class Connection implements Selectable
      */
     protected $encryption;
 
+    /**
+     * The LDAP link identifier being used
+     *
+     * @var resource
+     */
     protected $ds;
+
+    /**
+     * The ip address, hostname or ldap URI being used to connect with the LDAP server
+     *
+     * @var string
+     */
     protected $hostname;
     protected $port = 389;
     protected $bind_dn;
@@ -72,14 +114,23 @@ class Connection implements Selectable
      */
     protected $bound = false;
 
+    /**
+     * The current connection's root node
+     *
+     * @var Root
+     */
     protected $root;
 
     /**
+     * The properties and capabilities of the LDAP server
+     *
      * @var Capability
      */
     protected $capabilities;
 
     /**
+     * Whether discovery was successful or not
+     *
      * @var bool
      */
     protected $discoverySuccess = false;
@@ -103,21 +154,41 @@ class Connection implements Selectable
         $this->reqCert = (bool) $config->get('reqcert', $this->reqCert);
     }
 
+    /**
+     * Return the ip address, hostname or ldap URI being used to connect with the LDAP server
+     *
+     * @return  string
+     */
     public function getHostname()
     {
         return $this->hostname;
     }
 
+    /**
+     * Return the port being used to connect with the LDAP server
+     *
+     * @return  int
+     */
     public function getPort()
     {
         return $this->port;
     }
 
+    /**
+     * Return the distinguished name being used as the base path for queries which do not provide one theirselves
+     *
+     * @return  string
+     */
     public function getDn()
     {
         return $this->root_dn;
     }
 
+    /**
+     * Return the root node for this connection
+     *
+     * @return  Root
+     */
     public function root()
     {
         if ($this->root === null) {
@@ -136,6 +207,13 @@ class Connection implements Selectable
         return new Query($this);
     }
 
+    /**
+     * Fetch and return all rows of the given query's result set using an iterator
+     *
+     * @param   Query   $query  The query returning the result set
+     *
+     * @return  ArrayIterator
+     */
     public function query(Query $query)
     {
         return new ArrayIterator($this->fetchAll($query));
@@ -205,6 +283,13 @@ class Connection implements Selectable
         return $pairs;
     }
 
+    /**
+     * Return whether an entry identified by the given distinguished name exists
+     *
+     * @param   string  $dn
+     *
+     * @return  bool
+     */
     public function hasDn($dn)
     {
         $this->connect();
@@ -214,6 +299,15 @@ class Connection implements Selectable
         return ldap_count_entries($this->ds, $result) > 0;
     }
 
+    /**
+     * Delete a root entry and all of its children identified by the given distinguished name
+     *
+     * @param   string  $dn
+     *
+     * @return  bool
+     *
+     * @throws  LdapException   In case an error occured while deleting an entry
+     */
     public function deleteRecursively($dn)
     {
         $this->connect();
@@ -241,6 +335,15 @@ class Connection implements Selectable
         return $this->deleteDn($dn);
     }
 
+    /**
+     * Delete a single entry identified by the given distinguished name
+     *
+     * @param   string  $dn
+     *
+     * @return  bool
+     *
+     * @throws  LdapException   In case an error occured while deleting the entry
+     */
     public function deleteDn($dn)
     {
         $this->connect();
@@ -539,6 +642,16 @@ class Connection implements Selectable
         return $entries;
     }
 
+    /**
+     * Clean up the given attributes and return them as simple object
+     *
+     * Applies column aliases, aggregates multi-value attributes as array and sets null for each missing attribute.
+     *
+     * @param   array   $attributes
+     * @param   array   $requestedFields
+     *
+     * @return  object
+     */
     protected function cleanupAttributes($attributes, array $requestedFields)
     {
         // In case the result contains attributes with a differing case than the requested fields, it is
@@ -706,6 +819,11 @@ class Connection implements Selectable
         return $ds;
     }
 
+    /**
+     * Set up how to handle StartTLS connections
+     *
+     * @throws  LdapException   In case the LDAPRC environment variable cannot be set
+     */
     protected function prepareTlsEnvironment()
     {
         // TODO: allow variable known CA location (system VS Icinga)
@@ -883,6 +1001,9 @@ class Connection implements Selectable
         return $returnValue;
     }
 
+    /**
+     * Reset the environment variables set by self::prepareTlsEnvironment()
+     */
     public function __destruct()
     {
         putenv('LDAPRC');
