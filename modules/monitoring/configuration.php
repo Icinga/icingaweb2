@@ -112,7 +112,7 @@ $section->add($this->translate('Service Problems'), array(
     'priority'  => 60
 ));
 $section->add($this->translate('Service Grid'), array(
-    'url'       => 'monitoring/list/servicegrid?service_problem=1',
+    'url'       => 'monitoring/list/servicegrid?problems',
     'priority'  => 70
 ));
 $section->add($this->translate('Current Downtimes'), array(

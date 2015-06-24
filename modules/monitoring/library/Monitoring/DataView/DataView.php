@@ -201,12 +201,15 @@ abstract class DataView implements QueryInterface, IteratorAggregate
      *
      * @param   string  $xAxisColumn    The column to use for the x axis
      * @param   string  $yAxisColumn    The column to use for the y axis
+     * @param   Filter  $xAxisFilter    The filter to apply on a query for the x axis
+     * @param   Filter  $yAxisFilter    The filter to apply on a query for the y axis
      *
      * @return  PivotTable
      */
-    public function pivot($xAxisColumn, $yAxisColumn)
+    public function pivot($xAxisColumn, $yAxisColumn, Filter $xAxisFilter = null, Filter $yAxisFilter = null)
     {
-        return new PivotTable($this->query, $xAxisColumn, $yAxisColumn);
+        $pivot = new PivotTable($this->query, $xAxisColumn, $yAxisColumn);
+        return $pivot->setXAxisFilter($xAxisFilter)->setYAxisFilter($yAxisFilter);
     }
 
     /**

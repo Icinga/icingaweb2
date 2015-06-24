@@ -586,6 +586,7 @@ class Monitoring_ListController extends Controller
     {
         $this->addTitleTab('servicegrid', $this->translate('Service Grid'), $this->translate('Show the Service Grid'));
         $this->setAutorefreshInterval(15);
+        $problems = (bool) $this->params->shift('problems', 0);
         $query = $this->backend->select()->from('servicestatus', array(
             'host_name',
             'service_description',
@@ -599,7 +600,12 @@ class Monitoring_ListController extends Controller
             'host_name'           => $this->translate('Hostname'),
             'service_description' => $this->translate('Service description')
         ), $query);
-        $pivot = $query->pivot('service_description', 'host_name');
+        $pivot = $query->pivot(
+            'service_description',
+            'host_name',
+            $problems ? Filter::where('service_problem', 1) : null,
+            $problems ? Filter::where('service_problem', 1) : null
+        );
         $this->view->pivot = $pivot;
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
         $this->view->verticalPaginator   = $pivot->paginateYAxis();
@@ -618,7 +624,7 @@ class Monitoring_ListController extends Controller
             ->setQuery($dataView)
             ->preserveParams(
                 'limit', 'sort', 'dir', 'format', 'view', 'backend',
-                'stateType', 'addColumns', '_dev'
+                'stateType', 'addColumns', '_dev', 'problems'
             )
             ->ignoreParams('page')
             ->setSearchColumns($dataView->getSearchColumns())
