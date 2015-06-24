@@ -1,4 +1,7 @@
 <div class="controls">
+  <?php if (! $this->compact): ?>
+    <?= $this->tabs; ?>
+  <?php endif ?>
   <?php if ($object->getType() === $object::TYPE_HOST): ?>
     <?= $this->render('partials/host/object-header.phtml'); ?>
     <?= $this->render('partials/host/servicesummary.phtml'); ?>
