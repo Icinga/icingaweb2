@@ -1087,6 +1087,24 @@ class Form extends Zend_Form
     }
 
     /**
+     * Set the action to submit this form against
+     *
+     * Note that if you'll pass a instance of URL, Url::getAbsoluteUrl('&') is called to set the action.
+     *
+     * @param   Url|string  $action
+     *
+     * @return  $this
+     */
+    public function setAction($action)
+    {
+        if ($action instanceof Url) {
+            $action = $action->getAbsoluteUrl('&');
+        }
+
+        return parent::setAction($action);
+    }
+
+    /**
      * Set form description
      *
      * Alias for Zend_Form::setDescription().
