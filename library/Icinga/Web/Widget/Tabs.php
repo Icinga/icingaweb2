@@ -309,14 +309,13 @@ EOT;
 
     private function renderRefreshTab()
     {
+        $url = Url::fromRequest()->without('renderLayout');
         $tab = $this->get($this->getActiveName());
+
         if ($tab !== null) {
-            $url = Url::fromRequest($tab->getUrl()->getParams()->toArray(false))->without('renderLayout');
             $label = $this->view()->escape(
                 $tab->getLabel()
             );
-        } else {
-            $url = Url::fromRequest()->without('renderLayout');
         }
 
         if (! empty($label)) {
