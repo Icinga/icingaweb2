@@ -10,7 +10,7 @@ use Icinga\Exception\NotImplementedError;
 /**
  * LDAP query class
  */
-class Query extends SimpleQuery
+class LdapQuery extends SimpleQuery
 {
     /**
      * This query's filters

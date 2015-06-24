@@ -282,21 +282,21 @@ class LdapConnection implements Selectable
     /**
      * Provide a query on this connection
      *
-     * @return  Query
+     * @return  LdapQuery
      */
     public function select()
     {
-        return new Query($this);
+        return new LdapQuery($this);
     }
 
     /**
      * Fetch and return all rows of the given query's result set using an iterator
      *
-     * @param   Query   $query  The query returning the result set
+     * @param   LdapQuery   $query  The query returning the result set
      *
      * @return  ArrayIterator
      */
-    public function query(Query $query)
+    public function query(LdapQuery $query)
     {
         return new ArrayIterator($this->fetchAll($query));
     }
@@ -304,11 +304,11 @@ class LdapConnection implements Selectable
     /**
      * Count all rows of the given query's result set
      *
-     * @param   Query   $query  The query returning the result set
+     * @param   LdapQuery   $query  The query returning the result set
      *
      * @return  int
      */
-    public function count(Query $query)
+    public function count(LdapQuery $query)
     {
         $this->connect();
         $this->bind();
@@ -320,12 +320,12 @@ class LdapConnection implements Selectable
     /**
      * Retrieve an array containing all rows of the result set
      *
-     * @param   Query   $query      The query returning the result set
-     * @param   array   $fields     Request these attributes instead of the ones registered in the given query
+     * @param   LdapQuery   $query      The query returning the result set
+     * @param   array       $fields     Request these attributes instead of the ones registered in the given query
      *
      * @return  array
      */
-    public function fetchAll(Query $query, array $fields = null)
+    public function fetchAll(LdapQuery $query, array $fields = null)
     {
         $this->connect();
         $this->bind();
@@ -344,12 +344,12 @@ class LdapConnection implements Selectable
     /**
      * Fetch the first row of the result set
      *
-     * @param   Query   $query      The query returning the result set
-     * @param   array   $fields     Request these attributes instead of the ones registered in the given query
+     * @param   LdapQuery   $query      The query returning the result set
+     * @param   array       $fields     Request these attributes instead of the ones registered in the given query
      *
      * @return  mixed
      */
-    public function fetchRow(Query $query, array $fields = null)
+    public function fetchRow(LdapQuery $query, array $fields = null)
     {
         $clonedQuery = clone $query;
         $clonedQuery->limit(1);
@@ -361,14 +361,14 @@ class LdapConnection implements Selectable
     /**
      * Fetch the first column of all rows of the result set as an array
      *
-     * @param   Query   $query      The query returning the result set
-     * @param   array   $fields     Request these attributes instead of the ones registered in the given query
+     * @param   LdapQuery   $query      The query returning the result set
+     * @param   array       $fields     Request these attributes instead of the ones registered in the given query
      *
      * @return  array
      *
-     * @throws  ProgrammingError    In case no attribute is being requested
+     * @throws  ProgrammingError        In case no attribute is being requested
      */
-    public function fetchColumn(Query $query, array $fields = null)
+    public function fetchColumn(LdapQuery $query, array $fields = null)
     {
         if ($fields === null) {
             $fields = $query->getColumns();
@@ -393,12 +393,12 @@ class LdapConnection implements Selectable
     /**
      * Fetch the first column of the first row of the result set
      *
-     * @param   Query   $query      The query returning the result set
-     * @param   array   $fields     Request these attributes instead of the ones registered in the given query
+     * @param   LdapQuery   $query      The query returning the result set
+     * @param   array       $fields     Request these attributes instead of the ones registered in the given query
      *
      * @return  string
      */
-    public function fetchOne(Query $query, array $fields = null)
+    public function fetchOne(LdapQuery $query, array $fields = null)
     {
         $row = (array) $this->fetchRow($query, $fields);
         return array_shift($row) ?: false;
@@ -409,14 +409,14 @@ class LdapConnection implements Selectable
      *
      * The first column is the key, the second column is the value.
      *
-     * @param   Query   $query      The query returning the result set
-     * @param   array   $fields     Request these attributes instead of the ones registered in the given query
+     * @param   LdapQuery   $query      The query returning the result set
+     * @param   array       $fields     Request these attributes instead of the ones registered in the given query
      *
      * @return  array
      *
-     * @throws  ProgrammingError    In case there are less than two attributes being requested
+     * @throws  ProgrammingError        In case there are less than two attributes being requested
      */
-    public function fetchPairs(Query $query, array $fields = null)
+    public function fetchPairs(LdapQuery $query, array $fields = null)
     {
         if ($fields === null) {
             $fields = $query->getColumns();
@@ -564,13 +564,13 @@ class LdapConnection implements Selectable
     /**
      * Fetch the distinguished name of the result of the given query
      *
-     * @param   Query   $query  The query returning the result set
+     * @param   LdapQuery   $query  The query returning the result set
      *
-     * @return  string          The distinguished name, or false when the given query yields no results
+     * @return  string              The distinguished name, or false when the given query yields no results
      *
-     * @throws  LdapException   In case the query yields multiple results
+     * @throws  LdapException       In case the query yields multiple results
      */
-    public function fetchDn(Query $query)
+    public function fetchDn(LdapQuery $query)
     {
         $rows = $this->fetchAll($query, array());
         if (count($rows) > 1) {
@@ -583,14 +583,14 @@ class LdapConnection implements Selectable
     /**
      * Run the given LDAP query and return the resulting entries
      *
-     * @param   Query   $query      The query to fetch results with
-     * @param   array   $fields     Request these attributes instead of the ones registered in the given query
+     * @param   LdapQuery   $query      The query to fetch results with
+     * @param   array       $fields     Request these attributes instead of the ones registered in the given query
      *
      * @return  array
      *
-     * @throws  LdapException       In case an error occured while fetching the results
+     * @throws  LdapException           In case an error occured while fetching the results
      */
-    protected function runQuery(Query $query, array $fields = null)
+    protected function runQuery(LdapQuery $query, array $fields = null)
     {
         $limit = $query->getLimit();
         $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
@@ -663,15 +663,15 @@ class LdapConnection implements Selectable
      *
      * This utilizes paged search requests as defined in RFC 2696.
      *
-     * @param   Query   $query      The query to fetch results with
-     * @param   array   $fields     Request these attributes instead of the ones registered in the given query
-     * @param   int     $pageSize   The maximum page size, defaults to self::PAGE_SIZE
+     * @param   LdapQuery   $query      The query to fetch results with
+     * @param   array       $fields     Request these attributes instead of the ones registered in the given query
+     * @param   int         $pageSize   The maximum page size, defaults to self::PAGE_SIZE
      *
      * @return  array
      *
-     * @throws  LdapException       In case an error occured while fetching the results
+     * @throws  LdapException           In case an error occured while fetching the results
      */
-    protected function runPagedQuery(Query $query, array $fields = null, $pageSize = null)
+    protected function runPagedQuery(LdapQuery $query, array $fields = null, $pageSize = null)
     {
         if ($pageSize === null) {
             $pageSize = static::PAGE_SIZE;
