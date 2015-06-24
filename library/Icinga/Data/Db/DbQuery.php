@@ -381,6 +381,7 @@ class DbQuery extends SimpleQuery
 
     public function __clone()
     {
+        parent::__clone();
         $this->select = clone $this->select;
     }
 

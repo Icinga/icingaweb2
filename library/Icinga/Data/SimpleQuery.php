@@ -550,4 +550,12 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     {
         return $this->columns;
     }
+
+    /**
+     * Deep clone self::$filter
+     */
+    public function __clone()
+    {
+        $this->filter = clone $this->filter;
+    }
 }
