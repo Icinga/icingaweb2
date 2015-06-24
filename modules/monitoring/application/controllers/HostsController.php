@@ -117,7 +117,7 @@ class Monitoring_HostsController extends Controller
             $this->view->removeAckForm = $removeAckForm;
         }
 
-        $hostStates = (object)$this->hostList->getStateSummary();
+        $hostStates = $this->hostList->getStateSummary();
 
         $this->setAutorefreshInterval(15);
         $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/hosts/reschedule-check');

@@ -3,8 +3,10 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
+use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterOr;
+use Icinga\Data\SimpleQuery;
 use Icinga\Util\String;
 
 /**
@@ -33,7 +35,7 @@ class HostList extends ObjectList
     /**
      * Create a state summary of all hosts that can be consumed by hostssummary.phtml
      *
-     * @return object   The summary
+     * @return  SimpleQuery
      */
     public function getStateSummary()
     {
@@ -48,7 +50,8 @@ class HostList extends ObjectList
 
         $hostStates['hosts_total'] = count($this);
 
-        return (object)$hostStates;
+        $ds = new ArrayDatasource(array((object) $hostStates));
+        return $ds->select();
     }
 
     /**
