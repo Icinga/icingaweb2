@@ -14,7 +14,7 @@ namespace Icinga\Protocol\Ldap;
 class Node extends Root
 {
     /**
-     * @var Connection
+     * @var LdapConnection
      */
     protected $connection;
 

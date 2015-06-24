@@ -8,7 +8,7 @@ use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\UserGroup\LdapUserGroupBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
-use Icinga\Protocol\Ldap\Connection;
+use Icinga\Protocol\Ldap\LdapConnection;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 
@@ -286,11 +286,11 @@ class LdapUserGroupBackendForm extends Form
     /**
      * Return the names of all configured LDAP user backends
      *
-     * @param   Connection  $resource
+     * @param   LdapConnection  $resource
      *
      * @return  array
      */
-    protected function getLdapUserBackendNames(Connection $resource)
+    protected function getLdapUserBackendNames(LdapConnection $resource)
     {
         $names = array();
         foreach (Config::app('authentication') as $name => $config) {

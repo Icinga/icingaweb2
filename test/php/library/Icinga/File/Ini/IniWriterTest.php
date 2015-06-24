@@ -739,7 +739,6 @@ inkey' => 'blarg'
         );
 
         $rendered = $writer->render();
-        var_dump($rendered);
         $this->assertEquals(
             count(explode("\n", $rendered)),
             4,

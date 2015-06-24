@@ -9,7 +9,7 @@ use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
-use Icinga\Protocol\Ldap\Exception as LdapException;
+use Icinga\Protocol\Ldap\LdapException;
 use Icinga\Protocol\Ldap\Expression;
 use Icinga\User;
 
@@ -325,7 +325,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface
             throw new AuthenticationException('Connection not possible.', $e);
         }
 
-        if ($result === null) {
+        if ($result === false) {
             throw new AuthenticationException(
                 'No objects with objectClass "%s" in DN "%s" found. (Filter: %s)',
                 $this->userClass,

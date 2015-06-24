@@ -9,7 +9,7 @@ use Icinga\Protocol\Dns;
 class Discovery {
 
     /**
-     * @var Connection
+     * @var LdapConnection
      */
     private $connection;
 
@@ -21,9 +21,9 @@ class Discovery {
     private $discovered = false;
 
     /**
-     * @param Connection $conn  The ldap connection to use for the discovery
+     * @param   LdapConnection  $conn   The ldap connection to use for the discovery
      */
-    public function __construct(Connection $conn)
+    public function __construct(LdapConnection $conn)
     {
         $this->connection = $conn;
     }
@@ -147,7 +147,7 @@ class Discovery {
      */
     public static function discover($host, $port)
     {
-        $conn = new Connection(new ConfigObject(array(
+        $conn = new LdapConnection(new ConfigObject(array(
             'hostname' => $host,
             'port'     => $port
         )));

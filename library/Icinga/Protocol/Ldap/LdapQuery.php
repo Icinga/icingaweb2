@@ -10,7 +10,7 @@ use Icinga\Exception\NotImplementedError;
 /**
  * LDAP query class
  */
-class Query extends SimpleQuery
+class LdapQuery extends SimpleQuery
 {
     /**
      * This query's filters
@@ -156,7 +156,7 @@ class Query extends SimpleQuery
     {
         $result = $this->fetchAll();
         $sorted = array();
-        $quotedDn = preg_quote($this->ds->getDN(), '/');
+        $quotedDn = preg_quote($this->ds->getDn(), '/');
         foreach ($result as $key => & $item) {
             $new_key = LdapUtils::implodeDN(
                 array_reverse(
@@ -186,7 +186,7 @@ class Query extends SimpleQuery
      *
      * @return  string|false    The distinguished name or false in case it's not possible to fetch a result
      *
-     * @throws  Exception       In case the query returns multiple results
+     * @throws  LdapException   In case the query returns multiple results
      *                          (i.e. it's not possible to fetch a unique DN)
      */
     public function fetchDn()
@@ -199,12 +199,12 @@ class Query extends SimpleQuery
      *
      * @return  string
      *
-     * @throws  Exception   In case the objectClass filter does not exist
+     * @throws  LdapException   In case the objectClass filter does not exist
      */
     protected function renderFilter()
     {
         if (! isset($this->filters['objectClass'])) {
-            throw new Exception('Object class is mandatory');
+            throw new LdapException('Object class is mandatory');
         }
 
         $parts = array();
