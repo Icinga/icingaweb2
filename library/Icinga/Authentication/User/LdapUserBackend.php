@@ -9,7 +9,7 @@ use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
-use Icinga\Protocol\Ldap\Exception as LdapException;
+use Icinga\Protocol\Ldap\LdapException;
 use Icinga\Protocol\Ldap\Expression;
 use Icinga\User;
 

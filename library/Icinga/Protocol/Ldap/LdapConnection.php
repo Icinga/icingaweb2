@@ -11,7 +11,7 @@ use Icinga\Data\ConfigObject;
 use Icinga\Data\Selectable;
 use Icinga\Data\Sortable;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Protocol\Ldap\Exception as LdapException;
+use Icinga\Protocol\Ldap\LdapException;
 
 /**
  * Encapsulate LDAP connections and query creation
