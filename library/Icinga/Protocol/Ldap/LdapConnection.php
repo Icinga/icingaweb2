@@ -16,7 +16,7 @@ use Icinga\Protocol\Ldap\Exception as LdapException;
 /**
  * Encapsulate LDAP connections and query creation
  */
-class Connection implements Selectable
+class LdapConnection implements Selectable
 {
     /**
      * Indicates that the target object cannot be found
