@@ -191,6 +191,6 @@ class ServiceStatus extends DataView
      */
     public function getSearchColumns()
     {
-        return array('service', 'service_display_name');
+        return array('host', 'host_display_name', 'service', 'service_display_name');
     }
 }
