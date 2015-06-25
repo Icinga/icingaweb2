@@ -608,6 +608,12 @@ class LdapConnection implements Selectable
                     'value' => $this->encodeSortRules($query->getOrder())
                 )
             ));
+        } elseif ($query->hasOrder()) {
+            foreach ($query->getOrder() as $rule) {
+                if (! in_array($rule[0], $fields)) {
+                    $fields[] = $rule[0];
+                }
+            }
         }
 
         $results = @ldap_search(
@@ -695,6 +701,12 @@ class LdapConnection implements Selectable
                     'value' => $this->encodeSortRules($query->getOrder())
                 )
             ));
+        } elseif ($query->hasOrder()) {
+            foreach ($query->getOrder() as $rule) {
+                if (! in_array($rule[0], $fields)) {
+                    $fields[] = $rule[0];
+                }
+            }
         }
 
         $count = 0;
