@@ -32,7 +32,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         if (empty($output)) {
             return '';
         }
-        $output = preg_replace('~<br[^>]+>~', "\n", $output);
+        $output = preg_replace('~<br+>~', "\n", $output);
         if (preg_match('~<\w+[^>^\\\]{,60}>~', $output)) {
             // HTML
             $output = preg_replace('~<table~', '<table style="font-size: 0.75em"',
