@@ -49,12 +49,20 @@ class Comment extends DataView
     public function getFilterColumns()
     {
         return array(
-            'comment_author ',
+            'comment_author',
             'host', 'host_alias',
             'hostgroup', 'hostgroup_alias', 'hostgroup_name',
             'service',
             'servicegroup', 'servicegroup_alias', 'servicegroup_name'
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('host', 'host_display_name', 'service', 'service_display_name', 'comment_author');
     }
 
     /**
