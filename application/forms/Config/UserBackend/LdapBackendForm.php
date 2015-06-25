@@ -92,17 +92,19 @@ class LdapBackendForm extends Form
             'text',
             'filter',
             array(
-                'allowEmpty'    => true,
-                'label'         => $this->translate('LDAP Filter'),
-                'description'   => $this->translate(
+                'preserveDefault'   => true,
+                'allowEmpty'        => true,
+                'value'             => $isAd ? '!(objectClass=computer)' : null,
+                'label'             => $this->translate('LDAP Filter'),
+                'description'       => $this->translate(
                     'An additional filter to use when looking up users using the specified connection. '
                     . 'Leave empty to not to use any additional filter rules.'
                 ),
-                'requirement'   => $this->translate(
+                'requirement'       => $this->translate(
                     'The filter needs to be expressed as standard LDAP expression.'
                     . ' (e.g. &(foo=bar)(bar=foo) or foo=bar)'
                 ),
-                'validators'    => array(
+                'validators'        => array(
                     array(
                         'Callback',
                         false,
