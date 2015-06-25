@@ -67,6 +67,14 @@ class Downtime extends DataView
     /**
      * {@inheritdoc}
      */
+    public function getSearchColumns()
+    {
+        return array('downtime_author', 'host', 'host_display_name', 'service', 'service_display_name');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getSortRules()
     {
         return array(
