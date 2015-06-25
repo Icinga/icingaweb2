@@ -78,4 +78,12 @@ class Contactgroup extends DataView
             'servicegroup', 'servicegroup_alias', 'servicegroup_name'
         );
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('contactgroup', 'contactgroup_alias', 'contact', 'contact_alias', 'contact_email');
+    }
 }
