@@ -202,16 +202,4 @@ class LdapBackendForm extends Form
 
         return true;
     }
-
-    /**
-     * Return the configuration for the chosen resource
-     *
-     * @return  ConfigObject
-     *
-     * @todo    Check whether it's possible to drop this (Or even all occurences!)
-     */
-    public function getResourceConfig()
-    {
-        return ResourceFactory::getResourceConfig($this->getValue('resource'));
-    }
 }

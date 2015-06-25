@@ -163,7 +163,12 @@ class UserBackend
                 $name
             );
         }
-        $resource = ResourceFactory::create($backendConfig->resource);
+
+        if ($backendConfig->resource instanceof ConfigObject) {
+            $resource = ResourceFactory::createResource($backendConfig->resource);
+        } else {
+            $resource = ResourceFactory::create($backendConfig->resource);
+        }
 
         switch ($backendType) {
             case 'db':

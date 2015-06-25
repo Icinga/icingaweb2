@@ -122,7 +122,15 @@ class AuthBackendPage extends Form
         }
 
         if (false === isset($data['skip_validation']) || $data['skip_validation'] == 0) {
-            if ($this->config['type'] === 'ldap' && false === LdapBackendForm::isValidUserBackend($this)) {
+            $self = clone $this;
+            $self->addElement(
+                'text',
+                'resource',
+                array(
+                    'value' => $this->getResourceConfig()
+                )
+            );
+            if ($this->config['type'] === 'ldap' && false === LdapBackendForm::isValidUserBackend($self)) {
                 $this->addSkipValidationCheckbox();
                 return false;
             }
