@@ -84,4 +84,12 @@ class Notification extends DataView
             'servicegroup', 'servicegroup_alias', 'servicegroup_name'
         );
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('contact', 'host', 'host_display_name', 'service', 'service_display_name');
+    }
 }
