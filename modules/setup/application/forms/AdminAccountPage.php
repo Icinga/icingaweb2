@@ -4,12 +4,9 @@
 namespace Icinga\Module\Setup\Forms;
 
 use Exception;
-use LogicException;
-use Icinga\Web\Form;
+use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\ConfigObject;
-use Icinga\Data\ResourceFactory;
-use Icinga\Authentication\User\DbUserBackend;
-use Icinga\Authentication\User\LdapUserBackend;
+use Icinga\Web\Form;
 
 /**
  * Wizard page to define the initial administrative account
@@ -95,7 +92,7 @@ class AdminAccountPage extends Form
             }
         }
 
-        if ($this->backendConfig['backend'] === 'db' || $this->backendConfig['backend'] === 'ldap') {
+        if (in_array($this->backendConfig['backend'], array('db', 'ldap', 'msldap'))) {
             $users = $this->fetchUsers();
             if (false === empty($users)) {
                 $choices['existing_user'] = $this->translate('Existing User');
@@ -260,24 +257,12 @@ class AdminAccountPage extends Form
      * Return the names of all users this backend currently provides
      *
      * @return  array
-     *
-     * @throws  LogicException  In case the backend to fetch users from is not supported
      */
     protected function fetchUsers()
     {
-        if ($this->backendConfig['backend'] === 'db') {
-            $backend = new DbUserBackend(ResourceFactory::createResource(new ConfigObject($this->resourceConfig)));
-        } elseif ($this->backendConfig['backend'] === 'ldap') {
-            $backend = new LdapUserBackend(ResourceFactory::createResource(new ConfigObject($this->resourceConfig)));
-            $backend->setConfig($this->backendConfig);
-        } else {
-            throw new LogicException(
-                sprintf(
-                    'Tried to fetch users from an unsupported authentication backend: %s',
-                    $this->backendConfig['backend']
-                )
-            );
-        }
+        $config = new ConfigObject($this->backendConfig);
+        $config->resource = $this->resourceConfig;
+        $backend = UserBackend::create(null, $config);
 
         try {
             return $backend->select(array('user_name'))->fetchColumn();
