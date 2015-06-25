@@ -265,7 +265,7 @@ class AdminAccountPage extends Form
         $backend = UserBackend::create(null, $config);
 
         try {
-            return $backend->select(array('user_name'))->fetchColumn();
+            return $backend->select(array('user_name'))->order('user_name', 'asc', true)->fetchColumn();
         } catch (Exception $_) {
             // No need to handle anything special here. Error means no users found.
             return array();
