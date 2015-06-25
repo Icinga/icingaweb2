@@ -5,7 +5,7 @@ use Icinga\Data\Reducible;
 use Icinga\Data\Selectable;
 
 $editLink = null;
-if (true || $this->hasPermission('config/authentication/users/edit') && $backend instanceof Updatable) {
+if ($this->hasPermission('config/authentication/users/edit') && $backend instanceof Updatable) {
     $editLink = $this->qlink(
         null,
         'user/edit',
