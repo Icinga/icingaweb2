@@ -157,7 +157,7 @@ class HostcommentQuery extends IdoQuery
     public function getGroup()
     {
         $group = array();
-        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('servicegroups')) {
+        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('services')) {
             $group = array('c.comment_id', 'ho.object_id');
             if ($this->hasJoinedVirtualTable('hosts')) {
                 $group[] = 'h.host_id';
