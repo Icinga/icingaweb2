@@ -23,38 +23,37 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
 
 ?>
 <div class="controls">
- <?php if (! $this->compact): ?>
- <?= $tabs ?>
- <?php endif ?>
-
- <h1><?= $this->escape($user->user_name); ?><span class="pull-right"><?= $editLink ?></span></h1>
+<?php if (! $this->compact): ?>
+  <?= $tabs; ?>
+<?php endif ?>
+  <h1><?= $this->escape($user->user_name); ?><span class="pull-right"><?= $editLink; ?></span></h1>
+  <table class="avp user-header">
+    <tr>
+      <th><?= $this->translate('State'); ?></th>
+      <td><?= $user->is_active === null ? '-' : ($user->is_active ? $this->translate('Active') : $this->translate('Inactive')); ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->translate('Created at'); ?></th>
+      <td><?= $user->created_at === null ? '-' : $this->formatDateTime($user->created_at); ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->translate('Last modified'); ?></th>
+      <td><?= $user->last_modified === null ? '-' : $this->formatDateTime($user->last_modified); ?></td>
+    </tr>
+  </table>
+  <h2><?= $this->translate('Group Memberships'); ?></h2>
+<?php if (! $this->compact): ?>
+  <?= $this->sortBox ?>
+<?php endif ?>
+  <?= $this->limiter ?>
+  <?= $this->paginator ?>
+<?php if (! $this->compact): ?>
+  <?= $this->filterEditor ?>
+<?php endif ?>
 </div>
-<div class="content">
- <table class="avp">
-  <tr>
-   <th><?= $this->translate('State'); ?>:</th>
-   <td><?= $user->is_active === null ? '-' : ($user->is_active ? $this->translate('Active') : $this->translate('Inactive')); ?></td>
-  </tr>
-  <tr>
-   <th><?= $this->translate('Created at'); ?>:</th>
-   <td><?= $user->created_at === null ? '-' : $this->formatDateTime($user->created_at); ?></td>
-  </tr>
-  <tr>
-   <th><?= $this->translate('Last modified'); ?>:</th>
-   <td><?= $user->last_modified === null ? '-' : $this->formatDateTime($user->last_modified); ?></td>
-  </tr>
- </table>
- <h3><?= $this->translate('Group Memberships'); ?></h3>
-    <?php if (! $this->compact): ?>
-     <?= $this->sortBox ?>
-    <?php endif ?>
-     <?= $this->limiter ?>
-     <?= $this->paginator ?>
-    <?php if (! $this->compact): ?>
-     <?= $this->filterEditor ?>
-    <?php endif ?>
+<div class="content memberships">
 <?php if (count($memberships) > 0): ?>
-  <table data-base-target="_next" class="action membership-list">
+  <table data-base-target="_next" class="action membership-list alternating">
     <thead>
       <tr>
         <th class="membership-group"><?= $this->translate('Group'); ?></th>
@@ -95,17 +94,17 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
 <?php endif ?>
 <?php if ($showCreateMembershipLink): ?>
 <?= $this->qlink(
-    $this->translate('Create new membership'),
-    'user/createmembership',
-    array(
-        'backend'             => $backend->getName(),
-        'user'                => $user->user_name
-    ),
-    array(
-        'icon'                => 'plus',
-        'data-base-target'    => '_next',
-        'class'               => 'membership-create'
-    )
-) ?>
+  $this->translate('Create New Membership'),
+  'user/createmembership',
+  array(
+    'backend'   => $backend->getName(),
+    'user'      => $user->user_name
+  ),
+  array(
+    'icon'              => 'plus',
+    'data-base-target'  => '_next',
+    'class'             => 'membership-create'
+  )
+); ?>
 <?php endif ?>
 </div>
