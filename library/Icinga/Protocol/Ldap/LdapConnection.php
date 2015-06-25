@@ -374,12 +374,13 @@ class LdapConnection implements Selectable
             $fields = $query->getColumns();
         }
 
-        $column = current($fields);
-        if (! $column) {
+        if (empty($fields)) {
             throw new ProgrammingError('You must request at least one attribute when fetching a single column');
         }
 
-        $results = $this->fetchAll($query, array($column));
+        $alias = key($fields);
+        $results = $this->fetchAll($query, array($alias => current($fields)));
+        $column = is_int($alias) ? current($fields) : $alias;
         $values = array();
         foreach ($results as $row) {
             if (isset($row->$column)) {
