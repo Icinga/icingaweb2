@@ -218,12 +218,13 @@ class RepositoryQuery implements QueryInterface, Iterator
      * If called without a specific column, the repository's defaul sort rules will be applied.
      * This notifies the repository about each column being required as filter column.
      *
-     * @param   string  $field      The name of the column by which to sort the query's result
-     * @param   string  $direction  The direction to use when sorting (asc or desc, default is asc)
+     * @param   string  $field          The name of the column by which to sort the query's result
+     * @param   string  $direction      The direction to use when sorting (asc or desc, default is asc)
+     * @param   bool    $ignoreDefault  Whether to ignore any default sort rules if $field is given
      *
      * @return  $this
      */
-    public function order($field = null, $direction = null)
+    public function order($field = null, $direction = null, $ignoreDefault = false)
     {
         $sortRules = $this->repository->getSortRules();
         if ($field === null) {
@@ -240,7 +241,7 @@ class RepositoryQuery implements QueryInterface, Iterator
             if ($direction !== null || !array_key_exists('order', $sortColumns)) {
                 $sortColumns['order'] = $direction ?: static::SORT_ASC;
             }
-        } elseif (array_key_exists($field, $sortRules)) {
+        } elseif (! $ignoreDefault && array_key_exists($field, $sortRules)) {
             $sortColumns = $sortRules[$field];
             if (! array_key_exists('columns', $sortColumns)) {
                 $sortColumns['columns'] = array($field);
