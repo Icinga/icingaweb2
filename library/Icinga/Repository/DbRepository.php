@@ -69,14 +69,28 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      *
      * @var array
      */
-    protected $statementTableMap;
+    protected $statementAliasTableMap;
 
     /**
      * A flattened array to map statement columns to aliases
      *
      * @var array
      */
-    protected $statementColumnMap;
+    protected $statementAliasColumnMap;
+
+    /**
+     * An array to map table names to statement columns
+     *
+     * @var array
+     */
+    protected $statementColumnTableMap;
+
+    /**
+     * A flattened array to map aliases to statement columns
+     *
+     * @var array
+     */
+    protected $statementColumnAliasMap;
 
     /**
      * List of columns where the COLLATE SQL-instruction has been removed
@@ -348,13 +362,13 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      *
      * @return  array
      */
-    protected function getStatementTableMap()
+    protected function getStatementAliasTableMap()
     {
-        if ($this->statementTableMap === null) {
+        if ($this->statementAliasTableMap === null) {
             $this->initializeStatementMaps();
         }
 
-        return $this->statementTableMap;
+        return $this->statementAliasTableMap;
     }
 
     /**
@@ -362,40 +376,87 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      *
      * @return  array
      */
-    protected function getStatementColumnMap()
+    protected function getStatementAliasColumnMap()
     {
-        if ($this->statementColumnMap === null) {
+        if ($this->statementAliasColumnMap === null) {
             $this->initializeStatementMaps();
         }
 
-        return $this->statementColumnMap;
+        return $this->statementAliasColumnMap;
     }
 
     /**
-     * Initialize $this->statementTableMap and $this->statementColumnMap
+     * Return an array to map table names to statement columns
+     *
+     * @return  array
+     */
+    protected function getStatementColumnTableMap()
+    {
+        if ($this->statementColumnTableMap === null) {
+            $this->initializeStatementMaps();
+        }
+
+        return $this->statementColumnTableMap;
+    }
+
+    /**
+     * Return a flattened array to map aliases to statement columns
+     *
+     * @return  array
+     */
+    protected function getStatementColumnAliasMap()
+    {
+        if ($this->statementColumnAliasMap === null) {
+            $this->initializeStatementMaps();
+        }
+
+        return $this->statementColumnAliasMap;
+    }
+
+    /**
+     * Initialize $this->statementAliasTableMap and $this->statementAliasColumnMap
      */
     protected function initializeStatementMaps()
     {
-        $this->statementTableMap = array();
-        $this->statementColumnMap = array();
+        $this->statementAliasTableMap = array();
+        $this->statementAliasColumnMap = array();
+        $this->statementColumnTableMap = array();
+        $this->statementColumnAliasMap = array();
         foreach ($this->getStatementColumns() as $table => $columns) {
             foreach ($columns as $alias => $column) {
                 $key = is_string($alias) ? $alias : $column;
-                if (array_key_exists($key, $this->statementTableMap)) {
-                    if ($this->statementTableMap[$key] !== null) {
-                        $existingTable = $this->statementTableMap[$key];
-                        $existingColumn = $this->statementColumnMap[$key];
-                        $this->statementTableMap[$existingTable . '.' . $key] = $existingTable;
-                        $this->statementColumnMap[$existingTable . '.' . $key] = $existingColumn;
-                        $this->statementTableMap[$key] = null;
-                        $this->statementColumnMap[$key] = null;
+                if (array_key_exists($key, $this->statementAliasTableMap)) {
+                    if ($this->statementAliasTableMap[$key] !== null) {
+                        $existingTable = $this->statementAliasTableMap[$key];
+                        $existingColumn = $this->statementAliasColumnMap[$key];
+                        $this->statementAliasTableMap[$existingTable . '.' . $key] = $existingTable;
+                        $this->statementAliasColumnMap[$existingTable . '.' . $key] = $existingColumn;
+                        $this->statementAliasTableMap[$key] = null;
+                        $this->statementAliasColumnMap[$key] = null;
                     }
 
-                    $this->statementTableMap[$table . '.' . $key] = $table;
-                    $this->statementColumnMap[$table . '.' . $key] = $column;
+                    $this->statementAliasTableMap[$table . '.' . $key] = $table;
+                    $this->statementAliasColumnMap[$table . '.' . $key] = $column;
                 } else {
-                    $this->statementTableMap[$key] = $table;
-                    $this->statementColumnMap[$key] = $column;
+                    $this->statementAliasTableMap[$key] = $table;
+                    $this->statementAliasColumnMap[$key] = $column;
+                }
+
+                if (array_key_exists($column, $this->statementColumnTableMap)) {
+                    if ($this->statementColumnTableMap[$column] !== null) {
+                        $existingTable = $this->statementColumnTableMap[$column];
+                        $existingAlias = $this->statementColumnAliasMap[$column];
+                        $this->statementColumnTableMap[$existingTable . '.' . $column] = $existingTable;
+                        $this->statementColumnAliasMap[$existingTable . '.' . $column] = $existingAlias;
+                        $this->statementColumnTableMap[$column] = null;
+                        $this->statementColumnAliasMap[$column] = null;
+                    }
+
+                    $this->statementColumnTableMap[$table . '.' . $column] = $table;
+                    $this->statementColumnAliasMap[$table . '.' . $column] = $key;
+                } else {
+                    $this->statementColumnTableMap[$column] = $table;
+                    $this->statementColumnAliasMap[$column] = $key;
                 }
             }
         }
@@ -530,6 +591,28 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     }
 
     /**
+     * Return the alias for the given query column name or null in case the query column name does not exist
+     *
+     * @param   array|string    $table
+     * @param   string          $column
+     *
+     * @return  string|null
+     */
+    public function reassembleQueryColumnAlias($table, $column)
+    {
+        $alias = parent::reassembleQueryColumnAlias($this->removeTablePrefix($this->clearTableAlias($table)), $column);
+        if (
+            $alias === null
+            && !$this->validateQueryColumnAssociation($table, $column)
+            && ($tableName = $this->findTableName($column))
+        ) {
+            return parent::reassembleQueryColumnAlias($tableName, $column);
+        }
+
+        return $alias;
+    }
+
+    /**
      * Return whether the given query column name or alias is available in the given table
      *
      * @param   array|string    $table
@@ -607,14 +690,35 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function resolveStatementColumnAlias($table, $alias)
     {
-        $statementColumnMap = $this->getStatementColumnMap();
-        if (isset($statementColumnMap[$alias])) {
-            return $statementColumnMap[$alias];
+        $statementAliasColumnMap = $this->getStatementAliasColumnMap();
+        if (isset($statementAliasColumnMap[$alias])) {
+            return $statementAliasColumnMap[$alias];
         }
 
         $prefixedAlias = $this->removeTablePrefix($table) . '.' . $alias;
-        if (isset($statementColumnMap[$prefixedAlias])) {
-            return $statementColumnMap[$prefixedAlias];
+        if (isset($statementAliasColumnMap[$prefixedAlias])) {
+            return $statementAliasColumnMap[$prefixedAlias];
+        }
+    }
+
+    /**
+     * Return the alias for the given statement column name or null in case the statement column does not exist
+     *
+     * @param   string  $table
+     * @param   string  $column
+     *
+     * @return  string|null
+     */
+    public function reassembleStatementColumnAlias($table, $column)
+    {
+        $statementColumnAliasMap = $this->getStatementColumnAliasMap();
+        if (isset($statementColumnAliasMap[$column])) {
+            return $statementColumnAliasMap[$column];
+        }
+
+        $prefixedColumn = $this->removeTablePrefix($table) . '.' . $column;
+        if (isset($statementColumnAliasMap[$prefixedColumn])) {
+            return $statementColumnAliasMap[$prefixedColumn];
         }
     }
 
@@ -628,13 +732,20 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function validateStatementColumnAssociation($table, $alias)
     {
-        $statementTableMap = $this->getStatementTableMap();
-        if (isset($statementTableMap[$alias])) {
-            return $statementTableMap[$alias] === $this->removeTablePrefix($table);
+        $tableName = $this->removeTablePrefix($table);
+
+        $statementAliasTableMap = $this->getStatementAliasTableMap();
+        if (isset($statementAliasTableMap[$alias])) {
+            return $statementAliasTableMap[$alias] === $tableName;
         }
 
-        $prefixedAlias = $this->removeTablePrefix($table) . '.' . $alias;
-        return isset($statementTableMap[$prefixedAlias]);
+        $statementColumnTableMap = $this->getStatementColumnTableMap();
+        if (isset($statementColumnTableMap[$alias])) {
+            return $statementColumnTableMap[$alias] === $tableName;
+        }
+
+        $prefixedAlias = $tableName . '.' . $alias;
+        return isset($statementAliasTableMap[$prefixedAlias]) || isset($statementColumnTableMap[$prefixedAlias]);
     }
 
     /**
@@ -648,7 +759,8 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     public function hasStatementColumn($table, $name)
     {
         if (
-            $this->resolveStatementColumnAlias($table, $name) === null
+            ($this->resolveStatementColumnAlias($table, $name) === null
+             && $this->reassembleStatementColumnAlias($table, $name) === null)
             || !$this->validateStatementColumnAssociation($table, $name)
         ) {
             return parent::hasStatementColumn($table, $name);
@@ -669,11 +781,15 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function requireStatementColumn($table, $name)
     {
-        if (($column = $this->resolveStatementColumnAlias($table, $name)) === null) {
+        if (($column = $this->resolveStatementColumnAlias($table, $name)) !== null) {
+            $alias = $name;
+        } elseif (($alias = $this->reassembleStatementColumnAlias($table, $name)) !== null) {
+            $column = $name;
+        } else {
             return parent::requireStatementColumn($table, $name);
         }
 
-        if (! $this->validateStatementColumnAssociation($table, $name)) {
+        if (! $this->validateStatementColumnAssociation($table, $alias)) {
             throw new StatementException('Statement column "%s" not found in table "%s"', $name, $table);
         }
 
@@ -706,7 +822,9 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             );
         }
 
-        $column = $this->resolveQueryColumnAlias($tableName, $name);
+        if (($column = $this->resolveQueryColumnAlias($tableName, $name)) === null) {
+            $column = $name;
+        }
 
         $prefixedTableName = $this->prependTablePrefix($tableName);
         if ($query->getQuery()->hasJoinedTable($prefixedTableName)) {
@@ -741,11 +859,16 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             return $aliasTableMap[$column];
         }
 
+        $columnTableMap = $this->getColumnTableMap();
+        if (isset($columnTableMap[$column])) {
+            return $columnTableMap[$column];
+        }
+
         // TODO(jom): Elaborate whether it makes sense to throw ProgrammingError
         //            instead (duplicate aliases in different tables?)
-        foreach ($aliasTableMap as $alias => $table) {
-            if (strpos($alias, '.') !== false) {
-                list($_, $alias) = explode('.', $column, 2);
+        foreach ($aliasTableMap as $prefixedAlias => $table) {
+            if (strpos($prefixedAlias, '.') !== false) {
+                list($_, $alias) = explode('.', $prefixedAlias, 2);
                 if ($alias === $column) {
                     return $table;
                 }

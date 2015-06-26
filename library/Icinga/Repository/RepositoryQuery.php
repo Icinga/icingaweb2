@@ -241,20 +241,23 @@ class RepositoryQuery implements QueryInterface, Iterator
             if ($direction !== null || !array_key_exists('order', $sortColumns)) {
                 $sortColumns['order'] = $direction ?: static::SORT_ASC;
             }
-        } elseif (! $ignoreDefault && array_key_exists($field, $sortRules)) {
-            $sortColumns = $sortRules[$field];
-            if (! array_key_exists('columns', $sortColumns)) {
-                $sortColumns['columns'] = array($field);
-            }
-            if ($direction !== null || !array_key_exists('order', $sortColumns)) {
-                $sortColumns['order'] = $direction ?: static::SORT_ASC;
-            }
         } else {
-            $sortColumns = array(
-                'columns'   => array($field),
-                'order'     => $direction
-            );
-        };
+            $alias = $this->repository->reassembleQueryColumnAlias($this->target, $field) ?: $field;
+            if (! $ignoreDefault && array_key_exists($alias, $sortRules)) {
+                $sortColumns = $sortRules[$alias];
+                if (! array_key_exists('columns', $sortColumns)) {
+                    $sortColumns['columns'] = array($alias);
+                }
+                if ($direction !== null || !array_key_exists('order', $sortColumns)) {
+                    $sortColumns['order'] = $direction ?: static::SORT_ASC;
+                }
+            } else {
+                $sortColumns = array(
+                    'columns'   => array($alias),
+                    'order'     => $direction
+                );
+            }
+        }
 
         $baseDirection = strtoupper($sortColumns['order']) === static::SORT_DESC ? static::SORT_DESC : static::SORT_ASC;
 
