@@ -464,16 +464,28 @@ abstract class Repository implements Selectable
     }
 
     /**
-     * Return whether this repository is capable of converting values for the given table
+     * Return whether this repository is capable of converting values for the given table and optional column
      *
      * @param   string  $table
+     * @param   string  $column
      *
      * @return  bool
      */
-    public function providesValueConversion($table)
+    public function providesValueConversion($table, $column = null)
     {
         $conversionRules = $this->getConversionRules();
-        return !empty($conversionRules) && isset($conversionRules[$table]);
+        if (empty($conversionRules)) {
+            return false;
+        }
+
+        if (! isset($conversionRules[$table])) {
+            return false;
+        } elseif ($column === null) {
+            return true;
+        }
+
+        $alias = $this->reassembleQueryColumnAlias($table, $column) ?: $column;
+        return array_key_exists($alias, $conversionRules[$table]) || in_array($alias, $conversionRules[$table]);
     }
 
     /**
