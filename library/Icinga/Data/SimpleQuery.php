@@ -380,7 +380,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      */
     public function hasLimit()
     {
-        return $this->limitCount !== null;
+        return $this->limitCount !== null && $this->limitCount > 0;
     }
 
     /**
