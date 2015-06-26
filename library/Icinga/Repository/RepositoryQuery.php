@@ -315,13 +315,11 @@ class RepositoryQuery implements QueryInterface, Iterator
     /**
      * Return whether any sort rules were applied to this query
      *
-     * @param   string  $column
-     *
      * @return  bool
      */
-    public function hasOrder($column = null)
+    public function hasOrder()
     {
-        return $this->query->hasOrder($column);
+        return $this->query->hasOrder();
     }
 
     /**
