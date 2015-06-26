@@ -264,6 +264,16 @@ class RepositoryQuery implements QueryInterface, Iterator
         foreach ($sortColumns['columns'] as $column) {
             list($column, $specificDirection) = $this->splitOrder($column);
 
+            if ($this->hasLimit() && $this->repository->providesValueConversion($this->target, $column)) {
+                Logger::debug(
+                    'Cannot order by column "%s" in repository "%s". The query is'
+                    . ' limited and applies value conversion rules on the column',
+                    $column,
+                    $this->repository->getName()
+                );
+                continue;
+            }
+
             try {
                 $this->query->order(
                     $this->repository->requireFilterColumn($this->target, $column, $this),
