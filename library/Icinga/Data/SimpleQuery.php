@@ -341,11 +341,25 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     /**
      * Whether an order is set
      *
+     * @param   string  $column
+     *
      * @return bool
      */
-    public function hasOrder()
+    public function hasOrder($column = null)
     {
-        return !empty($this->order);
+        if (empty($this->order)) {
+            return false;
+        } elseif ($column === null) {
+            return true;
+        }
+
+        foreach ($this->order as $rule) {
+            if ($rule[0] === $column) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

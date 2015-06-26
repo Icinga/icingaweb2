@@ -294,11 +294,13 @@ abstract class DataView implements QueryInterface, IteratorAggregate
     /**
      * Whether an order is set
      *
+     * @param   string  $column
+     *
      * @return bool
      */
-    public function hasOrder()
+    public function hasOrder($column = null)
     {
-        return $this->query->hasOrder();
+        return $this->query->hasOrder($column);
     }
 
     /**

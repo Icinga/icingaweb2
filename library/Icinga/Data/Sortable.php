@@ -36,9 +36,11 @@ interface Sortable
     /**
      * Whether an order is set
      *
+     * @param   string  $column
+     *
      * @return bool
      */
-    public function hasOrder();
+    public function hasOrder($column = null);
 
     /**
      * Get the order if any
