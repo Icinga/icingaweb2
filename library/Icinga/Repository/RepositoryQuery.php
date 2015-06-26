@@ -450,8 +450,10 @@ class RepositoryQuery implements QueryInterface, Iterator
             $columns = $this->getColumns();
             $aliases = array_keys($columns);
             $column = is_int($aliases[0]) ? $columns[0] : $aliases[0];
-            foreach ($results as & $value) {
-                $value = $this->repository->retrieveColumn($this->target, $column, $value);
+            if ($this->repository->providesValueConversion($this->target, $column)) {
+                foreach ($results as & $value) {
+                    $value = $this->repository->retrieveColumn($this->target, $column, $value);
+                }
             }
         }
 
@@ -475,15 +477,20 @@ class RepositoryQuery implements QueryInterface, Iterator
         if (! empty($results) && $this->repository->providesValueConversion($this->target)) {
             $columns = $this->getColumns();
             $aliases = array_keys($columns);
-            $newResults = array();
-            foreach ($results as $colOneValue => $colTwoValue) {
-                $colOne = $aliases[0] !== 0 ? $aliases[0] : $columns[0];
-                $colTwo = count($aliases) < 2 ? $colOne : ($aliases[1] !== 1 ? $aliases[1] : $columns[1]);
-                $colOneValue = $this->repository->retrieveColumn($this->target, $colOne, $colOneValue);
-                $newResults[$colOneValue] = $this->repository->retrieveColumn($this->target, $colTwo, $colTwoValue);
-            }
+            $colOne = $aliases[0] !== 0 ? $aliases[0] : $columns[0];
+            $colTwo = count($aliases) < 2 ? $colOne : ($aliases[1] !== 1 ? $aliases[1] : $columns[1]);
+            if (
+                $this->repository->providesValueConversion($this->target, $colOne)
+                || $this->repository->providesValueConversion($this->target, $colTwo)
+            ) {
+                $newResults = array();
+                foreach ($results as $colOneValue => $colTwoValue) {
+                    $colOneValue = $this->repository->retrieveColumn($this->target, $colOne, $colOneValue);
+                    $newResults[$colOneValue] = $this->repository->retrieveColumn($this->target, $colTwo, $colTwoValue);
+                }
 
-            $results = $newResults;
+                $results = $newResults;
+            }
         }
 
         return $results;
