@@ -509,7 +509,9 @@ class RepositoryQuery implements QueryInterface, Iterator
 
         $results = $this->query->fetchAll();
         if (! empty($results) && $this->repository->providesValueConversion($this->target)) {
+            $updateOrder = false;
             $columns = $this->getColumns();
+            $flippedColumns = array_flip($columns);
             foreach ($results as $row) {
                 foreach ($columns as $alias => $column) {
                     if (! is_string($alias)) {
@@ -518,6 +520,27 @@ class RepositoryQuery implements QueryInterface, Iterator
 
                     $row->$alias = $this->repository->retrieveColumn($this->target, $alias, $row->$alias);
                 }
+
+                foreach (($this->getOrder() ?: array()) as $rule) {
+                    if (! array_key_exists($rule[0], $flippedColumns) && property_exists($row, $rule[0])) {
+                        if ($this->repository->providesValueConversion($this->target, $rule[0])) {
+                            $updateOrder = true;
+                            $row->{$rule[0]} = $this->repository->retrieveColumn(
+                                $this->target,
+                                $rule[0],
+                                $row->{$rule[0]}
+                            );
+                        }
+                    } elseif (array_key_exists($rule[0], $flippedColumns)) {
+                        if ($this->repository->providesValueConversion($this->target, $rule[0])) {
+                            $updateOrder = true;
+                        }
+                    }
+                }
+            }
+
+            if ($updateOrder) {
+                uasort($results, array($this->query, 'compare'));
             }
         }
 
