@@ -32,9 +32,11 @@ class UserGroupBackendForm extends ConfigForm
     /**
      * Return a form object for the given backend type
      *
-     * @param   string      $type   The backend type for which to return a form
+     * @param   string  $type               The backend type for which to return a form
      *
      * @return  Form
+     *
+     * @throws  InvalidArgumentException    In case the given backend type is invalid
      */
     public function getBackendForm($type)
     {
@@ -73,6 +75,8 @@ class UserGroupBackendForm extends ConfigForm
 
     /**
      * Add a new user group backend
+     *
+     * The backend to add is identified by the array-key `name'.
      *
      * @param   array   $data
      *
@@ -171,7 +175,7 @@ class UserGroupBackendForm extends ConfigForm
                             'pattern'  => '/^[^\\[\\]:]+$/',
                             'messages' => array(
                                 'regexNotMatch' => $this->translate(
-                                    'The backend name cannot contain \'[\', \']\' or \':\'.'
+                                    'The name cannot contain \'[\', \']\' or \':\'.'
                                 )
                             )
                         )
