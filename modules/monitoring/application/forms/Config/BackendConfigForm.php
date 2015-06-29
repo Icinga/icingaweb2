@@ -277,6 +277,11 @@ class BackendConfigForm extends ConfigForm
                 )
             )
         );
+
+        if (isset($formData['skip_validation']) && $formData['skip_validation']) {
+            // In case another error occured and the checkbox was displayed before
+            $this->addSkipValidationCheckbox();
+        }
     }
 
     /**
@@ -292,61 +297,100 @@ class BackendConfigForm extends ConfigForm
     }
 
     /**
-     * Validate the ido instance schema resource
+     * Return whether the given values are valid
      *
-     * @param   Form            $form
-     * @param   ConfigObject    $resourceConfig
+     * @param   array   $formData   The data to validate
      *
-     * @return  bool                                Whether validation succeeded or not
+     * @return  bool
      */
-    public static function isValidIdoSchema(Form $form, ConfigObject $resourceConfig)
+    public function isValid($formData)
     {
-        try {
-            $resource = ResourceFactory::createResource($resourceConfig);
-            $result = $resource->select()->from('icinga_dbversion', array('version'));
-            $result->fetchOne();
-        } catch (Exception $e) {
-            $form->addError(
-                $form->translate(
-                    'IDO schema validation failed, it looks like that the IDO schema is missing in the given database.'
-                )
-            );
+        if (! parent::isValid($formData)) {
             return false;
         }
+
+        $resourceConfig = ResourceFactory::getResourceConfig($this->getValue('resource'));
+        if (! self::isValidIdoSchema($this, $resourceConfig) || !self::isValidIdoInstance($this, $resourceConfig)) {
+            $this->addSkipValidationCheckbox();
+            return false;
+        }
+
         return true;
     }
 
     /**
-     * Validate the ido instance availability
+     * Add a checkbox to the form by which the user can skip the schema validation
+     */
+    protected function addSkipValidationCheckbox()
+    {
+        $this->addElement(
+            'checkbox',
+            'skip_validation',
+            array(
+                'order'         => 0,
+                'ignore'        => true,
+                'required'      => true,
+                'label'         => $this->translate('Skip Validation'),
+                'description'   => $this->translate(
+                    'Check this to not to validate the IDO schema of the chosen resource.'
+                )
+            )
+        );
+    }
+
+    /**
+     * Return whether the given resource contains a valid IDO schema
      *
      * @param   Form            $form
      * @param   ConfigObject    $resourceConfig
      *
-     * @return  bool                                Whether validation succeeded or not
+     * @return  bool
      */
-    public static function isValidIdoInstance(Form $form, ConfigObject $resourceConfig)
+    public static function isValidIdoSchema(Form $form, ConfigObject $resourceConfig)
     {
-        $resource = ResourceFactory::createResource($resourceConfig);
-        $result = $resource->select()->from('icinga_instances', array('instance_name'));
-        $instances = $result->fetchAll();
-
-        if (count($instances) === 1) {
-            return true;
-        } elseif (count($instances) > 1) {
-            $form->warning(
-                $form->translate(
-                    'IDO instance validation failed, because there are multiple instances available.'
-                )
-            );
+        try {
+            $db = ResourceFactory::createResource($resourceConfig);
+            $db->select()->from('icinga_dbversion', array('version'))->fetchOne();
+        } catch (Exception $_) {
+            $form->error($form->translate(
+                'Cannot find the IDO schema. Please verify that the given database '
+                . 'contains the schema and that the configured user has access to it.'
+            ));
             return false;
         }
 
-        $form->error(
-            $form->translate(
-                'IDO instance validation failed, because there is no IDO instance available.'
-            )
-        );
+        return true;
+    }
 
-        return false;
+    /**
+     * Return whether a single icinga instance is writing to the given resource
+     *
+     * @param   Form            $form
+     * @param   ConfigObject    $resourceConfig
+     *
+     * @return  bool                                True if it's a single instance, false if none
+     *                                              or multiple instances are writing to it
+     */
+    public static function isValidIdoInstance(Form $form, ConfigObject $resourceConfig)
+    {
+        $db = ResourceFactory::createResource($resourceConfig);
+        $rowCount = $db->select()->from('icinga_instances')->count();
+
+        if ($rowCount === 0) {
+            $form->error($form->translate(
+                'There is currently no icinga instance writing to the IDO. Make sure '
+                . 'that a icinga instance is configured and able to write to the IDO.'
+            ));
+            return false;
+        } elseif ($rowCount > 1) {
+            $form->warning($form->translate(
+                'There is currently more than one icinga instance writing to the IDO. You\'ll see all objects from all'
+                . ' instances without any differentation. If this is not desired, consider setting up a separate IDO'
+                . ' for each instance.'
+            ));
+            return false;
+        }
+
+        return true;
     }
 }
