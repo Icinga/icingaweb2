@@ -91,82 +91,113 @@ class Monitoring_ConfigController extends Controller
     }
 
     /**
-     * Display a confirmation form to remove the instance identified by the 'instance' parameter
+     * Remove a monitoring instance
      */
     public function removeinstanceAction()
     {
-        $config = $this->Config('instances');
-        $form = new ConfirmRemovalForm(array(
-            'onSuccess' => function ($form) use ($config) {
-                $instanceName = $form->getRequest()->getQuery('instance');
-                $configForm = new InstanceConfigForm();
-                $configForm->setIniConfig($config);
+        $instanceName = $this->params->getRequired('instance');
 
-                try {
-                    $configForm->remove($instanceName);
-                } catch (InvalidArgumentException $e) {
-                    Notification::error($e->getMessage());
-                    return;
-                }
-
-                if ($configForm->save()) {
-                    Notification::success(sprintf(
-                        $this->translate('Instance "%s" successfully removed.'),
-                        $instanceName
-                    ));
-                } else {
-                    return false;
-                }
-            }
-        ));
-        $form->setTitle($this->translate('Remove Existing Instance'));
+        $instanceForm = new InstanceConfigForm();
+        $instanceForm->setIniConfig($this->Config('instances'));
+        $form = new ConfirmRemovalForm();
+        $form->setRedirectUrl('monitoring/config');
+        $form->setTitle(sprintf($this->translate('Remove Monitoring Instance %s'), $instanceName));
         $form->addDescription($this->translate(
             'If you have still any environments or views referring to this instance, '
             . 'you won\'t be able to send commands anymore after deletion.'
         ));
-        $form->addElement(
-            'note',
-            'question',
-            array(
-                'value'         => $this->translate('Are you sure you want to remove this instance?'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'p'))
-                )
-            )
-        );
-        $form->setRedirectUrl('monitoring/config');
+        $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($instanceName, $instanceForm) {
+            try {
+                $instanceForm->delete($instanceName);
+            } catch (Exception $e) {
+                $form->error($e->getMessage());
+                return false;
+            }
+
+            if ($instanceForm->save()) {
+                Notification::success(sprintf(t('Monitoring instance "%s" successfully removed'), $instanceName));
+                return true;
+            }
+
+            return false;
+        });
         $form->handleRequest();
 
         $this->view->form = $form;
+        $this->render('form');
     }
 
     /**
-     * Display a form to edit the instance identified by the 'instance' parameter of the request
+     * Edit a monitoring instance
      */
     public function editinstanceAction()
     {
+        $instanceName = $this->params->getRequired('instance');
+
         $form = new InstanceConfigForm();
-        $form->setTitle($this->translate('Edit Existing Instance'));
-        $form->setIniConfig($this->Config('instances'));
         $form->setRedirectUrl('monitoring/config');
-        $form->handleRequest();
+        $form->setTitle(sprintf($this->translate('Edit Monitoring Instance %s'), $instanceName));
+        $form->setIniConfig($this->Config('instances'));
+        $form->setOnSuccess(function (InstanceConfigForm $form) use ($instanceName) {
+            try {
+                $form->edit($instanceName, array_map(
+                    function ($v) {
+                        return $v !== '' ? $v : null;
+                    },
+                    $form->getValues()
+                ));
+            } catch (Exception $e) {
+                $form->error($e->getMessage());
+                return false;
+            }
+
+            if ($form->save()) {
+                Notification::success(sprintf(t('Monitoring instance "%s" successfully updated'), $instanceName));
+                return true;
+            }
+
+            return false;
+        });
+
+        try {
+            $form->load($instanceName);
+            $form->handleRequest();
+        } catch (NotFoundError $_) {
+            $this->httpNotFound(sprintf($this->translate('Monitoring instance "%s" not found'), $instanceName));
+        }
 
         $this->view->form = $form;
+        $this->render('form');
     }
 
     /**
-     * Display a form to create a new instance
+     * Create a new monitoring instance
      */
     public function createinstanceAction()
     {
         $form = new InstanceConfigForm();
-        $form->setTitle($this->translate('Add New Instance'));
-        $form->setIniConfig($this->Config('instances'));
         $form->setRedirectUrl('monitoring/config');
+        $form->setTitle($this->translate('Create New Monitoring Instance'));
+        $form->setIniConfig($this->Config('instances'));
+        $form->setOnSuccess(function (InstanceConfigForm $form) {
+            try {
+                $form->add(array_filter($form->getValues()));
+            } catch (Exception $e) {
+                $form->error($e->getMessage());
+                return false;
+            }
+
+            if ($form->save()) {
+                Notification::success(t('Monitoring instance successfully created'));
+                return true;
+            }
+
+            return false;
+        });
         $form->handleRequest();
 
         $this->view->form = $form;
+        $this->render('form');
     }
 
     /**
