@@ -117,9 +117,6 @@
             $(document).on('click', 'a', { self: this }, this.linkClicked);
             $(document).on('click', 'tr[href]', { self: this }, this.linkClicked);
 
-            // Select a table row
-            $(document).on('click', 'table.multiselect tr[href]', { self: this }, this.rowSelected);
-
             // We catch all form submit events
             $(document).on('submit', 'form', { self: this }, this.submitForm);
 
@@ -305,12 +302,6 @@
         },
 
         /**
-         * Handle table selection.
-         */
-        rowSelected: function(event) {
-        },
-
-        /**
          * Handle anchor, i.e. focus the element which is referenced by the anchor
          *
          * @param {string} query jQuery selector
@@ -345,16 +336,16 @@
             // Special checks for link clicks in multiselect rows
             if (! $a.is('tr[href]') && $a.closest('tr[href]').length > 0 && $a.closest('table.multiselect').length > 0) {
 
-                // Forward clicks to ANY link with special key pressed to rowSelected
+                // ignoray clicks to ANY link with special key pressed
                 if (event.ctrlKey || event.metaKey || event.shiftKey)
                 {
-                    return self.rowSelected.call($a.closest('tr[href]'), event);
+                    return true;
                 }
 
-                // Forward inner links matching the row URL to rowSelected
+                // ignore inner links matching the row URL
                 if ($a.attr('href') === $a.closest('tr[href]').attr('href'))
                 {
-                    return self.rowSelected.call($a.closest('tr[href]'), event);
+                    return true;
                 }
             }
 
@@ -513,8 +504,6 @@
             $(window).off('beforeunload', this.onUnload);
             $(document).off('scroll', '.container', this.onContainerScroll);
             $(document).off('click', 'a', this.linkClicked);
-            $(document).off('click', 'table.action tr[href]', this.rowSelected);
-            $(document).off('click', 'table.action tr a', this.rowSelected);
             $(document).off('submit', 'form', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
             $(document).off('change', 'form input.autosubmit', this.submitForm);
