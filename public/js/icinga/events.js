@@ -308,68 +308,6 @@
          * Handle table selection.
          */
         rowSelected: function(event) {
-            var self     = event.data.self;
-            var icinga   = self.icinga;
-            var $tr      = $(this);
-            var $table   = $tr.closest('table.multiselect');
-            var data     = self.icinga.ui.getSelectionKeys($table);
-            var url      = $table.data('icinga-multiselect-url');
-
-            if ($(event.target).closest('form').length) {
-                // allow form actions in table rows to pass through
-                return;
-            }
-            event.stopPropagation();
-            event.preventDefault();
-
-            if (!data) {
-                icinga.logger.error('multiselect table has no data-icinga-multiselect-data');
-                return;
-            }
-            if (!url) {
-                icinga.logger.error('multiselect table has no data-icinga-multiselect-url');
-                return;
-            }
-
-            // update selection
-            if (event.ctrlKey || event.metaKey) {
-                icinga.ui.toogleTableRowSelection($tr);
-                // multi selection
-            } else if (event.shiftKey) {
-                // range selection
-                icinga.ui.addTableRowRangeSelection($tr);
-            } else {
-                // single selection
-                icinga.ui.setTableRowSelection($tr);
-            }
-            // focus only the current table.
-            icinga.ui.focusTable($table[0]);
-
-            var $target = self.getLinkTargetFor($tr);
-
-            var $trs = $table.find('tr[href].active');
-            if ($trs.length > 1) {
-                var selectionData = icinga.ui.getSelectionSetData($trs, data);
-                var query = icinga.ui.selectionDataToQuery(selectionData);
-                icinga.loader.loadUrl(url + '?' + query, $target);
-                icinga.ui.storeSelectionData(selectionData);
-                icinga.ui.provideSelectionCount();
-            } else if ($trs.length === 1) {
-                // display a single row
-                $tr = $trs.first();
-                icinga.loader.loadUrl($tr.attr('href'), $target);
-                icinga.ui.storeSelectionData($tr.attr('href'));
-                icinga.ui.provideSelectionCount();
-            } else {
-                // display nothing
-                if ($target.attr('id') === 'col2') {
-                    icinga.ui.layout1col();
-                }
-                icinga.ui.storeSelectionData(null);
-                icinga.ui.provideSelectionCount();
-            }
-
-            return false;
         },
 
         /**

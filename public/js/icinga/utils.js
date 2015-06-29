@@ -293,6 +293,14 @@
             return $element[0];
         },
 
+        objectKeys: Object.keys || function (obj) {
+            var keys = [];
+            $.each(obj, function (key) {
+                keys.push(key);
+            });
+            return keys;
+        },
+
         /**
          * Cleanup
          */
