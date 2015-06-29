@@ -4,17 +4,18 @@
 namespace Icinga\Module\Monitoring\Forms\Config;
 
 use Exception;
-use Icinga\Data\ConfigObject;
-use Icinga\Data\ResourceFactory;
-use Icinga\Web\Form;
 use InvalidArgumentException;
 use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
+use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\IcingaException;
+use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfigForm;
-use Icinga\Web\Notification;
+use Icinga\Web\Form;
 
 /**
- * Form class for creating/modifying monitoring backends
+ * Form for managing monitoring backends
  */
 class BackendConfigForm extends ConfigForm
 {
@@ -24,6 +25,13 @@ class BackendConfigForm extends ConfigForm
      * @var array
      */
     protected $resources;
+
+    /**
+     * The backend to load when displaying the form for the first time
+     *
+     * @var string
+     */
+    protected $backendToLoad;
 
     /**
      * Initialize this form
@@ -47,16 +55,15 @@ class BackendConfigForm extends ConfigForm
     {
         $resources = array();
         foreach ($resourceConfig as $name => $resource) {
-//            if ($resource->type === 'db' || $resource->type === 'livestatus') {
-//                $resources[$resource->type === 'db' ? 'ido' : 'livestatus'][$name] = $name;
-//            }
             if ($resource->type === 'db') {
                 $resources['ido'][$name] = $name;
             }
         }
 
         if (empty($resources)) {
-            throw new ConfigurationError($this->translate('Could not find any valid monitoring backend resources'));
+            throw new ConfigurationError($this->translate(
+                'Could not find any valid monitoring backend resources. Please configure a database resource first.'
+            ));
         }
 
         $this->resources = $resources;
@@ -64,146 +71,109 @@ class BackendConfigForm extends ConfigForm
     }
 
     /**
-     * Add a particular monitoring backend
+     * Populate the form with the given backend's config
      *
-     * The backend to add is identified by the array-key `name'.
-     *
-     * @param   array   $values             The values to extend the configuration with
+     * @param   string  $name
      *
      * @return  $this
      *
-     * @throws  InvalidArgumentException    In case the backend does already exist
+     * @throws  NotFoundError   In case no backend with the given name is found
      */
-    public function add(array $values)
+    public function load($name)
     {
-        $name = isset($values['name']) ? $values['name'] : '';
-        if (! $name) {
-            throw new InvalidArgumentException($this->translate('Monitoring backend name missing'));
-        } elseif ($this->config->hasSection($name)) {
-            throw new InvalidArgumentException($this->translate('Monitoring backend already exists'));
+        if (! $this->config->hasSection($name)) {
+            throw new NotFoundError('No monitoring backend called "%s" found', $name);
         }
 
-        unset($values['name']);
-        $this->config->setSection($name, $values);
+        $this->backendToLoad = $name;
         return $this;
     }
 
     /**
-     * Edit a particular monitoring backend
+     * Add a new monitoring backend
      *
-     * @param   string  $name               The name of the backend to edit
-     * @param   array   $values             The values to edit the configuration with
+     * The backend to add is identified by the array-key `name'.
      *
-     * @return  array                       The edited backend configuration
+     * @param   array   $data
      *
-     * @throws  InvalidArgumentException    In case the backend does not exist
+     * @return  $this
+     *
+     * @throws  InvalidArgumentException    In case $data does not contain a backend name
+     * @throws  IcingaException             In case a backend with the same name already exists
      */
-    public function edit($name, array $values)
+    public function add(array $data)
     {
-        if (! $name) {
-            throw new InvalidArgumentException($this->translate('Old monitoring backend name missing'));
-        } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
-            throw new InvalidArgumentException($this->translate('New monitoring backend name missing'));
-        } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException($this->translate('Unknown monitoring backend provided'));
+        if (! isset($data['name'])) {
+            throw new InvalidArgumentException('Key \'name\' missing');
         }
 
-        unset($values['name']);
-        $this->config->setSection($name, $values);
-        return $this->config->getSection($name);
+        $backendName = $data['name'];
+        if ($this->config->hasSection($backendName)) {
+            throw new IcingaException('A monitoring backend with the name "%s" does already exist', $backendName);
+        }
+
+        unset($data['name']);
+        $this->config->setSection($backendName, $data);
+        return $this;
     }
 
     /**
-     * Remove the given monitoring backend
+     * Edit a monitoring backend
      *
-     * @param   string      $name           The name of the backend to remove
+     * @param   string  $name
+     * @param   array   $data
      *
-     * @return  array                       The removed backend configuration
+     * @return  $this
      *
-     * @throws  InvalidArgumentException    In case the backend does not exist
+     * @throws  NotFoundError   In case no backend with the given name is found
      */
-    public function remove($name)
+    public function edit($name, array $data)
     {
-        if (! $name) {
-            throw new InvalidArgumentException($this->translate('Monitoring backend name missing'));
-        } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException($this->translate('Unknown monitoring backend provided'));
+        if (! $this->config->hasSection($name)) {
+            throw new NotFoundError('No monitoring backend called "%s" found', $name);
         }
 
         $backendConfig = $this->config->getSection($name);
-        $this->config->removeSection($name);
-        return $backendConfig;
-    }
-
-    /**
-     * Add or edit a monitoring backend and save the configuration
-     */
-    public function onSuccess()
-    {
-        $monitoringBackend = $this->request->getQuery('backend');
-        try {
-            if ($monitoringBackend === null) { // Create new backend
-                $this->add($this->getValues());
-                $message = $this->translate('Monitoring backend "%s" has been successfully created');
-            } else { // Edit existing backend
-                $this->edit($monitoringBackend, $this->getValues());
-                $message = $this->translate('Monitoring backend "%s" has been successfully changed');
+        if (isset($data['name'])) {
+            if ($data['name'] !== $name) {
+                $this->config->removeSection($name);
+                $name = $data['name'];
             }
-        } catch (InvalidArgumentException $e) {
-            Notification::error($e->getMessage());
-            return null;
+
+            unset($data['name']);
         }
 
-        if ($this->save()) {
-            Notification::success(sprintf($message, $this->getElement('name')->getValue()));
-        } else {
-            return false;
+        $backendConfig->merge($data);
+        foreach ($backendConfig->toArray() as $k => $v) {
+            if ($v === null) {
+                unset($backendConfig->$k);
+            }
         }
+
+        $this->config->setSection($name, $backendConfig);
+        return $this;
     }
 
     /**
-     * Populate the form in case a monitoring backend is being edited
+     * Remove a monitoring backend
      *
-     * @throws  ConfigurationError  In case the backend name is missing in the request or is invalid
+     * @param   string  $name
+     *
+     * @return  $this
      */
-    public function onRequest()
+    public function delete($name)
     {
-        $monitoringBackend = $this->request->getQuery('backend');
-        if ($monitoringBackend !== null) {
-            if ($monitoringBackend === '') {
-                throw new ConfigurationError($this->translate('Monitoring backend name missing'));
-            } elseif (! $this->config->hasSection($monitoringBackend)) {
-                throw new ConfigurationError($this->translate('Unknown monitoring backend provided'));
-            }
-
-            $backendConfig = $this->config->getSection($monitoringBackend)->toArray();
-            $backendConfig['name'] = $monitoringBackend;
-            $this->populate($backendConfig);
-        }
+        $this->config->removeSection($name);
+        return $this;
     }
 
     /**
-     * (non-PHPDoc)
-     * @see Form::createElements() For the method documentation.
+     * Create and add elements to this form
+     *
+     * @param   array   $formData
      */
     public function createElements(array $formData)
     {
-        $resourceType = isset($formData['type']) ? $formData['type'] : key($this->resources);
-
-        if ($resourceType === 'livestatus') {
-            throw new ConfigurationError(
-                'We\'ve disabled livestatus support for now because it\'s not feature complete yet'
-            );
-        }
-
-        $resourceTypes = array();
-        if ($resourceType === 'ido' || array_key_exists('ido', $this->resources)) {
-            $resourceTypes['ido'] = 'IDO Backend';
-        }
-//        if ($resourceType === 'livestatus' || array_key_exists('livestatus', $this->resources)) {
-//            $resourceTypes['livestatus'] = 'Livestatus';
-//        }
-
         $this->addElement(
             'checkbox',
             'disabled',
@@ -218,9 +188,41 @@ class BackendConfigForm extends ConfigForm
             array(
                 'required'      => true,
                 'label'         => $this->translate('Backend Name'),
-                'description'   => $this->translate('The identifier of this backend')
+                'description'   => $this->translate(
+                    'The name of this monitoring backend that is used to differentiate it from others'
+                ),
+                'validators'    => array(
+                    array(
+                        'Regex',
+                        false,
+                        array(
+                            'pattern'  => '/^[^\\[\\]:]+$/',
+                            'messages' => array(
+                                'regexNotMatch' => $this->translate(
+                                    'The name cannot contain \'[\', \']\' or \':\'.'
+                                )
+                            )
+                        )
+                    )
+                )
             )
         );
+
+        $resourceType = isset($formData['type']) ? $formData['type'] : null;
+
+        $resourceTypes = array();
+        if ($resourceType === 'ido' || array_key_exists('ido', $this->resources)) {
+            $resourceTypes['ido'] = 'IDO Backend';
+        }
+
+        if ($resourceType === null) {
+            $resourceType = key($resourceTypes);
+        } elseif ($resourceType === 'livestatus') {
+            throw new ConfigurationError(
+                'We\'ve disabled livestatus support for now because it\'s not feature complete yet'
+            );
+        }
+
         $this->addElement(
             'select',
             'type',
@@ -228,9 +230,10 @@ class BackendConfigForm extends ConfigForm
                 'required'      => true,
                 'autosubmit'    => true,
                 'label'         => $this->translate('Backend Type'),
-                'description'   => $this->translate('The data source used for retrieving monitoring information'),
-                'multiOptions'  => $resourceTypes,
-                'value'         => $resourceType
+                'description'   => $this->translate(
+                    'The type of data source used for retrieving monitoring information'
+                ),
+                'multiOptions'  => $resourceTypes
             )
         );
 
@@ -274,6 +277,18 @@ class BackendConfigForm extends ConfigForm
                 )
             )
         );
+    }
+
+    /**
+     * Populate the configuration of the backend to load
+     */
+    public function onRequest()
+    {
+        if ($this->backendToLoad) {
+            $data = $this->config->getSection($this->backendToLoad)->toArray();
+            $data['name'] = $this->backendToLoad;
+            $this->populate($data);
+        }
     }
 
     /**
