@@ -287,8 +287,10 @@ class Wizard
                     $this->setCurrentPage($this->getNewPage($requestedPage, $page));
                     $page->getResponse()->redirectAndExit($page->getRedirectUrl());
                 }
-            } else {
+            } elseif ($page->getValidatePartial()) {
                 $page->isValidPartial($requestData);
+            } else {
+                $page->populate($requestData);
             }
         } elseif (($pageData = $this->getPageData($page->getName())) !== null) {
             $page->populate($pageData);
