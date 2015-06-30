@@ -9,13 +9,6 @@
 
     'use strict';
 
-    // Stores the icinga-data-url of the last focused table.
-    var focusedTableDataUrl = null;
-
-    // The stored selection data, useful for preserving selections over
-    // multiple reload-cycles.
-    var selectionData = null;
-
     Icinga.UI = function (icinga) {
 
         this.icinga = icinga;
@@ -38,8 +31,7 @@
             this.fadeNotificationsAway();
         },
 
-        fadeNotificationsAway: function()
-        {
+        fadeNotificationsAway: function() {
             var icinga = this.icinga;
             $('#notifications li')
                 .not('.fading-out')
@@ -296,93 +288,6 @@
 
         getColumnCount: function () {
             return $('#main > .container').length;
-        },
-
-        /**
-         * Read the data from a whole set of selections.
-         *
-         * @param $selections   {jQuery}    All selected rows in a jQuery-selector.
-         * @param keys          {Array}     An array containing all valid keys.
-         * @returns {Array} An array containing an object with the data for each selection.
-         */
-        getSelectionSetData: function($selections, keys) {
-            var selections = [];
-            var icinga = this.icinga;
-
-            // read all current selections
-            $selections.each(function(ind, selected) {
-                selections.push(icinga.ui.getSelectionData($(selected), keys, icinga));
-            });
-            return selections;
-        },
-
-        /**
-         * Store a set of selection-data to preserve it accross page-reloads
-         *
-         * @param data {Array|String|Null}  The selection-data be an Array of Objects,
-         *  containing the selection data (when multiple rows where selected), a
-         * String containing a single url (when only a single row was selected) or
-         * Null when nothing was selected.
-         */
-        storeSelectionData: function(data) {
-            selectionData = data;
-        },
-
-        /**
-         * Load the last stored set of selection-data
-         *
-         * @returns {Array|String|Null}   May be an Array of Objects, containing the selection data
-         * (when multiple rows where selected), a String containing a single url
-         * (when only a single row was selected) or Null when nothing was selected.
-         */
-        loadSelectionData: function() {
-            this.provideSelectionCount();
-            return selectionData;
-        },
-
-        /**
-         * Set the selections row count hint info
-         */
-        provideSelectionCount: function() {
-            var $count = $('.selection-info-count');
-
-            if (typeof selectionData === 'undefined' || selectionData === null) {
-                $count.text(0);
-                return;
-            }
-
-            if (typeof selectionData === 'string') {
-                $count.text(1);
-            } else if (selectionData.length > 1) {
-                $count.text(selectionData.length);
-            } else {
-                $count.text(0);
-            }
-        },
-
-        /**
-         * Focus the given table by deselecting all selections on all other tables.
-         *
-         * Focusing a table is important for environments with multiple tables like
-         * the dashboard. It should only be possible to select rows at one table at a time,
-         * when a user selects a row on a table all rows that are not child of the given table
-         * will be removed from the selection.
-         *
-         * @param table {htmlElement}   The table to focus.
-         */
-        focusTable: function (table) {
-            $('table').filter(function(){ return this !== table; }).find('tr[href]').removeClass('active');
-            var n = $(table).closest('div.container').attr('data-icinga-url');
-            focusedTableDataUrl = n;
-        },
-
-        /**
-         * Return the URL of the last focused table container.
-         *
-         * @returns {String}    The data-icinga-url of the last focused table, which should be unique in each site.
-         */
-        getFocusedContainerDataUrl: function() {
-            return focusedTableDataUrl;
         },
 
         /**
