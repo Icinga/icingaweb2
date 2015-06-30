@@ -5,6 +5,8 @@ namespace Icinga\Module\Setup\Forms;
 
 use Exception;
 use Icinga\Authentication\User\UserBackend;
+use Icinga\Authentication\User\DbUserBackend;
+use Icinga\Authentication\User\LdapUserBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Web\Form;
 
@@ -204,7 +206,7 @@ class AdminAccountPage extends Form
             return false;
         }
 
-        if ($data['user_type'] === 'new_user' && array_search($data['new_user'], $this->fetchUsers()) !== false) {
+        if ($data['user_type'] === 'new_user' && !$this->hasUser($data['new_user'])) {
             $this->getElement('new_user')->addError($this->translate('Username already exists.'));
             return false;
         }
@@ -254,21 +256,41 @@ class AdminAccountPage extends Form
     }
 
     /**
-     * Return the names of all users this backend currently provides
+     * Return the names of all users the backend currently provides
      *
      * @return  array
      */
     protected function fetchUsers()
     {
-        $config = new ConfigObject($this->backendConfig);
-        $config->resource = $this->resourceConfig;
-        $backend = UserBackend::create(null, $config);
-
         try {
-            return $backend->select(array('user_name'))->order('user_name', 'asc', true)->fetchColumn();
+            return $this->createBackend()->select(array('user_name'))->order('user_name', 'asc', true)->fetchColumn();
         } catch (Exception $_) {
             // No need to handle anything special here. Error means no users found.
             return array();
         }
+    }
+
+    /**
+     * Return whether the backend provides a user with the given name
+     *
+     * @param   string  $username
+     *
+     * @return  bool
+     */
+    protected function hasUser($username)
+    {
+        return $this->createBackend()->select()->where('user_name', $username)->count() > 1;
+    }
+
+    /**
+     * Create and return the backend
+     *
+     * @return  DbUserBackend|LdapUserBackend
+     */
+    protected function createBackend()
+    {
+        $config = new ConfigObject($this->backendConfig);
+        $config->resource = $this->resourceConfig;
+        return UserBackend::create(null, $config);
     }
 }
