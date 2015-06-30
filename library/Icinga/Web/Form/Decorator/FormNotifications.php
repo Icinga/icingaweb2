@@ -4,15 +4,16 @@
 namespace Icinga\Web\Form\Decorator;
 
 use Zend_Form_Decorator_Abstract;
-use Icinga\Web\Form as Form;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Form;
 
 /**
- * Decorator to add a list of notifications at the top of a form
+ * Decorator to add a list of notifications at the top or bottom of a form
  */
 class FormNotifications extends Zend_Form_Decorator_Abstract
 {
     /**
-     * Render form descriptions
+     * Render form notifications
      *
      * @param   string      $content    The html rendered so far
      *
@@ -31,16 +32,27 @@ class FormNotifications extends Zend_Form_Decorator_Abstract
         }
 
         $notifications = $this->recurseForm($form);
-
         if (empty($notifications)) {
             return $content;
         }
 
         $html = '<ul class="form-notifications">';
+        foreach (array(Form::NOTIFICATION_ERROR, Form::NOTIFICATION_WARNING, Form::NOTIFICATION_INFO) as $type) {
+            if (isset($notifications[$type])) {
+                $html .= '<li><ul class="' . $this->getNotificationTypeName($type) . '">';
+                foreach ($notifications[$type] as $message) {
+                    if (is_array($message)) {
+                        list($message, $properties) = $message;
+                        $html .= '<li' . $view->propertiesToString($properties) . '>'
+                            . $view->escape($message)
+                            . '</li>';
+                    } else {
+                        $html .= '<li>' . $view->escape($message) . '</li>';
+                    }
+                }
 
-        asort($notifications);
-        foreach ($notifications as $message => $type) {
-            $html .= '<li class="'.self::getNotificationTypeName($type).'">' . $view->escape($message) . '</li>';
+                $html .= '</ul></li>';
+            }
         }
 
         switch ($this->getPlacement()) {
@@ -54,42 +66,44 @@ class FormNotifications extends Zend_Form_Decorator_Abstract
     /**
      * Recurse the given form and return the notifications for it and all of its subforms
      *
-     * @param   Form    $form       The form to recurse
+     * @param   Form    $form   The form to recurse
      *
-     * @return array
+     * @return  array
      */
     protected function recurseForm(Form $form)
     {
         $notifications = $form->getNotifications();
-
         foreach ($form->getSubForms() as $subForm) {
-            $notifications = $notifications + $this->recurseForm($subForm);
+            foreach ($this->recurseForm($subForm) as $type => $messages) {
+                foreach ($messages as $message) {
+                    $notifications[$type][] = $message;
+                }
+            }
         }
 
         return $notifications;
     }
 
     /**
-     * Get the readable type name of the notification
+     * Return the name for the given notification type
      *
-     * @param   $type       Type of the message
+     * @param   int     $type
      *
      * @return  string
+     *
+     * @throws  ProgrammingError    In case the given type is invalid
      */
-    public static function getNotificationTypeName($type)
+    protected function getNotificationTypeName($type)
     {
         switch ($type) {
             case Form::NOTIFICATION_ERROR:
                 return 'error';
-                break;
             case Form::NOTIFICATION_WARNING:
                 return 'warning';
-                break;
             case Form::NOTIFICATION_INFO:
                 return 'info';
-                break;
             default:
-                return 'unknown';
+                throw new ProgrammingError('Invalid notification type "%s" provided', $type);
         }
     }
 }
