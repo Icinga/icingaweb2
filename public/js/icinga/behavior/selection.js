@@ -93,28 +93,6 @@
             return tuple;
         },
 
-        /**
-         * If this table is currently used to control the selection
-         *
-         * @returns {Boolean}
-         */
-        active: function() {
-            var loc = this.icinga.utils.parseUrl(window.location.href);
-            if (!loc.hash) {
-                return false;
-            }
-            if (this.getMultiselectionUrl()) {
-                var multiUrl = this.getMultiselectionUrl();
-                return multiUrl === loc.hash.split('?')[0].substr(1);
-            } else {
-                return this.rowActions().filter('[href="' + loc.hash.substr(1) + '"]').length > 1;
-            }
-        },
-
-        loading: function() {
-            
-        },
-
         clear: function() {
             this.selections().removeClass('active');
         },
@@ -210,6 +188,25 @@
             } else {
                 return '';
             }
+        },
+
+        refresh: function() {
+            this.clear();
+            var hash = this.icinga.utils.parseUrl(window.location.href).hash;
+            if (this.hasMultiselection()) {
+                var query = parseSelectionQuery(hash);
+                if (query.length > 1 && this.getMultiselectionUrl() === this.icinga.utils.parseUrl(hash.substr(1)).path) {
+                    // select all rows with matching filters
+                    var self = this;
+                    $.each(query, function(i, selection) {
+                        self.select(selection);
+                    });
+                }
+                if (query.length > 1) {
+                    return;
+                }
+            }
+            this.selectUrl(hash.substr(1));
         }
     };
 
@@ -236,16 +233,6 @@
         this.on('click', 'table.action tr[href]', this.onRowClicked, this);
     };
     Selection.prototype = new Icinga.EventListener();
-
-    Selection.prototype.toogleTableRowSelection = function ($tr) {
-        // multi selection
-        if ($tr.hasClass('active')) {
-            $tr.removeClass('active');
-        } else {
-            $tr.addClass('active');
-        }
-        return true;
-    };
 
     Selection.prototype.tables = function(context) {
         if (context) {
@@ -275,6 +262,7 @@
                 // range selection
                 table.range($tr);
             } else {
+                // single selection
                 table.clear();
                 table.select($tr);
             }
@@ -285,25 +273,24 @@
 
         // update history
         var url = self.icinga.utils.parseUrl(window.location.href.split('#')[0]);
-        if (table.selections().length > 0) {
+        var count = table.selections().length;
+        var state = url.path + url.query;
+        if (count > 0) {
             var query = table.toQuery();
-            self.icinga.loader.loadUrl(query, self.icinga.events.getLinkTargetFor($tr)); 
-            self.icinga.history.pushUrl(url.path + url.query + '#!' + query);
+            self.icinga.loader.loadUrl(query, self.icinga.events.getLinkTargetFor($tr));
+            state +=  '#!' + query;
         } else {
             if (self.icinga.events.getLinkTargetFor($tr).attr('id') === 'col2') {
-                icinga.ui.layout1col();
+                self.icinga.ui.layout1col();
             }
-            self.icinga.history.pushUrl(url.path + url.query);
         }
+        self.icinga.history.pushUrl(state);
         
-        // clear all inactive tables
-        this.tables().each(function () { 
-            var t = new Table(this, self.icinga)
-            if (! t.active()) {
-                t.clear();
-            }
+        // re draw all table selections
+        self.tables().each(function () {
+            new Table(this, self.icinga).refresh();
         });
-        
+
         // update selection info
         $('.selection-info-count').text(table.selections().size());
         return false;
@@ -312,28 +299,15 @@
     Selection.prototype.onRendered = function(evt) {
         var container = evt.target;
         var self = evt.data.self;
-        
-        if (self.tables(container).length < 1) {
-            return;
-        }
 
         // draw all selections
         self.tables().each(function(i, el) {
-            var table = new Table(el, self.icinga);
-            table.clear();
-            if (! table.active()) {
-                return;
-            }
-            var hash = self.icinga.utils.parseUrl(window.location.href).hash;
-            if (table.hasMultiselection()) {
-                $.each(parseSelectionQuery(hash), function(i, selection) {
-                    table.select(selection);
-                });
-            } else {
-                table.selectUrl(hash.substr(1));
-            }
-            $('.selection-info-count').text(table.selections().size());
+            new Table(el, self.icinga).refresh();
         });
+
+        // update displayed selection count
+        var table = new Table(self.tables(container).first());
+        $(container).find('.selection-info-count').text(table.selections().size());
     };
 
     Icinga.Behaviors.Selection = Selection;
