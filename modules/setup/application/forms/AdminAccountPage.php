@@ -5,6 +5,8 @@ namespace Icinga\Module\Setup\Forms;
 
 use Exception;
 use Icinga\Authentication\User\UserBackend;
+use Icinga\Authentication\User\DbUserBackend;
+use Icinga\Authentication\User\LdapUserBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Web\Form;
 
@@ -33,7 +35,10 @@ class AdminAccountPage extends Form
     public function init()
     {
         $this->setName('setup_admin_account');
-        $this->setViewScript('form/setup-admin-account.phtml');
+        $this->setTitle($this->translate('Administration', 'setup.page.title'));
+        $this->addDescription($this->translate(
+            'Now it\'s time to configure your first administrative account for Icinga Web 2.'
+        ));
     }
 
     /**
@@ -68,14 +73,53 @@ class AdminAccountPage extends Form
     public function createElements(array $formData)
     {
         $choices = array();
-
         if ($this->backendConfig['backend'] !== 'db') {
             $choices['by_name'] = $this->translate('By Name', 'setup.admin');
+            $choice = isset($formData['user_type']) ? $formData['user_type'] : 'by_name';
+        } else {
+            $choices['new_user'] = $this->translate('New User', 'setup.admin');
+            $choice = isset($formData['user_type']) ? $formData['user_type'] : 'new_user';
+        }
+
+        if (in_array($this->backendConfig['backend'], array('db', 'ldap', 'msldap'))) {
+            $users = $this->fetchUsers();
+            if (! empty($users)) {
+                $choices['existing_user'] = $this->translate('Existing User', 'setup.admin');
+            }
+        }
+
+        if (count($choices) > 1) {
+            $this->addDescription($this->translate(
+                'Below are several options you can choose from for how to define the desired account.'
+            ));
+            $this->addElement(
+                'select',
+                'user_type',
+                array(
+                    'required'      => true,
+                    'autosubmit'    => true,
+                    'label'         => $this->translate('Type Of Definition'),
+                    'multiOptions'  => $choices,
+                    'value'         => $choice
+                )
+            );
+        } else {
+            $this->addElement(
+                'hidden',
+                'user_type',
+                array(
+                    'required'  => true,
+                    'value'     => key($choices)
+                )
+            );
+        }
+
+        if ($choice === 'by_name') {
             $this->addElement(
                 'text',
                 'by_name',
                 array(
-                    'required'      => !isset($formData['user_type']) || $formData['user_type'] === 'by_name',
+                    'required'      => true,
                     'value'         => $this->getUsername(),
                     'label'         => $this->translate('Username'),
                     'description'   => $this->translate(
@@ -84,53 +128,35 @@ class AdminAccountPage extends Form
                     )
                 )
             );
-            if (! $this->request->isXmlHttpRequest()) {
-                // In case JS is disabled we must not provide client side validation as
-                // the user is required to input data even he has changed his mind
-                $this->getElement('by_name')->setAttrib('required', null);
-                $this->getElement('by_name')->setAttrib('aria-required', null);
-            }
         }
 
-        if (in_array($this->backendConfig['backend'], array('db', 'ldap', 'msldap'))) {
-            $users = $this->fetchUsers();
-            if (false === empty($users)) {
-                $choices['existing_user'] = $this->translate('Existing User');
-                $this->addElement(
-                    'select',
-                    'existing_user',
-                    array(
-                        'required'      => isset($formData['user_type']) && $formData['user_type'] === 'existing_user',
-                        'label'         => $this->translate('Username'),
-                        'description'   => sprintf(
-                            $this->translate(
-                                'Choose a user reported by the %s backend as the initial administrative account',
-                                'setup.admin'
-                            ),
-                            $this->backendConfig['backend'] === 'db'
-                                ? $this->translate('database', 'setup.admin.authbackend')
-                                : 'LDAP'
+        if ($choice === 'existing_user') {
+            $this->addElement(
+                'select',
+                'existing_user',
+                array(
+                    'required'      => true,
+                    'label'         => $this->translate('Username'),
+                    'description'   => sprintf(
+                        $this->translate(
+                            'Choose a user reported by the %s backend as the initial administrative account',
+                            'setup.admin'
                         ),
-                        'multiOptions'  => array_combine($users, $users)
-                    )
-                );
-                if (! $this->request->isXmlHttpRequest()) {
-                    // In case JS is disabled we must not provide client side validation as
-                    // the user is required to input data even he has changed his mind
-                    $this->getElement('existing_user')->setAttrib('required', null);
-                    $this->getElement('existing_user')->setAttrib('aria-required', null);
-                }
-            }
+                        $this->backendConfig['backend'] === 'db'
+                            ? $this->translate('database', 'setup.admin.authbackend')
+                            : 'LDAP'
+                    ),
+                    'multiOptions'  => array_combine($users, $users)
+                )
+            );
         }
 
-        if ($this->backendConfig['backend'] === 'db') {
-            $choices['new_user'] = $this->translate('New User');
-            $required = isset($formData['user_type']) && $formData['user_type'] === 'new_user';
+        if ($choice === 'new_user') {
             $this->addElement(
                 'text',
                 'new_user',
                 array(
-                    'required'      => $required,
+                    'required'      => true,
                     'label'         => $this->translate('Username'),
                     'description'   => $this->translate(
                         'Enter the username to be used when creating an initial administrative account'
@@ -141,7 +167,7 @@ class AdminAccountPage extends Form
                 'password',
                 'new_user_password',
                 array(
-                    'required'      => $required,
+                    'required'      => true,
                     'label'         => $this->translate('Password'),
                     'description'   => $this->translate('Enter the password to assign to the newly created account')
                 )
@@ -150,42 +176,14 @@ class AdminAccountPage extends Form
                 'password',
                 'new_user_2ndpass',
                 array(
-                    'required'      => $required,
+                    'required'      => true,
                     'label'         => $this->translate('Repeat password'),
-                    'description'   => $this->translate('Please repeat the password given above to avoid typing errors'),
+                    'description'   => $this->translate(
+                        'Please repeat the password given above to avoid typing errors'
+                    ),
                     'validators'    => array(
                         array('identical', false, array('new_user_password'))
                     )
-                )
-            );
-            if (! $this->request->isXmlHttpRequest()) {
-                // In case JS is disabled we must not provide client side validation as
-                // the user is required to input data even he has changed his mind
-                foreach (array('new_user', 'new_user_password', 'new_user_2ndpass') as $elementName) {
-                    $this->getElement($elementName)->setAttrib('aria-required', null);
-                    $this->getElement($elementName)->setAttrib('required', null);
-                }
-            }
-        }
-
-        if (count($choices) > 1) {
-            $this->addElement(
-                'radio',
-                'user_type',
-                array(
-                    'required'      => true,
-                    'autosubmit'    => true,
-                    'value'         => key($choices),
-                    'multiOptions'  => $choices
-                )
-            );
-        } else {
-            $this->addElement(
-                'hidden',
-                'user_type',
-                array(
-                    'required'  => true,
-                    'value'     => key($choices)
                 )
             );
         }
@@ -204,32 +202,12 @@ class AdminAccountPage extends Form
             return false;
         }
 
-        if ($data['user_type'] === 'new_user' && array_search($data['new_user'], $this->fetchUsers()) !== false) {
+        if ($data['user_type'] === 'new_user' && !$this->hasUser($data['new_user'])) {
             $this->getElement('new_user')->addError($this->translate('Username already exists.'));
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * Return whether the given values (possibly incomplete) are valid
-     *
-     * Unsets all empty text-inputs so that they are not being validated when auto-submitting the form.
-     *
-     * @param   array   $formData
-     *
-     * @return type
-     */
-    public function isValidPartial(array $formData)
-    {
-        foreach (array('by_name', 'new_user', 'new_user_password', 'new_user_2ndpass') as $elementName) {
-            if (isset($formData[$elementName]) && $formData[$elementName] === '') {
-                unset($formData[$elementName]);
-            }
-        }
-
-        return parent::isValidPartial($formData);
     }
 
     /**
@@ -254,21 +232,41 @@ class AdminAccountPage extends Form
     }
 
     /**
-     * Return the names of all users this backend currently provides
+     * Return the names of all users the backend currently provides
      *
      * @return  array
      */
     protected function fetchUsers()
     {
-        $config = new ConfigObject($this->backendConfig);
-        $config->resource = $this->resourceConfig;
-        $backend = UserBackend::create(null, $config);
-
         try {
-            return $backend->select(array('user_name'))->order('user_name', 'asc', true)->fetchColumn();
+            return $this->createBackend()->select(array('user_name'))->order('user_name', 'asc', true)->fetchColumn();
         } catch (Exception $_) {
             // No need to handle anything special here. Error means no users found.
             return array();
         }
+    }
+
+    /**
+     * Return whether the backend provides a user with the given name
+     *
+     * @param   string  $username
+     *
+     * @return  bool
+     */
+    protected function hasUser($username)
+    {
+        return $this->createBackend()->select()->where('user_name', $username)->count() > 1;
+    }
+
+    /**
+     * Create and return the backend
+     *
+     * @return  DbUserBackend|LdapUserBackend
+     */
+    protected function createBackend()
+    {
+        $config = new ConfigObject($this->backendConfig);
+        $config->resource = $this->resourceConfig;
+        return UserBackend::create(null, $config);
     }
 }
