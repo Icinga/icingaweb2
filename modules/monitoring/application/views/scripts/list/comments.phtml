@@ -43,11 +43,14 @@ if (count($comments) === 0) {
             ),
             'monitoring/comment/show',
             array('comment_id' => $comment->id),
-            array('title' => sprintf(
-                $this->translate('Show detailed information for comment on %s for %s'),
-                $comment->service_display_name,
-                $comment->host_display_name
-          ))) ?>
+            array(
+                'title' => sprintf(
+                    $this->translate('Show detailed information for comment on %s for %s'),
+                    $comment->service_display_name,
+                    $comment->host_display_name
+                ),
+                'class' => 'rowaction'
+            )) ?>
         <?php else: ?>
           <?= $this->icon('host', $this->translate('Host')); ?>
 
