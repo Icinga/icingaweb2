@@ -1,18 +1,31 @@
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 /**
- * Icinga.Behavior.Selection
+ * Icinga.Behavior.ActionTable
  * 
- * A multi selection that distincts between the rows using the row action URL filter
+ * A multi selection that distincts between the table rows using the row action URL filter
  */
 (function(Icinga, $) {
 
     "use strict";
 
+    /**
+     * Remove one leading and trailing bracket and all text outside those brackets
+     *
+     * @param   str     {String}
+     * @returns         {string}
+     */
     var stripBrackets = function (str) {
         return str.replace(/^[^\(]*\(/, '').replace(/\)[^\)]*$/, '');
     };
 
+    /**
+     * Parse the filter query contained in the given url filter string
+     *
+     * @param   filterString    {String}
+     *
+     * @returns                 {Array}   An object containing each row filter
+     */
     var parseSelectionQuery = function(filterString) {
         var selections = [];
         $.each(stripBrackets(filterString).split('|'), function(i, row) {
@@ -26,15 +39,15 @@
         return selections;
     };
 
-    var toQueryPart = function(id) {
-        var queries = [];
-        $.each(id, function(key, value) {
-            queries.push(key + '=' + encodeURIComponent(value));
-        });
-        return queries.join('&');
-    };
-
-    var Table = function(table, icinga) {
+    /**
+     * Handle the selection of an action table
+     *
+     * @param   table   {HTMLElement}   The table
+     * @param           {Icinga}
+     *
+     * @constructor
+     */
+    var Selection = function(table, icinga) {
         this.$el = $(table);
         this.icinga = icinga;
         
@@ -48,37 +61,71 @@
         }
     };
 
-    Table.prototype = {
+    Selection.prototype = {
+
+        /**
+         * Return all rows as jQuery selector
+         *
+         * @returns         {jQuery}
+         */
         rows: function() {
             return this.$el.find('tr');
         },
 
+        /**
+         * Return all row action links as jQuery selector
+         *
+         * @returns         {jQuery}
+         */
         rowActions: function() {
             return this.$el.find('tr a.rowaction');
         },
 
+        /**
+         * Return all selected rows as jQuery selector
+         *
+         * @returns         {jQuery}
+         */
         selections: function() {
             return this.$el.find('tr.active');
         },
 
+        /**
+         * If this selection allows selecting multiple rows
+         *
+         * @returns         {Boolean}
+         */
         hasMultiselection: function() {
             return this.$el.hasClass('multiselect');
         },
 
+        /**
+         * Return all filter keys that are significant when applying the selection
+         *
+         * @returns         {Array}
+         */
         getMultiselectionKeys: function() {
             var data = this.$el.data('icinga-multiselect-data');
             return (data && data.split(',')) || [];
         },
 
+        /**
+         * Return the target URL that is used when multi selecting rows
+         *
+         * This URL may differ from the url that is used when applying single rows
+         *
+         * @returns         {String}
+         */
         getMultiselectionUrl: function() {
             return this.$el.data('icinga-multiselect-url');
         },
 
         /**
-         * @param   row     {jQuery}    The row
+         * Read all filter data from the given row
          *
-         * @returns         {Object}    An object containing all selection data in
-         *                              this row as key-value pairs
+         * @param   row     {jQuery}    The row element
+         *
+         * @returns         {Object}    An object containing all filter data in this row as key-value pairs
          */
         getRowData: function(row) {
             var params = this.icinga.utils.parseUrl(row.attr('href')).params;
@@ -93,10 +140,18 @@
             return tuple;
         },
 
+        /**
+         * Deselect all selected rows
+         */
         clear: function() {
             this.selections().removeClass('active');
         },
 
+        /**
+         * Add all rows that match the given filter to the selection
+         *
+         * @param filter {jQuery|Object}    Either an object containing filter variables or the actual row to select
+         */
         select: function(filter) {
             if (filter instanceof jQuery) {
                 filter.addClass('active');
@@ -124,21 +179,22 @@
                 .addClass('active');
         },
 
-        toggle: function(filter) {
-            if (filter instanceof jQuery) {
-                filter.toggleClass('active');
-                return;
-            }
-            this.icinga.logger.error('toggling by filter not implemented');
+        /**
+         * Toggle the selection of the row between on and off
+         *
+         * @param   row     {jQuery}    The row to toggle
+         */
+        toggle: function(row) {
+            row.toggleClass('active');
         },
 
         /**
          * Add a new selection range to the closest table, using the selected row as
          * range target.
          *
-         * @param   row {jQuery}    The target of the selected range.
+         * @param   row     {jQuery}    The target of the selected range.
          *
-         * @returns     {boolean}   If the selection was changed.
+         * @returns         {boolean}   If the selection was changed.
          */
         range: function(row) {
             var from, to;
@@ -166,10 +222,20 @@
             return false;
         },
 
+        /**
+         * Select rows that target the given url
+         *
+         * @param   url     {String}    The target url
+         */
         selectUrl: function(url) {
             this.rows().filter('[href="' + url + '"]').addClass('active');
         },
 
+        /**
+         * Convert all currently selected rows into an url query string
+         *
+         * @returns         {String}    The filter string
+         */
         toQuery: function() {
             var self = this;
             var selections = this.selections();
@@ -190,6 +256,9 @@
             }
         },
 
+        /**
+         * Refresh the displayed active columns using the current page location
+         */
         refresh: function() {
             this.clear();
             var hash = this.icinga.utils.parseUrl(window.location.href).hash;
@@ -212,7 +281,7 @@
 
     Icinga.Behaviors = Icinga.Behaviors || {};
 
-    var Selection = function (icinga) {
+    var ActionTable = function (icinga) {
         Icinga.EventListener.call(this, icinga);
         
        /**
@@ -232,19 +301,28 @@
         this.on('rendered', this.onRendered, this);
         this.on('click', 'table.action tr[href]', this.onRowClicked, this);
     };
-    Selection.prototype = new Icinga.EventListener();
+    ActionTable.prototype = new Icinga.EventListener();
 
-    Selection.prototype.tables = function(context) {
+    /**
+     * Return all active tables in this table, or in the context as jQuery selector
+     *
+     * @param   context   {HTMLElement}
+     * @returns           {jQuery}
+     */
+    ActionTable.prototype.tables = function(context) {
         if (context) {
             return $(context).find('table.action');
         }
         return $('table.action');
     };
 
-    Selection.prototype.onRowClicked = function(event) {
+    /**
+     * Handle clicks on table rows and update selection and history
+     */
+    ActionTable.prototype.onRowClicked = function (event) {
         var self = event.data.self;
         var $tr = $(event.target).closest('tr');
-        var table = new Table($tr.closest('table.action')[0], self.icinga);
+        var table = new Selection($tr.closest('table.action')[0], self.icinga);
 
         // allow form actions in table rows to pass through
         if ($(event.target).closest('form').length) {
@@ -288,28 +366,31 @@
         
         // re draw all table selections
         self.tables().each(function () {
-            new Table(this, self.icinga).refresh();
+            new Selection(this, self.icinga).refresh();
         });
 
         // update selection info
         $('.selection-info-count').text(table.selections().size());
         return false;
-    }
+    };
 
-    Selection.prototype.onRendered = function(evt) {
+    /**
+     * Ensure that
+     */
+    ActionTable.prototype.onRendered = function(evt) {
         var container = evt.target;
         var self = evt.data.self;
 
         // draw all selections
         self.tables().each(function(i, el) {
-            new Table(el, self.icinga).refresh();
+            new Selection(el, self.icinga).refresh();
         });
 
         // update displayed selection count
-        var table = new Table(self.tables(container).first());
+        var table = new Selection(self.tables(container).first());
         $(container).find('.selection-info-count').text(table.selections().size());
     };
 
-    Icinga.Behaviors.Selection = Selection;
+    Icinga.Behaviors.ActionTable = ActionTable;
 
 }) (Icinga, jQuery);

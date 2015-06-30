@@ -27,7 +27,7 @@ class JavaScript
         'js/icinga/behavior/tristate.js',
         'js/icinga/behavior/navigation.js',
         'js/icinga/behavior/form.js',
-        'js/icinga/behavior/selection.js'
+        'js/icinga/behavior/actiontable.js'
     );
 
     protected static $vendorFiles = array(
