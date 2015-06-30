@@ -35,6 +35,7 @@ class AdminAccountPage extends Form
     public function init()
     {
         $this->setName('setup_admin_account');
+        $this->setTitle($this->translate('Administration', 'setup.page.title'));
         $this->addDescription($this->translate(
             'Now it\'s time to configure your first administrative account for Icinga Web 2.'
         ));
