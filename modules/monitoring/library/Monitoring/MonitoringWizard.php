@@ -52,8 +52,9 @@ class MonitoringWizard extends Wizard implements SetupWizard
             $this->getDirection() === static::FORWARD
             && ($page->getName() === 'setup_monitoring_ido' || $page->getName() === 'setup_monitoring_livestatus')
         ) {
-            if ((($dbResourceData = $this->getPageData('setup_db_resource')) !== null
-                 && $dbResourceData['name'] === $request->getPost('name'))
+            if (
+                (($authDbResourceData = $this->getPageData('setup_auth_db_resource')) !== null
+                 && $authDbResourceData['name'] === $request->getPost('name'))
                 || (($ldapResourceData = $this->getPageData('setup_ldap_resource')) !== null
                     && $ldapResourceData['name'] === $request->getPost('name'))
             ) {

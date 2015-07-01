@@ -18,7 +18,6 @@ class DbResourcePage extends Form
      */
     public function init()
     {
-        $this->setName('setup_db_resource');
         $this->setTitle($this->translate('Database Resource', 'setup.page.title'));
         $this->addDescription($this->translate(
             'Now please configure your database resource. Note that the database itself does not need to'

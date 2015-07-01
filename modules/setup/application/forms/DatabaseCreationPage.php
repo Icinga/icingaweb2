@@ -38,7 +38,6 @@ class DatabaseCreationPage extends Form
      */
     public function init()
     {
-        $this->setName('setup_database_creation');
         $this->setTitle($this->translate('Database Setup', 'setup.page.title'));
         $this->addDescription($this->translate(
             'It seems that either the database you defined earlier does not yet exist and cannot be created'
