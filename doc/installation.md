@@ -35,14 +35,14 @@ Please contact your distribution packagers.
 You need to add the Icinga repository to your package management configuration for installing Icinga Web 2.
 Below is a list with examples for various distributions.
 
-Debian (debmon):
+**Debian (debmon)**:
 ````
 wget -O - http://debmon.org/debmon/repo.key 2>/dev/null | apt-key add -
 echo 'deb http://debmon.org/debmon debmon-wheezy main' >/etc/apt/sources.list.d/debmon.list
 apt-get update
 ````
 
-Ubuntu Trusty:
+**Ubuntu Trusty**:
 ````
 wget -O - http://packages.icinga.org/icinga.key | apt-key add -
 add-apt-repository 'deb http://packages.icinga.org/ubuntu icinga-trusty main'
@@ -51,41 +51,49 @@ apt-get update
 
 For other Ubuntu versions just replace trusty with your distribution's code name.
 
-RHEL and CentOS:
+**RHEL and CentOS**:
 ````
 rpm --import http://packages.icinga.org/icinga.key
 curl -o /etc/yum.repos.d/ICINGA-release.repo http://packages.icinga.org/epel/ICINGA-release.repo
 yum makecache
 ````
 
-Fedora:
+**Fedora**:
 ````
 rpm --import http://packages.icinga.org/icinga.key
 curl -o /etc/yum.repos.d/ICINGA-release.repo http://packages.icinga.org/fedora/ICINGA-release.repo
 yum makecache
 ````
 
-SLES 11:
+**SLES 11**:
 ````
 zypper ar http://packages.icinga.org/SUSE/ICINGA-release-11.repo
 zypper ref
 ````
 
-SLES 12:
+**SLES 12**:
 ````
 zypper ar http://packages.icinga.org/SUSE/ICINGA-release.repo
 zypper ref
 ````
 
-openSUSE:
+**openSUSE**:
 ````
 zypper ar http://packages.icinga.org/openSUSE/ICINGA-release.repo
 zypper ref
 ````
 
+#### <a id="package-repositories-rhel-notes"></a> RHEL/CentOS Notes
+
 The packages for RHEL/CentOS depend on other packages which are distributed as part of the
 [EPEL repository](http://fedoraproject.org/wiki/EPEL). Please make sure to enable this repository by following
 [these instructions](http://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F).
+
+#### <a id="package-repositories-wheezy-notes"></a> Debian wheezy Notes
+
+The packages for Debian wheezy depend on other packages which are distributed as part of the
+[wheezy-packports](http://backports.debian.org/) repository. Please make sure to enable this repository by following
+[these instructions](http://backports.debian.org/Instructions/).
 
 ### <a id="installing-from-package-example"></a> Installing Icinga Web 2
 
@@ -93,17 +101,19 @@ You can install Icinga Web 2 by using your distribution's package manager to ins
 Below is a list with examples for various distributions. The additional package `icingacli` is necessary
 for being able to follow further steps in this guide.
 
-Debian and Ubuntu:
+**Debian and Ubuntu**:
 ````
 apt-get install icingaweb2 icingacli
 ````
+For Debian wheezy please read the [package repositories notes](#package-repositories-wheezy-notes).
 
-RHEL, CentOS and Fedora:
+**RHEL, CentOS and Fedora**:
 ````
 yum install icingaweb2 icingacli
 ````
+For RHEL/CentOS please read the [package repositories notes](#package-repositories-rhel-notes).
 
-SLES and openSUSE:
+**SLES and openSUSE**:
 ````
 zypper install icingaweb2 icingacli
 ````
@@ -158,12 +168,12 @@ mv icingaweb2 /usr/share/icingaweb2
 
 Use `icingacli` to generate web server configuration for either Apache or nginx.
 
-Apache:
+**Apache**:
 ````
 ./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public
 ````
 
-nginx:
+**nginx**:
 ````
 ./bin/icingacli setup config webserver nginx --document-root /usr/share/icingaweb2/public
 ````
@@ -185,29 +195,29 @@ system group. The web server user and CLI user have to be added to this system g
 
 Add the system group `icingaweb2` in the first place.
 
-Fedora, RHEL, CentOS, SLES and OpenSUSE:
+**Fedora, RHEL, CentOS, SLES and OpenSUSE**:
 ````
 groupadd -r icingaweb2
 ````
 
-Debian and Ubuntu:
+**Debian and Ubuntu**:
 ````
 addgroup --system icingaweb2
 ````
 
 Add your web server's user to the system group `icingaweb2`:
 
-Fedora, RHEL and CentOS:
+**Fedora, RHEL and CentOS**:
 ````
 usermod -a -G icingaweb2 apache
 ````
 
-SLES and OpenSUSE:
+**SLES and OpenSUSE**:
 ````
 usermod -A icingaweb2 wwwrun
 ````
 
-Debian and Ubuntu:
+**Debian and Ubuntu**:
 ````
 usermod -a -G icingaweb2 www-data
 ````
