@@ -55,8 +55,10 @@ class MonitoringWizard extends Wizard implements SetupWizard
             if (
                 (($authDbResourceData = $this->getPageData('setup_auth_db_resource')) !== null
                  && $authDbResourceData['name'] === $request->getPost('name'))
-                || (($ldapResourceData = $this->getPageData('setup_ldap_resource')) !== null
-                    && $ldapResourceData['name'] === $request->getPost('name'))
+                || (($configDbResourceData = $this->getPageData('setup_config_db_resource')) !== null
+                    && $configDbResourceData['name'] === $request->getPost('name'))
+                    || (($ldapResourceData = $this->getPageData('setup_ldap_resource')) !== null
+                        && $ldapResourceData['name'] === $request->getPost('name'))
             ) {
                 $page->addError(mt('monitoring', 'The given resource name is already in use.'));
             }
