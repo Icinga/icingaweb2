@@ -202,7 +202,7 @@ class AdminAccountPage extends Form
             return false;
         }
 
-        if ($data['user_type'] === 'new_user' && !$this->hasUser($data['new_user'])) {
+        if ($data['user_type'] === 'new_user' && $this->hasUser($data['new_user'])) {
             $this->getElement('new_user')->addError($this->translate('Username already exists.'));
             return false;
         }
@@ -255,7 +255,11 @@ class AdminAccountPage extends Form
      */
     protected function hasUser($username)
     {
-        return $this->createBackend()->select()->where('user_name', $username)->count() > 1;
+        try {
+            return $this->createBackend()->select()->where('user_name', $username)->count() > 1;
+        } catch (Exception $_) {
+            return null;
+        }
     }
 
     /**
