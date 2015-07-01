@@ -6,6 +6,7 @@ namespace Icinga\Authentication;
 use Exception;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
 use Icinga\Application\Logger;
@@ -63,8 +64,11 @@ class Manager
             );
             $config = new Config();
         }
-        if ($config->get('preferences', 'store', 'ini') !== 'none') {
-            $preferencesConfig = $config->getSection('preferences');
+        if ($config->get('global', 'config_backend', 'ini') !== 'none') {
+            $preferencesConfig = new ConfigObject(array(
+                'store'     => $config->get('global', 'config_backend', 'ini'),
+                'resource'  => $config->get('global', 'config_resource')
+            ));
             try {
                 $preferencesStore = PreferencesStore::create(
                     $preferencesConfig,
