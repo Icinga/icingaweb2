@@ -281,3 +281,9 @@ The first release candidate of Icinga Web 2 introduces the following non-backwar
   predefined subset of filter columns. Please see the module's security
   related documentation for more details.
 
+## <a id="upgrading-to-2.0.0"></a> Upgrading to Icinga Web 2 2.0.0
+
+* Icinga Web 2 installations from package on RHEL/CentOS 7 now depend on `php-ZendFramework` which is available through
+the [EPEL repository](http://fedoraproject.org/wiki/EPEL). Before, Zend was installed as Icinga Web 2 vendor library
+through the package `icingaweb2-vendor-zend`. After upgrading, please make sure to remove the package
+`icingaweb2-vendor-zend`.
