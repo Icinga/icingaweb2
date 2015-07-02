@@ -15,20 +15,11 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}
 Packager:       Icinga Team <info@icinga.org>
 
 %if 0%{?fedora} || 0%{?rhel} || 0%{?amzn}
+%define php             php
+%define php_cli         php-cli
 %define wwwconfigdir    %{_sysconfdir}/httpd/conf.d
 %define wwwuser         apache
-%if 0%{?rhel} == 5
-%define php     php53
-%define php_cli php53-cli
-%else
-%define php     php
-%define php_cli php-cli
-%endif
-%if 0%{?rhel} == 6
-%define zend php-ZendFramework
-%else
-%define zend %{name}-vendor-Zend
-%endif
+%define zend            php-ZendFramework
 %endif
 
 %if 0%{?suse_version}
@@ -56,6 +47,7 @@ Requires:                       %{name}-vendor-JShrink
 Requires:                       %{name}-vendor-lessphp
 Requires:                       %{name}-vendor-Parsedown
 Requires:                       %{zend}
+Obsoletes:                      %{name}-vendor-zend
 
 
 %description
