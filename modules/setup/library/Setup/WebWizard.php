@@ -235,7 +235,8 @@ class WebWizard extends Wizard implements SetupWizard
             $skip = $authData['type'] !== 'ldap';
         } elseif ($newPage->getName() === 'setup_config_db_resource') {
             $authData = $this->getPageData('setup_authentication_type');
-            $skip = $authData['type'] === 'db';
+            $configData = $this->getPageData('setup_general_config');
+            $skip = $authData['type'] === 'db' || $configData['global_config_backend'] !== 'db';
         } elseif (in_array($newPage->getName(), array('setup_auth_db_creation', 'setup_config_db_creation'))) {
             if (
                 ($newPage->getName() === 'setup_auth_db_creation' || $this->hasPageData('setup_config_db_resource'))
