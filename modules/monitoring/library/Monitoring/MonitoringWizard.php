@@ -63,7 +63,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
                     || (($ldapResourceData = $this->getPageData('setup_ldap_resource')) !== null
                         && $ldapResourceData['name'] === $request->getPost('name'))
             ) {
-                $page->addError(mt('monitoring', 'The given resource name is already in use.'));
+                $page->error(mt('monitoring', 'The given resource name is already in use.'));
             }
         }
     }
