@@ -75,7 +75,7 @@ class DbResourcePage extends Form
                 $db = new DbTool($this->getValues());
                 $db->checkConnectivity();
             } catch (PDOException $e) {
-                $this->addError($e->getMessage());
+                $this->error($e->getMessage());
                 $this->addSkipValidationCheckbox();
                 return false;
             }
