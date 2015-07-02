@@ -89,6 +89,9 @@ The packages for RHEL/CentOS depend on other packages which are distributed as p
 [EPEL repository](http://fedoraproject.org/wiki/EPEL). Please make sure to enable this repository by following
 [these instructions](http://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F).
 
+> Please note that installing Icinga Web 2 on **RHEL/CentOS 5** is not supported due to EOL versions of PHP and
+> PostgreSQL.
+
 #### <a id="package-repositories-wheezy-notes"></a> Debian wheezy Notes
 
 The packages for Debian wheezy depend on other packages which are distributed as part of the
