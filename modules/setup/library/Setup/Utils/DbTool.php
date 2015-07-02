@@ -352,6 +352,24 @@ class DbTool
     }
 
     /**
+     * Return the given table name with all wildcards being escaped
+     *
+     * @param   string  $tableName
+     *
+     * @return  string
+     *
+     * @throws  LogicException          In case there is no behaviour implemented for the current PDO driver
+     */
+    public function escapeTableWildcards($tableName)
+    {
+        if ($this->config['db'] === 'mysql') {
+            return str_replace(array('_', '%'), array('\_', '\%'), $tableName);
+        }
+
+        throw new LogicException('Unable to escape table wildcards.');
+    }
+
+    /**
      * Return the given value escaped as string
      *
      * @param   mixed  $value       The value to escape
@@ -481,9 +499,12 @@ class DbTool
     {
         if ($this->config['db'] === 'mysql') {
             list($_, $host) = explode('@', $this->query('select current_user()')->fetchColumn());
-            $queryString = sprintf(
-                'GRANT %%s ON %s.%%s TO %s@%s',
-                $this->quoteIdentifier($this->config['dbname']),
+            $quotedDbName = $this->quoteIdentifier($this->config['dbname']);
+
+            $grant = 'GRANT %s';
+            $on = ' ON %s.%s';
+            $to = sprintf(
+                ' TO %s@%s',
                 $this->quoteIdentifier($username),
                 str_replace('%', '%%', $this->quoteIdentifier($host))
             );
@@ -499,15 +520,18 @@ class DbTool
             }
 
             if (false === empty($tablePrivileges)) {
+                $tableGrant = sprintf($grant, join(',', $tablePrivileges));
                 foreach ($context as $table) {
-                    $this->exec(
-                        sprintf($queryString, join(',', $tablePrivileges), $this->quoteIdentifier($table))
-                    );
+                    $this->exec($tableGrant . sprintf($on, $quotedDbName, $this->quoteIdentifier($table)) . $to);
                 }
             }
 
             if (false === empty($dbPrivileges)) {
-                $this->exec(sprintf($queryString, join(',', $dbPrivileges), '*'));
+                $this->exec(
+                    sprintf($grant, join(',', $dbPrivileges))
+                    . sprintf($on, $this->escapeTableWildcards($quotedDbName), '*')
+                    . $to
+                );
             }
         } elseif ($this->config['db'] === 'pgsql') {
             $dbPrivileges = array();
@@ -651,7 +675,7 @@ EOD;
                     . ' AND table_schema = :dbname'
                     . ' AND privilege_type IN (' . join(',', array_map(array($this, 'quote'), $dbPrivileges)) . ')'
                     . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
-                    array(':grantee' => $grantee, ':dbname' => $this->config['dbname'])
+                    array(':grantee' => $grantee, ':dbname' => $this->escapeTableWildcards($this->config['dbname']))
                 );
                 $dbPrivilegesGranted = (int) $query->fetchObject()->matches === count($dbPrivileges);
             }
