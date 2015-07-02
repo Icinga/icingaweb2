@@ -77,7 +77,7 @@ class LdapDiscoveryPage extends Form
             } catch (Exception $e) {
             }
 
-            $this->addError(
+            $this->error(
                 sprintf($this->translate('Could not find any LDAP servers on the domain "%s".'), $data['domain'])
             );
         } else {
