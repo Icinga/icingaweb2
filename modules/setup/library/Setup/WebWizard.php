@@ -248,7 +248,7 @@ class WebWizard extends Wizard implements SetupWizard
 
                 try {
                     $db->connectToDb(); // Are we able to login on the database?
-                    if (array_search(key($this->databaseTables), $db->listTables()) === false) {
+                    if (array_search(reset($this->databaseTables), $db->listTables()) === false) {
                         // In case the database schema does not yet exist the
                         // user needs the privileges to setup the database
                         $skip = $db->checkPrivileges($this->databaseSetupPrivileges, $this->databaseTables);
