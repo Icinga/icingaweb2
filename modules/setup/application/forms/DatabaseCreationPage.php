@@ -107,8 +107,9 @@ class DatabaseCreationPage extends Form
             'password',
             'password',
             array(
-                'label'         => $this->translate('Password'),
-                'description'   => $this->translate('The password for the database user defined above')
+                'renderPassword'    => true,
+                'label'             => $this->translate('Password'),
+                'description'       => $this->translate('The password for the database user defined above')
             )
         );
 

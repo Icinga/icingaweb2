@@ -167,21 +167,23 @@ class AdminAccountPage extends Form
                 'password',
                 'new_user_password',
                 array(
-                    'required'      => true,
-                    'label'         => $this->translate('Password'),
-                    'description'   => $this->translate('Enter the password to assign to the newly created account')
+                    'required'          => true,
+                    'renderPassword'    => true,
+                    'label'             => $this->translate('Password'),
+                    'description'       => $this->translate('Enter the password to assign to the newly created account')
                 )
             );
             $this->addElement(
                 'password',
                 'new_user_2ndpass',
                 array(
-                    'required'      => true,
-                    'label'         => $this->translate('Repeat password'),
-                    'description'   => $this->translate(
+                    'required'          => true,
+                    'renderPassword'    => true,
+                    'label'             => $this->translate('Repeat password'),
+                    'description'       => $this->translate(
                         'Please repeat the password given above to avoid typing errors'
                     ),
-                    'validators'    => array(
+                    'validators'        => array(
                         array('identical', false, array('new_user_password'))
                     )
                 )
