@@ -90,7 +90,7 @@ class WebWizard extends Wizard implements SetupWizard
     );
 
     /**
-     * @see Wizard::init()
+     * Register all pages and module wizards for this wizard
      */
     protected function init()
     {
@@ -119,7 +119,10 @@ class WebWizard extends Wizard implements SetupWizard
     }
 
     /**
-     * @see Wizard::setupPage()
+     * Setup the given page that is either going to be displayed or validated
+     *
+     * @param   Form        $page       The page to setup
+     * @param   Request     $request    The current request
      */
     public function setupPage(Form $page, Request $request)
     {
@@ -204,7 +207,16 @@ class WebWizard extends Wizard implements SetupWizard
     }
 
     /**
-     * @see Wizard::getNewPage()
+     * Return the new page to set as current page
+     *
+     * {@inheritdoc} Runs additional checks related to some registered pages.
+     *
+     * @param   string  $requestedPage      The name of the requested page
+     * @param   Form    $originPage         The origin page
+     *
+     * @return  Form                        The new page
+     *
+     * @throws  InvalidArgumentException    In case the requested page does not exist or is not permitted yet
      */
     protected function getNewPage($requestedPage, Form $originPage)
     {
@@ -268,7 +280,9 @@ class WebWizard extends Wizard implements SetupWizard
     }
 
     /**
-     * @see Wizard::addButtons()
+     * Add buttons to the given page based on its position in the page-chain
+     *
+     * @param   Form    $page   The page to add the buttons to
      */
     protected function addButtons(Form $page)
     {
@@ -284,7 +298,7 @@ class WebWizard extends Wizard implements SetupWizard
     }
 
     /**
-     * @see Wizard::clearSession()
+     * Clear the session being used by this wizard and drop the setup token
      */
     public function clearSession()
     {
@@ -297,7 +311,9 @@ class WebWizard extends Wizard implements SetupWizard
     }
 
     /**
-     * @see SetupWizard::getSetup()
+     * Return the setup for this wizard
+     *
+     * @return  Setup
      */
     public function getSetup()
     {
@@ -415,7 +431,9 @@ class WebWizard extends Wizard implements SetupWizard
     }
 
     /**
-     * @see SetupWizard::getRequirements()
+     * Return the requirements of this wizard
+     *
+     * @return  RequirementSet
      */
     public function getRequirements($skipModules = false)
     {
