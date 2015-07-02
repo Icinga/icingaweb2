@@ -226,7 +226,7 @@ rm -rf %{buildroot}
 %{basedir}/doc
 %{basedir}/modules
 %{basedir}/public
-%{wwwconfigdir}/icingaweb2.conf
+%config(noreplace) %{wwwconfigdir}/icingaweb2.conf
 %attr(2775,root,%{icingawebgroup}) %dir %{logdir}
 %attr(2770,root,%{icingawebgroup}) %config(noreplace) %dir %{configdir}/modules/setup
 %attr(0660,root,%{icingawebgroup}) %config(noreplace) %{configdir}/modules/setup/config.ini
