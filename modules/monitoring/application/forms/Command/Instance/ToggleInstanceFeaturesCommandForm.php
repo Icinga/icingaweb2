@@ -254,18 +254,19 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
         );
 
         foreach ($this->getValues() as $feature => $enabled) {
-            $toggleFeature = new ToggleInstanceFeatureCommand();
-            $toggleFeature
-                ->setFeature($feature)
-                ->setEnabled($enabled);
-            $this->getTransport($this->request)->send($toggleFeature);
-
             if ((bool) $this->status->{$feature} !== (bool) $enabled) {
+                $toggleFeature = new ToggleInstanceFeatureCommand();
+                $toggleFeature
+                    ->setFeature($feature)
+                    ->setEnabled($enabled);
+                $this->getTransport($this->request)->send($toggleFeature);
+
                 Notification::success(
                     $notifications[$feature][$enabled ? 0 : 1]
                 );
             }
         }
+
         return true;
     }
 }
