@@ -20,8 +20,13 @@ class InstancePage extends Form
     public function createElements(array $formData)
     {
         $instanceConfigForm = new InstanceConfigForm();
-        $instanceConfigForm->createElements($formData);
-        $this->addElements($instanceConfigForm->getElements());
-        $this->getElement('name')->setValue('icinga');
+        $this->addSubForm($instanceConfigForm, 'instance_form');
+        $instanceConfigForm->create($formData);
+        $instanceConfigForm->getElement('name')->setValue('icinga');
+    }
+
+    public function getValues($suppressArrayNotation = false)
+    {
+        return $this->getSubForm('instance_form')->getValues($suppressArrayNotation);
     }
 }
