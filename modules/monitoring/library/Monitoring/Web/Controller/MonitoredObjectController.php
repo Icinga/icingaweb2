@@ -76,6 +76,7 @@ abstract class MonitoredObjectController extends Controller
         $this->object->populate();
         $toggleFeaturesForm = new ToggleObjectFeaturesCommandForm();
         $toggleFeaturesForm
+            ->setBackend($this->backend)
             ->load($this->object)
             ->setObjects($this->object)
             ->handleRequest();
