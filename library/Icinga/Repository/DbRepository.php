@@ -497,19 +497,24 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Return the name of the conversion method for the given alias or column name and context
      *
-     * @param   array|string    $table      The datasource's table
-     * @param   string          $name       The alias or column name for which to return a conversion method
-     * @param   string          $context    The context of the conversion: persist or retrieve
+     * If a query column or a filter column, which is part of a query filter, needs to be converted,
+     * you'll need to pass $query, otherwise the column is considered a statement column.
+     *
+     * @param   string              $table      The datasource's table
+     * @param   string              $name       The alias or column name for which to return a conversion method
+     * @param   string              $context    The context of the conversion: persist or retrieve
+     * @param   RepositoryQuery     $query      If given the column is considered a query column,
+     *                                          statement column otherwise
      *
      * @return  string
      *
      * @throws  ProgrammingError    In case a conversion rule is found but not any conversion method
      */
-    protected function getConverter($table, $name, $context)
+    protected function getConverter($table, $name, $context, RepositoryQuery $query = null)
     {
         if (
-            $this->validateQueryColumnAssociation($table, $name)
-            || $this->validateStatementColumnAssociation($table, $name)
+            ($query !== null && $this->validateQueryColumnAssociation($table, $name))
+            || ($query === null && $this->validateStatementColumnAssociation($table, $name))
         ) {
             $table = $this->removeTablePrefix($this->clearTableAlias($table));
         } else {
@@ -519,7 +524,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             }
         }
 
-        return parent::getConverter($table, $name, $context);
+        return parent::getConverter($table, $name, $context, $query);
     }
 
     /**
@@ -650,7 +655,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * Attempts to join the given column from a different table if its association to the given table cannot be
      * verified.
      *
-     * @param   string              $table  The table where to look for the column or alias
+     * @param   array|string        $table  The table where to look for the column or alias
      * @param   string              $name   The name or alias of the column to validate
      * @param   RepositoryQuery     $query  An optional query to pass as context,
      *                                      if not given no join will be attempted
@@ -662,7 +667,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     public function requireQueryColumn($table, $name, RepositoryQuery $query = null)
     {
         if ($query === null || $this->validateQueryColumnAssociation($table, $name)) {
-            return parent::requireQueryColumn($table, $name, $query);
+            return parent::requireQueryColumn($this->removeTablePrefix($this->clearTableAlias($table)), $name, $query);
         }
 
         return $this->joinColumn($name, $table, $query);
@@ -674,7 +679,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * Attempts to join the given column from a different table if its association to the given table cannot be
      * verified.
      *
-     * @param   string              $table  The table where to look for the column or alias
+     * @param   array|string        $table  The table where to look for the column or alias
      * @param   string              $name   The name or alias of the column to validate
      * @param   RepositoryQuery     $query  An optional query to pass as context,
      *                                      if not given the column is considered being used for a statement filter
@@ -690,7 +695,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
         }
 
         if ($this->validateQueryColumnAssociation($table, $name)) {
-            return parent::requireFilterColumn($table, $name, $query);
+            return parent::requireFilterColumn($this->removeTablePrefix($this->clearTableAlias($table)), $name, $query);
         }
 
         return $this->joinColumn($name, $table, $query);
@@ -699,8 +704,8 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Return the statement column name for the given alias or null in case the alias does not exist
      *
-     * @param   string  $table
-     * @param   string  $alias
+     * @param   array|string    $table
+     * @param   string          $alias
      *
      * @return  string|null
      */
@@ -711,7 +716,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             return $statementAliasColumnMap[$alias];
         }
 
-        $prefixedAlias = $this->removeTablePrefix($table) . '.' . $alias;
+        $prefixedAlias = $this->removeTablePrefix($this->clearTableAlias($table)) . '.' . $alias;
         if (isset($statementAliasColumnMap[$prefixedAlias])) {
             return $statementAliasColumnMap[$prefixedAlias];
         }
@@ -720,8 +725,8 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Return the alias for the given statement column name or null in case the statement column does not exist
      *
-     * @param   string  $table
-     * @param   string  $column
+     * @param   array|string    $table
+     * @param   string          $column
      *
      * @return  string|null
      */
@@ -732,7 +737,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             return $statementColumnAliasMap[$column];
         }
 
-        $prefixedColumn = $this->removeTablePrefix($table) . '.' . $column;
+        $prefixedColumn = $this->removeTablePrefix($this->clearTableAlias($table)) . '.' . $column;
         if (isset($statementColumnAliasMap[$prefixedColumn])) {
             return $statementColumnAliasMap[$prefixedColumn];
         }
@@ -741,14 +746,14 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Return whether the given alias or statement column name is available in the given table
      *
-     * @param   string  $table
-     * @param   string  $alias
+     * @param   array|string    $table
+     * @param   string          $alias
      *
      * @return  bool
      */
     public function validateStatementColumnAssociation($table, $alias)
     {
-        $tableName = $this->removeTablePrefix($table);
+        $tableName = $this->removeTablePrefix($this->clearTableAlias($table));
 
         $statementAliasTableMap = $this->getStatementAliasTableMap();
         if (isset($statementAliasTableMap[$alias])) {
@@ -767,8 +772,8 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Return whether the given column name or alias of the given table is a valid statement column
      *
-     * @param   string  $table  The table where to look for the column or alias
-     * @param   string  $name   The column name or alias to check
+     * @param   array|string    $table  The table where to look for the column or alias
+     * @param   string          $name   The column name or alias to check
      *
      * @return  bool
      */
@@ -779,7 +784,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
              && $this->reassembleStatementColumnAlias($table, $name) === null)
             || !$this->validateStatementColumnAssociation($table, $name)
         ) {
-            return parent::hasStatementColumn($table, $name);
+            return parent::hasStatementColumn($this->removeTablePrefix($this->clearTableAlias($table)), $name);
         }
 
         return true;
@@ -788,12 +793,12 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Validate that the given column is a valid statement column and return it or the actual name if it's an alias
      *
-     * @param   string  $table      The table for which to require the column
-     * @param   string  $name       The name or alias of the column to validate
+     * @param   array|string    $table  The table for which to require the column
+     * @param   string          $name   The name or alias of the column to validate
      *
-     * @return  string              The given column's name
+     * @return  string                  The given column's name
      *
-     * @throws  StatementException  In case the given column is not a statement column
+     * @throws  StatementException      In case the given column is not a statement column
      */
     public function requireStatementColumn($table, $name)
     {
@@ -802,11 +807,15 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
         } elseif (($alias = $this->reassembleStatementColumnAlias($table, $name)) !== null) {
             $column = $name;
         } else {
-            return parent::requireStatementColumn($table, $name);
+            return parent::requireStatementColumn($this->removeTablePrefix($this->clearTableAlias($table)), $name);
         }
 
         if (! $this->validateStatementColumnAssociation($table, $alias)) {
-            throw new StatementException('Statement column "%s" not found in table "%s"', $name, $table);
+            throw new StatementException(
+                'Statement column "%s" not found in table "%s"',
+                $name,
+                $this->removeTablePrefix($this->clearTableAlias($table))
+            );
         }
 
         return $column;
