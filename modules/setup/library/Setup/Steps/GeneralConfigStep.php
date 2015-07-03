@@ -102,12 +102,18 @@ class GeneralConfigStep extends Step
     public function getReport()
     {
         if ($this->error === false) {
-            $message = mt('setup', 'General configuration has been successfully written to: %s');
-            return '<p>' . sprintf($message, Config::resolvePath('config.ini')) . '</p>';
+            return array(sprintf(
+                mt('setup', 'General configuration has been successfully written to: %s'),
+                Config::resolvePath('config.ini')
+            ));
         } elseif ($this->error !== null) {
-            $message = mt('setup', 'General configuration could not be written to: %s; An error occured:');
-            return '<p class="error">' . sprintf($message, Config::resolvePath('config.ini')) . '</p>'
-                . '<p>' . $this->error->getMessage() . '</p>';
+            return array(
+                sprintf(
+                    mt('setup', 'General configuration could not be written to: %s. An error occured:'),
+                    Config::resolvePath('config.ini')
+                ),
+                sprintf(mt('setup', 'ERROR: %s'), $this->error->getMessage())
+            );
         }
     }
 }

@@ -133,12 +133,18 @@ class ResourceStep extends Step
     public function getReport()
     {
         if ($this->error === false) {
-            $message = mt('setup', 'Resource configuration has been successfully written to: %s');
-            return '<p>' . sprintf($message, Config::resolvePath('resources.ini')) . '</p>';
+            return array(sprintf(
+                mt('setup', 'Resource configuration has been successfully written to: %s'),
+                Config::resolvePath('resources.ini')
+            ));
         } elseif ($this->error !== null) {
-            $message = mt('setup', 'Resource configuration could not be written to: %s; An error occured:');
-            return '<p class="error">' . sprintf($message, Config::resolvePath('resources.ini')) . '</p>'
-                . '<p>' . $this->error->getMessage() . '</p>';
+            return array(
+                sprintf(
+                    mt('setup', 'Resource configuration could not be written to: %s. An error occured:'),
+                    Config::resolvePath('resources.ini')
+                ),
+                sprintf(mt('setup', 'ERROR: %s'), $this->error->getMessage())
+            );
         }
     }
 }
