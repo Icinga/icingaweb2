@@ -667,24 +667,46 @@ EOD;
             }
 
             $dbPrivilegesGranted = true;
+            $tablePrivilegesGranted = true;
+
             if (! empty($dbPrivileges)) {
-                $query = $this->query(
-                    'SELECT COUNT(*) as matches'
+                $queryString = 'SELECT COUNT(*) as matches'
                     . ' FROM information_schema.schema_privileges'
                     . ' WHERE grantee = :grantee'
                     . ' AND table_schema = :dbname'
-                    . ' AND privilege_type IN (' . join(',', array_map(array($this, 'quote'), $dbPrivileges)) . ')'
-                    . ($requireGrants ? " AND is_grantable = 'YES'" : ''),
+                    . ' AND privilege_type IN (%s)'
+                    . ($requireGrants ? " AND is_grantable = 'YES'" : '');
+
+                $dbAndTableQuery = $this->query(
+                    sprintf($queryString, join(',', array_map(array($this, 'quote'), $dbPrivileges))),
                     array(':grantee' => $grantee, ':dbname' => $this->escapeTableWildcards($this->config['dbname']))
                 );
-                $dbPrivilegesGranted = (int) $query->fetchObject()->matches === count($dbPrivileges);
+                $grantedDbAndTablePrivileges = (int) $dbAndTableQuery->fetchObject()->matches;
+                if ($grantedDbAndTablePrivileges === count($dbPrivileges)) {
+                    $tableExclusivePrivileges = array_diff($tablePrivileges, $dbPrivileges);
+                    if (! empty($tableExclusivePrivileges)) {
+                        $tablePrivileges = $tableExclusivePrivileges;
+                        $tablePrivilegesGranted = false;
+                    }
+                } else {
+                    $tablePrivilegesGranted = false;
+                    $dbExclusivePrivileges = array_diff($dbPrivileges, $tablePrivileges);
+                    if (! empty($dbExclusivePrivileges)) {
+                        $dbExclusiveQuery = $this->query(
+                            sprintf($queryString, join(',', array_map(array($this, 'quote'), $dbExclusivePrivileges))),
+                            array(
+                                ':grantee'  => $grantee,
+                                ':dbname'   => $this->escapeTableWildcards($this->config['dbname'])
+                            )
+                        );
+                        $dbPrivilegesGranted = (int) $dbExclusiveQuery->fetchObject()->matches === count(
+                            $dbExclusivePrivileges
+                        );
+                    }
+                }
             }
 
-            $tablePrivilegesGranted = true;
-            if (
-                !empty($tablePrivileges)
-                && (! $dbPrivilegesGranted || array_intersect($dbPrivileges, $tablePrivileges) != $tablePrivileges)
-            ) {
+            if (! $tablePrivilegesGranted && !empty($tablePrivileges)) {
                 $query = $this->query(
                     'SELECT COUNT(*) as matches'
                     . ' FROM information_schema.table_privileges'
@@ -747,6 +769,7 @@ EOD;
             }
 
             if (! empty($dbPrivileges)) {
+                $dbExclusivesGranted = true;
                 foreach ($dbPrivileges as $dbPrivilege) {
                     $query = $this->query(
                         'SELECT has_database_privilege(:user, :dbname, :privilege) AS db_privilege_granted',
@@ -756,11 +779,23 @@ EOD;
                             ':privilege'    => $dbPrivilege . ($requireGrants ? ' WITH GRANT OPTION' : '')
                         )
                     );
-                    $privilegesGranted &= $query->fetchObject()->db_privilege_granted;
+                    if (! $query->fetchObject()->db_privilege_granted) {
+                        $privilegesGranted = false;
+                        if (! in_array($dbPrivilege, $tablePrivileges)) {
+                            $dbExclusivesGranted = false;
+                        }
+                    }
+                }
+
+                if ($privilegesGranted) {
+                    // Do not check privileges twice if they are already granted at database level
+                    $tablePrivileges = array_diff($tablePrivileges, $dbPrivileges);
+                } elseif ($dbExclusivesGranted) {
+                    $privilegesGranted = true;
                 }
             }
 
-            if (! empty($tablePrivileges)) {
+            if ($privilegesGranted && !empty($tablePrivileges)) {
                 foreach (array_intersect($context, $this->listTables()) as $table) {
                     foreach ($tablePrivileges as $tablePrivilege) {
                         $query = $this->query(
