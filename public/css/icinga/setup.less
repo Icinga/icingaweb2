@@ -300,50 +300,35 @@ form#setup_requirements {
   }
 }
 
-.conspicuous-state-notification {
-  width: 66%;
-  margin: 0 auto;
-  padding: 0.5em;
-  color: white;
-  font-weight: bold;
-}
-
 #setup-finish {
-  div.report {
-    padding: 1em;
-    border: 1px solid lightgrey;
-    border-radius: 0em;
+  h2 {
+    padding: 0.5em;
+    border-bottom: 0;
+    font-variant: normal;
+    font-weight: bold;
+    color: white;
 
-    div.line-separator {
-      width: 50%;
-      height: 1px;
-      margin: 0 auto;
-      background-color: white;
+    &.success {
+      background-color: @colorOk;
     }
 
-    p {
-      margin: 1em;
-      color: #444;
-      text-align: center;
-
-      &.error {
-        color: red;
-      }
-
-      &.failure {
-        .conspicuous-state-notification;
-        background-color: @colorCritical;
-      }
-
-      &.success {
-        .conspicuous-state-notification;
-        background-color: @colorOk;
-      }
+    &.failure {
+      background-color: @colorCritical;
     }
   }
 
+  textarea.report {
+    width: 66%;
+    height: 25em;
+  }
+
   div.buttons {
+    margin-top: 0.5em;
     text-align: center;
+
+    a {
+      padding: 0.5em;
+    }
   }
 }
 

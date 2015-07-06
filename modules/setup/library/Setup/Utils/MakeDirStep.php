@@ -53,14 +53,14 @@ class MakeDirStep extends Step
         $okMessage = mt('setup', 'Directory "%s" in "%s" has been successfully created.');
         $failMessage = mt('setup', 'Unable to create directory "%s" in "%s". An error occured:');
 
-        $report = '';
+        $report = array();
         foreach ($this->paths as $path) {
             if (array_key_exists($path, $this->errors)) {
                 if (is_array($this->errors[$path])) {
-                    $report .= '<p class="error">' . sprintf($failMessage, basename($path), dirname($path)) . '</p>'
-                        . '<p>' . $this->errors[$path]['message'] . '</p>';
+                    $report[] = sprintf($failMessage, basename($path), dirname($path));
+                    $report[] = sprintf(mt('setup', 'ERROR: %s'), $this->errors[$path]['message']);
                 } else {
-                    $report .= '<p>' . sprintf($okMessage, basename($path), dirname($path)) . '</p>';
+                    $report[] = sprintf($okMessage, basename($path), dirname($path));
                 }
             }
         }

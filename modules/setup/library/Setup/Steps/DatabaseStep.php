@@ -247,12 +247,14 @@ class DatabaseStep extends Step
     public function getReport()
     {
         if ($this->error === false) {
-            return '<p>' . join('</p><p>', $this->messages) . '</p>'
-                . '<p>' . mt('setup', 'The database has been fully set up!') . '</p>';
+            $report = $this->messages;
+            $report[] = mt('setup', 'The database has been fully set up!');
+            return $report;
         } elseif ($this->error !== null) {
-            $message = mt('setup', 'Failed to fully setup the database. An error occured:');
-            return '<p>' . join('</p><p>', $this->messages) . '</p>'
-                . '<p class="error">' . $message . '</p><p>' . $this->error->getMessage() . '</p>';
+            $report = $this->messages;
+            $report[] = mt('setup', 'Failed to fully setup the database. An error occured:');
+            $report[] = sprintf(mt('setup', 'ERROR: %s'), $this->error->getMessage());
+            return $report;
         }
     }
 
