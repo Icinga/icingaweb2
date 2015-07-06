@@ -453,6 +453,8 @@
                     var $el = $(el);
                     if ($el.hasClass('dashboard')) {
                         return;
+                    } else {
+
                     }
                     var url = $el.data('icingaUrl');
                     targets[i].data('icingaUrl', url);
@@ -559,7 +561,7 @@
                 } else {
                     // Request wasn't for a container, so it's usually the body
                     // or the full layout. Push request URL to history:
-                    this.icinga.history.pushCurrentState();
+                    this.icinga.history.pushUrl(req.url);
                 }
             }
 
@@ -588,8 +590,6 @@
             var url = req.url;
 
             req.failure = true;
-
-            req.$target.data('icingaUrl', req.url);
 
             /*
              * Test if a manual actions comes in and autorefresh is active: Stop refreshing
