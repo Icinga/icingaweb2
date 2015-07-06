@@ -116,7 +116,6 @@
             req.complete(this.onComplete);
             req.autorefresh = autorefresh;
             req.action = action;
-            req.failure = false;
             req.addToHistory = true;
 
             if (id) {
@@ -553,7 +552,7 @@
             // Update history when necessary. Don't do so for requests triggered
             // by history or autorefresh events
             if (! req.autorefresh && req.addToHistory) {
-                if (req.$target.hasClass('container') && ! req.failure) {
+                if (req.$target.hasClass('container')) {
                     // We only want to care about top-level containers
                     if (req.$target.parent().closest('.container').length === 0) {
                         this.icinga.history.pushCurrentState();
@@ -588,8 +587,6 @@
          */
         onFailure: function (req, textStatus, errorThrown) {
             var url = req.url;
-
-            req.failure = true;
 
             /*
              * Test if a manual actions comes in and autorefresh is active: Stop refreshing
