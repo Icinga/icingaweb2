@@ -22,7 +22,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
         $pieChartData = PerfdataSet::fromString($perfdataStr)->asArray();
         uasort(
             $pieChartData,
-            function($a, $b) {
+            function ($a, $b) {
                 return $a->worseThan($b) ? -1 : ($b->worseThan($a) ? 1 : 0);
             }
         );

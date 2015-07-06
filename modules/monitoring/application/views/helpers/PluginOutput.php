@@ -35,7 +35,9 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         $output = preg_replace('~<br[^>]+>~', "\n", $output);
         if (preg_match('~<\w+[^>^\\\]{0,60}>~', $output)) {
             // HTML
-            $output = preg_replace('~<table~', '<table style="font-size: 0.75em"',
+            $output = preg_replace(
+                '~<table~',
+                '<table style="font-size: 0.75em"',
                 $this->getPurifier()->purify($output)
             );
         } else {
