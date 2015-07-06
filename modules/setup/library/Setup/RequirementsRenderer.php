@@ -9,53 +9,34 @@ class RequirementsRenderer extends RecursiveIteratorIterator
 {
     public function beginIteration()
     {
-        $this->tags[] = '<table class="requirements">';
-        $this->tags[] = '<tbody>';
+        $this->tags[] = '<ul class="requirements">';
     }
 
     public function endIteration()
     {
-        $this->tags[] = '</tbody>';
-        $this->tags[] = '</table>';
+        $this->tags[] = '</ul>';
     }
 
     public function beginChildren()
     {
-        $this->tags[] = '<tr>';
+        $this->tags[] = '<li>';
         $currentSet = $this->getSubIterator();
-        $state = $currentSet->getState() ? 'fulfilled' : (
-            $currentSet->isOptional() ? 'not-available' : 'missing'
-        );
-        $colSpanRequired = $this->hasSingleRequirements($this->getSubIterator($this->getDepth() - 1));
-        $this->tags[] = '<td class="set-state ' . $state . '"' . ($colSpanRequired ? ' colspan=3' : '') . '>';
-        $this->beginIteration();
+        $state = $currentSet->getState() ? 'fulfilled' : ($currentSet->isOptional() ? 'not-available' : 'missing');
+        $this->tags[] = '<ul class="set-state ' . $state . '">';
     }
 
     public function endChildren()
     {
-        $this->endIteration();
-        $this->tags[] = '</td>';
-        $this->tags[] = '</tr>';
-    }
-
-    protected function hasSingleRequirements(RequirementSet $requirements)
-    {
-        $set = $requirements->getAll();
-        foreach ($set as $entry) {
-            if ($entry instanceof Requirement) {
-                return true;
-            }
-        }
-
-        return false;
+        $this->tags[] = '</ul>';
+        $this->tags[] = '</li>';
     }
 
     public function render()
     {
         foreach ($this as $requirement) {
-            $this->tags[] = '<tr>';
-            $this->tags[] = '<td class="title"><h2>' . $requirement->getTitle() . '</h2></td>';
-            $this->tags[] = '<td class="desc">';
+            $this->tags[] = '<li class="clearfix">';
+            $this->tags[] = '<div class="title"><h3>' . $requirement->getTitle() . '</h3></div>';
+            $this->tags[] = '<div class="description">';
             $descriptions = $requirement->getDescriptions();
             if (count($descriptions) > 1) {
                 $this->tags[] = '<ul>';
@@ -66,11 +47,11 @@ class RequirementsRenderer extends RecursiveIteratorIterator
             } elseif (! empty($descriptions)) {
                 $this->tags[] = $descriptions[0];
             }
-            $this->tags[] = '</td>';
-            $this->tags[] = '<td class="state ' . ($requirement->getState() ? 'fulfilled' : (
+            $this->tags[] = '</div>';
+            $this->tags[] = '<div class="state ' . ($requirement->getState() ? 'fulfilled' : (
                 $requirement->isOptional() ? 'not-available' : 'missing'
-            )) . '">' . $requirement->getStateText() . '</td>';
-            $this->tags[] = '</tr>';
+            )) . '">' . $requirement->getStateText() . '</div>';
+            $this->tags[] = '</li>';
         }
 
         return implode("\n", $this->tags);

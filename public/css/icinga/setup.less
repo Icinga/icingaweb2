@@ -183,43 +183,55 @@ form#setup_requirements {
   }
 }
 
-#setup > table.requirements {
-  font-size: 0.9em;
-}
+#setup ul.requirements {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
 
-#setup table.requirements {
-  margin: -1em;
-  border-spacing: 1em;
-  border-collapse: separate;
+  ul.set-state {
+    border: 1px dashed black;
+  }
 
-  td {
-    padding: 0;
+  li {
+    margin-bottom: 1em;
 
-    h2 {
-      margin: 0 1em 0 0;
-      font-variant: normal;
-      border-bottom: 0;
-    }
-
-    table {
-      font-size: 102%; // Just a hack for webkit, remove this in case you can't see any difference or make it work without it
-    }
-
-    ul {
+    & > ul {
       margin: 0;
-      padding-left: 1em;
-      list-style-type: square;
+      padding: 0;
+      list-style-type: none;
     }
 
-    &.title {
+    div {
+      float: left;
+      padding-top: 0.4em;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+    }
+
+    div.title {
       width: 25%;
+
+      h3 {
+        padding: 0;
+        margin: 0 1em 0 0;
+        border-bottom: 0;
+      }
     }
 
-    &.desc {
+    div.description {
       width: 50%;
+      border-left: 0.4em solid transparent;
+      border-right: 0.4em solid transparent;
+
+      ul {
+        margin: 0;
+        padding-left: 1em;
+        list-style-type: square;
+      }
     }
 
-    &.state {
+    div.state {
       width: 25%;
       color: white;
       padding: 0.4em;
