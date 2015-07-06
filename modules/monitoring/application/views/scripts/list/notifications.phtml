@@ -48,7 +48,7 @@ if (count($notifications) === 0) {
                     <?= $this->link()->host($notification->host_name, $notification->host_display_name) ?>
                 <?php endif ?>
                 <br>
-                <?= $this->pluginOutput($this->ellipsis($notification->notification_output, 10000), true) ?>
+                <?= $this->escape($this->ellipsis($notification->notification_output, 10000)) ?>
                 <br>
                 <?php if (! $this->contact): ?>
                     <small>
