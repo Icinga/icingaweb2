@@ -40,11 +40,14 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             );
         } else {
             // Plaintext
-            $output = '<pre class="pluginoutput">' . preg_replace(
+            $output = preg_replace(
                 self::$txtPatterns,
                 self::$txtReplacements,
                 $this->view->escape($output)
-            ) . '</pre>';
+            );
+        }
+        if (! $raw) {
+            $output = '<pre class="pluginoutput">' . $output . '</pre>';
         }
         $output = $this->fixLinks($output);
         return $output;

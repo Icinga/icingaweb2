@@ -90,7 +90,7 @@ if (count($hosts) === 0) {
           )
         ) ?>)</span>
         <?php endif ?>
-        <p class="pluginoutput"><?= $this->escape($this->ellipsis($host->host_output, 10000)) ?></p>
+        <p class="pluginoutput"><?= $this->pluginOutput($this->ellipsis($host->host_output, 10000), true) ?></p>
       </td>
       <?php foreach($this->addColumns as $col): ?>
       <td><?= $this->escape($host->$col) ?></td>
