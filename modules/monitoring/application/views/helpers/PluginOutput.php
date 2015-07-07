@@ -27,7 +27,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         '@@@@@@',
     );
 
-    public function pluginOutput($output)
+    public function pluginOutput($output, $raw = false)
     {
         if (empty($output)) {
             return '';
@@ -48,7 +48,11 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
                 $this->view->escape($output)
             );
         }
-        return '<pre class="pluginoutput">' . $this->fixLinks($output) . '</pre>';
+        if (! $raw) {
+            $output = '<pre class="pluginoutput">' . $output . '</pre>';
+        }
+        $output = $this->fixLinks($output);
+        return $output;
     }
 
     protected function fixLinks($html)
