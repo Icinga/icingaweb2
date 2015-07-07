@@ -124,9 +124,14 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
     public function count()
     {
         if ($this->count === null) {
-            $this->count = (int) $this->backend->select()->from($this->dataViewName)->applyFilter($this->filter)
-                ->getQuery()->count();
+            $this->count = (int) $this->backend
+                ->select()
+                ->from($this->dataViewName, $this->columns)
+                ->applyFilter($this->filter)
+                ->getQuery()
+                ->count();
         }
+
         return $this->count;
     }
 
