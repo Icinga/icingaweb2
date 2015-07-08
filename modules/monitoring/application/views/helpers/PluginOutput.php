@@ -32,8 +32,8 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         if (empty($output)) {
             return '';
         }
-        $output = preg_replace('~<br[^>]+>~', "\n", $output);
-        if (preg_match('~<\w+[^>^\\\]{0,60}>~', $output)) {
+        $output = preg_replace('~<br[^>]*>~', "\n", $output);
+        if (strlen($output) > strlen(strip_tags($output))) {
             // HTML
             $output = preg_replace(
                 '~<table~',
