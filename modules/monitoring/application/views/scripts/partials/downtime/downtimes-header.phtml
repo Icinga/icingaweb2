@@ -16,9 +16,9 @@
                 <strong><?= $downtime->host_name ?>: <?= $downtime->service_description ?></strong>
             <?php else: ?>
                  <?= $this->icon('host', $this->translate('Host')) ?>
-                <strong><?= $downtime->host_name ?>.</strong>
+                <strong><?= $downtime->host_name ?></strong>
             <?php endif; ?>
-
+                <br>
             <?php if ($downtime->is_flexible): ?>
               <?php if ($downtime->is_in_effect): ?>
                 <?= sprintf(
