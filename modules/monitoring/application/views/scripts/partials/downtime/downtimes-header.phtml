@@ -62,10 +62,10 @@
                   $this->isService
                     ? $this->translate('This fixed service downtime has been scheduled to start on %s at %s and to end on %s at %s.')
                     : $this->translate('This fixed host downtime has been scheduled to start on %s at %s and to end on %s at %s.'),
-                    $this->formatDate($downtime->start),
-                    $this->formatTime($downtime->start),
-                    $this->formatDate($downtime->end),
-                    $this->formatTime($downtime->end)
+                    $this->formatDate($downtime->scheduled_start),
+                    $this->formatTime($downtime->scheduled_start),
+                    $this->formatDate($downtime->scheduled_end),
+                    $this->formatTime($downtime->scheduled_end)
                 ); ?>
               <?php endif ?>
             <?php endif ?>
