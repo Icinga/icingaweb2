@@ -1,4 +1,4 @@
- <table class="action">
+ <table class="action" data-base-target="_next">
     <tbody>
     <?php $i = 0; foreach ($downtimes as $downtime):
         if (++ $i > 5) {
@@ -13,10 +13,15 @@
           <td class="name oneline">
             <?php if ($downtime->isService): ?>
                 <?= $this->icon('service', $this->translate('Service')) ?>
-                <strong><?= $downtime->host_name ?>: <?= $downtime->service_description ?></strong>
+                <strong><?= $this->link()->service(
+                    $downtime->service_description,
+                    $downtime->service_display_name,
+                    $downtime->host_name,
+                    $downtime->host_display_name
+                ); ?></strong>
             <?php else: ?>
                  <?= $this->icon('host', $this->translate('Host')) ?>
-                <strong><?= $downtime->host_name ?></strong>
+                <strong><?= $this->link()->host($downtime->host_name, $downtime->host_display_name); ?></strong>
             <?php endif; ?>
                 <br>
             <?php if ($downtime->is_flexible): ?>
