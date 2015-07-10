@@ -13,7 +13,7 @@
           <td class="name oneline">
             <?php if ($downtime->isService): ?>
                 <?= $this->icon('service', $this->translate('Service')) ?>
-                <b><?= $downtime->service ?> on <?= $downtime->host_name ?>.</b>
+                <b><?= $downtime->host_name ?>: <?= $downtime->service_description ?></b>
             <?php else: ?>
                  <?= $this->icon('host', $this->translate('Host')) ?>
                 <b><?= $downtime->host_name ?>.</b>
