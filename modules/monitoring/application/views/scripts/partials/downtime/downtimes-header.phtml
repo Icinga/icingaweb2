@@ -13,10 +13,10 @@
           <td class="name oneline">
             <?php if ($downtime->isService): ?>
                 <?= $this->icon('service', $this->translate('Service')) ?>
-                <b><?= $downtime->host_name ?>: <?= $downtime->service_description ?></b>
+                <strong><?= $downtime->host_name ?>: <?= $downtime->service_description ?></strong>
             <?php else: ?>
                  <?= $this->icon('host', $this->translate('Host')) ?>
-                <b><?= $downtime->host_name ?>.</b>
+                <strong><?= $downtime->host_name ?>.</strong>
             <?php endif; ?>
 
             <?php if ($downtime->is_flexible): ?>
