@@ -154,6 +154,13 @@ class LdapConnection implements Selectable
     protected $discoverySuccess;
 
     /**
+     * Whether the current connection is encrypted
+     *
+     * @var bool
+     */
+    protected $encryptionSuccess;
+
+    /**
      * Create a new connection object
      *
      * @param   ConfigObject    $config
@@ -241,7 +248,15 @@ class LdapConnection implements Selectable
     public function getCapabilities()
     {
         if ($this->capabilities === null) {
-            $this->connect(); // Populates $this->capabilities
+            try {
+                $this->capabilities = $this->discoverCapabilities($this->getConnection());
+                $this->discoverySuccess = true;
+            } catch (LdapException $e) {
+                Logger::debug($e);
+                Logger::warning('LADP discovery failed, assuming default LDAP capabilities.');
+                $this->capabilities = new Capability(); // create empty default capabilities
+                $this->discoverySuccess = false;
+            }
         }
 
         return $this->capabilities;
@@ -262,6 +277,20 @@ class LdapConnection implements Selectable
     }
 
     /**
+     * Return whether the current connection is encrypted
+     *
+     * @return  bool
+     */
+    public function isEncrypted()
+    {
+        if ($this->encryptionSuccess === null) {
+            return false;
+        }
+
+        return $this->encryptionSuccess;
+    }
+
+    /**
      * Establish a connection
      *
      * @throws  LdapException   In case the connection could not be established
@@ -276,7 +305,7 @@ class LdapConnection implements Selectable
     /**
      * Perform a LDAP bind on the current connection
      *
-     * @throws  LdapException   In case the LDAP bind was unsuccessful
+     * @throws  LdapException   In case the LDAP bind was unsuccessful or insecure
      */
     public function bind()
     {
@@ -299,6 +328,12 @@ class LdapConnection implements Selectable
         }
 
         $this->bound = true;
+
+        if ($this->encryptionSuccess === false && $this->getCapabilities()->hasStartTls()) {
+            // Alert the user about the unencrypted connection if there is really an error. If the server
+            // does not support it, don't do anything as authentication is completely broken otherwise.
+            throw new LdapException('LDAP STARTTLS failed. An error occured. Please see the log for more details');
+        }
     }
 
     /**
@@ -910,7 +945,7 @@ class LdapConnection implements Selectable
     /**
      * Prepare and establish a connection with the LDAP server
      *
-     * @return  resource        A positive LDAP link identifier
+     * @return  resource        A LDAP link identifier
      *
      * @throws  LdapException   In case the connection is not possible
      */
@@ -927,46 +962,30 @@ class LdapConnection implements Selectable
 
         $ds = ldap_connect($hostname, $this->port);
 
-        try {
-            $this->capabilities = $this->discoverCapabilities($ds);
-            $this->discoverySuccess = true;
-        } catch (LdapException $e) {
-            Logger::debug($e);
-            Logger::warning('LADP discovery failed, assuming default LDAP capabilities.');
-            $this->capabilities = new Capability(); // create empty default capabilities
-            $this->discoverySuccess = false;
-        }
-
-        if ($this->encryption === static::STARTTLS) {
-            $force_tls = false;
-            if ($this->capabilities->hasStartTls()) {
-                if (@ldap_start_tls($ds)) {
-                    Logger::debug('LDAP STARTTLS succeeded');
-                } else {
-                    Logger::error('LDAP STARTTLS failed: %s', ldap_error($ds));
-                    throw new LdapException('LDAP STARTTLS failed: %s', ldap_error($ds));
-                }
-            } elseif ($force_tls) {
-                throw new LdapException('STARTTLS is required but not announced by %s', $this->hostname);
-            } else {
-                Logger::warning('LDAP STARTTLS enabled but not announced');
-            }
-        }
-
-        // ldap_rename requires LDAPv3:
-        if ($this->capabilities->hasLdapV3()) {
-            if (! ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3)) {
-                throw new LdapException('LDAPv3 is required');
-            }
-        } else {
-            // TODO: remove this -> FORCING v3 for now
-            ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
-            Logger::warning('No LDAPv3 support detected');
-        }
+        // Usage of ldap_rename, setting LDAP_OPT_REFERRALS to 0 or using STARTTLS requires LDAPv3.
+        // If this does not work we're probably not in a PHP 5.3+ environment as it is VERY
+        // unlikely that the server complains about it by itself prior to a bind request
+        ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 
         // Not setting this results in "Operations error" on AD when using the whole domain as search base
         ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
-        // ldap_set_option($ds, LDAP_OPT_DEREF, LDAP_DEREF_NEVER);
+
+        if ($this->encryption === static::STARTTLS) {
+            if (($this->encryptionSuccess = @ldap_start_tls($ds))) {
+                Logger::debug('LDAP STARTTLS succeeded');
+            } else {
+                Logger::error('LDAP STARTTLS failed: %s', ldap_error($ds));
+
+                // ldap_start_tls seems to corrupt the connection though if I understand
+                // https://tools.ietf.org/html/rfc4511#section-4.14.2 correctly, this shouldn't happen
+                $ds = ldap_connect($hostname, $this->port);
+                ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+                ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
+            }
+        } elseif ($this->encryption === static::LDAPS) {
+            $this->encryptionSuccess = true;
+        }
+
         return $ds;
     }
 
