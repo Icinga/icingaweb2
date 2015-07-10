@@ -156,7 +156,6 @@ class LdapResourceForm extends Form
     {
         try {
             $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
-            $resource->connect();
             $resource->bind();
         } catch (Exception $e) {
             $msg = $form->translate('Connectivity validation failed, connection to the given resource not possible.');
