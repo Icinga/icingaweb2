@@ -53,7 +53,7 @@ if (count($downtimes) === 0) {
             array('downtime_id' => $downtime->id),
             array(
               'title' => sprintf(
-                $this->translate('Show this downtime\'s details for service %s on host %s'),
+                $this->translate('Show detailed information for this downtime scheduled for service %s on host %s'),
                 $downtime->service_display_name,
                 $downtime->host_display_name
               ),
@@ -67,7 +67,7 @@ if (count($downtimes) === 0) {
             array('downtime_id' => $downtime->id),
             array(
               'title' => sprintf(
-                $this->translate('Show this donwtime\'s details for host %s'),
+                $this->translate('Show detailed information for this downtime scheduled for host %s'),
                 $downtime->host_display_name
               ),
               'class' => 'rowaction'
