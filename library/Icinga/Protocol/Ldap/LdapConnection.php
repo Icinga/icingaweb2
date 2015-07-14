@@ -3,11 +3,13 @@
 
 namespace Icinga\Protocol\Ldap;
 
+use Exception;
 use ArrayIterator;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Application\Platform;
 use Icinga\Data\ConfigObject;
+use Icinga\Data\Inspectable;
 use Icinga\Data\Selectable;
 use Icinga\Data\Sortable;
 use Icinga\Exception\ProgrammingError;
@@ -16,7 +18,7 @@ use Icinga\Protocol\Ldap\LdapException;
 /**
  * Encapsulate LDAP connections and query creation
  */
-class LdapConnection implements Selectable
+class LdapConnection implements Selectable, Inspectable
 {
     /**
      * Indicates that the target object cannot be found
@@ -142,7 +144,7 @@ class LdapConnection implements Selectable
     /**
      * The properties and capabilities of the LDAP server
      *
-     * @var Capability
+     * @var LdapCapabilities
      */
     protected $capabilities;
 
@@ -159,6 +161,16 @@ class LdapConnection implements Selectable
      * @var bool
      */
     protected $encryptionSuccess;
+
+    /**
+     * @var array
+     */
+    protected $info = null;
+
+    /**
+     * @var Boolean
+     */
+    protected $healthy = null;
 
     /**
      * Create a new connection object
@@ -243,7 +255,7 @@ class LdapConnection implements Selectable
     /**
      * Return the capabilities of the current connection
      *
-     * @return  Capability
+     * @return  LdapCapabilities
      */
     public function getCapabilities()
     {
@@ -254,7 +266,7 @@ class LdapConnection implements Selectable
             } catch (LdapException $e) {
                 Logger::debug($e);
                 Logger::warning('LADP discovery failed, assuming default LDAP capabilities.');
-                $this->capabilities = new Capability(); // create empty default capabilities
+                $this->capabilities = new LdapCapabilities(); // create empty default capabilities
                 $this->discoverySuccess = false;
             }
         }
@@ -660,7 +672,7 @@ class LdapConnection implements Selectable
         if ($serverSorting && $query->hasOrder()) {
             ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
                 array(
-                    'oid'   => Capability::LDAP_SERVER_SORT_OID,
+                    'oid'   => LdapCapabilities::LDAP_SERVER_SORT_OID,
                     'value' => $this->encodeSortRules($query->getOrder())
                 )
             ));
@@ -755,7 +767,7 @@ class LdapConnection implements Selectable
         if ($serverSorting && $query->hasOrder()) {
             ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
                 array(
-                    'oid'   => Capability::LDAP_SERVER_SORT_OID,
+                    'oid'   => LdapCapabilities::LDAP_SERVER_SORT_OID,
                     'value' => $this->encodeSortRules($query->getOrder())
                 )
             ));
@@ -1018,7 +1030,7 @@ class LdapConnection implements Selectable
      *
      * @param   resource    $ds     The link identifier of the current LDAP connection
      *
-     * @return  Capability
+     * @return  LdapCapabilities
      *
      * @throws  LdapException       In case the capability query has failed
      */
@@ -1059,8 +1071,7 @@ class LdapConnection implements Selectable
                 ldap_error($ds)
             );
         }
-
-        return new Capability($this->cleanupAttributes(ldap_get_attributes($ds, $entry), array_flip($fields)));
+        return new LdapCapabilities($this->cleanupAttributes(ldap_get_attributes($ds, $entry), array_flip($fields)));
     }
 
     /**
@@ -1126,6 +1137,45 @@ class LdapConnection implements Selectable
         }
 
         return $dir;
+    }
+
+    protected function logInfo($message)
+    {
+        Logger::debug($message);
+        if (! isset($this->info)) {
+            $this->info = array();
+        }
+        $this->info[] = $message;
+    }
+
+    /**
+     * Get information about this objects state
+     *
+     * @return array    An array of strings that describe the state in a human-readable form, each array element
+     *                  represents one fact about this object
+     */
+    public function getInfo()
+    {
+        if (! isset($this->info)) {
+            $this->getConnection();
+        }
+        return $this->info;
+    }
+
+    /**
+     * If this object is working in its current configuration
+     *
+     * @return Bool     True if the object is working, false if not
+     */
+    public function isHealthy()
+    {
+        if (! isset($this->healthy)) {
+            try {
+                $this->testConnectionHealth();
+            } catch (Exception $e) {
+            }
+        }
+        return $this->healthy;
     }
 
     /**

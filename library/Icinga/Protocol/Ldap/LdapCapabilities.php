@@ -9,7 +9,7 @@ namespace Icinga\Protocol\Ldap;
  * Provides information about the available encryption mechanisms (StartTLS), the supported
  * LDAP protocol (v2/v3), vendor-specific extensions or protocols controls and extensions.
  */
-class Capability
+class LdapCapabilities
 {
 
     const LDAP_SERVER_START_TLS_OID = '1.3.6.1.4.1.1466.20037';
@@ -127,7 +127,7 @@ class Capability
     }
 
     /**
-     * Return if the capability object contains support for StartTLS
+     * Return if the capability object contains support for paged results
      *
      * @return      bool Whether StartTLS is supported
      */
@@ -207,5 +207,33 @@ class Capability
             return array($this->attributes->namingContexts);
         }
         return$this->attributes->namingContexts;
+    }
+
+    public function getVendor()
+    {
+        // AD doesn't include the vendor entry
+        if ($this->hasAdOid()) {
+            return 'Microsoft Active Directory';
+        }
+
+        if (! isset($this->attributes->vendorName)) {
+            // OpenLDAP doesn't include the vendor entry
+            // TODO: bad, remove this and add proper OpenLDAP version checking
+            return 'OpenLDAP';
+        }
+        return $this->attributes->vendorName;
+    }
+
+    public function getVersion()
+    {
+        // AD doesn't include the version string
+        if ($this->hasAdOid()) {
+            // TODO: query AD version from cn=schema,cn=configuration,dc=yourdomain,dc=com attribute:ObjectVersion
+        }
+
+        if (! isset($this->attributes->vendorVersion)) {
+            return 'unknown';
+        }
+        return $this->attributes->vendorVersion;
     }
 }
