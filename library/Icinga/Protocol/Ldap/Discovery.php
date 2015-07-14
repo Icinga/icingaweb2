@@ -66,7 +66,7 @@ class Discovery {
      */
     public function isAd()
     {
-        return $this->connection->getCapabilities()->hasAdOid();
+        return $this->connection->getCapabilities()->isActiveDirectory();
     }
 
     /**

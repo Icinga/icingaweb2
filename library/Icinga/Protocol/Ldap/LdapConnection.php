@@ -882,7 +882,7 @@ class LdapConnection implements Selectable, Inspectable
      *
      * @return  object
      */
-    protected function cleanupAttributes($attributes, array $requestedFields)
+    public function cleanupAttributes($attributes, array $requestedFields)
     {
         // In case the result contains attributes with a differing case than the requested fields, it is
         // necessary to create another array to map attributes case insensitively to their requested counterparts.
@@ -1058,65 +1058,19 @@ class LdapConnection implements Selectable, Inspectable
             putenv('LDAPTLS_REQCERT=never');
         } else {
             if ($this->validateCertificate) {
-                $ldap_conf = $this->getConfigDir('ldap_ca.conf');
+                // $ldap_conf = $this->getConfigDir('ldap_ca.conf');
             } else {
-                $ldap_conf = $this->getConfigDir('ldap_nocert.conf');
+                // $ldap_conf = $this->getConfigDir('ldap_nocert.conf');
+                putenv('LDAPTLS_REQCERT=never');
             }
 
+            /*
             putenv('LDAPRC=' . $ldap_conf); // TODO: Does not have any effect
             if (getenv('LDAPRC') !== $ldap_conf) {
                 throw new LdapException('putenv failed');
             }
+            */
         }
-    }
-
-    /**
-     * Discover the capabilities of the given LDAP server
-     *
-     * @param   resource    $ds     The link identifier of the current LDAP connection
-     *
-     * @return  LdapCapabilities
-     *
-     * @throws  LdapException       In case the capability query has failed
-     */
-    protected function discoverCapabilities($ds)
-    {
-        $fields = array(
-            'defaultNamingContext',
-            'namingContexts',
-            'vendorName',
-            'vendorVersion',
-            'supportedSaslMechanisms',
-            'dnsHostName',
-            'schemaNamingContext',
-            'supportedLDAPVersion', // => array(3, 2)
-            'supportedCapabilities',
-            'supportedControl',
-            'supportedExtension',
-            '+'
-        );
-
-        $result = @ldap_read($ds, '', (string) $this->select()->from('*', $fields), $fields);
-        if (! $result) {
-            throw new LdapException(
-                'Capability query failed (%s:%d): %s. Check if hostname and port of the'
-                . ' ldap resource are correct and if anonymous access is permitted.',
-                $this->hostname,
-                $this->port,
-                ldap_error($ds)
-            );
-        }
-
-        $entry = ldap_first_entry($ds, $result);
-        if ($entry === false) {
-            throw new LdapException(
-                'Capabilities not available (%s:%d): %s. Discovery of root DSE probably not permitted.',
-                $this->hostname,
-                $this->port,
-                ldap_error($ds)
-            );
-        }
-        return new LdapCapabilities($this->cleanupAttributes(ldap_get_attributes($ds, $entry), array_flip($fields)));
     }
 
     /**

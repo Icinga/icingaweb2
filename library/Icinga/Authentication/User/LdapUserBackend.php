@@ -218,7 +218,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface
             throw new ProgrammingError('It is required to set a attribute name where to find a user\'s name first');
         }
 
-        if ($this->ds->getCapabilities()->hasAdOid()) {
+        if ($this->ds->getCapabilities()->isActiveDirectory()) {
             $isActiveAttribute = 'userAccountControl';
             $createdAtAttribute = 'whenCreated';
             $lastModifiedAttribute = 'whenChanged';
@@ -254,7 +254,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface
             throw new ProgrammingError('It is required to set the objectClass where to look for users first');
         }
 
-        if ($this->ds->getCapabilities()->hasAdOid()) {
+        if ($this->ds->getCapabilities()->isActiveDirectory()) {
             $stateConverter = 'user_account_control';
         } else {
             $stateConverter = 'shadow_expire';
