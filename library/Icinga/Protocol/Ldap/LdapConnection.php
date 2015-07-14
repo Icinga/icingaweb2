@@ -969,6 +969,10 @@ class LdapConnection implements Selectable, Inspectable
 
         $hostname = $this->hostname;
         if ($this->encryption === static::LDAPS) {
+            $this->logInfo('Connect using LDAPS');
+            if (! $this->validateCertificate) {
+                $this->logInfo('Skipping certificate validation');
+            }
             $hostname = 'ldaps://' . $hostname;
         }
 
@@ -1156,7 +1160,7 @@ class LdapConnection implements Selectable, Inspectable
     public function getInfo()
     {
         if (! isset($this->info)) {
-            $this->getConnection();
+            $this->testConnectionHealth();
         }
         return $this->info;
     }
