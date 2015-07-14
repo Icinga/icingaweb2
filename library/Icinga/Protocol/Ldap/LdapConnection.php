@@ -983,22 +983,67 @@ class LdapConnection implements Selectable, Inspectable
         ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
 
         if ($this->encryption === static::STARTTLS) {
-            if (($this->encryptionSuccess = @ldap_start_tls($ds))) {
-                Logger::debug('LDAP STARTTLS succeeded');
-            } else {
-                Logger::error('LDAP STARTTLS failed: %s', ldap_error($ds));
-
-                // ldap_start_tls seems to corrupt the connection though if I understand
-                // https://tools.ietf.org/html/rfc4511#section-4.14.2 correctly, this shouldn't happen
-                $ds = ldap_connect($hostname, $this->port);
-                ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
-                ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
+            $this->encrypted = true;
+            $this->logInfo('Connect using STARTTLS');
+            if (! $this->validateCertificate) {
+                $this->logInfo('Skipping certificate validation');
             }
-        } elseif ($this->encryption === static::LDAPS) {
-            $this->encryptionSuccess = true;
+
+            $ret = ldap_start_tls($ds);
+            var_dump($ret);
+            if ($ret) {
+            } else {
+                throw new LdapException('LDAP STARTTLS failed: %s', ldap_error($ds));
+            }
+
+        } elseif ($this->encryption !== static::LDAPS) {
+            $this->encrypted = false;
+            $this->logInfo('Connect without encryption');
         }
 
         return $ds;
+    }
+
+    /**
+     * Test if needed aspects of the LDAP connection are working as expected
+     *
+     * Extended information about the
+     *
+     * @throws \Icinga\Protocol\Ldap\LdapException  When a critical aspect of the health test fails
+     */
+    public function testConnectionHealth()
+    {
+        $this->healthy = false;
+        $this->info = array();
+
+        // Try to connect to the server with the given connection parameters
+        $ds = $this->prepareNewConnection();
+
+        // Try a bind-command with the given user credentials, this must not fail
+        $success = @ldap_bind($ds, $this->bindDn, $this->bindPw);
+        $msg = sprintf('LDAP bind to %s:%s (%s / %s)', $this->hostname, $this->port, $this->bindDn, '***' /* $this->bindPw */);
+        if (! $success) {
+            throw new LdapException('%s failed: %s', $msg, ldap_error($ds));
+        }
+        $this->logInfo(sprintf($msg . ' successful'));
+
+        // Try to execute a schema discovery, this may fail if schema discovery is not supported
+        try {
+            $cap = LdapCapabilities::discoverCapabilities($this, $ds);
+            $infos []= $cap->getVendor();
+
+            $version = $cap->getVersion();
+            if (isset($version)) {
+                $infos []= $version;
+            }
+            $infos []= 'Supports STARTTLS: ' . ($cap->hasStartTls() ? 'True' : 'False');
+            $infos []= 'Default naming context: ' . $cap->getDefaultNamingContext();
+            $this->info['Discovery Results:'] =  $infos;
+        } catch (Exception $e) {
+            $this->logInfo('Schema discovery not possible: ', $e->getMessage());
+        }
+
+        $this->healthy = true;
     }
 
     /**
