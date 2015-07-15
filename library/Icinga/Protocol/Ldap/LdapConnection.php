@@ -397,8 +397,7 @@ class LdapConnection implements Selectable, Inspectable
     {
         $this->bind();
 
-        if (
-            $query->getUsePagedResults()
+        if ($query->getUsePagedResults()
             && version_compare(PHP_VERSION, '5.4.0') >= 0
             && $this->getCapabilities()->hasPagedResult()
         ) {
@@ -714,7 +713,8 @@ class LdapConnection implements Selectable, Inspectable
             $count += 1;
             if (! $serverSorting || $offset === 0 || $offset < $count) {
                 $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
-                    ldap_get_attributes($ds, $entry), array_flip($fields)
+                    ldap_get_attributes($ds, $entry),
+                    array_flip($fields)
                 );
             }
         } while (
@@ -826,7 +826,8 @@ class LdapConnection implements Selectable, Inspectable
                 $count += 1;
                 if (! $serverSorting || $offset === 0 || $offset < $count) {
                     $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
-                        ldap_get_attributes($ds, $entry), array_flip($fields)
+                        ldap_get_attributes($ds, $entry),
+                        array_flip($fields)
                     );
                 }
             } while (
@@ -932,6 +933,7 @@ class LdapConnection implements Selectable, Inspectable
      * @param   array   $sortRules
      *
      * @return  string
+     * @throws ProgrammingError
      *
      * @todo    Produces an invalid stream, obviously
      */
@@ -1025,7 +1027,13 @@ class LdapConnection implements Selectable, Inspectable
 
         // Try a bind-command with the given user credentials, this must not fail
         $success = @ldap_bind($ds, $this->bindDn, $this->bindPw);
-        $msg = sprintf('LDAP bind to %s:%s (%s / %s)', $this->hostname, $this->port, $this->bindDn, '***' /* $this->bindPw */);
+        $msg = sprintf(
+            'LDAP bind to %s:%s (%s / %s)',
+            $this->hostname,
+            $this->port,
+            $this->bindDn,
+            '***' /* $this->bindPw */
+        );
         if (! $success) {
             throw new LdapException('%s failed: %s', $msg, ldap_error($ds));
         }

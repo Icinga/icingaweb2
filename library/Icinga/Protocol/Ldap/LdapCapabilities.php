@@ -313,7 +313,6 @@ class LdapCapabilities
                 array_flip($fields)
             )
         );
-
         return $cap;
     }
 
@@ -334,6 +333,5 @@ class LdapCapabilities
             return 'Windows Server 2008 (or newer)';
         }
         return null;
-
     }
 }
