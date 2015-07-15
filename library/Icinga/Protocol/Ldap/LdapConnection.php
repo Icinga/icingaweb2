@@ -261,7 +261,7 @@ class LdapConnection implements Selectable, Inspectable
     {
         if ($this->capabilities === null) {
             try {
-                $this->capabilities = $this->discoverCapabilities($this->getConnection());
+                $this->capabilities = LdapCapabilities::discoverCapabilities($this);
                 $this->discoverySuccess = true;
             } catch (LdapException $e) {
                 Logger::debug($e);
@@ -1031,7 +1031,7 @@ class LdapConnection implements Selectable, Inspectable
 
         // Try to execute a schema discovery, this may fail if schema discovery is not supported
         try {
-            $cap = LdapCapabilities::discoverCapabilities($this, $ds);
+            $cap = LdapCapabilities::discoverCapabilities($this);
             $infos []= $cap->getVendor();
 
             $version = $cap->getVersion();

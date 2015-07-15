@@ -263,14 +263,15 @@ class LdapCapabilities
      * Discover the capabilities of the given LDAP server
      *
      * @param   LdapConnection  $connection The ldap connection to use
-     * @param   int             $ds         The link identifier of the current LDAP connection
      *
      * @return  LdapCapabilities
      *
      * @throws  LdapException       In case the capability query has failed
      */
-    public static function discoverCapabilities(LdapConnection $connection, $ds)
+    public static function discoverCapabilities(LdapConnection $connection)
     {
+        $ds = $connection->getConnection();
+
         $fields = array(
             'defaultNamingContext',
             'namingContexts',
