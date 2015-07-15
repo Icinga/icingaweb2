@@ -160,7 +160,7 @@ class LdapConnection implements Selectable, Inspectable
      *
      * @var bool
      */
-    protected $encryptionSuccess;
+    protected $encrypted = null;
 
     /**
      * @var array
@@ -295,11 +295,11 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function isEncrypted()
     {
-        if ($this->encryptionSuccess === null) {
+        if ($this->encrypted === null) {
             return false;
         }
 
-        return $this->encryptionSuccess;
+        return $this->encrypted;
     }
 
     /**
