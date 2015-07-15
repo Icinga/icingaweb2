@@ -377,7 +377,7 @@ class BackendConfigForm extends ConfigForm
         $rowCount = $db->select()->from('icinga_instances')->count();
 
         if ($rowCount === 0) {
-            $form->error($form->translate(
+            $form->warning($form->translate(
                 'There is currently no icinga instance writing to the IDO. Make sure '
                 . 'that a icinga instance is configured and able to write to the IDO.'
             ));
