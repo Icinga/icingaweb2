@@ -340,12 +340,6 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         $this->bound = true;
-
-        if ($this->encryptionSuccess === false && $this->getCapabilities()->hasStartTls()) {
-            // Alert the user about the unencrypted connection if there is really an error. If the server
-            // does not support it, don't do anything as authentication is completely broken otherwise.
-            throw new LdapException('LDAP STARTTLS failed. An error occured. Please see the log for more details');
-        }
     }
 
     /**
