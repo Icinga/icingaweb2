@@ -945,7 +945,7 @@ class LdapConnection implements Selectable, Inspectable
     /**
      * Prepare and establish a connection with the LDAP server
      *
-     * @param   Inspection  $info   Optional inspection to fill with diagnosis info
+     * @param   Inspection  $info   Optional inspection to fill with diagnostic info
      *
      * @return  resource            A LDAP link identifier
      *
@@ -1089,6 +1089,9 @@ class LdapConnection implements Selectable, Inspectable
 
     /**
      * Inspect if this LDAP Connection is working as expected
+     *
+     * Check if connection, bind and encryption is working as expected and get additional
+     * information about the used
      *
      * @return  Inspection  Inspection result
      */
