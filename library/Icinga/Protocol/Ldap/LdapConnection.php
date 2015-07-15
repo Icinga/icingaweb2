@@ -994,11 +994,7 @@ class LdapConnection implements Selectable, Inspectable
             if (! $this->validateCertificate) {
                 $this->logInfo('Skipping certificate validation');
             }
-
-            $ret = ldap_start_tls($ds);
-            var_dump($ret);
-            if ($ret) {
-            } else {
+            if (! ldap_start_tls($ds)) {
                 throw new LdapException('LDAP STARTTLS failed: %s', ldap_error($ds));
             }
 
