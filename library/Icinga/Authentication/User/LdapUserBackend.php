@@ -5,6 +5,8 @@ namespace Icinga\Authentication\User;
 
 use DateTime;
 use Icinga\Data\ConfigObject;
+use Icinga\Data\Inspectable;
+use Icinga\Data\Inspection;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Repository\LdapRepository;
@@ -13,7 +15,7 @@ use Icinga\Protocol\Ldap\LdapException;
 use Icinga\Protocol\Ldap\Expression;
 use Icinga\User;
 
-class LdapUserBackend extends LdapRepository implements UserBackendInterface
+class LdapUserBackend extends LdapRepository implements UserBackendInterface, Inspectable
 {
     /**
      * The base DN to use for a query
@@ -315,24 +317,32 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface
      *  <li>The specified userClass has the property specified by userNameAttribute</li>
      * </ul>
      *
+     * @param   Inspection  $info           Optional inspection to fill with diagnostic info
+     *
      * @throws  AuthenticationException     When authentication is not possible
      */
-    public function assertAuthenticationPossible()
+    public function assertAuthenticationPossible(Inspection $insp = null)
     {
+        if (! isset($insp)) {
+            $insp = new Inspection('');
+        }
         try {
             $result = $this->select()->fetchRow();
         } catch (LdapException $e) {
             throw new AuthenticationException('Connection not possible.', $e);
         }
+        $insp->write('Connection possible.');
 
+        $msg = sprintf(
+            'objects with objectClass "%s" in DN "%s" (Filter: %s)',
+            $this->userClass,
+            $this->baseDn ?: $this->ds->getDn(),
+            $this->filter ?: 'None'
+        );
         if ($result === false) {
-            throw new AuthenticationException(
-                'No objects with objectClass "%s" in DN "%s" found. (Filter: %s)',
-                $this->userClass,
-                $this->baseDn ?: $this->ds->getDn(),
-                $this->filter ?: 'None'
-            );
+            throw new AuthenticationException('No ' . $msg . 'found');
         }
+        $insp->write($msg . ' exist');
 
         if (! isset($result->user_name)) {
             throw new AuthenticationException(
@@ -376,5 +386,32 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface
                 $e
             );
         }
+    }
+
+    /**
+     * Inspect if this LDAP User Backend is working as expected
+     *
+     * @return  Inspection  Inspection result
+     */
+    public function inspect()
+    {
+        $result = new Inspection('Ldap User Backend');
+
+        // inspect the used connection to get more diagnostic info in case the connection is not working
+        $result->write($this->ds->inspect());
+
+        try {
+            $this->assertAuthenticationPossible($result);
+            $result->write('User count: ' . $this->select()->count());
+        } catch (AuthenticationException $e) {
+            if (($previous = $e->getPrevious()) !== null) {
+                $result->error($previous->getMessage());
+            } else {
+                $result->error($e->getMessage());
+            }
+        } catch (Exception $e) {
+            $result->error(sprintf('Unable to validate authentication: %s', $e->getMessage()));
+        }
+        return $result;
     }
 }
