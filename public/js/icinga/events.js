@@ -199,6 +199,7 @@
             var $form = $(event.currentTarget).closest('form');
             var url = $form.attr('action');
             var method = $form.attr('method');
+            var encoding = $form.attr('enctype');
             var $button = $('input[type=submit]:focus', $form).add('button[type=submit]:focus', $form);
             var $target;
             var data;
@@ -228,6 +229,10 @@
                 method = 'POST';
             } else {
                 method = method.toUpperCase();
+            }
+
+            if (typeof encoding === 'undefined') {
+                encoding = 'application/x-www-form-urlencoded';
             }
 
             if ($button.length === 0) {
@@ -266,14 +271,22 @@
 
                 url = icinga.utils.addUrlParams(url, dataObj);
             } else {
-                data = $form.serializeArray();
+                if (encoding === 'multipart/form-data') {
+                    data = new FormData($form[0]);
+                } else {
+                    data = $form.serializeArray();
+                }
 
                 if (typeof autosubmit === 'undefined' || ! autosubmit) {
                     if ($button.length && $button.attr('name') !== 'undefined') {
-                        data.push({
-                            name: $button.attr('name'),
-                            value: $button.attr('value')
-                        });
+                        if (data instanceof FormData) {
+                            data.append($button.attr('name'), $button.attr('value'));
+                        } else {
+                            data.push({
+                                name: $button.attr('name'),
+                                value: $button.attr('value')
+                            });
+                        }
                     }
                 }
             }

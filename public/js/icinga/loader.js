@@ -100,13 +100,25 @@
                 headers['X-Icinga-WindowId'] = 'undefined';
             }
 
+            // This is jQuery's default content type
+            var contentType = 'application/x-www-form-urlencoded; charset=UTF-8';
+
+            var isFormData = data instanceof FormData;
+            if (isFormData) {
+                // Setting false is mandatory as the form's data
+                // won't be recognized by the server otherwise
+                contentType = false;
+            }
+
             var self = this;
             var req = $.ajax({
                 type   : method,
                 url    : url,
                 data   : data,
                 headers: headers,
-                context: self
+                context: self,
+                contentType: contentType,
+                processData: ! isFormData
             });
 
             req.$target = $target;
