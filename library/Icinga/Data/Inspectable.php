@@ -2,18 +2,19 @@
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Data;
-use Icinga\Exception\InspectionException;
 
 /**
  * An object for which the user can retrieve status information
+ *
+ * This interface is useful for providing summaries or diagnostic information about objects
+ * to users.
  */
 interface Inspectable
 {
     /**
-     * Get information about this objects state
+     * Inspect this object to gain extended information about its health
      *
-     * @return Inspection
-     * @throws InspectionException  When inspection of the object was not possible
+     * @return Inspection           The inspection result
      */
     public function inspect();
 }

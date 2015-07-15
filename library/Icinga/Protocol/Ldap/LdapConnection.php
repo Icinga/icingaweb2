@@ -1088,11 +1088,9 @@ class LdapConnection implements Selectable, Inspectable
     }
 
     /**
-     * Test if needed aspects of the LDAP connection are working as expected
+     * Inspect if this LDAP Connection is working as expected
      *
-     * @return  Inspection          Information about the tested connection
-     *
-     * @throws  InspectionException When inspection failed
+     * @return  Inspection  Inspection result
      */
     public function inspect()
     {
@@ -1102,7 +1100,7 @@ class LdapConnection implements Selectable, Inspectable
         try {
             $ds = $this->prepareNewConnection($insp);
         } catch (Exception $e) {
-            throw new InspectionException($e->getMessage(), $insp);
+            return $insp->error($e->getMessage());
         }
 
         // Try a bind-command with the given user credentials, this must not fail
@@ -1115,7 +1113,7 @@ class LdapConnection implements Selectable, Inspectable
             '***' /* $this->bindPw */
         );
         if (! $success) {
-            $insp->error(sprintf('%s failed: %s', $msg, ldap_error($ds)));
+            return $insp->error(sprintf('%s failed: %s', $msg, ldap_error($ds)));
         }
         $insp->write(sprintf($msg . ' successful'));
 
