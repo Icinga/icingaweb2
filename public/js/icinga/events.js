@@ -272,14 +272,14 @@
                 url = icinga.utils.addUrlParams(url, dataObj);
             } else {
                 if (encoding === 'multipart/form-data') {
-                    data = new FormData($form[0]);
+                    data = new window.FormData($form[0]);
                 } else {
                     data = $form.serializeArray();
                 }
 
                 if (typeof autosubmit === 'undefined' || ! autosubmit) {
                     if ($button.length && $button.attr('name') !== 'undefined') {
-                        if (data instanceof FormData) {
+                        if (encoding === 'multipart/form-data') {
                             data.append($button.attr('name'), $button.attr('value'));
                         } else {
                             data.push({
