@@ -1062,18 +1062,15 @@ class LdapConnection implements Selectable, Inspectable
             putenv('LDAPTLS_REQCERT=never');
         } else {
             if ($this->validateCertificate) {
-                // $ldap_conf = $this->getConfigDir('ldap_ca.conf');
+                $ldap_conf = $this->getConfigDir('ldap_ca.conf');
             } else {
-                // $ldap_conf = $this->getConfigDir('ldap_nocert.conf');
-                putenv('LDAPTLS_REQCERT=never');
+                $ldap_conf = $this->getConfigDir('ldap_nocert.conf');
             }
 
-            /*
             putenv('LDAPRC=' . $ldap_conf); // TODO: Does not have any effect
             if (getenv('LDAPRC') !== $ldap_conf) {
                 throw new LdapException('putenv failed');
             }
-            */
         }
     }
 
