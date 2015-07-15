@@ -160,7 +160,7 @@ class LdapConnection implements Selectable, Inspectable
      *
      * @var bool
      */
-    protected $encryptionSuccess;
+    protected $encrypted = null;
 
     /**
      * @var array
@@ -295,11 +295,11 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function isEncrypted()
     {
-        if ($this->encryptionSuccess === null) {
+        if ($this->encrypted === null) {
             return false;
         }
 
-        return $this->encryptionSuccess;
+        return $this->encrypted;
     }
 
     /**
@@ -340,12 +340,6 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         $this->bound = true;
-
-        if ($this->encryptionSuccess === false && $this->getCapabilities()->hasStartTls()) {
-            // Alert the user about the unencrypted connection if there is really an error. If the server
-            // does not support it, don't do anything as authentication is completely broken otherwise.
-            throw new LdapException('LDAP STARTTLS failed. An error occured. Please see the log for more details');
-        }
     }
 
     /**
