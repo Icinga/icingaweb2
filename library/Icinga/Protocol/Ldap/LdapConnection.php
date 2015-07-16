@@ -703,8 +703,7 @@ class LdapConnection implements Selectable, Inspectable
                     array_flip($fields)
                 );
             }
-        } while (
-            (! $serverSorting || $limit === 0 || $limit !== count($entries))
+        } while ((! $serverSorting || $limit === 0 || $limit !== count($entries))
             && ($entry = ldap_next_entry($ds, $entry))
         );
 
