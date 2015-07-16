@@ -28,8 +28,8 @@ class DbBackendFormTest extends BaseTestCase
     {
         $this->setUpResourceFactoryMock();
         Mockery::mock('overload:Icinga\Authentication\User\DbUserBackend')
-            ->shouldReceive('select->where->count')
-            ->andReturn(2);
+            ->shouldReceive('inspect')
+            ->andReturn(self::createInspector(false));
 
         // Passing array(null) is required to make Mockery call the constructor...
         $form = Mockery::mock('Icinga\Forms\Config\UserBackend\DbBackendForm[getView]', array(null));
@@ -54,8 +54,8 @@ class DbBackendFormTest extends BaseTestCase
     {
         $this->setUpResourceFactoryMock();
         Mockery::mock('overload:Icinga\Authentication\User\DbUserBackend')
-            ->shouldReceive('count')
-            ->andReturn(0);
+            ->shouldReceive('inspect')
+            ->andReturn(self::createInspector(true));
 
         // Passing array(null) is required to make Mockery call the constructor...
         $form = Mockery::mock('Icinga\Forms\Config\UserBackend\DbBackendForm[getView]', array(null));
@@ -79,5 +79,22 @@ class DbBackendFormTest extends BaseTestCase
             ->andReturn(Mockery::mock('Icinga\Data\Db\DbConnection'))
             ->shouldReceive('getResourceConfig')
             ->andReturn(new ConfigObject());
+    }
+
+    public static function createInspector($error = false, $log = array('log'))
+    {
+        if (! $error) {
+            $calls = array(
+                'hasError' => false,
+                'toArray' => $log
+            );
+        } else {
+            $calls = array(
+                'hasError' => true,
+                'getError' => 'Error',
+                'toArray' => $log
+            );
+        }
+        return Mockery::mock('Icinga\Data\Inspection', $calls);
     }
 }
