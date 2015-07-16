@@ -111,6 +111,7 @@ class Service extends MonitoredObject
             'host_acknowledged',
             'host_active_checks_enabled',
             'host_address',
+            'host_address6',
             'host_alias',
             'host_display_name',
             'host_handled',

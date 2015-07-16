@@ -25,6 +25,7 @@ class HoststatusQuery extends IdoQuery
             'host'                  => 'ho.name1 COLLATE latin1_general_ci',
             'host_action_url'       => 'h.action_url',
             'host_address'          => 'h.address',
+            'host_address6'         => 'h.address6',
             'host_alias'            => 'h.alias',
             'host_display_name'     => 'h.display_name COLLATE latin1_general_ci',
             'host_icon_image'       => 'h.icon_image',

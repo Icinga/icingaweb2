@@ -96,6 +96,7 @@ class Host extends MonitoredObject
             'host_active_checks_enabled',
             'host_active_checks_enabled_changed',
             'host_address',
+            'host_address6',
             'host_alias',
             'host_check_command',
             'host_check_execution_time',

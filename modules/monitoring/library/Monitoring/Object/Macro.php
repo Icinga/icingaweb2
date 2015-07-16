@@ -14,11 +14,13 @@ class Macro
      * @var array
      */
     private static $icingaMacros = array(
-        'HOSTNAME'     => 'host_name',
-        'HOSTADDRESS'  => 'host_address',
-        'SERVICEDESC'  => 'service_description',
-        'host.name'    => 'host_name',
-        'host.address' => 'host_address',
+        'HOSTNAME'      => 'host_name',
+        'HOSTADDRESS'   => 'host_address',
+        'HOSTADDRESS6'  => 'host_address6',
+        'SERVICEDESC'   => 'service_description',
+        'host.name'     => 'host_name',
+        'host.address'  => 'host_address',
+        'host.address6' => 'host_address6',
         'service.description' => 'service_description'
     );
 

@@ -29,6 +29,7 @@ class ServiceStatus extends DataView
             'host_state_type',
             'host_last_state_change',
             'host_address',
+            'host_address6',
             'host_problem',
             'host_handled',
             'service_description',

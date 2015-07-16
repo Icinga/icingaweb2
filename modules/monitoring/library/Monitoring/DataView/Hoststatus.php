@@ -15,6 +15,7 @@ class HostStatus extends DataView
             'host_display_name',
             'host_alias',
             'host_address',
+            'host_address6',
             'host_state',
             'host_state_type',
             'host_handled',

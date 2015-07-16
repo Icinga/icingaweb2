@@ -77,6 +77,7 @@ class Monitoring_HostController extends MonitoredObjectController
             'host_state_type',
             'host_last_state_change',
             'host_address',
+            'host_address6',
             'host_handled',
             'service_description',
             'service_display_name',

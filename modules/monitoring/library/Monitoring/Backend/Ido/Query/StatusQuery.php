@@ -39,6 +39,7 @@ class StatusQuery extends IdoQuery
             'host_display_name'     => 'h.display_name COLLATE latin1_general_ci',
             'host_alias'            => 'h.alias',
             'host_address'          => 'h.address',
+            'host_address6'         => 'h.address6',
             'host_ipv4'             => 'INET_ATON(h.address)',
             'host_icon_image'       => 'h.icon_image',
             'host_icon_image_alt'   => 'h.icon_image_alt',
