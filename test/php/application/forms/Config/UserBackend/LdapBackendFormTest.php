@@ -12,6 +12,7 @@ use Icinga\Data\ConfigObject;
 use Icinga\Test\BaseTestCase;
 use Icinga\Forms\Config\UserBackend\LdapBackendForm;
 use Icinga\Exception\AuthenticationException;
+use Tests\Icinga\Forms\Config\Resource\LdapResourceFormTest;
 
 class LdapBackendFormTest extends BaseTestCase
 {
@@ -27,15 +28,18 @@ class LdapBackendFormTest extends BaseTestCase
      */
     public function testValidBackendIsValid()
     {
-        $ldapUserBackendMock = Mockery::mock('overload:Icinga\Authentication\User\LdapUserBackend');
-        $ldapUserBackendMock->shouldReceive('assertAuthenticationPossible')->andReturnNull();
+        $ldapUserBackendMock = Mockery::mock('overload:Icinga\Authentication\User\LdapUserBackend')
+            ->shouldReceive('inspect')
+            ->andReturn(self::createInspector(false))->getMock();
         $this->setUpUserBackendMock($ldapUserBackendMock);
 
         // Passing array(null) is required to make Mockery call the constructor...
         $form = Mockery::mock('Icinga\Forms\Config\UserBackend\LdapBackendForm[getView]', array(null));
         $form->shouldReceive('getView->escape')
             ->with(Mockery::type('string'))
-            ->andReturnUsing(function ($s) { return $s; });
+            ->andReturnUsing(function ($s) {
+                return $s;
+            });
         $form->setTokenDisabled();
         $form->setResources(array('test_ldap_backend'));
         $form->populate(array('resource' => 'test_ldap_backend'));
@@ -52,7 +56,9 @@ class LdapBackendFormTest extends BaseTestCase
      */
     public function testInvalidBackendIsNotValid()
     {
-        $ldapUserBackendMock = Mockery::mock('overload:Icinga\Authentication\User\LdapUserBackend');
+        $ldapUserBackendMock = Mockery::mock('overload:Icinga\Authentication\User\LdapUserBackend')
+            ->shouldReceive('inspect')
+            ->andReturn(self::createInspector(true))->getMock();
         $ldapUserBackendMock->shouldReceive('assertAuthenticationPossible')->andThrow(new AuthenticationException);
         $this->setUpUserBackendMock($ldapUserBackendMock);
 
@@ -60,7 +66,9 @@ class LdapBackendFormTest extends BaseTestCase
         $form = Mockery::mock('Icinga\Forms\Config\UserBackend\LdapBackendForm[getView]', array(null));
         $form->shouldReceive('getView->escape')
             ->with(Mockery::type('string'))
-            ->andReturnUsing(function ($s) { return $s; });
+            ->andReturnUsing(function ($s) {
+                return $s;
+            });
         $form->setTokenDisabled();
         $form->setResources(array('test_ldap_backend'));
         $form->populate(array('resource' => 'test_ldap_backend'));
@@ -76,5 +84,22 @@ class LdapBackendFormTest extends BaseTestCase
         Mockery::mock('alias:Icinga\Authentication\User\UserBackend')
             ->shouldReceive('create')
             ->andReturn($ldapUserBackendMock);
+    }
+
+    public static function createInspector($error = false, $log = array('log'))
+    {
+        if (! $error) {
+            $calls = array(
+                'hasError' => false,
+                'toArray' => $log
+            );
+        } else {
+            $calls = array(
+                'hasError' => true,
+                'getError' => 'Error',
+                'toArray' => $log
+            );
+        }
+        return Mockery::mock('Icinga\Data\Inspection', $calls);
     }
 }
