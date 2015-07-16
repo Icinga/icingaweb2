@@ -129,16 +129,13 @@ class DbResourceForm extends Form
      */
     public static function isValidResource(Form $form)
     {
-        try {
-            $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
-            $resource->getConnection()->getConnection();
-        } catch (Exception $e) {
-            $form->addError(
-                $form->translate('Connectivity validation failed, connection to the given resource not possible.')
-            );
-            return false;
+        $result = ResourceFactory::createResource(new ConfigObject($form->getValues()))->inspect();
+        if ($result->hasError()) {
+            $form->addError(sprintf($form->translate('Connectivity validation failed: %s'), $result->getError()));
         }
 
-        return true;
+        // TODO: display diagnostics in $result->toArray() to the user
+
+        return ! $result->hasError();
     }
 }
