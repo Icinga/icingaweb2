@@ -376,19 +376,18 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
             try {
                 $res = $this->select()->fetchRow();
             } catch (LdapException $e) {
-                throw new AuthenticationException('Connection not possible.', $e);
+                throw new AuthenticationException('Connection not possible', $e);
             }
-            $result->write('Connection possible.');
-            $msg = sprintf(
-                'objects with objectClass "%s" in DN "%s" (Filter: %s)',
+            $result->write('Searching for: ' . sprintf(
+                'objectClass "%s" in DN "%s" (Filter: %s)',
                 $this->userClass,
                 $this->baseDn ?: $this->ds->getDn(),
                 $this->filter ?: 'None'
-            );
+            ));
             if ($res === false) {
-                throw new AuthenticationException('No ' . $msg . 'found');
+                throw new AuthenticationException('Error, no users found in backend');
             }
-            $result->write($msg . ' exist');
+            $result->write('Users found in backend');
             if (! isset($res->user_name)) {
                 throw new AuthenticationException(
                     'UserNameAttribute "%s" not existing in objectClass "%s"',
@@ -397,7 +396,8 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
                 );
             }
 
-            $result->write('User count: ' . $this->select()->count());
+            // (mj) don't do this until we have a more scalable count() implementation
+            // $result->write('User count: ' . $this->select()->count());
         } catch (AuthenticationException $e) {
             if (($previous = $e->getPrevious()) !== null) {
                 $result->error($previous->getMessage());
