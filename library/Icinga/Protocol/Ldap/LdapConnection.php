@@ -10,8 +10,10 @@ use Icinga\Application\Logger;
 use Icinga\Application\Platform;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\Inspectable;
+use Icinga\Data\Inspection;
 use Icinga\Data\Selectable;
 use Icinga\Data\Sortable;
+use Icinga\Exception\InspectionException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Ldap\LdapException;
 
@@ -161,16 +163,6 @@ class LdapConnection implements Selectable, Inspectable
      * @var bool
      */
     protected $encrypted = null;
-
-    /**
-     * @var array
-     */
-    protected $info = null;
-
-    /**
-     * @var Boolean
-     */
-    protected $healthy = null;
 
     /**
      * Create a new connection object
@@ -711,8 +703,7 @@ class LdapConnection implements Selectable, Inspectable
                     array_flip($fields)
                 );
             }
-        } while (
-            (! $serverSorting || $limit === 0 || $limit !== count($entries))
+        } while ((! $serverSorting || $limit === 0 || $limit !== count($entries))
             && ($entry = ldap_next_entry($ds, $entry))
         );
 
@@ -953,21 +944,27 @@ class LdapConnection implements Selectable, Inspectable
     /**
      * Prepare and establish a connection with the LDAP server
      *
-     * @return  resource        A LDAP link identifier
+     * @param   Inspection  $info   Optional inspection to fill with diagnostic info
      *
-     * @throws  LdapException   In case the connection is not possible
+     * @return  resource            A LDAP link identifier
+     *
+     * @throws  LdapException       In case the connection is not possible
      */
-    protected function prepareNewConnection()
+    protected function prepareNewConnection(Inspection $info = null)
     {
+        if (! isset($info)) {
+            $info = new Inspection('');
+        }
+
         if ($this->encryption === static::STARTTLS || $this->encryption === static::LDAPS) {
             $this->prepareTlsEnvironment();
         }
 
         $hostname = $this->hostname;
         if ($this->encryption === static::LDAPS) {
-            $this->logInfo('Connect using LDAPS');
+            $info->write('Connect using LDAPS');
             if (! $this->validateCertificate) {
-                $this->logInfo('Skipping certificate validation');
+                $info->write('Skip certificate validation');
             }
             $hostname = 'ldaps://' . $hostname;
         }
@@ -984,9 +981,9 @@ class LdapConnection implements Selectable, Inspectable
 
         if ($this->encryption === static::STARTTLS) {
             $this->encrypted = true;
-            $this->logInfo('Connect using STARTTLS');
+            $info->write('Connect using STARTTLS');
             if (! $this->validateCertificate) {
-                $this->logInfo('Skipping certificate validation');
+                $info->write('Skip certificate validation');
             }
             if (! ldap_start_tls($ds)) {
                 throw new LdapException('LDAP STARTTLS failed: %s', ldap_error($ds));
@@ -994,58 +991,10 @@ class LdapConnection implements Selectable, Inspectable
 
         } elseif ($this->encryption !== static::LDAPS) {
             $this->encrypted = false;
-            $this->logInfo('Connect without encryption');
+            $info->write('Connect without encryption');
         }
 
         return $ds;
-    }
-
-    /**
-     * Test if needed aspects of the LDAP connection are working as expected
-     *
-     * Extended information about the
-     *
-     * @throws \Icinga\Protocol\Ldap\LdapException  When a critical aspect of the health test fails
-     */
-    public function testConnectionHealth()
-    {
-        $this->healthy = false;
-        $this->info = array();
-
-        // Try to connect to the server with the given connection parameters
-        $ds = $this->prepareNewConnection();
-
-        // Try a bind-command with the given user credentials, this must not fail
-        $success = @ldap_bind($ds, $this->bindDn, $this->bindPw);
-        $msg = sprintf(
-            'LDAP bind to %s:%s (%s / %s)',
-            $this->hostname,
-            $this->port,
-            $this->bindDn,
-            '***' /* $this->bindPw */
-        );
-        if (! $success) {
-            throw new LdapException('%s failed: %s', $msg, ldap_error($ds));
-        }
-        $this->logInfo(sprintf($msg . ' successful'));
-
-        // Try to execute a schema discovery, this may fail if schema discovery is not supported
-        try {
-            $cap = LdapCapabilities::discoverCapabilities($this);
-            $infos []= $cap->getVendor();
-
-            $version = $cap->getVersion();
-            if (isset($version)) {
-                $infos []= $version;
-            }
-            $infos []= 'Supports STARTTLS: ' . ($cap->hasStartTls() ? 'True' : 'False');
-            $infos []= 'Default naming context: ' . $cap->getDefaultNamingContext();
-            $this->info['Discovery Results:'] =  $infos;
-        } catch (Exception $e) {
-            $this->logInfo('Schema discovery not possible: ', $e->getMessage());
-        }
-
-        $this->healthy = true;
     }
 
     /**
@@ -1137,43 +1086,55 @@ class LdapConnection implements Selectable, Inspectable
         return $dir;
     }
 
-    protected function logInfo($message)
-    {
-        Logger::debug($message);
-        if (! isset($this->info)) {
-            $this->info = array();
-        }
-        $this->info[] = $message;
-    }
-
     /**
-     * Get information about this objects state
+     * Inspect if this LDAP Connection is working as expected
      *
-     * @return array    An array of strings that describe the state in a human-readable form, each array element
-     *                  represents one fact about this object
+     * Check if connection, bind and encryption is working as expected and get additional
+     * information about the used
+     *
+     * @return  Inspection  Inspection result
      */
-    public function getInfo()
+    public function inspect()
     {
-        if (! isset($this->info)) {
-            $this->testConnectionHealth();
-        }
-        return $this->info;
-    }
+        $insp = new Inspection('Ldap Connection');
 
-    /**
-     * If this object is working in its current configuration
-     *
-     * @return Bool     True if the object is working, false if not
-     */
-    public function isHealthy()
-    {
-        if (! isset($this->healthy)) {
-            try {
-                $this->testConnectionHealth();
-            } catch (Exception $e) {
+        // Try to connect to the server with the given connection parameters
+        try {
+            $ds = $this->prepareNewConnection($insp);
+        } catch (Exception $e) {
+            return $insp->error($e->getMessage());
+        }
+
+        // Try a bind-command with the given user credentials, this must not fail
+        $success = @ldap_bind($ds, $this->bindDn, $this->bindPw);
+        $msg = sprintf(
+            'LDAP bind to %s:%s (%s / %s)',
+            $this->hostname,
+            $this->port,
+            $this->bindDn,
+            '***' /* $this->bindPw */
+        );
+        if (! $success) {
+            return $insp->error(sprintf('%s failed: %s', $msg, ldap_error($ds)));
+        }
+        $insp->write(sprintf($msg . ' successful'));
+
+        // Try to execute a schema discovery this may fail if schema discovery is not supported
+        try {
+            $cap = LdapCapabilities::discoverCapabilities($this);
+            $discovery = new Inspection('Discovery Results');
+            $discovery->write($cap->getVendor());
+            $version = $cap->getVersion();
+            if (isset($version)) {
+                $discovery->write($version);
             }
+            $discovery->write('Supports STARTTLS: ' . ($cap->hasStartTls() ? 'True' : 'False'));
+            $discovery->write('Default naming context: ' . $cap->getDefaultNamingContext());
+            $insp->write($discovery);
+        } catch (Exception $e) {
+            $insp->write('Schema discovery not possible: ' . $e->getMessage());
         }
-        return $this->healthy;
+        return $insp;
     }
 
     /**

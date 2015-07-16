@@ -4,6 +4,8 @@
 namespace Icinga\Forms\Config\UserBackend;
 
 use Exception;
+use Icinga\Authentication\User\LdapUserBackend;
+use Icinga\Data\Inspection;
 use Icinga\Web\Form;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
@@ -184,22 +186,16 @@ class LdapBackendForm extends Form
      */
     public static function isValidUserBackend(Form $form)
     {
-        try {
-            $ldapUserBackend = UserBackend::create(null, new ConfigObject($form->getValues()));
-            $ldapUserBackend->assertAuthenticationPossible();
-        } catch (AuthenticationException $e) {
-            if (($previous = $e->getPrevious()) !== null) {
-                $form->addError($previous->getMessage());
-            } else {
-                $form->addError($e->getMessage());
-            }
-
-            return false;
-        } catch (Exception $e) {
-            $form->addError(sprintf($form->translate('Unable to validate authentication: %s'), $e->getMessage()));
-            return false;
+        /**
+         * @var $result Inspection
+         */
+        $result = UserBackend::create(null, new ConfigObject($form->getValues()))->inspect();
+        if ($result->hasError()) {
+            $form->addError($result->getError());
         }
 
-        return true;
+        // TODO: display diagnostics in $result->toArray() to the user
+
+        return ! $result->hasError();
     }
 }
