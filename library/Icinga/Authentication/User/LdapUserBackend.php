@@ -387,7 +387,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
             if ($res === false) {
                 throw new AuthenticationException('Error, no users found in backend');
             }
-            $result->write('Users found in backend');
+            $result->write(sprintf('%d users found in backend', $this->select()->count()));
             if (! isset($res->user_name)) {
                 throw new AuthenticationException(
                     'UserNameAttribute "%s" not existing in objectClass "%s"',
@@ -395,9 +395,6 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
                     $this->userClass
                 );
             }
-
-            // (mj) don't do this until we have a more scalable count() implementation
-            // $result->write('User count: ' . $this->select()->count());
         } catch (AuthenticationException $e) {
             if (($previous = $e->getPrevious()) !== null) {
                 $result->error($previous->getMessage());
