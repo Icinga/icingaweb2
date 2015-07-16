@@ -3,6 +3,9 @@
 
 namespace Icinga\Data\Db;
 
+use Exception;
+use Icinga\Data\Inspectable;
+use Icinga\Data\Inspection;
 use PDO;
 use Iterator;
 use Zend_Db;
@@ -23,7 +26,7 @@ use Icinga\Exception\ProgrammingError;
 /**
  * Encapsulate database connections and query creation
  */
-class DbConnection implements Selectable, Extensible, Updatable, Reducible
+class DbConnection implements Selectable, Extensible, Updatable, Reducible, Inspectable
 {
     /**
      * Connection config
@@ -434,5 +437,43 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible
         } else {
             return $column . ' ' . $sign . ' ' . $this->dbAdapter->quote($value);
         }
+    }
+
+    public function inspect()
+    {
+        $insp = new Inspection('Db Connection');
+        try {
+            $this->getDbAdapter()->getConnection();
+            $config = $this->dbAdapter->getConfig();
+            $insp->write(sprintf(
+                'Connection to %s as %s on %s:%s successful',
+                $config['dbname'],
+                $config['username'],
+                $config['host'],
+                $config['port']
+            ));
+            switch ($this->dbType) {
+                case 'mysql':
+                    $rows = $this->dbAdapter->query(
+                        'SHOW VARIABLES WHERE variable_name ' .
+                        'IN (\'version\', \'protocol_version\', \'version_compile_os\');'
+                    )->fetchAll();
+                    $sqlinsp = new Inspection('MySQL');
+                    foreach ($rows as $row) {
+                        $sqlinsp->write($row->variable_name . ': ' . $row->value);
+                    }
+                    $insp->write($sqlinsp);
+                    break;
+                case 'pgsql':
+                    $row = $this->dbAdapter->query('SELECT version();')->fetchAll();
+                    $sqlinsp = new Inspection('PostgreSQL');
+                    $sqlinsp->write($row[0]->version);
+                    $insp->write($sqlinsp);
+                    break;
+            }
+        } catch (Exception $e) {
+            return $insp->error(sprintf('Connection failed %s', $e->getMessage()));
+        }
+        return $insp;
     }
 }
