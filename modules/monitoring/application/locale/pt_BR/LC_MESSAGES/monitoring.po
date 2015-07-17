@@ -311,7 +311,7 @@ msgstr "<b>{title}:</b><br>{value} de {sum} serviços estão {label}"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/components/notifications.phtml:17
 #, php-format
-msgid "A notification has been sent for this issue %s ago"
+msgid "A notication has been sent for this issue %s ago"
 msgstr "Uma notificação foi enviada para este problema %s atrás"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/show/history.phtml:64
