@@ -8,7 +8,7 @@ use Icinga\Util\ConfigAwareFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Data\Db\DbConnection;
 use Icinga\Protocol\Livestatus\Connection as LivestatusConnection;
-use Icinga\Protocol\Ldap\Connection as LdapConnection;
+use Icinga\Protocol\Ldap\LdapConnection;
 use Icinga\Protocol\File\FileReader;
 
 /**

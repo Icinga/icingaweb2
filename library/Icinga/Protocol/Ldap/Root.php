@@ -22,7 +22,7 @@ class Root
     protected $rdn;
 
     /**
-     * @var Connection
+     * @var LdapConnection
      */
     protected $connection;
 
@@ -37,9 +37,9 @@ class Root
     protected $props = array();
 
     /**
-     * @param Connection $connection
+     * @param LdapConnection $connection
      */
-    protected function __construct(Connection $connection)
+    protected function __construct(LdapConnection $connection)
     {
         $this->connection = $connection;
     }
@@ -53,10 +53,10 @@ class Root
     }
 
     /**
-     * @param Connection $connection
+     * @param LdapConnection $connection
      * @return Root
      */
-    public static function forConnection(Connection $connection)
+    public static function forConnection(LdapConnection $connection)
     {
         $root = new Root($connection);
         return $root;
@@ -177,17 +177,17 @@ class Root
     }
 
     /**
-     * @param Connection $connection
+     * @param LdapConnection $connection
      * @return $this
      */
-    public function setConnection(Connection $connection)
+    public function setConnection(LdapConnection $connection)
     {
         $this->connection = $connection;
         return $this;
     }
 
     /**
-     * @return Connection
+     * @return LdapConnection
      */
     public function getConnection()
     {
@@ -215,7 +215,7 @@ class Root
      */
     public function getDN()
     {
-        return $this->connection->getDN();
+        return $this->connection->getDn();
     }
 
     /**

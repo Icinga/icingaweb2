@@ -13,9 +13,8 @@ foreach ($object->servicegroups as $name => $alias) {
 }
 
 printf(
-    "<tr><th>%s</th><td>%s %s</td></tr>\n",
+    "<tr><th>%s</th><td class=\"go-ahead\">%s</td></tr>\n",
     $this->translate('Servicegroups'),
-    $this->icon('services'),
     implode(', ', $list)
 );
 

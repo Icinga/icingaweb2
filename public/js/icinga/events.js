@@ -42,9 +42,14 @@
 
             // Set first links href in a action table tr as row href:
             $('table.action tr', el).each(function(idx, el) {
-                var $a = $('a[href]', el).first();
+                var $a = $('a[href].rowaction', el).first();
                 if ($a.length) {
                     // TODO: Find out whether we leak memory on IE with this:
+                    $(el).attr('href', $a.attr('href'));
+                    return;
+                }
+                $a = $('a[href]', el).first();
+                if ($a.length) {
                     $(el).attr('href', $a.attr('href'));
                 }
             });
@@ -105,12 +110,12 @@
             // We catch scroll events in our containers
             $('.container').on('scroll', { self: this }, this.icinga.events.onContainerScroll);
 
+            // Remove notifications on click
+            $(document).on('click', '#notifications li', function () { $(this).remove(); });
+
             // We want to catch each link click
             $(document).on('click', 'a', { self: this }, this.linkClicked);
             $(document).on('click', 'tr[href]', { self: this }, this.linkClicked);
-
-            // Select a table row
-            $(document).on('click', 'table.multiselect tr[href]', { self: this }, this.rowSelected);
 
             // We catch all form submit events
             $(document).on('submit', 'form', { self: this }, this.submitForm);
@@ -192,8 +197,7 @@
             var icinga = self.icinga;
             // .closest is not required unless subelements to trigger this
             var $form = $(event.currentTarget).closest('form');
-            var regex = new RegExp('&amp;', 'g');
-            var url = $form.attr('action').replace(regex, '&'); // WHY??
+            var url = $form.attr('action');
             var method = $form.attr('method');
             var $button = $('input[type=submit]:focus', $form).add('button[type=submit]:focus', $form);
             var $target;
@@ -297,74 +301,6 @@
         },
 
         /**
-         * Handle table selection.
-         */
-        rowSelected: function(event) {
-            var self     = event.data.self;
-            var icinga   = self.icinga;
-            var $tr      = $(this);
-            var $table   = $tr.closest('table.multiselect');
-            var data     = self.icinga.ui.getSelectionKeys($table);
-            var url      = $table.data('icinga-multiselect-url');
-
-            if ($(event.target).closest('form').length) {
-                // allow form actions in table rows to pass through
-                return;
-            }
-            event.stopPropagation();
-            event.preventDefault();
-
-            if (!data) {
-                icinga.logger.error('multiselect table has no data-icinga-multiselect-data');
-                return;
-            }
-            if (!url) {
-                icinga.logger.error('multiselect table has no data-icinga-multiselect-url');
-                return;
-            }
-
-            // update selection
-            if (event.ctrlKey || event.metaKey) {
-                icinga.ui.toogleTableRowSelection($tr);
-                // multi selection
-            } else if (event.shiftKey) {
-                // range selection
-                icinga.ui.addTableRowRangeSelection($tr);
-            } else {
-                // single selection
-                icinga.ui.setTableRowSelection($tr);
-            }
-            // focus only the current table.
-            icinga.ui.focusTable($table[0]);
-
-            var $target = self.getLinkTargetFor($tr);
-
-            var $trs = $table.find('tr[href].active');
-            if ($trs.length > 1) {
-                var selectionData = icinga.ui.getSelectionSetData($trs, data);
-                var query = icinga.ui.selectionDataToQuery(selectionData);
-                icinga.loader.loadUrl(url + '?' + query, $target);
-                icinga.ui.storeSelectionData(selectionData);
-                icinga.ui.provideSelectionCount();
-            } else if ($trs.length === 1) {
-                // display a single row
-                $tr = $trs.first();
-                icinga.loader.loadUrl($tr.attr('href'), $target);
-                icinga.ui.storeSelectionData($tr.attr('href'));
-                icinga.ui.provideSelectionCount();
-            } else {
-                // display nothing
-                if ($target.attr('id') === 'col2') {
-                    icinga.ui.layout1col();
-                }
-                icinga.ui.storeSelectionData(null);
-                icinga.ui.provideSelectionCount();
-            }
-
-            return false;
-        },
-
-        /**
          * Handle anchor, i.e. focus the element which is referenced by the anchor
          *
          * @param {string} query jQuery selector
@@ -399,16 +335,16 @@
             // Special checks for link clicks in multiselect rows
             if (! $a.is('tr[href]') && $a.closest('tr[href]').length > 0 && $a.closest('table.multiselect').length > 0) {
 
-                // Forward clicks to ANY link with special key pressed to rowSelected
+                // ignoray clicks to ANY link with special key pressed
                 if (event.ctrlKey || event.metaKey || event.shiftKey)
                 {
-                    return self.rowSelected.call($a.closest('tr[href]'), event);
+                    return true;
                 }
 
-                // Forward inner links matching the row URL to rowSelected
+                // ignore inner links matching the row URL
                 if ($a.attr('href') === $a.closest('tr[href]').attr('href'))
                 {
-                    return self.rowSelected.call($a.closest('tr[href]'), event);
+                    return true;
                 }
             }
 
@@ -470,8 +406,6 @@
                                 icinga.ui.layout1col();
                             }
                             $('table tr[href].active').removeClass('active');
-                            icinga.ui.storeSelectionData(null);
-                            icinga.ui.loadSelectionData();
                             icinga.history.pushCurrentState();
                         }
                     }
@@ -567,8 +501,6 @@
             $(window).off('beforeunload', this.onUnload);
             $(document).off('scroll', '.container', this.onContainerScroll);
             $(document).off('click', 'a', this.linkClicked);
-            $(document).off('click', 'table.action tr[href]', this.rowSelected);
-            $(document).off('click', 'table.action tr a', this.rowSelected);
             $(document).off('submit', 'form', this.submitForm);
             $(document).off('change', 'form select.autosubmit', this.submitForm);
             $(document).off('change', 'form input.autosubmit', this.submitForm);

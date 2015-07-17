@@ -3,43 +3,45 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
+/**
+ * Service group view */
 class Servicegroup extends DataView
 {
     /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getColumns()
     {
         return array(
-            'servicegroup_name',
             'servicegroup_alias',
-            'host_name',
-            'service_host_name',
-            'service_description'
+            'servicegroup_name'
         );
     }
 
     /**
-     * Retrieve default sorting rules for particular columns. These involve sort order and potential additional to sort
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getSortRules()
+    public function getFilterColumns()
     {
         return array(
-            'servicegroup_name' => array(
-                'order' => self::SORT_ASC
-            ),
-            'servicegroup_alias' => array(
-                'order' => self::SORT_ASC
-            )
+            'host', 'host_alias', 'host_display_name', 'host_name',
+            'hostgroup', 'hostgroup_alias', 'hostgroup_name',
+            'service', 'service_description', 'service_display_name',
+            'servicegroup'
         );
     }
 
-    public function getFilterColumns()
+    /**
+     * {@inheritdoc}
+     */
+    public function isValidFilterTarget($column)
     {
-        return array('servicegroup', 'host', 'service');
+        if ($column[0] === '_'
+            && preg_match('/^_(?:host|service)_/', $column)
+        ) {
+            return true;
+        } else {
+            return parent::isValidFilterTarget($column);
+        }
     }
 }

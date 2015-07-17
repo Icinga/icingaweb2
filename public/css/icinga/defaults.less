@@ -1,22 +1,22 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 /* Color definitions */
+@colorMainLayout: #049baf;
+@colorMainBackground: #fff;
+@colorMainForeground: #666;
+@colorMainLink: #222;
+@colorSecondary: #f9f9f9;
+
+
 @colorGray: #f9f9f9;
 @colorLinkDefault: #049baf;
-@colorTextDefault: #666;
+@colorTextDefault: @colorMainForeground;
 @colorTextDarkDefault: #555;
-@colorPetrol: #049baf;
 @colorOk: #44bb77;
 @colorWarning: #ffaa44;
 @colorWarningHandled: #ffcc66;
 @colorCritical: #ff5566;
 @colorCriticalHandled: #ff99aa;
-/*
-@colorUnknown: #dd66ff;
-@colorUnknownHandled: #ee99ff;
-@colorUnreachable: #dd66ff;
-@colorUnreachableHandled: #ee99ff;
-*/
 @colorUnknown: #aa44ff;
 @colorUnknownHandled: #cc77ff;
 @colorUnreachable: #aa44ff;
@@ -27,20 +27,8 @@
 @colorFormNotificationWarning: #ffaa44;
 @colorFormNotificationError: #ff5566;
 
-/* Mixins */
-
-.page-header(@borderSize: 2px; @fontSize: 2em; @textColor: @colorTextDarkDefault) {
-  font-size: @fontSize;
-  color: @textColor;
-  border-bottom: @borderSize solid @colorPetrol;
-  a {
-    text-decoration: none;
-    color: inherit;
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
+/* deprecated */
+@colorPetrol: @colorMainLayout;
 
 /*** Base rules ***/
 * {
@@ -81,44 +69,21 @@ body {
 }
 
 a {
-  color: #333;
-  text-decoration: underline;
-}
+  @colorMainLink;
+  text-decoration: none;
 
-a:hover {
-  color: black;
-  text-decoration: underline;
-}
-
-/* W3C Recommendation <http://www.w3.org/TR/CSS21/sample.html> (except h4) */
-h1 {
-    .page-header();
-}
-
-h2 {
-    font-size:  1.5em;
-    color: @colorPetrol;
-}
-
-h3 {
-  .page-header(1px, 1.17em);
-}
-
-h4 {
-  font-size:    1em;
-  color: @colorPetrol;
-}
-
-h5 {
-  .page-header(1px, .83em);
-}
-
-h6 {
-    font-size:  .75em;
-    color: @colorPetrol;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {
+  font-size: 1em;
+  padding: 0.3em 0em;
+  margin: 0.7em 0 0.5em 0;
+  color: @textColor;
+  border-bottom: 1px dotted #aaa;
+
   a {
     text-decoration: none;
     color: inherit;
@@ -127,6 +92,31 @@ h1, h2, h3, h4, h5, h6 {
       text-decoration: underline;
     }
   }
+}
+
+h5 {
+  font-size: 0.83em;
+}
+
+h6 {
+  font-size: 0.75em;
+}
+
+h1 {
+  border-bottom: 3px solid #666;
+  font-variant: small-caps;
+  font-weight: bold;
+}
+
+h2 {
+  border-bottom: 1px solid #888;
+  font-variant: small-caps;
+  font-weight: normal;
+}
+
+h3 {
+  font-weight: normal;
+  border-bottom: 1px solid #aaa;
 }
 
 button {

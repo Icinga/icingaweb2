@@ -39,26 +39,19 @@ class Form extends Zend_Form
     const DEFAULT_SUFFIX = '_default';
 
     /**
-     * The type of the notification for the error
+     * Identifier for notifications of type error
      */
-    const NOTIFICATION_ERROR    = 0;
+    const NOTIFICATION_ERROR = 0;
 
     /**
-     * The type of the notification for the warning
+     * Identifier for notifications of type warning
      */
-    const NOTIFICATION_WARNING  = 2;
+    const NOTIFICATION_WARNING = 1;
 
     /**
-     * The type of the notification for the info
+     * Identifier for notifications of type info
      */
-    const NOTIFICATION_INFO     = 4;
-
-    /**
-     * The notifications of the form
-     *
-     * @var array
-     */
-    protected $notifications = array();
+    const NOTIFICATION_INFO = 2;
 
     /**
      * Whether this form has been created
@@ -159,6 +152,13 @@ class Form extends Zend_Form
      * @var array
      */
     protected $descriptions;
+
+    /**
+     * The notifications of this form
+     *
+     * @var array
+     */
+    protected $notifications;
 
     /**
      * Whether the Autosubmit decorator should be applied to this form
@@ -520,6 +520,50 @@ class Form extends Zend_Form
         }
 
         return $this->descriptions;
+    }
+
+    /**
+     * Set the notifications for this form
+     *
+     * @param   array   $notifications
+     *
+     * @return  $this
+     */
+    public function setNotifications(array $notifications)
+    {
+        $this->notifications = $notifications;
+        return $this;
+    }
+
+    /**
+     * Add a notification for this form
+     *
+     * If $notification is an array the second value should be
+     * an array as well containing additional HTML properties.
+     *
+     * @param   string|array    $notification
+     * @param   int             $type
+     *
+     * @return  $this
+     */
+    public function addNotification($notification, $type)
+    {
+        $this->notifications[$type][] = $notification;
+        return $this;
+    }
+
+    /**
+     * Return the notifications of this form
+     *
+     * @return  array
+     */
+    public function getNotifications()
+    {
+        if ($this->notifications === null) {
+            return array();
+        }
+
+        return $this->notifications;
     }
 
     /**
@@ -1087,6 +1131,24 @@ class Form extends Zend_Form
     }
 
     /**
+     * Set the action to submit this form against
+     *
+     * Note that if you'll pass a instance of URL, Url::getAbsoluteUrl('&') is called to set the action.
+     *
+     * @param   Url|string  $action
+     *
+     * @return  $this
+     */
+    public function setAction($action)
+    {
+        if ($action instanceof Url) {
+            $action = $action->getAbsoluteUrl('&');
+        }
+
+        return parent::setAction($action);
+    }
+
+    /**
      * Set form description
      *
      * Alias for Zend_Form::setDescription().
@@ -1246,55 +1308,48 @@ class Form extends Zend_Form
     }
 
     /**
-     * Return all form notifications
+     * Add a error notification and prevent the form from being successfully validated
      *
-     * @return array
-     */
-    public function getNotifications()
-    {
-        return $this->notifications;
-    }
-
-    /**
-     * Add a typed message to the notifications
+     * @param   string|array    $message    The notfication's message
      *
-     * @param string    $message    The message which would be displayed to the user
-     *
-     * @param int       $type       The type of the message notification
-     */
-    public function addNotification($message, $type = self::NOTIFICATION_ERROR)
-    {
-        $this->notifications[$message] = $type;
-        $this->markAsError();
-    }
-
-    /**
-     * Add a error message to notifications
-     *
-     * @param string $message
+     * @return  $this
      */
     public function error($message)
     {
-        $this->addNotification($message, $type = self::NOTIFICATION_ERROR);
+        $this->addNotification($message, self::NOTIFICATION_ERROR);
+        $this->markAsError();
+        return $this;
     }
 
     /**
-     * Add a warning message to notifications
+     * Add a warning notification and prevent the form from being successfully validated
      *
-     * @param string $message
+     * @param   string|array    $message    The notfication's message
+     *
+     * @return  $this
      */
     public function warning($message)
     {
-        $this->addNotification($message, $type = self::NOTIFICATION_WARNING);
+        $this->addNotification($message, self::NOTIFICATION_WARNING);
+        $this->markAsError();
+        return $this;
     }
 
     /**
-     * Add a info message to notifications
+     * Add a info notification
      *
-     * @param string $message
+     * @param   string|array    $message        The notfication's message
+     * @param   bool            $markAsError    Whether to prevent the form from being successfully validated or not
+     *
+     * @return  $this
      */
-    public function info($message)
+    public function info($message, $markAsError = true)
     {
-        $this->addNotification($message, $type = self::NOTIFICATION_INFO);
+        $this->addNotification($message, self::NOTIFICATION_INFO);
+        if ($markAsError) {
+            $this->markAsError();
+        }
+
+        return $this;
     }
 }

@@ -3,21 +3,30 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
-/**
- * Describes the data needed by the Contactgroup DataView
- */
 class Contactgroup extends DataView
 {
     /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
+     */
+    public function isValidFilterTarget($column)
+    {
+        if ($column[0] === '_' && preg_match('/^_(?:host|service)_/', $column)) {
+            return true;
+        }
+
+        return parent::isValidFilterTarget($column);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getColumns()
     {
         return array(
             'contactgroup_name',
             'contactgroup_alias',
+            'contact_object_id',
+            'contact_id',
             'contact_name',
             'contact_alias',
             'contact_email',
@@ -36,16 +45,13 @@ class Contactgroup extends DataView
             'contact_notify_host_unreachable',
             'contact_notify_host_flapping',
             'contact_notify_host_downtime',
-            'host_name',
-            'service_description',
-            'service_host_name'
+            'contact_notify_host_timeperiod',
+            'contact_notify_service_timeperiod'
         );
     }
 
     /**
-     * Retrieve default sorting rules for particular columns. These involve sort order and potential additional to sort
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getSortRules()
     {
@@ -59,8 +65,25 @@ class Contactgroup extends DataView
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFilterColumns()
     {
-        return array('contactgroup', 'contact', 'host', 'service', 'service_host');
+        return array(
+            'contactgroup', 'contact',
+            'host', 'host_name', 'host_display_name', 'host_alias',
+            'hostgroup', 'hostgroup_alias', 'hostgroup_name',
+            'service', 'service_description', 'service_display_name',
+            'servicegroup', 'servicegroup_alias', 'servicegroup_name'
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('contactgroup', 'contactgroup_alias', 'contact', 'contact_alias', 'contact_email');
     }
 }

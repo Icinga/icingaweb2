@@ -8,9 +8,7 @@ if (! $this->compact): ?>
     <div class="dontprint">
         <?= $this->render('list/components/selectioninfo.phtml'); ?>
     </div>
-    <div class="tinystatesummary">
-        <?= count($downtimes) ?> <?= $this->translate('Downtimes') ?>
-    </div>
+    <h1><?= count($downtimes) ?> <?= $this->translate('Downtimes') ?></h1>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
   <?= $this->paginator; ?>
@@ -48,22 +46,34 @@ if (count($downtimes) === 0) {
           <?= $this->timeUntil($downtime->is_in_effect ? $downtime->end : $downtime->start, $this->compact) ?>
         </td>
         <td>
-        <?php
-            if ($isService) {
-                echo $this->icon('service');
-            } else {
-                echo $this->icon('host');
-            }
-        ?>
-        <?= $this->qlink(
-            sprintf($this->translate('%s on %s', 'Service running on host'), $downtime->service_display_name, $downtime->host_display_name),
-                'monitoring/downtime/show',
-                array('downtime_id' => $downtime->id),
-                array('title' => sprintf(
-                $this->translate('Show detailed information for downtime on %s for %s'),
+        <?php if ($isService): ?>
+          <?= $this->icon('service', $this->translate('Service')); ?> <?= $this->qlink(
+            $this->escape($downtime->host_display_name) . ': ' . $this->escape($downtime->service_display_name),
+            'monitoring/downtime/show',
+            array('downtime_id' => $downtime->id),
+            array(
+              'title' => sprintf(
+                $this->translate('Show detailed information for this downtime scheduled for service %s on host %s'),
                 $downtime->service_display_name,
                 $downtime->host_display_name
-        ))) ?>
+              ),
+              'class' => 'rowaction'
+            )
+          ); ?>
+        <?php else: ?>
+          <?= $this->icon('host', $this->translate('host')); ?> <?= $this->qlink(
+            $this->escape($downtime->host_display_name),
+            'monitoring/downtime/show',
+            array('downtime_id' => $downtime->id),
+            array(
+              'title' => sprintf(
+                $this->translate('Show detailed information for this downtime scheduled for host %s'),
+                $downtime->host_display_name
+              ),
+              'class' => 'rowaction'
+            )
+          ); ?>
+        <?php endif ?>
           <br>
           <?= $this->icon('comment', $this->translate('Comment')); ?> [<?= $this->escape($downtime->author_name) ?>] <?= $this->escape($downtime->comment) ?>
           <br>

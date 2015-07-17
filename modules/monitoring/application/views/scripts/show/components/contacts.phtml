@@ -13,9 +13,8 @@ if (! empty($object->contacts)) {
     }
 
     printf(
-        "<tr><th>%s</th><td>%s %s</td></tr>\n",
+        "<tr><th>%s</th><td class=\"go-ahead\">%s</td></tr>\n",
         $this->translate('Contacts'),
-        $this->icon('user'),
         implode(', ', $list)
     );
 
@@ -33,9 +32,8 @@ if (! empty($object->contactgroups)) {
     }
 
     printf(
-        "<tr><th>%s</th><td>%s %s</td></tr>\n",
+        "<tr><th>%s</th><td class=\"go-ahead\">%s</td></tr>\n",
         $this->translate('Contactgroups'),
-        $this->icon('users'),
         implode(', ', $list)
     );
 

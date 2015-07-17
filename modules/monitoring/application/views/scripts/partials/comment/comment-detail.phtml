@@ -1,9 +1,9 @@
 <?php if ($comment->objecttype === 'service'): ?>
     <?= $this->icon('service', $this->translate('Service')); ?>
     <?= sprintf(
-        $this->translate('%s on %s', 'Service running on host'),
-        $comment->service_display_name,
-        $comment->host_display_name
+        '%s: %s',
+        $comment->host_display_name,
+        $comment->service_display_name
     ) ?>
 <?php else: ?>
     <?= $this->icon('host', $this->translate('Host')); ?>

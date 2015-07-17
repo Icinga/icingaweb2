@@ -30,9 +30,9 @@ class Monitoring_ServicesController extends Controller
         $serviceList->setFilter(Filter::fromQueryString(
             (string) $this->params->without(array('service_problem', 'service_handled', 'view'))
         ));
+        $this->applyRestriction('monitoring/filter/objects', $serviceList);
         $this->serviceList = $serviceList;
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/services');
-
         $this->getTabs()->add(
             'show',
             array(
@@ -84,7 +84,6 @@ class Monitoring_ServicesController extends Controller
         $this->view->objects = $this->serviceList;
         $this->view->stats = $this->serviceList->getServiceStateSummary();
         $this->view->serviceStates = true;
-        $this->view->hostStates = $this->serviceList->getHostStateSummary();
         $this->_helper->viewRenderer('partials/command/objects-command-form', null, true);
         return $form;
     }
@@ -145,7 +144,6 @@ class Monitoring_ServicesController extends Controller
         $this->view->addCommentLink = Url::fromRequest()->setPath('monitoring/services/add-comment');
         $this->view->deleteCommentLink = Url::fromRequest()->setPath('monitoring/services/delete-comment');
         $this->view->stats = $this->serviceList->getServiceStateSummary();
-        $this->view->hostStats = $this->serviceList->getHostStateSummary();
         $this->view->objects = $this->serviceList;
         $this->view->unhandledObjects = $this->serviceList->getUnhandledObjects();
         $this->view->problemObjects = $this->serviceList->getProblemObjects();

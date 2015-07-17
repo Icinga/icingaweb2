@@ -78,6 +78,23 @@ class AuthBackendPage extends Form
                 'Before you are able to authenticate using the LDAP connection defined earlier you need to'
                 . ' provide some more information so that Icinga Web 2 is able to locate account details.'
             ));
+            $this->addElement(
+                'select',
+                'type',
+                array(
+                    'ignore'            => true,
+                    'required'          => true,
+                    'autosubmit'        => true,
+                    'label'             => $this->translate('Backend Type'),
+                    'description'       => $this->translate(
+                        'The type of the resource being used for this authenticaton provider'
+                    ),
+                    'multiOptions'      => array(
+                        'ldap'      => 'LDAP',
+                        'msldap'    => 'ActiveDirectory'
+                    )
+                )
+            );
         } else { // $this->config['type'] === 'external'
             $backendForm = new ExternalBackendForm();
             $backendForm->createElements($formData);
@@ -104,8 +121,16 @@ class AuthBackendPage extends Form
             return false;
         }
 
-        if (false === isset($data['skip_validation']) || $data['skip_validation'] == 0) {
-            if ($this->config['type'] === 'ldap' && false === LdapBackendForm::isValidUserBackend($this)) {
+        if ($this->config['type'] === 'ldap' && ( !isset($data['skip_validation']) || $data['skip_validation'] == 0)) {
+            $self = clone $this;
+            $self->addElement(
+                'text',
+                'resource',
+                array(
+                    'value' => $this->getResourceConfig()
+                )
+            );
+            if (! LdapBackendForm::isValidUserBackend($self)) {
                 $this->addSkipValidationCheckbox();
                 return false;
             }

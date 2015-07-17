@@ -1,4 +1,4 @@
-<div class="controls">
+<div class="controls separated">
   <?php if (! $this->compact): ?>
     <?= $this->tabs; ?>
   <?php endif ?>
@@ -11,18 +11,21 @@
 
     <table class="avp newsection">
         <tbody>
-        <?= $this->render('show/components/notes.phtml') ?>
+        <tr><td colspan="2"><h2><?= $this->translate('Problem handling') ?></h2></td></tr>
         <?= $this->render('show/components/acknowledgement.phtml') ?>
         <?= $this->render('show/components/comments.phtml') ?>
-        <?= $this->render('show/components/notifications.phtml') ?>
         <?= $this->render('show/components/downtime.phtml') ?>
-        <?= $this->render('show/components/flapping.phtml') ?>
-        <?= $this->render('show/components/perfdata.phtml') ?>
-        <?= $this->render('show/components/checksource.phtml') ?>
+        <?= $this->render('show/components/notes.phtml') ?>
         <?= $this->render('show/components/actions.phtml') ?>
-        <?= $this->render('show/components/command.phtml') ?>
+        <?= $this->render('show/components/flapping.phtml') ?>
         <?= $this->render('show/components/servicegroups.phtml') ?>
+        <?= $this->render('show/components/perfdata.phtml') ?>
+        <tr><td colspan="2"><h2><?= $this->translate('Notifications') ?></h2></td></tr>
+        <?= $this->render('show/components/notifications.phtml') ?>
         <?= $this->render('show/components/contacts.phtml') ?>
+        <tr><td colspan="2"><h2><?= $this->translate('Check execution') ?></h2></td></tr>
+        <?= $this->render('show/components/command.phtml') ?>
+        <?= $this->render('show/components/checksource.phtml') ?>
         <?= $this->render('show/components/checkstatistics.phtml') ?>
         <?= $this->render('show/components/customvars.phtml') ?>
         <?= $this->render('show/components/flags.phtml') ?>

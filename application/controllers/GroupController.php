@@ -1,7 +1,6 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use \Exception;
 use Icinga\Application\Logger;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\Reducible;
@@ -104,6 +103,7 @@ class GroupController extends AuthBackendController
 
         $filterEditor = Widget::create('filterEditor')
             ->setQuery($members)
+            ->setSearchColumns(array('user'))
             ->preserveParams('limit', 'sort', 'dir', 'view', 'backend', 'group')
             ->ignoreParams('page')
             ->handleRequest($this->getRequest());
@@ -342,6 +342,25 @@ class GroupController extends AuthBackendController
                 'label'     => $this->translate('Group'),
                 'icon'      => 'users',
                 'url'       => Url::fromPath('group/show', array('backend' => $backendName, 'group' => $groupName))
+            )
+        );
+
+        return $tabs;
+    }
+
+    /**
+     * Create the tabs to display when listing groups
+     */
+    protected function createListTabs()
+    {
+        $tabs = $this->getTabs();
+        $tabs->add(
+            'group/list',
+            array(
+                'title'     => $this->translate('List groups of user group backends'),
+                'label'     => $this->translate('Usergroups'),
+                'icon'      => 'users',
+                'url'       => 'group/list'
             )
         );
 

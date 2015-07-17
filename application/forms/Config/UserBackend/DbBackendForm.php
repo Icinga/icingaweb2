@@ -105,18 +105,15 @@ class DbBackendForm extends Form
      */
     public static function isValidUserBackend(Form $form)
     {
-        try {
-            $dbUserBackend = new DbUserBackend(ResourceFactory::createResource($form->getResourceConfig()));
-            if ($dbUserBackend->select()->where('is_active', true)->count() < 1) {
-                $form->addError($form->translate('No active users found under the specified database backend'));
-                return false;
-            }
-        } catch (Exception $e) {
-            $form->addError(sprintf($form->translate('Using the specified backend failed: %s'), $e->getMessage()));
-            return false;
+        $backend = new DbUserBackend(ResourceFactory::createResource($form->getResourceConfig()));
+        $result = $backend->inspect();
+        if ($result->hasError()) {
+            $form->addError(sprintf($form->translate('Using the specified backend failed: %s'), $result->getError()));
         }
 
-        return true;
+        // TODO: display diagnostics in $result->toArray() to the user
+
+        return ! $result->hasError();
     }
 
     /**

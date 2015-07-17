@@ -6,10 +6,11 @@ namespace Icinga\Module\Monitoring\Object;
 use ArrayIterator;
 use Countable;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filterable;
 use IteratorAggregate;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
-abstract class ObjectList implements Countable, IteratorAggregate
+abstract class ObjectList implements Countable, IteratorAggregate, Filterable
 {
     /**
      * @var string
@@ -66,11 +67,11 @@ abstract class ObjectList implements Countable, IteratorAggregate
     }
 
     /**
-     * @param $filter
+     * @param Filter $filter
      *
      * @return $this
      */
-    public function setFilter($filter)
+    public function setFilter(Filter $filter)
     {
         $this->filter = $filter;
         return $this;
@@ -81,7 +82,27 @@ abstract class ObjectList implements Countable, IteratorAggregate
      */
     public function getFilter()
     {
+        if ($this->filter === null) {
+            $this->filter = Filter::matchAny();
+        }
+
         return $this->filter;
+    }
+
+    public function applyFilter(Filter $filter)
+    {
+        $this->getFilter()->addFilter($filter);
+        return $this;
+    }
+
+    public function addFilter(Filter $filter)
+    {
+        $this->getFilter()->addFilter($filter);
+    }
+
+    public function where($condition, $value = null)
+    {
+        $this->getFilter()->addFilter(Filter::where($condition, $value));
     }
 
     abstract protected function fetchObjects();
@@ -103,9 +124,14 @@ abstract class ObjectList implements Countable, IteratorAggregate
     public function count()
     {
         if ($this->count === null) {
-            $this->count = (int) $this->backend->select()->from($this->dataViewName)->applyFilter($this->filter)
-                ->getQuery()->count();
+            $this->count = (int) $this->backend
+                ->select()
+                ->from($this->dataViewName, $this->columns)
+                ->applyFilter($this->filter)
+                ->getQuery()
+                ->count();
         }
+
         return $this->count;
     }
 

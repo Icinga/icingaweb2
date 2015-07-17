@@ -380,7 +380,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      */
     public function hasLimit()
     {
-        return $this->limitCount !== null;
+        return $this->limitCount !== null && $this->limitCount > 0;
     }
 
     /**
@@ -549,5 +549,13 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     public function getColumns()
     {
         return $this->columns;
+    }
+
+    /**
+     * Deep clone self::$filter
+     */
+    public function __clone()
+    {
+        $this->filter = clone $this->filter;
     }
 }

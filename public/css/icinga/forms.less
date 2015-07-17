@@ -139,7 +139,6 @@ form div.element ul.errors {
   li {
     color: @colorCritical;
     font-weight: bold;
-    line-height: 1.5em;
   }
 }
 
@@ -160,33 +159,33 @@ form ul.form-errors {
   li {
     color: white;
     font-weight: bold;
-    line-height: 1.5em;
   }
 }
 
 form ul.form-notifications {
   .non-list-like-list;
   margin-bottom: 1em;
-  padding: 0em;
+  padding: 0;
 
-  li.info {
-    background: @colorFormNotificationInfo;
-  }
+  ul {
+    .non-list-like-list;
 
-  li.warning {
-    background: @colorFormNotificationWarning;
-  }
+    &.info {
+      background-color: @colorFormNotificationInfo;
+    }
 
-  li.error {
-    background: @colorFormNotificationError;
+    &.warning {
+      background-color: @colorFormNotificationWarning;
+    }
+
+    &.error {
+      background-color: @colorFormNotificationError;
+    }
   }
 
   li {
     color: white;
     font-weight: bold;
-    line-height: 1.5em;
-    padding: 0.5em;
-    margin-bottom: 0.5em;
   }
 }
 
@@ -210,6 +209,13 @@ textarea {
   height: 4em;
 }
 
+textarea.resource {
+  &.ssh-identity {
+    width: 50%;
+    height: 25em;
+  }
+}
+
 form .description {
   font-size: 0.8em;
   margin: 0.3em 0 0 0.6em;
@@ -225,7 +231,7 @@ select.grant-permissions {
 }
 
 label ~ input, label ~ select {
-  margin-left: 1.6em;
+  margin-left: 1.35em;
 }
 
 label + i ~ input, label + i ~ select {
@@ -251,11 +257,5 @@ form ul.descriptions {
       margin-left: -1.3em;
       list-style-type: none;
     }
-  }
-}
-
-form > div.header {
-  h1, h2, h3, h4, h5, h6 {
-    display: inline-block;
   }
 }

@@ -229,12 +229,12 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      */
     protected function persistGroupId($groupName)
     {
-        if (! $groupName || empty($groupName) || is_int($groupName)) {
+        if (! $groupName || empty($groupName) || is_numeric($groupName)) {
             return $groupName;
         }
 
         if (is_array($groupName)) {
-            if (is_int($groupName[0])) {
+            if (is_numeric($groupName[0])) {
                 return $groupName; // In case the array contains mixed types...
             }
 

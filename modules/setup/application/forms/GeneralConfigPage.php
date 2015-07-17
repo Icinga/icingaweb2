@@ -3,8 +3,9 @@
 
 namespace Icinga\Module\Setup\Forms;
 
-use Icinga\Web\Form;
+use Icinga\Forms\Config\General\ApplicationConfigForm;
 use Icinga\Forms\Config\General\LoggingConfigForm;
+use Icinga\Web\Form;
 
 /**
  * Wizard page to define the application and logging configuration
@@ -28,7 +29,13 @@ class GeneralConfigPage extends Form
      */
     public function createElements(array $formData)
     {
-        $loggingForm = new LoggingConfigForm();
-        $this->addElements($loggingForm->createElements($formData)->getElements());
+        $appConfigForm = new ApplicationConfigForm();
+        $appConfigForm->createElements($formData);
+        $appConfigForm->removeElement('global_module_path');
+        $appConfigForm->removeElement('global_config_resource');
+        $this->addElements($appConfigForm->getElements());
+
+        $loggingConfigForm = new LoggingConfigForm();
+        $this->addElements($loggingConfigForm->createElements($formData)->getElements());
     }
 }

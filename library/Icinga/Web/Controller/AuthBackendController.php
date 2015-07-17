@@ -3,13 +3,12 @@
 
 namespace Icinga\Web\Controller;
 
-use \Zend_Controller_Action_Exception;
+use Zend_Controller_Action_Exception;
 use Icinga\Application\Config;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\UserBackendInterface;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackendInterface;
-use Icinga\Security\SecurityException;
 use Icinga\Web\Controller;
 
 /**
@@ -18,19 +17,11 @@ use Icinga\Web\Controller;
 class AuthBackendController extends Controller
 {
     /**
-     * Redirect to the first permitted list action
+     * Redirect to this controller's list action
      */
-    final public function indexAction()
+    public function indexAction()
     {
-        if ($this->hasPermission('config/authentication/users/show')) {
-            $this->redirectNow('user/list');
-        } elseif ($this->hasPermission('config/authentication/groups/show')) {
-            $this->redirectNow('group/list');
-        } elseif ($this->hasPermission('config/authentication/roles/show')) {
-            $this->redirectNow('role/list');
-        } else {
-            throw new SecurityException($this->translate('No permission for authentication configuration'));
-        }
+        $this->redirectNow($this->getRequest()->getControllerName() . '/list');
     }
 
     /**
@@ -147,52 +138,5 @@ class AuthBackendController extends Controller
         }
 
         return $backend;
-    }
-
-    /**
-     * Create the tabs to list users and groups
-     */
-    protected function createListTabs()
-    {
-        $tabs = $this->getTabs();
-
-        if ($this->hasPermission('config/authentication/users/show')) {
-            $tabs->add(
-                'user/list',
-                array(
-                    'title'     => $this->translate('List users of authentication backends'),
-                    'label'     => $this->translate('Users'),
-                    'icon'      => 'user',
-                    'url'       => 'user/list'
-                )
-            );
-        }
-
-        if ($this->hasPermission('config/authentication/groups/show')) {
-            $tabs->add(
-                'group/list',
-                array(
-                    'title'     => $this->translate('List groups of user group backends'),
-                    'label'     => $this->translate('Groups'),
-                    'icon'      => 'users',
-                    'url'       => 'group/list'
-                )
-            );
-        }
-
-        if ($this->hasPermission('config/authentication/roles/show')) {
-            $tabs->add(
-                'role/list',
-                array(
-                    'title' => $this->translate(
-                        'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
-                    ),
-                    'label' => $this->translate('Roles'),
-                    'url'   => 'role/list'
-                )
-            );
-        }
-
-        return $tabs;
     }
 }

@@ -35,6 +35,7 @@
           color: white;
           font-size: 0.9em;
           text-align: center;
+          border-bottom: none;
         }
 
         table {
@@ -102,8 +103,6 @@
     form {
       h2 {
         font-size: 2.0em;
-        color: @colorTextDefault;
-        border-bottom: 2px solid @colorPetrol;
       }
     }
   }
@@ -144,6 +143,7 @@
     &:hover, &:focus, &:active {
       background-color: #666;
       border-color: #666;
+      cursor: pointer;
 
       &[disabled="1"] {
         background-color: #aaa;
@@ -170,7 +170,7 @@
 form#setup_requirements {
   margin-top: 2em;
   padding-top: 0.5em;
-  border-top: 2px solid @colorPetrol;
+  border-top: 1px solid #888;
 
   div.buttons div.requirements-refresh {
     width: 25%;
@@ -183,41 +183,51 @@ form#setup_requirements {
   }
 }
 
-#setup > table.requirements {
-  font-size: 0.9em;
-}
+#setup ul.requirements {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
 
-#setup table.requirements {
-  margin: -1em;
-  border-spacing: 1em;
-  border-collapse: separate;
+  li {
+    margin-bottom: 1em;
 
-  td {
-    padding: 0;
-
-    h2 {
-      margin: 0 1em 0 0;
-    }
-
-    table {
-      font-size: 102%; // Just a hack for webkit, remove this in case you can't see any difference or make it work without it
-    }
-
-    ul {
+    & > ul {
       margin: 0;
-      padding-left: 1em;
-      list-style-type: square;
+      padding: 0;
+      list-style-type: none;
     }
 
-    &.title {
+    div {
+      float: left;
+      padding-top: 0.4em;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+    }
+
+    div.title {
       width: 25%;
+
+      h3 {
+        padding: 0;
+        margin: 0 1em 0 0;
+        border-bottom: 0;
+      }
     }
 
-    &.desc {
+    div.description {
       width: 50%;
+      border-left: 0.4em solid transparent;
+      border-right: 0.4em solid transparent;
+
+      ul {
+        margin: 0;
+        padding-left: 1em;
+        list-style-type: square;
+      }
     }
 
-    &.state {
+    div.state {
       width: 25%;
       color: white;
       padding: 0.4em;
@@ -299,50 +309,35 @@ form#setup_requirements {
   }
 }
 
-.conspicuous-state-notification {
-  width: 66%;
-  margin: 0 auto;
-  padding: 0.5em;
-  color: white;
-  font-weight: bold;
-}
-
 #setup-finish {
-  div.report {
-    padding: 1em;
-    border: 1px solid lightgrey;
-    border-radius: 0em;
+  h2 {
+    padding: 0.5em;
+    border-bottom: 0;
+    font-variant: normal;
+    font-weight: bold;
+    color: white;
 
-    div.line-separator {
-      width: 50%;
-      height: 1px;
-      margin: 0 auto;
-      background-color: white;
+    &.success {
+      background-color: @colorOk;
     }
 
-    p {
-      margin: 1em;
-      color: #444;
-      text-align: center;
-
-      &.error {
-        color: red;
-      }
-
-      &.failure {
-        .conspicuous-state-notification;
-        background-color: @colorCritical;
-      }
-
-      &.success {
-        .conspicuous-state-notification;
-        background-color: @colorOk;
-      }
+    &.failure {
+      background-color: @colorCritical;
     }
   }
 
+  textarea.report {
+    width: 66%;
+    height: 25em;
+  }
+
   div.buttons {
+    margin-top: 0.5em;
     text-align: center;
+
+    a {
+      padding: 0.5em;
+    }
   }
 }
 
@@ -352,10 +347,7 @@ form#setup_requirements {
 
   h2 {
     font-size: 2.0em;
-    color: @colorTextDefault;
-    border-bottom: 2px solid @colorPetrol;
     margin-bottom: 2em;
-
   }
 
   div.info {
@@ -376,14 +368,12 @@ form#setup_requirements {
     font-size: 0.9em;
     border: 1px solid lightgrey;
 
-    div.title {
-      color: white;
+    h3 {
       padding: 0.2em;
       margin: -1em -1em 1em;
       text-align: center;
       color: @colorTextDefault;
-      border-bottom: 2px solid @colorPetrol;
-
+      background-color: #f6fafa;
     }
 
     img {

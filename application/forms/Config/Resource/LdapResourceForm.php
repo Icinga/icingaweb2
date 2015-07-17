@@ -7,7 +7,7 @@ use Exception;
 use Icinga\Web\Form;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
-use Icinga\Protocol\Ldap\Connection;
+use Icinga\Protocol\Ldap\LdapConnection;
 
 /**
  * Form class for adding/modifying ldap resources
@@ -27,7 +27,7 @@ class LdapResourceForm extends Form
      */
     public function createElements(array $formData)
     {
-        $defaultPort = ! array_key_exists('encryption', $formData) || $formData['encryption'] !== Connection::LDAPS
+        $defaultPort = ! array_key_exists('encryption', $formData) || $formData['encryption'] !== LdapConnection::LDAPS
             ? 389
             : 636;
 
@@ -75,9 +75,9 @@ class LdapResourceForm extends Form
                     . ' none for unencrypted communication'
                 ),
                 'multiOptions'  => array(
-                    'none'                  => $this->translate('None', 'resource.ldap.encryption'),
-                    Connection::STARTTLS    => 'STARTTLS',
-                    Connection::LDAPS       => 'LDAPS'
+                    'none'                      => $this->translate('None', 'resource.ldap.encryption'),
+                    LdapConnection::STARTTLS    => 'STARTTLS',
+                    LdapConnection::LDAPS       => 'LDAPS'
                 )
             )
         );
@@ -154,25 +154,17 @@ class LdapResourceForm extends Form
      */
     public static function isValidResource(Form $form)
     {
-        try {
-            $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
-            if (false === $resource->testCredentials(
-                $form->getElement('bind_dn')->getValue(),
-                $form->getElement('bind_pw')->getValue()
-                )
-            ) {
-                throw new Exception(); // TODO: Get the exact error message
-            }
-        } catch (Exception $e) {
-            $msg = $form->translate('Connectivity validation failed, connection to the given resource not possible.');
-            if (($error = $e->getMessage())) {
-                $msg .= ' (' . $error . ')';
-            }
-
-            $form->addError($msg);
-            return false;
+        $result = ResourceFactory::createResource(new ConfigObject($form->getValues()))->inspect();
+        if ($result->hasError()) {
+            $form->addError(sprintf(
+                '%s (%s)',
+                $form->translate('Connectivity validation failed, connection to the given resource not possible.'),
+                $result->getError()
+            ));
         }
 
-        return true;
+        // TODO: display diagnostics in $result->toArray() to the user
+
+        return ! $result->hasError();
     }
 }

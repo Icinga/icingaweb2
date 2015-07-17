@@ -1,0 +1,158 @@
+<?php
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Object\Service;
+
+$self = $this;
+
+if (! $this->compact): ?>
+<div class="controls">
+  <?= $this->tabs; ?>
+  <?= $this->render('partials/host/object-header.phtml'); ?>
+  <h1><?= $this->translate('This Host\'s Event History'); ?></h1>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
+</div>
+<?php endif ?>
+<div class="content">
+<?php
+
+if (count($history) === 0) {
+    echo $this->translate('No history events found matching the filter') . '</div>';
+    return;
+}
+?>
+
+<?php
+function contactsLink($match, $view) {
+    $links = array();
+    foreach (preg_split('/,\s/', $match[1]) as $contact) {
+        $links[] = $view->qlink(
+            $contact,
+            'monitoring/show/contact',
+            array('contact_name' => $contact),
+            array('title' => sprintf($view->translate('Show detailed information about %s'), $contact))
+        );
+    }
+    return '[' . implode(', ', $links) . ']';
+}
+?>
+
+  <table data-base-target="_next" class="action objecthistory">
+    <tbody>
+    <?php foreach ($history as $event): ?>
+    <?php
+      $stateClass = 'invalid';
+      $msg = $this->escape($event->output);
+      $isService = isset($event->service_description);
+      switch ($event->type) {
+        case 'notify':
+          $icon = 'notification';
+          $title = $this->translate('Notification');
+          $stateClass = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
+
+          $msg = $msg ? preg_replace_callback(
+              '/^\[([^\]]+)\]/',
+              function($match) use ($self) { return contactsLink($match, $self); },
+              $msg
+          ) : $this->translate('This notification was not sent out to any contact.');
+          break;
+        case 'comment':
+          $icon = 'comment';
+          $title = $this->translate('Comment');
+          break;
+        case 'comment_deleted':
+          $icon = 'remove';
+          $title = $this->translate('Comment deleted');
+          break;
+        case 'ack':
+          $icon = 'acknowledgement';
+          $title = $this->translate('Acknowledge');
+          break;
+        case 'ack_deleted':
+          $icon = 'remove';
+          $title = $this->translate('Ack removed');
+          break;
+        case 'dt_comment':
+          $icon = 'in_downtime';
+          $title = $this->translate('In Downtime');
+          break;
+        case 'dt_comment_deleted':
+          $icon = 'remove';
+          $title = $this->translate('Downtime removed');
+          break;
+        case 'flapping':
+          $icon = 'flapping';
+          $title = $this->translate('Flapping');
+          break;
+        case 'flapping_deleted':
+          $icon = 'remove';
+          $title = $this->translate('Flapping stopped');
+          break;
+        case 'hard_state':
+          $stateClass = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
+          $icon = 'attention-alt';
+          $title = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
+          break;
+        case 'soft_state':
+          $icon = 'spinner';
+          $stateClass = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
+          $title = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
+          break;
+        case 'dt_start':
+          $icon = 'downtime_start';
+          $title = $this->translate('Downtime Start');
+          break;
+        case 'dt_end':
+          $icon = 'downtime_end';
+          $title = $this->translate('Downtime End');
+          break;
+      }
+    ?>
+      <tr class="state <?= $stateClass; ?>">
+        <td class="state">
+          <strong><?= $this->escape($title); ?></strong>
+          <br>
+          <?= date('d.m. H:i', $event->timestamp); ?>
+        </td>
+        <td><?php
+
+$output = $this->tickets ? preg_replace_callback(
+    $this->tickets->getPattern(),
+    array($this->tickets, 'createLink'),
+    $msg
+) : $msg;
+
+?>
+        <?php if ($isService): ?>
+          <?= sprintf(
+              $this->translate('%s on %s', 'Service running on host'),
+              $this->qlink(
+                  $event->service_display_name,
+                  'monitoring/show/service',
+                  array(
+                      'host' => $event->host_name,
+                      'service' => $event->service_description
+                  ),
+                  array('title' => sprintf(
+                      $this->translate('Show detailed information for service %s on host %s'),
+                      $event->service_display_name,
+                      $event->host_display_name
+                  ))
+              ),
+              $event->host_display_name
+          ) ?>
+        <?php else: ?>
+          <?= $this->escape($event->host_name); ?>
+        <?php endif ?>
+          <br>
+          <div>
+            <?= $this->icon($icon, $title); ?> <?= empty($msg) ? '' : $msg; ?>
+          </div>
+        </td>
+      </tr>
+<?php endforeach; ?>
+    </tbody>
+  </table>
+</div>

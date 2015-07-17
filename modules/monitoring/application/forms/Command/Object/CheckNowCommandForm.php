@@ -35,7 +35,7 @@ class CheckNowCommandForm extends ObjectsCommandForm
                     'ignore'        => true,
                     'type'          => 'submit',
                     'value'         => $this->translate('Check now'),
-                    'label'         => '<i aria-hidden="true" class="icon-reschedule"></i> '
+                    'label'         => '<i aria-hidden="true" class="icon-reschedule"></i>'
                         . $this->translate('Check now'),
                     'decorators'    => array('ViewHelper'),
                     'escape'        => false,

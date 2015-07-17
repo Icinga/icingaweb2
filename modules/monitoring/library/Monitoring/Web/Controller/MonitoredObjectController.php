@@ -76,6 +76,7 @@ abstract class MonitoredObjectController extends Controller
         $this->object->populate();
         $toggleFeaturesForm = new ToggleObjectFeaturesCommandForm();
         $toggleFeaturesForm
+            ->setBackend($this->backend)
             ->load($this->object)
             ->setObjects($this->object)
             ->handleRequest();
@@ -90,6 +91,20 @@ abstract class MonitoredObjectController extends Controller
             $delDowntimeForm->handleRequest();
             $this->view->delDowntimeForm = $delDowntimeForm;
         }
+        $this->view->object = $this->object;
+    }
+
+    /**
+     * Show the history for a host or service
+     */
+    public function historyAction()
+    {
+        $this->getTabs()->activate('history');
+        $this->view->history = $this->object->fetchEventHistory()->eventhistory;
+        $this->applyRestriction('monitoring/filter/objects', $this->view->history);
+
+        $this->setupLimitControl(50);
+        $this->setupPaginationControl($this->view->history, 50);
         $this->view->object = $this->object;
     }
 
@@ -145,6 +160,9 @@ abstract class MonitoredObjectController extends Controller
             $params = array(
                 'host' => $object->getName()
             );
+            if ($this->params->has('service')) {
+                $params['service'] = $this->params->get('service');
+            }
         } else {
             $isService = true;
             $params = array(
@@ -165,14 +183,14 @@ abstract class MonitoredObjectController extends Controller
                 'urlParams' => $params
             )
         );
-        if ($isService) {
+        if ($isService || $this->params->has('service')) {
             $tabs->add(
                 'service',
                 array(
                     'title'     => sprintf(
                         $this->translate('Show detailed information for service %s on host %s'),
-                        $object->getName(),
-                        $object->getHost()->getName()
+                        $isService ? $object->getName() : $this->params->get('service'),
+                        $isService ? $object->getHost()->getName() : $object->getName()
                     ),
                     'label'     => $this->translate('Service'),
                     'icon'      => 'service',
@@ -181,7 +199,20 @@ abstract class MonitoredObjectController extends Controller
                 )
             );
         }
-        if ($this->backend->hasQuery('eventHistory')) {
+        $tabs->add(
+            'services',
+            array(
+                'title'     => sprintf(
+                    $this->translate('List all services on host %s'),
+                    $isService ? $object->getHost()->getName() : $object->getName()
+                ),
+                'label'     => $this->translate('Services'),
+                'icon'      => 'services',
+                'url'       => 'monitoring/host/services',
+                'urlParams' => $params
+            )
+        );
+        if ($this->backend->hasQuery('eventhistory')) {
             $tabs->add(
                 'history',
                 array(
@@ -195,7 +226,7 @@ abstract class MonitoredObjectController extends Controller
                     ,
                     'label'     => $this->translate('History'),
                     'icon'      => 'rewind',
-                    'url'       => 'monitoring/show/history',
+                    'url'       => $isService ? 'monitoring/service/history' : 'monitoring/host/history',
                     'urlParams' => $params
                 )
             );

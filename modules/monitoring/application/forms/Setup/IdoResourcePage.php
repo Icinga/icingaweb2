@@ -4,12 +4,15 @@
 namespace Icinga\Module\Monitoring\Forms\Setup;
 
 use Icinga\Data\ConfigObject;
-use Icinga\Module\Monitoring\Forms\Config\BackendConfigForm;
-use Icinga\Web\Form;
 use Icinga\Forms\Config\Resource\DbResourceForm;
+use Icinga\Web\Form;
+use Icinga\Module\Monitoring\Forms\Config\BackendConfigForm;
 
 class IdoResourcePage extends Form
 {
+    /**
+     * Initialize this form
+     */
     public function init()
     {
         $this->setName('setup_monitoring_ido');
@@ -19,6 +22,11 @@ class IdoResourcePage extends Form
         ));
     }
 
+    /**
+     * Create and add elements to this form
+     *
+     * @param   array   $formData
+     */
     public function createElements(array $formData)
     {
         $this->addElement(
@@ -31,6 +39,7 @@ class IdoResourcePage extends Form
         );
 
         if (isset($formData['skip_validation']) && $formData['skip_validation']) {
+            // In case another error occured and the checkbox was displayed before
             $this->addSkipValidationCheckbox();
         } else {
             $this->addElement(
@@ -43,32 +52,37 @@ class IdoResourcePage extends Form
             );
         }
 
-        $livestatusResourceForm = new DbResourceForm();
-        $this->addElements($livestatusResourceForm->createElements($formData)->getElements());
+        $dbResourceForm = new DbResourceForm();
+        $this->addElements($dbResourceForm->createElements($formData)->getElements());
         $this->getElement('name')->setValue('icinga_ido');
     }
 
-    public function isValid($data)
+    /**
+     * Return whether the given values are valid
+     *
+     * @param   array   $formData   The data to validate
+     *
+     * @return  bool
+     */
+    public function isValid($formData)
     {
-        if (false === parent::isValid($data)) {
+        if (! parent::isValid($formData)) {
             return false;
         }
 
-        if (false === isset($data['skip_validation']) || $data['skip_validation'] == 0) {
+        if (! isset($formData['skip_validation']) || !$formData['skip_validation']) {
             $configObject = new ConfigObject($this->getValues());
-            if (false === DbResourceForm::isValidResource($this, $configObject)) {
+            if (! DbResourceForm::isValidResource($this, $configObject)) {
                 $this->addSkipValidationCheckbox($this->translate(
-                    'Check this to not to validate connectivity with the given database server'
+                    'Check this to not to validate connectivity with the given database server.'
                 ));
                 return false;
-            } elseif (false === BackendConfigForm::isValidIdoSchema($this, $configObject)) {
+            } elseif (
+                ! BackendConfigForm::isValidIdoSchema($this, $configObject)
+                || !BackendConfigForm::isValidIdoInstance($this, $configObject)
+            ) {
                 $this->addSkipValidationCheckbox($this->translate(
-                    'Check this to not to validate the ido schema'
-                ));
-                return false;
-            } elseif (false === BackendConfigForm::isValidIdoInstance($this, $configObject)) {
-                $this->addSkipValidationCheckbox($this->translate(
-                    'Check this to not to validate the ido instance'
+                    'Check this to not to validate the IDO schema in the given database.'
                 ));
                 return false;
             }
@@ -78,13 +92,15 @@ class IdoResourcePage extends Form
     }
 
     /**
-     * Add a checkbox to the form by which the user can skip the connection validation
+     * Add a checkbox to the form by which the user can skip the resource validation
+     *
+     * @param   string  $description
      */
-    protected function addSkipValidationCheckbox($description = '')
+    protected function addSkipValidationCheckbox($description = null)
     {
         if (empty($description)) {
             $description = $this->translate(
-                'Proceed without any further (custom) validation'
+                'Proceed without any further (custom) validation.'
             );
         }
 

@@ -38,7 +38,6 @@ class DatabaseCreationPage extends Form
      */
     public function init()
     {
-        $this->setName('setup_database_creation');
         $this->setTitle($this->translate('Database Setup', 'setup.page.title'));
         $this->addDescription($this->translate(
             'It seems that either the database you defined earlier does not yet exist and cannot be created'
@@ -108,8 +107,9 @@ class DatabaseCreationPage extends Form
             'password',
             'password',
             array(
-                'label'         => $this->translate('Password'),
-                'description'   => $this->translate('The password for the database user defined above')
+                'renderPassword'    => true,
+                'label'             => $this->translate('Password'),
+                'description'       => $this->translate('The password for the database user defined above')
             )
         );
 
@@ -156,7 +156,7 @@ class DatabaseCreationPage extends Form
                 $db->connectToHost(); // Are we able to login on the server?
             } catch (PDOException $e) {
                 // We are NOT able to login on the server..
-                $this->addError($e->getMessage());
+                $this->error($e->getMessage());
                 $this->addSkipValidationCheckbox();
                 return false;
             }
@@ -165,7 +165,7 @@ class DatabaseCreationPage extends Form
         // In case we are connected the credentials filled into this
         // form need to be granted to create databases, users...
         if (false === $db->checkPrivileges($this->databaseSetupPrivileges)) {
-            $this->addError(
+            $this->error(
                 $this->translate('The provided credentials cannot be used to create the database and/or the user.')
             );
             $this->addSkipValidationCheckbox();
@@ -174,7 +174,7 @@ class DatabaseCreationPage extends Form
 
         // ...and to grant all required usage privileges to others
         if (false === $db->isGrantable($this->databaseUsagePrivileges)) {
-            $this->addError(sprintf(
+            $this->error(sprintf(
                 $this->translate(
                     'The provided credentials cannot be used to grant all required privileges to the login "%s".'
                 ),

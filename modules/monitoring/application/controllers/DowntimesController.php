@@ -39,9 +39,9 @@ class Monitoring_DowntimesController extends Controller
             'downtime_internal_id',
             (string)$this->params
         ));
-        $this->downtimes = $this->backend->select()->from('downtime', array(
+        $query = $this->backend->select()->from('downtime', array(
             'id'              => 'downtime_internal_id',
-            'objecttype'      => 'downtime_objecttype',
+            'objecttype'      => 'object_type',
             'comment'         => 'downtime_comment',
             'author_name'     => 'downtime_author_name',
             'start'           => 'downtime_start',
@@ -53,22 +53,22 @@ class Monitoring_DowntimesController extends Controller
             'is_fixed'        => 'downtime_is_fixed',
             'is_in_effect'    => 'downtime_is_in_effect',
             'entry_time'      => 'downtime_entry_time',
-            'host_state'      => 'downtime_host_state',
-            'service_state'   => 'downtime_service_state',
+            'host_state',
+            'service_state',
             'host_name',
-            'host',
-            'service',
             'service_description',
             'host_display_name',
             'service_display_name'
-        ))->addFilter($this->filter)->getQuery()->fetchAll();
+        ))->addFilter($this->filter);
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
+        $this->downtimes = $query->getQuery()->fetchAll();
         if (false === $this->downtimes) {
             throw new Zend_Controller_Action_Exception(
                 $this->translate('Downtime not found')
             );
         }
-        
+
         $this->getTabs()->add(
             'downtimes',
             array(
@@ -80,14 +80,14 @@ class Monitoring_DowntimesController extends Controller
                 'url'   =>'monitoring/downtimes/show'
             )
         )->activate('downtimes');
-        
+
         foreach ($this->downtimes as $downtime) {
             if (isset($downtime->service_description)) {
                 $downtime->isService = true;
             } else {
                 $downtime->isService = false;
             }
-            
+
             if ($downtime->isService) {
                 $downtime->stateText = Service::getStateText($downtime->service_state);
             } else {

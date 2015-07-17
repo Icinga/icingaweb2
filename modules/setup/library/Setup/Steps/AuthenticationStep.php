@@ -161,32 +161,45 @@ class AuthenticationStep extends Step
 
     public function getReport()
     {
-        $report = '';
+        $report = array();
+
         if ($this->authIniError === false) {
-            $message = mt('setup', 'Authentication configuration has been successfully written to: %s');
-            $report .= '<p>' . sprintf($message, Config::resolvePath('authentication.ini')) . '</p>';
+            $report[] = sprintf(
+                mt('setup', 'Authentication configuration has been successfully written to: %s'),
+                Config::resolvePath('authentication.ini')
+            );
         } elseif ($this->authIniError !== null) {
-            $message = mt('setup', 'Authentication configuration could not be written to: %s; An error occured:');
-            $report .= '<p class="error">' . sprintf($message, Config::resolvePath('authentication.ini')) . '</p>'
-                . '<p>' . $this->authIniError->getMessage() . '</p>';
+            $report[] = sprintf(
+                mt('setup', 'Authentication configuration could not be written to: %s. An error occured:'),
+                Config::resolvePath('authentication.ini')
+            );
+            $report[] = sprintf(mt('setup', 'ERROR: %s'), $this->authIniError->getMessage());
         }
 
         if ($this->dbError === false) {
-            $message = mt('setup', 'Account "%s" has been successfully created.');
-            $report .= '<p>' . sprintf($message, $this->data['adminAccountData']['username']) . '</p>';
+            $report[] = sprintf(
+                mt('setup', 'Account "%s" has been successfully created.'),
+                $this->data['adminAccountData']['username']
+            );
         } elseif ($this->dbError !== null) {
-            $message = mt('setup', 'Unable to create account "%s". An error occured:');
-            $report .= '<p class="error">' . sprintf($message, $this->data['adminAccountData']['username']) . '</p>'
-                . '<p>' . $this->dbError->getMessage() . '</p>';
+            $report[] = sprintf(
+                mt('setup', 'Unable to create account "%s". An error occured:'),
+                $this->data['adminAccountData']['username']
+            );
+            $report[] = sprintf(mt('setup', 'ERROR: %s'), $this->dbError->getMessage());
         }
 
         if ($this->permIniError === false) {
-            $message = mt('setup', 'Account "%s" has been successfully defined as initial administrator.');
-            $report .= '<p>' . sprintf($message, $this->data['adminAccountData']['username']) . '</p>';
+            $report[] = sprintf(
+                mt('setup', 'Account "%s" has been successfully defined as initial administrator.'),
+                $this->data['adminAccountData']['username']
+            );
         } elseif ($this->permIniError !== null) {
-            $message = mt('setup', 'Unable to define account "%s" as initial administrator. An error occured:');
-            $report .= '<p class="error">' . sprintf($message, $this->data['adminAccountData']['username']) . '</p>'
-                . '<p>' . $this->permIniError->getMessage() . '</p>';
+            $report[] = sprintf(
+                mt('setup', 'Unable to define account "%s" as initial administrator. An error occured:'),
+                $this->data['adminAccountData']['username']
+            );
+            $report[] = sprintf(mt('setup', 'ERROR: %s'), $this->permIniError->getMessage());
         }
 
         return $report;

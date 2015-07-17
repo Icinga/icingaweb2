@@ -3,7 +3,7 @@
 
 namespace Icinga\Repository;
 
-use Icinga\Protocol\Ldap\Connection;
+use Icinga\Protocol\Ldap\LdapConnection;
 
 /**
  * Abstract base class for concrete LDAP repository implementations
@@ -18,7 +18,7 @@ abstract class LdapRepository extends Repository
     /**
      * The datasource being used
      *
-     * @var Connection
+     * @var LdapConnection
      */
     protected $ds;
 
@@ -40,9 +40,9 @@ abstract class LdapRepository extends Repository
     /**
      * Create a new LDAP repository object
      *
-     * @param   Connection  $ds     The data source to use
+     * @param   LdapConnection  $ds     The data source to use
      */
-    public function __construct(Connection $ds)
+    public function __construct(LdapConnection $ds)
     {
         parent::__construct($ds);
     }

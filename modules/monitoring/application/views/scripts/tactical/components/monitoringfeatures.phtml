@@ -1,5 +1,7 @@
 <div class="box monitoringfeatures">
-    <h2><?= $this->translate('Monitoring Features'); ?></h2>
+    <div class="box header">
+        <h2><?= $this->translate('Monitoring Features'); ?></h2>
+    </div>
     <div class="box contents">
 <?php if ($this->statusSummary->hosts_without_flap_detection || $this->statusSummary->services_without_flap_detection ||
     $this->statusSummary->hosts_flapping || $this->statusSummary->services_flapping): ?>

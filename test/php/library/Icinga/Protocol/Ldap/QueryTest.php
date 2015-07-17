@@ -5,7 +5,7 @@ namespace Tests\Icinga\Protocol\Ldap;
 
 use Icinga\Data\ConfigObject;
 use Icinga\Test\BaseTestCase;
-use Icinga\Protocol\Ldap\Connection;
+use Icinga\Protocol\Ldap\LdapConnection;
 
 class QueryTest extends BaseTestCase
 {
@@ -20,7 +20,7 @@ class QueryTest extends BaseTestCase
             )
         );
 
-        $connection = new Connection($config);
+        $connection = new LdapConnection($config);
         return $connection->select();
     }
 

@@ -61,13 +61,8 @@ $this->providePermission(
 );
 
 $this->provideRestriction(
-    'monitoring/hosts/filter',
-    $this->translate('Restrict hosts view to the hosts that match the filter')
-);
-
-$this->provideRestriction(
-    'monitoring/services/filter',
-    $this->translate('Restrict services view to the services that match the filter')
+    'monitoring/filter/objects',
+    $this->translate('Restrict views to the Icinga objects that match the filter')
 );
 
 $this->provideConfigTab('backends', array(
@@ -117,7 +112,7 @@ $section->add($this->translate('Service Problems'), array(
     'priority'  => 60
 ));
 $section->add($this->translate('Service Grid'), array(
-    'url'       => 'monitoring/list/servicegrid?service_problem=1',
+    'url'       => 'monitoring/list/servicegrid?problems',
     'priority'  => 70
 ));
 $section->add($this->translate('Current Downtimes'), array(

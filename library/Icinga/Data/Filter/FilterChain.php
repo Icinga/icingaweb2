@@ -4,6 +4,7 @@
 namespace Icinga\Data\Filter;
 
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\QueryException;
 
 /**
  * FilterChain
@@ -17,6 +18,8 @@ abstract class FilterChain extends Filter
     protected $operatorName;
 
     protected $operatorSymbol;
+
+    protected $allowedColumns;
 
     public function hasId($id)
     {
@@ -116,6 +119,12 @@ abstract class FilterChain extends Filter
         return $this->operatorSymbol;
     }
 
+    public function setAllowedFilterColumns(array $columns)
+    {
+        $this->allowedColumns = $columns;
+        return $this;
+    }
+
     public function listFilteredColumns()
     {
         $columns = array();
@@ -196,9 +205,39 @@ abstract class FilterChain extends Filter
 
     public function addFilter(Filter $filter)
     {
+        if (! empty($this->allowedColumns)) {
+            $this->validateFilterColumns($filter);
+        }
+
         $this->filters[] = $filter;
         $filter->setId($this->getId() . '-' . $this->count());
         return $this;
+    }
+
+    protected function validateFilterColumns(Filter $filter)
+    {
+        if ($filter->isExpression()) {
+            $valid = false;
+            foreach ($this->allowedColumns as $column) {
+                if (is_callable($column)) {
+                    if (call_user_func($column, $filter->getColumn())) {
+                        $valid = true;
+                        break;
+                    }
+                } elseif ($filter->getColumn() === $column) {
+                    $valid = true;
+                    break;
+                }
+            }
+
+            if (! $valid) {
+                throw new QueryException('Invalid filter column provided: %s', $filter->getColumn());
+            }
+        } else {
+            foreach ($filter->filters() as $subFilter) {
+                $this->validateFilterColumns($subFilter);
+            }
+        }
     }
 
     public function &filters()

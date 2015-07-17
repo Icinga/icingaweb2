@@ -3,8 +3,10 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
+use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterOr;
+use Icinga\Data\SimpleQuery;
 use Icinga\Util\String;
 
 /**
@@ -12,7 +14,7 @@ use Icinga\Util\String;
  */
 class HostList extends ObjectList
 {
-    protected $dataViewName = 'hostStatus';
+    protected $dataViewName = 'hoststatus';
 
     protected $columns = array('host_name');
 
@@ -33,7 +35,7 @@ class HostList extends ObjectList
     /**
      * Create a state summary of all hosts that can be consumed by hostssummary.phtml
      *
-     * @return object   The summary
+     * @return  SimpleQuery
      */
     public function getStateSummary()
     {
@@ -48,7 +50,8 @@ class HostList extends ObjectList
 
         $hostStates['hosts_total'] = count($this);
 
-        return (object)$hostStates;
+        $ds = new ArrayDatasource(array((object) $hostStates));
+        return $ds->select();
     }
 
     /**
@@ -88,16 +91,29 @@ class HostList extends ObjectList
     }
 
     /**
+     * Get the comments
+     *
+     * @return \Icinga\Module\Monitoring\DataView\Hostcomment
+     */
+    public function getComments()
+    {
+        return $this->backend
+            ->select()
+            ->from('hostcomment', array('host_name'))
+            ->applyFilter(clone $this->filter);
+    }
+
+    /**
      * Get the scheduled downtimes
      *
-     * @return type
+     * @return \Icinga\Module\Monitoring\DataView\Hostdowntime
      */
     public function getScheduledDowntimes()
     {
-        return $this->backend->select()
-                ->from('downtime')
-                ->applyFilter(clone $this->filter)
-                ->where('downtime_objecttype', 'host');
+        return $this->backend
+            ->select()
+            ->from('hostdowntime', array('host_name'))
+            ->applyFilter(clone $this->filter);
     }
 
     /**

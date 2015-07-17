@@ -3,8 +3,10 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
+use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterOr;
+use Icinga\Data\SimpleQuery;
 use Icinga\Util\String;
 
 /**
@@ -16,7 +18,7 @@ class ServiceList extends ObjectList
 
     protected $serviceStateSummary;
 
-    protected $dataViewName = 'serviceStatus';
+    protected $dataViewName = 'servicestatus';
 
     protected $columns = array('host_name', 'service_description');
 
@@ -37,27 +39,31 @@ class ServiceList extends ObjectList
     /**
      * Create a state summary of all services that can be consumed by servicesummary.phtml
      *
-     * @return object   The summary
+     * @return  SimpleQuery
      */
     public function getServiceStateSummary()
     {
         if (! $this->serviceStateSummary) {
             $this->initStateSummaries();
         }
-        return (object)$this->serviceStateSummary;
+
+        $ds = new ArrayDatasource(array((object) $this->serviceStateSummary));
+        return $ds->select();
     }
 
     /**
      * Create a state summary of all hosts that can be consumed by hostsummary.phtml
      *
-     * @return object   The summary
+     * @return  SimpleQuery
      */
     public function getHostStateSummary()
     {
         if (! $this->hostStateSummary) {
             $this->initStateSummaries();
         }
-        return (object)$this->hostStateSummary;
+
+        $ds = new ArrayDatasource(array((object) $this->hostStateSummary));
+        return $ds->select();
     }
 
     /**
@@ -136,16 +142,29 @@ class ServiceList extends ObjectList
     }
 
     /**
+     * Get the comments
+     *
+     * @return \Icinga\Module\Monitoring\DataView\Hostcomment
+     */
+    public function getComments()
+    {
+        return $this->backend
+            ->select()
+            ->from('servicecomment', array('host_name', 'service_description'))
+            ->applyFilter(clone $this->filter);
+    }
+
+    /**
      * Get the scheduled downtimes
      *
-     * @return type
+     * @return \Icinga\Module\Monitoring\DataView\Servicedowntime
      */
     public function getScheduledDowntimes()
     {
-        return $this->backend->select()
-                ->from('downtime')
-                ->applyFilter(clone $this->filter)
-                ->where('downtime_objecttype', 'service');
+        return $this->backend
+            ->select()
+            ->from('servicedowntime', array('host_name', 'service_description'))
+            ->applyFilter(clone $this->filter);
     }
 
     /**

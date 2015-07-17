@@ -7,7 +7,6 @@ use Icinga\Application\Icinga;
 use Icinga\Data\ResourceFactory;
 use Icinga\Web\Form;
 
-
 /**
  * Form class to modify the general application configuration
  */
@@ -43,7 +42,7 @@ class ApplicationConfigForm extends Form
 
         $this->addElement(
             'select',
-            'preferences_store',
+            'global_config_backend',
             array(
                 'required'      => true,
                 'autosubmit'    => true,
@@ -55,7 +54,7 @@ class ApplicationConfigForm extends Form
                 )
             )
         );
-        if (isset($formData['preferences_store']) && $formData['preferences_store'] === 'db') {
+        if (isset($formData['global_config_backend']) && $formData['global_config_backend'] === 'db') {
             $backends = array();
             foreach (ResourceFactory::getResourceConfigs()->toArray() as $name => $resource) {
                 if ($resource['type'] === 'db') {
@@ -65,7 +64,7 @@ class ApplicationConfigForm extends Form
 
             $this->addElement(
                 'select',
-                'preferences_resource',
+                'global_config_resource',
                 array(
                     'required'      => true,
                     'multiOptions'  => $backends,

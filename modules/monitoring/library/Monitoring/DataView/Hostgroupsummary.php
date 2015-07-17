@@ -17,17 +17,16 @@ class Hostgroupsummary extends DataView
             'hostgroup_alias',
             'hostgroup_name',
             'hosts_down_handled',
-            'hosts_down_last_state_change_handled',
-            'hosts_down_last_state_change_unhandled',
+            'hosts_down_handled_last_state_change',
             'hosts_down_unhandled',
+            'hosts_down_unhandled_last_state_change',
             'hosts_pending',
             'hosts_pending_last_state_change',
-            'hosts_severity',
             'hosts_total',
             'hosts_unreachable_handled',
-            'hosts_unreachable_last_state_change_handled',
-            'hosts_unreachable_last_state_change_unhandled',
+            'hosts_unreachable_handled_last_state_change',
             'hosts_unreachable_unhandled',
+            'hosts_unreachable_unhandled_last_state_change',
             'hosts_up',
             'hosts_up_last_state_change',
             'services_critical_handled',
@@ -47,15 +46,13 @@ class Hostgroupsummary extends DataView
      */
     public function getFilterColumns()
     {
-        return array('hostgroup');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getQueryName()
-    {
-        return 'groupsummary';
+        return array(
+            'hosts_severity',
+            'host', 'host_alias', 'host_display_name', 'host_name',
+            'hostgroup',
+            'service', 'service_description', 'service_display_name',
+            'servicegroup', 'servicegroup_alias', 'servicegroup_name'
+        );
     }
 
     /**
@@ -63,7 +60,7 @@ class Hostgroupsummary extends DataView
      */
     public function getSearchColumns()
     {
-        return array('hostgroup', 'hostgroup_alias');
+        return array('host', 'host_display_name', 'hostgroup', 'hostgroup_alias');
     }
 
     /**
@@ -97,5 +94,19 @@ class Hostgroupsummary extends DataView
                 'order' => self::SORT_ASC
             )
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isValidFilterTarget($column)
+    {
+        if ($column[0] === '_'
+            && preg_match('/^_(?:host|service)_/', $column)
+        ) {
+            return true;
+        } else {
+            return parent::isValidFilterTarget($column);
+        }
     }
 }

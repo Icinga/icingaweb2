@@ -18,7 +18,6 @@ class DbResourcePage extends Form
      */
     public function init()
     {
-        $this->setName('setup_db_resource');
         $this->setTitle($this->translate('Database Resource', 'setup.page.title'));
         $this->addDescription($this->translate(
             'Now please configure your database resource. Note that the database itself does not need to'
@@ -56,14 +55,6 @@ class DbResourcePage extends Form
         $resourceForm = new DbResourceForm();
         $this->addElements($resourceForm->createElements($formData)->getElements());
         $this->getElement('name')->setValue('icingaweb_db');
-        $this->addElement(
-            'hidden',
-            'prefix',
-            array(
-                'required'  => true,
-                'value'     => 'icingaweb_'
-            )
-        );
     }
 
     /**
@@ -84,7 +75,7 @@ class DbResourcePage extends Form
                 $db = new DbTool($this->getValues());
                 $db->checkConnectivity();
             } catch (PDOException $e) {
-                $this->addError($e->getMessage());
+                $this->error($e->getMessage());
                 $this->addSkipValidationCheckbox();
                 return false;
             }

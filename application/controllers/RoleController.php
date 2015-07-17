@@ -152,4 +152,24 @@ class RoleController extends AuthBackendController
         $this->view->form = $confirmation;
         $this->render('form');
     }
+
+    /**
+     * Create the tabs to display when listing roles
+     */
+    protected function createListTabs()
+    {
+        $tabs = $this->getTabs();
+        $tabs->add(
+            'role/list',
+            array(
+                'title' => $this->translate(
+                    'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
+                ),
+                'label' => $this->translate('Roles'),
+                'url'   => 'role/list'
+            )
+        );
+
+        return $tabs;
+    }
 }

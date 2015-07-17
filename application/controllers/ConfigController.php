@@ -22,55 +22,41 @@ use Icinga\Web\Widget;
 class ConfigController extends Controller
 {
     /**
-     * The first allowed config action according to the user's permissions
-     *
-     * @var string
+     * Create and return the tabs to display when showing application configuration
      */
-    protected $firstAllowedAction;
-
-    /**
-     * Initialize tabs and validate the user's permissions
-     *
-     * @throws SecurityException    If the user does not have any configuration permission
-     */
-    public function init()
+    public function createApplicationTabs()
     {
         $tabs = $this->getTabs();
-        $auth = $this->Auth();
-        $allowedActions = array();
-        if ($auth->hasPermission('config/application/general')) {
-            $tabs->add('general', array(
-                'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
-                'label' => $this->translate('General'),
-                'url'   => 'config/general'
-            ));
-            $allowedActions[] = 'general';
-        }
-        if ($auth->hasPermission('config/application/resources')) {
-            $tabs->add('resource', array(
-                'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
-                'label' => $this->translate('Resources'),
-                'url'   => 'config/resource'
-            ));
-            $allowedActions[] = 'resource';
-        }
-        if ($auth->hasPermission('config/application/userbackend')) {
-            $tabs->add('userbackend', array(
-                'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
-                'label' => $this->translate('Authentication'),
-                'url'   => 'config/userbackend'
-            ));
-            $allowedActions[] = 'userbackend';
-        }
-        if ($auth->hasPermission('config/application/usergroupbackend')) {
-            $tabs->add('usergroupbackend', array(
-                'title' => $this->translate('Configure how users are associated with groups by Icinga Web 2'),
-                'label' => $this->translate('User Groups'),
-                'url'   => 'usergroupbackend/list'
-            ));
-            $allowedActions[] = 'usergroupbackend';
-        }
-        $this->firstAllowedAction = array_shift($allowedActions);
+        $tabs->add('general', array(
+            'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
+            'label' => $this->translate('General'),
+            'url'   => 'config/general'
+        ));
+        $tabs->add('resource', array(
+            'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
+            'label' => $this->translate('Resources'),
+            'url'   => 'config/resource'
+        ));
+        return $tabs;
+    }
+
+    /**
+     * Create and return the tabs to display when showing authentication configuration
+     */
+    public function createAuthenticationTabs()
+    {
+        $tabs = $this->getTabs();
+        $tabs->add('userbackend', array(
+            'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
+            'label' => $this->translate('User Backends'),
+            'url'   => 'config/userbackend'
+        ));
+        $tabs->add('usergroupbackend', array(
+            'title' => $this->translate('Configure how users are associated with groups by Icinga Web 2'),
+            'label' => $this->translate('User Group Backends'),
+            'url'   => 'usergroupbackend/list'
+        ));
+        return $tabs;
     }
 
     public function devtoolsAction()
@@ -79,19 +65,11 @@ class ConfigController extends Controller
     }
 
     /**
-     * Forward or redirect to the first allowed configuration action
+     * Redirect to the general configuration
      */
     public function indexAction()
     {
-        if ($this->firstAllowedAction === null) {
-            throw new SecurityException($this->translate('No permission for application configuration'));
-        }
-        $action = $this->getTabs()->get($this->firstAllowedAction);
-        if (substr($action->getUrl()->getPath(), 0, 7) === 'config/') {
-            $this->forward($this->firstAllowedAction);
-        } else {
-            $this->redirectNow($action->getUrl());
-        }
+        $this->redirectNow('config/general');
     }
 
     /**
@@ -107,7 +85,7 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->view->tabs->activate('general');
+        $this->createApplicationTabs()->activate('general');
     }
 
     /**
@@ -210,7 +188,7 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->view->tabs->activate('userbackend');
+        $this->createAuthenticationTabs()->activate('userbackend');
         $this->render('userbackend/reorder');
     }
 
@@ -232,7 +210,6 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->view->tabs->activate('userbackend');
         $this->render('userbackend/create');
     }
 
@@ -251,7 +228,6 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->view->tabs->activate('userbackend');
         $this->render('userbackend/modify');
     }
 
@@ -290,7 +266,6 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->view->tabs->activate('userbackend');
         $this->render('userbackend/remove');
     }
 
@@ -301,7 +276,7 @@ class ConfigController extends Controller
     {
         $this->assertPermission('config/application/resources');
         $this->view->resources = Config::app('resources', true)->keys();
-        $this->view->tabs->activate('resource');
+        $this->createApplicationTabs()->activate('resource');
     }
 
     /**

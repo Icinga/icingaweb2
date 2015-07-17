@@ -19,13 +19,14 @@ class InstancePage extends Form
 
     public function createElements(array $formData)
     {
-        if (isset($formData['host'])) {
-            $formData['type'] = 'remote'; // This is necessary as the type element gets ignored by Form::getValues()
-        }
-
         $instanceConfigForm = new InstanceConfigForm();
-        $instanceConfigForm->createElements($formData);
-        $this->addElements($instanceConfigForm->getElements());
-        $this->getElement('name')->setValue('icinga');
+        $this->addSubForm($instanceConfigForm, 'instance_form');
+        $instanceConfigForm->create($formData);
+        $instanceConfigForm->getElement('name')->setValue('icinga');
+    }
+
+    public function getValues($suppressArrayNotation = false)
+    {
+        return $this->getSubForm('instance_form')->getValues($suppressArrayNotation);
     }
 }

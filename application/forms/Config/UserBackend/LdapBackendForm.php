@@ -4,6 +4,8 @@
 namespace Icinga\Forms\Config\UserBackend;
 
 use Exception;
+use Icinga\Authentication\User\LdapUserBackend;
+use Icinga\Data\Inspection;
 use Icinga\Web\Form;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
@@ -92,26 +94,33 @@ class LdapBackendForm extends Form
             'text',
             'filter',
             array(
-                'allowEmpty'    => true,
-                'label'         => $this->translate('LDAP Filter'),
-                'description'   => $this->translate(
+                'preserveDefault'   => true,
+                'allowEmpty'        => true,
+                'value'             => $isAd ? '!(objectClass=computer)' : null,
+                'label'             => $this->translate('LDAP Filter'),
+                'description'       => $this->translate(
                     'An additional filter to use when looking up users using the specified connection. '
                     . 'Leave empty to not to use any additional filter rules.'
                 ),
-                'requirement'   => $this->translate(
-                    'The filter needs to be expressed as standard LDAP expression, without'
-                    . ' outer parentheses. (e.g. &(foo=bar)(bar=foo) or foo=bar)'
+                'requirement'       => $this->translate(
+                    'The filter needs to be expressed as standard LDAP expression.'
+                    . ' (e.g. &(foo=bar)(bar=foo) or foo=bar)'
                 ),
-                'validators'    => array(
+                'validators'        => array(
                     array(
                         'Callback',
                         false,
                         array(
                             'callback'  => function ($v) {
-                                return strpos($v, '(') !== 0;
+                                // This is not meant to be a full syntax check. It will just
+                                // ensure that we can safely strip unnecessary parentheses.
+                                $v = trim($v);
+                                return ! $v || $v[0] !== '(' || (
+                                    strpos($v, ')(') !== false ? substr($v, -2) === '))' : substr($v, -1) === ')'
+                                );
                             },
                             'messages'  => array(
-                                'callbackValue' => $this->translate('The filter must not be wrapped in parantheses.')
+                                'callbackValue' => $this->translate('The filter is invalid. Please check your syntax.')
                             )
                         )
                     )
@@ -177,34 +186,16 @@ class LdapBackendForm extends Form
      */
     public static function isValidUserBackend(Form $form)
     {
-        try {
-            $ldapUserBackend = UserBackend::create(null, new ConfigObject($form->getValues()));
-            $ldapUserBackend->assertAuthenticationPossible();
-        } catch (AuthenticationException $e) {
-            if (($previous = $e->getPrevious()) !== null) {
-                $form->addError($previous->getMessage());
-            } else {
-                $form->addError($e->getMessage());
-            }
-
-            return false;
-        } catch (Exception $e) {
-            $form->addError(sprintf($form->translate('Unable to validate authentication: %s'), $e->getMessage()));
-            return false;
+        /**
+         * @var $result Inspection
+         */
+        $result = UserBackend::create(null, new ConfigObject($form->getValues()))->inspect();
+        if ($result->hasError()) {
+            $form->addError($result->getError());
         }
 
-        return true;
-    }
+        // TODO: display diagnostics in $result->toArray() to the user
 
-    /**
-     * Return the configuration for the chosen resource
-     *
-     * @return  ConfigObject
-     *
-     * @todo    Check whether it's possible to drop this (Or even all occurences!)
-     */
-    public function getResourceConfig()
-    {
-        return ResourceFactory::getResourceConfig($this->getValue('resource'));
+        return ! $result->hasError();
     }
 }

@@ -27,23 +27,29 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
  <?php if (! $this->compact): ?>
   <?= $tabs; ?>
  <?php endif ?>
-  <div class="group-header">
-    <p class="group-name"><strong><?= $this->escape($group->group_name); ?></strong></p> <?= $editLink; ?>
-    <p class="group-created"><strong><?= $this->translate('Created at'); ?>:</strong> <?= $group->created_at === null ? '-' : $this->formatDateTime($group->created_at); ?></p>
-    <p class="group-modified"><strong><?= $this->translate('Last modified'); ?>:</strong> <?= $group->last_modified === null ? '-' : $this->formatDateTime($group->last_modified); ?></p> 
-    <h5><?= $this->translate('Members'); ?></h5>
-  </div>
+  <h1><?= $this->escape($group->group_name); ?><span class="pull-right"><?= $editLink; ?></span></h1>
+  <table class="avp user-header">
+    <tr>
+      <th><?= $this->translate('Created at'); ?></th>
+      <td><?= $group->created_at === null ? '-' : $this->formatDateTime($group->created_at); ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->translate('Last modified'); ?></th>
+      <td><?= $group->last_modified === null ? '-' : $this->formatDateTime($group->last_modified); ?></td>
+    </tr>
+  </table>
+  <h2><?= $this->translate('Members'); ?></h2>
+<?php if (! $this->compact): ?>
+  <?= $this->sortBox; ?>
+<?php endif ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+<?php if (! $this->compact): ?>
+  <?= $this->filterEditor; ?>
+<?php endif ?>
 </div>
 <div class="content members" data-base-target="_next">
 <?php if (count($members) > 0): ?>
- <?php if (! $this->compact): ?>
-  <?= $this->sortBox; ?>
- <?php endif ?>
-  <?= $this->limiter; ?>
-  <?= $this->paginator; ?>
- <?php if (! $this->compact): ?>
-  <?= $this->filterEditor; ?>
- <?php endif ?>
   <table data-base-target="_next" class="action member-list">
     <thead>
       <tr>
@@ -67,7 +73,7 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
     </tbody>
   </table>
 <?php else: ?>
-  <p><?= $this->translate('Group has no members.'); ?></p>
+  <p><?= $this->translate('No group member found matching the filter'); ?></p>
 <?php endif ?>
 <?php if ($extensible): ?>
   <?= $this->qlink($this->translate('Add a new member'), 'group/addmember', array(

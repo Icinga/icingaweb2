@@ -3,13 +3,14 @@
 
 namespace Icinga\Data\Db;
 
-use Icinga\Data\SimpleQuery;
-use Icinga\Data\Filter\FilterChain;
-use Icinga\Data\Filter\FilterOr;
-use Icinga\Data\Filter\FilterAnd;
-use Icinga\Data\Filter\FilterNot;
-use Icinga\Exception\QueryException;
 use Zend_Db_Select;
+use Icinga\Data\Filter\FilterAnd;
+use Icinga\Data\Filter\FilterChain;
+use Icinga\Data\Filter\FilterNot;
+use Icinga\Data\Filter\FilterOr;
+use Icinga\Data\SimpleQuery;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\QueryException;
 
 /**
  * Database query class
@@ -20,6 +21,15 @@ class DbQuery extends SimpleQuery
      * @var Zend_Db_Adapter_Abstract
      */
     protected $db;
+
+    /**
+     * Whether or not the query is a sub query
+     *
+     * Sub queries are automatically wrapped in parentheses
+     *
+     * @var bool
+     */
+    protected $isSubQuery = false;
 
     /**
      * Select query
@@ -70,6 +80,27 @@ class DbQuery extends SimpleQuery
         parent::init();
     }
 
+    /**
+     * Get whether or not the query is a sub query
+     */
+    public function getIsSubQuery()
+    {
+        return $this->isSubQuery;
+    }
+
+    /**
+     * Set whether or not the query is a sub query
+     *
+     * @param   bool $isSubQuery
+     *
+     * @return  $this
+     */
+    public function setIsSubQuery($isSubQuery = true)
+    {
+        $this->isSubQuery = (bool) $isSubQuery;
+        return $this;
+    }
+
     public function setUseSubqueryCount($useSubqueryCount = true)
     {
         $this->useSubqueryCount = $useSubqueryCount;
@@ -95,6 +126,16 @@ class DbQuery extends SimpleQuery
     }
 
     /**
+     * Return the underlying select
+     *
+     * @return  Zend_Db_Select
+     */
+    public function select()
+    {
+        return $this->select;
+    }
+
+    /**
      * Get the select query
      *
      * Applies order and limit if any
@@ -115,8 +156,9 @@ class DbQuery extends SimpleQuery
             }
         }
 
-        if ($this->group) {
-            $select->group($this->group);
+        $group = $this->getGroup();
+        if ($group) {
+            $select->group($group);
         }
 
         $select->columns($this->columns);
@@ -255,12 +297,27 @@ class DbQuery extends SimpleQuery
         if ($this->isTimestamp($col)) {
             $expression = $this->valueToTimestamp($expression);
         }
+
         if (is_array($expression) && $sign === '=') {
             // TODO: Should we support this? Doesn't work for blub*
             return $col . ' IN (' . $this->escapeForSql($expression) . ')';
         } elseif ($sign === '=' && strpos($expression, '*') !== false) {
+            if ($expression === '*') {
+                // We'll ignore such filters as it prevents index usage and because "*" means anything, anything means
+                // all whereas all means that whether we use a filter to match anything or no filter at all makes no
+                // difference, except for performance reasons...
+                return '';
+            }
+
             return $col . ' LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
         } elseif ($sign === '!=' && strpos($expression, '*') !== false) {
+            if ($expression === '*') {
+                // We'll ignore such filters as it prevents index usage and because "*" means nothing, so whether we're
+                // using a real column with a valid comparison here or just an expression which cannot be evaluated to
+                // true makes no difference, except for performance reasons...
+                return $this->escapeForSql(0);
+            }
+
             return $col . ' NOT LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
         } else {
             return $col . ' ' . $sign . ' ' . $this->escapeForSql($expression);
@@ -276,8 +333,9 @@ class DbQuery extends SimpleQuery
     {
         // TODO: there may be situations where we should clone the "select"
         $count = $this->dbSelect();
-        if ($this->group) {
-            $count->group($this->group);
+        $group = $this->getGroup();
+        if ($group) {
+            $count->group($group);
         }
         $this->applyFilterSql($count);
         if ($this->useSubqueryCount || $this->group) {
@@ -323,6 +381,7 @@ class DbQuery extends SimpleQuery
 
     public function __clone()
     {
+        parent::__clone();
         $this->select = clone $this->select;
     }
 
@@ -331,7 +390,8 @@ class DbQuery extends SimpleQuery
      */
     public function __toString()
     {
-        return (string) $this->getSelectQuery();
+        $select = (string) $this->getSelectQuery();
+        return $this->getIsSubQuery() ? ('(' . $select . ')') : $select;
     }
 
     /**
@@ -345,6 +405,16 @@ class DbQuery extends SimpleQuery
     {
         $this->group = $group;
         return $this;
+    }
+
+    /**
+     * Return the GROUP BY clause
+     *
+     * @return  string|array
+     */
+    public function getGroup()
+    {
+        return $this->group;
     }
 
     /**
@@ -368,6 +438,35 @@ class DbQuery extends SimpleQuery
         }
 
         return false;
+    }
+
+    /**
+     * Return the alias used for joining the given table
+     *
+     * @param   string      $table
+     *
+     * @return  string|null         null in case no alias is being used
+     *
+     * @throws  ProgrammingError    In case the given table has not been joined
+     */
+    public function getJoinedTableAlias($table)
+    {
+        $fromPart = $this->select->getPart(Zend_Db_Select::FROM);
+        if (isset($fromPart[$table])) {
+            if ($fromPart[$table]['joinType'] === Zend_Db_Select::FROM) {
+                throw new ProgrammingError('Table "%s" has not been joined', $table);
+            }
+
+            return; // No alias in use
+        }
+
+        foreach ($fromPart as $alias => $options) {
+            if ($options['tableName'] === $table && $options['joinType'] !== Zend_Db_Select::FROM) {
+                return $alias;
+            }
+        }
+
+        throw new ProgrammingError('Table "%s" has not been joined', $table);
     }
 
     /**

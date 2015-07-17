@@ -86,9 +86,13 @@ class ActionController extends Zend_Controller_Action
         $this->handlerBrowserWindows();
         $this->view->translationDomain = 'icinga';
         $this->_helper->layout()->isIframe = $request->getUrl()->shift('isIframe');
+        $this->_helper->layout()->showFullscreen = $request->getUrl()->shift('showFullscreen');
         $this->_helper->layout()->moduleName = false;
 
         $this->view->compact = $request->getParam('view') === 'compact';
+        if ($request->getUrl()->shift('showCompact')) {
+            $this->view->compact = true;
+        }
         if ($this->rerenderLayout = $request->getUrl()->shift('renderLayout')) {
             $this->xhrLayout = 'body';
         }
@@ -501,7 +505,7 @@ class ActionController extends Zend_Controller_Action
      */
     protected function renderBenchmark()
     {
-        $this->render();
+        $this->_helper->viewRenderer->postDispatch();
         Benchmark::measure('Response ready');
         return Benchmark::renderToHtml();
     }

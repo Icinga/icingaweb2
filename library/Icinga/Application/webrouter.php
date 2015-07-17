@@ -31,7 +31,7 @@ $baseDir = $_SERVER['DOCUMENT_ROOT'];
 $baseDir = dirname($_SERVER['SCRIPT_FILENAME']);
 
 // Fix aliases
-$remove = dirname($_SERVER['PHP_SELF']);
+$remove = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
 if (substr($ruri, 0, strlen($remove)) !== $remove) {
     return false;
 }

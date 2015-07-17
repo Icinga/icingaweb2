@@ -1,7 +1,6 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use \Exception;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotFoundError;
@@ -103,6 +102,7 @@ class UserController extends AuthBackendController
 
         $filterEditor = Widget::create('filterEditor')
             ->setQuery($memberships)
+            ->setSearchColumns(array('group_name'))
             ->preserveParams('limit', 'sort', 'dir', 'view', 'backend', 'user')
             ->ignoreParams('page')
             ->handleRequest($this->getRequest());
@@ -301,6 +301,25 @@ class UserController extends AuthBackendController
                 'label'     => $this->translate('User'),
                 'icon'      => 'user',
                 'url'       => Url::fromPath('user/show', array('backend' => $backendName, 'user' => $userName))
+            )
+        );
+
+        return $tabs;
+    }
+
+    /**
+     * Create the tabs to display when listing users
+     */
+    protected function createListTabs()
+    {
+        $tabs = $this->getTabs();
+        $tabs->add(
+            'user/list',
+            array(
+                'title'     => $this->translate('List users of authentication backends'),
+                'label'     => $this->translate('Users'),
+                'icon'      => 'user',
+                'url'       => 'user/list'
             )
         );
 

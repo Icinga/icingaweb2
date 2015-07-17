@@ -5,7 +5,7 @@ namespace Icinga\Module\Monitoring\Clicommands;
 
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Cli\CliUtils;
-use Icinga\Util\Format;
+use Icinga\Date\DateFormatter;
 use Icinga\Cli\Command;
 use Icinga\File\Csv;
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
@@ -124,19 +124,19 @@ class ListCommand extends Command
      *   --verbose  Show detailled output
      *   --showsql  Dump generated SQL query (DB backend only)
      *
-     *   --format <csv|json|<custom>>
+     *   --format=<csv|json|<custom>>
      *     Dump columns in the given format. <custom> format allows $column$
-     *     placeholders, e.g. --format '$host$: $service$'
+     *     placeholders, e.g. --format='$host$: $service$'
      *
-     *   --<column> [filter]
+     *   --<column>[=filter]
      *     Filter given column by optional filter. Boolean (1/0) columns are
      *     true if no filter value is given.
      *
      * EXAMPLES
      *
      *   icingacli monitoring list --unhandled
-     *   icingacli monitoring list --host local* --service *disk*
-     *   icingacli monitoring list --format '$host$: $service$'
+     *   icingacli monitoring list --host=local* --service=*disk*
+     *   icingacli monitoring list --format='$host$: $service$'
      */
     public function statusAction()
     {
@@ -156,7 +156,7 @@ class ListCommand extends Command
             'service_perfdata',
             'service_last_state_change'
         );
-        $query = $this->getQuery('serviceStatus', $columns)
+        $query = $this->getQuery('servicestatus', $columns)
             ->order('host_name');
         echo $this->renderStatusQuery($query);
     }
@@ -299,7 +299,7 @@ class ListCommand extends Command
                 $leaf,
                 $screen->underline($row->service_description),
                 $screen->colorize($utils->objectStateFlags('service', $row) . $perf, 'lightblue'),
-                ucfirst(Format::timeSince($row->service_last_state_change))
+                ucfirst(DateFormatter::timeSince($row->service_last_state_change))
             );
             if ($this->isVerbose) {
                 $out .= $emptyLine . preg_replace(

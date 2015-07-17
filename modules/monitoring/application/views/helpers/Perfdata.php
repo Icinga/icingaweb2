@@ -20,6 +20,12 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
     public function perfdata($perfdataStr, $compact = false, $limit = 0, $color = Perfdata::PERFDATA_OK)
     {
         $pieChartData = PerfdataSet::fromString($perfdataStr)->asArray();
+        uasort(
+            $pieChartData,
+            function ($a, $b) {
+                return $a->worseThan($b) ? -1 : ($b->worseThan($a) ? 1 : 0);
+            }
+        );
         $results = array();
         $keys = array('', 'label', 'value', 'min', 'max', 'warn', 'crit');
         $columns = array();

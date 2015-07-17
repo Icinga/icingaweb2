@@ -48,10 +48,11 @@ if (count($notifications) === 0) {
                     <?= $this->link()->host($notification->host_name, $notification->host_display_name) ?>
                 <?php endif ?>
                 <br>
-                <?= $this->escape($this->ellipsis($notification->notification_output, 10000)) ?>
+                <?= $this->pluginOutput($this->ellipsis($notification->notification_output, 10000), true) ?>
                 <br>
                 <?php if (! $this->contact): ?>
                     <small>
+                    <?php if ($notification->notification_contact_name): ?>
                         <?= sprintf(
                             $this->translate('Sent to %s'),
                             $this->qlink(
@@ -60,6 +61,9 @@ if (count($notifications) === 0) {
                                 array('contact_name' => $notification->notification_contact_name)
                             )
                         ) ?>
+                    <?php else: ?>
+                        <?= $this->translate('This notification was not sent out to any contact.'); ?>
+                    <?php endif ?>
                     </small>
                 <?php endif ?>
             </td>
