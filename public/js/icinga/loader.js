@@ -116,7 +116,6 @@
             req.complete(this.onComplete);
             req.autorefresh = autorefresh;
             req.action = action;
-            req.failure = false;
             req.addToHistory = true;
 
             if (id) {
@@ -453,6 +452,8 @@
                     var $el = $(el);
                     if ($el.hasClass('dashboard')) {
                         return;
+                    } else {
+
                     }
                     var url = $el.data('icingaUrl');
                     targets[i].data('icingaUrl', url);
@@ -504,42 +505,6 @@
                 this.icinga.ui.fixDebugVisibility().triggerWindowResize();
             }
             self.cacheLoadedIcons(req.$target);
-
-            if (active) {
-                var focusedUrl = this.icinga.ui.getFocusedContainerDataUrl();
-                var oldSelectionData = this.icinga.ui.loadSelectionData();
-                if (typeof oldSelectionData === 'string') {
-                    $('[href="' + oldSelectionData + '"]', req.$target).addClass('active');
-
-                } else if (oldSelectionData !== null) {
-                    var $container;
-                    if (!focusedUrl) {
-                        $container = $('document').first();
-                    } else {
-                        $container = $('.container[data-icinga-url="' + focusedUrl + '"]');
-                    }
-
-                    var $table = $container.find('table.action').first();
-                    var keys = self.icinga.ui.getSelectionKeys($table);
-
-                    // build map of selected queries
-                    var oldSelectionQueries = {};
-                    $.each(oldSelectionData, function(i, query){
-                        oldSelectionQueries[self.icinga.ui.selectionDataToQueryComp(query)] = true;
-                    });
-
-                    // set all new selections to active
-                    $table.find('tr[href]').filter(function(){
-                            var $tr = $(this);
-                            var rowData = self.icinga.ui.getSelectionData($tr, keys, self.icinga);
-                            var newSelectionQuery = self.icinga.ui.selectionDataToQueryComp(rowData);
-                            if (oldSelectionQueries[newSelectionQuery]) {
-                                return true;
-                            }
-                            return false;
-                        }).addClass('active');
-                }
-            }
         },
 
         /**
@@ -587,7 +552,7 @@
             // Update history when necessary. Don't do so for requests triggered
             // by history or autorefresh events
             if (! req.autorefresh && req.addToHistory) {
-                if (req.$target.hasClass('container') && ! req.failure) {
+                if (req.$target.hasClass('container')) {
                     // We only want to care about top-level containers
                     if (req.$target.parent().closest('.container').length === 0) {
                         this.icinga.history.pushCurrentState();
@@ -595,7 +560,7 @@
                 } else {
                     // Request wasn't for a container, so it's usually the body
                     // or the full layout. Push request URL to history:
-                    this.icinga.history.pushCurrentState();
+                    this.icinga.history.pushUrl(req.url);
                 }
             }
 
@@ -622,10 +587,6 @@
          */
         onFailure: function (req, textStatus, errorThrown) {
             var url = req.url;
-
-            req.failure = true;
-
-            req.$target.data('icingaUrl', req.url);
 
             /*
              * Test if a manual actions comes in and autorefresh is active: Stop refreshing

@@ -9,9 +9,8 @@ namespace Icinga\Protocol\Ldap;
  * Provides information about the available encryption mechanisms (StartTLS), the supported
  * LDAP protocol (v2/v3), vendor-specific extensions or protocols controls and extensions.
  */
-class Capability
+class LdapCapabilities
 {
-
     const LDAP_SERVER_START_TLS_OID = '1.3.6.1.4.1.1466.20037';
 
     const LDAP_PAGED_RESULT_OID_STRING = '1.2.840.113556.1.4.319';
@@ -127,7 +126,7 @@ class Capability
     }
 
     /**
-     * Return if the capability object contains support for StartTLS
+     * Return if the capability object contains support for paged results
      *
      * @return      bool Whether StartTLS is supported
      */
@@ -141,9 +140,20 @@ class Capability
      *
      * @return      boolean
      */
-    public function hasAdOid()
+    public function isActiveDirectory()
     {
         return isset($this->oids[self::LDAP_CAP_ACTIVE_DIRECTORY_OID]);
+    }
+
+    /**
+     * Whether the ldap server is an OpenLDAP server
+     *
+     * @return bool
+     */
+    public function isOpenLdap()
+    {
+        return isset($this->attributes->structuralObjectClass) &&
+            $this->attributes->structuralObjectClass === 'OpenLDAProotDSE';
     }
 
     /**
@@ -207,5 +217,122 @@ class Capability
             return array($this->attributes->namingContexts);
         }
         return$this->attributes->namingContexts;
+    }
+
+    public function getVendor()
+    {
+        /*
+         rfc #3045 specifies that the name of the server MAY be included in the attribute 'verndorName',
+         AD and OpenLDAP don't do this, but for all all other vendors we follow the standard and
+         just hope for the best.
+        */
+
+        if ($this->isActiveDirectory()) {
+            return 'Microsoft Active Directory';
+        }
+
+        if ($this->isOpenLdap()) {
+            return 'OpenLDAP';
+        }
+
+        if (! isset($this->attributes->vendorName)) {
+            return null;
+        }
+        return $this->attributes->vendorName;
+    }
+
+    public function getVersion()
+    {
+        /*
+         rfc #3045 specifies that the version of the server MAY be included in the attribute 'vendorVersion',
+         but AD and OpenLDAP don't do this. For OpenLDAP there is no way to query the server versions, but for all
+         all other vendors we follow the standard and just hope for the best.
+        */
+
+        if ($this->isActiveDirectory()) {
+            return $this->getAdObjectVersionName();
+        }
+
+        if (! isset($this->attributes->vendorVersion)) {
+            return null;
+        }
+        return $this->attributes->vendorVersion;
+    }
+
+    /**
+     * Discover the capabilities of the given LDAP server
+     *
+     * @param   LdapConnection  $connection The ldap connection to use
+     *
+     * @return  LdapCapabilities
+     *
+     * @throws  LdapException       In case the capability query has failed
+     */
+    public static function discoverCapabilities(LdapConnection $connection)
+    {
+        $ds = $connection->getConnection();
+
+        $fields = array(
+            'defaultNamingContext',
+            'namingContexts',
+            'vendorName',
+            'vendorVersion',
+            'supportedSaslMechanisms',
+            'dnsHostName',
+            'schemaNamingContext',
+            'supportedLDAPVersion', // => array(3, 2)
+            'supportedCapabilities',
+            'supportedControl',
+            'supportedExtension',
+            'objectVersion',
+            '+'
+        );
+
+        $result = @ldap_read($ds, '', (string) $connection->select()->from('*', $fields), $fields);
+        if (! $result) {
+            throw new LdapException(
+                'Capability query failed (%s:%d): %s. Check if hostname and port of the'
+                . ' ldap resource are correct and if anonymous access is permitted.',
+                $connection->getHostname(),
+                $connection->getPort(),
+                ldap_error($ds)
+            );
+        }
+
+        $entry = ldap_first_entry($ds, $result);
+        if ($entry === false) {
+            throw new LdapException(
+                'Capabilities not available (%s:%d): %s. Discovery of root DSE probably not permitted.',
+                $connection->getHostname(),
+                $connection->getPort(),
+                ldap_error($ds)
+            );
+        }
+        $cap = new LdapCapabilities(
+            $connection->cleanupAttributes(
+                ldap_get_attributes($ds, $entry),
+                array_flip($fields)
+            )
+        );
+        return $cap;
+    }
+
+    /**
+     * Determine the active directory version using the available capabillities
+     *
+     * @return null|string  The server version description or null when unknown
+     */
+    protected function getAdObjectVersionName()
+    {
+        if (isset($this->oids[self::LDAP_CAP_ACTIVE_DIRECTORY_W8_OID])) {
+            return 'Windows Server 2012 (or newer)';
+        }
+        if (isset($this->oids[self::LDAP_CAP_ACTIVE_DIRECTORY_V61_R2_OID])) {
+            return 'Windows Server 2008 R2 (or newer)';
+        }
+        if (isset($this->oids[self::LDAP_CAP_ACTIVE_DIRECTORY_V60_OID])) {
+            return 'Windows Server 2008 (or newer)';
+        }
+        return null;
     }
 }

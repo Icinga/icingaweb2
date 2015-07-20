@@ -5,6 +5,8 @@ namespace Icinga\Authentication\User;
 
 use DateTime;
 use Icinga\Data\ConfigObject;
+use Icinga\Data\Inspectable;
+use Icinga\Data\Inspection;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Repository\LdapRepository;
@@ -13,7 +15,7 @@ use Icinga\Protocol\Ldap\LdapException;
 use Icinga\Protocol\Ldap\Expression;
 use Icinga\User;
 
-class LdapUserBackend extends LdapRepository implements UserBackendInterface
+class LdapUserBackend extends LdapRepository implements UserBackendInterface, Inspectable
 {
     /**
      * The base DN to use for a query
@@ -218,7 +220,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface
             throw new ProgrammingError('It is required to set a attribute name where to find a user\'s name first');
         }
 
-        if ($this->ds->getCapabilities()->hasAdOid()) {
+        if ($this->ds->getCapabilities()->isActiveDirectory()) {
             $isActiveAttribute = 'userAccountControl';
             $createdAtAttribute = 'whenCreated';
             $lastModifiedAttribute = 'whenChanged';
@@ -254,7 +256,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface
             throw new ProgrammingError('It is required to set the objectClass where to look for users first');
         }
 
-        if ($this->ds->getCapabilities()->hasAdOid()) {
+        if ($this->ds->getCapabilities()->isActiveDirectory()) {
             $stateConverter = 'user_account_control';
         } else {
             $stateConverter = 'shadow_expire';
@@ -306,41 +308,14 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface
     }
 
     /**
-     * Probe the backend to test if authentication is possible
-     *
-     * Try to bind to the backend and fetch a single user to check if:
-     * <ul>
-     *  <li>Connection credentials are correct and the bind is possible</li>
-     *  <li>At least one user exists</li>
-     *  <li>The specified userClass has the property specified by userNameAttribute</li>
-     * </ul>
+
+     * @param   Inspection  $info           Optional inspection to fill with diagnostic info
      *
      * @throws  AuthenticationException     When authentication is not possible
      */
-    public function assertAuthenticationPossible()
+    public function assertAuthenticationPossible(Inspection $insp = null)
     {
-        try {
-            $result = $this->select()->fetchRow();
-        } catch (LdapException $e) {
-            throw new AuthenticationException('Connection not possible.', $e);
-        }
 
-        if ($result === false) {
-            throw new AuthenticationException(
-                'No objects with objectClass "%s" in DN "%s" found. (Filter: %s)',
-                $this->userClass,
-                $this->baseDn ?: $this->ds->getDn(),
-                $this->filter ?: 'None'
-            );
-        }
-
-        if (! isset($result->user_name)) {
-            throw new AuthenticationException(
-                'UserNameAttribute "%s" not existing in objectClass "%s"',
-                $this->userNameAttribute,
-                $this->userClass
-            );
-        }
     }
 
     /**
@@ -376,5 +351,59 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface
                 $e
             );
         }
+    }
+
+    /**
+     * Inspect if this LDAP User Backend is working as expected by probing the backend
+     * and testing if thea uthentication is possible
+     *
+     * Try to bind to the backend and fetch a single user to check if:
+     * <ul>
+     *  <li>Connection credentials are correct and the bind is possible</li>
+     *  <li>At least one user exists</li>
+     *  <li>The specified userClass has the property specified by userNameAttribute</li>
+     * </ul>
+     *
+     * @return  Inspection  Inspection result
+     */
+    public function inspect()
+    {
+        $result = new Inspection('Ldap User Backend');
+
+        // inspect the used connection to get more diagnostic info in case the connection is not working
+        $result->write($this->ds->inspect());
+        try {
+            try {
+                $res = $this->select()->fetchRow();
+            } catch (LdapException $e) {
+                throw new AuthenticationException('Connection not possible', $e);
+            }
+            $result->write('Searching for: ' . sprintf(
+                'objectClass "%s" in DN "%s" (Filter: %s)',
+                $this->userClass,
+                $this->baseDn ?: $this->ds->getDn(),
+                $this->filter ?: 'None'
+            ));
+            if ($res === false) {
+                throw new AuthenticationException('Error, no users found in backend');
+            }
+            $result->write(sprintf('%d users found in backend', $this->select()->count()));
+            if (! isset($res->user_name)) {
+                throw new AuthenticationException(
+                    'UserNameAttribute "%s" not existing in objectClass "%s"',
+                    $this->userNameAttribute,
+                    $this->userClass
+                );
+            }
+        } catch (AuthenticationException $e) {
+            if (($previous = $e->getPrevious()) !== null) {
+                $result->error($previous->getMessage());
+            } else {
+                $result->error($e->getMessage());
+            }
+        } catch (Exception $e) {
+            $result->error(sprintf('Unable to validate authentication: %s', $e->getMessage()));
+        }
+        return $result;
     }
 }

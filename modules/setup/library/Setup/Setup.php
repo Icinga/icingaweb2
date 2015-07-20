@@ -81,13 +81,16 @@ class Setup implements IteratorAggregate
     /**
      * Return a report of all actions that were run
      *
-     * @return  array       An array of HTML strings
+     * @return  array       An array of arrays of strings
      */
     public function getReport()
     {
         $reports = array();
         foreach ($this->steps as $step) {
-            $reports[] = $step->getReport();
+            $report = $step->getReport();
+            if (! empty($report)) {
+                $reports[] = $report;
+            }
         }
 
         return $reports;

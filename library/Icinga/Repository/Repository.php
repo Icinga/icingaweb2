@@ -491,15 +491,18 @@ abstract class Repository implements Selectable
     /**
      * Convert a value supposed to be transmitted to the data source
      *
-     * @param   string  $table      The table where to persist the value
-     * @param   string  $name       The alias or column name
-     * @param   mixed   $value      The value to convert
+     * @param   string              $table      The table where to persist the value
+     * @param   string              $name       The alias or column name
+     * @param   mixed               $value      The value to convert
+     * @param   RepositoryQuery     $query      An optional query to pass as context
+     *                                          (Directly passed through to $this->getConverter)
      *
-     * @return  mixed               If conversion was possible, the converted value, otherwise the unchanged value
+     * @return  mixed                           If conversion was possible, the converted value,
+     *                                          otherwise the unchanged value
      */
-    public function persistColumn($table, $name, $value)
+    public function persistColumn($table, $name, $value, RepositoryQuery $query = null)
     {
-        $converter = $this->getConverter($table, $name, 'persist');
+        $converter = $this->getConverter($table, $name, 'persist', $query);
         if ($converter !== null) {
             $value = $this->$converter($value);
         }
@@ -510,15 +513,18 @@ abstract class Repository implements Selectable
     /**
      * Convert a value which was fetched from the data source
      *
-     * @param   string  $table      The table the value has been fetched from
-     * @param   string  $name       The alias or column name
-     * @param   mixed   $value      The value to convert
+     * @param   string              $table      The table the value has been fetched from
+     * @param   string              $name       The alias or column name
+     * @param   mixed               $value      The value to convert
+     * @param   RepositoryQuery     $query      An optional query to pass as context
+     *                                          (Directly passed through to $this->getConverter)
      *
-     * @return  mixed               If conversion was possible, the converted value, otherwise the unchanged value
+     * @return  mixed                           If conversion was possible, the converted value,
+     *                                          otherwise the unchanged value
      */
-    public function retrieveColumn($table, $name, $value)
+    public function retrieveColumn($table, $name, $value, RepositoryQuery $query = null)
     {
-        $converter = $this->getConverter($table, $name, 'retrieve');
+        $converter = $this->getConverter($table, $name, 'retrieve', $query);
         if ($converter !== null) {
             $value = $this->$converter($value);
         }
@@ -529,15 +535,17 @@ abstract class Repository implements Selectable
     /**
      * Return the name of the conversion method for the given alias or column name and context
      *
-     * @param   string  $table      The datasource's table
-     * @param   string  $name       The alias or column name for which to return a conversion method
-     * @param   string  $context    The context of the conversion: persist or retrieve
+     * @param   string              $table      The datasource's table
+     * @param   string              $name       The alias or column name for which to return a conversion method
+     * @param   string              $context    The context of the conversion: persist or retrieve
+     * @param   RepositoryQuery     $query      An optional query to pass as context
+     *                                          (unused by the base implementation)
      *
      * @return  string
      *
      * @throws  ProgrammingError    In case a conversion rule is found but not any conversion method
      */
-    protected function getConverter($table, $name, $context)
+    protected function getConverter($table, $name, $context, RepositoryQuery $query = null)
     {
         $conversionRules = $this->getConversionRules();
         if (! isset($conversionRules[$table])) {

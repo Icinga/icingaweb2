@@ -1,22 +1,10 @@
 <div id="setup-finish">
-  <div class="report">
-  <?php $firstLine = true; ?>
-  <?php foreach ($report as $entry): ?>
-    <?php if ($entry): ?>
-      <?php if (false === $firstLine): ?>
-        <div class="line-separator"></div>
-      <?php endif ?>
-      <?= $entry; ?>
-      <?php $firstLine = false; ?>
-    <?php endif ?>
-  <?php endforeach ?>
-  <?php if ($success): ?>
-    <p class="success"><?= $this->translate('Congratulations! Icinga Web 2 has been successfully set up.'); ?></p>
-  <?php else: ?>
-    <p class="failure"><?= $this->translate('Sorry! Failed to set up Icinga Web 2 successfully.'); ?></p>
-  <?php endif ?>
-  </div>
-  <div class="buttons">
+ <?php if ($success): ?>
+  <h2 class="success"><?= $this->translate('Congratulations! Icinga Web 2 has been successfully set up.'); ?></h2>
+ <?php else: ?>
+  <h2 class="failure"><?= $this->translate('Sorry! Failed to set up Icinga Web 2 successfully.'); ?></h2>
+ <?php endif ?>
+  <div class="buttons pull-right">
   <?php if ($success): ?>
     <?= $this->qlink(
         $this->translate('Login to Icinga Web 2'),
@@ -39,4 +27,7 @@
     ); ?>
   <?php endif ?>
   </div>
+  <textarea class="report" readonly><?= join("\n\n", array_map(function($a) {
+    return join("\n", $a);
+  }, $report)); ?></textarea>
 </div>

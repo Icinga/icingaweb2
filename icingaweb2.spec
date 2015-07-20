@@ -14,21 +14,12 @@ BuildArch:      noarch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}
 Packager:       Icinga Team <info@icinga.org>
 
-%if 0%{?fedora} || 0%{?rhel}
+%if 0%{?fedora} || 0%{?rhel} || 0%{?amzn}
+%define php             php
+%define php_cli         php-cli
 %define wwwconfigdir    %{_sysconfdir}/httpd/conf.d
 %define wwwuser         apache
-%if 0%{?rhel} == 5
-%define php     php53
-%define php_cli php53-cli
-%else
-%define php     php
-%define php_cli php-cli
-%endif
-%if 0%{?rhel} == 6
-%define zend php-ZendFramework
-%else
-%define zend %{name}-vendor-Zend
-%endif
+%define zend            php-ZendFramework
 %endif
 
 %if 0%{?suse_version}
@@ -44,6 +35,7 @@ Requires: apache2-mod_php5
 %endif
 %endif
 
+%{?amzn:Requires(pre):          shadow-utils}
 %{?fedora:Requires(pre):        shadow-utils}
 %{?rhel:Requires(pre):          shadow-utils}
 %{?suse_version:Requires(pre):  pwdutils}
@@ -55,6 +47,7 @@ Requires:                       %{name}-vendor-JShrink
 Requires:                       %{name}-vendor-lessphp
 Requires:                       %{name}-vendor-Parsedown
 Requires:                       %{zend}
+Obsoletes:                      %{name}-vendor-zend
 
 
 %description
@@ -73,6 +66,7 @@ Icinga Web 2
 %package common
 Summary:                        Common files for Icinga Web 2 and the Icinga CLI
 Group:                          Applications/System
+%{?amzn:Requires(pre):          shadow-utils}
 %{?fedora:Requires(pre):        shadow-utils}
 %{?rhel:Requires(pre):          shadow-utils}
 %{?suse_version:Requires(pre):  pwdutils}
@@ -86,6 +80,7 @@ Summary:                    Icinga Web 2 PHP library
 Group:                      Development/Libraries
 Requires:                   %{php} >= 5.3.0
 Requires:                   %{php}-gd %{php}-intl
+%{?amzn:Requires:           %{php}-pecl-imagick}
 %{?fedora:Requires:         php-pecl-imagick}
 %{?rhel:Requires:           php-pecl-imagick}
 %{?suse_version:Requires:   %{php}-gettext %{php}-json %{php}-openssl %{php}-posix}
@@ -99,6 +94,7 @@ Summary:                    Icinga CLI
 Group:                      Applications/System
 Requires:                   %{name}-common = %{version}-%{release}
 Requires:                   php-Icinga = %{version}-%{release}
+%{?amzn:Requires:           %{php_cli} >= 5.3.0 bash-completion}
 %{?fedora:Requires:         %{php_cli} >= 5.3.0 bash-completion}
 %{?rhel:Requires:           %{php_cli} >= 5.3.0 bash-completion}
 %{?suse_version:Requires:   %{php} >= 5.3.0}
@@ -167,18 +163,6 @@ Requires:   %{php} >= 5.3.0
 Icinga Web 2 vendor library Parsedown
 
 
-%package vendor-Zend
-Version:    1.12.9
-Release:    1%{?dist}
-Summary:    Icinga Web 2 vendor library Zend Framework
-Group:      Development/Libraries
-License:    BSD
-Requires:   %{php} >= 5.3.0
-
-%description vendor-Zend
-Icinga Web 2 vendor library Zend
-
-
 %prep
 %setup -q
 
@@ -186,12 +170,12 @@ Icinga Web 2 vendor library Zend
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/{%{basedir}/{modules,library,public},%{bindir},%{configdir}/modules/setup,%{logdir},%{phpdir},%{wwwconfigdir},%{_sysconfdir}/bash_completion.d,%{docsdir}}
+mkdir -p %{buildroot}/{%{basedir}/{modules,library/vendor,public},%{bindir},%{configdir}/modules/setup,%{logdir},%{phpdir},%{wwwconfigdir},%{_sysconfdir}/bash_completion.d,%{docsdir}}
 cp -prv application doc %{buildroot}/%{basedir}
 cp -pv etc/bash_completion.d/icingacli %{buildroot}/%{_sysconfdir}/bash_completion.d/icingacli
 cp -prv modules/{monitoring,setup,doc,translation} %{buildroot}/%{basedir}/modules
 cp -prv library/Icinga %{buildroot}/%{phpdir}
-cp -prv library/vendor %{buildroot}/%{basedir}/library
+cp -prv library/vendor/{dompdf,HTMLPurifier,JShrink,lessphp,Parsedown} %{buildroot}/%{basedir}/library/vendor
 cp -prv public/{css,img,js,error_norewrite.html} %{buildroot}/%{basedir}/public
 cp -pv packages/files/apache/icingaweb2.conf %{buildroot}/%{wwwconfigdir}/icingaweb2.conf
 cp -pv packages/files/bin/icingacli %{buildroot}/%{bindir}
@@ -222,12 +206,12 @@ rm -rf %{buildroot}
 %{basedir}/doc
 %{basedir}/modules
 %{basedir}/public
-%{wwwconfigdir}/icingaweb2.conf
+%config(noreplace) %{wwwconfigdir}/icingaweb2.conf
 %attr(2775,root,%{icingawebgroup}) %dir %{logdir}
-%{docsdir}
-%docdir %{docsdir}
 %attr(2770,root,%{icingawebgroup}) %config(noreplace) %dir %{configdir}/modules/setup
 %attr(0660,root,%{icingawebgroup}) %config(noreplace) %{configdir}/modules/setup/config.ini
+%{docsdir}
+%docdir %{docsdir}
 
 
 %pre common
@@ -277,8 +261,3 @@ exit 0
 %files vendor-Parsedown
 %defattr(-,root,root)
 %{basedir}/library/vendor/Parsedown
-
-
-%files vendor-Zend
-%defattr(-,root,root)
-%{basedir}/library/vendor/Zend

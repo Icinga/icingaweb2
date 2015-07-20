@@ -82,7 +82,7 @@ if (count($history) === 0) {
         <td>
         <?php if ($isService): ?>
           <?= $this->link()->service(
-              $event->service_description, $event->service_display_name, $event->host_name, $event->host_display_name
+              $event->service_description, $event->service_display_name, $event->host_name, $event->host_display_name, 'rowaction'
           ) ?>
         <?php else: ?>
           <?= $this->link()->host($event->host_name, $event->host_display_name) ?>

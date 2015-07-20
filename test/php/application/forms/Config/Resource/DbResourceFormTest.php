@@ -26,7 +26,7 @@ class DbResourceFormTest extends BaseTestCase
     public function testValidDbResourceIsValid()
     {
         $this->setUpResourceFactoryMock(
-            Mockery::mock()->shouldReceive('getConnection')->atMost()->twice()->andReturn(Mockery::self())->getMock()
+            Mockery::mock()->shouldReceive('inspect')->andReturn(self::createInspector(false))->getMock()
         );
 
         $this->assertTrue(
@@ -42,7 +42,7 @@ class DbResourceFormTest extends BaseTestCase
     public function testInvalidDbResourceIsNotValid()
     {
         $this->setUpResourceFactoryMock(
-            Mockery::mock()->shouldReceive('getConnection')->once()->andThrow('\Exception')->getMock()
+            Mockery::mock()->shouldReceive('inspect')->andReturn(self::createInspector(true))->getMock()
         );
 
         $this->assertFalse(
@@ -57,5 +57,22 @@ class DbResourceFormTest extends BaseTestCase
             ->shouldReceive('createResource')
             ->with(Mockery::type('Icinga\Data\ConfigObject'))
             ->andReturn($resourceMock);
+    }
+
+    public static function createInspector($error = false, $log = array('log'))
+    {
+        if (! $error) {
+            $calls = array(
+                'hasError' => false,
+                'toArray' => $log
+            );
+        } else {
+            $calls = array(
+                'hasError' => true,
+                'getError' => 'Error',
+                'toArray' => $log
+            );
+        }
+        return Mockery::mock('Icinga\Data\Inspection', $calls);
     }
 }

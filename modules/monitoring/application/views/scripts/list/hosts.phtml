@@ -60,7 +60,8 @@ if (count($hosts) === 0) {
           $hostLink,
           null,
           array(
-            'title' => sprintf($this->translate('Show detailed information for host %s'), $host->host_display_name)
+            'title' => sprintf($this->translate('Show detailed information for host %s'), $host->host_display_name),
+            'class' => 'rowaction'
           )
         ); ?>
         <?php if (isset($host->host_unhandled_services) && $host->host_unhandled_services > 0): ?>
@@ -89,7 +90,7 @@ if (count($hosts) === 0) {
           )
         ) ?>)</span>
         <?php endif ?>
-        <p class="pluginoutput"><?= $this->escape($this->ellipsis($host->host_output, 10000)) ?></p>
+        <p class="pluginoutput"><?= $this->pluginOutput($this->ellipsis($host->host_output, 10000), true) ?></p>
       </td>
       <?php foreach($this->addColumns as $col): ?>
       <td><?= $this->escape($host->$col) ?></td>

@@ -165,21 +165,25 @@ class AdminAccountPage extends Form
                 'password',
                 'new_user_password',
                 array(
-                    'required'      => true,
-                    'label'         => $this->translate('Password'),
-                    'description'   => $this->translate('Enter the password to assign to the newly created account.')
+                    'required'          => true,
+                    'renderPassword'    => true,
+                    'label'             => $this->translate('Password'),
+                    'description'       => $this->translate(
+                        'Enter the password to assign to the newly created account.'
+                    )
                 )
             );
             $this->addElement(
                 'password',
                 'new_user_2ndpass',
                 array(
-                    'required'      => true,
-                    'label'         => $this->translate('Repeat password'),
-                    'description'   => $this->translate(
+                    'required'          => true,
+                    'renderPassword'    => true,
+                    'label'             => $this->translate('Repeat password'),
+                    'description'       => $this->translate(
                         'Please repeat the password given above to avoid typing errors.'
                     ),
-                    'validators'    => array(
+                    'validators'        => array(
                         array('identical', false, array('new_user_password'))
                     )
                 )
@@ -200,7 +204,7 @@ class AdminAccountPage extends Form
             return false;
         }
 
-        if ($data['user_type'] === 'new_user' && !$this->hasUser($data['new_user'])) {
+        if ($data['user_type'] === 'new_user' && $this->hasUser($data['new_user'])) {
             $this->getElement('new_user')->addError($this->translate('Username already exists.'));
             return false;
         }
@@ -253,7 +257,11 @@ class AdminAccountPage extends Form
      */
     protected function hasUser($username)
     {
-        return $this->createBackend()->select()->where('user_name', $username)->count() > 1;
+        try {
+            return $this->createBackend()->select()->where('user_name', $username)->count() > 1;
+        } catch (Exception $_) {
+            return null;
+        }
     }
 
     /**

@@ -27,24 +27,29 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         '@@@@@@',
     );
 
-    public function pluginOutput($output)
+    public function pluginOutput($output, $raw = false)
     {
         if (empty($output)) {
             return '';
         }
-        $output = preg_replace('~<br[^>]+>~', "\n", $output);
-        if (preg_match('~<\w+[^>^\\\]{,60}>~', $output)) {
+        $output = preg_replace('~<br[^>]*>~', "\n", $output);
+        if (strlen($output) > strlen(strip_tags($output))) {
             // HTML
-            $output = preg_replace('~<table~', '<table style="font-size: 0.75em"',
+            $output = preg_replace(
+                '~<table~',
+                '<table style="font-size: 0.75em"',
                 $this->getPurifier()->purify($output)
             );
         } else {
             // Plaintext
-            $output = '<pre class="pluginoutput">' . preg_replace(
+            $output = preg_replace(
                 self::$txtPatterns,
                 self::$txtReplacements,
                 $this->view->escape($output)
-            ) . '</pre>';
+            );
+        }
+        if (! $raw) {
+            $output = '<pre class="pluginoutput">' . $output . '</pre>';
         }
         $output = $this->fixLinks($output);
         return $output;

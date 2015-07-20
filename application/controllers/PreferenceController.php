@@ -6,6 +6,7 @@ use Icinga\Web\Url;
 use Icinga\Web\Widget\Tab;
 use Icinga\Application\Config;
 use Icinga\Forms\PreferenceForm;
+use Icinga\Data\ConfigObject;
 use Icinga\User\Preferences\PreferencesStore;
 
 /**
@@ -38,13 +39,16 @@ class PreferenceController extends BasePreferenceController
      */
     public function indexAction()
     {
-        $storeConfig = Config::app()->getSection('preferences');
-
+        $config = Config::app()->getSection('global');
         $user = $this->getRequest()->getUser();
+
         $form = new PreferenceForm();
         $form->setPreferences($user->getPreferences());
-        if ($storeConfig->get('store', 'ini') !== 'none') {
-            $form->setStore(PreferencesStore::create($storeConfig, $user));
+        if ($config->get('config_backend', 'ini') !== 'none') {
+            $form->setStore(PreferencesStore::create(new ConfigObject(array(
+                'store'     => $config->get('config_backend', 'ini'),
+                'resource'  => $config->config_resource
+            )), $user));
         }
         $form->handleRequest();
 

@@ -25,7 +25,7 @@ use Icinga\Module\Setup\Requirement\PhpModuleRequirement;
 class MonitoringWizard extends Wizard implements SetupWizard
 {
     /**
-     * @see Wizard::init()
+     * Register all pages for this wizard
      */
     public function init()
     {
@@ -39,7 +39,10 @@ class MonitoringWizard extends Wizard implements SetupWizard
     }
 
     /**
-     * @see Wizard::setupPage()
+     * Setup the given page that is either going to be displayed or validated
+     *
+     * @param   Form        $page       The page to setup
+     * @param   Request     $request    The current request
      */
     public function setupPage(Form $page, Request $request)
     {
@@ -52,18 +55,30 @@ class MonitoringWizard extends Wizard implements SetupWizard
             $this->getDirection() === static::FORWARD
             && ($page->getName() === 'setup_monitoring_ido' || $page->getName() === 'setup_monitoring_livestatus')
         ) {
-            if ((($dbResourceData = $this->getPageData('setup_db_resource')) !== null
-                 && $dbResourceData['name'] === $request->getPost('name'))
-                || (($ldapResourceData = $this->getPageData('setup_ldap_resource')) !== null
-                    && $ldapResourceData['name'] === $request->getPost('name'))
+            if (
+                (($authDbResourceData = $this->getPageData('setup_auth_db_resource')) !== null
+                 && $authDbResourceData['name'] === $request->getPost('name'))
+                || (($configDbResourceData = $this->getPageData('setup_config_db_resource')) !== null
+                    && $configDbResourceData['name'] === $request->getPost('name'))
+                    || (($ldapResourceData = $this->getPageData('setup_ldap_resource')) !== null
+                        && $ldapResourceData['name'] === $request->getPost('name'))
             ) {
-                $page->addError(mt('monitoring', 'The given resource name is already in use.'));
+                $page->error(mt('monitoring', 'The given resource name is already in use.'));
             }
         }
     }
 
     /**
-     * @see Wizard::getNewPage()
+     * Return the new page to set as current page
+     *
+     * {@inheritdoc} Runs additional checks related to some registered pages.
+     *
+     * @param   string  $requestedPage      The name of the requested page
+     * @param   Form    $originPage         The origin page
+     *
+     * @return  Form                        The new page
+     *
+     * @throws  InvalidArgumentException    In case the requested page does not exist or is not permitted yet
      */
     protected function getNewPage($requestedPage, Form $originPage)
     {
@@ -81,7 +96,9 @@ class MonitoringWizard extends Wizard implements SetupWizard
     }
 
     /**
-     * @see Wizard::addButtons()
+     * Add buttons to the given page based on its position in the page-chain
+     *
+     * @param   Form    $page   The page to add the buttons to
      */
     protected function addButtons(Form $page)
     {
@@ -100,7 +117,9 @@ class MonitoringWizard extends Wizard implements SetupWizard
     }
 
     /**
-     * @see SetupWizard::getSetup()
+     * Return the setup for this wizard
+     *
+     * @return  Setup
      */
     public function getSetup()
     {
@@ -132,7 +151,9 @@ class MonitoringWizard extends Wizard implements SetupWizard
     }
 
     /**
-     * @see SetupWizard::getRequirements()
+     * Return the requirements of this wizard
+     *
+     * @return  RequirementSet
      */
     public function getRequirements()
     {

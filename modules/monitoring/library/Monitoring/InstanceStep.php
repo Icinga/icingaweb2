@@ -85,15 +85,21 @@ class InstanceStep extends Step
     public function getReport()
     {
         if ($this->error === false) {
-            $message = mt('monitoring', 'Monitoring instance configuration has been successfully created: %s');
-            return '<p>' . sprintf($message, Config::resolvePath('modules/monitoring/instances.ini')) . '</p>';
+            return array(sprintf(
+                mt('monitoring', 'Monitoring instance configuration has been successfully created: %s'),
+                Config::resolvePath('modules/monitoring/instances.ini')
+            ));
         } elseif ($this->error !== null) {
-            $message = mt(
-                'monitoring',
-                'Monitoring instance configuration could not be written to: %s; An error occured:'
+            return array(
+                sprintf(
+                    mt(
+                        'monitoring',
+                        'Monitoring instance configuration could not be written to: %s. An error occured:'
+                    ),
+                    Config::resolvePath('modules/monitoring/instances.ini')
+                ),
+                sprintf(mt('setup', 'ERROR: %s'), $this->error->getMessage())
             );
-            return '<p class="error">' . sprintf($message, Config::resolvePath('modules/monitoring/instances.ini'))
-                . '</p><p>' . $this->error->getMessage() . '</p>';
         }
     }
 }
