@@ -161,6 +161,13 @@ class Form extends Zend_Form
     protected $notifications;
 
     /**
+     * The hints of this form
+     *
+     * @var array
+     */
+    protected $hints;
+
+    /**
      * Whether the Autosubmit decorator should be applied to this form
      *
      * If this is true, the Autosubmit decorator is being applied to this form instead of to each of its elements.
@@ -564,6 +571,49 @@ class Form extends Zend_Form
         }
 
         return $this->notifications;
+    }
+
+    /**
+     * Set the hints for this form
+     *
+     * @param   array   $hints
+     *
+     * @return  $this
+     */
+    public function setHints(array $hints)
+    {
+        $this->hints = $hints;
+        return $this;
+    }
+
+    /**
+     * Add a hint for this form
+     *
+     * If $hint is an array the second value should be an
+     * array as well containing additional HTML properties.
+     *
+     * @param   string|array    $hint
+     *
+     * @return  $this
+     */
+    public function addHint($hint)
+    {
+        $this->hints[] = $hint;
+        return $this;
+    }
+
+    /**
+     * Return the hints of this form
+     *
+     * @return  array
+     */
+    public function getHints()
+    {
+        if ($this->hints === null) {
+            return array();
+        }
+
+        return $this->hints;
     }
 
     /**
@@ -1087,10 +1137,11 @@ class Form extends Zend_Form
                         ->addDecorator('HtmlTag', array('tag' => 'div', 'class' => 'header'));
                 }
 
-                $this->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
+                $this->addDecorator('FormDescriptions')
                     ->addDecorator('FormNotifications')
-                    ->addDecorator('FormDescriptions')
+                    ->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
                     ->addDecorator('FormElements')
+                    ->addDecorator('FormHints')
                     //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
                     ->addDecorator('Form');
             }
