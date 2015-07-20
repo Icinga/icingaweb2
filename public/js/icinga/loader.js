@@ -141,6 +141,35 @@
         },
 
         /**
+         * Mimic XHR form submission by using an iframe
+         *
+         * @param {object} $form    The form being submitted
+         * @param {string} action   The form's action URL
+         * @param {object} $target  The target container
+         */
+        submitFormToIframe: function ($form, action, $target) {
+            var self = this;
+
+            $form.prop('action', self.icinga.utils.addUrlParams(action, {
+                '_disableLayout': true
+            }));
+            $form.prop('target', 'fileupload-frame-target');
+            $('#fileupload-frame-target').on('load', function (event) {
+                var $frame = $(event.target);
+
+                // Fetch the frame's new content, paste it into the target..
+                self.renderContentToContainer(
+                    $frame.contents().find('body').html(),
+                    $target,
+                    'replace'
+                );
+                $frame.prop('src', 'about:blank'); // ..and clear the frame's dom
+
+                $frame.off('load'); // Unbind the event as it's set on demand
+            });
+        },
+
+        /**
          * Create an URL relative to the Icinga base Url, still unused
          *
          * @param {string} url Relative url

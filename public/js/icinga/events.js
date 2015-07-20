@@ -269,6 +269,17 @@
                 url = icinga.utils.addUrlParams(url, dataObj);
             } else {
                 if (encoding === 'multipart/form-data') {
+                    if (typeof window.FormData === 'undefined') {
+                        icinga.loader.submitFormToIframe($form, url, $target);
+
+                        // Disable all form controls to prevent resubmission as early as possible.
+                        // (This relies on native form submission, so using setTimeout is the only possible solution)
+                        setTimeout(function () {
+                            $form.find(':input:not(:disabled)').prop('disabled', true);
+                        }, 0);
+                        return true;
+                    }
+
                     data = new window.FormData($form[0]);
                 } else {
                     data = $form.serializeArray();
