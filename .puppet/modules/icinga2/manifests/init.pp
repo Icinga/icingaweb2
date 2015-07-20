@@ -39,4 +39,8 @@ class icinga2 {
   }
 
   icinga2::feature { [ 'statusdata', 'command', 'compatlog' ]: }
+
+  icinga2::feature { 'api':
+    ensure => absent,
+  }
 }

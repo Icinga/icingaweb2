@@ -1,6 +1,6 @@
 # Class: icinga2_dev
 #
-#   This class installs Icinga 2 w/ MySQL and provides Icinga 2 test configuration.
+#   This class installs Icinga 2 w/ MySQL and PostgreSQL and provides Icinga 2 test configuration.
 #
 # Requires:
 #
@@ -19,7 +19,8 @@ class icinga2_dev {
   include monitoring_test_config
 
   icinga2::config { [
-    'conf.d/test-config', 'conf.d/commands', 'constants' ]:
+    'conf.d/test-config', 'conf.d/commands', 'constants',
+  ]:
     source => 'puppet:///modules/icinga2_dev',
   }
 
