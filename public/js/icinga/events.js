@@ -239,9 +239,6 @@
                 $button = $('input[type=submit]', $form).add('button[type=submit]', $form).first();
             }
 
-            event.stopPropagation();
-            event.preventDefault();
-
             if ($button.length) {
                 // Activate spinner
                 if ($button.hasClass('spinner')) {
@@ -297,6 +294,8 @@
 
             icinga.loader.loadUrl(url, $target, data, method);
 
+            event.stopPropagation();
+            event.preventDefault();
             return false;
         },
 
