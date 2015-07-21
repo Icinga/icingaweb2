@@ -277,7 +277,7 @@ class Form extends Zend_Form
     public function getRedirectUrl()
     {
         if ($this->redirectUrl === null) {
-            $url = Url::fromRequest(array(), $this->getRequest());
+            $url = $this->getRequest()->getUrl();
             // Be sure to remove all form dependent params because we do not want to submit it again
             $this->redirectUrl = $url->without(array_keys($this->getElements()));
         }
