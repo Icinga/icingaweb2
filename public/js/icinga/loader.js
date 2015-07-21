@@ -326,16 +326,34 @@
                 }
             }
 
+            this.redirectToUrl(redirect, req.$target, req.getResponseHeader('X-Icinga-Rerender-Layout'));
+            return true;
+        },
+
+        /**
+         * Redirect to the given url
+         *
+         * @param {string}  url
+         * @param {object}  $target
+         * @param {boolean} rerenderLayout
+         */
+        redirectToUrl: function (url, $target, rerenderLayout) {
+            var icinga = this.icinga;
+
+            if (typeof rerenderLayout === 'undefined') {
+                rerenderLayout = false;
+            }
+
             icinga.logger.debug(
-                'Got redirect for ', req.$target, ', URL was ' + redirect
+                'Got redirect for ', $target, ', URL was ' + url
             );
 
-            if (req.getResponseHeader('X-Icinga-Rerender-Layout')) {
-                var parts = redirect.split(/#!/);
-                redirect = parts.shift();
-                var redirectionUrl = this.addUrlFlag(redirect, 'renderLayout');
+            if (rerenderLayout) {
+                var parts = url.split(/#!/);
+                url = parts.shift();
+                var redirectionUrl = this.addUrlFlag(url, 'renderLayout');
                 var r = this.loadUrl(redirectionUrl, $('#layout'));
-                r.url = redirect;
+                r.url = url;
                 if (parts.length) {
                     r.loadNext = parts;
                 } else if (!! document.location.hash) {
@@ -345,28 +363,24 @@
                         r.loadNext = parts;
                     }
                 }
-
             } else {
-
-                if (redirect.match(/#!/)) {
-                    var parts = redirect.split(/#!/);
+                if (url.match(/#!/)) {
+                    var parts = url.split(/#!/);
                     icinga.ui.layout2col();
                     this.loadUrl(parts.shift(), $('#col1'));
                     this.loadUrl(parts.shift(), $('#col2'));
                 } else {
-
-                    if (req.$target.attr('id') === 'col2') { // TODO: multicol
-                        if ($('#col1').data('icingaUrl').split('?')[0] === redirect.split('?')[0]) {
+                    if ($target.attr('id') === 'col2') { // TODO: multicol
+                        if ($('#col1').data('icingaUrl').split('?')[0] === url.split('?')[0]) {
                             icinga.ui.layout1col();
-                            req.$target = $('#col1');
+                            $target = $('#col1');
                             delete(this.requests['col2']);
                         }
                     }
 
-                    this.loadUrl(redirect, req.$target);
+                    this.loadUrl(url, $target);
                 }
             }
-            return true;
         },
 
         cacheLoadedIcons: function($container) {
