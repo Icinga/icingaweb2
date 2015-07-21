@@ -151,20 +151,26 @@
             var self = this;
 
             $form.prop('action', self.icinga.utils.addUrlParams(action, {
-                '_disableLayout': true
+                '_frameUpload': true
             }));
             $form.prop('target', 'fileupload-frame-target');
             $('#fileupload-frame-target').on('load', function (event) {
                 var $frame = $(event.target);
+                var $contents = $frame.contents();
 
-                // Fetch the frame's new content, paste it into the target..
-                self.renderContentToContainer(
-                    $frame.contents().find('body').html(),
-                    $target,
-                    'replace'
-                );
-                $frame.prop('src', 'about:blank'); // ..and clear the frame's dom
+                var $redirectMeta = $contents.find('meta[name="redirectUrl"]');
+                if ($redirectMeta.length) {
+                    self.loadUrl($redirectMeta.attr('content'), $target);
+                } else {
+                    // Fetch the frame's new content and paste it into the target
+                    self.renderContentToContainer(
+                        $contents.find('body').html(),
+                        $target,
+                        'replace'
+                    );
+                }
 
+                $frame.prop('src', 'about:blank'); // Clear the frame's dom
                 $frame.off('load'); // Unbind the event as it's set on demand
             });
         },
