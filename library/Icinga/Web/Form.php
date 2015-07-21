@@ -84,7 +84,7 @@ class Form extends Zend_Form
     /**
      * The url to redirect to upon success
      *
-     * @var string|Url
+     * @var Url
      */
     protected $redirectUrl;
 
@@ -262,9 +262,17 @@ class Form extends Zend_Form
      * @param   string|Url  $url    The url to redirect to
      *
      * @return  $this
+     *
+     * @throws  ProgrammingError    In case $url is neither a string nor a instance of Icinga\Web\Url
      */
     public function setRedirectUrl($url)
     {
+        if (is_string($url)) {
+            $url = Url::fromPath($url, array(), $this->getRequest());
+        } elseif (! $url instanceof Url) {
+            throw new ProgrammingError('$url must be a string or instance of Icinga\Web\Url');
+        }
+
         $this->redirectUrl = $url;
         return $this;
     }
@@ -272,7 +280,7 @@ class Form extends Zend_Form
     /**
      * Return the url to redirect to upon success
      *
-     * @return  string|Url
+     * @return  Url
      */
     public function getRedirectUrl()
     {
