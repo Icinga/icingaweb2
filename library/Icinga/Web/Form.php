@@ -965,9 +965,9 @@ class Form extends Zend_Form
                         || ($this->onSuccess === null && false !== $this->onSuccess()))) {
                     if (! $frameUpload) {
                         $this->getResponse()->redirectAndExit($this->getRedirectUrl());
+                    } else {
+                        $this->getView()->layout()->redirectUrl = $this->getRedirectUrl()->getAbsoluteUrl();
                     }
-
-                    $this->getView()->layout()->redirectUrl = $this->getRedirectUrl()->getAbsoluteUrl();
                 }
             } elseif ($this->getValidatePartial()) {
                 // The form can't be processed but we may want to show validation errors though
