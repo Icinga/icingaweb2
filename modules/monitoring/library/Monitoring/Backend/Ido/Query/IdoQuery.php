@@ -497,6 +497,7 @@ abstract class IdoQuery extends DbQuery
                 && strpos($filter->getColumn(), 'LOWER') !== 0
             ) {
                 $filter->setColumn('LOWER(' . $filter->getColumn() . ')');
+                $filter->setColumn('LOWER(' . $filter->getColumn() . ')');
                 $expression = $filter->getExpression();
                 if (is_array($expression)) {
                     $filter->setExpression(array_map('strtolower', $expression));
@@ -855,7 +856,6 @@ abstract class IdoQuery extends DbQuery
     protected function customvarNameToTypeName($customvar)
     {
         $customvar = strtolower($customvar);
-        // TODO: Improve this:
         if (! preg_match('~^_(host|service)_([a-zA-Z0-9_]+)$~', $customvar, $m)) {
             throw new ProgrammingError(
                 'Got invalid custom var: "%s"',
@@ -870,11 +870,19 @@ abstract class IdoQuery extends DbQuery
         return array_key_exists($name, $this->joinedVirtualTables);
     }
 
+    /**
+     * Get the query column of a custom variable or null in case the custom variable has not been joined
+     *
+     * @param   string $customvar
+     *
+     * @return  null|string
+     */
     protected function getCustomvarColumnName($customvar)
     {
         if (isset($this->customVars[($customvar = strtolower($customvar))])) {
-            $this->customVars[strtolower($customvar)] . '.varvalue';
+            return $this->customVars[$customvar] . '.varvalue';
         }
+        return null;
     }
 
     public function aliasToColumnName($alias)
