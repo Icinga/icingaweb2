@@ -192,7 +192,6 @@
          *
          */
         submitForm: function (event, autosubmit) {
-            //return false;
             var self   = event.data.self;
             var icinga = self.icinga;
             // .closest is not required unless subelements to trigger this
@@ -277,7 +276,21 @@
                         setTimeout(function () {
                             $form.find(':input:not(:disabled)').prop('disabled', true);
                         }, 0);
-                        return true;
+
+                        if (! typeof autosubmit === 'undefined' && autosubmit) {
+                            if ($button.length) {
+                                // We're autosubmitting the form so the button has not been clicked, however,
+                                // to be really safe, we're disabling the button explicitly, just in case..
+                                $button.prop('disabled', true);
+                            }
+
+                            $form[0].submit(); // This should actually not trigger the onSubmit event, let's hope that this is true for all browsers..
+                            event.stopPropagation();
+                            event.preventDefault();
+                            return false;
+                        } else {
+                            return true;
+                        }
                     }
 
                     data = new window.FormData($form[0]);
