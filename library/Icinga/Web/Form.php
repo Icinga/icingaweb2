@@ -946,12 +946,20 @@ class Form extends Zend_Form
 
         $formData = $this->getRequestData();
         if ($this->getUidDisabled() || $this->wasSent($formData)) {
+            if (($frameUpload = (bool) $request->getUrl()->shift('_frameUpload', false))) {
+                $this->getView()->layout()->setLayout('wrapped');
+            }
+
             $this->populate($formData); // Necessary to get isSubmitted() to work
             if (! $this->getSubmitLabel() || $this->isSubmitted()) {
                 if ($this->isValid($formData)
                     && (($this->onSuccess !== null && false !== call_user_func($this->onSuccess, $this))
                         || ($this->onSuccess === null && false !== $this->onSuccess()))) {
-                    $this->getResponse()->redirectAndExit($this->getRedirectUrl());
+                    if (! $frameUpload) {
+                        $this->getResponse()->redirectAndExit($this->getRedirectUrl());
+                    }
+
+                    $this->getView()->layout()->redirectUrl = $this->getRedirectUrl();
                 }
             } elseif ($this->getValidatePartial()) {
                 // The form can't be processed but we may want to show validation errors though
