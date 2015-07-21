@@ -160,7 +160,7 @@
 
                 var $redirectMeta = $contents.find('meta[name="redirectUrl"]');
                 if ($redirectMeta.length) {
-                    self.loadUrl($redirectMeta.attr('content'), $target);
+                    self.redirectToUrl($redirectMeta.attr('content'), $target);
                 } else {
                     // Fetch the frame's new content and paste it into the target
                     self.renderContentToContainer(
