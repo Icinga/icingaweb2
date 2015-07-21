@@ -92,7 +92,8 @@ class FormTest extends BaseTestCase
 
     public function testWhetherAnExplicitlySetRedirectUrlIsUsedForRedirection()
     {
-        $this->getResponseMock()->shouldReceive('redirectAndExit')->atLeast()->once()->with('special/route');
+        $this->getResponseMock()->shouldReceive('redirectAndExit')->atLeast()->once()
+            ->with(Mockery::on(function ($url) { return $url->getRelativeUrl() === 'special/route'; }));
 
         $form = new SuccessfulForm();
         $form->setTokenDisabled();
