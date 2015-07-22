@@ -25,6 +25,17 @@ class ModuleActionController extends ActionController
     protected $moduleName;
 
     /**
+     * Whether the module permission is required to access to module
+     *
+     * Note that module permissions do not have any effect if the controller does not require authentication.
+     *
+     * @var bool
+     *
+     * @see $requiresAuthentication For enabling/disabling whether the controller requires authentication.
+     */
+    protected $requiresModulePermission = true;
+
+    /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Controller\ActionController For the method documentation.
      */
@@ -41,6 +52,29 @@ class ModuleActionController extends ActionController
      */
     protected function moduleInit()
     {
+    }
+
+    /**
+     * Get whether the module permission is required to access to module
+     *
+     * @return bool
+     */
+    public function getRequiresModulePermission()
+    {
+        return $this->requiresModulePermission;
+    }
+
+    /**
+     * Set whether the module permission is required to access to module
+     *
+     * @param   bool $required
+     *
+     * @return  $this
+     */
+    public function setRequiresModulePermission($required)
+    {
+        $this->requiresModulePermission = (bool) $required;
+        return $this;
     }
 
     public function Config($file = null)
