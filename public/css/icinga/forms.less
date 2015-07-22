@@ -25,7 +25,7 @@ label {
   font-weight: bold;
 }
 
-input, select {
+input, select, textarea {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -198,6 +198,14 @@ form label {
   margin-right: 1em;
   font-size: 0.9em;
   width: 10em;
+}
+
+form div.element > * {
+  vertical-align: top;
+}
+
+form dt {
+  vertical-align: top;
 }
 
 select, input[type=text], textarea {

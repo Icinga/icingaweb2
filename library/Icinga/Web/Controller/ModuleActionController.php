@@ -73,6 +73,6 @@ class ModuleActionController extends ActionController
     public function postDispatchXhr()
     {
         parent::postDispatchXhr();
-        $this->getResponse()->setHeader('X-Icinga-Module', $this->moduleName);
+        $this->getResponse()->setHeader('X-Icinga-Module', $this->moduleName, true);
     }
 }
