@@ -239,7 +239,7 @@ class FormTest extends BaseTestCase
     }
 
     /**
-     * @expectedException   LogicException
+     * @expectedException \Icinga\Exception\ProgrammingError
      */
     public function testWhetherTheOnSuccessOptionMustBeCallable()
     {
