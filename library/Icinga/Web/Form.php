@@ -3,13 +3,13 @@
 
 namespace Icinga\Web;
 
-use LogicException;
 use Zend_Config;
 use Zend_Form;
 use Zend_Form_Element;
 use Zend_View_Interface;
 use Icinga\Application\Icinga;
 use Icinga\Authentication\Manager;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Security\SecurityException;
 use Icinga\Util\Translator;
 use Icinga\Web\Form\ErrorLabeller;
@@ -222,12 +222,12 @@ class Form extends Zend_Form
      *
      * @return  $this
      *
-     * @throws  LogicException          If the callback is not callable
+     * @throws  ProgrammingError        If the callback is not callable
      */
     public function setOnSuccess($onSuccess)
     {
         if (! is_callable($onSuccess)) {
-            throw new LogicException('The option `onSuccess\' is not callable');
+            throw new ProgrammingError('The option `onSuccess\' is not callable');
         }
         $this->onSuccess = $onSuccess;
         return $this;
