@@ -260,7 +260,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
         $insp->write($this->ds->inspect());
         try {
             $users = $this->select()->where('is_active', true)->count();
-            if ($users > 1) {
+            if ($users > 0) {
                 $insp->write(sprintf('%s active users', $users));
             } else {
                 return $insp->error('0 active users', $users);
