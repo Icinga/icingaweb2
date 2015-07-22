@@ -9,6 +9,7 @@ class Monitoring_TacticalController extends MonitoringController
 {
     public function indexAction()
     {
+        $this->setAutorefreshInterval(15);
         $this->getTabs()->add(
             'tactical_overview',
             array(
