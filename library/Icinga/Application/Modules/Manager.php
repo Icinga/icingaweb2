@@ -25,6 +25,13 @@ use Icinga\Exception\NotReadableError;
 class Manager
 {
     /**
+     * Namespace for module permissions
+     *
+     * @var string
+     */
+    const MODULE_PERMISSION_NS = 'module/';
+
+    /**
      * Array of all installed module's base directories
      *
      * @var array
