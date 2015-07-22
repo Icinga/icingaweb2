@@ -100,13 +100,25 @@
                 headers['X-Icinga-WindowId'] = 'undefined';
             }
 
+            // This is jQuery's default content type
+            var contentType = 'application/x-www-form-urlencoded; charset=UTF-8';
+
+            var isFormData = typeof window.FormData !== 'undefined' && data instanceof window.FormData;
+            if (isFormData) {
+                // Setting false is mandatory as the form's data
+                // won't be recognized by the server otherwise
+                contentType = false;
+            }
+
             var self = this;
             var req = $.ajax({
                 type   : method,
                 url    : url,
                 data   : data,
                 headers: headers,
-                context: self
+                context: self,
+                contentType: contentType,
+                processData: ! isFormData
             });
 
             req.$target = $target;
@@ -126,6 +138,41 @@
             }
             this.icinga.ui.refreshDebug();
             return req;
+        },
+
+        /**
+         * Mimic XHR form submission by using an iframe
+         *
+         * @param {object} $form    The form being submitted
+         * @param {string} action   The form's action URL
+         * @param {object} $target  The target container
+         */
+        submitFormToIframe: function ($form, action, $target) {
+            var self = this;
+
+            $form.prop('action', self.icinga.utils.addUrlParams(action, {
+                '_frameUpload': true
+            }));
+            $form.prop('target', 'fileupload-frame-target');
+            $('#fileupload-frame-target').on('load', function (event) {
+                var $frame = $(event.target);
+                var $contents = $frame.contents();
+
+                var $redirectMeta = $contents.find('meta[name="redirectUrl"]');
+                if ($redirectMeta.length) {
+                    self.redirectToUrl($redirectMeta.attr('content'), $target);
+                } else {
+                    // Fetch the frame's new content and paste it into the target
+                    self.renderContentToContainer(
+                        $contents.find('body').html(),
+                        $target,
+                        'replace'
+                    );
+                }
+
+                $frame.prop('src', 'about:blank'); // Clear the frame's dom
+                $frame.off('load'); // Unbind the event as it's set on demand
+            });
         },
 
         /**
@@ -279,16 +326,34 @@
                 }
             }
 
+            this.redirectToUrl(redirect, req.$target, req.getResponseHeader('X-Icinga-Rerender-Layout'));
+            return true;
+        },
+
+        /**
+         * Redirect to the given url
+         *
+         * @param {string}  url
+         * @param {object}  $target
+         * @param {boolean} rerenderLayout
+         */
+        redirectToUrl: function (url, $target, rerenderLayout) {
+            var icinga = this.icinga;
+
+            if (typeof rerenderLayout === 'undefined') {
+                rerenderLayout = false;
+            }
+
             icinga.logger.debug(
-                'Got redirect for ', req.$target, ', URL was ' + redirect
+                'Got redirect for ', $target, ', URL was ' + url
             );
 
-            if (req.getResponseHeader('X-Icinga-Rerender-Layout')) {
-                var parts = redirect.split(/#!/);
-                redirect = parts.shift();
-                var redirectionUrl = this.addUrlFlag(redirect, 'renderLayout');
+            if (rerenderLayout) {
+                var parts = url.split(/#!/);
+                url = parts.shift();
+                var redirectionUrl = this.addUrlFlag(url, 'renderLayout');
                 var r = this.loadUrl(redirectionUrl, $('#layout'));
-                r.url = redirect;
+                r.url = url;
                 if (parts.length) {
                     r.loadNext = parts;
                 } else if (!! document.location.hash) {
@@ -298,28 +363,24 @@
                         r.loadNext = parts;
                     }
                 }
-
             } else {
-
-                if (redirect.match(/#!/)) {
-                    var parts = redirect.split(/#!/);
+                if (url.match(/#!/)) {
+                    var parts = url.split(/#!/);
                     icinga.ui.layout2col();
                     this.loadUrl(parts.shift(), $('#col1'));
                     this.loadUrl(parts.shift(), $('#col2'));
                 } else {
-
-                    if (req.$target.attr('id') === 'col2') { // TODO: multicol
-                        if ($('#col1').data('icingaUrl').split('?')[0] === redirect.split('?')[0]) {
+                    if ($target.attr('id') === 'col2') { // TODO: multicol
+                        if ($('#col1').data('icingaUrl').split('?')[0] === url.split('?')[0]) {
                             icinga.ui.layout1col();
-                            req.$target = $('#col1');
+                            $target = $('#col1');
                             delete(this.requests['col2']);
                         }
                     }
 
-                    this.loadUrl(redirect, req.$target);
+                    this.loadUrl(url, $target);
                 }
             }
-            return true;
         },
 
         cacheLoadedIcons: function($container) {

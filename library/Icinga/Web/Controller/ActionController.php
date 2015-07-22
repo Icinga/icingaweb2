@@ -96,6 +96,9 @@ class ActionController extends Zend_Controller_Action
         if ($this->rerenderLayout = $request->getUrl()->shift('renderLayout')) {
             $this->xhrLayout = 'body';
         }
+        if ($request->getUrl()->shift('_disableLayout')) {
+            $this->_helper->layout()->disableLayout();
+        }
 
         if ($this->requiresLogin()) {
             $this->redirectToLogin(Url::fromRequest());
