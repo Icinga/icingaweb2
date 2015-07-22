@@ -891,9 +891,19 @@ abstract class IdoQuery extends DbQuery
         return $this->idxAliasColumn[$alias];
     }
 
+    /**
+     * Get the alias of a column expression as defined in the {@link $columnMap} property.
+     *
+     * @param   string $alias Potential custom alias
+     *
+     * @return  string
+     */
     public function customAliasToAlias($alias)
     {
-        return $this->idxCustomAliases[$alias];
+        if (isset($this->idxCustomAliases[$alias])) {
+            return $this->idxCustomAliases[$alias];
+        }
+        return $alias;
     }
 
     /**
