@@ -472,7 +472,8 @@ class ActionController extends Zend_Controller_Action
             }
             $resp->setHeader(
                 'X-Icinga-Title',
-                rawurlencode($this->view->title . ' :: Icinga Web', true)
+                rawurlencode($this->view->title . ' :: Icinga Web'),
+                true
             );
         } else {
             $resp->setHeader('X-Icinga-Title', rawurlencode('Icinga Web'), true);
