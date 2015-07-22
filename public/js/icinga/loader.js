@@ -103,7 +103,7 @@
             // This is jQuery's default content type
             var contentType = 'application/x-www-form-urlencoded; charset=UTF-8';
 
-            var isFormData = data instanceof window.FormData;
+            var isFormData = typeof window.FormData !== 'undefined' && data instanceof window.FormData;
             if (isFormData) {
                 // Setting false is mandatory as the form's data
                 // won't be recognized by the server otherwise
