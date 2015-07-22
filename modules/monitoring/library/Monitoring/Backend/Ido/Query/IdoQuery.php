@@ -497,7 +497,6 @@ abstract class IdoQuery extends DbQuery
                 && strpos($filter->getColumn(), 'LOWER') !== 0
             ) {
                 $filter->setColumn('LOWER(' . $filter->getColumn() . ')');
-                $filter->setColumn('LOWER(' . $filter->getColumn() . ')');
                 $expression = $filter->getExpression();
                 if (is_array($expression)) {
                     $filter->setExpression(array_map('strtolower', $expression));
