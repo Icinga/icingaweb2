@@ -12,6 +12,7 @@ use Icinga\Data\Filter\FilterExpression;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotImplementedError;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\QueryException;
 use Icinga\Web\Session;
 
 /**
@@ -870,18 +871,19 @@ abstract class IdoQuery extends DbQuery
     }
 
     /**
-     * Get the query column of a custom variable or null in case the custom variable has not been joined
+     * Get the query column of a already joined custom variable
      *
      * @param   string $customvar
      *
-     * @return  null|string
+     * @return  string
+     * @throws  QueryException If the custom variable has not been joined
      */
     protected function getCustomvarColumnName($customvar)
     {
-        if (isset($this->customVars[($customvar = strtolower($customvar))])) {
-            return $this->customVars[$customvar] . '.varvalue';
+        if (! isset($this->customVars[($customvar = strtolower($customvar))])) {
+            throw new QueryException('Custom variable %s has not been joined', $customvar);
         }
-        return null;
+        return $this->customVars[$customvar] . '.varvalue';
     }
 
     public function aliasToColumnName($alias)

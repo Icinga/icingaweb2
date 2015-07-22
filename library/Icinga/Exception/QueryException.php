@@ -4,7 +4,7 @@
 namespace Icinga\Exception;
 
 /**
- * Exception thrown if a query contains invalid parameters
+ * Exception thrown if a query encountered an error
  */
 class QueryException extends IcingaException
 {
