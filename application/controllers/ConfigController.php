@@ -53,7 +53,7 @@ class ConfigController extends Controller
         ));
         $tabs->add('usergroupbackend', array(
             'title' => $this->translate('Configure how users are associated with groups by Icinga Web 2'),
-            'label' => $this->translate('Usergroup Backends'),
+            'label' => $this->translate('User Group Backends'),
             'url'   => 'usergroupbackend/list'
         ));
         return $tabs;

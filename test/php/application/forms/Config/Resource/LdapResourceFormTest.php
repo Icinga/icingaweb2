@@ -26,14 +26,16 @@ class LdapResourceFormTest extends BaseTestCase
     public function testValidLdapResourceIsValid()
     {
         $this->setUpResourceFactoryMock(
-            Mockery::mock()->shouldReceive('bind')->once()->getMock()
+            Mockery::mock()->shouldReceive('inspect')->andReturn(self::createInspector(false))->getMock()
         );
 
         // Passing array(null) is required to make Mockery call the constructor...
         $form = Mockery::mock('Icinga\Forms\Config\Resource\LdapResourceForm[getView]', array(null));
         $form->shouldReceive('getView->escape')
             ->with(Mockery::type('string'))
-            ->andReturnUsing(function ($s) { return $s; });
+            ->andReturnUsing(function ($s) {
+                return $s;
+            });
         $form->setTokenDisabled();
 
         $this->assertTrue(
@@ -49,14 +51,16 @@ class LdapResourceFormTest extends BaseTestCase
     public function testInvalidLdapResourceIsNotValid()
     {
         $this->setUpResourceFactoryMock(
-            Mockery::mock()->shouldReceive('bind')->andThrow('\Exception')->getMock()
+            Mockery::mock()->shouldReceive('inspect')->andReturn(self::createInspector(true))->getMock()
         );
 
         // Passing array(null) is required to make Mockery call the constructor...
         $form = Mockery::mock('Icinga\Forms\Config\Resource\LdapResourceForm[getView]', array(null));
         $form->shouldReceive('getView->escape')
             ->with(Mockery::type('string'))
-            ->andReturnUsing(function ($s) { return $s; });
+            ->andReturnUsing(function ($s) {
+                return $s;
+            });
         $form->setTokenDisabled();
 
         $this->assertFalse(
@@ -71,5 +75,22 @@ class LdapResourceFormTest extends BaseTestCase
             ->shouldReceive('createResource')
             ->with(Mockery::type('Icinga\Data\ConfigObject'))
             ->andReturn($resourceMock);
+    }
+
+    public static function createInspector($error = false, $log = array('log'))
+    {
+        if (! $error) {
+            $calls = array(
+                'hasError' => false,
+                'toArray' => $log
+            );
+        } else {
+            $calls = array(
+                'hasError' => true,
+                'getError' => 'Error',
+                'toArray' => $log
+            );
+        }
+        return Mockery::mock('Icinga\Data\Inspection', $calls);
     }
 }

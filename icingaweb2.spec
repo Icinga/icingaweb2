@@ -46,8 +46,6 @@ Requires:                       %{name}-vendor-HTMLPurifier
 Requires:                       %{name}-vendor-JShrink
 Requires:                       %{name}-vendor-lessphp
 Requires:                       %{name}-vendor-Parsedown
-Requires:                       %{zend}
-Obsoletes:                      %{name}-vendor-zend
 
 
 %description
@@ -84,6 +82,10 @@ Requires:                   %{php}-gd %{php}-intl
 %{?fedora:Requires:         php-pecl-imagick}
 %{?rhel:Requires:           php-pecl-imagick}
 %{?suse_version:Requires:   %{php}-gettext %{php}-json %{php}-openssl %{php}-posix}
+Requires:                   %{zend}
+Obsoletes:                  %{name}-vendor-zend
+Requires:                   %{zend}-Db-Adapter-Pdo-Mysql
+Requires:                   %{zend}-Db-Adapter-Pdo-Pgsql
 
 %description -n php-Icinga
 Icinga Web 2 PHP library

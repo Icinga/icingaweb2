@@ -154,19 +154,17 @@ class LdapResourceForm extends Form
      */
     public static function isValidResource(Form $form)
     {
-        try {
-            $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
-            $resource->bind();
-        } catch (Exception $e) {
-            $msg = $form->translate('Connectivity validation failed, connection to the given resource not possible.');
-            if (($error = $e->getMessage())) {
-                $msg .= ' (' . $error . ')';
-            }
-
-            $form->addError($msg);
-            return false;
+        $result = ResourceFactory::createResource(new ConfigObject($form->getValues()))->inspect();
+        if ($result->hasError()) {
+            $form->addError(sprintf(
+                '%s (%s)',
+                $form->translate('Connectivity validation failed, connection to the given resource not possible.'),
+                $result->getError()
+            ));
         }
 
-        return true;
+        // TODO: display diagnostics in $result->toArray() to the user
+
+        return ! $result->hasError();
     }
 }

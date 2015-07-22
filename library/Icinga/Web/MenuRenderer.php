@@ -118,7 +118,13 @@ class MenuRenderer extends RecursiveIteratorIterator
             try {
                 return $child->getRenderer()->render($child);
             } catch (Exception $e) {
-                Logger::error('Could not invoke custom renderer. Exception: '. $e->getMessage());
+                Logger::error(
+                    'Could not invoke custom menu renderer. %s in %s:%d with message: %s',
+                    get_class($e),
+                    $e->getFile(),
+                    $e->getLine(),
+                    $e->getMessage()
+                );
             }
         }
 

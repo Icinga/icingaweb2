@@ -89,9 +89,6 @@ class AdminAccountPage extends Form
         }
 
         if (count($choices) > 1) {
-            $this->addDescription($this->translate(
-                'Below are several options you can choose from for how to define the desired account.'
-            ));
             $this->addElement(
                 'select',
                 'user_type',
@@ -99,6 +96,7 @@ class AdminAccountPage extends Form
                     'required'      => true,
                     'autosubmit'    => true,
                     'label'         => $this->translate('Type Of Definition'),
+                    'description'   => $this->translate('Choose how to define the desired account.'),
                     'multiOptions'  => $choices,
                     'value'         => $choice
                 )
@@ -124,7 +122,7 @@ class AdminAccountPage extends Form
                     'label'         => $this->translate('Username'),
                     'description'   => $this->translate(
                         'Define the initial administrative account by providing a username that reflects'
-                        . ' a user created later or one that is authenticated using external mechanisms'
+                        . ' a user created later or one that is authenticated using external mechanisms.'
                     )
                 )
             );
@@ -139,7 +137,7 @@ class AdminAccountPage extends Form
                     'label'         => $this->translate('Username'),
                     'description'   => sprintf(
                         $this->translate(
-                            'Choose a user reported by the %s backend as the initial administrative account',
+                            'Choose a user reported by the %s backend as the initial administrative account.',
                             'setup.admin'
                         ),
                         $this->backendConfig['backend'] === 'db'
@@ -159,7 +157,7 @@ class AdminAccountPage extends Form
                     'required'      => true,
                     'label'         => $this->translate('Username'),
                     'description'   => $this->translate(
-                        'Enter the username to be used when creating an initial administrative account'
+                        'Enter the username to be used when creating an initial administrative account.'
                     )
                 )
             );
@@ -170,7 +168,9 @@ class AdminAccountPage extends Form
                     'required'          => true,
                     'renderPassword'    => true,
                     'label'             => $this->translate('Password'),
-                    'description'       => $this->translate('Enter the password to assign to the newly created account')
+                    'description'       => $this->translate(
+                        'Enter the password to assign to the newly created account.'
+                    )
                 )
             );
             $this->addElement(
@@ -181,7 +181,7 @@ class AdminAccountPage extends Form
                     'renderPassword'    => true,
                     'label'             => $this->translate('Repeat password'),
                     'description'       => $this->translate(
-                        'Please repeat the password given above to avoid typing errors'
+                        'Please repeat the password given above to avoid typing errors.'
                     ),
                     'validators'        => array(
                         array('identical', false, array('new_user_password'))

@@ -3,24 +3,18 @@
 
 namespace Icinga\Data;
 
-
 /**
  * An object for which the user can retrieve status information
+ *
+ * This interface is useful for providing summaries or diagnostic information about objects
+ * to users.
  */
 interface Inspectable
 {
     /**
-     * Get information about this objects state
+     * Inspect this object to gain extended information about its health
      *
-     * @return array    An array of strings that describe the state in a human-readable form, each array element
-     *                  represents one fact about this object
+     * @return Inspection           The inspection result
      */
-    public function getInfo();
-
-    /**
-     * If this object is working in its current configuration
-     *
-     * @return Bool     True if the object is working, false if not
-     */
-    public function isHealthy();
+    public function inspect();
 }
