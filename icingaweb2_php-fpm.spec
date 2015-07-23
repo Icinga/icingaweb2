@@ -184,7 +184,7 @@ rm -rf %{buildroot}
 
 mkdir -p %{buildroot}/%{basedir}/{modules,library/vendor,public}
 mkdir -p %{buildroot}/{%{_sysconfdir}/bash_completion.d,%{bindir},%{configdir}/modules/setup,%{docsdir},%{logdir}}
-mkdir -p %{buildroot}/{%{phpdir},%{phpfpm_configdir},%{apache_configdir},%{nginx_confdir}}
+mkdir -p %{buildroot}/{%{phpdir},%{phpfpm_configdir},%{apache_configdir},%{nginx_configdir}}
 
 cp -prv application doc                                                 %{buildroot}/%{basedir}
 cp -pv  etc/bash_completion.d/icingacli                                 %{buildroot}/%{_sysconfdir}/bash_completion.d/icingacli
