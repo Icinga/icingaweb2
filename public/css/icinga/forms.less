@@ -190,7 +190,8 @@ form ul.form-notifications {
 }
 
 form div.element {
-  margin: 0.5em 0;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 form label {
@@ -275,5 +276,20 @@ form ul.hints {
   li {
     font-size: 0.8em;
     padding-bottom: 0.5em;
+  }
+}
+
+.control-group {
+  & > * {
+    float: left;
+    margin-right: 0.5em;
+  }
+
+  &:after {
+    content: ".";
+    visibility: hidden;
+    display: block;
+    height: 0;
+    clear: both;
   }
 }
