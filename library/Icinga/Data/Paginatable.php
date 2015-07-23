@@ -3,4 +3,7 @@
 
 namespace Icinga\Data;
 
-interface QueryInterface extends Fetchable, Filterable, Paginatable, Sortable {};
+use Countable;
+
+interface Paginatable extends Limitable, Countable {};
+
