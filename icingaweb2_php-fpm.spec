@@ -82,6 +82,7 @@ Summary:                    Icinga Web 2 PHP library
 Group:                      Development/Libraries
 Requires:                   %{php}-common >= 5.3.0
 Requires:                   %{php}-intl
+Requires:                   %{php}-ldap
 Requires:                   %{php}-gd
 Obsoletes:                  %{name}-vendor-zend
 Requires:                   %{zend}-Db-Adapter-Pdo-Mysql
