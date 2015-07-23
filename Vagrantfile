@@ -47,5 +47,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     puppet.module_path = [ ".puppet/modules", ".puppet/profiles" ]
     puppet.manifests_path = ".puppet/manifests"
     puppet.manifest_file = "site.pp"
+    puppet.options = "--parser=future"
   end
 end
