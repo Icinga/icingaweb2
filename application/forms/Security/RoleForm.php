@@ -75,13 +75,14 @@ class RoleForm extends ConfigForm
                 $module = $mm->getModule($moduleName);
                 foreach ($module->getProvidedPermissions() as $permission) {
                     /** @var object $permission */
-                    $this->providedPermissions[$permission->name] = $permission->description . ' (' . $permission->name . ')';
+                    $this->providedPermissions[$permission->name] = $permission->description
+                        . ' (' . $permission->name . ')';
                 }
                 foreach ($module->getProvidedRestrictions() as $restriction) {
                     /** @var object $restriction */
-                    $name = $helper->filterName($restriction->name); // Zend only permits alphanumerics, the underscore,
-                    // the circumflex and any ASCII character in range
+                    // Zend only permits alphanumerics, the underscore, the circumflex and any ASCII character in range
                     // \x7f to \xff (127 to 255)
+                    $name = $helper->filterName($restriction->name);
                     while (isset($this->providedRestrictions[$name])) {
                         // Because Zend_Form_Element::filterName() replaces any not permitted character with the empty
                         // string we may have duplicate names, e.g. 're/striction' and 'restriction'
