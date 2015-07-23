@@ -109,7 +109,10 @@ class BackendConfigForm extends ConfigForm
 
         $backendName = $data['name'];
         if ($this->config->hasSection($backendName)) {
-            throw new IcingaException('A monitoring backend with the name "%s" does already exist', $backendName);
+            throw new IcingaException(
+                $this->translate('A monitoring backend with the name "%s" does already exist'),
+                $backendName
+            );
         }
 
         unset($data['name']);
