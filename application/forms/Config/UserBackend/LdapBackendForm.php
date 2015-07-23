@@ -3,14 +3,7 @@
 
 namespace Icinga\Forms\Config\UserBackend;
 
-use Exception;
-use Icinga\Authentication\User\LdapUserBackend;
-use Icinga\Data\Inspection;
 use Icinga\Web\Form;
-use Icinga\Data\ConfigObject;
-use Icinga\Data\ResourceFactory;
-use Icinga\Exception\AuthenticationException;
-use Icinga\Authentication\User\UserBackend;
 
 /**
  * Form class for adding/modifying LDAP user backends
@@ -46,7 +39,9 @@ class LdapBackendForm extends Form
     }
 
     /**
-     * @see Form::createElements()
+     * Create and add elements to this form
+     *
+     * @param   array   $formData
      */
     public function createElements(array $formData)
     {
@@ -60,6 +55,20 @@ class LdapBackendForm extends Form
                 'label'         => $this->translate('Backend Name'),
                 'description'   => $this->translate(
                     'The name of this authentication provider that is used to differentiate it from others.'
+                ),
+                'validators'    => array(
+                    array(
+                        'Regex',
+                        false,
+                        array(
+                            'pattern'  => '/^[^\\[\\]:]+$/',
+                            'messages' => array(
+                                'regexNotMatch' => $this->translate(
+                                    'The name cannot contain \'[\', \']\' or \':\'.'
+                                )
+                            )
+                        )
+                    )
                 )
             )
         );
@@ -72,7 +81,7 @@ class LdapBackendForm extends Form
                 'description'   => $this->translate(
                     'The LDAP connection to use for authenticating with this provider.'
                 ),
-                'multiOptions'  => false === empty($this->resources)
+                'multiOptions'  => !empty($this->resources)
                     ? array_combine($this->resources, $this->resources)
                     : array()
             )
@@ -162,40 +171,5 @@ class LdapBackendForm extends Form
                 )
             )
         );
-        return $this;
-    }
-
-    /**
-     * Validate that the selected resource is a valid ldap user backend
-     *
-     * @see Form::onSuccess()
-     */
-    public function onSuccess()
-    {
-        if (false === static::isValidUserBackend($this)) {
-            return false;
-        }
-    }
-
-    /**
-     * Validate the configuration by creating a backend and requesting the user count
-     *
-     * @param   Form    $form   The form to fetch the configuration values from
-     *
-     * @return  bool            Whether validation succeeded or not
-     */
-    public static function isValidUserBackend(Form $form)
-    {
-        /**
-         * @var $result Inspection
-         */
-        $result = UserBackend::create(null, new ConfigObject($form->getValues()))->inspect();
-        if ($result->hasError()) {
-            $form->addError($result->getError());
-        }
-
-        // TODO: display diagnostics in $result->toArray() to the user
-
-        return ! $result->hasError();
     }
 }
