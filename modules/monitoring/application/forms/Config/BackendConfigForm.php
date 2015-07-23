@@ -309,10 +309,15 @@ class BackendConfigForm extends ConfigForm
             return false;
         }
 
-        $resourceConfig = ResourceFactory::getResourceConfig($this->getValue('resource'));
-        if (! self::isValidIdoSchema($this, $resourceConfig) || !self::isValidIdoInstance($this, $resourceConfig)) {
-            $this->addSkipValidationCheckbox();
-            return false;
+        if (($el = $this->getElement('skip_validation')) === null || false === $el->isChecked()) {
+            $resourceConfig = ResourceFactory::getResourceConfig($this->getValue('resource'));
+            if (! self::isValidIdoSchema($this, $resourceConfig) || !self::isValidIdoInstance($this, $resourceConfig)) {
+                if ($el === null) {
+                    $this->addSkipValidationCheckbox();
+                }
+
+                return false;
+            }
         }
 
         return true;
