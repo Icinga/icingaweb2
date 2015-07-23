@@ -5,6 +5,7 @@ namespace Icinga\Web\Controller;
 
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
+use Icinga\Application\Modules\Manager;
 
 /**
  * Base class for module action controllers
@@ -25,17 +26,6 @@ class ModuleActionController extends ActionController
     protected $moduleName;
 
     /**
-     * Whether the module permission is required to access to module
-     *
-     * Note that module permissions do not have any effect if the controller does not require authentication.
-     *
-     * @var bool
-     *
-     * @see $requiresAuthentication For enabling/disabling whether the controller requires authentication.
-     */
-    protected $requiresModulePermission = true;
-
-    /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Controller\ActionController For the method documentation.
      */
@@ -45,6 +35,7 @@ class ModuleActionController extends ActionController
         $this->_helper->layout()->moduleName = $this->moduleName;
         $this->view->translationDomain = $this->moduleName;
         $this->moduleInit();
+        $this->assertPermission(Manager::MODULE_PERMISSION_NS . $this->moduleName);
     }
 
     /**
@@ -52,29 +43,6 @@ class ModuleActionController extends ActionController
      */
     protected function moduleInit()
     {
-    }
-
-    /**
-     * Get whether the module permission is required to access to module
-     *
-     * @return bool
-     */
-    public function getRequiresModulePermission()
-    {
-        return $this->requiresModulePermission;
-    }
-
-    /**
-     * Set whether the module permission is required to access to module
-     *
-     * @param   bool $required
-     *
-     * @return  $this
-     */
-    public function setRequiresModulePermission($required)
-    {
-        $this->requiresModulePermission = (bool) $required;
-        return $this;
     }
 
     public function Config($file = null)
