@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms\Config\UserBackend;
 
+use Icinga\Data\ResourceFactory;
 use Icinga\Web\Form;
 
 /**
@@ -86,6 +87,60 @@ class LdapBackendForm extends Form
                     : array()
             )
         );
+
+        $baseDn = null;
+        $hasAdOid = false;
+        if (! $isAd && !empty($this->resources)) {
+            $this->addElement(
+                'button',
+                'discovery_btn',
+                array(
+                    'type'              => 'submit',
+                    'value'             => 'discovery_btn',
+                    'label'             => $this->translate('Discover', 'A button to discover LDAP capabilities'),
+                    'title'             => $this->translate(
+                        'Push to fill in the chosen connection\'s default settings.'
+                    ),
+                    'decorators'        => array(
+                        array('ViewHelper', array('separator' => '')),
+                        array('HtmlTag', array('tag' => 'div', 'class' => 'element'))
+                    ),
+                    'formnovalidate'    => 'formnovalidate'
+                )
+            );
+            $this->addDisplayGroup(
+                array('resource', 'discovery_btn'),
+                'connection_discovery',
+                array(
+                    'decorators' => array(
+                        'FormElements',
+                        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
+                    )
+                )
+            );
+
+            if ($this->getElement('discovery_btn')->isChecked()) {
+                $connection = ResourceFactory::create(
+                    isset($formData['resource']) ? $formData['resource'] : reset($this->resources)
+                );
+                $capabilities = $connection->bind()->getCapabilities();
+                $baseDn = $capabilities->getDefaultNamingContext();
+                $hasAdOid = $capabilities->isActiveDirectory();
+            }
+        }
+
+        if ($isAd || $hasAdOid) {
+            // ActiveDirectory defaults
+            $userClass = 'user';
+            $filter = '!(objectClass=computer)';
+            $userNameAttribute = 'sAMAccountName';
+        } else {
+            // OpenLDAP defaults
+            $userClass = 'inetOrgPerson';
+            $filter = null;
+            $userNameAttribute = 'uid';
+        }
+
         $this->addElement(
             'text',
             'user_class',
@@ -96,7 +151,7 @@ class LdapBackendForm extends Form
                 'disabled'          => $isAd ?: null,
                 'label'             => $this->translate('LDAP User Object Class'),
                 'description'       => $this->translate('The object class used for storing users on the LDAP server.'),
-                'value'             => $isAd ? 'user' : 'inetOrgPerson'
+                'value'             => $userClass
             )
         );
         $this->addElement(
@@ -105,7 +160,7 @@ class LdapBackendForm extends Form
             array(
                 'preserveDefault'   => true,
                 'allowEmpty'        => true,
-                'value'             => $isAd ? '!(objectClass=computer)' : null,
+                'value'             => $filter,
                 'label'             => $this->translate('LDAP Filter'),
                 'description'       => $this->translate(
                     'An additional filter to use when looking up users using the specified connection. '
@@ -148,7 +203,7 @@ class LdapBackendForm extends Form
                 'description'       => $this->translate(
                     'The attribute name used for storing the user name on the LDAP server.'
                 ),
-                'value'             => $isAd ? 'sAMAccountName' : 'uid'
+                'value'             => $userNameAttribute
             )
         );
         $this->addElement(
@@ -163,12 +218,14 @@ class LdapBackendForm extends Form
             'text',
             'base_dn',
             array(
-                'required'      => false,
-                'label'         => $this->translate('LDAP Base DN'),
-                'description'   => $this->translate(
+                'preserveDefault'   => true,
+                'required'          => false,
+                'label'             => $this->translate('LDAP Base DN'),
+                'description'       => $this->translate(
                     'The path where users can be found on the LDAP server. Leave ' .
                     'empty to select all users available using the specified connection.'
-                )
+                ),
+                'value'             => $baseDn
             )
         );
     }
