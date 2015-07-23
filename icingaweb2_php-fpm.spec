@@ -2,7 +2,7 @@
 
 %define revision 4.rc1
 
-Name:           icingaweb2_php-fpm
+Name:           icingaweb2
 Version:        2.0.0
 Release:        %{revision}%{?dist}
 Summary:        Icinga Web 2
@@ -46,7 +46,6 @@ Requires:                       %{name}-vendor-HTMLPurifier
 Requires:                       %{name}-vendor-JShrink
 Requires:                       %{name}-vendor-lessphp
 Requires:                       %{name}-vendor-Parsedown
-Conflicts:                      icingaweb2
 
 
 %description
@@ -82,8 +81,8 @@ Common files for Icinga Web 2 and the Icinga CLI
 Summary:                    Icinga Web 2 PHP library
 Group:                      Development/Libraries
 Requires:                   %{php}-common >= 5.3.0
-Requires:                   %{php}-gd %{php}-intl
-Requires:                   %{zend}
+Requires:                   %{php}-intl
+Requires:                   %{php}-gd
 Obsoletes:                  %{name}-vendor-zend
 Requires:                   %{zend}-Db-Adapter-Pdo-Mysql
 Requires:                   %{zend}-Db-Adapter-Pdo-Pgsql
@@ -120,7 +119,6 @@ Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library dompdf
 Group:      Development/Libraries
 License:    LGPLv2.1
-Requires:   %{php} >= 5.3.0
 
 %description vendor-dompdf
 Icinga Web 2 vendor library dompdf
@@ -132,7 +130,6 @@ Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library HTMLPurifier
 Group:      Development/Libraries
 License:    LGPLv2.1
-Requires:   %{php} >= 5.3.0
 
 %description vendor-HTMLPurifier
 Icinga Web 2 vendor library HTMLPurifier
@@ -144,7 +141,6 @@ Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library JShrink
 Group:      Development/Libraries
 License:    BSD
-Requires:   %{php} >= 5.3.0
 
 %description vendor-JShrink
 Icinga Web 2 vendor library JShrink
@@ -156,7 +152,6 @@ Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library lessphp
 Group:      Development/Libraries
 License:    MIT
-Requires:   %{php} >= 5.3.0
 
 %description vendor-lessphp
 Icinga Web 2 vendor library lessphp
@@ -168,7 +163,6 @@ Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library Parsedown
 Group:      Development/Libraries
 License:    MIT
-Requires:   %{php} >= 5.3.0
 
 %description vendor-Parsedown
 Icinga Web 2 vendor library Parsedown
