@@ -71,28 +71,27 @@ class RoleForm extends ConfigForm
                 $moduleName,
                 $modulePermission
             );
-            if ($mm->hasEnabled($moduleName)) {
-                $module = $mm->getModule($moduleName);
-                foreach ($module->getProvidedPermissions() as $permission) {
-                    /** @var object $permission */
-                    $this->providedPermissions[$permission->name] = $permission->description
-                        . ' (' . $permission->name . ')';
+
+            $module = $mm->getModule($moduleName, false);
+            foreach ($module->getProvidedPermissions() as $permission) {
+                /** @var object $permission */
+                $this->providedPermissions[$permission->name] = $permission->description
+                    . ' (' . $permission->name . ')';
+            }
+            foreach ($module->getProvidedRestrictions() as $restriction) {
+                /** @var object $restriction */
+                // Zend only permits alphanumerics, the underscore, the circumflex and any ASCII character in range
+                // \x7f to \xff (127 to 255)
+                $name = $helper->filterName($restriction->name);
+                while (isset($this->providedRestrictions[$name])) {
+                    // Because Zend_Form_Element::filterName() replaces any not permitted character with the empty
+                    // string we may have duplicate names, e.g. 're/striction' and 'restriction'
+                    $name .= '_';
                 }
-                foreach ($module->getProvidedRestrictions() as $restriction) {
-                    /** @var object $restriction */
-                    // Zend only permits alphanumerics, the underscore, the circumflex and any ASCII character in range
-                    // \x7f to \xff (127 to 255)
-                    $name = $helper->filterName($restriction->name);
-                    while (isset($this->providedRestrictions[$name])) {
-                        // Because Zend_Form_Element::filterName() replaces any not permitted character with the empty
-                        // string we may have duplicate names, e.g. 're/striction' and 'restriction'
-                        $name .= '_';
-                    }
-                    $this->providedRestrictions[$name] = array(
-                        'description' => $restriction->description,
-                        'name'        => $restriction->name
-                    );
-                }
+                $this->providedRestrictions[$name] = array(
+                    'description' => $restriction->description,
+                    'name'        => $restriction->name
+                );
             }
         }
     }
