@@ -8,6 +8,7 @@ use Icinga\Data\ConfigObject;
 use Icinga\Application\Logger\Writer\FileWriter;
 use Icinga\Application\Logger\Writer\SyslogWriter;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\IcingaException;
 
 /**
  * Logger
@@ -226,13 +227,7 @@ class Logger
                 $messages = array();
                 $error = $message;
                 do {
-                    $messages[] = sprintf(
-                        '%s in %s:%d with message: %s',
-                        get_class($error),
-                        $error->getFile(),
-                        $error->getLine(),
-                        $error->getMessage()
-                    );
+                    $messages[] = IcingaException::describe($error);
                 } while ($error = $error->getPrevious());
                 $message = implode(' <- ', $messages);
             }

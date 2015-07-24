@@ -4,6 +4,7 @@
 namespace Icinga\Cli;
 
 use Icinga\Application\ApplicationBootstrap as App;
+use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Cli\Params;
 use Icinga\Cli\Screen;
@@ -266,13 +267,7 @@ class Loader
                 echo $this->formatTrace($e->getTrace());
             }
 
-            $this->fail(sprintf(
-                '%s in %s:%d with message: %s',
-                get_class($e),
-                $e->getFile(),
-                $e->getLine(),
-                $e->getMessage()
-            ));
+            $this->fail(IcingaException::describe($e));
         }
     }
 
