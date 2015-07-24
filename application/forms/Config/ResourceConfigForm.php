@@ -4,15 +4,20 @@
 namespace Icinga\Forms\Config;
 
 use InvalidArgumentException;
-use Icinga\Web\Notification;
+use Icinga\Application\Platform;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Data\ConfigObject;
+use Icinga\Data\Inspectable;
+use Icinga\Data\Inspection;
+use Icinga\Data\ResourceFactory;
 use Icinga\Forms\ConfigForm;
 use Icinga\Forms\Config\Resource\DbResourceForm;
 use Icinga\Forms\Config\Resource\FileResourceForm;
 use Icinga\Forms\Config\Resource\LdapResourceForm;
 use Icinga\Forms\Config\Resource\LivestatusResourceForm;
 use Icinga\Forms\Config\Resource\SshResourceForm;
-use Icinga\Application\Platform;
-use Icinga\Exception\ConfigurationError;
+use Icinga\Web\Form;
+use Icinga\Web\Notification;
 
 class ResourceConfigForm extends ConfigForm
 {
@@ -141,7 +146,9 @@ class ResourceConfigForm extends ConfigForm
         $resourceForm = $this->getResourceForm($this->getElement('type')->getValue());
 
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
-            if (method_exists($resourceForm, 'isValidResource') && false === $resourceForm::isValidResource($this)) {
+            $inspection = static::inspectResource($this);
+            if ($inspection !== null && $inspection->hasError()) {
+                $this->error($inspection->getError());
                 $this->addElement($this->getForceCreationCheckbox());
                 return false;
             }
@@ -254,5 +261,22 @@ class ResourceConfigForm extends ConfigForm
         }
 
         $this->addElements($this->getResourceForm($resourceType)->createElements($formData)->getElements());
+    }
+
+    /**
+     * Create a resource by using the given form's values and return its inspection results
+     *
+     * @param   Form    $form
+     *
+     * @return  Inspection
+     */
+    public static function inspectResource(Form $form)
+    {
+        if ($form->getValue('type') !== 'ssh') {
+            $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
+            if ($resource instanceof Inspectable) {
+                return $resource->inspect();
+            }
+        }
     }
 }
