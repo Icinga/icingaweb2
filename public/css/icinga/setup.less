@@ -117,15 +117,6 @@
     left: -1337px;
   }
 
-  #btn_prev {
-    margin-right: 1em;
-    font-size: 0.9em;
-  }
-
-  #btn_next {
-    font-size: 0.9em;
-  }
-
   button, .button-like {
     &.finish, &.login {
       min-width: 25em;
@@ -137,6 +128,11 @@
       }
     }
   }
+}
+
+#setup div.buttons + ul.hints {
+  margin-top: -1.5em;
+  margin-bottom: 1.5em;
 }
 
 form#setup_requirements {
