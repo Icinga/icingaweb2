@@ -93,6 +93,7 @@ class ConfigController extends Controller
      */
     public function modulesAction()
     {
+        $this->assertPermission('config/modules');
         // Overwrite tabs created in init
         // @TODO(el): This seems not natural to me. Module configuration should have its own controller.
         $this->view->tabs = Widget::create('tabs')
@@ -118,6 +119,7 @@ class ConfigController extends Controller
 
     public function moduleAction()
     {
+        $this->assertPermission('config/modules');
         $app = Icinga::app();
         $manager = $app->getModuleManager();
         $name = $this->getParam('name');
