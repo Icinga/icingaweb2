@@ -168,6 +168,17 @@ License:    MIT
 Icinga Web 2 vendor library Parsedown
 
 
+%package vendor-Zend
+Version:    1.12.9
+Release:    1%{?dist}
+Summary:    Icinga Web 2 vendor library Zend Framework
+Group:      Development/Libraries
+License:    BSD
+
+%description vendor-Zend
+Icinga Web 2 vendor library Zend
+
+
 %prep
 %setup -q
 
@@ -176,7 +187,7 @@ Icinga Web 2 vendor library Parsedown
 %install
 rm -rf %{buildroot}
 
-mkdir -p %{buildroot}/%{basedir}/{modules,library/vendor,public}
+mkdir -p %{buildroot}/%{basedir}/{modules,library,public}
 mkdir -p %{buildroot}/{%{_sysconfdir}/bash_completion.d,%{bindir},%{configdir}/modules/setup,%{docsdir},%{logdir}}
 mkdir -p %{buildroot}/{%{phpdir},%{phpfpm_configdir},%{apache_configdir},%{nginx_configdir}}
 
@@ -185,7 +196,7 @@ cp -pv  etc/bash_completion.d/icingacli                                 %{buildr
 cp -prv etc/schema                                                      %{buildroot}/%{docsdir}
 cp -prv modules/{monitoring,setup,doc,translation}                      %{buildroot}/%{basedir}/modules
 cp -prv library/Icinga                                                  %{buildroot}/%{phpdir}
-cp -prv library/vendor/{dompdf,HTMLPurifier,JShrink,lessphp,Parsedown}  %{buildroot}/%{basedir}/library/vendor
+cp -prv library/vendor                                                  %{buildroot}/%{basedir}/librar
 cp -pv  packages/files/bin/icingacli                                    %{buildroot}/%{bindir}
 cp -prv packages/files/config/modules/setup                             %{buildroot}/%{configdir}/modules/
 cp -pv  packages/files/httpd/icingaweb2.conf                            %{buildroot}/%{apache_configdir}/icingaweb2.conf
@@ -291,3 +302,8 @@ exit 0
 %files vendor-Parsedown
 %defattr(-,root,root)
 %{basedir}/library/vendor/Parsedown
+
+
+files vendor-Zend
+%defattr(-,root,root)
+%{basedir}/library/vendor/Zend
