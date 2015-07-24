@@ -101,12 +101,11 @@ The packages for Debian wheezy depend on other packages which are distributed as
 ### <a id="installing-from-package-example"></a> Installing Icinga Web 2
 
 You can install Icinga Web 2 by using your distribution's package manager to install the `icingaweb2` package.
-Below is a list with examples for various distributions. The additional package `icingacli` is necessary
-for being able to follow further steps in this guide.
+Below is a list with examples for various distributions. The additional package `icingacli` is necessary on RPM based systems for being able to follow further steps in this guide. In DEB based systems, the icingacli binary is included in the icingaweb2 package.
 
 **Debian and Ubuntu**:
 ````
-apt-get install icingaweb2 icingacli
+apt-get install icingaweb2
 ````
 For Debian wheezy please read the [package repositories notes](#package-repositories-wheezy-notes).
 
