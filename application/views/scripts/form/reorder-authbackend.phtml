@@ -33,7 +33,7 @@
         </td>
         <td data-base-target="_self">
 <?php if ($i > 0): ?>
-          <button type="submit" name="backend_newpos" value="<?= sprintf(
+          <button type="submit" name="backend_newpos" class="icon-only" value="<?= sprintf(
             '%s|%s',
             $backendNames[$i],
             $i - 1
@@ -43,11 +43,11 @@
             $this->translate('Move user backend %s upwards'),
             $backendNames[$i]
           ); ?>">
-            <?= $this->icon('up-big'); ?>
+            <?= $this->icon('up-small'); ?>
           </button>
 <?php endif; ?>
 <?php if ($i + 1 < count($backendNames)): ?>
-          <button type="submit" name="backend_newpos" value="<?= sprintf(
+          <button type="submit" name="backend_newpos" class="icon-only" value="<?= sprintf(
             '%s|%s',
             $backendNames[$i],
             $i + 1
@@ -57,7 +57,7 @@
             $this->translate('Move user backend %s downwards'),
             $backendNames[$i]
           ); ?>">
-            <?= $this->icon('down-big'); ?>
+            <?= $this->icon('down-small'); ?>
           </button>
 <?php endif; ?>
         </td>
