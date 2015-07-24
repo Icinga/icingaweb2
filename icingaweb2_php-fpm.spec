@@ -91,7 +91,6 @@ Requires:                   %{zend}-Db-Adapter-Pdo-Pgsql
 %{?amzn:Requires:           %{php}-pecl-imagick}
 %{?fedora:Requires:         php-pecl-imagick}
 %{?rhel:Requires:           php-pecl-imagick}
-Requires:                   %{zend}
 Obsoletes:                  %{name}-vendor-zend
 Requires:                   %{zend}-Db-Adapter-Pdo-Mysql
 Requires:                   %{zend}-Db-Adapter-Pdo-Pgsql
