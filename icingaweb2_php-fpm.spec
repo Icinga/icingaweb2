@@ -15,17 +15,17 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}
 Packager:       Icinga Team <info@icinga.org>
 
 %if 0%{?fedora} || 0%{?rhel} || 0%{?amzn}
-%define apache_configdir  %{_sysconfdir}/httpd/conf.d
-%define apache_user     apache
-%define zend            php-ZendFramework
-%define php             php
-%define php_cli         php-cli
+%define apache_configdir    %{_sysconfdir}/httpd/conf.d
+%define apache_user         apache
+%define zend                php-ZendFramework
+%define php                 php
+%define php_cli             php-cli
 %endif
 
 %if 0%{?suse_version}
-%define apache_configdir  %{_sysconfdir}/apache2/conf.d
-%define apache_user     wwwrun
-%define zend            php5-ZendFramework
+%define apache_configdir    %{_sysconfdir}/apache2/conf.d
+%define apache_user         wwwrun
+%define zend                php5-ZendFramework
 %if 0%{?suse_version} == 1110
 %define php php53
 %else
@@ -37,8 +37,7 @@ Packager:       Icinga Team <info@icinga.org>
 %{?fedora:Requires(pre):        shadow-utils}
 %{?rhel:Requires(pre):          shadow-utils}
 %{?suse_version:Requires(pre):  pwdutils}
-Requires:                       php-fpm
-Requires:                       webserver
+Requires:                       php-fpm >= 5.3.0
 Requires:                       %{name}-common = %{version}-%{release}
 Requires:                       php-Icinga = %{version}-%{release}
 Requires:                       %{name}-vendor-dompdf
@@ -46,6 +45,10 @@ Requires:                       %{name}-vendor-HTMLPurifier
 Requires:                       %{name}-vendor-JShrink
 Requires:                       %{name}-vendor-lessphp
 Requires:                       %{name}-vendor-Parsedown
+%{?suse_version:Requires:       http_daemon}
+%{?amzn:Requires:               webserver}
+%{?fedora:Requires:             webserver}
+%{?rhel:Requires:               webserver}
 
 
 %description
@@ -80,20 +83,14 @@ Common files for Icinga Web 2 and the Icinga CLI
 %package -n php-Icinga
 Summary:                    Icinga Web 2 PHP library
 Group:                      Development/Libraries
-Requires:                   %{php}-common >= 5.3.0
-Requires:                   %{php}-intl
-Requires:                   %{php}-ldap
-Requires:                   %{php}-gd
-Obsoletes:                  %{name}-vendor-zend
-Requires:                   %{zend}-Db-Adapter-Pdo-Mysql
-Requires:                   %{zend}-Db-Adapter-Pdo-Pgsql
-%{?suse_version:Requires:   %{php}-gettext %{php}-json %{php}-openssl %{php}-posix}
-%{?amzn:Requires:           %{php}-pecl-imagick}
-%{?fedora:Requires:         php-pecl-imagick}
-%{?rhel:Requires:           php-pecl-imagick}
-Obsoletes:                  %{name}-vendor-zend
-Requires:                   %{zend}-Db-Adapter-Pdo-Mysql
-Requires:                   %{zend}-Db-Adapter-Pdo-Pgsql
+Requires:                   %{php}-intl >= 5.3.0
+Requires:                   %{php}-ldap >= 5.3.0
+Requires:                   %{php}-gd >= 5.3.0
+%{?suse_version:Requires:   %{php}-gettext >= 5.3.0 %{php}-json >= 5.3.0 %{php}-openssl >= 5.3.0 %{php}-posix >= 5.3.0 %{php}-mysql >= 5.3.0 %{php}-pgsql >= 5.3.0 %{name}-vendor-Zend}
+%{?amzn:Requires:           %{php}-pecl-imagick %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
+%{?fedora:Requires:         php-pecl-imagick %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
+%{?rhel:Requires:           php-pecl-imagick %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
+
 
 %description -n php-Icinga
 Icinga Web 2 PHP library
@@ -196,7 +193,7 @@ cp -pv  etc/bash_completion.d/icingacli                                 %{buildr
 cp -prv etc/schema                                                      %{buildroot}/%{docsdir}
 cp -prv modules/{monitoring,setup,doc,translation}                      %{buildroot}/%{basedir}/modules
 cp -prv library/Icinga                                                  %{buildroot}/%{phpdir}
-cp -prv library/vendor                                                  %{buildroot}/%{basedir}/librar
+cp -prv library/vendor                                                  %{buildroot}/%{basedir}/library
 cp -pv  packages/files/bin/icingacli                                    %{buildroot}/%{bindir}
 cp -prv packages/files/config/modules/setup                             %{buildroot}/%{configdir}/modules/
 cp -pv  packages/files/httpd/icingaweb2.conf                            %{buildroot}/%{apache_configdir}/icingaweb2.conf
@@ -304,6 +301,6 @@ exit 0
 %{basedir}/library/vendor/Parsedown
 
 
-files vendor-Zend
+%files vendor-Zend
 %defattr(-,root,root)
 %{basedir}/library/vendor/Zend
