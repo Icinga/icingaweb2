@@ -35,7 +35,9 @@ class ModuleActionController extends ActionController
         $this->_helper->layout()->moduleName = $this->moduleName;
         $this->view->translationDomain = $this->moduleName;
         $this->moduleInit();
-        $this->assertPermission(Manager::MODULE_PERMISSION_NS . $this->moduleName);
+        if ($this->getFrontController()->getDefaultModule() !== $this->moduleName) {
+            $this->assertPermission(Manager::MODULE_PERMISSION_NS . $this->moduleName);
+        }
     }
 
     /**
