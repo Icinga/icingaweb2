@@ -4,6 +4,7 @@
 namespace Icinga\Module\Setup\Forms;
 
 use Icinga\Web\Form;
+use Icinga\Forms\Config\ResourceConfigForm;
 use Icinga\Forms\Config\Resource\LdapResourceForm;
 
 /**
@@ -65,12 +66,14 @@ class LdapResourcePage extends Form
      */
     public function isValid($data)
     {
-        if (false === parent::isValid($data)) {
+        if (! parent::isValid($data)) {
             return false;
         }
 
-        if (false === isset($data['skip_validation']) || $data['skip_validation'] == 0) {
-            if (false === LdapResourceForm::isValidResource($this)) {
+        if (! isset($data['skip_validation']) || $data['skip_validation'] == 0) {
+            $inspection = ResourceConfigForm::inspectResource($this);
+            if ($inspection !== null && $inspection->hasError()) {
+                $this->error($inspection->getError());
                 $this->addSkipValidationCheckbox();
                 return false;
             }

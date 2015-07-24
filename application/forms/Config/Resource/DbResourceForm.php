@@ -3,10 +3,7 @@
 
 namespace Icinga\Forms\Config\Resource;
 
-use Exception;
 use Icinga\Web\Form;
-use Icinga\Data\ConfigObject;
-use Icinga\Data\ResourceFactory;
 use Icinga\Application\Platform;
 
 /**
@@ -23,7 +20,9 @@ class DbResourceForm extends Form
     }
 
     /**
-     * @see Form::createElements()
+     * Create and add elements to this form
+     *
+     * @param   array   $formData   The data sent by the user
      */
     public function createElements(array $formData)
     {
@@ -106,36 +105,5 @@ class DbResourceForm extends Form
         );
 
         return $this;
-    }
-
-    /**
-     * Validate that the current configuration points to a valid resource
-     *
-     * @see Form::onSuccess()
-     */
-    public function onSuccess()
-    {
-        if (false === static::isValidResource($this)) {
-            return false;
-        }
-    }
-
-    /**
-     * Validate the resource configuration by trying to connect with it
-     *
-     * @param   Form    $form   The form to fetch the configuration values from
-     *
-     * @return  bool            Whether validation succeeded or not
-     */
-    public static function isValidResource(Form $form)
-    {
-        $result = ResourceFactory::createResource(new ConfigObject($form->getValues()))->inspect();
-        if ($result->hasError()) {
-            $form->addError(sprintf($form->translate('Connectivity validation failed: %s'), $result->getError()));
-        }
-
-        // TODO: display diagnostics in $result->toArray() to the user
-
-        return ! $result->hasError();
     }
 }

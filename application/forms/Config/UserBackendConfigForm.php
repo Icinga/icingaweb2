@@ -11,6 +11,7 @@ use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\Inspectable;
+use Icinga\Data\Inspection;
 use Icinga\Forms\ConfigForm;
 use Icinga\Forms\Config\UserBackend\ExternalBackendForm;
 use Icinga\Forms\Config\UserBackend\DbBackendForm;
@@ -43,6 +44,7 @@ class UserBackendConfigForm extends ConfigForm
     {
         $this->setName('form_config_authbackend');
         $this->setSubmitLabel($this->translate('Save Changes'));
+        $this->setValidatePartial(true);
     }
 
     /**
@@ -348,8 +350,9 @@ class UserBackendConfigForm extends ConfigForm
         }
 
         if (($el = $this->getElement('skip_validation')) === null || false === $el->isChecked()) {
-            $backendForm = $this->getBackendForm($this->getValue('type'));
-            if (! static::isValidUserBackend($this)) {
+            $inspection = static::inspectUserBackend($this);
+            if ($inspection && $inspection->hasError()) {
+                $this->error($inspection->getError());
                 if ($el === null) {
                     $this->addSkipValidationCheckbox();
                 }
@@ -362,24 +365,20 @@ class UserBackendConfigForm extends ConfigForm
     }
 
     /**
-     * Validate the configuration by creating a backend and running its inspection checks
+     * Create a user backend by using the given form's values and return its inspection results
      *
-     * @param   Form    $form   The form to fetch the configuration values from
+     * Returns null for non-inspectable backends.
      *
-     * @return  bool            Whether inspection succeeded or not
+     * @param   Form    $form
+     *
+     * @return  Inspection|null
      */
-    public static function isValidUserBackend(Form $form)
+    public static function inspectUserBackend(Form $form)
     {
         $backend = UserBackend::create(null, new ConfigObject($form->getValues()));
         if ($backend instanceof Inspectable) {
-            $inspection = $backend->inspect();
-            if ($inspection->hasError()) {
-                $form->error($inspection->getError());
-                return false;
-            }
+            return $backend->inspect();
         }
-
-        return true;
     }
 
     /**
@@ -400,5 +399,87 @@ class UserBackendConfigForm extends ConfigForm
                 )
             )
         );
+    }
+
+    /**
+     * Run the configured backend's inspection checks and show the result, if necessary
+     *
+     * This will only run any validation if the user pushed the 'backend_validation' button.
+     *
+     * @param   array   $formData
+     *
+     * @return  bool
+     */
+    public function isValidPartial(array $formData)
+    {
+        if ($this->getElement('backend_validation')->isChecked() && parent::isValid($formData)) {
+            $inspection = static::inspectUserBackend($this);
+            if ($inspection !== null) {
+                $join = function ($e) use (& $join) {
+                    return is_string($e) ? $e : join("\n", array_map($join, $e));
+                };
+                $this->addElement(
+                    'note',
+                    'inspection_output',
+                    array(
+                        'order'         => 0,
+                        'value'         => '<strong>' . $this->translate('Validation Log') . "</strong>\n\n"
+                            . join("\n", array_map($join, $inspection->toArray())),
+                        'decorators'    => array(
+                            'ViewHelper',
+                            array('HtmlTag', array('tag' => 'pre', 'class' => 'log-output')),
+                        )
+                    )
+                );
+
+                if ($inspection->hasError()) {
+                    $this->warning(sprintf(
+                        $this->translate('Failed to successfully validate the configuration: %s'),
+                        $inspection->getError()
+                    ));
+                    return false;
+                }
+            }
+
+            $this->info($this->translate('The configuration has been successfully validated.'));
+        }
+
+        return true;
+    }
+
+    /**
+     * Add a submit button to this form and one to manually validate the configuration
+     *
+     * Calls parent::addSubmitButton() to add the submit button.
+     *
+     * @return  $this
+     */
+    public function addSubmitButton()
+    {
+        parent::addSubmitButton()
+            ->getElement('btn_submit')
+            ->setDecorators(array('ViewHelper'));
+
+        $this->addElement(
+            'submit',
+            'backend_validation',
+            array(
+                'ignore'        => true,
+                'label'         => $this->translate('Validate Configuration'),
+                'decorators'    => array('ViewHelper')
+            )
+        );
+        $this->addDisplayGroup(
+            array('btn_submit', 'backend_validation'),
+            'submit_validation',
+            array(
+                'decorators' => array(
+                    'FormElements',
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
+                )
+            )
+        );
+
+        return $this;
     }
 }
