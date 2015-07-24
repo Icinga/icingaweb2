@@ -102,7 +102,7 @@ class Module
     /**
      * Module metadata (version...)
      *
-     * @var stdClass
+     * @var object
      */
     private $metadata;
 
@@ -200,6 +200,30 @@ class Module
     protected $userGroupBackends = array();
 
     /**
+     * Create a new module object
+     *
+     * @param ApplicationBootstrap  $app
+     * @param string                $name
+     * @param string                $basedir
+     */
+    public function __construct(ApplicationBootstrap $app, $name, $basedir)
+    {
+        $this->app            = $app;
+        $this->name           = $name;
+        $this->basedir        = $basedir;
+        $this->cssdir         = $basedir . '/public/css';
+        $this->jsdir          = $basedir . '/public/js';
+        $this->libdir         = $basedir . '/library';
+        $this->configdir      = $app->getConfigDir('modules/' . $name);
+        $this->localedir      = $basedir . '/application/locale';
+        $this->formdir        = $basedir . '/application/forms';
+        $this->controllerdir  = $basedir . '/application/controllers';
+        $this->runScript      = $basedir . '/run.php';
+        $this->configScript   = $basedir . '/configuration.php';
+        $this->metadataFile   = $basedir . '/module.info';
+    }
+
+    /**
      * Provide a search URL
      *
      * @param string    $title
@@ -278,30 +302,6 @@ class Module
         }
 
         return $this->menuItems[$name];
-    }
-
-    /**
-     * Create a new module object
-     *
-     * @param ApplicationBootstrap  $app
-     * @param string                $name
-     * @param string                $basedir
-     */
-    public function __construct(ApplicationBootstrap $app, $name, $basedir)
-    {
-        $this->app            = $app;
-        $this->name           = $name;
-        $this->basedir        = $basedir;
-        $this->cssdir         = $basedir . '/public/css';
-        $this->jsdir          = $basedir . '/public/js';
-        $this->libdir         = $basedir . '/library';
-        $this->configdir      = $app->getConfigDir('modules/' . $name);
-        $this->localedir      = $basedir . '/application/locale';
-        $this->formdir        = $basedir . '/application/forms';
-        $this->controllerdir  = $basedir . '/application/controllers';
-        $this->runScript      = $basedir . '/run.php';
-        $this->configScript   = $basedir . '/configuration.php';
-        $this->metadataFile   = $basedir . '/module.info';
     }
 
     /**
