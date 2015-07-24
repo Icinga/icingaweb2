@@ -205,10 +205,7 @@ class PreferenceForm extends Form
                 array(
                     'ignore'        => true,
                     'label'         => $this->translate('Save to the Preferences'),
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array('HtmlTag', array('tag' => 'div'))
-                    )
+                    'decorators'    => array('ViewHelper')
                 )
             );
         }
@@ -219,10 +216,7 @@ class PreferenceForm extends Form
             array(
                 'ignore'        => true,
                 'label'         => $this->translate('Save for the current Session'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'div'))
-                )
+                'decorators'    => array('ViewHelper')
             )
         );
 

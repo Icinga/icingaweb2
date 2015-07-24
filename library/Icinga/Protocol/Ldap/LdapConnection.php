@@ -314,7 +314,7 @@ class LdapConnection implements Selectable, Inspectable
     public function bind()
     {
         if ($this->bound) {
-            return;
+            return $this;
         }
 
         $ds = $this->getConnection();
@@ -332,6 +332,7 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         $this->bound = true;
+        return $this;
     }
 
     /**

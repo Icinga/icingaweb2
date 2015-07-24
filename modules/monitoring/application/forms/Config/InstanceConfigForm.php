@@ -95,7 +95,10 @@ class InstanceConfigForm extends ConfigForm
 
         $instanceName = $data['name'];
         if ($this->config->hasSection($instanceName)) {
-            throw new IcingaException('A monitoring instance with the name "%s" does already exist', $instanceName);
+            throw new IcingaException(
+                $this->translate('A monitoring instance with the name "%s" does already exist'),
+                $instanceName
+            );
         }
 
         unset($data['name']);
