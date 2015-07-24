@@ -265,7 +265,14 @@ class Loader
             if ($obj && $obj instanceof Command && $obj->showTrace()) {
                 echo $this->formatTrace($e->getTrace());
             }
-            $this->fail($e->getMessage());
+
+            $this->fail(sprintf(
+                '%s in %s:%d with message: %s',
+                get_class($e),
+                $e->getFile(),
+                $e->getLine(),
+                $e->getMessage()
+            ));
         }
     }
 
