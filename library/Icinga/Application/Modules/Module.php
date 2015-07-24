@@ -114,7 +114,7 @@ class Module
     private $triedToLaunchConfigScript = false;
 
     /**
-     * Whether the module's namespace has been registered on our autoloader
+     * Whether the module's namespaces have been registered on our autoloader
      *
      * @var bool
      */
@@ -233,25 +233,27 @@ class Module
     /**
      * Provide a search URL
      *
-     * @param string    $title
-     * @param string    $url
-     * @param int       $priority
+     * @param   string    $title
+     * @param   string    $url
+     * @param   int       $priority
+     *
+     * @return  $this
      */
     public function provideSearchUrl($title, $url, $priority = 0)
     {
-        $searchUrl = (object) array(
+        $this->searchUrls[] = (object) array(
             'title'     => (string) $title,
             'url'       => (string) $url,
             'priority'  => (int) $priority
         );
 
-        $this->searchUrls[] = $searchUrl;
+        return $this;
     }
 
     /**
-     * Return this module's search urls
+     * Get this module's search urls
      *
-     * @return  array
+     * @return array
      */
     public function getSearchUrls()
     {
@@ -260,7 +262,7 @@ class Module
     }
 
     /**
-     * Get all Menu Items
+     * Get all pane items
      *
      * @return array
      */
@@ -273,8 +275,9 @@ class Module
     /**
      * Add a pane to dashboard
      *
-     * @param $name
-     * @return Pane
+     * @param   string $name
+     *
+     * @return  Pane
      */
     protected function dashboard($name)
     {
@@ -283,7 +286,7 @@ class Module
     }
 
     /**
-     * Get all Menu Items
+     * Get all menu items
      *
      * @return array
      */
@@ -294,11 +297,12 @@ class Module
     }
 
     /**
-     * Add a menu Section to the Sidebar menu
+     * Add or get a menu section
      *
-     * @param $name
-     * @param array $properties
-     * @return mixed
+     * @param   string  $name
+     * @param   array   $properties
+     *
+     * @return  Menu
      */
     protected function menuSection($name, array $properties = array())
     {
@@ -334,16 +338,16 @@ class Module
             );
             return false;
         }
-
         $this->registerWebIntegration();
         $this->registered = true;
+
         return true;
     }
 
     /**
-     * Return whether this module has been registered
+     * Get whether this module has been registered
      *
-     * @return  bool
+     * @return bool
      */
     public function isRegistered()
     {
@@ -353,9 +357,9 @@ class Module
     /**
      * Test for an enabled module by name
      *
-     * @param string $name
+     * @param   string $name
      *
-     * @return boolean
+     * @return  bool
      */
     public static function exists($name)
     {
@@ -363,7 +367,7 @@ class Module
     }
 
     /**
-     * Get module by name
+     * Get a module by name
      *
      * @param string $name
      * @param bool   $autoload
@@ -425,7 +429,7 @@ class Module
     }
 
     /**
-     * Getter for module name
+     * Get the module name
      *
      * @return string
      */
@@ -435,7 +439,7 @@ class Module
     }
 
     /**
-     * Getter for module version
+     * Get the module version
      *
      * @return string
      */
@@ -445,7 +449,7 @@ class Module
     }
 
     /**
-     * Get module description
+     * Get the module description
      *
      * @return string
      */
@@ -455,7 +459,7 @@ class Module
     }
 
     /**
-     * Get module title (short description)
+     * Get the module title (short description)
      *
      * @return string
      */
@@ -465,9 +469,9 @@ class Module
     }
 
     /**
-     * Getter for module version
+     * Get the module dependencies
      *
-     * @return Array
+     * @return array
      */
     public function getDependencies()
     {
@@ -562,7 +566,7 @@ class Module
     }
 
     /**
-     * Getter for css file name
+     * Get the module's CSS directory
      *
      * @return string
      */
@@ -572,17 +576,7 @@ class Module
     }
 
     /**
-     * Getter for base directory
-     *
-     * @return string
-     */
-    public function getBaseDir()
-    {
-        return $this->basedir;
-    }
-
-    /**
-     * Get the controller directory
+     * Get the module's controller directory
      *
      * @return string
      */
@@ -592,7 +586,17 @@ class Module
     }
 
     /**
-     * Getter for library directory
+     * Get the module's base directory
+     *
+     * @return string
+     */
+    public function getBaseDir()
+    {
+        return $this->basedir;
+    }
+
+    /**
+     * Get the module's library directory
      *
      * @return string
      */
@@ -602,7 +606,7 @@ class Module
     }
 
     /**
-     * Getter for configuration directory
+     * Get the module's configuration directory
      *
      * @return string
      */
@@ -612,7 +616,7 @@ class Module
     }
 
     /**
-     * Getter for form directory
+     * Get the module's form directory
      *
      * @return string
      */
@@ -622,11 +626,11 @@ class Module
     }
 
     /**
-     * Getter for module config object
+     * Get the module config
      *
-     * @param string $file
+     * @param   string $file
      *
-     * @return Config
+     * @return  Config
      */
     public function getConfig($file = 'config')
     {
@@ -634,9 +638,7 @@ class Module
     }
 
     /**
-     * Retrieve provided permissions
-     *
-     * @param string $name Permission name
+     * Get provided permissions
      *
      * @return array
      */
@@ -647,9 +649,8 @@ class Module
     }
 
     /**
-     * Retrieve provided restrictions
+     * Get provided restrictions
      *
-     * @param  string  $name Restriction name
      * @return array
      */
     public function getProvidedRestrictions()
@@ -659,24 +660,11 @@ class Module
     }
 
     /**
-     * Whether the given permission name is supported
+     * Whether the module provides the given restriction
      *
-     * @param string $name Permission name
+     * @param   string $name Restriction name
      *
-     * @return bool
-     */
-    public function providesPermission($name)
-    {
-        $this->launchConfigScript();
-        return array_key_exists($name, $this->permissionList);
-    }
-
-    /**
-     * Whether the given restriction name is supported
-     *
-     * @param string $name Restriction name
-     *
-     * @return bool
+     * @return  bool
      */
     public function providesRestriction($name)
     {
@@ -685,9 +673,22 @@ class Module
     }
 
     /**
-     * Retrieve this modules configuration tabs
+     * Whether the module provides the given permission
      *
-     * @return Icinga\Web\Widget\Tabs
+     * @param   string $name Permission name
+     *
+     * @return  bool
+     */
+    public function providesPermission($name)
+    {
+        $this->launchConfigScript();
+        return array_key_exists($name, $this->permissionList);
+    }
+
+    /**
+     * Get the module configuration tabs
+     *
+     * @return \Icinga\Web\Widget\Tabs
      */
     public function getConfigTabs()
     {
@@ -705,9 +706,9 @@ class Module
     }
 
     /**
-     * Whether this module provides a setup wizard
+     * Whether the module provides a setup wizard
      *
-     * @return  bool
+     * @return bool
      */
     public function providesSetupWizard()
     {
@@ -721,9 +722,9 @@ class Module
     }
 
     /**
-     * Return this module's setup wizard
+     * Get the module's setup wizard
      *
-     * @return  SetupWizard
+     * @return SetupWizard
      */
     public function getSetupWizard()
     {
@@ -731,9 +732,9 @@ class Module
     }
 
     /**
-     * Return this module's user backends
+     * Get the module's user backends
      *
-     * @return  array
+     * @return array
      */
     public function getUserBackends()
     {
@@ -742,9 +743,9 @@ class Module
     }
 
     /**
-     * Return this module's user group backends
+     * Get the module's user group backends
      *
-     * @return  array
+     * @return array
      */
     public function getUserGroupBackends()
     {
@@ -755,10 +756,10 @@ class Module
     /**
      * Provide a named permission
      *
-     * @param string $name Unique permission name
-     * @param string $name Permission description
+     * @param   string $name        Unique permission name
+     * @param   string $description Permission description
      *
-     * @return void
+     * @throws  IcingaException     If the permission is already provided
      */
     protected function providePermission($name, $description)
     {
@@ -777,10 +778,10 @@ class Module
     /**
      * Provide a named restriction
      *
-     * @param string $name        Unique restriction name
-     * @param string $description Restriction description
+     * @param   string $name        Unique restriction name
+     * @param   string $description Restriction description
      *
-     * @return void
+     * @throws  IcingaException     If the restriction is already provided
      */
     protected function provideRestriction($name, $description)
     {
@@ -799,15 +800,16 @@ class Module
     /**
      * Provide a module config tab
      *
-     * @param string $name   Unique tab name
-     * @param string $config Tab config
+     * @param   string  $name       Unique tab name
+     * @param   array   $config     Tab config
      *
-     * @return $this
+     * @return  $this
+     * @throws  ProgrammingError    If $config lacks the key 'url'
      */
     protected function provideConfigTab($name, $config = array())
     {
         if (! array_key_exists('url', $config)) {
-            throw new ProgrammingError('A module config tab MUST provide and "url"');
+            throw new ProgrammingError('A module config tab MUST provide a "url"');
         }
         $config['url'] = $this->getName() . '/' . ltrim($config['url'], '/');
         $this->configTabs[$name] = $config;
@@ -817,7 +819,7 @@ class Module
     /**
      * Provide a setup wizard
      *
-     * @param   string  $className      The name of the class
+     * @param   string $className The name of the class
      *
      * @return  $this
      */
@@ -830,8 +832,8 @@ class Module
     /**
      * Provide a user backend capable of authenticating users
      *
-     * @param   string  $identifier     The identifier of the new backend type
-     * @param   string  $className      The name of the class
+     * @param   string $identifier  The identifier of the new backend type
+     * @param   string $className   The name of the class
      *
      * @return  $this
      */
@@ -844,8 +846,8 @@ class Module
     /**
      * Provide a user group backend
      *
-     * @param   string  $identifier     The identifier of the new backend type
-     * @param   string  $className      The name of the class
+     * @param   string $identifier  The identifier of the new backend type
+     * @param   string $className   The name of the class
      *
      * @return  $this
      */
@@ -856,7 +858,7 @@ class Module
     }
 
     /**
-     * Register new namespaces on the autoloader
+     * Register module namespaces on the autoloader
      *
      * @return $this
      */
@@ -897,7 +899,7 @@ class Module
     }
 
     /**
-     * return bool Whether this module has translations
+     * Get whether the module has translations
      */
     public function hasLocales()
     {
@@ -907,7 +909,7 @@ class Module
     /**
      * List all available locales
      *
-     * return array Locale list
+     * @return array Locale list
      */
     public function listLocales()
     {
@@ -954,10 +956,9 @@ class Module
     }
 
     /**
-     * Add routes for static content and any route added via addRoute() to the route chain
+     * Add routes for static content and any route added via {@link addRoute()} to the route chain
      *
-     * @return  $this
-     * @see     addRoute()
+     * @return $this
      */
     protected function registerRoutes()
     {
@@ -1006,14 +1007,14 @@ class Module
     /**
      * Include a php script if it is readable
      *
-     * @param string $file File to include
+     * @param   string $file File to include
      *
-     * @return $this
+     * @return  $this
      */
     protected function includeScript($file)
     {
-        if (file_exists($file) && is_readable($file) === true) {
-            include($file);
+        if (file_exists($file) && is_readable($file)) {
+            include $file;
         }
 
         return $this;
@@ -1021,29 +1022,27 @@ class Module
 
     /**
      * Run module config script
+     *
+     * @return $this
      */
     protected function launchConfigScript()
     {
         if ($this->triedToLaunchConfigScript) {
-            return;
+            return $this;
         }
         $this->triedToLaunchConfigScript = true;
-        if (! file_exists($this->configScript)
-         || ! is_readable($this->configScript)) {
-            return;
-        }
         $this->registerAutoloader();
-        include($this->configScript);
+        return $this->includeScript($this->configScript);
     }
 
     /**
      * Register hook
      *
-     * @param string $name
-     * @param string $class
-     * @param string $key
+     * @param   string $name
+     * @param   string $class
+     * @param   string $key
      *
-     * @return $this
+     * @return  $this
      */
     protected function registerHook($name, $class, $key = null)
     {
@@ -1072,12 +1071,8 @@ class Module
     }
 
     /**
-     * Translate a string with the global mt()
-     *
-     * @param $string
-     * @param null $context
-     *
-     * @return mixed|string
+     * (non-PHPDoc)
+     * @see Translator::translate() For the function documentation.
      */
     protected function translate($string, $context = null)
     {
