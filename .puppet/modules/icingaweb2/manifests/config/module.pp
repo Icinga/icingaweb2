@@ -20,7 +20,7 @@ define icingaweb2::config::module (
      source  => "${source}/modules/${module}/${name}.ini",
      owner   => 'root',
      group   => $web_group,
-     mode    => 0660,
+     mode    => '0660',
      replace => $replace,
   }
 }

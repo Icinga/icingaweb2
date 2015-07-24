@@ -12,6 +12,7 @@ use Icinga\Data\Filter\FilterExpression;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotImplementedError;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\QueryException;
 use Icinga\Web\Session;
 
 /**
@@ -855,7 +856,6 @@ abstract class IdoQuery extends DbQuery
     protected function customvarNameToTypeName($customvar)
     {
         $customvar = strtolower($customvar);
-        // TODO: Improve this:
         if (! preg_match('~^_(host|service)_([a-zA-Z0-9_]+)$~', $customvar, $m)) {
             throw new ProgrammingError(
                 'Got invalid custom var: "%s"',
@@ -870,11 +870,20 @@ abstract class IdoQuery extends DbQuery
         return array_key_exists($name, $this->joinedVirtualTables);
     }
 
+    /**
+     * Get the query column of a already joined custom variable
+     *
+     * @param   string $customvar
+     *
+     * @return  string
+     * @throws  QueryException If the custom variable has not been joined
+     */
     protected function getCustomvarColumnName($customvar)
     {
-        if (isset($this->customVars[($customvar = strtolower($customvar))])) {
-            $this->customVars[strtolower($customvar)] . '.varvalue';
+        if (! isset($this->customVars[($customvar = strtolower($customvar))])) {
+            throw new QueryException('Custom variable %s has not been joined', $customvar);
         }
+        return $this->customVars[$customvar] . '.varvalue';
     }
 
     public function aliasToColumnName($alias)
@@ -882,9 +891,19 @@ abstract class IdoQuery extends DbQuery
         return $this->idxAliasColumn[$alias];
     }
 
+    /**
+     * Get the alias of a column expression as defined in the {@link $columnMap} property.
+     *
+     * @param   string $alias Potential custom alias
+     *
+     * @return  string
+     */
     public function customAliasToAlias($alias)
     {
-        return $this->idxCustomAliases[$alias];
+        if (isset($this->idxCustomAliases[$alias])) {
+            return $this->idxCustomAliases[$alias];
+        }
+        return $alias;
     }
 
     /**

@@ -19,9 +19,13 @@ class icinga2_dev {
   include monitoring_test_config
 
   icinga2::config { [
-    'conf.d/test-config', 'conf.d/commands', 'constants',
+    'conf.d/test-config', 'conf.d/commands', 'constants'
   ]:
     source => 'puppet:///modules/icinga2_dev',
+  }
+
+  icinga2::feature { 'api':
+    ensure => absent,
   }
 
   icinga2::feature { 'ido-pgsql':

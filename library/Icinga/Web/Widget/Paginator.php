@@ -3,7 +3,7 @@
 
 namespace Icinga\Web\Widget;
 
-use Icinga\Data\QueryInterface;
+use Icinga\Data\Paginatable;
 use Icinga\Exception\ProgrammingError;
 
 /**
@@ -14,7 +14,7 @@ class Paginator extends AbstractWidget
     /**
      * The query the paginator widget is created for
      *
-     * @var QueryInterface
+     * @var Paginatable
      */
     protected $query;
 
@@ -28,11 +28,11 @@ class Paginator extends AbstractWidget
     /**
      * Set the query to create the paginator widget for
      *
-     * @param   QueryInterface      $query
+     * @param   Paginatable      $query
      *
      * @return  $this
      */
-    public function setQuery(QueryInterface $query)
+    public function setQuery(Paginatable $query)
     {
         $this->query = $query;
         return $this;

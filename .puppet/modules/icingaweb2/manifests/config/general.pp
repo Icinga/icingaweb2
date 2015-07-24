@@ -10,7 +10,7 @@ define icingaweb2::config::general (
      content => template("${source}/${name}.ini.erb"),
      owner   => 'root',
      group   => $web_group,
-     mode    => 0660,
+     mode    => '0660',
      replace => $replace,
   }
 }
