@@ -114,6 +114,13 @@ class Module
     private $triedToLaunchConfigScript = false;
 
     /**
+     * Whether the module's namespace has been registered on our autoloader
+     *
+     * @var bool
+     */
+    protected $registeredAutoloader = false;
+
+    /**
      * Whether this module has been registered
      *
      * @var bool
@@ -855,6 +862,10 @@ class Module
      */
     protected function registerAutoloader()
     {
+        if ($this->registeredAutoloader) {
+            return $this;
+        }
+
         $moduleName = ucfirst($this->getName());
 
         $moduleLibraryDir = $this->getLibDir(). '/'. $moduleName;
@@ -866,6 +877,8 @@ class Module
         if (is_dir($moduleFormDir)) {
             $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName. '\\Forms',  $moduleFormDir);
         }
+
+        $this->registeredAutoloader = true;
 
         return $this;
     }
@@ -1011,7 +1024,7 @@ class Module
      */
     protected function launchConfigScript()
     {
-        if ($this->triedToLaunchConfigScript || !$this->registered) {
+        if ($this->triedToLaunchConfigScript) {
             return;
         }
         $this->triedToLaunchConfigScript = true;
@@ -1019,6 +1032,7 @@ class Module
          || ! is_readable($this->configScript)) {
             return;
         }
+        $this->registerAutoloader();
         include($this->configScript);
     }
 
