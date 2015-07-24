@@ -179,6 +179,9 @@ Icinga Web 2 vendor library Zend
 %prep
 %setup -q
 
+%clean
+rm -rf %{buildroot}
+
 %build
 
 %install
@@ -226,9 +229,6 @@ fi
 %endif
 exit 0
 
-%clean
-rm -rf %{buildroot}
-
 %files
 %defattr(-,root,root)
 %{basedir}/application/controllers
@@ -248,6 +248,14 @@ rm -rf %{buildroot}
 %attr(2775,root,%{icingaweb_group}) %dir %{logdir}
 %{docsdir}
 %docdir %{docsdir}
+
+%post
+%if 0%{?suse_version}
+if ! apache2ctl -M 2>/dev/null | grep -q rewrite_module; then
+    a2enmod rewrite >/dev/null
+fi
+%endif
+exit 0
 
 
 %pre common
