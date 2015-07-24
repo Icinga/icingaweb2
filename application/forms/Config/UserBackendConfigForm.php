@@ -11,6 +11,7 @@ use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\Inspectable;
+use Icinga\Data\Inspection;
 use Icinga\Forms\ConfigForm;
 use Icinga\Forms\Config\UserBackend\ExternalBackendForm;
 use Icinga\Forms\Config\UserBackend\DbBackendForm;
@@ -348,8 +349,9 @@ class UserBackendConfigForm extends ConfigForm
         }
 
         if (($el = $this->getElement('skip_validation')) === null || false === $el->isChecked()) {
-            $backendForm = $this->getBackendForm($this->getValue('type'));
-            if (! static::isValidUserBackend($this)) {
+            $inspection = static::inspectUserBackend($this);
+            if ($inspection && $inspection->hasError()) {
+                $this->error($inspection->getError());
                 if ($el === null) {
                     $this->addSkipValidationCheckbox();
                 }
@@ -362,24 +364,20 @@ class UserBackendConfigForm extends ConfigForm
     }
 
     /**
-     * Validate the configuration by creating a backend and running its inspection checks
+     * Create a user backend by using the given form's values and return its inspection results
      *
-     * @param   Form    $form   The form to fetch the configuration values from
+     * Returns null for non-inspectable backends.
      *
-     * @return  bool            Whether inspection succeeded or not
+     * @param   Form    $form
+     *
+     * @return  Inspection|null
      */
-    public static function isValidUserBackend(Form $form)
+    public static function inspectUserBackend(Form $form)
     {
         $backend = UserBackend::create(null, new ConfigObject($form->getValues()));
         if ($backend instanceof Inspectable) {
-            $inspection = $backend->inspect();
-            if ($inspection->hasError()) {
-                $form->error($inspection->getError());
-                return false;
-            }
+            return $backend->inspect();
         }
-
-        return true;
     }
 
     /**

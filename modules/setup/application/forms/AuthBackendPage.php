@@ -146,7 +146,9 @@ class AuthBackendPage extends Form
                     'value' => $this->getResourceConfig()
                 )
             );
-            if (! UserBackendConfigForm::isValidUserBackend($self)) {
+            $inspection = UserBackendConfigForm::inspectUserBackend($self);
+            if ($inspection && $inspection->hasError()) {
+                $this->error($inspection->getError());
                 $this->addSkipValidationCheckbox();
                 return false;
             }
