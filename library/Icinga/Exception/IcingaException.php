@@ -4,6 +4,7 @@
 namespace Icinga\Exception;
 
 use Exception;
+use ReflectionClass;
 
 class IcingaException extends Exception
 {
@@ -24,5 +25,18 @@ class IcingaException extends Exception
             }
         }
         parent::__construct(vsprintf($message, $args), 0, $exc);
+    }
+
+    /**
+     * Create the exception from an array of arguments
+     *
+     * @param   array   $args
+     *
+     * @return  static
+     */
+    public static function create(array $args)
+    {
+        $e = new ReflectionClass(get_called_class());
+        return $e->newInstanceArgs($args);
     }
 }
