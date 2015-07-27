@@ -405,3 +405,13 @@ html {
   padding-top: 0em;
   font-size: 0.9em;
 }
+
+// Hide non-javascript elements if javascript is enabled
+html.js *.no-js {
+  .sr-only;
+}
+
+// Hide javascript elements if javascript is disabled
+html.no-js *.js {
+  .sr-only;
+}
