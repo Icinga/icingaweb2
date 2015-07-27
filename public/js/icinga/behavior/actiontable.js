@@ -381,6 +381,20 @@
         var container = evt.target;
         var self = evt.data.self;
 
+        // Set first links href in a action table tr as row href:
+        $('table.action tr', container).each(function(idx, el) {
+            var $a = $('a[href].rowaction', el).first();
+            if ($a.length) {
+                // TODO: Find out whether we leak memory on IE with this:
+                $(el).attr('href', $a.attr('href'));
+                return;
+            }
+            $a = $('a[href]', el).first();
+            if ($a.length) {
+                $(el).attr('href', $a.attr('href'));
+            }
+        });
+
         // draw all selections
         self.tables().each(function(i, el) {
             new Selection(el, self.icinga).refresh();

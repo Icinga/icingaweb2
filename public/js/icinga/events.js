@@ -40,20 +40,6 @@
                 icinga.loader.loadUrl(url, $(el)).autorefresh = true;
             });
 
-            // Set first links href in a action table tr as row href:
-            $('table.action tr', el).each(function(idx, el) {
-                var $a = $('a[href].rowaction', el).first();
-                if ($a.length) {
-                    // TODO: Find out whether we leak memory on IE with this:
-                    $(el).attr('href', $a.attr('href'));
-                    return;
-                }
-                $a = $('a[href]', el).first();
-                if ($a.length) {
-                    $(el).attr('href', $a.attr('href'));
-                }
-            });
-
             $('td.state span.timesince').attr('title', null);
 
             var moduleName = el.data('icingaModule');
