@@ -49,24 +49,24 @@ class Doc_ModuleController extends DocController
     {
         $moduleManager = Icinga::app()->getModuleManager();
         $modules = array();
-        foreach ($moduleManager->listEnabledModules() as $module) {
+        foreach ($moduleManager->listInstalledModules() as $module) {
             $path = $this->getPath($module, $moduleManager->getModuleDir($module, '/doc'), true);
             if ($path !== null) {
-                $modules[] = $moduleManager->getModule($module);
+                $modules[] = $moduleManager->getModule($module, false);
             }
         }
         $this->view->modules = $modules;
     }
 
     /**
-     * Assert that the given module is enabled
+     * Assert that the given module is installed
      *
-     * @param   $moduleName
+     * @param   string $moduleName
      *
-     * @throws  Zend_Controller_Action_Exception    If the required parameter 'moduleName' is empty or either if the
-     *                                              given module is neither installed nor enabled
+     * @throws  Zend_Controller_Action_Exception    If the required parameter 'moduleName' is empty or if the
+     *                                              given module is not installed
      */
-    protected function assertModuleEnabled($moduleName)
+    protected function assertModuleInstalled($moduleName)
     {
         if (empty($moduleName)) {
             throw new Zend_Controller_Action_Exception(
@@ -81,23 +81,17 @@ class Doc_ModuleController extends DocController
                 404
             );
         }
-        if (! $moduleManager->hasEnabled($moduleName)) {
-            throw new Zend_Controller_Action_Exception(
-                sprintf($this->translate('Module \'%s\' is not enabled'), $moduleName),
-                404
-            );
-        }
     }
 
     /**
      * View the toc of a module's documentation
      *
-     * @see assertModuleEnabled()
+     * @see assertModuleInstalled()
      */
     public function tocAction()
     {
         $module = $this->getParam('moduleName');
-        $this->assertModuleEnabled($module);
+        $this->assertModuleInstalled($module);
         $this->view->moduleName = $module;
         try {
             $this->renderToc(
@@ -116,12 +110,12 @@ class Doc_ModuleController extends DocController
      *
      * @throws  Zend_Controller_Action_Exception    If the required parameter 'chapterId' is missing or if an error in
      *                                              the documentation module's library occurs
-     * @see     assertModuleEnabled()
+     * @see     assertModuleInstalled()
      */
     public function chapterAction()
     {
         $module = $this->getParam('moduleName');
-        $this->assertModuleEnabled($module);
+        $this->assertModuleInstalled($module);
         $chapter = $this->getParam('chapter');
         if ($chapter === null) {
             throw new Zend_Controller_Action_Exception(
@@ -145,12 +139,12 @@ class Doc_ModuleController extends DocController
     /**
      * View a module's documentation as PDF
      *
-     * @see assertModuleEnabled()
+     * @see assertModuleInstalled()
      */
     public function pdfAction()
     {
         $module = $this->getParam('moduleName');
-        $this->assertModuleEnabled($module);
+        $this->assertModuleInstalled($module);
         $this->renderPdf(
             $this->getPath($module, Icinga::app()->getModuleManager()->getModuleDir($module, '/doc')),
             $module,
