@@ -37,13 +37,13 @@ class Controller extends ModuleActionController
             return;
         }
 
-        if (($sort = $request->getPost('sort'))) {
+        if (($sort = $request->getPost('sort')) || ($direction = $request->getPost('dir'))) {
             $url = Url::fromRequest();
-            $url->setParam('sort', $sort);
-            if (($dir = $request->getPost('dir'))) {
-                $url->setParam('dir', $dir);
+            if ($sort) {
+                $url->setParam('sort', $sort);
+                $url->remove('dir');
             } else {
-                $url->removeParam('dir');
+                $url->setParam('dir', $direction);
             }
 
             $this->redirectNow($url);

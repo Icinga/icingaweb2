@@ -127,43 +127,56 @@ class SortBox extends AbstractWidget
      */
     public function render()
     {
-        $form = new Form();
-        $form->setTokenDisabled();
-        $form->setName($this->name);
-        $form->setAttrib('class', 'sort-control inline');
-
-        $form->addElement(
+        $columnForm = new Form();
+        $columnForm->setTokenDisabled();
+        $columnForm->setName($this->name . '-column');
+        $columnForm->setAttrib('class', 'inline');
+        $columnForm->addElement(
             'select',
             'sort',
             array(
                 'autosubmit'    => true,
                 'label'         => $this->view()->translate('Sort by'),
-                'multiOptions'  => $this->sortFields
+                'multiOptions'  => $this->sortFields,
+                'decorators'    => array(
+                    array('ViewHelper'),
+                    array('Label')
+                )
             )
         );
-        $form->getElement('sort')->setDecorators(array(
-            array('ViewHelper'),
-            array('Label')
-        ));
-        $form->addElement(
+
+        $orderForm = new Form();
+        $orderForm->setTokenDisabled();
+        $orderForm->setName($this->name . '-order');
+        $orderForm->setAttrib('class', 'inline');
+        $orderForm->addElement(
             'select',
             'dir',
             array(
                 'autosubmit'    => true,
+                'label'         => $this->view()->translate('Direction', 'sort direction'),
                 'multiOptions'  => array(
-                    'asc'       => 'Asc',
-                    'desc'      => 'Desc',
+                    'asc'       => $this->view()->translate('Ascending', 'sort direction'),
+                    'desc'      => $this->view()->translate('Descending', 'sort direction')
                 ),
                 'decorators'    => array(
-                    array('ViewHelper')
+                    array('ViewHelper'),
+                    array('Label', array('class' => 'no-js'))
                 )
             )
         );
 
         if ($this->request) {
-            $form->populate($this->request->getParams());
+            $url = $this->request->getUrl();
+            if ($url->hasParam('sort')) {
+                $columnForm->populate(array('sort' => $url->getParam('sort')));
+            }
+
+            if ($url->hasParam('dir')) {
+                $orderForm->populate(array('dir' => $url->getParam('dir')));
+            }
         }
 
-        return $form;
+        return '<div class="sort-control">' . $columnForm . $orderForm . '</div>';
     }
 }
