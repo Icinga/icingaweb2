@@ -250,7 +250,6 @@ class ConfigController extends Controller
         $backendName = $this->params->getRequired('backend');
 
         $form = new UserBackendConfigForm();
-        $form->setAction(Url::fromRequest());
         $form->setRedirectUrl('config/userbackend');
         $form->setTitle(sprintf($this->translate('Edit User Backend %s'), $backendName));
         $form->setIniConfig(Config::app('authentication'));

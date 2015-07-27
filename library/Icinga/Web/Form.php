@@ -292,9 +292,11 @@ class Form extends Zend_Form
     public function getRedirectUrl()
     {
         if ($this->redirectUrl === null) {
-            $url = $this->getRequest()->getUrl();
-            // Be sure to remove all form dependent params because we do not want to submit it again
-            $this->redirectUrl = $url->without(array_keys($this->getElements()));
+            $this->redirectUrl = $this->getRequest()->getUrl();
+            if ($this->getMethod() === 'get') {
+                // Be sure to remove all form dependent params because we do not want to submit it again
+                $this->redirectUrl = $this->redirectUrl->without(array_keys($this->getElements()));
+            }
         }
 
         return $this->redirectUrl;
@@ -658,22 +660,26 @@ class Form extends Zend_Form
      */
     public function create(array $formData = array())
     {
-        if (false === $this->created) {
+        if (! $this->created) {
             $this->createElements($formData);
             $this->addFormIdentification()
                 ->addCsrfCounterMeasure()
                 ->addSubmitButton();
 
+            // Use Form::getAttrib() instead of Form::getAction() here because we want to explicitly check against
+            // null. Form::getAction() would return the empty string '' if the action is not set.
+            // For not setting the action attribute use Form::setAction(''). This is required for for the
+            // accessibility's enable/disable auto-refresh mechanic
             if ($this->getAttrib('action') === null) {
-                // Use Form::getAttrib() instead of Form::getAction() here because we want to explicitly check against
-                // null. Form::getAction() would return the empty string '' if the action is not set.
-                // For not setting the action attribute use Form::setAction(''). This is required for for the
-                // accessibility's enable/disable auto-refresh mechanic
+                $action = $this->getRequest()->getUrl();
+                if ($this->getMethod() === 'get') {
+                    $action = $action->without(array_keys($this->getElements()));
+                }
 
                 // TODO(el): Re-evalute this necessity. JavaScript could use the container's URL if there's no action set.
                 // We MUST set an action as JS gets confused otherwise, if
                 // this form is being displayed in an additional column
-                $this->setAction($this->getRequest()->getUrl()->without(array_keys($this->getElements())));
+                $this->setAction($action);
             }
 
             $this->created = true;
@@ -920,7 +926,7 @@ class Form extends Zend_Form
      */
     public function addFormIdentification()
     {
-        if (false === $this->uidDisabled && $this->getElement($this->uidElementName) === null) {
+        if (! $this->uidDisabled && $this->getElement($this->uidElementName) === null) {
             $this->addElement(
                 'hidden',
                 $this->uidElementName,
@@ -942,7 +948,7 @@ class Form extends Zend_Form
      */
     public function addCsrfCounterMeasure()
     {
-        if (false === $this->tokenDisabled && $this->getElement($this->tokenElementName) === null) {
+        if (! $this->tokenDisabled && $this->getElement($this->tokenElementName) === null) {
             $this->addElement(new CsrfCounterMeasure($this->tokenElementName));
         }
 

@@ -78,7 +78,6 @@ class UsergroupbackendController extends Controller
         $backendName = $this->params->getRequired('backend');
 
         $form = new UserGroupBackendForm();
-        $form->setAction(Url::fromRequest());
         $form->setRedirectUrl('usergroupbackend/list');
         $form->setTitle(sprintf($this->translate('Edit User Group Backend %s'), $backendName));
         $form->setIniConfig(Config::app('groups'));
