@@ -86,9 +86,15 @@ cp -prv modules/{monitoring,setup,doc,translation}  %{buildroot}/%{basedir}/modu
 cp -prv library/Icinga                              %{buildroot}/%{phpdir}
 cp -prv library/vendor                              %{buildroot}/%{basedir}/library
 cp -pv  packages/files/bin/icingacli                %{buildroot}/%{bindir}
-cp -prv packages/files/config/modules/setup         %{buildroot}/%{configdir}/modules/
-cp -pv  packages/files/httpd/icingaweb2.conf        %{buildroot}/%{apache_configdir}/icingaweb2.conf
-cp -pv  packages/files/nginx/icingaweb2.conf        %{buildroot}/%{nginx_configdir}/icingaweb2.conf
+cp -prv packages/files/config/modules/setup         %{buildroot}/%{configdir}/modules
+
+%if 0%{?fedora} || 0%{?rhel} || 0%{?amzn}
+cp -pv  packages/files/httpd/icingaweb2-mod_proxy_fcgi.conf     %{buildroot}/%{apache_configdir}/icingaweb2.conf
+cp -pv  packages/files/nginx/icingaweb2.conf                    %{buildroot}/%{nginx_configdir}/icingaweb2.conf
+%else
+cp -pv  packages/files/httpd/icingaweb2-mod_php.conf            %{buildroot}/%{apache_configdir}/icingaweb2.conf
+%endif
+
 cp -pv  packages/files/php-fpm/icingaweb2.conf      %{buildroot}/%{phpfpm_configdir}/icingaweb2.conf
 cp -pv  packages/files/public/index.php             %{buildroot}/%{basedir}/public
 cp -prv public/{css,img,js,error_*.html}            %{buildroot}/%{basedir}/public
@@ -101,13 +107,12 @@ fi
 if getent passwd %{apache_user} >/dev/null; then
     usermod -A icingacmd,%{icingaweb_group} %{apache_user}
 fi
-if getent passwd %{nginx_user} >/dev/null; then
-    usermod -A icingacmd,%{icingaweb_group} %{nginx_user}
-fi
 %else
 if getent passwd %{apache_user} >/dev/null; then
     usermod -a -G icingacmd,%{icingaweb_group} %{apache_user}
 fi
+%endif
+%if 0%{?fedora} || 0%{?rhel} || 0%{?amzn}
 if getent passwd %{nginx_user} >/dev/null; then
     usermod -a -G icingacmd,%{icingaweb_group} %{nginx_user}
 fi
@@ -126,7 +131,11 @@ exit 0
 %{basedir}/modules
 %{basedir}/public
 %config(noreplace) %{apache_configdir}/icingaweb2.conf
+
+%if 0%{?fedora} || 0%{?rhel} || 0%{?amzn}
 %config(noreplace) %{nginx_configdir}/icingaweb2.conf
+%endif
+
 %attr(2770,root,%{icingaweb_group}) %config(noreplace) %dir %{configdir}/modules/setup
 %attr(0660,root,%{icingaweb_group}) %config(noreplace) %{configdir}/modules/setup/config.ini
 %attr(2775,root,%{icingaweb_group}) %dir %{logdir}
