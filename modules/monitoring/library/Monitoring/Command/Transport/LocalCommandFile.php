@@ -7,9 +7,9 @@ use Exception;
 use RuntimeException;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Module\Monitoring\Command\Exception\CommandTransportException;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
 use Icinga\Module\Monitoring\Command\Renderer\IcingaCommandFileCommandRenderer;
+use Icinga\Module\Monitoring\Exception\CommandTransportException;
 use Icinga\Util\File;
 
 /**

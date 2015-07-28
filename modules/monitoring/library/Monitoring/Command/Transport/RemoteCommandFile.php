@@ -6,9 +6,9 @@ namespace Icinga\Module\Monitoring\Command\Transport;
 use Icinga\Application\Logger;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Module\Monitoring\Command\Exception\CommandTransportException;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
 use Icinga\Module\Monitoring\Command\Renderer\IcingaCommandFileCommandRenderer;
+use Icinga\Module\Monitoring\Exception\CommandTransportException;
 
 /**
  * A remote Icinga command file
