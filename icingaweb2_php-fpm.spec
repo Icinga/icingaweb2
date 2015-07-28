@@ -79,19 +79,19 @@ mkdir -p %{buildroot}/%{basedir}/{modules,library,public}
 mkdir -p %{buildroot}/{%{_sysconfdir}/bash_completion.d,%{bindir},%{configdir}/modules/setup,%{docsdir},%{logdir}}
 mkdir -p %{buildroot}/{%{phpdir},%{phpfpm_configdir},%{apache_configdir},%{nginx_configdir}}
 
-cp -prv application doc                                                 %{buildroot}/%{basedir}
-cp -pv  etc/bash_completion.d/icingacli                                 %{buildroot}/%{_sysconfdir}/bash_completion.d/icingacli
-cp -prv etc/schema                                                      %{buildroot}/%{docsdir}
-cp -prv modules/{monitoring,setup,doc,translation}                      %{buildroot}/%{basedir}/modules
-cp -prv library/Icinga                                                  %{buildroot}/%{phpdir}
-cp -prv library/vendor                                                  %{buildroot}/%{basedir}/library
-cp -pv  packages/files/bin/icingacli                                    %{buildroot}/%{bindir}
-cp -prv packages/files/config/modules/setup                             %{buildroot}/%{configdir}/modules/
-cp -pv  packages/files/httpd/icingaweb2.conf                            %{buildroot}/%{apache_configdir}/icingaweb2.conf
-cp -pv  packages/files/nginx/icingaweb2.conf                            %{buildroot}/%{nginx_configdir}/icingaweb2.conf
-cp -pv  packages/files/php-fpm/icingaweb2.conf                          %{buildroot}/%{phpfpm_configdir}/icingaweb2.conf
-cp -pv  packages/files/public/index.php                                 %{buildroot}/%{basedir}/public
-cp -prv public/{css,img,js,error_norewrite.html}                        %{buildroot}/%{basedir}/public
+cp -prv application doc                             %{buildroot}/%{basedir}
+cp -pv  etc/bash_completion.d/icingacli             %{buildroot}/%{_sysconfdir}/bash_completion.d/icingacli
+cp -prv etc/schema                                  %{buildroot}/%{docsdir}
+cp -prv modules/{monitoring,setup,doc,translation}  %{buildroot}/%{basedir}/modules
+cp -prv library/Icinga                              %{buildroot}/%{phpdir}
+cp -prv library/vendor                              %{buildroot}/%{basedir}/library
+cp -pv  packages/files/bin/icingacli                %{buildroot}/%{bindir}
+cp -prv packages/files/config/modules/setup         %{buildroot}/%{configdir}/modules/
+cp -pv  packages/files/httpd/icingaweb2.conf        %{buildroot}/%{apache_configdir}/icingaweb2.conf
+cp -pv  packages/files/nginx/icingaweb2.conf        %{buildroot}/%{nginx_configdir}/icingaweb2.conf
+cp -pv  packages/files/php-fpm/icingaweb2.conf      %{buildroot}/%{phpfpm_configdir}/icingaweb2.conf
+cp -pv  packages/files/public/index.php             %{buildroot}/%{basedir}/public
+cp -prv public/{css,img,js,error_*.html}            %{buildroot}/%{basedir}/public
 
 %pre
 if ! getent group icingacmd >/dev/null; then
