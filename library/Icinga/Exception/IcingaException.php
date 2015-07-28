@@ -40,7 +40,7 @@ class IcingaException extends Exception
         $e = new ReflectionClass(get_called_class());
         return $e->newInstanceArgs($args);
     }
-    
+
     /**
      * Return the given exception formatted as one-liner
      *
