@@ -36,8 +36,10 @@ class Customvar extends DataView
     {
         return array(
             'varname' => array(
-                'varname'  => self::SORT_ASC,
-                'varvalue' => self::SORT_ASC,
+                'columns' => array(
+                    'varname',
+                    'varvalue'
+                )
             )
         );
     }
