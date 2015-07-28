@@ -1,7 +1,6 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use \Zend_Controller_Action_Exception;
 use Icinga\Application\Icinga;
 use Icinga\Module\Doc\DocController;
 
@@ -25,10 +24,7 @@ class Doc_IcingawebController extends DocController
                 return $path;
             }
         }
-        throw new Zend_Controller_Action_Exception(
-            $this->translate('Documentation for Icinga Web 2 is not available'),
-            404
-        );
+        $this->httpNotFound($this->translate('Documentation for Icinga Web 2 is not available'));
     }
 
     /**
