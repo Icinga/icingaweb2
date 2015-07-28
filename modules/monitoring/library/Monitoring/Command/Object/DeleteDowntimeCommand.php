@@ -27,17 +27,20 @@ class DeleteDowntimeCommand extends IcingaCommand
     /**
      * Set if this command affects a service
      *
-     * @param type $value
+     * @param   bool $isService
+     *
+     * @return  $this
      */
-    public function setIsService($value = true)
+    public function setIsService($isService = true)
     {
-        $this->isService = (bool) $value;
+        $this->isService = (bool) $isService;
+        return $this;
     }
-    
+
     /**
      * Return whether the command affects a service
      *
-     * @return type
+     * @return bool
      */
     public function getIsService()
     {
