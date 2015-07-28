@@ -43,7 +43,7 @@ class AuthChain implements Iterator
     /**
      * Rewind the chain
      *
-     * @return  ConfigObject
+     * @return ConfigObject
      */
     public function rewind()
     {
@@ -64,7 +64,7 @@ class AuthChain implements Iterator
     /**
      * Return the key of the current user backend config
      *
-     * @return  string
+     * @return string
      */
     public function key()
     {
@@ -74,7 +74,7 @@ class AuthChain implements Iterator
     /**
      * Move forward to the next user backend config
      *
-     * @return  ConfigObject
+     * @return ConfigObject
      */
     public function next()
     {
@@ -84,17 +84,17 @@ class AuthChain implements Iterator
     /**
      * Check if the current user backend is valid, i.e. it's enabled and the config is valid
      *
-     * @return  bool
+     * @return bool
      */
     public function valid()
     {
-        if (!$this->config->valid()) {
+        if (! $this->config->valid()) {
             // Stop when there are no more backends to check
             return false;
         }
 
         $backendConfig = $this->config->current();
-        if ((bool) $backendConfig->get('disabled', false) === true) {
+        if ((bool) $backendConfig->get('disabled', false)) {
             $this->next();
             return $this->valid();
         }
