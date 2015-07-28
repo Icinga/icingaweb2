@@ -7,7 +7,7 @@ use RecursiveIterator;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
-use Icinga\Authentication\Manager;
+use Icinga\Authentication\Auth;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
@@ -208,7 +208,7 @@ class Menu implements RecursiveIterator
     {
         $menu = new static('menu');
         $menu->addMainMenuItems();
-        $auth = Manager::getInstance();
+        $auth = Auth::getInstance();
         $manager = Icinga::app()->getModuleManager();
         foreach ($manager->getLoadedModules() as $module) {
             if ($auth->hasPermission($manager::MODULE_PERMISSION_NS . $module->getName())) {
@@ -223,7 +223,7 @@ class Menu implements RecursiveIterator
      */
     protected function addMainMenuItems()
     {
-        $auth = Manager::getInstance();
+        $auth = Auth::getInstance();
 
         if ($auth->isAuthenticated()) {
 

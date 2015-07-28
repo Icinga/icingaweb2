@@ -15,7 +15,7 @@ use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Session;
 
-class Manager
+class Auth
 {
     /**
      * Singleton instance
@@ -44,7 +44,7 @@ class Manager
     public static function getInstance()
     {
         if (self::$instance === null) {
-            self::$instance = new static();
+            self::$instance = new self();
         }
         return self::$instance;
     }

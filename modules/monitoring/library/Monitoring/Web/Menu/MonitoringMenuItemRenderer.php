@@ -3,7 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Web\Menu;
 
-use Icinga\Authentication\Manager;
+use Icinga\Authentication\Auth;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 use Icinga\Web\Menu;
@@ -27,7 +27,7 @@ class MonitoringMenuItemRenderer extends MenuItemRenderer
     protected static function applyRestriction($restriction, Filterable $filterable)
     {
         $restrictions = Filter::matchAny();
-        foreach (Manager::getInstance()->getRestrictions($restriction) as $filter) {
+        foreach (Auth::getInstance()->getRestrictions($restriction) as $filter) {
             $restrictions->addFilter(Filter::fromQueryString($filter));
         }
         $filterable->applyFilter($restrictions);

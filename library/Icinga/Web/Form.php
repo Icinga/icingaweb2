@@ -8,7 +8,7 @@ use Zend_Form;
 use Zend_Form_Element;
 use Zend_View_Interface;
 use Icinga\Application\Icinga;
-use Icinga\Authentication\Manager;
+use Icinga\Authentication\Auth;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Security\SecurityException;
 use Icinga\Util\Translator;
@@ -179,7 +179,7 @@ class Form extends Zend_Form
     /**
      * Authentication manager
      *
-     * @var Manager|null
+     * @var Auth|null
      */
     private $auth;
 
@@ -1344,12 +1344,12 @@ class Form extends Zend_Form
     /**
      * Get the authentication manager
      *
-     * @return Manager
+     * @return Auth
      */
     public function Auth()
     {
         if ($this->auth === null) {
-            $this->auth = Manager::getInstance();
+            $this->auth = Auth::getInstance();
         }
         return $this->auth;
     }

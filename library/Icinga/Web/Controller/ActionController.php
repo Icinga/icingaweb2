@@ -6,7 +6,7 @@ namespace Icinga\Web\Controller;
 use Exception;
 use Icinga\Application\Benchmark;
 use Icinga\Application\Config;
-use Icinga\Authentication\Manager;
+use Icinga\Authentication\Auth;
 use Icinga\Exception\Http\HttpMethodNotAllowedException;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
@@ -52,7 +52,7 @@ class ActionController extends Zend_Controller_Action
     /**
      * Authentication manager
      *
-     * @var Manager|null
+     * @var Auth|null
      */
     private $auth;
 
@@ -124,12 +124,12 @@ class ActionController extends Zend_Controller_Action
     /**
      * Get the authentication manager
      *
-     * @return Manager
+     * @return Auth
      */
     public function Auth()
     {
         if ($this->auth === null) {
-            $this->auth = Manager::getInstance();
+            $this->auth = Auth::getInstance();
         }
         return $this->auth;
     }
