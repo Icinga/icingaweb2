@@ -373,8 +373,11 @@
         var container = evt.target;
         var self = evt.data.self;
 
-        // initialize all rows with the correct link, to assure that
+        // initialize all rows with the correct link
         $('table.action tr', container).each(function(idx, el) {
+            // IE will not ignore user-select unless we cancel selectstart
+            $(el).on('selectstart', false);
+
             var $a = $('a[href].rowaction', el).first();
             if ($a.length) {
                 // TODO: Find out whether we leak memory on IE with this:
