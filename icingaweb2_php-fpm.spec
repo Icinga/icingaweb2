@@ -95,9 +95,6 @@ cp -pv  packages/files/public/index.php                                 %{buildr
 cp -prv public/{css,img,js,error_norewrite.html}                        %{buildroot}/%{basedir}/public
 
 %pre
-if ! getent passwd %{icingaweb_user} >/dev/null; then
-    useradd -r %{icingaweb_user} -N -s /bin/false -g %{icingaweb_group}
-fi
 if ! getent group icingacmd >/dev/null; then
     groupadd -r icingacmd
 fi
@@ -199,10 +196,16 @@ Icinga Web 2 PHP library
 %package php-fpm-config
 Summary:    php-fpm configuration file for Icinga Web 2
 Group:      System Environment/Libraries
-Requires:   php-fpm
+Requires:   %{name}-common = %{version}-%{release}
 
 %description php-fpm-config
 php-fpm configuration file for Icinga Web 2
+
+%pre php-fpm-config
+if ! getent passwd %{icingaweb_user} >/dev/null; then
+    useradd -r %{icingaweb_user} -N -s /bin/false -g %{icingaweb_group}
+fi
+exit 0
 
 %files php-fpm-config
 %defattr(-,root,root)
