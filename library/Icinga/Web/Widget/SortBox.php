@@ -3,10 +3,11 @@
 
 namespace Icinga\Web\Widget;
 
+use Icinga\Application\Icinga;
+use Icinga\Data\Sortable;
+use Icinga\Data\SortRules;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
-use Icinga\Data\Sortable;
-use Icinga\Application\Icinga;
 
 /**
  * SortBox widget
@@ -113,11 +114,39 @@ class SortBox extends AbstractWidget
             if ($request === null) {
                 $request = Icinga::app()->getFrontController()->getRequest();
             }
-            if ($sort = $request->getParam('sort')) {
+
+            if (($sort = $request->getParam('sort'))) {
                 $this->query->order($sort, $request->getParam('dir'));
+            } elseif (($dir = $request->getParam('dir'))) {
+                $this->query->order(null, $dir);
             }
         }
+
         return $this;
+    }
+
+    /**
+     * Return the default sort rule for the query
+     *
+     * @param   string  $column     An optional column
+     *
+     * @return  array               An array of two values: $column, $direction
+     */
+    protected function getSortDefaults($column = null)
+    {
+        $direction = null;
+        if ($this->query !== null && $this->query instanceof SortRules) {
+            $sortRules = $this->query->getSortRules();
+            if ($column === null) {
+                $column = key($sortRules);
+            }
+
+            if ($column !== null && isset($sortRules[$column]['order'])) {
+                $direction = strtoupper($sortRules[$column]['order']) === Sortable::SORT_DESC ? 'desc' : 'asc';
+            }
+        }
+
+        return array($column, $direction);
     }
 
     /**
@@ -166,17 +195,29 @@ class SortBox extends AbstractWidget
             )
         );
 
+        $column = null;
         if ($this->request) {
             $url = $this->request->getUrl();
             if ($url->hasParam('sort')) {
-                $columnForm->populate(array('sort' => $url->getParam('sort')));
-            }
+                $column = $url->getParam('sort');
 
-            if ($url->hasParam('dir')) {
-                $orderForm->populate(array('dir' => $url->getParam('dir')));
+                if ($url->hasParam('dir')) {
+                    $direction = $url->getParam('dir');
+                } else {
+                    list($_, $direction) = $this->getSortDefaults($column);
+                }
+            } elseif ($url->hasParam('dir')) {
+                $direction = $url->getParam('dir');
+                list($column, $_) = $this->getSortDefaults();
             }
         }
 
+        if ($column === null) {
+            list($column, $direction) = $this->getSortDefaults();
+        }
+
+        $columnForm->populate(array('sort' => $column));
+        $orderForm->populate(array('dir' => $direction));
         return '<div class="sort-control">' . $columnForm . $orderForm . '</div>';
     }
 }
