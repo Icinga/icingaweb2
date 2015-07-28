@@ -13,17 +13,15 @@ use Icinga\Web\Notification;
 class DeleteDowntimeCommandForm extends CommandForm
 {
     /**
-     * (non-PHPDoc)
-     * @see \Zend_Form::init() For the method documentation.
+     * {@inheritdoc}
      */
     public function init()
     {
         $this->setAttrib('class', 'inline');
     }
-    
+
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::createElements() For the method documentation.
+     * {@inheritdoc}
      */
     public function createElements(array $formData = array())
     {
@@ -57,10 +55,9 @@ class DeleteDowntimeCommandForm extends CommandForm
         );
         return $this;
     }
-    
+
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::addSubmitButton() For the method documentation.
+     * {@inheritdoc}
      */
     public function addSubmitButton()
     {
@@ -79,10 +76,9 @@ class DeleteDowntimeCommandForm extends CommandForm
         );
         return $this;
     }
-   
+
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::onSuccess() For  the method documentation.
+     * {@inheritdoc}
      */
     public function onSuccess()
     {
@@ -90,7 +86,7 @@ class DeleteDowntimeCommandForm extends CommandForm
         $cmd->setDowntimeId($this->getElement('downtime_id')->getValue());
         $cmd->setIsService($this->getElement('downtime_is_service')->getValue());
         $this->getTransport($this->request)->send($cmd);
-    
+
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);
