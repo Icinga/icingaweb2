@@ -4,7 +4,7 @@
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\DeleteDowntimeCommand;
-use \Icinga\Module\Monitoring\Forms\Command\CommandForm;
+use Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 
 /**
@@ -18,7 +18,7 @@ class DeleteDowntimesCommandForm extends CommandForm
      * @var array
      */
     protected $downtimes;
-    
+
     /**
      * (non-PHPDoc)
      * @see \Zend_Form::init() For the method documentation.
@@ -43,7 +43,7 @@ class DeleteDowntimesCommandForm extends CommandForm
         ));
         return $this;
     }
- 
+
     /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
@@ -52,7 +52,7 @@ class DeleteDowntimesCommandForm extends CommandForm
     {
         return $this->translatePlural('Remove', 'Remove All', count($this->downtimes));
     }
-    
+
     /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::onSuccess() For the method documentation.
@@ -72,7 +72,7 @@ class DeleteDowntimesCommandForm extends CommandForm
         Notification::success($this->translate('Deleting downtime.'));
         return true;
     }
-    
+
     /**
      * Set the downtimes to be deleted upon success
      *
