@@ -63,24 +63,34 @@ class RoleForm extends ConfigForm
     public function init()
     {
         $helper = new Zend_Form_Element('bogus');
-        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
+        $mm = Icinga::app()->getModuleManager();
+        foreach ($mm->listInstalledModules() as $moduleName) {
+            $modulePermission = $mm::MODULE_PERMISSION_NS . $moduleName;
+            $this->providedPermissions[$modulePermission] = sprintf(
+                $this->translate('Allow access to module %s') . ' (%s)',
+                $moduleName,
+                $modulePermission
+            );
+
+            $module = $mm->getModule($moduleName, false);
             foreach ($module->getProvidedPermissions() as $permission) {
                 /** @var object $permission */
-                $this->providedPermissions[$permission->name] = $permission->description . ' (' . $permission->name . ')';
+                $this->providedPermissions[$permission->name] = $permission->description
+                    . ' (' . $permission->name . ')';
             }
             foreach ($module->getProvidedRestrictions() as $restriction) {
                 /** @var object $restriction */
-                $name = $helper->filterName($restriction->name); // Zend only permits alphanumerics, the underscore,
-                                                                 // the circumflex and any ASCII character in range
-                                                                 // \x7f to \xff (127 to 255)
+                // Zend only permits alphanumerics, the underscore, the circumflex and any ASCII character in range
+                // \x7f to \xff (127 to 255)
+                $name = $helper->filterName($restriction->name);
                 while (isset($this->providedRestrictions[$name])) {
                     // Because Zend_Form_Element::filterName() replaces any not permitted character with the empty
                     // string we may have duplicate names, e.g. 're/striction' and 'restriction'
                     $name .= '_';
                 }
                 $this->providedRestrictions[$name] = array(
-                    'description'   => $restriction->description,
-                    'name'          => $restriction->name
+                    'description' => $restriction->description,
+                    'name'        => $restriction->name
                 );
             }
         }

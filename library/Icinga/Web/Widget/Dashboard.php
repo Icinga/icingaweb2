@@ -70,13 +70,13 @@ class Dashboard extends AbstractWidget
     {
         $manager = Icinga::app()->getModuleManager();
         foreach ($manager->getLoadedModules() as $module) {
-            /** @var $module \Icinga\Application\Modules\Module */
-            $this->mergePanes($module->getPaneItems());
+            if ($this->getUser()->can($manager::MODULE_PERMISSION_NS . $module->getName())) {
+                $this->mergePanes($module->getPaneItems());
+            }
 
         }
-        if ($this->user !== null) {
-            $this->loadUserDashboards();
-        }
+
+        $this->loadUserDashboards();
 
         return $this;
     }
@@ -90,11 +90,11 @@ class Dashboard extends AbstractWidget
     {
         $output = array();
         foreach ($this->panes as $pane) {
-            if ($pane->isUserWidget() === true) {
+            if ($pane->isUserWidget()) {
                 $output[$pane->getName()] = $pane->toArray();
             }
             foreach ($pane->getDashlets() as $dashlet) {
-                if ($dashlet->isUserWidget() === true) {
+                if ($dashlet->isUserWidget()) {
                     $output[$pane->getName() . '.' . $dashlet->getTitle()] = $dashlet->toArray();
                 }
             }

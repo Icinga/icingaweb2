@@ -206,13 +206,14 @@ class Menu implements RecursiveIterator
      */
     public static function load()
     {
-        /** @var $menu \Icinga\Web\Menu */
         $menu = new static('menu');
         $menu->addMainMenuItems();
+        $auth = Manager::getInstance();
         $manager = Icinga::app()->getModuleManager();
         foreach ($manager->getLoadedModules() as $module) {
-            /** @var $module \Icinga\Application\Modules\Module */
-            $menu->mergeSubMenus($module->getMenuItems());
+            if ($auth->hasPermission($manager::MODULE_PERMISSION_NS . $module->getName())) {
+                $menu->mergeSubMenus($module->getMenuItems());
+            }
         }
         return $menu->order();
     }

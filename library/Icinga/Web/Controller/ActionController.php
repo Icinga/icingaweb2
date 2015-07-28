@@ -155,7 +155,7 @@ class ActionController extends Zend_Controller_Action
      */
     public function assertPermission($permission)
     {
-        if (! $this->Auth()->hasPermission($permission)) {
+        if ($this->requiresAuthentication && ! $this->Auth()->hasPermission($permission)) {
             throw new SecurityException('No permission for %s', $permission);
         }
     }

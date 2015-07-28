@@ -4,7 +4,7 @@
 </div>
 <div class="content">
     <ul>
-    <?php foreach ($modules as $module): ?>
+    <?php foreach ($modules as $module): /** @var \Icinga\Application\Modules\Module $module */ ?>
         <li><?= $this->qlink(
             $module->getTitle(),
             'doc/module/toc',

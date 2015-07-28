@@ -8,11 +8,11 @@ namespace Tests\Icinga\Web;
 require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
 
 use Mockery;
-use Icinga\Application\Icinga;
+use Icinga\Test\BaseTestCase;
+use Icinga\User;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Dashlet;
-use Icinga\Test\BaseTestCase;
 
 class DashletWithMockedView extends Dashlet
 {
@@ -52,6 +52,7 @@ class DashboardTest extends BaseTestCase
         $moduleMock->shouldReceive('getPaneItems')->andReturn(array(
             'test-pane' => new Pane('Test Pane')
         ));
+        $moduleMock->shouldReceive('getName')->andReturn('test');
 
         $moduleManagerMock = Mockery::mock('Icinga\Application\Modules\Manager');
         $moduleManagerMock->shouldReceive('getLoadedModules')->andReturn(array(
@@ -130,7 +131,10 @@ class DashboardTest extends BaseTestCase
      */
     public function testLoadPaneItemsProvidedByEnabledModules()
     {
+        $user = new User('test');
+        $user->setPermissions(array('*' => '*'));
         $dashboard = new Dashboard();
+        $dashboard->setUser($user);
         $dashboard->load();
 
         $this->assertCount(

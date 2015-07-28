@@ -290,3 +290,9 @@ The first release candidate of Icinga Web 2 introduces the following non-backwar
 the [EPEL repository](http://fedoraproject.org/wiki/EPEL). Before, Zend was installed as Icinga Web 2 vendor library
 through the package `icingaweb2-vendor-zend`. After upgrading, please make sure to remove the package
 `icingaweb2-vendor-zend`.
+
+* Icinga Web 2 version 2.0.0 requires permissions for accessing modules. Those permissions are automatically generated
+for each installed module in the format `module/<moduleName>`. Administrators have to grant the module permissions to
+users and/or user groups in the roles configuration for permitting access to specific modules.
+In addition, restrictions provided by modules are now configurable for each installed module too. Before,
+a module had to be enabled before having the possibility to configure restrictions.

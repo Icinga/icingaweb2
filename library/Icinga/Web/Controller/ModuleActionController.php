@@ -5,6 +5,7 @@ namespace Icinga\Web\Controller;
 
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
+use Icinga\Application\Modules\Manager;
 
 /**
  * Base class for module action controllers
@@ -34,6 +35,9 @@ class ModuleActionController extends ActionController
         $this->_helper->layout()->moduleName = $this->moduleName;
         $this->view->translationDomain = $this->moduleName;
         $this->moduleInit();
+        if ($this->getFrontController()->getDefaultModule() !== $this->moduleName) {
+            $this->assertPermission(Manager::MODULE_PERMISSION_NS . $this->moduleName);
+        }
     }
 
     /**
