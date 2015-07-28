@@ -37,7 +37,10 @@ Packager:       Icinga Team <info@icinga.org>
 %{?fedora:Requires(pre):        shadow-utils}
 %{?rhel:Requires(pre):          shadow-utils}
 %{?suse_version:Requires(pre):  pwdutils}
-Requires:                       php-fpm >= 5.3.0
+%{?amzn:Requires:               webserver php-fpm >= 5.3.0 %{name}-php-fpm-config = %{version}-%{release}}
+%{?fedora:Requires:             webserver php-fpm >= 5.3.0 %{name}-php-fpm-config = %{version}-%{release}}
+%{?rhel:Requires:               webserver php-fpm >= 5.3.0 %{name}-php-fpm-config = %{version}-%{release}}
+%{?suse_version:Requires:       http_daemon php-engine}
 Requires:                       %{name}-common = %{version}-%{release}
 Requires:                       php-Icinga = %{version}-%{release}
 Requires:                       %{name}-vendor-dompdf
@@ -45,10 +48,6 @@ Requires:                       %{name}-vendor-HTMLPurifier
 Requires:                       %{name}-vendor-JShrink
 Requires:                       %{name}-vendor-lessphp
 Requires:                       %{name}-vendor-Parsedown
-%{?suse_version:Requires:       http_daemon}
-%{?amzn:Requires:               webserver}
-%{?fedora:Requires:             webserver}
-%{?rhel:Requires:               webserver}
 
 %define basedir                 %{_datadir}/%{name}
 %define bindir                  %{_bindir}
