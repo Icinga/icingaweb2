@@ -32,7 +32,7 @@ namespace Icinga\Test {
     /**
      * Class BaseTestCase
      */
-    class BaseTestCase extends PHPUnit_Framework_TestCase implements DbTest
+    abstract class BaseTestCase extends PHPUnit_Framework_TestCase implements DbTest
     {
         /**
          * Path to application/
