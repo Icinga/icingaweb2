@@ -3,9 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Forms;
 
-use Icinga\Data\Filter\FilterNot;
 use Icinga\Web\Url;
-use \Zend_Form;
 use Icinga\Web\Form;
 use Icinga\Data\Filter\Filter;
 
@@ -15,7 +13,7 @@ use Icinga\Data\Filter\Filter;
 class EventOverviewForm extends Form
 {
     /**
-     * Initialize this form
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -28,7 +26,7 @@ class EventOverviewForm extends Form
     }
 
     /**
-     * @see Form::createElements()
+     * {@inheritdoc}
      */
     public function createElements(array $formData)
     {
