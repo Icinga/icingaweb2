@@ -427,7 +427,6 @@
                             } else {
                                 icinga.ui.layout1col();
                             }
-                            $('table tr[href].active').removeClass('active');
                             icinga.history.pushCurrentState();
                         }
                     }

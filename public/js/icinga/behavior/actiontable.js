@@ -397,6 +397,13 @@
         $(container).find('.selection-info-count').text(table.selections().size());
     };
 
+    ActionTable.prototype.clearAll = function () {
+        var self = this;
+        this.tables().each(function () {
+            new Selection(this, self.icinga).clear();
+        });
+    };
+
     Icinga.Behaviors.ActionTable = ActionTable;
 
 }) (Icinga, jQuery);

@@ -241,6 +241,9 @@
             $('#layout').removeClass('twocols');
             this.closeContainer($('#col2'));
             this.disableCloseButtons();
+
+            // one-column layouts never have any selection active
+            this.icinga.behaviors.actiontable.clearAll();
         },
 
         closeContainer: function($c) {
