@@ -110,6 +110,15 @@ Requires:                   php-Icinga = %{version}-%{release}
 Icinga CLI
 
 
+%package php-fpm-config
+Summary:    php-fpm configuration file for Icinga Web 2
+Group:      System Environment/Libraries
+Requires:   php-fpm
+
+%description php-fpm-config
+php-fpm configuration file for Icinga Web 2
+
+
 %package vendor-dompdf
 Version:    0.6.1
 Release:    1%{?dist}
@@ -242,7 +251,6 @@ exit 0
 %{basedir}/public
 %config(noreplace) %{apache_configdir}/icingaweb2.conf
 %config(noreplace) %{nginx_configdir}/icingaweb2.conf
-%config(noreplace) %{phpfpm_configdir}/icingaweb2.conf
 %attr(2770,root,%{icingaweb_group}) %config(noreplace) %dir %{configdir}/modules/setup
 %attr(0660,root,%{icingaweb_group}) %config(noreplace) %{configdir}/modules/setup/config.ini
 %attr(2775,root,%{icingaweb_group}) %dir %{logdir}
@@ -275,6 +283,11 @@ exit 0
 %files -n php-Icinga
 %defattr(-,root,root)
 %{phpdir}/Icinga
+
+
+%files php-fpm-config
+%defattr(-,root,root)
+%config(noreplace) %{phpfpm_configdir}/icingaweb2.conf
 
 
 %files -n icingacli
