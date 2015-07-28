@@ -92,9 +92,6 @@ class Doc_SearchController extends DocController
                 return $path;
             }
         }
-        throw new Zend_Controller_Action_Exception(
-            $this->translate('Documentation for Icinga Web 2 is not available'),
-            404
-        );
+        $this->httpNotFound($this->translate('Documentation for Icinga Web 2 is not available'));
     }
 }
