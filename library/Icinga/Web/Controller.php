@@ -53,13 +53,14 @@ class Controller extends ModuleActionController
     /**
      * Immediately respond w/ HTTP 404
      *
-     * @param   $message
+     * @param   string  $message    Exception message or exception format string
+     * @param   mixed   ...$arg     Format string argument
      *
      * @throws  HttpNotFoundException
      */
     public function httpNotFound($message)
     {
-        throw new HttpNotFoundException($message);
+        throw HttpNotFoundException::create(func_get_args());
     }
 
     /**
