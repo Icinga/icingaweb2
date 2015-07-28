@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms\Config\UserBackend;
 
+use Exception;
 use Icinga\Data\ResourceFactory;
 use Icinga\Web\Form;
 
@@ -123,9 +124,17 @@ class LdapBackendForm extends Form
                 $connection = ResourceFactory::create(
                     isset($formData['resource']) ? $formData['resource'] : reset($this->resources)
                 );
-                $capabilities = $connection->bind()->getCapabilities();
-                $baseDn = $capabilities->getDefaultNamingContext();
-                $hasAdOid = $capabilities->isActiveDirectory();
+
+                try {
+                    $capabilities = $connection->bind()->getCapabilities();
+                    $baseDn = $capabilities->getDefaultNamingContext();
+                    $hasAdOid = $capabilities->isActiveDirectory();
+                } catch (Exception $e) {
+                    $this->warning(sprintf(
+                        $this->translate('Failed to discover the chosen LDAP connection: %s'),
+                        $e->getMessage()
+                    ));
+                }
             }
         }
 
