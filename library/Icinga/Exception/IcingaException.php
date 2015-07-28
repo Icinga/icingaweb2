@@ -15,7 +15,7 @@ class IcingaException extends Exception
      *
      * If there is at least one exception, the last one will be also used for the exception chaining.
      */
-    public function __construct($message = '')
+    public function __construct($message)
     {
         $args = array_slice(func_get_args(), 1);
         $exc = null;
