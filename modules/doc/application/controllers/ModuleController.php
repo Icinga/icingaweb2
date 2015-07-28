@@ -35,10 +35,7 @@ class Doc_ModuleController extends DocController
         if ($suppressErrors) {
             return null;
         }
-        throw new Zend_Controller_Action_Exception(
-            sprintf($this->translate('Documentation for module \'%s\' is not available'), $module),
-            404
-        );
+        $this->httpNotFound($this->translate('Documentation for module \'%s\' is not available'), $module);
     }
 
     /**
@@ -75,10 +72,7 @@ class Doc_ModuleController extends DocController
         }
         $moduleManager = Icinga::app()->getModuleManager();
         if (! $moduleManager->hasInstalled($moduleName)) {
-            throw new Zend_Controller_Action_Exception(
-                sprintf($this->translate('Module \'%s\' is not installed'), $moduleName),
-                404
-            );
+            $this->httpNotFound($this->translate('Module \'%s\' is not installed'), $moduleName);
         }
     }
 
@@ -100,7 +94,7 @@ class Doc_ModuleController extends DocController
                 array('moduleName' => $module)
             );
         } catch (DocException $e) {
-            throw new Zend_Controller_Action_Exception($e->getMessage(), 404);
+            $this->httpNotFound($e->getMessage());
         }
     }
 
@@ -131,7 +125,7 @@ class Doc_ModuleController extends DocController
                 array('moduleName' => $module)
             );
         } catch (DocException $e) {
-            throw new Zend_Controller_Action_Exception($e->getMessage(), 404);
+            $this->httpNotFound($e->getMessage());
         }
     }
 
