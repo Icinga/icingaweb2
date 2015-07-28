@@ -78,7 +78,7 @@ abstract class Repository implements Selectable
     protected $filterColumns;
 
     /**
-     * The default sort rules to be applied on a query
+     * The sort rules to be applied on a query
      *
      * This may be initialized by concrete repository implementations, in the following format
      * <pre><code>
@@ -284,7 +284,7 @@ abstract class Repository implements Selectable
     }
 
     /**
-     * Return the default sort rules to be applied on a query
+     * Return the sort rules to be applied on a query
      *
      * Calls $this->initializeSortRules() in case $this->sortRules is null.
      *
