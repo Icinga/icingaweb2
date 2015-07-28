@@ -60,13 +60,13 @@ class DeleteCommentCommand extends IcingaCommand
     /**
      * Set whether the command affects a service
      *
-     * @param boolean $value    The value, defaults to true
+     * @param   bool $isService
      *
-     * @return this             fluent interface
+     * @return  $this
      */
-    public function setIsService($value = true)
+    public function setIsService($isService = true)
     {
-        $this->isService = (bool) $value;
+        $this->isService = (bool) $isService;
         return $this;
     }
 }
