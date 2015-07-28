@@ -9,11 +9,12 @@ use ReflectionClass;
 class IcingaException extends Exception
 {
     /**
-     * @param string $message   format string for vsprintf()
-     * Any futher args:         args for vsprintf()
-     * @see vsprintf
+     * Create a new exception
      *
-     * If there is at least one exception, the last one will be also used for the exception chaining.
+     * @param   string  $message    Exception message or exception format string
+     * @param   mixed   ...$arg     Format string argument
+     *
+     * If there is at least one exception, the last one will be used for exception chaining.
      */
     public function __construct($message)
     {
