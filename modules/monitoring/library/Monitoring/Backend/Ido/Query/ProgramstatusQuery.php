@@ -60,5 +60,8 @@ class ProgramstatusQuery extends IdoQuery
         if (version_compare($this->getIdoVersion(), '1.11.8', '<')) {
             $this->columnMap['programstatus']['program_version'] = '(NULL)';
         }
+        if (version_compare($this->getIdoVersion(), '1.8', '<')) {
+            $this->columnMap['programstatus']['disable_notif_expire_time'] = '(NULL)';
+        }
     }
 }

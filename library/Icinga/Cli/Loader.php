@@ -4,6 +4,7 @@
 namespace Icinga\Cli;
 
 use Icinga\Application\ApplicationBootstrap as App;
+use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Cli\Params;
 use Icinga\Cli\Screen;
@@ -265,7 +266,8 @@ class Loader
             if ($obj && $obj instanceof Command && $obj->showTrace()) {
                 echo $this->formatTrace($e->getTrace());
             }
-            $this->fail($e->getMessage());
+
+            $this->fail(IcingaException::describe($e));
         }
     }
 

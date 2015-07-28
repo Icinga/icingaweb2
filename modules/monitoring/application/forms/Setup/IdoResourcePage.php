@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Forms\Setup;
 
 use Icinga\Data\ConfigObject;
+use Icinga\Forms\Config\ResourceConfigForm;
 use Icinga\Forms\Config\Resource\DbResourceForm;
 use Icinga\Web\Form;
 use Icinga\Module\Monitoring\Forms\Config\BackendConfigForm;
@@ -71,13 +72,17 @@ class IdoResourcePage extends Form
         }
 
         if (! isset($formData['skip_validation']) || !$formData['skip_validation']) {
-            $configObject = new ConfigObject($this->getValues());
-            if (! DbResourceForm::isValidResource($this, $configObject)) {
+            $inspection = ResourceConfigForm::inspectResource($this);
+            if ($inspection !== null && $inspection->hasError()) {
+                $this->error($inspection->getError());
                 $this->addSkipValidationCheckbox($this->translate(
                     'Check this to not to validate connectivity with the given database server.'
                 ));
                 return false;
-            } elseif (
+            }
+
+            $configObject = new ConfigObject($this->getValues());
+            if (
                 ! BackendConfigForm::isValidIdoSchema($this, $configObject)
                 || !BackendConfigForm::isValidIdoInstance($this, $configObject)
             ) {

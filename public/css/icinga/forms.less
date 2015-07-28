@@ -25,7 +25,7 @@ label {
   font-weight: bold;
 }
 
-input, select {
+input, select, textarea {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -44,10 +44,19 @@ input[type=submit] {
   font-weight: bold;
   text-align: center;
   color: #fff;
-  border: 2px solid #ddd;
+  border: 1px solid;
   border-color: @colorPetrol;
   background: @colorPetrol;
   outline: 0;
+
+  &[disabled] {
+    background-color: #666;
+    border-color: black;
+  }
+
+  &:hover[disabled], &:active[disabled], &:focus[disabled] {
+    background-color: #666;
+  }
 }
 
 input[type=submit]:hover, a.button:hover, input[type=submit]:focus {
@@ -85,10 +94,6 @@ input::-moz-focus-inner {
 button::-moz-focus-inner {
   border: 0;
   outline: 0;
-}
-
-button {
-  cursor: pointer;
 }
 
 select::-moz-focus-inner {
@@ -190,7 +195,8 @@ form ul.form-notifications {
 }
 
 form div.element {
-  margin: 0.5em 0;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 form label {
@@ -198,6 +204,14 @@ form label {
   margin-right: 1em;
   font-size: 0.9em;
   width: 10em;
+}
+
+form div.element > * {
+  vertical-align: top;
+}
+
+form dt {
+  vertical-align: top;
 }
 
 select, input[type=text], textarea {
@@ -258,4 +272,77 @@ form ul.descriptions {
       list-style-type: none;
     }
   }
+}
+
+form ul.hints {
+  .non-list-like-list;
+  padding: 0.5em 0.5em 0 0.5em;
+
+  li {
+    font-size: 0.8em;
+    padding-bottom: 0.5em;
+  }
+}
+
+.control-group {
+  & > * {
+    float: left;
+    margin-right: 0.5em;
+  }
+
+  div.element {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  &:after {
+    content: ".";
+    visibility: hidden;
+    display: block;
+    height: 0;
+    clear: both;
+  }
+}
+
+button, .button-like {
+  font-size: 0.9em;
+  font-weight: bold;
+  outline: 0;
+  color: #fff;
+  padding: 0.2em;
+  border: 1px solid;
+  border-color: @colorPetrol;
+  background: @colorPetrol;
+
+  &[disabled] {
+    background-color: #666;
+    border-color: black;
+  }
+
+  &:hover, &:focus, &:active {
+    background-color: #333;
+    border-color: #333;
+    cursor: pointer;
+
+    &[disabled] {
+      background-color: #666;
+    }
+  }
+
+  &.icon-only {
+    font-size: 1.5em;
+    padding: 0;
+    border: none;
+    color: inherit;
+    background-color: transparent;
+
+    &:hover, &:focus, &:active {
+      color: #666;
+    }
+  }
+}
+
+a.button-like {
+  cursor: default;
+  text-decoration: none;
 }

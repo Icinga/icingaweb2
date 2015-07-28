@@ -16,7 +16,7 @@ abstract class CommandForm extends Form
     /**
      * Monitoring backend
      *
-     * @var Backend
+     * @var MonitoringBackend
      */
     protected $backend;
 
@@ -36,7 +36,7 @@ abstract class CommandForm extends Form
     /**
      * Get the monitoring backend
      *
-     * @return Backend
+     * @return MonitoringBackend
      */
     public function getBackend()
     {

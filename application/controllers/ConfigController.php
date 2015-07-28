@@ -5,6 +5,8 @@ use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Modules\Module;
 use Icinga\Data\ResourceFactory;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Config\UserBackendConfigForm;
 use Icinga\Forms\Config\UserBackendReorderForm;
 use Icinga\Forms\Config\GeneralConfigForm;
@@ -195,80 +197,129 @@ class ConfigController extends Controller
     }
 
     /**
-     * Action for creating a new user backend
+     * Create a new user backend
      */
     public function createuserbackendAction()
     {
         $this->assertPermission('config/application/userbackend');
         $form = new UserBackendConfigForm();
+        $form->setRedirectUrl('config/userbackend');
         $form->setTitle($this->translate('Create New User Backend'));
         $form->addDescription($this->translate(
             'Create a new backend for authenticating your users. This backend'
             . ' will be added at the end of your authentication order.'
         ));
         $form->setIniConfig(Config::app('authentication'));
-        $form->setResourceConfig(ResourceFactory::getResourceConfigs());
-        $form->setRedirectUrl('config/userbackend');
+
+        try {
+            $form->setResourceConfig(ResourceFactory::getResourceConfigs());
+        } catch (ConfigurationError $e) {
+            if ($this->hasPermission('config/application/resources')) {
+                Notification::error($e->getMessage());
+                $this->redirectNow('config/createresource');
+            }
+
+            throw $e; // No permission for resource configuration, show the error
+        }
+
+        $form->setOnSuccess(function (UserBackendConfigForm $form) {
+            try {
+                $form->add(array_filter($form->getValues()));
+            } catch (Exception $e) {
+                $form->error($e->getMessage());
+                return false;
+            }
+
+            if ($form->save()) {
+                Notification::success(t('User backend successfully created'));
+                return true;
+            }
+
+            return false;
+        });
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->render('userbackend/create');
+        $this->render('form');
     }
 
     /**
-     * Action for editing user backends
+     * Edit a user backend
      */
     public function edituserbackendAction()
     {
         $this->assertPermission('config/application/userbackend');
+        $backendName = $this->params->getRequired('backend');
+
         $form = new UserBackendConfigForm();
-        $form->setTitle($this->translate('Edit User Backend'));
-        $form->setIniConfig(Config::app('authentication'));
-        $form->setResourceConfig(ResourceFactory::getResourceConfigs());
         $form->setRedirectUrl('config/userbackend');
-        $form->setAction(Url::fromRequest());
-        $form->handleRequest();
+        $form->setTitle(sprintf($this->translate('Edit User Backend %s'), $backendName));
+        $form->setIniConfig(Config::app('authentication'));
+        $form->setOnSuccess(function (UserBackendConfigForm $form) use ($backendName) {
+            try {
+                $form->edit($backendName, array_map(
+                    function ($v) {
+                        return $v !== '' ? $v : null;
+                    },
+                    $form->getValues()
+                ));
+            } catch (Exception $e) {
+                $form->error($e->getMessage());
+                return false;
+            }
+
+            if ($form->save()) {
+                Notification::success(sprintf(t('User backend "%s" successfully updated'), $backendName));
+                return true;
+            }
+
+            return false;
+        });
+
+        try {
+            $form->load($backendName);
+            $form->setResourceConfig(ResourceFactory::getResourceConfigs());
+            $form->handleRequest();
+        } catch (NotFoundError $_) {
+            $this->httpNotFound(sprintf($this->translate('User backend "%s" not found'), $backendName));
+        }
 
         $this->view->form = $form;
-        $this->render('userbackend/modify');
+        $this->render('form');
     }
 
     /**
-     * Action for removing a user backend
+     * Display a confirmation form to remove the backend identified by the 'backend' parameter
      */
     public function removeuserbackendAction()
     {
         $this->assertPermission('config/application/userbackend');
-        $form = new ConfirmRemovalForm(array(
-            'onSuccess' => function ($form) {
-                $configForm = new UserBackendConfigForm();
-                $configForm->setIniConfig(Config::app('authentication'));
-                $authBackend = $form->getRequest()->getQuery('backend');
+        $backendName = $this->params->getRequired('backend');
 
-                try {
-                    $configForm->remove($authBackend);
-                } catch (InvalidArgumentException $e) {
-                    Notification::error($e->getMessage());
-                    return false;
-                }
-
-                if ($configForm->save()) {
-                    Notification::success(sprintf(
-                        t('User backend "%s" has been successfully removed'),
-                        $authBackend
-                    ));
-                } else {
-                    return false;
-                }
-            }
-        ));
-        $form->setTitle($this->translate('Remove User Backend'));
+        $backendForm = new UserBackendConfigForm();
+        $backendForm->setIniConfig(Config::app('authentication'));
+        $form = new ConfirmRemovalForm();
         $form->setRedirectUrl('config/userbackend');
-        $form->setAction(Url::fromRequest());
+        $form->setTitle(sprintf($this->translate('Remove User Backend %s'), $backendName));
+        $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($backendName, $backendForm) {
+            try {
+                $backendForm->delete($backendName);
+            } catch (Exception $e) {
+                $form->error($e->getMessage());
+                return false;
+            }
+
+            if ($backendForm->save()) {
+                Notification::success(sprintf(t('User backend "%s" successfully removed'), $backendName));
+                return true;
+            }
+
+            return false;
+        });
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->render('userbackend/remove');
+        $this->render('form');
     }
 
     /**

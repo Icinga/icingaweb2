@@ -3,41 +3,50 @@
 
 namespace Icinga\Module\Monitoring\Web\Menu;
 
-use Icinga\Web\Menu as Menu;
-use Icinga\Module\Monitoring\Backend\MonitoringBackend;
+use Icinga\Web\Menu;
 use Icinga\Web\Menu\MenuItemRenderer;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
 class BackendAvailabilityMenuItemRenderer extends MenuItemRenderer
 {
     /**
-     * Checks whether the monitoring backend is running or not
+     * Get whether or not the monitoring backend is currently running
      *
-     * @return mixed
+     * @return bool
      */
     protected function isCurrentlyRunning()
     {
-        return MonitoringBackend::instance()->select()->from(
-            'programstatus',
-            array(
-                'is_currently_running'
+        $programStatus = MonitoringBackend::instance()
+            ->select()
+            ->from(
+                'programstatus',
+                array('is_currently_running')
             )
-        )->getQuery()->fetchRow()->is_currently_running;
+            ->fetchRow();
+        return $programStatus !== false ? (bool) $programStatus : false;
     }
 
     /**
-     * @see MenuItemRenderer::render()
+     * {@inheritdoc}
      */
     public function render(Menu $menu)
     {
         return $this->getBadge() . $this->createLink($menu);
     }
 
+    /**
+     * Get the problem badge HTML
+     *
+     * @return string
+     */
     protected function getBadge()
     {
-        if (! (bool)$this->isCurrentlyRunning()) {
+        if (! $this->isCurrentlyRunning()) {
             return sprintf(
-                '<div title="%s" class="badge-container"><span class="badge badge-critical">%s</span></div>',
-                mt('monitoring', 'monitoring backend is not running'),
+                '<div title="%s" class="badge-container"><span class="badge badge-critical">%d</span></div>',
+                sprintf(
+                    mt('monitoring', 'Monitoring backend %s is not running'), MonitoringBackend::instance()->getName()
+                ),
                 1
             );
         }
@@ -51,10 +60,12 @@ class BackendAvailabilityMenuItemRenderer extends MenuItemRenderer
      */
     public function getSummary()
     {
-        if (! (bool)$this->isCurrentlyRunning()) {
+        if (! $this->isCurrentlyRunning()) {
             return array(
-                'problems' => 1,
-                'title' => mt('monitoring', 'monitoring backend is not running')
+                'problems'  => 1,
+                'title'     => sprintf(
+                    mt('monitoring', 'Monitoring backend %s is not running'), MonitoringBackend::instance()->getName()
+                )
             );
         }
         return null;

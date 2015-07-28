@@ -1,6 +1,6 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-form.sort-control {
+div.sort-control {
   .dontprint;
   float: right;
 
@@ -15,7 +15,13 @@ form.sort-control {
   }
 
   select[name=dir] {
-    width: 5em;
+    width: 8em;
     margin-left: 0;
   }
+}
+
+html.no-js div.sort-control form {
+  display: table;
+  margin-left: auto;
+  margin-top: 0.25em;
 }

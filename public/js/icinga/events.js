@@ -192,13 +192,13 @@
          *
          */
         submitForm: function (event, autosubmit) {
-            //return false;
             var self   = event.data.self;
             var icinga = self.icinga;
             // .closest is not required unless subelements to trigger this
             var $form = $(event.currentTarget).closest('form');
             var url = $form.attr('action');
             var method = $form.attr('method');
+            var encoding = $form.attr('enctype');
             var $button = $('input[type=submit]:focus', $form).add('button[type=submit]:focus', $form);
             var $target;
             var data;
@@ -230,12 +230,13 @@
                 method = method.toUpperCase();
             }
 
+            if (typeof encoding === 'undefined') {
+                encoding = 'application/x-www-form-urlencoded';
+            }
+
             if ($button.length === 0) {
                 $button = $('input[type=submit]', $form).add('button[type=submit]', $form).first();
             }
-
-            event.stopPropagation();
-            event.preventDefault();
 
             if ($button.length) {
                 // Activate spinner
@@ -266,14 +267,47 @@
 
                 url = icinga.utils.addUrlParams(url, dataObj);
             } else {
-                data = $form.serializeArray();
+                if (encoding === 'multipart/form-data') {
+                    if (typeof window.FormData === 'undefined') {
+                        icinga.loader.submitFormToIframe($form, url, $target);
+
+                        // Disable all form controls to prevent resubmission as early as possible.
+                        // (This relies on native form submission, so using setTimeout is the only possible solution)
+                        setTimeout(function () {
+                            $form.find(':input:not(:disabled)').prop('disabled', true);
+                        }, 0);
+
+                        if (! typeof autosubmit === 'undefined' && autosubmit) {
+                            if ($button.length) {
+                                // We're autosubmitting the form so the button has not been clicked, however,
+                                // to be really safe, we're disabling the button explicitly, just in case..
+                                $button.prop('disabled', true);
+                            }
+
+                            $form[0].submit(); // This should actually not trigger the onSubmit event, let's hope that this is true for all browsers..
+                            event.stopPropagation();
+                            event.preventDefault();
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    data = new window.FormData($form[0]);
+                } else {
+                    data = $form.serializeArray();
+                }
 
                 if (typeof autosubmit === 'undefined' || ! autosubmit) {
                     if ($button.length && $button.attr('name') !== 'undefined') {
-                        data.push({
-                            name: $button.attr('name'),
-                            value: $button.attr('value')
-                        });
+                        if (encoding === 'multipart/form-data') {
+                            data.append($button.attr('name'), $button.attr('value'));
+                        } else {
+                            data.push({
+                                name: $button.attr('name'),
+                                value: $button.attr('value')
+                            });
+                        }
                     }
                 }
             }
@@ -284,6 +318,8 @@
 
             icinga.loader.loadUrl(url, $target, data, method);
 
+            event.stopPropagation();
+            event.preventDefault();
             return false;
         },
 

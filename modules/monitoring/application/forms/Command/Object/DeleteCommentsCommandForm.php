@@ -4,7 +4,7 @@
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\DeleteCommentCommand;
-use \Icinga\Module\Monitoring\Forms\Command\CommandForm;
+use Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 
 /**
@@ -20,8 +20,7 @@ class DeleteCommentsCommandForm extends CommandForm
     protected $comments;
 
     /**
-     * (non-PHPDoc)
-     * @see \Zend_Form::init() For the method documentation.
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -29,8 +28,7 @@ class DeleteCommentsCommandForm extends CommandForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::createElements() For the method documentation.
+     * {@inheritdoc}
      */
     public function createElements(array $formData = array())
     {
@@ -45,8 +43,7 @@ class DeleteCommentsCommandForm extends CommandForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
+     * {@inheritdoc}
      */
     public function getSubmitLabel()
     {
@@ -54,8 +51,7 @@ class DeleteCommentsCommandForm extends CommandForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::onSuccess() For the method documentation.
+     * {@inheritdoc}
      */
     public function onSuccess()
     {
@@ -76,9 +72,9 @@ class DeleteCommentsCommandForm extends CommandForm
     /**
      * Set the comments to be deleted upon success
      *
-     * @param array $comments
+     * @param   array $comments
      *
-     * @return this             fluent interface
+     * @return  $this
      */
     public function setComments(array $comments)
     {

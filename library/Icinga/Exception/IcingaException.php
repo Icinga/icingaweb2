@@ -40,4 +40,24 @@ class IcingaException extends Exception
         $e = new ReflectionClass(get_called_class());
         return $e->newInstanceArgs($args);
     }
+    
+    /**
+     * Return the given exception formatted as one-liner
+     *
+     * The format used is: %class% in %path%:%line% with message: %message%
+     *
+     * @param   Exception   $exception
+     *
+     * @return  string
+     */
+    public static function describe(Exception $exception)
+    {
+        return sprintf(
+            '%s in %s:%d with message: %s',
+            get_class($exception),
+            $exception->getFile(),
+            $exception->getLine(),
+            $exception->getMessage()
+        );
+    }
 }

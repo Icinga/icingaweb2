@@ -9,12 +9,13 @@ use Icinga\Application\Benchmark;
 use Icinga\Application\Logger;
 use Icinga\Data\QueryInterface;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\SortRules;
 use Icinga\Exception\QueryException;
 
 /**
  * Query class supposed to mediate between a repository and its datasource's query
  */
-class RepositoryQuery implements QueryInterface, Iterator
+class RepositoryQuery implements QueryInterface, SortRules, Iterator
 {
     /**
      * The repository being used
@@ -213,6 +214,16 @@ class RepositoryQuery implements QueryInterface, Iterator
     }
 
     /**
+     * Return the sort rules being applied on this query
+     *
+     * @return  array
+     */
+    public function getSortRules()
+    {
+        return $this->repository->getSortRules();
+    }
+
+    /**
      * Add a sort rule for this query
      *
      * If called without a specific column, the repository's defaul sort rules will be applied.
@@ -226,7 +237,7 @@ class RepositoryQuery implements QueryInterface, Iterator
      */
     public function order($field = null, $direction = null, $ignoreDefault = false)
     {
-        $sortRules = $this->repository->getSortRules();
+        $sortRules = $this->getSortRules();
         if ($field === null) {
             // Use first available sort rule as default
             if (empty($sortRules)) {

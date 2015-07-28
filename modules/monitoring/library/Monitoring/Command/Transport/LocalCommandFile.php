@@ -7,9 +7,9 @@ use Exception;
 use RuntimeException;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Module\Monitoring\Command\Exception\TransportException;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
 use Icinga\Module\Monitoring\Command\Renderer\IcingaCommandFileCommandRenderer;
+use Icinga\Module\Monitoring\Exception\CommandTransportException;
 use Icinga\Util\File;
 
 /**
@@ -104,7 +104,7 @@ class LocalCommandFile implements CommandTransportInterface
      * @param   int|null        $now
      *
      * @throws  ConfigurationError
-     * @throws  TransportException
+     * @throws  CommandTransportException
      */
     public function send(IcingaCommand $command, $now = null)
     {
@@ -129,7 +129,7 @@ class LocalCommandFile implements CommandTransportInterface
                 // Assume RuntimeException thrown by SplFileObject in the format: __METHOD__ . "({$filename}): Message"
                 $message = substr($message, $pos + 1);
             }
-            throw new TransportException(
+            throw new CommandTransportException(
                 'Can\'t send external Icinga command to the local command file "%s": %s',
                 $this->path,
                 $message

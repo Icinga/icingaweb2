@@ -49,8 +49,7 @@ class EventHistory extends DataView
     {
         return array(
             'timestamp' => array(
-                'columns'   => array('timestamp'),
-                'order'     => 'DESC'
+                'order' => self::SORT_DESC
             )
         );
     }

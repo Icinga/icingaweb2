@@ -4,7 +4,7 @@
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\DeleteDowntimeCommand;
-use \Icinga\Module\Monitoring\Forms\Command\CommandForm;
+use Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 
 /**
@@ -18,10 +18,9 @@ class DeleteDowntimesCommandForm extends CommandForm
      * @var array
      */
     protected $downtimes;
-    
+
     /**
-     * (non-PHPDoc)
-     * @see \Zend_Form::init() For the method documentation.
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -29,8 +28,7 @@ class DeleteDowntimesCommandForm extends CommandForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::createElements() For the method documentation.
+     * {@inheritdoc}
      */
     public function createElements(array $formData = array())
     {
@@ -43,19 +41,17 @@ class DeleteDowntimesCommandForm extends CommandForm
         ));
         return $this;
     }
- 
+
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
+     * {@inheritdoc}
      */
     public function getSubmitLabel()
     {
         return $this->translatePlural('Remove', 'Remove All', count($this->downtimes));
     }
-    
+
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::onSuccess() For the method documentation.
+     * {@inheritdoc}
      */
     public function onSuccess()
     {
@@ -72,13 +68,13 @@ class DeleteDowntimesCommandForm extends CommandForm
         Notification::success($this->translate('Deleting downtime.'));
         return true;
     }
-    
+
     /**
      * Set the downtimes to be deleted upon success
      *
-     * @param type $downtimes
+     * @param   array $downtimes
      *
-     * @return $this
+     * @return  $this
      */
     public function setDowntimes(array $downtimes)
     {

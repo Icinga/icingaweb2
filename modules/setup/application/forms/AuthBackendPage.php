@@ -3,11 +3,12 @@
 
 namespace Icinga\Module\Setup\Forms;
 
-use Icinga\Web\Form;
+use Icinga\Data\ConfigObject;
+use Icinga\Forms\Config\UserBackendConfigForm;
 use Icinga\Forms\Config\UserBackend\DbBackendForm;
 use Icinga\Forms\Config\UserBackend\LdapBackendForm;
 use Icinga\Forms\Config\UserBackend\ExternalBackendForm;
-use Icinga\Data\ConfigObject;
+use Icinga\Web\Form;
 
 /**
  * Wizard page to define authentication backend specific details
@@ -66,14 +67,14 @@ class AuthBackendPage extends Form
             $this->setRequiredCue(null);
             $backendForm = new DbBackendForm();
             $backendForm->setRequiredCue(null);
-            $backendForm->createElements($formData)->removeElement('resource');
+            $backendForm->create($formData)->removeElement('resource');
             $this->addDescription($this->translate(
                 'As you\'ve chosen to use a database for authentication all you need '
                 . 'to do now is defining a name for your first authentication backend.'
             ));
         } elseif ($this->config['type'] === 'ldap') {
             $backendForm = new LdapBackendForm();
-            $backendForm->createElements($formData)->removeElement('resource');
+            $backendForm->create($formData)->removeElement('resource');
             $this->addDescription($this->translate(
                 'Before you are able to authenticate using the LDAP connection defined earlier you need to'
                 . ' provide some more information so that Icinga Web 2 is able to locate account details.'
@@ -97,15 +98,30 @@ class AuthBackendPage extends Form
             );
         } else { // $this->config['type'] === 'external'
             $backendForm = new ExternalBackendForm();
-            $backendForm->createElements($formData);
+            $backendForm->create($formData);
             $this->addDescription($this->translate(
                 'You\'ve chosen to authenticate using a web server\'s mechanism so it may be necessary'
                 . ' to adjust usernames before any permissions, restrictions, etc. are being applied.'
             ));
         }
 
-        $this->addElements($backendForm->getElements());
-        $this->getElement('name')->setValue('icingaweb2');
+        $backendForm->getElement('name')->setValue('icingaweb2');
+        $this->addSubForm($backendForm, 'backend_form');
+    }
+
+    /**
+     * Retrieve all form element values
+     *
+     * @param   bool    $suppressArrayNotation  Ignored
+     *
+     * @return  array
+     */
+    public function getValues($suppressArrayNotation = false)
+    {
+        $values = parent::getValues();
+        $values = array_merge($values, $values['backend_form']);
+        unset($values['backend_form']);
+        return $values;
     }
 
     /**
@@ -117,11 +133,11 @@ class AuthBackendPage extends Form
      */
     public function isValid($data)
     {
-        if (false === parent::isValid($data)) {
+        if (! parent::isValid($data)) {
             return false;
         }
 
-        if ($this->config['type'] === 'ldap' && ( !isset($data['skip_validation']) || $data['skip_validation'] == 0)) {
+        if ($this->config['type'] === 'ldap' && (! isset($data['skip_validation']) || $data['skip_validation'] == 0)) {
             $self = clone $this;
             $self->addElement(
                 'text',
@@ -130,7 +146,9 @@ class AuthBackendPage extends Form
                     'value' => $this->getResourceConfig()
                 )
             );
-            if (! LdapBackendForm::isValidUserBackend($self)) {
+            $inspection = UserBackendConfigForm::inspectUserBackend($self);
+            if ($inspection && $inspection->hasError()) {
+                $this->error($inspection->getError());
                 $this->addSkipValidationCheckbox();
                 return false;
             }

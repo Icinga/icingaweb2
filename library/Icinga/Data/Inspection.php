@@ -59,6 +59,7 @@ class Inspection
         if ($entry instanceof Inspection) {
             $this->log[$entry->description] = $entry->toArray();
         } else {
+            Logger::debug($entry);
             $this->log[] = $entry;
         }
     }
@@ -77,7 +78,8 @@ class Inspection
         if (isset($this->error)) {
             throw new ProgrammingError('Inspection object used after error');
         }
-        $this->write($entry);
+        Logger::error($entry);
+        $this->log[] = $entry;
         $this->error = $entry;
         return $this;
     }

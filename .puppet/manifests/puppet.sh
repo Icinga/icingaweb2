@@ -3,7 +3,7 @@
 set -e
 
 if which puppet >/dev/null 2>&1; then
-  exit 0
+    exit 0
 fi
 
 RELEASEVER=$(rpm -q --qf "%{VERSION}" $(rpm -q --whatprovides redhat-release))
@@ -20,7 +20,7 @@ esac
 
 echo "Adding puppet repository.."
 rpm --import "https://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs"
-rpm -ivh $PUPPET >/dev/null
+rpm -Uvh $PUPPET >/dev/null
 
 echo "Installing puppet.."
 yum install -y puppet >/dev/null

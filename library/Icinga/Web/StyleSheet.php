@@ -99,6 +99,7 @@ class StyleSheet
         }
 
         $less = new LessCompiler();
+        $less->disableExtendedImport();
         foreach ($lessFiles as $file) {
             $less->addFile($file);
         }
