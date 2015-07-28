@@ -50,140 +50,20 @@ Requires:                       %{name}-vendor-Parsedown
 %{?fedora:Requires:             webserver}
 %{?rhel:Requires:               webserver}
 
+%define basedir                 %{_datadir}/%{name}
+%define bindir                  %{_bindir}
+%define configdir               %{_sysconfdir}/%{name}
+%define docsdir                 %{_datadir}/doc/%{name}
+%define logdir                  %{_localstatedir}/log/%{name}
+%define icingaweb_user          icingaweb2
+%define icingaweb_group         %{icingaweb_user}
+%define nginx_configdir         %{_sysconfdir}/nginx/default.d
+%define nginx_user              nginx
+%define phpdir                  %{_datadir}/php
+%define phpfpm_configdir        %{_sysconfdir}/php-fpm.d
 
 %description
 Icinga Web 2
-
-
-%define basedir             %{_datadir}/%{name}
-%define bindir              %{_bindir}
-%define configdir           %{_sysconfdir}/%{name}
-%define docsdir             %{_datadir}/doc/%{name}
-%define logdir              %{_localstatedir}/log/%{name}
-%define icingaweb_user      icingaweb2
-%define icingaweb_group     %{icingaweb_user}
-%define nginx_configdir     %{_sysconfdir}/nginx/default.d
-%define nginx_user          nginx
-%define phpdir              %{_datadir}/php
-%define phpfpm_configdir    %{_sysconfdir}/php-fpm.d
-
-
-%package common
-Summary:                        Common files for Icinga Web 2 and the Icinga CLI
-Group:                          Applications/System
-%{?amzn:Requires(pre):          shadow-utils}
-%{?fedora:Requires(pre):        shadow-utils}
-%{?rhel:Requires(pre):          shadow-utils}
-%{?suse_version:Requires(pre):  pwdutils}
-
-%description common
-Common files for Icinga Web 2 and the Icinga CLI
-
-
-%package -n php-Icinga
-Summary:                    Icinga Web 2 PHP library
-Group:                      Development/Libraries
-Requires:                   %{php}-intl >= 5.3.0
-Requires:                   %{php}-ldap >= 5.3.0
-Requires:                   %{php}-gd >= 5.3.0
-%{?suse_version:Requires:   %{php}-gettext >= 5.3.0 %{php}-json >= 5.3.0 %{php}-openssl >= 5.3.0 %{php}-posix >= 5.3.0 %{php}-mysql >= 5.3.0 %{php}-pgsql >= 5.3.0 %{name}-vendor-Zend}
-%{?amzn:Requires:           %{php}-pecl-imagick %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
-%{?fedora:Requires:         php-pecl-imagick %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
-%{?rhel:Requires:           php-pecl-imagick %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
-
-
-%description -n php-Icinga
-Icinga Web 2 PHP library
-
-
-%package -n icingacli
-Summary:                    Icinga CLI
-Group:                      Applications/System
-Requires:                   %{name}-common = %{version}-%{release}
-Requires:                   php-Icinga = %{version}-%{release}
-%{?amzn:Requires:           %{php_cli} >= 5.3.0 bash-completion}
-%{?fedora:Requires:         %{php_cli} >= 5.3.0 bash-completion}
-%{?rhel:Requires:           %{php_cli} >= 5.3.0 bash-completion}
-%{?suse_version:Requires:   %{php} >= 5.3.0}
-
-%description -n icingacli
-Icinga CLI
-
-
-%package php-fpm-config
-Summary:    php-fpm configuration file for Icinga Web 2
-Group:      System Environment/Libraries
-Requires:   php-fpm
-
-%description php-fpm-config
-php-fpm configuration file for Icinga Web 2
-
-
-%package vendor-dompdf
-Version:    0.6.1
-Release:    1%{?dist}
-Summary:    Icinga Web 2 vendor library dompdf
-Group:      Development/Libraries
-License:    LGPLv2.1
-
-%description vendor-dompdf
-Icinga Web 2 vendor library dompdf
-
-
-%package vendor-HTMLPurifier
-Version:    4.6.0
-Release:    1%{?dist}
-Summary:    Icinga Web 2 vendor library HTMLPurifier
-Group:      Development/Libraries
-License:    LGPLv2.1
-
-%description vendor-HTMLPurifier
-Icinga Web 2 vendor library HTMLPurifier
-
-
-%package vendor-JShrink
-Version:    1.0.1
-Release:    1%{?dist}
-Summary:    Icinga Web 2 vendor library JShrink
-Group:      Development/Libraries
-License:    BSD
-
-%description vendor-JShrink
-Icinga Web 2 vendor library JShrink
-
-
-%package vendor-lessphp
-Version:    0.4.0
-Release:    1%{?dist}
-Summary:    Icinga Web 2 vendor library lessphp
-Group:      Development/Libraries
-License:    MIT
-
-%description vendor-lessphp
-Icinga Web 2 vendor library lessphp
-
-
-%package vendor-Parsedown
-Version:    1.0.0
-Release:    1%{?dist}
-Summary:    Icinga Web 2 vendor library Parsedown
-Group:      Development/Libraries
-License:    MIT
-
-%description vendor-Parsedown
-Icinga Web 2 vendor library Parsedown
-
-
-%package vendor-Zend
-Version:    1.12.9
-Release:    1%{?dist}
-Summary:    Icinga Web 2 vendor library Zend Framework
-Group:      Development/Libraries
-License:    BSD
-
-%description vendor-Zend
-Icinga Web 2 vendor library Zend
-
 
 %prep
 %setup -q
@@ -266,6 +146,19 @@ fi
 exit 0
 
 
+# Package icingaweb2-common
+
+%package common
+Summary:                        Common files for Icinga Web 2 and the Icinga CLI
+Group:                          Applications/System
+%{?amzn:Requires(pre):          shadow-utils}
+%{?fedora:Requires(pre):        shadow-utils}
+%{?rhel:Requires(pre):          shadow-utils}
+%{?suse_version:Requires(pre):  pwdutils}
+
+%description common
+Common files for Icinga Web 2 and the Icinga CLI
+
 %pre common
 if ! getent group %{icingaweb_group} >/dev/null; then
     groupadd -r %{icingaweb_group}
@@ -280,15 +173,56 @@ exit 0
 %attr(2770,root,%{icingaweb_group}) %config(noreplace) %dir %{configdir}/modules
 
 
+# Package php-Icinga
+
+%package -n php-Icinga
+Summary:                    Icinga Web 2 PHP library
+Group:                      Development/Libraries
+Requires:                   %{php}-intl >= 5.3.0
+Requires:                   %{php}-ldap >= 5.3.0
+Requires:                   %{php}-gd >= 5.3.0
+%{?suse_version:Requires:   %{php}-gettext >= 5.3.0 %{php}-json >= 5.3.0 %{php}-openssl >= 5.3.0 %{php}-posix >= 5.3.0 %{php}-mysql >= 5.3.0 %{php}-pgsql >= 5.3.0 %{name}-vendor-Zend}
+%{?amzn:Requires:           %{php}-pecl-imagick %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
+%{?fedora:Requires:         php-pecl-imagick %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
+%{?rhel:Requires:           php-pecl-imagick %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
+
+%description -n php-Icinga
+Icinga Web 2 PHP library
+
 %files -n php-Icinga
 %defattr(-,root,root)
 %{phpdir}/Icinga
 
 
+# Package icingaweb2-php-fpm-config
+
+%package php-fpm-config
+Summary:    php-fpm configuration file for Icinga Web 2
+Group:      System Environment/Libraries
+Requires:   php-fpm
+
+%description php-fpm-config
+php-fpm configuration file for Icinga Web 2
+
 %files php-fpm-config
 %defattr(-,root,root)
 %config(noreplace) %{phpfpm_configdir}/icingaweb2.conf
 
+
+# Package icingacli
+
+%package -n icingacli
+Summary:                    Icinga CLI
+Group:                      Applications/System
+Requires:                   %{name}-common = %{version}-%{release}
+Requires:                   php-Icinga = %{version}-%{release}
+%{?amzn:Requires:           %{php_cli} >= 5.3.0 bash-completion}
+%{?fedora:Requires:         %{php_cli} >= 5.3.0 bash-completion}
+%{?rhel:Requires:           %{php_cli} >= 5.3.0 bash-completion}
+%{?suse_version:Requires:   %{php} >= 5.3.0}
+
+%description -n icingacli
+Icinga CLI
 
 %files -n icingacli
 %defattr(-,root,root)
@@ -297,30 +231,102 @@ exit 0
 %attr(0755,root,root) %{bindir}/icingacli
 
 
+# Package icingaweb2-vendor-dompdf
+
+%package vendor-dompdf
+Version:    0.6.1
+Release:    1%{?dist}
+Summary:    Icinga Web 2 vendor library dompdf
+Group:      Development/Libraries
+License:    LGPLv2.1
+
+%description vendor-dompdf
+Icinga Web 2 vendor library dompdf
+
 %files vendor-dompdf
 %defattr(-,root,root)
 %{basedir}/library/vendor/dompdf
 
+
+# Package icingaweb2-vendor-HTMLPurifier
+
+%package vendor-HTMLPurifier
+Version:    4.6.0
+Release:    1%{?dist}
+Summary:    Icinga Web 2 vendor library HTMLPurifier
+Group:      Development/Libraries
+License:    LGPLv2.1
+
+%description vendor-HTMLPurifier
+Icinga Web 2 vendor library HTMLPurifier
 
 %files vendor-HTMLPurifier
 %defattr(-,root,root)
 %{basedir}/library/vendor/HTMLPurifier
 
 
+# Package icingaweb2-vendor-JShrink
+
+%package vendor-JShrink
+Version:    1.0.1
+Release:    1%{?dist}
+Summary:    Icinga Web 2 vendor library JShrink
+Group:      Development/Libraries
+License:    BSD
+
+%description vendor-JShrink
+Icinga Web 2 vendor library JShrink
+
 %files vendor-JShrink
 %defattr(-,root,root)
 %{basedir}/library/vendor/JShrink
 
+
+# Package icingaweb2-vendor-lessphp
+
+%package vendor-lessphp
+Version:    0.4.0
+Release:    1%{?dist}
+Summary:    Icinga Web 2 vendor library lessphp
+Group:      Development/Libraries
+License:    MIT
+
+%description vendor-lessphp
+Icinga Web 2 vendor library lessphp
 
 %files vendor-lessphp
 %defattr(-,root,root)
 %{basedir}/library/vendor/lessphp
 
 
+# Package icingaweb2-vendor-Parsedown
+
+%package vendor-Parsedown
+Version:    1.0.0
+Release:    1%{?dist}
+Summary:    Icinga Web 2 vendor library Parsedown
+Group:      Development/Libraries
+License:    MIT
+
+%description vendor-Parsedown
+Icinga Web 2 vendor library Parsedown
+
 %files vendor-Parsedown
 %defattr(-,root,root)
 %{basedir}/library/vendor/Parsedown
 
+
+# Package icingaweb2-vendor-Zend
+
+%package vendor-Zend
+Version:    1.12.9
+Release:    1%{?dist}
+Summary:    Icinga Web 2 vendor library Zend Framework
+Group:      Development/Libraries
+License:    BSD
+
+%description vendor-Zend
+Icinga Web 2 vendor library Zend
 
 %files vendor-Zend
 %defattr(-,root,root)
