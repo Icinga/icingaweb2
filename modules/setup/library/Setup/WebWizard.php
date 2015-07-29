@@ -165,6 +165,7 @@ class WebWizard extends Wizard implements SetupWizard
             $page->setBackendConfig($this->getPageData('setup_authentication_backend'));
         } elseif ($page->getName() === 'setup_admin_account') {
             $page->setBackendConfig($this->getPageData('setup_authentication_backend'));
+            $page->setGroupConfig($this->getPageData('setup_usergroup_backend'));
             $authData = $this->getPageData('setup_authentication_type');
             if ($authData['type'] === 'db') {
                 $page->setResourceConfig($this->getPageData('setup_auth_db_resource'));
