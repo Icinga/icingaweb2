@@ -139,8 +139,10 @@
                 icinga.logger.debug('History state', event.originalEvent.state);
             }
 
-            self.applyLocationBar();
+            // keep the last pushed url in sync with history changes
+            self.lastPushUrl = location.href;
 
+            self.applyLocationBar();
         },
 
         applyLocationBar: function (onload) {
