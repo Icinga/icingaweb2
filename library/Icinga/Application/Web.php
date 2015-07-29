@@ -91,11 +91,11 @@ class Web extends ApplicationBootstrap
             ->setupResourceFactory()
             ->setupSession()
             ->setupNotifications()
+            ->setupRequest()
             ->setupUser()
             ->setupTimezone()
             ->setupLogger()
             ->setupInternationalization()
-            ->setupRequest()
             ->setupZendMvc()
             ->setupFormNamespace()
             ->setupModuleManager()
@@ -191,7 +191,9 @@ class Web extends ApplicationBootstrap
     {
         $auth = Auth::getInstance();
         if ($auth->isAuthenticated()) {
-            $this->user = $auth->getUser();
+            $user = $auth->getUser();
+            $this->request->setUser($user);
+            $this->user = $user;
         }
         return $this;
     }
@@ -219,16 +221,13 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Inject dependencies into request
+     * Set the request
      *
      * @return $this
      */
     private function setupRequest()
     {
         $this->request = new Request();
-        if ($this->user instanceof User) {
-            $this->request->setUser($this->user);
-        }
         return $this;
     }
 
