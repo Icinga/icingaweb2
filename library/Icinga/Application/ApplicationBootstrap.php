@@ -7,6 +7,7 @@ use ErrorException;
 use Exception;
 use LogicException;
 use Icinga\Application\Modules\Manager as ModuleManager;
+use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
@@ -538,6 +539,24 @@ abstract class ApplicationBootstrap
         } catch (NotReadableError $e) {
             Logger::error(
                 new IcingaException('Cannot load resource configuration. An exception was thrown:', $e)
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set up the user backend factory
+     *
+     * @return  $this
+     */
+    protected function setupUserBackendFactory()
+    {
+        try {
+            UserBackend::setConfig(Config::app('authentication'));
+        } catch (NotReadableError $e) {
+            Logger::error(
+                new IcingaException('Cannot load user backend configuration. An exception was thrown:', $e)
             );
         }
 

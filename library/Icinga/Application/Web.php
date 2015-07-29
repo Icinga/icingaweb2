@@ -99,6 +99,7 @@ class Web extends ApplicationBootstrap
             ->setupZendMvc()
             ->setupFormNamespace()
             ->setupModuleManager()
+            ->setupUserBackendFactory()
             ->loadSetupModuleIfNecessary()
             ->loadEnabledModules()
             ->setupRoute()
