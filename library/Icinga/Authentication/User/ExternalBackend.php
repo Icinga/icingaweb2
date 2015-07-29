@@ -36,11 +36,7 @@ class ExternalBackend implements UserBackendInterface
     }
 
     /**
-     * Set this backend's name
-     *
-     * @param   string  $name
-     *
-     * @return  $this
+     * {@inheritdoc}
      */
     public function setName($name)
     {
@@ -49,24 +45,16 @@ class ExternalBackend implements UserBackendInterface
     }
 
     /**
-     * Return this backend's name
-     *
-     * @return  string
+     * {@inheritdoc}
      */
     public function getName()
     {
         return $this->name;
     }
 
+
     /**
-     * Authenticate the given user
-     *
-     * @param   User        $user
-     * @param   string      $password
-     *
-     * @return  bool                        True on success, false on failure
-     *
-     * @throws  AuthenticationException     In case authentication is not possible due to an error
+     * {@inheritdoc}
      */
     public function authenticate(User $user, $password = null)
     {
