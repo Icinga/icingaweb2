@@ -79,10 +79,10 @@ class Auth
      */
     public function isAuthenticated($ignoreSession = false)
     {
-        if ($this->user === null && ! $ignoreSession) {
+        if ($this->user === null && ! $this->authHttp() && ! $ignoreSession) {
             $this->authenticateFromSession();
         }
-        return is_object($this->user);
+        return $this->user !== null;
     }
 
     public function setAuthenticated(User $user, $persist = true)
@@ -175,7 +175,7 @@ class Auth
     public function getRequest()
     {
         if ($this->request === null) {
-            $this->request = Icinga::app()->getFrontController()->getRequest();
+            $this->request = Icinga::app()->getRequest();
         }
         return $this->request;
     }
@@ -221,6 +221,44 @@ class Auth
             if (! array_key_exists($field, $_SERVER) || $_SERVER[$field] !== $originUsername) {
                 $this->removeAuthorization();
             }
+        }
+    }
+
+    /**
+     * Attempt to authenticate a user using HTTP authentication
+     *
+     * Supports only the Basic HTTP authentication scheme. This will not challenge the client if authorization is
+     * missing or invalid yet. XHR will be ignored.
+     *
+     * @return bool
+     */
+    protected function authHttp()
+    {
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            return false;
+        }
+        $header = $this->getRequest()->getHeader('Authorization');
+        if (empty($header)) {
+            return false;
+        }
+        list($scheme) = explode(' ', $header, 2);
+        if ($scheme !== 'Basic') {
+            return false;
+        }
+        $authorization = substr($header, strlen('Basic '));
+        $credentials = base64_decode($authorization);
+        $credentials = array_filter(explode(':', $credentials));
+        if (count($credentials) !== 2) {
+            // Deny empty username and/or password
+            return false;
+        }
+        $user = new User($credentials[0]);
+        $password = $credentials[1];
+        if ($this->getAuthChain()->setSkipExternalBackends(true)->authenticate($user, $password)) {
+            $this->setAuthenticated($user, false);
+            return true;
+        } else {
+            return false;
         }
     }
 
