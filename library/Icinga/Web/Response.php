@@ -8,6 +8,26 @@ use Icinga\Application\Icinga;
 
 class Response extends Zend_Controller_Response_Http
 {
+    /**
+     * Request
+     *
+     * @var Request
+     */
+    protected $request;
+
+    /**
+     * Get the request
+     *
+     * @return Request
+     */
+    public function getRequest()
+    {
+        if ($this->request === null) {
+            $this->request = Icinga::app()->getFrontController()->getRequest();
+        }
+        return $this->request;
+    }
+
     public function redirectAndExit($url)
     {
         if (! $url instanceof Url) {
@@ -15,7 +35,7 @@ class Response extends Zend_Controller_Response_Http
         }
         $url->getParams()->setSeparator('&');
 
-        if (Icinga::app()->getFrontController()->getRequest()->isXmlHttpRequest()) {
+        if ($this->getRequest()->isXmlHttpRequest()) {
             $this->setHeader('X-Icinga-Redirect', rawurlencode($url->getAbsoluteUrl()));
         } else {
             $this->setRedirect($url->getAbsoluteUrl());
