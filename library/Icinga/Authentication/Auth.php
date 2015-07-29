@@ -32,6 +32,9 @@ class Auth
     private $user;
 
 
+    /**
+     * @see getInstance()
+     */
     private function __construct()
     {
     }
@@ -57,6 +60,21 @@ class Auth
     public function getAuthChain()
     {
         return new AuthChain();
+    }
+
+    /**
+     * Whether the user is authenticated
+     *
+     * @param  bool $ignoreSession True to prevent session authentication
+     *
+     * @return bool
+     */
+    public function isAuthenticated($ignoreSession = false)
+    {
+        if ($this->user === null && ! $ignoreSession) {
+            $this->authenticateFromSession();
+        }
+        return is_object($this->user);
     }
 
     public function setAuthenticated(User $user, $persist = true)
@@ -131,58 +149,14 @@ class Auth
     }
 
     /**
-     * Writes the current user to the session
+     * Getter for groups belonged to authenticated user
+     *
+     * @return  array
+     * @see     User::getGroups
      */
-    public function persistCurrentUser()
+    public function getGroups()
     {
-        Session::getSession()->set('user', $this->user)->refreshId();
-    }
-
-    /**
-     * Try to authenticate the user with the current session
-     *
-     * Authentication for externally-authenticated users will be revoked if the username changed or external
-     * authentication is no longer in effect
-     */
-    public function authenticateFromSession()
-    {
-        $this->user = Session::getSession()->get('user');
-        if ($this->user !== null && $this->user->isExternalUser() === true) {
-            list($originUsername, $field) = $this->user->getExternalUserInformation();
-            if (! array_key_exists($field, $_SERVER) || $_SERVER[$field] !== $originUsername) {
-                $this->removeAuthorization();
-            }
-        }
-    }
-
-    /**
-     * Whether the user is authenticated
-     *
-     * @param  bool $ignoreSession True to prevent session authentication
-     *
-     * @return bool
-     */
-    public function isAuthenticated($ignoreSession = false)
-    {
-        if ($this->user === null && ! $ignoreSession) {
-            $this->authenticateFromSession();
-        }
-        return is_object($this->user);
-    }
-
-    /**
-     * Whether an authenticated user has a given permission
-     *
-     * @param  string  $permission  Permission name
-     *
-     * @return bool                 True if the user owns the given permission, false if not or if not authenticated
-     */
-    public function hasPermission($permission)
-    {
-        if (! $this->isAuthenticated()) {
-            return false;
-        }
-        return $this->user->can($permission);
+        return $this->user->getGroups();
     }
 
     /**
@@ -203,15 +177,6 @@ class Auth
     }
 
     /**
-     * Purges the current authorization information and session
-     */
-    public function removeAuthorization()
-    {
-        $this->user = null;
-        Session::getSession()->purge();
-    }
-
-    /**
      * Returns the current user or null if no user is authenticated
      *
      * @return User
@@ -222,13 +187,51 @@ class Auth
     }
 
     /**
-     * Getter for groups belonged to authenticated user
+     * Try to authenticate the user with the current session
      *
-     * @return  array
-     * @see     User::getGroups
+     * Authentication for externally-authenticated users will be revoked if the username changed or external
+     * authentication is no longer in effect
      */
-    public function getGroups()
+    public function authenticateFromSession()
     {
-        return $this->user->getGroups();
+        $this->user = Session::getSession()->get('user');
+        if ($this->user !== null && $this->user->isExternalUser() === true) {
+            list($originUsername, $field) = $this->user->getExternalUserInformation();
+            if (! array_key_exists($field, $_SERVER) || $_SERVER[$field] !== $originUsername) {
+                $this->removeAuthorization();
+            }
+        }
+    }
+
+    /**
+     * Whether an authenticated user has a given permission
+     *
+     * @param  string  $permission  Permission name
+     *
+     * @return bool                 True if the user owns the given permission, false if not or if not authenticated
+     */
+    public function hasPermission($permission)
+    {
+        if (! $this->isAuthenticated()) {
+            return false;
+        }
+        return $this->user->can($permission);
+    }
+
+    /**
+     * Writes the current user to the session
+     */
+    public function persistCurrentUser()
+    {
+        Session::getSession()->set('user', $this->user)->refreshId();
+    }
+
+    /**
+     * Purges the current authorization information and session
+     */
+    public function removeAuthorization()
+    {
+        $this->user = null;
+        Session::getSession()->purge();
     }
 }
