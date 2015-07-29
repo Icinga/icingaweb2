@@ -54,13 +54,6 @@ class AuthChain implements Authenticatable, Iterator
     const ENOTALL = 4;
 
     /**
-     * External user backends are excluded by the iterator
-     *
-     * @var int
-     */
-    const IT_MODE_NOT_EXTERNAL = 1;
-
-    /**
      * User backends configuration
      *
      * @var Config
@@ -82,11 +75,11 @@ class AuthChain implements Authenticatable, Iterator
     protected $error;
 
     /**
-     * Mode of iteration
+     * Whether external user backends should be skipped on iteration
      *
-     * @var int
+     * @var bool
      */
-    protected $iteratorMode;
+    protected $skipExternalBackends = false;
 
     /**
      * Create a new authentication chain from config
@@ -159,25 +152,25 @@ class AuthChain implements Authenticatable, Iterator
     }
 
     /**
-     * Get the iterator mode
+     * Get whether to skip external user backends on iteration
      *
-     * @return int
+     * @return bool
      */
-    public function getIteratorMode()
+    public function getSkipExternalBackends()
     {
-        return $this->iteratorMode;
+        return $this->skipExternalBackends;
     }
 
     /**
-     * Set the iterator mode
+     * Set whether to skip external user backends on iteration
      *
-     * @param   int $iteratorMode
+     * @param   bool $skipExternalBackends
      *
      * @return  $this
      */
-    public function setIteratorMode($iteratorMode)
+    public function setSkipExternalBackends($skipExternalBackends = true)
     {
-        $this->iteratorMode = (int) $iteratorMode;
+        $this->skipExternalBackends = (bool) $skipExternalBackends;
         return $this;
     }
 
@@ -254,7 +247,7 @@ class AuthChain implements Authenticatable, Iterator
             return $this->valid();
         }
 
-        if ($this->iteratorMode === static::IT_MODE_NOT_EXTERNAL
+        if ($this->getSkipExternalBackends()
             && $backend instanceof ExternalBackend
         ) {
             $this->next();

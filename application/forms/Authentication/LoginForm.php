@@ -85,7 +85,7 @@ class LoginForm extends Form
     {
         $auth = Auth::getInstance();
         $authChain = $auth->getAuthChain();
-        $authChain->setIteratorMode($authChain::IT_MODE_NOT_EXTERNAL);
+        $authChain->setSkipExternalBackends(true);
         $user = new User($this->getElement('username')->getValue());
         $password = $this->getElement('password')->getValue();
         $authenticated = $authChain->authenticate($user, $password);
@@ -107,6 +107,7 @@ class LoginForm extends Form
                     . ' Please check the system log or Icinga Web 2 log for more information.'
                 ));
                 break;
+            /** @noinspection PhpMissingBreakStatementInspection */
             case $authChain::ENOTALL:
                 $this->addError($this->translate(
                     'Please note that not all authentication methods were available.'
