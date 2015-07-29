@@ -93,7 +93,8 @@ class AuthBackendPage extends Form
                     'multiOptions'      => array(
                         'ldap'      => 'LDAP',
                         'msldap'    => 'ActiveDirectory'
-                    )
+                    ),
+                    'value'             => isset($formData['backend']) ? $formData['backend'] : null
                 )
             );
         } else { // $this->config['type'] === 'external'
