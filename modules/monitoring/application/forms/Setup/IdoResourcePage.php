@@ -21,6 +21,7 @@ class IdoResourcePage extends Form
         $this->addDescription($this->translate(
             'Please fill out the connection details below to access the IDO database of your monitoring environment.'
         ));
+        $this->setValidatePartial(true);
     }
 
     /**
@@ -91,6 +92,52 @@ class IdoResourcePage extends Form
                 ));
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * Run the configured backend's inspection checks and show the result, if necessary
+     *
+     * This will only run any validation if the user pushed the 'backend_validation' button.
+     *
+     * @param   array   $formData
+     *
+     * @return  bool
+     */
+    public function isValidPartial(array $formData)
+    {
+        if (isset($formData['backend_validation']) && parent::isValid($formData)) {
+            $inspection = ResourceConfigForm::inspectResource($this);
+            if ($inspection !== null) {
+                $join = function ($e) use (& $join) {
+                    return is_string($e) ? $e : join("\n", array_map($join, $e));
+                };
+                $this->addElement(
+                    'note',
+                    'inspection_output',
+                    array(
+                        'order'         => 0,
+                        'value'         => '<strong>' . $this->translate('Validation Log') . "</strong>\n\n"
+                            . join("\n", array_map($join, $inspection->toArray())),
+                        'decorators'    => array(
+                            'ViewHelper',
+                            array('HtmlTag', array('tag' => 'pre', 'class' => 'log-output')),
+                        )
+                    )
+                );
+
+                if ($inspection->hasError()) {
+                    $this->warning(sprintf(
+                        $this->translate('Failed to successfully validate the configuration: %s'),
+                        $inspection->getError()
+                    ));
+                    return false;
+                }
+            }
+
+            $this->info($this->translate('The configuration has been successfully validated.'));
         }
 
         return true;
