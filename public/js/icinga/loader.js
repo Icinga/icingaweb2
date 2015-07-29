@@ -587,8 +587,6 @@
                         if (req.$target[0].id === 'col1') {
                             self.icinga.behaviors.navigation.resetActive();
                         }
-                    } else if ($(el).closest('table.action').length) {
-                        $(el).closest('table.action').find('.active').removeClass('active');
                     }
                 });
 
@@ -604,8 +602,6 @@
                         }
                         // Interrupt .each, only on menu item shall be active
                         return false;
-                    } else if ($(el).closest('table.action').length) {
-                        $el.addClass('active');
                     }
                 });
             }
