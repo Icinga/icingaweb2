@@ -12,6 +12,8 @@ use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Authentication\UserGroup\LdapUserGroupBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
+use Icinga\Data\Selectable;
+use Icinga\Exception\NotImplementedError;
 use Icinga\Web\Form;
 
 /**
@@ -402,6 +404,11 @@ class AdminAccountPage extends Form
             $groupConfig = new ConfigObject($this->groupConfig);
         }
 
-        return UserGroupBackend::create(null, $groupConfig);
+        $backend = UserGroupBackend::create(null, $groupConfig);
+        if (! $backend instanceof Selectable) {
+            throw new NotImplementedError('Unsupported, until #9772 has been resolved');
+        }
+
+        return $backend;
     }
 }
