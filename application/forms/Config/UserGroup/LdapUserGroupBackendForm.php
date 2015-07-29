@@ -3,7 +3,6 @@
 
 namespace Icinga\Forms\Config\UserGroup;
 
-use Icinga\Application\Config;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\UserGroup\LdapUserGroupBackend;
 use Icinga\Data\ConfigObject;
@@ -293,7 +292,7 @@ class LdapUserGroupBackendForm extends Form
     protected function getLdapUserBackendNames(LdapConnection $resource)
     {
         $names = array();
-        foreach (Config::app('authentication') as $name => $config) {
+        foreach (UserBackend::getBackendConfigs() as $name => $config) {
             if (in_array(strtolower($config->backend), array('ldap', 'msldap'))) {
                 $backendResource = ResourceFactory::create($config->resource);
                 if (
