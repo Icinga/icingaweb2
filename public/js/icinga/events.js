@@ -354,18 +354,16 @@
                 return true;
             }
 
-            // Special checks for link clicks in multiselect rows
-            if (! $a.is('tr[href]') && $a.closest('tr[href]').length > 0 && $a.closest('table.multiselect').length > 0) {
+            // Special checks for link clicks in action tables
+            if (! $a.is('tr[href]') && $a.closest('table.action').length > 0) {
 
                 // ignoray clicks to ANY link with special key pressed
-                if (event.ctrlKey || event.metaKey || event.shiftKey)
-                {
+                if ($a.closest('table.multiselect').length > 0 && (event.ctrlKey || event.metaKey || event.shiftKey)) {
                     return true;
                 }
 
                 // ignore inner links matching the row URL
-                if ($a.attr('href') === $a.closest('tr[href]').attr('href'))
-                {
+                if ($a.attr('href') === $a.closest('tr[href]').attr('href')) {
                     return true;
                 }
             }
