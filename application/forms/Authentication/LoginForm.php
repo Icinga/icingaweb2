@@ -91,6 +91,7 @@ class LoginForm extends Form
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
             $auth->setAuthenticated($user);
+            $this->getResponse()->setRerenderLayout(true);
             return true;
         }
         switch ($authChain->getError()) {
@@ -131,7 +132,7 @@ class LoginForm extends Form
             if ($backend instanceof ExternalBackend) {
                 if ($backend->authenticate($user)) {
                     $auth->setAuthenticated($user);
-                    $this->getResponse()->redirectAndExit($this->getRedirectUrl());
+                    $this->getResponse()->setRerenderLayout(true)->redirectAndExit($this->getRedirectUrl());
                 }
             } else {
                 $onlyExternal = false;
