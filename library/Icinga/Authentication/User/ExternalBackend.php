@@ -72,7 +72,7 @@ class ExternalBackend implements UserBackendInterface
     {
         if (isset($_SERVER['REMOTE_USER'])) {
             $username = $_SERVER['REMOTE_USER'];
-            $user->setRemoteUserInformation($username, 'REMOTE_USER');
+            $user->setExternalUserInformation($username, 'REMOTE_USER');
 
             if ($this->stripUsernameRegexp) {
                 $stripped = preg_replace($this->stripUsernameRegexp, '', $username);

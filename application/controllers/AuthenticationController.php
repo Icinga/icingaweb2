@@ -52,9 +52,11 @@ class AuthenticationController extends Controller
         if (! $auth->isAuthenticated()) {
             $this->redirectToLogin();
         }
-        $isRemoteUser = $auth->getUser()->isRemoteUser();
+        // Get info whether the user is externally authenticated before removing authorization which destroys the
+        // session and the user object
+        $isExternalUser = $auth->getUser()->isExternalUser();
         $auth->removeAuthorization();
-        if ($isRemoteUser === true) {
+        if ($isExternalUser) {
             $this->getResponse()->setHttpResponseCode(401);
         } else {
             $this->redirectToLogin();
