@@ -22,6 +22,7 @@ use Icinga\Module\Setup\Forms\RequirementsPage;
 use Icinga\Module\Setup\Forms\GeneralConfigPage;
 use Icinga\Module\Setup\Forms\AuthenticationPage;
 use Icinga\Module\Setup\Forms\DatabaseCreationPage;
+use Icinga\Module\Setup\Forms\UserGroupBackendPage;
 use Icinga\Module\Setup\Steps\DatabaseStep;
 use Icinga\Module\Setup\Steps\GeneralConfigStep;
 use Icinga\Module\Setup\Steps\ResourceStep;
@@ -104,6 +105,7 @@ class WebWizard extends Wizard implements SetupWizard
         //$this->addPage(new LdapDiscoveryConfirmPage());
         $this->addPage(new LdapResourcePage());
         $this->addPage(new AuthBackendPage());
+        $this->addPage(new UserGroupBackendPage());
         $this->addPage(new AdminAccountPage());
         $this->addPage(new GeneralConfigPage());
         $this->addPage(new DbResourcePage(array('name' => 'setup_config_db_resource')));
@@ -139,9 +141,20 @@ class WebWizard extends Wizard implements SetupWizard
                 if (isset($suggestions['backend'])) {
                     $page->populate($suggestions['backend']);
                 }
+
+                if ($this->getDirection() === static::FORWARD) {
+                    $backendConfig = $this->getPageData('setup_authentication_backend');
+                    if ($backendConfig !== null && $request->getPost('name') !== $backendConfig['name']) {
+                        $pageData = & $this->getPageData();
+                        unset($pageData['setup_usergroup_backend']);
+                    }
+                }
             }
         /*} elseif ($page->getName() === 'setup_ldap_discovery_confirm') {
             $page->setResourceConfig($this->getPageData('setup_ldap_discovery'));*/
+        } elseif ($page->getName() === 'setup_usergroup_backend') {
+            $page->setResourceConfig($this->getPageData('setup_ldap_resource'));
+            $page->setBackendConfig($this->getPageData('setup_authentication_backend'));
         } elseif ($page->getName() === 'setup_admin_account') {
             $page->setBackendConfig($this->getPageData('setup_authentication_backend'));
             $authData = $this->getPageData('setup_authentication_type');
@@ -172,6 +185,14 @@ class WebWizard extends Wizard implements SetupWizard
             $suggestion = $this->getPageData('setup_ldap_discovery');
             if (isset($suggestion['resource'])) {
                 $page->populate($suggestion['resource']);
+            }
+
+            if ($this->getDirection() === static::FORWARD) {
+                $resourceConfig = $this->getPageData('setup_ldap_resource');
+                if ($resourceConfig !== null && $request->getPost('name') !== $resourceConfig['name']) {
+                    $pageData = & $this->getPageData();
+                    unset($pageData['setup_usergroup_backend']);
+                }
             }
         } elseif ($page->getName() === 'setup_general_config') {
             $authData = $this->getPageData('setup_authentication_type');
@@ -233,6 +254,9 @@ class WebWizard extends Wizard implements SetupWizard
         } elseif ($newPage->getName() === 'setup_ldap_resource') {
             $authData = $this->getPageData('setup_authentication_type');
             $skip = $authData['type'] !== 'ldap';
+        } elseif ($newPage->getName() === 'setup_usergroup_backend') {
+            $backendConfig = $this->getPageData('setup_authentication_backend');
+            $skip = $backendConfig['backend'] !== 'ldap';
         } elseif ($newPage->getName() === 'setup_config_db_resource') {
             $authData = $this->getPageData('setup_authentication_type');
             $configData = $this->getPageData('setup_general_config');
