@@ -4,10 +4,12 @@
 namespace Icinga\Module\Setup\Forms;
 
 use Exception;
+use Icinga\Application\Config;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Authentication\User\LdapUserBackend;
 use Icinga\Data\ConfigObject;
+use Icinga\Data\ResourceFactory;
 use Icinga\Web\Form;
 
 /**
@@ -271,8 +273,12 @@ class AdminAccountPage extends Form
      */
     protected function createBackend()
     {
+        $resourceConfig = new Config();
+        $resourceConfig->setSection($this->resourceConfig['name'], $this->resourceConfig);
+        ResourceFactory::setConfig($resourceConfig);
+
         $config = new ConfigObject($this->backendConfig);
-        $config->resource = $this->resourceConfig;
+        $config->resource = $this->resourceConfig['name'];
         return UserBackend::create(null, $config);
     }
 }
