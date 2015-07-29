@@ -150,6 +150,14 @@ class WebWizard extends Wizard implements SetupWizard
                     }
                 }
             }
+
+            if ($this->getDirection() === static::FORWARD) {
+                $backendConfig = $this->getPageData('setup_authentication_backend');
+                if ($backendConfig !== null && $request->getPost('backend') !== $backendConfig['backend']) {
+                    $pageData = & $this->getPageData();
+                    unset($pageData['setup_usergroup_backend']);
+                }
+            }
         /*} elseif ($page->getName() === 'setup_ldap_discovery_confirm') {
             $page->setResourceConfig($this->getPageData('setup_ldap_discovery'));*/
         } elseif ($page->getName() === 'setup_usergroup_backend') {
