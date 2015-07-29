@@ -5,6 +5,7 @@ namespace Icinga\Authentication;
 
 use Exception;
 use Icinga\Application\Config;
+use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Data\ConfigObject;
@@ -23,6 +24,13 @@ class Auth
      * @var self
      */
     private static $instance;
+
+    /**
+     * Request
+     *
+     * @var \Icinga\Web\Request
+     */
+    protected $request;
 
     /**
      * Authenticated user
@@ -157,6 +165,19 @@ class Auth
     public function getGroups()
     {
         return $this->user->getGroups();
+    }
+
+    /**
+     * Get the request
+     *
+     * @return \Icinga\Web\Request
+     */
+    public function getRequest()
+    {
+        if ($this->request === null) {
+            $this->request = Icinga::app()->getFrontController()->getRequest();
+        }
+        return $this->request;
     }
 
     /**
