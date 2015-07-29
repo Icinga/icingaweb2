@@ -313,13 +313,16 @@
      */
     ActionTable.prototype.onRowClicked = function (event) {
         var self = event.data.self;
-        var $tr = $(event.target).closest('tr');
+        var $target = $(event.target);
+        var $tr = $target.closest('tr');
         var table = new Selection($tr.closest('table.action')[0], self.icinga);
 
-        // allow form actions in table rows to pass through
-        if ($(event.target).closest('form').length) {
+        // some rows may contain form actions that trigger a different action, pass those through
+        if (!$target.hasClass('rowaction') && $target.closest('form').length &&
+            ($target.closest('a').length || $target.closest('button').length)) {
             return;
         }
+
         event.stopPropagation();
         event.preventDefault();
 
