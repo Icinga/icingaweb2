@@ -57,7 +57,7 @@ class User
     protected $additionalInformation = array();
 
     /**
-     * Information if the user is external authenticated
+     * Information if the user is externally authenticated
      *
      * Keys:
      *
@@ -382,7 +382,7 @@ class User
     /**
      * Set additional external user information
      *
-     * @param stirng    $username
+     * @param string    $username
      * @param string    $field
      */
     public function setExternalUserInformation($username, $field)
