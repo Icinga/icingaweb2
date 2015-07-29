@@ -4,12 +4,12 @@
 namespace Icinga\Authentication;
 
 use Exception;
-use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Application\Config;
+use Icinga\Application\Logger;
+use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
-use Icinga\Application\Logger;
 use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
@@ -47,6 +47,16 @@ class Auth
             self::$instance = new self();
         }
         return self::$instance;
+    }
+
+    /**
+     * Get the auth chain
+     *
+     * @return AuthChain
+     */
+    public function getAuthChain()
+    {
+        return new AuthChain();
     }
 
     public function setAuthenticated(User $user, $persist = true)
