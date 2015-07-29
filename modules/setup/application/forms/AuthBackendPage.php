@@ -3,7 +3,8 @@
 
 namespace Icinga\Module\Setup\Forms;
 
-use Icinga\Data\ConfigObject;
+use Icinga\Application\Config;
+use Icinga\Data\ResourceFactory;
 use Icinga\Forms\Config\UserBackendConfigForm;
 use Icinga\Forms\Config\UserBackend\DbBackendForm;
 use Icinga\Forms\Config\UserBackend\LdapBackendForm;
@@ -40,22 +41,18 @@ class AuthBackendPage extends Form
      */
     public function setResourceConfig(array $config)
     {
+        $resourceConfig = new Config();
+        $resourceConfig->setSection($config['name'], $config);
+        ResourceFactory::setConfig($resourceConfig);
+
         $this->config = $config;
         return $this;
     }
 
     /**
-     * Return the resource configuration as Config object
+     * Create and add elements to this form
      *
-     * @return  ConfigObject
-     */
-    public function getResourceConfig()
-    {
-        return new ConfigObject($this->config);
-    }
-
-    /**
-     * @see Form::createElements()
+     * @param   array   $formData
      */
     public function createElements(array $formData)
     {
@@ -74,7 +71,9 @@ class AuthBackendPage extends Form
             ));
         } elseif ($this->config['type'] === 'ldap') {
             $backendForm = new LdapBackendForm();
-            $backendForm->create($formData)->removeElement('resource');
+            $backendForm->setResources(array($this->config['name']));
+            $backendForm->create($formData);
+            $backendForm->getElement('resource')->setIgnore(true);
             $this->addDescription($this->translate(
                 'Before you are able to authenticate using the LDAP connection defined earlier you need to'
                 . ' provide some more information so that Icinga Web 2 is able to locate account details.'
@@ -139,13 +138,7 @@ class AuthBackendPage extends Form
 
         if ($this->config['type'] === 'ldap' && (! isset($data['skip_validation']) || $data['skip_validation'] == 0)) {
             $self = clone $this;
-            $self->addElement(
-                'text',
-                'resource',
-                array(
-                    'value' => $this->getResourceConfig()
-                )
-            );
+            $self->getSubForm('backend_form')->getElement('resource')->setIgnore(false);
             $inspection = UserBackendConfigForm::inspectUserBackend($self);
             if ($inspection && $inspection->hasError()) {
                 $this->error($inspection->getError());
