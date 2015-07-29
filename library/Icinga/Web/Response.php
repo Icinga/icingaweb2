@@ -9,6 +9,13 @@ use Icinga\Application\Icinga;
 class Response extends Zend_Controller_Response_Http
 {
     /**
+     * Redirect URL
+     *
+     * @var Url|null
+     */
+    protected $redirectUrl;
+
+    /**
      * Request
      *
      * @var Request
@@ -21,6 +28,37 @@ class Response extends Zend_Controller_Response_Http
      * @var bool
      */
     protected $rerenderLayout = false;
+
+    /**
+     * Get the redirect URL
+     *
+     * @return Url|null
+     */
+    protected function getRedirectUrl()
+    {
+        return $this->redirectUrl;
+    }
+
+    /**
+     * Set the redirect URL
+     *
+     * Unlike {@link setRedirect()} this method only sets a redirect URL on the response for later usage.
+     * {@link prepare()} will take care of the correct redirect handling and HTTP headers on XHR and "normal" browser
+     * requests.
+     *
+     * @param   string|Url $redirectUrl
+     *
+     * @return  $this
+     */
+    protected function setRedirectUrl($redirectUrl)
+    {
+        if (! $redirectUrl instanceof Url) {
+            $redirectUrl = Url::fromPath((string) $redirectUrl);
+        }
+        $redirectUrl->getParams()->setSeparator('&');
+        $this->redirectUrl = $redirectUrl;
+        return $this;
+    }
 
     /**
      * Get the request
@@ -63,8 +101,21 @@ class Response extends Zend_Controller_Response_Http
      */
     protected function prepare()
     {
-        if ($this->getRequest()->isXmlHttpRequest() && $this->getRerenderLayout()) {
-            $this->setHeader('X-Icinga-Rerender-Layout', 'yes');
+        $redirectUrl = $this->getRedirectUrl();
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            if ($redirectUrl !== null) {
+                $this->setHeader('X-Icinga-Redirect', rawurlencode($redirectUrl->getAbsoluteUrl()), true);
+                if ($this->getRerenderLayout()) {
+                    $this->setHeader('X-Icinga-Rerender-Layout', 'yes', true);
+                }
+            }
+            if ($this->getRerenderLayout()) {
+                $this->setHeader('X-Icinga-Container', 'layout', true);
+            }
+        } else {
+            if ($redirectUrl !== null) {
+                $this->setRedirect($redirectUrl->getAbsoluteUrl());
+            }
         }
     }
 
@@ -75,16 +126,7 @@ class Response extends Zend_Controller_Response_Http
      */
     public function redirectAndExit($url)
     {
-        if (! $url instanceof Url) {
-            $url = Url::fromPath((string) $url);
-        }
-        $url->getParams()->setSeparator('&');
-
-        if ($this->getRequest()->isXmlHttpRequest()) {
-            $this->setHeader('X-Icinga-Redirect', rawurlencode($url->getAbsoluteUrl()));
-        } else {
-            $this->setRedirect($url->getAbsoluteUrl());
-        }
+        $this->setRedirectUrl($url);
 
         $session = Session::getSession();
         if ($session->hasChanged()) {
