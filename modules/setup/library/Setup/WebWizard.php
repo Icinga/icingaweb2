@@ -320,6 +320,27 @@ class WebWizard extends Wizard implements SetupWizard
         } elseif ($index === count($pages) - 1) {
             $page->getElement(static::BTN_NEXT)->setLabel(mt('setup', 'Setup Icinga Web 2', 'setup.summary.btn.finish'));
         }
+
+        $authData = $this->getPageData('setup_authentication_type');
+        $veto = $page->getName() === 'setup_authentication_backend' && $authData['type'] === 'db';
+        if (! $veto && in_array($page->getName(), array(
+            'setup_authentication_backend',
+            'setup_auth_db_resource',
+            'setup_config_db_resource',
+            'setup_ldap_resource',
+            'setup_monitoring_ido'
+        ))) {
+            $page->addElement(
+                'submit',
+                'backend_validation',
+                array(
+                    'ignore'        => true,
+                    'label'         => t('Validate Configuration'),
+                    'decorators'    => array('ViewHelper')
+                )
+            );
+            $page->getDisplayGroup('buttons')->addElement($page->getElement('backend_validation'));
+        }
     }
 
     /**

@@ -3,7 +3,8 @@
 
 namespace Icinga\Module\Setup\Forms;
 
-use Icinga\Data\ConfigObject;
+use Icinga\Application\Config;
+use Icinga\Data\ResourceFactory;
 use Icinga\Forms\Config\UserBackendConfigForm;
 use Icinga\Forms\Config\UserBackend\DbBackendForm;
 use Icinga\Forms\Config\UserBackend\LdapBackendForm;
@@ -29,6 +30,7 @@ class AuthBackendPage extends Form
     {
         $this->setName('setup_authentication_backend');
         $this->setTitle($this->translate('Authentication Backend', 'setup.page.title'));
+        $this->setValidatePartial(true);
     }
 
     /**
@@ -40,22 +42,18 @@ class AuthBackendPage extends Form
      */
     public function setResourceConfig(array $config)
     {
+        $resourceConfig = new Config();
+        $resourceConfig->setSection($config['name'], $config);
+        ResourceFactory::setConfig($resourceConfig);
+
         $this->config = $config;
         return $this;
     }
 
     /**
-     * Return the resource configuration as Config object
+     * Create and add elements to this form
      *
-     * @return  ConfigObject
-     */
-    public function getResourceConfig()
-    {
-        return new ConfigObject($this->config);
-    }
-
-    /**
-     * @see Form::createElements()
+     * @param   array   $formData
      */
     public function createElements(array $formData)
     {
@@ -74,7 +72,9 @@ class AuthBackendPage extends Form
             ));
         } elseif ($this->config['type'] === 'ldap') {
             $backendForm = new LdapBackendForm();
-            $backendForm->create($formData)->removeElement('resource');
+            $backendForm->setResources(array($this->config['name']));
+            $backendForm->create($formData);
+            $backendForm->getElement('resource')->setIgnore(true);
             $this->addDescription($this->translate(
                 'Before you are able to authenticate using the LDAP connection defined earlier you need to'
                 . ' provide some more information so that Icinga Web 2 is able to locate account details.'
@@ -140,19 +140,61 @@ class AuthBackendPage extends Form
 
         if ($this->config['type'] === 'ldap' && (! isset($data['skip_validation']) || $data['skip_validation'] == 0)) {
             $self = clone $this;
-            $self->addElement(
-                'text',
-                'resource',
-                array(
-                    'value' => $this->getResourceConfig()
-                )
-            );
+            $self->getSubForm('backend_form')->getElement('resource')->setIgnore(false);
             $inspection = UserBackendConfigForm::inspectUserBackend($self);
             if ($inspection && $inspection->hasError()) {
                 $this->error($inspection->getError());
                 $this->addSkipValidationCheckbox();
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * Run the configured backend's inspection checks and show the result, if necessary
+     *
+     * This will only run any validation if the user pushed the 'backend_validation' button.
+     *
+     * @param   array   $formData
+     *
+     * @return  bool
+     */
+    public function isValidPartial(array $formData)
+    {
+        if (isset($formData['backend_validation']) && parent::isValid($formData)) {
+            $self = clone $this;
+            $self->getSubForm('backend_form')->getElement('resource')->setIgnore(false);
+            $inspection = UserBackendConfigForm::inspectUserBackend($self);
+            if ($inspection !== null) {
+                $join = function ($e) use (& $join) {
+                    return is_string($e) ? $e : join("\n", array_map($join, $e));
+                };
+                $this->addElement(
+                    'note',
+                    'inspection_output',
+                    array(
+                        'order'         => 0,
+                        'value'         => '<strong>' . $this->translate('Validation Log') . "</strong>\n\n"
+                            . join("\n", array_map($join, $inspection->toArray())),
+                        'decorators'    => array(
+                            'ViewHelper',
+                            array('HtmlTag', array('tag' => 'pre', 'class' => 'log-output')),
+                        )
+                    )
+                );
+
+                if ($inspection->hasError()) {
+                    $this->warning(sprintf(
+                        $this->translate('Failed to successfully validate the configuration: %s'),
+                        $inspection->getError()
+                    ));
+                    return false;
+                }
+            }
+
+            $this->info($this->translate('The configuration has been successfully validated.'));
         }
 
         return true;

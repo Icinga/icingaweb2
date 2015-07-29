@@ -43,7 +43,7 @@
      * Handle the selection of an action table
      *
      * @param   table   {HTMLElement}   The table
-     * @param           {Icinga}
+     * @param   icinga  {Icinga}
      *
      * @constructor
      */
@@ -158,7 +158,6 @@
                 return;
             }
             var self = this;
-            var url = this.getMultiselectionUrl();
             this.rowActions()
                 .filter(
                     function (i, el) {
@@ -283,14 +282,7 @@
 
     var ActionTable = function (icinga) {
         Icinga.EventListener.call(this, icinga);
-        
-       /**
-        * The hash that is currently being loaded
-        *
-        * @var String
-        */
-        this.loadingHash = null;
-        
+
         /**
          * If currently loading
          *
@@ -364,7 +356,7 @@
         }
         self.icinga.history.pushUrl(state);
         
-        // re draw all table selections
+        // redraw all table selections
         self.tables().each(function () {
             new Selection(this, self.icinga).refresh();
         });
@@ -375,20 +367,44 @@
     };
 
     /**
-     * Ensure that
+     * Render the selection and prepare selection rows
      */
     ActionTable.prototype.onRendered = function(evt) {
         var container = evt.target;
         var self = evt.data.self;
 
-        // draw all selections
+        // initialize all rows with the correct link
+        $('table.action tr', container).each(function(idx, el) {
+            // IE will not ignore user-select unless we cancel selectstart
+            $(el).on('selectstart', false);
+
+            var $a = $('a[href].rowaction', el).first();
+            if ($a.length) {
+                // TODO: Find out whether we leak memory on IE with this:
+                $(el).attr('href', $a.attr('href'));
+                return;
+            }
+            $a = $('a[href]', el).first();
+            if ($a.length) {
+                $(el).attr('href', $a.attr('href'));
+            }
+        });
+
+        // draw all active selections that have disappeared on reload
         self.tables().each(function(i, el) {
             new Selection(el, self.icinga).refresh();
         });
 
-        // update displayed selection count
+        // update displayed selection counter
         var table = new Selection(self.tables(container).first());
         $(container).find('.selection-info-count').text(table.selections().size());
+    };
+
+    ActionTable.prototype.clearAll = function () {
+        var self = this;
+        this.tables().each(function () {
+            new Selection(this, self.icinga).clear();
+        });
     };
 
     Icinga.Behaviors.ActionTable = ActionTable;

@@ -114,6 +114,19 @@ class MonitoringWizard extends Wizard implements SetupWizard
                 mt('monitoring', 'Setup the monitoring module for Icinga Web 2', 'setup.summary.btn.finish')
             );
         }
+
+        if ($page->getName() === 'setup_monitoring_ido') {
+            $page->addElement(
+                'submit',
+                'backend_validation',
+                array(
+                    'ignore'        => true,
+                    'label'         => t('Validate Configuration'),
+                    'decorators'    => array('ViewHelper')
+                )
+            );
+            $page->getDisplayGroup('buttons')->addElement($page->getElement('backend_validation'));
+        }
     }
 
     /**

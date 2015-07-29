@@ -207,12 +207,7 @@ class UserBackend implements ConfigAwareFactory
             );
         }
 
-        if ($backendConfig->resource instanceof ConfigObject) {
-            $resource = ResourceFactory::createResource($backendConfig->resource);
-        } else {
-            $resource = ResourceFactory::create($backendConfig->resource);
-        }
-
+        $resource = ResourceFactory::create($backendConfig->resource);
         switch ($backendType) {
             case 'db':
                 $backend = new DbUserBackend($resource);

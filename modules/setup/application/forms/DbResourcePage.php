@@ -23,6 +23,7 @@ class DbResourcePage extends Form
             'Now please configure your database resource. Note that the database itself does not need to'
             . ' exist at this time as it is going to be created once the wizard is about to be finished.'
         ));
+        $this->setValidatePartial(true);
     }
 
     /**
@@ -79,6 +80,35 @@ class DbResourcePage extends Form
                 $this->addSkipValidationCheckbox();
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check whether it's possible to connect to the database server
+     *
+     * This will only run the check if the user pushed the 'backend_validation' button.
+     *
+     * @param   array   $formData
+     *
+     * @return  bool
+     */
+    public function isValidPartial(array $formData)
+    {
+        if (isset($formData['backend_validation']) && parent::isValid($formData)) {
+            try {
+                $db = new DbTool($this->getValues());
+                $db->checkConnectivity();
+            } catch (PDOException $e) {
+                $this->warning(sprintf(
+                    $this->translate('Failed to successfully validate the configuration: %s'),
+                    $e->getMessage()
+                ));
+                return false;
+            }
+
+            $this->info($this->translate('The configuration has been successfully validated.'));
         }
 
         return true;
