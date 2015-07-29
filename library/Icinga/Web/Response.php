@@ -28,10 +28,15 @@ class Response extends Zend_Controller_Response_Http
         return $this->request;
     }
 
+    /**
+     * Redirect to the given URL and exit immediately
+     *
+     * @param string|Url $url
+     */
     public function redirectAndExit($url)
     {
         if (! $url instanceof Url) {
-            $url = Url::fromPath($url);
+            $url = Url::fromPath((string) $url);
         }
         $url->getParams()->setSeparator('&');
 
