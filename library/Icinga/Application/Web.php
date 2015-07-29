@@ -137,6 +137,16 @@ class Web extends ApplicationBootstrap
     }
 
     /**
+     * Get the request
+     *
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
      * Getter for view
      *
      * @return View
