@@ -32,12 +32,14 @@ class ConfigController extends Controller
         $tabs->add('general', array(
             'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
             'label' => $this->translate('General'),
-            'url'   => 'config/general'
+            'url'   => 'config/general',
+            'baseTarget' => '_main'
         ));
         $tabs->add('resource', array(
             'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
             'label' => $this->translate('Resources'),
-            'url'   => 'config/resource'
+            'url'   => 'config/resource',
+            'baseTarget' => '_main'
         ));
         return $tabs;
     }
@@ -51,12 +53,14 @@ class ConfigController extends Controller
         $tabs->add('userbackend', array(
             'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
             'label' => $this->translate('User Backends'),
-            'url'   => 'config/userbackend'
+            'url'   => 'config/userbackend',
+            'baseTarget' => '_main'
         ));
         $tabs->add('usergroupbackend', array(
             'title' => $this->translate('Configure how users are associated with groups by Icinga Web 2'),
             'label' => $this->translate('User Group Backends'),
-            'url'   => 'usergroupbackend/list'
+            'url'   => 'usergroupbackend/list',
+            'baseTarget' => '_main'
         ));
         return $tabs;
     }
