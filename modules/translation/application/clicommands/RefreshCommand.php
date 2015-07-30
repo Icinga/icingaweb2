@@ -38,7 +38,7 @@ class RefreshCommand extends TranslationCommand
     {
         $locale = $this->validateLocaleCode($this->params->shift());
 
-        $helper = new GettextTranslationHelper($this->app, $locale);
+        $helper = $this->getTranslationHelper($locale);
         $helper->updateIcingaTranslations();
     }
 
@@ -61,7 +61,7 @@ class RefreshCommand extends TranslationCommand
         $module = $this->validateModuleName($this->params->shift());
         $locale = $this->validateLocaleCode($this->params->shift());
 
-        $helper = new GettextTranslationHelper($this->app, $locale);
+        $helper = $this->getTranslationHelper($locale);
         $helper->updateModuleTranslations($module);
     }
 }

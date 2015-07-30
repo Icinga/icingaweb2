@@ -4,10 +4,11 @@
 namespace Icinga\Module\Translation\Util;
 
 use Exception;
+use Icinga\Application\ApplicationBootstrap;
+use Icinga\Application\Config;
+use Icinga\Application\Modules\Manager;
 use Icinga\Exception\IcingaException;
 use Icinga\Util\File;
-use Icinga\Application\Modules\Manager;
-use Icinga\Application\ApplicationBootstrap;
 
 /**
  * This class provides some useful utility functions to handle gettext translations
@@ -18,6 +19,13 @@ class GettextTranslationHelper
      * All project files are supposed to have the same/this encoding
      */
     const FILE_ENCODING = 'UTF-8';
+
+    /**
+     * Config
+     *
+     * @var Config
+     */
+    protected $config;
 
     /**
      * The source files to parse
@@ -103,6 +111,29 @@ class GettextTranslationHelper
         $this->moduleMgr = $bootstrap->getModuleManager()->loadEnabledModules();
         $this->appDir = $bootstrap->getApplicationDir();
         $this->locale = $locale;
+    }
+
+    /**
+     * Get the config
+     *
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * Set the config
+     *
+     * @param   Config $config
+     *
+     * @return  $this
+     */
+    public function setConfig(Config $config)
+    {
+        $this->config = $config;
+        return $this;
     }
 
     /**
