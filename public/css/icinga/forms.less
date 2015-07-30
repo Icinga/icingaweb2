@@ -107,6 +107,53 @@ form.inline {
   display: inline;
 }
 
+button, .button-like {
+  font-size: 0.9em;
+  font-weight: bold;
+  outline: 0;
+  color: #fff;
+  padding: 0.2em;
+  border: 1px solid;
+  border-color: @colorPetrol;
+  background: @colorPetrol;
+
+  &[disabled] {
+    background-color: #666;
+    border-color: black;
+  }
+
+  &:hover, &:focus, &:active {
+    background-color: #333;
+    border-color: #333;
+    cursor: pointer;
+
+    &[disabled] {
+      background-color: #666;
+    }
+  }
+
+  &.icon-only {
+    font-size: 1.5em;
+    padding: 0;
+    border: none;
+    color: inherit;
+    background-color: transparent;
+
+    &:hover, &:focus, &:active {
+      color: #666;
+    }
+  }
+}
+
+.button-like {
+  display: inline-block;
+}
+
+a.button-like {
+  cursor: default;
+  text-decoration: none;
+}
+
 form.link-like input[type="submit"], form.link-like button[type="submit"], input.link-like, button.link-like {
   color: @colorLinkDefault;
   font-weight: normal;
@@ -302,47 +349,4 @@ form ul.hints {
     height: 0;
     clear: both;
   }
-}
-
-button, .button-like {
-  font-size: 0.9em;
-  font-weight: bold;
-  outline: 0;
-  color: #fff;
-  padding: 0.2em;
-  border: 1px solid;
-  border-color: @colorPetrol;
-  background: @colorPetrol;
-
-  &[disabled] {
-    background-color: #666;
-    border-color: black;
-  }
-
-  &:hover, &:focus, &:active {
-    background-color: #333;
-    border-color: #333;
-    cursor: pointer;
-
-    &[disabled] {
-      background-color: #666;
-    }
-  }
-
-  &.icon-only {
-    font-size: 1.5em;
-    padding: 0;
-    border: none;
-    color: inherit;
-    background-color: transparent;
-
-    &:hover, &:focus, &:active {
-      color: #666;
-    }
-  }
-}
-
-a.button-like {
-  cursor: default;
-  text-decoration: none;
 }
