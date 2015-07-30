@@ -104,13 +104,13 @@ class AuthenticationStep extends Step
                     'password'  => $this->data['adminAccountData']['password'],
                     'is_active' => true
                 ));
+                $this->dbError = false;
             }
         } catch (Exception $e) {
             $this->dbError = $e;
             return false;
         }
 
-        $this->dbError = false;
         return true;
     }
 
