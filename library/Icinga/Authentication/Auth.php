@@ -256,6 +256,7 @@ class Auth
         $password = $credentials[1];
         if ($this->getAuthChain()->setSkipExternalBackends(true)->authenticate($user, $password)) {
             $this->setAuthenticated($user, false);
+            $user->setIsHttpUser(true);
             return true;
         } else {
             return false;
