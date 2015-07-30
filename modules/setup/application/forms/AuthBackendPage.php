@@ -71,6 +71,12 @@ class AuthBackendPage extends Form
                 . 'to do now is defining a name for your first authentication backend.'
             ));
         } elseif ($this->config['type'] === 'ldap') {
+            $type = null;
+            if (! isset($formData['type']) && isset($formData['backend'])) {
+                $type = $formData['backend'];
+                $formData['type'] = $type;
+            }
+
             $backendForm = new LdapBackendForm();
             $backendForm->setResources(array($this->config['name']));
             $backendForm->create($formData);
@@ -94,7 +100,7 @@ class AuthBackendPage extends Form
                         'ldap'      => 'LDAP',
                         'msldap'    => 'ActiveDirectory'
                     ),
-                    'value'             => isset($formData['backend']) ? $formData['backend'] : null
+                    'value'             => $type
                 )
             );
         } else { // $this->config['type'] === 'external'
