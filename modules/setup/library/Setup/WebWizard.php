@@ -434,14 +434,18 @@ class WebWizard extends Wizard implements SetupWizard
         );
 
         $adminAccountType = $pageData['setup_admin_account']['user_type'];
-        $adminAccountData = array('username' => $pageData['setup_admin_account'][$adminAccountType]);
-        if ($adminAccountType === 'new_user' && !$pageData['setup_auth_db_resource']['skip_validation']
-            && (! isset($pageData['setup_auth_db_creation'])
-                || !$pageData['setup_auth_db_creation']['skip_validation']
-            )
-        ) {
-            $adminAccountData['resourceConfig'] = $pageData['setup_auth_db_resource'];
-            $adminAccountData['password'] = $pageData['setup_admin_account']['new_user_password'];
+        if ($adminAccountType === 'user_group') {
+            $adminAccountData = array('groupname' => $pageData['setup_admin_account'][$adminAccountType]);
+        } else {
+            $adminAccountData = array('username' => $pageData['setup_admin_account'][$adminAccountType]);
+            if ($adminAccountType === 'new_user' && !$pageData['setup_auth_db_resource']['skip_validation']
+                && (! isset($pageData['setup_auth_db_creation'])
+                    || !$pageData['setup_auth_db_creation']['skip_validation']
+                )
+            ) {
+                $adminAccountData['resourceConfig'] = $pageData['setup_auth_db_resource'];
+                $adminAccountData['password'] = $pageData['setup_admin_account']['new_user_password'];
+            }
         }
         $authType = $pageData['setup_authentication_type']['type'];
         $setup->addStep(

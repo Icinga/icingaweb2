@@ -62,14 +62,24 @@ class AuthenticationStep extends Step
 
     protected function createRolesIni()
     {
-        $config = array();
-        $config['admins'] = array(
-            'users'         => $this->data['adminAccountData']['username'],
-            'permissions'   => '*'
-        );
+        if (isset($this->data['adminAccountData']['username'])) {
+            $config = array(
+                'users'         => $this->data['adminAccountData']['username'],
+                'permissions'   => '*'
+            );
+
+            if ($this->data['backendConfig']['backend'] === 'db') {
+                $config['groups'] = mt('setup', 'Administrators', 'setup.role.name');
+            }
+        } else { // isset($this->data['adminAccountData']['groupname'])
+            $config = array(
+                'groups'        => $this->data['adminAccountData']['groupname'],
+                'permissions'   => '*'
+            );
+        }
 
         try {
-            Config::fromArray($config)
+            Config::fromArray(array(mt('setup', 'Administrators', 'setup.role.name') => $config))
                 ->setConfigFile(Config::resolvePath('roles.ini'))
                 ->saveIni();
         } catch (Exception $e) {
@@ -147,13 +157,20 @@ class AuthenticationStep extends Step
             . '</tbody>'
             . '</table>';
 
-        $adminHtml = '<p>' . (isset($this->data['adminAccountData']['resourceConfig']) ? sprintf(
-            mt('setup', 'Administrative rights will initially be granted to a new account called "%s".'),
-            $this->data['adminAccountData']['username']
-        ) : sprintf(
-            mt('setup', 'Administrative rights will initially be granted to an existing account called "%s".'),
-            $this->data['adminAccountData']['username']
-        )) . '</p>';
+        if (isset($this->data['adminAccountData']['username'])) {
+            $adminHtml = '<p>' . (isset($this->data['adminAccountData']['resourceConfig']) ? sprintf(
+                mt('setup', 'Administrative rights will initially be granted to a new account called "%s".'),
+                $this->data['adminAccountData']['username']
+            ) : sprintf(
+                mt('setup', 'Administrative rights will initially be granted to an existing account called "%s".'),
+                $this->data['adminAccountData']['username']
+            )) . '</p>';
+        } else { // isset($this->data['adminAccountData']['groupname'])
+            $adminHtml = '<p>' . sprintf(
+                mt('setup', 'Administrative rights will initially be granted to members of the user group "%s".'),
+                $this->data['adminAccountData']['groupname']
+            ) . '</p>';
+        }
 
         return $pageTitle . '<div class="topic">' . $backendDesc . $backendTitle . $backendHtml . '</div>'
             . '<div class="topic">' . $adminTitle . $adminHtml . '</div>';
@@ -190,14 +207,23 @@ class AuthenticationStep extends Step
         }
 
         if ($this->permIniError === false) {
-            $report[] = sprintf(
+            $report[] = isset($this->data['adminAccountData']['username']) ? sprintf(
                 mt('setup', 'Account "%s" has been successfully defined as initial administrator.'),
                 $this->data['adminAccountData']['username']
+            ) : sprintf(
+                mt('setup', 'The members of the user group "%s" were successfully defined as initial administrators.'),
+                $this->data['adminAccountData']['groupname']
             );
         } elseif ($this->permIniError !== null) {
-            $report[] = sprintf(
+            $report[] = isset($this->data['adminAccountData']['username']) ? sprintf(
                 mt('setup', 'Unable to define account "%s" as initial administrator. An error occured:'),
                 $this->data['adminAccountData']['username']
+            ) : sprintf(
+                mt(
+                    'setup',
+                    'Unable to define the members of the user group "%s" as initial administrators. An error occured:'
+                ),
+                $this->data['adminAccountData']['groupname']
             );
             $report[] = sprintf(mt('setup', 'ERROR: %s'), $this->permIniError->getMessage());
         }
