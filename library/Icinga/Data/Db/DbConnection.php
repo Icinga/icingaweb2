@@ -153,6 +153,9 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             case 'pgsql':
                 $adapter = 'Pdo_Pgsql';
                 $adapterParamaters['port'] = $this->config->get('port', 5432);
+                if ($adapterParamaters['host'] === '') {
+                  unset($adapterParamaters['host']);
+                }
                 break;
             /*case 'oracle':
                 if ($this->dbtype === 'oracle') {
