@@ -242,7 +242,12 @@ class GettextTranslationHelper
     private function updateTranslationTable()
     {
         if (is_file($this->tablePath)) {
-            shell_exec(sprintf('/usr/bin/msgmerge --update %s %s 2>&1', $this->tablePath, $this->templatePath));
+            shell_exec(sprintf(
+                '%s --update %s %s 2>&1',
+                $this->getConfig()->get('translation', 'msgmerge', '/usr/bin/env php'),
+                $this->tablePath,
+                $this->templatePath
+            ));
         } else {
             if ((!is_dir(dirname($this->tablePath)) && !@mkdir(dirname($this->tablePath), 0755, true)) ||
                 !rename($this->templatePath, $this->tablePath)) {
