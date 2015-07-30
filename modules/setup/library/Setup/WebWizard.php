@@ -27,6 +27,7 @@ use Icinga\Module\Setup\Steps\DatabaseStep;
 use Icinga\Module\Setup\Steps\GeneralConfigStep;
 use Icinga\Module\Setup\Steps\ResourceStep;
 use Icinga\Module\Setup\Steps\AuthenticationStep;
+use Icinga\Module\Setup\Steps\UserGroupStep;
 use Icinga\Module\Setup\Utils\EnableModuleStep;
 use Icinga\Module\Setup\Utils\DbTool;
 use Icinga\Module\Setup\Requirement\OSRequirement;
@@ -457,6 +458,26 @@ class WebWizard extends Wizard implements SetupWizard
                 )
             ))
         );
+
+        if ($authType !== 'external') {
+            $setup->addStep(
+                new UserGroupStep(array(
+                    'backendConfig'     => $pageData['setup_authentication_backend'],
+                    'groupConfig'       => isset($pageData['setup_usergroup_backend'])
+                        ? $pageData['setup_usergroup_backend']
+                        : null,
+                    'resourceName'      => $authType === 'db'
+                        ? $pageData['setup_auth_db_resource']['name']
+                        : $pageData['setup_ldap_resource']['name'],
+                    'resourceConfig'    => $authType === 'db'
+                        ? $pageData['setup_auth_db_resource']
+                        : null,
+                    'username'          => $authType === 'db'
+                        ? $pageData['setup_admin_account'][$adminAccountType]
+                        : null
+                ))
+            );
+        }
 
         if (
             isset($pageData['setup_auth_db_resource'])
