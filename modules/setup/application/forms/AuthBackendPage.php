@@ -171,7 +171,10 @@ class AuthBackendPage extends Form
     {
         if (isset($formData['backend_validation']) && parent::isValid($formData)) {
             $self = clone $this;
-            $self->getSubForm('backend_form')->getElement('resource')->setIgnore(false);
+            if (($resourceElement = $self->getSubForm('backend_form')->getElement('resource')) !== null) {
+                $resourceElement->setIgnore(false);
+            }
+
             $inspection = UserBackendConfigForm::inspectUserBackend($self);
             if ($inspection !== null) {
                 $join = function ($e) use (& $join) {
