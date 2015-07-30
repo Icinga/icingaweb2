@@ -948,10 +948,18 @@ class Form extends Zend_Form
      */
     public function addCsrfCounterMeasure()
     {
-        if (! $this->tokenDisabled && $this->getElement($this->tokenElementName) === null) {
-            $this->addElement(new CsrfCounterMeasure($this->tokenElementName));
+        if (! $this->tokenDisabled) {
+            $request = $this->getRequest();
+            if (! $request->isXmlHttpRequest()
+                && ($user = $request->getUser()) !== null
+                && $user->getIsHttpUser()
+            ) {
+                return $this;
+            }
+            if ($this->getElement($this->tokenElementName) === null) {
+                $this->addElement(new CsrfCounterMeasure($this->tokenElementName));
+            }
         }
-
         return $this;
     }
 
