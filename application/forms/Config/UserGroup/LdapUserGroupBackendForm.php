@@ -31,6 +31,32 @@ class LdapUserGroupBackendForm extends Form
      */
     public function createElements(array $formData)
     {
+        $this->addElement(
+            'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => $this->translate('Backend Name'),
+                'description'   => $this->translate(
+                    'The name of this user group backend that is used to differentiate it from others'
+                ),
+                'validators'    => array(
+                    array(
+                        'Regex',
+                        false,
+                        array(
+                            'pattern'  => '/^[^\\[\\]:]+$/',
+                            'messages' => array(
+                                'regexNotMatch' => $this->translate(
+                                    'The name cannot contain \'[\', \']\' or \':\'.'
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        );
+
         $resourceNames = $this->getLdapResourceNames();
         $this->addElement(
             'select',
@@ -89,6 +115,15 @@ class LdapUserGroupBackendForm extends Form
 
         $this->createGroupConfigElements($defaults, $groupConfigDisabled);
         $this->createUserConfigElements($defaults, $userConfigDisabled, $dnDisabled);
+
+        $this->addElement(
+            'hidden',
+            'backend',
+            array(
+                'disabled'  => true, // Prevents the element from being submitted, see #7717
+                'value'     => $formData['type']
+            )
+        );
     }
 
     /**

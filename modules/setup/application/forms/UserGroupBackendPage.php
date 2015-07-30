@@ -110,6 +110,7 @@ class UserGroupBackendPage extends Form
         $backendForm->create($formData);
         $userBackendOptions = $backendForm->getElement('user_backend')->getMultiOptions();
         unset($userBackendOptions['none']);
+        $backendForm->getElement('name')->setValue('icingaweb2');
         $backendForm->getElement('user_backend')->setMultiOptions($userBackendOptions);
         $this->addSubForm($backendForm, 'backend_form');
     }
