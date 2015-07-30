@@ -124,7 +124,9 @@ class AuthenticationStep extends Step
         $backendDesc = '<p>' . sprintf(
             mt('setup', 'Users will authenticate using %s.', 'setup.summary.auth'),
             $authType === 'db' ? mt('setup', 'a database', 'setup.summary.auth.type') : (
-                $authType === 'ldap' ? 'LDAP' : mt('setup', 'webserver authentication', 'setup.summary.auth.type')
+                $authType === 'ldap' || $authType === 'msldap' ? 'LDAP' : (
+                    mt('setup', 'webserver authentication', 'setup.summary.auth.type')
+                )
             )
         ) . '</p>';
 
@@ -135,18 +137,20 @@ class AuthenticationStep extends Step
             . '<td><strong>' . t('Backend Name') . '</strong></td>'
             . '<td>' . $this->data['backendConfig']['name'] . '</td>'
             . '</tr>'
-            . ($authType === 'ldap' ? (
+            . ($authType === 'ldap' || $authType === 'msldap' ? (
                 '<tr>'
                 . '<td><strong>' . mt('setup', 'User Object Class') . '</strong></td>'
-                . '<td>' . $this->data['backendConfig']['user_class'] . '</td>'
+                . '<td>' . ($authType === 'msldap' ? 'user' : $this->data['backendConfig']['user_class']) . '</td>'
                 . '</tr>'
                 . '<tr>'
                 . '<td><strong>' . mt('setup', 'Custom Filter') . '</strong></td>'
-                . '<td>' . trim($this->data['backendConfig']['filter']) ?: t('None', 'auth.ldap.filter') . '</td>'
+                . '<td>' . (trim($this->data['backendConfig']['filter']) ?: t('None', 'auth.ldap.filter')) . '</td>'
                 . '</tr>'
                 . '<tr>'
                 . '<td><strong>' . mt('setup', 'User Name Attribute') . '</strong></td>'
-                . '<td>' . $this->data['backendConfig']['user_name_attribute'] . '</td>'
+                . '<td>' . ($authType === 'msldap'
+                    ? 'sAMAccountName'
+                    : $this->data['backendConfig']['user_name_attribute']) . '</td>'
                 . '</tr>'
             ) : ($authType === 'external' ? (
                 '<tr>'
