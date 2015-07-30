@@ -183,11 +183,11 @@ class Notification
     }
 
     /**
-     * Get the notification messages
+     * Pop the notification messages
      *
      * @return array
      */
-    public function getMessages()
+    public function popMessages()
     {
         $messages = $this->messages;
         $this->messages = array();

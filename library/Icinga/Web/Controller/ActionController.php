@@ -455,7 +455,7 @@ class ActionController extends Zend_Controller_Action
         $notifications = Notification::getInstance();
         if ($notifications->hasMessages()) {
             $notificationList = array();
-            foreach ($notifications->getMessages() as $m) {
+            foreach ($notifications->popMessages() as $m) {
                 $notificationList[] = rawurlencode($m->type . ' ' . $m->message);
             }
             $resp->setHeader('X-Icinga-Notification', implode('&', $notificationList), true);

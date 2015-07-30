@@ -51,7 +51,7 @@ if (Auth::getInstance()->isAuthenticated()):
    <ul id="notifications"><?php
 $notifications = Notification::getInstance();
 if ($notifications->hasMessages()) {
-    foreach ($notifications->getMessages() as $m) {
+    foreach ($notifications->popMessages() as $m) {
         echo '<li class="' . $m->type . '">' . $this->escape($m->message) . '</li>';
     }
 }
