@@ -97,6 +97,13 @@ class User
     protected $preferences;
 
     /**
+     * Whether the user is authenticated using a HTTP authentication mechanism
+     *
+     * @var bool
+     */
+    protected $isHttpUser = false;
+
+    /**
      * Creates a user object given the provided information
      *
      * @param   string      $username
@@ -408,6 +415,29 @@ class User
     public function isExternalUser()
     {
         return ! empty($this->externalUserInformation);
+    }
+
+    /**
+     * Get whether the user is authenticated using a HTTP authentication mechanism
+     *
+     * @return bool
+     */
+    public function getIsHttpUser()
+    {
+        return $this->isHttpUser;
+    }
+
+    /**
+     * Set whether the user is authenticated using a HTTP authentication mechanism
+     *
+     * @param   bool $isHttpUser
+     *
+     * @return  $this
+     */
+    public function setIsHttpUser($isHttpUser = true)
+    {
+        $this->isHttpUser = (bool) $isHttpUser;
+        return $this;
     }
 
     /**
