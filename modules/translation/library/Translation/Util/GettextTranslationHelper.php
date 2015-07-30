@@ -269,7 +269,7 @@ class GettextTranslationHelper
             implode(
                 ' ',
                 array(
-                    '/usr/bin/xgettext',
+                    $this->getConfig()->get('translation', 'xgettext', '/usr/bin/env xgettext'),
                     '--language=PHP',
                     '--keyword=translate',
                     '--keyword=translate:1,2c',
