@@ -68,7 +68,7 @@ class Response extends Zend_Controller_Response_Http
     public function getRequest()
     {
         if ($this->request === null) {
-            $this->request = Icinga::app()->getFrontController()->getRequest();
+            $this->request = Icinga::app()->getRequest();
         }
         return $this->request;
     }

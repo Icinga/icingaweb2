@@ -435,7 +435,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
 
         if ($itemsPerPage === null || $pageNumber === null) {
             // Detect parameters from request
-            $request = Icinga::app()->getFrontController()->getRequest();
+            $request = Icinga::app()->getRequest();
             if ($itemsPerPage === null) {
                 $itemsPerPage = $request->getParam('limit', 25);
             }

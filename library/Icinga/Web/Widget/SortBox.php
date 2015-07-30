@@ -116,7 +116,7 @@ class SortBox extends AbstractWidget
     {
         if ($this->query !== null) {
             if ($request === null) {
-                $request = Icinga::app()->getFrontController()->getRequest();
+                $request = Icinga::app()->getRequest();
             }
 
             if (($sort = $request->getParam('sort'))) {
