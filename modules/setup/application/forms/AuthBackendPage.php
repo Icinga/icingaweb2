@@ -71,6 +71,12 @@ class AuthBackendPage extends Form
                 . 'to do now is defining a name for your first authentication backend.'
             ));
         } elseif ($this->config['type'] === 'ldap') {
+            $type = null;
+            if (! isset($formData['type']) && isset($formData['backend'])) {
+                $type = $formData['backend'];
+                $formData['type'] = $type;
+            }
+
             $backendForm = new LdapBackendForm();
             $backendForm->setResources(array($this->config['name']));
             $backendForm->create($formData);
@@ -93,7 +99,8 @@ class AuthBackendPage extends Form
                     'multiOptions'      => array(
                         'ldap'      => 'LDAP',
                         'msldap'    => 'ActiveDirectory'
-                    )
+                    ),
+                    'value'             => $type
                 )
             );
         } else { // $this->config['type'] === 'external'
@@ -164,7 +171,10 @@ class AuthBackendPage extends Form
     {
         if (isset($formData['backend_validation']) && parent::isValid($formData)) {
             $self = clone $this;
-            $self->getSubForm('backend_form')->getElement('resource')->setIgnore(false);
+            if (($resourceElement = $self->getSubForm('backend_form')->getElement('resource')) !== null) {
+                $resourceElement->setIgnore(false);
+            }
+
             $inspection = UserBackendConfigForm::inspectUserBackend($self);
             if ($inspection !== null) {
                 $join = function ($e) use (& $join) {
@@ -194,6 +204,9 @@ class AuthBackendPage extends Form
             }
 
             $this->info($this->translate('The configuration has been successfully validated.'));
+        } elseif (! isset($formData['backend_validation'])) {
+            // This is usually done by isValid(Partial), but as we're not calling any of these...
+            $this->populate($formData);
         }
 
         return true;

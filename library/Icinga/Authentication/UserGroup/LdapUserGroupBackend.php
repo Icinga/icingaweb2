@@ -437,7 +437,7 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
             throw new ProgrammingError('It is required to set a attribute name where to find a group\'s name first');
         }
 
-        if ($this->ds->getCapabilities()->hasAdOid()) {
+        if ($this->ds->getCapabilities()->isActiveDirectory()) {
             $createdAtAttribute = 'whenCreated';
             $lastModifiedAttribute = 'whenChanged';
         } else {

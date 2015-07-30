@@ -3,7 +3,6 @@
 
 namespace Icinga\Forms\Config\UserGroup;
 
-use Icinga\Application\Config;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\UserGroup\LdapUserGroupBackend;
 use Icinga\Data\ConfigObject;
@@ -32,6 +31,32 @@ class LdapUserGroupBackendForm extends Form
      */
     public function createElements(array $formData)
     {
+        $this->addElement(
+            'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => $this->translate('Backend Name'),
+                'description'   => $this->translate(
+                    'The name of this user group backend that is used to differentiate it from others'
+                ),
+                'validators'    => array(
+                    array(
+                        'Regex',
+                        false,
+                        array(
+                            'pattern'  => '/^[^\\[\\]:]+$/',
+                            'messages' => array(
+                                'regexNotMatch' => $this->translate(
+                                    'The name cannot contain \'[\', \']\' or \':\'.'
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        );
+
         $resourceNames = $this->getLdapResourceNames();
         $this->addElement(
             'select',
@@ -90,6 +115,15 @@ class LdapUserGroupBackendForm extends Form
 
         $this->createGroupConfigElements($defaults, $groupConfigDisabled);
         $this->createUserConfigElements($defaults, $userConfigDisabled, $dnDisabled);
+
+        $this->addElement(
+            'hidden',
+            'backend',
+            array(
+                'disabled'  => true, // Prevents the element from being submitted, see #7717
+                'value'     => $formData['type']
+            )
+        );
     }
 
     /**
@@ -293,7 +327,7 @@ class LdapUserGroupBackendForm extends Form
     protected function getLdapUserBackendNames(LdapConnection $resource)
     {
         $names = array();
-        foreach (Config::app('authentication') as $name => $config) {
+        foreach (UserBackend::getBackendConfigs() as $name => $config) {
             if (in_array(strtolower($config->backend), array('ldap', 'msldap'))) {
                 $backendResource = ResourceFactory::create($config->resource);
                 if (

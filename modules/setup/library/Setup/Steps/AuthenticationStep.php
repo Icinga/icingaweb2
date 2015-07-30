@@ -32,7 +32,7 @@ class AuthenticationStep extends Step
             $success &= $this->createAccount();
         }
 
-        $success &= $this->defineInitialAdmin();
+        $success &= $this->createRolesIni();
         return $success;
     }
 
@@ -60,16 +60,26 @@ class AuthenticationStep extends Step
         return true;
     }
 
-    protected function defineInitialAdmin()
+    protected function createRolesIni()
     {
-        $config = array();
-        $config['admins'] = array(
-            'users'         => $this->data['adminAccountData']['username'],
-            'permissions'   => '*'
-        );
+        if (isset($this->data['adminAccountData']['username'])) {
+            $config = array(
+                'users'         => $this->data['adminAccountData']['username'],
+                'permissions'   => '*'
+            );
+
+            if ($this->data['backendConfig']['backend'] === 'db') {
+                $config['groups'] = mt('setup', 'Administrators', 'setup.role.name');
+            }
+        } else { // isset($this->data['adminAccountData']['groupname'])
+            $config = array(
+                'groups'        => $this->data['adminAccountData']['groupname'],
+                'permissions'   => '*'
+            );
+        }
 
         try {
-            Config::fromArray($config)
+            Config::fromArray(array(mt('setup', 'Administrators', 'setup.role.name') => $config))
                 ->setConfigFile(Config::resolvePath('roles.ini'))
                 ->saveIni();
         } catch (Exception $e) {
@@ -94,13 +104,13 @@ class AuthenticationStep extends Step
                     'password'  => $this->data['adminAccountData']['password'],
                     'is_active' => true
                 ));
+                $this->dbError = false;
             }
         } catch (Exception $e) {
             $this->dbError = $e;
             return false;
         }
 
-        $this->dbError = false;
         return true;
     }
 
@@ -114,7 +124,9 @@ class AuthenticationStep extends Step
         $backendDesc = '<p>' . sprintf(
             mt('setup', 'Users will authenticate using %s.', 'setup.summary.auth'),
             $authType === 'db' ? mt('setup', 'a database', 'setup.summary.auth.type') : (
-                $authType === 'ldap' ? 'LDAP' : mt('setup', 'webserver authentication', 'setup.summary.auth.type')
+                $authType === 'ldap' || $authType === 'msldap' ? 'LDAP' : (
+                    mt('setup', 'webserver authentication', 'setup.summary.auth.type')
+                )
             )
         ) . '</p>';
 
@@ -125,18 +137,20 @@ class AuthenticationStep extends Step
             . '<td><strong>' . t('Backend Name') . '</strong></td>'
             . '<td>' . $this->data['backendConfig']['name'] . '</td>'
             . '</tr>'
-            . ($authType === 'ldap' ? (
+            . ($authType === 'ldap' || $authType === 'msldap' ? (
                 '<tr>'
                 . '<td><strong>' . mt('setup', 'User Object Class') . '</strong></td>'
-                . '<td>' . $this->data['backendConfig']['user_class'] . '</td>'
+                . '<td>' . ($authType === 'msldap' ? 'user' : $this->data['backendConfig']['user_class']) . '</td>'
                 . '</tr>'
                 . '<tr>'
                 . '<td><strong>' . mt('setup', 'Custom Filter') . '</strong></td>'
-                . '<td>' . trim($this->data['backendConfig']['filter']) ?: t('None', 'auth.ldap.filter') . '</td>'
+                . '<td>' . (trim($this->data['backendConfig']['filter']) ?: t('None', 'auth.ldap.filter')) . '</td>'
                 . '</tr>'
                 . '<tr>'
                 . '<td><strong>' . mt('setup', 'User Name Attribute') . '</strong></td>'
-                . '<td>' . $this->data['backendConfig']['user_name_attribute'] . '</td>'
+                . '<td>' . ($authType === 'msldap'
+                    ? 'sAMAccountName'
+                    : $this->data['backendConfig']['user_name_attribute']) . '</td>'
                 . '</tr>'
             ) : ($authType === 'external' ? (
                 '<tr>'
@@ -147,13 +161,20 @@ class AuthenticationStep extends Step
             . '</tbody>'
             . '</table>';
 
-        $adminHtml = '<p>' . (isset($this->data['adminAccountData']['resourceConfig']) ? sprintf(
-            mt('setup', 'Administrative rights will initially be granted to a new account called "%s".'),
-            $this->data['adminAccountData']['username']
-        ) : sprintf(
-            mt('setup', 'Administrative rights will initially be granted to an existing account called "%s".'),
-            $this->data['adminAccountData']['username']
-        )) . '</p>';
+        if (isset($this->data['adminAccountData']['username'])) {
+            $adminHtml = '<p>' . (isset($this->data['adminAccountData']['resourceConfig']) ? sprintf(
+                mt('setup', 'Administrative rights will initially be granted to a new account called "%s".'),
+                $this->data['adminAccountData']['username']
+            ) : sprintf(
+                mt('setup', 'Administrative rights will initially be granted to an existing account called "%s".'),
+                $this->data['adminAccountData']['username']
+            )) . '</p>';
+        } else { // isset($this->data['adminAccountData']['groupname'])
+            $adminHtml = '<p>' . sprintf(
+                mt('setup', 'Administrative rights will initially be granted to members of the user group "%s".'),
+                $this->data['adminAccountData']['groupname']
+            ) . '</p>';
+        }
 
         return $pageTitle . '<div class="topic">' . $backendDesc . $backendTitle . $backendHtml . '</div>'
             . '<div class="topic">' . $adminTitle . $adminHtml . '</div>';
@@ -190,14 +211,23 @@ class AuthenticationStep extends Step
         }
 
         if ($this->permIniError === false) {
-            $report[] = sprintf(
+            $report[] = isset($this->data['adminAccountData']['username']) ? sprintf(
                 mt('setup', 'Account "%s" has been successfully defined as initial administrator.'),
                 $this->data['adminAccountData']['username']
+            ) : sprintf(
+                mt('setup', 'The members of the user group "%s" were successfully defined as initial administrators.'),
+                $this->data['adminAccountData']['groupname']
             );
         } elseif ($this->permIniError !== null) {
-            $report[] = sprintf(
+            $report[] = isset($this->data['adminAccountData']['username']) ? sprintf(
                 mt('setup', 'Unable to define account "%s" as initial administrator. An error occured:'),
                 $this->data['adminAccountData']['username']
+            ) : sprintf(
+                mt(
+                    'setup',
+                    'Unable to define the members of the user group "%s" as initial administrators. An error occured:'
+                ),
+                $this->data['adminAccountData']['groupname']
             );
             $report[] = sprintf(mt('setup', 'ERROR: %s'), $this->permIniError->getMessage());
         }

@@ -26,6 +26,32 @@ class DbUserGroupBackendForm extends Form
      */
     public function createElements(array $formData)
     {
+        $this->addElement(
+            'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => $this->translate('Backend Name'),
+                'description'   => $this->translate(
+                    'The name of this user group backend that is used to differentiate it from others'
+                ),
+                'validators'    => array(
+                    array(
+                        'Regex',
+                        false,
+                        array(
+                            'pattern'  => '/^[^\\[\\]:]+$/',
+                            'messages' => array(
+                                'regexNotMatch' => $this->translate(
+                                    'The name cannot contain \'[\', \']\' or \':\'.'
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        );
+
         $resourceNames = $this->getDatabaseResourceNames();
         $this->addElement(
             'select',
@@ -35,6 +61,15 @@ class DbUserGroupBackendForm extends Form
                 'label'         => $this->translate('Database Connection'),
                 'description'   => $this->translate('The database connection to use for this backend'),
                 'multiOptions'  => empty($resourceNames) ? array() : array_combine($resourceNames, $resourceNames)
+            )
+        );
+
+        $this->addElement(
+            'hidden',
+            'backend',
+            array(
+                'disabled'  => true, // Prevents the element from being submitted, see #7717
+                'value'     => 'db'
             )
         );
     }

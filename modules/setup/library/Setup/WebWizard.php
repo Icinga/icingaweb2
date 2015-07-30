@@ -22,10 +22,12 @@ use Icinga\Module\Setup\Forms\RequirementsPage;
 use Icinga\Module\Setup\Forms\GeneralConfigPage;
 use Icinga\Module\Setup\Forms\AuthenticationPage;
 use Icinga\Module\Setup\Forms\DatabaseCreationPage;
+use Icinga\Module\Setup\Forms\UserGroupBackendPage;
 use Icinga\Module\Setup\Steps\DatabaseStep;
 use Icinga\Module\Setup\Steps\GeneralConfigStep;
 use Icinga\Module\Setup\Steps\ResourceStep;
 use Icinga\Module\Setup\Steps\AuthenticationStep;
+use Icinga\Module\Setup\Steps\UserGroupStep;
 use Icinga\Module\Setup\Utils\EnableModuleStep;
 use Icinga\Module\Setup\Utils\DbTool;
 use Icinga\Module\Setup\Requirement\OSRequirement;
@@ -104,6 +106,7 @@ class WebWizard extends Wizard implements SetupWizard
         //$this->addPage(new LdapDiscoveryConfirmPage());
         $this->addPage(new LdapResourcePage());
         $this->addPage(new AuthBackendPage());
+        $this->addPage(new UserGroupBackendPage());
         $this->addPage(new AdminAccountPage());
         $this->addPage(new GeneralConfigPage());
         $this->addPage(new DbResourcePage(array('name' => 'setup_config_db_resource')));
@@ -135,15 +138,37 @@ class WebWizard extends Wizard implements SetupWizard
             } elseif ($authData['type'] === 'ldap') {
                 $page->setResourceConfig($this->getPageData('setup_ldap_resource'));
 
-                $suggestions = $this->getPageData('setup_ldap_discovery');
-                if (isset($suggestions['backend'])) {
-                    $page->populate($suggestions['backend']);
+                if (! $this->hasPageData('setup_authentication_backend')) {
+                    $suggestions = $this->getPageData('setup_ldap_discovery');
+                    if (isset($suggestions['backend'])) {
+                        $page->populate($suggestions['backend']);
+                    }
+                }
+
+                if ($this->getDirection() === static::FORWARD) {
+                    $backendConfig = $this->getPageData('setup_authentication_backend');
+                    if ($backendConfig !== null && $request->getPost('name') !== $backendConfig['name']) {
+                        $pageData = & $this->getPageData();
+                        unset($pageData['setup_usergroup_backend']);
+                    }
+                }
+            }
+
+            if ($this->getDirection() === static::FORWARD) {
+                $backendConfig = $this->getPageData('setup_authentication_backend');
+                if ($backendConfig !== null && $request->getPost('backend') !== $backendConfig['backend']) {
+                    $pageData = & $this->getPageData();
+                    unset($pageData['setup_usergroup_backend']);
                 }
             }
         /*} elseif ($page->getName() === 'setup_ldap_discovery_confirm') {
             $page->setResourceConfig($this->getPageData('setup_ldap_discovery'));*/
+        } elseif ($page->getName() === 'setup_usergroup_backend') {
+            $page->setResourceConfig($this->getPageData('setup_ldap_resource'));
+            $page->setBackendConfig($this->getPageData('setup_authentication_backend'));
         } elseif ($page->getName() === 'setup_admin_account') {
             $page->setBackendConfig($this->getPageData('setup_authentication_backend'));
+            $page->setGroupConfig($this->getPageData('setup_usergroup_backend'));
             $authData = $this->getPageData('setup_authentication_type');
             if ($authData['type'] === 'db') {
                 $page->setResourceConfig($this->getPageData('setup_auth_db_resource'));
@@ -172,6 +197,14 @@ class WebWizard extends Wizard implements SetupWizard
             $suggestion = $this->getPageData('setup_ldap_discovery');
             if (isset($suggestion['resource'])) {
                 $page->populate($suggestion['resource']);
+            }
+
+            if ($this->getDirection() === static::FORWARD) {
+                $resourceConfig = $this->getPageData('setup_ldap_resource');
+                if ($resourceConfig !== null && $request->getPost('name') !== $resourceConfig['name']) {
+                    $pageData = & $this->getPageData();
+                    unset($pageData['setup_usergroup_backend']);
+                }
             }
         } elseif ($page->getName() === 'setup_general_config') {
             $authData = $this->getPageData('setup_authentication_type');
@@ -233,6 +266,9 @@ class WebWizard extends Wizard implements SetupWizard
         } elseif ($newPage->getName() === 'setup_ldap_resource') {
             $authData = $this->getPageData('setup_authentication_type');
             $skip = $authData['type'] !== 'ldap';
+        } elseif ($newPage->getName() === 'setup_usergroup_backend') {
+            $backendConfig = $this->getPageData('setup_authentication_backend');
+            $skip = $backendConfig['backend'] !== 'ldap';
         } elseif ($newPage->getName() === 'setup_config_db_resource') {
             $authData = $this->getPageData('setup_authentication_type');
             $configData = $this->getPageData('setup_general_config');
@@ -401,14 +437,18 @@ class WebWizard extends Wizard implements SetupWizard
         );
 
         $adminAccountType = $pageData['setup_admin_account']['user_type'];
-        $adminAccountData = array('username' => $pageData['setup_admin_account'][$adminAccountType]);
-        if ($adminAccountType === 'new_user' && !$pageData['setup_auth_db_resource']['skip_validation']
-            && (! isset($pageData['setup_auth_db_creation'])
-                || !$pageData['setup_auth_db_creation']['skip_validation']
-            )
-        ) {
-            $adminAccountData['resourceConfig'] = $pageData['setup_auth_db_resource'];
-            $adminAccountData['password'] = $pageData['setup_admin_account']['new_user_password'];
+        if ($adminAccountType === 'user_group') {
+            $adminAccountData = array('groupname' => $pageData['setup_admin_account'][$adminAccountType]);
+        } else {
+            $adminAccountData = array('username' => $pageData['setup_admin_account'][$adminAccountType]);
+            if ($adminAccountType === 'new_user' && !$pageData['setup_auth_db_resource']['skip_validation']
+                && (! isset($pageData['setup_auth_db_creation'])
+                    || !$pageData['setup_auth_db_creation']['skip_validation']
+                )
+            ) {
+                $adminAccountData['resourceConfig'] = $pageData['setup_auth_db_resource'];
+                $adminAccountData['password'] = $pageData['setup_admin_account']['new_user_password'];
+            }
         }
         $authType = $pageData['setup_authentication_type']['type'];
         $setup->addStep(
@@ -420,6 +460,26 @@ class WebWizard extends Wizard implements SetupWizard
                 )
             ))
         );
+
+        if ($authType !== 'external') {
+            $setup->addStep(
+                new UserGroupStep(array(
+                    'backendConfig'     => $pageData['setup_authentication_backend'],
+                    'groupConfig'       => isset($pageData['setup_usergroup_backend'])
+                        ? $pageData['setup_usergroup_backend']
+                        : null,
+                    'resourceName'      => $authType === 'db'
+                        ? $pageData['setup_auth_db_resource']['name']
+                        : $pageData['setup_ldap_resource']['name'],
+                    'resourceConfig'    => $authType === 'db'
+                        ? $pageData['setup_auth_db_resource']
+                        : null,
+                    'username'          => $authType === 'db'
+                        ? $pageData['setup_admin_account'][$adminAccountType]
+                        : null
+                ))
+            );
+        }
 
         if (
             isset($pageData['setup_auth_db_resource'])

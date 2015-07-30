@@ -27,7 +27,7 @@
     ); ?>
   <?php endif ?>
   </div>
-  <textarea class="report" readonly><?= join("\n\n", array_map(function($a) {
+  <pre class="log-output"><?= join("\n\n", array_map(function($a) {
     return join("\n", $a);
-  }, $report)); ?></textarea>
+  }, $report)); ?></pre>
 </div>
