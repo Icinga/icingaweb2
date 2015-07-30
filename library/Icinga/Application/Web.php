@@ -56,6 +56,13 @@ class Web extends ApplicationBootstrap
     private $request;
 
     /**
+     * Response
+     *
+     * @var Response
+     */
+    protected $response;
+
+    /**
      * Session object
      *
      * @var BaseSession
@@ -92,6 +99,7 @@ class Web extends ApplicationBootstrap
             ->setupSession()
             ->setupNotifications()
             ->setupRequest()
+            ->setupResponse()
             ->setupUser()
             ->setupTimezone()
             ->setupLogger()
@@ -147,6 +155,16 @@ class Web extends ApplicationBootstrap
     }
 
     /**
+     * Get the response
+     *
+     * @return Response
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
      * Getter for view
      *
      * @return View
@@ -161,7 +179,7 @@ class Web extends ApplicationBootstrap
      */
     public function dispatch()
     {
-        $this->frontController->dispatch($this->request, new Response());
+        $this->frontController->dispatch($this->getRequest(), $this->getResponse());
     }
 
     /**
@@ -228,6 +246,17 @@ class Web extends ApplicationBootstrap
     private function setupRequest()
     {
         $this->request = new Request();
+        return $this;
+    }
+
+    /**
+     * Set the response
+     *
+     * @return $this
+     */
+    protected function setupResponse()
+    {
+        $this->response = new Response();
         return $this;
     }
 
