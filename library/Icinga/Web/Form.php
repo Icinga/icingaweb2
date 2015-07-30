@@ -951,8 +951,7 @@ class Form extends Zend_Form
         if (! $this->tokenDisabled) {
             $request = $this->getRequest();
             if (! $request->isXmlHttpRequest()
-                && ($user = $request->getUser()) !== null
-                && $user->getIsHttpUser()
+                && $request->getIsApiRequest()
             ) {
                 return $this;
             }
