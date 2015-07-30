@@ -32,7 +32,7 @@ class AuthenticationStep extends Step
             $success &= $this->createAccount();
         }
 
-        $success &= $this->defineInitialAdmin();
+        $success &= $this->createRolesIni();
         return $success;
     }
 
@@ -60,7 +60,7 @@ class AuthenticationStep extends Step
         return true;
     }
 
-    protected function defineInitialAdmin()
+    protected function createRolesIni()
     {
         $config = array();
         $config['admins'] = array(
