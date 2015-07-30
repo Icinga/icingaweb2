@@ -7,6 +7,7 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
@@ -79,7 +80,11 @@ class Auth
      */
     public function isAuthenticated($ignoreSession = false)
     {
-        if ($this->user === null && ! $this->authHttp() && ! $ignoreSession) {
+        if ($this->user === null
+            && ! $this->authHttp()
+            && ! $this->authExternal()
+            && ! $ignoreSession
+        ) {
             $this->authenticateFromSession();
         }
         return $this->user !== null;
@@ -222,6 +227,25 @@ class Auth
                 $this->removeAuthorization();
             }
         }
+    }
+
+    /**
+     * Attempt to authenticate a user from external user backends
+     *
+     * @return bool
+     */
+    protected function authExternal()
+    {
+        $user = new User('');
+        foreach ($this->getAuthChain() as $userBackend) {
+            if ($userBackend instanceof ExternalBackend) {
+                if ($userBackend->authenticate($user)) {
+                    $this->setAuthenticated($user);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

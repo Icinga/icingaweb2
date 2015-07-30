@@ -128,14 +128,9 @@ class LoginForm extends Form
     {
         $auth = Auth::getInstance();
         $onlyExternal = true;
-        $user = new User('');
+        // TODO(el): This may be set on the auth chain once iterated. See Auth::authExternal().
         foreach ($auth->getAuthChain() as $backend) {
-            if ($backend instanceof ExternalBackend) {
-                if ($backend->authenticate($user)) {
-                    $auth->setAuthenticated($user);
-                    $this->getResponse()->setRerenderLayout(true)->redirectAndExit($this->getRedirectUrl());
-                }
-            } else {
+            if (! $backend instanceof ExternalBackend) {
                 $onlyExternal = false;
             }
         }
