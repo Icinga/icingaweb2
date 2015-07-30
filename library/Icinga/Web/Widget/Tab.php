@@ -92,6 +92,13 @@ class Tab extends AbstractWidget
     private $targetBlank = false;
 
     /**
+     * Data base target that determines if the link will be opened in a side-bar or in the main container
+     *
+     * @var null
+     */
+    private $baseTarget = null;
+
+    /**
      * Sets an icon image for this tab
      *
      * @param string $icon      The url of the image to use
@@ -210,6 +217,11 @@ class Tab extends AbstractWidget
         $this->targetBlank =  $value;
     }
 
+    public function setBaseTarget($value)
+    {
+        $this->baseTarget = $value;
+    }
+
     /**
      * Create a new Tab with the given properties
      *
@@ -272,6 +284,10 @@ class Tab extends AbstractWidget
                     'aria-label'    => $this->title
                 );
             }
+        }
+
+        if ($this->baseTarget !== null) {
+            $tagParams['data-base-target'] = $this->baseTarget;
         }
 
         if ($this->icon !== null) {

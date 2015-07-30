@@ -540,11 +540,17 @@ class FilterEditor extends AbstractWidget
         );
     }
 
+    public function setColumns(array $columns)
+    {
+        $this->cachedColumnSelect = $this->arrayForSelect($columns);
+        return $this;
+    }
+
     protected function selectColumn(Filter $filter = null)
     {
         $active = $filter === null ? null : $filter->getColumn();
 
-        if ($this->query === null) {
+        if ($this->cachedColumnSelect === null && $this->query === null) {
             return sprintf(
                 '<input type="text" name="%s" value="%s" />',
                 $this->elementId('column', $filter),

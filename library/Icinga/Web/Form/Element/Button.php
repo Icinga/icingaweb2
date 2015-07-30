@@ -75,6 +75,6 @@ class Button extends FormElement
      */
     protected function getRequest()
     {
-        return Icinga::app()->getFrontController()->getRequest();
+        return Icinga::app()->getRequest();
     }
 }

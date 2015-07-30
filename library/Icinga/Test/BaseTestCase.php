@@ -180,7 +180,7 @@ namespace Icinga\Test {
          */
         public function getRequestMock()
         {
-            return Icinga::app()->getFrontController()->getRequest();
+            return Icinga::app()->getRequest();
         }
 
         /**
