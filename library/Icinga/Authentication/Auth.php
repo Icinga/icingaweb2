@@ -292,7 +292,7 @@ class Auth
         }
         $authorization = substr($header, strlen('Basic '));
         $credentials = base64_decode($authorization);
-        $credentials = array_filter(explode(':', $credentials));
+        $credentials = array_filter(explode(':', $credentials, 2));
         if (count($credentials) !== 2) {
             // Deny empty username and/or password
             $this->challengeHttp();
