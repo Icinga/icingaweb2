@@ -34,6 +34,13 @@ class Auth
     protected $request;
 
     /**
+     * Response
+     *
+     * @var \Icinga\Web\Response
+     */
+    protected $response;
+
+    /**
      * Authenticated user
      *
      * @var User
@@ -186,6 +193,19 @@ class Auth
     }
 
     /**
+     * Get the response
+     *
+     * @return \Icinga\Web\Response
+     */
+    public function getResponse()
+    {
+        if ($this->response === null) {
+            $this->response = Icinga::app()->getResponse();
+        }
+        return $this->response;
+    }
+
+    /**
      * Get applied restrictions matching a given restriction name
      *
      * Returns a list of applied restrictions, empty if no user is
@@ -251,8 +271,7 @@ class Auth
     /**
      * Attempt to authenticate a user using HTTP authentication
      *
-     * Supports only the Basic HTTP authentication scheme. This will not challenge the client if authorization is
-     * missing or invalid yet. XHR will be ignored.
+     * Supports only the Basic HTTP authentication scheme. XHR will be ignored.
      *
      * @return bool
      */
@@ -261,20 +280,22 @@ class Auth
         if ($this->getRequest()->isXmlHttpRequest()) {
             return false;
         }
-        $header = $this->getRequest()->getHeader('Authorization');
-        if (empty($header)) {
+        if (($header = $this->getRequest()->getHeader('Authorization')) === false) {
             return false;
+        }
+        if (empty($header)) {
+            $this->challengeHttp();
         }
         list($scheme) = explode(' ', $header, 2);
         if ($scheme !== 'Basic') {
-            return false;
+            $this->challengeHttp();
         }
         $authorization = substr($header, strlen('Basic '));
         $credentials = base64_decode($authorization);
         $credentials = array_filter(explode(':', $credentials));
         if (count($credentials) !== 2) {
             // Deny empty username and/or password
-            return false;
+            $this->challengeHttp();
         }
         $user = new User($credentials[0]);
         $password = $credentials[1];
@@ -283,8 +304,22 @@ class Auth
             $user->setIsHttpUser(true);
             return true;
         } else {
-            return false;
+            $this->challengeHttp();
         }
+    }
+
+    /**
+     * Challenge client immediately for HTTP authentication
+     *
+     * Sends the response w/ the 401 Unauthorized status code and WWW-Authenticate header.
+     */
+    protected function challengeHttp()
+    {
+        $response = $this->getResponse();
+        $response->setHttpResponseCode(401);
+        $response->setHeader('WWW-Authenticate', 'Basic realm="Icinga Web 2"');
+        $response->sendHeaders();
+        exit();
     }
 
     /**
