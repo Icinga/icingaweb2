@@ -147,7 +147,7 @@ class UserGroupStep extends Step
             . '</tr>'
             . '<tr>'
             . '<td><strong>' . mt('setup', 'Custom Filter') . '</strong></td>'
-            . '<td>' . trim($this->data['groupConfig']['group_filter']) ?: t('None', 'auth.ldap.filter') . '</td>'
+            . '<td>' . (trim($this->data['groupConfig']['group_filter']) ?: t('None', 'auth.ldap.filter')) . '</td>'
             . '</tr>'
             . '<tr>'
             . '<td><strong>' . mt('setup', 'Group Name Attribute') . '</strong></td>'
