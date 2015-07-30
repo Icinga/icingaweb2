@@ -4,46 +4,180 @@
 namespace Icinga\Authentication;
 
 use Iterator;
-use Icinga\Data\ConfigObject;
-use Icinga\Authentication\User\UserBackend;
-use Icinga\Authentication\User\UserBackendInterface;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
+use Icinga\Authentication\User\ExternalBackend;
+use Icinga\Authentication\User\UserBackend;
+use Icinga\Authentication\User\UserBackendInterface;
+use Icinga\Data\ConfigObject;
+use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotReadableError;
+use Icinga\User;
 
 /**
  * Iterate user backends created from config
  */
-class AuthChain implements Iterator
+class AuthChain implements Authenticatable, Iterator
 {
+    /**
+     * Authentication config file
+     *
+     * @var string
+     */
+    const AUTHENTICATION_CONFIG = 'authentication';
+
+    /**
+     * Error code if the authentication configuration was not readable
+     *
+     * @var int
+     */
+    const EPERM = 1;
+
+    /**
+     * Error code if the authentication configuration is empty
+     */
+    const EEMPTY = 2;
+
+    /**
+     * Error code if all authentication methods failed
+     *
+     * @var int
+     */
+    const EFAIL = 3;
+
+    /**
+     * Error code if not all authentication methods were available
+     *
+     * @var int
+     */
+    const ENOTALL = 4;
+
     /**
      * User backends configuration
      *
      * @var Config
      */
-    private $config;
+    protected $config;
 
     /**
      * The consecutive user backend while looping
      *
      * @var UserBackendInterface
      */
-    private $currentBackend;
+    protected $currentBackend;
+
+    /**
+     * Last error code
+     *
+     * @var int|null
+     */
+    protected $error;
+
+    /**
+     * Whether external user backends should be skipped on iteration
+     *
+     * @var bool
+     */
+    protected $skipExternalBackends = false;
 
     /**
      * Create a new authentication chain from config
      *
      * @param Config $config User backends configuration
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config = null)
     {
-        $this->config = $config;
+        if ($config === null) {
+            try {
+                $this->config = Config::app(static::AUTHENTICATION_CONFIG);
+            } catch (NotReadableError $e) {
+                $this->config = new Config();
+                $this->error = static::EPERM;
+            }
+        } else {
+            $this->config = $config;
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function authenticate(User $user, $password)
+    {
+        $this->error = null;
+        $backendsTried = 0;
+        $backendsWithError = 0;
+        foreach ($this as $backend) {
+            ++$backendsTried;
+            try {
+                $authenticated = $backend->authenticate($user, $password);
+            } catch (AuthenticationException $e) {
+                Logger::error($e);
+                ++$backendsWithError;
+                continue;
+            }
+            if ($authenticated) {
+                return true;
+            }
+        }
+        if ($backendsTried === 0) {
+            $this->error = static::EEMPTY;
+        } elseif ($backendsTried === $backendsWithError) {
+            $this->error = static::EFAIL;
+        } elseif ($backendsWithError) {
+            $this->error = static::ENOTALL;
+        }
+        return false;
+    }
+
+    /**
+     * Get the last error code
+     *
+     * @return int|null
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    /**
+     * Whether authentication had errors
+     *
+     * @return bool
+     */
+    public function hasError()
+    {
+        return $this->error !== null;
+    }
+
+    /**
+     * Get whether to skip external user backends on iteration
+     *
+     * @return bool
+     */
+    public function getSkipExternalBackends()
+    {
+        return $this->skipExternalBackends;
+    }
+
+    /**
+     * Set whether to skip external user backends on iteration
+     *
+     * @param   bool $skipExternalBackends
+     *
+     * @return  $this
+     */
+    public function setSkipExternalBackends($skipExternalBackends = true)
+    {
+        $this->skipExternalBackends = (bool) $skipExternalBackends;
+        return $this;
     }
 
     /**
      * Rewind the chain
      *
-     * @return  ConfigObject
+     * @return ConfigObject
      */
     public function rewind()
     {
@@ -52,7 +186,7 @@ class AuthChain implements Iterator
     }
 
     /**
-     * Return the current user backend
+     * Get the current user backend
      *
      * @return UserBackendInterface
      */
@@ -62,9 +196,9 @@ class AuthChain implements Iterator
     }
 
     /**
-     * Return the key of the current user backend config
+     * Get the key of the current user backend config
      *
-     * @return  string
+     * @return string
      */
     public function key()
     {
@@ -74,7 +208,7 @@ class AuthChain implements Iterator
     /**
      * Move forward to the next user backend config
      *
-     * @return  ConfigObject
+     * @return ConfigObject
      */
     public function next()
     {
@@ -82,19 +216,20 @@ class AuthChain implements Iterator
     }
 
     /**
-     * Check if the current user backend is valid, i.e. it's enabled and the config is valid
+     * Check whether the current user backend is valid, i.e. it's enabled, not an external user backend and whether its
+     * config is valid
      *
-     * @return  bool
+     * @return bool
      */
     public function valid()
     {
-        if (!$this->config->valid()) {
+        if (! $this->config->valid()) {
             // Stop when there are no more backends to check
             return false;
         }
 
         $backendConfig = $this->config->current();
-        if ((bool) $backendConfig->get('disabled', false) === true) {
+        if ((bool) $backendConfig->get('disabled', false)) {
             $this->next();
             return $this->valid();
         }
@@ -105,11 +240,16 @@ class AuthChain implements Iterator
         } catch (ConfigurationError $e) {
             Logger::error(
                 new ConfigurationError(
-                    'Cannot create authentication backend "%s". An exception was thrown:',
-                    $name,
-                    $e
+                    'Can\'t create authentication backend "%s". An exception was thrown:',  $name,  $e
                 )
             );
+            $this->next();
+            return $this->valid();
+        }
+
+        if ($this->getSkipExternalBackends()
+            && $backend instanceof ExternalBackend
+        ) {
             $this->next();
             return $this->valid();
         }

@@ -6,7 +6,7 @@ namespace Icinga\Forms;
 use Exception;
 use DateTimeZone;
 use Icinga\Application\Logger;
-use Icinga\Authentication\Manager;
+use Icinga\Authentication\Auth;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Util\TimezoneDetect;
@@ -123,7 +123,7 @@ class PreferenceForm extends Form
      */
     public function onRequest()
     {
-        $auth = Manager::getInstance();
+        $auth = Auth::getInstance();
         $values = $auth->getUser()->getPreferences()->get('icingaweb');
 
         if (! isset($values['language'])) {

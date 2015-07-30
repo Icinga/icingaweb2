@@ -111,7 +111,7 @@ class PivotTable
      */
     protected function getPaginationParameter($axis, $param, $default = null)
     {
-        $request = Icinga::app()->getFrontController()->getRequest();
+        $request = Icinga::app()->getRequest();
 
         $value = $request->getParam($param, '');
         if (strpos($value, ',') > 0) {

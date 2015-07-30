@@ -12,7 +12,7 @@ use Zend_Layout;
 use Zend_Paginator;
 use Zend_View_Helper_PaginationControl;
 use Icinga\Application\Logger;
-use Icinga\Authentication\Manager;
+use Icinga\Authentication\Auth;
 use Icinga\User;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Util\Translator;
@@ -56,6 +56,13 @@ class Web extends ApplicationBootstrap
     private $request;
 
     /**
+     * Response
+     *
+     * @var Response
+     */
+    protected $response;
+
+    /**
      * Session object
      *
      * @var BaseSession
@@ -91,11 +98,12 @@ class Web extends ApplicationBootstrap
             ->setupResourceFactory()
             ->setupSession()
             ->setupNotifications()
+            ->setupRequest()
+            ->setupResponse()
             ->setupUser()
             ->setupTimezone()
             ->setupLogger()
             ->setupInternationalization()
-            ->setupRequest()
             ->setupZendMvc()
             ->setupFormNamespace()
             ->setupModuleManager()
@@ -137,6 +145,26 @@ class Web extends ApplicationBootstrap
     }
 
     /**
+     * Get the request
+     *
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Get the response
+     *
+     * @return Response
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
      * Getter for view
      *
      * @return View
@@ -151,7 +179,7 @@ class Web extends ApplicationBootstrap
      */
     public function dispatch()
     {
-        $this->frontController->dispatch($this->request, new Response());
+        $this->frontController->dispatch($this->getRequest(), $this->getResponse());
     }
 
     /**
@@ -179,9 +207,11 @@ class Web extends ApplicationBootstrap
      */
     private function setupUser()
     {
-        $auth = Manager::getInstance();
+        $auth = Auth::getInstance();
         if ($auth->isAuthenticated()) {
-            $this->user = $auth->getUser();
+            $user = $auth->getUser();
+            $this->request->setUser($user);
+            $this->user = $user;
         }
         return $this;
     }
@@ -209,16 +239,24 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Inject dependencies into request
+     * Set the request
      *
      * @return $this
      */
     private function setupRequest()
     {
         $this->request = new Request();
-        if ($this->user instanceof User) {
-            $this->request->setUser($this->user);
-        }
+        return $this;
+    }
+
+    /**
+     * Set the response
+     *
+     * @return $this
+     */
+    protected function setupResponse()
+    {
+        $this->response = new Response();
         return $this;
     }
 
@@ -282,7 +320,7 @@ class Web extends ApplicationBootstrap
      */
     protected function detectTimezone()
     {
-        $auth = Manager::getInstance();
+        $auth = Auth::getInstance();
         if (! $auth->isAuthenticated()
             || ($timezone = $auth->getUser()->getPreferences()->getValue('icingaweb', 'timezone')) === null
         ) {
@@ -303,7 +341,7 @@ class Web extends ApplicationBootstrap
      */
     protected function detectLocale()
     {
-        $auth = Manager::getInstance();
+        $auth = Auth::getInstance();
         if ($auth->isAuthenticated()
             && ($locale = $auth->getUser()->getPreferences()->getValue('icingaweb', 'language')) !== null
         ) {

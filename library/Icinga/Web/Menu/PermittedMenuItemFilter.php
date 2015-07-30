@@ -3,7 +3,7 @@
 namespace Icinga\Web\Menu;
 
 use RecursiveFilterIterator;
-use Icinga\Authentication\Manager;
+use Icinga\Authentication\Auth;
 use Icinga\Web\Menu;
 
 class PermittedMenuItemFilter extends RecursiveFilterIterator
@@ -18,7 +18,7 @@ class PermittedMenuItemFilter extends RecursiveFilterIterator
         $item = $this->current();
         /** @var Menu $item */
         if (($permission = $item->getPermission()) !== null) {
-            $auth = Manager::getInstance();
+            $auth = Auth::getInstance();
             if (! $auth->isAuthenticated()) {
                 // Don't accept menu item because user is not authenticated and the menu item requires a permission
                 return false;

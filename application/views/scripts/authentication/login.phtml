@@ -17,11 +17,6 @@
       '<a href="' . $this->href('setup') . '" title="' . $this->translate('Icinga Web 2 Setup-Wizard') . '">',
       '</a>'
     ); ?></p>
-    <?php elseif ($requiresExternalAuth): ?>
-    <p class="info-box"><?= $this->icon('info'); ?><?= $this->translate(
-      'You\'re currently not authenticated using any of the web server\'s authentication mechanisms.'
-      . ' Make sure you\'ll configure such, otherwise you\'ll not be able to login.'
-    ); ?></p>
     <?php endif ?>
     <?= $this->form ?>
     <div class="footer">Icinga Web 2 &copy; 2013-2015<br><a href="https://www.icinga.org"><?= $this->translate('The Icinga Project'); ?></a></div>

@@ -5,7 +5,7 @@ namespace Icinga\Web;
 
 use Closure;
 use Zend_View_Abstract;
-use Icinga\Authentication\Manager;
+use Icinga\Authentication\Auth;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Util\Translator;
 
@@ -39,7 +39,7 @@ class View extends Zend_View_Abstract
     /**
      * Authentication manager
      *
-     * @var \Icinga\Authentication\Manager|null
+     * @var Auth|null
      */
     private $auth;
 
@@ -164,12 +164,12 @@ class View extends Zend_View_Abstract
     /**
      * Get the authentication manager
      *
-     * @return Manager
+     * @return Auth
      */
     public function Auth()
     {
         if ($this->auth === null) {
-            $this->auth = Manager::getInstance();
+            $this->auth = Auth::getInstance();
         }
         return $this->auth;
     }

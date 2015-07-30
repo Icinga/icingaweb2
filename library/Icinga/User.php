@@ -57,7 +57,7 @@ class User
     protected $additionalInformation = array();
 
     /**
-     * Information if the user is external authenticated
+     * Information if the user is externally authenticated
      *
      * Keys:
      *
@@ -66,7 +66,7 @@ class User
      *
      * @var array
      */
-    protected $remoteUserInformation = array();
+    protected $externalUserInformation = array();
 
     /**
      * Set of permissions
@@ -95,6 +95,13 @@ class User
      * @var Preferences
      */
     protected $preferences;
+
+    /**
+     * Whether the user is authenticated using a HTTP authentication mechanism
+     *
+     * @var bool
+     */
+    protected $isHttpUser = false;
 
     /**
      * Creates a user object given the provided information
@@ -380,34 +387,57 @@ class User
     }
 
     /**
-     * Set additional remote user information
+     * Set additional external user information
      *
-     * @param stirng    $username
+     * @param string    $username
      * @param string    $field
      */
-    public function setRemoteUserInformation($username, $field)
+    public function setExternalUserInformation($username, $field)
     {
-        $this->remoteUserInformation = array($username, $field);
+        $this->externalUserInformation = array($username, $field);
     }
 
     /**
-     * Get additional remote user information
+     * Get additional external user information
      *
      * @return array
      */
-    public function getRemoteUserInformation()
+    public function getExternalUserInformation()
     {
-        return $this->remoteUserInformation;
+        return $this->externalUserInformation;
     }
 
     /**
-     * Return true if user has remote user information set
+     * Return true if user has external user information set
      *
      * @return bool
      */
-    public function isRemoteUser()
+    public function isExternalUser()
     {
-        return ! empty($this->remoteUserInformation);
+        return ! empty($this->externalUserInformation);
+    }
+
+    /**
+     * Get whether the user is authenticated using a HTTP authentication mechanism
+     *
+     * @return bool
+     */
+    public function getIsHttpUser()
+    {
+        return $this->isHttpUser;
+    }
+
+    /**
+     * Set whether the user is authenticated using a HTTP authentication mechanism
+     *
+     * @param   bool $isHttpUser
+     *
+     * @return  $this
+     */
+    public function setIsHttpUser($isHttpUser = true)
+    {
+        $this->isHttpUser = (bool) $isHttpUser;
+        return $this;
     }
 
     /**

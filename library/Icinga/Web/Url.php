@@ -102,7 +102,7 @@ class Url
         if ($app->isCli()) {
             return new FakeRequest();
         } else {
-            return $app->getFrontController()->getRequest();
+            return $app->getRequest();
         }
     }
 
