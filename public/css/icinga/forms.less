@@ -166,9 +166,16 @@ form.link-like input[type="submit"], form.link-like button[type="submit"], input
 
 form.link-like input[type="submit"]:hover,
 form.link-like input[type="submit"]:focus,
+form.link-like input[type="submit"]:active,
 form.link-like button[type="submit"]:hover,
 form.link-like button[type="submit"]:focus,
-input.link-like:hover, button.link-like:focus {
+form.link-like button[type="submit"]:active,
+input.link-like:hover,
+input.link-like:focus,
+input.link-like:active,
+button.link-like:hover,
+button.link-like:focus,
+button.link-like:active {
   text-decoration: underline;
   background: none;
   color: @colorLinkDefault;
