@@ -450,7 +450,7 @@ class GettextTranslationHelper
             implode(
                 ' ',
                 array(
-                    '/usr/bin/msgfmt',
+                    $this->getConfig()->get('translation', 'msgfmt', '/usr/bin/env msgfmt'),
                     '-o ' . $targetPath,
                     $this->tablePath
                 )
