@@ -28,7 +28,7 @@ class UserGroupStep extends Step
 
     public function apply()
     {
-        $success &= $this->createGroupsIni();
+        $success = $this->createGroupsIni();
         if (isset($this->data['resourceConfig'])) {
             $success &= $this->createUserGroup();
             if ($success) {
