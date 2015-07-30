@@ -87,14 +87,13 @@ class Auth
      */
     public function isAuthenticated($ignoreSession = false)
     {
-        if ($this->user === null
-            && ! $this->authHttp()
-            && ! $this->authExternal()
-            && ! $ignoreSession
-        ) {
+        if ($this->user === null && ! $ignoreSession) {
             $this->authenticateFromSession();
         }
-        return $this->user !== null;
+        if ($this->user === null && ! $this->authExternal()) {
+            return $this->authHttp();
+        }
+        return true;
     }
 
     public function setAuthenticated(User $user, $persist = true)
