@@ -35,6 +35,10 @@ class UserGroupBackendPage extends Form
     {
         $this->setName('setup_usergroup_backend');
         $this->setTitle($this->translate('User Group Backend', 'setup.page.title'));
+        $this->addDescription($this->translate(
+            'To allow Icinga Web 2 to associate users and groups, you\'ll need to provide some further information'
+            . ' about the LDAP Connection that is already going to be used to locate account details.'
+        ));
     }
 
     /**
