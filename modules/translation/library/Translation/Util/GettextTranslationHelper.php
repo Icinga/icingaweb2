@@ -244,7 +244,7 @@ class GettextTranslationHelper
         if (is_file($this->tablePath)) {
             shell_exec(sprintf(
                 '%s --update %s %s 2>&1',
-                $this->getConfig()->get('translation', 'msgmerge', '/usr/bin/env php'),
+                $this->getConfig()->get('translation', 'msgmerge', '/usr/bin/env msgmerge'),
                 $this->tablePath,
                 $this->templatePath
             ));
