@@ -172,7 +172,7 @@ Icinga Web 2 vendor library Parsedown
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/{%{basedir}/{modules,library/vendor,public},%{bindir},%{configdir}/modules/setup,%{logdir},%{phpdir},%{wwwconfigdir},%{_sysconfdir}/bash_completion.d,%{docsdir}}
+mkdir -p %{buildroot}/{%{basedir}/{modules,library/vendor,public},%{bindir},%{configdir}/modules,%{logdir},%{phpdir},%{wwwconfigdir},%{_sysconfdir}/bash_completion.d,%{docsdir}}
 cp -prv application doc %{buildroot}/%{basedir}
 cp -pv etc/bash_completion.d/icingacli %{buildroot}/%{_sysconfdir}/bash_completion.d/icingacli
 cp -prv modules/{monitoring,setup,doc,translation} %{buildroot}/%{basedir}/modules
@@ -183,7 +183,7 @@ cp -pv packages/files/apache/icingaweb2.conf %{buildroot}/%{wwwconfigdir}/icinga
 cp -pv packages/files/bin/icingacli %{buildroot}/%{bindir}
 cp -pv packages/files/public/index.php %{buildroot}/%{basedir}/public
 cp -prv etc/schema %{buildroot}/%{docsdir}
-cp -prv packages/files/config/modules/setup %{buildroot}/%{configdir}/modules/
+cp -prv packages/files/config/modules/{setup,translation} %{buildroot}/%{configdir}/modules
 
 %pre
 getent group icingacmd >/dev/null || groupadd -r icingacmd
@@ -212,6 +212,8 @@ rm -rf %{buildroot}
 %attr(2775,root,%{icingawebgroup}) %dir %{logdir}
 %attr(2770,root,%{icingawebgroup}) %config(noreplace) %dir %{configdir}/modules/setup
 %attr(0660,root,%{icingawebgroup}) %config(noreplace) %{configdir}/modules/setup/config.ini
+%attr(2770,root,%{icingawebgroup}) %config(noreplace) %dir %{configdir}/modules/translation
+%attr(0660,root,%{icingawebgroup}) %config(noreplace) %{configdir}/modules/translation/config.ini
 %{docsdir}
 %docdir %{docsdir}
 
