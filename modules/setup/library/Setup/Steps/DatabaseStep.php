@@ -65,7 +65,7 @@ class DatabaseStep extends Step
             $db->reconnect($this->data['resourceConfig']['dbname']);
         }
 
-        if (array_search(reset($this->data['tables']), $db->listTables()) !== false) {
+        if (array_search(reset($this->data['tables']), $db->listTables(), true) !== false) {
             $this->log(mt('setup', 'Database schema already exists...'));
         } else {
             $this->log(mt('setup', 'Creating database schema...'));
@@ -116,7 +116,7 @@ class DatabaseStep extends Step
             $db->reconnect($this->data['resourceConfig']['dbname']);
         }
 
-        if (array_search(reset($this->data['tables']), $db->listTables()) !== false) {
+        if (array_search(reset($this->data['tables']), $db->listTables(), true) !== false) {
             $this->log(mt('setup', 'Database schema already exists...'));
         } else {
             $this->log(mt('setup', 'Creating database schema...'));
@@ -163,7 +163,7 @@ class DatabaseStep extends Step
 
         try {
             $db->connectToDb();
-            if (array_search(reset($this->data['tables']), $db->listTables()) === false) {
+            if (array_search(reset($this->data['tables']), $db->listTables(), true) === false) {
                 if ($resourceConfig['username'] !== $this->data['resourceConfig']['username']) {
                     $message = sprintf(
                         mt(
