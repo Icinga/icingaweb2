@@ -12,4 +12,11 @@ use Icinga\Exception\IcingaException;
  */
 class SetupException extends IcingaException
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct()
+    {
+        parent::__construct('Setup abortion');
+    }
 }
