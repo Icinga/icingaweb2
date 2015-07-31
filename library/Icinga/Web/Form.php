@@ -840,7 +840,7 @@ class Form extends Zend_Form
             }
 
             $decorators = $el->getDecorators();
-            $pos = array_search('Zend_Form_Decorator_ViewHelper', array_keys($decorators)) + 1;
+            $pos = array_search('Zend_Form_Decorator_ViewHelper', array_keys($decorators), true) + 1;
             $el->setDecorators(
                 array_slice($decorators, 0, $pos, true)
                 + array('autosubmit' => $autosubmitDecorator)
