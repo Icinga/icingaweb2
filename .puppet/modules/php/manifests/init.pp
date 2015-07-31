@@ -24,7 +24,5 @@ class php {
     require => Package['apache'],
   }
 
-  php::phpd { ['error_reporting', 'timezone', 'xdebug_settings' ]:
-    require => Package['php'],
-  }
+  php::phpd { ['error_reporting', 'timezone', 'xdebug_settings' ]: }
 }
