@@ -150,7 +150,7 @@ class DbQuery extends SimpleQuery
             && $this->getDatasource()->getDbType() === 'pgsql'
             && $select->getPart(Zend_Db_Select::DISTINCT) === true) {
             foreach ($this->getOrder() as $fieldAndDirection) {
-                if (array_search($fieldAndDirection[0], $this->columns) === false) {
+                if (array_search($fieldAndDirection[0], $this->columns, true) === false) {
                     $this->columns[] = $fieldAndDirection[0];
                 }
             }
