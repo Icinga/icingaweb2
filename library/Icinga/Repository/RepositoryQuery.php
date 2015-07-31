@@ -5,6 +5,7 @@ namespace Icinga\Repository;
 
 use Iterator;
 use IteratorAggregate;
+use Traversable;
 use Icinga\Application\Benchmark;
 use Icinga\Application\Logger;
 use Icinga\Data\QueryInterface;
@@ -581,7 +582,12 @@ class RepositoryQuery implements QueryInterface, SortRules, Iterator
                 $this->order();
             }
 
-            $iterator = $this->repository->getDataSource()->query($this->query);
+            if ($this->query instanceof Traversable) {
+                $iterator = $this->query;
+            } else {
+                $iterator = $this->repository->getDataSource()->query($this->query);
+            }
+
             if ($iterator instanceof IteratorAggregate) {
                 $this->iterator = $iterator->getIterator();
             } else {
