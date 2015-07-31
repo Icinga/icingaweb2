@@ -10,6 +10,7 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Benchmark;
 use Icinga\Data\Filter\Filter;
 use Icinga\Exception\IcingaException;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 
 class SimpleQuery implements QueryInterface, Queryable, Iterator
@@ -27,6 +28,13 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      * @var Iterator
      */
     protected $iterator;
+
+    /**
+     * The current position of this query's iterator
+     *
+     * @var int
+     */
+    protected $iteratorPosition;
 
     /**
      * The target you are going to query
@@ -83,6 +91,20 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      */
     protected $limitOffset;
 
+    /**
+     * Whether to peek ahead for more results
+     *
+     * @var bool
+     */
+    protected $peekAhead;
+
+    /**
+     * Whether the query did not yield all available results
+     *
+     * @var bool
+     */
+    protected $hasMore;
+
     protected $filter;
 
     /**
@@ -136,6 +158,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
         }
 
         $this->iterator->rewind();
+        $this->iteratorPosition = 0;
         Benchmark::measure('Query result iteration started');
     }
 
@@ -156,7 +179,15 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      */
     public function valid()
     {
-        if (! $this->iterator->valid()) {
+        $valid = $this->iterator->valid();
+        if ($valid && $this->peekAhead && $this->hasLimit() && $this->iteratorPosition + 1 === $this->getLimit()) {
+            $this->hasMore = true;
+            $valid = false; // We arrived at the last result, which is the requested extra row, so stop the iteration
+        } elseif (! $valid) {
+            $this->hasMore = false;
+        }
+
+        if (! $valid) {
             Benchmark::measure('Query result iteration finished');
             return false;
         }
@@ -180,6 +211,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     public function next()
     {
         $this->iterator->next();
+        $this->iteratorPosition += 1;
     }
 
     /**
@@ -359,6 +391,36 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     }
 
     /**
+     * Set whether this query should peek ahead for more results
+     *
+     * Enabling this causes the current query limit to be increased by one. The potential extra row being yielded will
+     * be removed from the result set. Note that this only applies when fetching multiple results of limited queries.
+     *
+     * @return  $this
+     */
+    public function peekAhead($state = true)
+    {
+        $this->peekAhead = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Return whether this query did not yield all available results
+     *
+     * @return  bool
+     *
+     * @throws  ProgrammingError    In case the query did not run yet
+     */
+    public function hasMore()
+    {
+        if ($this->hasMore === null) {
+            throw new ProgrammingError('Query did not run. Cannot determine whether there are more results.');
+        }
+
+        return $this->hasMore;
+    }
+
+    /**
      * Set a limit count and offset to the query
      *
      * @param   int $count  Number of rows to return
@@ -390,7 +452,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      */
     public function getLimit()
     {
-        return $this->limitCount;
+        return $this->peekAhead && $this->hasLimit() ? $this->limitCount + 1 : $this->limitCount;
     }
 
     /**
@@ -460,6 +522,14 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
         Benchmark::measure('Fetching all results started');
         $results = $this->ds->fetchAll($this);
         Benchmark::measure('Fetching all results finished');
+
+        if ($this->peekAhead && $this->hasLimit() && count($results) === $this->getLimit()) {
+            $this->hasMore = true;
+            array_pop($results);
+        } else {
+            $this->hasMore = false;
+        }
+
         return $results;
     }
 
@@ -486,6 +556,14 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
         Benchmark::measure('Fetching one column started');
         $values = $this->ds->fetchColumn($this);
         Benchmark::measure('Fetching one column finished');
+
+        if ($this->peekAhead && $this->hasLimit() && count($values) === $this->getLimit()) {
+            $this->hasMore = true;
+            array_pop($values);
+        } else {
+            $this->hasMore = false;
+        }
+
         return $values;
     }
 
@@ -514,6 +592,14 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
         Benchmark::measure('Fetching pairs started');
         $pairs = $this->ds->fetchPairs($this);
         Benchmark::measure('Fetching pairs finished');
+
+        if ($this->peekAhead && $this->hasLimit() && count($pairs) === $this->getLimit()) {
+            $this->hasMore = true;
+            array_pop($pairs);
+        } else {
+            $this->hasMore = false;
+        }
+
         return $pairs;
     }
 
