@@ -816,7 +816,7 @@ EOD;
             // as the chances are very high that the database is created later causing the current user being
             // the owner with ALL privileges. (Which in turn can be granted to others.)
 
-            if (array_search('CREATE', $privileges) !== false) {
+            if (array_search('CREATE', $privileges, true) !== false) {
                 $query = $this->query(
                     'select rolcreatedb from pg_roles where rolname = :user',
                     array(':user' => $username !== null ? $username : $this->config['username'])
@@ -825,7 +825,7 @@ EOD;
             }
         }
 
-        if (array_search('CREATEROLE', $privileges) !== false) {
+        if (array_search('CREATEROLE', $privileges, true) !== false) {
             $query = $this->query(
                 'select rolcreaterole from pg_roles where rolname = :user',
                 array(':user' => $username !== null ? $username : $this->config['username'])
@@ -833,7 +833,7 @@ EOD;
             $privilegesGranted &= $query->fetchColumn() !== false;
         }
 
-        if (array_search('SUPER', $privileges) !== false) {
+        if (array_search('SUPER', $privileges, true) !== false) {
             $query = $this->query(
                 'select rolsuper from pg_roles where rolname = :user',
                 array(':user' => $username !== null ? $username : $this->config['username'])
