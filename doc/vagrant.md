@@ -24,8 +24,6 @@ vagrant up
 > you'll download a plain CentOS base box and Vagrant will automatically
 > provision the environment on the first go.
 
-If the LDAP schema import fails, rerun `vagrant provision`.
-
 After you should be able to browse [localhost:8080/icingaweb2](http://localhost:8080/icingaweb2).
 
 ## Log into Icinga Web 2
