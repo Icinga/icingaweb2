@@ -84,7 +84,7 @@ class HostStatus extends DataView
      */
     public function getSearchColumns()
     {
-        return array('host', 'host_display_name');
+        return array('host_display_name');
     }
 
     /**

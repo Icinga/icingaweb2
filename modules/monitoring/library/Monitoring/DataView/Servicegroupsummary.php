@@ -55,7 +55,7 @@ class Servicegroupsummary extends DataView
      */
     public function getSearchColumns()
     {
-        return array('service', 'service_display_name', 'servicegroup', 'servicegroup_alias');
+        return array('servicegroup_alias');
     }
 
     /**

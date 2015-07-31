@@ -84,6 +84,6 @@ class Contactgroup extends DataView
      */
     public function getSearchColumns()
     {
-        return array('contactgroup', 'contactgroup_alias', 'contact', 'contact_alias', 'contact_email');
+        return array('contactgroup_alias');
     }
 }
