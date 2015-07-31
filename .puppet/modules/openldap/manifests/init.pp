@@ -24,14 +24,11 @@ class openldap {
   }
 
   if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
-    ['core', 'cosine', 'inetorgperson', 'nis', 'misc', 'openldap'].each |String $schema| {
-      exec { "slapd-schema-${schema}":
-        command => "ldapadd -Y EXTERNAL -H ldapi:// -f /etc/openldap/schema/${schema}.ldif",
-        group   => 'root',
-        require => Package['openldap-servers'],
-        unless  => "test -n \"$(find /etc/openldap/slapd.d/cn=config/cn=schema/ -name cn={*}${schema}.ldif -print -quit)\"",
-        user    => 'root',
-      }
-    }
+    openldap::schema{ 'core': }
+    -> openldap::schema{ 'cosine': }
+    -> openldap::schema{ 'inetorgperson': }
+    -> openldap::schema{ 'nis': }
+    -> openldap::schema{ 'misc': }
+    -> openldap::schema{ 'openldap': }
   }
 }

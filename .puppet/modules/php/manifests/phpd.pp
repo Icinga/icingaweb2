@@ -17,5 +17,6 @@ define php::phpd {
   file { "/etc/php.d/$name.ini":
     content => template("php/$name.ini.erb"),
     notify  => Service['apache'],
+    require => Package['php'],
   }
 }
