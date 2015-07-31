@@ -411,6 +411,29 @@ abstract class DataView implements QueryInterface, SortRules, IteratorAggregate
     }
 
     /**
+     * Set whether the query should peek ahead for more results
+     *
+     * Enabling this causes the current query limit to be increased by one. The potential extra row being yielded will
+     * be removed from the result set. Note that this only applies when fetching multiple results of limited queries.
+     *
+     * @return  $this
+     */
+    public function peekAhead($state = true)
+    {
+        return $this->query->peekAhead($state);
+    }
+
+    /**
+     * Return whether the query did not yield all available results
+     *
+     * @return  bool
+     */
+    public function hasMore()
+    {
+        return $this->query->hasMore();
+    }
+
+    /**
      * Set a limit count and offset
      *
      * @param   int $count  Number of rows to return
