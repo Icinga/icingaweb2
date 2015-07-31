@@ -4,10 +4,11 @@
 namespace Icinga\Module\Translation\Util;
 
 use Exception;
+use Icinga\Application\ApplicationBootstrap;
+use Icinga\Application\Config;
+use Icinga\Application\Modules\Manager;
 use Icinga\Exception\IcingaException;
 use Icinga\Util\File;
-use Icinga\Application\Modules\Manager;
-use Icinga\Application\ApplicationBootstrap;
 
 /**
  * This class provides some useful utility functions to handle gettext translations
@@ -18,6 +19,13 @@ class GettextTranslationHelper
      * All project files are supposed to have the same/this encoding
      */
     const FILE_ENCODING = 'UTF-8';
+
+    /**
+     * Config
+     *
+     * @var Config
+     */
+    protected $config;
 
     /**
      * The source files to parse
@@ -72,6 +80,13 @@ class GettextTranslationHelper
     private $moduleDir;
 
     /**
+     * Path to the Icinga library
+     *
+     * @var string
+     */
+    protected $libDir;
+
+    /**
      * The path to the file catalog
      *
      * @var string
@@ -102,7 +117,31 @@ class GettextTranslationHelper
     {
         $this->moduleMgr = $bootstrap->getModuleManager()->loadEnabledModules();
         $this->appDir = $bootstrap->getApplicationDir();
+        $this->libDir = $bootstrap->getLibraryDir('Icinga');
         $this->locale = $locale;
+    }
+
+    /**
+     * Get the config
+     *
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * Set the config
+     *
+     * @param   Config $config
+     *
+     * @return  $this
+     */
+    public function setConfig(Config $config)
+    {
+        $this->config = $config;
+        return $this;
     }
 
     /**
@@ -211,7 +250,12 @@ class GettextTranslationHelper
     private function updateTranslationTable()
     {
         if (is_file($this->tablePath)) {
-            shell_exec(sprintf('/usr/bin/msgmerge --update %s %s 2>&1', $this->tablePath, $this->templatePath));
+            shell_exec(sprintf(
+                '%s --update %s %s 2>&1',
+                $this->getConfig()->get('translation', 'msgmerge', '/usr/bin/env msgmerge'),
+                $this->tablePath,
+                $this->templatePath
+            ));
         } else {
             if ((!is_dir(dirname($this->tablePath)) && !@mkdir(dirname($this->tablePath), 0755, true)) ||
                 !rename($this->templatePath, $this->tablePath)) {
@@ -233,7 +277,7 @@ class GettextTranslationHelper
             implode(
                 ' ',
                 array(
-                    '/usr/bin/xgettext',
+                    $this->getConfig()->get('translation', 'xgettext', '/usr/bin/env xgettext'),
                     '--language=PHP',
                     '--keyword=translate',
                     '--keyword=translate:1,2c',
@@ -360,7 +404,7 @@ class GettextTranslationHelper
                 $this->getSourceFileNames($this->moduleDir, $catalog);
             } else {
                 $this->getSourceFileNames($this->appDir, $catalog);
-                $this->getSourceFileNames(realpath($this->appDir . '/../library/Icinga'), $catalog);
+                $this->getSourceFileNames($this->libDir, $catalog);
             }
         } catch (Exception $error) {
             throw $error;
@@ -414,7 +458,7 @@ class GettextTranslationHelper
             implode(
                 ' ',
                 array(
-                    '/usr/bin/msgfmt',
+                    $this->getConfig()->get('translation', 'msgfmt', '/usr/bin/env msgfmt'),
                     '-o ' . $targetPath,
                     $this->tablePath
                 )
