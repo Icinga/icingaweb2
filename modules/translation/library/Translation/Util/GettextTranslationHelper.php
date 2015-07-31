@@ -80,6 +80,13 @@ class GettextTranslationHelper
     private $moduleDir;
 
     /**
+     * Path to the Icinga library
+     *
+     * @var string
+     */
+    protected $libDir;
+
+    /**
      * The path to the file catalog
      *
      * @var string
@@ -110,6 +117,7 @@ class GettextTranslationHelper
     {
         $this->moduleMgr = $bootstrap->getModuleManager()->loadEnabledModules();
         $this->appDir = $bootstrap->getApplicationDir();
+        $this->libDir = $bootstrap->getLibraryDir('Icinga');
         $this->locale = $locale;
     }
 
@@ -396,7 +404,7 @@ class GettextTranslationHelper
                 $this->getSourceFileNames($this->moduleDir, $catalog);
             } else {
                 $this->getSourceFileNames($this->appDir, $catalog);
-                $this->getSourceFileNames(realpath($this->appDir . '/../library/Icinga'), $catalog);
+                $this->getSourceFileNames($this->libDir, $catalog);
             }
         } catch (Exception $error) {
             throw $error;
