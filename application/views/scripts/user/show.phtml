@@ -52,7 +52,12 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
 <?php endif ?>
 </div>
 <div class="content memberships">
-<?php if (count($memberships) > 0): ?>
+<?php
+
+$firstRow = true;
+foreach ($memberships as $membership): ?>
+<?php if ($firstRow): ?>
+  <?php $firstRow = false; ?>
   <table data-base-target="_next" class="action membership-list alternating">
     <thead>
       <tr>
@@ -61,7 +66,7 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
       </tr>
     </thead>
     <tbody>
-    <?php foreach ($memberships as $membership): ?>
+<?php endif ?>
       <tr>
         <td class="membership-group">
          <?php if ($this->hasPermission('config/authentication/groups/show') && $membership->backend instanceof Selectable): ?>
@@ -86,7 +91,8 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
        <?php endif ?>
         </td>
       </tr>
-    <?php endforeach ?>
+<?php endforeach ?>
+<?php if ($memberships->hasResult()): ?>
     </tbody>
   </table>
 <?php else: ?>
