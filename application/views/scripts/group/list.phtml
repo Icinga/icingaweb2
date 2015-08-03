@@ -26,7 +26,10 @@ if (! isset($backend)) {
     $reducible = $this->hasPermission('config/authentication/groups/remove') && $backend instanceof Reducible;
 }
 
-if (count($groups) > 0): ?>
+$firstRow = true;
+foreach ($groups as $group): ?>
+  <?php if ($firstRow): ?>
+    <?php $firstRow = false; ?>
 <table data-base-target="_next" class="action group-list alternating">
   <thead>
     <tr>
@@ -37,7 +40,7 @@ if (count($groups) > 0): ?>
     </tr>
   </thead>
   <tbody>
-  <?php foreach ($groups as $group): ?>
+  <?php endif ?>
     <tr>
       <td class="group-name"><?= $this->qlink($group->group_name, 'group/show', array(
         'backend'   => $backend->getName(),
@@ -62,7 +65,8 @@ if (count($groups) > 0): ?>
       </td>
      <?php endif ?>
     </tr>
-  <?php endforeach ?>
+<?php endforeach ?>
+<?php if ($groups->hasResult()): ?>
   </tbody>
 </table>
 <?php else: ?>

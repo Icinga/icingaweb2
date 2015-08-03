@@ -158,7 +158,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
         }
 
         $this->iterator->rewind();
-        $this->iteratorPosition = 0;
+        $this->iteratorPosition = null;
         Benchmark::measure('Query result iteration started');
     }
 
@@ -190,6 +190,8 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
         if (! $valid) {
             Benchmark::measure('Query result iteration finished');
             return false;
+        } elseif ($this->iteratorPosition === null) {
+            $this->iteratorPosition = 0;
         }
 
         return true;
@@ -418,6 +420,16 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
         }
 
         return $this->hasMore;
+    }
+
+    /**
+     * Return whether this query will or has yielded any result
+     *
+     * @return  bool
+     */
+    public function hasResult()
+    {
+        return $this->iteratorPosition !== null || $this->fetchRow() !== false;
     }
 
     /**

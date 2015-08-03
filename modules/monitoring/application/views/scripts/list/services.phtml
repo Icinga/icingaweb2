@@ -18,13 +18,6 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 <div class="content">
-<?php
-
-if (count($services) === 0) {
-    echo $this->translate('No services found matching the filter') . '</div>';
-    return;
-}
-?>
 <table data-base-target="<?= isset($baseTarget) ? $baseTarget : '_next'; ?>"
     class="action multiselect <?php if ($this->compact): ?> compact<?php endif ?>" style="table-layout: auto;"
     data-icinga-multiselect-url="<?= $this->href("monitoring/services/show") ?>"
@@ -91,4 +84,7 @@ if (count($services) === 0) {
 <?php endforeach ?>
   </tbody>
 </table>
+<?php if (! $services->hasResult()): ?>
+  <?= $this->translate('No services found matching the filter'); ?>
+<?php endif ?>
 </div>

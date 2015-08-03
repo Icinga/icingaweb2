@@ -49,7 +49,12 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
 <?php endif ?>
 </div>
 <div class="content members" data-base-target="_next">
-<?php if (count($members) > 0): ?>
+<?php
+
+$firstRow = true;
+foreach ($members as $member): ?>
+<?php if ($firstRow): ?>
+  <?php $firstRow = false; ?>
   <table data-base-target="_next" class="action member-list">
     <thead>
       <tr>
@@ -60,7 +65,7 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
       </tr>
     </thead>
     <tbody>
-    <?php foreach ($members as $member): ?>
+  <?php endif ?>
       <tr>
         <td class="member-name"><?= $this->escape($member->user_name); ?></td>
        <?php if (isset($removeForm)): ?>
@@ -69,7 +74,8 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
         </td>
        <?php endif ?>
       </tr>
-    <?php endforeach ?>
+<?php endforeach ?>
+<?php if ($members->hasResult()): ?>
     </tbody>
   </table>
 <?php else: ?>

@@ -2,6 +2,19 @@
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
+function contactsLink($match, $view) {
+    $links = array();
+    foreach (preg_split('/,\s/', $match[1]) as $contact) {
+        $links[] = $view->qlink(
+            $contact,
+            'monitoring/show/contact',
+            array('contact_name' => $contact),
+            array('title' => sprintf($view->translate('Show detailed information about %s'), $contact))
+        );
+    }
+    return '[' . implode(', ', $links) . ']';
+}
+
 $self = $this;
 
 if (! $this->compact): ?>
@@ -16,29 +29,6 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 <div class="content">
-<?php
-
-if (count($history) === 0) {
-    echo $this->translate('No history events found matching the filter') . '</div>';
-    return;
-}
-?>
-
-<?php
-function contactsLink($match, $view) {
-    $links = array();
-    foreach (preg_split('/,\s/', $match[1]) as $contact) {
-        $links[] = $view->qlink(
-            $contact,
-            'monitoring/show/contact',
-            array('contact_name' => $contact),
-            array('title' => sprintf($view->translate('Show detailed information about %s'), $contact))
-        );
-    }
-    return '[' . implode(', ', $links) . ']';
-}
-?>
-
   <table data-base-target="_next" class="action objecthistory">
     <tbody>
     <?php foreach ($history as $event): ?>
@@ -144,7 +134,10 @@ function contactsLink($match, $view) {
           </div>
         </td>
       </tr>
-<?php endforeach; ?>
+    <?php endforeach; ?>
     </tbody>
   </table>
+<?php if (! $history->hasResult()): ?>
+  <?= $this->translate('No history events found matching the filter'); ?>
+<?php endif ?>
 </div>

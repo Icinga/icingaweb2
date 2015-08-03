@@ -15,14 +15,6 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 <div class="content">
-<?php
-
-if (count($hosts) === 0) {
-    echo $this->translate('No hosts found matching the filter') . '</div>';
-    return;
-}
-?>
-
 <table
     data-base-target="_next"
     class="action multiselect"
@@ -99,4 +91,7 @@ if (count($hosts) === 0) {
   <?php endforeach ?>
   </tbody>
 </table>
+<?php if (! $hosts->hasResult()): ?>
+  <?= $this->translate('No hosts found matching the filter'); ?>
+<?php endif ?>
 </div>

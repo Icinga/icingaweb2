@@ -434,6 +434,16 @@ abstract class DataView implements QueryInterface, SortRules, IteratorAggregate
     }
 
     /**
+     * Return whether this query will or has yielded any result
+     *
+     * @return  bool
+     */
+    public function hasResult()
+    {
+        return $this->query->hasResult();
+    }
+
+    /**
      * Set a limit count and offset
      *
      * @param   int $count  Number of rows to return

@@ -368,6 +368,16 @@ class RepositoryQuery implements QueryInterface, SortRules, Iterator
     }
 
     /**
+     * Return whether this query will or has yielded any result
+     *
+     * @return  bool
+     */
+    public function hasResult()
+    {
+        return $this->query->hasResult();
+    }
+
+    /**
      * Limit this query's results
      *
      * @param   int     $count      When to stop returning results
