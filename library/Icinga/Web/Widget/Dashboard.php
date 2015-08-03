@@ -36,7 +36,7 @@ class Dashboard extends AbstractWidget
      *
      * @var Tabs
      */
-    private $tabs;
+    protected $tabs;
 
     /**
      * The parameter that will be added to identify panes
