@@ -52,16 +52,8 @@ if (empty($object->comments) && ! $addLink) {
  <?php foreach ($object->comments as $comment): ?>
  <?php
 
-// Ticket hook sample
-$commentText = $this->tickets ? preg_replace_callback(
-    $this->tickets->getPattern(),
-    array($this->tickets, 'createLink'),
-    $this->escape($comment->comment)
-) : $this->escape($comment->comment);
-
-
 // Form is unset if the current user lacks the respective permission
-if (isset($delCommentForm)) { 
+if (isset($delCommentForm)) {
     $deleteButton = clone($delCommentForm);
     $deleteButton->populate(
         array(
@@ -80,7 +72,7 @@ if (isset($delCommentForm)) {
 		    	<?= $this->timeAgo($comment->timestamp) ?>
                 <?= $deleteButton ?>
 		    </h3>
-		    <p><span class="sr-only">(<?= $this->translate('Comment'); ?>): </span><?= str_replace(array('\r\n', '\n'), '<br>', $commentText) ?></p>
+		    <p><span class="sr-only">(<?= $this->translate('Comment'); ?>): </span><?= str_replace(array('\r\n', '\n'), '<br>', $this->createTicketLinks($comment->comment)) ?></p>
          </li>
  <?php endforeach ?>
     </ul>
