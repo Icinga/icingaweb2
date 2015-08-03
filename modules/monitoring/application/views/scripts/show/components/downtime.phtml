@@ -67,8 +67,8 @@ if (empty($object->comments) && ! $addLink) {
 
     if ((bool) $downtime->is_in_effect) {
         $state = sprintf(
-            $this->translate('in downtime %s', 'Last format parameter represents the time in downtime'),
-            $this->timeSince($downtime->start)
+            $this->translate('expires %s', 'Last format parameter represents the downtime expire time'),
+            $this->timeUntil($downtime->end)
         );
     } else {
         if ((bool) $downtime->is_fixed) {
