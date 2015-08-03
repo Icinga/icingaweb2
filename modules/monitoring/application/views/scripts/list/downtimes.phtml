@@ -16,14 +16,6 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 <div class="content">
-<?php
-
-if (count($downtimes) === 0) {
-    echo $this->translate('No downtimes found matching the filter,'
-            . ' maybe the downtime already expired.') . '</div>';
-    return;
-}
-?>
   <table data-base-target="_next"
          class="action multiselect"
          data-icinga-multiselect-url="/icingaweb2/monitoring/downtimes/show"
@@ -143,4 +135,7 @@ if (count($downtimes) === 0) {
 <?php endforeach ?>
     </tbody>
   </table>
+<?php if (! $downtimes->hasResult()): ?>
+  <?= $this->translate('No downtimes found matching the filter, maybe the downtime already expired.'); ?>
+<?php endif ?>
 </div>
