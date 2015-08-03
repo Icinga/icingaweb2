@@ -53,23 +53,45 @@ class RemoteInstanceForm extends Form
     }
 
     /**
+     * Check whether ssh identity resources exists or not
+     *
+     * @return boolean
+     */
+    public function hasResources()
+    {
+        $resourceConfig = ResourceFactory::getResourceConfigs();
+
+        foreach ($resourceConfig as $name => $resource) {
+            if ($resource->type === 'ssh') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * (non-PHPDoc)
      * @see Form::createElements() For the method documentation.
      */
     public function createElements(array $formData = array())
     {
-        $useResource = isset($formData['use_resource']) ? $formData['use_resource'] : $this->getValue('use_resource');
+        $useResource = false;
 
-        $this->addElement(
-            'checkbox',
-            'use_resource',
-            array(
-                'label'         => $this->translate('Use SSH Identity'),
-                'description'   => $this->translate('Make use of the ssh identity resource'),
-                'autosubmit'    => true,
-                'ignore'        => true
-            )
-        );
+        if ($this->hasResources()) {
+            $useResource = isset($formData['use_resource'])
+                ? $formData['use_resource'] : $this->getValue('use_resource');
+
+            $this->addElement(
+                'checkbox',
+                'use_resource',
+                array(
+                    'label'         => $this->translate('Use SSH Identity'),
+                    'description'   => $this->translate('Make use of the ssh identity resource'),
+                    'autosubmit'    => true,
+                    'ignore'        => true
+                )
+            );
+        }
 
         if ($useResource) {
 
