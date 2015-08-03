@@ -114,15 +114,7 @@ function contactsLink($match, $view) {
           <br>
           <?= date('d.m. H:i', $event->timestamp); ?>
         </td>
-        <td><?php
-
-$output = $this->tickets ? preg_replace_callback(
-    $this->tickets->getPattern(),
-    array($this->tickets, 'createLink'),
-    $msg
-) : $msg;
-
-?>
+        <td>
           <?= sprintf(
               $this->translate('%s on %s', 'Service running on host'),
               $this->escape($event->service_display_name),
@@ -130,7 +122,7 @@ $output = $this->tickets ? preg_replace_callback(
           ) ?>
           <br>
           <div>
-            <?= $this->icon($icon, $title); ?> <?= empty($msg) ? '' : $msg; ?>
+            <?= $this->icon($icon, $title); ?> <?= $this->createTicketLinks($msg) ?>
           </div>
         </td>
       </tr>
