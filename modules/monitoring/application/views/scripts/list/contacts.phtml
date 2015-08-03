@@ -8,14 +8,7 @@
 </div>
 <?php endif ?>
 <div data-base-target="_next" class="content contacts">
-<?php
-
-if (count($contacts) === 0) {
-    echo $this->translate('No contacts found matching the filter') . '</div>';
-    return;
-}
-?>
-<?php foreach ($contacts as $contact): ?>
+    <?php foreach ($contacts as $contact): ?>
         <div class="contact">
             <?= $this->img('/static/gravatar', array('email' => $contact->contact_email)); ?>
             <strong><?= $this->qlink(
@@ -59,4 +52,7 @@ if (count($contacts) === 0) {
     if (true): /* The following piece of HTML MUST be nested in <?php */ ?>
     <div style="clear: both;"></div>
     <?php endif; ?>
+    <?php if (! $contacts->hasResult()): ?>
+        <?= $this->translate('No contacts found matching the filter'); ?>
+    <?php endif ?>
 </div>
