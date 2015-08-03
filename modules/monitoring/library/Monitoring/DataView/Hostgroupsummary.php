@@ -60,7 +60,7 @@ class Hostgroupsummary extends DataView
      */
     public function getSearchColumns()
     {
-        return array('host', 'host_display_name', 'hostgroup', 'hostgroup_alias');
+        return array('hostgroup_alias');
     }
 
     /**

@@ -104,15 +104,30 @@ class UserGroupBackendPage extends Form
         ResourceFactory::setConfig($this->createResourceConfiguration());
         UserBackend::setConfig($this->createBackendConfiguration());
 
-        $formData['type'] = 'ldap';
-        $formData['user_backend'] = $this->backendConfig['name']; // We're forcing the linkage anyway..
         $backendForm = new LdapUserGroupBackendForm();
+        $formData['type'] = 'ldap';
         $backendForm->create($formData);
-        $userBackendOptions = $backendForm->getElement('user_backend')->getMultiOptions();
-        unset($userBackendOptions['none']);
         $backendForm->getElement('name')->setValue('icingaweb2');
-        $backendForm->getElement('user_backend')->setMultiOptions($userBackendOptions);
         $this->addSubForm($backendForm, 'backend_form');
+
+        $backendForm->addElement(
+            'hidden',
+            'resource',
+            array(
+                'required'      => true,
+                'value'         => $this->resourceConfig['name'],
+                'decorators'    => array('ViewHelper')
+            )
+        );
+        $backendForm->addElement(
+            'hidden',
+            'user_backend',
+            array(
+                'required'      => true,
+                'value'         => $this->backendConfig['name'],
+                'decorators'    => array('ViewHelper')
+            )
+        );
     }
 
     /**

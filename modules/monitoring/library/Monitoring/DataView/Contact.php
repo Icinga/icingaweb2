@@ -79,14 +79,6 @@ class Contact extends DataView
      */
     public function getSearchColumns()
     {
-        return array(
-            'contact',
-            'contact_alias',
-            'contact_email',
-            'host',
-            'host_display_name',
-            'service',
-            'service_display_name'
-        );
+        return array('contact_alias');
     }
 }
