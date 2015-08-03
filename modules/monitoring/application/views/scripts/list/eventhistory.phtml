@@ -12,12 +12,6 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 <div class="content">
-<?php
-if (count($history) === 0) {
-    echo $this->translate('No history events found matching the filter') . '</div>';
-    return;
-}
-?>
   <table data-base-target="_next" class="action">
     <tbody>
     <?php foreach ($history as $event): ?>
@@ -96,4 +90,7 @@ if (count($history) === 0) {
     <?php endforeach ?>
     </tbody>
   </table>
+<?php if (! $history->hasResult()): ?>
+  <?= $this->translate('No history events found matching the filter'); ?>
+<?php endif ?>
 </div>
