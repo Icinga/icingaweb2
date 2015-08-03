@@ -106,15 +106,7 @@ if (! $this->compact): ?>
           <br>
           <?= date('d.m. H:i', $event->timestamp); ?>
         </td>
-        <td><?php
-
-$output = $this->tickets ? preg_replace_callback(
-    $this->tickets->getPattern(),
-    array($this->tickets, 'createLink'),
-    $msg
-) : $msg;
-
-?>
+        <td>
         <?php if ($isService): ?>
           <?= sprintf(
               $this->translate('%s on %s', 'Service running on host'),
@@ -138,7 +130,7 @@ $output = $this->tickets ? preg_replace_callback(
         <?php endif ?>
           <br>
           <div>
-            <?= $this->icon($icon, $title); ?> <?= empty($msg) ? '' : $msg; ?>
+            <?= $this->icon($icon, $title); ?> <?= $this->createTicketLinks($msg) ?>
           </div>
         </td>
       </tr>
