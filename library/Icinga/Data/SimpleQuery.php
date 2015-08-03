@@ -423,6 +423,16 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     }
 
     /**
+     * Return whether this query will or has yielded any result
+     *
+     * @return  bool
+     */
+    public function hasResult()
+    {
+        return $this->iteratorPosition !== null || $this->fetchRow() !== false;
+    }
+
+    /**
      * Set a limit count and offset to the query
      *
      * @param   int $count  Number of rows to return
