@@ -103,12 +103,7 @@ if (isset($delDowntimeForm)) {
         <li class="comment-item">
             <h3>
                 <span class="author"><?= $this->escape($downtime->author_name) ?></span>
-                <span class="info">
-                <? printf($this->translate('Added %s.'), $this->timeAgo($downtime->entry_time)) ?>
-                <? if ($downtime->is_in_effect) {
-                    printf($this->translate('Expires %s.'),  $this->timeUntil($downtime->end));
-                } ?>
-                </span>
+                <?= $this->timeAgo($downtime->entry_time) ?>
                 <?= $deleteButton ?>
             </h3>
             <p>            <span class="sr-only"><?= $this->translate('Downtime'); ?></span><?= $state; ?> - <?= str_replace(array('\r\n', '\n'), '<br>', $commentText); ?></p>
