@@ -104,8 +104,8 @@ if (isset($delDowntimeForm)) {
             <h3>
                 <span class="author"><?= $this->escape($downtime->author_name) ?></span>
                 <span class="info">
-                <?php printf($this->translate('Added %s.'), $this->timeAgo($downtime->entry_time)) ?>
-                <?php if ($downtime->is_in_effect) {
+                <? printf($this->translate('Added %s.'), $this->timeAgo($downtime->entry_time)) ?>
+                <? if ($downtime->is_in_effect) {
                     printf($this->translate('Expires %s.'),  $this->timeUntil($downtime->end));
                 } ?>
                 </span>
