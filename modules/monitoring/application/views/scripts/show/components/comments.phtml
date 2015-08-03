@@ -43,30 +43,30 @@ if (empty($object->comments) && ! $addLink) {
     else: ?>
         <ul class="inline-comments">
         <?php foreach ($object->comments as $comment):
-        // Form is unset if the current user lacks the respective permission
-        if (isset($delCommentForm)) {
-            $deleteButton = clone($delCommentForm);
-            $deleteButton->populate(
-                array(
-                    'comment_id' => $comment->id,
-                    'comment_is_service' => isset($comment->service_description)
-                )
-            );
-        } else {
-            $deleteButton = '';
-        }
-        ?>
-        <li class="comment-item">
-            <h3>
-                <span class="author"><?= $this->escape($comment->author) ?></span>
-                <?= $this->timeAgo($comment->timestamp) ?>
-                <?= $deleteButton ?>
-            </h3>
-            <p>
-                <span class="sr-only">(<?= $this->translate('Comment') ?>): </span>
-                <?= str_replace(array('\r\n', '\n'), '<br>', $this->createTicketLinks($comment->comment)) ?>
-            </p>
-        </li>
+            // Form is unset if the current user lacks the respective permission
+            if (isset($delCommentForm)) {
+                $deleteButton = clone($delCommentForm);
+                $deleteButton->populate(
+                    array(
+                        'comment_id' => $comment->id,
+                        'comment_is_service' => isset($comment->service_description)
+                    )
+                );
+            } else {
+                $deleteButton = '';
+            }
+            ?>
+            <li class="comment-item">
+                <h3>
+                    <span class="author"><?= $this->escape($comment->author) ?></span>
+                    <?= $this->timeAgo($comment->timestamp) ?>
+                    <?= $deleteButton ?>
+                </h3>
+                <p>
+                    <span class="sr-only">(<?= $this->translate('Comment') ?>): </span>
+                    <?= str_replace(array('\r\n', '\n'), '<br>', $this->createTicketLinks($comment->comment)) ?>
+                </p>
+            </li>
         <?php endforeach ?>
         </ul>
     <?php endif ?>
