@@ -20,6 +20,25 @@ class SearchDashboard extends Dashboard
     const SEARCH_PANE = 'search';
 
     /**
+     * {@inheritdoc}
+     */
+    public function getTabs()
+    {
+        if ($this->tabs === null) {
+            $this->tabs = new Tabs();
+            $this->tabs->add(
+                'search',
+                array(
+                    'title' => t('Show Search', 'dashboard.pane.tooltip'),
+                    'label' => t('Search'),
+                    'url'   => Url::fromRequest()
+                )
+            );
+        }
+        return $this->tabs;
+    }
+
+    /**
      * Load all available search dashlets from modules
      *
      * @param   string $searchString
