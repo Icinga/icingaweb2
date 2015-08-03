@@ -5,19 +5,13 @@ namespace Icinga\Web\Hook;
 
 use ErrorException;
 use Exception;
-use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
 
 /**
- * Icinga Web Ticket Hook base class
+ * Base class for ticket hooks
  *
- * Extend this class if you want to integrate your ticketing solution nicely into
- * Icinga Web
- *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * Extend this class if you want to integrate your ticketing solution Icinga Web 2
  */
 abstract class TicketHook
 {
@@ -29,10 +23,9 @@ abstract class TicketHook
     protected $lastError;
 
     /**
-     * Constructor must live without arguments right now
+     * Create a new ticket hook
      *
-     * Therefore the constructor is final, we might change our opinion about
-     * this one far day
+     * @see init() For hook initialization.
      */
     final public function __construct()
     {
@@ -40,7 +33,7 @@ abstract class TicketHook
     }
 
     /**
-     * Overwrite this function if you want to do some initialization stuff
+     * Overwrite this function for hook initialization, e.g. loading the hook's config
      */
     protected function init()
     {
