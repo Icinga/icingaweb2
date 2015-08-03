@@ -58,13 +58,6 @@ if (empty($object->comments) && ! $addLink) {
 <?php foreach ($object->downtimes as $downtime): ?>
 <?php
 
-    // Ticket hook sample
-    $commentText = $this->tickets ? preg_replace_callback(
-        $this->tickets->getPattern(),
-        array($this->tickets, 'createLink'),
-        $this->escape($downtime->comment)
-    ) : $this->escape($downtime->comment);
-
     if ((bool) $downtime->is_in_effect) {
         $state = sprintf(
             $this->translate('in downtime %s', 'Last format parameter represents the time in downtime'),
@@ -86,7 +79,7 @@ if (empty($object->comments) && ! $addLink) {
 
 
 // Form is unset if the current user lacks the respective permission
-if (isset($delDowntimeForm)) { 
+if (isset($delDowntimeForm)) {
     $deleteButton = clone($delDowntimeForm);
     $deleteButton->populate(
         array(
@@ -106,7 +99,7 @@ if (isset($delDowntimeForm)) {
                 <?= $this->timeAgo($downtime->entry_time) ?>
                 <?= $deleteButton ?>
             </h3>
-            <p>            <span class="sr-only"><?= $this->translate('Downtime'); ?></span><?= $state; ?> - <?= str_replace(array('\r\n', '\n'), '<br>', $commentText); ?></p>
+            <p>            <span class="sr-only"><?= $this->translate('Downtime'); ?></span><?= $state; ?> - <?= str_replace(array('\r\n', '\n'), '<br>', $this->createTicketLinks($downtime->comment)); ?></p>
          </li>
  <?php endforeach ?>
     </ul>
