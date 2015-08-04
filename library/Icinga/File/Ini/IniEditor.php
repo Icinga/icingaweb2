@@ -2,6 +2,7 @@
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\File\Ini;
+use Icinga\Exception\ConfigurationError;
 
 /**
  * Edit the sections and keys of an ini in-place
@@ -176,6 +177,9 @@ class IniEditor
      */
     public function setSection($section, $extend = null)
     {
+        if (false !== strpos($section, '[') || false !== strpos($section, ']')) {
+            throw new ConfigurationError('Brackets not allowed in section: %s', $section);
+        }
         if (isset($extend)) {
             $decl = '[' . $section . ' : ' . $extend . ']';
         } else {
