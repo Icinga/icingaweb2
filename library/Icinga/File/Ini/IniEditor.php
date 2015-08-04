@@ -173,18 +173,13 @@ class IniEditor
      * Create the section if it does not exist and set the properties
      *
      * @param string $section   The section name
-     * @param array $extend     The section that should be extended by this section
      */
-    public function setSection($section, $extend = null)
+    public function setSection($section)
     {
         if (false !== strpos($section, '[') || false !== strpos($section, ']')) {
             throw new ConfigurationError('Brackets not allowed in section: %s', $section);
         }
-        if (isset($extend)) {
-            $decl = '[' . $section . ' : ' . $extend . ']';
-        } else {
-            $decl = '[' . $section . ']';
-        }
+        $decl = '[' . $section . ']';
         $line = $this->getSectionLine($section);
         if ($line !== -1) {
             $this->deleteLine($line);

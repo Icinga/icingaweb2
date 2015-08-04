@@ -151,10 +151,7 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
             if ($value instanceof Zend_Config) {
                 // The value is a nested Zend_Config, handle it recursively
                 if ($section === null) {
-                    // Update the section declaration
-                    $extends = $newconfig->getExtends();
-                    $extend = array_key_exists($key, $extends) ? $extends[$key] : null;
-                    $editor->setSection($key, $extend);
+                    $editor->setSection($key);
                 }
                 if ($oldvalue === null) {
                     $oldvalue = new Zend_Config(array());
