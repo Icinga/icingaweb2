@@ -331,4 +331,14 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
         array_push($parts, 'Query', ucfirst(strtolower($query)) . 'Query');
         return implode('\\', $parts);
     }
+
+    /**
+     * Fetch and return the program version of the current instance
+     *
+     * @return string
+     */
+    public function getProgramVersion()
+    {
+        return $this->select()->from('programstatus', array('program_version'))->fetchOne();
+    }
 }
