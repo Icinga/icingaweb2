@@ -122,6 +122,7 @@ class Monitoring_ServiceController extends MonitoredObjectController
         $this->assertPermission('monitoring/command/process-check-result');
 
         $form = new ProcessCheckResultCommandForm();
+        $form->setBackend($this->backend);
         $form->setTitle($this->translate('Submit Passive Service Check Result'));
         $this->handleCommandForm($form);
     }
