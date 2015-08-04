@@ -746,6 +746,43 @@ inkey' => 'blarg'
         );
     }
 
+    public function testSectionNameEscaping()
+    {
+        $config = <<<'EOD'
+[section 1]
+foo                 = 1337
+
+[section (with special chars)]
+foo                 = "baz"
+
+[section/as/arbitrary/path]
+foo                 = "nope"
+
+[section.with.dots.in.it]
+foo                 = "bar"
+EOD;
+        $target = $this->writeConfigToTemporaryFile($config);
+        $writer = new IniWriter(
+            array(
+                'config' => Config::fromArray(
+                    array(
+                        'section 1' => array('foo' => 1337),
+                        'section (with special chars)' => array('foo' => 'baz'),
+                        'section/as/arbitrary/path' => array('foo' => 'nope'),
+                        'section.with.dots.in.it' => array('foo' => 'bar')
+                    )
+                ),
+                'filename' => $target
+            )
+        );
+
+        $this->assertEquals(
+            trim($config),
+            trim($writer->render()),
+            'IniWriter does not handle special chars in section names properly.'
+        );
+    }
+
     /**
      * Write a INI-configuration string to a temporary file and return its path
      *

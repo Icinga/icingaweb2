@@ -143,7 +143,7 @@ class IniEditor
             if ($this->isSectionDeclaration($l)) {
                 return -1;
             }
-            if (preg_match('/^\s*' . $formatted . '\[\]\s*=/', $l) === 1) {
+            if (preg_match('/^\s*' . preg_quote($formatted, '/') . '\[\]\s*=/', $l) === 1) {
                 return $line;
             }
             if ($this->isPropertyDeclaration($l, array_merge($key, array($index)))) {
@@ -507,7 +507,7 @@ class IniEditor
     private function isSectionDeclaration($lineContent, $section = null)
     {
         if (isset($section)) {
-            return preg_match('/^\s*\[\s*' . $section . '\s*[\]:]/', $lineContent) === 1;
+            return preg_match('/^\s*\[\s*' . preg_quote(trim($section), '/') . '\s*[\]:]/', $lineContent) === 1;
         } else {
             return preg_match('/^\s*\[/', $lineContent) === 1;
         }
