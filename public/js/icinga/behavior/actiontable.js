@@ -239,13 +239,14 @@
             var self = this;
             var selections = this.selections();
             var queries = [];
+            var utils = this.icinga.utils;
             if (selections.length === 1) {
                 return $(selections[0]).attr('href');
             } else if (selections.length > 1 && self.hasMultiselection()) {
                 selections.each(function (i, el) {
                     var parts = [];
                     $.each(self.getRowData($(el)), function(key, value) {
-                        parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+                        parts.push(utils.fixedEncodeURIComponent(key) + '=' + utils.fixedEncodeURIComponent(value));
                     });
                     queries.push('(' + parts.join('&') + ')');
                 });
