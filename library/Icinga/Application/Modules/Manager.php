@@ -281,7 +281,10 @@ class Manager
     public function disableModule($name)
     {
         if (! $this->hasEnabled($name)) {
-            return $this;
+            throw new ConfigurationError(
+                'Cannot disable module "%s". Module is not installed.',
+                $name
+            );
         }
 
         if (! is_writable($this->enableDir)) {
