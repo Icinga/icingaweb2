@@ -307,6 +307,19 @@
         destroy: function () {
             this.urlHelper = null;
             this.icinga = null;
+        },
+
+        /**
+         * Encode the parenthesis too
+         *
+         * @param str {String} A component of a URI
+         *
+         * @returns {String} Encoded component
+         */
+        fixedEncodeURIComponent: function (str) {
+            return encodeURIComponent(str).replace(/[()]/g, function(c) {
+                return '%' + c.charCodeAt(0).toString(16);
+            });
         }
     };
 
