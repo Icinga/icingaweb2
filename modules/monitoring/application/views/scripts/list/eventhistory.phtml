@@ -2,6 +2,8 @@
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
+$history->peekAhead($this->compact);
+
 if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
@@ -92,5 +94,15 @@ if (! $this->compact): ?>
   </table>
 <?php if (! $history->hasResult()): ?>
   <?= $this->translate('No history events found matching the filter'); ?>
+<?php elseif ($history->hasMore()): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $this->url()->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right'
+    )
+  ); ?>
 <?php endif ?>
 </div>
