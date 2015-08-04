@@ -10,6 +10,7 @@
 <div class="content">
 <?php
 
+$servicegroups->peekAhead($this->compact);
 $firstRow = true;
 foreach ($servicegroups as $s): ?>
 <?php if ($firstRow): ?>
@@ -301,6 +302,17 @@ foreach ($servicegroups as $s): ?>
 <?php if ($servicegroups->hasResult()): ?>
     </tbody>
   </table>
+<?php if ($servicegroups->hasMore()): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $this->url()->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right'
+    )
+  ); ?>
+<?php endif ?>
 <?php else: ?>
   <?= $this->translate('No servicegroups found matching the filter'); ?>
 <?php endif ?>
