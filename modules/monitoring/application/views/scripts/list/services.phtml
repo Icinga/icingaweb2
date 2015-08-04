@@ -3,6 +3,7 @@ use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
 $selfUrl = 'monitoring/list/services';
+$services->peekAhead($this->compact);
 
 if (! $this->compact): ?>
 <div class="controls separated">
@@ -86,5 +87,15 @@ if (! $this->compact): ?>
 </table>
 <?php if (! $services->hasResult()): ?>
   <?= $this->translate('No services found matching the filter'); ?>
+<?php elseif ($services->hasMore()): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $this->url()->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right'
+    )
+  ); ?>
 <?php endif ?>
 </div>
