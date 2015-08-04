@@ -27,8 +27,8 @@ class Monitoring_HostsController extends Controller
     public function init()
     {
         $hostList = new HostList($this->backend);
-        $hostList->setFilter(Filter::fromQueryString((string) $this->params));
         $this->applyRestriction('monitoring/filter/objects', $hostList);
+        $hostList->addFilter(Filter::fromQueryString((string) $this->params));
         $this->hostList = $hostList;
         $this->getTabs()->add(
             'show',
