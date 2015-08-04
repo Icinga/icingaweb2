@@ -72,6 +72,9 @@ class Controller extends IcingaWebController
         ));
 
         foreach ($this->getRestrictions($restriction) as $filter) {
+            if ($filter === '*') {
+                return $view;
+            }
             try {
                 $restrictions->addFilter(Filter::fromQueryString($filter));
             } catch (QueryException $e) {
