@@ -226,6 +226,7 @@ class Monitoring_HostsController extends Controller
         $this->assertPermission('monitoring/command/process-check-result');
 
         $form = new ProcessCheckResultCommandForm();
+        $form->setBackend($this->backend);
         $form->setTitle($this->translate('Submit Passive Host Check Results'));
         $this->handleCommandForm($form);
     }
