@@ -2,6 +2,8 @@
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
+$downtimes->peekAhead($this->compact);
+
 if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
@@ -137,5 +139,15 @@ if (! $this->compact): ?>
   </table>
 <?php if (! $downtimes->hasResult()): ?>
   <?= $this->translate('No downtimes found matching the filter, maybe the downtime already expired.'); ?>
+<?php elseif ($downtimes->hasMore()): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $this->url()->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right show-more'
+    )
+  ); ?>
 <?php endif ?>
 </div>
