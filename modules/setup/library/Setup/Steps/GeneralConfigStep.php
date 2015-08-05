@@ -6,6 +6,7 @@ namespace Icinga\Module\Setup\Steps;
 use Exception;
 use Icinga\Application\Logger;
 use Icinga\Application\Config;
+use Icinga\Exception\IcingaException;
 use Icinga\Module\Setup\Step;
 
 class GeneralConfigStep extends Step
@@ -112,7 +113,7 @@ class GeneralConfigStep extends Step
                     mt('setup', 'General configuration could not be written to: %s. An error occured:'),
                     Config::resolvePath('config.ini')
                 ),
-                sprintf(mt('setup', 'ERROR: %s'), $this->error->getMessage())
+                sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->error))
             );
         }
     }
