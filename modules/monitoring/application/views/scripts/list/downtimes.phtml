@@ -35,9 +35,15 @@ if (! $this->compact): ?>
     ?>
       <tr class="state <?= $stateName; ?><?= $downtime->is_in_effect ? ' handled' : ''; ?>">
         <td class="state">
+        <?php if ($downtime->start <= time() && ! $downtime->is_in_effect): ?>
+          <strong><?= $this->translate('Started'); ?></strong>
+          <br>
+          Ends <?= $this->timeUntil($downtime->end, $this->compact) ?>
+        <?php else: ?>
           <strong><?= $downtime->is_in_effect ? $this->translate('Expires') : $this->translate('Starts'); ?></strong>
           <br>
           <?= $this->timeUntil($downtime->is_in_effect ? $downtime->end : $downtime->start, $this->compact) ?>
+        <?php endif; ?>
         </td>
         <td>
         <?php if ($isService): ?>
