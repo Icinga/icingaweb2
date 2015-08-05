@@ -359,11 +359,7 @@ class Config implements Countable, Iterator, Selectable
      */
     protected function getIniWriter($filePath = null, $fileMode = null)
     {
-        return new IniWriter(array(
-            'config' => $this,
-            'filename' => $filePath,
-            'filemode' => $fileMode
-        ));
+        return new IniWriter($this, $filePath, $fileMode);
     }
 
     /**
@@ -418,7 +414,6 @@ class Config implements Countable, Iterator, Selectable
                 static::resolvePath('modules/' . $modulename . '/' . $configname . '.ini')
             );
         }
-
         return $moduleConfigs[$configname];
     }
 
