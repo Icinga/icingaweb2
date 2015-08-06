@@ -389,7 +389,7 @@
             // This is an anchor only
             if (href.substr(0, 1) === '#' && href.length > 1
                 && href.substr(1, 1) !== '!') {
-                icinga.ui.focusElement(href.substr(1));
+                icinga.ui.focusElement(href.substr(1), $a.closest('.container'));
                 return;
             }
 

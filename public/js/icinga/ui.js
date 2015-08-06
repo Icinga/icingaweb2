@@ -126,16 +126,16 @@
          * Focus the given element and scroll to its position
          *
          * @param   {string}    element     The name or id of the element to focus
-         * @param   {object}    $container  Optional, the container containing the element
+         * @param   {object}    $container  The container containing the element
          */
         focusElement: function(element, $container) {
-            var $element = $('#' + element);
+            var $element = $('#' + element, $container);
 
             if (! $element.length) {
                 // The name attribute is actually deprecated, on anchor tags,
                 // but we'll possibly handle links from another source
                 // (module etc) so that's used as a fallback
-                $element = $('[name="' + element.replace(/'/, '\\\'') + '"]');
+                $element = $('[name="' + element.replace(/'/, '\\\'') + '"]', $container);
             }
 
             if ($element.length) {
@@ -143,16 +143,9 @@
                     $element.attr('tabindex', -1);
                 }
 
-                if (typeof $container === 'undefined') {
-                    $container = $element.closest('.container');
-                }
-
                 $element.focus();
-
-                if ($container.length) {
-                    $container.scrollTop(0);
-                    $container.scrollTop($element.first().position().top);
-                }
+                $container.scrollTop(0);
+                $container.scrollTop($element.first().position().top);
             }
         },
 
