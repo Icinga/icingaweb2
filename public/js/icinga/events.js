@@ -323,28 +323,6 @@
         },
 
         /**
-         * Handle anchor, i.e. focus the element which is referenced by the anchor
-         *
-         * @param {string} element  The name or id of the element to focus
-         */
-        handleAnchor: function(element) {
-            var $element = $('#' + element);
-            if (! $element.length) {
-                // The name attribute is actually deprecated, on anchor tags,
-                // but we'll possibly handle links from another source
-                // (module etc) so that's used as a fallback
-                $element = $('[name="' + element + '"]');
-            }
-
-            if ($element.length) {
-                if (typeof $element.attr('tabindex') === 'undefined') {
-                    $element.attr('tabindex', -1);
-                }
-                $element.focus();
-            }
-        },
-
-        /**
          * Someone clicked a link or tr[href]
          */
         linkClicked: function (event) {
@@ -411,7 +389,7 @@
             // This is an anchor only
             if (href.substr(0, 1) === '#' && href.length > 1
                 && href.substr(1, 1) !== '!') {
-                self.handleAnchor(href.substr(1));
+                icinga.ui.focusElement(href.substr(1));
                 return;
             }
 
@@ -441,7 +419,7 @@
 
                 formerUrl = $target.data('icingaUrl');
                 if (typeof formerUrl !== 'undefined' && formerUrl.split(/#/)[0] === href.split(/#/)[0]) {
-                    icinga.ui.scrollContainerToAnchor($target, href.split(/#/)[1]);
+                    icinga.ui.focusElement(href.split(/#/)[1], $target);
                     $target.data('icingaUrl', href);
                     if (formerUrl !== href) {
                         icinga.history.pushCurrentState();

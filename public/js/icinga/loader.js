@@ -560,7 +560,7 @@
                 oldNotifications.appendTo($('#notifications'));
             }
             if (url.match(/#/)) {
-                this.icinga.ui.scrollContainerToAnchor(req.$target, url.split(/#/)[1]);
+                this.icinga.ui.focusElement(url.split(/#/)[1], req.$target);
             }
             if (newBody) {
                 this.icinga.ui.fixDebugVisibility().triggerWindowResize();
