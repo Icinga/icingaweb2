@@ -325,11 +325,18 @@
         /**
          * Handle anchor, i.e. focus the element which is referenced by the anchor
          *
-         * @param {string} query jQuery selector
+         * @param {string} element  The name or id of the element to focus
          */
-        handleAnchor: function(query) {
-            var $element = $(query);
-            if ($element.length > 0) {
+        handleAnchor: function(element) {
+            var $element = $('#' + element);
+            if (! $element.length) {
+                // The name attribute is actually deprecated, on anchor tags,
+                // but we'll possibly handle links from another source
+                // (module etc) so that's used as a fallback
+                $element = $('[name="' + element + '"]');
+            }
+
+            if ($element.length) {
                 if (typeof $element.attr('tabindex') === 'undefined') {
                     $element.attr('tabindex', -1);
                 }
@@ -404,7 +411,7 @@
             // This is an anchor only
             if (href.substr(0, 1) === '#' && href.length > 1
                 && href.substr(1, 1) !== '!') {
-                self.handleAnchor(href);
+                self.handleAnchor(href.substr(1));
                 return;
             }
 
