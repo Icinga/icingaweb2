@@ -163,6 +163,13 @@ class Module
     private $app;
 
     /**
+     * The CSS/LESS files this module provides
+     *
+     * @var array
+     */
+    protected $cssFiles = array();
+
+    /**
      * Routes to add to the route chain
      *
      * @var array Array of name-route pairs
@@ -389,13 +396,31 @@ class Module
     }
 
     /**
+     * Provide an additional CSS/LESS file
+     *
+     * @param   string  $path   The path to the file, relative to self::$cssdir
+     *
+     * @return  $this
+     */
+    protected function provideCssFile($path)
+    {
+        $this->cssFiles[] = $this->cssdir . DIRECTORY_SEPARATOR . $path;
+        return $this;
+    }
+
+    /**
      * Test if module provides css
      *
      * @return bool
      */
     public function hasCss()
     {
-        return file_exists($this->getCssFilename());
+        if (file_exists($this->getCssFilename())) {
+            return true;
+        }
+
+        $this->launchConfigScript();
+        return !empty($this->cssFiles);
     }
 
     /**
@@ -406,6 +431,18 @@ class Module
     public function getCssFilename()
     {
         return $this->cssdir . '/module.less';
+    }
+
+    /**
+     * Return the CSS/LESS files this module provides
+     *
+     * @return  array
+     */
+    public function getCssFiles()
+    {
+        $files = $this->cssFiles;
+        $files[] = $this->getCssFilename();
+        return $files;
     }
 
     /**
