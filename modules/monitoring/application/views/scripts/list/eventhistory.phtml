@@ -80,7 +80,7 @@ if (! $this->compact): ?>
       <tr class="state <?= $stateName; ?>">
         <td class="state">
         <?php if ($history->getIteratorPosition() % $limit === 0): ?>
-          <a name="page-<?= $history->getIteratorPosition() / $limit + 1; ?>"></a>
+          <a id="page-<?= $history->getIteratorPosition() / $limit + 1; ?>"></a>
         <?php endif ?>
           <strong><?= $this->escape($title); ?></strong>
           <br>
@@ -124,7 +124,7 @@ if (! $this->compact): ?>
       'page'    => $page + 1,
     ),
     array(
-      'name'    => 'load-more',
+      'id'      => 'load-more',
       'class'   => 'pull-right load-more'
     )
   ); ?>
