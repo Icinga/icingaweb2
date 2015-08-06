@@ -576,7 +576,6 @@ class Monitoring_ListController extends Controller
         $this->view->history = $query;
 
         $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->history);
         $this->setupSortControl(array(
             'timestamp' => $this->translate('Occurence')
         ), $query);

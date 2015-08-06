@@ -48,16 +48,6 @@ class DbQuery extends SimpleQuery
     protected $useSubqueryCount = false;
 
     /**
-     * Set the count maximum
-     *
-     * If the count maximum is set, count queries will not count more than that many rows. You should set this
-     * property only for really heavy queries.
-     *
-     * @var int
-     */
-    protected $maxCount;
-
-    /**
      * Count query result
      *
      * Count queries are only executed once
@@ -342,9 +332,6 @@ class DbQuery extends SimpleQuery
             }
             $columns = array('cnt' => 'COUNT(*)');
             return $this->db->select()->from($count, $columns);
-        }
-        if ($this->maxCount !== null) {
-            return $this->db->select()->from($count->limit($this->maxCount));
         }
 
         $count->columns(array('cnt' => 'COUNT(*)'));
