@@ -170,6 +170,13 @@ class Module
     protected $cssFiles = array();
 
     /**
+     * The Javascript files this module provides
+     *
+     * @var array
+     */
+    protected $jsFiles = array();
+
+    /**
      * Routes to add to the route chain
      *
      * @var array Array of name-route pairs
@@ -446,13 +453,31 @@ class Module
     }
 
     /**
+     * Provide an additional Javascript file
+     *
+     * @param   string  $path   The path to the file, relative to self::$jsdir
+     *
+     * @return  $this
+     */
+    protected function provideJsFile($path)
+    {
+        $this->jsFiles[] = $this->jsdir . DIRECTORY_SEPARATOR . $path;
+        return $this;
+    }
+
+    /**
      * Test if module provides js
      *
      * @return bool
      */
     public function hasJs()
     {
-        return file_exists($this->getJsFilename());
+        if (file_exists($this->getJsFilename())) {
+            return true;
+        }
+
+        $this->launchConfigScript();
+        return !empty($this->jsFiles);
     }
 
     /**
@@ -463,6 +488,18 @@ class Module
     public function getJsFilename()
     {
         return $this->jsdir . '/module.js';
+    }
+
+    /**
+     * Return the Javascript files this module provides
+     *
+     * @return  array
+     */
+    public function getJsFiles()
+    {
+        $files = $this->jsFiles;
+        $files[] = $this->getJsFilename();
+        return $files;
     }
 
     /**
