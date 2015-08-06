@@ -3,6 +3,8 @@
 
 namespace Icinga\File\Ini\Dom;
 
+use Icinga\Exception\ConfigurationError;
+
 class Section
 {
     /**
@@ -33,8 +35,11 @@ class Section
     public function __construct($name)
     {
         $this->name = trim(str_replace("\n", ' ', $name));
+        if (false !== strpos($name, ';') || false !== strpos($name, ']')) {
+            throw new ConfigurationError(sprintf('Ini file error: invalid char in title: %s', $name));
+        }
         if (strlen($this->name) < 1) {
-            throw new Exception(sprintf('Ini parser error: empty section identifier'));
+            throw new ConfigurationError(sprintf('Ini file error: empty section identifier'));
         }
     }
 
