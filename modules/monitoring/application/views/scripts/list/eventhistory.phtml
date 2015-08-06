@@ -117,7 +117,7 @@ if (! $this->compact): ?>
     )
   ); ?>
  <?php else: ?>
-  <?= $this->qlink(
+  <div class="load-more-container"><?= $this->qlink(
     $this->translate('Load More'),
     $url->setAnchor('page-' . ($page + 1)),
     array(
@@ -125,9 +125,9 @@ if (! $this->compact): ?>
     ),
     array(
       'id'      => 'load-more',
-      'class'   => 'pull-right load-more'
+      'class'   => 'pull-right load-more button-like'
     )
-  ); ?>
+  ); ?></div>
  <?php endif ?>
 <?php endif ?>
 </div>
