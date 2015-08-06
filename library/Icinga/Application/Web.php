@@ -3,7 +3,7 @@
 
 namespace Icinga\Application;
 
-require_once __DIR__ . '/ApplicationBootstrap.php';
+require_once __DIR__ . '/EmbeddedWeb.php';
 
 use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Front;
@@ -11,14 +11,11 @@ use Zend_Controller_Router_Route;
 use Zend_Layout;
 use Zend_Paginator;
 use Zend_View_Helper_PaginationControl;
-use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\User;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Util\Translator;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
-use Icinga\Web\Response;
 use Icinga\Web\Session;
 use Icinga\Web\Session\Session as BaseSession;
 use Icinga\Web\View;
@@ -28,11 +25,11 @@ use Icinga\Web\View;
  *
  * Usage example:
  * <code>
- * use Icinga\Application\EmbeddedWeb;
- * EmbeddedWeb::start();
+ * use Icinga\Application\Web;
+ * Web::start();
  * </code>
  */
-class Web extends ApplicationBootstrap
+class Web extends EmbeddedWeb
 {
     /**
      * View object
@@ -47,20 +44,6 @@ class Web extends ApplicationBootstrap
      * @var Zend_Controller_Front
      */
     private $frontController;
-
-    /**
-     * Request object
-     *
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * Response
-     *
-     * @var Response
-     */
-    protected $response;
 
     /**
      * Session object
@@ -146,26 +129,6 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Get the request
-     *
-     * @return Request
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * Get the response
-     *
-     * @return Response
-     */
-    public function getResponse()
-    {
-        return $this->response;
-    }
-
-    /**
      * Getter for view
      *
      * @return View
@@ -211,7 +174,7 @@ class Web extends ApplicationBootstrap
         $auth = Auth::getInstance();
         if ($auth->isAuthenticated()) {
             $user = $auth->getUser();
-            $this->request->setUser($user);
+            $this->getRequest()->setUser($user);
             $this->user = $user;
         }
         return $this;
@@ -240,28 +203,6 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Set the request
-     *
-     * @return $this
-     */
-    private function setupRequest()
-    {
-        $this->request = new Request();
-        return $this;
-    }
-
-    /**
-     * Set the response
-     *
-     * @return $this
-     */
-    protected function setupResponse()
-    {
-        $this->response = new Response();
-        return $this;
-    }
-
-    /**
      * Instantiate front controller
      *
      * @return $this
@@ -269,7 +210,7 @@ class Web extends ApplicationBootstrap
     private function setupFrontController()
     {
         $this->frontController = Zend_Controller_Front::getInstance();
-        $this->frontController->setRequest($this->request);
+        $this->frontController->setRequest($this->getRequest());
         $this->frontController->setControllerDirectory($this->getApplicationDir('/controllers'));
         $this->frontController->setParams(
             array(
