@@ -122,6 +122,40 @@
             return this;
         },
 
+        /**
+         * Focus the given element and scroll to its position
+         *
+         * @param   {string}    element     The name or id of the element to focus
+         * @param   {object}    $container  Optional, the container containing the element
+         */
+        focusElement: function(element, $container) {
+            var $element = $('#' + element);
+
+            if (! $element.length) {
+                // The name attribute is actually deprecated, on anchor tags,
+                // but we'll possibly handle links from another source
+                // (module etc) so that's used as a fallback
+                $element = $('[name="' + element.replace(/'/, '\\\'') + '"]');
+            }
+
+            if ($element.length) {
+                if (typeof $element.attr('tabindex') === 'undefined') {
+                    $element.attr('tabindex', -1);
+                }
+
+                if (typeof $container === 'undefined') {
+                    $container = $element.closest('.container');
+                }
+
+                $element.focus();
+
+                if ($container.length) {
+                    $container.scrollTop(0);
+                    $container.scrollTop($element.first().position().top);
+                }
+            }
+        },
+
         moveToLeft: function () {
             var col2 = this.cutContainer($('#col2'));
             var kill = this.cutContainer($('#col1'));
