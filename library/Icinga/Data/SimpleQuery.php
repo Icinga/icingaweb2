@@ -144,6 +144,16 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     }
 
     /**
+     * Return the current position of this query's iterator
+     *
+     * @return  int
+     */
+    public function getIteratorPosition()
+    {
+        return $this->iteratorPosition;
+    }
+
+    /**
      * Start or rewind the iteration
      */
     public function rewind()

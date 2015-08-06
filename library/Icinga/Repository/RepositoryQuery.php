@@ -606,6 +606,16 @@ class RepositoryQuery implements QueryInterface, SortRules, Iterator
     }
 
     /**
+     * Return the current position of this query's iterator
+     *
+     * @return  int
+     */
+    public function getIteratorPosition()
+    {
+        return $this->query->getIteratorPosition();
+    }
+
+    /**
      * Start or rewind the iteration
      */
     public function rewind()
