@@ -7,7 +7,7 @@ class Section
 {
     /**
      * @var string
-     *
+     */
     protected $name;
 
     /**

@@ -67,6 +67,7 @@ class Document
      */
     public function render()
     {
+        $sections = array();
         foreach ($this->sections as $section) {
             $sections []=  $section->render();
         }

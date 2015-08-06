@@ -178,8 +178,9 @@ class IniWriter
                 Logger::warning('Section-less property ' . (string)$directives . ' was ignored.');
                 continue;
             }
-            $newSection = $newconfig->getSection($section);
-            if (isset($newSection)) {
+
+            if ($newconfig->hasSection($section)) {
+                $newSection = $newconfig->getSection($section);
                 $oldDomSection = $doc->getSection($section);
                 foreach ($directives as $key => $value) {
                     if ($value instanceof ConfigObject) {
