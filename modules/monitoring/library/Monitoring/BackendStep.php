@@ -6,6 +6,7 @@ namespace Icinga\Module\Monitoring;
 use Exception;
 use Icinga\Module\Setup\Step;
 use Icinga\Application\Config;
+use Icinga\Exception\IcingaException;
 
 class BackendStep extends Step
 {
@@ -151,7 +152,7 @@ class BackendStep extends Step
                 ),
                 Config::resolvePath('modules/monitoring/backends.ini')
             );
-            $report[] = sprintf(mt('setup', 'ERROR: %s'), $this->backendIniError->getMessage());
+            $report[] = sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->backendIniError));
         }
 
         if ($this->resourcesIniError === false) {
@@ -164,7 +165,7 @@ class BackendStep extends Step
                 mt('monitoring', 'Resource configuration could not be udpated: %s. An error occured:'),
                 Config::resolvePath('resources.ini')
             );
-            $report[] = sprintf(mt('setup', 'ERROR: %s'), $this->resourcesIniError->getMessage());
+            $report[] = sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->resourcesIniError));
         }
 
         return $report;

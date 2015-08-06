@@ -7,6 +7,7 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
+use Icinga\Exception\IcingaException;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Module\Setup\Step;
 
@@ -194,7 +195,7 @@ class AuthenticationStep extends Step
                 mt('setup', 'Authentication configuration could not be written to: %s. An error occured:'),
                 Config::resolvePath('authentication.ini')
             );
-            $report[] = sprintf(mt('setup', 'ERROR: %s'), $this->authIniError->getMessage());
+            $report[] = sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->authIniError));
         }
 
         if ($this->dbError === false) {
@@ -207,7 +208,7 @@ class AuthenticationStep extends Step
                 mt('setup', 'Unable to create account "%s". An error occured:'),
                 $this->data['adminAccountData']['username']
             );
-            $report[] = sprintf(mt('setup', 'ERROR: %s'), $this->dbError->getMessage());
+            $report[] = sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->dbError));
         }
 
         if ($this->permIniError === false) {
@@ -229,7 +230,7 @@ class AuthenticationStep extends Step
                 ),
                 $this->data['adminAccountData']['groupname']
             );
-            $report[] = sprintf(mt('setup', 'ERROR: %s'), $this->permIniError->getMessage());
+            $report[] = sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->permIniError));
         }
 
         return $report;
