@@ -323,6 +323,21 @@
         },
 
         /**
+         * Handle anchor, i.e. focus the element which is referenced by the anchor
+         *
+         * @param {string} query jQuery selector
+         */
+        handleAnchor: function(query) {
+            var $element = $(query);
+            if ($element.length > 0) {
+                if (typeof $element.attr('tabindex') === 'undefined') {
+                    $element.attr('tabindex', -1);
+                }
+                $element.focus();
+            }
+        },
+
+        /**
          * Someone clicked a link or tr[href]
          */
         linkClicked: function (event) {
@@ -382,14 +397,16 @@
                 return;
             }
 
-            // This is an anchor only
-            if (href.substr(0, 1) === '#' && href.length > 1 && href.substr(1, 1) !== '!') {
-                return;
-            }
-
             // Handle all other links as XHR requests
             event.stopPropagation();
             event.preventDefault();
+
+            // This is an anchor only
+            if (href.substr(0, 1) === '#' && href.length > 1
+                && href.substr(1, 1) !== '!') {
+                self.handleAnchor(href);
+                return;
+            }
 
             // activate spinner indicator
             if ($a.hasClass('spinner')) {
