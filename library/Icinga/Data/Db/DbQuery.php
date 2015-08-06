@@ -334,8 +334,12 @@ class DbQuery extends SimpleQuery
         // TODO: there may be situations where we should clone the "select"
         $count = $this->dbSelect();
         $this->applyFilterSql($count);
-        if ($this->useSubqueryCount || $this->group) {
+        $group = $this->getGroup();
+        if ($this->useSubqueryCount || $group) {
             $count->columns($this->columns);
+            if ($group) {
+                $count->group($group);
+            }
             $columns = array('cnt' => 'COUNT(*)');
             return $this->db->select()->from($count, $columns);
         }
