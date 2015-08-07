@@ -29,15 +29,10 @@ class Section
 
     /**
      * @param   string      $name
-     *
-     * @throws  Exception
      */
     public function __construct($name)
     {
-        $this->name = trim(str_replace("\n", ' ', $name));
-        if (false !== strpos($name, ';') || false !== strpos($name, ']')) {
-            throw new ConfigurationError(sprintf('Ini file error: invalid char in title: %s', $name));
-        }
+        $this->name = trim($name);
         if (strlen($this->name) < 1) {
             throw new ConfigurationError(sprintf('Ini file error: empty section identifier'));
         }
@@ -108,6 +103,16 @@ class Section
         if (isset($this->commentPost)) {
             $post = ' ' . $this->commentPost->render();
         }
-        return $cms . sprintf('[%s]', $this->name) . $post . PHP_EOL . $dirs;
+        return $cms . sprintf('[%s]', $this->sanitize($this->name)) . $post . PHP_EOL . $dirs;
+    }
+
+    protected function sanitize($str)
+    {
+        $str = trim($str);
+        $str = str_replace('\\', '\\\\', $str);
+        $str = str_replace('"', '\\"', $str);
+        $str = str_replace(']', '\\]', $str);
+        $str = str_replace(';', '\\;', $str);
+        return str_replace(PHP_EOL, ' ', $str);
     }
 }

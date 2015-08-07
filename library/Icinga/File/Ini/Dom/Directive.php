@@ -32,7 +32,7 @@ class Directive
      */
     public function __construct($key)
     {
-        $this->key = trim(str_replace("\n", ' ', $key));
+        $this->key = trim($key);
         if (strlen($this->key) < 1) {
             throw new Exception(sprintf('Ini parser error: empty key.'));
         }
@@ -47,11 +47,19 @@ class Directive
     }
 
     /**
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
      * @param string    $value
      */
     public function setValue($value)
     {
-        $this->value = trim(str_replace("\n", ' ', $value));
+        $this->value = trim($value);
     }
 
     /**
@@ -67,10 +75,23 @@ class Directive
             }
             $str = implode(PHP_EOL, $comments) . PHP_EOL;
         }
-        $str .= sprintf('%s = "%s"', $this->key, $this->value);
+        $str .= sprintf('%s = "%s"', $this->sanitizeKey($this->key), $this->sanitizeValue($this->value));
         if (isset ($this->commentPost)) {
             $str .= ' ' . $this->commentPost->render();
         }
         return $str;
+    }
+
+    protected function sanitizeKey($str)
+    {
+        return trim(str_replace(PHP_EOL, ' ', $str));
+    }
+
+    protected function sanitizeValue($str)
+    {
+        $str = trim($str);
+        $str = str_replace('\\', '\\\\', $str);
+        $str = str_replace('"', '\\"', $str);
+        return str_replace(PHP_EOL, ' ', $str);
     }
 }

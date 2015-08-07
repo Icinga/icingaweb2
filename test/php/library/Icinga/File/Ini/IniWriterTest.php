@@ -285,26 +285,30 @@ inkey' => 'blarg'
     public function testSectionNameEscaping()
     {
         $config = <<<'EOD'
-[section 1]
-foo = "1337"
+[section [brackets\]]
+foo = "bar"
 
-[section (with special chars)]
-foo = "baz"
+[section \;comment]
+foo = "bar"
 
-[section/as/arbitrary/path]
-foo = "nope"
+[section \"quotes\"]
+foo = "bar"
 
-[section.with.dots.in.it]
+[section with \\]
+foo = "bar"
+
+[section with newline]
 foo = "bar"
 EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
             Config::fromArray(
                 array(
-                    'section 1' => array('foo' => 1337),
-                    'section (with special chars)' => array('foo' => 'baz'),
-                    'section/as/arbitrary/path' => array('foo' => 'nope'),
-                    'section.with.dots.in.it' => array('foo' => 'bar')
+                    'section [brackets]' => array('foo' => 'bar'),
+                    'section ;comment' => array('foo' => 'bar'),
+                    'section "quotes"' => array('foo' => 'bar'),
+                    'section with \\' => array('foo' => 'bar'),
+                    'section with' . PHP_EOL . 'newline' => array('foo' => 'bar')
                 )
             ),
             $target
@@ -314,6 +318,36 @@ EOD;
             trim($config),
             trim($writer->render()),
             'IniWriter does not handle special chars in section names properly.'
+        );
+    }
+
+    public function testDirectiveValueEscaping()
+    {
+        $config = <<<'EOD'
+[section]
+key1 = "value with \"quotes\""
+key2 = "value with \\"
+key3 = "value with newline"
+
+EOD;
+        $target = $this->writeConfigToTemporaryFile($config);
+        $writer = new IniWriter(
+            Config::fromArray(
+                array(
+                    'section' => array(
+                        'key1' => 'value with "quotes"',
+                        'key2' => 'value with \\',
+                        'key3' => 'value with' . PHP_EOL . 'newline'
+                    )
+                )
+            ),
+            $target
+        );
+
+        $this->assertEquals(
+            trim($config),
+            trim($writer->render()),
+            'IniWriter does not handle special chars in directives properly.'
         );
     }
 
@@ -355,7 +389,6 @@ EOD;
             'IniWriter does not delete sections properly'
         );
     }
-
 
     /**
      * Write a INI-configuration string to a temporary file and return its path

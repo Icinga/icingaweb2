@@ -14,6 +14,7 @@ class IniParser
 {
     const LINE_START = 0;
     const SECTION = 1;
+    const ESCAPE = 2;
     const DIRECTIVE_KEY = 4;
     const DIRECTIVE_VALUE_START = 5;
     const DIRECTIVE_VALUE = 6;
@@ -43,6 +44,7 @@ class IniParser
         $dir = null;
         $coms = array();
         $state = self::LINE_START;
+        $escaping = null;
         $token = '';
         $line = 0;
 
@@ -67,10 +69,19 @@ class IniParser
                     }
                     break;
 
+                case self::ESCAPE:
+                    $token .= $s;
+                    $state = $escaping;
+                    $escaping = null;
+                    break;
+
                 case self::SECTION:
                     if ($s === "\n") {
                         self::throwParseError('Unterminated SECTION', $line);
-                    } if ($s !== ']') {
+                    } elseif ($s === '\\') {
+                        $state = self::ESCAPE;
+                        $escaping = self::SECTION;
+                    } elseif ($s !== ']') {
                         $token .= $s;
                     } else {
                         $sec = new Section($token);
@@ -119,6 +130,11 @@ class IniParser
                     break;
 
                 case self::DIRECTIVE_VALUE:
+                    /*
+                        Escaping non-quoted values is not supported by php_parse_ini, it might
+                        be reasonable to include in case we are switching completely our own
+                        parser implementation
+                    */
                     if ($s === "\n" || $s === ";") {
                         $dir->setValue($token);
                         $token = '';
@@ -137,6 +153,9 @@ class IniParser
                 case self::DIRECTIVE_VALUE_QUOTED:
                     if ($s === "\n") {
                         self::throwParseError('Unterminated DIRECTIVE_VALUE_QUOTED', $line);
+                    } elseif ($s === '\\') {
+                        $state = self::ESCAPE;
+                        $escaping = self::DIRECTIVE_VALUE_QUOTED;
                     } elseif ($s !== '"') {
                         $token .= $s;
                     } else {
@@ -204,6 +223,7 @@ class IniParser
                 $sec->addDirective($dir);
                 break;
 
+            case self::ESCAPE:
             case self::DIRECTIVE_VALUE_QUOTED:
             case self::DIRECTIVE_KEY:
             case self::SECTION:
