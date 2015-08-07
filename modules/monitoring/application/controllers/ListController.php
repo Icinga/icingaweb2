@@ -120,6 +120,21 @@ class Monitoring_ListController extends Controller
             'host_address'      => $this->translate('Address'),
             'host_last_check'   => $this->translate('Last Check')
         ), $query);
+
+        $summary = $this->backend->select()->from('Hostservicestatussummary', array(
+            'host_name',
+            'unhandled_service_count'
+        ));
+        $summary->addFilter($query->getFilter());
+        $this->setupSortControl(array(
+            'host_severity'     => $this->translate('Severity'),
+            'host_state'        => $this->translate('Current State'),
+            'host_display_name' => $this->translate('Hostname'),
+            'host_address'      => $this->translate('Address'),
+            'host_last_check'   => $this->translate('Last Check')
+        ), $summary);
+        $summary->limit($query->getLimit(), $query->getOffset());
+        $this->view->summary = $summary->fetchPairs();
     }
 
     /**
