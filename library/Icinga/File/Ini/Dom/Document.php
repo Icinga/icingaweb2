@@ -30,7 +30,7 @@ class Document
      */
     public function hasSection($name)
     {
-        return isset($this->sections[$name]);
+        return isset($this->sections[trim($name)]);
     }
 
     /**
@@ -40,7 +40,7 @@ class Document
      */
     public function getSection($name)
     {
-        return $this->sections[$name];
+        return $this->sections[trim($name)];
     }
 
     /**
@@ -51,7 +51,7 @@ class Document
      */
     public function setSection($name, Section $section)
     {
-        return $this->sections[$name] = $section;
+        return $this->sections[trim($name)] = $section;
     }
 
     /**
@@ -59,7 +59,7 @@ class Document
      */
     public function removeSection($name)
     {
-        unset ($this->sections[$name]);
+        unset ($this->sections[trim($name)]);
     }
 
     /**
