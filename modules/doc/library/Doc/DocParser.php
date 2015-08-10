@@ -145,11 +145,11 @@ class DocParser
     public function getDocTree()
     {
         $tree = new SimpleTree();
-        $stack = new SplStack();
         foreach ($this->docIterator as $fileInfo) {
             /** @var $fileInfo \SplFileInfo */
             $file = $fileInfo->openFile();
             $lastLine = null;
+            $stack = new SplStack();
             $cachingIterator = new CachingIterator($file, CachingIterator::TOSTRING_USE_CURRENT);
             for ($cachingIterator->rewind(); $line = $cachingIterator->valid(); $cachingIterator->next()) {
                 $fileIterator = $cachingIterator->getInnerIterator();
@@ -195,7 +195,20 @@ class DocParser
                     }
                 } else {
                     if ($stack->isEmpty()) {
-                        throw new LogicException('Heading required');
+                        $title = ucfirst($file->getBasename('.' . pathinfo($file->getFilename(), PATHINFO_EXTENSION)));
+                        $id = $title;
+                        if ($tree->getNode($id) !== null) {
+                            $id = uniqid($id);
+                        }
+                        $section = new DocSection();
+                        $section
+                            ->setId($id)
+                            ->setTitle($title)
+                            ->setLevel(1)
+                            ->setNoFollow(true);
+                        $section->setChapter($section);
+                        $tree->addChild($section);
+                        $stack->push($section);
                     }
                     $stack->top()->appendContent($line);
                 }
