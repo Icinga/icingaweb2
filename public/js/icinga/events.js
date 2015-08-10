@@ -40,8 +40,6 @@
                 icinga.loader.loadUrl(url, $(el)).autorefresh = true;
             });
 
-            $('td.state span.timesince').attr('title', null);
-
             var moduleName = el.data('icingaModule');
             if (moduleName) {
                 if (icinga.hasModule(moduleName)) {
