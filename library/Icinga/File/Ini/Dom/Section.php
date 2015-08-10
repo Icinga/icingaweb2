@@ -5,30 +5,43 @@ namespace Icinga\File\Ini\Dom;
 
 use Icinga\Exception\ConfigurationError;
 
+/**
+ * A section in an INI file
+ */
 class Section
 {
     /**
+     * The immutable name of this section
+     *
      * @var string
      */
     protected $name;
 
     /**
-     * @var array
+     * All configuration directives of this section
+     *
+     * @var Directive[]
      */
     protected $directives = array();
 
     /**
-     * @var array
+     * Comments added one line before this section
+     *
+     * @var Comment[]
      */
-    public $commentsPre;
+    protected $commentsPre;
 
     /**
+     * Comment added at the end of the same line
+     *
      * @var string
      */
-    public $commentPost;
+    protected $commentPost;
 
     /**
-     * @param   string      $name
+     * @param   string  $name       The immutable name of this section
+     *
+     * @throws  ConfigurationError  When the section name is empty
      */
     public function __construct($name)
     {
@@ -39,7 +52,9 @@ class Section
     }
 
     /**
-     * @param Directive $directive
+     * Append a directive to the end of this section
+     *
+     * @param   Directive   $directive  The directive to append
      */
     public function addDirective(Directive $directive)
     {
@@ -47,7 +62,9 @@ class Section
     }
 
     /**
-     * @param string    $key
+     * Remove the directive with the given name
+     *
+     * @param   string      $key        They name of the directive to remove
      */
     public function removeDirective($key)
     {
@@ -55,7 +72,9 @@ class Section
     }
 
     /**
-     * @param   string  $key
+     * Return whether this section has a directive with the given key
+     *
+     * @param   string  $key            The name of the directive
      *
      * @return  bool
      */
@@ -65,6 +84,8 @@ class Section
     }
 
     /**
+     * Get the directive with the given key
+     *
      * @param $key  string
      *
      * @return Directive
@@ -75,7 +96,9 @@ class Section
     }
 
     /**
-     * @return string
+     * Return the name of this section
+     *
+     * @return string   The name
      */
     public function getName()
     {
@@ -83,6 +106,28 @@ class Section
     }
 
     /**
+     * Set the comments to be rendered on the line before this section
+     *
+     * @param   Comment[]   $comments
+     */
+    public function setCommentsPre(array $comments)
+    {
+        $this->commentsPre = $comments;
+    }
+
+    /**
+     * Set the comment rendered on the same line of this section
+     *
+     * @param   Comment     $comment
+     */
+    public function setCommentPost(Comment $comment)
+    {
+        $this->commentPost = $comment;
+    }
+
+    /**
+     * Render this section into INI markup
+     *
      * @return string
      */
     public function render()
@@ -90,7 +135,9 @@ class Section
         $dirs = '';
         $i = 0;
         foreach ($this->directives as $directive) {
-            $dirs .= (($i++ > 0 && ! empty($directive->commentsPre)) ? PHP_EOL : '') . $directive->render() . PHP_EOL;
+            $comments = $directive->getCommentsPre();
+            $dirs .= (($i++ > 0 && ! empty($comments)) ? PHP_EOL : '')
+                    . $directive->render() . PHP_EOL;
         }
         $cms = '';
         if (! empty($this->commentsPre)) {
@@ -106,6 +153,13 @@ class Section
         return $cms . sprintf('[%s]', $this->sanitize($this->name)) . $post . PHP_EOL . $dirs;
     }
 
+    /**
+     * Escape the significant characters in sections and normalize line breaks
+     *
+     * @param   $str    The string to sanitize
+     *
+     * @return  mixed
+     */
     protected function sanitize($str)
     {
         $str = trim($str);

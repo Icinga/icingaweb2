@@ -117,7 +117,10 @@ class IniWriter
     protected function updateSectionOrder(Config $newconfig, Document $oldDoc)
     {
         $doc = new Document();
-        $doc->commentsDangling = $oldDoc->commentsDangling;
+        $dangling = $oldDoc->getCommentsDangling();
+        if (isset($dangling)) {
+            $doc->setCommentsDangling($dangling);
+        }
         foreach ($newconfig->toArray() as $section => $directives) {
             $doc->addSection($oldDoc->getSection($section));
         }

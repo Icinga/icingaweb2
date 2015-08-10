@@ -6,16 +6,22 @@ namespace Icinga\File\Ini\Dom;
 class Document
 {
     /**
-     * @var array
+     * The sections of this INI file
+     *
+     * @var Section[]
      */
     protected $sections = array();
 
     /**
-     * @var array
+     * The comemnts at file end that belong to no particular section
+     *
+     * @var Comment[]
      */
-    public $commentsDangling;
+    protected $commentsDangling;
 
     /**
+     * Append a section to the end of this INI file
+     *
      * @param Section $section
      */
     public function addSection(Section $section)
@@ -24,6 +30,8 @@ class Document
     }
 
     /**
+     * Return whether this INI file has the section with the given key
+     *
      * @param   string  $name
      *
      * @return  bool
@@ -34,6 +42,8 @@ class Document
     }
 
     /**
+     * Return the section with the given name
+     *
      * @param   string  $name
      *
      * @return Section
@@ -44,6 +54,8 @@ class Document
     }
 
     /**
+     * Set the section with the given name
+     *
      * @param string  $name
      * @param Section $section
      *
@@ -55,6 +67,8 @@ class Document
     }
 
     /**
+     * Remove the section with the given name
+     *
      * @param string $name
      */
     public function removeSection($name)
@@ -63,6 +77,28 @@ class Document
     }
 
     /**
+     * Set the dangling comments at file end that belong to no particular directive
+     *
+     * @param Comment[] $comments
+     */
+    public function setCommentsDangling(array $comments)
+    {
+        $this->commentsDangling = $comments;
+    }
+
+    /**
+     * Get the dangling comments at file end that belong to no particular directive
+     *
+     * @return array
+     */
+    public function getCommentsDangling()
+    {
+        return $this->commentsDangling;
+    }
+
+    /**
+     * Render this document into the corresponding INI markup
+     *
      * @return string
      */
     public function render()
