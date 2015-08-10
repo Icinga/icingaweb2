@@ -89,6 +89,14 @@ class DocSection extends TreeNode
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function setId($id)
+    {
+        return parent::setId(str_replace(' ', '-', (string) $id));
+    }
+
+    /**
      * Set the header level
      *
      * @param   int     $level  Header level
