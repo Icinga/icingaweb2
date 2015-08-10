@@ -23,6 +23,14 @@ class IniParser
     const COMMENT_END = 9;
     const LINE_END = 10;
 
+    /**
+     * Cancel the parsing with an error
+     *
+     * @param $message  The error description
+     * @param $line     The line in which the error occured
+     *
+     * @throws ConfigurationError
+     */
     private static function throwParseError($message, $line)
     {
         throw new ConfigurationError(sprintf('Ini parser error: %s. (l. %d)', $message, $line));
@@ -151,9 +159,7 @@ class IniParser
                     break;
 
                 case self::DIRECTIVE_VALUE_QUOTED:
-                    if ($s === "\n") {
-                        self::throwParseError('Unterminated DIRECTIVE_VALUE_QUOTED', $line);
-                    } elseif ($s === '\\') {
+                    if ($s === '\\') {
                         $state = self::ESCAPE;
                         $escaping = self::DIRECTIVE_VALUE_QUOTED;
                     } elseif ($s !== '"') {

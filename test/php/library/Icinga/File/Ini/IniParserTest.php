@@ -60,4 +60,19 @@ EOD;
             'IniParser does not recognize escaped bracket in section'
         );
     }
+
+    public function testMultilineValues()
+    {
+        $config = <<<'EOD'
+[section]
+key1 = "with some
+newline in the value"
+EOD;
+        $doc = IniParser::parseIni($config);
+        $this->assertEquals(
+            2,
+            count(explode("\n", $doc->getSection('section')->getDirective('key1')->getValue())),
+            'IniParser does not recognize multi-line values'
+        );
+    }
 }
