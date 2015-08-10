@@ -56,7 +56,7 @@ if (empty($object->comments) && ! $addLink) {
                 if ($downtime->start <= time() && ! (bool) $downtime->is_in_effect) {
                     $state = sprintf(
                         $this->translate('ends %s', 'Last format parameter represents the end time'),
-                        $this->timeUntil($downtime->end)
+                        $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end)
                     );
                 } elseif ((bool) $downtime->is_fixed) {
                     $state = sprintf(

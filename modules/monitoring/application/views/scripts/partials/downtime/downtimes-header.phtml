@@ -9,7 +9,7 @@
           <?php if ($downtime->start <= time() && ! $downtime->is_in_effect): ?>
             <strong><?= $this->translate('Ends'); ?></strong>
             <br>
-            <?= $this->timeUntil($downtime->end, $this->compact) ?>
+            <?= $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end, $this->compact) ?>
           <?php else: ?>
             <strong><?= $downtime->is_in_effect ? $this->translate('Expires') : $this->translate('Starts'); ?></strong>
             <br>
