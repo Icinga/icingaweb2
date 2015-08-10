@@ -7,9 +7,9 @@
         <tr class="state <?= $downtime->stateText ?>">
           <td class="state">
           <?php if ($downtime->start <= time() && ! $downtime->is_in_effect): ?>
-            <strong><?= $this->translate('Started'); ?></strong>
+            <strong><?= $this->translate('Ends'); ?></strong>
             <br>
-            <?= sprintf($this->translate('Ends %s'), $this->timeUntil($downtime->end, $this->compact)) ?>
+            <?= $this->timeUntil($downtime->end, $this->compact) ?>
           <?php else: ?>
             <strong><?= $downtime->is_in_effect ? $this->translate('Expires') : $this->translate('Starts'); ?></strong>
             <br>
