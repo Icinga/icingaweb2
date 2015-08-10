@@ -43,7 +43,7 @@ class Menu implements RecursiveIterator
     /**
      * The url of this menu
      *
-     * @var string
+     * @var string|null
      */
     protected $url;
 
@@ -404,21 +404,20 @@ class Menu implements RecursiveIterator
      */
     public function setUrl($url)
     {
-        if ($url instanceof Url) {
-            $this->url = $url;
-        } else {
-            $this->url = Url::fromPath($url);
-        }
+        $this->url = $url;
         return $this;
     }
 
     /**
      * Return the url of this menu
      *
-     * @return  Url
+     * @return Url|null
      */
     public function getUrl()
     {
+        if ($this->url !== null && ! $this->url instanceof Url) {
+            $this->url = Url::fromPath($this->url);
+        }
         return $this->url;
     }
 
