@@ -323,21 +323,6 @@
         },
 
         /**
-         * Handle anchor, i.e. focus the element which is referenced by the anchor
-         *
-         * @param {string} query jQuery selector
-         */
-        handleAnchor: function(query) {
-            var $element = $(query);
-            if ($element.length > 0) {
-                if (typeof $element.attr('tabindex') === 'undefined') {
-                    $element.attr('tabindex', -1);
-                }
-                $element.focus();
-            }
-        },
-
-        /**
          * Someone clicked a link or tr[href]
          */
         linkClicked: function (event) {
@@ -404,7 +389,7 @@
             // This is an anchor only
             if (href.substr(0, 1) === '#' && href.length > 1
                 && href.substr(1, 1) !== '!') {
-                self.handleAnchor(href);
+                icinga.ui.focusElement(href.substr(1), $a.closest('.container'));
                 return;
             }
 
@@ -434,7 +419,7 @@
 
                 formerUrl = $target.data('icingaUrl');
                 if (typeof formerUrl !== 'undefined' && formerUrl.split(/#/)[0] === href.split(/#/)[0]) {
-                    icinga.ui.scrollContainerToAnchor($target, href.split(/#/)[1]);
+                    icinga.ui.focusElement(href.split(/#/)[1], $target);
                     $target.data('icingaUrl', href);
                     if (formerUrl !== href) {
                         icinga.history.pushCurrentState();

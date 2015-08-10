@@ -77,7 +77,21 @@ class DashletForm extends Form
             array(
                 'required'      => true,
                 'label'         => $this->translate('Dashlet Title'),
-                'description'   => $this->translate('Enter a title for the dashlet.')
+                'description'   => $this->translate('Enter a title for the dashlet.'),
+                'validators'    =>  array(
+                    array(
+                        'Regex',
+                        false,
+                        array(
+                            'pattern'  => '/^[^\\[\\]]+$/',
+                            'messages' => array(
+                                'regexNotMatch' => $this->translate(
+                                    'The name cannot contain \'[\' or \']\'.'
+                                )
+                            )
+                        )
+                    )
+                )
             )
         );
         $this->addElement(

@@ -122,7 +122,6 @@ class LocalCommandFile implements CommandTransportInterface
         try {
             $file = new File($this->path, $this->openMode);
             $file->fwrite($commandString . "\n");
-            $file->fflush();
         } catch (Exception $e) {
             $message = $e->getMessage();
             if ($e instanceof RuntimeException && ($pos = strrpos($message, ':')) !== false) {

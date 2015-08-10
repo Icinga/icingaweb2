@@ -17,6 +17,14 @@ function contactsLink($match, $view) {
 
 $self = $this;
 
+$url = $this->url();
+$limit = (int) $url->getParam('limit', 25);
+if (! $url->hasParam('page') || ($page = (int) $url->getParam('page')) < 1) {
+    $page = 1;
+}
+
+$history->limit($limit * $page);
+
 if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
@@ -24,14 +32,16 @@ if (! $this->compact): ?>
   <h1><?= $this->translate('This Host\'s Event History'); ?></h1>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
-  <?= $this->paginator; ?>
+  <a class="load-more-hint" href="#load-more">
+    <?= $this->translate('Scroll to the bottom of this page to load additional events'); ?>
+  </a>
   <?= $this->filterEditor; ?>
 </div>
 <?php endif ?>
 <div class="content">
   <table data-base-target="_next" class="action objecthistory">
     <tbody>
-    <?php foreach ($history as $event): ?>
+    <?php foreach ($history->peekAhead() as $event): ?>
     <?php
       $stateClass = 'invalid';
       $msg = $this->escape($event->output);
@@ -102,6 +112,9 @@ if (! $this->compact): ?>
     ?>
       <tr class="state <?= $stateClass; ?>">
         <td class="state">
+        <?php if ($history->getIteratorPosition() % $limit === 0): ?>
+          <a id="page-<?= $history->getIteratorPosition() / $limit + 1; ?>"></a>
+        <?php endif ?>
           <strong><?= $this->escape($title); ?></strong>
           <br>
           <?= date('d.m. H:i', $event->timestamp); ?>
@@ -139,5 +152,17 @@ if (! $this->compact): ?>
   </table>
 <?php if (! $history->hasResult()): ?>
   <?= $this->translate('No history events found matching the filter'); ?>
+<?php elseif ($history->hasMore()): ?>
+  <div class="load-more-container"><?= $this->qlink(
+    $this->translate('Load More'),
+    $url->setAnchor('page-' . ($page + 1)),
+    array(
+      'page'    => $page + 1,
+    ),
+    array(
+      'id'      => 'load-more',
+      'class'   => 'pull-right load-more button-like'
+    )
+  ); ?></div>
 <?php endif ?>
 </div>

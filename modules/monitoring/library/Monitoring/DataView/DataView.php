@@ -70,6 +70,16 @@ abstract class DataView implements QueryInterface, SortRules, IteratorAggregate
     }
 
     /**
+     * Return the current position of the result set's iterator
+     *
+     * @return  int
+     */
+    public function getIteratorPosition()
+    {
+        return $this->query->getIteratorPosition();
+    }
+
+    /**
      * Get the query name this data view relies on
      *
      * By default this is this class' name without its namespace

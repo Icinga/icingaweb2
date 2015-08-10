@@ -76,7 +76,11 @@ class StyleSheet
         $files = $lessFiles;
         foreach ($app->getModuleManager()->getLoadedModules() as $name => $module) {
             if ($module->hasCss()) {
-                $files[] = $module->getCssFilename();
+                foreach ($module->getCssFiles() as $path) {
+                    if (file_exists($path)) {
+                        $files[] = $path;
+                    }
+                }
             }
         }
 

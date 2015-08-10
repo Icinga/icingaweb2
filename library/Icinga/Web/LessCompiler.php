@@ -93,14 +93,21 @@ class LessCompiler
     public function addModule($name, $module)
     {
         if ($module->hasCss()) {
-            $this->source .= "\n/* CSS: modules/$name/module.less */\n"
+            $contents = array();
+            foreach ($module->getCssFiles() as $path) {
+                if (file_exists($path)) {
+                    $contents[] = "/* CSS: modules/$name/$path */\n" . file_get_contents($path);
+                }
+            }
+
+            $this->source .= ''
                 . '.icinga-module.module-'
                 . $name
                 . " {\n"
-                . file_get_contents($module->getCssFilename())
-                . "}\n\n"
-            ;
+                . join("\n\n", $contents)
+                . "}\n\n";
         }
+
         return $this;
     }
 

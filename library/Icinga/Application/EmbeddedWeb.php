@@ -5,6 +5,9 @@ namespace Icinga\Application;
 
 require_once dirname(__FILE__) . '/ApplicationBootstrap.php';
 
+use Icinga\Web\Request;
+use Icinga\Web\Response;
+
 /**
  * Use this if you want to make use of Icinga functionality in other web projects
  *
@@ -17,6 +20,40 @@ require_once dirname(__FILE__) . '/ApplicationBootstrap.php';
 class EmbeddedWeb extends ApplicationBootstrap
 {
     /**
+     * Request object
+     *
+     * @var Request
+     */
+    protected $request;
+
+    /**
+     * Response
+     *
+     * @var Response
+     */
+    protected $response;
+
+    /**
+     * Get the request
+     *
+     * @return  Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * Get the response
+     *
+     * @return  Response
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
      * Embedded bootstrap parts
      *
      * @see    ApplicationBootstrap::bootstrap
@@ -26,10 +63,34 @@ class EmbeddedWeb extends ApplicationBootstrap
     {
         return $this
             ->setupZendAutoloader()
-            ->loadConfig()
             ->setupErrorHandling()
+            ->loadConfig()
+            ->setupRequest()
+            ->setupResponse()
             ->setupTimezone()
             ->setupModuleManager()
             ->loadEnabledModules();
+    }
+
+    /**
+     * Set the request
+     *
+     * @return  $this
+     */
+    protected function setupRequest()
+    {
+        $this->request = new Request();
+        return $this;
+    }
+
+    /**
+     * Set the response
+     *
+     * @return  $this
+     */
+    protected function setupResponse()
+    {
+        $this->response = new Response();
+        return $this;
     }
 }
