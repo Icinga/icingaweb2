@@ -30,37 +30,38 @@
         },
 
         // TODO: What's this?
-        applyHandlers: function (evt) {
-            var el = $(evt.target), self = evt.data.self;
+        applyHandlers: function (event) {
+            var $target = $(event.target);
+            var self = event.data.self;
             var icinga = self.icinga;
 
-            $('.dashboard > div', el).each(function(idx, el) {
-                var url = $(el).data('icingaUrl');
-                if (typeof url === 'undefined') return;
-                icinga.loader.loadUrl(url, $(el)).autorefresh = true;
+            $('.dashboard > div', $target).each(function(idx, el) {
+                var $element = $(el);
+                var $url = $element.data('icingaUrl');
+                if (typeof $url !== 'undefined') {
+                    icinga.loader.loadUrl($url, $element).autorefresh = true;
+                }
             });
 
-            var moduleName = el.data('icingaModule');
+            var moduleName = $target.data('icingaModule');
             if (moduleName) {
                 if (icinga.hasModule(moduleName)) {
-                    var module = icinga.module(moduleName);
-                    // NOT YET, the applyOnloadDings: module.applyEventHandlers(mod);
+                    icinga.module(moduleName);
                 }
             }
 
-            $('.icinga-module', el).each(function(idx, mod) {
+            $('.icinga-module', $target).each(function(idx, mod) {
                 var $mod = $(mod);
                 moduleName = $mod.data('icingaModule');
                 if (icinga.hasModule(moduleName)) {
-                    var module = icinga.module(moduleName);
-                    // NOT YET, the applyOnloadDings: module.applyEventHandlers(mod);
+                    icinga.module(moduleName);
                 }
             });
 
-            var searchField = $('#menu input.search', el);
+            var $searchField = $('#menu input.search', $target);
             // Remember initial search field value if any
-            if (searchField.length && searchField.val().length) {
-                self.searchValue = searchField.val();
+            if ($searchField.length && $searchField.val().length) {
+                self.searchValue = $searchField.val();
             }
 
             if (icinga.ui.isOneColLayout()) {
