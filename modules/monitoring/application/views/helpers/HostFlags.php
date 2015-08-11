@@ -31,9 +31,6 @@ class Zend_View_Helper_HostFlags extends Zend_View_Helper_Abstract
                 $icons[] = $this->view->icon('eye-off', $this->view->translate('Active Checks Disabled'));
             }
         }
-        if (isset($host->host_last_comment) && $host->host_last_comment !== null) {
-            $icons[] = $this->view->icon('comment', $this->view->translate('Last Comment: ') . $host->host_last_comment);
-        }
         return $icons;
     }
-} 
+}
