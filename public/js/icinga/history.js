@@ -174,7 +174,7 @@
                         redirect.val() + '#!' + parts[1]
                     );
                 } else {
-                    if ($('#col2').data('icingaUrl') !== main) {
+                    if ($('#col2').data('icingaUrl') !== parts[1]) {
                         icinga.loader.loadUrl(
                             parts[1],
                             $('#col2')
