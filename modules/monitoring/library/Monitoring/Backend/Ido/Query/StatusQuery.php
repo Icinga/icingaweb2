@@ -311,10 +311,6 @@ class StatusQuery extends IdoQuery
                 END'
         ),
 
-        'serviceproblemsummary' => array(
-            'host_unhandled_services' => 'sps.unhandled_services_count'
-        ),
-
         'lasthostcommentgeneric' => array(
             'host_last_comment' => 'hlcg.last_comment_data'
         ),
@@ -526,42 +522,6 @@ class StatusQuery extends IdoQuery
         }
 
         return $this;
-    }
-
-    protected function joinServiceproblemsummary()
-    {
-        $select = <<<'SQL'
-SELECT
-    SUM(
-        CASE WHEN(ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0
-        THEN 0
-        ELSE 1
-        END
-    ) AS unhandled_services_count,
-    SUM(
-        CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0) ) > 0
-        THEN 1
-        ELSE 0
-        END
-    ) AS handled_services_count,
-    s.host_object_id
-FROM
-    icinga_servicestatus ss
-    JOIN icinga_objects o ON o.object_id = ss.service_object_id
-    JOIN icinga_services s ON s.service_object_id = o.object_id
-    JOIN icinga_hoststatus hs ON hs.host_object_id = s.host_object_id
-WHERE
-    o.is_active = 1
-    AND o.objecttype_id = 2
-    AND ss.current_state > 0
-GROUP BY
-    s.host_object_id
-SQL;
-        $this->select->joinLeft(
-            array('sps' => new Zend_Db_Expr('(' . $select . ')')),
-            'sps.host_object_id = hs.host_object_id',
-            array()
-        );
     }
 
     /**
