@@ -636,6 +636,8 @@
                 }
             }
 
+            req.$target.trigger('rendered');
+
             this.icinga.ui.refreshDebug();
         },
 
@@ -794,9 +796,6 @@
                     $(self.icinga.utils.getElementByDomPath(origFocus)).focus();
                 }, 0);
             }
-
-            // TODO: this.icinga.events.refreshContainer(container);
-            $container.trigger('rendered');
 
             if (scrollPos !== false) {
                 $container.scrollTop(scrollPos);
