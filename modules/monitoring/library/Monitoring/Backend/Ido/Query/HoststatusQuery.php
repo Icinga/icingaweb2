@@ -131,18 +131,6 @@ class HoststatusQuery extends IdoQuery
             'host_status_update_time'   => 'hs.status_update_time',
             'host_unhandled'            => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END'
         ),
-        'lasthostackcomment' => array(
-            'host_last_ack' => 'hlac.last_ack_data'
-        ),
-        'lasthostcomment' => array(
-            'host_last_comment' => 'hlc.last_comment_data'
-        ),
-        'lasthostdowntimecomment' => array(
-            'host_last_downtime' => 'hldc.last_downtime_data'
-        ),
-        'lasthostflappingcomment' => array(
-            'host_last_flapping' => 'hlfc.last_flapping_data'
-        ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
             'servicegroup_name'     => 'sgo.name1',
@@ -154,37 +142,6 @@ class HoststatusQuery extends IdoQuery
             'service_display_name'   => 's.display_name COLLATE latin1_general_ci',
         )
     );
-
-    /**
-     * Create a sub query to join comments into status query
-     *
-     * @param   int     $entryType
-     * @param   string  $alias
-     *
-     * @return  Zend_Db_Expr
-     */
-    protected function createLastCommentSubQuery($entryType, $alias)
-    {
-        $sql = <<<SQL
-SELECT
-  c.object_id,
-  '[' || c.author_name || '] ' || c.comment_data AS $alias
-FROM
-  icinga_comments c
-INNER JOIN
-  (
-    SELECT
-      MAX(comment_id) AS comment_id,
-      object_id
-    FROM
-      icinga_comments
-    WHERE
-      entry_type = $entryType
-    GROUP BY object_id
-  ) ec ON ec.comment_id = c.comment_id
-SQL;
-        return new Zend_Db_Expr('(' . $sql . ')');
-    }
 
     /**
      * {@inheritdoc}
@@ -243,54 +200,6 @@ SQL;
     }
 
     /**
-     * Join last host acknowledgement comment
-     */
-    protected function joinLasthostackcomment()
-    {
-        $this->select->joinLeft(
-            array('hlac' => $this->createLastCommentSubQuery(4, 'last_ack_data')),
-            'hlac.object_id = ho.object_id',
-            array()
-        );
-    }
-
-    /**
-     * Join last host comment
-     */
-    protected function joinLasthostcomment()
-    {
-        $this->select->joinLeft(
-            array('hlc' => $this->createLastCommentSubQuery(1, 'last_comment_data')),
-            'hlc.object_id = ho.object_id',
-            array()
-        );
-    }
-
-    /**
-     * Join last host downtime comment
-     */
-    protected function joinLasthostdowntimeComment()
-    {
-        $this->select->joinLeft(
-            array('hldc' => $this->createLastCommentSubQuery(2, 'last_downtime_data')),
-            'hldc.object_id = ho.object_id',
-            array()
-        );
-    }
-
-    /**
-     * Join last host flapping comment
-     */
-    protected function joinLasthostflappingcomment()
-    {
-        $this->select->joinLeft(
-            array('hlfc' => $this->createLastCommentSubQuery(3, 'last_flapping_data')),
-            'hlfc.object_id = ho.object_id',
-            array()
-        );
-    }
-
-    /**
      * Join service groups
      */
     protected function joinServicegroups()
@@ -342,22 +251,6 @@ SQL;
 
             if ($this->hasJoinedVirtualTable('serviceproblemsummary')) {
                 $group[] = 'sps.unhandled_services_count';
-            }
-
-            if ($this->hasJoinedVirtualTable('lasthostackcomment')) {
-                $group[] = 'hlac.last_ack_data';
-            }
-
-            if ($this->hasJoinedVirtualTable('lasthostcomment')) {
-                $group[] = 'hlc.last_comment_data';
-            }
-
-            if ($this->hasJoinedVirtualTable('lasthostdowntimecomment')) {
-                $group[] = 'hldc.last_downtime_data';
-            }
-
-            if ($this->hasJoinedVirtualTable('lasthostflappingcomment')) {
-                $group[] = 'hlfc.last_flapping_data';
             }
 
             if ($this->hasJoinedVirtualTable('hostgroups')) {
