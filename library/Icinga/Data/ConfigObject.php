@@ -173,8 +173,10 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
     /**
      * Add a new property or section
      *
-     * @param   string  $key    The name of the new property or section
-     * @param   mixed   $value  The value to set for the new property or section
+     * @param   string  $key        The name of the new property or section
+     * @param   mixed   $value      The value to set for the new property or section
+     *
+     * @throws  ProgrammingError    If the key is null
      */
     public function offsetSet($key, $value)
     {
@@ -254,7 +256,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
     /**
      * Merge the given data with this config
      *
-     * @param   array|Config    $data   An array or a config
+     * @param   array|ConfigObject $data An array or a config
      *
      * @return  $this
      */
