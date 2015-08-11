@@ -58,11 +58,11 @@ if (! $this->compact): ?>
             'class' => 'rowaction'
           )
         ); ?>
-        <?php if (isset($host->host_unhandled_services) && $host->host_unhandled_services > 0): ?>
+        <?php if (isset($summary[$host->host_name])): ?>
         <span> (<?= $this->qlink(
           sprintf(
-            $this->translatePlural('%u unhandled service', '%u unhandled services', $host->host_unhandled_services),
-            $host->host_unhandled_services
+            $this->translatePlural('%u unhandled service', '%u unhandled services', $summary[$host->host_name]),
+            $summary[$host->host_name]
           ),
           'monitoring/list/services',
           array(
@@ -76,9 +76,9 @@ if (! $this->compact): ?>
               $this->translatePlural(
                 'List %s unhandled service problem on host %s',
                 'List %s unhandled service problems on host %s',
-                $host->host_unhandled_services
+                $summary[$host->host_name]
               ),
-              $host->host_unhandled_services,
+              $summary[$host->host_name],
               $host->host_name
             )
           )

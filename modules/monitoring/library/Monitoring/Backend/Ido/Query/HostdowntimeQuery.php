@@ -148,7 +148,7 @@ class HostdowntimeQuery extends IdoQuery
     {
         $this->select->joinLeft(
             array('s' => $this->prefix . 'services'),
-            's.host_object_id = h.host_object_id',
+            's.host_object_id = ho.object_id',
             array()
         )->joinLeft(
             array('so' => $this->prefix . 'objects'),

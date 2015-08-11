@@ -33,7 +33,8 @@ class HoststatusQuery extends IdoQuery
             'host_name'             => 'ho.name1',
             'host_notes'            => 'h.notes',
             'host_notes_url'        => 'h.notes_url',
-            'object_type'           => '(\'host\')'
+            'object_type'           => '(\'host\')',
+            'object_id'             => 'ho.object_id'
         ),
         'hoststatus' => array(
             'host_acknowledged'                     => 'hs.problem_has_been_acknowledged',
@@ -447,5 +448,21 @@ SQL;
         }
 
         return $group;
+    }
+
+    /**
+     * Query the service problem summary for all hosts of this query's result set
+     *
+     * @return  HostserviceproblemsummaryQuery
+     */
+    public function queryServiceProblemSummary()
+    {
+        return $this->createSubQuery('Hostserviceproblemsummary')
+            ->setHostStatusQuery($this)
+            ->columns(array(
+                'host_name',
+                'unhandled_service_count'
+            )
+        );
     }
 }

@@ -85,7 +85,6 @@ class Monitoring_ListController extends Controller
             'host_last_check',
             'host_last_state_change' => $stateChangeColumn,
             'host_notifications_enabled',
-            'host_unhandled_services',
             'host_action_url',
             'host_notes_url',
             'host_last_comment',
@@ -121,6 +120,10 @@ class Monitoring_ListController extends Controller
             'host_address'      => $this->translate('Address'),
             'host_last_check'   => $this->translate('Last Check')
         ), $query);
+
+        $summary = $query->getQuery()->queryServiceProblemSummary();
+        $this->applyRestriction('monitoring/filter/objects', $summary);
+        $this->view->summary = $summary->fetchPairs();
     }
 
     /**
