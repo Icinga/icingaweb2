@@ -257,7 +257,7 @@ EOD;
         );
     }
 
-    public function testWhetherLinebreaksAreRemoved()
+    public function testWhetherLinebreaksAreProcessed()
     {
         $target = $this->writeConfigToTemporaryFile('');
         $writer = new IniWriter(
@@ -277,7 +277,7 @@ inkey' => 'blarg'
         $rendered = $writer->render();
         $this->assertEquals(
             count(explode("\n", $rendered)),
-            4,
+            5,
             'generated config should not contain more than three line breaks'
         );
     }
@@ -327,7 +327,6 @@ EOD;
 [section]
 key1 = "value with \"quotes\""
 key2 = "value with \\"
-key3 = "value with newline"
 
 EOD;
         $target = $this->writeConfigToTemporaryFile($config);
@@ -336,8 +335,7 @@ EOD;
                 array(
                     'section' => array(
                         'key1' => 'value with "quotes"',
-                        'key2' => 'value with \\',
-                        'key3' => 'value with' . PHP_EOL . 'newline'
+                        'key2' => 'value with \\'
                     )
                 )
             ),

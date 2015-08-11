@@ -6,9 +6,15 @@
         } ?>
         <tr class="state <?= $downtime->stateText ?>">
           <td class="state">
+          <?php if ($downtime->start <= time() && ! $downtime->is_in_effect): ?>
+            <strong><?= $this->translate('Ends'); ?></strong>
+            <br>
+            <?= $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end, $this->compact) ?>
+          <?php else: ?>
             <strong><?= $downtime->is_in_effect ? $this->translate('Expires') : $this->translate('Starts'); ?></strong>
             <br>
             <?= $this->timeUntil($downtime->is_in_effect ? $downtime->end : $downtime->start, $this->compact) ?>
+          <?php endif; ?>
           </td>
           <td class="name oneline">
             <?php if ($downtime->isService): ?>

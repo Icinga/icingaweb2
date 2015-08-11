@@ -447,6 +447,7 @@ class Module
      */
     public function getCssFiles()
     {
+        $this->launchConfigScript();
         $files = $this->cssFiles;
         $files[] = $this->getCssFilename();
         return $files;
@@ -497,6 +498,7 @@ class Module
      */
     public function getJsFiles()
     {
+        $this->launchConfigScript();
         $files = $this->jsFiles;
         $files[] = $this->getJsFilename();
         return $files;

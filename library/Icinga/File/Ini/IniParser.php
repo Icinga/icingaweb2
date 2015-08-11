@@ -23,6 +23,14 @@ class IniParser
     const COMMENT_END = 9;
     const LINE_END = 10;
 
+    /**
+     * Cancel the parsing with an error
+     *
+     * @param $message  The error description
+     * @param $line     The line in which the error occured
+     *
+     * @throws ConfigurationError
+     */
     private static function throwParseError($message, $line)
     {
         throw new ConfigurationError(sprintf('Ini parser error: %s. (l. %d)', $message, $line));
@@ -85,7 +93,7 @@ class IniParser
                         $token .= $s;
                     } else {
                         $sec = new Section($token);
-                        $sec->commentsPre = $coms;
+                        $sec->setCommentsPre($coms);
                         $doc->addSection($sec);
                         $dir = null;
                         $coms = array();
@@ -100,8 +108,7 @@ class IniParser
                         $token .= $s;
                     } else {
                         $dir = new Directive($token);
-                        $dir->commentsPre = $coms;
-
+                        $dir->setCommentsPre($coms);
                         if (isset($sec)) {
                             $sec->addDirective($dir);
                         } else {
@@ -151,9 +158,7 @@ class IniParser
                     break;
 
                 case self::DIRECTIVE_VALUE_QUOTED:
-                    if ($s === "\n") {
-                        self::throwParseError('Unterminated DIRECTIVE_VALUE_QUOTED', $line);
-                    } elseif ($s === '\\') {
+                    if ($s === '\\') {
                         $state = self::ESCAPE;
                         $escaping = self::DIRECTIVE_VALUE_QUOTED;
                     } elseif ($s !== '"') {
@@ -171,16 +176,16 @@ class IniParser
                         $token .= $s;
                     } else {
                         $com = new Comment();
-                        $com->content = $token;
+                        $com->setContent($token);
                         $token = '';
 
                         // Comments at the line end belong to the current line's directive or section. Comments
                         // on empty lines belong to the next directive that shows up.
                         if ($state === self::COMMENT_END) {
                             if (isset($dir)) {
-                                $dir->commentPost = $com;
+                                $dir->setCommentPost($com);
                             } else {
-                                $sec->commentPost = $com;
+                                $sec->setCommentPost($com);
                             }
                         } else {
                             $coms[] = $com;
@@ -206,12 +211,12 @@ class IniParser
             case self::COMMENT:
             case self::COMMENT_END:
                 $com = new Comment();
-                $com->content = $token;
+                $com->setContent($token);
                 if ($state === self::COMMENT_END) {
                     if (isset($dir)) {
-                        $dir->commentPost = $com;
+                        $dir->setCommentPost($com);
                     } else {
-                        $sec->commentPost = $com;
+                        $sec->setCommentPost($com);
                     }
                 } else {
                     $coms[] = $com;
@@ -230,7 +235,7 @@ class IniParser
                 self::throwParseError('File ended in unterminated state ' . $state, $line);
         }
         if (! empty($coms)) {
-            $doc->commentsDangling = $coms;
+            $doc->setCommentsDangling($coms);
         }
         return $doc;
     }

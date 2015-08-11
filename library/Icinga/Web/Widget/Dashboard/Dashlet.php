@@ -20,7 +20,7 @@ class Dashlet extends UserWidget
     /**
      * The url of this Dashlet
      *
-     * @var \Icinga\Web\Url
+     * @var Url|null
      */
     private $url;
 
@@ -74,16 +74,13 @@ EOD;
     {
         $this->title = $title;
         $this->pane = $pane;
-        if ($url instanceof Url) {
-            $this->url = $url;
-        } elseif ($url) {
-            $this->url = Url::fromPath($url);
-        } else {
+        if (! $url) {
             throw new IcingaException(
                 'Cannot create dashboard dashlet "%s" without valid URL',
                 $title
             );
         }
+        $this->url = $url;
     }
 
     /**
@@ -107,10 +104,13 @@ EOD;
     /**
      * Retrieve the dashlets url
      *
-     * @return Url
+     * @return Url|null
      */
     public function getUrl()
     {
+        if ($this->url !== null && ! $this->url instanceof Url) {
+            $this->url = Url::fromPath($this->url);
+        }
         return $this->url;
     }
 
@@ -123,11 +123,7 @@ EOD;
      */
     public function setUrl($url)
     {
-        if ($url instanceof Url) {
-            $this->url = $url;
-        } else {
-            $this->url = Url::fromPath($url);
-        }
+        $this->url = $url;
         return $this;
     }
 
@@ -159,7 +155,7 @@ EOD;
     public function toArray()
     {
         $array = array(
-            'url'   => $this->url->getRelativeUrl(),
+            'url'   => $this->getUrl()->getRelativeUrl(),
             'title' => $this->getTitle()
         );
         if ($this->getDisabled() === true) {
@@ -178,9 +174,9 @@ EOD;
         }
 
         $view = $this->view();
-        $url = clone($this->url);
+        $url = $this->getUrl();
         $url->setParam('view', 'compact');
-        $iframeUrl = clone($url);
+        $iframeUrl = clone $url;
         $iframeUrl->setParam('isIframe');
 
         $searchTokens = array(

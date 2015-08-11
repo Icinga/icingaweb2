@@ -13,6 +13,7 @@
         this.icinga = icinga;
 
         this.searchValue = '';
+        this.initializeModules = true;
     };
 
     Icinga.Events.prototype = {
@@ -30,39 +31,63 @@
         },
 
         // TODO: What's this?
-        applyHandlers: function (evt) {
-            var el = $(evt.target), self = evt.data.self;
+        applyHandlers: function (event) {
+            var $target = $(event.target);
+            var self = event.data.self;
             var icinga = self.icinga;
 
-            $('.dashboard > div', el).each(function(idx, el) {
-                var url = $(el).data('icingaUrl');
-                if (typeof url === 'undefined') return;
-                icinga.loader.loadUrl(url, $(el)).autorefresh = true;
-            });
-
-            $('td.state span.timesince').attr('title', null);
-
-            var moduleName = el.data('icingaModule');
-            if (moduleName) {
-                if (icinga.hasModule(moduleName)) {
-                    var module = icinga.module(moduleName);
-                    // NOT YET, the applyOnloadDings: module.applyEventHandlers(mod);
+            if (self.initializeModules) {
+                var loaded = false;
+                var moduleName = $target.data('icingaModule');
+                if (moduleName) {
+                    if (icinga.hasModule(moduleName) && !icinga.isLoadedModule(moduleName)) {
+                        loaded |= icinga.loadModule(moduleName);
+                    }
                 }
+
+                $('.icinga-module', $target).each(function(idx, mod) {
+                    moduleName = $(mod).data('icingaModule');
+                    if (icinga.hasModule(moduleName) && !icinga.isLoadedModule(moduleName)) {
+                        loaded |= icinga.loadModule(moduleName);
+                    }
+                });
+
+                if (loaded) {
+                    // Modules may register their own handler for the 'renderend' event
+                    // so we need to ensure that it is called the first time they are
+                    // initialized
+                    event.stopImmediatePropagation();
+                    self.initializeModules = false;
+
+                    var $container = $target.closest('.container');
+                    if (! $container.length) {
+                        // The page obviously got loaded for the first time,
+                        // so we'll trigger the event for all containers
+                        $container = $('.container');
+                    }
+
+                    $container.trigger('rendered');
+
+                    // But since we're listening on this event by ourself, we'll have
+                    // to abort our own processing as we'll process it twice otherwise
+                    return false;
+                }
+            } else {
+                self.initializeModules = true;
             }
 
-            $('.icinga-module', el).each(function(idx, mod) {
-                var $mod = $(mod);
-                moduleName = $mod.data('icingaModule');
-                if (icinga.hasModule(moduleName)) {
-                    var module = icinga.module(moduleName);
-                    // NOT YET, the applyOnloadDings: module.applyEventHandlers(mod);
+            $('.dashboard > div', $target).each(function(idx, el) {
+                var $element = $(el);
+                var $url = $element.data('icingaUrl');
+                if (typeof $url !== 'undefined') {
+                    icinga.loader.loadUrl($url, $element).autorefresh = true;
                 }
             });
 
-            var searchField = $('#menu input.search', el);
+            var $searchField = $('#menu input.search', $target);
             // Remember initial search field value if any
-            if (searchField.length && searchField.val().length) {
-                self.searchValue = searchField.val();
+            if ($searchField.length && $searchField.val().length) {
+                self.searchValue = $searchField.val();
             }
 
             if (icinga.ui.isOneColLayout()) {
@@ -76,12 +101,13 @@
          * Global default event handlers
          */
         applyGlobalDefaults: function () {
+            // Apply element-specific behavior whenever the layout is rendered
+            // Note: It is important that this is the first handler for this event!
+            $(document).on('rendered', { self: this }, this.applyHandlers);
+
             $.each(self.icinga.behaviors, function (name, behavior) {
                 behavior.bind($(document));
             });
-
-            // Apply element-specific behavior whenever the layout is rendered
-            $(document).on('rendered', { self: this }, this.applyHandlers);
 
             // We catch resize events
             $(window).on('resize', { self: this.icinga.ui }, this.icinga.ui.onWindowResize);
