@@ -1,12 +1,11 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Setup\Steps;
 
 use Exception;
 use Icinga\Application\Config;
-use Icinga\File\Ini\IniWriter;
+use Icinga\Exception\IcingaException;
 use Icinga\Module\Setup\Step;
 
 class ResourceStep extends Step
@@ -38,12 +37,9 @@ class ResourceStep extends Step
         }
 
         try {
-            $writer = new IniWriter(array(
-                'config'    => Config::fromArray($resourceConfig),
-                'filename'  => Config::resolvePath('resources.ini'),
-                'filemode'  => 0660
-            ));
-            $writer->write();
+            Config::fromArray($resourceConfig)
+                ->setConfigFile(Config::resolvePath('resources.ini'))
+                ->saveIni();
         } catch (Exception $e) {
             $this->error = $e;
             return false;
@@ -138,12 +134,18 @@ class ResourceStep extends Step
     public function getReport()
     {
         if ($this->error === false) {
-            $message = mt('setup', 'Resource configuration has been successfully written to: %s');
-            return '<p>' . sprintf($message, Config::resolvePath('resources.ini')) . '</p>';
+            return array(sprintf(
+                mt('setup', 'Resource configuration has been successfully written to: %s'),
+                Config::resolvePath('resources.ini')
+            ));
         } elseif ($this->error !== null) {
-            $message = mt('setup', 'Resource configuration could not be written to: %s; An error occured:');
-            return '<p class="error">' . sprintf($message, Config::resolvePath('resources.ini')) . '</p>'
-                . '<p>' . $this->error->getMessage() . '</p>';
+            return array(
+                sprintf(
+                    mt('setup', 'Resource configuration could not be written to: %s. An error occured:'),
+                    Config::resolvePath('resources.ini')
+                ),
+                sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->error))
+            );
         }
     }
 }

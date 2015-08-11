@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Command\Object;
 
@@ -34,7 +33,7 @@ class ProcessCheckResultCommand extends ObjectCommand
     /**
      * Host unreachable
      */
-    const HOST_UNREACHABLE = 2;
+    const HOST_UNREACHABLE = 2; // TODO: Icinga 2.x does not support submitting results with this state, yet
 
     /**
      * Service ok

@@ -1,6 +1,8 @@
 <?php $contactHelper = $this->getHelper('ContactFlags') ?>
 <div class="controls">
-  <?= $this->tabs ?>
+ <?php if (! $this->compact): ?>
+  <?= $this->tabs; ?>
+ <?php endif ?>
   <h1><?= $this->translate('Contact details') ?></h1>
   <div class="circular" style="background-image: url('<?=
       $this->href('static/gravatar', array('email' => $contact->contact_email))
@@ -19,23 +21,27 @@
       </tr>
 <?php if ($contact->contact_email): ?>
       <tr>
-        <th><?= mt('monitoring', 'Email') ?></th>
-        <td><?= sprintf('<a href="mailto:%1$s">%1$s</a>', $this->escape($contact->contact_email)) ?></td>
+        <th><?= $this->translate('Email') ?></th>
+        <td>
+            <a href="mailto:<?= $contact->contact_email; ?>" title="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>" aria-label="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>">
+                <?= $this->escape($contact->contact_email); ?>
+            </a>
+        </td>
       </tr>
 <?php endif ?>
 <?php if ($contact->contact_pager): ?>
       <tr>
-        <th><?= mt('monitoring', 'Pager') ?></th>
+        <th><?= $this->translate('Pager') ?></th>
         <td><?= $this->escape($contact->contact_pager) ?></td>
       </tr>
 <?php endif ?>
       <tr>
-        <th><?= mt('monitoring', 'Hosts') ?></th>
+        <th><?= $this->translate('Hosts') ?></th>
         <td><?= $this->escape($contactHelper->contactFlags($contact, 'host')) ?><br />
         <?= $this->escape($contact->contact_notify_host_timeperiod) ?></td>
       </tr>
       <tr>
-        <th><?= mt('monitoring', 'Services') ?></th>
+        <th><?= $this->translate('Services') ?></th>
         <td><?= $this->escape($contactHelper->contactFlags($contact, 'service')) ?><br />
         <?= $this->escape($contact->contact_notify_service_timeperiod) ?></td>
       </tr>
@@ -50,10 +56,15 @@
   </ul>
   <?php endif ?>
   <h1><?= $this->translate('Notifications sent to this contact') ?></h1>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
 </div>
 
 <?php if (count($notifications)): ?>
-<?= $this->render('list/notifications.phtml') ?>
+<?= $this->partial('list/notifications.phtml', array(
+    'notifications' => $notifications,
+    'compact' => true
+)); ?>
 <?php else: ?>
 <div class="content"><?= $this->translate('No notifications have been sent for this contact') ?></div>
 <?php endif ?>

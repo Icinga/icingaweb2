@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Chart;
 
@@ -66,13 +65,14 @@ class Legend implements Drawable
         $outer->getLayout()->setPadding(2, 2, 2, 2);
         $nrOfColumns = 4;
 
-        $leftstep = 100 / $nrOfColumns;
         $topstep = 10 / $nrOfColumns + 2;
 
         $top = 0;
         $left = 0;
         $lastLabelEndPos = -1;
         foreach ($this->dataset as $color => $text) {
+            $leftstep = 100 / $nrOfColumns + strlen($text);
+
             // Make sure labels don't overlap each other
             while ($lastLabelEndPos >= $left) {
                 $left += $leftstep;

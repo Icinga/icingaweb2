@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Translation\Clicommands;
 
@@ -16,7 +15,7 @@ use Icinga\Module\Translation\Util\GettextTranslationHelper;
  * Domains are the global one 'icinga' and all available and enabled modules
  * identified by their name.
  *
- * Once a PO-file is compiled it's content is used by Icinga Web 2 to display
+ * Once a PO-file is compiled its content is used by Icinga Web 2 to display
  * messages in the configured language.
  */
 class CompileCommand extends TranslationCommand
@@ -39,7 +38,7 @@ class CompileCommand extends TranslationCommand
     {
         $locale = $this->validateLocaleCode($this->params->shift());
 
-        $helper = new GettextTranslationHelper($this->app, $locale);
+        $helper = $this->getTranslationHelper($locale);
         $helper->compileIcingaTranslation();
     }
 
@@ -62,7 +61,7 @@ class CompileCommand extends TranslationCommand
         $module = $this->validateModuleName($this->params->shift());
         $locale = $this->validateLocaleCode($this->params->shift());
 
-        $helper = new GettextTranslationHelper($this->app, $locale);
+        $helper = $this->getTranslationHelper($locale);
         $helper->compileModuleTranslation($module);
     }
 }

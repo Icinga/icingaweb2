@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Chart\Primitive;
 
@@ -190,7 +189,7 @@ class PieSlice extends Animatable implements Drawable
      *
      * @param   int $x The new x position
      *
-     * @return  self   Fluid interface
+     * @return  $this   Fluid interface
      */
     public function setX($x)
     {
@@ -203,7 +202,7 @@ class PieSlice extends Animatable implements Drawable
      *
      * @param   int $y  The new y position
      *
-     * @return  self    Fluid interface
+     * @return  $this    Fluid interface
      */
     public function setY($y)
     {
@@ -216,7 +215,7 @@ class PieSlice extends Animatable implements Drawable
      *
      * @param   DOMElement $group   The label group
      *
-     * @return  self                Fluid interface
+     * @return  $this                Fluid interface
      */
     public function setLabelGroup(DOMElement $group)
     {
@@ -229,7 +228,7 @@ class PieSlice extends Animatable implements Drawable
      *
      * @param   string $caption The caption for this element
      *
-     * @return  self            Fluid interface
+     * @return  $this            Fluid interface
      */
     public function setCaption($caption)
     {
@@ -242,7 +241,7 @@ class PieSlice extends Animatable implements Drawable
      *
      * @param   int $offset     The offset for the caption handle
      *
-     * @return  self            Fluid interface
+     * @return  $this            Fluid interface
      */
     public function setCaptionOffset($offset)
     {
@@ -255,7 +254,7 @@ class PieSlice extends Animatable implements Drawable
      *
      * @param   int $bound  The offset for the caption text
      *
-     * @return  self        Fluid interface
+     * @return  $this        Fluid interface
      */
     public function setOuterCaptionBound($bound)
     {

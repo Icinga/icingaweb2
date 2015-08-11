@@ -1,12 +1,13 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Doc\Exception;
 
-use RuntimeException;
+use Icinga\Exception\IcingaException;
 
 /**
  * Exception thrown if an error in the documentation module's library occurs
  */
-class DocException extends RuntimeException {}
+class DocException extends IcingaException
+{
+}

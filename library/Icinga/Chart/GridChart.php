@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Chart;
 
@@ -85,6 +84,13 @@ class GridChart extends Chart
      */
     private $tooltips = array();
 
+    public function __construct()
+    {
+        $this->title = t('Grid Chart');
+        $this->description = t('Contains data in a bar or line chart.');
+        parent::__construct();
+    }
+
     /**
      * Check if the current dataset has the proper structure for this chart.
      *
@@ -126,7 +132,7 @@ class GridChart extends Chart
      *
      * @param   array $axis,... The line definitions to draw
      *
-     * @return  self            Fluid interface
+     * @return  $this            Fluid interface
      */
     public function drawLines(array $axis)
     {
@@ -140,7 +146,7 @@ class GridChart extends Chart
      * Refer to the graphs.md for a detailed list of allowed attributes
      *
      * @param   array $axis
-     * @return  self
+     * @return  $this
      */
     public function drawBars(array $axis)
     {
@@ -209,7 +215,7 @@ class GridChart extends Chart
      * @param   string $yAxisLabel  The label to use for the y axis
      * @param   string $axisName    The name of the axis, for now 'default'
      *
-     * @return  self                Fluid interface
+     * @return  $this                Fluid interface
      */
     public function setAxisLabel($xAxisLabel, $yAxisLabel, $axisName = 'default')
     {
@@ -223,7 +229,7 @@ class GridChart extends Chart
      * @param   AxisUnit    $unit       The unit for the x axis
      * @param   string      $axisName   The name of the axis to set the label for, currently only 'default'
      *
-     * @return  self                    Fluid interface
+     * @return  $this                    Fluid interface
      */
     public function setXAxis(AxisUnit $unit, $axisName = 'default')
     {
@@ -237,7 +243,7 @@ class GridChart extends Chart
      * @param   AxisUnit    $unit       The unit for the y axis
      * @param   string      $axisName   The name of the axis to set the label for, currently only 'default'
      *
-     * @return  self                    Fluid interface
+     * @return  $this                    Fluid interface
      */
     public function setYAxis(AxisUnit $unit, $axisName = 'default')
     {
@@ -270,7 +276,7 @@ class GridChart extends Chart
      * @param   Axis    $axis The new axis to use
      * @param   string  $name The name of the axis, currently only 'default'
      *
-     * @return  self          Fluid interface
+     * @return  $this          Fluid interface
      */
     public function setAxis(Axis $axis, $name = 'default')
     {
@@ -284,7 +290,7 @@ class GridChart extends Chart
      * @param   Axis    $axis The axis object to add
      * @param   string  $name The name of the axis
      *
-     * @return  self          Fluid interface
+     * @return  $this          Fluid interface
      */
     public function addAxis(Axis $axis, $name)
     {
@@ -301,7 +307,7 @@ class GridChart extends Chart
      * @param   int     $yMin       The minimum value for the y axis or null to use a dynamic value
      * @param   string  $axisName   The name of the axis to set the minimum, currently only 'default'
      *
-     * @return  self                Fluid interface
+     * @return  $this                Fluid interface
      */
     public function setAxisMin($xMin = null, $yMin = null, $axisName = 'default')
     {
@@ -318,7 +324,7 @@ class GridChart extends Chart
      * @param   int     $yMax       The maximum value for the y axis or null to use a dynamic value
      * @param   string  $axisName   The name of the axis to set the maximum, currently only 'default'
      *
-     * @return  self                Fluid interface
+     * @return  $this                Fluid interface
      */
     public function setAxisMax($xMax = null, $yMax = null, $axisName = 'default')
     {
@@ -396,7 +402,12 @@ class GridChart extends Chart
                         );
                         break;
                     case self::TYPE_LINE:
-                        $graphObj = new LineGraph($axis->transform($graph['data']));
+                        $graphObj = new LineGraph(
+                            $axis->transform($graph['data']),
+                            $graphs,
+                            $dataset,
+                            $this->tooltips
+                        );
                         break;
                     default:
                         continue;

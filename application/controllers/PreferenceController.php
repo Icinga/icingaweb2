@@ -1,13 +1,12 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 use Icinga\Web\Controller\BasePreferenceController;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tab;
 use Icinga\Application\Config;
 use Icinga\Forms\PreferenceForm;
-use Icinga\Exception\ConfigurationError;
+use Icinga\Data\ConfigObject;
 use Icinga\User\Preferences\PreferencesStore;
 
 /**
@@ -27,8 +26,9 @@ class PreferenceController extends BasePreferenceController
         return array(
             'preferences' => new Tab(
                 array(
-                    'title'     => t('Preferences'),
-                    'url'       => Url::fromPath('/preference')
+                    'title' => t('Adjust the preferences of Icinga Web 2 according to your needs'),
+                    'label' => t('Preferences'),
+                    'url'   => Url::fromPath('/preference')
                 )
             )
         );
@@ -39,15 +39,17 @@ class PreferenceController extends BasePreferenceController
      */
     public function indexAction()
     {
-        $storeConfig = Config::app()->getSection('preferences');
-        if ($storeConfig->isEmpty()) {
-            throw new ConfigurationError(t('You need to configure how to store preferences first.'));
-        }
-
+        $config = Config::app()->getSection('global');
         $user = $this->getRequest()->getUser();
+
         $form = new PreferenceForm();
         $form->setPreferences($user->getPreferences());
-        $form->setStore(PreferencesStore::create($storeConfig, $user));
+        if ($config->get('config_backend', 'ini') !== 'none') {
+            $form->setStore(PreferencesStore::create(new ConfigObject(array(
+                'store'     => $config->get('config_backend', 'ini'),
+                'resource'  => $config->config_resource
+            )), $user));
+        }
         $form->handleRequest();
 
         $this->view->form = $form;

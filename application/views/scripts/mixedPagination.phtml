@@ -9,11 +9,11 @@ use Icinga\Web\Url;
 
 if ($this->pageCount <= 1) return;
 
-?><p id="paginationlabel" class="audible"><?= t('Pagination') ?></p>
-<ul class="pagination" aria-labelledby="paginationlabel" role="navigation"
+?><p id="<?= $this->protectId('paginationlabel'); ?>" class="audible"><?= t('Pagination') ?></p>
+<ul class="pagination" aria-labelledby="<?= $this->protectId('paginationlabel'); ?>" role="navigation"
 <?php
 
-$fromto = t('Show rows %d to %d of %d');
+$fromto = t('Show rows %u to %u out of %u');
 $total = $this->totalItemCount;
 $limit = $this->itemCountPerPage;
 $title_prev = sprintf(
@@ -29,9 +29,9 @@ $title_next = sprintf(
     ($this->current + 1) * $limit,
     $total
 );
-$li = '  ><li%s><span class="audible">'
+$li = '  ><li%1$s><span class="audible">'
     . t('Page')
-    . ' </span><a href="%s" title="%s">%s</a></li
+    . ' </span><a href="%2$s" aria-label="%3$s" title="%3$s">%4$s</a></li
 ';
 
 ?>

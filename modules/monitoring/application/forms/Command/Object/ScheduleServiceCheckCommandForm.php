@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
@@ -16,27 +15,23 @@ use Icinga\Web\Request;
 class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
 {
     /**
+     * Initialize this form
+     */
+    public function init()
+    {
+        $this->addDescription($this->translate(
+            'This command is used to schedule the next check of hosts or services. Icinga will re-queue the'
+            . ' hosts or services to be checked at the time you specify.'
+        ));
+    }
+
+    /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
      */
     public function getSubmitLabel()
     {
-        return mtp(
-            'monitoring', 'Schedule check', 'Schedule checks', count($this->objects)
-        );
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
-     */
-    public function getHelp()
-    {
-        return mt(
-            'monitoring',
-            'This command is used to schedule the next check of hosts or services. Icinga will re-queue the'
-            . ' hosts or services to be checked at the time you specify.'
-        );
+        return $this->translatePlural('Schedule check', 'Schedule checks', count($this->objects));
     }
 
     /**
@@ -49,23 +44,14 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
         $checkTime->add(new DateInterval('PT1H'));
         $this->addElements(array(
             array(
-                'note',
-                'command-info',
-                array(
-                    'value' => mt(
-                        'monitoring',
-                        'This command is used to schedule the next check of hosts or services. Icinga will re-queue the'
-                        . ' hosts or services to be checked at the time you specify.'
-                    )
-                )
-            ),
-            array(
                 'dateTimePicker',
                 'check_time',
                 array(
                     'required'      => true,
-                    'label'         => mt('monitoring', 'Check Time'),
-                    'description'   => mt('monitoring', 'Set the date and time when the check should be scheduled.'),
+                    'label'         => $this->translate('Check Time'),
+                    'description'   => $this->translate(
+                        'Set the date and time when the check should be scheduled.'
+                    ),
                     'value'         => $checkTime
                 )
             ),
@@ -73,9 +59,8 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
                 'checkbox',
                 'force_check',
                 array(
-                    'label'         => mt('monitoring', 'Force Check'),
-                    'description'   => mt(
-                        'monitoring',
+                    'label'         => $this->translate('Force Check'),
+                    'description'   => $this->translate(
                         'If you select this option, Icinga will force a check regardless of both what time the'
                         . ' scheduled check occurs and whether or not checks are enabled.'
                     )
@@ -111,8 +96,7 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
             $check->setObject($object);
             $this->scheduleCheck($check, $this->request);
         }
-        Notification::success(mtp(
-            'monitoring',
+        Notification::success($this->translatePlural(
             'Scheduling service check..',
             'Scheduling service checks..',
             count($this->objects)

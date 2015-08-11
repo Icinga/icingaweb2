@@ -24,7 +24,7 @@ Package: icingaweb-module-doc
 Architecture: any
 Depends: icingaweb-common
 Description: Icingaweb documentation module
- This module renders documentation for Icingaweb and it's modules
+ This module renders documentation for Icingaweb and its modules
 
 Package: icingaweb-module-monitoring
 Architecture: any
@@ -42,7 +42,7 @@ Package: icingaweb-module-test
 Architecture: any
 Depends: icingacli
 Description: Icingaweb test module
- Use this module to run unit tests against Icingaweb or any of it's modules
+ Use this module to run unit tests against Icingaweb or any of its modules
 
 Package: icingaweb-module-translation
 Architecture: any
@@ -54,7 +54,7 @@ Package: icingacli
 Architecture: any
 Depends: icingaweb-common, php5-cli (>= 5.3.2)
 Description: Icinga CLI tool
- The Icinga CLI allows one to access it's Icinga monitoring
+ The Icinga CLI allows one to access its Icinga monitoring
  system from a terminal. 
  .
  The CLI is based on the Icinga PHP libraries

@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Setup\Forms;
 
@@ -39,7 +38,13 @@ class DatabaseCreationPage extends Form
      */
     public function init()
     {
-        $this->setName('setup_database_creation');
+        $this->setTitle($this->translate('Database Setup', 'setup.page.title'));
+        $this->addDescription($this->translate(
+            'It seems that either the database you defined earlier does not yet exist and cannot be created'
+            . ' using the provided access credentials, the database does not have the required schema to be'
+            . ' operated by Icinga Web 2 or the provided access credentials do not have the sufficient '
+            . 'permissions to access the database. Please provide appropriate access credentials to solve this.'
+        ));
     }
 
     /**
@@ -47,7 +52,7 @@ class DatabaseCreationPage extends Form
      *
      * @param   array   $config
      *
-     * @return  self
+     * @return  $this
      */
     public function setResourceConfig(array $config)
     {
@@ -60,7 +65,7 @@ class DatabaseCreationPage extends Form
      *
      * @param   array   $privileges     The privileges
      *
-     * @return  self
+     * @return  $this
      */
     public function setDatabaseSetupPrivileges(array $privileges)
     {
@@ -73,7 +78,7 @@ class DatabaseCreationPage extends Form
      *
      * @param   array   $privileges     The privileges
      *
-     * @return  self
+     * @return  $this
      */
     public function setDatabaseUsagePrivileges(array $privileges)
     {
@@ -86,46 +91,25 @@ class DatabaseCreationPage extends Form
      */
     public function createElements(array $formData)
     {
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => mt('setup', 'Database Setup', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-        $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => mt(
-                    'setup',
-                    'It seems that either the database you defined earlier does not yet exist and cannot be created'
-                    . ' using the provided access credentials or the database does not have the required schema to '
-                    . 'be operated by Icinga Web 2. Please provide appropriate access credentials to solve this.'
-                )
-            )
-        );
-
         $skipValidation = isset($formData['skip_validation']) && $formData['skip_validation'];
         $this->addElement(
             'text',
             'username',
             array(
                 'required'      => false === $skipValidation,
-                'label'         => mt('setup', 'Username'),
-                'description'   => mt('setup', 'A user which is able to create databases and/or touch the database schema')
+                'label'         => $this->translate('Username'),
+                'description'   => $this->translate(
+                    'A user which is able to create databases and/or touch the database schema'
+                )
             )
         );
         $this->addElement(
             'password',
             'password',
             array(
-                'label'         => mt('setup', 'Password'),
-                'description'   => mt('setup', 'The password for the database user defined above')
+                'renderPassword'    => true,
+                'label'             => $this->translate('Password'),
+                'description'       => $this->translate('The password for the database user defined above')
             )
         );
 
@@ -172,7 +156,7 @@ class DatabaseCreationPage extends Form
                 $db->connectToHost(); // Are we able to login on the server?
             } catch (PDOException $e) {
                 // We are NOT able to login on the server..
-                $this->addError($e->getMessage());
+                $this->error($e->getMessage());
                 $this->addSkipValidationCheckbox();
                 return false;
             }
@@ -181,8 +165,8 @@ class DatabaseCreationPage extends Form
         // In case we are connected the credentials filled into this
         // form need to be granted to create databases, users...
         if (false === $db->checkPrivileges($this->databaseSetupPrivileges)) {
-            $this->addError(
-                mt('setup', 'The provided credentials cannot be used to create the database and/or the user.')
+            $this->error(
+                $this->translate('The provided credentials cannot be used to create the database and/or the user.')
             );
             $this->addSkipValidationCheckbox();
             return false;
@@ -190,9 +174,8 @@ class DatabaseCreationPage extends Form
 
         // ...and to grant all required usage privileges to others
         if (false === $db->isGrantable($this->databaseUsagePrivileges)) {
-            $this->addError(sprintf(
-                mt(
-                    'setup',
+            $this->error(sprintf(
+                $this->translate(
                     'The provided credentials cannot be used to grant all required privileges to the login "%s".'
                 ),
                 $this->config['username']
@@ -213,11 +196,10 @@ class DatabaseCreationPage extends Form
             'checkbox',
             'skip_validation',
             array(
-                'order'         => 2,
+                'order'         => 0,
                 'required'      => true,
-                'label'         => mt('setup', 'Skip Validation'),
-                'description'   => mt(
-                    'setup',
+                'label'         => $this->translate('Skip Validation'),
+                'description'   => $this->translate(
                     'Check this to not to validate the ability to login and required privileges'
                 )
             )

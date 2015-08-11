@@ -1,11 +1,10 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Exception;
 
 /**
- * Exception thrown if a query contains invalid parameters
+ * Exception thrown if a query encountered an error
  */
 class QueryException extends IcingaException
 {

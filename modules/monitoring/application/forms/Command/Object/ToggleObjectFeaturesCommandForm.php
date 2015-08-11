@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
@@ -19,7 +18,10 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
      */
     public function init()
     {
+        $this->setUseFormAutosubmit();
+        $this->setTitle('Feature Commands');
         $this->setAttrib('class', 'inline object-features');
+        $this->loadDefaultDecorators()->getDecorator('description')->setTag('h2');
     }
 
     /**
@@ -28,57 +30,66 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
      */
     public function createElements(array $formData = array())
     {
-        $this->addElements(array(
+        $toggleDisabled = $this->hasPermission('monitoring/command/feature/object')  ? null : '';
+
+        $this->addElement(
+            'checkbox',
+            ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS,
             array(
-                'checkbox',
-                ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS,
-                array(
-                    'label'         => mt('monitoring', 'Active Checks'),
-                    'autosubmit'    => true
-                )
-            ),
+                'label'         => $this->translate('Active Checks'),
+                'autosubmit'    => true,
+                'disabled'      => $toggleDisabled
+            )
+        );
+        $this->addElement(
+            'checkbox',
+            ToggleObjectFeatureCommand::FEATURE_PASSIVE_CHECKS,
             array(
-                'checkbox',
-                ToggleObjectFeatureCommand::FEATURE_PASSIVE_CHECKS,
-                array(
-                    'label'         => mt('monitoring', 'Passive Checks'),
-                    'autosubmit'    => true
-                )
-            ),
-            array(
+                'label'         => $this->translate('Passive Checks'),
+                'autosubmit'    => true,
+                'disabled'      => $toggleDisabled
+            )
+        );
+
+        if (! preg_match('~^v2\.\d+\.\d+.*$~', $this->getIcingaVersion())) {
+            $this->addElement(
                 'checkbox',
                 ToggleObjectFeatureCommand::FEATURE_OBSESSING,
                 array(
-                    'label'         => mt('monitoring', 'Obsessing'),
-                    'autosubmit'    => true
+                    'label'         => $this->translate('Obsessing'),
+                    'autosubmit'    => true,
+                    'disabled'      => $toggleDisabled
                 )
-            ),
+            );
+        }
+
+        $this->addElement(
+            'checkbox',
+            ToggleObjectFeatureCommand::FEATURE_NOTIFICATIONS,
             array(
-                'checkbox',
-                ToggleObjectFeatureCommand::FEATURE_NOTIFICATIONS,
-                array(
-                    'label'         => mt('monitoring', 'Notifications'),
-                    'autosubmit'    => true
-                )
-            ),
-            array(
-                'checkbox',
-                ToggleObjectFeatureCommand::FEATURE_EVENT_HANDLER,
-                array(
-                    'label'         => mt('monitoring', 'Event Handler'),
-                    'autosubmit'    => true
-                )
-            ),
-            array(
-                'checkbox',
-                ToggleObjectFeatureCommand::FEATURE_FLAP_DETECTION,
-                array(
-                    'label'         => mt('monitoring', 'Flap Detection'),
-                    'autosubmit'    => true
-                )
+                'label'         => $this->translate('Notifications'),
+                'autosubmit'    => true,
+                'disabled'      => $toggleDisabled
             )
-        ));
-        return $this;
+        );
+        $this->addElement(
+            'checkbox',
+            ToggleObjectFeatureCommand::FEATURE_EVENT_HANDLER,
+            array(
+                'label'         => $this->translate('Event Handler'),
+                'autosubmit'    => true,
+                'disabled'      => $toggleDisabled
+            )
+        );
+        $this->addElement(
+            'checkbox',
+            ToggleObjectFeatureCommand::FEATURE_FLAP_DETECTION,
+            array(
+                'label'         => $this->translate('Flap Detection'),
+                'autosubmit'    => true,
+                'disabled'      => $toggleDisabled
+            )
+        );
     }
 
     /**
@@ -95,9 +106,10 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
             $element = $this->getElement($feature);
             $element->setChecked($object->{$feature});
             if ((bool) $object->{$feature . '_changed'} === true) {
-                $element->setDescription(mt('monitoring', 'changed'));
+                $element->setDescription($this->translate('changed'));
             }
         }
+
         return $this;
     }
 
@@ -107,6 +119,35 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
      */
     public function onSuccess()
     {
+        $this->assertPermission('monitoring/command/feature/object');
+
+        $notifications = array(
+            ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS => array(
+                $this->translate('Enabling active checks..'),
+                $this->translate('Disabling active checks..')
+            ),
+            ToggleObjectFeatureCommand::FEATURE_PASSIVE_CHECKS => array(
+                $this->translate('Enabling passive checks..'),
+                $this->translate('Disabling passive checks..')
+            ),
+            ToggleObjectFeatureCommand::FEATURE_OBSESSING => array(
+                $this->translate('Enabling obsessing..'),
+                $this->translate('Disabling obsessing..')
+            ),
+            ToggleObjectFeatureCommand::FEATURE_NOTIFICATIONS => array(
+                $this->translate('Enabling notifications..'),
+                $this->translate('Disabling notifications..')
+            ),
+            ToggleObjectFeatureCommand::FEATURE_EVENT_HANDLER => array(
+                $this->translate('Enabling event handler..'),
+                $this->translate('Disabling event handler..')
+            ),
+            ToggleObjectFeatureCommand::FEATURE_FLAP_DETECTION => array(
+                $this->translate('Enabling flap detection..'),
+                $this->translate('Disabling flap detection..')
+            )
+        );
+
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             foreach ($this->getValues() as $feature => $enabled) {
@@ -117,10 +158,24 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                         ->setObject($object)
                         ->setEnabled($enabled);
                     $this->getTransport($this->request)->send($toggleFeature);
+
+                    Notification::success(
+                        $notifications[$feature][$enabled ? 0 : 1]
+                    );
                 }
             }
         }
-        Notification::success(mt('monitoring', 'Toggling feature..'));
+
         return true;
+    }
+
+    /**
+     * Fetch and return the program version of the current instance
+     *
+     * @return  string
+     */
+    protected function getIcingaVersion()
+    {
+        return $this->getBackend()->select()->from('programstatus', array('program_version'))->fetchOne();
     }
 }

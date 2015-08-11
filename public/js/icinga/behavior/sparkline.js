@@ -1,5 +1,4 @@
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 (function(Icinga, $) {
 
@@ -16,36 +15,37 @@
     Sparkline.prototype.onRendered = function(evt) {
         var el = evt.target;
 
-        $('span.sparkline', el).each(function(i, element) {
+        $('.sparkline', el).each(function(i, element) {
             // read custom options
-            var $spark            = $(element);
-            var labels            = $spark.attr('labels').split('|');
-            var formatted         = $spark.attr('formatted').split('|');
-            var tooltipChartTitle = $spark.attr('sparkTooltipChartTitle') || '';
-            var format            = $spark.attr('tooltipformat');
-            var hideEmpty         = $spark.attr('hideEmptyLabel') === 'true';
-            $spark.sparkline(
-                'html',
-                {
+            var $spark = $(element);
+            var title  = $spark.attr('title');
+
+            if ($spark.attr('labels')) {
+                $spark.removeAttr('original-title');
+            }
+
+            var options;
+            if ($spark.hasClass('sparkline-perfdata')) {
+                options = {
                     enableTagOptions: true,
-                    tooltipFormatter: function (sparkline, options, fields) {
-                        var out       = format;
-                        if (hideEmpty && fields.offset === 3) {
-                            return '';
-                        }
-                        var replace   = {
-                            title:     tooltipChartTitle,
-                            label:     labels[fields.offset] ? labels[fields.offset] : fields.offset,
-                            formatted: formatted[fields.offset] ? formatted[fields.offset] : '',
-                            value:     fields.value,
-                            percent:   Math.round(fields.percent * 100) / 100
-                        };
-                        $.each(replace, function(key, value) {
-                            out = out.replace('{{' + key + '}}', value);
-                        });
-                        return out;
-                    }
-            });
+                    width: 16,
+                    height: 16,
+                    title: title,
+                    disableTooltips: true,
+                    borderWidth: 1.4,
+                    borderColor: '#FFF'
+                };
+                $spark.sparkline('html', options);
+            } else if ($spark.hasClass('sparkline-multi')) {
+                options = {
+                    width: 100,
+                    height: 100,
+                    title: title,
+                    enableTagOptions: true
+                };
+                $spark.sparkline('html', options);
+            }
+
         });
     };
 

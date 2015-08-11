@@ -1,38 +1,48 @@
-<?php if (!$this->compact): ?>
+<?php if (! $this->compact): ?>
 <div class="controls">
-    <?= $this->tabs ?>
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
 <?php endif ?>
 <div class="content">
-    <div class="boxview" data-base-target="_next">
-
 <?php
-if (count($groupData) === 0) {
-    echo mt('monitoring', 'No contacts matching the filter');
-}
 
-foreach ($groupData as $groupName => $groupInfo): ?>
+if (count($groupData) === 0) {
+    echo $this->translate('No contactgroups found matching the filter') . '</div>';
+    return;
+}
+?>
+    <div class="boxview" data-base-target="_next">
+<?php foreach ($groupData as $groupName => $groupInfo): ?>
         <div class="box contactgroup">
-            <h2><?= $groupInfo['alias']; ?></h2>
+            <div class="box header">
+                <h2><?= $groupInfo['alias']; ?></h2>
 <?php if ($groupInfo['alias'] !== $groupName): ?>
-            <h2><?= $groupName; ?></h2>
+                <h2><?= $groupName; ?></h2>
 <?php endif ?>
+            </div>
             <div class="box contents">
 <?php foreach ($groupInfo['contacts'] as $c): ?>
                 <div class="box entry">
-                    <img src="<?= $this->href('/static/gravatar', array('email' => $c->contact_email )) ?>" />
-                    <a href="<?= $this->href(
+                    <?= $this->img('/static/gravatar', array('email' => $c->contact_email)); ?>
+                    <?= $this->qlink(
+                        $c->contact_alias,
                         'monitoring/show/contact',
-                        array('contact' => $c->contact_name)
-                    ); ?>">
-                        <?= $this->escape($c->contact_alias) ?>
-                    </a>
+                        array('contact_name' => $c->contact_name),
+                        array('title' => sprintf(
+                            $this->translate('Show detailed information about %s'),
+                            $c->contact_alias
+                        ))
+                    ); ?>
                     <p>
 <?php if ($c->contact_email): ?>
                         <?= $c->contact_email; ?>
 <?php endif;
 if ($c->contact_pager): ?>
-                        <br />
+                        <br>
                         <?= $c->contact_pager; ?>
 <?php endif ?>
                     </p>

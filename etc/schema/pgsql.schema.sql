@@ -1,9 +1,13 @@
-/**
- * Table "icingaweb_group"
- */
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
+
+CREATE OR REPLACE FUNCTION unix_timestamp(timestamp with time zone) RETURNS bigint AS '
+        SELECT EXTRACT(EPOCH FROM $1)::bigint AS result
+' LANGUAGE sql;
+
 CREATE TABLE "icingaweb_group" (
+  "id"     serial,
   "name"   character varying(64) NOT NULL,
-  "parent" character varying(64) NULL DEFAULT NULL,
+  "parent" int NULL DEFAULT NULL,
   "ctime"  timestamp NULL DEFAULT NULL,
   "mtime"  timestamp NULL DEFAULT NULL
 );
@@ -11,7 +15,7 @@ CREATE TABLE "icingaweb_group" (
 ALTER TABLE ONLY "icingaweb_group"
   ADD CONSTRAINT pk_icingaweb_group
   PRIMARY KEY (
-    "name"
+    "id"
 );
 
 CREATE UNIQUE INDEX idx_icingaweb_group
@@ -20,12 +24,17 @@ CREATE UNIQUE INDEX idx_icingaweb_group
     lower((name)::text)
 );
 
+ALTER TABLE ONLY "icingaweb_group"
+  ADD CONSTRAINT fk_icingaweb_group_parent_id
+  FOREIGN KEY (
+    "parent"
+  )
+  REFERENCES "icingaweb_group" (
+    "id"
+);
 
-/**
- * Table "icingaweb_group_membership"
- */
 CREATE TABLE "icingaweb_group_membership" (
-  "group_name" character varying(64) NOT NULL,
+  "group_id"   int NOT NULL,
   "username"   character varying(64) NOT NULL,
   "ctime"      timestamp NULL DEFAULT NULL,
   "mtime"      timestamp NULL DEFAULT NULL
@@ -33,22 +42,20 @@ CREATE TABLE "icingaweb_group_membership" (
 
 ALTER TABLE ONLY "icingaweb_group_membership"
   ADD CONSTRAINT pk_icingaweb_group_membership
-  PRIMARY KEY (
-    "group_name",
-    "username"
+  FOREIGN KEY (
+    "group_id"
+  )
+  REFERENCES "icingaweb_group" (
+    "id"
 );
 
 CREATE UNIQUE INDEX idx_icingaweb_group_membership
   ON "icingaweb_group_membership"
   USING btree (
-    lower((group_name)::text),
+    group_id,
     lower((username)::text)
 );
 
-
-/**
- * Table "icingaweb_user"
- */
 CREATE TABLE "icingaweb_user" (
   "name"          character varying(64) NOT NULL,
   "active"        smallint NOT NULL,
@@ -69,10 +76,6 @@ CREATE UNIQUE INDEX idx_icingaweb_user
     lower((name)::text)
 );
 
-
-/**
- * Table "icingaweb_user_preference"
- */
 CREATE TABLE "icingaweb_user_preference" (
   "username" character varying(64) NOT NULL,
   "name"     character varying(64) NOT NULL,

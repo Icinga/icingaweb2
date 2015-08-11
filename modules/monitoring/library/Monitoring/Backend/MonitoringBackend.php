@@ -1,4 +1,5 @@
 <?php
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Backend;
 
@@ -145,7 +146,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
                 $this->type = lcfirst(substr($class, 0, -7));
             } else {
                 throw new ProgrammingError(
-                    '%s is not a valid monitoring backend class name', 
+                    '%s is not a valid monitoring backend class name',
                     $class
                 );
             }
@@ -238,7 +239,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
     /**
      * Backend entry point
      *
-     * @return self
+     * @return $this
      */
     public function select()
     {
@@ -251,7 +252,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
      * @param   string  $name
      * @param   array   $columns
      *
-     * @return  DataView
+     * @return  \Icinga\Module\Monitoring\DataView\DataView
      */
     public function from($name, array $columns = null)
     {
@@ -262,21 +263,21 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
     /**
      * View name to class name resolution
      *
-     * @param   string $viewName
+     * @param   string  $view
      *
      * @return  string
-     * @throws  ProgrammingError When the view does not exist
+     *
+     * @throws  ProgrammingError    In case the view does not exist
      */
     protected function buildViewClassName($view)
     {
-        $class = '\\Icinga\\Module\\Monitoring\\DataView\\' . ucfirst($view);
-        if (!class_exists($class)) {
-            throw new ProgrammingError(
-                'DataView %s does not exist',
-                ucfirst($view)
-            );
+        $class = ucfirst(strtolower($view));
+        $classPath = '\\Icinga\\Module\\Monitoring\\DataView\\' . $class;
+        if (! class_exists($classPath)) {
+            throw new ProgrammingError('DataView %s does not exist', $class);
         }
-        return $class;
+
+        return $classPath;
     }
 
     /**
@@ -286,6 +287,8 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
      * @param  array  $columns Optional column list
      *
      * @return Icinga\Data\QueryInterface
+     *
+     * @throws  ProgrammingError When the query does not exist for this backend
      */
     public function query($name, $columns = null)
     {
@@ -317,16 +320,25 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
     /**
      * Query name to class name resolution
      *
-     * @param   string $query
+     * @param   string  $query
      *
      * @return  string
-     * @throws  ProgrammingError When the query does not exist for this backend
      */
     protected function buildQueryClassName($query)
     {
         $parts = preg_split('~\\\~', get_class($this));
         array_pop($parts);
-        array_push($parts, 'Query', ucfirst($query) . 'Query');
+        array_push($parts, 'Query', ucfirst(strtolower($query)) . 'Query');
         return implode('\\', $parts);
+    }
+
+    /**
+     * Fetch and return the program version of the current instance
+     *
+     * @return string
+     */
+    public function getProgramVersion()
+    {
+        return $this->select()->from('programstatus', array('program_version'))->fetchOne();
     }
 }

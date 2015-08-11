@@ -1,36 +1,33 @@
-<?php
-$viewHelper = $this->getHelper('MonitoringState');
-$contactHelper = $this->getHelper('ContactFlags');
-?>
+<?php if (! $this->compact): ?>
 <div class="controls">
-    <?= $this->tabs ?>
-    <div style="margin: 1em">
-        <?= $this->sortControl->render($this); ?>
-    </div>
-    <?= $this->paginationControl($contacts, null, null, array('preserve' => $this->preserve)); ?>
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
-
+<?php endif ?>
 <div data-base-target="_next" class="content contacts">
-    <?php
-    if (count($contacts) === 0) {
-        echo mt('monitoring', 'No contacts matching the filter');
-        return;
-    }
-    foreach ($contacts as $contact): ?>
+    <?php foreach ($contacts->peekAhead($this->compact) as $contact): ?>
         <div class="contact">
-            <img src="<?= $this->href('/static/gravatar', array('email' => $contact->contact_email )) ?>" />
-            <a href="<?= $this->href(
+            <?= $this->img('/static/gravatar', array('email' => $contact->contact_email)); ?>
+            <strong><?= $this->qlink(
+                $contact->contact_name,
                 'monitoring/show/contact',
-                array('contact' => $contact->contact_name)
-            ) ?>"><strong><?= $contact->contact_name ?></strong></a> (<?= $contact->contact_alias ?>)
-            <div><?= sprintf(
-                '%1$s: <a href="mailto:%2$s">%2$s</a>',
-                mt('monitoring', 'Email'),
-                $this->escape($contact->contact_email)
-            ) ?></div>
+                array('contact_name' => $contact->contact_name),
+                array('title' => sprintf(
+                    $this->translate('Show detailed information about %s'),
+                    $contact->contact_alias
+                ))
+            ); ?></strong> (<?= $contact->contact_alias; ?>)
+            <div>
+                <?= $this->translate('Email'); ?>: <a href="mailto:<?= $contact->contact_email; ?>" title="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>" aria-label="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>">
+                    <?= $this->escape($contact->contact_email); ?>
+                </a>
+            </div>
             <?php if ($contact->contact_pager): ?>
             <div>
-                <?= mt('monitoring', 'Pager') ?>:
+                <?= $this->translate('Pager') ?>:
                 <?= $this->escape($contact->contact_pager) ?>
             </div>
             <?php endif; ?>
@@ -38,13 +35,13 @@ $contactHelper = $this->getHelper('ContactFlags');
             <div class="notification-periods">
                 <?php if ($contact->contact_notify_service_timeperiod): ?>
                 <div>
-                    <?= mt('monitoring', 'Service notification period') ?>:
+                    <?= $this->translate('Service notification period') ?>:
                     <?= $this->escape($contact->contact_notify_service_timeperiod) ?>
                 </div>
                 <?php endif; ?>
                 <?php if ($contact->contact_notify_host_timeperiod): ?>
                 <div>
-                    <?= mt('monitoring', 'Host notification period') ?>:
+                    <?= $this->translate('Host notification period') ?>:
                     <?= $this->escape($contact->contact_notify_host_timeperiod) ?>
                 </div>
                 <?php endif; ?>
@@ -55,4 +52,17 @@ $contactHelper = $this->getHelper('ContactFlags');
     if (true): /* The following piece of HTML MUST be nested in <?php */ ?>
     <div style="clear: both;"></div>
     <?php endif; ?>
+    <?php if (! $contacts->hasResult()): ?>
+        <?= $this->translate('No contacts found matching the filter'); ?>
+    <?php elseif ($contacts->hasMore()): ?>
+        <?= $this->qlink(
+            $this->translate('Show More'),
+            $this->url()->without(array('view', 'limit')),
+            null,
+            array(
+                'data-base-target'  => '_next',
+                'class'             => 'pull-right show-more'
+            )
+        ); ?>
+    <?php endif ?>
 </div>

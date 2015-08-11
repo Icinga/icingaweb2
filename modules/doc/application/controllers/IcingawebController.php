@@ -1,39 +1,51 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use \Zend_Controller_Action_Exception;
 use Icinga\Application\Icinga;
 use Icinga\Module\Doc\DocController;
 
 class Doc_IcingawebController extends DocController
 {
     /**
+     * Get the path to Icinga Web 2's documentation
+     *
+     * @return  string
+     *
+     * @throws  Zend_Controller_Action_Exception    If Icinga Web 2's documentation is not available
+     */
+    protected function getPath()
+    {
+        $path = Icinga::app()->getBaseDir('doc');
+        if (is_dir($path)) {
+            return $path;
+        }
+        if (($path = $this->Config()->get('documentation', 'icingaweb2')) !== null) {
+            if (is_dir($path)) {
+                return $path;
+            }
+        }
+        $this->httpNotFound($this->translate('Documentation for Icinga Web 2 is not available'));
+    }
+
+    /**
      * View the toc of Icinga Web 2's documentation
      */
     public function tocAction()
     {
-        return $this->renderToc(Icinga::app()->getApplicationDir('/../doc'), 'Icinga Web 2', 'doc/icingaweb/chapter');
+        $this->renderToc($this->getPath(), 'Icinga Web 2', 'doc/icingaweb/chapter');
     }
 
     /**
      * View a chapter of Icinga Web 2's documentation
      *
-     * @throws Zend_Controller_Action_Exception If the required parameter 'chapterId' is missing
+     * @throws \Icinga\Exception\MissingParameterException If the required parameter 'chapter' is missing
      */
     public function chapterAction()
     {
-        $chapterId = $this->getParam('chapterId');
-        if ($chapterId === null) {
-            throw new Zend_Controller_Action_Exception(
-                $this->translate('Missing parameter \'chapterId\''),
-                404
-            );
-        }
-        return $this->renderChapter(
-            Icinga::app()->getApplicationDir('/../doc'),
-            $chapterId,
-            'doc/icingaweb/toc',
+        $chapter = $this->params->getRequired('chapter');
+        $this->renderChapter(
+            $this->getPath(),
+            $chapter,
             'doc/icingaweb/chapter'
         );
     }
@@ -43,6 +55,6 @@ class Doc_IcingawebController extends DocController
      */
     public function pdfAction()
     {
-        return $this->renderPdf(Icinga::app()->getApplicationDir('/../doc'), 'Icinga Web 2', 'doc/icingaweb/chapter');
+        $this->renderPdf($this->getPath(), 'Icinga Web 2', 'doc/icingaweb/chapter');
     }
 }

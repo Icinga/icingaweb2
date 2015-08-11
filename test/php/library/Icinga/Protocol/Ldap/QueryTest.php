@@ -1,12 +1,11 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Tests\Icinga\Protocol\Ldap;
 
 use Icinga\Data\ConfigObject;
 use Icinga\Test\BaseTestCase;
-use Icinga\Protocol\Ldap\Connection;
+use Icinga\Protocol\Ldap\LdapConnection;
 
 class QueryTest extends BaseTestCase
 {
@@ -21,7 +20,7 @@ class QueryTest extends BaseTestCase
             )
         );
 
-        $connection = new Connection($config);
+        $connection = new LdapConnection($config);
         return $connection->select();
     }
 
@@ -37,49 +36,9 @@ class QueryTest extends BaseTestCase
         return $select;
     }
 
-    public function testLimit()
-    {
-        $select = $this->prepareSelect();
-        $this->assertEquals(10, $select->getLimit());
-        $this->assertEquals(4, $select->getOffset());
-    }
-
-    public function testHasLimit()
-    {
-        $select = $this->emptySelect();
-        $this->assertFalse($select->hasLimit());
-        $select = $this->prepareSelect();
-        $this->assertTrue($select->hasLimit());
-    }
-
-    public function testHasOffset()
-    {
-        $select = $this->emptySelect();
-        $this->assertFalse($select->hasOffset());
-        $select = $this->prepareSelect();
-        $this->assertTrue($select->hasOffset());
-    }
-
-    public function testGetLimit()
-    {
-        $select = $this->prepareSelect();
-        $this->assertEquals(10, $select->getLimit());
-    }
-
-    public function testGetOffset()
-    {
-        $select = $this->prepareSelect();
-        $this->assertEquals(10, $select->getLimit());
-    }
-
     public function testFetchTree()
     {
         $this->markTestIncomplete('testFetchTree is not implemented yet - requires real LDAP');
-    }
-
-    public function testFrom()
-    {
-        return $this->testListFields();
     }
 
     public function testWhere()
@@ -89,30 +48,13 @@ class QueryTest extends BaseTestCase
 
     public function testOrder()
     {
-        $select = $this->emptySelect()->order('bla');
-        // tested by testGetSortColumns
+        $this->markTestIncomplete('testOrder is not implemented yet, order support for ldap queries is incomplete');
     }
 
-    public function testListFields()
-    {
-        $select = $this->prepareSelect();
-        $this->assertEquals(
-            array('testIntColumn', 'testStringColumn'),
-            $select->listFields()
-        );
-    }
-
-    public function testGetSortColumns()
-    {
-        $select = $this->prepareSelect();
-        $cols = $select->getSortColumns();
-        $this->assertEquals('testIntColumn', $cols[0][0]);
-    }
-
-    public function testCreateQuery()
+    public function testRenderFilter()
     {
         $select = $this->prepareSelect();
         $res = '(&(objectClass=dummyClass)(testIntColumn=1)(testStringColumn=test)(testWildcard=abc*))';
-        $this->assertEquals($res, $select->create());
+        $this->assertEquals($res, (string) $select);
     }
 }

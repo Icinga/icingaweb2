@@ -1,9 +1,9 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Setup\Forms;
 
+use LogicException;
 use Icinga\Web\Form;
 
 /**
@@ -30,7 +30,12 @@ class SummaryPage extends Form
      */
     public function init()
     {
-        $this->setName('setup_summary');
+        if ($this->getName() === $this->filterName(get_class($this))) {
+            throw new LogicException(
+                'When utilizing ' . get_class($this) . ' it is required to set a unique name by using the form options'
+            );
+        }
+
         $this->setViewScript('form/setup-summary.phtml');
     }
 
@@ -59,7 +64,7 @@ class SummaryPage extends Form
      *
      * @param   array   $summary
      *
-     * @return  self
+     * @return  $this
      */
     public function setSummary(array $summary)
     {

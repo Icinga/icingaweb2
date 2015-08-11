@@ -1,57 +1,107 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\DataView;
 
+/**
+ * Host and service downtimes view
+ */
 class Downtime extends DataView
 {
     /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
+     */
+    public function isValidFilterTarget($column)
+    {
+        if ($column[0] === '_'
+            && preg_match('/^_(?:host|service)_/', $column)
+        ) {
+            return true;
+        }
+        return parent::isValidFilterTarget($column);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getColumns()
     {
         return array(
-            'downtime_objecttype',
-            'downtime_author',
-            'author',
+            'downtime_author_name',
             'downtime_comment',
+            'downtime_duration',
+            'downtime_end',
             'downtime_entry_time',
+            'downtime_internal_id',
             'downtime_is_fixed',
             'downtime_is_flexible',
-            'downtime_start',
-            'downtime_scheduled_start',
-            'downtime_scheduled_end',
-            'downtime_end',
-            'downtime_duration',
             'downtime_is_in_effect',
-            'downtime_triggered_by_id',
-            'downtime_internal_id',
-            'downtime_host',
-            'downtime_service',
-            'downtime_host_state',
-            'downtime_service_state'
+            'downtime_scheduled_end',
+            'downtime_scheduled_start',
+            'downtime_start',
+            'host_display_name',
+            'host_name',
+            'host_state',
+            'object_type',
+            'service_description',
+            'service_display_name',
+            'service_host_name',
+            'service_state'
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilterColumns()
+    {
+        return array(
+            'downtime_author',
+            'host', 'host_alias',
+            'hostgroup', 'hostgroup_alias', 'hostgroup_name',
+            'service',
+            'servicegroup', 'servicegroup_alias', 'servicegroup_name'
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('host_display_name', 'service_display_name');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getSortRules()
     {
         return array(
             'downtime_is_in_effect' => array(
+                'columns' => array(
+                    'downtime_is_in_effect',
+                    'downtime_scheduled_start'
+                ),
                 'order' => self::SORT_DESC
             ),
             'downtime_start' => array(
                 'order' => self::SORT_DESC
             ),
-            'downtime_host' => array(
+            'host_display_name' => array(
                 'columns' => array(
-                    'downtime_host',
-                    'downtime_service'
+                    'host_display_name',
+                    'service_display_name'
                 ),
                 'order' => self::SORT_ASC
             ),
+            'service_display_name' => array(
+                'columns' => array(
+                    'service_display_name',
+                    'host_display_name'
+                ),
+                'order' => self::SORT_ASC
+            )
         );
     }
 }

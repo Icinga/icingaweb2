@@ -1,11 +1,11 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Tests\Icinga\Web;
 
 use Mockery;
 use Icinga\Test\BaseTestCase;
+use Icinga\User;
 use Icinga\Web\Widget\SearchDashboard;
 
 class SearchDashboardTest extends BaseTestCase
@@ -20,6 +20,7 @@ class SearchDashboardTest extends BaseTestCase
         $moduleMock->shouldReceive('getSearchUrls')->andReturn(array(
             $searchUrl
         ));
+        $moduleMock->shouldReceive('getName')->andReturn('test');
 
         $moduleManagerMock = Mockery::mock('Icinga\Application\Modules\Manager');
         $moduleManagerMock->shouldReceive('getLoadedModules')->andReturn(array(
@@ -35,14 +36,22 @@ class SearchDashboardTest extends BaseTestCase
      */
     public function testWhetherRenderThrowsAnExceptionWhenHasNoDashlets()
     {
-        $dashboard = SearchDashboard::search('pending');
+        $user = new User('test');
+        $user->setPermissions(array('*' => '*'));
+        $dashboard = new SearchDashboard();
+        $dashboard->setUser($user);
+        $dashboard = $dashboard->search('pending');
         $dashboard->getPane('search')->removeDashlets();
         $dashboard->render();
     }
 
     public function testWhetherSearchLoadsSearchDashletsFromModules()
     {
-        $dashboard = SearchDashboard::search('pending');
+        $user = new User('test');
+        $user->setPermissions(array('*' => '*'));
+        $dashboard = new SearchDashboard();
+        $dashboard->setUser($user);
+        $dashboard = $dashboard->search('pending');
 
         $result = $dashboard->getPane('search')->hasDashlet('Hosts: pending');
 
@@ -51,7 +60,11 @@ class SearchDashboardTest extends BaseTestCase
 
     public function testWhetherSearchProvidesHintWhenSearchStringIsEmpty()
     {
-        $dashboard = SearchDashboard::search();
+        $user = new User('test');
+        $user->setPermissions(array('*' => '*'));
+        $dashboard = new SearchDashboard();
+        $dashboard->setUser($user);
+        $dashboard = $dashboard->search();
 
         $result = $dashboard->getPane('search')->hasDashlet('Ready to search');
 

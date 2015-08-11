@@ -1,29 +1,35 @@
+<?php if (! $this->compact): ?>
 <div class="controls">
-<?= $this->tabs ?>
-<h1><?= $this->translate('Installed Modules') ?></h1>
-<?= $this->paginationControl($modules) ?>
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
-
+<?php endif ?>
 <div class="content">
-<table class="action" data-base-target="_next">
-  <tbody>
-  <?php foreach ($modules as $module): ?>
-    <tr>
-      <td>
-      <?php if ($module->enabled): ?>
-      <?= $this->icon('thumbs-up', $this->translate('Module is enabled')) ?>
-      <?php else: ?>
-      <?= $this->icon('thumbs-down', $this->translate('Module is disabled')) ?>
-      <?php endif ?>
-        <a href="<?= $this->url(
+  <table class="action alternating" data-base-target="_next">
+    <tbody>
+    <?php foreach ($modules as $module): ?>
+      <tr>
+        <td>
+          <?php if ($module->enabled && $module->loaded) {
+            echo $this->icon('thumbs-up', sprintf($this->translate('Module %s is enabled'), $module->name));
+          } elseif (! $module->enabled) {
+            echo $this->icon('thumbs-down', sprintf($this->translate('Module %s is disabled'), $module->name));
+          } else { // ! $module->loaded
+            echo $this->icon('thumbs-down', sprintf($this->translate('Module %s has failed to load'), $module->name));
+          }
+
+          echo $this->qlink(
+            $module->name,
             'config/module/',
-            array('name' => $module->name)
-        ) ?>"><?= $this->escape($module->name); ?></a> (<?=
-            $module->enabled ? ($module->loaded ? 'enabled' : 'failed') : 'disabled'
-        ?>)
-      </td>
-    </tr>
-  <?php endforeach ?>
-  </tbody>
-</table>
+            array('name' => $module->name),
+            array('title' => sprintf($this->translate('Show the overview of the %s module'), $module->name))
+          ); ?>
+        </td>
+      </tr>
+    <?php endforeach ?>
+    </tbody>
+  </table>
 </div>

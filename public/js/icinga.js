@@ -1,5 +1,4 @@
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 /**
  * Icinga starts here.
@@ -113,38 +112,69 @@
 
         /**
          * Load a given module by name
+         *
+         * @param   {string}    name
+         *
+         * @return  {boolean}
          */
         loadModule: function (name) {
 
-            if (this.hasModule(name)) {
+            if (this.isLoadedModule(name)) {
                 this.logger.error('Cannot load module ' + name + ' twice');
-                return;
+                return false;
             }
 
-            this.modules[name] = new Icinga.Module(this, name);
+            if (! this.hasModule(name)) {
+                this.logger.error('Cannot find module ' + name);
+                return false;
+            }
+
+            this.modules[name] = new Icinga.Module(
+                this,
+                name,
+                Icinga.availableModules[name]
+            );
+            return true;
         },
 
         /**
-         * Whether a module matching the given name exists
+         * Whether a module matching the given name exists or is loaded
+         *
+         * @param   {string}    name
+         *
+         * @return  {boolean}
          */
         hasModule: function (name) {
-            return 'undefined' !==  typeof this.modules[name] ||
+            return this.isLoadedModule(name) ||
                 'undefined' !== typeof Icinga.availableModules[name];
         },
 
         /**
+         * Return whether the given module is loaded
+         *
+         * @param   {string}    name    The name of the module
+         *
+         * @returns {Boolean}
+         */
+        isLoadedModule: function (name) {
+            return 'undefined' !==  typeof this.modules[name];
+        },
+
+        /**
          * Get a module by name
+         *
+         * @param   {string}    name
+         *
+         * @return  {object}
          */
         module: function (name) {
 
-            if ('undefined' === typeof this.modules[name]) {
-                if ('undefined' !== typeof Icinga.availableModules[name]) {
-                    this.modules[name] = new Icinga.Module(
-                        this,
-                        name,
-                        Icinga.availableModules[name]
-                    );
-                }
+            if (this.hasModule(name) && !this.isLoadedModule(name)) {
+                this.modules[name] = new Icinga.Module(
+                    this,
+                    name,
+                    Icinga.availableModules[name]
+                );
             }
 
             return this.modules[name];

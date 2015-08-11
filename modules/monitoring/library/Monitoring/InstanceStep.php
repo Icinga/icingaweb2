@@ -1,13 +1,12 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring;
 
 use Exception;
 use Icinga\Module\Setup\Step;
 use Icinga\Application\Config;
-use Icinga\File\Ini\IniWriter;
+use Icinga\Exception\IcingaException;
 
 class InstanceStep extends Step
 {
@@ -27,11 +26,9 @@ class InstanceStep extends Step
         unset($instanceConfig['name']);
 
         try {
-            $writer = new IniWriter(array(
-                'config'    => Config::fromArray(array($instanceName => $instanceConfig)),
-                'filename'  => Config::resolvePath('modules/monitoring/instances.ini')
-            ));
-            $writer->write();
+            Config::fromArray(array($instanceName => $instanceConfig))
+                ->setConfigFile(Config::resolvePath('modules/monitoring/instances.ini'))
+                ->saveIni();
         } catch (Exception $e) {
             $this->error = $e;
             return false;
@@ -89,15 +86,21 @@ class InstanceStep extends Step
     public function getReport()
     {
         if ($this->error === false) {
-            $message = mt('monitoring', 'Monitoring instance configuration has been successfully created: %s');
-            return '<p>' . sprintf($message, Config::resolvePath('modules/monitoring/instances.ini')) . '</p>';
+            return array(sprintf(
+                mt('monitoring', 'Monitoring instance configuration has been successfully created: %s'),
+                Config::resolvePath('modules/monitoring/instances.ini')
+            ));
         } elseif ($this->error !== null) {
-            $message = mt(
-                'monitoring',
-                'Monitoring instance configuration could not be written to: %s; An error occured:'
+            return array(
+                sprintf(
+                    mt(
+                        'monitoring',
+                        'Monitoring instance configuration could not be written to: %s. An error occured:'
+                    ),
+                    Config::resolvePath('modules/monitoring/instances.ini')
+                ),
+                sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->error))
             );
-            return '<p class="error">' . sprintf($message, Config::resolvePath('modules/monitoring/instances.ini'))
-                . '</p><p>' . $this->error->getMessage() . '</p>';
         }
     }
 }

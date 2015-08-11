@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Application;
 
@@ -32,7 +31,7 @@ $baseDir = $_SERVER['DOCUMENT_ROOT'];
 $baseDir = dirname($_SERVER['SCRIPT_FILENAME']);
 
 // Fix aliases
-$remove = dirname($_SERVER['PHP_SELF']);
+$remove = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
 if (substr($ruri, 0, strlen($remove)) !== $remove) {
     return false;
 }
@@ -92,7 +91,7 @@ if (in_array($path, $special)) {
     header('Content-Type: image/svg+xml');
     $pie = new PieChart();
     $pie->initFromRequest();
-    echo $pie->render();
+    $pie->toSvg();
 
 } elseif ($path === 'png/chart.php') {
     if (!array_key_exists('data', $_GET)) {

@@ -1,45 +1,35 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Application;
 
-require_once __DIR__ . '/ApplicationBootstrap.php';
+require_once __DIR__ . '/EmbeddedWeb.php';
 
-use Icinga\Authentication\Manager as AuthenticationManager;
-use Icinga\Authentication\Manager;
-use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\NotReadableError;
-use Icinga\Application\Logger;
-use Icinga\Util\TimezoneDetect;
-use Icinga\Web\Cookie;
-use Icinga\Web\Request;
-use Icinga\Web\Response;
-use Icinga\Web\View;
-use Icinga\Web\Session\Session as BaseSession;
-use Icinga\Web\Session;
-use Icinga\User;
-use Icinga\Util\Translator;
-use Icinga\Util\DateTimeFactory;
-use DateTimeZone;
-use Exception;
+use Zend_Controller_Action_HelperBroker;
+use Zend_Controller_Front;
+use Zend_Controller_Router_Route;
 use Zend_Layout;
 use Zend_Paginator;
 use Zend_View_Helper_PaginationControl;
-use Zend_Controller_Action_HelperBroker as ActionHelperBroker;
-use Zend_Controller_Router_Route;
-use Zend_Controller_Front;
+use Icinga\Authentication\Auth;
+use Icinga\User;
+use Icinga\Util\TimezoneDetect;
+use Icinga\Util\Translator;
+use Icinga\Web\Notification;
+use Icinga\Web\Session;
+use Icinga\Web\Session\Session as BaseSession;
+use Icinga\Web\View;
 
 /**
  * Use this if you want to make use of Icinga functionality in other web projects
  *
  * Usage example:
  * <code>
- * use Icinga\Application\EmbeddedWeb;
- * EmbeddedWeb::start();
+ * use Icinga\Application\Web;
+ * Web::start();
  * </code>
  */
-class Web extends ApplicationBootstrap
+class Web extends EmbeddedWeb
 {
     /**
      * View object
@@ -54,13 +44,6 @@ class Web extends ApplicationBootstrap
      * @var Zend_Controller_Front
      */
     private $frontController;
-
-    /**
-     * Request object
-     *
-     * @var Request
-     */
-    private $request;
 
     /**
      * Session object
@@ -86,27 +69,29 @@ class Web extends ApplicationBootstrap
     /**
      * Initialize all together
      *
-     * @return self
+     * @return $this
      */
     protected function bootstrap()
     {
         return $this
             ->setupZendAutoloader()
-            ->detectCookieSupport()
             ->setupLogging()
             ->setupErrorHandling()
             ->loadConfig()
             ->setupResourceFactory()
             ->setupSession()
+            ->setupNotifications()
+            ->setupRequest()
+            ->setupResponse()
             ->setupUser()
             ->setupTimezone()
             ->setupLogger()
             ->setupInternationalization()
-            ->setupRequest()
             ->setupZendMvc()
             ->setupFormNamespace()
             ->setupModuleManager()
-            ->loadCoreModules()
+            ->setupUserBackendFactory()
+            ->loadSetupModuleIfNecessary()
             ->loadEnabledModules()
             ->setupRoute()
             ->setupPagination();
@@ -115,7 +100,7 @@ class Web extends ApplicationBootstrap
     /**
      * Prepare routing
      *
-     * @return self
+     * @return $this
      */
     private function setupRoute()
     {
@@ -158,50 +143,47 @@ class Web extends ApplicationBootstrap
      */
     public function dispatch()
     {
-        $this->frontController->dispatch($this->request, new Response());
+        $this->frontController->dispatch($this->getRequest(), $this->getResponse());
     }
 
     /**
      * Prepare Zend MVC Base
      *
-     * @return self
+     * @return $this
      */
     private function setupZendMvc()
     {
-        // TODO: Replace Zend_Application:
         Zend_Layout::startMvc(
             array(
                 'layout'     => 'layout',
                 'layoutPath' => $this->getApplicationDir('/layouts/scripts')
             )
         );
-
         $this->setupFrontController();
         $this->setupViewRenderer();
-
         return $this;
     }
 
     /**
      * Create user object
      *
-     * @return  self
+     * @return $this
      */
     private function setupUser()
     {
-        $authenticationManager = AuthenticationManager::getInstance();
-
-        if ($authenticationManager->isAuthenticated() === true) {
-            $this->user = $authenticationManager->getUser();
+        $auth = Auth::getInstance();
+        if ($auth->isAuthenticated()) {
+            $user = $auth->getUser();
+            $this->getRequest()->setUser($user);
+            $this->user = $user;
         }
-
         return $this;
     }
 
     /**
      * Initialize a session provider
      *
-     * @return  self
+     * @return $this
      */
     private function setupSession()
     {
@@ -210,84 +192,67 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Inject dependencies into request
+     * Initialize notifications to remove them immediately from session
      *
-     * @return self
+     * @return $this
      */
-    private function setupRequest()
+    private function setupNotifications()
     {
-        $this->request = new Request();
-
-        if ($this->user instanceof User) {
-            $this->request->setUser($this->user);
-        }
-
+        Notification::getInstance();
         return $this;
     }
 
     /**
      * Instantiate front controller
      *
-     * @return self
+     * @return $this
      */
     private function setupFrontController()
     {
         $this->frontController = Zend_Controller_Front::getInstance();
-
-        $this->frontController->setRequest($this->request);
-
+        $this->frontController->setRequest($this->getRequest());
         $this->frontController->setControllerDirectory($this->getApplicationDir('/controllers'));
-
         $this->frontController->setParams(
             array(
                 'displayExceptions' => true
             )
         );
-
         return $this;
     }
 
     /**
      * Register helper paths and views for renderer
      *
-     * @return self
+     * @return $this
      */
     private function setupViewRenderer()
     {
+        $view = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
         /** @var \Zend_Controller_Action_Helper_ViewRenderer $view */
-        $view = ActionHelperBroker::getStaticHelper('viewRenderer');
         $view->setView(new View());
-
         $view->view->addHelperPath($this->getApplicationDir('/views/helpers'));
-
         $view->view->setEncoding('UTF-8');
         $view->view->headTitle()->prepend($this->config->get('global', 'project', 'Icinga'));
-
         $view->view->headTitle()->setSeparator(' :: ');
-
         $this->viewRenderer = $view;
-
         return $this;
     }
 
     /**
      * Configure pagination settings
      *
-     * @return self
+     * @return $this
      */
     private function setupPagination()
     {
-
         Zend_Paginator::addScrollingStylePrefixPath(
             'Icinga_Web_Paginator_ScrollingStyle',
             'Icinga/Web/Paginator/ScrollingStyle'
         );
-
         Zend_Paginator::setDefaultScrollingStyle('SlidingWithBorder');
         Zend_View_Helper_PaginationControl::setDefaultViewPartial(
             array('mixedPagination.phtml', 'default')
         );
-
         return $this;
     }
 
@@ -297,7 +262,7 @@ class Web extends ApplicationBootstrap
      */
     protected function detectTimezone()
     {
-        $auth = Manager::getInstance();
+        $auth = Auth::getInstance();
         if (! $auth->isAuthenticated()
             || ($timezone = $auth->getUser()->getPreferences()->getValue('icingaweb', 'timezone')) === null
         ) {
@@ -310,26 +275,30 @@ class Web extends ApplicationBootstrap
     /**
      * Setup internationalization using gettext
      *
-     * Uses the preferred user language or the configured default and system default, respectively.
+     * Uses the preferred user language or the browser suggested language or our default.
      *
-     * @return  self
+     * @return  string                      Detected locale code
+     *
+     * @see     Translator::DEFAULT_LOCALE  For the the default locale code.
      */
     protected function detectLocale()
     {
-        $auth = Manager::getInstance();
-        if (! $auth->isAuthenticated()
-            || ($locale = $auth->getUser()->getPreferences()->getValue('icingaweb', 'language')) === null
-            && isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
+        $auth = Auth::getInstance();
+        if ($auth->isAuthenticated()
+            && ($locale = $auth->getUser()->getPreferences()->getValue('icingaweb', 'language')) !== null
         ) {
-            $locale = Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+            return $locale;
         }
-        return $locale;
+        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+            return Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+        }
+        return Translator::DEFAULT_LOCALE;
     }
 
     /**
      * Setup an autoloader namespace for Icinga\Forms
      *
-     * @return  self
+     * @return $this
      */
     private function setupFormNamespace()
     {
@@ -339,20 +308,4 @@ class Web extends ApplicationBootstrap
         );
         return $this;
     }
-
-    /**
-     * Check cookie support
-     *
-     * @return $this
-     */
-    protected function detectCookieSupport()
-    {
-        if (! Cookie::isSupported()) {
-            echo 'Cookies must be enabled to run this application.';
-            exit(1);
-        }
-
-        return $this;
-    }
 }
-// @codeCoverageIgnoreEnd

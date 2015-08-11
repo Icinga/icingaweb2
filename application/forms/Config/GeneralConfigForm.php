@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Forms\Config;
 
@@ -20,7 +19,8 @@ class GeneralConfigForm extends ConfigForm
     public function init()
     {
         $this->setName('form_config_general');
-        $this->setSubmitLabel(t('Save Changes'));
+        $this->setSubmitLabel($this->translate('Save Changes'));
+        $this->setTitle($this->translate('General Configuration'));
     }
 
     /**
@@ -52,7 +52,7 @@ class GeneralConfigForm extends ConfigForm
         }
 
         if ($this->save()) {
-            Notification::success(t('New configuration has successfully been stored'));
+            Notification::success($this->translate('New configuration has successfully been stored'));
         } else {
             return false;
         }

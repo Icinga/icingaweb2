@@ -1,31 +1,30 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\DataView;
 
-use Countable;
+use IteratorAggregate;
+use Icinga\Data\QueryInterface;
+use Icinga\Data\SortRules;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterMatch;
-use Icinga\Data\Browsable;
 use Icinga\Data\PivotTable;
-use Icinga\Data\Sortable;
 use Icinga\Data\ConnectionInterface;
-use Icinga\Data\Filterable;
 use Icinga\Exception\QueryException;
 use Icinga\Web\Request;
 use Icinga\Web\Url;
+use Icinga\Module\Monitoring\Backend\Ido\Query\IdoQuery;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
 /**
  * A read-only view of an underlying query
  */
-abstract class DataView implements Browsable, Countable, Filterable, Sortable
+abstract class DataView implements QueryInterface, SortRules, IteratorAggregate
 {
     /**
      * The query used to populate the view
      *
-     * @var \Icinga\Data\SimpleQuery
+     * @var IdoQuery
      */
     protected $query;
 
@@ -61,6 +60,26 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
     }
 
     /**
+     * Return a iterator for all rows of the result set
+     *
+     * @return  IdoQuery
+     */
+    public function getIterator()
+    {
+        return $this->getQuery();
+    }
+
+    /**
+     * Return the current position of the result set's iterator
+     *
+     * @return  int
+     */
+    public function getIteratorPosition()
+    {
+        return $this->query->getIteratorPosition();
+    }
+
+    /**
      * Get the query name this data view relies on
      *
      * By default this is this class' name without its namespace
@@ -83,6 +102,7 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
 
     public function dump()
     {
+        $this->order();
         return $this->query->dump();
     }
 
@@ -192,12 +212,15 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
      *
      * @param   string  $xAxisColumn    The column to use for the x axis
      * @param   string  $yAxisColumn    The column to use for the y axis
+     * @param   Filter  $xAxisFilter    The filter to apply on a query for the x axis
+     * @param   Filter  $yAxisFilter    The filter to apply on a query for the y axis
      *
      * @return  PivotTable
      */
-    public function pivot($xAxisColumn, $yAxisColumn)
+    public function pivot($xAxisColumn, $yAxisColumn, Filter $xAxisFilter = null, Filter $yAxisFilter = null)
     {
-        return new PivotTable($this->query, $xAxisColumn, $yAxisColumn);
+        $pivot = new PivotTable($this->query, $xAxisColumn, $yAxisColumn);
+        return $pivot->setXAxisFilter($xAxisFilter)->setYAxisFilter($yAxisFilter);
     }
 
     /**
@@ -242,6 +265,7 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
         $order = (strtoupper($order) === static::SORT_ASC) ? 'ASC' : 'DESC';
 
         foreach ($sortColumns['columns'] as $column) {
+            list($column, $direction) = $this->query->splitOrder($column);
             if (! $this->isValidFilterTarget($column)) {
                 throw new QueryException(
                     mt('monitoring', 'The sort column "%s" is not allowed in "%s".'),
@@ -249,7 +273,7 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
                     get_class($this)
                 );
             }
-            $this->query->order($column, $order);
+            $this->query->order($column, $direction !== null ? $direction : $order);
         }
         $this->isSorted = true;
         return $this;
@@ -354,33 +378,36 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
         return $this;
     }
 
+    /**
+     * @deprecated(EL): Only use DataView::applyFilter() for applying filter because all other functions are missing
+     * column validation. Filter::matchAny() for the IdoQuery (or the DbQuery or the SimpleQuery I didn't have a look)
+     * is required for the filter to work properly.
+     */
     public function setFilter(Filter $filter)
     {
         $this->query->setFilter($filter);
         return $this;
     }
 
+    /**
+     * Get the view's search columns
+     *
+     * @return string[]
+     */
+    public function getSearchColumns()
+    {
+        return array();
+    }
+
+    /**
+     * @deprecated(EL): Only use DataView::applyFilter() for applying filter because all other functions are missing
+     * column validation.
+     */
     public function addFilter(Filter $filter)
     {
         $this->query->addFilter(clone($filter));
         $this->filter = $filter; // TODO: Hmmmm.... and?
         return $this;
-    }
-
-    /**
-     * Paginate data
-     *
-     * @param   int $itemsPerPage   Number of items per page
-     * @param   int $pageNumber     Current page number
-     *
-     * @return  Zend_Paginator
-     */
-    public function paginate($itemsPerPage = null, $pageNumber = null)
-    {
-        if (! $this->isSorted) {
-            $this->order();
-        }
-        return $this->query->paginate($itemsPerPage, $pageNumber);
     }
 
     /**
@@ -390,6 +417,145 @@ abstract class DataView implements Browsable, Countable, Filterable, Sortable
      */
     public function count()
     {
-        return count($this->query);
+        return $this->query->count();
+    }
+
+    /**
+     * Set whether the query should peek ahead for more results
+     *
+     * Enabling this causes the current query limit to be increased by one. The potential extra row being yielded will
+     * be removed from the result set. Note that this only applies when fetching multiple results of limited queries.
+     *
+     * @return  $this
+     */
+    public function peekAhead($state = true)
+    {
+        return $this->query->peekAhead($state);
+    }
+
+    /**
+     * Return whether the query did not yield all available results
+     *
+     * @return  bool
+     */
+    public function hasMore()
+    {
+        return $this->query->hasMore();
+    }
+
+    /**
+     * Return whether this query will or has yielded any result
+     *
+     * @return  bool
+     */
+    public function hasResult()
+    {
+        return $this->query->hasResult();
+    }
+
+    /**
+     * Set a limit count and offset
+     *
+     * @param   int $count  Number of rows to return
+     * @param   int $offset Start returning after this many rows
+     *
+     * @return  self
+     */
+    public function limit($count = null, $offset = null)
+    {
+        $this->query->limit($count, $offset);
+        return $this;
+    }
+
+    /**
+     * Whether a limit is set
+     *
+     * @return bool
+     */
+    public function hasLimit()
+    {
+        return $this->query->hasLimit();
+    }
+
+    /**
+     * Get the limit if any
+     *
+     * @return int|null
+     */
+    public function getLimit()
+    {
+        return $this->query->getLimit();
+    }
+
+    /**
+     * Whether an offset is set
+     *
+     * @return bool
+     */
+    public function hasOffset()
+    {
+        return $this->query->hasOffset();
+    }
+
+    /**
+     * Get the offset if any
+     *
+     * @return int|null
+     */
+    public function getOffset()
+    {
+        return $this->query->getOffset();
+    }
+
+    /**
+     * Retrieve an array containing all rows of the result set
+     *
+     * @return  array
+     */
+    public function fetchAll()
+    {
+        return $this->getQuery()->fetchAll();
+    }
+
+    /**
+     * Fetch the first row of the result set
+     *
+     * @return  mixed
+     */
+    public function fetchRow()
+    {
+        return $this->getQuery()->fetchRow();
+    }
+
+    /**
+     * Fetch the first column of all rows of the result set as an array
+     *
+     * @return  array
+     */
+    public function fetchColumn()
+    {
+        return $this->getQuery()->fetchColumn();
+    }
+
+    /**
+     * Fetch the first column of the first row of the result set
+     *
+     * @return  string
+     */
+    public function fetchOne()
+    {
+        return $this->getQuery()->fetchOne();
+    }
+
+    /**
+     * Fetch all rows of the result set as an array of key-value pairs
+     *
+     * The first column is the key, the second column is the value.
+     *
+     * @return  array
+     */
+    public function fetchPairs()
+    {
+        return $this->getQuery()->fetchPairs();
     }
 }

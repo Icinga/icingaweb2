@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Widget\Dashboard;
 
@@ -79,7 +78,7 @@ class Pane extends UserWidget
      *
      * @param string $title     The new title to use for this pane
      *
-     * @return self
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -199,7 +198,7 @@ class Pane extends UserWidget
      *                                                  (if a new dashlet will be created)
      * @param string|null $url                          An Url to be used when dashlet is a string
      *
-     * @return self
+     * @return $this
      * @throws \Icinga\Exception\ConfigurationError
      */
     public function addDashlet($dashlet, $url = null)

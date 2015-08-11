@@ -1,11 +1,10 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Forms\Config\Resource;
 
+use Zend_Validate_Callback;
 use Icinga\Web\Form;
-use Icinga\Web\Form\Validator\ReadablePathValidator;
 
 /**
  * Form class for adding/modifying file resources
@@ -30,8 +29,8 @@ class FileResourceForm extends Form
             'name',
             array(
                 'required'      => true,
-                'label'         => t('Resource Name'),
-                'description'   => t('The unique name of this resource')
+                'label'         => $this->translate('Resource Name'),
+                'description'   => $this->translate('The unique name of this resource')
             )
         );
         $this->addElement(
@@ -39,18 +38,27 @@ class FileResourceForm extends Form
             'filename',
             array(
                 'required'      => true,
-                'label'         => t('Filepath'),
-                'description'   => t('The filename to fetch information from'),
-                'validators'    => array(new ReadablePathValidator())
+                'label'         => $this->translate('Filepath'),
+                'description'   => $this->translate('The filename to fetch information from'),
+                'validators'    => array('ReadablePathValidator')
             )
+        );
+        $callbackValidator = new Zend_Validate_Callback(function ($value) {
+            return @preg_match($value, '') !== false;
+        });
+        $callbackValidator->setMessage(
+            $this->translate('"%value%" is not a valid regular expression.'),
+            Zend_Validate_Callback::INVALID_VALUE
         );
         $this->addElement(
             'text',
             'fields',
             array(
                 'required'      => true,
-                'label'         => t('Pattern'),
-                'description'   => t('The regular expression by which to identify columns')
+                'label'         => $this->translate('Pattern'),
+                'description'   => $this->translate('The pattern by which to identify columns.'),
+                'requirement'   => $this->translate('The column pattern must be a valid regular expression.'),
+                'validators'    => array($callbackValidator)
             )
         );
 

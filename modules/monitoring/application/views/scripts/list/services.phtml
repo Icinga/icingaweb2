@@ -1,43 +1,30 @@
 <?php
-$helper = $this->getHelper('MonitoringState');
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Object\Service;
 
 $selfUrl = 'monitoring/list/services';
+$services->peekAhead($this->compact);
 
-if (!$this->compact): ?>
-<div class="controls">
-<?= $this->tabs ?>
-<div style="margin: 1em;" class="dontprint">
-<?= $this->render('list/components/selectioninfo.phtml') ?>
-<?= $this->render('list/components/servicesummary.phtml') ?>
-<div style="float: right">
-<?= $this->translate('Sort by') ?> <?= $this->sortControl ?>
+if (! $this->compact): ?>
+<div class="controls separated">
+  <?= $this->tabs ?>
+  <div class="dontprint">
+    <?= $this->render('list/components/selectioninfo.phtml') ?>
+    <?= $this->render('list/components/servicesummary.phtml') ?>
+  </div>
+  <?= $this->sortBox ?>
+  <?= $this->limiter ?>
+  <?= $this->paginator ?>
+  <?= $this->filterEditor ?>
 </div>
-</div>
-<?php if ($this->limit === 0): ?>
-<?= $this->widget('limiter') ?>
-<?php else: ?>
-<?= $this->widget('limiter')->setCurrentPageCount($this->services->count()) ?>
-<?= $this->paginationControl($services, null, null, array('preserve' => $this->preserve)) ?>
 <?php endif ?>
-</div>
-
 <div class="content">
-<?= $this->filterEditor ?>
-<?php else: ?>
-
-<div class="content">
-<?php endif ?>
-<table data-base-target="_next"
+<table data-base-target="<?= isset($baseTarget) ? $baseTarget : '_next'; ?>"
     class="action multiselect <?php if ($this->compact): ?> compact<?php endif ?>" style="table-layout: auto;"
     data-icinga-multiselect-url="<?= $this->href("monitoring/services/show") ?>"
     data-icinga-multiselect-data="service,host">
   <tbody>
-<?php
-
-if (count($services) === 0) {
-    echo mt('monitoring', 'No services matching the filter');
-}
-foreach ($services as $service):
+<?php foreach ($services as $service):
     $serviceLink = $this->href(
       'monitoring/service/show',
       array(
@@ -51,71 +38,64 @@ foreach ($services as $service):
         'host' => $service->host_name,
       )
     );
-    $serviceStateName = strtolower($this->util()->getServiceStateName($service->service_state));
+    $serviceStateName = Service::getStateText($service->service_state);
 ?>
     <tr class="state <?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
-      <td class="state" title="<?= $helper->getStateTitle($service, 'service'); ?>">
-        <strong><?= $this->translate(strtoupper($helper->monitoringState($service, 'service'))) ?></strong><br />
-
-            <?php if (!$this->compact): ?><?= $this->prefixedTimeSince($service->service_last_state_change); ?><?php else: ?><?= $this->timeSince($service->service_last_state_change); ?><?php endif ?>
-            <?php if ($service->service_state > 0 && (int) $service->service_state_type === 0): ?>
-              <br />
-              <strong>Soft <?= $service->service_attempt ?></strong>
-            <?php endif ?>
+      <td class="state">
+        <strong><?= Service::getStateText($service->service_state, true) ?></strong>
+        <?php if ((int) $service->service_state !== 99): ?>
+          <br />
+          <?= $this->timeSince($service->service_last_state_change, $this->compact) ?>
+          <?php if ((int) $service->service_state > 0 && (int) $service->service_state_type === 0): ?>
+            <br />
+            <strong>Soft <?= $service->service_attempt ?></strong>
+          <?php endif ?>
+        <?php endif ?>
       </td>
 
       <td>
-        <?= $this->perfdata($service->service_perfdata, true, true) ?>
-
-        <?php if (!$service->service_handled && $service->service_state > 0): ?>
-        <?= $this->icon('attention-alt', $this->translate('Unhandled')) ?>
-        <?php endif ?>
-
-        <?php if ($service->service_acknowledged && !$service->service_in_downtime): ?>
-        <?= $this->icon('ok', $this->translate('Acknowledged') . (
-            $service->service_last_ack ? ': ' . $service->service_last_ack : ''
-        )) ?>
-        <?php endif ?>
-
-        <?php if ($service->service_is_flapping): ?>
-        <?= $this->icon('flapping', $this->translate('Flapping')) ?>
-        <?php endif ?>
-
-        <?php if (!$service->service_notifications_enabled): ?>
-        <?= $this->icon('bell-off-empty', $this->translate('Notifications Disabled')) ?>
-        <?php endif ?>
-
-        <?php if ($service->service_in_downtime): ?>
-        <?= $this->icon('plug', $this->translate('In Downtime')) ?>
-        <?php endif ?>
-
-        <?php if (isset($service->service_last_comment) && $service->service_last_comment !== null): ?>
-        <?= $this->icon('comment', $this->translate('Comment: ') . $service->service_last_comment) ?>
-        <?php endif ?>
-
-        <?php if (!$service->service_active_checks_enabled): ?>
-          <?php if (!$service->service_passive_checks_enabled): ?>
-            <?= $this->icon('eye-off', $this->translate('Active And Passive Checks Disabled')) ?>
-          <?php else: ?>
-            <?= $this->icon('eye-off', $this->translate('Active Checks Disabled')) ?>
-          <?php endif ?>
-        <?php endif ?>
-
-      <?php if ($service->service_icon_image && ! preg_match('/[\'"]/', $service->service_icon_image)): ?>
-      <?= $this->icon($this->resolveMacros($service->service_icon_image, $service)) ?>
-      <?php endif ?>
-<a href="<?= $serviceLink ?>"><?= $service->service_display_name ?></a><?php if ($this->showHost): ?> on <a href="<?= $hostLink ?>"><?= $service->host_name; ?>
-<?php if ($service->host_state != 0): ?>
- (<?= ucfirst($helper->monitoringState($service, 'host')); ?>)
-<?php endif ?>
-</a><?php endif ?><br />
-        <p class="pluginoutput"><?= $this->escape(substr(strip_tags($service->service_output), 0, 10000)); ?></p>
+        <?= $this->iconImage()->service($service) ?>
+        <span class="objectflags"><?= implode(' ', $this->serviceFlags($service)) ?></span>
+<?php if ($this->showHost): ?><?= $this->qlink(
+          $service->host_display_name . ($service->host_state != 0 ? ' (' . Host::getStateText($service->host_state, true) . ')' : ''),
+          $hostLink,
+          null,
+          array('title' => sprintf($this->translate('Show detailed information for host %s'), $service->host_display_name))
+        ) ?>: 
+<?php endif ?><?= $this->qlink(
+    $service->service_display_name,
+    $serviceLink,
+    null,
+    array(
+        'title' => sprintf(
+            $this->translate('Show detailed information for service %s on host %s'),
+            $service->service_display_name,
+            $service->host_display_name
+        ),
+        'class' => 'rowaction'
+    )
+) ?><br />
+        <div class="sparkline-box"><?= $this->perfdata($service->service_perfdata, true, 5) ?> </div>
+        <p class="pluginoutput"><?= $this->pluginOutput($this->ellipsis($service->service_output, 10000), true) ?></p>
       </td>
-<?php foreach($this->extraColumns as $col): ?>
+<?php foreach($this->addColumns as $col): ?>
       <td><?= $this->escape($service->$col) ?></td>
 <?php endforeach ?>
     </tr>
 <?php endforeach ?>
   </tbody>
 </table>
+<?php if (! $services->hasResult()): ?>
+  <?= $this->translate('No services found matching the filter'); ?>
+<?php elseif ($services->hasMore()): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $this->url()->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right show-more'
+    )
+  ); ?>
+<?php endif ?>
 </div>

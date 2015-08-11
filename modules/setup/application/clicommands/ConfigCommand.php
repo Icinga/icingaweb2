@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Setup\Clicommands;
 
@@ -12,56 +11,78 @@ use Icinga\Module\Setup\Webserver;
 class ConfigCommand extends Command
 {
     /**
-     * Create the configuration directory
-     *
-     * This command creates the configuration directory for Icinga Web 2. The `group' argument
-     * is mandatory and should be the groupname of the user your web server is running as.
+     * Create Icinga Web 2's configuration directory
      *
      * USAGE:
      *
-     *   icingacli setup config createDirectory <group> [options]
+     *  icingacli setup config directory [options]
      *
      * OPTIONS:
      *
-     *   --mode  The access mode to use. Default is: 2770
-     *   --path  The path to the configuration directory. If omitted the default is used.
+     *  --config=<directory>    Path to Icinga Web 2's configuration files [/etc/icingaweb2]
+     *
+     *  --mode=<mode>           The access mode to use [2770]
+     *
+     *  --group=<group>         Owner group for the configuration directory [icingaweb2]
      *
      * EXAMPLES:
      *
-     *   icingacli setup config createDirectory apache
-     *   icingacli setup config createDirectory apache --mode 2775
-     *   icingacli setup config createDirectory apache --path /some/path
+     *  icingacli setup config directory
+     *
+     *  icingacli setup config directory --mode=2775 --config=/opt/icingaweb2/etc
      */
-    public function createDirectoryAction()
+    public function directoryAction()
     {
-        $group = $this->params->getStandalone();
-        if ($group === null) {
-            $this->fail($this->translate('The `group\' argument is mandatory.'));
-            return false;
+        $configDir = trim($this->params->get('config', $this->app->getConfigDir()));
+        if (strlen($configDir) === 0) {
+            $this->fail($this->translate(
+                'The argument --config expects a path to Icinga Web 2\'s configuration files'
+            ));
         }
 
-        $path = $this->params->get('path', $this->app->getConfigDir());
-        if (file_exists($path)) {
-            printf($this->translate("Configuration directory already exists at: %s\n"), $path);
-            return true;
+        $group = trim($this->params->get('group', 'icingaweb2'));
+        if (strlen($group) === 0) {
+            $this->fail($this->translate(
+                'The argument --group expects a owner group for the configuration directory'
+            ));
         }
 
-        $mode = octdec($this->params->get('mode', '2770'));
-        if (false === mkdir($path)) {
-            $this->fail(sprintf($this->translate('Unable to create path: %s'), $path));
-            return false;
+        $mode = trim($this->params->get('mode', '2770'));
+        if (strlen($mode) === 0) {
+            $this->fail($this->translate(
+                'The argument --mode expects an access mode for the configuration directory'
+            ));
         }
 
-        $old = umask(0); // Prevent $mode from being mangled by the system's umask ($old)
-        chmod($path, $mode);
-        umask($old);
-
-        if (chgrp($path, $group) === false) {
-            $this->fail(sprintf($this->translate('Unable to change the group of "%s" to "%s".'), $path, $group));
-            return false;
+        if (! file_exists($configDir) && ! @mkdir($configDir)) {
+            $e = error_get_last();
+            $this->fail(sprintf(
+                $this->translate('Can\'t create configuration directory %s: %s'),
+                $configDir,
+                $e['message']
+            ));
         }
 
-        printf($this->translate("Successfully created configuration directory at: %s\n"), $path);
+        if (! @chmod($configDir, octdec($mode))) {
+            $e = error_get_last();
+            $this->fail(sprintf(
+                $this->translate('Can\'t change the mode of the configuration directory to %s: %s'),
+                $mode,
+                $e['message']
+            ));
+        }
+
+        if (! @chgrp($configDir, $group)) {
+            $e = error_get_last();
+            $this->fail(sprintf(
+                $this->translate('Can\'t change the group of %s to %s: %s'),
+                $configDir,
+                $group,
+                $e['message']
+            ));
+        }
+
+        printf($this->translate('Successfully created configuration directory %s') . PHP_EOL, $configDir);
     }
 
     /**
@@ -73,24 +94,23 @@ class ConfigCommand extends Command
      *
      * OPTIONS:
      *
-     *  --path=<urlpath>                    The URL path to Icinga Web 2 [/icingaweb]
+     *  --path=<urlpath>                    The URL path to Icinga Web 2 [/icingaweb2]
      *
-     *  --root/--document-root=<directory>  The directory from which the webserver will serve files [./public]
+     *  --root|--document-root=<directory>  The directory from which the webserver will serve files [/path/to/icingaweb2/public]
      *
-     *  --config=<directory>                Path to Icinga Web 2's configuration files [/etc/icingaweb]
+     *  --config=<directory>                Path to Icinga Web 2's configuration files [/etc/icingaweb2]
      *
      *  --file=<filename>                   Write configuration to file [stdout]
      *
-     *
      * EXAMPLES:
      *
-     * icingacli setup config webserver apache
+     *  icingacli setup config webserver apache
      *
-     * icingacli setup config webserver apache --path /icingaweb --document-root /usr/share/icingaweb/public --config=/etc/icingaweb
+     *  icingacli setup config webserver apache --path=/icingaweb2 --document-root=/usr/share/icingaweb2/public --config=/etc/icingaweb2
      *
-     * icingacli setup config webserver apache --file /etc/apache2/conf.d/icingaweb.conf
+     *  icingacli setup config webserver apache --file=/etc/apache2/conf.d/icingaweb2.conf
      *
-     * icingacli setup config webserver nginx
+     *  icingacli setup config webserver nginx
      */
     public function webserverAction()
     {
@@ -102,18 +122,20 @@ class ConfigCommand extends Command
         } catch (ProgrammingError $e) {
             $this->fail($this->translate('Unknown type') . ': ' . $type);
         }
-        $urlPath = $this->params->get('path', $webserver->getUrlPath());
-        if (! is_string($urlPath) || strlen(trim($urlPath)) === 0) {
+        $urlPath = trim($this->params->get('path', $webserver->getUrlPath()));
+        if (strlen($urlPath) === 0) {
             $this->fail($this->translate('The argument --path expects a URL path'));
         }
-        $documentRoot = $this->params->get('root', $this->params->get('document-root', $webserver->getDocumentRoot()));
-        if (! is_string($documentRoot) || strlen(trim($documentRoot)) === 0) {
+        $documentRoot = trim(
+            $this->params->get('root', $this->params->get('document-root', $webserver->getDocumentRoot()))
+        );
+        if (strlen($documentRoot) === 0) {
             $this->fail($this->translate(
                 'The argument --root/--document-root expects a directory from which the webserver will serve files'
             ));
         }
-        $configDir = $this->params->get('config', $webserver->getConfigDir());
-        if (! is_string($documentRoot) || strlen(trim($documentRoot)) === 0) {
+        $configDir = trim($this->params->get('config', $webserver->getConfigDir()));
+        if (strlen($configDir) === 0) {
             $this->fail($this->translate(
                 'The argument --config expects a path to Icinga Web 2\'s configuration files'
             ));

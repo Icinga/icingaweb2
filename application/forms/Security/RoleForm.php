@@ -1,11 +1,11 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Forms\Security;
 
 use InvalidArgumentException;
 use LogicException;
+use Zend_Form_Element;
 use Icinga\Application\Icinga;
 use Icinga\Forms\ConfigForm;
 use Icinga\Util\String;
@@ -20,7 +20,35 @@ class RoleForm extends ConfigForm
      *
      * @var array
      */
-    protected $providedPermissions = array();
+    protected $providedPermissions = array(
+        '*'                                             => 'Allow everything (*)',
+        'config/*'                                      => 'Allow config access (config/*)',
+/*
+        // [tg] seems excessive for me, hidden for rc1, tbd
+        'config/application/*'                          => 'config/application/*',
+        'config/application/general'                    => 'config/application/general',
+        'config/application/resources'                  => 'config/application/resources',
+        'config/application/userbackend'                => 'config/application/userbackend',
+        'config/application/usergroupbackend'           => 'config/application/usergroupbackend',
+        'config/authentication/*'                       => 'config/authentication/*',
+        'config/authentication/users/*'                 => 'config/authentication/users/*',
+        'config/authentication/users/show'              => 'config/authentication/users/show',
+        'config/authentication/users/add'               => 'config/authentication/users/add',
+        'config/authentication/users/edit'              => 'config/authentication/users/edit',
+        'config/authentication/users/remove'            => 'config/authentication/users/remove',
+        'config/authentication/groups/*'                => 'config/authentication/groups/*',
+        'config/authentication/groups/show'             => 'config/authentication/groups/show',
+        'config/authentication/groups/add'              => 'config/authentication/groups/add',
+        'config/authentication/groups/edit'             => 'config/authentication/groups/edit',
+        'config/authentication/groups/remove'           => 'config/authentication/groups/remove',
+        'config/authentication/roles/*'                 => 'config/authentication/roles/*',
+        'config/authentication/roles/show'              => 'config/authentication/roles/show',
+        'config/authentication/roles/add'               => 'config/authentication/roles/add',
+        'config/authentication/roles/edit'              => 'config/authentication/roles/edit',
+        'config/authentication/roles/remove'            => 'config/authentication/roles/remove',
+        'config/modules'                                => 'config/modules'
+*/
+    );
 
     /**
      * Provided restrictions by currently loaded modules
@@ -30,26 +58,46 @@ class RoleForm extends ConfigForm
     protected $providedRestrictions = array();
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::init() For the method documentation.
+     * {@inheritdoc}
      */
     public function init()
     {
-        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
+        $helper = new Zend_Form_Element('bogus');
+        $mm = Icinga::app()->getModuleManager();
+        foreach ($mm->listInstalledModules() as $moduleName) {
+            $modulePermission = $mm::MODULE_PERMISSION_NS . $moduleName;
+            $this->providedPermissions[$modulePermission] = sprintf(
+                $this->translate('Allow access to module %s') . ' (%s)',
+                $moduleName,
+                $modulePermission
+            );
+
+            $module = $mm->getModule($moduleName, false);
             foreach ($module->getProvidedPermissions() as $permission) {
                 /** @var object $permission */
-                $this->providedPermissions[$permission->name] = $permission->name . ': ' . $permission->description;
+                $this->providedPermissions[$permission->name] = $permission->description
+                    . ' (' . $permission->name . ')';
             }
             foreach ($module->getProvidedRestrictions() as $restriction) {
                 /** @var object $restriction */
-                $this->providedRestrictions[$restriction->name] = $restriction->description;
+                // Zend only permits alphanumerics, the underscore, the circumflex and any ASCII character in range
+                // \x7f to \xff (127 to 255)
+                $name = $helper->filterName($restriction->name);
+                while (isset($this->providedRestrictions[$name])) {
+                    // Because Zend_Form_Element::filterName() replaces any not permitted character with the empty
+                    // string we may have duplicate names, e.g. 're/striction' and 'restriction'
+                    $name .= '_';
+                }
+                $this->providedRestrictions[$name] = array(
+                    'description' => $restriction->description,
+                    'name'        => $restriction->name
+                );
             }
         }
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::createElements() For the method documentation.
+     * {@inheritdoc}
      */
     public function createElements(array $formData = array())
     {
@@ -59,8 +107,8 @@ class RoleForm extends ConfigForm
                 'name',
                 array(
                     'required'      => true,
-                    'label'         => t('Role Name'),
-                    'description'   => t('The name of the role'),
+                    'label'         => $this->translate('Role Name'),
+                    'description'   => $this->translate('The name of the role'),
                     'ignore'        => true
                 ),
             ),
@@ -68,35 +116,38 @@ class RoleForm extends ConfigForm
                 'textarea',
                 'users',
                 array(
-                    'label'         => t('Users'),
-                    'description'   => t('Comma-separated list of users that are assigned to the role')
+                    'label'         => $this->translate('Users'),
+                    'description'   => $this->translate('Comma-separated list of users that are assigned to the role')
                 ),
             ),
             array(
                 'textarea',
                 'groups',
                 array(
-                    'label'         => t('Groups'),
-                    'description'   => t('Comma-separated list of groups that are assigned to the role')
+                    'label'         => $this->translate('Groups'),
+                    'description'   => $this->translate('Comma-separated list of groups that are assigned to the role')
                 ),
             ),
             array(
                 'multiselect',
                 'permissions',
                 array(
-                    'label'         => t('Permissions Set'),
-                    'description'   => t('The permissions to grant. You may select more than one permission'),
-                    'multiOptions'  => $this->providedPermissions
+                    'label'         => $this->translate('Permissions Set'),
+                    'description'   => $this->translate(
+                        'The permissions to grant. You may select more than one permission'
+                    ),
+                    'multiOptions'  => $this->providedPermissions,
+                    'class'         => 'grant-permissions'
                 )
             )
         ));
-        foreach ($this->providedRestrictions as $name => $description) {
+        foreach ($this->providedRestrictions as $name => $spec) {
             $this->addElement(
                 'text',
                 $name,
                 array(
-                    'label'         => $name,
-                    'description'   => $description
+                    'label'         => $spec['name'],
+                    'description'   => $spec['description']
                 )
             );
         }
@@ -120,7 +171,7 @@ class RoleForm extends ConfigForm
         }
         if (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(sprintf(
-                t('Can\'t load role \'%s\'. Role does not exist'),
+                $this->translate('Can\'t load role \'%s\'. Role does not exist'),
                 $name
             ));
         }
@@ -129,6 +180,15 @@ class RoleForm extends ConfigForm
             ? String::trimSplit($role['permissions'])
             : null;
         $role['name'] = $name;
+        $restrictions = array();
+        foreach ($this->providedRestrictions as $name => $spec) {
+            if (isset($role[$spec['name']])) {
+                // Translate restriction names to filtered element names
+                $restrictions[$name] = $role[$spec['name']];
+                unset($role[$spec['name']]);
+            }
+        }
+        $role = array_merge($role, $restrictions);
         $this->populate($role);
         return $this;
     }
@@ -152,7 +212,7 @@ class RoleForm extends ConfigForm
         }
         if ($this->config->hasSection($name)) {
             throw new InvalidArgumentException(sprintf(
-                t('Can\'t add role \'%s\'. Role already exists'),
+                $this->translate('Can\'t add role \'%s\'. Role already exists'),
                 $name
             ));
         }
@@ -178,7 +238,7 @@ class RoleForm extends ConfigForm
         }
         if (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException(sprintf(
-                t('Can\'t remove role \'%s\'. Role does not exist'),
+                $this->translate('Can\'t remove role \'%s\'. Role does not exist'),
                 $name
             ));
         }
@@ -211,7 +271,7 @@ class RoleForm extends ConfigForm
         } else {
             if (! $this->config->hasSection($name)) {
                 throw new InvalidArgumentException(sprintf(
-                    t('Can\'t update role \'%s\'. Role does not exist'),
+                    $this->translate('Can\'t update role \'%s\'. Role does not exist'),
                     $name
                 ));
             }
@@ -221,8 +281,7 @@ class RoleForm extends ConfigForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Zend_Form::getValues() For the method documentation.
+     * {@inheritdoc}
      */
     public function getValues($suppressArrayNotation = false)
     {
@@ -230,6 +289,15 @@ class RoleForm extends ConfigForm
         if (isset($values['permissions'])) {
             $values['permissions'] = implode(', ', $values['permissions']);
         }
+        $restrictions = array();
+        foreach ($this->providedRestrictions as $name => $spec) {
+            if (isset($values[$name])) {
+                // Translate filtered element names to restriction names
+                $restrictions[$spec['name']] = $values[$name];
+                unset($values[$name]);
+            }
+        }
+        $values = array_merge($values, $restrictions);
         return $values;
     }
 }

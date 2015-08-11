@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 use Icinga\Web\MenuRenderer;
 use Icinga\Web\Controller\ActionController;
@@ -24,25 +23,5 @@ class LayoutController extends ActionController
         $url = Url::fromRequest();
         $menu = new MenuRenderer(Menu::load(), $url->getRelativeUrl());
         $this->view->menuRenderer = $menu->useCustomRenderer();
-    }
-
-    /**
-     * Render the top bar
-     */
-    public function topbarAction()
-    {
-        $topbarHtmlParts = array();
-
-        /** @var Hook\TopBarHook $hook */
-        $hook = null;
-
-        foreach (Hook::all('TopBar') as $hook) {
-            $topbarHtmlParts[] = $hook->getHtml($this->getRequest());
-        }
-
-        $this->view->topbarHtmlParts = $topbarHtmlParts;
-
-
-        $this->renderScript('parts/topbar.phtml');
     }
 }

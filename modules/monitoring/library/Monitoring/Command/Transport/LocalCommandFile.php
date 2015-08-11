@@ -1,15 +1,15 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Command\Transport;
 
 use Exception;
-use LogicException;
+use RuntimeException;
 use Icinga\Application\Logger;
-use Icinga\Module\Monitoring\Command\Exception\TransportException;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
 use Icinga\Module\Monitoring\Command\Renderer\IcingaCommandFileCommandRenderer;
+use Icinga\Module\Monitoring\Exception\CommandTransportException;
 use Icinga\Util\File;
 
 /**
@@ -56,7 +56,7 @@ class LocalCommandFile implements CommandTransportInterface
      *
      * @param   string $path
      *
-     * @return  self
+     * @return  $this
      */
     public function setPath($path)
     {
@@ -79,7 +79,7 @@ class LocalCommandFile implements CommandTransportInterface
      *
      * @param   string $openMode
      *
-     * @return  self
+     * @return  $this
      */
     public function setOpenMode($openMode)
     {
@@ -103,13 +103,15 @@ class LocalCommandFile implements CommandTransportInterface
      * @param   IcingaCommand   $command
      * @param   int|null        $now
      *
-     * @throws  LogicException
-     * @throws  TransportException
+     * @throws  ConfigurationError
+     * @throws  CommandTransportException
      */
     public function send(IcingaCommand $command, $now = null)
     {
         if (! isset($this->path)) {
-            throw new LogicException('Can\'t send external Icinga Command. Path to the local command file is missing');
+            throw new ConfigurationError(
+                'Can\'t send external Icinga Command. Path to the local command file is missing'
+            );
         }
         $commandString = $this->renderer->render($command, $now);
         Logger::debug(
@@ -120,13 +122,16 @@ class LocalCommandFile implements CommandTransportInterface
         try {
             $file = new File($this->path, $this->openMode);
             $file->fwrite($commandString . "\n");
-            $file->fflush();
         } catch (Exception $e) {
-            throw new TransportException(
-                'Can\'t send external Icinga command "%s" to the local command file "%s": %s',
-                $commandString,
+            $message = $e->getMessage();
+            if ($e instanceof RuntimeException && ($pos = strrpos($message, ':')) !== false) {
+                // Assume RuntimeException thrown by SplFileObject in the format: __METHOD__ . "({$filename}): Message"
+                $message = substr($message, $pos + 1);
+            }
+            throw new CommandTransportException(
+                'Can\'t send external Icinga command to the local command file "%s": %s',
                 $this->path,
-                $e
+                $message
             );
         }
     }

@@ -1,26 +1,18 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Data;
 
 use Iterator;
-use Countable;
 use ArrayAccess;
-use LogicException;
+use Icinga\Data\DataArray\ArrayDatasource;
+use Icinga\Exception\ProgrammingError;
 
 /**
  * Container for configuration values
  */
-class ConfigObject implements Countable, Iterator, ArrayAccess
+class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
 {
-    /**
-     * This config's data
-     *
-     * @var array
-     */
-    protected $data;
-
     /**
      * Create a new config
      *
@@ -28,15 +20,14 @@ class ConfigObject implements Countable, Iterator, ArrayAccess
      */
     public function __construct(array $data = array())
     {
-        $this->data = array();
-
-        foreach ($data as $key => $value) {
+        // Convert all embedded arrays to ConfigObjects as well
+        foreach ($data as & $value) {
             if (is_array($value)) {
-                $this->data[$key] = new static($value);
-            } else {
-                $this->data[$key] = $value;
+                $value = new static($value);
             }
         }
+
+        parent::__construct($data);
     }
 
     /**
@@ -54,16 +45,6 @@ class ConfigObject implements Countable, Iterator, ArrayAccess
         }
 
         $this->data = $array;
-    }
-
-    /**
-     * Return the count of available sections and properties
-     *
-     * @return  int
-     */
-    public function count()
-    {
-        return count($this->data);
     }
 
     /**
@@ -192,13 +173,15 @@ class ConfigObject implements Countable, Iterator, ArrayAccess
     /**
      * Add a new property or section
      *
-     * @param   string  $key    The name of the new property or section
-     * @param   mixed   $value  The value to set for the new property or section
+     * @param   string  $key        The name of the new property or section
+     * @param   mixed   $value      The value to set for the new property or section
+     *
+     * @throws  ProgrammingError    If the key is null
      */
     public function offsetSet($key, $value)
     {
         if ($key === null) {
-            throw new LogicException('Appending values without an explicit key is not supported');
+            throw new ProgrammingError('Appending values without an explicit key is not supported');
         }
 
         $this->$key = $value;
@@ -273,9 +256,9 @@ class ConfigObject implements Countable, Iterator, ArrayAccess
     /**
      * Merge the given data with this config
      *
-     * @param   array|Config    $data   An array or a config
+     * @param   array|ConfigObject $data An array or a config
      *
-     * @return  self
+     * @return  $this
      */
     public function merge($data)
     {

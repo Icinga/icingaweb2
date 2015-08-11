@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring;
 
@@ -9,9 +8,7 @@ use Icinga\Web\Wizard;
 use Icinga\Web\Request;
 use Icinga\Module\Setup\Setup;
 use Icinga\Module\Setup\SetupWizard;
-use Icinga\Module\Setup\Requirements;
-use Icinga\Module\Setup\Utils\MakeDirStep;
-use Icinga\Module\Setup\Utils\EnableModuleStep;
+use Icinga\Module\Setup\RequirementSet;
 use Icinga\Module\Setup\Forms\SummaryPage;
 use Icinga\Module\Monitoring\Forms\Setup\WelcomePage;
 use Icinga\Module\Monitoring\Forms\Setup\BackendPage;
@@ -19,6 +16,8 @@ use Icinga\Module\Monitoring\Forms\Setup\InstancePage;
 use Icinga\Module\Monitoring\Forms\Setup\SecurityPage;
 use Icinga\Module\Monitoring\Forms\Setup\IdoResourcePage;
 use Icinga\Module\Monitoring\Forms\Setup\LivestatusResourcePage;
+use Icinga\Module\Setup\Requirement\ClassRequirement;
+use Icinga\Module\Setup\Requirement\PhpModuleRequirement;
 
 /**
  * Monitoring Module Setup Wizard
@@ -26,7 +25,7 @@ use Icinga\Module\Monitoring\Forms\Setup\LivestatusResourcePage;
 class MonitoringWizard extends Wizard implements SetupWizard
 {
     /**
-     * @see Wizard::init()
+     * Register all pages for this wizard
      */
     public function init()
     {
@@ -36,35 +35,50 @@ class MonitoringWizard extends Wizard implements SetupWizard
         $this->addPage(new LivestatusResourcePage());
         $this->addPage(new InstancePage());
         $this->addPage(new SecurityPage());
-        $this->addPage(new SummaryPage());
+        $this->addPage(new SummaryPage(array('name' => 'setup_monitoring_summary')));
     }
 
     /**
-     * @see Wizard::setupPage()
+     * Setup the given page that is either going to be displayed or validated
+     *
+     * @param   Form        $page       The page to setup
+     * @param   Request     $request    The current request
      */
     public function setupPage(Form $page, Request $request)
     {
         if ($page->getName() === 'setup_requirements') {
             $page->setRequirements($this->getRequirements());
-        } elseif ($page->getName() === 'setup_summary') {
+        } elseif ($page->getName() === 'setup_monitoring_summary') {
             $page->setSummary($this->getSetup()->getSummary());
             $page->setSubjectTitle(mt('monitoring', 'the monitoring module', 'setup.summary.subject'));
         } elseif (
             $this->getDirection() === static::FORWARD
             && ($page->getName() === 'setup_monitoring_ido' || $page->getName() === 'setup_monitoring_livestatus')
         ) {
-            if ((($dbResourceData = $this->getPageData('setup_db_resource')) !== null
-                 && $dbResourceData['name'] === $request->getPost('name'))
-                || (($ldapResourceData = $this->getPageData('setup_ldap_resource')) !== null
-                    && $ldapResourceData['name'] === $request->getPost('name'))
+            if (
+                (($authDbResourceData = $this->getPageData('setup_auth_db_resource')) !== null
+                 && $authDbResourceData['name'] === $request->getPost('name'))
+                || (($configDbResourceData = $this->getPageData('setup_config_db_resource')) !== null
+                    && $configDbResourceData['name'] === $request->getPost('name'))
+                    || (($ldapResourceData = $this->getPageData('setup_ldap_resource')) !== null
+                        && $ldapResourceData['name'] === $request->getPost('name'))
             ) {
-                $page->addError(mt('monitoring', 'The given resource name is already in use.'));
+                $page->error(mt('monitoring', 'The given resource name is already in use.'));
             }
         }
     }
 
     /**
-     * @see Wizard::getNewPage()
+     * Return the new page to set as current page
+     *
+     * {@inheritdoc} Runs additional checks related to some registered pages.
+     *
+     * @param   string  $requestedPage      The name of the requested page
+     * @param   Form    $originPage         The origin page
+     *
+     * @return  Form                        The new page
+     *
+     * @throws  InvalidArgumentException    In case the requested page does not exist or is not permitted yet
      */
     protected function getNewPage($requestedPage, Form $originPage)
     {
@@ -78,27 +92,13 @@ class MonitoringWizard extends Wizard implements SetupWizard
             $skip = $backendData['type'] !== 'livestatus';
         }
 
-        if ($skip) {
-            if ($this->hasPageData($newPage->getName())) {
-                $pageData = & $this->getPageData();
-                unset($pageData[$newPage->getName()]);
-            }
-
-            $pages = $this->getPages();
-            if ($this->getDirection() === static::FORWARD) {
-                $nextPage = $pages[array_search($newPage, $pages, true) + 1];
-                $newPage = $this->getNewPage($nextPage->getName(), $newPage);
-            } else { // $this->getDirection() === static::BACKWARD
-                $previousPage = $pages[array_search($newPage, $pages, true) - 1];
-                $newPage = $this->getNewPage($previousPage->getName(), $newPage);
-            }
-        }
-
-        return $newPage;
+        return $skip ? $this->skipPage($newPage) : $newPage;
     }
 
     /**
-     * @see Wizard::addButtons()
+     * Add buttons to the given page based on its position in the page-chain
+     *
+     * @param   Form    $page   The page to add the buttons to
      */
     protected function addButtons(Form $page)
     {
@@ -114,17 +114,30 @@ class MonitoringWizard extends Wizard implements SetupWizard
                 mt('monitoring', 'Setup the monitoring module for Icinga Web 2', 'setup.summary.btn.finish')
             );
         }
+
+        if ($page->getName() === 'setup_monitoring_ido') {
+            $page->addElement(
+                'submit',
+                'backend_validation',
+                array(
+                    'ignore'        => true,
+                    'label'         => t('Validate Configuration'),
+                    'decorators'    => array('ViewHelper')
+                )
+            );
+            $page->getDisplayGroup('buttons')->addElement($page->getElement('backend_validation'));
+        }
     }
 
     /**
-     * @see SetupWizard::getSetup()
+     * Return the setup for this wizard
+     *
+     * @return  Setup
      */
     public function getSetup()
     {
         $pageData = $this->getPageData();
         $setup = new Setup();
-
-        $setup->addStep(new MakeDirStep(array($this->getConfigDir() . '/modules/monitoring'), 0775));
 
         $setup->addStep(
             new BackendStep(array(
@@ -147,33 +160,72 @@ class MonitoringWizard extends Wizard implements SetupWizard
             ))
         );
 
-        $setup->addStep(new EnableModuleStep('monitoring'));
-
         return $setup;
     }
 
     /**
-     * @see SetupWizard::getRequirements()
+     * Return the requirements of this wizard
+     *
+     * @return  RequirementSet
      */
     public function getRequirements()
     {
-        return new Requirements();
-    }
+        $set = new RequirementSet();
 
-    /**
-     * Return the configuration directory of Icinga Web 2
-     *
-     * @return  string
-     */
-    protected function getConfigDir()
-    {
-        if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
-            $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
-        } else {
-            $configDir = '/etc/icingaweb';
-        }
+        // TODO(8254): Add this to the $backendSet
+        $set->add(new PhpModuleRequirement(array(
+            'optional'      => true,
+            'condition'     => 'Sockets',
+            'description'   => mt(
+                'monitoring',
+                'In case it\'s desired that a TCP connection is being used by Icinga Web 2 to'
+                . ' access a Livestatus interface, the Sockets module for PHP is required.'
+            )
+        )));
 
-        $canonical = realpath($configDir);
-        return $canonical ? $canonical : $configDir;
+        $backendSet = new RequirementSet(false, RequirementSet::MODE_OR);
+        $mysqlSet = new RequirementSet(true);
+        $mysqlSet->add(new PhpModuleRequirement(array(
+            'optional'      => true,
+            'condition'     => 'mysql',
+            'alias'         => 'PDO-MySQL',
+            'description'   => mt(
+                'monitoring',
+                'To access the IDO stored in a MySQL database the PDO-MySQL module for PHP is required.'
+            )
+        )));
+        $mysqlSet->add(new ClassRequirement(array(
+            'optional'      => true,
+            'condition'     => 'Zend_Db_Adapter_Pdo_Mysql',
+            'alias'         => mt('monitoring', 'Zend database adapter for MySQL'),
+            'description'   => mt(
+                'monitoring',
+                'The Zend database adapter for MySQL is required to access a MySQL database.'
+            )
+        )));
+        $backendSet->merge($mysqlSet);
+        $pgsqlSet = new RequirementSet(true);
+        $pgsqlSet->add(new PhpModuleRequirement(array(
+            'optional'      => true,
+            'condition'     => 'pgsql',
+            'alias'         => 'PDO-PostgreSQL',
+            'description'   => mt(
+                'monitoring',
+                'To access the IDO stored in a PostgreSQL database the PDO-PostgreSQL module for PHP is required.'
+            )
+        )));
+        $pgsqlSet->add(new ClassRequirement(array(
+            'optional'      => true,
+            'condition'     => 'Zend_Db_Adapter_Pdo_Pgsql',
+            'alias'         => mt('monitoring', 'Zend database adapter for PostgreSQL'),
+            'description'   => mt(
+                'monitoring',
+                'The Zend database adapter for PostgreSQL is required to access a PostgreSQL database.'
+            )
+        )));
+        $backendSet->merge($pgsqlSet);
+        $set->merge($backendSet);
+
+        return $set;
     }
 }

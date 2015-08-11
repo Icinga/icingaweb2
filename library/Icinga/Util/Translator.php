@@ -1,10 +1,8 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Util;
 
-use Exception;
 use Icinga\Exception\IcingaException;
 
 /**
@@ -34,8 +32,8 @@ class Translator
      *
      * Falls back to the default domain in case the string cannot be translated using the given domain
      *
-     * @param   string  $text           The string to translate
-     * @param   string  $domain         The primary domain to use
+     * @param   string      $text       The string to translate
+     * @param   string      $domain     The primary domain to use
      * @param   string|null $context    Optional parameter for context based translation
      *
      * @return  string                  The translated string
@@ -64,7 +62,7 @@ class Translator
      *
      * @param   string      $textSingular   The string in singular form to translate
      * @param   string      $textPlural     The string in plural form to translate
-     * @param   integer     $number         The number to get the plural or singular string
+     * @param   integer     $number         The amount to determine from whether to return singular or plural
      * @param   string      $domain         The primary domain to use
      * @param   string|null $context        Optional parameter for context based translation
      *
@@ -102,7 +100,11 @@ class Translator
     {
         $contextString = "{$context}\004{$text}";
 
-        $translation = dcgettext($domain, $contextString, LC_MESSAGES);
+        $translation = dcgettext(
+            $domain,
+            $contextString,
+            defined('LC_MESSAGES') ? LC_MESSAGES : LC_ALL
+        );
 
         if ($translation == $contextString) {
             return $text;
@@ -128,7 +130,13 @@ class Translator
     {
         $contextString = "{$context}\004{$textSingular}";
 
-        $translation = dcngettext($domain, $contextString, $textPlural, $number, LC_MESSAGES);
+        $translation = dcngettext(
+            $domain,
+            $contextString,
+            $textPlural,
+            $number,
+            defined('LC_MESSAGES') ? LC_MESSAGES : LC_ALL
+        );
 
         if ($translation == $contextString || $translation == $textPlural) {
             return ($number == 1 ? $textSingular : $textPlural);

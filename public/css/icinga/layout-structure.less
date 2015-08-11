@@ -1,5 +1,4 @@
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 /** Default layout **/
 html {
@@ -48,6 +47,10 @@ html {
   }
 }
 
+#fileupload-frame-target {
+  display: none;
+}
+
 #responsive-debug {
   font-size: 0.9em;
   font-family: Courier new, monospace;
@@ -82,13 +85,29 @@ html {
 
 /** Fullscreen layout **/
 #layout.fullscreen-layout {
-  #header, #sidebar, .controls > .tabs {
+  #header, #sidebar {
     display: none;
+  }
+
+  .container .controls {
+    padding: 0;
+  }
+
+  .controls > ul.tabs {
+    margin-top: 0;
+    height: 1.5em;
+    background-color: @colorPetrol;
+    font-size: 0.75em;
+    padding: 0.2em 0 0;
+  }
+
+  .controls > ul.tabs > li > a {
+    line-height: 1.5em;
   }
 
   #main {
     left: 0;
-    top: 0;
+    top: 0 !important;
   }
 }
 
@@ -97,6 +116,7 @@ html {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  font-size: 0.875em;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -120,12 +140,17 @@ html {
 .container .controls {
   top: 0;
   background-color: white;
-  padding: 0;
+  padding: 1em 1em 0;
   z-index: 100;
 }
 
+.container .controls.separated {
+    box-shadow: 0 3px 4px -4px rgba(0, 0, 0, 0.2);
+    padding-bottom: 0.5em;
+}
+
 .container .fake-controls {
-  padding: 0;
+  padding: 1em 1em 0;
 }
 
 .container .controls .pagination {
@@ -137,21 +162,12 @@ html {
 }
 
 .dashboard > div.container {
-  font-size: 0.9em;
   vertical-align: top;
   width: 48.5%;
   display: inline-block;
   padding: 0;
   margin-top: 0em;
   margin-left: 1%;
-}
-
-.content h3 {
-  font-size: 0.9em;
-}
-
-.container .controls > * {
-  margin-left: 1em;
 }
 
 .container .controls .pagination {
@@ -163,6 +179,11 @@ html {
 }
 
 .dashboard .content {
+  padding: 0;
+  overflow: auto;
+}
+
+.dashboard .controls {
   padding: 0;
 }
 
@@ -257,6 +278,40 @@ html {
   #main {
     left: 0;
   }
+
+  #login {
+    .logo .image img {
+      width: 70%;
+    }
+    .form {
+      width: 100%;
+      margin: auto;
+    }
+    .form label {
+      width: 100%;
+      margin: 0;
+      text-align: center;
+      display: inline-block;
+    }
+    .footer {
+      margin-left: 0;
+    }
+    h1 {
+      margin-left: 0px;
+      text-align: center;
+    }
+    form {
+      width: 100%;
+      margin: 0;
+    }
+    form input {
+      margin: auto;
+      display: block;
+    }
+    form input[type=submit] {
+      margin-top: 1.5em;
+    }
+  }
 }
 
 
@@ -297,8 +352,7 @@ html {
   position: absolute;
 }
 
-/* TODO: replace this with .error */
-.fileNotReadable {
+.message-error {
   padding: 0.5em;
   background-color: @colorCritical;
   font-weight: bold;
@@ -312,6 +366,7 @@ html {
 .hbox-item {
   display: inline-block;
   vertical-align: top;
+  margin-top: 0.5em;
   margin-bottom: 0.25em;
   margin-left: 1em;
   margin-right: 1em;
@@ -321,4 +376,42 @@ html {
   display: inline-block;
   vertical-align: top;
   width: 2em;
+}
+
+/*
+ * Class to hide content from users but available for screen reader
+ * @todo(mh): Replace .audible class
+ */
+.sr-only {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.clearfix:after {
+  content: ".";
+  visibility: hidden;
+  display: block;
+  height: 0;
+  clear: both;
+}
+
+.multi-commands {
+  padding-top: 0em;
+  font-size: 0.9em;
+}
+
+// Hide non-javascript elements if javascript is enabled
+html.js *.no-js {
+  .sr-only;
+}
+
+// Hide javascript elements if javascript is disabled
+html.no-js *.js {
+  .sr-only;
 }

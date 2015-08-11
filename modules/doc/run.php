@@ -1,6 +1,6 @@
 <?php
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use \Zend_Controller_Router_Route;
 use Icinga\Application\Icinga;
 
 if (Icinga::app()->isCli()) {
@@ -8,7 +8,7 @@ if (Icinga::app()->isCli()) {
 }
 
 $docModuleChapter = new Zend_Controller_Router_Route(
-    'doc/module/:moduleName/chapter/:chapterId',
+    'doc/module/:moduleName/chapter/:chapter',
     array(
         'controller'    => 'module',
         'action'        => 'chapter',
@@ -17,7 +17,7 @@ $docModuleChapter = new Zend_Controller_Router_Route(
 );
 
 $docIcingaWebChapter = new Zend_Controller_Router_Route(
-    'doc/icingaweb/chapter/:chapterId',
+    'doc/icingaweb/chapter/:chapter',
     array(
         'controller'    => 'icingaweb',
         'action'        => 'chapter',
@@ -47,4 +47,3 @@ $this->addRoute('doc/module/chapter', $docModuleChapter);
 $this->addRoute('doc/icingaweb/chapter', $docIcingaWebChapter);
 $this->addRoute('doc/module/toc', $docModuleToc);
 $this->addRoute('doc/module/pdf', $docModulePdf);
-

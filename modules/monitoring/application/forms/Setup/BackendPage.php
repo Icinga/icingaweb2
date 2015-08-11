@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms\Setup;
 
@@ -12,56 +11,40 @@ class BackendPage extends Form
     public function init()
     {
         $this->setName('setup_monitoring_backend');
+        $this->setTitle($this->translate('Monitoring Backend', 'setup.page.title'));
+        $this->addDescription($this->translate(
+            'Please configure below how Icinga Web 2 should retrieve monitoring information.'
+        ));
     }
 
     public function createElements(array $formData)
     {
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => mt('monitoring', 'Monitoring Backend', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-        $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => mt(
-                    'monitoring',
-                    'Please configure below how Icinga Web 2 should retrieve monitoring information.'
-                )
-            )
-        );
-
         $this->addElement(
             'text',
             'name',
             array(
                 'required'      => true,
                 'value'         => 'icinga',
-                'label'         => mt('monitoring', 'Backend Name'),
-                'description'   => mt('monitoring', 'The identifier of this backend')
+                'label'         => $this->translate('Backend Name'),
+                'description'   => $this->translate('The identifier of this backend')
             )
         );
 
         $resourceTypes = array();
-        if (Platform::extensionLoaded('mysql') || Platform::extensionLoaded('pgsql')) {
+        if (Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
             $resourceTypes['ido'] = 'IDO';
         }
-        $resourceTypes['livestatus'] = 'Livestatus';
+        // $resourceTypes['livestatus'] = 'Livestatus';
 
         $this->addElement(
             'select',
             'type',
             array(
                 'required'      => true,
-                'label'         => mt('monitoring', 'Backend Type'),
-                'description'   => mt('monitoring', 'The data source used for retrieving monitoring information'),
+                'label'         => $this->translate('Backend Type'),
+                'description'   => $this->translate(
+                    'The data source used for retrieving monitoring information'
+                ),
                 'multiOptions'  => $resourceTypes
             )
         );

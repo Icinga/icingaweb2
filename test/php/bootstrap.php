@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 $applicationPath = realpath(dirname(__FILE__) . '/../../application/');
 $modulePath = realpath(dirname(__FILE__) . '/../../modules/');
@@ -55,6 +54,13 @@ foreach ($modules as $module) {
 }
 
 $loader->register();
+
+set_include_path(
+    implode(
+        PATH_SEPARATOR,
+        array($libraryPath . '/vendor', get_include_path())
+    )
+);
 
 require_once 'Zend/Loader/Autoloader.php';
 \Zend_Loader_Autoloader::getInstance();

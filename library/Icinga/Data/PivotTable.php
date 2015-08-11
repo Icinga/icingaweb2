@@ -1,9 +1,9 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Data;
 
+use Icinga\Data\Filter\Filter;
 use Icinga\Data\SimpleQuery;
 use Icinga\Application\Icinga;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
@@ -47,6 +47,20 @@ class PivotTable
     protected $yAxisColumn;
 
     /**
+     * The filter being applied on the query for the x axis
+     *
+     * @var Filter
+     */
+    protected $xAxisFilter;
+
+    /**
+     * The filter being applied on the query for the y axis
+     *
+     * @var Filter
+     */
+    protected $yAxisFilter;
+
+    /**
      * Create a new pivot table
      *
      * @param   SimpleQuery   $query          The query to fetch as pivot table
@@ -58,43 +72,31 @@ class PivotTable
         $this->baseQuery = $query;
         $this->xAxisColumn = $xAxisColumn;
         $this->yAxisColumn = $yAxisColumn;
-        $this->prepareQueries()->adjustSorting();
     }
 
     /**
-     * Prepare the queries used for the pre processing
+     * Set the filter to apply on the query for the x axis
      *
-     * @return  self
+     * @param   Filter  $filter
+     *
+     * @return  $this
      */
-    protected function prepareQueries()
+    public function setXAxisFilter(Filter $filter = null)
     {
-        $this->xAxisQuery = clone $this->baseQuery;
-        $this->xAxisQuery->group($this->xAxisColumn);
-        $this->xAxisQuery->columns(array($this->xAxisColumn));
-        $this->xAxisQuery->setUseSubqueryCount();
-        $this->yAxisQuery = clone $this->baseQuery;
-        $this->yAxisQuery->group($this->yAxisColumn);
-        $this->yAxisQuery->columns(array($this->yAxisColumn));
-        $this->yAxisQuery->setUseSubqueryCount();
-
+        $this->xAxisFilter = $filter;
         return $this;
     }
 
     /**
-     * Set a default sorting for the x- and y-axis without losing any existing rules
+     * Set the filter to apply on the query for the y axis
      *
-     * @return  self
+     * @param   Filter  $filter
+     *
+     * @return  $this
      */
-    protected function adjustSorting()
+    public function setYAxisFilter(Filter $filter = null)
     {
-        if (false === $this->xAxisQuery->hasOrder($this->xAxisColumn)) {
-            $this->xAxisQuery->order($this->xAxisColumn, 'ASC');
-        }
-
-        if (false === $this->yAxisQuery->hasOrder($this->yAxisColumn)) {
-            $this->yAxisQuery->order($this->yAxisColumn, 'ASC');
-        }
-
+        $this->yAxisFilter = $filter;
         return $this;
     }
 
@@ -109,7 +111,7 @@ class PivotTable
      */
     protected function getPaginationParameter($axis, $param, $default = null)
     {
-        $request = Icinga::app()->getFrontController()->getRequest();
+        $request = Icinga::app()->getRequest();
 
         $value = $request->getParam($param, '');
         if (strpos($value, ',') > 0) {
@@ -118,6 +120,56 @@ class PivotTable
         }
 
         return $default !== null ? $default : 0;
+    }
+
+    /**
+     * Query horizontal (x) axis
+     *
+     * @return  SimpleQuery
+     */
+    protected function queryXAxis()
+    {
+        if ($this->xAxisQuery === null) {
+            $this->xAxisQuery = clone $this->baseQuery;
+            $this->xAxisQuery->group($this->xAxisColumn);
+            $this->xAxisQuery->columns(array($this->xAxisColumn));
+            $this->xAxisQuery->setUseSubqueryCount();
+
+            if ($this->xAxisFilter !== null) {
+                $this->xAxisQuery->addFilter($this->xAxisFilter);
+            }
+
+            if (! $this->xAxisQuery->hasOrder($this->xAxisColumn)) {
+                $this->xAxisQuery->order($this->xAxisColumn, 'asc');
+            }
+        }
+
+        return $this->xAxisQuery;
+    }
+
+    /**
+     * Query vertical (y) axis
+     *
+     * @return  SimpleQuery
+     */
+    protected function queryYAxis()
+    {
+        if ($this->yAxisQuery === null) {
+            $this->yAxisQuery = clone $this->baseQuery;
+            $this->yAxisQuery->group($this->yAxisColumn);
+            $this->yAxisQuery->columns(array($this->yAxisColumn));
+            $this->yAxisQuery->setUseSubqueryCount();
+
+            if ($this->yAxisFilter !== null) {
+                $this->yAxisQuery->addFilter($this->yAxisFilter);
+            }
+
+            if (! $this->yAxisQuery->hasOrder($this->yAxisColumn)) {
+                $this->yAxisQuery->order($this->yAxisColumn, 'asc');
+            }
+        }
+
+        return $this->yAxisQuery;
     }
 
     /**
@@ -142,9 +194,10 @@ class PivotTable
             }
         }
 
-        $this->xAxisQuery->limit($limit, $page > 0 ? ($page - 1) * $limit : 0);
+        $query = $this->queryXAxis();
+        $query->limit($limit, $page > 0 ? ($page - 1) * $limit : 0);
 
-        $paginator = new Zend_Paginator(new QueryAdapter($this->xAxisQuery));
+        $paginator = new Zend_Paginator(new QueryAdapter($query));
         $paginator->setItemCountPerPage($limit);
         $paginator->setCurrentPageNumber($page);
         return $paginator;
@@ -172,9 +225,10 @@ class PivotTable
             }
         }
 
-        $this->yAxisQuery->limit($limit, $page > 0 ? ($page - 1) * $limit : 0);
+        $query = $this->queryYAxis();
+        $query->limit($limit, $page > 0 ? ($page - 1) * $limit : 0);
 
-        $paginator = new Zend_Paginator(new QueryAdapter($this->yAxisQuery));
+        $paginator = new Zend_Paginator(new QueryAdapter($query));
         $paginator->setItemCountPerPage($limit);
         $paginator->setCurrentPageNumber($page);
         return $paginator;
@@ -187,10 +241,23 @@ class PivotTable
      */
     public function toArray()
     {
-        $pivot = array();
-        $xAxis = $this->xAxisQuery->fetchColumn();
-        $yAxis = $this->yAxisQuery->fetchColumn();
+        if (
+            ($this->xAxisFilter === null && $this->yAxisFilter === null)
+            || ($this->xAxisFilter !== null && $this->yAxisFilter !== null)
+        ) {
+            $xAxis = $this->queryXAxis()->fetchColumn();
+            $yAxis = $this->queryYAxis()->fetchColumn();
+        } else {
+            if ($this->xAxisFilter !== null) {
+                $xAxis = $this->queryXAxis()->fetchColumn();
+                $yAxis = $this->queryYAxis()->where($this->xAxisColumn, $xAxis)->fetchColumn();
+            } else { // $this->yAxisFilter !== null
+                $yAxis = $this->queryYAxis()->fetchColumn();
+                $xAxis = $this->queryXAxis()->where($this->yAxisColumn, $yAxis)->fetchColumn();
+            }
+        }
 
+        $pivot = array();
         if (!empty($xAxis) && !empty($yAxis)) {
             $this->baseQuery->where($this->xAxisColumn, $xAxis)->where($this->yAxisColumn, $yAxis);
 
@@ -200,7 +267,7 @@ class PivotTable
                 }
             }
 
-            foreach ($this->baseQuery->fetchAll() as $row) {
+            foreach ($this->baseQuery as $row) {
                 $pivot[$row->{$this->yAxisColumn}][$row->{$this->xAxisColumn}] = $row;
             }
         }

@@ -1,15 +1,16 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Widget;
 
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Filter\FilterChain;
+use Icinga\Data\Filter\FilterOr;
 use Icinga\Web\Url;
 use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Notification;
 use Exception;
 
 /**
@@ -34,7 +35,13 @@ class FilterEditor extends AbstractWidget
 
     protected $preserveParams = array();
 
+    protected $preservedParams = array();
+
+    protected $preservedUrl;
+
     protected $ignoreParams = array();
+
+    protected $searchColumns = null;
 
     /**
      * @var string
@@ -65,9 +72,22 @@ class FilterEditor extends AbstractWidget
     public function getFilter()
     {
         if ($this->filter === null) {
-            $this->filter = Filter::fromQueryString((string) $this->url()->getParams()); 
+            $this->filter = Filter::fromQueryString((string) $this->url()->getParams());
         }
         return $this->filter;
+    }
+
+    /**
+     * Set columns to search in
+     *
+     * @param array $searchColumns
+     *
+     * @return $this
+     */
+    public function setSearchColumns(array $searchColumns)
+    {
+        $this->searchColumns = $searchColumns;
+        return $this;
     }
 
     public function setUrl($url)
@@ -82,6 +102,14 @@ class FilterEditor extends AbstractWidget
             $this->url = Url::fromRequest();
         }
         return $this->url;
+    }
+
+    protected function preservedUrl()
+    {
+        if ($this->preservedUrl === null) {
+            $this->preservedUrl = $this->url()->with($this->preservedParams);
+        }
+        return $this->preservedUrl;
     }
 
     public function setQuery($query)
@@ -136,6 +164,26 @@ class FilterEditor extends AbstractWidget
         return $filter;
     }
 
+    protected function resetSearchColumns(Filter &$filter)
+    {
+        if ($filter->isChain()) {
+            $filters = &$filter->filters();
+            if (!($empty = empty($filters))) {
+                foreach ($filters as $k => &$f) {
+                    if (false === $this->resetSearchColumns($f)) {
+                        unset($filters[$k]);
+                    }
+                }
+            }
+            return $empty || !empty($filters);
+        }
+        return $filter->isExpression() ? !(
+            in_array($filter->getColumn(), $this->searchColumns)
+            &&
+            $filter->getSign() === '='
+        ) : true;
+    }
+
     public function handleRequest($request)
     {
         $this->setUrl($request->getUrl()->without($this->ignoreParams));
@@ -147,6 +195,7 @@ class FilterEditor extends AbstractWidget
                 $preserve[$key] = $value;
             }
         }
+        $this->preservedParams = $preserve;
 
         $add    = $params->shift('addFilter');
         $remove = $params->shift('removeFilter');
@@ -167,33 +216,22 @@ class FilterEditor extends AbstractWidget
         $filter = $this->getFilter();
 
         if ($search !== null) {
-            if (strpos($search, '=') === false) {
-                // TODO: Ask the view for (multiple) search columns
-                switch($request->getActionName()) {
-                    case 'services':
-                        $searchCol = 'service_description';
-                        break;
-                    case 'hosts':
-                        $searchCol = 'host_name';
-                        break;
-                    case 'hostgroups':
-                        $searchCol = 'hostgroup';
-                        break;
-                    case 'servicegroups':
-                        $searchCol = 'servicegroup';
-                        break;
-                    default:
-                        $searchCol = null;
-                }
-
-                if ($searchCol === null) {
-                    throw new Exception('Cannot search here');
-                }
-                $filter = $this->mergeRootExpression($filter, $searchCol, '=', "*$search*");
-
-            } else {
+            if (strpos($search, '=') !== false) {
                 list($k, $v) = preg_split('/=/', $search);
-                $filter = $this->mergeRootExpression($filter, $k, '=', $v);
+                $filter = $this->mergeRootExpression($filter, trim($k), '=', ltrim($v));
+            } elseif (! empty($this->searchColumns)) {
+                if (! $this->resetSearchColumns($filter)) {
+                    $filter = Filter::matchAll();
+                }
+                $filters = array();
+                $search = ltrim($search);
+                foreach ($this->searchColumns as $searchColumn) {
+                    $filters[] = Filter::expression($searchColumn, '=', "*$search*");
+                }
+                $filter = $filter->andFilter(new FilterOr($filters));
+            } else {
+                Notification::error(mt('monitoring', 'Cannot search here'));
+                return $this;
             }
 
             $url = $this->url()->setQueryString(
@@ -232,7 +270,7 @@ class FilterEditor extends AbstractWidget
         if ($modify) {
             if ($request->isPost()) {
                 if ($request->get('cancel') === 'Cancel') {
-                    $this->redirectNow($this->url()->without('modifyFilter'));
+                    $this->redirectNow($this->preservedUrl()->without('modifyFilter'));
                 }
 
                 $filter = $this->applyChanges($request->getPost());
@@ -295,11 +333,11 @@ class FilterEditor extends AbstractWidget
     {
         return $this->view()->qlink(
             '',
-            $this->url()->with('removeFilter', $filter->getId()),
+            $this->preservedUrl()->with('removeFilter', $filter->getId()),
             null,
             array(
-                'title' => t('Click to remove this part of your filter'),
-                'class' => 'icon-cancel'
+                'icon'  => 'trash',
+                'title' => t('Remove this part of your filter')
             )
         );
     }
@@ -308,11 +346,11 @@ class FilterEditor extends AbstractWidget
     {
         return $this->view()->qlink(
             '',
-            $this->url()->with('addFilter', $filter->getId()),
+            $this->preservedUrl()->with('addFilter', $filter->getId()),
             null,
             array(
-                'title' => t('Click to add another filter'),
-                'class' => 'icon-plus'
+                'icon'  => 'plus',
+                'title' => t('Add another filter')
             )
         );
     }
@@ -321,11 +359,11 @@ class FilterEditor extends AbstractWidget
     {
         return $this->view()->qlink(
             '',
-            $this->url()->with('stripFilter', $filter->getId()),
+            $this->preservedUrl()->with('stripFilter', $filter->getId()),
             null,
             array(
-                'title' => t('Strip this filter'),
-                'class' => 'icon-minus'
+                'icon'  => 'minus',
+                'title' => t('Strip this filter')
             )
         );
     }
@@ -334,11 +372,11 @@ class FilterEditor extends AbstractWidget
     {
         return $this->view()->qlink(
             '',
-            $this->url()->without('addFilter'),
+            $this->preservedUrl()->without('addFilter'),
             null,
             array(
-                'title' => t('Cancel this operation'),
-                'class' => 'icon-cancel'
+                'icon'  => 'cancel',
+                'title' => t('Cancel this operation')
             )
         );
     }
@@ -391,12 +429,12 @@ class FilterEditor extends AbstractWidget
     protected function renderFilterExpression(FilterExpression $filter)
     {
         if ($this->addTo && $this->addTo === $filter->getId()) {
-            return 
+            return
                    preg_replace(
-            '/ class="autosubmit"/',
-            ' class="autofocus"',
-        $this->selectOperator()
-                )
+                       '/ class="autosubmit"/',
+                       ' class="autofocus"',
+                       $this->selectOperator()
+                   )
                   . '<ul><li>'
                   . $this->selectColumn($filter)
                   . $this->selectSign($filter)
@@ -502,11 +540,17 @@ class FilterEditor extends AbstractWidget
         );
     }
 
+    public function setColumns(array $columns)
+    {
+        $this->cachedColumnSelect = $this->arrayForSelect($columns);
+        return $this;
+    }
+
     protected function selectColumn(Filter $filter = null)
     {
         $active = $filter === null ? null : $filter->getColumn();
 
-        if ($this->query === null) {
+        if ($this->cachedColumnSelect === null && $this->query === null) {
             return sprintf(
                 '<input type="text" name="%s" value="%s" />',
                 $this->elementId('column', $filter),
@@ -531,7 +575,7 @@ class FilterEditor extends AbstractWidget
             $cols[$active] = str_replace('_', ' ', ucfirst(ltrim($active, '_')));
         }
 
-        return $this->select($this->elementId('column', $filter), $cols, $active); 
+        return $this->select($this->elementId('column', $filter), $cols, $active);
     }
 
     protected function applyChanges($changes)
@@ -637,13 +681,13 @@ class FilterEditor extends AbstractWidget
 
     public function renderSearch()
     {
-        $html = ' <form method="post" class="inline" action="'
-              . $this->url()
+        $html = ' <form method="post" class="search inline dontprint" action="'
+              . $this->preservedUrl()
               . '"><input type="text" name="q" style="width: 8em" class="search" value="" placeholder="'
               . t('Search...')
               . '" /></form>';
 
-        if  ($this->filter->isEmpty()) {
+        if ($this->filter->isEmpty()) {
             $title = t('Filter this list');
         } else {
             $title = t('Modify this filter');
@@ -653,31 +697,35 @@ class FilterEditor extends AbstractWidget
         }
         return $html
             . '<a href="'
-            . $this->url()->with('modifyFilter', true)
+            . $this->preservedUrl()->with('modifyFilter', true)
+            . '" aria-label="'
+            . $title
             . '" title="'
             . $title
             . '">'
-            . '<i class="icon-filter"></i>'
+            . '<i aria-hidden="true" class="icon-filter"></i>'
             . '</a>';
     }
 
     public function render()
     {
-        if (! $this->url()->getParam('modifyFilter')) {
-            return $this->renderSearch() . $this->shorten($this->filter, 50);
+        if (! $this->preservedUrl()->getParam('modifyFilter')) {
+            return '<div class="filter">' . $this->renderSearch() . $this->shorten($this->filter, 50) . '</div>';
         }
-        return  $this->renderSearch()
-              . '<form action="'
-              . Url::fromRequest()
-              . '" class="filterEditor" method="POST">'
-              . '<ul class="tree widgetFilter"><li>'
-              . $this->renderFilter($this->filter)
-              . '</li></ul>'
-              . '<div style="float: right">'
-              . '<input type="submit" name="submit" value="Apply" />'
-              . '<input type="submit" name="cancel" value="Cancel" />'
-              . '</div>'
-              . '</form>';
+        return  '<div class="filter">'
+            . $this->renderSearch()
+            . '<form action="'
+            . Url::fromRequest()
+            . '" class="editor" method="POST">'
+            . '<ul class="tree"><li>'
+            . $this->renderFilter($this->filter)
+            . '</li></ul>'
+            . '<div class="buttons">'
+            . '<input type="submit" name="submit" value="Apply" />'
+            . '<input type="submit" name="cancel" value="Cancel" />'
+            . '</div>'
+            . '</form>'
+            . '</div>';
     }
 
     protected function shorten($string, $length)

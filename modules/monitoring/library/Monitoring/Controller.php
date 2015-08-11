@@ -1,17 +1,20 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring;
 
-use Icinga\Web\Controller\ModuleActionController;
-use Icinga\Web\Url;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\QueryException;
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filterable;
 use Icinga\File\Csv;
+use Icinga\Web\Controller as IcingaWebController;
+use Icinga\Web\Url;
 
 /**
  * Base class for all monitoring action controller
  */
-class Controller extends ModuleActionController
+class Controller extends IcingaWebController
 {
     /**
      * The backend used for this controller
@@ -19,16 +22,6 @@ class Controller extends ModuleActionController
      * @var Backend
      */
     protected $backend;
-
-    /**
-     * Compact layout name
-     *
-     * Set to a string containing the compact layout name to use when
-     * 'compact' is set as the layout parameter, otherwise null
-     *
-     * @var string
-     */
-    protected $compactView;
 
     protected function moduleInit()
     {
@@ -38,10 +31,6 @@ class Controller extends ModuleActionController
 
     protected function handleFormatRequest($query)
     {
-        if ($this->compactView !== null && ($this->_getParam('view', false) === 'compact')) {
-            $this->_helper->viewRenderer($this->compactView);
-        }
-
         if ($this->_getParam('format') === 'sql') {
             echo '<pre>'
                 . htmlspecialchars(wordwrap($query->dump()))
@@ -59,6 +48,56 @@ class Controller extends ModuleActionController
             Csv::fromQuery($query)->dump();
             exit;
         }
+    }
+
+    /**
+     * Apply a restriction on the given data view
+     *
+     * @param   string      $restriction    The name of restriction
+     * @param   Filterable  $view           The filterable to restrict
+     *
+     * @return  Filterable  The filterable
+     */
+    protected function applyRestriction($restriction, Filterable $view)
+    {
+        $restrictions = Filter::matchAny();
+        $restrictions->setAllowedFilterColumns(array(
+            'host_name',
+            'hostgroup_name',
+            'service_description',
+            'servicegroup_name',
+            function ($c) {
+                return preg_match('/^_(?:host|service)_/', $c);
+            }
+        ));
+
+        foreach ($this->getRestrictions($restriction) as $filter) {
+            if ($filter === '*') {
+                return $view;
+            }
+            try {
+                $restrictions->addFilter(Filter::fromQueryString($filter));
+            } catch (QueryException $e) {
+                throw new ConfigurationError(
+                    $this->translate(
+                        'Cannot apply restriction %s using the filter %s. You can only use the following columns: %s'
+                    ),
+                    $restriction,
+                    $filter,
+                    implode(', ', array(
+                        'host_name',
+                        'hostgroup_name',
+                        'service_description',
+                        'servicegroup_name',
+                        '_(host|service)_<customvar-name>'
+                    )),
+                    $e
+                );
+            }
+        }
+
+        $view->applyFilter($restrictions);
+        return $view;
     }
 }
 

@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms\Config\Instance;
 
@@ -28,9 +27,9 @@ class LocalInstanceForm extends Form
             'path',
             array(
                 'required'      => true,
-                'label'         => mt('monitoring', 'Command File'),
-                'value'         => '/usr/local/icinga/var/rw/icinga.cmd',
-                'description'   => mt('monitoring', 'Path to the local Icinga command file')
+                'label'         => $this->translate('Command File'),
+                'value'         => '/var/run/icinga2/cmd/icinga2.cmd',
+                'description'   => $this->translate('Path to the local Icinga command file')
             )
         );
         return $this;

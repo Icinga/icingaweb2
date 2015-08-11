@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Setup\Forms;
 
@@ -19,7 +18,8 @@ class DbResourcePage extends Form
      */
     public function init()
     {
-        $this->setName('setup_db_resource');
+        $this->setTitle($this->translate('Database Resource', 'setup.page.title'));
+        $this->setValidatePartial(true);
     }
 
     /**
@@ -33,28 +33,6 @@ class DbResourcePage extends Form
             array(
                 'required'  => true,
                 'value'     => 'db'
-            )
-        );
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => mt('setup', 'Database Resource', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-        $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => mt(
-                    'setup',
-                    'Now please configure your database resource. Note that the database itself does not need to'
-                    . ' exist at this time as it is going to be created once the wizard is about to be finished.'
-                )
             )
         );
 
@@ -74,14 +52,6 @@ class DbResourcePage extends Form
         $resourceForm = new DbResourceForm();
         $this->addElements($resourceForm->createElements($formData)->getElements());
         $this->getElement('name')->setValue('icingaweb_db');
-        $this->addElement(
-            'hidden',
-            'prefix',
-            array(
-                'required'  => true,
-                'value'     => 'icingaweb_'
-            )
-        );
     }
 
     /**
@@ -102,10 +72,42 @@ class DbResourcePage extends Form
                 $db = new DbTool($this->getValues());
                 $db->checkConnectivity();
             } catch (PDOException $e) {
-                $this->addError($e->getMessage());
+                $this->error($e->getMessage());
                 $this->addSkipValidationCheckbox();
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check whether it's possible to connect to the database server
+     *
+     * This will only run the check if the user pushed the 'backend_validation' button.
+     *
+     * @param   array   $formData
+     *
+     * @return  bool
+     */
+    public function isValidPartial(array $formData)
+    {
+        if (isset($formData['backend_validation']) && parent::isValid($formData)) {
+            try {
+                $db = new DbTool($this->getValues());
+                $db->checkConnectivity();
+            } catch (PDOException $e) {
+                $this->warning(sprintf(
+                    $this->translate('Failed to successfully validate the configuration: %s'),
+                    $e->getMessage()
+                ));
+                return false;
+            }
+
+            $this->info($this->translate('The configuration has been successfully validated.'));
+        } elseif (! isset($formData['backend_validation'])) {
+            // This is usually done by isValid(Partial), but as we're not calling any of these...
+            $this->populate($formData);
         }
 
         return true;
@@ -121,8 +123,10 @@ class DbResourcePage extends Form
             'skip_validation',
             array(
                 'required'      => true,
-                'label'         => mt('setup', 'Skip Validation'),
-                'description'   => mt('setup', 'Check this to not to validate connectivity with the given database server')
+                'label'         => $this->translate('Skip Validation'),
+                'description'   => $this->translate(
+                    'Check this to not to validate connectivity with the given database server'
+                )
             )
         );
     }

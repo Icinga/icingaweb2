@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Application\Modules;
 
@@ -13,7 +12,6 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\SystemPermissionException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\NotReadableError;
-use Icinga\Exception\NotFoundError;
 
 /**
  * Module manager that handles detecting, enabling and disabling of modules
@@ -26,6 +24,13 @@ use Icinga\Exception\NotFoundError;
  */
 class Manager
 {
+    /**
+     * Namespace for module permissions
+     *
+     * @var string
+     */
+    const MODULE_PERMISSION_NS = 'module/';
+
     /**
      * Array of all installed module's base directories
      *
@@ -69,18 +74,6 @@ class Manager
     private $modulePaths        = array();
 
     /**
-     * The core modules
-     *
-     * Core modules do not need to be enabled to load and cannot be disabled
-     * by the user. This must not be writable programmatically!
-     *
-     * @var array
-     */
-    private $coreModules = array(
-        'setup'
-    );
-
-    /**
      *  Create a new instance of the module manager
      *
      *  @param ApplicationBootstrap $app
@@ -115,25 +108,32 @@ class Manager
      */
     private function detectEnabledModules()
     {
-        $canonical = $this->enableDir;
-        if ($canonical === false || ! file_exists($canonical)) {
-            // TODO: I guess the check for false has something to do with a
-            //       call to realpath no longer present
+        if (! file_exists($parent = dirname($this->enableDir))) {
             return;
         }
-        if (!is_dir($this->enableDir)) {
+        if (! is_readable($parent)) {
+            throw new NotReadableError(
+                'Cannot read enabled modules. Module directory\'s parent directory "%s" is not readable',
+                $parent
+            );
+        }
+
+        if (! file_exists($this->enableDir)) {
+            return;
+        }
+        if (! is_dir($this->enableDir)) {
             throw new NotReadableError(
                 'Cannot read enabled modules. Module directory "%s" is not a directory',
                 $this->enableDir
             );
         }
-        if (!is_readable($this->enableDir)) {
+        if (! is_readable($this->enableDir)) {
             throw new NotReadableError(
                 'Cannot read enabled modules. Module directory "%s" is not readable',
                 $this->enableDir
             );
         }
-        if (($dh = opendir($canonical)) !== false) {
+        if (($dh = opendir($this->enableDir)) !== false) {
             $this->enabledDirs = array();
             while (($file = readdir($dh)) !== false) {
 
@@ -141,7 +141,7 @@ class Manager
                     continue;
                 }
 
-                $link = $this->enableDir . '/' . $file;
+                $link = $this->enableDir . DIRECTORY_SEPARATOR . $file;
                 if (! is_link($link)) {
                     Logger::warning(
                         'Found invalid module in enabledModule directory "%s": "%s" is not a symlink',
@@ -152,7 +152,7 @@ class Manager
                 }
 
                 $dir = realpath($link);
-                if (!file_exists($dir) || !is_dir($dir)) {
+                if (! file_exists($dir) || !is_dir($dir)) {
                     Logger::warning(
                         'Found invalid module in enabledModule directory "%s": "%s" points to non existing path "%s"',
                         $this->enableDir,
@@ -170,23 +170,9 @@ class Manager
     }
 
     /**
-     * Try to set all core modules in loaded state
+     * Try to set all enabled modules in loaded sate
      *
-     * @return  self
-     * @see     Manager::loadModule()
-     */
-    public function loadCoreModules()
-    {
-        foreach ($this->coreModules as $name) {
-            $this->loadModule($name);
-        }
-        return $this;
-    }
-
-    /**
-     * Try to set all enabled modules in loaded state
-     *
-     * @return  self
+     * @return  $this
      * @see     Manager::loadModule()
      */
     public function loadEnabledModules()
@@ -203,7 +189,7 @@ class Manager
      * @param string $name    The name of the module to load
      * @param mixed  $basedir Optional module base directory
      *
-     * @return self
+     * @return $this
      */
     public function loadModule($name, $basedir = null)
     {
@@ -227,32 +213,35 @@ class Manager
      *
      * @param   string $name                The module to enable
      *
-     * @return  self
+     * @return  $this
      * @throws  ConfigurationError          When trying to enable a module that is not installed
-     * @throws  NotFoundError               In case the "enabledModules" directory does not exist
      * @throws  SystemPermissionException   When insufficient permissions for the application exist
      */
     public function enableModule($name)
     {
-        if (!$this->hasInstalled($name)) {
+        if (! $this->hasInstalled($name)) {
             throw new ConfigurationError(
                 'Cannot enable module "%s". Module is not installed.',
                 $name
             );
-        } elseif (in_array($name, $this->coreModules)) {
-            return $this;
         }
 
         clearstatcache(true);
         $target = $this->installedBaseDirs[$name];
-        $link = $this->enableDir . '/' . $name;
+        $link = $this->enableDir . DIRECTORY_SEPARATOR . $name;
 
-        if (! is_dir($this->enableDir)) {
-            throw new NotFoundError('Cannot enable module "%s". Path "%s" not found.', $name, $this->enableDir);
-        } elseif (!is_writable($this->enableDir)) {
+        if (! is_dir($this->enableDir) && !@mkdir($this->enableDir, 02770, true)) {
+            $error = error_get_last();
             throw new SystemPermissionException(
-                'Cannot enable module "%s". Insufficient system permissions for enabling modules.',
-                $name
+                'Failed to create enabledModules directory "%s" (%s)',
+                $this->enableDir,
+                $error['message']
+            );
+        } elseif (! is_writable($this->enableDir)) {
+            throw new SystemPermissionException(
+                'Cannot enable module "%s". Check the permissions for the enabledModules directory: %s',
+                $name,
+                $this->enableDir
             );
         }
 
@@ -260,71 +249,79 @@ class Manager
             return $this;
         }
 
-        if (!@symlink($target, $link)) {
+        if (! @symlink($target, $link)) {
             $error = error_get_last();
             if (strstr($error["message"], "File exists") === false) {
                 throw new SystemPermissionException(
-                    'Could not enable module "%s" due to file system errors. '
+                    'Cannot enable module "%s" at %s due to file system errors. '
                     . 'Please check path and mounting points because this is not a permission error. '
                     . 'Primary error was: %s',
                     $name,
+                    $this->enableDir,
                     $error['message']
                 );
             }
         }
 
         $this->enabledDirs[$name] = $link;
-
         $this->loadModule($name);
-
         return $this;
     }
 
     /**
-     * Disable the given module and remove it's enabled state
+     * Disable the given module and remove its enabled state
      *
      * @param   string $name                The name of the module to disable
      *
-     * @return  self
+     * @return  $this
      *
      * @throws  ConfigurationError          When the module is not installed or it's not a symlink
-     * @throws  SystemPermissionException   When the module can't be disabled
+     * @throws  SystemPermissionException   When insufficient permissions for the application exist
      */
     public function disableModule($name)
     {
-        if (!$this->hasEnabled($name)) {
-            return $this;
-        }
-        if (!is_writable($this->enableDir)) {
-            throw new SystemPermissionException(
-                'Could not disable module. Module path is not writable.'
-            );
-        }
-        $link = $this->enableDir . '/' . $name;
-        if (!file_exists($link)) {
+        if (! $this->hasEnabled($name)) {
             throw new ConfigurationError(
-                'Could not disable module. The module %s was not found.',
-                $name
-            );
-        }
-        if (!is_link($link)) {
-            throw new ConfigurationError(
-                'Could not disable module. The module "%s" is not a symlink. '
-                . 'It looks like you have installed this module manually and moved it to your module folder. '
-                . 'In order to dynamically enable and disable modules, you have to create a symlink to '
-                . 'the enabled_modules folder.',
+                'Cannot disable module "%s". Module is not installed.',
                 $name
             );
         }
 
+        if (! is_writable($this->enableDir)) {
+            throw new SystemPermissionException(
+                'Cannot disable module "%s". Check the permissions for the enabledModules directory: %s',
+                $name,
+                $this->enableDir
+            );
+        }
+
+        $link = $this->enableDir . DIRECTORY_SEPARATOR . $name;
+        if (! file_exists($link)) {
+            throw new ConfigurationError(
+                'Cannot disable module "%s". Module is not installed.',
+                $name
+            );
+        }
+        if (! is_link($link)) {
+            throw new ConfigurationError(
+                'Cannot disable module %s at %s. '
+                . 'It looks like you have installed this module manually and moved it to your module folder. '
+                . 'In order to dynamically enable and disable modules, you have to create a symlink to '
+                . 'the enabledModules folder.',
+                $name,
+                $this->enableDir
+            );
+        }
+
         if (file_exists($link) && is_link($link)) {
-            if (!@unlink($link)) {
+            if (! @unlink($link)) {
                 $error = error_get_last();
                 throw new SystemPermissionException(
-                    'Could not disable module "%s" due to file system errors. '
+                    'Cannot enable module "%s" at %s due to file system errors. '
                     . 'Please check path and mounting points because this is not a permission error. '
                     . 'Primary error was: %s',
                     $name,
+                    $this->enableDir,
                     $error['message']
                 );
             }
@@ -414,22 +411,25 @@ class Manager
     }
 
     /**
-     * Return the module instance of the given module when it is loaded
+     * Get a module
      *
-     * @param   string $name        The module name to return
+     * @param   string  $name           Name of the module
+     * @param   bool    $assertLoaded   Whether or not to throw an exception if the module hasn't been loaded
      *
      * @return  Module
-     * @throws  ProgrammingError    When the module hasn't been loaded
+     * @throws  ProgrammingError        If the module hasn't been loaded
      */
-    public function getModule($name)
+    public function getModule($name, $assertLoaded = true)
     {
-        if (!$this->hasLoaded($name)) {
-            throw new ProgrammingError(
-                'Cannot access module %s as it hasn\'t been loaded',
-                $name
-            );
+        if ($this->hasLoaded($name)) {
+            return $this->loadedModules[$name];
+        } elseif (! (bool) $assertLoaded) {
+            return new Module($this->app, $name, $this->getModuleDir($name));
         }
-        return $this->loadedModules[$name];
+        throw new ProgrammingError(
+            'Can\'t access module %s because it hasn\'t been loaded',
+            $name
+        );
     }
 
     /**
@@ -458,7 +458,7 @@ class Manager
         }
 
         $installed = $this->listInstalledModules();
-        foreach (array_diff($installed, $this->coreModules) as $name) {
+        foreach ($installed as $name) {
             $info[$name] = (object) array(
                 'name'    => $name,
                 'path'    => $this->installedBaseDirs[$name],
@@ -520,7 +520,7 @@ class Manager
      *
      * @param   array   $availableDirs      Installed modules location
      *
-     * @return self
+     * @return $this
      */
     public function detectInstalledModules(array $availableDirs = null)
     {

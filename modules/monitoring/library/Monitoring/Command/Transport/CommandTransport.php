@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Command\Transport;
 
@@ -52,6 +51,7 @@ abstract class CommandTransport
      */
     public static function fromConfig(ConfigObject $config)
     {
+        $config = clone $config;
         switch (strtolower($config->transport)) {
             case RemoteCommandFile::TRANSPORT:
                 $transport = new RemoteCommandFile();
@@ -74,7 +74,10 @@ abstract class CommandTransport
         foreach ($config as $key => $value) {
             $method = 'set' . ucfirst($key);
             if (! method_exists($transport, $method)) {
-                throw new ConfigurationError();
+                // Ignore settings from config that don't have a setter on the transport instead of throwing an
+                // exception here because the transport should throw an exception if it's not fully set up
+                // when being about to send a command
+                continue;
             }
             $transport->$method($value);
         }
@@ -105,7 +108,8 @@ abstract class CommandTransport
      */
     public static function first()
     {
-        $config = self::getConfig()->current();
-        return self::fromConfig($config);
+        $config = self::getConfig();
+        $config->rewind();
+        return self::fromConfig($config->current());
     }
 }

@@ -1,11 +1,11 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Controller;
 
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
+use Icinga\Application\Modules\Manager;
 
 /**
  * Base class for module action controllers
@@ -35,6 +35,9 @@ class ModuleActionController extends ActionController
         $this->_helper->layout()->moduleName = $this->moduleName;
         $this->view->translationDomain = $this->moduleName;
         $this->moduleInit();
+        if ($this->getFrontController()->getDefaultModule() !== $this->moduleName) {
+            $this->assertPermission(Manager::MODULE_PERMISSION_NS . $this->moduleName);
+        }
     }
 
     /**
@@ -74,6 +77,6 @@ class ModuleActionController extends ActionController
     public function postDispatchXhr()
     {
         parent::postDispatchXhr();
-        $this->getResponse()->setHeader('X-Icinga-Module', $this->moduleName);
+        $this->getResponse()->setHeader('X-Icinga-Module', $this->moduleName, true);
     }
 }

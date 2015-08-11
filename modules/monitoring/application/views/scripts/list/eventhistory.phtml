@@ -1,124 +1,133 @@
-<?php if (false === $this->compact): ?>
+<?php
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Object\Service;
+
+$url = $this->url();
+$limit = (int) $url->getParam('limit', 25);
+if (! $url->hasParam('page') || ($page = (int) $url->getParam('page')) < 1) {
+    $page = 1;
+}
+
+$history->limit($limit * $page);
+
+if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs->render($this); ?>
-  <div style="margin: 1em" class="dontprint">
-    <?= $this->translate('Sort by'); ?> <?= $this->sortControl->render($this); ?>
-  </div>
-
-  <?= $this->widget('limiter', array('url' => $this->url, 'max' => $this->history->count())); ?>
-  <?= $this->paginationControl($history, null, null, array('preserve' => $this->preserve)); ?>
-
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <a class="load-more-hint" href="#load-more">
+    <?= $this->translate('Scroll to the bottom of this page to load additional events'); ?>
+  </a>
+  <?= $this->filterEditor; ?>
 </div>
 <?php endif ?>
-
 <div class="content">
-<?php if (empty($history)): ?>
-  <?= $this->translate('No history events matching the filter') ?>
-</div>
-<?php return; endif ?>
-
   <table data-base-target="_next" class="action">
     <tbody>
-    <?php foreach ($history as $event): ?>
+    <?php foreach ($history->peekAhead() as $event): ?>
     <?php
       $icon = 'help';
+      $msg = $event->output;
       $title = $event->type;
       $stateName = 'invalid';
-      $isService = isset($event->service);
+      $isService = isset($event->service_description);
       switch ($event->type) {
         case 'notify':
           $icon = 'bell';
           $title = $this->translate('Notification');
-          $msg = $event->output;
+          $msg = $msg ?: $this->translate('This notification was not sent out to any contact.');
           break;
         case 'comment':
           $icon = 'comment';
           $title = $this->translate('Comment');
-          $msg = $event->output;
           break;
         case 'ack':
           $icon = 'ok';
           $title = $this->translate('Acknowledgement');
-          $msg = $event->output;
           break;
         case 'dt_comment':
           $icon = 'plug';
           $title = $this->translate('In Downtime');
-          $msg = $event->output;
           break;
         case 'flapping':
           $icon = 'flapping';
           $title = $this->translate('Flapping');
-          $msg = $event->output;
           break;
         case 'flapping_deleted':
           $icon = 'ok';
           $title = $this->translate('Flapping Stopped');
-          $msg = $event->output;
           break;
         case 'hard_state':
           $icon = $isService ? 'service' : 'host';
-          $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $event->output;
-          $stateName = (
-            $isService
-              ? strtolower($this->util()->getServiceStateName($event->state))
-              : strtolower($this->util()->getHostStateName($event->state))
-          );
-          $title = strtoupper($stateName); // TODO: Should be translatable!
+          $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
+          $title = $isService ? Service::getStateText($event->state, true) : Host::getStateText($event->state, true);
           break;
         case 'soft_state':
           $icon = 'lightbulb';
-          $msg = '[ ' . $event->attempt . '/' . $event->max_attempts . ' ] ' . $event->output;
-          $stateName = (
-            $isService
-              ? strtolower($this->util()->getServiceStateName($event->state))
-              : strtolower($this->util()->getHostStateName($event->state))
-          );
-          $title = strtoupper($stateName); // TODO: Should be translatable!
+          $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
+          $title = $isService ? Service::getStateText($event->state, true) : Host::getStateText($event->state, true);
           break;
         case 'dt_start':
           $icon = 'starttime';
           $title = $this->translate('Downtime Start');
-          $msg = $event->output;
           break;
         case 'dt_end':
           $icon = 'endtime';
           $title = $this->translate('Downtime End');
-          $msg = $event->output;
           break;
         }
       ?>
       <tr class="state <?= $stateName; ?>">
         <td class="state">
+        <?php if ($history->getIteratorPosition() % $limit === 0): ?>
+          <a id="page-<?= $history->getIteratorPosition() / $limit + 1; ?>"></a>
+        <?php endif ?>
           <strong><?= $this->escape($title); ?></strong>
           <br>
-          <?= date('d.m. H:i', $event->timestamp); ?>
+          <?= $this->timeAgo($event->timestamp, $this->compact); ?>
         </td>
         <td>
         <?php if ($isService): ?>
-          <a href="<?= $this->href('monitoring/show/service', array(
-            'host'      => $event->host,
-            'service'   => $event->service
-          )); ?>">
-            <?= $event->service; ?>
-          </a>
-          <small>
-            <?= $this->translate('on') . ' ' . $event->host; ?>
-          </small>
+          <?= $this->link()->service(
+              $event->service_description, $event->service_display_name, $event->host_name, $event->host_display_name, 'rowaction'
+          ) ?>
         <?php else: ?>
-          <a href="<?= $this->href('monitoring/show/host', array(
-            'host' => $event->host
-          )); ?>">
-            <?= $event->host; ?>
-          </a>
+          <?= $this->link()->host($event->host_name, $event->host_display_name) ?>
         <?php endif ?>
           <br>
           <div>
-            <?= $this->icon($icon, $title); ?> <?= empty($msg) ? '' : $msg; ?>
+            <?= $this->icon($icon, $title); ?> <?= empty($msg) ? '' : $this->escape($msg) ?>
           </div>
         </td>
       </tr>
     <?php endforeach ?>
     </tbody>
   </table>
+<?php if (! $history->hasResult()): ?>
+  <?= $this->translate('No history events found matching the filter'); ?>
+<?php elseif ($history->hasMore()): ?>
+ <?php if ($this->compact): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $url->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right show-more'
+    )
+  ); ?>
+ <?php else: ?>
+  <div class="load-more-container"><?= $this->qlink(
+    $this->translate('Load More'),
+    $url->setAnchor('page-' . ($page + 1)),
+    array(
+      'page'    => $page + 1,
+    ),
+    array(
+      'id'      => 'load-more',
+      'class'   => 'pull-right load-more button-like'
+    )
+  ); ?></div>
+ <?php endif ?>
+<?php endif ?>
 </div>

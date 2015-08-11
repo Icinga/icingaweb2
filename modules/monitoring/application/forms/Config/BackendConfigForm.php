@@ -1,17 +1,21 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms\Config;
 
+use Exception;
 use InvalidArgumentException;
-use Icinga\Web\Notification;
-use Icinga\Forms\ConfigForm;
 use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
+use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\IcingaException;
+use Icinga\Exception\NotFoundError;
+use Icinga\Forms\ConfigForm;
+use Icinga\Web\Form;
 
 /**
- * Form class for creating/modifying monitoring backends
+ * Form for managing monitoring backends
  */
 class BackendConfigForm extends ConfigForm
 {
@@ -23,20 +27,27 @@ class BackendConfigForm extends ConfigForm
     protected $resources;
 
     /**
+     * The backend to load when displaying the form for the first time
+     *
+     * @var string
+     */
+    protected $backendToLoad;
+
+    /**
      * Initialize this form
      */
     public function init()
     {
         $this->setName('form_config_monitoring_backends');
-        $this->setSubmitLabel(mt('monitoring', 'Save Changes'));
+        $this->setSubmitLabel($this->translate('Save Changes'));
     }
 
     /**
      * Set the resource configuration to use
      *
-     * @param   Config      $resources      The resource configuration
+     * @param   Config  $resourceConfig     The resource configuration
      *
-     * @return  self
+     * @return  $this
      *
      * @throws  ConfigurationError          In case there are no valid monitoring backend resources
      */
@@ -44,13 +55,15 @@ class BackendConfigForm extends ConfigForm
     {
         $resources = array();
         foreach ($resourceConfig as $name => $resource) {
-            if ($resource->type === 'db' || $resource->type === 'livestatus') {
-                $resources[$resource->type === 'db' ? 'ido' : 'livestatus'][$name] = $name;
+            if ($resource->type === 'db') {
+                $resources['ido'][$name] = $name;
             }
         }
 
         if (empty($resources)) {
-            throw new ConfigurationError(mt('monitoring', 'Could not find any valid monitoring backend resources'));
+            throw new ConfigurationError($this->translate(
+                'Could not find any valid monitoring backend resources. Please configure a database resource first.'
+            ));
         }
 
         $this->resources = $resources;
@@ -58,149 +71,118 @@ class BackendConfigForm extends ConfigForm
     }
 
     /**
-     * Add a particular monitoring backend
+     * Populate the form with the given backend's config
      *
-     * The backend to add is identified by the array-key `name'.
+     * @param   string  $name
      *
-     * @param   array   $values             The values to extend the configuration with
+     * @return  $this
      *
-     * @return  self
-     *
-     * @throws  InvalidArgumentException    In case the backend does already exist
+     * @throws  NotFoundError   In case no backend with the given name is found
      */
-    public function add(array $values)
+    public function load($name)
     {
-        $name = isset($values['name']) ? $values['name'] : '';
-        if (! $name) {
-            throw new InvalidArgumentException(mt('monitoring', 'Monitoring backend name missing'));
-        } elseif ($this->config->hasSection($name)) {
-            throw new InvalidArgumentException(mt('monitoring', 'Monitoring backend already exists'));
+        if (! $this->config->hasSection($name)) {
+            throw new NotFoundError('No monitoring backend called "%s" found', $name);
         }
 
-        unset($values['name']);
-        $this->config->setSection($name, $values);
+        $this->backendToLoad = $name;
         return $this;
     }
 
     /**
-     * Edit a particular monitoring backend
+     * Add a new monitoring backend
      *
-     * @param   string  $name               The name of the backend to edit
-     * @param   array   $values             The values to edit the configuration with
+     * The backend to add is identified by the array-key `name'.
      *
-     * @return  array                       The edited backend configuration
+     * @param   array   $data
      *
-     * @throws  InvalidArgumentException    In case the backend does not exist
+     * @return  $this
+     *
+     * @throws  InvalidArgumentException    In case $data does not contain a backend name
+     * @throws  IcingaException             In case a backend with the same name already exists
      */
-    public function edit($name, array $values)
+    public function add(array $data)
     {
-        if (! $name) {
-            throw new InvalidArgumentException(mt('monitoring', 'Old monitoring backend name missing'));
-        } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
-            throw new InvalidArgumentException(mt('monitoring', 'New monitoring backend name missing'));
-        } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(mt('monitoring', 'Unknown monitoring backend provided'));
+        if (! isset($data['name'])) {
+            throw new InvalidArgumentException('Key \'name\' missing');
         }
 
-        unset($values['name']);
-        $this->config->setSection($name, $values);
-        return $this->config->getSection($name);
+        $backendName = $data['name'];
+        if ($this->config->hasSection($backendName)) {
+            throw new IcingaException(
+                $this->translate('A monitoring backend with the name "%s" does already exist'),
+                $backendName
+            );
+        }
+
+        unset($data['name']);
+        $this->config->setSection($backendName, $data);
+        return $this;
     }
 
     /**
-     * Remove the given monitoring backend
+     * Edit a monitoring backend
      *
-     * @param   string      $name           The name of the backend to remove
+     * @param   string  $name
+     * @param   array   $data
      *
-     * @return  array                       The removed backend configuration
+     * @return  $this
      *
-     * @throws  InvalidArgumentException    In case the backend does not exist
+     * @throws  NotFoundError   In case no backend with the given name is found
      */
-    public function remove($name)
+    public function edit($name, array $data)
     {
-        if (! $name) {
-            throw new InvalidArgumentException(mt('monitoring', 'Monitoring backend name missing'));
-        } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(mt('monitoring', 'Unknown monitoring backend provided'));
+        if (! $this->config->hasSection($name)) {
+            throw new NotFoundError('No monitoring backend called "%s" found', $name);
         }
 
         $backendConfig = $this->config->getSection($name);
+        if (isset($data['name'])) {
+            if ($data['name'] !== $name) {
+                $this->config->removeSection($name);
+                $name = $data['name'];
+            }
+
+            unset($data['name']);
+        }
+
+        $backendConfig->merge($data);
+        foreach ($backendConfig->toArray() as $k => $v) {
+            if ($v === null) {
+                unset($backendConfig->$k);
+            }
+        }
+
+        $this->config->setSection($name, $backendConfig);
+        return $this;
+    }
+
+    /**
+     * Remove a monitoring backend
+     *
+     * @param   string  $name
+     *
+     * @return  $this
+     */
+    public function delete($name)
+    {
         $this->config->removeSection($name);
-        return $backendConfig;
+        return $this;
     }
 
     /**
-     * Add or edit a monitoring backend and save the configuration
+     * Create and add elements to this form
      *
-     * @see Form::onSuccess()
-     */
-    public function onSuccess()
-    {
-        $monitoringBackend = $this->request->getQuery('backend');
-        try {
-            if ($monitoringBackend === null) { // create new backend
-                $this->add($this->getValues());
-                $message = mt('monitoring', 'Monitoring backend "%s" has been successfully created');
-            } else { // edit existing backend
-                $this->edit($monitoringBackend, $this->getValues());
-                $message = mt('monitoring', 'Monitoring backend "%s" has been successfully changed');
-            }
-        } catch (InvalidArgumentException $e) {
-            Notification::error($e->getMessage());
-            return;
-        }
-
-        if ($this->save()) {
-            Notification::success(sprintf($message, $this->getElement('name')->getValue()));
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Populate the form in case a monitoring backend is being edited
-     *
-     * @see Form::onRequest()
-     *
-     * @throws  ConfigurationError      In case the backend name is missing in the request or is invalid
-     */
-    public function onRequest()
-    {
-        $monitoringBackend = $this->request->getQuery('backend');
-        if ($monitoringBackend !== null) {
-            if ($monitoringBackend === '') {
-                throw new ConfigurationError(mt('monitoring', 'Monitoring backend name missing'));
-            } elseif (! $this->config->hasSection($monitoringBackend)) {
-                throw new ConfigurationError(mt('monitoring', 'Unknown monitoring backend provided'));
-            }
-
-            $backendConfig = $this->config->getSection($monitoringBackend)->toArray();
-            $backendConfig['name'] = $monitoringBackend;
-            $this->populate($backendConfig);
-        }
-    }
-
-    /**
-     * @see Form::createElements()
+     * @param   array   $formData
      */
     public function createElements(array $formData)
     {
-        $resourceType = isset($formData['type']) ? $formData['type'] : key($this->resources);
-
-        $resourceTypes = array();
-        if ($resourceType === 'ido' || array_key_exists('ido', $this->resources)) {
-            $resourceTypes['ido'] = 'IDO Backend';
-        }
-        if ($resourceType === 'livestatus' || array_key_exists('livestatus', $this->resources)) {
-            $resourceTypes['livestatus'] = 'Livestatus';
-        }
-
         $this->addElement(
             'checkbox',
             'disabled',
             array(
                 'required'  => true,
-                'label'     => mt('monitoring', 'Disable This Backend')
+                'label'     => $this->translate('Disable This Backend')
             )
         );
         $this->addElement(
@@ -208,57 +190,215 @@ class BackendConfigForm extends ConfigForm
             'name',
             array(
                 'required'      => true,
-                'label'         => mt('monitoring', 'Backend Name'),
-                'description'   => mt('monitoring', 'The identifier of this backend')
+                'label'         => $this->translate('Backend Name'),
+                'description'   => $this->translate(
+                    'The name of this monitoring backend that is used to differentiate it from others'
+                ),
+                'validators'    => array(
+                    array(
+                        'Regex',
+                        false,
+                        array(
+                            'pattern'  => '/^[^\\[\\]:]+$/',
+                            'messages' => array(
+                                'regexNotMatch' => $this->translate(
+                                    'The name cannot contain \'[\', \']\' or \':\'.'
+                                )
+                            )
+                        )
+                    )
+                )
             )
         );
+
+        $resourceType = isset($formData['type']) ? $formData['type'] : null;
+
+        $resourceTypes = array();
+        if ($resourceType === 'ido' || array_key_exists('ido', $this->resources)) {
+            $resourceTypes['ido'] = 'IDO Backend';
+        }
+
+        if ($resourceType === null) {
+            $resourceType = key($resourceTypes);
+        } elseif ($resourceType === 'livestatus') {
+            throw new ConfigurationError(
+                'We\'ve disabled livestatus support for now because it\'s not feature complete yet'
+            );
+        }
+
         $this->addElement(
             'select',
             'type',
             array(
                 'required'      => true,
                 'autosubmit'    => true,
-                'label'         => mt('monitoring', 'Backend Type'),
-                'description'   => mt('monitoring', 'The data source used for retrieving monitoring information'),
-                'multiOptions'  => $resourceTypes,
-                'value'         => $resourceType
+                'label'         => $this->translate('Backend Type'),
+                'description'   => $this->translate(
+                    'The type of data source used for retrieving monitoring information'
+                ),
+                'multiOptions'  => $resourceTypes
             )
         );
 
-        $resourceElement = $this->createElement(
+        $decorators = static::$defaultElementDecorators;
+        array_pop($decorators); // Removes the HtmlTag decorator
+        $this->addElement(
             'select',
             'resource',
             array(
                 'required'      => true,
-                'label'         => mt('monitoring', 'Resource'),
-                'description'   => mt('monitoring', 'The resource to use'),
+                'label'         => $this->translate('Resource'),
+                'description'   => $this->translate('The resource to use'),
                 'multiOptions'  => $this->resources[$resourceType],
+                'value'         => current($this->resources[$resourceType]),
+                'decorators'    => $decorators,
                 'autosubmit'    => true
             )
         );
-
-        if (empty($formData)) {
-            $options = $resourceElement->options;
-            $resourceName = array_shift($options);
-        } else {
-            $resourceName = (isset($formData['resource'])) ? $formData['resource'] : $this->getValue('resource');
-        }
-
-        $this->addElement($resourceElement);
-
-        if ($resourceElement) {
-            $this->addElement(
-                'note',
-                'resource_note',
-                array(
-                    'value' => sprintf(
-                        '<a href="%s" data-base-target="_main">%s</a>',
-                        $this->getView()->href('/icingaweb/config/editresource', array('resource' => $resourceName)),
-                        mt('monitoring', 'Show resource configuration')
-                    ),
-                    'escape' => false
+        $resourceName = isset($formData['resource']) ? $formData['resource'] : $this->getValue('resource');
+        $this->addElement(
+            'note',
+            'resource_note',
+            array(
+                'escape'        => false,
+                'decorators'    => $decorators,
+                'value'         => sprintf(
+                    '<a href="%1$s" data-base-target="_next" title="%2$s" aria-label="%2$s">%3$s</a>',
+                    $this->getView()->url('config/editresource', array('resource' => $resourceName)),
+                    sprintf($this->translate('Show the configuration of the %s resource'), $resourceName),
+                    $this->translate('Show resource configuration')
                 )
-            );
+            )
+        );
+        $this->addDisplayGroup(
+            array('resource', 'resource_note'),
+            'resource-group',
+            array(
+                'decorators'    => array(
+                    'FormElements',
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'element'))
+                )
+            )
+        );
+
+        if (isset($formData['skip_validation']) && $formData['skip_validation']) {
+            // In case another error occured and the checkbox was displayed before
+            $this->addSkipValidationCheckbox();
         }
+    }
+
+    /**
+     * Populate the configuration of the backend to load
+     */
+    public function onRequest()
+    {
+        if ($this->backendToLoad) {
+            $data = $this->config->getSection($this->backendToLoad)->toArray();
+            $data['name'] = $this->backendToLoad;
+            $this->populate($data);
+        }
+    }
+
+    /**
+     * Return whether the given values are valid
+     *
+     * @param   array   $formData   The data to validate
+     *
+     * @return  bool
+     */
+    public function isValid($formData)
+    {
+        if (! parent::isValid($formData)) {
+            return false;
+        }
+
+        if (($el = $this->getElement('skip_validation')) === null || false === $el->isChecked()) {
+            $resourceConfig = ResourceFactory::getResourceConfig($this->getValue('resource'));
+            if (! self::isValidIdoSchema($this, $resourceConfig) || !self::isValidIdoInstance($this, $resourceConfig)) {
+                if ($el === null) {
+                    $this->addSkipValidationCheckbox();
+                }
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Add a checkbox to the form by which the user can skip the schema validation
+     */
+    protected function addSkipValidationCheckbox()
+    {
+        $this->addElement(
+            'checkbox',
+            'skip_validation',
+            array(
+                'order'         => 0,
+                'ignore'        => true,
+                'required'      => true,
+                'label'         => $this->translate('Skip Validation'),
+                'description'   => $this->translate(
+                    'Check this to not to validate the IDO schema of the chosen resource.'
+                )
+            )
+        );
+    }
+
+    /**
+     * Return whether the given resource contains a valid IDO schema
+     *
+     * @param   Form            $form
+     * @param   ConfigObject    $resourceConfig
+     *
+     * @return  bool
+     */
+    public static function isValidIdoSchema(Form $form, ConfigObject $resourceConfig)
+    {
+        try {
+            $db = ResourceFactory::createResource($resourceConfig);
+            $db->select()->from('icinga_dbversion', array('version'))->fetchOne();
+        } catch (Exception $_) {
+            $form->error($form->translate(
+                'Cannot find the IDO schema. Please verify that the given database '
+                . 'contains the schema and that the configured user has access to it.'
+            ));
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Return whether a single icinga instance is writing to the given resource
+     *
+     * @param   Form            $form
+     * @param   ConfigObject    $resourceConfig
+     *
+     * @return  bool                                True if it's a single instance, false if none
+     *                                              or multiple instances are writing to it
+     */
+    public static function isValidIdoInstance(Form $form, ConfigObject $resourceConfig)
+    {
+        $db = ResourceFactory::createResource($resourceConfig);
+        $rowCount = $db->select()->from('icinga_instances')->count();
+
+        if ($rowCount === 0) {
+            $form->warning($form->translate(
+                'There is currently no icinga instance writing to the IDO. Make sure '
+                . 'that a icinga instance is configured and able to write to the IDO.'
+            ));
+            return false;
+        } elseif ($rowCount > 1) {
+            $form->warning($form->translate(
+                'There is currently more than one icinga instance writing to the IDO. You\'ll see all objects from all'
+                . ' instances without any differentation. If this is not desired, consider setting up a separate IDO'
+                . ' for each instance.'
+            ));
+            return false;
+        }
+
+        return true;
     }
 }

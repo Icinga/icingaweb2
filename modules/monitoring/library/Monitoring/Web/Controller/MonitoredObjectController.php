@@ -1,11 +1,9 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Web\Controller;
 
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
@@ -15,7 +13,6 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandFor
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
-use Icinga\Web\Widget\Tabextension\OutputFormat;
 
 /**
  * Base class for the host and service controller
@@ -57,47 +54,58 @@ abstract class MonitoredObjectController extends Controller
     public function showAction()
     {
         $this->setAutorefreshInterval(10);
-        $checkNowForm = new CheckNowCommandForm();
-        $checkNowForm
-            ->setObjects($this->object)
-            ->handleRequest();
-        $this->view->checkNowForm = $checkNowForm;
-        if ( ! in_array((int) $this->object->state, array(0, 99))) {
+        $auth = $this->Auth();
+        if ($auth->hasPermission('monitoring/command/schedule-check')) {
+            $checkNowForm = new CheckNowCommandForm();
+            $checkNowForm
+                ->setObjects($this->object)
+                ->handleRequest();
+            $this->view->checkNowForm = $checkNowForm;
+        }
+        if (! in_array((int) $this->object->state, array(0, 99))) {
             if ((bool) $this->object->acknowledged) {
-                $removeAckForm = new RemoveAcknowledgementCommandForm();
-                $removeAckForm
-                    ->setObjects($this->object)
-                    ->handleRequest();
-                $this->view->removeAckForm = $removeAckForm;
-            } else {
-                $ackForm = new AcknowledgeProblemCommandForm();
-                $ackForm
-                    ->setObjects($this->object)
-                    ->handleRequest();
-                $this->view->ackForm = $ackForm;
+                if ($auth->hasPermission('monitoring/command/remove-acknowledgement')) {
+                    $removeAckForm = new RemoveAcknowledgementCommandForm();
+                    $removeAckForm
+                        ->setObjects($this->object)
+                        ->handleRequest();
+                    $this->view->removeAckForm = $removeAckForm;
+                }
             }
         }
-        if (count($this->object->comments) > 0) {
-            $delCommentForm = new DeleteCommentCommandForm();
-            $delCommentForm
-                ->setObjects($this->object)
-                ->handleRequest();
-            $this->view->delCommentForm = $delCommentForm;
-        }
-        if (count($this->object->downtimes > 0)) {
-            $delDowntimeForm = new DeleteDowntimeCommandForm();
-            $delDowntimeForm
-                ->setObjects($this->object)
-                ->handleRequest();
-            $this->view->delDowntimeForm = $delDowntimeForm;
-        }
+        $this->object->populate();
         $toggleFeaturesForm = new ToggleObjectFeaturesCommandForm();
         $toggleFeaturesForm
+            ->setBackend($this->backend)
             ->load($this->object)
             ->setObjects($this->object)
             ->handleRequest();
         $this->view->toggleFeaturesForm = $toggleFeaturesForm;
-        $this->view->object = $this->object->populate();
+        if (! empty($this->object->comments) && $auth->hasPermission('monitoring/command/comment/delete')) {
+            $delCommentForm = new DeleteCommentCommandForm();
+            $delCommentForm->handleRequest();
+            $this->view->delCommentForm = $delCommentForm;
+        }
+        if (! empty($this->object->downtimes) && $auth->hasPermission('monitoring/command/downtime/delete')) {
+            $delDowntimeForm = new DeleteDowntimeCommandForm();
+            $delDowntimeForm->handleRequest();
+            $this->view->delDowntimeForm = $delDowntimeForm;
+        }
+        $this->view->object = $this->object;
+    }
+
+    /**
+     * Show the history for a host or service
+     */
+    public function historyAction()
+    {
+        $this->getTabs()->activate('history');
+        $this->view->history = $this->object->fetchEventHistory()->eventhistory;
+        $this->applyRestriction('monitoring/filter/objects', $this->view->history);
+
+        $this->setupLimitControl(50);
+        $this->setupPaginationControl($this->view->history, 50);
+        $this->view->object = $this->object;
     }
 
     /**
@@ -114,7 +122,9 @@ abstract class MonitoredObjectController extends Controller
             ->setRedirectUrl(Url::fromPath($this->commandRedirectUrl)->setParams($this->params))
             ->handleRequest();
         $this->view->form = $form;
-        $this->_helper->viewRenderer('partials/command-form', null, true);
+        $this->view->object = $this->object;
+        $this->view->tabs->remove('dashboard');
+        $this->_helper->viewRenderer('partials/command/object-command-form', null, true);
         return $form;
     }
 
@@ -139,34 +149,6 @@ abstract class MonitoredObjectController extends Controller
     abstract public function scheduleDowntimeAction();
 
     /**
-     * Remove a comment
-     */
-    public function removeCommentAction()
-    {
-        /*
-         * TODO(el): This is here because monitoring/list/comments has buttons to remove comments. Because of the nature
-         * of an action, the form is accessible via GET which does not make much sense because the form requires
-         * us to populate the ID of the comment which is to be deleted. We may introduce a combo box for choosing
-         * the comment ID on GET or deny GET access.
-         */
-        $this->handleCommandForm(new DeleteCommentCommandForm());
-    }
-
-    /**
-     * Remove a downtime
-     */
-    public function deleteDowntimeAction()
-    {
-        /*
-         * TODO(el): This is here because monitoring/list/downtimes has buttons to remove comments. Because of the
-         * nature of an action, the form is accessible via GET which does not make much sense because the form requires
-         * us to populate the ID of the downtime which is to be deleted. We may introduce a combo box for choosing
-         * the downtime ID on GET or deny GET access.
-         */
-        $this->handleCommandForm(new DeleteDowntimeCommandForm());
-    }
-
-    /**
      * Create tabs
      */
     protected function createTabs()
@@ -174,10 +156,15 @@ abstract class MonitoredObjectController extends Controller
         $tabs = $this->getTabs();
         $object = $this->object;
         if ($object->getType() === $object::TYPE_HOST) {
+            $isService = false;
             $params = array(
                 'host' => $object->getName()
             );
+            if ($this->params->has('service')) {
+                $params['service'] = $this->params->get('service');
+            }
         } else {
+            $isService = true;
             $params = array(
                 'host'      => $object->getHost()->getName(),
                 'service'   => $object->getName()
@@ -186,17 +173,26 @@ abstract class MonitoredObjectController extends Controller
         $tabs->add(
             'host',
             array(
-                'title'     => 'Host',
+                'title'     => sprintf(
+                    $this->translate('Show detailed information for host %s'),
+                    $isService ? $object->getHost()->getName() : $object->getName()
+                ),
+                'label'     => $this->translate('Host'),
                 'icon'      => 'host',
                 'url'       => 'monitoring/host/show',
                 'urlParams' => $params
             )
         );
-        if (isset($params['service'])) {
+        if ($isService || $this->params->has('service')) {
             $tabs->add(
                 'service',
                 array(
-                    'title'     => 'Service',
+                    'title'     => sprintf(
+                        $this->translate('Show detailed information for service %s on host %s'),
+                        $isService ? $object->getName() : $this->params->get('service'),
+                        $isService ? $object->getHost()->getName() : $object->getName()
+                    ),
+                    'label'     => $this->translate('Service'),
                     'icon'      => 'service',
                     'url'       => 'monitoring/service/show',
                     'urlParams' => $params
@@ -206,25 +202,35 @@ abstract class MonitoredObjectController extends Controller
         $tabs->add(
             'services',
             array(
-                'title'     => 'Services',
+                'title'     => sprintf(
+                    $this->translate('List all services on host %s'),
+                    $isService ? $object->getHost()->getName() : $object->getName()
+                ),
+                'label'     => $this->translate('Services'),
                 'icon'      => 'services',
-                'url'       => 'monitoring/show/services',
+                'url'       => 'monitoring/host/services',
                 'urlParams' => $params
             )
         );
-        if ($this->backend->hasQuery('eventHistory')) {
+        if ($this->backend->hasQuery('eventhistory')) {
             $tabs->add(
                 'history',
                 array(
-                    'title'     => 'History',
+                    'title'     => $isService
+                        ? sprintf(
+                            $this->translate('Show all event records of service %s on host %s'),
+                            $object->getName(),
+                            $object->getHost()->getName()
+                        )
+                        : sprintf($this->translate('Show all event records of host %s'), $object->getName())
+                    ,
+                    'label'     => $this->translate('History'),
                     'icon'      => 'rewind',
-                    'url'       => 'monitoring/show/history',
+                    'url'       => $isService ? 'monitoring/service/history' : 'monitoring/host/history',
                     'urlParams' => $params
                 )
             );
         }
-        $tabs
-            ->extend(new OutputFormat())
-            ->extend(new DashboardAction());
+        $tabs->extend(new DashboardAction());
     }
 }

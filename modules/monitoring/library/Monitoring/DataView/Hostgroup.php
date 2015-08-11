@@ -1,40 +1,48 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
-
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\DataView;
 
 /**
- * View for hostgroups
+ * Host group data view
  */
 class Hostgroup extends DataView
 {
     /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getColumns()
     {
         return array(
-            'host',
-            'hostgroup_name',
-            'hostgroup_alias'
+            'hostgroup_alias',
+            'hostgroup_name'
         );
     }
 
     /**
-     * Retrieve default sorting rules for particular columns. These involve sort order and potential additional to sort
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getSortRules()
+    public function getFilterColumns()
     {
         return array(
-            'hostgroup_name' => array(
-                'order' => self::SORT_ASC
-            )
+            'host', 'host_alias', 'host_display_name', 'host_name',
+            'hostgroup',
+            'service', 'service_description', 'service_display_name',
+            'servicegroup', 'servicegroup_alias', 'servicegroup_name'
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isValidFilterTarget($column)
+    {
+        if ($column[0] === '_'
+            && preg_match('/^_(?:host|service)_/', $column)
+        ) {
+            return true;
+        } else {
+            return parent::isValidFilterTarget($column);
+        }
     }
 }

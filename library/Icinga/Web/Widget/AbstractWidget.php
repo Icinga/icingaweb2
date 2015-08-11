@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Widget;
 
@@ -27,7 +26,7 @@ abstract class AbstractWidget
 {
     /**
      * If you are going to access the current view with the view() function,
-     * it's instance is stored here for performance reasons.
+     * its instance is stored here for performance reasons.
      *
      * @var Zend_View_Abstract
      */

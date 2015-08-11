@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Chart\Primitive;
 
@@ -78,7 +77,7 @@ class Path extends Styleable implements Drawable
      *
      * @param   array $points Either a single [x, y] point or an array of x, y points
      *
-     * @return  self          Fluid interface
+     * @return  $this          Fluid interface
      */
     public function append(array $points)
     {
@@ -97,7 +96,7 @@ class Path extends Styleable implements Drawable
      *
      * @param   array $points Either a single [x, y] point or an array of x, y points
      *
-     * @return  self          Fluid interface
+     * @return  $this          Fluid interface
      */
     public function prepend(array $points)
     {
@@ -116,7 +115,7 @@ class Path extends Styleable implements Drawable
      *
      * @param   boolean $bool True to draw discrete or false to draw straight lines between points
      *
-     * @return  self          Fluid interface
+     * @return  $this          Fluid interface
      */
     public function setDiscrete($bool)
     {
@@ -127,7 +126,7 @@ class Path extends Styleable implements Drawable
     /**
      * Mark this path as containing absolute coordinates
      *
-     * @return self Fluid interface
+     * @return $this Fluid interface
      */
     public function toAbsolute()
     {

@@ -1,5 +1,4 @@
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 /**
  * Icinga.UI
@@ -9,13 +8,6 @@
 (function(Icinga, $) {
 
     'use strict';
-
-    // Stores the icinga-data-url of the last focused table.
-    var focusedTableDataUrl = null;
-
-    // The stored selection data, useful for preserving selections over
-    // multiple reload-cycles.
-    var selectionData = null;
 
     Icinga.UI = function (icinga) {
 
@@ -39,8 +31,7 @@
             this.fadeNotificationsAway();
         },
 
-        fadeNotificationsAway: function()
-        {
+        fadeNotificationsAway: function() {
             var icinga = this.icinga;
             $('#notifications li')
                 .not('.fading-out')
@@ -131,6 +122,33 @@
             return this;
         },
 
+        /**
+         * Focus the given element and scroll to its position
+         *
+         * @param   {string}    element     The name or id of the element to focus
+         * @param   {object}    $container  The container containing the element
+         */
+        focusElement: function(element, $container) {
+            var $element = $('#' + element, $container);
+
+            if (! $element.length) {
+                // The name attribute is actually deprecated, on anchor tags,
+                // but we'll possibly handle links from another source
+                // (module etc) so that's used as a fallback
+                $element = $('[name="' + element.replace(/'/, '\\\'') + '"]', $container);
+            }
+
+            if ($element.length) {
+                if (typeof $element.attr('tabindex') === 'undefined') {
+                    $element.attr('tabindex', -1);
+                }
+
+                $element.focus();
+                $container.scrollTop(0);
+                $container.scrollTop($element.first().position().top);
+            }
+        },
+
         moveToLeft: function () {
             var col2 = this.cutContainer($('#col2'));
             var kill = this.cutContainer($('#col1'));
@@ -141,7 +159,7 @@
 
         cutContainer: function ($col) {
             var props = {
-              'elements': $('#' + $col.attr('id') + ' > div').detach(),
+              'elements': $('#' + $col.attr('id') + ' > *').detach(),
               'data': {
                 'data-icinga-url': $col.data('icingaUrl'),
                 'data-icinga-refresh': $col.data('icingaRefresh'),
@@ -166,18 +184,6 @@
             $col.data('icingaRefresh', backup['data']['data-icinga-refresh']);
             $col.data('lastUpdate', backup['data']['data-last-update']);
             $col.data('icingaModule', backup['data']['data-icinga-module']);
-        },
-
-        scrollContainerToAnchor: function ($container, anchorName) {
-            // TODO: Generic issue -> we probably should escape attribute value selectors!?
-            var $anchor = $("a[name='" + anchorName.replace(/'/, '\\\'') + "']", $container);
-            if ($anchor.length) {
-                $container.scrollTop(0);
-                $container.scrollTop($anchor.first().position().top);
-                this.icinga.logger.debug('Scrolling ', $container, ' to ', anchorName);
-            } else {
-                this.icinga.logger.info('Anchor "' + anchorName + '" not found in ', $container);
-            }
         },
 
         triggerWindowResize: function () {
@@ -250,6 +256,9 @@
             $('#layout').removeClass('twocols');
             this.closeContainer($('#col2'));
             this.disableCloseButtons();
+
+            // one-column layouts never have any selection active
+            this.icinga.behaviors.actiontable.clearAll();
         },
 
         closeContainer: function($c) {
@@ -297,226 +306,6 @@
 
         getColumnCount: function () {
             return $('#main > .container').length;
-        },
-
-        /**
-         * Add the given table-row to the selection of the closest
-         * table and deselect all other rows of the closest table.
-         *
-         * @param $tr {jQuery}  The selected table row.
-         * @returns {boolean}   If the selection was changed.
-         */
-        setTableRowSelection: function ($tr) {
-            var $table   = $tr.closest('table.multiselect');
-            $table.find('tr[href].active').removeClass('active');
-            $tr.addClass('active');
-            return true;
-        },
-
-        /**
-         * Toggle the given table row to "on" when not selected, or to "off" when
-         * currently selected.
-         *
-         * @param $tr {jQuery}  The table row.
-         * @returns {boolean}   If the selection was changed.
-         */
-        toogleTableRowSelection: function ($tr) {
-            // multi selection
-            if ($tr.hasClass('active')) {
-                $tr.removeClass('active');
-            } else {
-                $tr.addClass('active');
-            }
-            return true;
-        },
-
-        /**
-         * Add a new selection range to the closest table, using the selected row as
-         * range target.
-         *
-         * @param $tr {jQuery}  The target of the selected range.
-         * @returns {boolean}   If the selection was changed.
-         */
-        addTableRowRangeSelection: function ($tr) {
-            var $table = $tr.closest('table.multiselect');
-            var $rows  = $table.find('tr[href]'),
-                from, to;
-            var selected = $tr.first().get(0);
-            $rows.each(function(i, el) {
-                if ($(el).hasClass('active') || el === selected) {
-                    if (!from) {
-                        from = el;
-                    }
-                    to = el;
-                }
-            });
-            var inRange = false;
-            $rows.each(function(i, el){
-                if (el === from) {
-                    inRange = true;
-                }
-                if (inRange) {
-                    $(el).addClass('active');
-                }
-                if (el === to) {
-                    inRange = false;
-                }
-            });
-            return false;
-        },
-
-
-        /**
-         * Read the data from a whole set of selections.
-         *
-         * @param $selections   {jQuery}    All selected rows in a jQuery-selector.
-         * @param keys          {Array}     An array containing all valid keys.
-         * @returns {Array} An array containing an object with the data for each selection.
-         */
-        getSelectionSetData: function($selections, keys) {
-            var selections = [];
-            var icinga = this.icinga;
-
-            // read all current selections
-            $selections.each(function(ind, selected) {
-                selections.push(icinga.ui.getSelectionData($(selected), keys, icinga));
-            });
-            return selections;
-        },
-
-        getSelectionKeys: function($selection)
-        {
-            var d = $selection.data('icinga-multiselect-data') && $selection.data('icinga-multiselect-data').split(',');
-            return d || [];
-        },
-
-        /**
-         * Read the data from the given selected object.
-         *
-         * @param $selection {jQuery}   The selected object.
-         * @param keys       {Array}    An array containing all valid keys.
-         * @param icinga     {Icinga}   The main icinga object.
-         * @returns {Object}    An object containing all key-value pairs associated with this selection.
-         */
-        getSelectionData: function($selection, keys, icinga)
-        {
-            var url    = $selection.attr('href');
-            var params = this.icinga.utils.parseUrl(url).params;
-            var tuple  = {};
-            for (var i = 0; i < keys.length; i++) {
-                var key = keys[i];
-                if (params[key]) {
-                    tuple[key] = params[key];
-                }
-            }
-            return tuple;
-        },
-
-        /**
-         * Convert a set of selection data to a single query.
-         *
-         * @param selectionData {Array} The selection data generated from getSelectionData
-         * @returns {String}    The formatted and uri-encoded query-string.
-         */
-        selectionDataToQuery: function (selectionData) {
-            var queries = [];
-
-            // create new url
-            if (selectionData.length < 2) {
-                this.icinga.logger.error('Something went wrong, we should never multiselect just one row');
-            } else {
-                $.each(selectionData, function(i, el){
-                    var parts = []
-                    $.each(el, function(key, value) {
-                        parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
-                    });
-                    queries.push('(' + parts.join('&') + ')');
-                });
-            }
-            return '(' + queries.join('|') + ')';
-        },
-
-        /**
-         * Create a single query-argument (not compatible to selectionDataToQuery)
-         *
-         * @param data
-         * @returns {string}
-         */
-        selectionDataToQueryComp: function(data) {
-            var queries = [];
-            $.each(data, function(key, value){
-                queries.push(key + '=' + encodeURIComponent(value));
-            });
-            return queries.join('&');
-        },
-
-        /**
-         * Store a set of selection-data to preserve it accross page-reloads
-         *
-         * @param data {Array|String|Null}  The selection-data be an Array of Objects,
-         *  containing the selection data (when multiple rows where selected), a
-         * String containing a single url (when only a single row was selected) or
-         * Null when nothing was selected.
-         */
-        storeSelectionData: function(data) {
-            selectionData = data;
-        },
-
-        /**
-         * Load the last stored set of selection-data
-         *
-         * @returns {Array|String|Null}   May be an Array of Objects, containing the selection data
-         * (when multiple rows where selected), a String containing a single url
-         * (when only a single row was selected) or Null when nothing was selected.
-         */
-        loadSelectionData: function() {
-            this.provideSelectionCount();
-            return selectionData;
-        },
-
-        /**
-         * Set the selections row count hint info
-         */
-        provideSelectionCount: function() {
-            var $count = $('.selection-info-count');
-
-            if (typeof selectionData === 'undefined' || selectionData === null) {
-                $count.text(0);
-                return;
-            }
-
-            if (typeof selectionData === 'string') {
-                $count.text(1);
-            } else if (selectionData.length > 1) {
-                $count.text(selectionData.length);
-            } else {
-                $count.text(0);
-            }
-        },
-
-        /**
-         * Focus the given table by deselecting all selections on all other tables.
-         *
-         * Focusing a table is important for environments with multiple tables like
-         * the dashboard. It should only be possible to select rows at one table at a time,
-         * when a user selects a row on a table all rows that are not child of the given table
-         * will be removed from the selection.
-         *
-         * @param table {htmlElement}   The table to focus.
-         */
-        focusTable: function (table) {
-            $('table').filter(function(){ return this !== table; }).find('tr[href]').removeClass('active');
-            var n = $(table).closest('div.container').attr('data-icinga-url');
-            focusedTableDataUrl = n;
-        },
-
-        /**
-         * Return the URL of the last focused table container.
-         *
-         * @returns {String}    The data-icinga-url of the last focused table, which should be unique in each site.
-         */
-        getFocusedContainerDataUrl: function() {
-            return focusedTableDataUrl;
         },
 
         /**
@@ -578,70 +367,60 @@
             );
         },
 
+        /**
+         * Refresh partial time counters
+         *
+         * This function runs every second.
+         */
         refreshTimeSince: function () {
-
-            $('.timesince').each(function (idx, el) {
-
-                // todo remove after replace timeSince
-                var mp = el.innerHTML.match(/^(.*?)(-?\d+)d\s(-?\d+)h/);
-                if (mp !== null) {
-                    return true;
-                }
-
-                var m = el.innerHTML.match(/^(.*?)(-?\d+)(.+\s)(-?\d+)(.+)/);
-                if (m !== null) {
-                    var nm = parseInt(m[2]);
-                    var ns = parseInt(m[4]);
-                    if (ns < 59) {
-                        ns++;
+            $('.time-ago, .time-since').each(function (idx, el) {
+                var partialTime = /(\d{1,2})m (\d{1,2})s/.exec(el.innerHTML);
+                if (partialTime !== null) {
+                    var minute = parseInt(partialTime[1], 10),
+                        second = parseInt(partialTime[2], 10);
+                    if (second < 59) {
+                        ++second;
                     } else {
-                        ns = 0;
-                        nm++;
+                        ++minute;
+                        second = 0;
                     }
-                    $(el).html(m[1] + nm + m[3] + ns + m[5]);
+                    el.innerHTML = el.innerHTML.substr(0, partialTime.index) + minute.toString() + 'm '
+                        + second.toString() + 's' + el.innerHTML.substr(partialTime.index + partialTime[0].length);
                 }
             });
 
-            $('.timeuntil').each(function (idx, el) {
-
-                // todo remove after replace timeUntil
-                var mp = el.innerHTML.match(/^(.*?)(-?\d+)d\s(-?\d+)h/);
-                if (mp !== null) {
-                    return true;
-                }
-
-                var m = el.innerHTML.match(/^(.*?)(-?\d+)(.+\s)(-?\d+)(.+)/);
-                if (m !== null) {
-                    var nm = parseInt(m[2]);
-                    var ns = parseInt(m[4]);
-                    var signed = '';
-                    var sec = 0;
-
-                    if (nm < 0) {
-                        signed = '-';    
-                        nm = nm * -1;
-                        sec = nm * 60 + ns;
-                        sec++;
-                    } else if (nm == 0 && ns == 0) {
-                        signed = '-';    
-                        sec = 1;
-                    } else if (nm == 0 && m[2][0] == '-') {
-                        signed = '-';    
-                        sec = ns;
-                        sec++;
-                    } else if (nm == 0 && m[2][0] != '-') {
-                        sec = ns;
-                        sec--;
+            $('.time-until').each(function (idx, el) {
+                var partialTime = /(-?)(\d{1,2})m (\d{1,2})s/.exec(el.innerHTML);
+                if (partialTime !== null) {
+                    var minute = parseInt(partialTime[2], 10),
+                        second = parseInt(partialTime[3], 10),
+                        invert = partialTime[1];
+                    if (invert.length) {
+                        // Count up because partial time is negative
+                        if (second < 59) {
+                            ++second;
+                        } else {
+                            ++minute;
+                            second = 0;
+                        }
                     } else {
-                        signed = '';    
-                        sec = nm * 60 + ns;
-                        sec--;
-                    }    
-
-                    nm = Math.floor(sec/60);
-                    ns = sec - nm * 60;
-
-                    $(el).html(m[1] + signed + nm + m[3] + ns + m[5]);
+                        // Count down because partial time is positive
+                        if (second === 0) {
+                            if (minute === 0) {
+                                // Invert counter
+                                minute = 0;
+                                second = 1;
+                                invert = '-';
+                            } else {
+                                --minute;
+                                second = 59;
+                            }
+                        } else {
+                            --second;
+                        }
+                    }
+                    el.innerHTML = el.innerHTML.substr(0, partialTime.index) + invert + minute.toString() + 'm '
+                        + second.toString() + 's' + el.innerHTML.substr(partialTime.index + partialTime[0].length);
                 }
             });
         },
@@ -671,24 +450,24 @@
                 // hide input boxess and remove text nodes
                 $target.find("input").hide();
                 $target.contents().filter(function() { return this.nodeType === 3; }).remove();
-                
+
                 // has three states?
                 var triState = $target.find('input[value="unchanged"]').size() > 0 ? 1 : 0;
-                
+
                 // fetch current value from radiobuttons
                 var value  = $target.find('input:checked').first().val();
-        
+
                 $target.append(
                   '<input class="tristate-dummy" ' +
                         ' data-icinga-old="' + value + '" data-icinga-tristate="' + triState + '" type="checkbox" ' +
                         (value === '1' ? 'checked ' : ( value === 'unchanged' ? 'indeterminate="true" ' : ' ' )) +
                   '/> <b style="visibility: hidden;" class="tristate-changed"> (changed) </b>'
-                ); 
+                );
                 if (triState) {
                   // TODO: find a better way to activate indeterminate checkboxes after load.
                   $target.append(
                     '<script type="text/javascript"> ' +
-                      ' $(\'input.tristate-dummy[indeterminate="true"]\').each(function(i, el){ el.indeterminate = true; }); ' + 
+                      ' $(\'input.tristate-dummy[indeterminate="true"]\').each(function(i, el){ el.indeterminate = true; }); ' +
                     '</script>'
                   );
                 }
@@ -717,8 +496,9 @@
         },
 
         initializeControls: function (parent) {
-
-            var self = this;
+            if ($(parent).closest('.dashboard').length || $('#layout').hasClass('fullscreen-layout')) {
+                return;
+            }
 
             $('.controls', parent).each(function (idx, el) {
                 var $el = $(el);
@@ -745,20 +525,28 @@
         },
 
         fixControls: function ($parent) {
-
             var self = this;
+            if ($('#layout').hasClass('fullscreen-layout')) {
+                return;
+            }
 
             if ('undefined' === typeof $parent) {
 
-                $('#header').css({height: 'auto'});
-                $('#main').css({top: $('#header').css('height')});
-                $('#sidebar').css({top: $('#header').height() + 'px'});
-                $('#header').css({height: $('#header').height() + 'px'});
-                $('#inner-layout').css({top: $('#header').css('height')});
+                if (! $('#layout').hasClass('fullscreen-layout')) {
+                    $('#header').css({height: 'auto'});
+                    $('#main').css({top: $('#header').css('height')});
+                    $('#sidebar').css({top: $('#header').height() + 'px'});
+                    $('#header').css({height: $('#header').height() + 'px'});
+                    $('#inner-layout').css({top: $('#header').css('height')});
+                }
                 $('.container').each(function (idx, container) {
                     self.fixControls($(container));
                 });
 
+                return;
+            }
+
+            if ($parent.closest('.dashboard').length) {
                 return;
             }
 
@@ -767,6 +555,11 @@
 
             $('.controls', $parent).each(function (idx, el) {
                 var $el = $(el);
+
+                if ($el.closest('.dashboard').length) {
+                    return;
+                }
+
                 var $fake = $el.next('.fake-controls');
                 var y = $parent.scrollTop();
 

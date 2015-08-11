@@ -1,12 +1,13 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web;
 
 use Exception;
+use Icinga\Web\Menu\MenuItemRenderer;
 use RecursiveIteratorIterator;
 use Icinga\Application\Logger;
+use Icinga\Web\Menu\PermittedMenuItemFilter;
 
 /**
  * A renderer to draw a menu with its sub-menus using an unordered html list
@@ -33,6 +34,11 @@ class MenuRenderer extends RecursiveIteratorIterator
     protected $useCustomRenderer = false;
 
     /**
+     * @var MenuItemRenderer
+     */
+    protected $defaultRenderer;
+
+    /**
      * Create a new MenuRenderer
      *
      * @param   Menu    $menu   The menu to render
@@ -45,7 +51,8 @@ class MenuRenderer extends RecursiveIteratorIterator
         } else {
             $this->url = Url::fromPath($url);
         }
-        parent::__construct($menu, RecursiveIteratorIterator::CHILD_FIRST);
+        $this->defaultRenderer = new MenuItemRenderer();
+        parent::__construct(new PermittedMenuItemFilter($menu), RecursiveIteratorIterator::CHILD_FIRST);
     }
 
     /**
@@ -62,7 +69,7 @@ class MenuRenderer extends RecursiveIteratorIterator
      */
     public function beginIteration()
     {
-        $this->tags[] = '<ul role="navigation">';
+        $this->tags[] = '<ul>';
     }
 
     /**
@@ -111,23 +118,17 @@ class MenuRenderer extends RecursiveIteratorIterator
             try {
                 return $child->getRenderer()->render($child);
             } catch (Exception $e) {
-                Logger::error('Could not invoke custom renderer. Exception: '. $e->getMessage());
+                Logger::error(
+                    'Could not invoke custom menu renderer. %s in %s:%d with message: %s',
+                    get_class($e),
+                    $e->getFile(),
+                    $e->getLine(),
+                    $e->getMessage()
+                );
             }
         }
-        if ($child->getIcon() && strpos($child->getIcon(), '.') === false) {
-            return sprintf(
-                '<a href="%s" class="icon-%s">%s</a>',
-                $child->getUrl() ?: '#',
-                $child->getIcon(),
-                htmlspecialchars($child->getTitle())
-            );
-        }
-        return sprintf(
-            '<a href="%s">%s%s</a>',
-            $child->getUrl() ?: '#',
-            $child->getIcon() ? '<img src="' . Url::fromPath($child->getIcon()) . '" class="icon" /> ' : '',
-            htmlspecialchars($child->getTitle())
-        );
+
+        return $this->defaultRenderer->render($child);
     }
 
     /**

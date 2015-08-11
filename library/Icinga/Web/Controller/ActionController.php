@@ -1,23 +1,25 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Controller;
 
 use Exception;
-use Icinga\Authentication\Manager as AuthManager;
 use Icinga\Application\Benchmark;
 use Icinga\Application\Config;
+use Icinga\Authentication\Auth;
+use Icinga\Exception\Http\HttpMethodNotAllowedException;
 use Icinga\Exception\IcingaException;
+use Icinga\Exception\ProgrammingError;
+use Icinga\File\Pdf;
+use Icinga\Forms\AutoRefreshForm;
+use Icinga\Security\SecurityException;
 use Icinga\Util\Translator;
+use Icinga\Web\Notification;
+use Icinga\Web\Session;
+use Icinga\Web\Url;
+use Icinga\Web\UrlParams;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Window;
-use Icinga\Web\Url;
-use Icinga\Web\Notification;
-use Icinga\File\Pdf;
-use Icinga\Exception\ProgrammingError;
-use Icinga\Web\Session;
-use Icinga\Web\UrlParams;
 use Zend_Controller_Action;
 use Zend_Controller_Action_HelperBroker as ActionHelperBroker;
 use Zend_Controller_Request_Abstract as Request;
@@ -47,8 +49,18 @@ class ActionController extends Zend_Controller_Action
 
     private $xhrLayout = 'inline';
 
+    /**
+     * Authentication manager
+     *
+     * @var Auth|null
+     */
     private $auth;
 
+    /**
+     * URL parameters
+     *
+     * @var UrlParams
+     */
     protected $params;
 
     /**
@@ -73,11 +85,19 @@ class ActionController extends Zend_Controller_Action
 
         $this->handlerBrowserWindows();
         $this->view->translationDomain = 'icinga';
-        $this->_helper->layout()->isIframe = $this->params->shift('isIframe');
+        $this->_helper->layout()->isIframe = $request->getUrl()->shift('isIframe');
+        $this->_helper->layout()->showFullscreen = $request->getUrl()->shift('showFullscreen');
         $this->_helper->layout()->moduleName = false;
 
-        if ($this->rerenderLayout = $this->params->shift('renderLayout')) {
+        $this->view->compact = $request->getParam('view') === 'compact';
+        if ($request->getUrl()->shift('showCompact')) {
+            $this->view->compact = true;
+        }
+        if ($this->rerenderLayout = $request->getUrl()->shift('renderLayout')) {
             $this->xhrLayout = 'body';
+        }
+        if ($request->getUrl()->shift('_disableLayout')) {
+            $this->_helper->layout()->disableLayout();
         }
 
         if ($this->requiresLogin()) {
@@ -101,6 +121,45 @@ class ActionController extends Zend_Controller_Action
     {
     }
 
+    /**
+     * Get the authentication manager
+     *
+     * @return Auth
+     */
+    public function Auth()
+    {
+        if ($this->auth === null) {
+            $this->auth = Auth::getInstance();
+        }
+        return $this->auth;
+    }
+
+    /**
+     * Whether the current user has the given permission
+     *
+     * @param   string  $permission Name of the permission
+     *
+     * @return  bool
+     */
+    public function hasPermission($permission)
+    {
+        return $this->Auth()->hasPermission($permission);
+    }
+
+    /**
+     * Assert that the current user has the given permission
+     *
+     * @param   string  $permission     Name of the permission
+     *
+     * @throws  SecurityException       If the current user lacks the given permission
+     */
+    public function assertPermission($permission)
+    {
+        if ($this->requiresAuthentication && ! $this->Auth()->hasPermission($permission)) {
+            throw new SecurityException('No permission for %s', $permission);
+        }
+    }
+
     public function Config($file = null)
     {
         if ($file === null) {
@@ -108,14 +167,6 @@ class ActionController extends Zend_Controller_Action
         } else {
             return Config::app($file);
         }
-    }
-
-    public function Auth()
-    {
-        if ($this->auth === null) {
-            $this->auth = AuthManager::getInstance();
-        }
-        return $this->auth;
     }
 
     public function Window()
@@ -147,6 +198,23 @@ class ActionController extends Zend_Controller_Action
     }
 
     /**
+     * Respond with HTTP 405 if the current request's method is not one of the given methods
+     *
+     * @param   string $httpMethod              Unlimited number of allowed HTTP methods
+     *
+     * @throws  HttpMethodNotAllowedException   If the request method is not one of the given methods
+     */
+    public function assertHttpMethod($httpMethod)
+    {
+        $httpMethods = array_flip(array_map('strtoupper', func_get_args()));
+        if (! isset($httpMethods[$this->getRequest()->getMethod()])) {
+            $e = new HttpMethodNotAllowedException($this->translate('Method Not Allowed'));
+            $e->setAllowedMethods(implode(', ', array_keys($httpMethods)));
+            throw $e;
+        }
+    }
+
+    /**
      * Return restriction information for an eventually authenticated user
      *
      * @param  string  $name Permission name
@@ -155,34 +223,6 @@ class ActionController extends Zend_Controller_Action
     public function getRestrictions($name)
     {
         return $this->Auth()->getRestrictions($name);
-    }
-
-    /**
-     * Whether the user currently authenticated has the given permission
-     *
-     * @param  string  $name Permission name
-     * @return bool
-     */
-    public function hasPermission($name)
-    {
-        return $this->Auth()->hasPermission($name);
-    }
-
-    /**
-     * Throws an exception if user lacks the given permission
-     *
-     * @param  string  $name Permission name
-     * @throws Exception
-     */
-    public function assertPermission($name)
-    {
-        if (! $this->Auth()->hasPermission($name)) {
-            // TODO: Shall this be an Auth Exception? Or a 404?
-            throw new IcingaException(
-                'Auth error, no permission for "%s"',
-                $name
-            );
-        }
     }
 
     /**
@@ -268,34 +308,36 @@ class ActionController extends Zend_Controller_Action
     }
 
     /**
-     * Redirect to the login path
+     * Redirect to login
      *
-     * @param   string      $afterLogin   The action to call when the login was successful. Defaults to '/index/welcome'
+     * XHR will always redirect to __SELF__ if an URL to redirect to after successful login is set. __SELF__ instructs
+     * JavaScript to redirect to the current window's URL if it's an auto-refresh request or to redirect to the URL
+     * which required login if it's not an auto-refreshing one.
      *
-     * @throws  \Exception
+     * XHR will respond with HTTP status code 403 Forbidden.
+     *
+     * @param   Url|string  $redirect   URL to redirect to after successful login
      */
-    protected function redirectToLogin($afterLogin = null)
+    protected function redirectToLogin($redirect = null)
     {
-        $redir = null;
-        if ($afterLogin !== null) {
-            if (! $afterLogin instanceof Url) {
-                $afterLogin = Url::fromPath($afterLogin);
+        $login = Url::fromPath('authentication/login');
+        if ($this->isXhr()) {
+            if ($redirect !== null) {
+                $login->setParam('redirect', '__SELF__');
             }
-            if ($this->isXhr()) {
-                $redir = '__SELF__';
-            } else {
-                // TODO: Ignore /?
-                $redir = $afterLogin->getRelativeUrl();
+
+            $this->_response->setHttpResponseCode(403);
+        } elseif ($redirect !== null) {
+            if (! $redirect instanceof Url) {
+                $redirect = Url::fromPath($redirect);
+            }
+
+            if (($relativeUrl = $redirect->getRelativeUrl())) {
+                $login->setParam('redirect', $relativeUrl);
             }
         }
 
-        $url = Url::fromPath('authentication/login');
-
-        if ($redir) {
-            $url->setParam('redirect', $redir);
-        }
-
-        $this->rerenderLayout()->redirectNow($url);
+        $this->rerenderLayout()->redirectNow($login);
     }
 
     protected function rerenderLayout()
@@ -356,6 +398,16 @@ class ActionController extends Zend_Controller_Action
     }
 
     /**
+     * @see Zend_Controller_Action::preDispatch()
+     */
+    public function preDispatch()
+    {
+        $form = new AutoRefreshForm();
+        $form->handleRequest();
+        $this->_helper->layout()->autoRefreshForm = $form;
+    }
+
+    /**
      * Detect whether the current request requires changes in the layout and apply them before rendering
      *
      * @see Zend_Controller_Action::postDispatch()
@@ -375,10 +427,13 @@ class ActionController extends Zend_Controller_Action
                     $layout->benchmark = $this->renderBenchmark();
                 }
             }
+
+            if ((bool) $user->getPreferences()->getValue('icingaweb', 'auto_refresh', true) === false) {
+                $this->disableAutoRefresh();
+            }
         }
 
         if ($req->getParam('format') === 'pdf') {
-            $layout->setLayout('pdf');
             $this->shutdownSession();
             $this->sendAsPdf();
             exit;
@@ -400,14 +455,14 @@ class ActionController extends Zend_Controller_Action
         $notifications = Notification::getInstance();
         if ($notifications->hasMessages()) {
             $notificationList = array();
-            foreach ($notifications->getMessages() as $m) {
+            foreach ($notifications->popMessages() as $m) {
                 $notificationList[] = rawurlencode($m->type . ' ' . $m->message);
             }
-            $resp->setHeader('X-Icinga-Notification', implode('&', $notificationList));
+            $resp->setHeader('X-Icinga-Notification', implode('&', $notificationList), true);
         }
 
         if ($this->reloadCss) {
-            $resp->setHeader('X-Icinga-CssReload', 'now');
+            $resp->setHeader('X-Icinga-CssReload', 'now', true);
         }
 
         if ($this->view->title) {
@@ -417,18 +472,19 @@ class ActionController extends Zend_Controller_Action
             }
             $resp->setHeader(
                 'X-Icinga-Title',
-                rawurlencode($this->view->title . ' :: Icinga Web')
+                rawurlencode($this->view->title . ' :: Icinga Web'),
+                true
             );
         } else {
-            $resp->setHeader('X-Icinga-Title', rawurlencode('Icinga Web'));
+            $resp->setHeader('X-Icinga-Title', rawurlencode('Icinga Web'), true);
         }
 
         if ($this->rerenderLayout) {
-            $this->getResponse()->setHeader('X-Icinga-Container', 'layout');
+            $this->getResponse()->setHeader('X-Icinga-Container', 'layout', true);
         }
 
         if ($this->autorefreshInterval !== null) {
-            $resp->setHeader('X-Icinga-Refresh', $this->autorefreshInterval);
+            $resp->setHeader('X-Icinga-Refresh', $this->autorefreshInterval, true);
         }
     }
 
@@ -453,7 +509,7 @@ class ActionController extends Zend_Controller_Action
      */
     protected function renderBenchmark()
     {
-        $this->render();
+        $this->_helper->viewRenderer->postDispatch();
         Benchmark::measure('Response ready');
         return Benchmark::renderToHtml();
     }

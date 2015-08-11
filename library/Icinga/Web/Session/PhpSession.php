@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Session;
 
@@ -78,8 +77,9 @@ class PhpSession extends Session
             }
         }
 
-        if (!is_writable(session_save_path())) {
-            throw new ConfigurationError('Can\'t save session');
+        $sessionSavePath = session_save_path() ?: sys_get_temp_dir();
+        if (session_module_name() === 'files' && !is_writable($sessionSavePath)) {
+            throw new ConfigurationError("Can't save session, path '$sessionSavePath' is not writable.");
         }
 
         if ($this->exists()) {

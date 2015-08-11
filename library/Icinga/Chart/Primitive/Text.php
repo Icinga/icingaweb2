@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 
 namespace Icinga\Chart\Primitive;
@@ -105,7 +104,7 @@ class Text extends Styleable implements Drawable
      *
      * @param   string $size    The font size including a unit
      *
-     * @return  self            Fluid interface
+     * @return  $this            Fluid interface
      */
     public function setFontSize($size)
     {
@@ -118,7 +117,7 @@ class Text extends Styleable implements Drawable
      *
      * @param   String $align   Value how to align
      *
-     * @return  self            Fluid interface
+     * @return  $this            Fluid interface
      */
     public function setAlignment($align)
     {
@@ -131,7 +130,7 @@ class Text extends Styleable implements Drawable
      *
      * @param string $weight    The weight of the string
      *
-     * @return self             Fluid interface
+     * @return $this             Fluid interface
      */
     public function setFontWeight($weight)
     {

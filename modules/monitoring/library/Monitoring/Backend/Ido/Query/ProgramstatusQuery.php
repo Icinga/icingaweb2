@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
@@ -11,17 +10,29 @@ class ProgramstatusQuery extends IdoQuery
 {
     protected $columnMap = array(
         'programstatus' => array(
-            'id'                                => 'programstatus_id',
-            'status_update_time'                => 'UNIX_TIMESTAMP(status_update_time)',
-            'program_start_time'                => 'UNIX_TIMESTAMP(program_start_time)',
-            'program_end_time'                  => 'UNIX_TIMESTAMP(program_end_time)',
-            'is_currently_running'              => 'is_currently_running',
+            'id'                    => 'programstatus_id',
+            'status_update_time'    => 'UNIX_TIMESTAMP(programstatus.status_update_time)',
+            'program_version'       => 'program_version',
+            'program_start_time'    => 'UNIX_TIMESTAMP(programstatus.program_start_time)',
+            'program_end_time'      => 'UNIX_TIMESTAMP(programstatus.program_end_time)',
+            'is_currently_running'  => 'CASE WHEN (programstatus.is_currently_running = 0)
+                THEN
+                    0
+                ELSE
+                    CASE WHEN (UNIX_TIMESTAMP(programstatus.status_update_time) + 60 > UNIX_TIMESTAMP(NOW()))
+                    THEN
+                        1
+                    ELSE
+                        0
+                    END
+                END',
             'process_id'                        => 'process_id',
+            'endpoint_name'                     => 'endpoint_name',
             'daemon_mode'                       => 'daemon_mode',
-            'last_command_check'                => 'UNIX_TIMESTAMP(last_command_check)',
-            'last_log_rotation'                 => 'UNIX_TIMESTAMP(last_log_rotation)',
+            'last_command_check'                => 'UNIX_TIMESTAMP(programstatus.last_command_check)',
+            'last_log_rotation'                 => 'UNIX_TIMESTAMP(programstatus.last_log_rotation)',
             'notifications_enabled'             => 'notifications_enabled',
-            'disable_notif_expire_time'         => 'UNIX_TIMESTAMP(disable_notif_expire_time)',
+            'disable_notif_expire_time'         => 'UNIX_TIMESTAMP(programstatus.disable_notif_expire_time)',
             'active_service_checks_enabled'     => 'active_service_checks_enabled',
             'passive_service_checks_enabled'    => 'passive_service_checks_enabled',
             'active_host_checks_enabled'        => 'active_host_checks_enabled',
@@ -38,4 +49,19 @@ class ProgramstatusQuery extends IdoQuery
             'global_service_event_handler'      => 'global_service_event_handler',
         )
     );
+
+    protected function joinBaseTables()
+    {
+        parent::joinBaseTables();
+
+        if (version_compare($this->getIdoVersion(), '1.11.7', '<')) {
+            $this->columnMap['programstatus']['endpoint_name'] = '(0)';
+        }
+        if (version_compare($this->getIdoVersion(), '1.11.8', '<')) {
+            $this->columnMap['programstatus']['program_version'] = '(NULL)';
+        }
+        if (version_compare($this->getIdoVersion(), '1.8', '<')) {
+            $this->columnMap['programstatus']['disable_notif_expire_time'] = '(NULL)';
+        }
+    }
 }

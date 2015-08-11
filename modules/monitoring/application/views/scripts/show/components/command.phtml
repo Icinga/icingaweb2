@@ -3,10 +3,41 @@
 $parts = explode('!', $object->check_command);
 $command = array_shift($parts);
 
-?><tr class="newsection">
-  <th><?= $this->translate('Command') ?></th>
-  <td><?= $this->escape($command) ?>
+?>
+
+<tr class="newsection">
+    <th><?= $this->translate('Command'); ?></th>
+    <td>
+        <?= $this->escape($command); ?>
+        <?php if ($this->hasPermission('monitoring/command/schedule-check') && $object->passive_checks_enabled) {
+            $title = sprintf($this->translate('Submit a one time or so called passive result for the %s check'), $command);
+            if ($object->getType() === $object::TYPE_HOST) {
+                echo $this->qlink(
+                    $this->translate('Process check result'),
+                    'monitoring/host/process-check-result',
+                    array('host' => $object->getName()),
+                    array(
+                        'icon'              => 'reply',
+                        'data-base-target'  => '_self',
+                        'title'             => $title
+                    )
+                );
+            } else {
+                echo $this->qlink(
+                    $this->translate('Process check result'),
+                    'monitoring/service/process-check-result',
+                    array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
+                    array(
+                        'icon'              => 'reply',
+                        'data-base-target'  => '_self',
+                        'title'             => $title
+                    )
+                );
+            }
+        } ?>
+    </td>
 </tr>
+
 <?php
 
 $row = "<tr>\n  <th>%s</th>\n  <td>%s</td>\n</tr>\n";

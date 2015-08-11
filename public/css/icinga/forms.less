@@ -1,5 +1,4 @@
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 div.config-form-buttons {
   margin-top: 5px;
@@ -26,7 +25,7 @@ label {
   font-weight: bold;
 }
 
-input, select {
+input, select, textarea {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -45,10 +44,19 @@ input[type=submit] {
   font-weight: bold;
   text-align: center;
   color: #fff;
-  border: 2px solid #ddd;
+  border: 1px solid;
   border-color: @colorPetrol;
   background: @colorPetrol;
   outline: 0;
+
+  &[disabled] {
+    background-color: #666;
+    border-color: black;
+  }
+
+  &:hover[disabled], &:active[disabled], &:focus[disabled] {
+    background-color: #666;
+  }
 }
 
 input[type=submit]:hover, a.button:hover, input[type=submit]:focus {
@@ -93,15 +101,45 @@ select::-moz-focus-inner {
   outline: 0;
 }
 
-input:disabled, select:disabled {
-    background-color: #fff;
-    border-color: white;
-}
-
 form.inline {
   margin: 0;
   padding: 0;
   display: inline;
+}
+
+button, .button-like {
+  font-size: 0.9em;
+  font-weight: bold;
+  outline: 0;
+  color: #fff;
+  padding: 0.2em;
+  border: 1px solid;
+  border-color: @colorPetrol;
+  background: @colorPetrol;
+
+  &[disabled] {
+    background-color: #666;
+    border-color: black;
+  }
+
+  &:hover, &:focus, &:active {
+    background-color: #333;
+    border-color: #333;
+    cursor: pointer;
+
+    &[disabled] {
+      background-color: #666;
+    }
+  }
+}
+
+.button-like {
+  display: inline-block;
+}
+
+a.button-like {
+  cursor: default;
+  text-decoration: none;
 }
 
 form.link-like input[type="submit"], form.link-like button[type="submit"], input.link-like, button.link-like {
@@ -112,13 +150,29 @@ form.link-like input[type="submit"], form.link-like button[type="submit"], input
   padding: 0;
   font-size: 1em;
   cursor: pointer;
+
+  &.icon-only {
+    color: inherit;
+    font-size: 1.5em;
+
+    &:hover, &:focus, &:active {
+      color: #666;
+    }
+  }
 }
 
 form.link-like input[type="submit"]:hover,
 form.link-like input[type="submit"]:focus,
+form.link-like input[type="submit"]:active,
 form.link-like button[type="submit"]:hover,
 form.link-like button[type="submit"]:focus,
-input.link-like:hover, button.link-like:focus {
+form.link-like button[type="submit"]:active,
+input.link-like:hover,
+input.link-like:focus,
+input.link-like:active,
+button.link-like:hover,
+button.link-like:focus,
+button.link-like:active {
   text-decoration: underline;
   background: none;
   color: @colorLinkDefault;
@@ -127,10 +181,10 @@ input.link-like:hover, button.link-like:focus {
 .non-list-like-list {
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 0.5em 0.5em 0;
 
   li {
-    margin: 0.5em;
+    padding-bottom: 0.5em;
   }
 }
 
@@ -141,29 +195,59 @@ form div.element ul.errors {
   li {
     color: @colorCritical;
     font-weight: bold;
-    line-height: 1.5em;
   }
 }
 
 form ul.form-errors {
   .non-list-like-list;
-  display: inline-block;
   margin-bottom: 1em;
   background-color: @colorCritical;
 
   ul.errors {
     .non-list-like-list;
+    padding: 0;
+
+    li:last-child {
+      padding-bottom: 0;
+    }
   }
 
   li {
     color: white;
     font-weight: bold;
-    line-height: 1.5em;
+  }
+}
+
+form ul.form-notifications {
+  .non-list-like-list;
+  margin-bottom: 1em;
+  padding: 0;
+
+  ul {
+    .non-list-like-list;
+
+    &.info {
+      background-color: @colorFormNotificationInfo;
+    }
+
+    &.warning {
+      background-color: @colorFormNotificationWarning;
+    }
+
+    &.error {
+      background-color: @colorFormNotificationError;
+    }
+  }
+
+  li {
+    color: white;
+    font-weight: bold;
   }
 }
 
 form div.element {
-  margin: 0.5em 0;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 form label {
@@ -171,6 +255,14 @@ form label {
   margin-right: 1em;
   font-size: 0.9em;
   width: 10em;
+}
+
+form div.element > * {
+  vertical-align: top;
+}
+
+form dt {
+  vertical-align: top;
 }
 
 select, input[type=text], textarea {
@@ -182,6 +274,13 @@ textarea {
   height: 4em;
 }
 
+textarea.resource {
+  &.ssh-identity {
+    width: 50%;
+    height: 25em;
+  }
+}
+
 form .description {
   font-size: 0.8em;
   margin: 0.3em 0 0 0.6em;
@@ -191,33 +290,67 @@ form .description {
   display: block;
 }
 
-form label.has-feedback:after {
-  content: '\e85b';
-  font-family: "ifont";
-  font-style: normal;
-  font-weight: normal;
-  speak: none;
+select.grant-permissions {
+  height: 20em;
+  width: auto;
+}
 
-  text-decoration: inherit;
-  width: 1em;
-  margin-right: .2em;
-  text-align: center;
-  /* opacity: .8; */
+label ~ input, label ~ select {
+  margin-left: 1.35em;
+}
 
-  /* For safety - reset parent styles, that can break glyph codes*/
-  font-variant: normal;
-  text-transform: none;
+label + i ~ input, label + i ~ select {
+  margin-left: 0;
+}
 
-  /* fix buttons height, for twitter bootstrap */
-  line-height: 1em;
+button.noscript-apply {
+  margin-left: 0.5em;
+}
 
-  /* Animation center compensation - margins should be symmetric */
-  /* remove if not needed */
-  margin-left: .2em;
+html.no-js i.autosubmit-warning {
+  .sr-only;
+}
 
-  /* you can be more comfortable with increased icons size */
-  /* font-size: 120%; */
+form ul.descriptions {
+  .info-box;
+  padding: 0.5em 0.5em 0 1.8em;
 
-  /* Uncomment for 3D effect */
-  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+  li {
+    padding-bottom: 0.5em;
+
+    &:only-child {
+      margin-left: -1.3em;
+      list-style-type: none;
+    }
+  }
+}
+
+form ul.hints {
+  .non-list-like-list;
+  padding: 0.5em 0.5em 0 0.5em;
+
+  li {
+    font-size: 0.8em;
+    padding-bottom: 0.5em;
+  }
+}
+
+.control-group {
+  & > * {
+    float: left;
+    margin-right: 0.5em;
+  }
+
+  div.element {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  &:after {
+    content: ".";
+    visibility: hidden;
+    display: block;
+    height: 0;
+    clear: both;
+  }
 }

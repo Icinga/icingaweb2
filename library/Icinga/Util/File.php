@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Util;
 
@@ -24,6 +23,13 @@ class File extends SplFileObject
     protected $openMode;
 
     /**
+     * The access mode to use when creating directories
+     *
+     * @var int
+     */
+    public static $dirMode = 1528; // 2770
+
+    /**
      * @see SplFileObject::__construct()
      */
     public function __construct($filename, $openMode = 'r', $useIncludePath = false, $context = null)
@@ -37,21 +43,74 @@ class File extends SplFileObject
     }
 
     /**
-     * Create a file with an access mode
+     * Create a file using the given access mode and return a instance of File open for writing
      *
      * @param   string  $path           The path to the file
      * @param   int     $accessMode     The access mode to set
+     * @param   bool    $recursive      Whether missing nested directories of the given path should be created
+     *
+     * @return  File
      *
      * @throws  RuntimeException        In case the file cannot be created or the access mode cannot be set
+     * @throws  NotWritableError        In case the path's (existing) parent is not writable
      */
-    public static function create($path, $accessMode)
+    public static function create($path, $accessMode, $recursive = true)
     {
-        if (!@touch($path)) {
-            throw new RuntimeException('Cannot create file "' . $path . '" with acces mode "' . $accessMode . '"');
+        $dirPath = dirname($path);
+        if ($recursive && !is_dir($dirPath)) {
+            static::createDirectories($dirPath);
+        } elseif (! is_writable($dirPath)) {
+            throw new NotWritableError(sprintf('Path "%s" is not writable', $dirPath));
         }
 
-        if (!@chmod($path, $accessMode)) {
-            throw new RuntimeException('Cannot set access mode "' . $accessMode . '" on file "' . $path . '"');
+        $file = new static($path, 'x+');
+
+        if (! @chmod($path, $accessMode)) {
+            $error = error_get_last();
+            throw new RuntimeException(sprintf(
+                'Cannot set access mode "%s" on file "%s" (%s)',
+                decoct($accessMode),
+                $path,
+                $error['message']
+            ));
+        }
+
+        return $file;
+    }
+
+    /**
+     * Create missing directories
+     *
+     * @param   string  $path
+     *
+     * @throws  RuntimeException        In case a directory cannot be created or the access mode cannot be set
+     */
+    protected static function createDirectories($path)
+    {
+        $part = strpos($path, DIRECTORY_SEPARATOR) === 0 ? DIRECTORY_SEPARATOR : '';
+        foreach (explode(DIRECTORY_SEPARATOR, ltrim($path, DIRECTORY_SEPARATOR)) as $dir) {
+            $part .= $dir . DIRECTORY_SEPARATOR;
+
+            if (! is_dir($part)) {
+                if (! @mkdir($part, static::$dirMode)) {
+                    $error = error_get_last();
+                    throw new RuntimeException(sprintf(
+                        'Failed to create missing directory "%s" (%s)',
+                        $part,
+                        $error['message']
+                    ));
+                }
+
+                if (! @chmod($part, static::$dirMode)) {
+                    $error = error_get_last();
+                    throw new RuntimeException(sprintf(
+                        'Failed to set access mode "%s" for directory "%s" (%s)',
+                        decoct(static::$dirMode),
+                        $part,
+                        $error['message']
+                    ));
+                }
+            }
         }
     }
 

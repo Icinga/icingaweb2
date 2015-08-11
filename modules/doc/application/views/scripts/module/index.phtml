@@ -1,10 +1,19 @@
-<h1><?= $this->translate('Module documentations'); ?></h1>
-<ul>
-    <?php foreach ($modules as $module): ?>
-        <li>
-            <a href="<?= $this->getHelper('Url')->url(array('moduleName' => $module), 'doc/module/toc', false, false); ?>">
-                <?= $module ?>
-            </a>
-        </li>
+<div class="controls">
+    <?= /** @var \Icinga\Web\Widget\Tabs $tabs */ $tabs->showOnlyCloseButton(); ?>
+    <h1><?= $this->translate('Module documentations'); ?></h1>
+</div>
+<div class="content">
+    <ul>
+    <?php foreach ($modules as $module): /** @var \Icinga\Application\Modules\Module $module */ ?>
+        <li><?= $this->qlink(
+            $module->getTitle(),
+            'doc/module/toc',
+            array('moduleName' => $module->getName()),
+            array('title' => sprintf(
+                $this->translate('Show the documentation\'s table of contents for the %s'),
+                $module->getTitle()
+            ))
+        ); ?></li>
     <?php endforeach ?>
-</ul>
+    </ul>
+</div>

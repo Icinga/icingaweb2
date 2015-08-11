@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 
 namespace Icinga\Chart\Primitive;
@@ -43,6 +42,13 @@ class Canvas implements Drawable
      * @var LayoutBox
      */
     private $rect;
+
+    /**
+     * The aria role used to describe this canvas' purpose in the accessibility tree
+     *
+     * @var string
+     */
+    private $ariaRole;
 
     /**
      * Create this canvas
@@ -112,6 +118,23 @@ class Canvas implements Drawable
             $innerContainer->appendChild($child->toSvg($ctx));
         }
 
+        if (isset($this->ariaRole)) {
+            $outer->setAttribute('role', $this->ariaRole);
+        }
         return $outer;
+    }
+
+    /**
+     * Set the aria role used to determine the meaning of this canvas in the accessibility tree
+     *
+     * The role 'presentation' will indicate that the purpose of this canvas is entirely decorative, while the role
+     * 'img' will indicate that the canvas contains an image, with a possible title or a description. For other
+     * possible roles, see http://www.w3.org/TR/wai-aria/roles
+     *
+     * @param $role string  The aria role to set
+     */
+    public function setAriaRole($role)
+    {
+        $this->ariaRole = $role;
     }
 }

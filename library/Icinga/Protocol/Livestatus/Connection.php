@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Protocol\Livestatus;
 
@@ -201,7 +200,7 @@ class Connection
             if ($filter !== null && ! $filter->matches($res)) continue;
             $result[] = $res;
         }
-        
+
         if ($query->hasOrder()) {
             usort($result, array($query, 'compare'));
         }
@@ -417,7 +416,7 @@ if ($col > $size - 1) return $res;
     /**
      * Disconnect in case we are connected to a Livestatus socket
      *
-     * @return self
+     * @return $this
      */
     public function disconnect()
     {

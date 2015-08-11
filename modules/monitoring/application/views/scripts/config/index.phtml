@@ -9,7 +9,7 @@
       <?= $this->icon('plus'); ?> <?= $this->translate('Create New Monitoring Backend'); ?>
     </a>
   </p>
-  <table class="action">
+  <table class="action alternating">
     <thead>
       <th><?= $this->translate('Monitoring Backend'); ?></th>
       <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
@@ -18,18 +18,30 @@
     <?php foreach ($this->backendsConfig as $backendName => $config): ?>
       <tr>
         <td>
-          <a href="<?= $this->href('/monitoring/config/editbackend', array('backend' => $backendName)); ?>">
-            <?= $this->icon('edit'); ?> <?= $this->escape($backendName); ?>
-          </a>
+          <?= $this->qlink(
+            $backendName,
+            '/monitoring/config/editbackend',
+            array('backend' => $backendName),
+            array(
+                'icon'  => 'edit',
+                'title' => sprintf($this->translate('Edit monitoring backend %s'), $backendName)
+            )
+          ); ?>
           <small>(<?= sprintf(
             $this->translate('Type: %s'),
             $this->escape($config->type === 'ido' ? 'IDO' : ucfirst($config->type))
           ); ?>)</small>
         </td>
         <td>
-          <a href="<?= $this->href('/monitoring/config/removebackend', array('backend' => $backendName)); ?>">
-            <?= $this->icon('cancel'); ?>
-          </a>
+          <?= $this->qlink(
+            '',
+            '/monitoring/config/removebackend',
+            array('backend' => $backendName),
+            array(
+                'icon'  => 'trash',
+                'title' => sprintf($this->translate('Remove monitoring backend %s'), $backendName)
+            )
+          ); ?>
         </td>
       </tr>
     <?php endforeach; ?>
@@ -41,7 +53,7 @@
       <?= $this->icon('plus'); ?> <?= $this->translate('Create New Instance'); ?>
     </a>
   </p>
-  <table class="action">
+  <table class="action alternating">
     <thead>
       <th><?= $this->translate('Instance'); ?></th>
       <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
@@ -50,18 +62,30 @@
     <?php foreach ($this->instancesConfig as $instanceName => $config): ?>
       <tr>
         <td>
-          <a href="<?= $this->href('/monitoring/config/editinstance', array('instance' => $instanceName)); ?>">
-            <?= $this->icon('edit'); ?> <?= $this->escape($instanceName); ?>
-          </a>
+          <?= $this->qlink(
+            $instanceName,
+            '/monitoring/config/editinstance',
+            array('instance' => $instanceName),
+            array(
+                'icon'  => 'edit',
+                'title' => sprintf($this->translate('Edit monitoring instance %s'), $instanceName)
+            )
+          ); ?>
           <small>(<?= sprintf(
             $this->translate('Type: %s'),
             $config->host !== null ? $this->translate('Remote') : $this->translate('Local')
           ); ?>)</small>
         </td>
         <td>
-          <a href="<?= $this->href('/monitoring/config/removeinstance', array('instance' => $instanceName)); ?>">
-            <?= $this->icon('cancel'); ?>
-          </a>
+          <?= $this->qlink(
+            '',
+            '/monitoring/config/removeinstance',
+            array('instance' => $instanceName),
+            array(
+                'icon'  => 'trash',
+                'title' => sprintf($this->translate('Remove monitoring instance %s'), $instanceName)
+            )
+          ); ?>
         </td>
       </tr>
     <?php endforeach; ?>

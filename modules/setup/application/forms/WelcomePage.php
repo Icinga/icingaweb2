@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Setup\Forms;
 
@@ -18,6 +17,7 @@ class WelcomePage extends Form
      */
     public function init()
     {
+        $this->setRequiredCue(null);
         $this->setName('setup_welcome');
         $this->setViewScript('form/setup-welcome.phtml');
     }
@@ -32,9 +32,8 @@ class WelcomePage extends Form
             'token',
             array(
                 'required'      => true,
-                'label'         => mt('setup', 'Setup Token'),
-                'description'   => mt(
-                    'setup',
+                'label'         => $this->translate('Setup Token'),
+                'description'   => $this->translate(
                     'For security reasons we need to ensure that you are permitted to run this wizard.'
                     . ' Please provide a token by following the instructions below.'
                 ),

@@ -1,5 +1,8 @@
-<div class="controls">
-    <?= $this->render('show/components/header.phtml') ?>
+<div class="controls separated">
+  <?php if (! $this->compact): ?>
+    <?= $this->tabs; ?>
+  <?php endif ?>
+    <?= $this->render('partials/service/object-header.phtml') ?>
     <h1><?= $this->translate("Service detail information") ?></h1>
 </div>
 <div class="content" data-base-target="_next">
@@ -8,17 +11,21 @@
 
     <table class="avp newsection">
         <tbody>
+        <tr><td colspan="2"><h2><?= $this->translate('Problem handling') ?></h2></td></tr>
         <?= $this->render('show/components/acknowledgement.phtml') ?>
         <?= $this->render('show/components/comments.phtml') ?>
-        <?= $this->render('show/components/notifications.phtml') ?>
         <?= $this->render('show/components/downtime.phtml') ?>
-        <?= $this->render('show/components/flapping.phtml') ?>
-        <?= $this->render('show/components/perfdata.phtml') ?>
-        <?= $this->render('show/components/checksource.phtml') ?>
+        <?= $this->render('show/components/notes.phtml') ?>
         <?= $this->render('show/components/actions.phtml') ?>
-        <?= $this->render('show/components/command.phtml') ?>
+        <?= $this->render('show/components/flapping.phtml') ?>
         <?= $this->render('show/components/servicegroups.phtml') ?>
+        <?= $this->render('show/components/perfdata.phtml') ?>
+        <tr><td colspan="2"><h2><?= $this->translate('Notifications') ?></h2></td></tr>
+        <?= $this->render('show/components/notifications.phtml') ?>
         <?= $this->render('show/components/contacts.phtml') ?>
+        <tr><td colspan="2"><h2><?= $this->translate('Check execution') ?></h2></td></tr>
+        <?= $this->render('show/components/command.phtml') ?>
+        <?= $this->render('show/components/checksource.phtml') ?>
         <?= $this->render('show/components/checkstatistics.phtml') ?>
         <?= $this->render('show/components/customvars.phtml') ?>
         <?= $this->render('show/components/flags.phtml') ?>

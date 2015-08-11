@@ -1,4 +1,5 @@
 <?php
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Command\Renderer;
 
@@ -30,7 +31,7 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
      *
      * @return  string
      */
-    public function escape($commandString)
+    protected function escape($commandString)
     {
         return str_replace(array("\r", "\n"), array('\r', '\n'), $commandString);
     }
@@ -52,7 +53,7 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
         if ($now === null) {
             $now = time();
         }
-        return sprintf('[%u] %s', $now, $this->$renderMethod($command));
+        return sprintf('[%u] %s', $now, $this->escape($this->$renderMethod($command)));
     }
 
     public function renderAddComment(AddCommentCommand $command)
@@ -126,7 +127,7 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
         } else {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
             $commandString = sprintf(
-                'PROCESS_SVC_CHECK_RESULT;%s;%s',
+                'PROCESS_SERVICE_CHECK_RESULT;%s;%s',
                 $object->getHost()->getName(),
                 $object->getName()
             );
@@ -322,28 +323,18 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
 
     public function renderDeleteComment(DeleteCommentCommand $command)
     {
-        if ($command->getObject()->getType() === $command::TYPE_HOST) {
-            $commandString = 'DEL_HOST_COMMENT';
-        } else {
-            $commandString = 'DEL_SVC_COMMENT';
-        }
         return sprintf(
             '%s;%u',
-            $commandString,
+            $command->getIsService() ? 'DEL_SVC_COMMENT' : 'DEL_HOST_COMMENT',
             $command->getCommentId()
         );
     }
 
     public function renderDeleteDowntime(DeleteDowntimeCommand $command)
     {
-        if ($command->getObject()->getType() === $command::TYPE_HOST) {
-            $commandString = 'DEL_HOST_DOWNTIME';
-        } else {
-            $commandString = 'DEL_SVC_DOWNTIME';
-        }
         return sprintf(
             '%s;%u',
-            $commandString,
+            $command->getIsService() ? 'DEL_SVC_DOWNTIME' : 'DEL_HOST_DOWNTIME',
             $command->getDowntimeId()
         );
     }

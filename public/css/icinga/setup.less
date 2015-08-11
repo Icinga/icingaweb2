@@ -1,3 +1,5 @@
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
+
 #layout {
   overflow: auto; // TODO: Shouldn't be necessary, here, IMHO
 }
@@ -33,6 +35,7 @@
           color: white;
           font-size: 0.9em;
           text-align: center;
+          border-bottom: none;
         }
 
         table {
@@ -100,83 +103,92 @@
     form {
       h2 {
         font-size: 2.0em;
-        color: @colorTextDefault;
-        border-bottom: 2px solid @colorPetrol;
       }
     }
   }
 }
 
 #setup div.buttons {
-  margin: 1.5em 0;
+  margin-top: 1.5em; // Yes, -top and -bottom, keep it like that...
+  margin-bottom: 1.5em;
 
   .double {
     position: absolute;
     left: -1337px;
   }
 
-  #btn_prev {
-    margin-right: 1em;
-    font-size: 0.9em;
-  }
-
-  #btn_next {
-    font-size: 0.9em;
-  }
-
-  button, .button-like {
-    font-size: 0.9em;
-    font-weight: bold;
-    outline: 0;
-    color: #fff;
-    border: 2px solid;
-    border-color: @colorPetrol;
-    background: @colorPetrol;
-
-    &[disabled="1"] {
-      background-color: #aaa;
-      border: 1px solid black;
-    }
-
-    &:hover, &:focus, &:active {
-      background-color: #666;
-      border-color: #666;
-
-      &[disabled="1"] {
-        background-color: #aaa;
-      }
-    }
-
-    &.finish, &.login {
-      min-width: 25em;
-      color: #fffafa;
-      background: @colorPetrol;
-
-      &:hover, &:focus, &:active {
-        background: #666;
-      }
-    }
-  }
-
-  a.button-like {
-    cursor: default;
-    text-decoration: none;
+  button.finish, a.button-like.login {
+    min-width: 25em;
   }
 }
 
-#setup table.requirements {
-  font-size: 0.9em;
-  margin: -1em -1em 2em;
-  border-spacing: 1em;
-  border-collapse: separate;
-  border-bottom: 2px solid @colorPetrol;
+#setup div.buttons + ul.hints {
+  margin-top: -1.5em;
+  margin-bottom: 1.5em;
+}
 
-  td {
-    h2 {
-      margin: 0 1em 0 0;
+form#setup_requirements {
+  margin-top: 2em;
+  padding-top: 0.5em;
+  border-top: 1px solid #888;
+
+  div.buttons div.requirements-refresh {
+    width: 25%;
+    float: right;
+    text-align: center;
+
+    a.button-like {
+      padding: 0.1em 0.4em;
+    }
+  }
+}
+
+#setup ul.requirements {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+
+  li {
+    margin-bottom: 1em;
+
+    & > ul {
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
     }
 
-    &.state {
+    div {
+      float: left;
+      padding-top: 0.4em;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+    }
+
+    div.title {
+      width: 25%;
+
+      h3 {
+        padding: 0;
+        margin: 0 1em 0 0;
+        border-bottom: 0;
+      }
+    }
+
+    div.description {
+      width: 50%;
+      border-left: 0.4em solid transparent;
+      border-right: 0.4em solid transparent;
+
+      ul {
+        margin: 0;
+        padding-left: 1em;
+        list-style-type: square;
+      }
+    }
+
+    div.state {
+      width: 25%;
       color: white;
       padding: 0.4em;
 
@@ -191,24 +203,6 @@
 
       &.missing {
         background-color: @colorCritical;
-      }
-    }
-
-    &.btn-update {
-      padding-top: 0.3em;
-      text-align: center;
-
-      div.buttons {
-        margin: 0;
-
-        a.button-like {
-          padding: 0.2em 0.5em;
-          background-color: @colorPetro;
-
-          &:hover, &:focus {
-            background-color: #666;
-          }
-        }
       }
     }
   }
@@ -270,55 +264,41 @@
     }
   }
 
-  form#setup_summary {
+  form.summary {
     clear: left;
   }
 }
 
-.conspicuous-state-notification {
-  width: 66%;
-  margin: 0 auto;
-  padding: 0.5em;
-  color: white;
-  font-weight: bold;
-}
-
 #setup-finish {
-  div.report {
-    padding: 1em;
-    border: 1px solid lightgrey;
-    border-radius: 0em;
+  h2 {
+    padding: 0.5em;
+    border-bottom: 0;
+    font-variant: normal;
+    font-weight: bold;
+    color: white;
 
-    div.line-separator {
-      width: 50%;
-      height: 1px;
-      margin: 0 auto;
-      background-color: white;
+    &.success {
+      background-color: @colorOk;
     }
 
-    p {
-      margin: 1em;
-      color: #444;
-      text-align: center;
-
-      &.error {
-        color: red;
-      }
-
-      &.failure {
-        .conspicuous-state-notification;
-        background-color: @colorCritical;
-      }
-
-      &.success {
-        .conspicuous-state-notification;
-        background-color: @colorOk;
-      }
+    &.failure {
+      background-color: @colorCritical;
     }
   }
 
+  pre.log-output {
+    width: 66%;
+    height: 25em;
+    max-height: none;
+  }
+
   div.buttons {
+    margin-top: 0;
     text-align: center;
+
+    a {
+      padding: 0.5em;
+    }
   }
 }
 
@@ -328,10 +308,7 @@
 
   h2 {
     font-size: 2.0em;
-    color: @colorTextDefault;
-    border-bottom: 2px solid @colorPetrol;
     margin-bottom: 2em;
-
   }
 
   div.info {
@@ -352,14 +329,12 @@
     font-size: 0.9em;
     border: 1px solid lightgrey;
 
-    div.title {
-      color: white;
+    h3 {
       padding: 0.2em;
       margin: -1em -1em 1em;
       text-align: center;
       color: @colorTextDefault;
-      border-bottom: 2px solid @colorPetrol;
-
+      background-color: #f6fafa;
     }
 
     img {
@@ -395,71 +370,45 @@
   }
 }
 
-#setup {
-  div.module-wizard {
-    width: auto;
-    padding: 1em;
-    overflow: hidden;
-    border: solid 1px lightgrey;
+#setup_modules {
+  div.module {
+    float: left;
+    width: 15em;
+    height: 15em;
+    margin: 1em;
+    padding: 0.3em;
+    border: 1px solid #ccc;
+    background-color: snow;
 
-    div.buttons {
-      margin: 1.5em 0 0;
-      float: right;
+    h3 {
+      border: none;
+      margin: 0.5em 0;
+      text-align: center;
 
-      button[type=submit] {
-        padding: 0.5em;
-        line-height: 0.5em;
-	background-color: @colorPetrol;
-
-        &:hover, &:focus, &:active {
-          background-color: #666;
-        }
+      label {
+        margin: 0;
+        width: 15em;
+        cursor: pointer;
       }
+    }
+
+    h3 + label {
+      width: 13.5em;
+      height: 13.9em;
+      overflow: auto;
+      cursor: pointer;
+      font-weight: normal;
+    }
+
+    input[type=checkbox] {
+      height: 10em;
+      float: right;
+      margin: 0;
     }
   }
 
-  div.module-menu {
-    font-size: 0.9em;
-    width: 25%;
-    float: right;
-    margin-left: 1.5em;
-
-    p {
-      margin-top: 0;
-
-      &.all-completed {
-        .conspicuous-state-notification;
-        text-align: center;
-        font-size: 90%;
-        background-color: @colorOk;
-      }
-    }
-
-    ul {
-      padding-left: 1.2em;
-
-      button {
-        margin: 0 0 0.8em;
-        padding: 0;
-        color: black;
-        border: none;
-        outline: none;
-        font-size: 90%;
-        background-color: white;
-
-        &:hover {
-          color: #666;
-          cursor: pointer;
-        }
-
-        &:focus, &:active {
-          color: #666;
-        }
-      }
-
-      img {
-        margin: 0 0.5em 0.2em;
-      }
-    }
+  div.buttons {
+    padding-top: 1em;
+    clear: both;
   }
 }

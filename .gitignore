@@ -3,7 +3,7 @@
 
 # Except those related to git and vagrant
 !.git*
-!.vagrant-puppet/*
+!.puppet*
 
 # Exclude application log files
 var/log/*
