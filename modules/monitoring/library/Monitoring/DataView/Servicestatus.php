@@ -48,6 +48,7 @@ class ServiceStatus extends DataView
             'service_notifications_enabled',
             'service_notifications_enabled_changed',
             'service_action_url',
+            'service_notes',
             'service_notes_url',
             'service_last_check',
             'service_next_check',
