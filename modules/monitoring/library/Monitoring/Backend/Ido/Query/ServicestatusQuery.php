@@ -362,9 +362,15 @@ class ServicestatusQuery extends IdoQuery
      */
     public function getGroup()
     {
-        $group = array();
+        $group = parent::getGroup() ?: array();
+        if (! is_array($group)) {
+            $group = array($group);
+        }
+
         if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('servicegroups')) {
-            $group = array('s.service_id', 'so.object_id');
+            $group[] = 's.service_id';
+            $group[] = 'so.object_id';
+
             if ($this->hasJoinedVirtualTable('hosts')) {
                 $group[] = 'h.host_id';
             }
