@@ -6,16 +6,6 @@ namespace Icinga\Module\Monitoring\DataView;
 class ServiceStatus extends DataView
 {
     /**
-     * Sets the mode for `distinct as workaround
-     *
-     * @TODO Subject to change, see #7344
-     */
-    public function init()
-    {
-        $this->query->setMode('service');
-    }
-
-    /**
      * Retrieve columns provided by this view
      *
      * @return array
@@ -105,11 +95,6 @@ class ServiceStatus extends DataView
             'service_modified_service_attributes',
             'service_host_name'
         );
-    }
-
-    public static function getQueryName()
-    {
-        return 'status';
     }
 
     public function getSortRules()
