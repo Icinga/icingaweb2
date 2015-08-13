@@ -41,7 +41,7 @@ class FilterEditor extends AbstractWidget
 
     protected $ignoreParams = array();
 
-    protected $searchColumns = null;
+    protected $searchColumns;
 
     /**
      * @var string
@@ -84,7 +84,7 @@ class FilterEditor extends AbstractWidget
      *
      * @return $this
      */
-    public function setSearchColumns(array $searchColumns)
+    public function setSearchColumns(array $searchColumns = null)
     {
         $this->searchColumns = $searchColumns;
         return $this;
