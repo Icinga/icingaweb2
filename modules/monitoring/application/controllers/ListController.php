@@ -627,7 +627,6 @@ class Monitoring_ListController extends Controller
             ->handleRequest($this->getRequest());
 
         $this->setupFilterControl($editor);
-        $this->view->filter = $editor->getFilter();
 
         $this->handleFormatRequest($dataView);
         return $dataView;
