@@ -45,18 +45,6 @@ abstract class DataView implements QueryInterface, SortRules, IteratorAggregate
         $this->connection = $connection;
         $this->query = $connection->query($this->getQueryName(), $columns);
         $this->filter = Filter::matchAll();
-        $this->init();
-    }
-
-    /**
-     * Initializer for `distinct purposes
-     *
-     * Implemented for `distinct as workaround
-     *
-     * @TODO Subject to change, see #7344
-     */
-    public function init()
-    {
     }
 
     /**
