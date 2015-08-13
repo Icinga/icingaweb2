@@ -3,6 +3,7 @@
 
 namespace Icinga\Web\Widget;
 
+use Icinga\Data\Filterable;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Filter\FilterChain;
@@ -25,6 +26,11 @@ class FilterEditor extends AbstractWidget
      */
     private $filter;
 
+    /**
+     * The query to filter
+     *
+     * @var Filterable
+     */
     protected $query;
 
     protected $url;
@@ -112,7 +118,14 @@ class FilterEditor extends AbstractWidget
         return $this->preservedUrl;
     }
 
-    public function setQuery($query)
+    /**
+     * Set the query to filter
+     *
+     * @param   Filterable  $query
+     *
+     * @return  $this
+     */
+    public function setQuery(Filterable $query)
     {
         $this->query = $query;
         return $this;
