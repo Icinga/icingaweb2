@@ -284,6 +284,11 @@ class FilterEditor extends AbstractWidget
         if ($add) {
             $this->addFilterToId($add);
         }
+
+        if ($request->isGet()) {
+            $this->query->applyFilter($this->getFilter());
+        }
+
         return $this;
     }
 

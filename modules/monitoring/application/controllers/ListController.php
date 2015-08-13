@@ -625,7 +625,6 @@ class Monitoring_ListController extends Controller
             ->ignoreParams('page')
             ->setSearchColumns($dataView->getSearchColumns())
             ->handleRequest($this->getRequest());
-        $dataView->applyFilter($editor->getFilter());
 
         $this->setupFilterControl($editor);
         $this->view->filter = $editor->getFilter();
