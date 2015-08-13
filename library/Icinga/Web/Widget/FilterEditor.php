@@ -593,7 +593,7 @@ class FilterEditor extends AbstractWidget
         }
 
         $cols = $this->cachedColumnSelect;
-        if (! isset($cols[$active])) {
+        if ($active && !isset($cols[$active])) {
             $cols[$active] = str_replace('_', ' ', ucfirst(ltrim($active, '_')));
         }
 
