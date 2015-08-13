@@ -3,9 +3,7 @@
 
 # namespace Icinga\Application\Controllers;
 
-use Icinga\Application\Config;
 use Icinga\Application\Icinga;
-use Icinga\Application\Logger;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Url;
@@ -16,11 +14,14 @@ use Icinga\Web\Url;
 class AuthenticationController extends Controller
 {
     /**
-     * This controller does not require authentication
-     *
-     * @var bool
+     * {@inheritdoc}
      */
     protected $requiresAuthentication = false;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $innerLayout = 'inline';
 
     /**
      * Log into the application
