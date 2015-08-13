@@ -3,7 +3,6 @@
 
 namespace Icinga\Web\Controller;
 
-use Exception;
 use Icinga\Application\Benchmark;
 use Icinga\Application\Config;
 use Icinga\Authentication\Auth;
@@ -48,6 +47,13 @@ class ActionController extends Zend_Controller_Action
     private $rerenderLayout = false;
 
     private $xhrLayout = 'inline';
+
+    /**
+     * The inner layout (inside the body) to use
+     *
+     * @var string
+     */
+    protected $innerLayout = 'body';
 
     /**
      * Authentication manager
@@ -418,6 +424,7 @@ class ActionController extends Zend_Controller_Action
 
         $req = $this->getRequest();
         $layout = $this->_helper->layout();
+        $layout->innerLayout = $this->innerLayout;
 
         if ($user = $req->getUser()) {
             // Cast preference app.show_benchmark to bool because preferences loaded from a preferences storage are
