@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\DataView;
 
 use IteratorAggregate;
+use Icinga\Data\FilterColumns;
 use Icinga\Data\QueryInterface;
 use Icinga\Data\SortRules;
 use Icinga\Data\Filter\Filter;
@@ -19,7 +20,7 @@ use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 /**
  * A read-only view of an underlying query
  */
-abstract class DataView implements QueryInterface, SortRules, IteratorAggregate
+abstract class DataView implements QueryInterface, SortRules, FilterColumns, IteratorAggregate
 {
     /**
      * The query used to populate the view
