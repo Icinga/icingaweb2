@@ -540,9 +540,9 @@ class FilterEditor extends AbstractWidget
         );
     }
 
-    public function setColumns(array $columns)
+    public function setColumns(array $columns = null)
     {
-        $this->cachedColumnSelect = $this->arrayForSelect($columns);
+        $this->cachedColumnSelect = $columns ? $this->arrayForSelect($columns) : null;
         return $this;
     }
 
