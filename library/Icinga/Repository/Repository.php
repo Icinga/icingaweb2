@@ -82,7 +82,7 @@ abstract class Repository implements Selectable
     /**
      * The filter columns being provided
      *
-     * This might be intialized by concrete repository implementations, in the following format
+     * This may be intialized by concrete repository implementations, in the following format
      * <pre><code>
      *  array(
      *      'alias_or_column_name',
@@ -93,6 +93,13 @@ abstract class Repository implements Selectable
      * @var array
      */
     protected $filterColumns;
+
+    /**
+     * The search columns (or aliases) being provided
+     *
+     * @var array   An array of strings
+     */
+    protected $searchColumns;
 
     /**
      * The sort rules to be applied on a query
@@ -323,6 +330,32 @@ abstract class Repository implements Selectable
      * @return  array
      */
     protected function initializeFilterColumns()
+    {
+        return array();
+    }
+
+    /**
+     * Return the search columns being provided
+     *
+     * Calls $this->initializeSearchColumns() in case $this->searchColumns is null.
+     *
+     * @return  array
+     */
+    public function getSearchColumns()
+    {
+        if ($this->searchColumns === null) {
+            $this->searchColumns = $this->initializeSearchColumns();
+        }
+
+        return $this->searchColumns;
+    }
+
+    /**
+     * Overwrite this in your repository implementation in case you need to initialize the search columns lazily
+     *
+     * @return  array
+     */
+    protected function initializeSearchColumns()
     {
         return array();
     }
