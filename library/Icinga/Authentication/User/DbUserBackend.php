@@ -64,6 +64,13 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
     protected $blacklistedQueryColumns = array('user');
 
     /**
+     * The search columns being provided
+     *
+     * @var array
+     */
+    protected $searchColumns = array('user');
+
+    /**
      * The default sort rules to be applied on a query
      *
      * @var array
@@ -96,6 +103,23 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
         if (! $this->ds->getTablePrefix()) {
             $this->ds->setTablePrefix('icingaweb_');
         }
+    }
+
+    /**
+     * Initialize this repository's filter columns
+     *
+     * @return  array
+     */
+    protected function initializeFilterColumns()
+    {
+        $userLabel = t('Username') . ' ' . t('(Case insensitive)');
+        return array(
+            $userLabel          => 'user',
+            t('Username')       => 'user_name',
+            t('Active')         => 'is_active',
+            t('Created At')     => 'created_at',
+            t('Last Modified')  => 'last_modified'
+        );
     }
 
     /**
