@@ -512,7 +512,7 @@ class FilterEditor extends AbstractWidget
         $res = array();
         foreach ($array as $k => $v) {
             if (is_int($k)) {
-                $res[str_replace('_', ' ', ucfirst($v))] = $v;
+                $res[$v] = str_replace('_', ' ', ucfirst($v));
             } elseif ($flip) {
                 $res[$v] = $k;
             } else {
