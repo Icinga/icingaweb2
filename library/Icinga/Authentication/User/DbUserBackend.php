@@ -61,7 +61,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
      *
      * @var array
      */
-    protected $filterColumns = array('user');
+    protected $blacklistedQueryColumns = array('user');
 
     /**
      * The default sort rules to be applied on a query

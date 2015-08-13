@@ -50,7 +50,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
      *
      * @var array
      */
-    protected $filterColumns = array('user');
+    protected $blacklistedQueryColumns = array('user');
 
     /**
      * The default sort rules to be applied on a query

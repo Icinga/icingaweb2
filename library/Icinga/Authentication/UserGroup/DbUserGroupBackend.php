@@ -71,7 +71,7 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      *
      * @var array
      */
-    protected $filterColumns = array('group', 'user');
+    protected $blacklistedQueryColumns = array('group', 'user');
 
     /**
      * The value conversion rules to apply on a query or statement

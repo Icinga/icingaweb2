@@ -32,7 +32,7 @@ class IniUserGroupBackend extends IniRepository implements UserGroupBackendInter
      *
      * @var array
      */
-    protected $filterColumns = array('group');
+    protected $blacklistedQueryColumns = array('group');
 
     /**
      * The value conversion rules to apply on a query or statement

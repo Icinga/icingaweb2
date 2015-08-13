@@ -64,16 +64,33 @@ abstract class Repository implements Selectable
      *          'alias2' => 'column3'
      *      )
      *  )
-     * <pre><code>
+     * </code></pre>
      *
      * @var array
      */
     protected $queryColumns;
 
     /**
-     * The columns (or aliases) which are not permitted to be queried. (by design)
+     * The columns (or aliases) which are not permitted to be queried
+     *
+     * Blacklisted query columns can still occur in a filter expression or sort rule.
      *
      * @var array   An array of strings
+     */
+    protected $blacklistedQueryColumns;
+
+    /**
+     * The filter columns being provided
+     *
+     * This might be intialized by concrete repository implementations, in the following format
+     * <pre><code>
+     *  array(
+     *      'alias_or_column_name',
+     *      'label_to_show_in_the_filter_editor' => 'alias_or_column_name'
+     *  )
+     * </code></pre>
+     *
+     * @var array
      */
     protected $filterColumns;
 
@@ -98,7 +115,7 @@ abstract class Repository implements Selectable
      *          // Ascendant sort by default
      *      )
      *  )
-     * <pre><code>
+     * </code></pre>
      * Note that it's mandatory to supply the alias name in case there is one.
      *
      * @var array
@@ -259,6 +276,33 @@ abstract class Repository implements Selectable
 
     /**
      * Return the columns (or aliases) which are not permitted to be queried
+     *
+     * Calls $this->initializeBlacklistedQueryColumns() in case $this->blacklistedQueryColumns is null.
+     *
+     * @return  array
+     */
+    public function getBlacklistedQueryColumns()
+    {
+        if ($this->blacklistedQueryColumns === null) {
+            $this->blacklistedQueryColumns = $this->initializeBlacklistedQueryColumns();
+        }
+
+        return $this->blacklistedQueryColumns;
+    }
+
+    /**
+     * Overwrite this in your repository implementation in case you
+     * need to initialize the blacklisted query columns lazily
+     *
+     * @return  array
+     */
+    protected function initializeBlacklistedQueryColumns()
+    {
+        return array();
+    }
+
+    /**
+     * Return the filter columns being provided
      *
      * Calls $this->initializeFilterColumns() in case $this->filterColumns is null.
      *
@@ -781,10 +825,10 @@ abstract class Repository implements Selectable
             throw new ProgrammingError('Table name "%s" not found', $table);
         }
 
-        $filterColumns = $this->getFilterColumns();
+        $blacklist = $this->getBlacklistedQueryColumns();
         $columns = array();
         foreach ($queryColumns[$table] as $alias => $column) {
-            if (! in_array(is_string($alias) ? $alias : $column, $filterColumns)) {
+            if (! in_array(is_string($alias) ? $alias : $column, $blacklist)) {
                 $columns[$alias] = $column;
             }
         }
@@ -874,7 +918,8 @@ abstract class Repository implements Selectable
             return false;
         }
 
-        return !in_array($alias, $this->getFilterColumns()) && $this->validateQueryColumnAssociation($table, $name);
+        return !in_array($alias, $this->getBlacklistedQueryColumns())
+            && $this->validateQueryColumnAssociation($table, $name);
     }
 
     /**
@@ -898,8 +943,8 @@ abstract class Repository implements Selectable
             throw new QueryException(t('Query column "%s" not found'), $name);
         }
 
-        if (in_array($alias, $this->getFilterColumns())) {
-            throw new QueryException(t('Filter column "%s" cannot be queried'), $name);
+        if (in_array($alias, $this->getBlacklistedQueryColumns())) {
+            throw new QueryException(t('Column "%s" cannot be queried'), $name);
         }
 
         if (! $this->validateQueryColumnAssociation($table, $alias)) {
@@ -985,8 +1030,8 @@ abstract class Repository implements Selectable
             throw new StatementException('Statement column "%s" not found', $name);
         }
 
-        if (in_array($alias, $this->getFilterColumns())) {
-            throw new StatementException('Filter column "%s" cannot be referenced in a statement', $name);
+        if (in_array($alias, $this->getBlacklistedQueryColumns())) {
+            throw new StatementException('Column "%s" cannot be referenced in a statement', $name);
         }
 
         if (! $this->validateQueryColumnAssociation($table, $alias)) {
