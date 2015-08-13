@@ -6,6 +6,7 @@
 use Icinga\Application\Icinga;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Web\Controller;
+use Icinga\Web\Cookie;
 use Icinga\Web\Url;
 
 /**
@@ -37,6 +38,11 @@ class AuthenticationController extends Controller
             $this->redirectNow($form->getRedirectUrl());
         }
         if (! $requiresSetup) {
+            if (! $this->getRequest()->hasCookieSupport()) {
+                echo $this->translate("Cookies must be enabled to run this application.\n");
+                $this->getResponse()->setHttpResponseCode(403)->sendHeaders();
+                exit();
+            }
             $form->handleRequest();
         }
         $this->view->form = $form;
