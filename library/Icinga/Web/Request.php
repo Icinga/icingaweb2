@@ -3,6 +3,7 @@
 
 namespace Icinga\Web;
 
+use Icinga\Application\Icinga;
 use Zend_Controller_Request_Http;
 use Icinga\User;
 
@@ -31,6 +32,13 @@ class Request extends Zend_Controller_Request_Http
      * @var Url
      */
     protected $url;
+
+    /**
+     * Response
+     *
+     * @var Response
+     */
+    protected $response;
 
     /**
      * Get whether the request seems to be an API request
@@ -79,6 +87,20 @@ class Request extends Zend_Controller_Request_Http
     }
 
     /**
+     * Get the response
+     *
+     * @return Response
+     */
+    public function getResponse()
+    {
+        if ($this->response === null) {
+            $this->response = Icinga::app()->getResponse();
+        }
+
+        return $this->response;
+    }
+
+    /**
      * Makes an ID unique to this request, to prevent id collisions in different containers
      *
      * Call this whenever an ID might show up multiple times in different containers. This function is useful
@@ -95,5 +117,11 @@ class Request extends Zend_Controller_Request_Http
             $this->uniqueId = Window::generateId();
         }
         return $id . '-' . $this->uniqueId;
+    }
+
+    public function hasCookieSupport()
+    {
+        $cookie = new Cookie($this);
+        return $cookie->isSupported();
     }
 }
