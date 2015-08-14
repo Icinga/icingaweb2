@@ -191,6 +191,37 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
         return array();
     }
 
+    /**
+     * Return all dynamic filter columns such as custom variables
+     *
+     * @return  array
+     */
+    public function getDynamicFilterColumns()
+    {
+        $columns = array();
+        if (! $this->query->allowsCustomVars()) {
+            return $columns;
+        }
+
+        $query = MonitoringBackend::instance()
+            ->select()
+            ->from('customvar', array('varname', 'object_type'))
+            ->where('is_json', 0)
+            ->where('object_type_id', array(1, 2))
+            ->getQuery()->group(array('varname', 'object_type'));
+        foreach ($query as $row) {
+            if ($row->object_type === 'host') {
+                $label = t('Host') . ' ' . ucwords(str_replace('_', ' ', $row->varname));
+                $columns[$label] = '_host_' . $row->varname;
+            } else { // $row->object_type === 'service'
+                $label = t('Service') . ' ' . ucwords(str_replace('_', ' ', $row->varname));
+                $columns[$label] = '_service_' . $row->varname;
+            }
+        }
+
+        return $columns;
+    }
+
     public function getFilter()
     {
         return $this->filter;
