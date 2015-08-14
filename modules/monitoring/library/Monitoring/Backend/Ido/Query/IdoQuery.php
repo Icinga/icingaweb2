@@ -796,6 +796,16 @@ abstract class IdoQuery extends DbQuery
     }
 
     /**
+     * Return whether this query allows to join custom variables
+     *
+     * @return  bool
+     */
+    public function allowsCustomVars()
+    {
+        return $this->allowCustomVars;
+    }
+
+    /**
      * Return true if the given alias denotes a custom variable
      *
      * @param  String $alias    The alias to test for being a customvariable
