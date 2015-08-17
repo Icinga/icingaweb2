@@ -27,7 +27,8 @@ class Dispatcher extends Zend_Controller_Dispatcher_Standard
         $this->setResponse($response);
         $controllerName = $request->getControllerName();
         if (! $controllerName) {
-            return parent::dispatch($request, $response);
+            parent::dispatch($request, $response);
+            return;
         }
         $controllerName = ucfirst($controllerName) . 'Controller';
         if ($this->_defaultModule === $this->_curModule) {
@@ -36,7 +37,8 @@ class Dispatcher extends Zend_Controller_Dispatcher_Standard
             $controllerClass = 'Icinga\\Module\\' . $this->_curModule . '\\Controllers\\' . $controllerName;
         }
         if (! class_exists($controllerClass)) {
-            return parent::dispatch($request, $response);
+            parent::dispatch($request, $response);
+            return;
         }
         $controller = new $controllerClass($request, $response, $this->getParams());
         $actionName = $request->getActionName();
