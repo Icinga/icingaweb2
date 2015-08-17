@@ -89,7 +89,7 @@ class Web extends EmbeddedWeb
             ->setupLogger()
             ->setupInternationalization()
             ->setupZendMvc()
-            ->setupFormNamespace()
+            ->setupNamespaces()
             ->setupModuleManager()
             ->setupUserBackendFactory()
             ->loadSetupModuleIfNecessary()
@@ -298,16 +298,22 @@ class Web extends EmbeddedWeb
     }
 
     /**
-     * Setup an autoloader namespace for Icinga\Forms
+     * Setup auto loader namespaces for Icinga\Controllers and Icinga\Forms
      *
      * @return $this
      */
-    private function setupFormNamespace()
+    private function setupNamespaces()
     {
-        $this->getLoader()->registerNamespace(
-            'Icinga\\Forms',
-            $this->getApplicationDir('forms')
-        );
+        $this
+            ->getLoader()
+            ->registerNamespace(
+                'Icinga\\Controllers',
+                $this->getApplicationDir('controllers')
+            )
+            ->registerNamespace(
+                'Icinga\\Forms',
+                $this->getApplicationDir('forms')
+            );
         return $this;
     }
 }
