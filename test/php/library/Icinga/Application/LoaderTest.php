@@ -56,7 +56,7 @@ EOD;
         }
         $this->assertTrue($check);
 
-        $loader->unRegister();
+        $loader->unregister();
 
         $check = true;
         foreach (spl_autoload_functions() as $functions) {

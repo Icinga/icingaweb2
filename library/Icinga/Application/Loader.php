@@ -24,7 +24,7 @@ class Loader
      */
     public function __destruct()
     {
-        $this->unRegister();
+        $this->unregister();
     }
 
     /**
@@ -134,7 +134,7 @@ class Loader
     /**
      * Detach autoloader from spl registration
      */
-    public function unRegister()
+    public function unregister()
     {
         spl_autoload_unregister(array(&$this, 'loadClass'));
     }
