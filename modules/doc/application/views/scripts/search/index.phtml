@@ -1,0 +1,8 @@
+<div class="content">
+    <?php foreach (/** @var \Icinga\Module\Doc\Renderer\DocSearchRenderer[] $searches */ $searches as $title => $search): ?>
+        <h2><?= $this->escape($title) ?></h2>
+        <?= $search->isEmpty()
+            ? $this->translate('No documentation found matching the filter')
+            : $search ?>
+    <?php endforeach ?>
+</div>

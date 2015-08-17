@@ -1,14 +1,15 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Doc;
 
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use Icinga\File\NonEmptyFileIterator;
+use Icinga\File\FileExtensionFilterIterator;
 
 /**
  * Iterator over non-empty Markdown files ordered by the case insensitive "natural order" of file names
@@ -29,12 +30,14 @@ class DocIterator implements Countable, IteratorAggregate
      */
     public function __construct($path)
     {
-        $it = new RecursiveIteratorIterator(
+        $it = new FileExtensionFilterIterator(
             new NonEmptyFileIterator(
-                new MarkdownFileIterator(
-                    new RecursiveDirectoryIterator($path)
+                new RecursiveIteratorIterator(
+                    new RecursiveDirectoryIterator($path),
+                    RecursiveIteratorIterator::SELF_FIRST
                 )
-            )
+            ),
+            'md'
         );
         // Unfortunately we have no chance to sort the iterator
         $fileInfo = iterator_to_array($it);
@@ -43,8 +46,7 @@ class DocIterator implements Countable, IteratorAggregate
     }
 
     /**
-     * (non-PHPDoc)
-     * @see Countable::count()
+     * {@inheritdoc}
      */
     public function count()
     {
@@ -52,8 +54,7 @@ class DocIterator implements Countable, IteratorAggregate
     }
 
     /**
-     * (non-PHPDoc)
-     * @see IteratorAggregate::getIterator()
+     * {@inheritdoc}
      */
     public function getIterator()
     {

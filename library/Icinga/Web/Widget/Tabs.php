@@ -1,10 +1,10 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Widget;
 
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\Tabextension;
 use Icinga\Application\Icinga;
 use Countable;
@@ -23,6 +23,7 @@ class Tabs extends AbstractWidget implements Countable
 <ul class="tabs">
   {TABS}
   {DROPDOWN}
+  {REFRESH}
   {CLOSE}
 </ul>
 EOT;
@@ -34,7 +35,7 @@ EOT;
      */
     private $dropdownTpl = <<< 'EOT'
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle"><i class="icon-down-open"></i></a>
+  <a href="#" class="dropdown-toggle"><i aria-hidden="true" class="icon-down-open"></i></a>
   <ul class="dropdown-menu">
     {TABS}
   </ul>
@@ -48,10 +49,22 @@ EOT;
      */
     private $closeTpl = <<< 'EOT'
 <li class="dropdown" style="float: right;">
-  <a href="#" class="dropdown-toggle close-toggle">X</a>
+  <a href="#" class="dropdown-toggle close-toggle"> <i aria-hidden="true" class="icon-cancel"></i> </a>
 </li>
 EOT;
 
+    /**
+     * Template used for the refresh icon
+     *
+     * @var string
+     */
+    private $refreshTpl = <<< 'EOT'
+<li>
+  <a class="spinner" href="{URL}" title="{TITLE}" aria-label="{LABEL}">
+    <i aria-hidden="true" class="icon-cw"></i>
+  </a>
+</li>
+EOT;
 
     /**
      * This is where single tabs added to this container will be stored
@@ -103,7 +116,7 @@ EOT;
      *
      * @param   string $name Name of the tab going to be activated
      *
-     * @return  self
+     * @return  $this
      *
      * @throws  ProgrammingError When the given tab name doesn't exist
      *
@@ -135,7 +148,7 @@ EOT;
      *
      * @param   string $name CSS class name(s)
      *
-     * @return  self
+     * @return  $this
      */
     public function setClass($name)
     {
@@ -179,9 +192,9 @@ EOT;
      * with tab properties or an instance of an existing Tab
      *
      * @param   string      $name   The new tab name
-     * @param   array|Tab   $tab    The tab itself of it's properties
+     * @param   array|Tab   $tab    The tab itself of its properties
      *
-     * @return  self
+     * @return  $this
      *
      * @throws  ProgrammingError When the tab name already exists
      */
@@ -204,9 +217,9 @@ EOT;
      * of an existing Tab
      *
      * @param   string      $name   The new tab name
-     * @param   array|Tab   $tab    The tab itself of it's properties
+     * @param   array|Tab   $tab    The tab itself of its properties
      *
-     * @return  self
+     * @return  $this
      */
     public function set($name, $tab)
     {
@@ -215,6 +228,25 @@ EOT;
         } else {
             $this->tabs[$name] = new Tab($tab + array('name' => $name));
         }
+        return $this;
+    }
+
+    /**
+     * Remove a tab
+     *
+     * @param   string  $name
+     *
+     * @return  $this
+     */
+    public function remove($name)
+    {
+        if ($this->has($name)) {
+            unset($this->tabs[$name]);
+            if (($dropdownIndex = array_search($name, $this->dropdownTabs, true)) !== false) {
+                array_splice($this->dropdownTabs, $dropdownIndex, 2);
+            }
+        }
+
         return $this;
     }
 
@@ -232,7 +264,7 @@ EOT;
     }
 
     /**
-     * Render the dropdown area with it's tabs and return the resulting HTML
+     * Render the dropdown area with its tabs and return the resulting HTML
      *
      * @return  mixed|string
      */
@@ -275,6 +307,43 @@ EOT;
         return $this->closeTpl;
     }
 
+    private function renderRefreshTab()
+    {
+        $url = Icinga::app()->getRequest()->getUrl();
+        $tab = $this->get($this->getActiveName());
+
+        if ($tab !== null) {
+            $label = $this->view()->escape(
+                $tab->getLabel()
+            );
+        }
+
+        if (! empty($label)) {
+            $caption = $label;
+        } else {
+            $caption = t('Content');
+        }
+
+        $label = t(sprintf('Refresh the %s', $caption));
+        $title = $label;
+
+        $tpl = str_replace(
+            array(
+                '{URL}',
+                '{TITLE}',
+                '{LABEL}'
+            ),
+            array(
+                $url,
+                $title,
+                $label
+            ),
+            $this->refreshTpl
+        );
+
+        return $tpl;
+    }
+
     /**
      * Render to HTML
      *
@@ -290,12 +359,23 @@ EOT;
             $drop = $this->renderDropdownTabs();
         }
         $close = $this->closeTab ? $this->renderCloseTab() : '';
+        $refresh = $this->renderRefreshTab();
 
-        $html = $this->baseTpl;
-        $html = str_replace('{TABS}', $tabs, $html);
-        $html = str_replace('{DROPDOWN}', $drop, $html);
-        $html = str_replace('{CLOSE}', $close, $html);
-        return $html;
+        return str_replace(
+            array(
+                '{TABS}',
+                '{DROPDOWN}',
+                '{REFRESH}',
+                '{CLOSE}'
+            ),
+            array(
+                $tabs,
+                $drop,
+                $close,
+                $refresh
+            ),
+            $this->baseTpl
+        );
     }
 
     public function __toString()
@@ -347,7 +427,7 @@ EOT;
      *
      * @param   Tabextension $tabextension
      *
-     * @return  self
+     * @return  $this
      */
     public function extend(Tabextension $tabextension)
     {

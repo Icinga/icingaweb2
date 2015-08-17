@@ -15,7 +15,7 @@ class icinga2 {
   include icinga_packages
 
   package { [
-    'icinga2', 'icinga2-doc', 'icinga2-debuginfo'
+    'icinga2', 'icinga2-doc'
   ]:
     ensure  => latest,
     require => Class['icinga_packages'],
@@ -35,7 +35,7 @@ class icinga2 {
     links  => follow,
     owner  => 'icinga',
     group  => 'icinga',
-    mode   => 6750,
+    mode   => '6750',
   }
 
   icinga2::feature { [ 'statusdata', 'command', 'compatlog' ]: }

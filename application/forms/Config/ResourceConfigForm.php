@@ -1,18 +1,23 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Forms\Config;
 
 use InvalidArgumentException;
-use Icinga\Web\Notification;
+use Icinga\Application\Platform;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Data\ConfigObject;
+use Icinga\Data\Inspectable;
+use Icinga\Data\Inspection;
+use Icinga\Data\ResourceFactory;
 use Icinga\Forms\ConfigForm;
 use Icinga\Forms\Config\Resource\DbResourceForm;
 use Icinga\Forms\Config\Resource\FileResourceForm;
 use Icinga\Forms\Config\Resource\LdapResourceForm;
 use Icinga\Forms\Config\Resource\LivestatusResourceForm;
-use Icinga\Application\Platform;
-use Icinga\Exception\ConfigurationError;
+use Icinga\Forms\Config\Resource\SshResourceForm;
+use Icinga\Web\Form;
+use Icinga\Web\Notification;
 
 class ResourceConfigForm extends ConfigForm
 {
@@ -22,7 +27,8 @@ class ResourceConfigForm extends ConfigForm
     public function init()
     {
         $this->setName('form_config_resource');
-        $this->setSubmitLabel(t('Save Changes'));
+        $this->setSubmitLabel($this->translate('Save Changes'));
+        $this->setValidatePartial(true);
     }
 
     /**
@@ -42,8 +48,10 @@ class ResourceConfigForm extends ConfigForm
             return new LivestatusResourceForm();
         } elseif ($type === 'file') {
             return new FileResourceForm();
+        } elseif ($type === 'ssh') {
+            return new SshResourceForm();
         } else {
-            throw new InvalidArgumentException(sprintf(t('Invalid resource type "%s" provided'), $type));
+            throw new InvalidArgumentException(sprintf($this->translate('Invalid resource type "%s" provided'), $type));
         }
     }
 
@@ -54,17 +62,17 @@ class ResourceConfigForm extends ConfigForm
      *
      * @param   array   $values             The values to extend the configuration with
      *
-     * @return  self
+     * @return  $this
      *
-     * @thrwos  InvalidArgumentException    In case the resource does already exist
+     * @throws  InvalidArgumentException    In case the resource does already exist
      */
     public function add(array $values)
     {
         $name = isset($values['name']) ? $values['name'] : '';
         if (! $name) {
-            throw new InvalidArgumentException(t('Resource name missing'));
+            throw new InvalidArgumentException($this->translate('Resource name missing'));
         } elseif ($this->config->hasSection($name)) {
-            throw new InvalidArgumentException(t('Resource already exists'));
+            throw new InvalidArgumentException($this->translate('Resource already exists'));
         }
 
         unset($values['name']);
@@ -85,11 +93,11 @@ class ResourceConfigForm extends ConfigForm
     public function edit($name, array $values)
     {
         if (! $name) {
-            throw new InvalidArgumentException(t('Old resource name missing'));
+            throw new InvalidArgumentException($this->translate('Old resource name missing'));
         } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
-            throw new InvalidArgumentException(t('New resource name missing'));
+            throw new InvalidArgumentException($this->translate('New resource name missing'));
         } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(t('Unknown resource provided'));
+            throw new InvalidArgumentException($this->translate('Unknown resource provided'));
         }
 
         $resourceConfig = $this->config->getSection($name);
@@ -111,12 +119,17 @@ class ResourceConfigForm extends ConfigForm
     public function remove($name)
     {
         if (! $name) {
-            throw new InvalidArgumentException(t('Resource name missing'));
+            throw new InvalidArgumentException($this->translate('Resource name missing'));
         } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(t('Unknown resource provided'));
+            throw new InvalidArgumentException($this->translate('Unknown resource provided'));
         }
 
         $resourceConfig = $this->config->getSection($name);
+        $resourceForm = $this->getResourceForm($resourceConfig->type);
+        if (method_exists($resourceForm, 'beforeRemove')) {
+            $resourceForm::beforeRemove($resourceConfig);
+        }
+
         $this->config->removeSection($name);
         return $resourceConfig;
     }
@@ -131,9 +144,12 @@ class ResourceConfigForm extends ConfigForm
      */
     public function onSuccess()
     {
+        $resourceForm = $this->getResourceForm($this->getElement('type')->getValue());
+
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
-            $resourceForm = $this->getResourceForm($this->getElement('type')->getValue());
-            if (method_exists($resourceForm, 'isValidResource') && false === $resourceForm::isValidResource($this)) {
+            $inspection = static::inspectResource($this);
+            if ($inspection !== null && $inspection->hasError()) {
+                $this->error($inspection->getError());
                 $this->addElement($this->getForceCreationCheckbox());
                 return false;
             }
@@ -142,15 +158,20 @@ class ResourceConfigForm extends ConfigForm
         $resource = $this->request->getQuery('resource');
         try {
             if ($resource === null) { // create new resource
+                if (method_exists($resourceForm, 'beforeAdd')) {
+                    if (! $resourceForm::beforeAdd($this)) {
+                        return false;
+                    }
+                }
                 $this->add($this->getValues());
-                $message = t('Resource "%s" has been successfully created');
+                $message = $this->translate('Resource "%s" has been successfully created');
             } else { // edit existing resource
                 $this->edit($resource, $this->getValues());
-                $message = t('Resource "%s" has been successfully changed');
+                $message = $this->translate('Resource "%s" has been successfully changed');
             }
         } catch (InvalidArgumentException $e) {
             Notification::error($e->getMessage());
-            return;
+            return false;
         }
 
         if ($this->save()) {
@@ -172,9 +193,9 @@ class ResourceConfigForm extends ConfigForm
         $resource = $this->request->getQuery('resource');
         if ($resource !== null) {
             if ($resource === '') {
-                throw new ConfigurationError(t('Resource name missing'));
+                throw new ConfigurationError($this->translate('Resource name missing'));
             } elseif (! $this->config->hasSection($resource)) {
-                throw new ConfigurationError(t('Unknown resource provided'));
+                throw new ConfigurationError($this->translate('Unknown resource provided'));
             }
 
             $configValues = $this->config->getSection($resource)->toArray();
@@ -197,8 +218,8 @@ class ResourceConfigForm extends ConfigForm
             array(
                 'order'         => 0,
                 'ignore'        => true,
-                'label'         => t('Force Changes'),
-                'description'   => t('Check this box to enforce changes without connectivity validation')
+                'label'         => $this->translate('Force Changes'),
+                'description'   => $this->translate('Check this box to enforce changes without connectivity validation')
             )
         );
     }
@@ -211,14 +232,15 @@ class ResourceConfigForm extends ConfigForm
         $resourceType = isset($formData['type']) ? $formData['type'] : 'db';
 
         $resourceTypes = array(
-            'file'          => t('File'),
+            'file'          => $this->translate('File'),
             'livestatus'    => 'Livestatus',
+            'ssh'           => $this->translate('SSH Identity'),
         );
         if ($resourceType === 'ldap' || Platform::extensionLoaded('ldap')) {
             $resourceTypes['ldap'] = 'LDAP';
         }
         if ($resourceType === 'db' || Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
-            $resourceTypes['db'] = t('SQL Database');
+            $resourceTypes['db'] = $this->translate('SQL Database');
         }
 
         $this->addElement(
@@ -227,8 +249,8 @@ class ResourceConfigForm extends ConfigForm
             array(
                 'required'          => true,
                 'autosubmit'        => true,
-                'label'             => t('Resource Type'),
-                'description'       => t('The type of resource'),
+                'label'             => $this->translate('Resource Type'),
+                'description'       => $this->translate('The type of resource'),
                 'multiOptions'      => $resourceTypes,
                 'value'             => $resourceType
             )
@@ -240,5 +262,104 @@ class ResourceConfigForm extends ConfigForm
         }
 
         $this->addElements($this->getResourceForm($resourceType)->createElements($formData)->getElements());
+    }
+
+    /**
+     * Create a resource by using the given form's values and return its inspection results
+     *
+     * @param   Form    $form
+     *
+     * @return  Inspection
+     */
+    public static function inspectResource(Form $form)
+    {
+        if ($form->getValue('type') !== 'ssh') {
+            $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
+            if ($resource instanceof Inspectable) {
+                return $resource->inspect();
+            }
+        }
+    }
+
+    /**
+     * Run the configured resource's inspection checks and show the result, if necessary
+     *
+     * This will only run any validation if the user pushed the 'resource_validation' button.
+     *
+     * @param   array   $formData
+     *
+     * @return  bool
+     */
+    public function isValidPartial(array $formData)
+    {
+        if ($this->getElement('resource_validation')->isChecked() && parent::isValid($formData)) {
+            $inspection = static::inspectResource($this);
+            if ($inspection !== null) {
+                $join = function ($e) use (& $join) {
+                    return is_string($e) ? $e : join("\n", array_map($join, $e));
+                };
+                $this->addElement(
+                    'note',
+                    'inspection_output',
+                    array(
+                        'order'         => 0,
+                        'value'         => '<strong>' . $this->translate('Validation Log') . "</strong>\n\n"
+                            . join("\n", array_map($join, $inspection->toArray())),
+                        'decorators'    => array(
+                            'ViewHelper',
+                            array('HtmlTag', array('tag' => 'pre', 'class' => 'log-output')),
+                        )
+                    )
+                );
+
+                if ($inspection->hasError()) {
+                    $this->warning(sprintf(
+                        $this->translate('Failed to successfully validate the configuration: %s'),
+                        $inspection->getError()
+                    ));
+                    return false;
+                }
+            }
+
+            $this->info($this->translate('The configuration has been successfully validated.'));
+        }
+
+        return true;
+    }
+
+    /**
+     * Add a submit button to this form and one to manually validate the configuration
+     *
+     * Calls parent::addSubmitButton() to add the submit button.
+     *
+     * @return  $this
+     */
+    public function addSubmitButton()
+    {
+        parent::addSubmitButton()
+            ->getElement('btn_submit')
+            ->setDecorators(array('ViewHelper'));
+
+        $this->addElement(
+            'submit',
+            'resource_validation',
+            array(
+                'ignore'        => true,
+                'label'         => $this->translate('Validate Configuration'),
+                'decorators'    => array('ViewHelper')
+            )
+        );
+        $this->addDisplayGroup(
+            array('btn_submit', 'resource_validation'),
+            'submit_validation',
+            array(
+                'decorators' => array(
+                    'FormElements',
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
+                )
+            )
+        );
+
+        return $this;
     }
 }

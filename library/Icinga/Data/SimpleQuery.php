@@ -1,17 +1,19 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Data;
 
-use Icinga\Application\Icinga;
-use Icinga\Data\Filter\Filter;
-use Icinga\Web\Paginator\Adapter\QueryAdapter;
+use Iterator;
+use IteratorAggregate;
 use Zend_Paginator;
-use Exception;
+use Icinga\Application\Icinga;
+use Icinga\Application\Benchmark;
+use Icinga\Data\Filter\Filter;
 use Icinga\Exception\IcingaException;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Paginator\Adapter\QueryAdapter;
 
-class SimpleQuery implements QueryInterface, Queryable
+class SimpleQuery implements QueryInterface, Queryable, Iterator
 {
     /**
      * Query data source
@@ -21,9 +23,25 @@ class SimpleQuery implements QueryInterface, Queryable
     protected $ds;
 
     /**
-     * The table you are going to query
+     * This query's iterator
+     *
+     * @var Iterator
      */
-    protected $table;
+    protected $iterator;
+
+    /**
+     * The current position of this query's iterator
+     *
+     * @var int
+     */
+    protected $iteratorPosition;
+
+    /**
+     * The target you are going to query
+     *
+     * @var mixed
+     */
+    protected $target;
 
     /**
      * The columns you asked for
@@ -42,6 +60,15 @@ class SimpleQuery implements QueryInterface, Queryable
      * @var array
      */
     protected $columns = array();
+
+    /**
+     * The columns and their aliases flipped in order to handle aliased sort columns
+     *
+     * Supposed to be used and populated by $this->compare *only*.
+     *
+     * @var array
+     */
+    protected $flippedColumns;
 
     /**
      * The columns you're using to sort the query result
@@ -63,6 +90,20 @@ class SimpleQuery implements QueryInterface, Queryable
      * @var int
      */
     protected $limitOffset;
+
+    /**
+     * Whether to peek ahead for more results
+     *
+     * @var bool
+     */
+    protected $peekAhead;
+
+    /**
+     * Whether the query did not yield all available results
+     *
+     * @var bool
+     */
+    protected $hasMore;
 
     protected $filter;
 
@@ -103,11 +144,97 @@ class SimpleQuery implements QueryInterface, Queryable
     }
 
     /**
-     * Choose a table and the colums you are interested in
+     * Return the current position of this query's iterator
      *
-     * Query will return all available columns if none are given here
+     * @return  int
+     */
+    public function getIteratorPosition()
+    {
+        return $this->iteratorPosition;
+    }
+
+    /**
+     * Start or rewind the iteration
+     */
+    public function rewind()
+    {
+        if ($this->iterator === null) {
+            $iterator = $this->ds->query($this);
+            if ($iterator instanceof IteratorAggregate) {
+                $this->iterator = $iterator->getIterator();
+            } else {
+                $this->iterator = $iterator;
+            }
+        }
+
+        $this->iterator->rewind();
+        $this->iteratorPosition = null;
+        Benchmark::measure('Query result iteration started');
+    }
+
+    /**
+     * Fetch and return the current row of this query's result
      *
-     * @return self
+     * @return  object
+     */
+    public function current()
+    {
+        return $this->iterator->current();
+    }
+
+    /**
+     * Return whether the current row of this query's result is valid
+     *
+     * @return  bool
+     */
+    public function valid()
+    {
+        $valid = $this->iterator->valid();
+        if ($valid && $this->peekAhead && $this->hasLimit() && $this->iteratorPosition + 1 === $this->getLimit()) {
+            $this->hasMore = true;
+            $valid = false; // We arrived at the last result, which is the requested extra row, so stop the iteration
+        } elseif (! $valid) {
+            $this->hasMore = false;
+        }
+
+        if (! $valid) {
+            Benchmark::measure('Query result iteration finished');
+            return false;
+        } elseif ($this->iteratorPosition === null) {
+            $this->iteratorPosition = 0;
+        }
+
+        return true;
+    }
+
+    /**
+     * Return the key for the current row of this query's result
+     *
+     * @return  mixed
+     */
+    public function key()
+    {
+        return $this->iterator->key();
+    }
+
+    /**
+     * Advance to the next row of this query's result
+     */
+    public function next()
+    {
+        $this->iterator->next();
+        $this->iteratorPosition += 1;
+    }
+
+    /**
+     * Choose a table and the columns you are interested in
+     *
+     * Query will return all available columns if none are given here.
+     *
+     * @param   mixed   $target
+     * @param   array   $fields
+     *
+     * @return  $this
      */
     public function from($target, array $fields = null)
     {
@@ -126,7 +253,7 @@ class SimpleQuery implements QueryInterface, Queryable
      * @param   string  $condition
      * @param   mixed   $value
      *
-     * @return  self
+     * @return  $this
      */
     public function where($condition, $value = null)
     {
@@ -163,6 +290,26 @@ class SimpleQuery implements QueryInterface, Queryable
     }
 
     /**
+     * Split order field into its field and sort direction
+     *
+     * @param   string  $field
+     *
+     * @return  array
+     */
+    public function splitOrder($field)
+    {
+        $fieldAndDirection = explode(' ', $field, 2);
+        if (count($fieldAndDirection) === 1) {
+            $direction = null;
+        } else {
+            $field = $fieldAndDirection[0];
+            $direction = (strtoupper(trim($fieldAndDirection[1])) === 'DESC') ?
+                Sortable::SORT_DESC : Sortable::SORT_ASC;
+        }
+        return array($field, $direction);
+    }
+
+    /**
      * Sort result set by the given field (and direction)
      *
      * Preferred usage:
@@ -173,18 +320,14 @@ class SimpleQuery implements QueryInterface, Queryable
      * @param  string   $field
      * @param  string   $direction
      *
-     * @return self
+     * @return $this
      */
     public function order($field, $direction = null)
     {
         if ($direction === null) {
-            $fieldAndDirection = explode(' ', $field, 2);
-            if (count($fieldAndDirection) === 1) {
-                $direction = self::SORT_ASC;
-            } else {
-                $field = $fieldAndDirection[0];
-                $direction = (strtoupper(trim($fieldAndDirection[1])) === 'DESC') ?
-                    Sortable::SORT_DESC : Sortable::SORT_ASC;
+            list($field, $direction) = $this->splitOrder($field);
+            if ($direction === null) {
+                $direction = Sortable::SORT_ASC;
             }
         } else {
             switch (($direction = strtoupper($direction))) {
@@ -200,32 +343,42 @@ class SimpleQuery implements QueryInterface, Queryable
         return $this;
     }
 
-    public function compare($a, $b, $col_num = 0)
+    /**
+     * Compare $a with $b based on this query's sort rules and column aliases
+     *
+     * @param   object  $a
+     * @param   object  $b
+     * @param   int     $orderIndex
+     *
+     * @return  int
+     */
+    public function compare($a, $b, $orderIndex = 0)
     {
-        // Last column to sort reached, rows are considered being equal
-        if (! array_key_exists($col_num, $this->order)) {
-            return 0;
-        }
-        $col = $this->order[$col_num][0];
-        $dir = $this->order[$col_num][1];
-// TODO: throw Exception if column is missing
-        //$res = strnatcmp(strtolower($a->$col), strtolower($b->$col));
-        $res = @strcmp(strtolower($a->$col), strtolower($b->$col));
-        if ($res === 0) {
-//            return $this->compare($a, $b, $col_num++);
-
-            if (array_key_exists(++$col_num, $this->order)) {
-                return $this->compare($a, $b, $col_num);
-            } else {
-                return 0;
-            }
-
+        if (! array_key_exists($orderIndex, $this->order)) {
+            return 0; // Last column to sort reached, rows are considered being equal
         }
 
-        if ($dir === self::SORT_ASC) {
-            return $res;
+        if ($this->flippedColumns === null) {
+            $this->flippedColumns = array_flip($this->columns);
+        }
+
+        $column = $this->order[$orderIndex][0];
+        if (array_key_exists($column, $this->flippedColumns)) {
+            $column = $this->flippedColumns[$column];
+        }
+
+        // TODO: throw Exception if column is missing
+        //$res = strnatcmp(strtolower($a->$column), strtolower($b->$column));
+        $result = @strcmp(strtolower($a->$column), strtolower($b->$column));
+        if ($result === 0) {
+            return $this->compare($a, $b, ++$orderIndex);
+        }
+
+        $direction = $this->order[$orderIndex][1];
+        if ($direction === self::SORT_ASC) {
+            return $result;
         } else {
-            return $res * -1;
+            return $result * -1;
         }
     }
 
@@ -250,12 +403,52 @@ class SimpleQuery implements QueryInterface, Queryable
     }
 
     /**
+     * Set whether this query should peek ahead for more results
+     *
+     * Enabling this causes the current query limit to be increased by one. The potential extra row being yielded will
+     * be removed from the result set. Note that this only applies when fetching multiple results of limited queries.
+     *
+     * @return  $this
+     */
+    public function peekAhead($state = true)
+    {
+        $this->peekAhead = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Return whether this query did not yield all available results
+     *
+     * @return  bool
+     *
+     * @throws  ProgrammingError    In case the query did not run yet
+     */
+    public function hasMore()
+    {
+        if ($this->hasMore === null) {
+            throw new ProgrammingError('Query did not run. Cannot determine whether there are more results.');
+        }
+
+        return $this->hasMore;
+    }
+
+    /**
+     * Return whether this query will or has yielded any result
+     *
+     * @return  bool
+     */
+    public function hasResult()
+    {
+        return $this->iteratorPosition !== null || $this->fetchRow() !== false;
+    }
+
+    /**
      * Set a limit count and offset to the query
      *
      * @param   int $count  Number of rows to return
      * @param   int $offset Start returning after this many rows
      *
-     * @return  self
+     * @return  $this
      */
     public function limit($count = null, $offset = null)
     {
@@ -271,7 +464,7 @@ class SimpleQuery implements QueryInterface, Queryable
      */
     public function hasLimit()
     {
-        return $this->limitCount !== null;
+        return $this->limitCount !== null && $this->limitCount > 0;
     }
 
     /**
@@ -281,7 +474,7 @@ class SimpleQuery implements QueryInterface, Queryable
      */
     public function getLimit()
     {
-        return $this->limitCount;
+        return $this->peekAhead && $this->hasLimit() ? $this->limitCount + 1 : $this->limitCount;
     }
 
     /**
@@ -313,14 +506,22 @@ class SimpleQuery implements QueryInterface, Queryable
      * @param   int $pageNumber     Current page number
      *
      * @return  Zend_Paginator
+     *
+     * @deprecated      Use Icinga\Web\Controller::setupPaginationControl() and/or Icinga\Web\Widget\Paginator instead
      */
     public function paginate($itemsPerPage = null, $pageNumber = null)
     {
+        trigger_error(
+            'SimpleQuery::paginate() is deprecated. Use Icinga\Web\Controller::setupPaginationControl()'
+            . ' and/or Icinga\Web\Widget\Paginator instead',
+            E_USER_DEPRECATED
+        );
+
         if ($itemsPerPage === null || $pageNumber === null) {
             // Detect parameters from request
-            $request = Icinga::app()->getFrontController()->getRequest();
+            $request = Icinga::app()->getRequest();
             if ($itemsPerPage === null) {
-                $itemsPerPage = $request->getParam('limit', 20);
+                $itemsPerPage = $request->getParam('limit', 25);
             }
             if ($pageNumber === null) {
                 $pageNumber = $request->getParam('page', 0);
@@ -340,7 +541,18 @@ class SimpleQuery implements QueryInterface, Queryable
      */
     public function fetchAll()
     {
-        return $this->ds->fetchAll($this);
+        Benchmark::measure('Fetching all results started');
+        $results = $this->ds->fetchAll($this);
+        Benchmark::measure('Fetching all results finished');
+
+        if ($this->peekAhead && $this->hasLimit() && count($results) === $this->getLimit()) {
+            $this->hasMore = true;
+            array_pop($results);
+        } else {
+            $this->hasMore = false;
+        }
+
+        return $results;
     }
 
     /**
@@ -350,19 +562,31 @@ class SimpleQuery implements QueryInterface, Queryable
      */
     public function fetchRow()
     {
-        return $this->ds->fetchRow($this);
+        Benchmark::measure('Fetching one row started');
+        $row = $this->ds->fetchRow($this);
+        Benchmark::measure('Fetching one row finished');
+        return $row;
     }
 
     /**
-     * Fetch a column of all rows of the result set as an array
-     *
-     * @param   int $columnIndex Index of the column to fetch
+     * Fetch the first column of all rows of the result set as an array
      *
      * @return  array
      */
-    public function fetchColumn($columnIndex = 0)
+    public function fetchColumn()
     {
-        return $this->ds->fetchColumn($this, $columnIndex);
+        Benchmark::measure('Fetching one column started');
+        $values = $this->ds->fetchColumn($this);
+        Benchmark::measure('Fetching one column finished');
+
+        if ($this->peekAhead && $this->hasLimit() && count($values) === $this->getLimit()) {
+            $this->hasMore = true;
+            array_pop($values);
+        } else {
+            $this->hasMore = false;
+        }
+
+        return $values;
     }
 
     /**
@@ -372,7 +596,10 @@ class SimpleQuery implements QueryInterface, Queryable
      */
     public function fetchOne()
     {
-        return $this->ds->fetchOne($this);
+        Benchmark::measure('Fetching one value started');
+        $value = $this->ds->fetchOne($this);
+        Benchmark::measure('Fetching one value finished');
+        return $value;
     }
 
     /**
@@ -384,17 +611,33 @@ class SimpleQuery implements QueryInterface, Queryable
      */
     public function fetchPairs()
     {
-        return $this->ds->fetchPairs($this);
+        Benchmark::measure('Fetching pairs started');
+        $pairs = $this->ds->fetchPairs($this);
+        Benchmark::measure('Fetching pairs finished');
+
+        if ($this->peekAhead && $this->hasLimit() && count($pairs) === $this->getLimit()) {
+            $this->hasMore = true;
+            array_pop($pairs);
+        } else {
+            $this->hasMore = false;
+        }
+
+        return $pairs;
     }
 
     /**
-     * Count all rows of the result set
+     * Count all rows of the result set, ignoring limit and offset
      *
-     * @return int
+     * @return  int
      */
     public function count()
     {
-        return $this->ds->count($this);
+        $query = clone $this;
+        $query->limit(0, 0);
+        Benchmark::measure('Counting all results started');
+        $count = $this->ds->count($query);
+        Benchmark::measure('Counting all results finished');
+        return $count;
     }
 
     /**
@@ -402,16 +645,25 @@ class SimpleQuery implements QueryInterface, Queryable
      *
      * @param   array $columns
      *
-     * @return  self
+     * @return  $this
      */
     public function columns(array $columns)
     {
         $this->columns = $columns;
+        $this->flippedColumns = null; // Reset, due to updated columns
         return $this;
     }
 
     public function getColumns()
     {
         return $this->columns;
+    }
+
+    /**
+     * Deep clone self::$filter
+     */
+    public function __clone()
+    {
+        $this->filter = clone $this->filter;
     }
 }

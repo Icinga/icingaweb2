@@ -28,7 +28,8 @@ class icinga2_mysql {
     privileges => 'SELECT,INSERT,UPDATE,DELETE',
     schemafile => '/usr/share/icinga2-ido-mysql/schema/mysql.sql',
   }
-  -> icinga2::feature { 'ido-mysql':
+  -> icinga2::config { 'features-available/ido-mysql':
     source => 'puppet:///modules/icinga2_mysql',
   }
+  -> icinga2::feature { 'ido-mysql': }
 }

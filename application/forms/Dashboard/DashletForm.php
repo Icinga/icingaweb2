@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Forms\Dashboard;
 
@@ -26,7 +25,7 @@ class DashletForm extends Form
     {
         $this->setName('form_dashboard_addurl');
         if (! $this->getSubmitLabel()) {
-            $this->setSubmitLabel(t('Add To Dashboard'));
+            $this->setSubmitLabel($this->translate('Add To Dashboard'));
         }
         $this->setAction(URL::fromRequest());
     }
@@ -66,9 +65,10 @@ class DashletForm extends Form
             'url',
             array(
                 'required'      => true,
-                'label'         => t('Url'),
-                'description'   =>
-                    t('Enter url being loaded in the dashlet. You can paste the full URL, including filters.')
+                'label'         => $this->translate('Url'),
+                'description'   => $this->translate(
+                    'Enter url being loaded in the dashlet. You can paste the full URL, including filters.'
+                )
             )
         );
         $this->addElement(
@@ -76,8 +76,22 @@ class DashletForm extends Form
             'dashlet',
             array(
                 'required'      => true,
-                'label'         => t('Dashlet Title'),
-                'description'   => t('Enter a title for the dashlet.')
+                'label'         => $this->translate('Dashlet Title'),
+                'description'   => $this->translate('Enter a title for the dashlet.'),
+                'validators'    =>  array(
+                    array(
+                        'Regex',
+                        false,
+                        array(
+                            'pattern'  => '/^[^\\[\\]]+$/',
+                            'messages' => array(
+                                'regexNotMatch' => $this->translate(
+                                    'The name cannot contain \'[\' or \']\'.'
+                                )
+                            )
+                        )
+                    )
+                )
             )
         );
         $this->addElement(
@@ -95,9 +109,8 @@ class DashletForm extends Form
                 'pane',
                 array(
                     'required'      => true,
-                    'label'         => t("New Dashboard Title"),
-                    'description'   =>
-                        t('Enter a title for the new pane.')
+                    'label'         => $this->translate("New Dashboard Title"),
+                    'description'   => $this->translate('Enter a title for the new pane.')
                 )
             );
         } else {
@@ -106,10 +119,9 @@ class DashletForm extends Form
                 'pane',
                 array(
                     'required'      => true,
-                    'label'         => t('Dashboard'),
+                    'label'         => $this->translate('Dashboard'),
                     'multiOptions'  => $panes,
-                    'description'   =>
-                        t('Select a pane you want to add the dashlet.')
+                    'description'   => $this->translate('Select a pane you want to add the dashlet.')
                 )
             );
         }
@@ -118,10 +130,10 @@ class DashletForm extends Form
             'checkbox',
             'create_new_pane',
             array(
+                'autosubmit'    => true,
                 'required'      => false,
-                'label'         => t('New dashboard'),
-                'class'         => 'autosubmit',
-                'description'   => t('Check this box if you want to add the dashlet to a new dashboard')
+                'label'         => $this->translate('New dashboard'),
+                'description'   => $this->translate('Check this box if you want to add the dashlet to a new dashboard')
             )
         );
     }
@@ -150,9 +162,9 @@ class DashletForm extends Form
         $this->populate(array(
             'pane'          => $dashlet->getPane()->getName(),
             'org_pane'      => $dashlet->getPane()->getName(),
-            'dashlet'     => $dashlet->getTitle(),
-            'org_dashlet' => $dashlet->getTitle(),
-            'url'           => $dashlet->getUrl()
+            'dashlet'       => $dashlet->getTitle(),
+            'org_dashlet'   => $dashlet->getTitle(),
+            'url'           => $dashlet->getUrl()->getRelativeUrl()
         ));
     }
 }

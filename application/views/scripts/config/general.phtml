@@ -1,0 +1,9 @@
+<div class="controls" data-base-target="_main">
+  <?= $this->tabs->render($this); ?>
+</div>
+<div class="content">
+  <?php if (isset($this->messageBox)): ?>
+    <?= $this->messageBox->render() ?>
+  <?php endif ?>
+  <?= $this->form ?>
+</div>

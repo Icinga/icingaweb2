@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
@@ -35,11 +34,13 @@ class CheckNowCommandForm extends ObjectsCommandForm
                 array(
                     'ignore'        => true,
                     'type'          => 'submit',
-                    'value'         => mt('monitoring', 'Check now'),
-                    'label'         => '<i class="icon-reschedule"></i> ' . mt('monitoring', 'Check now'),
+                    'value'         => $this->translate('Check now'),
+                    'label'         => '<i aria-hidden="true" class="icon-reschedule"></i>'
+                        . $this->translate('Check now'),
                     'decorators'    => array('ViewHelper'),
                     'escape'        => false,
-                    'class'         => 'link-like'
+                    'class'         => 'link-like spinner',
+                    'title'         => $this->translate('Schedule the next active check to run immediately')
                 )
             )
         ));

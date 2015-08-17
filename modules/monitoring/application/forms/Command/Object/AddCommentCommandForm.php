@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
@@ -13,26 +12,20 @@ use Icinga\Web\Notification;
 class AddCommentCommandForm extends ObjectsCommandForm
 {
     /**
+     * Initialize this form
+     */
+    public function init()
+    {
+        $this->addDescription($this->translate('This command is used to add host or service comments.'));
+    }
+
+    /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
      */
     public function getSubmitLabel()
     {
-        return mtp(
-            'monitoring', 'Add comment', 'Add comments', count($this->objects)
-        );
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
-     */
-    public function getHelp()
-    {
-        return mt(
-            'monitoring',
-            'This command is used to add host or service comments.'
-        );
+        return $this->translatePlural('Add comment', 'Add comments', count($this->objects));
     }
 
     /**
@@ -47,9 +40,8 @@ class AddCommentCommandForm extends ObjectsCommandForm
                 'comment',
                 array(
                     'required'      => true,
-                    'label'         => mt('monitoring', 'Comment'),
-                    'description'   => mt(
-                        'monitoring',
+                    'label'         => $this->translate('Comment'),
+                    'description'   => $this->translate(
                         'If you work with other administrators, you may find it useful to share information about the'
                         . ' the host or service that is having problems. Make sure you enter a brief description of'
                         . ' what you are doing.'
@@ -60,10 +52,9 @@ class AddCommentCommandForm extends ObjectsCommandForm
                 'checkbox',
                 'persistent',
                 array(
-                    'label'         => mt('monitoring', 'Persistent'),
+                    'label'         => $this->translate('Persistent'),
                     'value'         => true,
-                    'description'   => mt(
-                        'monitoring',
+                    'description'   => $this->translate(
                         'If you uncheck this option, the comment will automatically be deleted the next time Icinga is'
                         . ' restarted.'
                     )
@@ -88,8 +79,7 @@ class AddCommentCommandForm extends ObjectsCommandForm
             $comment->setPersistent($this->getElement('persistent')->isChecked());
             $this->getTransport($this->request)->send($comment);
         }
-        Notification::success(mtp(
-            'monitoring',
+        Notification::success($this->translatePlural(
             'Adding comment..',
             'Adding comments..',
             count($this->objects)

@@ -1,41 +1,68 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Web\Controller\ActionController;
-use Icinga\Web\Notification;
-use Icinga\Application\Modules\Module;
-use Icinga\Web\Widget;
-use Icinga\Application\Icinga;
 use Icinga\Application\Config;
+use Icinga\Application\Icinga;
+use Icinga\Application\Modules\Module;
+use Icinga\Data\ResourceFactory;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotFoundError;
+use Icinga\Forms\Config\UserBackendConfigForm;
+use Icinga\Forms\Config\UserBackendReorderForm;
 use Icinga\Forms\Config\GeneralConfigForm;
-use Icinga\Forms\Config\AuthenticationBackendReorderForm;
-use Icinga\Forms\Config\AuthenticationBackendConfigForm;
 use Icinga\Forms\Config\ResourceConfigForm;
 use Icinga\Forms\ConfirmRemovalForm;
-use Icinga\Data\ResourceFactory;
-
+use Icinga\Security\SecurityException;
+use Icinga\Web\Controller;
+use Icinga\Web\Notification;
+use Icinga\Web\Url;
+use Icinga\Web\Widget;
 
 /**
- * Application wide controller for application preferences
+ * Application and module configuration
  */
-class ConfigController extends ActionController
+class ConfigController extends Controller
 {
-    public function init()
+    /**
+     * Create and return the tabs to display when showing application configuration
+     */
+    public function createApplicationTabs()
     {
-        $this->view->tabs = Widget::create('tabs')->add('index', array(
-            'title' => $this->translate('Application'),
-            'url'   => 'config'
-        ))->add('authentication', array(
-            'title' => $this->translate('Authentication'),
-            'url'   => 'config/authentication'
-        ))->add('resources', array(
-            'title' => $this->translate('Resources'),
-            'url'   => 'config/resource'
-        ))->add('roles', array(
-            'title' => $this->translate('Roles'),
-            'url'   => 'roles'
+        $tabs = $this->getTabs();
+        $tabs->add('general', array(
+            'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
+            'label' => $this->translate('General'),
+            'url'   => 'config/general',
+            'baseTarget' => '_main'
         ));
+        $tabs->add('resource', array(
+            'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
+            'label' => $this->translate('Resources'),
+            'url'   => 'config/resource',
+            'baseTarget' => '_main'
+        ));
+        return $tabs;
+    }
+
+    /**
+     * Create and return the tabs to display when showing authentication configuration
+     */
+    public function createAuthenticationTabs()
+    {
+        $tabs = $this->getTabs();
+        $tabs->add('userbackend', array(
+            'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
+            'label' => $this->translate('User Backends'),
+            'url'   => 'config/userbackend',
+            'baseTarget' => '_main'
+        ));
+        $tabs->add('usergroupbackend', array(
+            'title' => $this->translate('Configure how users are associated with groups by Icinga Web 2'),
+            'label' => $this->translate('User Group Backends'),
+            'url'   => 'usergroupbackend/list',
+            'baseTarget' => '_main'
+        ));
+        return $tabs;
     }
 
     public function devtoolsAction()
@@ -44,16 +71,27 @@ class ConfigController extends ActionController
     }
 
     /**
-     * Index action, entry point for configuration
+     * Redirect to the general configuration
      */
     public function indexAction()
     {
+        $this->redirectNow('config/general');
+    }
+
+    /**
+     * General configuration
+     *
+     * @throws SecurityException    If the user lacks the permission for configuring the general configuration
+     */
+    public function generalAction()
+    {
+        $this->assertPermission('config/application/general');
         $form = new GeneralConfigForm();
         $form->setIniConfig(Config::app());
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->view->tabs->activate('index');
+        $this->createApplicationTabs()->activate('general');
     }
 
     /**
@@ -61,32 +99,50 @@ class ConfigController extends ActionController
      */
     public function modulesAction()
     {
-        $this->view->tabs = Widget::create('tabs')->add('modules', array(
-            'title' => $this->translate('Modules'),
-            'url'   => 'config/modules'
-        ));
-
-        $this->view->tabs->activate('modules');
+        $this->assertPermission('config/modules');
+        // Overwrite tabs created in init
+        // @TODO(el): This seems not natural to me. Module configuration should have its own controller.
+        $this->view->tabs = Widget::create('tabs')
+            ->add('modules', array(
+                'label' => $this->translate('Modules'),
+                'title' => $this->translate('List intalled modules'),
+                'url'   => 'config/modules'
+            ))
+            ->activate('modules');
         $this->view->modules = Icinga::app()->getModuleManager()->select()
             ->from('modules')
             ->order('enabled', 'desc')
-            ->order('name')->paginate();
+            ->order('name');
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->modules);
+        // TODO: Not working
+        /*$this->setupSortControl(array(
+            'name'      => $this->translate('Modulename'),
+            'path'      => $this->translate('Installation Path'),
+            'enabled'   => $this->translate('State')
+        ));*/
     }
 
     public function moduleAction()
     {
-        $name = $this->getParam('name');
+        $this->assertPermission('config/modules');
         $app = Icinga::app();
         $manager = $app->getModuleManager();
+        $name = $this->getParam('name');
         if ($manager->hasInstalled($name)) {
-            $this->view->moduleData = Icinga::app()->getModuleManager()->select()
-            ->from('modules')->where('name', $name)->fetchRow();
-            $module = new Module($app, $name, $manager->getModuleDir($name));
+            $this->view->moduleData = $manager->select()->from('modules')->where('name', $name)->fetchRow();
+            if ($manager->hasLoaded($name)) {
+                $module = $manager->getModule($name);
+            } else {
+                $module = new Module($app, $name, $manager->getModuleDir($name));
+            }
+
             $this->view->module = $module;
+            $this->view->tabs = $module->getConfigTabs()->activate('info');
         } else {
             $this->view->module = false;
+            $this->view->tabs = null;
         }
-        $this->view->tabs = $module->getConfigTabs()->activate('info');
     }
 
     /**
@@ -94,11 +150,11 @@ class ConfigController extends ActionController
      */
     public function moduleenableAction()
     {
+        $this->assertPermission('config/modules');
         $module = $this->getParam('name');
         $manager = Icinga::app()->getModuleManager();
         try {
             $manager->enableModule($module);
-            $manager->loadModule($module);
             Notification::success(sprintf($this->translate('Module "%s" enabled'), $module));
             $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
         } catch (Exception $e) {
@@ -114,6 +170,7 @@ class ConfigController extends ActionController
      */
     public function moduledisableAction()
     {
+        $this->assertPermission('config/modules');
         $module = $this->getParam('name');
         $manager = Icinga::app()->getModuleManager();
         try {
@@ -129,85 +186,144 @@ class ConfigController extends ActionController
     }
 
     /**
-     * Action for listing and reordering authentication backends
+     * Action for listing and reordering user backends
      */
-    public function authenticationAction()
+    public function userbackendAction()
     {
-        $form = new AuthenticationBackendReorderForm();
+        $this->assertPermission('config/application/userbackend');
+        $form = new UserBackendReorderForm();
         $form->setIniConfig(Config::app('authentication'));
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->view->tabs->activate('authentication');
-        $this->render('authentication/reorder');
+        $this->createAuthenticationTabs()->activate('userbackend');
+        $this->render('userbackend/reorder');
     }
 
     /**
-     * Action for creating a new authentication backend
+     * Create a new user backend
      */
-    public function createauthenticationbackendAction()
+    public function createuserbackendAction()
     {
-        $form = new AuthenticationBackendConfigForm();
-        $form->setIniConfig(Config::app('authentication'));
-        $form->setResourceConfig(ResourceFactory::getResourceConfigs());
-        $form->setRedirectUrl('config/authentication');
-        $form->handleRequest();
-
-        $this->view->form = $form;
-        $this->view->tabs->activate('authentication');
-        $this->render('authentication/create');
-    }
-
-    /**
-     * Action for editing authentication backends
-     */
-    public function editauthenticationbackendAction()
-    {
-        $form = new AuthenticationBackendConfigForm();
-        $form->setIniConfig(Config::app('authentication'));
-        $form->setResourceConfig(ResourceFactory::getResourceConfigs());
-        $form->setRedirectUrl('config/authentication');
-        $form->handleRequest();
-
-        $this->view->form = $form;
-        $this->view->tabs->activate('authentication');
-        $this->render('authentication/modify');
-    }
-
-    /**
-     * Action for removing a backend from the authentication list
-     */
-    public function removeauthenticationbackendAction()
-    {
-        $form = new ConfirmRemovalForm(array(
-            'onSuccess' => function ($form) {
-                $configForm = new AuthenticationBackendConfigForm();
-                $configForm->setIniConfig(Config::app('authentication'));
-                $authBackend = $form->getRequest()->getQuery('auth_backend');
-
-                try {
-                    $configForm->remove($authBackend);
-                } catch (InvalidArgumentException $e) {
-                    Notification::error($e->getMessage());
-                    return;
-                }
-
-                if ($configForm->save()) {
-                    Notification::success(sprintf(
-                        t('Authentication backend "%s" has been successfully removed'),
-                        $authBackend
-                    ));
-                } else {
-                    return false;
-                }
-            }
+        $this->assertPermission('config/application/userbackend');
+        $form = new UserBackendConfigForm();
+        $form->setRedirectUrl('config/userbackend');
+        $form->setTitle($this->translate('Create New User Backend'));
+        $form->addDescription($this->translate(
+            'Create a new backend for authenticating your users. This backend'
+            . ' will be added at the end of your authentication order.'
         ));
-        $form->setRedirectUrl('config/authentication');
+        $form->setIniConfig(Config::app('authentication'));
+
+        try {
+            $form->setResourceConfig(ResourceFactory::getResourceConfigs());
+        } catch (ConfigurationError $e) {
+            if ($this->hasPermission('config/application/resources')) {
+                Notification::error($e->getMessage());
+                $this->redirectNow('config/createresource');
+            }
+
+            throw $e; // No permission for resource configuration, show the error
+        }
+
+        $form->setOnSuccess(function (UserBackendConfigForm $form) {
+            try {
+                $form->add(array_filter($form->getValues()));
+            } catch (Exception $e) {
+                $form->error($e->getMessage());
+                return false;
+            }
+
+            if ($form->save()) {
+                Notification::success(t('User backend successfully created'));
+                return true;
+            }
+
+            return false;
+        });
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->view->tabs->activate('authentication');
-        $this->render('authentication/remove');
+        $this->render('form');
+    }
+
+    /**
+     * Edit a user backend
+     */
+    public function edituserbackendAction()
+    {
+        $this->assertPermission('config/application/userbackend');
+        $backendName = $this->params->getRequired('backend');
+
+        $form = new UserBackendConfigForm();
+        $form->setRedirectUrl('config/userbackend');
+        $form->setTitle(sprintf($this->translate('Edit User Backend %s'), $backendName));
+        $form->setIniConfig(Config::app('authentication'));
+        $form->setOnSuccess(function (UserBackendConfigForm $form) use ($backendName) {
+            try {
+                $form->edit($backendName, array_map(
+                    function ($v) {
+                        return $v !== '' ? $v : null;
+                    },
+                    $form->getValues()
+                ));
+            } catch (Exception $e) {
+                $form->error($e->getMessage());
+                return false;
+            }
+
+            if ($form->save()) {
+                Notification::success(sprintf(t('User backend "%s" successfully updated'), $backendName));
+                return true;
+            }
+
+            return false;
+        });
+
+        try {
+            $form->load($backendName);
+            $form->setResourceConfig(ResourceFactory::getResourceConfigs());
+            $form->handleRequest();
+        } catch (NotFoundError $_) {
+            $this->httpNotFound(sprintf($this->translate('User backend "%s" not found'), $backendName));
+        }
+
+        $this->view->form = $form;
+        $this->render('form');
+    }
+
+    /**
+     * Display a confirmation form to remove the backend identified by the 'backend' parameter
+     */
+    public function removeuserbackendAction()
+    {
+        $this->assertPermission('config/application/userbackend');
+        $backendName = $this->params->getRequired('backend');
+
+        $backendForm = new UserBackendConfigForm();
+        $backendForm->setIniConfig(Config::app('authentication'));
+        $form = new ConfirmRemovalForm();
+        $form->setRedirectUrl('config/userbackend');
+        $form->setTitle(sprintf($this->translate('Remove User Backend %s'), $backendName));
+        $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($backendName, $backendForm) {
+            try {
+                $backendForm->delete($backendName);
+            } catch (Exception $e) {
+                $form->error($e->getMessage());
+                return false;
+            }
+
+            if ($backendForm->save()) {
+                Notification::success(sprintf(t('User backend "%s" successfully removed'), $backendName));
+                return true;
+            }
+
+            return false;
+        });
+        $form->handleRequest();
+
+        $this->view->form = $form;
+        $this->render('form');
     }
 
     /**
@@ -215,8 +331,9 @@ class ConfigController extends ActionController
      */
     public function resourceAction()
     {
+        $this->assertPermission('config/application/resources');
         $this->view->resources = Config::app('resources', true)->keys();
-        $this->view->tabs->activate('resources');
+        $this->createApplicationTabs()->activate('resource');
     }
 
     /**
@@ -224,7 +341,10 @@ class ConfigController extends ActionController
      */
     public function createresourceAction()
     {
+        $this->assertPermission('config/application/resources');
         $form = new ResourceConfigForm();
+        $form->setTitle($this->translate('Create A New Resource'));
+        $form->addDescription($this->translate('Resources are entities that provide data to Icinga Web 2.'));
         $form->setIniConfig(Config::app('resources'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
@@ -238,7 +358,9 @@ class ConfigController extends ActionController
      */
     public function editresourceAction()
     {
+        $this->assertPermission('config/application/resources');
         $form = new ResourceConfigForm();
+        $form->setTitle($this->translate('Edit Existing Resource'));
         $form->setIniConfig(Config::app('resources'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
@@ -252,6 +374,7 @@ class ConfigController extends ActionController
      */
     public function removeresourceAction()
     {
+        $this->assertPermission('config/application/resources');
         $form = new ConfirmRemovalForm(array(
             'onSuccess' => function ($form) {
                 $configForm = new ResourceConfigForm();
@@ -262,7 +385,7 @@ class ConfigController extends ActionController
                     $configForm->remove($resource);
                 } catch (InvalidArgumentException $e) {
                     Notification::error($e->getMessage());
-                    return;
+                    return false;
                 }
 
                 if ($configForm->save()) {
@@ -272,6 +395,7 @@ class ConfigController extends ActionController
                 }
             }
         ));
+        $form->setTitle($this->translate('Remove Existing Resource'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
 
@@ -280,9 +404,9 @@ class ConfigController extends ActionController
         $authConfig = Config::app('authentication');
         foreach ($authConfig as $backendName => $config) {
             if ($config->get('resource') === $resource) {
-                $form->addError(sprintf(
+                $form->addDescription(sprintf(
                     $this->translate(
-                        'The resource "%s" is currently in use by the authentication backend "%s". ' .
+                        'The resource "%s" is currently utilized for authentication by user backend "%s". ' .
                         'Removing the resource can result in noone being able to log in any longer.'
                     ),
                     $resource,

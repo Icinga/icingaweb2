@@ -1,13 +1,11 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Widget\Dashboard;
 
 use Zend_Form_Element_Button;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
-use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
 
@@ -22,7 +20,7 @@ class Dashlet extends UserWidget
     /**
      * The url of this Dashlet
      *
-     * @var \Icinga\Web\Url
+     * @var Url|null
      */
     private $url;
 
@@ -53,9 +51,14 @@ class Dashlet extends UserWidget
     private $template =<<<'EOD'
 
     <div class="container" data-icinga-url="{URL}">
-        <h1><a href="{FULL_URL}" data-base-target="col1">{TITLE}</a></h1>
+        <h1><a href="{FULL_URL}" aria-label="{TOOLTIP}" title="{TOOLTIP}" data-base-target="col1">{TITLE}</a></h1>
         <noscript>
-            <iframe src="{IFRAME_URL}" style="height:100%; width:99%" frameborder="no"></iframe>
+            <iframe
+                src="{IFRAME_URL}"
+                style="height:100%; width:99%"
+                frameborder="no"
+                title="{TITLE_PREFIX}{TITLE}">
+            </iframe>
         </noscript>
     </div>
 EOD;
@@ -71,16 +74,13 @@ EOD;
     {
         $this->title = $title;
         $this->pane = $pane;
-        if ($url instanceof Url) {
-            $this->url = $url;
-        } elseif ($url) {
-            $this->url = Url::fromPath($url);
-        } else {
+        if (! $url) {
             throw new IcingaException(
                 'Cannot create dashboard dashlet "%s" without valid URL',
                 $title
             );
         }
+        $this->url = $url;
     }
 
     /**
@@ -104,10 +104,13 @@ EOD;
     /**
      * Retrieve the dashlets url
      *
-     * @return Url
+     * @return Url|null
      */
     public function getUrl()
     {
+        if ($this->url !== null && ! $this->url instanceof Url) {
+            $this->url = Url::fromPath($this->url);
+        }
         return $this->url;
     }
 
@@ -116,15 +119,11 @@ EOD;
      *
      * @param  string|Url $url  The url to use, either as an Url object or as a path
      *
-     * @return self
+     * @return $this
      */
     public function setUrl($url)
     {
-        if ($url instanceof Url) {
-            $this->url = $url;
-        } else {
-            $this->url = Url::fromPath($url);
-        }
+        $this->url = $url;
         return $this;
     }
 
@@ -156,7 +155,7 @@ EOD;
     public function toArray()
     {
         $array = array(
-            'url'   => $this->url->getRelativeUrl(),
+            'url'   => $this->getUrl()->getRelativeUrl(),
             'title' => $this->getTitle()
         );
         if ($this->getDisabled() === true) {
@@ -175,45 +174,30 @@ EOD;
         }
 
         $view = $this->view();
-        $url = clone($this->url);
+        $url = $this->getUrl();
         $url->setParam('view', 'compact');
-        $iframeUrl = clone($url);
+        $iframeUrl = clone $url;
         $iframeUrl->setParam('isIframe');
 
         $searchTokens = array(
             '{URL}',
             '{IFRAME_URL}',
             '{FULL_URL}',
+            '{TOOLTIP}',
             '{TITLE}',
-            '{REMOVE}'
+            '{TITLE_PREFIX}'
         );
 
         $replaceTokens = array(
             $url,
             $iframeUrl,
             $url->getUrlWithout(array('view', 'limit')),
+            sprintf($view->translate('Show %s', 'dashboard.dashlet.tooltip'), $view->escape($this->getTitle())),
             $view->escape($this->getTitle()),
-            $this->getRemoveLink()
+            $view->translate('Dashlet') . ': '
         );
 
         return str_replace($searchTokens, $replaceTokens, $this->template);
-    }
-
-    /**
-     * Render the form for removing a dashboard elemetn
-     *
-     * @return string                       The html representation of the form
-     */
-    protected function getRemoveLink()
-    {
-        return sprintf(
-            '<a data-base-target="main" href="%s">%s</a>',
-            Url::fromPath('dashboard/remove-dashlet', array(
-                'dashlet' => $this->getTitle(),
-                'pane'      => $this->pane->getTitle()
-            )),
-            t('Remove')
-        );
     }
 
     /**

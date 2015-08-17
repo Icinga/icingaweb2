@@ -1,17 +1,13 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Widget;
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Config;
-use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Exception\SystemPermissionException;
-use Icinga\File\Ini\IniWriter;
 use Icinga\User;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Dashlet as DashboardDashlet;
@@ -22,7 +18,7 @@ use Icinga\Web\Url;
  *
  * The terminology is as follows:
  * - Dashlet:     A single view showing a specific url
- * - Pane:          Aggregates one or more dashlets on one page, displays it's title as a tab
+ * - Pane:          Aggregates one or more dashlets on one page, displays its title as a tab
  * - Dashboard:     Shows all panes
  *
  */
@@ -40,7 +36,7 @@ class Dashboard extends AbstractWidget
      *
      * @var Tabs
      */
-    private $tabs;
+    protected $tabs;
 
     /**
      * The parameter that will be added to identify panes
@@ -68,54 +64,43 @@ class Dashboard extends AbstractWidget
     /**
      * Load Pane items provided by all enabled modules
      *
-     * @return  self
+     * @return  $this
      */
     public function load()
     {
         $manager = Icinga::app()->getModuleManager();
         foreach ($manager->getLoadedModules() as $module) {
-            /** @var $module \Icinga\Application\Modules\Module */
-            $this->mergePanes($module->getPaneItems());
+            if ($this->getUser()->can($manager::MODULE_PERMISSION_NS . $module->getName())) {
+                $this->mergePanes($module->getPaneItems());
+            }
 
         }
-        if ($this->user !== null) {
-            $this->loadUserDashboards();
-        }
+
+        $this->loadUserDashboards();
 
         return $this;
     }
 
     /**
-     * Create a writer object
+     * Create and return a Config object for this dashboard
      *
-     * @return IniWriter
+     * @return  Config
      */
-    public function createWriter()
+    public function getConfig()
     {
-        $configFile = $this->getConfigFile();
         $output = array();
         foreach ($this->panes as $pane) {
-            if ($pane->isUserWidget() === true) {
+            if ($pane->isUserWidget()) {
                 $output[$pane->getName()] = $pane->toArray();
             }
             foreach ($pane->getDashlets() as $dashlet) {
-                if ($dashlet->isUserWidget() === true) {
+                if ($dashlet->isUserWidget()) {
                     $output[$pane->getName() . '.' . $dashlet->getTitle()] = $dashlet->toArray();
                 }
             }
         }
 
-        $co = new ConfigObject($output);
-        $config = new Config($co);
-        return new IniWriter(array('config' => $config, 'filename' => $configFile));
-    }
-
-    /**
-     * Write user specific dashboards to disk
-     */
-    public function write()
-    {
-        $this->createWriter()->write();
+        return Config::fromArray($output)->setConfigFile($this->getConfigFile());
     }
 
     /**
@@ -226,7 +211,11 @@ class Dashboard extends AbstractWidget
                 $this->tabs->add(
                     $key,
                     array(
-                        'title'     => $pane->getTitle(),
+                        'title'       => sprintf(
+                            t('Show %s', 'dashboard.pane.tooltip'),
+                            $pane->getTitle()
+                        ),
+                        'label'     => $pane->getTitle(),
                         'url'       => clone($url),
                         'urlParams' => array($this->tabParam => $key)
                     )
@@ -252,7 +241,7 @@ class Dashboard extends AbstractWidget
      *
      * @param string $title
      *
-     * @return self
+     * @return $this
      */
     public function createPane($title)
     {
@@ -289,7 +278,7 @@ class Dashboard extends AbstractWidget
      *
      * @param Pane $pane        The pane to add
      *
-     * @return self
+     * @return $this
      */
     public function addPane(Pane $pane)
     {
@@ -358,7 +347,7 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * Activates the default pane of this dashboard and returns it's name
+     * Activates the default pane of this dashboard and returns its name
      *
      * @return mixed
      */
@@ -438,28 +427,8 @@ class Dashboard extends AbstractWidget
     public function getConfigFile()
     {
         if ($this->user === null) {
-            return '';
+            throw new ProgrammingError('Can\'t load dashboards. User is not set');
         }
-
-        $baseDir = '/var/lib/icingaweb';
-
-        if (! file_exists($baseDir)) {
-            throw new NotReadableError('Could not read: ' . $baseDir);
-        }
-
-        $userDir = $baseDir . '/' . $this->user->getUsername();
-
-        if (! file_exists($userDir)) {
-            $success = @mkdir($userDir);
-            if (!$success) {
-                throw new SystemPermissionException('Could not create: ' . $userDir);
-            }
-        }
-
-        if (! file_exists($userDir)) {
-            throw new NotReadableError('Could not read: ' . $userDir);
-        }
-
-        return $userDir . '/dashboard.ini';
+        return Config::resolvePath('dashboards/' . $this->user->getUsername() . '/dashboard.ini');
     }
 }

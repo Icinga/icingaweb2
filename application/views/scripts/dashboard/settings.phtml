@@ -1,5 +1,3 @@
-<?php
-?>
 <div class="controls">
     <?= $this->tabs ?>
 </div>
@@ -25,9 +23,15 @@
                         <?= $pane->getName(); ?>
                     </th>
                     <th>
-                        <a href="<?= $this->href('dashboard/remove-pane', array('pane' => $pane->getName()));  ?>">
-                            <?= $this->icon('cancel'); ?>
-                        </a>
+                        <?= $this->qlink(
+                            '',
+                            'dashboard/remove-pane',
+                            array('pane' => $pane->getName()),
+                            array(
+                                'icon'  => 'trash',
+                                'title' => sprintf($this->translate('Remove pane %s'), $pane->getName())
+                            )
+                        ); ?>
                     </th>
                 </tr>
                 <?php $dashlets = $pane->getDashlets(); ?>
@@ -42,17 +46,31 @@
                     <?php if ($dashlet->getDisabled() === true) continue; ?>
                         <tr>
                             <td>
-                                <a href="<?= $this->href('dashboard/update-dashlet', array('pane' => $pane->getName(), 'dashlet' => $dashlet->getTitle()));  ?>">
-                                    <?= $dashlet->getTitle(); ?>
-                                </a>
+                                <?= $this->qlink(
+                                    $dashlet->getTitle(),
+                                    'dashboard/update-dashlet',
+                                    array('pane' => $pane->getName(), 'dashlet' => $dashlet->getTitle()),
+                                    array('title' => sprintf($this->translate('Edit dashlet %s'), $dashlet->getTitle()))
+                                ); ?>
                             </td>
                             <td style="table-layout: fixed; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                <a href="<?= $this->href($dashlet->getUrl()); ?>"><?= $dashlet->getUrl(); ?></a>
+                                <?= $this->qlink(
+                                    $dashlet->getUrl()->getRelativeUrl(),
+                                    $dashlet->getUrl()->getRelativeUrl(),
+                                    null,
+                                    array('title' => sprintf($this->translate('Show dashlet %s'), $dashlet->getTitle()))
+                                ); ?>
                             </td>
                             <td>
-                                <a href="<?= $this->href('dashboard/remove-dashlet', array('pane' => $pane->getName(), 'dashlet' => $dashlet->getTitle()));  ?>">
-                                <?= $this->icon('cancel'); ?>
-                                </a>
+                                <?= $this->qlink(
+                                    '',
+                                    'dashboard/remove-dashlet',
+                                    array('pane' => $pane->getName(), 'dashlet' => $dashlet->getTitle()),
+                                    array(
+                                        'icon'  => 'trash',
+                                        'title' => sprintf($this->translate('Remove dashlet %s from pane %s'), $dashlet->getTitle(), $pane->getName())
+                                    )
+                                ); ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>

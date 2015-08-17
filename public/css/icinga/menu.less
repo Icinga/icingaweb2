@@ -1,5 +1,4 @@
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 #menu {
   max-height: 100%;
@@ -28,64 +27,55 @@
   margin-left: 0.0em;
 }
 
-#menu > ul > li > ul {
+#menu > nav > ul > li > ul {
   display: none;
   padding-left: 6px;
 }
 
-.no-js #menu > ul > li > ul {
+.no-js #menu > nav > ul > li > ul {
   display: block;
 }
 
-#menu > ul > li.active > ul {
+#menu > nav > ul > li.active > ul {
   display: block;
 }
 
-#menu > ul > li.active {
+#menu > nav > ul > li.active {
   background-color: white;
   padding-left: 0.0em;
   margin-left: 0;
   margin-right: 0;
 }
 
-#menu > ul > li > a {
+#menu > nav > ul > li > a {
   font-size: 0.9em;
   text-shadow: none;
 }
 
-#menu > ul > li.active > a {
+#menu > nav > ul > li.active > a {
   color: @colorTextDefault;
   text-shadow: none;
 }
 
-#menu > ul > li.active li.active a {
+#menu > nav > ul > li.active li.active a {
   color: @colorPetrol;
 }
 
-#menu > ul > li.active li a:focus {
-  color: @colorTextDefault;
-}
-
-#menu > ul > li > a:focus {
-  color: @colorTextDefault;
-  text-shadow: none;
-}
-
-#menu > ul > li.active li a:hover {
+#menu > nav > ul > li.active li a:hover {
   text-decoration: underline;
 }
 
-#menu > ul > li {
+#menu > nav > ul > li {
   border-bottom: 1px solid #d9d9d9;
 }
 
-#menu > ul > li li {
+#menu > nav > ul > li li {
   font-size: 0.8em;
   padding-left: 1.6em;
 }
 
 /* Collapsed menu item color */
-#menu > ul > li > a {
+#menu > nav > ul > li > a {
   color: @colorTextDefault;
 }
 
@@ -120,11 +110,11 @@
   padding-bottom: 1em;
 }
 
-#menu > ul > li {
+#menu > nav > ul > li {
   margin-left: 5px;
 }
 
-#menu > ul > li.active {
+#menu > nav > ul > li.active {
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
@@ -264,3 +254,42 @@ html.ie8 #menu input.search {
 
 input:focus { outline: none; }
 
+/* Make focus outline properly visible */
+a:focus {
+  outline: dotted black 1px;
+}
+
+/* Displaying the outline in the navigation is not possible because of the messed up link borders,
+   color those links instead. */
+#menu a:focus,
+#menu > nav > ul > li > a:focus,
+#menu .active ul li a:focus {
+  color: #21b5ad;
+  outline: none;
+}
+
+.skip-links {
+  position: relative;
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    li {
+      display: block;
+      a, button[type="submit"] {
+        background-color: #fff;
+        left: -999em;
+        padding: 0.8em;
+        position: absolute;
+        width: 100%;
+        &:focus {
+          left: 0;
+          outline: 1px dotted black;
+        }
+      }
+      button[type="submit"] {
+        text-align: left;
+      }
+    }
+  }
+}

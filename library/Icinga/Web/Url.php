@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web;
 
@@ -103,7 +102,7 @@ class Url
         if ($app->isCli()) {
             return new FakeRequest();
         } else {
-            return $app->getFrontController()->getRequest();
+            return $app->getRequest();
         }
     }
 
@@ -164,7 +163,7 @@ class Url
      *
      * @param   string  $baseUrl    The url path to use as the Url Base
      *
-     * @return  self
+     * @return  $this
      */
     public function setBaseUrl($baseUrl)
     {
@@ -191,7 +190,7 @@ class Url
      *
      * @param   string  $path   The path to set
      *
-     * @return  self
+     * @return  $this
      */
     public function setPath($path)
     {
@@ -251,7 +250,7 @@ class Url
      *
      * @param   array   $params     The parameters to add
      *
-     * @return  self
+     * @return  $this
      */
     public function addParams(array $params)
     {
@@ -267,7 +266,7 @@ class Url
      *
      * @param   array   $params     The parameters to set
      *
-     * @return  self
+     * @return  $this
      */
     public function overwriteParams(array $params)
     {
@@ -283,7 +282,7 @@ class Url
      *
      * @param   UrlParams|array   $params     The new parameters to use for the query part
      *
-     * @return  self
+     * @return  $this
      */
     public function setParams($params)
     {
@@ -344,7 +343,7 @@ class Url
      * @param   string          $param      The query parameter name
      * @param   array|string    $value      An array or string to set as the parameter value
      *
-     * @return  self
+     * @return  $this
      */
     public function setParam($param, $value = true)
     {
@@ -357,7 +356,7 @@ class Url
      *
      * @param   string  $anchor     The site's anchor string without the '#'
      *
-     * @return  self
+     * @return  $this
      */
     public function setAnchor($anchor)
     {
@@ -370,7 +369,7 @@ class Url
      *
      * @param   string|array    $keyOrArrayOfKeys   An array of strings or a string representing the key(s)
      *                                              of the parameters to be removed
-     * @return  self
+     * @return  $this
      */
     public function remove($keyOrArrayOfKeys)
     {

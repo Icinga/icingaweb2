@@ -1,5 +1,4 @@
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 #login {
   width: 100%;
@@ -51,6 +50,7 @@
     margin-left: 2.3em;
     border: none;
     color: @colorTextDefault;
+    font-variant: unset;
   }
 
   .form div.element {
@@ -80,9 +80,10 @@
   form input {
     width: 18em;
     padding: 0.5em;
-	background: #ddd;
-	color: #333;
+    background: #ddd;
+    color: #333;
     border: 1px solid #ddd;
+    margin-left: 0;
   }
 
   form input:focus {
@@ -109,22 +110,37 @@
   .footer {
     margin-top: 7em;
     font-size: 0.9em;
-    text-align: center; 
+    text-align: center;
     margin-left: 5em;
   }
 
-  div.config-note {
+  p.config-note {
     width: 50%;
     padding: 1em;
-    margin: 5em auto 0;
+    margin: 0 auto 2.5em;
     text-align: center;
     color: white;
     background-color: @colorCritical;
+
+    a {
+      color: white;
+      font-weight: bold;
+    }
   }
 
-  div.config-note a {
-    color: white;
-    font-weight: bold;
+  p.info-box {
+    width: 50%;
+    height: 2.2em;
+    margin: 2em auto 2.5em;
+
+    i.icon-info {
+      float: left;
+      height: 100%;
+    }
+
+    em {
+      text-decoration: underline;
+    }
   }
 }
 

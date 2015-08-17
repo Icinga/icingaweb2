@@ -1,0 +1,130 @@
+## What's New in Version 2.0.0-rc1
+
+### Changes
+
+* Improve layout and look and feel in many ways
+* Apply host, service and custom variable restrictions to all monitoring objects
+* Add fullscreen mode (?showFullscreen)
+* User and group management
+* Comment and Downtime Detail View
+* Show icon_image in host/service views
+* Show Icinga program version in monitoring health
+
+#### Features
+
+* Feature 4139: Notify monitoring backend availability problems
+* Feature 4498: Allow to add columns to monitoring views via URL
+* Feature 6392: Resolve Icinga 2 runtime macros in action and notes URLs
+* Feature 6729: Fullscreen mode
+* Feature 7343: Fetch user groups from LDAP
+* Feature 7595: Remote connection resource configuration
+* Feature 7614: Right-align icons
+* Feature 7651: Add module information (module.info) to all core modules
+* Feature 8054: Host Groups should list number of hosts (as well as services)
+* Feature 8235: Show host and service notes in the host and service detail view
+* Feature 8247: Move notifications to the bottom of the page
+* Feature 8281: Improve layout of comments and downtimes in the host and service detail views
+* Feature 8310: Improve layout of performance data and check statistics in the host and service detail views
+* Feature 8565: Improve look and feel of the monitoring multi-select views
+* Feature 8613: IDO queries related to concrete objects should not depend on collations
+* Feature 8665: Show icon_image in the host and service detail views
+* Feature 8781: Automatically deselect rows when closing the detail area
+* Feature 8826: User and group management
+* Feature 8849: Show only three (or four) significant digits (e.g. in check execution time)
+* Feature 8877: Allow module developers to implement new/custom authentication methods
+* Feature 8886: Require mandatory parameters in controller actions and CLI commands
+* Feature 8902: Downtime detail view
+* Feature 8903: Comment detail view
+* Feature 9009: Apply host and service restrictions to related views as well
+* Feature 9203: Wizard: Validate that a resource is actually an IDO instance
+* Feature 9207: Show icinga program version in Monitoring Health
+* Feature 9223: Show the active ido endpoint in the monitoring health view
+* Feature 9284: Create a ServiceActionsHook
+* Feature 9300: Support icon_image_alt
+* Feature 9361: Refine UI for RC1
+* Feature 9377: Permission and restriction documentation
+* Feature 9379: Provide an about.md
+
+#### Bugfixes
+
+* Bug 6281: ShowController's hostAction() and serviceAction() do not respond with 400 for invalid/missing parameters and with 404 if the host or service wasn't found
+* Bug 6778: Duration and history time formatting isn't correct
+* Bug 6952: Unauthenticated users are provided helpful error messages
+* Bug 7151: Play nice with form-button-double-clickers
+* Bug 7165: Invalid host address leads to exception w/ PostgreSQL
+* Bug 7447: Commands sent over SSH are missing the -i option when using a ssh user aside from the webserver's user
+* Bug 7491: Switching from MySQL to PostgreSQL and vice versa doesn't change the port in the resource configuration
+* Bug 7642: Monitoring menu renderers should be moved to the monitoring module
+* Bug 7658: MenuItemRenderer is not so easy to extend
+* Bug 7876: Not all views can be added to the dashboard w/o breaking the layout
+* Bug 7931: Can't acknowledge multiple selected services which are in downtime
+* Bug 7997: Service-Detail-View tabs are changing their context when clicking the Host-Tab
+* Bug 7998: Navigating to the Services-Tab in the Service-Detail-View displays only the selected service
+* Bug 8006: Beautify command transport error exceptions
+* Bug 8205: List views should not show more than the five worst pies
+* Bug 8241: Take display_name into account when searching for host and service names
+* Bug 8334: Perfdata details partially hidden depending on the resolution
+* Bug 8339: Lib: SimpleQuery::paginate() must not fetch page and limit from request but use them from parameters
+* Bug 8343: Status summary does not respect restrictions
+* Bug 8363: Updating dashlets corrupts their URLs
+* Bug 8453: The filter column "_dev" is not allowed here
+* Bug 8472: Missing support for command line arguments in the format --arg=<value>
+* Bug 8474: Improve layout of dictionaries in the host and service detail views
+* Bug 8624: Delete multiple downtimes and comments at once
+* Bug 8696: Can't search for Icinga 2 custom variables
+* Bug 8705: Show all shell commands required to get ready in the setup wizard
+* Bug 8706: INI files should end with a newline character and should not contain superfluous newlines
+* Bug 8707: Wizard: setup seems to fail with just one DB user
+* Bug 8711: JS is logging "ugly" side exceptions
+* Bug 8731: Apply host restrictions to service views
+* Bug 8744: Performance data metrics with value 0 are not displayed
+* Bug 8747: Icinga 2 boolean variables not shown in the host and service detail views
+* Bug 8777: Server error: Service not found exception when service name begins or ends with whitespaces
+* Bug 8815: Only the first external command is sent over SSH when submitting commands for multiple selected hosts or services
+* Bug 8847: Missing indication that nothing was found in the docs when searching
+* Bug 8860: Host group view calculates states from service states; but states should be calculated from host states instead
+* Bug 8927: Tactical overview does not respect restrictions
+* Bug 8928: Host and service groups views do not respect restrictions
+* Bug 8929: Setup wizard does not validate whether the PostgreSQL user for creating the database owns the CREATE ROLE system privilege
+* Bug 8930: Error message about refused connection to the PostgreSQL database server displayed twice in the setup wizard
+* Bug 8934: Status text for ok/up becomes white when hovered
+* Bug 8941: Long plugin output makes the whole container horizontally scrollable instead of just the row containing the long plugin output
+* Bug 8950: Improve English for "The last one occured %s ago"
+* Bug 8953: LDAP encryption settings have no effect
+* Bug 8956: Can't login when creating the database connection for the preferences store fails
+* Bug 8957: Fall back on syslog if the logger's type directive is misconfigured
+* Bug 8958: Switching LDAP encryption to LDAPS doesn't change the port in the resource configuration
+* Bug 8960: Remove exclamation mark from the notification "Authentication order updated!"
+* Bug 8966: Show custom variables visually separated in the host and service detail views
+* Bug 8967: Remove right petrol border from plugin output in the host and service detail views
+* Bug 8972: Can't view Icinga Web 2's log file
+* Bug 8994: Uncaught exception on empty session.save_path()
+* Bug 9000: Only the first line of a stack trace is shown in the applications log view
+* Bug 9007: Misspelled host and service names in commands are not accepted by icinga
+* Bug 9008: Notification overview does not respect restrictions
+* Bug 9022: Browser title does not change in case of an error
+* Bug 9023: Toggling feature...
+* Bug 9025: A tooltip of the service grid's x-axe makes it difficult to click the title of the currently hovered column
+* Bug 9026: Add To Dashboard ... on the dashboard
+* Bug 9046: Detail View: Downtimes description misses space between duration and comment text
+* Bug 9056: Filter for host/servicegroup search doesn't work anymore
+* Bug 9057: contact_notify_host_timeperiod
+* Bug 9059: Can't initiate an ascending sort by host or service severity
+* Bug 9198: monitoring/command/feature/object does not grant the correct permissions
+* Bug 9202: The config\* permission does not permit to navigate to the configuration
+* Bug 9211: Empty filters are being rendered to SQL which leads to syntax errors
+* Bug 9214: Detect multitple icinga_instances entries and warn the user
+* Bug 9220: Centralize submission and apply handling of sort rules
+* Bug 9224: Allow anonymous LDAP binding
+* Bug 9281: Problem with Icingaweb 2 after PHP Upgrade 5.6.8 -> 5.6.9
+* Bug 9317: Web 2's ListController inherits from the monitoring module's base controller
+* Bug 9319: Downtimes overview does not respect restrictions
+* Bug 9350: Menu disappears in user group management view
+* Bug 9351: Timeline links are broken
+* Bug 9352: User list should be sorted
+* Bug 9353: Searching for users fails, at least with LDAP backend
+* Bug 9355: msldap seems not to be a first-class citizen
+* Bug 9378: Rpm calls usermod w/ invalid option on openSUSE
+* Bug 9384: Timeline+Role problem
+* Bug 9392: Command links seem to be broken
+

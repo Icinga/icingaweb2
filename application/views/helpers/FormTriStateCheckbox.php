@@ -1,8 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
-
-use \Zend_View_Helper_FormElement;
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 /**
  * Helper to generate a "datetime" element

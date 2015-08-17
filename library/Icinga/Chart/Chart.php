@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Chart;
 
@@ -40,10 +39,24 @@ abstract class Chart implements Drawable
     protected $palette;
 
     /**
+     * The title of this chart, used for providing accessibility features
+     *
+     * @var string
+     */
+    public $title;
+
+    /**
+     * The description for this chart, mandatory for providing accessibility features
+     *
+     * @var string
+     */
+    public $description;
+
+    /**
      * Create a new chart object and create internal objects
      *
      * If you want to extend this class use the init() method as an extension point,
-     * as this will be called at the end o fthe construct call
+     * as this will be called at the end of the construct call
      */
     public function __construct()
     {
@@ -87,7 +100,6 @@ abstract class Chart implements Drawable
     }
 
     /**
-     *
      * Render this graph and return the created SVG
      *
      * @return  string              The SVG created by the SvgRenderer
@@ -106,6 +118,11 @@ abstract class Chart implements Drawable
             $this->renderer->setXAspectRatioAlignment(SVGRenderer::X_ASPECT_RATIO_MIN);
             $this->renderer->setYAspectRatioAlignment(SVGRenderer::Y_ASPECT_RATIO_MIN);
         }
+
+        $this->renderer->setAriaDescription($this->description);
+        $this->renderer->setAriaTitle($this->title);
+        $this->renderer->getCanvas()->setAriaRole('presentation');
+
         $this->renderer->getCanvas()->addElement($this);
         return $this->renderer->render();
     }

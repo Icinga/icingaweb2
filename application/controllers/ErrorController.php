@@ -1,12 +1,13 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-// namespace Icinga\Application\Controllers;
-
-use Icinga\Application\Logger;
-use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
+use Icinga\Exception\Http\HttpMethodNotAllowedException;
+use Icinga\Exception\Http\HttpNotFoundException;
+use Icinga\Exception\MissingParameterException;
+use Icinga\Security\SecurityException;
+use Icinga\Web\Controller\ActionController;
 
 /**
  * Application wide controller for displaying exceptions
@@ -36,7 +37,7 @@ class ErrorController extends ActionController
                 $path = array_shift($path);
                 $this->getResponse()->setHttpResponseCode(404);
                 $this->view->message = $this->translate('Page not found.');
-                if ($modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
+                if ($this->Auth()->isAuthenticated() && $modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
                     $this->view->message .= ' ' . sprintf(
                         $this->translate('Enabling the "%s" module might help!'),
                         $path
@@ -45,11 +46,30 @@ class ErrorController extends ActionController
 
                 break;
             default:
-                $title = preg_replace('/\r?\n.*$/s', '', $exception->getMessage());
-                $this->getResponse()->setHttpResponseCode(500);
-                $this->view->title = 'Server error: ' . $title;
+                switch (true) {
+                    case $exception instanceof HttpMethodNotAllowedException:
+                        $this->getResponse()->setHttpResponseCode(405);
+                        $this->getResponse()->setHeader('Allow', $exception->getAllowedMethods());
+                        break;
+                    case $exception instanceof HttpNotFoundException:
+                        $this->getResponse()->setHttpResponseCode(404);
+                        break;
+                    case $exception instanceof MissingParameterException:
+                        $this->getResponse()->setHttpResponseCode(400);
+                        $this->getResponse()->setHeader(
+                            'X-Status-Reason',
+                            'Missing parameter ' . $exception->getParameter()
+                        );
+                        break;
+                    case $exception instanceof SecurityException:
+                        $this->getResponse()->setHttpResponseCode(403);
+                        break;
+                    default:
+                        $this->getResponse()->setHttpResponseCode(500);
+                        break;
+                }
                 $this->view->message = $exception->getMessage();
-                if ($this->getInvokeArg('displayExceptions') == true) {
+                if ($this->getInvokeArg('displayExceptions')) {
                     $this->view->stackTrace = $exception->getTraceAsString();
                 }
                 break;

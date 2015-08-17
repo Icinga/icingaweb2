@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms\Command\Instance;
 
@@ -21,19 +20,11 @@ class DisableNotificationsExpireCommandForm extends CommandForm
      */
     public function init()
     {
-        $this->setSubmitLabel(mt('monitoring', 'Disable Notifications'));
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
-     */
-    public function getHelp()
-    {
-        return mt(
-            'monitoring',
+        $this->setRequiredCue(null);
+        $this->setSubmitLabel($this->translate('Disable Notifications'));
+        $this->addDescription($this->translate(
             'This command is used to disable host and service notifications for a specific time.'
-        );
+        ));
     }
 
     /**
@@ -49,8 +40,8 @@ class DisableNotificationsExpireCommandForm extends CommandForm
             'expire_time',
             array(
                 'required'      => true,
-                'label'         => mt('monitoring', 'Expire Time'),
-                'description'   => mt('monitoring', 'Set the expire time.'),
+                'label'         => $this->translate('Expire Time'),
+                'description'   => $this->translate('Set the expire time.'),
                 'value'         => $expireTime
             )
         );
@@ -67,7 +58,7 @@ class DisableNotificationsExpireCommandForm extends CommandForm
         $disableNotifications
             ->setExpireTime($this->getElement('expire_time')->getValue()->getTimestamp());
         $this->getTransport($this->request)->send($disableNotifications);
-        Notification::success(mt('monitoring', 'Disabling host and service notifications..'));
+        Notification::success($this->translate('Disabling host and service notifications..'));
         return true;
     }
 }

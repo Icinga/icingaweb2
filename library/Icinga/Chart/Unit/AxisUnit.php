@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Chart\Unit;
 
@@ -9,13 +8,14 @@ use Iterator;
 /**
  * Base class for Axis Units
  *
+ * An AxisUnit takes a set of values and places them on a given range
+ *
  * Concrete subclasses must implement the iterator interface, with
  * getCurrent returning the axis relative position and getValue the label
  * that will be displayed
  */
 interface AxisUnit extends Iterator
 {
-
     /**
      * Add a dataset to this AxisUnit, required for dynamic min and max vlaues
      *
@@ -46,4 +46,11 @@ interface AxisUnit extends Iterator
      * @param int $max The new maximum value
      */
     public function setMax($max);
+
+    /**
+     * Get the amount of ticks of this axis
+     *
+     * @return int
+     */
+    public function getTicks();
 }

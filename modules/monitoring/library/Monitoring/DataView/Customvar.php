@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\DataView;
 
@@ -20,7 +19,11 @@ class Customvar extends DataView
             'varname',
             'varvalue',
             'is_json',
-            'object_type'
+            'host_name',
+            'service_description',
+            'contact_name',
+            'object_type',
+            'object_type_id'
         );
     }
 
@@ -33,9 +36,16 @@ class Customvar extends DataView
     {
         return array(
             'varname' => array(
-                'varname'  => self::SORT_ASC,
-                'varvalue' => self::SORT_ASC,
+                'columns' => array(
+                    'varname',
+                    'varvalue'
+                )
             )
         );
+    }
+
+    public function getFilterColumns()
+    {
+        return array('host', 'service', 'contact');
     }
 }

@@ -1,5 +1,4 @@
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 (function(Icinga, $) {
 
@@ -28,10 +27,30 @@
             var $el = $(this);
             $el.attr('title', $el.data('title-rich') || $el.attr('title'));
         });
-        $('svg rect.chart-data[title]', el).tipsy({ gravity: 'se', html: true });
-        $('.historycolorgrid a[title]', el).tipsy({ gravity: 's', offset: 2 });
-        $('img.icon[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
-        $('[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, delayIn: 500 });
+        $('svg .chart-data', el).tipsy({ gravity: 'se', html: true });
+        $('i[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
+        $('[title]', el).each(function (i, el) {
+           var $el = $(el);
+           var delay, gravity;
+           if ($el.data('tooltip-delay') !== undefined) {
+               delay = $el.data('tooltip-delay');
+           }
+           if ($el.data('tooltip-gravity')) {
+               gravity = $el.data('tooltip-gravity');
+           }
+           if (delay === undefined &&
+               gravity === undefined &&
+               !$el.data('title-rich')) {
+               // use native tooltips for everything that doesn't
+               // require specific behavior or html markup
+               return;
+           }
+           delay = delay === undefined ? 500 : delay;
+           $el.tipsy({
+               gravity: gravity || $.fn.tipsy.autoNS,
+               delayIn: delay
+           });
+        });
 
         // migrate or remove all orphaned tooltips
         $('.tipsy').each(function () {

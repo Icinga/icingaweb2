@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Widget\Tabextension;
 
@@ -25,7 +24,7 @@ class DashboardAction implements Tabextension
             'dashboard',
             array(
                 'icon'      => 'dashboard',
-                'title'     => 'Add To Dashboard',
+                'label'     => t('Add To Dashboard'),
                 'url'       => Url::fromPath('dashboard/new-dashlet'),
                 'urlParams' => array(
                     'url' => rawurlencode(Url::fromRequest()->getRelativeUrl())

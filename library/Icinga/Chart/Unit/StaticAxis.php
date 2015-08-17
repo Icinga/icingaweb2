@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 
 namespace Icinga\Chart\Unit;
@@ -16,7 +15,7 @@ class StaticAxis implements AxisUnit
      * @param array $dataset    The dataset that will be shown in the Axis
      * @param int   $idx        The idx in the dataset (0 for x, 1 for y)
      *
-     * @return self             Fluent interface
+     * @return $this             Fluent interface
      */
     public function addValues(array $dataset, $idx = 0)
     {
@@ -117,5 +116,15 @@ class StaticAxis implements AxisUnit
     public function rewind()
     {
         return reset($this->items);
+    }
+
+    /**
+     * Get the amount of ticks of this axis
+     *
+     * @return int
+     */
+    public function getTicks()
+    {
+        return count($this->items);
     }
 }

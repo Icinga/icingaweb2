@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 /**
  * Render date-and-time input controls
@@ -57,7 +56,7 @@ class Zend_View_Helper_FormDateTime extends Zend_View_Helper_FormElement
         $type = $attribs['local'] === true ? 'datetime-local' : 'datetime';
         unset($attribs['local']);  // Unset local to not render it again in $this->_htmlAttribs($attribs)
         $html5 =  sprintf(
-            '<input type="%s" name="%s" id="%s" value="%s"%s%s%s%s%s',
+            '<input type="%s" name="%s" id="%s" step="1" value="%s"%s%s%s%s%s',
             $type,
             $this->view->escape($name),
             $this->view->escape($id),

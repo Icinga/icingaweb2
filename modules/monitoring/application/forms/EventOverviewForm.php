@@ -1,12 +1,9 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms;
 
-use Icinga\Data\Filter\FilterNot;
 use Icinga\Web\Url;
-use \Zend_Form;
 use Icinga\Web\Form;
 use Icinga\Data\Filter\Filter;
 
@@ -16,7 +13,7 @@ use Icinga\Data\Filter\Filter;
 class EventOverviewForm extends Form
 {
     /**
-     * Initialize this form
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -29,7 +26,7 @@ class EventOverviewForm extends Form
     }
 
     /**
-     * @see Form::createElements()
+     * {@inheritdoc}
      */
     public function createElements(array $formData)
     {
@@ -44,7 +41,7 @@ class EventOverviewForm extends Form
             'checkbox',
             'statechange',
             array(
-                'label' => t('State Changes'),
+                'label' => $this->translate('State Changes'),
                 'class' => 'autosubmit',
                 'decorators' => $decorators,
                 'value' => strpos($url, $this->stateChangeFilter()->toQueryString()) === false ? 0 : 1
@@ -54,7 +51,7 @@ class EventOverviewForm extends Form
             'checkbox',
             'downtime',
             array(
-                'label' => t('Downtimes'),
+                'label' => $this->translate('Downtimes'),
                 'class' => 'autosubmit',
                 'decorators' => $decorators,
                 'value' => strpos($url, $this->downtimeFilter()->toQueryString()) === false ? 0 : 1
@@ -64,7 +61,7 @@ class EventOverviewForm extends Form
             'checkbox',
             'comment',
             array(
-                'label' => t('Comments'),
+                'label' => $this->translate('Comments'),
                 'class' => 'autosubmit',
                 'decorators' => $decorators,
                 'value' => strpos($url, $this->commentFilter()->toQueryString()) === false ? 0 : 1
@@ -74,7 +71,7 @@ class EventOverviewForm extends Form
             'checkbox',
             'notification',
             array(
-                'label' => t('Notifications'),
+                'label' => $this->translate('Notifications'),
                 'class' => 'autosubmit',
                 'decorators' => $decorators,
                 'value' => strpos($url, $this->notificationFilter()->toQueryString()) === false ? 0 : 1
@@ -84,7 +81,7 @@ class EventOverviewForm extends Form
             'checkbox',
             'flapping',
             array(
-                'label' => t('Flapping'),
+                'label' => $this->translate('Flapping'),
                 'class' => 'autosubmit',
                 'decorators' => $decorators,
                 'value' => strpos($url, $this->flappingFilter()->toQueryString()) === false ? 0 : 1

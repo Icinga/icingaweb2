@@ -1,13 +1,9 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Forms\Config\Resource;
 
-use Exception;
 use Icinga\Web\Form;
-use Icinga\Data\ConfigObject;
-use Icinga\Data\ResourceFactory;
 use Icinga\Application\Platform;
 
 /**
@@ -24,7 +20,9 @@ class DbResourceForm extends Form
     }
 
     /**
-     * @see Form::createElements()
+     * Create and add elements to this form
+     *
+     * @param   array   $formData   The data sent by the user
      */
     public function createElements(array $formData)
     {
@@ -41,8 +39,8 @@ class DbResourceForm extends Form
             'name',
             array(
                 'required'      => true,
-                'label'         => t('Resource Name'),
-                'description'   => t('The unique name of this resource')
+                'label'         => $this->translate('Resource Name'),
+                'description'   => $this->translate('The unique name of this resource')
             )
         );
         $this->addElement(
@@ -50,8 +48,9 @@ class DbResourceForm extends Form
             'db',
             array(
                 'required'      => true,
-                'label'         => t('Database Type'),
-                'description'   => t('The type of SQL database'),
+                'autosubmit'    => true,
+                'label'         => $this->translate('Database Type'),
+                'description'   => $this->translate('The type of SQL database'),
                 'multiOptions'  => $dbChoices
             )
         );
@@ -60,8 +59,8 @@ class DbResourceForm extends Form
             'host',
             array (
                 'required'      => true,
-                'label'         => t('Host'),
-                'description'   => t('The hostname of the database'),
+                'label'         => $this->translate('Host'),
+                'description'   => $this->translate('The hostname of the database'),
                 'value'         => 'localhost'
             )
         );
@@ -69,10 +68,11 @@ class DbResourceForm extends Form
             'number',
             'port',
             array(
-                'required'      => true,
-                'label'         => t('Port'),
-                'description'   => t('The port to use'),
-                'value'         => 3306
+                'required'          => true,
+                'preserveDefault'   => true,
+                'label'             => $this->translate('Port'),
+                'description'       => $this->translate('The port to use'),
+                'value'             => ! array_key_exists('db', $formData) || $formData['db'] === 'mysql' ? 3306 : 5432
             )
         );
         $this->addElement(
@@ -80,8 +80,8 @@ class DbResourceForm extends Form
             'dbname',
             array(
                 'required'      => true,
-                'label'         => t('Database Name'),
-                'description'   => t('The name of the database to use')
+                'label'         => $this->translate('Database Name'),
+                'description'   => $this->translate('The name of the database to use')
             )
         );
         $this->addElement(
@@ -89,8 +89,8 @@ class DbResourceForm extends Form
             'username',
             array (
                 'required'      => true,
-                'label'         => t('Username'),
-                'description'   => t('The user name to use for authentication')
+                'label'         => $this->translate('Username'),
+                'description'   => $this->translate('The user name to use for authentication')
             )
         );
         $this->addElement(
@@ -99,43 +99,11 @@ class DbResourceForm extends Form
             array(
                 'required'          => true,
                 'renderPassword'    => true,
-                'label'             => t('Password'),
-                'description'       => t('The password to use for authentication')
+                'label'             => $this->translate('Password'),
+                'description'       => $this->translate('The password to use for authentication')
             )
         );
 
         return $this;
-    }
-
-    /**
-     * Validate that the current configuration points to a valid resource
-     *
-     * @see Form::onSuccess()
-     */
-    public function onSuccess()
-    {
-        if (false === static::isValidResource($this)) {
-            return false;
-        }
-    }
-
-    /**
-     * Validate the resource configuration by trying to connect with it
-     *
-     * @param   Form    $form   The form to fetch the configuration values from
-     *
-     * @return  bool            Whether validation succeeded or not
-     */
-    public static function isValidResource(Form $form)
-    {
-        try {
-            $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
-            $resource->getConnection()->getConnection();
-        } catch (Exception $e) {
-            $form->addError(t('Connectivity validation failed, connection to the given resource not possible.'));
-            return false;
-        }
-
-        return true;
     }
 }

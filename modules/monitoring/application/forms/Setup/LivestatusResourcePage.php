@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms\Setup;
 
@@ -12,6 +11,11 @@ class LivestatusResourcePage extends Form
     public function init()
     {
         $this->setName('setup_monitoring_livestatus');
+        $this->setTitle($this->translate('Monitoring Livestatus Resource', 'setup.page.title'));
+        $this->addDescription($this->translate(
+            'Please fill out the connection details below to access the Livestatus'
+            . ' socket interface for your monitoring environment.'
+        ));
     }
 
     public function createElements(array $formData)
@@ -22,28 +26,6 @@ class LivestatusResourcePage extends Form
             array(
                 'required'  => true,
                 'value'     => 'livestatus'
-            )
-        );
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => mt('monitoring', 'Monitoring Livestatus Resource', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-        $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => mt(
-                    'monitoring',
-                    'Please fill out the connection details below to access the Livestatus'
-                    . ' socket interface for your monitoring environment.'
-                )
             )
         );
 
@@ -91,8 +73,10 @@ class LivestatusResourcePage extends Form
             'skip_validation',
             array(
                 'required'      => true,
-                'label'         => t('Skip Validation'),
-                'description'   => t('Check this to not to validate connectivity with the given Livestatus socket')
+                'label'         => $this->translate('Skip Validation'),
+                'description'   => $this->translate(
+                    'Check this to not to validate connectivity with the given Livestatus socket'
+                )
             )
         );
     }

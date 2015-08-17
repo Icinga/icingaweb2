@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms\Command;
 
@@ -17,7 +16,7 @@ abstract class CommandForm extends Form
     /**
      * Monitoring backend
      *
-     * @var Backend
+     * @var MonitoringBackend
      */
     protected $backend;
 
@@ -37,21 +36,11 @@ abstract class CommandForm extends Form
     /**
      * Get the monitoring backend
      *
-     * @return Backend
+     * @return MonitoringBackend
      */
     public function getBackend()
     {
         return $this->backend;
-    }
-
-    /**
-     * Get the command help description
-     *
-     * @return string|null
-     */
-    public function getHelp()
-    {
-        return null;
     }
 
     /**

@@ -1,0 +1,150 @@
+<?php
+
+use Icinga\Web\Url;
+use Icinga\Module\Monitoring\Object\Service;
+
+function urlAddFilterOptional($url, $filter, $optional) {
+    $url = Url::fromPath($url);
+    $f = $filter;
+    if (isset($optional)) {
+        $f = Filter::matchAll($filter, $optional);
+    }
+    return $url->setQueryString($f->toQueryString());
+}
+
+$selfUrl = Url::fromPath('monitoring/list/services', array('host' => $object->host_name));
+?><h2 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
+<?php if ($object->stats->services_total): ?>
+<?= $this->qlink(
+    sprintf(
+        $this->translatePlural(
+            '%u configured service:',
+            '%u configured services:',
+            $object->stats->services_total
+        ),
+        $object->stats->services_total
+    ),
+    $selfUrl,
+    null,
+    array(
+        'title' => sprintf(
+            $this->translatePlural(
+                'List all %u service on host %s',
+                'List all %u services on host %s',
+                $object->stats->services_total
+            ),
+            $object->stats->services_total,
+            $object->host_name
+        ),
+        'data-base-target' => '_next'
+    )
+); ?>
+<?php else: ?>
+<?= $this->translate('No services configured on this host'); ?>
+<?php endif; ?>
+
+<span class="badges">
+<?php if ($object->stats->services_ok): ?>
+<span class="state ok">
+    <?= $this->qlink(
+        $object->stats->services_ok,
+        $selfUrl,
+        array('service_state' => 0),
+        array(
+            'title' => sprintf(
+                $this->translatePlural(
+                    'List %u service that is currently in state OK on host %s',
+                    'List %u services which are currently in state OK on host %s',
+                    $object->stats->services_ok
+                ),
+                $object->stats->services_ok,
+                $object->host_name
+            ),
+            'data-base-target' => '_next'
+        )
+    ); ?>
+</span>
+<?php endif ?>
+<?php
+foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $state) {
+    $pre = 'services_' . $state;
+    if ($object->stats->$pre) {
+        $handled = $pre . '_handled';
+        $unhandled = $pre . '_unhandled';
+        $paramsHandled = array('service_state' => $stateId, 'service_handled' => 1);
+        $paramsUnhandled = array('service_state' => $stateId, 'service_handled' => 0);
+        echo '<span class="state ' . $state . ($object->stats->$unhandled ? '' : ' handled') . '">';
+        if ($object->stats->$unhandled) {
+
+            echo $this->qlink(
+                $object->stats->$unhandled,
+                $selfUrl,
+                $paramsUnhandled,
+                array(
+                    'title' => sprintf(
+                        $this->translatePlural(
+                            'List %u service that is currently in state %s on host %s',
+                            'List %u services which are currently in state %s on host %s',
+                            $object->stats->$unhandled
+                        ),
+                        $object->stats->$unhandled,
+                        Service::getStateText($stateId, true),
+                        $object->host_name
+                    ),
+                    'data-base-target' => '_next'
+                )
+            );
+        }
+        if ($object->stats->$handled) {
+            if ($object->stats->$unhandled) {
+                echo '<span class="state handled ' . $state . '">';
+            }
+            echo $this->qlink(
+                $object->stats->$handled,
+                $selfUrl,
+                $paramsHandled,
+                array(
+                    'title' => sprintf(
+                        $this->translatePlural(
+                            'List %u service that is currently in state %s (Acknowledged) on host %s',
+                            'List %u services which are currently in state %s (Acknowledged) on host %s',
+                            $object->stats->$handled
+                        ),
+                        $object->stats->$handled,
+                        Service::getStateText($stateId, true),
+                        $object->host_name
+                    ),
+                    'data-base-target' => '_next'
+                )
+            );
+            if ($object->stats->$unhandled) {
+                echo "</span>\n";
+            }
+        }
+        echo "</span>\n";
+    }
+}
+?>
+<?php if ($object->stats->services_pending): ?>
+<span class="state pending">
+    <?= $this->qlink(
+        $object->stats->services_pending,
+        $selfUrl,
+        array('service_state' => 99),
+        array(
+            'title' => sprintf(
+                $this->translatePlural(
+                    'List %u service that is currently in state PENDING on host %s',
+                    'List %u services which are currently in state PENDING on host %s',
+                    $object->stats->services_pending
+                ),
+                $object->stats->services_pending,
+                $object->host_name
+            ),
+            'data-base-target' => '_next'
+        )
+    ) ?>
+</span>
+<?php endif ?>
+</span>
+</h2>

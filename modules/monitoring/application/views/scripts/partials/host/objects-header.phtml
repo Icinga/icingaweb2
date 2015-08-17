@@ -1,0 +1,45 @@
+<?php
+use Icinga\Module\Monitoring\Object\Host;
+
+$i = 0;
+?>
+
+<?php if (($hostCount = count($objects)) > 0): ?>
+    <table class="action state statesummary">
+        <tbody>
+        <?php foreach ($objects as $host): /** @var Host $host */ ?>
+            <?php
+            if (++ $i > 5) {
+                continue;
+            }
+            ?>
+
+            <tr class="state <?= Host::getStateText($host->host_state); ?><?= $host->host_handled ? ' handled' : '' ?>">
+                <td class="state"><?= Host::getStateText($host->host_state, true); ?><br /></td>
+                <td>
+                <?= $this->iconImage()->host($host) ?>
+                <?= implode(' ', $this->hostFlags($host)) ?>
+                <b><?= $this->escape($host->getName()); ?></b><br>
+                <?= $this->escape($host->host_output) ?>
+                </td>
+            </tr>
+        <?php endforeach ?>
+    </tbody>
+    </table>
+    <div class="hbox-item multi-commands">
+        <?php if ($i > 5): ?>
+        <?=
+        $this->qlink(
+            sprintf($this->translate('show all %d hosts'), $i),
+            $listAllLink,
+            null,
+            array(
+                'icon' => 'down-open',
+                'data-base-target' => '_next'
+            )
+        );
+        ?>
+        <?php endif ?>
+    </div>
+<?php endif ?>
+

@@ -10,29 +10,22 @@
 #
 #   icinga2::feature { 'example-feature'; }
 #
-define icinga2::feature ($source = undef) {
+define icinga2::feature ($ensure = 'present') {
   include icinga2
 
-  $target = "features-available/${name}"
-  $cfgpath = '/etc/icinga2'
-  $path = "${cfgpath}/features-enabled/${name}.conf"
-
-  if $source != undef {
-    icinga2::config { $target:
-      source => $source,
-    }
+  $action = $ensure ? {
+    /(present)/ => 'enable',
+    /(absent)/  => 'disable',
+  }
+  $test = $ensure ? {
+    /(present)/ => '-e',
+    /(absent)/  => '! -e',
   }
 
-  parent_dirs { $path:
-    user    => 'icinga',
-    require => [
-      User['icinga'],
-      File['icinga2cfgDir']
-    ],
-  }
-  -> file { $path:
-    ensure  => link,
-    target  => "${cfgpath}/${target}.conf",
+  exec { "icinga2-feature-${action}-${name}":
+    unless  => "/usr/bin/test ${test} /etc/icinga2/features-enabled/${name}.conf",
+    command => "/usr/sbin/icinga2 feature ${action} ${name}",
+    require => Package['icinga2'],
     notify  => Service['icinga2'],
   }
 }

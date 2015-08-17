@@ -1,11 +1,11 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Setup\Forms;
 
-use Icinga\Web\Form;
+use Icinga\Forms\Config\General\ApplicationConfigForm;
 use Icinga\Forms\Config\General\LoggingConfigForm;
+use Icinga\Web\Form;
 
 /**
  * Wizard page to define the application and logging configuration
@@ -18,6 +18,10 @@ class GeneralConfigPage extends Form
     public function init()
     {
         $this->setName('setup_general_config');
+        $this->setTitle($this->translate('Application Configuration', 'setup.page.title'));
+        $this->addDescription($this->translate(
+            'Now please adjust all application and logging related configuration options to fit your needs.'
+        ));
     }
 
     /**
@@ -25,29 +29,13 @@ class GeneralConfigPage extends Form
      */
     public function createElements(array $formData)
     {
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => mt('setup', 'Application Configuration', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-        $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => mt(
-                    'setup',
-                    'Now please adjust all application and logging related configuration options to fit your needs.'
-                )
-            )
-        );
+        $appConfigForm = new ApplicationConfigForm();
+        $appConfigForm->createElements($formData);
+        $appConfigForm->removeElement('global_module_path');
+        $appConfigForm->removeElement('global_config_resource');
+        $this->addElements($appConfigForm->getElements());
 
-        $loggingForm = new LoggingConfigForm();
-        $this->addElements($loggingForm->createElements($formData)->getElements());
+        $loggingConfigForm = new LoggingConfigForm();
+        $this->addElements($loggingConfigForm->createElements($formData)->getElements());
     }
 }

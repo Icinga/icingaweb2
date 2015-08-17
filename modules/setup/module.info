@@ -1,0 +1,6 @@
+Module: setup
+Version: 2.0.0-rc1
+Description: Setup module
+ Web based wizard for setting up Icinga Web 2 and its modules.
+ This includes the data backends (e.g. relational database, LDAP),
+ the authentication method, where to store the user preferences and much more.

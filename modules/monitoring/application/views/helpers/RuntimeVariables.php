@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 /**
  * Convert runtime summary data into a simple usable stdClass
@@ -10,7 +9,7 @@ class Zend_View_Helper_RuntimeVariables extends Zend_View_Helper_Abstract
     /**
      * Create dispatch instance
      *
-     * @return self
+     * @return $this
      */
     public function runtimeVariables()
     {

@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Protocol\Ldap;
 
@@ -10,34 +9,16 @@ use Icinga\Protocol\Dns;
 class Discovery {
 
     /**
-     * @var Connection
+     * @var LdapConnection
      */
     private $connection;
 
     /**
-     * If discovery was already performed
-     *
-     * @var bool
+     * @param   LdapConnection  $conn   The ldap connection to use for the discovery
      */
-    private $discovered = false;
-
-    /**
-     * @param Connection $conn  The ldap connection to use for the discovery
-     */
-    public function __construct(Connection $conn)
+    public function __construct(LdapConnection $conn)
     {
         $this->connection = $conn;
-    }
-
-    /**
-     * Execute the discovery on the underlying connection
-     */
-    private function execDiscovery()
-    {
-        if (! $this->discovered) {
-            $this->connection->connect();
-            $this->discovered = true;
-        }
     }
 
     /**
@@ -48,14 +29,10 @@ class Discovery {
      */
     public function suggestResourceSettings()
     {
-        if (! $this->discovered) {
-            $this->execDiscovery();
-        }
-
         return array(
             'hostname' => $this->connection->getHostname(),
             'port' => $this->connection->getPort(),
-            'root_dn' => $this->connection->getDefaultNamingContext()
+            'root_dn' => $this->connection->getCapabilities()->getDefaultNamingContext()
         );
     }
 
@@ -67,17 +44,16 @@ class Discovery {
      */
     public function suggestBackendSettings()
     {
-        $this->execDiscovery();
         if ($this->isAd()) {
             return array(
-                'base_dn' => $this->connection->getDefaultNamingContext(),
+                'base_dn' => $this->connection->getCapabilities()->getDefaultNamingContext(),
                 'user_class' => 'user',
                 'user_name_attribute' => 'sAMAccountName'
             );
         } else {
             return array(
-                'base_dn' => $this->connection->getDefaultNamingContext(),
-                'user_class' => 'getDefaultNamingContext',
+                'base_dn' => $this->connection->getCapabilities()->getDefaultNamingContext(),
+                'user_class' => 'inetOrgPerson',
                 'user_name_attribute' => 'uid'
             );
         }
@@ -90,9 +66,7 @@ class Discovery {
      */
     public function isAd()
     {
-        $this->execDiscovery();
-        $caps = $this->connection->getCapabilities();
-        return isset($caps->msCapabilities->ActiveDirectoryOid) && $caps->msCapabilities->ActiveDirectoryOid;
+        return $this->connection->getCapabilities()->isActiveDirectory();
     }
 
     /**
@@ -102,7 +76,6 @@ class Discovery {
      */
     public function isSuccess()
     {
-        $this->execDiscovery();
         return $this->connection->discoverySuccessful();
     }
 
@@ -149,10 +122,10 @@ class Discovery {
      */
     public static function discover($host, $port)
     {
-        $conn = new Connection(new ConfigObject(array(
+        $conn = new LdapConnection(new ConfigObject(array(
             'hostname' => $host,
             'port'     => $port
         )));
         return new Discovery($conn);
     }
-} 
+}

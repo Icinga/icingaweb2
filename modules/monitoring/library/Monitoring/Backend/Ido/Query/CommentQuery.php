@@ -1,47 +1,128 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Zend_Db_Expr;
+use Zend_Db_Select;
+use Icinga\Data\Filter\Filter;
+
 /**
- * Query map for comments
+ * Query for host and service comments
  */
 class CommentQuery extends IdoQuery
 {
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'comments' => array(
-            'comment_internal_id'   => 'cm.internal_comment_id',
-            'comment_data'          => 'cm.comment_data',
-            'comment_author'        => 'cm.author_name COLLATE latin1_general_ci',
-            'comment_timestamp'     => 'UNIX_TIMESTAMP(cm.comment_time)',
-            'comment_type'          => "CASE cm.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'downtime' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END",
-            'comment_is_persistent' => 'cm.is_persistent',
-            'comment_expiration'    => 'CASE cm.expires WHEN 1 THEN UNIX_TIMESTAMP(cm.expiration_time) ELSE NULL END',
-            'comment_host'          => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci',
-            'host'                  => 'CASE WHEN ho.name1 IS NULL THEN so.name1 ELSE ho.name1 END COLLATE latin1_general_ci', // #7278, #7279
-            'comment_service'       => 'so.name2 COLLATE latin1_general_ci',
-            'service'               => 'so.name2 COLLATE latin1_general_ci', // #7278, #7279
-            'comment_objecttype'    => "CASE WHEN ho.object_id IS NOT NULL THEN 'host' ELSE CASE WHEN so.object_id IS NOT NULL THEN 'service' ELSE NULL END END",
+            'comment_author'        => 'c.comment_author',
+            'comment_author_name'   => 'c.comment_author_name',
+            'comment_data'          => 'c.comment_data',
+            'comment_expiration'    => 'c.comment_expiration',
+            'comment_internal_id'   => 'c.comment_internal_id',
+            'comment_is_persistent' => 'c.comment_is_persistent',
+            'comment_timestamp'     => 'c.comment_timestamp',
+            'comment_type'          => 'c.comment_type',
+            'object_type'           => 'c.object_type'
+        ),
+        'hosts' => array(
+            'host_display_name' => 'c.host_display_name',
+            'host_name'         => 'c.host_name',
+            'host_state'        => 'c.host_state'
+        ),
+        'services' => array(
+            'service_description'   => 'c.service_description',
+            'service_display_name'  => 'c.service_display_name',
+            'service_host_name'     => 'c.service_host_name',
+            'service_state'         => 'c.service_state'
         )
     );
 
+    /**
+     * The union
+     *
+     * @var Zend_Db_Select
+     */
+    protected $commentQuery;
+
+    /**
+     * Subqueries used for the comment query
+     *
+     * @var IdoQuery[]
+     */
+    protected $subQueries = array();
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addFilter(Filter $filter)
+    {
+        foreach ($this->subQueries as $sub) {
+            $sub->applyFilter(clone $filter);
+        }
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function joinBaseTables()
     {
+        $this->commentQuery = $this->db->select();
         $this->select->from(
-            array('cm' => $this->prefix . 'comments'),
+            array('c' => $this->commentQuery),
             array()
         );
-        $this->select->joinLeft(
-            array('ho' => $this->prefix . 'objects'),
-            'cm.object_id = ho.object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
-            array()
-        );
-        $this->select->joinLeft(
-            array('so' => $this->prefix . 'objects'),
-            'cm.object_id = so.object_id AND so.is_active = 1 AND so.objecttype_id = 2',
-            array()
-        );
-        $this->joinedVirtualTables = array('comments' => true);
+        $this->joinedVirtualTables['comments'] = true;
+    }
+
+    /**
+     * Join hosts
+     */
+    protected function joinHosts()
+    {
+        $columns = array_keys($this->columnMap['comments'] + $this->columnMap['hosts']);
+        foreach (array_keys($this->columnMap['services']) as $column) {
+            $columns[$column] = new Zend_Db_Expr('NULL');
+        }
+        $hosts = $this->createSubQuery('hostcomment', $columns);
+        $this->subQueries[] = $hosts;
+        $this->commentQuery->union(array($hosts), Zend_Db_Select::SQL_UNION_ALL);
+    }
+
+    /**
+     * Join services
+     */
+    protected function joinServices()
+    {
+        $columns = array_keys($this->columnMap['comments'] + $this->columnMap['hosts'] + $this->columnMap['services']);
+        $services = $this->createSubQuery('servicecomment', $columns);
+        $this->subQueries[] = $services;
+        $this->commentQuery->union(array($services), Zend_Db_Select::SQL_UNION_ALL);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function order($columnOrAlias, $dir = null)
+    {
+        foreach ($this->subQueries as $sub) {
+            $sub->requireColumn($columnOrAlias);
+        }
+        return parent::order($columnOrAlias, $dir);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function where($condition, $value = null)
+    {
+        $this->requireColumn($condition);
+        foreach ($this->subQueries as $sub) {
+            $sub->where($condition, $value);
+        }
+        return $this;
     }
 }

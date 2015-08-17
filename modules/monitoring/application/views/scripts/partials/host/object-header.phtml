@@ -1,0 +1,24 @@
+<?php
+use Icinga\Module\Monitoring\Object\Host;
+
+?>
+<table class="objectstate">
+    <tr class="state <?= Host::getStateText($object->host_state); ?><?= $object->host_handled ? ' handled' : ''; ?>">
+        <td class="state">
+            <strong><?= Host::getStateText($object->host_state, true); ?></strong><br>
+            <?= $this->timeSince($object->host_last_state_change); ?>
+        </td>
+        <td>
+          <?= $this->iconImage()->host($object) ?>
+            <strong><?= $this->escape($object->host_display_name); ?></strong>
+          <?php if ($object->host_display_name !== $object->host_name): ?>
+            <small>(<?= $this->escape($object->host_name); ?>)</small>
+          <?php endif ?>
+          <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
+            <br>
+            <?= $this->escape($object->host_address); ?>
+          <?php endif ?>
+            <?= $this->render('partials/host/statusicons.phtml'); ?>
+        </td>
+    </tr>
+</table>

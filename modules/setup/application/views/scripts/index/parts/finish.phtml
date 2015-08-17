@@ -1,26 +1,33 @@
 <div id="setup-finish">
-  <div class="report">
-  <?php $firstLine = true; ?>
-  <?php foreach ($report as $entry): ?>
-    <?php if ($entry): ?>
-      <?php if (false === $firstLine): ?>
-        <div class="line-separator"></div>
-      <?php endif ?>
-      <?= $entry; ?>
-      <?php $firstLine = false; ?>
-    <?php endif ?>
-  <?php endforeach ?>
+ <?php if ($success): ?>
+  <h2 class="success"><?= $this->translate('Congratulations! Icinga Web 2 has been successfully set up.'); ?></h2>
+ <?php else: ?>
+  <h2 class="failure"><?= $this->translate('Sorry! Failed to set up Icinga Web 2 successfully.'); ?></h2>
+ <?php endif ?>
+  <div class="buttons pull-right">
   <?php if ($success): ?>
-    <p class="success"><?= mt('setup', 'Congratulations! Icinga Web 2 has been successfully set up.'); ?></p>
+    <?= $this->qlink(
+        $this->translate('Login to Icinga Web 2'),
+        'authentication/login',
+        null,
+        array(
+            'class' => 'button-like login',
+            'title' => $this->translate('Show the login page of Icinga Web 2')
+        )
+    ); ?>
   <?php else: ?>
-    <p class="failure"><?= mt('setup', 'Sorry! Failed to set up Icinga Web 2 successfully.'); ?></p>
+    <?= $this->qlink(
+        $this->translate('Back'),
+        null,
+        null,
+        array(
+            'class' => 'button-like',
+            'title' => $this->translate('Show previous wizard-page')
+        )
+    ); ?>
   <?php endif ?>
   </div>
-  <div class="buttons">
-  <?php if ($success): ?>
-    <a href="<?= $this->href('authentication/login'); ?>" class="button-like login"><?= mt('setup', 'Login to Icinga Web 2'); ?></a>
-  <?php else: ?>
-    <a href="<?= $this->href(); ?>" class="button-like"><?= mt('setup', 'Back'); ?></a>
-  <?php endif ?>
-  </div>
+  <pre class="log-output"><?= join("\n\n", array_map(function($a) {
+    return join("\n", $a);
+  }, $report)); ?></pre>
 </div>

@@ -1,5 +1,4 @@
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 /**
  * Icinga.History
@@ -93,7 +92,7 @@
             // TODO: update navigation
             // Did we find any URL? Then push it!
             if (url !== '') {
-                window.history.pushState({icinga: true}, null, this.cleanupUrl(url));
+                this.push(url);
             }
         },
 
@@ -102,13 +101,16 @@
             if (!this.enabled) {
                 return;
             }
-            window.history.pushState({icinga: true}, null, this.cleanupUrl(url));
+            this.push(url);
         },
 
-        cleanupUrl: function(url) {
-            url = url.replace(/_render=[a-z0-9]+&/, '').replace(/&_render=[a-z0-9]+/, '').replace(/\?_render=[a-z0-9]+$/, '');
-            url = url.replace(/_reload=[a-z0-9]+&/, '').replace(/&_reload=[a-z0-9]+/, '').replace(/\?_reload=[a-z0-9]+$/, '');
-            return url;
+        push: function (url) {
+            url = url.replace(/[\?&]?_(render|reload)=[a-z0-9]+/g, '');
+            if (this.lastPushUrl === url) {
+                return;
+            }
+            this.lastPushUrl = url;
+            window.history.pushState({icinga: true}, null, url);
         },
 
         /**
@@ -137,8 +139,10 @@
                 icinga.logger.debug('History state', event.originalEvent.state);
             }
 
-            self.applyLocationBar();
+            // keep the last pushed url in sync with history changes
+            self.lastPushUrl = location.href;
 
+            self.applyLocationBar();
         },
 
         applyLocationBar: function (onload) {
@@ -156,7 +160,7 @@
                 icinga.loader.loadUrl(
                     main,
                     $('#col1')
-                ).historyTriggered = true;
+                ).addToHistory = false;
             }
 
             if (document.location.hash && document.location.hash.match(/^#!/)) {
@@ -164,16 +168,17 @@
                 parts = document.location.hash.split(/#!/);
 
                 if ($('#layout > #login').length) {
-                    // We are on the login page!
-                    $('#login form #redirect').val(
-                        $('#login form #redirect').val() + '#!' + parts[1]
+                    // We are on the login page
+                    var redirect = $('#login form input[name=redirect]').first();
+                    redirect.val(
+                        redirect.val() + '#!' + parts[1]
                     );
                 } else {
-                    if ($('#col2').data('icingaUrl') !== main) {
+                    if ($('#col2').data('icingaUrl') !== parts[1]) {
                         icinga.loader.loadUrl(
                             parts[1],
                             $('#col2')
-                        ).historyTriggered = true;
+                        ).addToHistory = false;
                     }
                 }
 

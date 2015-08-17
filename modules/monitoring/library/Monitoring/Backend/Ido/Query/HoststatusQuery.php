@@ -1,52 +1,96 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Zend_Db_Expr;
+
 class HoststatusQuery extends IdoQuery
 {
+    /**
+     * {@inheritdoc}
+     */
     protected $allowCustomVars = true;
 
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
+        'hostgroups' => array(
+            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
+            'hostgroup_name'    => 'hgo.name1'
+        ),
         'hosts' => array(
-            'host'              => 'ho.name1 COLLATE latin1_general_ci',
-            'host_name'         => 'ho.name1 COLLATE latin1_general_ci',
-            'host_display_name' => 'h.display_name',
-            'host_alias'        => 'h.alias',
-            'host_address'      => 'h.address',
-            'host_ipv4'         => 'INET_ATON(h.address)',
-            'host_icon_image'   => 'h.icon_image',
-            'object_type'       => '(\'host\')'
+            'host'                  => 'ho.name1 COLLATE latin1_general_ci',
+            'host_action_url'       => 'h.action_url',
+            'host_address'          => 'h.address',
+            'host_alias'            => 'h.alias',
+            'host_display_name'     => 'h.display_name COLLATE latin1_general_ci',
+            'host_icon_image'       => 'h.icon_image',
+            'host_icon_image_alt'   => 'h.icon_image_alt',
+            'host_ipv4'             => 'INET_ATON(h.address)',
+            'host_name'             => 'ho.name1',
+            'host_notes'            => 'h.notes',
+            'host_notes_url'        => 'h.notes_url',
+            'object_type'           => '(\'host\')',
+            'object_id'             => 'ho.object_id'
         ),
         'hoststatus' => array(
-            'problems'                      => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
-            'handled'                       => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
-            'unhandled'                     => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END',
-            'host_state'                    => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
-            'host_output'                   => 'hs.output',
-            'host_long_output'              => 'hs.long_output',
-            'host_perfdata'                 => 'hs.perfdata',
-            'host_problem'                  => 'CASE WHEN hs.current_state = 0 THEN 0 ELSE 1 END',
-            'host_acknowledged'             => 'hs.problem_has_been_acknowledged',
-            'host_in_downtime'              => 'CASE WHEN (hs.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
-            'host_handled'                  => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
-            'host_does_active_checks'       => 'hs.active_checks_enabled',
-            'host_accepts_passive_checks'   => 'hs.passive_checks_enabled',
-            'host_last_state_change'        => 'UNIX_TIMESTAMP(hs.last_state_change)',
-            'host_last_hard_state'          => 'hs.last_hard_state',
-            'host_check_command'            => 'hs.check_command',
-            'host_last_check'               => 'UNIX_TIMESTAMP(hs.last_check)',
-            'host_next_check'               => 'CASE WHEN hs.should_be_scheduled THEN UNIX_TIMESTAMP(hs.next_check) ELSE NULL END',
-            'host_check_execution_time'     => 'hs.execution_time',
-            'host_check_latency'            => 'hs.latency',
-            'host_notifications_enabled'    => 'hs.notifications_enabled',
-            'host_last_time_up'             => 'hs.last_time_up',
-            'host_last_time_down'           => 'hs.last_time_down',
-            'host_last_time_unreachable'    => 'hs.last_time_unreachable',
-            'host_current_check_attempt'    => 'hs.current_check_attempt',
-            'host_max_check_attempts'       => 'hs.max_check_attempts',
-            'host_severity'                 => 'CASE WHEN hs.current_state = 0
+            'host_acknowledged'                     => 'hs.problem_has_been_acknowledged',
+            'host_acknowledgement_type'             => 'hs.acknowledgement_type',
+            'host_active_checks_enabled'            => 'hs.active_checks_enabled',
+            'host_active_checks_enabled_changed'    => 'CASE WHEN hs.active_checks_enabled = h.active_checks_enabled THEN 0 ELSE 1 END',
+            'host_attempt'                          => 'hs.current_check_attempt || \'/\' || hs.max_check_attempts',
+            'host_check_command'                    => 'hs.check_command',
+            'host_check_execution_time'             => 'hs.execution_time',
+            'host_check_latency'                    => 'hs.latency',
+            'host_check_source'                     => 'hs.check_source',
+            'host_check_type'                       => 'hs.check_type',
+            'host_current_check_attempt'            => 'hs.current_check_attempt',
+            'host_current_notification_number'      => 'hs.current_notification_number',
+            'host_event_handler'                    => 'hs.event_handler',
+            'host_event_handler_enabled'            => 'hs.event_handler_enabled',
+            'host_event_handler_enabled_changed'    => 'CASE WHEN hs.event_handler_enabled = h.event_handler_enabled THEN 0 ELSE 1 END',
+            'host_failure_prediction_enabled'       => 'hs.failure_prediction_enabled',
+            'host_flap_detection_enabled'           => 'hs.flap_detection_enabled',
+            'host_flap_detection_enabled_changed'   => 'CASE WHEN hs.flap_detection_enabled = h.flap_detection_enabled THEN 0 ELSE 1 END',
+            'host_handled'                          => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) > 0 THEN 1 ELSE 0 END',
+            'host_hard_state'                       => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE CASE WHEN hs.state_type = 1 THEN hs.current_state ELSE hs.last_hard_state END END',
+            'host_in_downtime'                      => 'CASE WHEN (hs.scheduled_downtime_depth = 0) THEN 0 ELSE 1 END',
+            'host_is_flapping'                      => 'hs.is_flapping',
+            'host_is_passive_checked'               => 'CASE WHEN hs.active_checks_enabled = 0 AND hs.passive_checks_enabled = 1 THEN 1 ELSE 0 END',
+            'host_is_reachable'                     => 'hs.is_reachable',
+            'host_last_check'                       => 'UNIX_TIMESTAMP(hs.last_check)',
+            'host_last_hard_state'                  => 'hs.last_hard_state',
+            'host_last_hard_state_change'           => 'UNIX_TIMESTAMP(hs.last_hard_state_change)',
+            'host_last_notification'                => 'UNIX_TIMESTAMP(hs.last_notification)',
+            'host_last_state_change'                => 'UNIX_TIMESTAMP(hs.last_state_change)',
+            'host_last_time_down'                   => 'UNIX_TIMESTAMP(hs.last_time_down)',
+            'host_last_time_unreachable'            => 'UNIX_TIMESTAMP(hs.last_time_unreachable)',
+            'host_last_time_up'                     => 'UNIX_TIMESTAMP(hs.last_time_up)',
+            'host_long_output'                      => 'hs.long_output',
+            'host_max_check_attempts'               => 'hs.max_check_attempts',
+            'host_modified_host_attributes'         => 'hs.modified_host_attributes',
+            'host_next_check'                       => 'CASE hs.should_be_scheduled WHEN 1 THEN UNIX_TIMESTAMP(hs.next_check) ELSE NULL END',
+            'host_next_notification'                => 'UNIX_TIMESTAMP(hs.next_notification)',
+            'host_no_more_notifications'            => 'hs.no_more_notifications',
+            'host_normal_check_interval'            => 'hs.normal_check_interval',
+            'host_notifications_enabled'            => 'hs.notifications_enabled',
+            'host_notifications_enabled_changed'    => 'CASE WHEN hs.notifications_enabled = h.notifications_enabled THEN 0 ELSE 1 END',
+            'host_obsessing'                        => 'hs.obsess_over_host',
+            'host_obsessing_changed'                => 'CASE WHEN hs.obsess_over_host = h.obsess_over_host THEN 0 ELSE 1 END',
+            'host_output'                           => 'hs.output',
+            'host_passive_checks_enabled'           => 'hs.passive_checks_enabled',
+            'host_passive_checks_enabled_changed'   => 'CASE WHEN hs.passive_checks_enabled = h.passive_checks_enabled THEN 0 ELSE 1 END',
+            'host_percent_state_change'             => 'hs.percent_state_change',
+            'host_perfdata'                         => 'hs.perfdata',
+            'host_problem'                          => 'CASE WHEN COALESCE(hs.current_state, 0) = 0 THEN 0 ELSE 1 END',
+            'host_problem_has_been_acknowledged'    => 'hs.problem_has_been_acknowledged',
+            'host_process_performance_data'         => 'hs.process_performance_data',
+            'host_retry_check_interval'             => 'hs.retry_check_interval',
+            'host_scheduled_downtime_depth'         => 'hs.scheduled_downtime_depth',
+            'host_severity'                         => 'CASE WHEN hs.current_state = 0
             THEN
                 CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
                      THEN 16
@@ -81,243 +125,195 @@ class HoststatusQuery extends IdoQuery
             CASE WHEN hs.state_type = 1
                 THEN 8
                 ELSE 0
-            END'
-        ),
-        'hostgroups' => array(
-            'hostgroup'     => 'hgo.name1 COLLATE latin1_general_ci',
+            END',
+            'host_state'                => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
+            'host_state_type'           => 'hs.state_type',
+            'host_status_update_time'   => 'hs.status_update_time',
+            'host_unhandled'            => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END'
         ),
         'servicegroups' => array(
-            'servicegroup'  => 'sgo.name1 COLLATE latin1_general_ci',
-        ),
-        'contactgroups' => array(
-            'contactgroup'  => 'contactgroup',
-        ),
-        'contacts' => array(
-            'contact'       => 'hco.name1 COLLATE latin1_general_ci',
+            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_name'     => 'sgo.name1',
+            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
         ),
         'services' => array(
-            'services_cnt' => 'SUM(1)',
-            'services_ok' => 'SUM(CASE WHEN ss.current_state = 0 THEN 1 ELSE 0 END)',
-            'services_warning' => 'SUM(CASE WHEN ss.current_state = 1 THEN 1 ELSE 0 END)',
-            'services_critical' => 'SUM(CASE WHEN ss.current_state = 2 THEN 1 ELSE 0 END)',
-            'services_unknown' => 'SUM(CASE WHEN ss.current_state = 3 THEN 1 ELSE 0 END)',
-            'services_pending' => 'SUM(CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 1 ELSE 0 END)',
-            'services_problem' => 'SUM(CASE WHEN ss.current_state > 0 THEN 1 ELSE 0 END)',
-            'services_problem_handled' => 'SUM(CASE WHEN ss.current_state > 0 AND (ss.problem_has_been_acknowledged = 1 OR ss.scheduled_downtime_depth > 0) THEN 1 ELSE 0 END)',
-            'services_problem_unhandled' => 'SUM(CASE WHEN ss.current_state > 0 AND (ss.problem_has_been_acknowledged = 0 AND ss.scheduled_downtime_depth = 0) THEN 1 ELSE 0 END)',
-            'services_warning_handled' => 'SUM(CASE WHEN ss.current_state = 1 AND (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END)',
-            'services_critical_handled' => 'SUM(CASE WHEN ss.current_state = 2 AND (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END)',
-            'services_unknown_handled' => 'SUM(CASE WHEN ss.current_state = 3 AND (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END)',
-            'services_warning_unhandled' => 'SUM(CASE WHEN ss.current_state = 1 AND (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END)',
-            'services_critical_unhandled' => 'SUM(CASE WHEN ss.current_state = 2 AND (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END)',
-            'services_unknown_unhandled' => 'SUM(CASE WHEN ss.current_state = 3 AND (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END)',
-        ),
+            'service'                => 'so.name2 COLLATE latin1_general_ci',
+            'service_description'    => 'so.name2',
+            'service_display_name'   => 's.display_name COLLATE latin1_general_ci',
+        )
     );
 
-    protected $aggregateColumnIdx = array(
-        'services_cnt' => true,
-        'services_problem' => true,
-        'services_problem_handled' => true,
-        'services_problem_unhandled' => true,
-    );
-
-    protected $hcgSub;
-
-    public function getDefaultColumns()
-    {
-        return $this->columnMap['hosts'] + $this->columnMap['hoststatus'];
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     protected function joinBaseTables()
     {
-        // TODO: Shall we always add hostobject?
-        $this->select->from(
-            array('ho' => $this->prefix . 'objects'),
-            array()
-        )->join(
-            array('hs' => $this->prefix . 'hoststatus'),
-            'ho.' . $this->object_id . ' = hs.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
-            array()
-        )->join(
-            array('h' => $this->prefix . 'hosts'),
-            'hs.host_object_id = h.host_object_id',
-            array()
-        );
-        $this->joinedVirtualTables = array(
-            'hosts' => true,
-            'hoststatus' => true,
-        );
-    }
-
-    protected function joinStatus()
-    {
-        $this->requireVirtualTable('services');
-    }
-
-    protected function joinServiceStatus()
-    {
-        $this->requireVirtualTable('services');
-    }
-
-    protected function joinServices()
-    {
-        $this->select->join(
-            array('s' => $this->prefix . 'services'),
-            's.host_object_id = h.host_object_id',
-            array()
-        )->join(
-            array('so' => $this->prefix . 'objects'),
-            'so.' . $this->object_id . ' = s.service_object_id AND so.is_active = 1',
-            array()
-        )->joinLeft(
-            array('ss' => $this->prefix . 'servicestatus'),
-            'so.' . $this->object_id . ' = ss.service_object_id',
-            array()
-        );
-        foreach ($this->getColumns() as $col) {
-            $real = $this->aliasToColumnName($col);
-            if (substr($real, 0, 4) === 'SUM(') {
-                continue;
-            }
-            $this->select->group($real);
+        if (version_compare($this->getIdoVersion(), '1.10.0', '<')) {
+            $this->columnMap['hoststatus']['host_check_source'] = '(NULL)';
         }
-        $this->useSubqueryCount = true;
+
+        if (version_compare($this->getIdoVersion(), '1.13.0', '<')) {
+            $this->columnMap['hoststatus']['host_is_reachable'] = '(NULL)';
+        }
+
+        $this->select->from(
+            array('h' => $this->prefix . 'hosts'),
+            array()
+        )->join(
+            array('ho' => $this->prefix . 'objects'),
+            'ho.object_id = h.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
+            array()
+        );
+        $this->joinedVirtualTables['hosts'] = true;
     }
 
+    /**
+     * Join host groups
+     */
     protected function joinHostgroups()
     {
-        if ($this->hasJoinedVirtualTable('services')) {
-            return $this->joinServiceHostgroups();
-        } else {
-            return $this->joinHostHostgroups();
-        }
-    }
-
-    protected function joinServiceHostgroups()
-    {
-        $this->select->join(
+        $this->select->joinLeft(
             array('hgm' => $this->prefix . 'hostgroup_members'),
-            'hgm.host_object_id = s.host_object_id',
+            'hgm.host_object_id = ho.object_id',
             array()
-        )->join(
+        )->joinLeft(
             array('hg' => $this->prefix . 'hostgroups'),
-            'hgm.hostgroup_id = hg.' . $this->hostgroup_id,
+            'hg.hostgroup_id = hgm.hostgroup_id',
             array()
-        )->join(
+        )->joinLeft(
             array('hgo' => $this->prefix . 'objects'),
-            'hgo.' . $this->object_id . ' = hg.hostgroup_object_id'
-            . ' AND hgo.is_active = 1',
+            'hgo.object_id = hg.hostgroup_object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
             array()
         );
-        return $this;
     }
 
-    protected function joinHostHostgroups()
+    /**
+     * Join host status
+     */
+    protected function joinHoststatus()
     {
         $this->select->join(
-            array('hgm' => $this->prefix . 'hostgroup_members'),
-            'hgm.host_object_id = h.host_object_id',
-            array()
-        )->join(
-            array('hg' => $this->prefix . 'hostgroups'),
-            'hgm.hostgroup_id = hg.' . $this->hostgroup_id,
-            array()
-        )->join(
-            array('hgo' => $this->prefix . 'objects'),
-            'hgo.' . $this->object_id . ' = hg.hostgroup_object_id' . ' AND hgo.is_active = 1',
+            array('hs' => $this->prefix . 'hoststatus'),
+            'hs.host_object_id = ho.object_id',
             array()
         );
-        return $this;
     }
 
-    protected function joinContacts()
-    {
-        $this->hcgcSub = $this->db->select()->distinct()->from(
-            array('hcgc' => $this->prefix . 'host_contactgroups'),
-            array('host_name' => 'ho.name1')
-        )->join(
-            array('cgo' => $this->prefix . 'objects'),
-            'hcg.contactgroup_object_id = cgo.' . $this->object_id . ' AND cgo.is_active = 1',
-            array()
-        )->join(
-            array('h' => $this->prefix . 'hosts'),
-            'hcg.host_id = h.host_id',
-            array()
-        )->join(
-            array('ho' => $this->prefix . 'objects'),
-            'h.host_object_id = ho.' . $this->object_id . ' AND ho.is_active = 1',
-            array()
-        );
-        $this->select->join(
-            array('hcg' => $this->hcgSub),
-            'hcg.host_name = ho.name1',
-            array()
-        );
-
-        return $this;
-    }
-
-    protected function filterContactgroup($value)
-    {
-        $this->hcgSub->where(
-            $this->prepareFilterStringForColumn(
-                'cgo.name1 COLLATE latin1_general_ci',
-                $value
-            )
-        );
-        return $this;
-    }
-
-    protected function joinContactgroups()
-    {
-        $this->hcgSub = $this->createContactgroupFilterSubselect();
-        $this->select->join(
-            array('hcg' => $this->hcgSub),
-            'hcg.object_id = ho.object_id',
-            array()
-        );
-        return $this;
-    }
-
-    protected function createContactgroupFilterSubselect()
-    {
-        die((string) $this->db->select()->distinct()->from(
-            array('hcg' => $this->prefix . 'host_contactgroups'),
-            array('object_id' => 'ho.object_id')
-        )->join(
-            array('cgo' => $this->prefix . 'objects'),
-            'hcg.contactgroup_object_id = cgo.' . $this->object_id
-            . ' AND cgo.is_active = 1',
-            array()
-        )->join(
-            array('h' => $this->prefix . 'hosts'),
-            'hcg.host_id = h.host_id',
-            array()
-        )->join(
-            array('ho' => $this->prefix . 'objects'),
-            'h.host_object_id = ho.' . $this->object_id . ' AND ho.is_active = 1',
-            array()
-        ));
-    }
-
+    /**
+     * Join service groups
+     */
     protected function joinServicegroups()
     {
-        // TODO: Only hosts with services having such servicegroups
         $this->requireVirtualTable('services');
-        $this->select->join(
+        $this->select->joinLeft(
             array('sgm' => $this->prefix . 'servicegroup_members'),
             'sgm.service_object_id = s.service_object_id',
             array()
-        )->join(
+        )->joinLeft(
             array('sg' => $this->prefix . 'servicegroups'),
             'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
             array()
-        )->join(
+        )->joinLeft(
             array('sgo' => $this->prefix . 'objects'),
-            'sgo.' . $this->object_id . ' = sg.servicegroup_object_id'
-            . ' AND sgo.is_active = 1',
+            'sgo.object_id = sg.servicegroup_object_id AND sgo.is_active = 1 AND sgo.objecttype_id = 4',
             array()
         );
-        return $this;
+    }
+
+    /**
+     * Join services
+     */
+    protected function joinServices()
+    {
+        $this->requireVirtualTable('hosts');
+        $this->select->joinLeft(
+            array('s' => $this->prefix . 'services'),
+            's.host_object_id = h.host_object_id',
+            array()
+        )->joinLeft(
+            array('so' => $this->prefix . 'objects'),
+            'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
+            array()
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGroup()
+    {
+        $group = array();
+        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('services')) {
+            $group = array('h.host_id', 'ho.object_id');
+            if ($this->hasJoinedVirtualTable('hoststatus')) {
+                $group[] = 'hs.hoststatus_id';
+            }
+
+            if ($this->hasJoinedVirtualTable('serviceproblemsummary')) {
+                $group[] = 'sps.unhandled_services_count';
+            }
+
+            if ($this->hasJoinedVirtualTable('hostgroups')) {
+                $selected = false;
+                foreach ($this->columns as $alias => $column) {
+                    if ($column instanceof Zend_Db_Expr) {
+                        continue;
+                    }
+
+                    $table = $this->aliasToTableName(
+                        $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
+                    );
+                    if ($table === 'hostgroups') {
+                        $selected = true;
+                        break;
+                    }
+                }
+
+                if ($selected) {
+                    $group[] = 'hg.hostgroup_id';
+                    $group[] = 'hgo.object_id';
+                }
+            }
+
+            if ($this->hasJoinedVirtualTable('servicegroups')) {
+                $selected = false;
+                foreach ($this->columns as $alias => $column) {
+                    if ($column instanceof Zend_Db_Expr) {
+                        continue;
+                    }
+
+                    $table = $this->aliasToTableName(
+                        $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
+                    );
+                    if ($table === 'servicegroups') {
+                        $selected = true;
+                        break;
+                    }
+                }
+
+                if ($selected) {
+                    $group[] = 'sg.servicegroup_id';
+                    $group[] = 'sgo.object_id';
+                }
+            }
+        }
+
+        return $group;
+    }
+
+    /**
+     * Query the service problem summary for all hosts of this query's result set
+     *
+     * @return  HostserviceproblemsummaryQuery
+     */
+    public function queryServiceProblemSummary()
+    {
+        return $this->createSubQuery('Hostserviceproblemsummary')
+            ->setHostStatusQuery($this)
+            ->columns(array(
+                'host_name',
+                'unhandled_service_count'
+            )
+        );
     }
 }

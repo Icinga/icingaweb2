@@ -1,13 +1,13 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web;
 
+use Closure;
+use Zend_View_Abstract;
+use Icinga\Authentication\Auth;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Util\Translator;
-use Zend_View_Abstract;
-use Closure;
 
 /**
  * Icinga view
@@ -35,6 +35,13 @@ class View extends Zend_View_Abstract
      * Registered helper functions
      */
     private $helperFunctions = array();
+
+    /**
+     * Authentication manager
+     *
+     * @var Auth|null
+     */
+    private $auth;
 
     /**
      * Create a new view object
@@ -97,7 +104,7 @@ class View extends Zend_View_Abstract
      *
      * @param  string  $name     The desired function name
      * @param  Closure $function An anonymous function
-     * @return self
+     * @return $this
      */
     public function addHelperFunction($name, Closure $function)
     {
@@ -152,6 +159,31 @@ class View extends Zend_View_Abstract
         foreach ($files as $file) {
             require_once $file;
         }
+    }
+
+    /**
+     * Get the authentication manager
+     *
+     * @return Auth
+     */
+    public function Auth()
+    {
+        if ($this->auth === null) {
+            $this->auth = Auth::getInstance();
+        }
+        return $this->auth;
+    }
+
+    /**
+     * Whether the current user has the given permission
+     *
+     * @param   string  $permission Name of the permission
+     *
+     * @return  bool
+     */
+    public function hasPermission($permission)
+    {
+        return $this->Auth()->hasPermission($permission);
     }
 
     /**

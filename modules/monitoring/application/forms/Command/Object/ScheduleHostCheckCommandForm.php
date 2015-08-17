@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
@@ -24,9 +23,8 @@ class ScheduleHostCheckCommandForm extends ScheduleServiceCheckCommandForm
                 'checkbox',
                 'all_services',
                 array(
-                    'label'         => mt('monitoring', 'All Services'),
-                    'description'   => mt(
-                        'monitoring',
+                    'label'         => $this->translate('All Services'),
+                    'description'   => $this->translate(
                         'Schedule check for all services on the hosts and the hosts themselves.'
                     )
                 )
@@ -49,8 +47,7 @@ class ScheduleHostCheckCommandForm extends ScheduleServiceCheckCommandForm
                 ->setOfAllServices($this->getElement('all_services')->isChecked());
             $this->scheduleCheck($check, $this->request);
         }
-        Notification::success(mtp(
-            'monitoring',
+        Notification::success($this->translatePlural(
             'Scheduling host check..',
             'Scheduling host checks..',
             count($this->objects)

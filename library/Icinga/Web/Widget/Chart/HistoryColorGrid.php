@@ -1,13 +1,12 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Widget\Chart;
 
-use Icinga\Util\DateTimeFactory;
+use DateInterval;
+use DateTime;
 use Icinga\Util\Color;
 use Icinga\Web\Widget\AbstractWidget;
-use DateInterval;
 
 /**
  * Display a colored grid that visualizes a set of values for each day
@@ -123,17 +122,19 @@ class HistoryColorGrid extends AbstractWidget {
     {
         if (array_key_exists($day, $this->data) && $this->data[$day]['value'] > 0) {
             $entry = $this->data[$day];
-            return'<a ' .
-                'style="background-color:' . $this->calculateColor($entry['value']) . '; '
-                    . ' opacity: ' . $this->opacity . ';"' .
-                'title="' . $entry['caption'] . '" ' .
-                'href="'  . $entry['url'] . '"' .
-            '>&nbsp;</a>';
-        } else {
             return '<a ' .
-                'style="background-color:' . $this->calculateColor(0) . '; ' . ' opacity: ' . $this->opacity . ';" ' .
-                'title="No entries for ' . $day . '" ' .
+                'style="background-color: ' . $this->calculateColor($entry['value']) . ';'
+                    . ' opacity: ' . $this->opacity . ';" ' .
+                'aria-label="' . $entry['caption'] . '" ' .
+                'title="' . $entry['caption'] . '" ' .
+                'href="'  . $entry['url'] . '" ' .
+                'data-tooltip-delay="0"' .
             '></a>';
+        } else {
+            return '<span ' .
+                'style="background-color: ' . $this->calculateColor(0) . '; opacity: ' . $this->opacity . ';" ' .
+                'title="No entries for ' . $day . '" ' .
+            '></span>';
         }
     }
 
@@ -268,7 +269,7 @@ class HistoryColorGrid extends AbstractWidget {
                 }
                 $week++;
             }
-            if ($day > cal_days_in_month(CAL_GREGORIAN, $month, $year)) {
+            if ($day > date('t', mktime(0, 0, 0, $month, 1, $year))) {
                 $month++;
                 if ($month > 12) {
                     $year++;
@@ -312,7 +313,7 @@ class HistoryColorGrid extends AbstractWidget {
     private function monthName($month, $year)
     {
         // TODO: find a way to render years without messing up the layout
-        $dt = DateTimeFactory::create($year . '-' . $month . '-01');
+        $dt = new DateTime($year . '-' . $month . '-01');
         return $dt->format('M');
     }
 
@@ -323,7 +324,7 @@ class HistoryColorGrid extends AbstractWidget {
      */
     private function weekdayName($weekday)
     {
-        $sun = DateTimeFactory::create('last Sunday');
+        $sun = new DateTime('last Sunday');
         $interval = new DateInterval('P' .  $weekday . 'D');
         $sun->add($interval);
         return substr($sun->format('D'), 0, 2);

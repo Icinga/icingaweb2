@@ -1,0 +1,12 @@
+<div class="controls">
+    
+  <?php if (! $this->compact): ?>
+    <?= $this->tabs; ?>
+  <?php endif ?>
+
+  <?= $this->render('partials/comment/comments-header.phtml'); ?>
+</div>
+
+<div class="content object-command">
+    <?= $delCommentForm ?>
+</div>

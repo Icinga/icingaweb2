@@ -1,5 +1,4 @@
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 code {
   background-color: #eee;
@@ -13,6 +12,15 @@ p code {
   padding: 0.3em;
 }
 
+pre.log-output {
+  padding: 0.5em;
+  margin-top: 0;
+  margin-bottom: 2em;
+  max-height: 12em;
+  overflow: auto;
+  border: 1px solid #ddd;
+}
+
 a {
   color: #39a;
 }
@@ -23,39 +31,6 @@ img.icon {
   vertical-align: middle;
   border: none;
 }
-
-/** Notifications **/
-
-#notifications {
-  margin: 0;
-  padding: 0;
-}
-
-#notifications > li {
-  list-style-type: none;
-  display: block;
-  border-bottom: 1px solid #999;
-  color: white;
-  line-height: 2.5em;
-  padding-left: 3em;
-  background-repeat: no-repeat;
-  background-position: 1em center;
-}
-
-#notifications > li.warning {
-  background-color: @colorWarningHandled;
-}
-#notifications > li.error {
-  background-color: @colorCritical;
-  background-image: url(../img/icons/error_white.png);
-}
-
-#notifications > li.success {
-  background-color: #fe6;
-  background-image: url(../img/icons/success.png);
-  color: #333;
-}
-/** END of Notifications **/
 
 /* TODO: Remove once there is no more module container */
 .container > div > pre {
@@ -70,7 +45,6 @@ table.avp {
   color: @colorTextDarkDefault;
   table-layout: auto;
   width: 100%;
-  font-size: 0.9em;
 }
 
 table.avp a {
@@ -81,7 +55,7 @@ table.avp a {
 table.avp > tbody > tr > th {
   text-align: left;
   margin: 0;
-  width: 10em;
+  width: 14em;
   vertical-align: top;
   line-height: 1.8em;
 }
@@ -96,16 +70,12 @@ table.avp > tbody > tr > td {
 }
 
 table.avp.newsection, table.avp tr.newsection {
-  border-top: 1px solid #d9d9d9;
+  margin-top: 1em;
 }
 
 .content table.avp dd, .content table.avp dd {
   margin: 0;
   padding: 0;
-}
-
-table.avp {
-  font-size: 0.8em;
 }
 
 table.avp a {
@@ -117,70 +87,11 @@ table.avp a:hover {
   text-decoration: underline;
 }
 
-/* Definitively monitoring-only: */
-table.objectstate {
-  margin: 1em;
-  border-collapse: separate;
-  border-spacing: 1px;
-}
-
-table.objectstate td {
-  font-size: 1.2em;
-  line-height: 1.5em;
-  padding-left: 1em;
-}
-
-table.objectstate tr.state td.state {
-  font-size: 1em;
-  width: 9em;
-  text-align: center;
-  padding-left: 0;
-  border-radius: 0;
-}
-
-table.objectstate tr.state.handled td.state {
-}
-
-table.perfdata {
-  min-width: 24em;
-  font-size: 0.9em;
-}
-
-table.perfdata th {
-  padding: 0;
-  text-align: left;
-  padding-right: 0.5em;
-}
-
-table.perfdata td {
-  white-space: nowrap;
-}
-
-table.objectlist {
-  min-width: 28em;
-  th {
-    text-align: left;
-  }
-}
-
 table.benchmark {
   margin: 1em 1% 1em 1%;
   font-family: monospace;
-  font-size: 1em;
   width: 96%;
 }
-
-.dashboard h1 {
-  font-size: 1em;
-}
-
-.dashboard h2 {
-  font-size: 1em;
-}
-
-.dashboard h3 {
-  font-size: 1em;
-} 
 
 .dashboard table.benchmark {
   font-size: 0.9em;
@@ -194,11 +105,236 @@ table.benchmark {
   color: inherit;
 }
 
-/* controls have no padding as of tabs */
-.controls > h1 {
-  margin-right: 1em;
-}
-
 [class^="icon-"]:before, [class*=" icon-"]:before {
     text-decoration: none;
+    margin-left: 0;
+}
+
+.info-box {
+  padding: 0.5em;
+  border: 1px solid lightgrey;
+  background-color: #f2f4fd;
+}
+
+/* Action table */
+table.action {
+  border-collapse: separate;
+  border-spacing: 1px;
+  width: 100%;
+  table-layout: fixed !important;
+  margin: 0;
+  color: @colorTextDefault;
+}
+
+table.action th {
+  text-align: left;
+  overflow: hidden;
+}
+
+table.action.wide td {
+  line-height: 2.5em;
+}
+
+table.action td {
+  padding: 0.3em 0.5em 0.3em 0.5em;
+  line-height: 1.5em;
+  overflow: hidden;
+}
+
+.dashboard table.action td {
+  line-height: 1.2em;
+  padding: 0.2 0.4em 0.2em 0.5em;
+}
+
+table.action td a {
+  color: inherit;
+  text-decoration: none;
+}
+
+table.action td a:hover {
+  text-decoration: underline;
+}
+
+/* END of Action table */
+
+/* Table behaviour */
+
+tr[href] {
+  cursor: pointer;
+}
+
+tr[href].active {
+  background-color: #eee;
+  color: black;
+}
+
+table.alternating {
+  tr[href].active:nth-child(even), tr[href].active:nth-child(odd) {
+    background-color: #E5E5E5;
+    color: black;
+  }
+  tr[href]:nth-child(even) {
+    background-color: #FDFDFD;
+  }
+  tr[href]:nth-child(odd) {
+    background-color: #f5f5f5;
+  }
+  tr[href]:hover {
+    color: black;
+    background-color: #DDDDDD;
+  }
+}
+/* End of table behaviour */
+
+
+/* HOVER colors */
+ 
+tr[href]:hover {
+  color: black;
+  background-color: #DDDDDD;
+}
+/* END of HOVER colors */
+
+div.controls table.user-header {
+  th {
+    width: 9em;
+    line-height: 1.5em;
+    font-size: 0.9em;
+  }
+
+  td {
+    line-height: 1.5em;
+    font-size: 0.9em;
+  }
+}
+
+/* TODO: get rid of most if not all styles below this line,
+         by ensuring to not to make everything look ugly... */
+div.content.users {
+  table.user-list {
+    th.user-remove {
+      width: 8em;
+      padding-right: 0.5em;
+      text-align: right;
+    }
+
+    td.user-remove {
+      text-align: right;
+    }
+  }
+
+  p {
+    margin-top: 0;
+  }
+
+  a.user-add {
+    display: block;
+    margin-top: 1em;
+  }
+}
+
+div.content.memberships {
+  table.membership-list {
+    th.membership-cancel {
+      width: 8em;
+      padding-right: 0.5em;
+      text-align: right;
+    }
+
+    td.membership-cancel {
+      text-align: right;
+
+      form button.link-like {
+        color: inherit;
+      }
+    }
+  }
+
+  p {
+    margin-top: 0;
+  }
+
+  a.membership-create {
+    display: block;
+    margin-top: 1em;
+  }
+}
+
+div.content.groups {
+  table.group-list {
+    th.group-remove {
+      width: 8em;
+      padding-right: 0.5em;
+      text-align: right;
+    }
+
+    td.group-remove {
+      text-align: right;
+    }
+  }
+
+  p {
+    margin-top: 0;
+  }
+
+  a.group-add {
+    display: block;
+    margin-top: 1em;
+  }
+}
+
+div.content.members {
+  table.member-list {
+    th.member-remove {
+      width: 8em;
+      padding-right: 0.5em;
+      text-align: right;
+    }
+
+    td.member-remove {
+      text-align: right;
+
+      form button.link-like {
+        color: inherit;
+      }
+    }
+  }
+
+  p {
+    margin-top: 0;
+  }
+
+  a.member-add {
+    display: block;
+    margin-top: 1em;
+  }
+}
+
+form.backend-selection {
+  float: right;
+
+  div.element {
+    margin: 0;
+
+    label {
+      width: auto;
+      margin-right: 0.5em;
+    }
+
+    select {
+      width: 11.5em;
+      margin-left: 0;
+    }
+  }
+}
+
+table.usergroupbackend-list {
+  th.backend-remove {
+    width: 8em;
+    text-align: right;
+  }
+
+  td.backend-remove {
+    text-align: right;
+  }
 }

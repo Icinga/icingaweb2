@@ -3,13 +3,12 @@ use Icinga\Web\Url;
 use Icinga\Util\Color;
 
 $groupInfo = $timeline->getGroupInfo();
-$firstRow = !$beingExtended;
+$firstRow = ! $beingExtended;
 
-?>
-<?php if (!$beingExtended): ?>
+if (! $beingExtended && !$this->compact): ?>
 <div class="controls">
-    <?= $this->tabs ?>
-    <div style="margin: 1em;" class="dontprint">
+    <?= $this->tabs; ?>
+    <div style="float: right;" class="dontprint">
         <?= $intervalBox; ?>
     </div>
     <div style="margin: 1em;" class="timeline-legend">
@@ -21,25 +20,62 @@ $firstRow = !$beingExtended;
 <?php endforeach ?>
     </div>
 </div>
+<?php endif ?>
+<?php if (! $beingExtended): ?>
 <div class="content" data-base-target="_next">
     <div class="timeline">
 <?php endif ?>
 <?php if ($switchedContext): ?>
         <hr>
 <?php endif ?>
-<?php foreach ($timeline as $timeInfo): ?>
+<?php foreach ($timeline as $timeInfo):
+    switch ($intervalBox->getInterval()) {
+        case '1d':
+            $titleTime = sprintf(
+                $this->translate('on %s', 'timeline.link.title.time'),
+                $timeInfo[0]->end->format('d/m/Y')
+            );
+            break;
+        case '1w':
+            $titleTime = sprintf(
+                $this->translate('in week %s of %s', 'timeline.link.title.week.and.year'),
+                $timeInfo[0]->end->format('W'),
+                $timeInfo[0]->end->format('Y')
+            );
+            break;
+        case '1m':
+            $titleTime = sprintf(
+                $this->translate('in %s', 'timeline.link.title.month.and.year'),
+                $timeInfo[0]->end->format('F Y')
+            );
+            break;
+        case '1y':
+            $titleTime = sprintf(
+                $this->translate('in %s', 'timeline.link.title.year'),
+                $timeInfo[0]->end->format('Y')
+            );
+            break;
+        default:
+            $titleTime = sprintf(
+                $this->translate('between %s and %s', 'timeline.link.title.datetime.twice'),
+                $timeInfo[0]->end->format('d/m/Y g:i A'),
+                $timeInfo[0]->start->format('d/m/Y g:i A')
+            );
+    } ?>
         <div class="timeframe">
-            <span>
-                <a href="<?= $this->href(
-                    '/monitoring/list/eventhistory',
-                    array(
-                        'timestamp<' => $timeInfo[0]->start->getTimestamp(),
-                        'timestamp>' => $timeInfo[0]->end->getTimestamp()
-                    )
-                ); ?>">
-                    <?= $timeInfo[0]->end->format($intervalFormat); ?>
-                </a>
-            </span>
+            <span><?= $this->qlink(
+                $timeInfo[0]->end->format($intervalFormat),
+                '/monitoring/list/eventhistory',
+                array(
+                    'timestamp<' => $timeInfo[0]->start->getTimestamp(),
+                    'timestamp>' => $timeInfo[0]->end->getTimestamp()
+                ),
+                array('title' => sprintf(
+                    $this->translate('List all event records registered %s', 'timeline.link.title'),
+                    $titleTime
+                )),
+                false
+            ); ?></span>
 <?php foreach ($groupInfo as $groupName => $labelAndColor): ?>
 <?php if (array_key_exists($groupName, $timeInfo[1])): ?>
 <?php
@@ -63,18 +99,30 @@ $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$g
                     $circleWidth
                 ); ?>">
 <?php endif ?>
-                    <a class="inner-circle" style="<?= sprintf(
-                        'width: %3$s; height: %3$s; background-color: %2$s; margin-top: -%1$Fem; margin-left: -%1$Fem;',
-                        (float) substr($circleWidth, 0, -2) / 2,
-                        $timeInfo[1][$groupName]->getColor(),
-                        (string) $circleWidth
-                    ); ?>" href="<?= $timeInfo[1][$groupName]->getDetailUrl()->overwriteParams(
+                    <?= $this->qlink(
+                        '',
+                        $timeInfo[1][$groupName]->getDetailUrl(),
                         array(
-                            'timestamp<' => $timeInfo[0]->start->getTimestamp(),
-                            'timestamp>'   => $timeInfo[0]->end->getTimestamp(),
-                            'type'  => $groupName
+                            'type'          => $groupName,
+                            'timestamp<'    => $timeInfo[0]->start->getTimestamp(),
+                            'timestamp>'    => $timeInfo[0]->end->getTimestamp()
+                        ),
+                        array(
+                            'title' => sprintf(
+                                $this->translate('List %u %s registered %s', 'timeline.link.title'),
+                                $timeInfo[1][$groupName]->getValue(),
+                                strtolower($labelAndColor['label']),
+                                $titleTime
+                            ),
+                            'class' => 'inner-circle',
+                            'style' => sprintf(
+                                'width: %3$s; height: %3$s; background-color: %2$s; margin-top: -%1$Fem; margin-left: -%1$Fem;',
+                                (float) substr($circleWidth, 0, -2) / 2,
+                                $timeInfo[1][$groupName]->getColor(),
+                                (string) $circleWidth
+                            )
                         )
-                    ); ?>" title="<?= $timeInfo[1][$groupName]->getValue(); ?> <?= $labelAndColor['label']; ?>"></a>
+                    ); ?>
                 </div>
             </div>
 <?php endif ?>
@@ -82,10 +130,10 @@ $extrapolatedCircleWidth = $timeline->getExtrapolatedCircleWidth($timeInfo[1][$g
         </div>
         <?php $firstRow = false; ?>
 <?php endforeach ?>
-        <a id="end" href="<?= Url::fromRequest()->remove(
+        <a aria-hidden="true" id="end" href="<?= Url::fromRequest()->remove(
             array(
-                'raw_timestamp<',
-                'raw_timestamp>'
+                'timestamp<',
+                'timestamp>'
             )
         )->overwriteParams(
             array(

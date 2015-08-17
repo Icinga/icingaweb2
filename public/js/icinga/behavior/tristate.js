@@ -1,5 +1,4 @@
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 (function(Icinga, $) {
 
@@ -43,7 +42,7 @@
         } else {
             $tristate.parent().find('b.tristate-changed').css('visibility', 'hidden');
         }
-        self.icinga.ui.setTriState(value.toString(), $tristate);    
+        self.icinga.ui.setTriState(value.toString(), $tristate);
     };
 
     Icinga.Behaviors.Tristate = Tristate;

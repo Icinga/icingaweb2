@@ -1,21 +1,16 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 use Icinga\Chart\GridChart;
 use Icinga\Chart\Unit\LinearUnit;
 use Icinga\Chart\Unit\StaticAxis;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Web\Widget\SelectBox;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Url;
 
 class Monitoring_AlertsummaryController extends Controller
 {
-    /**
-     * @var string
-     */
-    protected $url;
-
     /**
      * @var array
      */
@@ -31,40 +26,28 @@ class Monitoring_AlertsummaryController extends Controller
      */
     public function init()
     {
-        $tabs = $this->getTabs();
-        if (in_array($this->_request->getActionName(), array('alertsummary'))) {
-            $tabs->extend(new OutputFormat())->extend(new DashboardAction());
-        }
-
-        $this->url = Url::fromRequest();
-
         $this->notificationData = $this->createNotificationData();
         $this->problemData = $this->createProblemData();
     }
 
     /**
-     * @param string $action
-     * @param bool $title
-     */
-    protected function addTitleTab($action, $title = false)
-    {
-        $title = $title ?: ucfirst($action);
-        $this->getTabs()->add(
-            $action,
-            array(
-                'title' => $title,
-                'url'   => $this->url
-            )
-        )->activate($action);
-        $this->view->title = $title;
-    }
-
-    /**
-     * Creat full report
+     * Create full report
      */
     public function indexAction()
     {
-        $this->addTitleTab('alertsummary', $this->translate('Alert Summary'));
+        $this->getTabs()->add(
+            'alertsummary',
+            array(
+                'title' => $this->translate(
+                    'Show recent alerts and visualize notifications and problems'
+                    . ' based on their amount and chronological distribution'
+                ),
+                'label' => $this->translate('Alert Summary'),
+                'url'   => Url::fromRequest()
+            )
+        )->extend(new DashboardAction())->activate('alertsummary');
+        $this->view->title = $this->translate('Alert Summary');
+
         $this->view->intervalBox = $this->createIntervalBox();
         $this->view->recentAlerts = $this->createRecentAlerts();
         $this->view->interval = $this->getInterval();
@@ -77,16 +60,21 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
+                'host_name',
+                'host_display_name',
+                'service_description',
+                'service_display_name',
                 'notification_output',
-                'notification_contact',
+                'notification_contact_name',
                 'notification_start_time',
                 'notification_state'
             )
         );
+        $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->view->notifications = $query;
 
-        $this->view->notifications = $query->paginate();
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->notifications);
     }
 
     /**
@@ -101,18 +89,14 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
-                'notification_output',
-                'notification_contact',
-                'notification_start_time',
-                'notification_state'
+                'notification_start_time'
             )
         );
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
-        $query->setFilter(
+        $query->addFilter(
             new Icinga\Data\Filter\FilterExpression(
-                'n.start_time',
+                'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
             )
@@ -154,18 +138,14 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
-                'notification_output',
-                'notification_contact',
-                'notification_start_time',
-                'notification_state'
+                'notification_start_time'
             )
         );
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
-        $query->setFilter(
+        $query->addFilter(
             new Icinga\Data\Filter\FilterExpression(
-                'n.start_time',
+                'notification_start_time',
                 '>=',
                 $beginDate->format('Y-m-d H:i:s')
             )
@@ -193,11 +173,11 @@ class Monitoring_AlertsummaryController extends Controller
 
         $out = new stdClass();
         if ($yesterday === $today) {
-            $out->trend = 'unchanged';
+            $out->trend = $this->translate('unchanged');
         } elseif ($yesterday > $today) {
-            $out->trend = 'down';
+            $out->trend = $this->translate('down');
         } else {
-            $out->trend = 'up';
+            $out->trend = $this->translate('up');
         }
 
         if ($yesterday <= 0) {
@@ -226,18 +206,14 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
-                'notification_output',
-                'notification_contact',
-                'notification_start_time',
-                'notification_state'
+                'notification_start_time'
             )
         );
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
-        $query->setFilter(
+        $query->addFilter(
             new Icinga\Data\Filter\FilterExpression(
-                'n.start_time',
+                'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
             )
@@ -279,22 +255,12 @@ class Monitoring_AlertsummaryController extends Controller
         $interval = $this->getInterval();
 
         $query = $this->backend->select()->from(
-            'EventHistory',
+            'eventhistory',
             array(
-                'host_name',
-                'service_description',
-                'object_type',
-                'timestamp',
-                'state',
-                'attempt',
-                'max_attempts',
-                'output',
-                'type',
-                'host',
-                'service',
-                'service_host_name'
+                'timestamp'
             )
         );
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
         $query->addFilter(
             new Icinga\Data\Filter\FilterExpression(
@@ -340,32 +306,31 @@ class Monitoring_AlertsummaryController extends Controller
     public function createHealingChart()
     {
         $gridChart = new GridChart();
+        $gridChart->title = $this->translate('Healing Chart');
+        $gridChart->description = $this->translate('Notifications and average reaction time per hour.');
 
         $gridChart->alignTopLeft();
-        $gridChart->setAxisLabel('', mt('monitoring', 'Notifications'))
+        $gridChart->setAxisLabel($this->createPeriodDescription(), $this->translate('Notifications'))
             ->setXAxis(new StaticAxis())
-            ->setAxisMin(null, 0)
-            ->setYAxis(new LinearUnit(10));
+            ->setYAxis(new LinearUnit(10))
+            ->setAxisMin(null, 0);
 
         $interval = $this->getInterval();
 
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
                 'notification_object_id',
-                'notification_output',
-                'notification_contact',
                 'notification_start_time',
                 'notification_state',
                 'acknowledgement_entry_time'
             )
         );
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
-        $query->setFilter(
+        $query->addFilter(
             new Icinga\Data\Filter\FilterExpression(
-                'n.start_time',
+                'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
             )
@@ -373,7 +338,7 @@ class Monitoring_AlertsummaryController extends Controller
 
         $query->order('notification_start_time', 'asc');
 
-        $records    = $query->getQuery()->fetchAll();
+        $records = $query->getQuery()->fetchAll();
 
         $interval       = $this->getInterval();
         $period         = $this->createPeriod($interval);
@@ -399,6 +364,15 @@ class Monitoring_AlertsummaryController extends Controller
                 $recover = 0;
                 if ($item->acknowledgement_entry_time) {
                     $recover = $item->acknowledgement_entry_time - $item->notification_start_time;
+
+                    /*
+                     * Acknowledgements may happen before the actual notification starts, since notifications
+                     * can be configured to start a certain time after the problem. In that case we assume
+                     * a reaction time of 0s.
+                     */
+                    if ($recover < 0) {
+                        $recover = 0;
+                    }
                 }
                 $rData[$item->notification_object_id] = array(
                     'id'        => $id,
@@ -429,13 +403,13 @@ class Monitoring_AlertsummaryController extends Controller
             $item[1] = $item[1]/60/60;
         }
 
-
         $gridChart->drawBars(
             array(
                 'label' => $this->translate('Notifications'),
-                'color' => '#049baf',
+                'color' => '#07C0D9',
                 'data'  =>  $notifications,
-                'showPoints' => true
+                'showPoints' => true,
+                'tooltip' => '<b>{title}:</b> {value} {label}'
             )
         );
 
@@ -444,7 +418,8 @@ class Monitoring_AlertsummaryController extends Controller
                 'label' => $this->translate('Avg (min)'),
                 'color' => '#ffaa44',
                 'data'  =>  $dAvg,
-                'showPoints' => true
+                'showPoints' => true,
+                'tooltip' => $this->translate('<b>{title}:</b> {value}m min. reaction time')
             )
         );
 
@@ -453,7 +428,8 @@ class Monitoring_AlertsummaryController extends Controller
                 'label' => $this->translate('Max (min)'),
                 'color' => '#ff5566',
                 'data'  =>  $dMax,
-                'showPoints' => true
+                'showPoints' => true,
+                'tooltip' => $this->translate('<b>{title}:</b> {value}m max. reaction time')
             )
         );
 
@@ -468,19 +444,22 @@ class Monitoring_AlertsummaryController extends Controller
     public function createDefectImage()
     {
         $gridChart = new GridChart();
+        $gridChart->title = $this->translate('Defect Chart');
+        $gridChart->description = $this->translate('Notifications and defects per hour');
 
         $gridChart->alignTopLeft();
-        $gridChart->setAxisLabel('', mt('monitoring', 'Notifications'))
+        $gridChart->setAxisLabel($this->createPeriodDescription(), $this->translate('Notifications'))
             ->setXAxis(new StaticAxis())
-            ->setAxisMin(null, 0)
-            ->setYAxis(new LinearUnit(10));
+            ->setYAxis(new LinearUnit(10))
+            ->setAxisMin(null, 0);
 
         $gridChart->drawBars(
             array(
                 'label' => $this->translate('Notifications'),
-                'color' => '#049baf',
+                'color' => '#07C0D9',
                 'data'  =>  $this->notificationData,
-                'showPoints' => true
+                'showPoints' => true,
+                'tooltip' => '<b>{title}:</b> {value} {label}'
             )
         );
 
@@ -489,7 +468,8 @@ class Monitoring_AlertsummaryController extends Controller
                 'label' => $this->translate('Defects'),
                 'color' => '#ff5566',
                 'data'  =>  $this->problemData,
-                'showPoints' => true
+                'showPoints' => true,
+                'tooltip' => '<b>{title}:</b> {value} {label}'
             )
         );
 
@@ -506,18 +486,21 @@ class Monitoring_AlertsummaryController extends Controller
         $query = $this->backend->select()->from(
             'notification',
             array(
-                'host',
-                'service',
+                'host_name',
+                'host_display_name',
+                'service_description',
+                'service_display_name',
                 'notification_output',
-                'notification_contact',
+                'notification_contact_name',
                 'notification_start_time',
                 'notification_state'
             )
         );
+        $this->applyRestriction('monitoring/filter/objects', $query);
 
         $query->order('notification_start_time', 'desc');
 
-        return $query->paginate(5);
+        return $query->limit(5);
     }
 
     /**
@@ -530,12 +513,12 @@ class Monitoring_AlertsummaryController extends Controller
         $box = new SelectBox(
             'intervalBox',
             array(
-                '1d' => mt('monitoring', 'One day'),
-                '1w' => mt('monitoring', 'One week'),
-                '1m' => mt('monitoring', 'One month'),
-                '1y' => mt('monitoring', 'One year')
+                '1d' => $this->translate('One day'),
+                '1w' => $this->translate('One week'),
+                '1m' => $this->translate('One month'),
+                '1y' => $this->translate('One year')
             ),
-            mt('monitoring', 'Report interval'),
+            $this->translate('Report interval'),
             'interval'
         );
         $box->applyRequest($this->getRequest());
@@ -554,7 +537,7 @@ class Monitoring_AlertsummaryController extends Controller
     {
         $format = '';
         if ($interval === '1d') {
-            $format = '%H:00:00';
+            $format = '%H:00';
         } elseif ($interval === '1w') {
             $format = '%Y-%m-%d';
         } elseif ($interval === '1m') {
@@ -579,7 +562,7 @@ class Monitoring_AlertsummaryController extends Controller
         } elseif ($interval === '1w') {
             return new DatePeriod($this->getBeginDate($interval), new DateInterval('P1D'), 7);
         } elseif ($interval === '1m') {
-            return new DatePeriod($this->getBeginDate($interval), new DateInterval('P1D'), 30);
+            return new DatePeriod($this->getBeginDate($interval), new DateInterval('P1D'), 31);
         } elseif ($interval === '1y') {
             return new DatePeriod($this->getBeginDate($interval), new DateInterval('P1M'), 12);
         }
@@ -622,5 +605,29 @@ class Monitoring_AlertsummaryController extends Controller
         }
 
         return $interval;
+    }
+
+    /**
+     * Create a human-readable description of the current interval size
+     *
+     * @return string   The description of the current interval size
+     */
+    private function createPeriodDescription()
+    {
+        $int = $this->getInterval();
+        switch ($int) {
+            case '1d':
+                return $this->translate('Hour');
+                break;
+            case '1w';
+                return $this->translate('Day');
+                break;
+            case '1m':
+                return $this->translate('Day');
+                break;
+            case '1y':
+                return $this->translate('Month');
+                break;
+        }
     }
 }

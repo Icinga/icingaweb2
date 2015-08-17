@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Setup\Forms;
 
@@ -17,7 +16,13 @@ class AuthenticationPage extends Form
      */
     public function init()
     {
+        $this->setRequiredCue(null);
         $this->setName('setup_authentication_type');
+        $this->setTitle($this->translate('Authentication', 'setup.page.title'));
+        $this->addDescription($this->translate(
+            'Please choose how you want to authenticate when accessing Icinga Web 2.'
+            . ' Configuring backend specific details follows in a later step.'
+        ));
     }
 
     /**
@@ -25,45 +30,34 @@ class AuthenticationPage extends Form
      */
     public function createElements(array $formData)
     {
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => mt('setup', 'Authentication', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-        $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => mt(
-                    'setup',
-                    'Please choose how you want to authenticate when accessing Icinga Web 2.'
-                    . ' Configuring backend specific details follows in a later step.'
-                )
-            )
-        );
+        if (isset($formData['type']) && $formData['type'] === 'external' && !isset($_SERVER['REMOTE_USER'])) {
+            $this->info(
+                $this->translate(
+                    'You\'re currently not authenticated using any of the web server\'s authentication '
+                    . 'mechanisms. Make sure you\'ll configure such, otherwise you\'ll not be able to '
+                    . 'log into Icinga Web 2.'
+                ),
+                false
+            );
+        }
 
         $backendTypes = array();
         if (Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
-            $backendTypes['db'] = t('Database');
+            $backendTypes['db'] = $this->translate('Database');
         }
         if (Platform::extensionLoaded('ldap')) {
             $backendTypes['ldap'] = 'LDAP';
         }
-        $backendTypes['autologin'] = t('Autologin');
+        $backendTypes['external'] = $this->translate('External');
 
         $this->addElement(
             'select',
             'type',
             array(
                 'required'      => true,
-                'label'         => mt('setup', 'Authentication Type'),
-                'description'   => mt('setup', 'The type of authentication to use when accessing Icinga Web 2'),
+                'autosubmit'    => true,
+                'label'         => $this->translate('Authentication Type'),
+                'description'   => $this->translate('The type of authentication to use when accessing Icinga Web 2'),
                 'multiOptions'  => $backendTypes
             )
         );

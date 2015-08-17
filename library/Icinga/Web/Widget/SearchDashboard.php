@@ -1,101 +1,111 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Widget;
 
+use Zend_Controller_Action_Exception;
 use Icinga\Application\Icinga;
-use Icinga\Application\Modules\Module;
 use Icinga\Web\Url;
-use Icinga\Web\Widget\Dashboard\Pane;
-use Zend_Controller_Action_Exception as ActionError;
 
 /**
  * Class SearchDashboard display multiple search views on a single search page
- *
- * @package Icinga\Web\Widget
  */
 class SearchDashboard extends Dashboard
 {
+    /**
+     * Name for the search pane
+     *
+     * @var string
+     */
     const SEARCH_PANE = 'search';
 
     /**
-     * All searchUrls provided by Modules
-     *
-     * @var array
+     * {@inheritdoc}
      */
-    protected $searchUrls = array();
+    public function getTabs()
+    {
+        if ($this->tabs === null) {
+            $this->tabs = new Tabs();
+            $this->tabs->add(
+                'search',
+                array(
+                    'title' => t('Show Search', 'dashboard.pane.tooltip'),
+                    'label' => t('Search'),
+                    'url'   => Url::fromRequest()
+                )
+            );
+        }
+        return $this->tabs;
+    }
 
     /**
      * Load all available search dashlets from modules
      *
-     * @param string $searchString
-     * @return Dashboard|SearchDashboard
-     */
-    public static function search($searchString = '')
-    {
-        /** @var $dashboard SearchDashboard */
-        $dashboard = new static('searchDashboard');
-        $dashboard->loadSearchDashlets($searchString);
-        return $dashboard;
-    }
-
-    /**
-     * Renders the output
+     * @param   string $searchString
      *
-     * @return string
-     * @throws \Zend_Controller_Action_Exception
+     * @return  $this
      */
-    public function render()
-    {
-        if (! $this->getPane(self::SEARCH_PANE)->hasDashlets()) {
-            throw new ActionError('Site not found', 404);
-        }
-        return parent::render();
-    }
-
-    /**
-     * Loads search dashlets
-     *
-     * @param string $searchString
-     */
-    protected function loadSearchDashlets($searchString)
+    public function search($searchString = '')
     {
         $pane = $this->createPane(self::SEARCH_PANE)->getPane(self::SEARCH_PANE)->setTitle(t('Search'));
         $this->activate(self::SEARCH_PANE);
 
         $manager = Icinga::app()->getModuleManager();
+        $searchUrls = array();
 
         foreach ($manager->getLoadedModules() as $module) {
-            $this->addSearchDashletsFromModule($searchString, $module, $pane);
+            if ($this->getUser()->can($manager::MODULE_PERMISSION_NS . $module->getName())) {
+                $moduleSearchUrls = $module->getSearchUrls();
+                if (! empty($moduleSearchUrls)) {
+                    if ($searchString === '') {
+                        $pane->add(t('Ready to search'), 'search/hint');
+                        return $this;
+                    }
+                    $searchUrls = array_merge($searchUrls, $moduleSearchUrls);
+                }
+            }
         }
 
-        if ($searchString === '' && $pane->hasDashlets()) {
-            $pane->removeDashlets();
-            $pane->add('Ready to search', 'search/hint');
-            return;
+        usort($searchUrls, array($this, 'compareSearchUrls'));
+
+        foreach (array_reverse($searchUrls) as $searchUrl) {
+            $pane->addDashlet(
+                $searchUrl->title . ': ' . $searchString,
+                Url::fromPath($searchUrl->url, array('q' => $searchString))
+            );
         }
+
+        return $this;
     }
 
     /**
-     * Add available search dashlets to the pane
+     * Renders the output
      *
-     * @param string $searchString
-     * @param Module $module
-     * @param Pane $pane
+     * @return  string
+     *
+     * @throws  Zend_Controller_Action_Exception
      */
-    protected function addSearchDashletsFromModule($searchString, $module, $pane)
+    public function render()
     {
-        $searchUrls = $module->getSearchUrls();
-
-        if (! empty($searchUrls)) {
-            $this->searchUrls[] = $module->getSearchUrls();
-            foreach ($searchUrls as $search) {
-                $pane->addDashlet(
-                    $search->title . ': ' . $searchString,
-                    Url::fromPath($search->url, array('q' => $searchString))
-                );
-            }
+        if (! $this->getPane(self::SEARCH_PANE)->hasDashlets()) {
+            throw new Zend_Controller_Action_Exception(t('Page not found'), 404);
         }
+        return parent::render();
+    }
+
+    /**
+     * Compare search URLs based on their priority
+     *
+     * @param   object  $a
+     * @param   object  $b
+     *
+     * @return  int
+     */
+    private function compareSearchUrls($a, $b)
+    {
+        if ($a->priority === $b->priority) {
+            return 0;
+        }
+        return ($a->priority < $b->priority) ? -1 : 1;
     }
 }

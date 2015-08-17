@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Application\Logger\Writer;
 
@@ -55,7 +54,7 @@ class SyslogWriter extends LogWriter
      */
     public function __construct(ConfigObject $config)
     {
-        $this->ident = $config->get('application', 'icingaweb');
+        $this->ident = $config->get('application', 'icingaweb2');
         $this->facility = static::$facilities['user'];
     }
 
@@ -68,6 +67,6 @@ class SyslogWriter extends LogWriter
     public function log($level, $message)
     {
         openlog($this->ident, LOG_PID, $this->facility);
-        syslog(static::$severityMap[$level], $message);
+        syslog(static::$severityMap[$level], str_replace("\n", '    ', $message));
     }
 }

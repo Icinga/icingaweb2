@@ -2,31 +2,43 @@
   <?= $tabs; ?>
 </div>
 <div class="content" data-base-target="_next">
-  <p>
-    <a href="<?= $this->href('/config/createresource'); ?>">
-      <?= $this->icon('plus'); ?> <?= $this->translate('Create A New Resource'); ?>
-    </a>
-  </p>
-  <table class="action">
+  <a href="<?= $this->href('/config/createresource'); ?>">
+    <?= $this->icon('plus'); ?> <?= $this->translate('Create A New Resource'); ?>
+  </a>
+  <table class="action alternating" id="resource-edit-table">
     <thead>
       <th><?= $this->translate('Resource'); ?></th>
       <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
     </thead>
     <tbody>
-<?php foreach ($this->resources as $name): ?>
+    <?php foreach ($this->resources as $name): ?>
       <tr>
         <td>
-          <a href="<?= $this->href('config/editresource', array('resource' => $name)); ?>">
-            <?= $this->icon('edit'); ?> <?= $this->escape($name); ?>
-          </a>
+          <?= $this->qlink(
+            $name,
+            'config/editresource',
+            array('resource' => $name),
+            array(
+                'icon'  => 'edit',
+                'title' => sprintf($this->translate('Edit resource %s'), $name)
+            )
+          ); ?>
         </td>
-        <td style="text-align: center">
-          <a href="<?= $this->href('config/removeresource', array('resource' => $name)); ?>">
-            <?= $this->icon('cancel'); ?>
-          </a>
+        <td>
+          <center>
+            <?= $this->qlink(
+              '',
+              'config/removeresource',
+              array('resource' => $name),
+              array(
+                  'icon'    => 'trash',
+                  'title'   => sprintf($this->translate('Remove resource %s'), $name)
+              )
+            ); ?>
+          </center>
         </td>
       </tr>
-<?php endforeach; ?>
+    <?php endforeach; ?>
     </tbody>
   </table>
 </div>

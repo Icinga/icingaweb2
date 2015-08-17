@@ -1,7 +1,5 @@
-<h1><?= $docName ?> <?= $this->translate('Documentation'); ?></h1>
-<div class="toc">
-    <?= $tocRenderer->render($this, $this->getHelper('Url')); ?>
-</div>
-<div class="chapter">
-    <?= $sectionRenderer->render($this, $this->getHelper('Url')); ?>
+<div class="content">
+    <h1><?= /** @var string $title */ $title ?></h1>
+    <?= /** @var \Icinga\Module\Doc\Renderer\DocTocRenderer $toc */ $toc ?>
+    <?= /** @var \Icinga\Module\Doc\Renderer\DocSectionRenderer $section */ $section ?>
 </div>

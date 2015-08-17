@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Widget\Tabextension;
 
@@ -49,10 +48,9 @@ class OutputFormat implements Tabextension
         foreach ($this->getSupportedTypes() as $type => $tabConfig) {
             if (!in_array($type, $disabled)) {
                 $tabConfig['url'] = Url::fromRequest();
-                $tabConfig['tagParams'] = array(
-                    'target' => '_blank'
-                );
-                $this->tabs[] = new Tab($tabConfig);
+                $tab = new Tab($tabConfig);
+                $tab->setTargetBlank();
+                $this->tabs[] = $tab;
             }
         }
     }
@@ -86,7 +84,7 @@ class OutputFormat implements Tabextension
         if (Platform::extensionLoaded('gd')) {
             $supportedTypes[self::TYPE_PDF] = array(
                 'name'      => 'pdf',
-                'title'     => 'PDF',
+                'label'     => 'PDF',
                 'icon'      => 'file-pdf',
                 'urlParams' => array('format' => 'pdf'),
             );
@@ -94,7 +92,7 @@ class OutputFormat implements Tabextension
 
         $supportedTypes[self::TYPE_CSV] = array(
             'name'      => 'csv',
-            'title'     => 'CSV',
+            'label'     => 'CSV',
             'icon'      => 'file-excel',
             'urlParams' => array('format' => 'csv')
         );
@@ -102,7 +100,7 @@ class OutputFormat implements Tabextension
         if (Platform::extensionLoaded('json')) {
             $supportedTypes[self::TYPE_JSON] = array(
                 'name'      => 'json',
-                'title'     => 'JSON',
+                'label'     => 'JSON',
                 'icon'      => 'img/icons/json.png',
                 'urlParams' => array('format' => 'json')
             );

@@ -1,52 +1,67 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Doc;
 
-use Icinga\Web\Controller\ModuleActionController;
+use Icinga\Module\Doc\Renderer\DocSectionRenderer;
+use Icinga\Module\Doc\Renderer\DocTocRenderer;
+use Icinga\Web\Controller;
 
-class DocController extends ModuleActionController
+class DocController extends Controller
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected function moduleInit()
+    {
+        // Our UrlParams object does not take parameters from custom routes into account which is why we have to set
+        // them explicitly
+        if ($this->hasParam('chapter')) {
+            $this->params->set('chapter', $this->getParam('chapter'));
+        }
+        if ($this->hasParam('moduleName')) {
+            $this->params->set('moduleName', $this->getParam('moduleName'));
+        }
+    }
+
     /**
      * Render a chapter
      *
-     * @param string    $path           Path to the documentation
-     * @param string    $chapterId      ID of the chapter
-     * @param string    $tocUrl
-     * @param string    $url
-     * @param array     $urlParams
+     * @param string    $path       Path to the documentation
+     * @param string    $chapter    ID of the chapter
+     * @param string    $url        URL to replace links with
+     * @param array     $urlParams  Additional URL parameters
      */
-    protected function renderChapter($path, $chapterId, $tocUrl, $url, array $urlParams = array())
+    protected function renderChapter($path, $chapter, $url, array $urlParams = array())
     {
         $parser = new DocParser($path);
-        $this->view->sectionRenderer = new SectionRenderer(
-            $parser->getDocTree(),
-            SectionRenderer::decodeUrlParam($chapterId),
-            $tocUrl,
-            $url,
-            $urlParams
-        );
-        $this->view->title = $chapterId;
-        return $this->render('chapter', null, true);
+        $section = new DocSectionRenderer($parser->getDocTree(), DocSectionRenderer::decodeUrlParam($chapter));
+        $this->view->section = $section
+            ->setUrl($url)
+            ->setUrlParams($urlParams)
+            ->setHighlightSearch($this->params->get('highlight-search'));
+        $this->view->title = $chapter;
+        $this->render('chapter', null, true);
     }
 
     /**
      * Render a toc
      *
-     * @param string    $path           Path to the documentation
-     * @param string    $name           Name of the documentation
-     * @param string    $url
-     * @param array     $urlParams
+     * @param string    $path       Path to the documentation
+     * @param string    $name       Name of the documentation
+     * @param string    $url        URL to replace links with
+     * @param array     $urlParams  Additional URL parameters
      */
     protected function renderToc($path, $name, $url, array $urlParams = array())
     {
         $parser = new DocParser($path);
-        $this->view->tocRenderer = new TocRenderer($parser->getDocTree(), $url, $urlParams);
+        $toc = new DocTocRenderer($parser->getDocTree()->getIterator());
+        $this->view->toc = $toc
+            ->setUrl($url)
+            ->setUrlParams($urlParams);
         $name = ucfirst($name);
-        $this->view->docName = $name;
         $this->view->title = sprintf($this->translate('%s Documentation'), $name);
-        return $this->render('toc', null, true);
+        $this->render('toc', null, true);
     }
 
     /**
@@ -60,17 +75,16 @@ class DocController extends ModuleActionController
     protected function renderPdf($path, $name, $url, array $urlParams = array())
     {
         $parser = new DocParser($path);
-        $docTree = $parser->getDocTree();
-        $this->view->tocRenderer = new TocRenderer($docTree, $url, $urlParams);
-        $this->view->sectionRenderer = new SectionRenderer(
-            $docTree,
-            null,
-            null,
-            $url,
-            $urlParams
-        );
-        $this->view->docName = $name;
+        $toc = new DocTocRenderer($parser->getDocTree()->getIterator());
+        $this->view->toc = $toc
+            ->setUrl($url)
+            ->setUrlParams($urlParams);
+        $section = new DocSectionRenderer($parser->getDocTree());
+        $this->view->section = $section
+            ->setUrl($url)
+            ->setUrlParams($urlParams);
+        $this->view->title = sprintf($this->translate('%s Documentation'), $name);
         $this->_request->setParam('format', 'pdf');
-        return $this->render('pdf', null, true);
+        $this->_helper->viewRenderer->setRender('pdf', null, true);
     }
 }

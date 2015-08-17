@@ -1,14 +1,15 @@
 class icingaweb2::config (
-  $config = hiera('icingaweb2::config')
+  $config    = hiera('icingaweb2::config'),
+  $web_group = hiera('icingaweb2::group')
 ) {
-  group { 'icingaweb':
+  group { $web_group:
       ensure => present,
   }
 
   file { [ "${config}", "${config}/enabledModules", "${config}/modules", "${config}/preferences" ]:
     ensure  => directory,
     owner   => 'root',
-    group   => 'icingaweb',
+    group   => $web_group,
     mode    => '2770',
   }
 }

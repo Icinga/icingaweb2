@@ -1,30 +1,34 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\DataView;
 
-/**
- * Describes the data needed by the 'Contact' DataView
- */
 class Contact extends DataView
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function isValidFilterTarget($column)
+    {
+        if ($column[0] === '_' && preg_match('/^_(?:host|service)_/', $column)) {
+            return true;
+        }
+
+        return parent::isValidFilterTarget($column);
+    }
 
     /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getColumns()
     {
         return array(
-            'contact',
+            'contact_object_id',
+            'contact_id',
             'contact_name',
             'contact_alias',
             'contact_email',
             'contact_pager',
-            'contact_notify_hosts',
-            'contact_notify_services',
             'contact_has_host_notfications',
             'contact_has_service_notfications',
             'contact_can_submit_commands',
@@ -39,28 +43,42 @@ class Contact extends DataView
             'contact_notify_host_unreachable',
             'contact_notify_host_flapping',
             'contact_notify_host_downtime',
-            'contact_object_id',
-            'host_object_id',
-            'host_name',
-            'service_object_id',
-            'service_host_name',
-            'service_description',
-            'service',
-            'host',
+            'contact_notify_host_timeperiod',
+            'contact_notify_service_timeperiod'
         );
     }
 
     /**
-     * Retrieve default sorting rules for particular columns. These involve sort order and potential additional to sort
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getSortRules()
     {
         return array(
-            'contact_alias' => array(
-                'order' => self::SORT_DESC
+            'contact_name' => array(
+                'order' => self::SORT_ASC
             )
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilterColumns()
+    {
+        return array(
+            'contact',
+            'host', 'host_name', 'host_display_name', 'host_alias',
+            'hostgroup', 'hostgroup_alias', 'hostgroup_name',
+            'service', 'service_description', 'service_display_name',
+            'servicegroup', 'servicegroup_alias', 'servicegroup_name'
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('contact_alias');
     }
 }

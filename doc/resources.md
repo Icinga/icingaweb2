@@ -8,7 +8,7 @@ different files, when the information about a data source changes.
 
 Each section in **config/resources.ini** represents a data source with the section name being the identifier used to
 reference this specific data source. Depending on the data source type, the sections define different directives.
-The available data source types are *db*, *ldap* and *livestatus* which will described in detail in the following
+The available data source types are *db*, *ldap*, *ssh* and *livestatus* which will described in detail in the following
 paragraphs.
 
 ### <a id="resources-configuration-database"></a> Database
@@ -62,6 +62,26 @@ port      = 389
 root_dn   = "ou=people,dc=icinga,dc=org"
 bind_dn   = "cn=admin,ou=people,dc=icinga,dc=org"
 bind_pw   = admin`
+````
+
+### <a id="resources-configuration-ssh"></a> SSH
+
+A SSH resource contains the information about the user and the private key location, which can be used for the key-based
+ssh authentication.
+
+Directive           | Description
+--------------------|------------
+**type**            | `ssh`
+**user**            | The username to use when connecting to the server.
+**private_key**     | The path to the private key of the user.
+
+**Example:**
+
+````
+[ssh]
+type                = "ssh"
+user                = "ssh-user"
+private_key        = "/etc/icingaweb2/ssh/ssh-user"
 ````
 
 ### <a id="resources-configuration-livestatus"></a> Livestatus

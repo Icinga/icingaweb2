@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Application;
 
@@ -8,12 +7,12 @@ use ErrorException;
 use Exception;
 use LogicException;
 use Icinga\Application\Modules\Manager as ModuleManager;
+use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Application\Logger;
-use Icinga\Util\DateTimeFactory;
 use Icinga\Util\Translator;
 use Icinga\Exception\IcingaException;
 
@@ -114,6 +113,13 @@ abstract class ApplicationBootstrap
     protected $isWeb = false;
 
     /**
+     * Whether Icinga Web 2 requires setup
+     *
+     * @var bool
+     */
+    protected $requiresSetup = false;
+
+    /**
      * Constructor
      *
      * @param string $baseDir   Icinga Web 2 base directory
@@ -129,17 +135,19 @@ abstract class ApplicationBootstrap
         $this->vendorDir = $baseDir . '/library/vendor';
         $this->libDir = realpath(__DIR__ . '/../..');
 
+        $this->setupAutoloader();
+
         if ($configDir === null) {
             if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
                 $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
             } else {
-                $configDir = '/etc/icingaweb';
+                $configDir = Platform::isWindows()
+                    ? $baseDir . '/config'
+                    : '/etc/icingaweb2';
             }
         }
         $canonical = realpath($configDir);
         $this->configDir = $canonical ? $canonical : $configDir;
-
-        $this->setupAutoloader();
 
         set_include_path(
             implode(
@@ -333,7 +341,7 @@ abstract class ApplicationBootstrap
     /**
      * Setup Icinga auto loader
      *
-     * @return self
+     * @return $this
      */
     public function setupAutoloader()
     {
@@ -366,7 +374,7 @@ abstract class ApplicationBootstrap
     /**
      * Setup module manager
      *
-     * @return self
+     * @return $this
      */
     protected function setupModuleManager()
     {
@@ -379,24 +387,9 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Load all core modules
-     *
-     * @return self
-     */
-    protected function loadCoreModules()
-    {
-        try {
-            $this->moduleManager->loadCoreModules();
-        } catch (NotReadableError $e) {
-            Logger::error(new IcingaException('Cannot load core modules. An exception was thrown:', $e));
-        }
-        return $this;
-    }
-
-    /**
      * Load all enabled modules
      *
-     * @return self
+     * @return $this
      */
     protected function loadEnabledModules()
     {
@@ -409,9 +402,46 @@ abstract class ApplicationBootstrap
     }
 
     /**
+     * Load the setup module if Icinga Web 2 requires setup or the setup token exists
+     *
+     * @return $this
+     */
+    protected function loadSetupModuleIfNecessary()
+    {
+        if (! @file_exists($this->config->resolvePath('authentication.ini'))) {
+            $this->requiresSetup = true;
+            $this->moduleManager->loadModule('setup');
+        } elseif ($this->setupTokenExists()) {
+            // Load setup module but do not require setup
+            $this->moduleManager->loadModule('setup');
+        }
+        return $this;
+    }
+
+    /**
+     * Get whether Icinga Web 2 requires setup
+     *
+     * @return bool
+     */
+    public function requiresSetup()
+    {
+        return $this->requiresSetup;
+    }
+
+    /**
+     * Get whether the setup token exists
+     *
+     * @return bool
+     */
+    public function setupTokenExists()
+    {
+        return @file_exists($this->config->resolvePath('setup.token'));
+    }
+
+    /**
      * Setup default logging
      *
-     * @return  self
+     * @return $this
      */
     protected function setupLogging()
     {
@@ -428,7 +458,7 @@ abstract class ApplicationBootstrap
     /**
      * Load Configuration
      *
-     * @return self
+     * @return $this
      */
     protected function loadConfig()
     {
@@ -447,7 +477,7 @@ abstract class ApplicationBootstrap
     /**
      * Error handling configuration
      *
-     * @return self
+     * @return $this
      */
     protected function setupErrorHandling()
     {
@@ -473,24 +503,33 @@ abstract class ApplicationBootstrap
     /**
      * Set up logger
      *
-     * @return self
+     * @return $this
      */
     protected function setupLogger()
     {
         if ($this->config->hasSection('logging')) {
+            $loggingConfig = $this->config->getSection('logging');
+
             try {
-                Logger::create($this->config->getSection('logging'));
+                Logger::create($loggingConfig);
             } catch (ConfigurationError $e) {
-                Logger::error($e);
+                Logger::getInstance()->registerConfigError($e->getMessage());
+
+                try {
+                    Logger::getInstance()->setLevel($loggingConfig->get('level', Logger::ERROR));
+                } catch (ConfigurationError $e) {
+                    Logger::getInstance()->registerConfigError($e->getMessage());
+                }
             }
         }
+
         return $this;
     }
 
     /**
      * Set up the resource factory
      *
-     * @return self
+     * @return $this
      */
     protected function setupResourceFactory()
     {
@@ -500,6 +539,24 @@ abstract class ApplicationBootstrap
         } catch (NotReadableError $e) {
             Logger::error(
                 new IcingaException('Cannot load resource configuration. An exception was thrown:', $e)
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set up the user backend factory
+     *
+     * @return  $this
+     */
+    protected function setupUserBackendFactory()
+    {
+        try {
+            UserBackend::setConfig(Config::app('authentication'));
+        } catch (NotReadableError $e) {
+            Logger::error(
+                new IcingaException('Cannot load user backend configuration. An exception was thrown:', $e)
             );
         }
 
@@ -531,7 +588,6 @@ abstract class ApplicationBootstrap
                 date_default_timezone_set($timezone);
             }
         }
-        DateTimeFactory::setConfig(array('timezone' => $timezone));
         return $this;
     }
 

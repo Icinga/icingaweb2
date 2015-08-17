@@ -6,7 +6,7 @@ if ($xAxisPaginator->count() <= 1 && $yAxisPaginator->count() <= 1) {
     return; // Display this pagination only if there are multiple pages
 }
 
-$fromTo = t('%s: %d to %d of %d');
+$fromTo = t('%s: %d to %d of %d (on the %s-axis)');
 $xAxisPages = $xAxisPaginator->getPages('all');
 $yAxisPages = $yAxisPaginator->getPages('all');
 
@@ -28,13 +28,15 @@ $yAxisPages = $yAxisPaginator->getPages('all');
                         t('Hosts'),
                         ($yAxisPage - 1) * $yAxisPages->itemCountPerPage + 1,
                         $yAxisPage === $yAxisPages->last ? $yAxisPages->totalItemCount : $yAxisPage * $yAxisPages->itemCountPerPage,
-                        $yAxisPages->totalItemCount
+                        $yAxisPages->totalItemCount,
+                        'y'
                     ) . '; ' . sprintf(
                         $fromTo,
                         t('Services'),
                         ($xAxisPage - 1) * $xAxisPages->itemCountPerPage + 1,
                         $xAxisPage === $xAxisPages->last ? $xAxisPages->totalItemCount : $xAxisPage * $xAxisPages->itemCountPerPage,
-                        $xAxisPages->totalItemCount
+                        $xAxisPages->totalItemCount,
+                        'x'
                     ); ?>"></a>
 <?php endif ?>
                 </td>

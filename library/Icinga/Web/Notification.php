@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web;
 
@@ -18,104 +17,204 @@ use Icinga\Web\Session;
  */
 class Notification
 {
+    /**
+     * Notification type info
+     *
+     * @var string
+     */
+    const INFO = 'info';
+
+    /**
+     * Notification type error
+     *
+     * @var string
+     */
+    const ERROR = 'error';
+
+    /**
+     * Notification type success
+     *
+     * @var string
+     */
+    const SUCCESS = 'success';
+
+    /**
+     * Notification type warning
+     *
+     * @var string
+     */
+    const WARNING = 'warning';
+
+    /**
+     * Name of the session key for notification messages
+     *
+     * @var string
+     */
+    const SESSION_KEY = 'session';
+
+    /**
+     * Singleton instance
+     *
+     * @var self
+     */
     protected static $instance;
+
+    /**
+     * Whether the platform is CLI
+     *
+     * @var bool
+     */
     protected $isCli = false;
 
-    public static function info($msg)
-    {
-        self::getInstance()->addMessage($msg, 'info');
-    }
+    /**
+     * Notification messages
+     *
+     * @var array
+     */
+    protected $messages = array();
 
-    public static function success($msg)
-    {
-        self::getInstance()->addMessage($msg, 'success');
-    }
+    /**
+     * Session
+     *
+     * @var Session
+     */
+    protected $session;
 
-    public static function warning($msg)
+    /**
+     * Create the notification instance
+     */
+    final private function __construct()
     {
-        self::getInstance()->addMessage($msg, 'warning');
-    }
-
-    public static function error($msg)
-    {
-        self::getInstance()->addMessage($msg, 'error');
-    }
-
-    protected function addMessage($message, $type = 'info')
-    {
-        if (! in_array(
-            $type,
-            array(
-                'info',
-                'error',
-                'warning',
-                'success'
-            )
-        )) {
-            throw new ProgrammingError(
-                '"%s" is not a valid notification type',
-                $type
-            );
-        }
-
-        if ($this->isCli) {
-            $msg = sprintf('[%s] %s', $type, $message);
-            switch ($type) {
-                case 'info':
-                case 'success':
-                    Logger::info($msg);
-                    break;
-                case 'warning':
-                    Logger::warn($msg);
-                    break;
-                case 'error':
-                    Logger::error($msg);
-                    break;
-            }
+        if (Platform::isCli()) {
+            $this->isCli = true;
             return;
         }
 
-        $messages = & Session::getSession()->getByRef('messages');
-        $messages[] = (object) array(
-            'type'    => $type,
-            'message' => $message,
-        );
-    }
-
-    public function hasMessages()
-    {
-        $session = Session::getSession();
-        return false === empty($session->messages);
-    }
-
-    public function getMessages()
-    {
-        $session = Session::getSession();
-        $messages = $session->messages;
-        if (false === empty($messages)) {
-            $session->messages = array();
-        }
-
-        return $messages;
-    }
-
-    final private function __construct()
-    {
-        $session = Session::getSession();
-        if (!is_array($session->get('messages'))) {
-            $session->messages = array();
-        }
-
-        if (Platform::isCli()) {
-            $this->is_cli = true;
+        $this->session = Session::getSession();
+        $messages = $this->session->get(self::SESSION_KEY);
+        if (is_array($messages)) {
+            $this->messages = $messages;
+            $this->session->delete(self::SESSION_KEY);
+            $this->session->write();
         }
     }
 
+    /**
+     * Get the Notification instance
+     *
+     * @return Notification
+     */
     public static function getInstance()
     {
         if (self::$instance === null) {
-            self::$instance = new Notification();
+            self::$instance = new self();
         }
         return self::$instance;
+    }
+
+    /**
+     * Add info notification
+     *
+     * @param string $msg
+     */
+    public static function info($msg)
+    {
+        self::getInstance()->addMessage($msg, self::INFO);
+    }
+
+    /**
+     * Add error notification
+     *
+     * @param string $msg
+     */
+    public static function error($msg)
+    {
+        self::getInstance()->addMessage($msg, self::ERROR);
+    }
+
+    /**
+     * Add success notification
+     *
+     * @param string $msg
+     */
+    public static function success($msg)
+    {
+        self::getInstance()->addMessage($msg, self::SUCCESS);
+    }
+
+    /**
+     * Add warning notification
+     *
+     * @param string $msg
+     */
+    public static function warning($msg)
+    {
+        self::getInstance()->addMessage($msg, self::WARNING);
+    }
+
+    /**
+     * Add a notification message
+     *
+     * @param   string $message
+     * @param   string $type
+     */
+    protected function addMessage($message, $type = self::INFO)
+    {
+        if ($this->isCli) {
+            $msg = sprintf('[%s] %s', $type, $message);
+            switch ($type) {
+                case self::INFO:
+                case self::SUCCESS:
+                    Logger::info($msg);
+                    break;
+                case self::ERROR:
+                    Logger::error($msg);
+                    break;
+                case self::WARNING:
+                    Logger::warning($msg);
+                    break;
+            }
+        } else {
+            $this->messages[] = (object) array(
+                'type'    => $type,
+                'message' => $message,
+            );
+        }
+    }
+
+    /**
+     * Pop the notification messages
+     *
+     * @return array
+     */
+    public function popMessages()
+    {
+        $messages = $this->messages;
+        $this->messages = array();
+        return $messages;
+    }
+
+    /**
+     * Get whether notification messages have been added
+     *
+     * @return bool
+     */
+    public function hasMessages()
+    {
+        return ! empty($this->messages);
+    }
+
+    /**
+     * Destroy the notification instance
+     */
+    final public function __destruct()
+    {
+        if ($this->isCli) {
+            return;
+        }
+        if ($this->hasMessages() && $this->session->get('messages') !== $this->messages) {
+            $this->session->set(self::SESSION_KEY, $this->messages);
+            $this->session->write();
+        }
     }
 }

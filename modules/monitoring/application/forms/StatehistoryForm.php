@@ -1,10 +1,8 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms;
 
-use \Zend_Form;
 use Icinga\Web\Form;
 use Icinga\Data\Filter\Filter;
 
@@ -14,12 +12,12 @@ use Icinga\Data\Filter\Filter;
 class StatehistoryForm extends Form
 {
     /**
-     * Initialize this form
+     * {@inheritdoc}
      */
     public function init()
     {
         $this->setName('form_event_overview');
-        $this->setSubmitLabel(mt('monitoring', 'Apply'));
+        $this->setSubmitLabel($this->translate('Apply'));
     }
 
     /**
@@ -57,7 +55,7 @@ class StatehistoryForm extends Form
     }
 
     /**
-     * @see Form::createElements()
+     * {@inheritdoc}
      */
     public function createElements(array $formData)
     {
@@ -65,14 +63,14 @@ class StatehistoryForm extends Form
             'select',
             'from',
             array(
-                'label' => mt('monitoring', 'From'),
+                'label' => $this->translate('From'),
                 'value' => $this->getRequest()->getParam('from', strtotime('3 months ago')),
                 'multiOptions' => array(
-                    strtotime('midnight 3 months ago') => mt('monitoring', '3 Months'),
-                    strtotime('midnight 4 months ago') => mt('monitoring', '4 Months'),
-                    strtotime('midnight 8 months ago') => mt('monitoring', '8 Months'),
-                    strtotime('midnight 12 months ago') => mt('monitoring', '1 Year'),
-                    strtotime('midnight 24 months ago') => mt('monitoring', '2 Years')
+                    strtotime('midnight 3 months ago') => $this->translate('3 Months'),
+                    strtotime('midnight 4 months ago') => $this->translate('4 Months'),
+                    strtotime('midnight 8 months ago') => $this->translate('8 Months'),
+                    strtotime('midnight 12 months ago') => $this->translate('1 Year'),
+                    strtotime('midnight 24 months ago') => $this->translate('2 Years')
                 ),
                 'class' => 'autosubmit'
             )
@@ -81,10 +79,10 @@ class StatehistoryForm extends Form
             'select',
             'to',
             array(
-                'label' => mt('monitoring', 'To'),
+                'label' => $this->translate('To'),
                 'value' => $this->getRequest()->getParam('to', time()),
                 'multiOptions' => array(
-                    time() => mt('monitoring', 'Today')
+                    time() => $this->translate('Today')
                 ),
                 'class' => 'autosubmit'
             )
@@ -95,11 +93,11 @@ class StatehistoryForm extends Form
             'select',
             'objecttype',
             array(
-                'label' => mt('monitoring', 'Object type'),
+                'label' => $this->translate('Object type'),
                 'value' => $objectType,
                 'multiOptions' => array(
-                    'services' => mt('monitoring', 'Services'),
-                    'hosts' => mt('monitoring', 'Hosts')
+                    'services' => $this->translate('Services'),
+                    'hosts' => $this->translate('Hosts')
                 ),
                 'class' => 'autosubmit'
             )
@@ -113,13 +111,13 @@ class StatehistoryForm extends Form
                 'select',
                 'state',
                 array(
-                    'label' => mt('monitoring', 'State'),
+                    'label' => $this->translate('State'),
                     'value' => $serviceState,
                     'multiOptions' => array(
-                        'cnt_critical_hard' => mt('monitoring', 'Critical'),
-                        'cnt_warning_hard' => mt('monitoring', 'Warning'),
-                        'cnt_unknown_hard' => mt('monitoring', 'Unknown'),
-                        'cnt_ok' => mt('monitoring', 'Ok')
+                        'cnt_critical_hard' => $this->translate('Critical'),
+                        'cnt_warning_hard' => $this->translate('Warning'),
+                        'cnt_unknown_hard' => $this->translate('Unknown'),
+                        'cnt_ok' => $this->translate('Ok')
                     ),
                     'class' => 'autosubmit'
                 )
@@ -133,12 +131,12 @@ class StatehistoryForm extends Form
                 'select',
                 'state',
                 array(
-                    'label' => mt('monitoring', 'State'),
+                    'label' => $this->translate('State'),
                     'value' => $hostState,
                     'multiOptions' =>  array(
-                        'cnt_up' => mt('monitoring', 'Up'),
-                        'cnt_down_hard' => mt('monitoring', 'Down'),
-                        'cnt_unreachable_hard' => mt('monitoring', 'Unreachable')
+                        'cnt_up' => $this->translate('Up'),
+                        'cnt_down_hard' => $this->translate('Down'),
+                        'cnt_unreachable_hard' => $this->translate('Unreachable')
                     ),
                     'class' => 'autosubmit'
                 )

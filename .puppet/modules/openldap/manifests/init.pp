@@ -20,6 +20,15 @@ class openldap {
 
   service { 'slapd':
     ensure  => running,
-    require => Package['openldap-servers']
+    require => Package['openldap-servers'],
+  }
+
+  if versioncmp($::operatingsystemmajrelease, '7') >= 0 {
+    openldap::schema{ 'core': }
+    -> openldap::schema{ 'cosine': }
+    -> openldap::schema{ 'inetorgperson': }
+    -> openldap::schema{ 'nis': }
+    -> openldap::schema{ 'misc': }
+    -> openldap::schema{ 'openldap': }
   }
 }

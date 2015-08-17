@@ -1,39 +1,44 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms\Config;
 
 use InvalidArgumentException;
-use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\IcingaException;
+use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfigForm;
 use Icinga\Module\Monitoring\Command\Transport\LocalCommandFile;
 use Icinga\Module\Monitoring\Command\Transport\RemoteCommandFile;
 use Icinga\Module\Monitoring\Forms\Config\Instance\LocalInstanceForm;
 use Icinga\Module\Monitoring\Forms\Config\Instance\RemoteInstanceForm;
-use Icinga\Web\Notification;
 
 /**
- * Form for modifying/creating monitoring instances
+ * Form for managing monitoring instances
  */
 class InstanceConfigForm extends ConfigForm
 {
     /**
-     * (non-PHPDoc)
-     * @see Form::init() For the method documentation.
+     * The instance to load when displaying the form for the first time
+     *
+     * @var string
+     */
+    protected $instanceToLoad;
+
+    /**
+     * Initialize this form
      */
     public function init()
     {
         $this->setName('form_config_monitoring_instance');
-        $this->setSubmitLabel(mt('monitoring', 'Save Changes'));
+        $this->setSubmitLabel($this->translate('Save Changes'));
     }
 
     /**
-     * Get a form object for the given instance type
+     * Return a form object for the given instance type
      *
-     * @param   string $type                The instance type for which to return a form
+     * @param   string  $type               The instance type for which to return a form
      *
-     * @return  LocalInstanceForm|RemoteInstanceForm
+     * @return  Form
      *
      * @throws  InvalidArgumentException    In case the given instance type is invalid
      */
@@ -41,173 +46,200 @@ class InstanceConfigForm extends ConfigForm
     {
         switch (strtolower($type)) {
             case LocalCommandFile::TRANSPORT:
-                $form = new LocalInstanceForm();
-                break;
+                return new LocalInstanceForm();
             case RemoteCommandFile::TRANSPORT;
-                $form = new RemoteInstanceForm();
-                break;
+                return new RemoteInstanceForm();
             default:
                 throw new InvalidArgumentException(
-                    sprintf(mt('monitoring', 'Invalid instance type "%s" given'), $type)
+                    sprintf($this->translate('Invalid monitoring instance type "%s" given'), $type)
                 );
         }
-        return $form;
+    }
+
+    /**
+     * Populate the form with the given instance's config
+     *
+     * @param   string  $name
+     *
+     * @return  $this
+     *
+     * @throws  NotFoundError   In case no instance with the given name is found
+     */
+    public function load($name)
+    {
+        if (! $this->config->hasSection($name)) {
+            throw new NotFoundError('No monitoring instance called "%s" found', $name);
+        }
+
+        $this->instanceToLoad = $name;
+        return $this;
     }
 
     /**
      * Add a new instance
      *
-     * The resource to add is identified by the array-key `name'.
+     * The instance to add is identified by the array-key `name'.
      *
-     * @param   array   $values             The values to extend the configuration with
+     * @param   array   $data
      *
-     * @return  self
+     * @return  $this
      *
-     * @throws  InvalidArgumentException    In case the resource already exists
+     * @throws  InvalidArgumentException    In case $data does not contain a instance name
+     * @throws  IcingaException             In case a instance with the same name already exists
      */
-    public function add(array $values)
+    public function add(array $data)
     {
-        $name = isset($values['name']) ? $values['name'] : '';
-        if (! $name) {
-            throw new InvalidArgumentException(mt('monitoring', 'Instance name missing'));
-        }
-        if ($this->config->hasSection($name)) {
-            throw new InvalidArgumentException(mt('monitoring', 'Instance already exists'));
+        if (! isset($data['name'])) {
+            throw new InvalidArgumentException('Key \'name\' missing');
         }
 
-        unset($values['name']);
-        $this->config->setSection($name, $values);
+        $instanceName = $data['name'];
+        if ($this->config->hasSection($instanceName)) {
+            throw new IcingaException(
+                $this->translate('A monitoring instance with the name "%s" does already exist'),
+                $instanceName
+            );
+        }
+
+        unset($data['name']);
+        $this->config->setSection($instanceName, $data);
         return $this;
     }
 
     /**
      * Edit an existing instance
      *
-     * @param   string      $name           The name of the resource to edit
-     * @param   array       $values         The values to edit the configuration with
+     * @param   string  $name
+     * @param   array   $data
      *
-     * @return  array                       The edited resource configuration
+     * @return  $this
      *
-     * @throws  InvalidArgumentException    In case the resource name is missing or invalid
+     * @throws  NotFoundError   In case no instance with the given name is found
      */
-    public function edit($name, array $values)
+    public function edit($name, array $data)
     {
-        if (! $name) {
-            throw new InvalidArgumentException(mt('monitoring', 'Old instance name missing'));
-        } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
-            throw new InvalidArgumentException(mt('monitoring', 'New instance name missing'));
-        } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(mt('monitoring', 'Unknown instance name provided'));
+        if (! $this->config->hasSection($name)) {
+            throw new NotFoundError('No monitoring instance called "%s" found', $name);
         }
 
-        unset($values['name']);
-        $this->config->setSection($name, $values);
-        return $this->config->getSection($name);
+        $instanceConfig = $this->config->getSection($name);
+        if (isset($data['name'])) {
+            if ($data['name'] !== $name) {
+                $this->config->removeSection($name);
+                $name = $data['name'];
+            }
+
+            unset($data['name']);
+        }
+
+        $instanceConfig->merge($data);
+        foreach ($instanceConfig->toArray() as $k => $v) {
+            if ($v === null) {
+                unset($instanceConfig->$k);
+            }
+        }
+
+        $this->config->setSection($name, $instanceConfig);
+        return $this;
     }
 
     /**
      * Remove a instance
      *
-     * @param   string      $name           The name of the resource to remove
+     * @param   string  $name
      *
-     * @return  array                       The removed resource configuration
-     *
-     * @throws  InvalidArgumentException    In case the resource name is missing or invalid
+     * @return  $this
      */
-    public function remove($name)
+    public function delete($name)
     {
-        if (! $name) {
-            throw new InvalidArgumentException(mt('monitoring', 'Instance name missing'));
-        } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(mt('monitoring', 'Unknown instance name provided'));
-        }
-
-        $instanceConfig = $this->config->getSection($name);
         $this->config->removeSection($name);
-        return $instanceConfig;
+        return $this;
     }
 
     /**
-     * @see     Form::onRequest()   For the method documentation.
-     * @throws  ConfigurationError  In case the instance name is missing or invalid
+     * Create and add elements to this form
+     *
+     * @param   array   $formData
      */
-    public function onRequest()
+    public function createElements(array $formData)
     {
-        $instanceName = $this->request->getQuery('instance');
-        if ($instanceName !== null) {
-            if (! $instanceName) {
-                throw new ConfigurationError(mt('monitoring', 'Instance name missing'));
-            }
-            if (! $this->config->hasSection($instanceName)) {
-                throw new ConfigurationError(mt('monitoring', 'Unknown instance name given'));
-            }
+        $this->addElement(
+            'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => $this->translate('Instance Name'),
+                'description'   => $this->translate(
+                    'The name of this monitoring instance that is used to differentiate it from others'
+                ),
+                'validators'    => array(
+                    array(
+                        'Regex',
+                        false,
+                        array(
+                            'pattern'  => '/^[^\\[\\]:]+$/',
+                            'messages' => array(
+                                'regexNotMatch' => $this->translate(
+                                    'The name cannot contain \'[\', \']\' or \':\'.'
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        );
 
-            $instanceConfig = $this->config->getSection($instanceName)->toArray();
-            $instanceConfig['name'] = $instanceName;
-            $this->populate($instanceConfig);
+        $instanceTypes = array(
+            LocalCommandFile::TRANSPORT     => $this->translate('Local Command File'),
+            RemoteCommandFile::TRANSPORT    => $this->translate('Remote Command File')
+        );
+
+        $instanceType = isset($formData['transport']) ? $formData['transport'] : null;
+        if ($instanceType === null) {
+            $instanceType = key($instanceTypes);
         }
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see Form::onSuccess() For the method documentation.
-     */
-    public function onSuccess()
-    {
-        $instanceName = $this->request->getQuery('instance');
-        try {
-            if ($instanceName === null) { // create new instance
-                $this->add($this->getValues());
-                $message = mt('monitoring', 'Instance "%s" created successfully.');
-            } else { // edit existing instance
-                $this->edit($instanceName, $this->getValues());
-                $message = mt('monitoring', 'Instance "%s" edited successfully.');
-            }
-        } catch (InvalidArgumentException $e) {
-            Notification::error($e->getMessage());
-            return;
-        }
-
-        if ($this->save()) {
-            Notification::success(sprintf($message, $this->getElement('name')->getValue()));
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see Form::createElements() For the method documentation.
-     */
-    public function createElements(array $formData = array())
-    {
-        $instanceType = isset($formData['transport']) ? $formData['transport'] : LocalCommandFile::TRANSPORT;
 
         $this->addElements(array(
-            array(
-                'text',
-                'name',
-                array(
-                    'required'  => true,
-                    'label'     => mt('monitoring', 'Instance Name')
-                )
-            ),
             array(
                 'select',
                 'transport',
                 array(
                     'required'      => true,
                     'autosubmit'    => true,
-                    'label'         => mt('monitoring', 'Instance Type'),
-                    'multiOptions'  => array(
-                        LocalCommandFile::TRANSPORT     => mt('monitoring', 'Local Command File'),
-                        RemoteCommandFile::TRANSPORT    => mt('monitoring', 'Remote Command File')
-                    ),
-                    'value' => $instanceType
+                    'label'         => $this->translate('Instance Type'),
+                    'description'   => $this->translate('The type of transport to use for this monitoring instance'),
+                    'multiOptions'  => $instanceTypes
                 )
             )
         ));
 
-        $this->addElements($this->getInstanceForm($instanceType)->createElements($formData)->getElements());
+        $this->addSubForm($this->getInstanceForm($instanceType)->create($formData), 'instance_form');
+    }
+
+    /**
+     * Populate the configuration of the instance to load
+     */
+    public function onRequest()
+    {
+        if ($this->instanceToLoad) {
+            $data = $this->config->getSection($this->instanceToLoad)->toArray();
+            $data['name'] = $this->instanceToLoad;
+            $this->populate($data);
+        }
+    }
+
+    /**
+     * Retrieve all form element values
+     *
+     * @param   bool    $suppressArrayNotation  Ignored
+     *
+     * @return  array
+     */
+    public function getValues($suppressArrayNotation = false)
+    {
+        $values = parent::getValues();
+        $values = array_merge($values, $values['instance_form']);
+        unset($values['instance_form']);
+        return $values;
     }
 }

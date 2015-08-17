@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Widget;
 
@@ -83,7 +82,7 @@ class FilterWidget extends AbstractWidget
 
 
         // $html .= $this->renderFilter($this->filter);
-        
+
         $editorUrl = clone $url;
         $editorUrl->setParam('modifyFilter', true);
         if  ($this->filter->isEmpty()) {

@@ -1,10 +1,11 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+# Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+
+
 VAGRANTFILE_API_VERSION = "2"
 VAGRANT_REQUIRED_VERSION = "1.5.0"
 
-# Require 1.2.x at least
 if ! defined? Vagrant.require_version
   if Gem::Version.new(Vagrant::VERSION) < Gem::Version.new(VAGRANT_REQUIRED_VERSION)
     puts "Vagrant >= " + VAGRANT_REQUIRED_VERSION + " required. Your version is " + Vagrant::VERSION
@@ -21,13 +22,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :shell, :path => ".puppet/manifests/puppet.sh"
 
   config.vm.provider :virtualbox do |v, override|
-    override.vm.box = "puppetlabs/centos-6.5-64-puppet"
+    override.vm.box = "centos-71-x64-vbox"
+    override.vm.box_url = "http://boxes.icinga.org/centos-71-x64-vbox.box"
 
     v.customize ["modifyvm", :id, "--memory", "1024"]
+    v.customize ["modifyvm", :id, "--cpus", "2"]
   end
 
   config.vm.provider :parallels do |p, override|
-    override.vm.box = "parallels/centos-6.5"
+    override.vm.box = "parallels/centos-7.1"
 
     p.name = "Icinga Web 2 Development"
 
@@ -46,5 +49,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     puppet.module_path = [ ".puppet/modules", ".puppet/profiles" ]
     puppet.manifests_path = ".puppet/manifests"
     puppet.manifest_file = "site.pp"
+    puppet.options = "--parser=future"
   end
 end

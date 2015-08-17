@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace {
 
@@ -26,7 +25,6 @@ namespace Icinga\Test {
     use Mockery;
     use PHPUnit_Framework_TestCase;
     use Icinga\Application\Icinga;
-    use Icinga\Util\DateTimeFactory;
     use Icinga\Data\ConfigObject;
     use Icinga\Data\ResourceFactory;
     use Icinga\Data\Db\DbConnection;
@@ -34,7 +32,7 @@ namespace Icinga\Test {
     /**
      * Class BaseTestCase
      */
-    class BaseTestCase extends PHPUnit_Framework_TestCase implements DbTest
+    abstract class BaseTestCase extends PHPUnit_Framework_TestCase implements DbTest
     {
         /**
          * Path to application/
@@ -105,12 +103,11 @@ namespace Icinga\Test {
         );
 
         /**
-         * Setup the default timezone and pass it to DateTimeFactory::setConfig
+         * Setup the default timezone
          */
         public static function setupTimezone()
         {
             date_default_timezone_set('UTC');
-            DateTimeFactory::setConfig(array('timezone' => 'UTC'));
         }
 
         /**
@@ -183,7 +180,7 @@ namespace Icinga\Test {
          */
         public function getRequestMock()
         {
-            return Icinga::app()->getFrontController()->getRequest();
+            return Icinga::app()->getRequest();
         }
 
         /**

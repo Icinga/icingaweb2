@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\View;
 
@@ -21,62 +20,90 @@ $this->addHelperFunction('url', function ($path = null, $params = null) {
     } else {
         $url = Url::fromPath($path);
     }
+
     if ($params !== null) {
+        if ($url === $path) {
+            $url = clone $url;
+        }
+
         $url->overwriteParams($params);
     }
 
     return $url;
 });
 
+$this->addHelperFunction('qlink', function ($title, $url, $params = null, $properties = null, $escape = true) use ($view) {
+    $icon = '';
+    if ($properties) {
+        if (array_key_exists('title', $properties) && !array_key_exists('aria-label', $properties)) {
+            $properties['aria-label'] = $properties['title'];
+        }
 
-$this->addHelperFunction('qlink', function ($title, $url, $params = null, $properties = array()) use ($view) {
+        if (array_key_exists('icon', $properties)) {
+            $icon = $view->icon($properties['icon']);
+            unset($properties['icon']);
+        }
+    }
+
     return sprintf(
         '<a href="%s"%s>%s</a>',
         $view->url($url, $params),
         $view->propertiesToString($properties),
-        $view->escape($title)
+        $icon . ($escape ? $view->escape($title) : $title)
     );
 });
 
-$this->addHelperFunction('img', function ($url, array $properties = array()) use ($view) {
+$this->addHelperFunction('img', function ($url, $params = null, array $properties = array()) use ($view) {
     if (! array_key_exists('alt', $properties)) {
         $properties['alt'] = '';
     }
 
+    $ariaHidden = array_key_exists('aria-hidden', $properties) ? $properties['aria-hidden'] : null;
+    if (array_key_exists('title', $properties)) {
+        if (! array_key_exists('aria-label', $properties) && $ariaHidden !== 'true') {
+            $properties['aria-label'] = $properties['title'];
+        }
+    } elseif ($ariaHidden === null) {
+        $properties['aria-hidden'] = 'true';
+    }
+
     return sprintf(
         '<img src="%s"%s />',
-        $view->url($url),
+        $view->url($url, $params),
         $view->propertiesToString($properties)
     );
 });
 
 $this->addHelperFunction('icon', function ($img, $title = null, array $properties = array()) use ($view) {
-    $isClass = strpos($img, '.') === false;
-    $class = null;
-
-    if ($isClass) {
-        $class = 'icon-' . $img;
-    } else {
-        $class = 'icon';
-    }
-    if ($title !== null) {
-        $properties['alt'] = $title;
-        $properties['title'] = $title;
-    }
- 
-    if ($class !== null) {
-        if (isset($props['class'])) {
-            $properties['class'] .= ' ' . $class;
+    if (strpos($img, '.') !== false) {
+        if (array_key_exists('class', $properties)) {
+            $properties['class'] .= ' icon';
         } else {
-            $properties['class'] = $class;
+            $properties['class'] = 'icon';
         }
-    }
-    if ($isClass) {
-        return sprintf('<i %s ></i>', $view->propertiesToString($properties));
 
-    } else {
         return $view->img('img/icons/' . $img, $properties);
     }
+
+    $ariaHidden = array_key_exists('aria-hidden', $properties) ? $properties['aria-hidden'] : null;
+    if ($title !== null) {
+        $properties['role'] = 'img';
+        $properties['title'] = $title;
+
+        if (! array_key_exists('aria-label', $properties) && $ariaHidden !== 'true') {
+            $properties['aria-label'] = $title;
+        }
+    } elseif ($ariaHidden === null) {
+        $properties['aria-hidden'] = 'true';
+    }
+
+    if (isset($properties['class'])) {
+        $properties['class'] .= ' icon-' . $img;
+    } else {
+        $properties['class'] = 'icon-' . $img;
+    }
+
+    return sprintf('<i %s></i>', $view->propertiesToString($properties));
 });
 
 $this->addHelperFunction('propertiesToString', function ($properties) use ($view) {

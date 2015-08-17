@@ -1,8 +1,9 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web;
+
+use Icinga\Exception\MissingParameterException;
 
 class UrlParams
 {
@@ -41,6 +42,29 @@ class UrlParams
         }
 
         return rawurldecode($this->params[ end($this->index[$param]) ][ 1 ]);
+    }
+
+    /**
+     * Require a parameter
+     *
+     * @param   string  $name               Name of the parameter
+     * @param   bool    $strict             Whether the parameter's value must not be the empty string
+     *
+     * @return  mixed
+     *
+     * @throws  MissingParameterException   If the parameter was not given
+     */
+    public function getRequired($name, $strict = true)
+    {
+        if ($this->has($name)) {
+            $value = $this->get($name);
+            if (! $strict || strlen($value) > 0) {
+                return $value;
+            }
+        }
+        $e = new MissingParameterException(t('Required parameter \'%s\' missing'), $name);
+        $e->setParameter($name);
+        throw $e;
     }
 
     /**
@@ -114,6 +138,30 @@ class UrlParams
         return $ret;
     }
 
+    /**
+     * Require and remove a parameter
+     *
+     * @param   string  $name               Name of the parameter
+     * @param   bool    $strict             Whether the parameter's value must not be the empty string
+     *
+     * @return  mixed
+     *
+     * @throws  MissingParameterException   If the parameter was not given
+     */
+    public function shiftRequired($name, $strict = true)
+    {
+        if ($this->has($name)) {
+            $value = $this->get($name);
+            if (! $strict || strlen($value) > 0) {
+                $this->shift($name);
+                return $value;
+            }
+        }
+        $e = new MissingParameterException(t('Required parameter \'%s\' missing'), $name);
+        $e->setParameter($name);
+        throw $e;
+    }
+
     public function addEncoded($param, $value = true)
     {
         $this->params[] = array($param, $this->cleanupValue($value));
@@ -135,7 +183,7 @@ class UrlParams
      * @param string $param The parameter you're interested in
      * @param string $value The value to be stored
      *
-     * @return self
+     * @return $this
      */
     public function add($param, $value = true)
     {
@@ -151,7 +199,7 @@ class UrlParams
      * @param string $param Parameter name or param/value list
      * @param string $value The value to be stored
      *
-     * @return self
+     * @return $this
      */
     public function addValues($param, $values = null)
     {
@@ -207,7 +255,7 @@ class UrlParams
      * @param string $param The parameter you're interested in
      * @param string $value The value to be stored
      *
-     * @return self
+     * @return $this
      */
     public function unshift($param, $value)
     {
@@ -224,7 +272,7 @@ class UrlParams
      * @param string $param The parameter you want to set
      * @param string $value The value to be stored
      *
-     * @return self
+     * @return $this
      */
     public function set($param, $value)
     {
@@ -243,7 +291,7 @@ class UrlParams
         );
         $this->reIndexAll();
 
-        return $this;        
+        return $this;
     }
 
     public function remove($param)
@@ -326,9 +374,29 @@ class UrlParams
         }
     }
 
-    public function toArray()
+    /**
+     * Return the parameters of this url as sequenced or associative array
+     *
+     * @param   bool    $sequenced
+     *
+     * @return  array
+     */
+    public function toArray($sequenced = true)
     {
-        return $this->params;
+        if ($sequenced) {
+            return $this->params;
+        }
+
+        $params = array();
+        foreach ($this->params as $param) {
+            if ($param[1] === true) {
+                $params[] = $param[0];
+            } else {
+                $params[$param[0]] = $param[1];
+            }
+        }
+
+        return $params;
     }
 
     public function toString($separator = null)

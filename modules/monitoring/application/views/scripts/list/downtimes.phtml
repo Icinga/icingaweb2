@@ -1,131 +1,159 @@
 <?php
-
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
-?>
+$downtimes->peekAhead($this->compact);
 
-<?php if (false === $this->compact): ?>
+if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs->render($this); ?>
-  <div style="margin: 1em" class="dontprint">
-    <?= $this->translate('Sort by'); ?> <?= $this->sortControl->render($this); ?>
-    <?php if (! $this->filterEditor): ?>
-        <?= $this->filterPreview ?>
-    <?php endif; ?>
-  </div>
-  <?= $this->widget('limiter', array('url' => $this->url, 'max' => $downtimes->count())); ?>
-  <?= $this->paginationControl($downtimes, null, null, array('preserve' => $this->preserve)); ?>
+  <?= $this->tabs; ?>
+    <div class="dontprint">
+        <?= $this->render('list/components/selectioninfo.phtml'); ?>
+    </div>
+    <h1><?= count($downtimes) ?> <?= $this->translate('Downtimes') ?></h1>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
 <?php endif ?>
-
 <div class="content">
-<?= $this->filterEditor ?>
-<?php if (count($downtimes) === 0): ?>
-  <?= $this->translate('No active downtimes'); ?>
-</div>
-<?php return; endif ?>
-
-  <table data-base-target="_next" class="action">
+  <table data-base-target="_next"
+         class="action multiselect"
+         data-icinga-multiselect-url="/icingaweb2/monitoring/downtimes/show"
+         data-icinga-multiselect-data="downtime_id">
     <tbody>
     <?php foreach ($downtimes as $downtime): ?>
     <?php
-      if (isset($downtime->service)) {
+      if (isset($downtime->service_description)) {
+          $isService = true;
           $stateName = Service::getStateText($downtime->service_state);
       } else {
+          $isService = false;
           $stateName = Host::getStateText($downtime->host_state);
       }
     ?>
       <tr class="state <?= $stateName; ?><?= $downtime->is_in_effect ? ' handled' : ''; ?>">
         <td class="state">
+        <?php if ($downtime->start <= time() && ! $downtime->is_in_effect): ?>
+          <strong><?= $this->translate('Ends'); ?></strong>
+          <br>
+          <?= $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end, $this->compact) ?>
+        <?php else: ?>
           <strong><?= $downtime->is_in_effect ? $this->translate('Expires') : $this->translate('Starts'); ?></strong>
           <br>
-            <?=
-            $this->dateTimeRenderer(
-                ($downtime->is_in_effect ? $downtime->end : $downtime->start),
-                true
-            )->render(
-                $this->translate('on %s', 'datetime'),
-                $this->translate('at %s', 'time'),
-                $this->translate('in %s', 'timespan')
-            );
-            ?>
+          <?= $this->timeUntil($downtime->is_in_effect ? $downtime->end : $downtime->start, $this->compact) ?>
+        <?php endif; ?>
         </td>
         <td>
-        <?php if (isset($downtime->service)): ?>
-          <a href="<?= $this->href('monitoring/service/show', array(
-            'host'      => $downtime->host,
-            'service'   => $downtime->service
-          )); ?>">
-            <?= $downtime->service; ?>
-          </a>
-          <small>
-            <?= $this->translate('on'); ?> <?= $downtime->host; ?>
-          </small>
+        <?php if ($isService): ?>
+          <?= $this->icon('service', $this->translate('Service')); ?> <?= $this->qlink(
+            $this->escape($downtime->host_display_name) . ': ' . $this->escape($downtime->service_display_name),
+            'monitoring/downtime/show',
+            array('downtime_id' => $downtime->id),
+            array(
+              'title' => sprintf(
+                $this->translate('Show detailed information for this downtime scheduled for service %s on host %s'),
+                $downtime->service_display_name,
+                $downtime->host_display_name
+              ),
+              'class' => 'rowaction'
+            )
+          ); ?>
         <?php else: ?>
-          <a href="<?= $this->href('monitoring/host/show', array(
-            'host' => $downtime->host
-          )); ?>">
-            <?= $downtime->host; ?>
-          </a>
+          <?= $this->icon('host', $this->translate('host')); ?> <?= $this->qlink(
+            $this->escape($downtime->host_display_name),
+            'monitoring/downtime/show',
+            array('downtime_id' => $downtime->id),
+            array(
+              'title' => sprintf(
+                $this->translate('Show detailed information for this downtime scheduled for host %s'),
+                $downtime->host_display_name
+              ),
+              'class' => 'rowaction'
+            )
+          ); ?>
         <?php endif ?>
           <br>
-          <?= $this->icon('comment'); ?> [<?= $downtime->author; ?>] <?= $downtime->comment; ?>
+          <?= $this->icon('comment', $this->translate('Comment')); ?> [<?= $this->escape($downtime->author_name) ?>] <?= $this->escape($downtime->comment) ?>
           <br>
           <small>
         <?php if ($downtime->is_flexible): ?>
           <?php if ($downtime->is_in_effect): ?>
             <?= sprintf(
-              $this->translate('This flexible downtime was started on %s at %s and lasts for %s until %s at %s.'),
-              date('d.m.y', $downtime->start),
-              date('H:i', $downtime->start),
-              $this->format()->duration($downtime->duration),
-              date('d.m.y', $downtime->end),
-              date('H:i', $downtime->end)
+              $isService
+                ? $this->translate('This flexible service downtime was started on %s at %s and lasts for %s until %s at %s.')
+                : $this->translate('This flexible host downtime was started on %s at %s and lasts for %s until %s at %s.'),
+                $this->formatDate($downtime->start),
+                $this->formatTime($downtime->start),
+                $this->formatDuration($downtime->duration),
+                $this->formatDate($downtime->end),
+                $this->formatTime($downtime->end)
             ); ?>
           <?php else: ?>
             <?= sprintf(
-              $this->translate('This flexible downtime has been scheduled to start between %s - %s and to last for %s.'),
-              date('d.m.y H:i', $downtime->scheduled_start),
-              date('d.m.y H:i', $downtime->scheduled_end),
-              $this->format()->duration($downtime->duration)
+              $isService
+                ? $this->translate('This flexible service downtime has been scheduled to start between %s - %s and to last for %s.')
+                : $this->translate('This flexible host downtime has been scheduled to start between %s - %s and to last for %s.'),
+                $this->formatDateTime($downtime->scheduled_start),
+                $this->formatDateTime($downtime->scheduled_end),
+                $this->formatDuration($downtime->duration)
             ); ?>
           <?php endif ?>
         <?php else: ?>
           <?php if ($downtime->is_in_effect): ?>
             <?= sprintf(
-              $this->translate('This fixed downtime was started on %s at %s and expires on %s at %s.'),
-              date('d.m.y', $downtime->start),
-              date('H:i', $downtime->start),
-              date('d.m.y', $downtime->end),
-              date('H:i', $downtime->end)
+              $isService
+                ? $this->translate('This fixed service downtime was started on %s at %s and expires on %s at %s.')
+                : $this->translate('This fixed host downtime was started on %s at %s and expires on %s at %s.'),
+                $this->formatDate($downtime->start),
+                $this->formatTime($downtime->start),
+                $this->formatDate($downtime->end),
+                $this->formatTime($downtime->end)
             ); ?>
           <?php else: ?>
             <?= sprintf(
-              $this->translate('This fixed downtime has been scheduled to start on %s at %s and to end on %s at %s.'),
-              date('d.m.y', $downtime->scheduled_start),
-              date('H:i', $downtime->scheduled_start),
-              date('d.m.y', $downtime->scheduled_end),
-              date('H:i', $downtime->scheduled_end)
+              $isService
+                ? $this->translate('This fixed service downtime has been scheduled to start on %s at %s and to end on %s at %s.')
+                : $this->translate('This fixed host downtime has been scheduled to start on %s at %s and to end on %s at %s.'),
+                $this->formatDate($downtime->start),
+                $this->formatTime($downtime->start),
+                $this->formatDate($downtime->end),
+                $this->formatTime($downtime->end)
             ); ?>
           <?php endif ?>
         <?php endif ?>
           </small>
         </td>
+        <?php if (isset($delDowntimeForm)): // Form is unset if the current user lacks the respective permission ?>
         <td style="width: 2em" data-base-target="self">
           <?php
           $delDowntimeForm = clone $delDowntimeForm;
-          $delDowntimeForm->populate(array('downtime_id' => $downtime->id, 'redirect' => $this->url));
-          if (! isset($downtime->service)) {
-            $delDowntimeForm->setAction($this->url('monitoring/host/delete-downtime', array('host' => $downtime->host)));
-          } else {
-            $delDowntimeForm->setAction($this->url('monitoring/service/delete-downtime', array('host' => $downtime->host, 'service' => $downtime->service)));
-          }
+          $delDowntimeForm->populate(
+              array(
+                  'downtime_id' => $downtime->id,
+                  'downtime_is_service' => isset($downtime->service_description)
+              )
+          );
           echo $delDowntimeForm;
           ?>
         </td>
+        <?php endif ?>
       </tr>
 <?php endforeach ?>
     </tbody>
   </table>
+<?php if (! $downtimes->hasResult()): ?>
+  <?= $this->translate('No downtimes found matching the filter, maybe the downtime already expired.'); ?>
+<?php elseif ($downtimes->hasMore()): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $this->url()->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right show-more'
+    )
+  ); ?>
+<?php endif ?>
 </div>

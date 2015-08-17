@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Widget\Tabextension;
 
@@ -23,7 +22,7 @@ class DashboardSettings implements Tabextension
             'dashboard_add',
             array(
                 'icon'      => 'img/icons/dashboard.png',
-                'title'     => t('Add To Dashboard'),
+                'label'     => t('Add New Pane Or Dashlet'),
                 'url'       => Url::fromPath('dashboard/new-dashlet')
             )
         );
@@ -31,9 +30,9 @@ class DashboardSettings implements Tabextension
         $tabs->addAsDropdown(
             'dashboard_settings',
             array(
-            'icon'      => 'img/icons/dashboard.png',
-            'title'     => t('Settings'),
-            'url'       => Url::fromPath('dashboard/settings')
+                'icon'      => 'img/icons/dashboard.png',
+                'label'     => t('Settings'),
+                'url'       => Url::fromPath('dashboard/settings')
             )
         );
     }

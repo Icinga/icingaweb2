@@ -1,19 +1,23 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Application;
 
 use Iterator;
 use Countable;
+use LogicException;
 use UnexpectedValueException;
+use Icinga\Util\File;
 use Icinga\Data\ConfigObject;
+use Icinga\Data\Selectable;
+use Icinga\Data\SimpleQuery;
+use Icinga\File\Ini\IniWriter;
 use Icinga\Exception\NotReadableError;
 
 /**
  * Container for INI like configuration and global registry of application and module related configuration.
  */
-class Config implements Countable, Iterator
+class Config implements Countable, Iterator, Selectable
 {
     /**
      * Configuration directory where ALL (application and module) configuration is located
@@ -75,12 +79,32 @@ class Config implements Countable, Iterator
      *
      * @param   string      $filepath   The path to the ini file
      *
-     * @return  self
+     * @return  $this
      */
     public function setConfigFile($filepath)
     {
         $this->configFile = $filepath;
         return $this;
+    }
+
+    /**
+     * Return the internal ConfigObject
+     *
+     * @return  ConfigObject
+     */
+    public function getConfigObject()
+    {
+        return $this->config;
+    }
+
+    /**
+     * Provide a query for the internal config object
+     *
+     * @return  SimpleQuery
+     */
+    public function select()
+    {
+        return $this->config->select();
     }
 
     /**
@@ -90,7 +114,7 @@ class Config implements Countable, Iterator
      */
     public function count()
     {
-        return $this->config->count();
+        return $this->select()->count();
     }
 
     /**
@@ -221,7 +245,7 @@ class Config implements Countable, Iterator
      * @param   string              $name
      * @param   array|ConfigObject  $config
      *
-     * @return  self
+     * @return  $this
      */
     public function setSection($name, $config = null)
     {
@@ -240,7 +264,7 @@ class Config implements Countable, Iterator
      *
      * @param   string  $name
      *
-     * @return  self
+     * @return  $this
      */
     public function removeSection($name)
     {
@@ -279,7 +303,7 @@ class Config implements Countable, Iterator
      *
      * @param   string      $file   The file to parse
      *
-     * @throws  NotReadableError    When the file does not exist or cannot be read
+     * @throws  NotReadableError    When the file cannot be read
      */
     public static function fromIni($file)
     {
@@ -292,11 +316,50 @@ class Config implements Countable, Iterator
             $config = new static(new ConfigObject(parse_ini_file($filepath, true)));
             $config->setConfigFile($filepath);
             return $config;
-        } else {
+        } elseif (@file_exists($filepath)) {
             throw new NotReadableError(t('Cannot read config file "%s". Permission denied'), $filepath);
         }
 
         return $emptyConfig;
+    }
+
+    /**
+     * Save configuration to the given INI file
+     *
+     * @param   string|null     $filePath   The path to the INI file or null in case this config's path should be used
+     * @param   int             $fileMode   The file mode to store the file with
+     *
+     * @throws  LogicException              In case this config has no path and none is passed in either
+     * @throws  NotWritableError            In case the INI file cannot be written
+     *
+     * @todo    create basepath and throw NotWritableError in case its not possible
+     */
+    public function saveIni($filePath = null, $fileMode = 0660)
+    {
+        if ($filePath === null && $this->configFile) {
+            $filePath = $this->configFile;
+        } elseif ($filePath === null) {
+            throw new LogicException('You need to pass $filePath or set a path using Config::setConfigFile()');
+        }
+
+        if (! file_exists($filePath)) {
+            File::create($filePath, $fileMode);
+        }
+
+        $this->getIniWriter($filePath, $fileMode)->write();
+    }
+
+    /**
+     * Return a IniWriter for this config
+     *
+     * @param   string|null     $filePath
+     * @param   int             $fileMode
+     *
+     * @return  IniWriter
+     */
+    protected function getIniWriter($filePath = null, $fileMode = null)
+    {
+        return new IniWriter($this, $filePath, $fileMode);
     }
 
     /**
@@ -322,7 +385,7 @@ class Config implements Countable, Iterator
      */
     public static function app($configname = 'config', $fromDisk = false)
     {
-        if (!isset(self::$app[$configname]) || $fromDisk) {
+        if (! isset(self::$app[$configname]) || $fromDisk) {
             self::$app[$configname] = static::fromIni(static::resolvePath($configname . '.ini'));
         }
 
@@ -341,17 +404,26 @@ class Config implements Countable, Iterator
      */
     public static function module($modulename, $configname = 'config', $fromDisk = false)
     {
-        if (!isset(self::$modules[$modulename])) {
+        if (! isset(self::$modules[$modulename])) {
             self::$modules[$modulename] = array();
         }
 
         $moduleConfigs = self::$modules[$modulename];
-        if (!isset($moduleConfigs[$configname]) || $fromDisk) {
+        if (! isset($moduleConfigs[$configname]) || $fromDisk) {
             $moduleConfigs[$configname] = static::fromIni(
                 static::resolvePath('modules/' . $modulename . '/' . $configname . '.ini')
             );
         }
-
         return $moduleConfigs[$configname];
+    }
+
+    /**
+     * Return this config rendered as a INI structured string
+     *
+     * @return  string
+     */
+    public function __toString()
+    {
+        return $this->getIniWriter()->render();
     }
 }

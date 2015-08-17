@@ -1,28 +1,28 @@
 <?php
-
 use Icinga\Module\Monitoring\Object\Service;
 
-?>
-<?php if (!$this->compact): ?>
+if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
-  <div style="margin: 1em;" class="dontprint">
-    <?= $this->translate('Sort by'); ?> <?= $this->sortControl; ?>
-  </div>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
+  <?= $this->filterEditor; ?>
 </div>
 <?php endif ?>
 <div class="content" data-base-target="_next">
-  <table class="pivot servicestates">
 <?php
+
 $hasHeader = false;
 $pivotData = $this->pivot->toArray();
+if (count($pivotData) === 0) {
+    echo $this->translate('No services found matching the filter') . '</div>';
+    return;
+}
+
 $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . ')';
 ?>
-
-<?php if (count($pivotData) === 0): ?>
-    <?= $this->translate('No Services matching the filter'); ?>
-<?php endif ?>
-
+  <table class="pivot servicestates">
 <?php foreach ($pivotData as $host_name => $serviceStates): ?>
 <?php if (!$hasHeader): ?>
     <thead>
@@ -37,18 +37,23 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
         ); ?></th>
         <th colspan="<?= count($serviceStates); ?>">
           <div>
-<?php foreach (array_keys($serviceStates) as $service_description): ?>
+<?php
+$serviceDescriptions = array_keys($serviceStates);
+$serviceFilter = '(service_description=' . implode('|service_description=', $serviceDescriptions) . ')';
+
+foreach ($serviceDescriptions as $service_description): ?>
             <span>
-              <a href="<?= $this->href(
-                'monitoring/list/services',
+              <?= $this->qlink(
+                '<abbr>' . (strlen($service_description) > 18 ? substr($service_description, 0, 18) . '...' : $service_description) . '</abbr>',
+                'monitoring/list/services?' . $hostFilter,
                 array(
                   'service_description' => $service_description
-                )
-              ) . '&' . $hostFilter; ?>">
-                <abbr title="<?= $service_description; ?>">
-                  <?= strlen($service_description) > 18 ? substr($service_description, 0, 18) . '...' : $service_description; ?>
-                </abbr>
-              </a>
+                ),
+                array(
+                  'title' => sprintf($this->translate('List all services with the name "%s" on all reported hosts'), $service_description)
+                ),
+                false
+              ); ?>
             </span>
 <?php endforeach ?>
           </div>
@@ -60,18 +65,40 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
 <?php endif ?>
       <tr>
         <th>
-          <a href="<?= $this->href('monitoring/show/services', array('host' => $host_name)); ?>"><?= $host_name; ?></a>
+          <?= $this->qlink(
+            $host_name,
+            'monitoring/list/services?' . $serviceFilter,
+            array('host' => $host_name),
+            array('title' => sprintf($this->translate('List all reported services on host %s'), $host_name))
+          ); ?>
         </th>
 <?php foreach (array_values($serviceStates) as $service): ?>
 <?php if ($service !== null): ?>
         <td>
-          <a href="<?= $this->href('monitoring/show/service', array(
-            'host'      => $service->host_name,
-            'service'   => $service->service_description
-          )); ?>" title="<?= $this->escape($service->service_output); ?>" class="state_<?= Service::getStateText($service->service_state); ?> <?= $service->service_handled ? 'handled' : ''; ?>"></a>
+          <span class="sr-only" id="<?= $service->host_name . '_' . $service->service_description . '_desc'; ?>">
+            <?= $this->escape($service->service_output); ?>
+          </span>
+          <?= $this->qlink(
+            '',
+            'monitoring/show/service',
+            array(
+              'host'      => $service->host_name,
+              'service'   => $service->service_description
+            ),
+            array(
+              'aria-describedby'    => $service->host_name . '_' . $service->service_description . '_desc',
+              'class'               => 'state_' . Service::getStateText($service->service_state). ($service->service_handled ? ' handled' : ''),
+              'title'               => $this->escape($service->service_output),
+              'aria-label'          => sprintf(
+                $this->translate('Show detailed information for service %s on host %s'),
+                $service->service_description,
+                $service->host_name
+              )
+            )
+          ); ?>
         </td>
 <?php else: ?>
-        <td>&middot;</td>
+        <td><span aria-hidden="true">&middot;</span></td>
 <?php endif ?>
 <?php endforeach ?>
       </tr>

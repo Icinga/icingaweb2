@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Setup\Clicommands;
 
@@ -22,11 +21,22 @@ class TokenCommand extends Command
      *
      * USAGE:
      *
-     *   icingacli setup token show
+     *   icingacli setup token show [options]
+     *
+     * OPTIONS:
+     *
+     *  --config=<directory>    Path to Icinga Web 2's configuration files [/etc/icingaweb2]
      */
     public function showAction()
     {
-        $token = file_get_contents($this->app->getConfigDir() . '/setup.token');
+        $configDir = $this->params->get('config', $this->app->getConfigDir());
+        if (! is_string($configDir) || strlen(trim($configDir)) === 0) {
+            $this->fail($this->translate(
+                'The argument --config expects a path to Icinga Web 2\'s configuration files'
+            ));
+        }
+
+        $token = file_get_contents($configDir . '/setup.token');
         if (! $token) {
             $this->fail(
                 $this->translate('Nothing to show. Please create a new setup token using the generateToken action.')
@@ -43,24 +53,35 @@ class TokenCommand extends Command
      *
      * USAGE:
      *
-     *   icingacli setup token create
+     *   icingacli setup token create [options]
+     *
+     * OPTIONS:
+     *
+     *  --config=<directory>    Path to Icinga Web 2's configuration files [/etc/icingaweb2]
      */
     public function createAction()
     {
+        $configDir = $this->params->get('config', $this->app->getConfigDir());
+        if (! is_string($configDir) || strlen(trim($configDir)) === 0) {
+            $this->fail($this->translate(
+                'The argument --config expects a path to Icinga Web 2\'s configuration files'
+            ));
+        }
+
+        $file = $configDir . '/setup.token';
+
         if (function_exists('openssl_random_pseudo_bytes')) {
             $token = bin2hex(openssl_random_pseudo_bytes(8));
         } else {
             $token = substr(md5(mt_rand()), 16);
         }
 
-        $filepath = $this->app->getConfigDir() . '/setup.token';
-
-        if (false === file_put_contents($filepath, $token)) {
-            $this->fail(sprintf($this->translate('Cannot write setup token "%s" to disk.'), $filepath));
+        if (false === file_put_contents($file, $token)) {
+            $this->fail(sprintf($this->translate('Cannot write setup token "%s" to disk.'), $file));
         }
 
-        if (false === chmod($filepath, 0660)) {
-            $this->fail(sprintf($this->translate('Cannot change access mode of "%s" to %o.'), $filepath, 0660));
+        if (! chmod($file, 0660)) {
+            $this->fail(sprintf($this->translate('Cannot change access mode of "%s" to %o.'), $file, 0660));
         }
 
         printf($this->translate("The newly generated setup token is: %s\n"), $token);

@@ -1,54 +1,153 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Zend_Db_Expr;
+use Zend_Db_Select;
+use Icinga\Data\Filter\Filter;
+
+/**
+ * Query for host and service comment removal records
+ */
 class CommentdeletionhistoryQuery extends IdoQuery
 {
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'commenthistory' => array(
-            'state_time'    => 'h.deletion_time',
-            'timestamp'     => 'UNIX_TIMESTAMP(h.deletion_time)',
-            'raw_timestamp' => 'h.deletion_time',
-            'object_id'     => 'h.object_id',
-            'type'          => "(CASE h.entry_type WHEN 1 THEN 'comment_deleted' WHEN 2 THEN 'dt_comment_deleted' WHEN 3 THEN 'flapping_deleted' WHEN 4 THEN 'ack_deleted' END)",
-            'state'         => '(NULL)',
-            'state_type'    => '(NULL)',
-            'output'        => "('[' || h.author_name || '] ' || h.comment_data)",
-            'attempt'       => '(NULL)',
-            'max_attempts'  => '(NULL)',
-
-            'host'                => 'o.name1 COLLATE latin1_general_ci',
-            'service'             => 'o.name2 COLLATE latin1_general_ci',
-            'host_name'           => 'o.name1 COLLATE latin1_general_ci',
-            'service_description' => 'o.name2 COLLATE latin1_general_ci',
-            'service_host_name'   => 'o.name1 COLLATE latin1_general_ci',
-            'service_description' => 'o.name2 COLLATE latin1_general_ci',
-            'object_type'         => "CASE WHEN o.objecttype_id = 1 THEN 'host' ELSE 'service' END"
+            'object_type' => 'cdh.object_type'
+        ),
+        'history' => array(
+            'type'      => 'cdh.type',
+            'timestamp' => 'cdh.timestamp',
+            'object_id' => 'cdh.object_id',
+            'state'     => 'cdh.state',
+            'output'    => 'cdh.output'
+        ),
+        'hosts' => array(
+            'host_display_name' => 'cdh.host_display_name',
+            'host_name'         => 'cdh.host_name'
+        ),
+        'services' => array(
+            'service_description'   => 'cdh.service_description',
+            'service_display_name'  => 'cdh.service_display_name',
+            'service_host_name'     => 'cdh.service_host_name'
         )
     );
 
-    public function whereToSql($col, $sign, $expression)
-    {
-        if ($col === 'UNIX_TIMESTAMP(h.deletion_time)') {
-            return 'h.deletion_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } else {
-            return parent::whereToSql($col, $sign, $expression);
-        }
-    }
+    /**
+     * The union
+     *
+     * @var Zend_Db_Select
+     */
+    protected $commentDeletionHistoryQuery;
 
+    /**
+     * Subqueries used for the comment history query
+     *
+     * @var IdoQuery[]
+     */
+    protected $subQueries = array();
+
+    /**
+     * Whether to additionally select all history columns
+     *
+     * @var bool
+     */
+    protected $fetchHistoryColumns = false;
+
+    /**
+     * {@inheritdoc}
+     */
     protected function joinBaseTables()
     {
+        $this->commentDeletionHistoryQuery = $this->db->select();
         $this->select->from(
-            array('o' => $this->prefix . 'objects'),
-            array()
-        )->join(
-            array('h' => $this->prefix . 'commenthistory'),
-            'o.' . $this->object_id . ' = h.' . $this->object_id . " AND o.is_active = 1 AND h.deletion_time > '1970-01-02 00:00:00' AND h.entry_type <> 2",
+            array('cdh' => $this->commentDeletionHistoryQuery),
             array()
         );
-        $this->joinedVirtualTables = array('commenthistory' => true);
+        $this->joinedVirtualTables['commenthistory'] = true;
     }
 
+    /**
+     * Join history related columns and tables
+     */
+    protected function joinHistory()
+    {
+        // TODO: Ensure that one is selecting the history columns first...
+        $this->fetchHistoryColumns = true;
+        $this->requireVirtualTable('hosts');
+        $this->requireVirtualTable('services');
+    }
+
+    /**
+     * Join hosts
+     */
+    protected function joinHosts()
+    {
+        $columns = array_keys(
+            $this->columnMap['commenthistory'] + $this->columnMap['hosts']
+        );
+        foreach ($this->columnMap['services'] as $column => $_) {
+            $columns[$column] = new Zend_Db_Expr('NULL');
+        }
+        if ($this->fetchHistoryColumns) {
+            $columns = array_merge($columns, array_keys($this->columnMap['history']));
+        }
+        $hosts = $this->createSubQuery('Hostcommentdeletionhistory', $columns);
+        $this->subQueries[] = $hosts;
+        $this->commentDeletionHistoryQuery->union(array($hosts), Zend_Db_Select::SQL_UNION_ALL);
+    }
+
+    /**
+     * Join services
+     */
+    protected function joinServices()
+    {
+        $columns = array_keys(
+            $this->columnMap['commenthistory'] + $this->columnMap['hosts'] + $this->columnMap['services']
+        );
+        if ($this->fetchHistoryColumns) {
+            $columns = array_merge($columns, array_keys($this->columnMap['history']));
+        }
+        $services = $this->createSubQuery('Servicecommentdeletionhistory', $columns);
+        $this->subQueries[] = $services;
+        $this->commentDeletionHistoryQuery->union(array($services), Zend_Db_Select::SQL_UNION_ALL);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function order($columnOrAlias, $dir = null)
+    {
+        foreach ($this->subQueries as $sub) {
+            $sub->requireColumn($columnOrAlias);
+        }
+        return parent::order($columnOrAlias, $dir);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function where($condition, $value = null)
+    {
+        $this->requireColumn($condition);
+        foreach ($this->subQueries as $sub) {
+            $sub->where($condition, $value);
+        }
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addFilter(Filter $filter)
+    {
+        foreach ($this->subQueries as $sub) {
+            $sub->applyFilter(clone $filter);
+        }
+        return $this;
+    }
 }

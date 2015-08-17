@@ -1,14 +1,15 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Module\Monitoring\Web\Controller\MonitoredObjectController;
+use Icinga\Web\Hook;
 
 class Monitoring_ServiceController extends MonitoredObjectController
 {
@@ -20,17 +21,39 @@ class Monitoring_ServiceController extends MonitoredObjectController
 
     /**
      * Fetch the requested service from the monitoring backend
-     *
-     * @throws Zend_Controller_Action_Exception If the service was not found
      */
     public function init()
     {
-        $service = new Service($this->backend, $this->params->get('host'), $this->params->get('service'));
+        $service = new Service(
+            $this->backend, $this->params->getRequired('host'), $this->params->getRequired('service')
+        );
+
+        $this->applyRestriction('monitoring/filter/objects', $service);
+
         if ($service->fetch() === false) {
-            throw new Zend_Controller_Action_Exception($this->translate('Service not found'));
+            $this->httpNotFound($this->translate('Service not found'));
         }
         $this->object = $service;
         $this->createTabs();
+        $this->getTabs()->activate('service');
+    }
+
+    /**
+     * Get service actions from hook
+     *
+     * @return array
+     */
+    protected function getServiceActions()
+    {
+        $urls = array();
+
+        foreach (Hook::all('Monitoring\\ServiceActions') as $hook) {
+            foreach ($hook->getActionsForService($this->object) as $id => $url) {
+                $urls[$id] = $url;
+            }
+        }
+
+        return $urls;
     }
 
     /**
@@ -38,17 +61,21 @@ class Monitoring_ServiceController extends MonitoredObjectController
      */
     public function showAction()
     {
-        $this->getTabs()->activate('service');
+        $this->view->actions = $this->getServiceActions();
         parent::showAction();
     }
+
 
     /**
      * Acknowledge a service problem
      */
     public function acknowledgeProblemAction()
     {
-        $this->view->title = $this->translate('Acknowledge Service Problem');
-        $this->handleCommandForm(new AcknowledgeProblemCommandForm());
+        $this->assertPermission('monitoring/command/acknowledge-problem');
+
+        $form = new AcknowledgeProblemCommandForm();
+        $form->setTitle($this->translate('Acknowledge Service Problem'));
+        $this->handleCommandForm($form);
     }
 
     /**
@@ -56,8 +83,11 @@ class Monitoring_ServiceController extends MonitoredObjectController
      */
     public function addCommentAction()
     {
-        $this->view->title = $this->translate('Add Service Comment');
-        $this->handleCommandForm(new AddCommentCommandForm());
+        $this->assertPermission('monitoring/command/comment/add');
+
+        $form = new AddCommentCommandForm();
+        $form->setTitle($this->translate('Add Service Comment'));
+        $this->handleCommandForm($form);
     }
 
     /**
@@ -65,8 +95,11 @@ class Monitoring_ServiceController extends MonitoredObjectController
      */
     public function rescheduleCheckAction()
     {
-        $this->view->title = $this->translate('Reschedule Service Check');
-        $this->handleCommandForm(new ScheduleServiceCheckCommandForm());
+        $this->assertPermission('monitoring/command/schedule-check');
+
+        $form = new ScheduleServiceCheckCommandForm();
+        $form->setTitle($this->translate('Reschedule Service Check'));
+        $this->handleCommandForm($form);
     }
 
     /**
@@ -74,8 +107,11 @@ class Monitoring_ServiceController extends MonitoredObjectController
      */
     public function scheduleDowntimeAction()
     {
-        $this->view->title = $this->translate('Schedule Service Downtime');
-        $this->handleCommandForm(new ScheduleServiceDowntimeCommandForm());
+        $this->assertPermission('monitoring/command/downtime/schedule');
+
+        $form = new ScheduleServiceDowntimeCommandForm();
+        $form->setTitle($this->translate('Schedule Service Downtime'));
+        $this->handleCommandForm($form);
     }
 
     /**
@@ -83,7 +119,23 @@ class Monitoring_ServiceController extends MonitoredObjectController
      */
     public function processCheckResultAction()
     {
-        $this->view->title = $this->translate('Submit Passive Service Check Result');
-        $this->handleCommandForm(new ProcessCheckResultCommandForm());
+        $this->assertPermission('monitoring/command/process-check-result');
+
+        $form = new ProcessCheckResultCommandForm();
+        $form->setBackend($this->backend);
+        $form->setTitle($this->translate('Submit Passive Service Check Result'));
+        $this->handleCommandForm($form);
+    }
+
+    /**
+     * Send a custom notification for a service
+     */
+    public function sendCustomNotificationAction()
+    {
+        $this->assertPermission('monitoring/command/send-custom-notification');
+
+        $form = new SendCustomNotificationCommandForm();
+        $form->setTitle($this->translate('Send Custom Service Notification'));
+        $this->handleCommandForm($form);
     }
 }

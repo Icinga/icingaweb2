@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Forms;
 
@@ -25,51 +24,11 @@ class LdapDiscoveryForm extends Form
             'text',
             'domain',
             array(
-                'required'      => true,
-                'label'         => t('Search Domain'),
-                'description'   => t('Search this domain for records of available servers.'),
+                'label'         => $this->translate('Search Domain'),
+                'description'   => $this->translate('Search this domain for records of available servers.'),
             )
         );
 
-        if (false) {
-            $this->addElement(
-                'note',
-                'additional_description',
-                array(
-                    'value' => t('No Ldap servers found on this domain.'
-                        . ' You can try to specify host and port and try again, or just skip this step and '
-                        . 'configure the server manually.'
-                    )
-                )
-            );
-            $this->addElement(
-                'text',
-                'hostname',
-                array(
-                    'required'      => false,
-                    'label'         => t('Host'),
-                    'description'   => t('IP or host name to search.'),
-                )
-            );
-
-            $this->addElement(
-                'text',
-                'port',
-                array(
-                    'required'      => false,
-                    'label'         => t('Port'),
-                    'description'   => t('Port', 389),
-                )
-            );
-        }
         return $this;
-    }
-
-    public function isValid($data)
-    {
-        if (false === parent::isValid($data)) {
-            return false;
-        }
-        return true;
     }
 }

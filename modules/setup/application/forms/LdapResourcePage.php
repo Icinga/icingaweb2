@@ -1,10 +1,10 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Setup\Forms;
 
 use Icinga\Web\Form;
+use Icinga\Forms\Config\ResourceConfigForm;
 use Icinga\Forms\Config\Resource\LdapResourceForm;
 
 /**
@@ -18,6 +18,12 @@ class LdapResourcePage extends Form
     public function init()
     {
         $this->setName('setup_ldap_resource');
+        $this->setTitle($this->translate('LDAP Resource', 'setup.page.title'));
+        $this->addDescription($this->translate(
+            'Now please configure your AD/LDAP resource. This will later '
+            . 'be used to authenticate users logging in to Icinga Web 2.'
+        ));
+        $this->setValidatePartial(true);
     }
 
     /**
@@ -31,28 +37,6 @@ class LdapResourcePage extends Form
             array(
                 'required'  => true,
                 'value'     => 'ldap'
-            )
-        );
-        $this->addElement(
-            'note',
-            'title',
-            array(
-                'value'         => mt('setup', 'LDAP Resource', 'setup.page.title'),
-                'decorators'    => array(
-                    'ViewHelper',
-                    array('HtmlTag', array('tag' => 'h2'))
-                )
-            )
-        );
-        $this->addElement(
-            'note',
-            'description',
-            array(
-                'value' => mt(
-                    'setup',
-                    'Now please configure your AD/LDAP resource. This will later '
-                    . 'be used to authenticate users logging in to Icinga Web 2.'
-                )
             )
         );
 
@@ -83,15 +67,66 @@ class LdapResourcePage extends Form
      */
     public function isValid($data)
     {
-        if (false === parent::isValid($data)) {
+        if (! parent::isValid($data)) {
             return false;
         }
 
-        if (false === isset($data['skip_validation']) || $data['skip_validation'] == 0) {
-            if (false === LdapResourceForm::isValidResource($this)) {
+        if (! isset($data['skip_validation']) || $data['skip_validation'] == 0) {
+            $inspection = ResourceConfigForm::inspectResource($this);
+            if ($inspection !== null && $inspection->hasError()) {
+                $this->error($inspection->getError());
                 $this->addSkipValidationCheckbox();
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * Run the configured backend's inspection checks and show the result, if necessary
+     *
+     * This will only run any validation if the user pushed the 'backend_validation' button.
+     *
+     * @param   array   $formData
+     *
+     * @return  bool
+     */
+    public function isValidPartial(array $formData)
+    {
+        if (isset($formData['backend_validation']) && parent::isValid($formData)) {
+            $inspection = ResourceConfigForm::inspectResource($this);
+            if ($inspection !== null) {
+                $join = function ($e) use (& $join) {
+                    return is_string($e) ? $e : join("\n", array_map($join, $e));
+                };
+                $this->addElement(
+                    'note',
+                    'inspection_output',
+                    array(
+                        'order'         => 0,
+                        'value'         => '<strong>' . $this->translate('Validation Log') . "</strong>\n\n"
+                            . join("\n", array_map($join, $inspection->toArray())),
+                        'decorators'    => array(
+                            'ViewHelper',
+                            array('HtmlTag', array('tag' => 'pre', 'class' => 'log-output')),
+                        )
+                    )
+                );
+
+                if ($inspection->hasError()) {
+                    $this->warning(sprintf(
+                        $this->translate('Failed to successfully validate the configuration: %s'),
+                        $inspection->getError()
+                    ));
+                    return false;
+                }
+            }
+
+            $this->info($this->translate('The configuration has been successfully validated.'));
+        } elseif (! isset($formData['backend_validation'])) {
+            // This is usually done by isValid(Partial), but as we're not calling any of these...
+            $this->populate($formData);
         }
 
         return true;
@@ -107,9 +142,8 @@ class LdapResourcePage extends Form
             'skip_validation',
             array(
                 'required'      => true,
-                'label'         => mt('setup', 'Skip Validation'),
-                'description'   => mt(
-                    'setup',
+                'label'         => $this->translate('Skip Validation'),
+                'description'   => $this->translate(
                     'Check this to not to validate connectivity with the given directory service'
                 )
             )

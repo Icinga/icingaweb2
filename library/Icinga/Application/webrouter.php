@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Application;
 
@@ -32,7 +31,7 @@ $baseDir = $_SERVER['DOCUMENT_ROOT'];
 $baseDir = dirname($_SERVER['SCRIPT_FILENAME']);
 
 // Fix aliases
-$remove = dirname($_SERVER['PHP_SELF']);
+$remove = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
 if (substr($ruri, 0, strlen($remove)) !== $remove) {
     return false;
 }

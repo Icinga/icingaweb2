@@ -1,0 +1,36 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Accessibility: Text cue for required form control labels</title>
+    <meta name="description" content="Text cue for required form control labels">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+        label.required span.required-indicator:after {
+            content: " *";
+        }
+        .sr-only {
+            border: 0;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+        }
+    </style>
+</head>
+<body>
+    <form>
+        <label class="required">
+            Enter some text
+            <span class="required-indicator" aria-hidden="true"></span>
+            <span class="sr-only"> (required)</span>
+            <input type="text" name="some_text" value="" aria-required="true" required>
+        </label>
+        <input type="submit" name="btn_submit" value="Submit">
+    </form>
+</body>
+</html>

@@ -1,70 +1,77 @@
 <div class="controls">
-<?= $this->tabs ?>
-<h1><?= $this->escape($module->getTitle()) ?></h1>
+  <?= $this->tabs ?>
 </div>
 <div class="content">
-<?php if (! $module): ?>
-<?= $this->translate('There is no such module installed.') ?>
-<?php return; endif ?>
-<?php
-$dependencies = $module->getDependencies();
-$restrictions = $module->getProvidedRestrictions();
-$permissions = $module->getProvidedPermissions();
-$state = $moduleData->enabled ? ($moduleData->loaded ? 'enabled' : 'failed') : 'disabled'
-
-?>
-<table class="avp">
-<tr>
-  <th><?= $this->escape($this->translate('Name')) ?></th>
-  <td><?= $this->escape($module->getName()) ?></td>
-</tr>
-<tr>
-  <th><?= $this->translate('State') ?></th>
-  <td><?= $state ?><?php if ($state === 'enabled'): ?>
-  <?= $this->qlink($this->translate('disable'), 'config/moduledisable', array(
-      'name' => $module->getName()
-  )) ?>
-  <?php endif ?>
-  <?php if ($state === 'disabled'): ?>
-  <?= $this->qlink($this->translate('enable'), 'config/moduleenable', array(
-      'name' => $module->getName()
-  )) ?>
-  <?php endif ?>
-  </td>
-<tr>
-  <th><?= $this->escape($this->translate('Version')) ?></th>
-  <td><?= $this->escape($module->getVersion()) ?></td></tr>
-<tr>
-  <th><?= $this->escape($this->translate('Description')) ?></th>
-  <td><?= nl2br($this->escape($module->getDescription())) ?></td>
-</tr>
-<tr>
-  <th><?= $this->escape($this->translate('Dependencies')) ?></th>
-  <td><?php
-  
-if (empty($dependencies)):
-    echo $this->translate('This module has no dependencies');
-
-else: foreach ($dependencies as $name => $versionString): ?>
-<strong><?= $this->escape($name) ?></strong><?php if ($versionString !== true): ?>: <?= $this->escape($versionString) ?><?php endif ?><br />
-<?php endforeach; endif ?></td>
-</tr>
-<?php if (! empty($permissions)): ?>
-<tr>
-  <th><?= $this->escape($this->translate('Permissions')) ?></th>
-  <td><?php foreach ($permissions as $permission): ?>
-<strong><?= $this->escape($permission->name) ?></strong>: <?= $this->escape($permission->description) ?><br />
-<?php endforeach ?></td>
-</tr>
-<?php endif ?>
-<?php if (! empty($restrictions)): ?>
-<tr>
-  <th><?= $this->escape($this->translate('Restrictions')) ?></th>
-  <td><?php foreach ($restrictions as $restriction): ?>
-<strong><?= $this->escape($restriction->name) ?></strong>: <?= $this->escape($restriction->description) ?><br />
-<?php endforeach ?></td>
-</tr>
-<?php endif ?>
-</table>
-
+  <?php if (! $module): ?>
+    <?= $this->translate('There is no such module installed.') ?>
+  <?php return; endif ?>
+  <?php
+    $dependencies = $module->getDependencies();
+    $restrictions = $module->getProvidedRestrictions();
+    $permissions = $module->getProvidedPermissions();
+    $state = $moduleData->enabled ? ($moduleData->loaded ? 'enabled' : 'failed') : 'disabled'
+  ?>
+  <table class="avp">
+    <tr>
+      <th><?= $this->escape($this->translate('Name')) ?></th>
+      <td><?= $this->escape($module->getName()) ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->translate('State') ?></th>
+      <td><?= $state ?><?php if ($state === 'enabled'): ?>
+      <?= $this->qlink(
+        $this->translate('disable'),
+        'config/moduledisable',
+        array('name' => $module->getName()),
+        array('title' => sprintf($this->translate('Disable the %s module'), $module->getName()))
+      ); ?>
+      <?php endif ?>
+      <?php if ($state === 'disabled'): ?>
+      <?= $this->qlink(
+        $this->translate('enable'),
+        'config/moduleenable',
+        array('name' => $module->getName()),
+        array('title' => sprintf($this->translate('Enable the %s module'), $module->getName()))
+      ); ?>
+      <?php endif ?>
+      </td>
+    <tr>
+      <th><?= $this->escape($this->translate('Version')) ?></th>
+      <td><?= $this->escape($module->getVersion()) ?></td></tr>
+    <tr>
+      <th><?= $this->escape($this->translate('Description')) ?></th>
+      <td><?= nl2br($this->escape($module->getDescription())) ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->escape($this->translate('Dependencies')) ?></th>
+      <td>
+        <?php
+          if (empty($dependencies)):
+            echo $this->translate('This module has no dependencies');
+          else: foreach ($dependencies as $name => $versionString): ?>
+            <strong><?= $this->escape($name) ?></strong><?php if ($versionString !== true): ?>: <?= $this->escape($versionString) ?><?php endif ?><br />
+        <?php endforeach; endif ?>
+      </td>
+    </tr>
+    <?php if (! empty($permissions)): ?>
+      <tr>
+        <th><?= $this->escape($this->translate('Permissions')) ?></th>
+        <td>
+          <?php foreach ($permissions as $permission): ?>
+            <strong><?= $this->escape($permission->name) ?></strong>: <?= $this->escape($permission->description) ?><br />
+          <?php endforeach ?>
+        </td>
+      </tr>
+    <?php endif ?>
+    <?php if (! empty($restrictions)): ?>
+      <tr>
+        <th><?= $this->escape($this->translate('Restrictions')) ?></th>
+        <td>
+          <?php foreach ($restrictions as $restriction): ?>
+            <strong><?= $this->escape($restriction->name) ?></strong>: <?= $this->escape($restriction->description) ?><br />
+          <?php endforeach ?>
+        </td>
+      </tr>
+    <?php endif ?>
+  </table>
 </div>

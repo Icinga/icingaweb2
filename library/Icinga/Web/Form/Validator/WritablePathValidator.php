@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Form\Validator;
 
@@ -11,6 +10,9 @@ use Zend_Validate_Abstract;
  */
 class WritablePathValidator extends Zend_Validate_Abstract
 {
+    const NOT_WRITABLE = 'notWritable';
+    const DOES_NOT_EXIST = 'doesNotExist';
+
     /**
      * The messages to write on differen error states
      *
@@ -19,8 +21,8 @@ class WritablePathValidator extends Zend_Validate_Abstract
      * @see Zend_Validate_Abstract::$_messageTemplates‚
      */
     protected $_messageTemplates = array(
-        'NOT_WRITABLE'      =>  'Path is not writable',
-        'DOES_NOT_EXIST'    =>  'Path does not exist'
+        self::NOT_WRITABLE      => 'Path is not writable',
+        self::DOES_NOT_EXIST    => 'Path does not exist'
     );
 
     /**
@@ -54,7 +56,7 @@ class WritablePathValidator extends Zend_Validate_Abstract
 
         $this->_setValue($value);
         if ($this->requireExistence && !file_exists($value)) {
-            $this->_error('DOES_NOT_EXIST');
+            $this->_error(self::DOES_NOT_EXIST);
             return false;
         }
 
@@ -63,7 +65,8 @@ class WritablePathValidator extends Zend_Validate_Abstract
         ) {
             return true;
         }
-        $this->_error('NOT_WRITABLE');
+
+        $this->_error(self::NOT_WRITABLE);
         return false;
     }
 }

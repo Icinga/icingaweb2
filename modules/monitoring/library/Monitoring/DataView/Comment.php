@@ -1,41 +1,72 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\DataView;
 
 /**
- * View representation for comments
+ * Host and service comments view
  */
 class Comment extends DataView
 {
     /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
+     */
+    public function isValidFilterTarget($column)
+    {
+        if ($column[0] === '_'
+            && preg_match('/^_(?:host|service)_/', $column)
+        ) {
+            return true;
+        }
+        return parent::isValidFilterTarget($column);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getColumns()
     {
         return array(
-            'comment_objecttype',
-            'comment_internal_id',
+            'comment_author_name',
             'comment_data',
-            'comment_author',
+            'comment_expiration',
+            'comment_internal_id',
+            'comment_is_persistent',
             'comment_timestamp',
             'comment_type',
-            'comment_is_persistent',
-            'comment_expiration',
-            'comment_host',
-            'comment_service',
-            'host',
-            'service',
+            'host_display_name',
+            'host_name',
+            'object_type',
+            'service_description',
+            'service_display_name',
+            'service_host_name'
         );
     }
 
     /**
-     * Retrieve default sorting rules for particular columns. These involve sort order and potential additional to sort
-     *
-     * @return array
+     * {@inheritdoc}
+     */
+    public function getFilterColumns()
+    {
+        return array(
+            'comment_author',
+            'host', 'host_alias',
+            'hostgroup', 'hostgroup_alias', 'hostgroup_name',
+            'service',
+            'servicegroup', 'servicegroup_alias', 'servicegroup_name'
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSearchColumns()
+    {
+        return array('host_display_name', 'service_display_name');
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getSortRules()
     {
@@ -43,13 +74,20 @@ class Comment extends DataView
             'comment_timestamp' => array(
                 'order' => self::SORT_DESC
             ),
-            'comment_host' => array(
+            'host_display_name' => array(
                 'columns' => array(
-                    'comment_host',
-                    'comment_service'
+                    'host_display_name',
+                    'service_display_name'
                 ),
                 'order' => self::SORT_ASC
             ),
+            'service_display_name' => array(
+                'columns' => array(
+                    'service_display_name',
+                    'host_display_name'
+                ),
+                'order' => self::SORT_ASC
+            )
         );
     }
 }

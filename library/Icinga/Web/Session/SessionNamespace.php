@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Session;
 
@@ -96,14 +95,14 @@ class SessionNamespace implements IteratorAggregate
      * @param   string      $key        Name of value
      * @param   mixed       $value      Value to set
      *
-     * @return  self
+     * @return  $this
      */
     public function set($key, $value)
     {
         $this->values[$key] = $value;
 
-        if (in_array($key, $this->removed)) {
-            unset($this->removed[array_search($key, $this->removed)]);
+        if (in_array($key, $this->removed, true)) {
+            unset($this->removed[array_search($key, $this->removed, true)]);
         }
 
         return $this;
@@ -113,8 +112,8 @@ class SessionNamespace implements IteratorAggregate
     {
         $this->values[$key] = & $value;
 
-        if (in_array($key, $this->removed)) {
-            unset($this->removed[array_search($key, $this->removed)]);
+        if (in_array($key, $this->removed, true)) {
+            unset($this->removed[array_search($key, $this->removed, true)]);
         }
 
         return $this;

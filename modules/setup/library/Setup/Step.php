@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Setup;
 
@@ -24,9 +23,9 @@ abstract class Step
     abstract public function getSummary();
 
     /**
-     * Return a HTML representation of this step's configuration changes that were made
+     * Return a textual summary of all configuration changes made
      *
-     * @return  string
+     * @return  array
      */
     abstract public function getReport();
 }

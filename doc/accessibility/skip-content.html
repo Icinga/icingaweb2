@@ -1,0 +1,179 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Accessibility: Skip Links</title>
+    <meta name="description" content="Accessible skip links">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+        .sr-only {
+            border: 0;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+        }
+        .clearfix {
+            *zoom: 1;
+        }
+        .clearfix:before,
+        .clearfix:after {
+            display: table;
+            content: "";
+            line-height: 0;
+        }
+        .clearfix:after {
+            clear: both;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .head {
+            background-color: #049baf;
+            padding: 5px;
+        }
+        .nav {
+            width: 200px;
+            float: left;
+            margin: 0 20px 20px 0;
+            padding: 0 20px 20px 0;
+        }
+        .container {
+            margin: 10px 0 0 0;
+        }
+        .content {
+            overflow: auto;
+        }
+        .skip-links {
+            position: absolute;
+            opacity: 1;
+        }
+        .skip-links-inline {
+            margin-top: -3.5em;
+        }
+        .skip-links ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        .skip-links ul li {
+            display: inline;
+            margin: 0;
+            padding: 0;
+        }
+        .skip-links ul li a {
+            position: absolute;
+            display: block;
+            left: -999em;
+            width: 200px;
+            padding: 0.6em;
+            background-color: white;
+        }
+        .skip-links ul li a:focus {
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="head">
+        <div class="skip-links">
+            <nav>
+                <h1 class="sr-only">Skip Links</h1>
+                <ul>
+                    <li><a tabindex="0" href="#content">Skip to Content</a></li>
+                    <li><a tabindex="0" href="#searchField">Skip to Search</a></li>
+                    <li><a tabindex="0" href="#navigation">Skip to Navigation</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div id="logo">
+            <a href="skip-content.html">
+                <img width="92" height="32" title="" alt="" src="data:image/png;base64,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" />
+            </a>
+        </div>
+    </div>
+    <div class="container clearfix">
+    <div class="nav">
+        <h1 class="sr-only">Navigation</h1>
+
+        <div id="search">
+            <h2 class="sr-only">Search</h2>
+            <form>
+                <fieldset>
+                    <label for="searchField">Search</label>
+                    <input type="text" name="searchField" id="searchField" />
+                </fieldset>
+            </form>
+        </div>
+        <nav>
+            <h2 id="navigation" tabindex="0" class="sr-only">Site Links</h2>
+            <ul>
+                <li><a href="#">Link1</a></li>
+                <li><a href="#">Link2</a></li>
+                <li><a href="#">Link3</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="content">
+        <h1 tabindex="0" id="content">Content</h1>
+        <div class="skip-links skip-links-inline">
+            <nav>
+                <ul>
+                    <li><a tabindex="0" href="#content2">Skip content</a></li>
+                </ul>
+            </nav>
+        </div>
+        <p>
+            Organised prehistoric cultures began developing on Bulgarian lands
+            during the Neolithic period. Its ancient history saw the presence
+            of the Thracians and later the Greeks and Romans. The emergence of
+            a unified Bulgarian state dates back to the establishment of the
+            <a href="#">First Bulgarian Empire</a>
+            in 681 CE, which dominated most of the
+            Balkans and functioned as a cultural hub for Slavs during the
+            Middle Ages.
+        </p>
+        <p>
+            With the downfall of the Second Bulgarian Empire in 1396, its
+            <a href="#">territories came under Ottoman</a>
+            rule for nearly five centuries.
+            The Russo-Turkish War (1877–78) led to the formation of the Third
+            Bulgarian State. The following years saw several conflicts with its
+            neighbours, which prompted Bulgaria to align with Germany in both
+            world wars.
+        </p>
+        <p>
+            In 1946 it became a single-party socialist state as part of the
+            Soviet-led Eastern Bloc. In December 1989 the ruling Communist
+            Party allowed multi-party elections, which subsequently led to
+            Bulgaria's transition into a democracy and a market-based economy.
+        </p>
+
+        <h1 tabindex="0" id="content2">Content2</h1>
+        <p>
+            The development of Final Fantasy VIII began in 1997, during the
+            English localization process of Final Fantasy VII. It was produced
+            <a href="#">by Shinji Hashimoto</a>,
+            and directed by Yoshinori Kitase. The music
+            was scored by regular series composer Nobuo Uematsu, and in a
+            series first a vocal piece was written as the game's theme, "Eyes
+            on Me", performed by Faye Wong.
+        </p>
+        <p>
+            The game was positively received by
+            critics,
+            <a href="#">who praised the originality </a>
+            and scope of the game. It was
+            voted the 22nd-best game of all time in 2006 by readers of the
+            Japanese magazine Famitsu. The game was a commercial success;
+            thirteen weeks after its release,
+        </p>
+    </div>
+    </div>
+</body>
+</html>

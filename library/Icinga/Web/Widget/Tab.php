@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web\Widget;
 
@@ -44,6 +43,13 @@ class Tab extends AbstractWidget
     private $title = '';
 
     /**
+     * The label displayed for this tab
+     *
+     * @var string
+     */
+    private $label = '';
+
+    /**
      * The Url this tab points to
      *
      * @var string|null
@@ -77,6 +83,20 @@ class Tab extends AbstractWidget
      * @var array
      */
     private $tagParams;
+
+    /**
+     * Whether to open the link target on a new page
+     *
+     * @var boolean
+     */
+    private $targetBlank = false;
+
+    /**
+     * Data base target that determines if the link will be opened in a side-bar or in the main container
+     *
+     * @var null
+     */
+    private $baseTarget = null;
 
     /**
      * Sets an icon image for this tab
@@ -118,6 +138,30 @@ class Tab extends AbstractWidget
     }
 
     /**
+     * Set the tab label
+     *
+     * @param string $label
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
+    }
+
+    /**
+     * Get the tab label
+     *
+     * @return string
+     */
+    public function getLabel()
+    {
+        if (! $this->label) {
+            return $this->title;
+        }
+
+        return $this->label;
+    }
+
+    /**
      * @param mixed $title
      */
     public function setTitle($title)
@@ -139,6 +183,16 @@ class Tab extends AbstractWidget
     }
 
     /**
+     * Get the tab's target URL
+     *
+     * @return Url
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
      * Set the parameters to be set for this tabs Url
      *
      * @param array $url        The Url parameters to set
@@ -156,6 +210,16 @@ class Tab extends AbstractWidget
     public function setTagParams(array $tagParams)
     {
         $this->tagParams = $tagParams;
+    }
+
+    public function setTargetBlank($value = true)
+    {
+        $this->targetBlank =  $value;
+    }
+
+    public function setBaseTarget($value)
+    {
+        $this->baseTarget = $value;
     }
 
     /**
@@ -183,7 +247,7 @@ class Tab extends AbstractWidget
      *
      * @param  bool $active Whether the tab should be active
      *
-     * @return self
+     * @return $this
      */
     public function setActive($active = true)
     {
@@ -201,27 +265,48 @@ class Tab extends AbstractWidget
         if ($this->active) {
             $classes[] = 'active';
         }
-        $caption = $view->escape($this->title);
+
+        $caption = $view->escape($this->getLabel());
         $tagParams = $this->tagParams;
+        if ($this->targetBlank) {
+            // add warning to links that open in new tabs to improve accessibility, as recommended by WCAG20 G201
+            $caption .= '<span class="info-box display-on-hover"> opens in new window </span>';
+            $tagParams['target'] ='_blank';
+        }
+
+        if ($this->title) {
+            if ($tagParams !== null) {
+                $tagParams['title'] = $this->title;
+                $tagParams['aria-label'] = $this->title;
+            } else {
+                $tagParams = array(
+                    'title'         => $this->title,
+                    'aria-label'    => $this->title
+                );
+            }
+        }
+
+        if ($this->baseTarget !== null) {
+            $tagParams['data-base-target'] = $this->baseTarget;
+        }
 
         if ($this->icon !== null) {
             if (strpos($this->icon, '.') === false) {
-                if ($tagParams && array_key_exists('class', $tagParams)) {
-                    $tagParams['class'] .= ' icon-' . $this->icon;
-                } else {
-                    $tagParams['class'] = 'icon-' . $this->icon;
-                }
+                $caption = $view->icon($this->icon) . $caption;
             } else {
-                $caption = $view->img($this->icon, array('class' => 'icon')) . $caption;
+                $caption = $view->img($this->icon, null, array('class' => 'icon')) . $caption;
             }
         }
+
         if ($this->url !== null) {
             $this->url->overwriteParams($this->urlParams);
+
             if ($tagParams !== null) {
                 $params = $view->propertiesToString($tagParams);
             } else {
                 $params = '';
             }
+
             $tab = sprintf(
                 '<a href="%s"%s>%s</a>',
                 $this->url,
@@ -231,6 +316,7 @@ class Tab extends AbstractWidget
         } else {
             $tab = $caption;
         }
+
         $class = empty($classes) ? '' : sprintf(' class="%s"', implode(' ', $classes));
         return '<li ' . $class . '>' . $tab . "</li>\n";
     }

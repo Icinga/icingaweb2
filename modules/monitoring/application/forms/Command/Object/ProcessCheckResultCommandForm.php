@@ -1,6 +1,5 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
@@ -13,25 +12,23 @@ use Icinga\Module\Monitoring\Command\Object\ProcessCheckResultCommand;
 class ProcessCheckResultCommandForm extends ObjectsCommandForm
 {
     /**
+     * Initialize this form
+     */
+    public function init()
+    {
+        $this->addDescription($this->translate(
+            'This command is used to submit passive host or service check results.'
+        ));
+    }
+
+    /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
      */
     public function getSubmitLabel()
     {
-        return mtp(
-            'monitoring', 'Submit Passive Check Result', 'Submit Passive Check Results', count($this->objects)
-        );
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see \Icinga\Module\Monitoring\Forms\Command\CommandForm::getHelp() For the method documentation.
-     */
-    public function getHelp()
-    {
-        return mt(
-            'monitoring',
-            'This command is used to submit passive host or service check results.'
+        return $this->translatePlural(
+            'Submit Passive Check Result', 'Submit Passive Check Results', count($this->objects)
         );
     }
 
@@ -53,17 +50,13 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
             'status',
             array(
                 'required'      => true,
-                'label'         => mt('monitoring', 'Status'),
-                'description'   => mt('monitoring', 'The state this check result should report'),
-                'multiOptions'  => $object->getType() === $object::TYPE_HOST ? array(
-                    ProcessCheckResultCommand::HOST_UP          => mt('monitoring', 'UP', 'icinga.state'),
-                    ProcessCheckResultCommand::HOST_DOWN        => mt('monitoring', 'DOWN', 'icinga.state'),
-                    ProcessCheckResultCommand::HOST_UNREACHABLE => mt('monitoring', 'UNREACHABLE', 'icinga.state')
-                ) : array(
-                    ProcessCheckResultCommand::SERVICE_OK       => mt('monitoring', 'OK', 'icinga.state'),
-                    ProcessCheckResultCommand::SERVICE_WARNING  => mt('monitoring', 'WARNING', 'icinga.state'),
-                    ProcessCheckResultCommand::SERVICE_CRITICAL => mt('monitoring', 'CRITICAL', 'icinga.state'),
-                    ProcessCheckResultCommand::SERVICE_UNKNOWN  => mt('monitoring', 'UNKNOWN', 'icinga.state')
+                'label'         => $this->translate('Status'),
+                'description'   => $this->translate('The state this check result should report'),
+                'multiOptions'  => $object->getType() === $object::TYPE_HOST ? $this->getHostMultiOptions() : array(
+                    ProcessCheckResultCommand::SERVICE_OK       => $this->translate('OK', 'icinga.state'),
+                    ProcessCheckResultCommand::SERVICE_WARNING  => $this->translate('WARNING', 'icinga.state'),
+                    ProcessCheckResultCommand::SERVICE_CRITICAL => $this->translate('CRITICAL', 'icinga.state'),
+                    ProcessCheckResultCommand::SERVICE_UNKNOWN  => $this->translate('UNKNOWN', 'icinga.state')
                 )
             )
         );
@@ -72,8 +65,8 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
             'output',
             array(
                 'required'      => true,
-                'label'         => mt('monitoring', 'Output'),
-                'description'   => mt('monitoring', 'The plugin output of this check result')
+                'label'         => $this->translate('Output'),
+                'description'   => $this->translate('The plugin output of this check result')
             )
         );
         $this->addElement(
@@ -81,9 +74,8 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
             'perfdata',
             array(
                 'allowEmpty'    => true,
-                'label'         => mt('monitoring', 'Performance Data'),
-                'description'   => mt(
-                    'monitoring',
+                'label'         => $this->translate('Performance Data'),
+                'description'   => $this->translate(
                     'The performance data of this check result. Leave empty'
                     . ' if this check result has no performance data'
                 )
@@ -111,13 +103,31 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
             $this->getTransport($this->request)->send($command);
         }
 
-        Notification::success(mtp(
-            'monitoring',
+        Notification::success($this->translatePlural(
             'Processing check result..',
             'Processing check results..',
             count($this->objects)
         ));
 
         return true;
+    }
+
+    /**
+     * Returns the available host options based on the program version
+     *
+     * @return array
+     */
+    protected function getHostMultiOptions()
+    {
+        $options =  array(
+            ProcessCheckResultCommand::HOST_UP => $this->translate('UP', 'icinga.state'),
+            ProcessCheckResultCommand::HOST_DOWN => $this->translate('DOWN', 'icinga.state')
+        );
+
+        if (substr($this->getBackend()->getProgramVersion(), 0, 2) !== 'v2') {
+            $options[ProcessCheckResultCommand::HOST_UNREACHABLE] = $this->translate('UNREACHABLE', 'icinga.state');
+        }
+
+        return $options;
     }
 }

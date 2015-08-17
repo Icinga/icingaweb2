@@ -1,25 +1,21 @@
-<?php if ($this->compact): ?>
-<div class="content">
-<?php else: ?>
+<?php if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs ?>
-  <div style="margin: 1em;" class="dontprint">
-    <?= $this->translate('Sort by'); ?> <?= $this->sortControl->render($this); ?>
-  </div>
-  <?= $this->widget('limiter')->setMaxLimit(count($servicegroups)); ?>
-  <?= $this->paginationControl($servicegroups, null, null, array('preserve' => $this->preserve)); ?>
-</div>
-<div class="content">
+  <?= $this->tabs; ?>
+  <?= $this->sortBox; ?>
+  <?= $this->limiter; ?>
+  <?= $this->paginator; ?>
   <?= $this->filterEditor; ?>
+</div>
 <?php endif ?>
-  <?php
-    if (count($servicegroups) === 0) {
-      echo $this->translate('No service groups matching the filter');
-      echo '</div>';
-      return;
-    }
-  ?>
-  <table class="groupview" data-base-target="_next">
+<div class="content">
+<?php
+
+$servicegroups->peekAhead($this->compact);
+$firstRow = true;
+foreach ($servicegroups as $s): ?>
+<?php if ($firstRow): ?>
+  <?php $firstRow = false; ?>
+  <table class="groupview action" data-base-target="_next">
     <thead>
       <th><?= $this->translate('Last Problem'); ?></th>
       <th><?= $this->translate('Service Group'); ?></th>
@@ -27,61 +23,64 @@
       <th><?= $this->translate('Service States'); ?></th>
     </thead>
     <tbody>
-    <?php foreach ($servicegroups as $s): ?>
-      <tr href="<?= $this->href('monitoring/list/services', array('servicegroup' => $s->servicegroup)); ?>">
+<?php endif ?>
+      <tr href="<?= $this->href('monitoring/list/services', array('servicegroup_name' => $s->servicegroup_name)); ?>">
        <?php if ($s->services_critical_last_state_change_unhandled): ?>
         <td class="state change critical unhandled">
           <strong><?= $this->translate('CRITICAL'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_critical_last_state_change_unhandled); ?>
+          <?= $this->timeSince($s->services_critical_last_state_change_unhandled); ?>
         </td>
        <?php elseif ($s->services_unknown_last_state_change_unhandled): ?>
         <td class="state change unknown unhandled">
           <strong><?= $this->translate('UNKNOWN'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_unknown_last_state_change_unhandled); ?>
+          <?= $this->timeSince($s->services_unknown_last_state_change_unhandled); ?>
         </td>
        <?php elseif ($s->services_warning_last_state_change_unhandled): ?>
         <td class="state change warning unhandled">
           <strong><?= $this->translate('WARNING'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_warning_last_state_change_unhandled); ?>
+          <?= $this->timeSince($s->services_warning_last_state_change_unhandled); ?>
         </td>
        <?php elseif ($s->services_critical_last_state_change_handled): ?>
         <td class="state change critical">
           <strong><?= $this->translate('CRITICAL'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_critical_last_state_change_handled); ?>
+          <?= $this->timeSince($s->services_critical_last_state_change_handled); ?>
         </td>
        <?php elseif ($s->services_unknown_last_state_change_handled): ?>
         <td class="state change unknown">
           <strong><?= $this->translate('UNKNOWN'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_unknown_last_state_change_handled); ?>
+          <?= $this->timeSince($s->services_unknown_last_state_change_handled); ?>
         </td>
        <?php elseif ($s->services_warning_last_state_change_handled): ?>
         <td class="state change warning">
           <strong><?= $this->translate('WARNING'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_warning_last_state_change_handled); ?>
+          <?= $this->timeSince($s->services_warning_last_state_change_handled); ?>
         </td>
        <?php elseif ($s->services_ok_last_state_change): ?>
         <td class="state change ok">
           <strong><?= $this->translate('OK'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_ok_last_state_change); ?>
+          <?= $this->timeSince($s->services_ok_last_state_change); ?>
         </td>
        <?php else: ?>
         <td class="state change pending">
           <strong><?= $this->translate('PENDING'); ?></strong>
           <br>
-          <?= $this->prefixedTimeSince($s->services_pending_last_state_change); ?>
+          <?= $this->timeSince($s->services_pending_last_state_change); ?>
         </td>
        <?php endif ?>
         <td class="groupname">
-          <a href="<?= $this->href('monitoring/list/services', array('servicegroup' => $s->servicegroup)); ?>">
-            <?= $s->servicegroup; ?>
-          </a>
+          <?= $this->qlink(
+            $s->servicegroup_alias,
+            'monitoring/list/services',
+            array('servicegroup_name' => $s->servicegroup_name),
+            array('title' => sprintf($this->translate('List all services in the group "%s"'), $s->servicegroup_alias))
+          ); ?>
         </td>
         <td class="total">
           <?= $s->services_total; ?>
@@ -89,47 +88,77 @@
         <td class="state">
         <?php if ($s->services_ok): ?>
           <span class="state ok">
-            <a href="<?= $this->href(
+            <?= $this->qlink(
+              $s->services_ok,
               'monitoring/list/services',
               array(
-                'service_state' => 0,
-                'servicegroup'  => $s->servicegroup,
-                'sort'          => 'service_severity'
+                'service_state'     => 0,
+                'servicegroup_name' => $s->servicegroup_name,
+                'sort'              => 'service_severity'
+              ),
+              array(
+                'title' => sprintf(
+                  $this->translatePlural(
+                    'List %s service that is currently in state OK in service group "%s"',
+                    'List %s services which are currently in state OK in service group "%s"',
+                    $s->services_ok
+                  ),
+                  $s->services_ok,
+                  $s->servicegroup_alias
+                )
               )
-            ); ?>" title="<?= $this->translate('Services OK'); ?>">
-              <?= $s->services_ok; ?>
-            </a>
+            ); ?>
           </span>
         <?php endif ?>
         <?php if ($s->services_critical_unhandled): ?>
           <span class="state critical">
-            <a href="<?= $this->href(
+            <?= $this->qlink(
+              $s->services_critical_unhandled,
               'monitoring/list/services',
               array(
                 'service_state'         => 2,
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'servicegroup'          => $s->servicegroup,
+                'servicegroup_name'     => $s->servicegroup_name,
                 'sort'                  => 'service_severity'
+              ),
+              array(
+                  'title' => sprintf(
+                  $this->translatePlural(
+                    'List %s service that is currently in state CRITICAL in service group "%s"',
+                    'List %s services which are currently in state CRITICAL in service group "%s"',
+                    $s->services_critical_unhandled
+                  ),
+                  $s->services_critical_unhandled,
+                  $s->servicegroup_alias
+                )
               )
-            ); ?>" title="<?= $this->translate('Services CRITICAL Unhandled'); ?>">
-              <?= $s->services_critical_unhandled; ?>
-            </a>
+            ); ?>
         <?php endif ?>
           <?php if ($s->services_critical_handled): ?>
             <span class="state critical handled">
-              <a href="<?= $this->href(
+              <?= $this->qlink(
+                $s->services_critical_handled,
                 'monitoring/list/services',
                 array(
                   'service_state'     => 2,
                   'service_handled'   => 1,
-                  'servicegroup'      => $s->servicegroup,
+                  'servicegroup_name' => $s->servicegroup_name,
                   'sort'              => 'service_severity'
+                ),
+                array(
+                  'title' => sprintf(
+                    $this->translatePlural(
+                      'List %s service that is currently in state CRITICAL (Acknowledged) in service group "%s"',
+                      'List %s services which are currently in state CRITICAL (Acknowledged) in service group "%s"',
+                      $s->services_critical_handled
+                    ),
+                    $s->services_critical_handled,
+                    $s->servicegroup_alias
+                  )
                 )
-              ); ?>" title="<?= $this->translate('Services CRITICAL Handled'); ?>">
-                <?= $s->services_critical_handled; ?>
-              </a>
+              ); ?>
             </span>
           <?php endif ?>
         <?php if ($s->services_critical_unhandled): ?>
@@ -137,33 +166,53 @@
         <?php endif ?>
         <?php if ($s->services_unknown_unhandled): ?>
           <span class="state unknown">
-            <a href="<?= $this->href(
+            <?= $this->qlink(
+              $s->services_unknown_unhandled,
               'monitoring/list/services',
               array(
                 'service_state'         => 3,
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'servicegroup'          => $s->servicegroup,
+                'servicegroup_name'     => $s->servicegroup_name,
                 'sort'                  => 'service_severity'
+              ),
+              array(
+                'title' => sprintf(
+                  $this->translatePlural(
+                    'List %s service that is currently in state UNKNOWN in service group "%s"',
+                    'List %s services which are currently in state UNKNOWN in service group "%s"',
+                    $s->services_unknown_unhandled
+                  ),
+                  $s->services_unknown_unhandled,
+                  $s->servicegroup_alias
+                )
               )
-            ); ?>" title="<?= $this->translate('Services UNKNOWN Unhandled'); ?>">
-              <?= $s->services_unknown_unhandled; ?>
-            </a>
+            ); ?>
         <?php endif ?>
           <?php if ($s->services_unknown_handled): ?>
             <span class="state unknown handled">
-              <a href="<?= $this->href(
+              <?= $this->qlink(
+                $s->services_unknown_handled,
                 'monitoring/list/services',
                 array(
                   'service_state'     => 3,
                   'service_handled'   => 1,
-                  'servicegroup'      => $s->servicegroup,
+                  'servicegroup_name' => $s->servicegroup_name,
                   'sort'              => 'service_severity'
+                ),
+                array(
+                  'title' => sprintf(
+                    $this->translatePlural(
+                      'List %s service that is currently in state UNKNOWN (Acknowledged) in service group "%s"',
+                      'List %s services which are currently in state UNKNOWN (Acknowledged) in service group "%s"',
+                      $s->services_unknown_handled
+                    ),
+                    $s->services_unknown_handled,
+                    $s->servicegroup_alias
+                  )
                 )
-              ); ?>" title="<?= $this->translate('Services UNKNOWN Handled'); ?>">
-                <?= $s->services_unknown_handled; ?>
-              </a>
+              ); ?>
             </span>
           <?php endif ?>
         <?php if ($s->services_unknown_unhandled): ?>
@@ -171,33 +220,53 @@
         <?php endif ?>
         <?php if ($s->services_warning_unhandled): ?>
           <span class="state warning">
-            <a href="<?= $this->href(
+            <?= $this->qlink(
+              $s->services_warning_unhandled,
               'monitoring/list/services',
               array(
                 'service_state'         => 1,
                 'service_acknowledged'  => 0,
                 'service_in_downtime'   => 0,
                 'host_problem'          => 0,
-                'servicegroup'          => $s->servicegroup,
+                'servicegroup_name'     => $s->servicegroup_name,
                 'sort'                  => 'service_severity'
+              ),
+              array(
+                'title' => sprintf(
+                  $this->translatePlural(
+                    'List %s service that is currently in state WARNING in service group "%s"',
+                    'List %s services which are currently in state WARNING in service group "%s"',
+                    $s->services_warning_unhandled
+                  ),
+                  $s->services_warning_unhandled,
+                  $s->servicegroup_alias
+                )
               )
-            ); ?>" title="<?= $this->translate('Services WARNING Unhandled'); ?>">
-              <?= $s->services_warning_unhandled; ?>
-            </a>
+            ); ?>
         <?php endif ?>
           <?php if ($s->services_warning_handled): ?>
             <span class="state warning handled">
-              <a href="<?= $this->href(
+              <?= $this->qlink(
+                $s->services_warning_handled,
                 'monitoring/list/services',
                 array(
                     'service_state'     => 1,
                     'service_handled'   => 1,
-                    'servicegroup'      => $s->servicegroup,
+                    'servicegroup_name' => $s->servicegroup_name,
                     'sort'              => 'service_severity'
+                ),
+                array(
+                  'title' => sprintf(
+                    $this->translatePlural(
+                      'List %s service that is currently in state WARNING (Acknowledged) in service group "%s"',
+                      'List %s services which are currently in state WARNING (Acknowledged) in service group "%s"',
+                      $s->services_warning_handled
+                    ),
+                    $s->services_warning_handled,
+                    $s->servicegroup_alias
+                  )
                 )
-              ); ?>" title="<?= $this->translate('Services WARNING Handled'); ?>">
-                <?= $s->services_warning_handled; ?>
-              </a>
+              ); ?>
             </span>
           <?php endif ?>
         <?php if ($s->services_warning_unhandled): ?>
@@ -205,21 +274,46 @@
         <?php endif ?>
         <?php if ($s->services_pending): ?>
           <span class="state pending">
-            <a href="<?= $this->href(
+            <?= $this->qlink(
+              $s->services_pending,
               'monitoring/list/services',
               array(
-                'service_state' => 99,
-                'servicegroup'  => $s->servicegroup,
-                'sort'          => 'service_severity'
+                'service_state'     => 99,
+                'servicegroup_name' => $s->servicegroup_name,
+                'sort'              => 'service_severity'
+              ),
+              array(
+                'title' => sprintf(
+                  $this->translatePlural(
+                    'List %s service that is currenlty in state PENDING in service group "%s"',
+                    'List %s services which are currently in state PENDING in service group "%s"',
+                    $s->services_pending
+                  ),
+                  $s->services_pending,
+                  $s->servicegroup_alias
+                )
               )
-            ); ?>" title="<?= $this->translate('Services PENDING'); ?>">
-              <?= $s->services_pending; ?>
-            </a>
+            ); ?>
           </span>
         <?php endif ?>
         </td>
       </tr>
-    <?php endforeach ?>
+<?php endforeach ?>
+<?php if ($servicegroups->hasResult()): ?>
     </tbody>
   </table>
+<?php if ($servicegroups->hasMore()): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $this->url()->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right show-more'
+    )
+  ); ?>
+<?php endif ?>
+<?php else: ?>
+  <?= $this->translate('No servicegroups found matching the filter'); ?>
+<?php endif ?>
 </div>

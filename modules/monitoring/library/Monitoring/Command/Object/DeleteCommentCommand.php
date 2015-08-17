@@ -1,29 +1,28 @@
 <?php
-// {{{ICINGA_LICENSE_HEADER}}}
-// {{{ICINGA_LICENSE_HEADER}}}
+/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Module\Monitoring\Command\Object;
+
+use Icinga\Module\Monitoring\Command\IcingaCommand;
 
 /**
  * Delete a host or service comment
  */
-class DeleteCommentCommand extends ObjectCommand
+class DeleteCommentCommand extends IcingaCommand
 {
-    /**
-     * (non-PHPDoc)
-     * @see \Icinga\Module\Monitoring\Command\Object\ObjectCommand::$allowedObjects For the property documentation.
-     */
-    protected $allowedObjects = array(
-        self::TYPE_HOST,
-        self::TYPE_SERVICE
-    );
-
     /**
      * ID of the comment that is to be deleted
      *
      * @var int
      */
     protected $commentId;
+
+    /**
+     * The type of the comment, either 'host' or 'service'
+     *
+     * @var boolean
+     */
+    protected $isService = false;
 
     /**
      * Set the ID of the comment that is to be deleted
@@ -46,5 +45,28 @@ class DeleteCommentCommand extends ObjectCommand
     public function getCommentId()
     {
         return $this->commentId;
+    }
+
+    /**
+     * Whether the command affects a service comment
+     *
+     * @return boolean
+     */
+    public function getIsService()
+    {
+        return $this->isService;
+    }
+
+    /**
+     * Set whether the command affects a service
+     *
+     * @param   bool $isService
+     *
+     * @return  $this
+     */
+    public function setIsService($isService = true)
+    {
+        $this->isService = (bool) $isService;
+        return $this;
     }
 }
