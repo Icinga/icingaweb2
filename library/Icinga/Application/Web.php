@@ -307,7 +307,7 @@ class Web extends EmbeddedWeb
         $this
             ->getLoader()
             ->registerNamespace(
-                'Icinga\\Controllers',
+                'Icinga\\' . Dispatcher::CONTROLLER_NAMESPACE,
                 $this->getApplicationDir('controllers')
             )
             ->registerNamespace(

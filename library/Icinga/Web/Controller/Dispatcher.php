@@ -19,6 +19,13 @@ use Zend_Controller_Response_Abstract;
 class Dispatcher extends Zend_Controller_Dispatcher_Standard
 {
     /**
+     * Controller namespace
+     *
+     * @var string
+     */
+    const CONTROLLER_NAMESPACE = 'Controller';
+
+    /**
      * Dispatch request to a controller and action
      *
      * @param   Zend_Controller_Request_Abstract  $request
@@ -38,9 +45,10 @@ class Dispatcher extends Zend_Controller_Dispatcher_Standard
         }
         $controllerName = ucfirst($controllerName) . 'Controller';
         if ($this->_defaultModule === $this->_curModule) {
-            $controllerClass = 'Icinga\\Controllers\\' . $controllerName;
+            $controllerClass = 'Icinga\\' . self::CONTROLLER_NAMESPACE . '\\' . $controllerName;
         } else {
-            $controllerClass = 'Icinga\\Module\\' . $this->_curModule . '\\Controllers\\' . $controllerName;
+            $controllerClass = 'Icinga\\Module\\' . $this->_curModule . '\\' . self::CONTROLLER_NAMESPACE . '\\'
+                . $controllerName;
         }
         if (! class_exists($controllerClass)) {
             parent::dispatch($request, $response);
