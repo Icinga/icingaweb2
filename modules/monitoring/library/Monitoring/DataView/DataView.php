@@ -36,6 +36,13 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
     protected $isSorted = false;
 
     /**
+     * The cache for all filter columns
+     *
+     * @var array
+     */
+    protected $filterColumns;
+
+    /**
      * Create a new view
      *
      * @param ConnectionInterface   $connection
@@ -174,19 +181,45 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
     }
 
     /**
-     * Check whether the given column is a valid filter column, i.e. the view actually provides the column or it's
-     * a non-queryable filter column
+     * Check whether the given column is a valid filter column
      *
-     * @param   string $column
+     * @param   string  $column
      *
      * @return  bool
      */
     public function isValidFilterTarget($column)
     {
-        return in_array($column, $this->getColumns()) || in_array($column, $this->getFilterColumns());
+        return in_array($column, $this->getFilterColumns());
     }
 
+    /**
+     * Return all filter columns with their optional label as key
+     *
+     * This will merge the results of self::getColumns(), self::getStaticFilterColumns() and
+     * self::getDynamicFilterColumns() *once*. (i.e. subsequent calls of this function will
+     * return the same result.)
+     *
+     * @return  array
+     */
     public function getFilterColumns()
+    {
+        if ($this->filterColumns === null) {
+            $this->filterColumns = array_merge(
+                $this->getColumns(),
+                $this->getStaticFilterColumns(),
+                $this->getDynamicFilterColumns()
+            );
+        }
+
+        return $this->filterColumns;
+    }
+
+    /**
+     * Return all static filter columns
+     *
+     * @return  array
+     */
+    public function getStaticFilterColumns()
     {
         return array();
     }
