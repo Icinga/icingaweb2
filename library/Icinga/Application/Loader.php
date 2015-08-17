@@ -33,6 +33,7 @@ class Loader
      * @param   string  $namespace
      * @param   string  $directory
      *
+     * @return  $this
      * @throws  ProgrammingError
      */
     public function registerNamespace($namespace, $directory)
@@ -46,6 +47,8 @@ class Loader
         }
 
         $this->namespaces[$namespace] = $directory;
+
+        return $this;
     }
 
     /**
