@@ -204,11 +204,24 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
     public function getFilterColumns()
     {
         if ($this->filterColumns === null) {
-            $this->filterColumns = array_merge(
+            $columns = array_merge(
                 $this->getColumns(),
                 $this->getStaticFilterColumns(),
                 $this->getDynamicFilterColumns()
             );
+
+            $this->filterColumns = array();
+            foreach ($columns as $label => $column) {
+                if (is_int($label)) {
+                    $label = ucwords(str_replace('_', ' ', $column));
+                }
+
+                if ($this->query->isCaseInsensitive($column)) {
+                    $label .= ' ' . t('(Case insensitive)');
+                }
+
+                $this->filterColumns[$label] = $column;
+            }
         }
 
         return $this->filterColumns;
