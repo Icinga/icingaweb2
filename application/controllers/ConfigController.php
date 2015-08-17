@@ -332,7 +332,7 @@ class ConfigController extends Controller
     public function resourceAction()
     {
         $this->assertPermission('config/application/resources');
-        $this->view->resources = Config::app('resources', true)->keys();
+        $this->view->resources = Config::app('resources', true);
         $this->createApplicationTabs()->activate('resource');
     }
 

@@ -6,8 +6,12 @@
       <th style="width: 5em"><?= $this->translate('Order'); ?></th>
     </thead>
     <tbody>
-<?php $backendNames = $form->getBackendOrder(); ?>
-<?php for ($i = 0; $i < count($backendNames); $i++): ?>
+<?php
+    $backendNames = $form->getBackendOrder();
+    $backendConfigs = $form->getConfig();
+    for ($i = 0; $i < count($backendNames); $i++):
+        $type = $backendConfigs->getSection($backendNames[$i])->get('backend');
+?>
       <tr>
         <td class="action">
           <?= $this->qlink(
@@ -15,7 +19,8 @@
             'config/edituserbackend',
             array('backend' => $backendNames[$i]),
             array(
-                'icon'  => 'edit',
+                'icon'  => $type === 'external' ?
+                    'magic' : ($type === 'ldap' || $type === 'msldap' ? 'sitemap' : 'database'),
                 'class' => 'rowaction',
                 'title' => sprintf($this->translate('rEdit user backend %s'), $backendNames[$i])
             )
