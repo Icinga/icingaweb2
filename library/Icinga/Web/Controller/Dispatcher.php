@@ -4,6 +4,9 @@
 namespace Icinga\Web\Controller;
 
 use Exception;
+use Zend_Controller_Action;
+use Zend_Controller_Action_Interface;
+use Zend_Controller_Dispatcher_Exception;
 use Zend_Controller_Dispatcher_Standard;
 use Zend_Controller_Request_Abstract;
 use Zend_Controller_Response_Abstract;
@@ -21,7 +24,9 @@ class Dispatcher extends Zend_Controller_Dispatcher_Standard
      * @param   Zend_Controller_Request_Abstract  $request
      * @param   Zend_Controller_Response_Abstract $response
      *
-     * @throws  Exception If dispatching the request fails
+     * @throws  Zend_Controller_Dispatcher_Exception    If the controller is not an instance of
+     *                                                  Zend_Controller_Action_Interface
+     * @throws  Exception                               If dispatching the request fails
      */
     public function dispatch(Zend_Controller_Request_Abstract $request, Zend_Controller_Response_Abstract $response)
     {
@@ -42,6 +47,13 @@ class Dispatcher extends Zend_Controller_Dispatcher_Standard
             return;
         }
         $controller = new $controllerClass($request, $response, $this->getParams());
+        if (! $controller instanceof Zend_Controller_Action
+            && ! $controller instanceof Zend_Controller_Action_Interface
+        ) {
+            throw new Zend_Controller_Dispatcher_Exception(
+                'Controller "' . $controllerClass . '" is not an instance of Zend_Controller_Action_Interface'
+            );
+        }
         $action = $this->getActionMethod($request);
         $request->setDispatched(true);
         // Buffer output by default
