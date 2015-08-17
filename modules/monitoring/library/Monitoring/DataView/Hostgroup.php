@@ -22,7 +22,7 @@ class Hostgroup extends DataView
     /**
      * {@inheritdoc}
      */
-    public function getFilterColumns()
+    public function getStaticFilterColumns()
     {
         return array(
             'host', 'host_alias', 'host_display_name', 'host_name',
@@ -30,19 +30,5 @@ class Hostgroup extends DataView
             'service', 'service_description', 'service_display_name',
             'servicegroup', 'servicegroup_alias', 'servicegroup_name'
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_'
-            && preg_match('/^_(?:host|service)_/', $column)
-        ) {
-            return true;
-        } else {
-            return parent::isValidFilterTarget($column);
-        }
     }
 }
