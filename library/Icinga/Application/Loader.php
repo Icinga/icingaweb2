@@ -128,7 +128,7 @@ class Loader
     {
         // Think about to add class pathes to php include path
         // this could be faster (tg)
-        spl_autoload_register(array(&$this, 'loadClass'));
+        spl_autoload_register(array($this, 'loadClass'));
     }
 
     /**
@@ -136,6 +136,6 @@ class Loader
      */
     public function unregister()
     {
-        spl_autoload_unregister(array(&$this, 'loadClass'));
+        spl_autoload_unregister(array($this, 'loadClass'));
     }
 }
