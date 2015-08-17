@@ -11,18 +11,23 @@ use Zend_Controller_Response_Abstract;
 
 /**
  * Dispatcher supporting Zend-style and namespaced controllers
+ *
+ * Does not support a namespaced default controller in combination w/ the Zend parameter useDefaultControllerAlways.
  */
 class Dispatcher extends Zend_Controller_Dispatcher_Standard
 {
     /**
-     * {@inheritdoc}
+     * Dispatch request to a controller and action
+     *
+     * @param Zend_Controller_Request_Abstract  $request
+     * @param Zend_Controller_Response_Abstract $resposne
      */
     public function dispatch(Zend_Controller_Request_Abstract $request, Zend_Controller_Response_Abstract $response)
     {
         $this->setResponse($response);
         $controllerName = $request->getControllerName();
         if (! $controllerName) {
-            throw new LogicException('Controller name not found');
+            return parent::dispatch($request, $response);
         }
         $controllerName = ucfirst($controllerName) . 'Controller';
         if ($this->_defaultModule === $this->_curModule) {
