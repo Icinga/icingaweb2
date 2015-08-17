@@ -9,8 +9,14 @@ use Zend_Controller_Dispatcher_Standard;
 use Zend_Controller_Request_Abstract;
 use Zend_Controller_Response_Abstract;
 
+/**
+ * Dispatcher supporting Zend-style and namespaced controllers
+ */
 class Dispatcher extends Zend_Controller_Dispatcher_Standard
 {
+    /**
+     * {@inheritdoc}
+     */
     public function dispatch(Zend_Controller_Request_Abstract $request, Zend_Controller_Response_Abstract $response)
     {
         $this->setResponse($response);
