@@ -16,11 +16,12 @@
         this.on('mouseleave', 'li.dropdown', this.dropdownLeave, this);
         this.on('mouseenter', '#menu > nav > ul > li', this.menuTitleHovered, this);
         this.on('mouseleave', '#sidebar', this.leaveSidebar, this);
-        this.on('rendered', this.onRendered);
+        this.on('rendered', this.onRendered, this);
     };
     Navigation.prototype = new Icinga.EventListener();
 
     Navigation.prototype.onRendered = function(evt) {
+        var self = evt.data.self;
         // get original source element of the rendered-event
         var el = evt.target;
         if (activeMenuId) {
@@ -50,14 +51,23 @@
                 });
             }
         }
+        // restore hovered menu after auto-reload
+        if (self.hovered) {
+            var hovered = self.icinga.utils.getElementByDomPath(self.hovered);
+            if (hovered) {
+                self.hoverElement($(hovered));
+            }
+        }
     };
 
     Navigation.prototype.linkClicked = function(event) {
         var $a = $(this);
         var href = $a.attr('href');
         var $li;
-        var icinga = event.data.self.icinga;
+        var self = event.data.self;
+        var icinga = self.icinga;
 
+        self.hovered = null;
         if (href.match(/#/)) {
             // ...it may be a menu section without a dedicated link.
             // Switch the active menu item:
@@ -88,7 +98,7 @@
     Navigation.prototype.setActiveByUrl = function(url) {
         this.resetActive();
         this.setActive($('#menu [href="' + url + '"]'));
-    }
+    };
 
     /**
      * Change the active menu element
@@ -96,7 +106,6 @@
      * @param $el   {jQuery}    A selector pointing to the active element
      */
     Navigation.prototype.setActive = function($el) {
-
         $el.closest('li').addClass('active');
         $el.parents('li').addClass('active');
         activeMenuId = $el.closest('li').attr('id');
@@ -112,6 +121,7 @@
             delay = 800,
             self = event.data.self;
 
+        self.hovered = null;
         if ($li.hasClass('active')) {
             $li.siblings().removeClass('hover');
             return;
@@ -170,11 +180,17 @@
             $li.removeClass('hover');
             $('#layout').removeClass('hoveredmenu');
         }, 500);
+        self.hovered = null;
     };
 
     Navigation.prototype.hoverElement = function ($li)  {
         $('#layout').addClass('hoveredmenu');
         $li.addClass('hover');
+        if ($li[0]) {
+            this.hovered = this.icinga.utils.getDomPath($li[0]);
+        } else {
+            this.hovered = null;
+        }
     };
 
     Navigation.prototype.dropdownHover = function () {
@@ -192,6 +208,7 @@
                 }
             } catch(e) { /* Bypass because if IE8 */ }
         }, 300);
+        self.hovered = null;
     };
     Icinga.Behaviors.Navigation = Navigation;
 
