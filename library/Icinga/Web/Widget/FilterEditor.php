@@ -305,7 +305,7 @@ class FilterEditor extends AbstractWidget
             $this->addFilterToId($add);
         }
 
-        if ($request->isGet()) {
+        if ($this->query !== null && $request->isGet()) {
             $this->query->applyFilter($this->getFilter());
         }
 
