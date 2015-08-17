@@ -9,9 +9,7 @@ namespace Icinga\Module\Monitoring\DataView;
 class Programstatus extends DataView
 {
     /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getColumns()
     {
@@ -45,9 +43,7 @@ class Programstatus extends DataView
     }
 
     /**
-     * Retrieve default sorting rules for particular columns. These involve sort order and potential additional to sort
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getSortRules()
     {

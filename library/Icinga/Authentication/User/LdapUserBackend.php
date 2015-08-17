@@ -50,7 +50,14 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
      *
      * @var array
      */
-    protected $filterColumns = array('user');
+    protected $blacklistedQueryColumns = array('user');
+
+    /**
+     * The search columns being provided
+     *
+     * @var array
+     */
+    protected $searchColumns = array('user');
 
     /**
      * The default sort rules to be applied on a query
@@ -240,6 +247,21 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
                 'created_at'    => $createdAtAttribute,
                 'last_modified' => $lastModifiedAttribute
             )
+        );
+    }
+
+    /**
+     * Initialize this repository's filter columns
+     *
+     * @return  array
+     */
+    protected function initializeFilterColumns()
+    {
+        return array(
+            t('Username')       => 'user_name',
+            t('Active')         => 'is_active',
+            t('Created At')     => 'created_at',
+            t('Last Modified')  => 'last_modified'
         );
     }
 

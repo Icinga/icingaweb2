@@ -6,9 +6,7 @@ namespace Icinga\Module\Monitoring\DataView;
 class ServiceStatus extends DataView
 {
     /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getColumns()
     {
@@ -97,6 +95,9 @@ class ServiceStatus extends DataView
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSortRules()
     {
         return array(
@@ -142,7 +143,10 @@ class ServiceStatus extends DataView
         );
     }
 
-    public function getFilterColumns()
+    /**
+     * {@inheritdoc}
+     */
+    public function getStaticFilterColumns()
     {
         return array(
             'host',
@@ -155,16 +159,6 @@ class ServiceStatus extends DataView
             'servicegroup_alias',
             'servicegroup_name'
         );
-    }
-
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_'
-            && preg_match('/^_(?:host|service)_/', $column)
-        ) {
-            return true;
-        }
-        return parent::isValidFilterTarget($column);
     }
 
     /**

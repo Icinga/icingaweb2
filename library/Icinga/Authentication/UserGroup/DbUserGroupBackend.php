@@ -71,7 +71,14 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      *
      * @var array
      */
-    protected $filterColumns = array('group', 'user');
+    protected $blacklistedQueryColumns = array('group', 'user');
+
+    /**
+     * The search columns being provided
+     *
+     * @var array
+     */
+    protected $searchColumns = array('group', 'user');
 
     /**
      * The value conversion rules to apply on a query or statement
@@ -95,6 +102,26 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
         if (! $this->ds->getTablePrefix()) {
             $this->ds->setTablePrefix('icingaweb_');
         }
+    }
+
+    /**
+     * Initialize this repository's filter columns
+     *
+     * @return  array
+     */
+    protected function initializeFilterColumns()
+    {
+        $userLabel = t('Username') . ' ' . t('(Case insensitive)');
+        $groupLabel = t('User Group') . ' ' . t('(Case insensitive)');
+        return array(
+            $userLabel          => 'user',
+            t('Username')       => 'user_name',
+            $groupLabel         => 'group',
+            t('User Group')     => 'group_name',
+            t('Parent')         => 'parent',
+            t('Created At')     => 'created_at',
+            t('Last Modified')  => 'last_modified'
+        );
     }
 
     /**

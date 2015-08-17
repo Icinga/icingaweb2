@@ -32,7 +32,14 @@ class IniUserGroupBackend extends IniRepository implements UserGroupBackendInter
      *
      * @var array
      */
-    protected $filterColumns = array('group');
+    protected $blacklistedQueryColumns = array('group');
+
+    /**
+     * The search columns being provided
+     *
+     * @var array
+     */
+    protected $searchColumns = array('group');
 
     /**
      * The value conversion rules to apply on a query or statement
@@ -53,6 +60,21 @@ class IniUserGroupBackend extends IniRepository implements UserGroupBackendInter
     protected function init()
     {
         $this->ds->getConfigObject()->setKeyColumn('name');
+    }
+
+    /**
+     * Initialize this repository's filter columns
+     *
+     * @return  array
+     */
+    protected function initializeFilterColumns()
+    {
+        return array(
+            t('User Group')     => 'group',
+            t('Parent')         => 'parent',
+            t('Created At')     => 'created_at',
+            t('Last Modified')  => 'last_modified'
+        );
     }
 
     /**

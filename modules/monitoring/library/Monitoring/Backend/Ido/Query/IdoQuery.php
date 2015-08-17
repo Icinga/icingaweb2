@@ -554,6 +554,31 @@ abstract class IdoQuery extends DbQuery
     }
 
     /**
+     * Return whether the given alias or column name provides case insensitive value comparison
+     *
+     * @param   string  $aliasOrColumn
+     *
+     * @return  bool
+     */
+    public function isCaseInsensitive($aliasOrColumn)
+    {
+        if ($this->isCustomVar($aliasOrColumn)) {
+            return false;
+        }
+
+        $column = $this->getMappedField($aliasOrColumn) ?: $aliasOrColumn;
+        if (! $column) {
+            return false;
+        }
+
+        if (! empty($this->columnsWithoutCollation)) {
+            return in_array($column, $this->columnsWithoutCollation) || strpos($column, 'LOWER') !== 0;
+        }
+
+        return preg_match('/ COLLATE .+$/', $column) === 1;
+    }
+
+    /**
      * Apply oracle specific query initialization
      */
     private function initializeForOracle()
@@ -793,6 +818,16 @@ abstract class IdoQuery extends DbQuery
     protected function aliasToTableName($alias)
     {
         return isset($this->idxAliasTable[$alias]) ? $this->idxAliasTable[$alias] : null;
+    }
+
+    /**
+     * Return whether this query allows to join custom variables
+     *
+     * @return  bool
+     */
+    public function allowsCustomVars()
+    {
+        return $this->allowCustomVars;
     }
 
     /**
