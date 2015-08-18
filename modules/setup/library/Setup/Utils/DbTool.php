@@ -445,6 +445,24 @@ class DbTool
     }
 
     /**
+     * Return the version of the server currently connected to
+     *
+     * @return  string|null
+     */
+    public function getServerVersion()
+    {
+        if ($this->config['db'] === 'mysql') {
+            return $this->query('show variables like "version"')->fetchColumn(1) ?: null;
+        } elseif ($this->config['db'] === 'pgsql') {
+            return $this->query('show server_version')->fetchColumn() ?: null;
+        } else {
+            throw new LogicException(
+                sprintf('Unable to fetch the server\'s version. Unsupported PDO driver "%s"', $this->config['db'])
+            );
+        }
+    }
+
+    /**
      * Import the given SQL file
      *
      * @param   string  $filepath   The file to import
