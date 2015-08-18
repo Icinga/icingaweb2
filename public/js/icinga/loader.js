@@ -424,7 +424,9 @@
                 this.icinga.ui.reloadCss();
             }
 
-            if (req.getResponseHeader('X-Icinga-Redirect')) return;
+            if (req.getResponseHeader('X-Icinga-Redirect')) {
+                return;
+            }
 
             // div helps getting an XML tree
             var $resp = $('<div>' + req.responseText + '</div>');
@@ -515,8 +517,6 @@
                     var $el = $(el);
                     if ($el.hasClass('dashboard')) {
                         return;
-                    } else {
-
                     }
                     var url = $el.data('icingaUrl');
                     targets[i].data('icingaUrl', url);
@@ -533,28 +533,9 @@
 
             this.icinga.ui.initializeTriStates($resp);
 
-            /* Should we try to fiddle with responses containing full HTML? */
-            /*
-            if ($('body', $resp).length) {
-                req.responseText = $('script', $('body', $resp).html()).remove();
+            if (rendered) {
+                return;
             }
-            */
-            /*
-
-            var containers = [];
-
-            $('.dashboard .container').each(function(idx, el) {
-              urls.push($(el).data('icingaUrl'));
-            });
-            console.log(urls);
-                  $('.container[data-icinga-refresh]').each(function(idx, el) {
-                    var $el = $(el);
-                    self.loadUrl($el.data('icingaUrl'), $el).autorefresh = true;
-                    el = null;
-                  });
-            */
-
-            if (rendered) return;
 
             // .html() removes outer div we added above
             this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh);
