@@ -8,7 +8,7 @@ use Icinga\Application\Icinga;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 use Zend_Paginator;
 
-class PivotTable
+class PivotTable implements Sortable
 {
     /**
      * The query to fetch as pivot table
@@ -16,20 +16,6 @@ class PivotTable
      * @var SimpleQuery
      */
     protected $baseQuery;
-
-    /**
-     * The query to fetch the x axis labels
-     *
-     * @var SimpleQuery
-     */
-    protected $xAxisQuery;
-
-    /**
-     * The query to fetch the y axis labels
-     *
-     * @var SimpleQuery
-     */
-    protected $yAxisQuery;
 
     /**
      * The column that contains the labels for the x axis
@@ -60,6 +46,27 @@ class PivotTable
     protected $yAxisFilter;
 
     /**
+     * The query to fetch the x axis labels
+     *
+     * @var SimpleQuery
+     */
+    protected $xAxisQuery;
+
+    /**
+     * The query to fetch the y axis labels
+     *
+     * @var SimpleQuery
+     */
+    protected $yAxisQuery;
+
+    /**
+     * Column for sorting the result set
+     *
+     * @var array
+     */
+    protected $order = array();
+
+    /**
      * Create a new pivot table
      *
      * @param   SimpleQuery $query          The query to fetch as pivot table
@@ -71,6 +78,31 @@ class PivotTable
         $this->baseQuery = $query;
         $this->xAxisColumn = $xAxisColumn;
         $this->yAxisColumn = $yAxisColumn;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasOrder()
+    {
+        return ! empty($this->order);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function order($field, $direction = null)
+    {
+        $this->order[$field] = $direction;
+        return $this;
     }
 
     /**
@@ -137,9 +169,10 @@ class PivotTable
                 $this->xAxisQuery->addFilter($this->xAxisFilter);
             }
 
-            if (! $this->xAxisQuery->hasOrder($this->xAxisColumn)) {
-                $this->xAxisQuery->order($this->xAxisColumn, 'asc');
-            }
+            $this->xAxisQuery->order(
+                $this->xAxisColumn,
+                isset($this->order[$this->xAxisColumn]) ? $this->order[$this->xAxisColumn] : self::SORT_ASC
+            );
         }
 
         return $this->xAxisQuery;
@@ -161,9 +194,10 @@ class PivotTable
                 $this->yAxisQuery->addFilter($this->yAxisFilter);
             }
 
-            if (! $this->yAxisQuery->hasOrder($this->yAxisColumn)) {
-                $this->yAxisQuery->order($this->yAxisColumn, 'asc');
-            }
+            $this->yAxisQuery->order(
+                $this->yAxisColumn,
+                isset($this->order[$this->yAxisColumn]) ? $this->order[$this->yAxisColumn] : self::SORT_ASC
+            );
         }
 
         return $this->yAxisQuery;
