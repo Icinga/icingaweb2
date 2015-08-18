@@ -4,7 +4,6 @@
 namespace Icinga\Data;
 
 use Icinga\Data\Filter\Filter;
-use Icinga\Data\SimpleQuery;
 use Icinga\Application\Icinga;
 use Icinga\Web\Paginator\Adapter\QueryAdapter;
 use Zend_Paginator;
