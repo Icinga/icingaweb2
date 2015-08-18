@@ -591,16 +591,16 @@ class Monitoring_ListController extends Controller
         ));
         $this->filterQuery($query);
         $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->setupSortControl(array(
-            'host_name'           => $this->translate('Hostname'),
-            'service_description' => $this->translate('Service description')
-        ), $query);
         $pivot = $query->pivot(
             'service_description',
             'host_name',
             $problems ? Filter::where('service_problem', 1) : null,
             $problems ? Filter::where('service_problem', 1) : null
         );
+        $this->setupSortControl(array(
+            'host_name'           => $this->translate('Hostname'),
+            'service_description' => $this->translate('Service description')
+        ), $pivot);
         $this->view->pivot = $pivot;
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
         $this->view->verticalPaginator   = $pivot->paginateYAxis();
