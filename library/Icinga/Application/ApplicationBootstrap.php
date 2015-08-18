@@ -78,7 +78,7 @@ abstract class ApplicationBootstrap
     protected $configDir;
 
     /**
-     * Icinga auto loader
+     * Icinga class loader
      *
      * @var ClassLoader
      */
@@ -339,7 +339,7 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Setup Icinga auto loader
+     * Setup Icinga class loader
      *
      * @return $this
      */
