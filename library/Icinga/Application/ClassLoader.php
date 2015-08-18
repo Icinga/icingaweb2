@@ -5,6 +5,9 @@ namespace Icinga\Application;
 
 use Icinga\Exception\ProgrammingError;
 
+/**
+ * PSR-4 class loader
+ */
 class ClassLoader
 {
     /**
@@ -13,14 +16,14 @@ class ClassLoader
     const NAMESPACE_SEPARATOR = '\\';
 
     /**
-     * List of namespaces
+     * Namespaces
      *
      * @var array
      */
     private $namespaces = array();
 
     /**
-     * Register new namespace for directory
+     * Register a base directory for a namespace prefix
      *
      * @param   string  $namespace
      * @param   string  $directory
@@ -44,9 +47,9 @@ class ClassLoader
     }
 
     /**
-     * Test if a namespace exists
+     * Test whether a namespace exists
      *
-     * @param   string  $namespace
+     * @param   string $namespace
      *
      * @return  bool
      */
@@ -56,13 +59,11 @@ class ClassLoader
     }
 
     /**
-     * Class loader
+     * Load the given class or interface
      *
-     * Ignores all but classes in registered namespaces.
+     * @param   string  $class  Name of the class or interface
      *
-     * @param   string  $class
-     *
-     * @return  boolean
+     * @return  bool            Whether the class or interface has been loaded
      */
     public function loadClass($class)
     {
@@ -82,7 +83,7 @@ class ClassLoader
     }
 
     /**
-     * Test if we have a registered namespaces for this class
+     * Get the namespace for the given class
      *
      * Return is the longest match in the array found
      *
@@ -114,17 +115,15 @@ class ClassLoader
     }
 
     /**
-     * Effectively registers the autoloader the PHP/SPL way
+     * Register {@link loadClass()} as an autoloader
      */
     public function register()
     {
-        // Think about to add class pathes to php include path
-        // this could be faster (tg)
         spl_autoload_register(array($this, 'loadClass'));
     }
 
     /**
-     * Detach autoloader from spl registration
+     * Unregister {@link loadClass()} as an autoloader
      */
     public function unregister()
     {
@@ -132,7 +131,7 @@ class ClassLoader
     }
 
     /**
-     * Detach spl autoload method from stack
+     * Unregister this as an autloader
      */
     public function __destruct()
     {
