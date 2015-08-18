@@ -132,7 +132,6 @@ class PivotTable
             $this->xAxisQuery = clone $this->baseQuery;
             $this->xAxisQuery->group($this->xAxisColumn);
             $this->xAxisQuery->columns(array($this->xAxisColumn));
-            $this->xAxisQuery->setUseSubqueryCount();
 
             if ($this->xAxisFilter !== null) {
                 $this->xAxisQuery->addFilter($this->xAxisFilter);
@@ -157,7 +156,6 @@ class PivotTable
             $this->yAxisQuery = clone $this->baseQuery;
             $this->yAxisQuery->group($this->yAxisColumn);
             $this->yAxisQuery->columns(array($this->yAxisColumn));
-            $this->yAxisQuery->setUseSubqueryCount();
 
             if ($this->yAxisFilter !== null) {
                 $this->yAxisQuery->addFilter($this->yAxisFilter);
