@@ -20,14 +20,6 @@ class ClassLoader
     private $namespaces = array();
 
     /**
-     * Detach spl autoload method from stack
-     */
-    public function __destruct()
-    {
-        $this->unregister();
-    }
-
-    /**
      * Register new namespace for directory
      *
      * @param   string  $namespace
@@ -137,5 +129,13 @@ class ClassLoader
     public function unregister()
     {
         spl_autoload_unregister(array($this, 'loadClass'));
+    }
+
+    /**
+     * Detach spl autoload method from stack
+     */
+    public function __destruct()
+    {
+        $this->unregister();
     }
 }
