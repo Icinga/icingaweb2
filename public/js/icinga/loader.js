@@ -74,11 +74,13 @@
                 if (autorefresh) {
                     return false;
                 }
-                // ...ignore the new request if it is already pending with the same URL
-                if (this.requests[id].url === url) {
+                // ... ignore the new request if it is already pending with the same URL. Only abort GETs, as those
+                // are the only methods that are guaranteed to return the same value
+                if (this.requests[id].url === url && method === 'GET') {
                     this.icinga.logger.debug('Request to ', url, ' is already running for ', $target);
                     return this.requests[id];
                 }
+
                 // ...or abort the former request otherwise
                 this.icinga.logger.debug(
                     'Aborting pending request loading ',
