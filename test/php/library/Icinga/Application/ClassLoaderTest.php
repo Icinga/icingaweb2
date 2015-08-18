@@ -107,13 +107,4 @@ EOD;
         $o = new \My\Library\TestStruct();
         $this->assertTrue($o->testFlag());
     }
-
-    /**
-     * @expectedException Icinga\Exception\ProgrammingError
-     */
-    public function testNonexistingDirectory()
-    {
-        $loader = new ClassLoader();
-        $loader->registerNamespace('My\\Library', '/trullalla/123');
-    }
 }

@@ -29,18 +29,9 @@ class ClassLoader
      * @param   string  $directory
      *
      * @return  $this
-     * @throws  ProgrammingError
      */
     public function registerNamespace($namespace, $directory)
     {
-        if (!is_dir($directory)) {
-            throw new ProgrammingError(
-                'Directory "%s" for namespace "%s" does not exist',
-                $directory,
-                $namespace
-            );
-        }
-
         $this->namespaces[$namespace] = $directory;
 
         return $this;
