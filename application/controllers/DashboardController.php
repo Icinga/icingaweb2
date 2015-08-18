@@ -3,6 +3,8 @@
 
 namespace Icinga\Controller;
 
+use Exception;
+use Zend_Controller_Action_Exception;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Dashboard\DashletForm;
