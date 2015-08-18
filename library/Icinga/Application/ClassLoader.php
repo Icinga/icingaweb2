@@ -5,7 +5,7 @@ namespace Icinga\Application;
 
 use Icinga\Exception\ProgrammingError;
 
-class Loader
+class ClassLoader
 {
     /**
      * Namespace separator

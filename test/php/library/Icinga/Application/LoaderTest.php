@@ -4,7 +4,7 @@
 namespace Tests\Icinga\Application;
 
 use Icinga\Test\BaseTestCase;
-use Icinga\Application\Loader;
+use Icinga\Application\ClassLoader;
 
 class LoaderTest extends BaseTestCase
 {
@@ -43,7 +43,7 @@ EOD;
 
     public function testObjectCreation1()
     {
-        $loader = new Loader();
+        $loader = new ClassLoader();
         $loader->register();
 
         $check = false;
@@ -71,7 +71,7 @@ EOD;
 
     public function testNamespaces()
     {
-        $loader = new Loader();
+        $loader = new ClassLoader();
         $loader->registerNamespace('Test\\Laola', '/tmp');
         $loader->registerNamespace('Dings\\Var', '/var/tmp');
 
@@ -89,7 +89,7 @@ EOD;
         $classFile = $this->baseDir. self::$classFile;
         $this->assertFileExists($classFile);
 
-        $loader = new Loader();
+        $loader = new ClassLoader();
         $loader->registerNamespace('My\\Library', dirname($classFile));
         $this->assertFalse($loader->loadClass('DOES\\NOT\\EXISTS'));
         $this->assertTrue($loader->loadClass('My\\Library\\TestStruct'));
@@ -100,7 +100,7 @@ EOD;
         $classFile = $this->baseDir. self::$classFile;
         $this->assertFileExists($classFile);
 
-        $loader = new Loader();
+        $loader = new ClassLoader();
         $loader->registerNamespace('My\\Library', dirname($classFile));
         $loader->register();
 
@@ -113,7 +113,7 @@ EOD;
      */
     public function testNonexistingDirectory()
     {
-        $loader = new Loader();
+        $loader = new ClassLoader();
         $loader->registerNamespace('My\\Library', '/trullalla/123');
     }
 }
