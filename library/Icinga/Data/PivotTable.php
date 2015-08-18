@@ -62,7 +62,7 @@ class PivotTable
     /**
      * Create a new pivot table
      *
-     * @param   SimpleQuery   $query          The query to fetch as pivot table
+     * @param   SimpleQuery $query          The query to fetch as pivot table
      * @param   string      $xAxisColumn    The column that contains the labels for the x axis
      * @param   string      $yAxisColumn    The column that contains the labels for the y axis
      */
@@ -106,7 +106,7 @@ class PivotTable
      * @param   string  $param      The parameter name to return
      * @param   int     $default    The default value to return
      *
-     * @return int
+     * @return  int
      */
     protected function getPaginationParameter($axis, $param, $default = null)
     {
@@ -124,7 +124,7 @@ class PivotTable
     /**
      * Query horizontal (x) axis
      *
-     * @return  SimpleQuery
+     * @return SimpleQuery
      */
     protected function queryXAxis()
     {
@@ -149,7 +149,7 @@ class PivotTable
     /**
      * Query vertical (y) axis
      *
-     * @return  SimpleQuery
+     * @return SimpleQuery
      */
     protected function queryYAxis()
     {
@@ -236,7 +236,7 @@ class PivotTable
     /**
      * Return the pivot table as array
      *
-     * @return  array
+     * @return array
      */
     public function toArray()
     {
