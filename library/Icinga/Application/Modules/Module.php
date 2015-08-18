@@ -4,23 +4,24 @@
 namespace Icinga\Application\Modules;
 
 use Exception;
-use Zend_Controller_Router_Route_Abstract;
+use Icinga\Web\Controller\Dispatcher;
 use Zend_Controller_Router_Route as Route;
+use Zend_Controller_Router_Route_Abstract;
 use Zend_Controller_Router_Route_Regex as RegexRoute;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
+use Icinga\Exception\IcingaException;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Module\Setup\SetupWizard;
+use Icinga\Util\File;
 use Icinga\Util\Translator;
 use Icinga\Web\Hook;
 use Icinga\Web\Menu;
 use Icinga\Web\Widget;
 use Icinga\Web\Widget\Dashboard\Pane;
-use Icinga\Module\Setup\SetupWizard;
-use Icinga\Util\File;
-use Icinga\Exception\ProgrammingError;
-use Icinga\Exception\IcingaException;
 
 /**
  * Module handling
@@ -934,7 +935,7 @@ class Module
     }
 
     /**
-     * Register module namespaces on the autoloader
+     * Register module namespaces on our class loader
      *
      * @return $this
      */
@@ -944,16 +945,25 @@ class Module
             return $this;
         }
 
+        $loader = $this->app->getLoader();
         $moduleName = ucfirst($this->getName());
 
         $moduleLibraryDir = $this->getLibDir(). '/'. $moduleName;
         if (is_dir($moduleLibraryDir)) {
-            $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName, $moduleLibraryDir);
+            $loader->registerNamespace('Icinga\\Module\\' . $moduleName, $moduleLibraryDir);
         }
 
         $moduleFormDir = $this->getFormDir();
         if (is_dir($moduleFormDir)) {
-            $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName. '\\Forms',  $moduleFormDir);
+            $loader->registerNamespace('Icinga\\Module\\' . $moduleName. '\\Forms', $moduleFormDir);
+        }
+
+        $moduleControllerDir = $this->getControllerDir();
+        if (is_dir($moduleControllerDir)) {
+            $loader->registerNamespace(
+                'Icinga\\Module\\' . $moduleName . '\\' . Dispatcher::CONTROLLER_NAMESPACE,
+                $moduleControllerDir
+            );
         }
 
         $this->registeredAutoloader = true;
