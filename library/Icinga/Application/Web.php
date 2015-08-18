@@ -298,7 +298,7 @@ class Web extends EmbeddedWeb
     }
 
     /**
-     * Setup auto loader namespaces for Icinga\Controllers and Icinga\Forms
+     * Setup class loader namespaces for Icinga\Controllers and Icinga\Forms
      *
      * @return $this
      */
