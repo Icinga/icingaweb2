@@ -6,7 +6,7 @@ namespace Tests\Icinga\Application;
 use Icinga\Test\BaseTestCase;
 use Icinga\Application\ClassLoader;
 
-class LoaderTest extends BaseTestCase
+class ClassLoaderTest extends BaseTestCase
 {
     private static $classFile = 'test/My/Library/TestStruct.php';
 
