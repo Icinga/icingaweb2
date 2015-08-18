@@ -22,7 +22,7 @@ class BackendAvailabilityMenuItemRenderer extends MenuItemRenderer
                 'programstatus',
                 array('is_currently_running')
             )
-            ->fetchRow();
+            ->fetchOne();
         return $programStatus !== false ? (bool) $programStatus : false;
     }
 
