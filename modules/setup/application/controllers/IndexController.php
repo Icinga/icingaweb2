@@ -16,6 +16,11 @@ class Setup_IndexController extends Controller
     protected $requiresAuthentication = false;
 
     /**
+     * {@inheritdoc}
+     */
+    protected $innerLayout = 'inline';
+
+    /**
      * Show the web wizard and run the configuration once finished
      */
     public function indexAction()
