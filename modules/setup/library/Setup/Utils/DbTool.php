@@ -205,6 +205,16 @@ class DbTool
     }
 
     /**
+     * Return whether a connection with the server has been established
+     *
+     * @return  bool
+     */
+    public function isConnected()
+    {
+        return $this->pdoConn !== null;
+    }
+
+    /**
      * Establish a connection with the database or just the server by omitting the database name
      *
      * @param   string  $dbname     The name of the database to connect to
