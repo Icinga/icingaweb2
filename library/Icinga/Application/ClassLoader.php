@@ -3,8 +3,6 @@
 
 namespace Icinga\Application;
 
-use Icinga\Exception\ProgrammingError;
-
 /**
  * PSR-4 class loader
  */
@@ -50,6 +48,30 @@ class ClassLoader
     }
 
     /**
+     * Get the source file of the given class or interface
+     *
+     * @param   string      $class Name of the class or interface
+     *
+     * @return  string|null
+     */
+    public function getSourceFile($class)
+    {
+        foreach ($this->namespaces as $namespace => $dir) {
+            if ($class === strstr($class, $namespace)) {
+                $classPath = str_replace(
+                    self::NAMESPACE_SEPARATOR,
+                    DIRECTORY_SEPARATOR,
+                    substr($class, strlen($namespace))
+                ) . '.php';
+                if (file_exists($file = $dir . $classPath)) {
+                    return $file;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Load the given class or interface
      *
      * @param   string  $class  Name of the class or interface
@@ -58,50 +80,10 @@ class ClassLoader
      */
     public function loadClass($class)
     {
-        $namespace = $this->getNamespaceForClass($class);
-
-        if ($namespace) {
-            $file = $this->namespaces[$namespace] . preg_replace('/^' . preg_quote($namespace) . '/', '', $class);
-            $file = str_replace(self::NAMESPACE_SEPARATOR, '/', $file) . '.php';
-
-            if (@file_exists($file)) {
-                require_once $file;
-                return true;
-            }
+        if ($file = $this->getSourceFile($class)) {
+            require $file;
+            return true;
         }
-
-        return false;
-    }
-
-    /**
-     * Get the namespace for the given class
-     *
-     * Return is the longest match in the array found
-     *
-     * @param   string  $className
-     *
-     * @return  bool|string
-     */
-    private function getNamespaceForClass($className)
-    {
-        $testNamespace = '';
-        $testLength = 0;
-
-        foreach (array_keys($this->namespaces) as $namespace) {
-            $stub = preg_replace(
-                '/^' . preg_quote($namespace) . '(' . preg_quote(self::NAMESPACE_SEPARATOR) . '|$)/', '', $className
-            );
-            $length = strlen($className) - strlen($stub);
-            if ($length > $testLength) {
-                $testLength = $length;
-                $testNamespace = $namespace;
-            }
-        }
-
-        if ($testLength > 0) {
-            return $testNamespace;
-        }
-
         return false;
     }
 
@@ -122,7 +104,7 @@ class ClassLoader
     }
 
     /**
-     * Unregister this as an autloader
+     * Unregister this as an autoloader
      */
     public function __destruct()
     {
