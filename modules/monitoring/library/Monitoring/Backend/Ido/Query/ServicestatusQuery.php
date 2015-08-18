@@ -366,68 +366,60 @@ class ServicestatusQuery extends IdoQuery
         if (! is_array($group)) {
             $group = array($group);
         }
-
-        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('servicegroups')) {
-            $group[] = 's.service_id';
-            $group[] = 'so.object_id';
-
-            if ($this->hasJoinedVirtualTable('hosts')) {
-                $group[] = 'h.host_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('hoststatus')) {
-                $group[] = 'hs.hoststatus_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('servicestatus')) {
-                $group[] = 'ss.servicestatus_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('hostgroups')) {
-                $selected = false;
-                foreach ($this->columns as $alias => $column) {
-                    if ($column instanceof Zend_Db_Expr) {
-                        continue;
-                    }
-
-                    $table = $this->aliasToTableName(
-                        $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
-                    );
-                    if ($table === 'hostgroups') {
-                        $selected = true;
-                        break;
-                    }
-                }
-
-                if ($selected) {
-                    $group[] = 'hg.hostgroup_id';
-                    $group[] = 'hgo.object_id';
-                }
-            }
-
-            if ($this->hasJoinedVirtualTable('servicegroups')) {
-                $selected = false;
-                foreach ($this->columns as $alias => $column) {
-                    if ($column instanceof Zend_Db_Expr) {
-                        continue;
-                    }
-
-                    $table = $this->aliasToTableName(
-                        $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
-                    );
-                    if ($table === 'servicegroups') {
-                        $selected = true;
-                        break;
-                    }
-                }
-
-                if ($selected) {
-                    $group[] = 'sg.servicegroup_id';
-                    $group[] = 'sgo.object_id';
-                }
+        $groupedTables = array();
+        if ($this->hasJoinedVirtualTable('servicegroups')) {
+            $serviceGroupColumns = array_keys($this->columnMap['servicegroups']);
+            $selectedServiceGroupColumns = array_intersect($serviceGroupColumns, array_keys($this->columns));
+            if (! empty($selectedServiceGroupColumns)) {
+                $group[] = 'so.object_id';
+                $group[] = 's.service_id';
+                $group[] = 'sgo.object_id';
+                $groupedTables['services'] = true;
+                $groupedTables['servicegroups'] = true;
             }
         }
-
+        if ($this->hasJoinedVirtualTable('hostgroups')) {
+            $hostGroupColumns = array_keys($this->columnMap['hostgroups']);
+            $selectedHostGroupColumns = array_intersect($hostGroupColumns, array_keys($this->columns));
+            if (! empty($selectedHostGroupColumns)) {
+                if (! isset($groupedTables['services'])) {
+                    $group[] = 'so.object_id';
+                    $group[] = 's.service_id';
+                    $groupedTables['services'] = true;
+                }
+                $group[] = 'hgo.object_id';
+                $groupedTables['hostgroups'] = true;
+            }
+        }
+        if (! empty($groupedTables)) {
+            foreach ($this->columns as $alias => $column) {
+                if ($column instanceof Zend_Db_Expr || $column === '(NULL)') {
+                    continue;
+                }
+                $tableName = $this->aliasToTableName(
+                    $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
+                );
+                if (isset($groupedTables[$tableName])) {
+                    continue;
+                }
+                switch ($tableName) {
+                    case 'hosts':
+                        $groupColumn = 'h.host_id';
+                        break;
+                    case 'hoststatus':
+                        $groupColumn = 'hs.hoststatus_id';
+                        break;
+                    case 'servicestatus':
+                        $groupColumn = 'ss.servicestatus_id';
+                        break;
+                    default:
+                        continue 2;
+                }
+                /** @var string $groupColumn */
+                $group[] = $groupColumn;
+                $groupedTables[$tableName] = true;
+            }
+        }
         return $group;
     }
 }
