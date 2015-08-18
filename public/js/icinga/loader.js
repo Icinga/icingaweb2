@@ -633,8 +633,7 @@
             /*
              * Test if a manual actions comes in and autorefresh is active: Stop refreshing
              */
-            if (req.addToHistory && ! req.autorefresh && req.$target.data('icingaRefresh') > 0
-            && req.$target.data('icingaUrl') !== url) {
+            if (req.addToHistory && ! req.autorefresh && req.$target.data('icingaRefresh') > 0) {
                 req.$target.data('icingaRefresh', 0);
                 req.$target.data('icingaUrl', url);
             }
