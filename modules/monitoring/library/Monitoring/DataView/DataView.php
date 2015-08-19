@@ -29,8 +29,6 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      */
     protected $query;
 
-    protected $filter;
-
     protected $connection;
 
     protected $isSorted = false;
@@ -52,7 +50,6 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
     {
         $this->connection = $connection;
         $this->query = $connection->query($this->getQueryName(), $columns);
-        $this->filter = Filter::matchAll();
     }
 
     /**
@@ -91,7 +88,6 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
 
     public function where($condition, $value = null)
     {
-        $this->filter->addFilter(Filter::where($condition, $value));
         $this->query->where($condition, $value);
         return $this;
     }
@@ -268,9 +264,14 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
         return $columns;
     }
 
+    /**
+     * Return the current filter
+     *
+     * @return  Filter
+     */
     public function getFilter()
     {
-        return $this->filter;
+        return $this->query->getFilter();
     }
 
     /**
@@ -471,8 +472,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      */
     public function addFilter(Filter $filter)
     {
-        $this->query->addFilter(clone($filter));
-        $this->filter = $filter; // TODO: Hmmmm.... and?
+        $this->query->addFilter($filter);
         return $this;
     }
 
