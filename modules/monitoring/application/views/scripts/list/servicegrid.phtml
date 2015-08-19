@@ -91,8 +91,8 @@ foreach ($serviceDescriptions as $service_description): ?>
               'title'               => $this->escape($service->service_output),
               'aria-label'          => sprintf(
                 $this->translate('Show detailed information for service %s on host %s'),
-                $service->service_description,
-                $service->host_name
+                $service->service_display_name,
+                $service->host_display_name
               )
             )
           ); ?>
