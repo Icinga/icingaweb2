@@ -374,6 +374,7 @@ class ServicestatusQuery extends IdoQuery
                 $group[] = 'so.object_id';
                 $group[] = 's.service_id';
                 $group[] = 'sgo.object_id';
+                $group[] = 'sg.servicegroup_id';
                 $groupedTables['services'] = true;
                 $groupedTables['servicegroups'] = true;
             }
@@ -388,6 +389,7 @@ class ServicestatusQuery extends IdoQuery
                     $groupedTables['services'] = true;
                 }
                 $group[] = 'hgo.object_id';
+                $group[] = 'hg.hostgroup_id';
                 $groupedTables['hostgroups'] = true;
             }
         }
@@ -404,19 +406,17 @@ class ServicestatusQuery extends IdoQuery
                 }
                 switch ($tableName) {
                     case 'hosts':
-                        $groupColumn = 'h.host_id';
+                        $group[] = 'h.host_id';
                         break;
                     case 'hoststatus':
-                        $groupColumn = 'hs.hoststatus_id';
+                        $group[] = 'hs.hoststatus_id';
                         break;
                     case 'servicestatus':
-                        $groupColumn = 'ss.servicestatus_id';
+                        $group[] = 'ss.servicestatus_id';
                         break;
                     default:
                         continue 2;
                 }
-                /** @var string $groupColumn */
-                $group[] = $groupColumn;
                 $groupedTables[$tableName] = true;
             }
         }
