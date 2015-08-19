@@ -123,13 +123,6 @@ class LdapConnection implements Selectable, Inspectable
     protected $rootDn;
 
     /**
-     * Whether to load the configuration for strict certificate validation or the one for non-strict validation
-     *
-     * @var bool
-     */
-    protected $validateCertificate;
-
-    /**
      * Whether the bind on this connection has already been performed
      *
      * @var bool
@@ -176,7 +169,6 @@ class LdapConnection implements Selectable, Inspectable
         $this->bindPw = $config->bind_pw;
         $this->rootDn = $config->root_dn;
         $this->port = $config->get('port', 389);
-        $this->validateCertificate = (bool) $config->get('reqcert', true);
 
         $this->encryption = $config->encryption;
         if ($this->encryption !== null) {
@@ -957,16 +949,9 @@ class LdapConnection implements Selectable, Inspectable
             $info = new Inspection('');
         }
 
-        if ($this->encryption === static::STARTTLS || $this->encryption === static::LDAPS) {
-            $this->prepareTlsEnvironment();
-        }
-
         $hostname = $this->hostname;
         if ($this->encryption === static::LDAPS) {
             $info->write('Connect using LDAPS');
-            if (! $this->validateCertificate) {
-                $info->write('Skip certificate validation');
-            }
             $hostname = 'ldaps://' . $hostname;
         }
 
@@ -983,9 +968,6 @@ class LdapConnection implements Selectable, Inspectable
         if ($this->encryption === static::STARTTLS) {
             $this->encrypted = true;
             $info->write('Connect using STARTTLS');
-            if (! $this->validateCertificate) {
-                $info->write('Skip certificate validation');
-            }
             if (! ldap_start_tls($ds)) {
                 throw new LdapException('LDAP STARTTLS failed: %s', ldap_error($ds));
             }
@@ -996,30 +978,6 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         return $ds;
-    }
-
-    /**
-     * Set up how to handle StartTLS connections
-     *
-     * @throws  LdapException   In case the LDAPRC environment variable cannot be set
-     */
-    protected function prepareTlsEnvironment()
-    {
-        // TODO: allow variable known CA location (system VS Icinga)
-        if (Platform::isWindows()) {
-            putenv('LDAPTLS_REQCERT=never');
-        } else {
-            if ($this->validateCertificate) {
-                $ldap_conf = $this->getConfigDir('ldap_ca.conf');
-            } else {
-                $ldap_conf = $this->getConfigDir('ldap_nocert.conf');
-            }
-
-            putenv('LDAPRC=' . $ldap_conf); // TODO: Does not have any effect
-            if (getenv('LDAPRC') !== $ldap_conf) {
-                throw new LdapException('putenv failed');
-            }
-        }
     }
 
     /**
@@ -1103,6 +1061,13 @@ class LdapConnection implements Selectable, Inspectable
         try {
             $ds = $this->prepareNewConnection($insp);
         } catch (Exception $e) {
+            if ($this->encryption === 'starttls') {
+                // The Exception does not return any proper error messages in case of certificate errors. Connecting
+                // by STARTTLS will usually fail at this point when the certificate is unknown,
+                // so at least try to give some hints.
+                $insp->write('NOTE: There might be an issue with the chosen encryption. Ensure that the LDAP-Server ' .
+                    'supports STARTTLS and that the LDAP-Client is configured to accept its certificate.');
+            }
             return $insp->error($e->getMessage());
         }
 
@@ -1116,6 +1081,13 @@ class LdapConnection implements Selectable, Inspectable
             '***' /* $this->bindPw */
         );
         if (! $success) {
+            // ldap_error does not return any proper error messages in case of certificate errors. Connecting
+            // by LDAPS will usually fail at this point when the certificate is unknown, so at least try to give
+            // some hints.
+            if ($this->encryption === 'ldaps') {
+                $insp->write('NOTE: There might be an issue with the chosen encryption. Ensure that the LDAP-Server ' .
+                    ' supports LDAPS and that the LDAP-Client is configured to accept its certificate.');
+            }
             return $insp->error(sprintf('%s failed: %s', $msg, ldap_error($ds)));
         }
         $insp->write(sprintf($msg . ' successful'));
@@ -1136,13 +1108,5 @@ class LdapConnection implements Selectable, Inspectable
             $insp->write('Schema discovery not possible: ' . $e->getMessage());
         }
         return $insp;
-    }
-
-    /**
-     * Reset the environment variables set by self::prepareTlsEnvironment()
-     */
-    public function __destruct()
-    {
-        putenv('LDAPRC');
     }
 }
