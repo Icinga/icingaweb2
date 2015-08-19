@@ -62,14 +62,14 @@ with Icinga Web 2 (e.g. an alias) no matter what the primary user id might actua
 
 Directive               | Description
 ------------------------|------------
-**backend**             | `ad`
+**backend**             | `msldap`
 **resource**            | The name of the LDAP resource defined in [resources.ini](resources.md#resources).
 
 **Example:**
 
 ```
 [auth_ad]
-backend  = ad
+backend  = msldap
 resource = my_ad
 ```
 
