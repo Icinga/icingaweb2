@@ -496,7 +496,8 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      */
     public function peekAhead($state = true)
     {
-        return $this->query->peekAhead($state);
+        $this->query->peekAhead($state);
+        return $this;
     }
 
     /**
