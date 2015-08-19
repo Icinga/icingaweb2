@@ -205,6 +205,16 @@ class DbTool
     }
 
     /**
+     * Return whether a connection with the server has been established
+     *
+     * @return  bool
+     */
+    public function isConnected()
+    {
+        return $this->pdoConn !== null;
+    }
+
+    /**
      * Establish a connection with the database or just the server by omitting the database name
      *
      * @param   string  $dbname     The name of the database to connect to
@@ -432,6 +442,24 @@ class DbTool
         $stmt = $this->pdoConn->prepare($statement);
         $stmt->execute($params);
         return $stmt;
+    }
+
+    /**
+     * Return the version of the server currently connected to
+     *
+     * @return  string|null
+     */
+    public function getServerVersion()
+    {
+        if ($this->config['db'] === 'mysql') {
+            return $this->query('show variables like "version"')->fetchColumn(1) ?: null;
+        } elseif ($this->config['db'] === 'pgsql') {
+            return $this->query('show server_version')->fetchColumn() ?: null;
+        } else {
+            throw new LogicException(
+                sprintf('Unable to fetch the server\'s version. Unsupported PDO driver "%s"', $this->config['db'])
+            );
+        }
     }
 
     /**
