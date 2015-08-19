@@ -5,7 +5,7 @@ use Icinga\Web\Notification;
 use Icinga\Authentication\Auth;
 
 $moduleName = $this->layout()->moduleName;
-if ($moduleName) {
+if ($moduleName !== 'default') {
     $moduleClass = ' icinga-module module-' . $moduleName;
 } else {
     $moduleClass = '';
