@@ -151,7 +151,7 @@ class DbResourcePage extends Form
     }
 
     /**
-     * Add a checkbox to the form by which the user can skip the connection validation
+     * Add a checkbox to the form by which the user can skip the configuration validation
      */
     protected function addSkipValidationCheckbox()
     {
@@ -161,9 +161,7 @@ class DbResourcePage extends Form
             array(
                 'required'      => true,
                 'label'         => $this->translate('Skip Validation'),
-                'description'   => $this->translate(
-                    'Check this to not to validate connectivity with the given database server'
-                )
+                'description'   => $this->translate('Check this to not to validate the configuration')
             )
         );
     }
