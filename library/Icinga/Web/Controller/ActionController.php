@@ -90,7 +90,6 @@ class ActionController extends Zend_Controller_Action
         $this->_helper = new ActionHelperBroker($this);
 
         $this->handlerBrowserWindows();
-        $this->view->tabs = new Tabs();
         $this->view->translationDomain = 'icinga';
         $this->_helper->layout()->isIframe = $request->getUrl()->shift('isIframe');
         $this->_helper->layout()->showFullscreen = $request->getUrl()->shift('showFullscreen');
@@ -107,12 +106,12 @@ class ActionController extends Zend_Controller_Action
             $this->_helper->layout()->disableLayout();
         }
 
-        $this->prepareInit();
-
         if ($this->requiresLogin()) {
             $this->redirectToLogin(Url::fromRequest());
         }
 
+        $this->view->tabs = new Tabs();
+        $this->prepareInit();
         $this->init();
     }
 
