@@ -509,6 +509,9 @@
                     self.icinga.ui.layout1col();
                 } else {
                     $target = $('#' + targetId);
+                    if (! $target.length) {
+                        self.icinga.logger.warn('Link target "#' + targetId + '" does not exist in DOM.');
+                    }
                 }
 
             }
