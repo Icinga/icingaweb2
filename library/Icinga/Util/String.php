@@ -4,7 +4,7 @@
 namespace Icinga\Util;
 
 /**
- * Common string helper
+ * Common string functions
  */
 class String
 {
@@ -103,8 +103,8 @@ class String
     /**
      * Check if a string ends with a different string
      *
-     * @param $haystack The string to search for matches
-     * @param $needle   The string to match at the start of the haystack
+     * @param $haystack string The string to search for matches
+     * @param $needle   string The string to match at the start of the haystack
      *
      * @return bool     Whether or not needle is at the beginning of haystack
      */
