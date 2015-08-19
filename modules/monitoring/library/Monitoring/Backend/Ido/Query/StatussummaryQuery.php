@@ -10,7 +10,7 @@ use Icinga\Data\Filter\Filter;
 /**
  * Query for host and service status summary
  */
-class StatusSummaryQuery extends IdoQuery
+class StatussummaryQuery extends IdoQuery
 {
     /**
      * {@inheritdoc}
