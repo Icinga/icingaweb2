@@ -450,21 +450,29 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetchEventhistory()
     {
-        $eventHistory = $this->backend->select()->from('eventhistory', array(
-                'object_type',
-                'host_name',
-                'host_display_name',
-                'service_description',
-                'service_display_name',
-                'timestamp',
-                'state',
-                'output',
-                'type'
-        ))
+        $eventHistory = $this->backend
+            ->select()
+            ->from(
+                'eventhistory',
+                array(
+                    'object_type',
+                    'host_name',
+                    'host_display_name',
+                    'service_description',
+                    'service_display_name',
+                    'timestamp',
+                    'state',
+                    'output',
+                    'type'
+                )
+            )
+            ->where('object_type', $this->type)
             ->where('host_name', $this->host_name);
+
         if ($this->type === self::TYPE_SERVICE) {
             $eventHistory->where('service_description', $this->service_description);
         }
+
         $this->eventhistory = $eventHistory->applyFilter($this->getFilter());
         return $this;
     }

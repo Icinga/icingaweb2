@@ -38,6 +38,13 @@ class ActionController extends Zend_Controller_Action
      */
     protected $requiresAuthentication = true;
 
+    /**
+     * The current module's name
+     *
+     * @var string
+     */
+    private $moduleName;
+
     private $autorefreshInterval;
 
     private $reloadCss = false;
@@ -90,11 +97,11 @@ class ActionController extends Zend_Controller_Action
         $this->_helper = new ActionHelperBroker($this);
 
         $this->handlerBrowserWindows();
-        $this->view->tabs = new Tabs();
-        $this->view->translationDomain = 'icinga';
+        $moduleName = $this->getModuleName();
+        $this->view->translationDomain = $moduleName !== 'default' ? $moduleName : 'icinga';
         $this->_helper->layout()->isIframe = $request->getUrl()->shift('isIframe');
         $this->_helper->layout()->showFullscreen = $request->getUrl()->shift('showFullscreen');
-        $this->_helper->layout()->moduleName = false;
+        $this->_helper->layout()->moduleName = $moduleName;
 
         $this->view->compact = $request->getParam('view') === 'compact';
         if ($request->getUrl()->shift('showCompact')) {
@@ -107,12 +114,12 @@ class ActionController extends Zend_Controller_Action
             $this->_helper->layout()->disableLayout();
         }
 
-        $this->prepareInit();
-
         if ($this->requiresLogin()) {
             $this->redirectToLogin(Url::fromRequest());
         }
 
+        $this->view->tabs = new Tabs();
+        $this->prepareInit();
         $this->init();
     }
 
@@ -165,6 +172,20 @@ class ActionController extends Zend_Controller_Action
         if ($this->requiresAuthentication && ! $this->Auth()->hasPermission($permission)) {
             throw new SecurityException('No permission for %s', $permission);
         }
+    }
+
+    /**
+     * Return the current module's name
+     *
+     * @return  string
+     */
+    public function getModuleName()
+    {
+        if ($this->moduleName === null) {
+            $this->moduleName = $this->getRequest()->getModuleName();
+        }
+
+        return $this->moduleName;
     }
 
     public function Config($file = null)

@@ -8,7 +8,7 @@ use Zend_Db_Select;
 /**
  * Query for host and service group summaries
  */
-class GroupSummaryQuery extends IdoQuery
+class GroupsummaryQuery extends IdoQuery
 {
     /**
      * {@inheritdoc}

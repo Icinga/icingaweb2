@@ -9,7 +9,7 @@ use Icinga\Data\Filter\Filter;
 /**
  * Query for event history records
  */
-class EventHistoryQuery extends IdoQuery
+class EventhistoryQuery extends IdoQuery
 {
     /**
      * {@inheritdoc}
