@@ -1074,6 +1074,11 @@ class Form extends Zend_Form
                     } else {
                         $this->getView()->layout()->redirectUrl = $this->getRedirectUrl()->getAbsoluteUrl();
                     }
+                } elseif ($this->getIsApiTarget()) {
+                    $this->getRequest()->sendJson(array(
+                        'status'    => 'fail',
+                        'data'      => array_merge($this->getMessages(), $this->getErrorMessages())
+                    ));
                 }
             } elseif ($this->getValidatePartial()) {
                 // The form can't be processed but we may want to show validation errors though
