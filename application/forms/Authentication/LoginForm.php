@@ -27,6 +27,7 @@ class LoginForm extends Form
         $this->setRequiredCue(null);
         $this->setName('form_login');
         $this->setSubmitLabel($this->translate('Login'));
+        $this->setProgressLabel($this->translate('Logging in'));
     }
 
     /**
