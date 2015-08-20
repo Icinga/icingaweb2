@@ -3,6 +3,10 @@
 
 namespace Icinga\Web\Controller;
 
+use Zend_Controller_Action;
+use Zend_Controller_Action_HelperBroker;
+use Zend_Controller_Request_Abstract;
+use Zend_Controller_Response_Abstract;
 use Icinga\Application\Benchmark;
 use Icinga\Application\Config;
 use Icinga\Authentication\Auth;
@@ -19,10 +23,6 @@ use Icinga\Web\Url;
 use Icinga\Web\UrlParams;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Window;
-use Zend_Controller_Action;
-use Zend_Controller_Action_HelperBroker as ActionHelperBroker;
-use Zend_Controller_Request_Abstract as Request;
-use Zend_Controller_Response_Abstract as Response;
 
 /**
  * Base class for all core action controllers
@@ -90,13 +90,13 @@ class ActionController extends Zend_Controller_Action
      * The constructor starts benchmarking, loads the configuration and sets
      * other useful controller properties
      *
-     * @param Request  $request
-     * @param Response $response
-     * @param array    $invokeArgs Any additional invocation arguments
+     * @param Zend_Controller_Request_Abstract  $request
+     * @param Zend_Controller_Response_Abstract $response
+     * @param array                             $invokeArgs Any additional invocation arguments
      */
     public function __construct(
-        Request $request,
-        Response $response,
+        Zend_Controller_Request_Abstract $request,
+        Zend_Controller_Response_Abstract $response,
         array $invokeArgs = array()
     ) {
         $this->params = UrlParams::fromQueryString();
@@ -104,7 +104,7 @@ class ActionController extends Zend_Controller_Action
         $this->setRequest($request)
             ->setResponse($response)
             ->_setInvokeArgs($invokeArgs);
-        $this->_helper = new ActionHelperBroker($this);
+        $this->_helper = new Zend_Controller_Action_HelperBroker($this);
 
         $this->handlerBrowserWindows();
         $moduleName = $this->getModuleName();
