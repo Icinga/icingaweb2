@@ -82,6 +82,13 @@ class Form extends Zend_Form
     protected $submitLabel;
 
     /**
+     * Label to use for showing the user an activity indicator when submitting the form
+     *
+     * @var string
+     */
+    protected $progressLabel;
+
+    /**
      * The url to redirect to upon success
      *
      * @var Url
@@ -261,6 +268,29 @@ class Form extends Zend_Form
     public function getSubmitLabel()
     {
         return $this->submitLabel;
+    }
+
+    /**
+     * Set the label to use for showing the user an activity indicator when submitting the form
+     *
+     * @param   string  $label
+     *
+     * @return  $this
+     */
+    public function setProgressLabel($label)
+    {
+        $this->progressLabel = $label;
+        return $this;
+    }
+
+    /**
+     * Return the label to use for showing the user an activity indicator when submitting the form
+     *
+     * @return  string
+     */
+    public function getProgressLabel()
+    {
+        return $this->progressLabel;
     }
 
     /**
@@ -738,9 +768,10 @@ class Form extends Zend_Form
                 'submit',
                 'btn_submit',
                 array(
-                    'ignore'        => true,
-                    'label'         => $submitLabel,
-                    'decorators'    => array(
+                    'ignore'                => true,
+                    'label'                 => $submitLabel,
+                    'data-progress-label'   => $this->getProgressLabel(),
+                    'decorators'            => array(
                         'ViewHelper',
                         array('HtmlTag', array('tag' => 'div'))
                     )
