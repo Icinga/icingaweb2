@@ -1039,6 +1039,7 @@ class Module
     protected function registerRoutes()
     {
         $router = $this->app->getFrontController()->getRouter();
+        /** @var \Zend_Controller_Router_Rewrite $router */
         foreach ($this->routes as $name => $route) {
             $router->addRoute($name, $route);
         }
