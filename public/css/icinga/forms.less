@@ -271,12 +271,13 @@ form div.element {
 
 form label {
   display: inline-block;
+  margin-top: 0.3em;
   margin-right: 1em;
   font-size: 0.9em;
   width: 10em;
 }
 
-form div.element > * {
+label ~ * {
   vertical-align: top;
 }
 
@@ -314,8 +315,8 @@ select.grant-permissions {
   width: auto;
 }
 
-label ~ input, label ~ select {
-  margin-left: 1.35em;
+label ~ input, label ~ select, label ~ textarea {
+  margin-left: 1.3em;
 }
 
 label + i ~ input, label + i ~ select {
