@@ -1005,6 +1005,8 @@ class Form extends Zend_Form
      * Populate the elements with the given values
      *
      * @param   array   $defaults   The values to populate the elements with
+     *
+     * @return  $this
      */
     public function populate(array $defaults)
     {
