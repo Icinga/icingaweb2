@@ -336,43 +336,45 @@
             // Show a spinner depending on how the form is being submitted
             if (autosubmit && typeof $el !== 'undefined' && $el.next().hasClass('autosubmit-warning')) {
                 $el.next().addClass('spinning');
-            } else if ($button.length) {
-                if ($button.attr('data-progress-label')) {
-                    var isInput = $button.is('input');
-                    if (isInput) {
-                        $button.prop('value', $button.attr('data-progress-label') + '...');
-                    } else {
-                        $button.html($button.attr('data-progress-label') + '...');
+            } else if ($button.length && $button.attr('data-progress-label')) {
+                var isInput = $button.is('input');
+                if (isInput) {
+                    $button.prop('value', $button.attr('data-progress-label') + '...');
+                } else {
+                    $button.html($button.attr('data-progress-label') + '...');
+                }
+
+                // Use a fixed width to prevent the button from wobbling
+                $button.css('width', $button.css('width'));
+
+                progressTimer = icinga.timer.register(function () {
+                    var label = isInput ? $button.prop('value') : $button.html();
+                    var dots = label.substr(-3);
+
+                    // Using empty spaces here to prevent centered labels from wobbling
+                    if (dots === '...') {
+                        label = label.slice(0, -2) + '  ';
+                    } else if (dots === '.. ') {
+                        label = label.slice(0, -1) + '.';
+                    } else if (dots === '.  ') {
+                        label = label.slice(0, -2) + '. ';
                     }
 
-                    // Use a fixed width to prevent the button from wobbling
-                    $button.css('width', $button.css('width'));
-
-                    progressTimer = icinga.timer.register(function () {
-                        var label = isInput ? $button.prop('value') : $button.html();
-                        var dots = label.substr(-3);
-
-                        // Using empty spaces here to prevent centered labels from wobbling
-                        if (dots === '...') {
-                            label = label.slice(0, -2) + '  ';
-                        } else if (dots === '.. ') {
-                            label = label.slice(0, -1) + '.';
-                        } else if (dots === '.  ') {
-                            label = label.slice(0, -2) + '. ';
-                        }
-
-                        if (isInput) {
-                            $button.prop('value', label);
-                        } else {
-                            $button.html(label);
-                        }
-                    }, null, 100);
-                } else if ($button.next().hasClass('spinner')) {
-                    $('i', $button.next()).addClass('active');
-                } else if ($form.attr('data-progress-element')) {
-                    var $progressElement = $('#' + $form.attr('data-progress-element'));
-                    if ($progressElement.length) {
+                    if (isInput) {
+                        $button.prop('value', label);
+                    } else {
+                        $button.html(label);
+                    }
+                }, null, 100);
+            } else if ($button.length && $button.next().hasClass('spinner')) {
+                $('i', $button.next()).addClass('active');
+            } else if ($form.attr('data-progress-element')) {
+                var $progressElement = $('#' + $form.attr('data-progress-element'));
+                if ($progressElement.length) {
+                    if ($progressElement.hasClass('spinner')) {
                         $('i', $progressElement).addClass('active');
+                    } else {
+                        $('i.autosubmit-warning', $progressElement).addClass('spinning');
                     }
                 }
             }
