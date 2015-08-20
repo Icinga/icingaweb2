@@ -327,6 +327,22 @@ button.noscript-apply {
   margin-left: 0.5em;
 }
 
+i.autosubmit-warning {
+  display: inline-block;
+  margin-left: 0.2em;
+  margin-top: 0.25em;
+
+  &.spinning {
+    .animate(spin 2s infinite linear);
+
+    &:before {
+      margin: 0; // Disables wobbling
+      font-size: 90%; // icon-spin6 seems to be bigger than icon-cw
+      content: '\e874'; // icon-spin6
+    }
+  }
+}
+
 html.no-js i.autosubmit-warning {
   .sr-only;
 }

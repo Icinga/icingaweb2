@@ -212,6 +212,7 @@
             var method = $form.attr('method');
             var encoding = $form.attr('enctype');
             var $button = $('input[type=submit]:focus', $form).add('button[type=submit]:focus', $form);
+            var progressTimer;
             var $target;
             var data;
 
@@ -332,7 +333,39 @@
             // Note that disabled form inputs will not be enabled via JavaScript again
             $form.find(':input:not(#search):not(:disabled)').prop('disabled', true);
 
-            icinga.loader.loadUrl(url, $target, data, method);
+            // Show a spinner depending on how the form is being submitted
+            if (autosubmit && typeof $el !== 'undefined' && $el.next().hasClass('autosubmit-warning')) {
+                $el.next().addClass('spinning');
+            } else if ($button.length) {
+                if ($button.attr('data-progress-label')) {
+                    var isInput = $button.is('input');
+                    if (isInput) {
+                        $button.prop('value', $button.attr('data-progress-label'));
+                    } else {
+                        $button.html($button.attr('data-progress-label'));
+                    }
+
+                    progressTimer = icinga.timer.register(function () {
+                        var label = isInput ? $button.prop('value') : $button.html();
+
+                        if (label.substr(-3) === '...') {
+                            label = label.slice(0, -2);
+                        } else {
+                            label += '.';
+                        }
+
+                        if (isInput) {
+                            $button.prop('value', label);
+                        } else {
+                            $button.html(label);
+                        }
+                    }, null, 100);
+                } else if ($button.next().hasClass('spinner')) {
+                    $('i', $button.next()).addClass('active');
+                }
+            }
+
+            icinga.loader.loadUrl(url, $target, data, method).progressTimer = progressTimer;
 
             event.stopPropagation();
             event.preventDefault();
