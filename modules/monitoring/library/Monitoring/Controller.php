@@ -60,9 +60,7 @@ class Controller extends IcingaWebController
      */
     protected function applyRestriction($name, Filterable $filterable)
     {
-        if (null !== $restriction = $restriction = $this->getRestriction($name)) {
-            $filterable->applyFilter($restriction);
-        }
+        $filterable->applyFilter($this->getRestriction($name));
         return $filterable;
     }
 
@@ -88,7 +86,7 @@ class Controller extends IcingaWebController
         ));
         foreach ($this->getRestrictions($name) as $filter) {
             if ($filter === '*') {
-                return null;
+                return Filter::matchAny();
             }
             try {
                 $restriction->addFilter(Filter::fromQueryString($filter));
