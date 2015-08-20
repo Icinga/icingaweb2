@@ -3,8 +3,9 @@
 
 namespace Icinga\Web;
 
-use Icinga\Application\Icinga;
+use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Request_Http;
+use Icinga\Application\Icinga;
 use Icinga\User;
 
 /**
@@ -123,5 +124,17 @@ class Request extends Zend_Controller_Request_Http
     {
         $cookie = new Cookie($this);
         return $cookie->isSupported();
+    }
+
+    /**
+     * Immediately respond w/ the given data encoded in JSON
+     *
+     * @param array $data
+     */
+    public function sendJson(array $data)
+    {
+        $helper = Zend_Controller_Action_HelperBroker::getStaticHelper('json');
+        /** @var \Zend_Controller_Action_Helper_Json $helper */
+        $helper->sendJson($data);
     }
 }
