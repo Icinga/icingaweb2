@@ -33,6 +33,11 @@ use Zend_Controller_Response_Abstract as Response;
  *     {@inheritdoc}
  *     @return  \Icinga\Web\Request
  * }
+ *
+ * @method \Icinga\Web\Response getResponse() {
+ *     {@inheritdoc}
+ *     @return  \Icinga\Web\Response
+ * }
  */
 class ActionController extends Zend_Controller_Action
 {
