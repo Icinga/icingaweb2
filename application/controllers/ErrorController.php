@@ -14,6 +14,9 @@ use Icinga\Web\Controller\ActionController;
  */
 class ErrorController extends ActionController
 {
+    /**
+     * {@inheritdoc}
+     */
     protected $requiresAuthentication = false;
 
     /**
@@ -23,7 +26,7 @@ class ErrorController extends ActionController
     {
         $error      = $this->_getParam('error_handler');
         $exception  = $error->exception;
-
+        /** @var \Exception $exception */
         Logger::error($exception);
         Logger::error('Stacktrace: %s', $exception->getTraceAsString());
 
@@ -74,6 +77,15 @@ class ErrorController extends ActionController
                 }
                 break;
         }
+
+        if ($this->getRequest()->getIsApiRequest()) {
+            // @TODO(el): Use ApiResponse class for unified response handling.
+            $this->getRequest()->sendJson(array(
+                'status'    => 'error',
+                'message'   => $this->view->message
+            ));
+        }
+
         $this->view->request = $error->request;
     }
 }
