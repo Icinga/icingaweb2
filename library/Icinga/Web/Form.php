@@ -668,6 +668,12 @@ class Form extends Zend_Form
     public function setUseFormAutosubmit($state = true)
     {
         $this->useFormAutosubmit = (bool) $state;
+        if ($this->useFormAutosubmit) {
+            $this->setAttrib('data-progress-element', 'form-header');
+        } else {
+            $this->removeAttrib('data-progress-element');
+        }
+
         return $this;
     }
 
@@ -1203,7 +1209,7 @@ class Form extends Zend_Form
                 $this->addDecorator('Description', array('tag' => 'h1'));
                 if ($this->getUseFormAutosubmit()) {
                     $this->addDecorator('Autosubmit', array('accessible' => true))
-                        ->addDecorator('HtmlTag', array('tag' => 'div', 'class' => 'header'));
+                        ->addDecorator('HtmlTag', array('tag' => 'div', 'class' => 'header', 'id' => 'form-header'));
                 }
 
                 $this->addDecorator('FormDescriptions')
