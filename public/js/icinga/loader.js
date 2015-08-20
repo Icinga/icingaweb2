@@ -42,13 +42,15 @@
         /**
          * Load the given URL to the given target
          *
-         * @param {string} url     URL to be loaded
-         * @param {object} target  Target jQuery element
-         * @param {object} data    Optional parameters, usually for POST requests
-         * @param {string} method  HTTP method, default is 'GET'
-         * @param {string} action  How to handle the response ('replace' or 'append'), default is 'replace'
+         * @param {string}  url             URL to be loaded
+         * @param {object}  target          Target jQuery element
+         * @param {object}  data            Optional parameters, usually for POST requests
+         * @param {string}  method          HTTP method, default is 'GET'
+         * @param {string}  action          How to handle the response ('replace' or 'append'), default is 'replace'
+         * @param {boolean} autorefresh     Whether the cause is a autorefresh or not
+         * @param {object}  progressTimer   A timer to be stopped when the request is done
          */
-        loadUrl: function (url, $target, data, method, action, autorefresh) {
+        loadUrl: function (url, $target, data, method, action, autorefresh, progressTimer) {
             var id = null;
 
             // Default method is GET
@@ -131,6 +133,7 @@
             req.autorefresh = autorefresh;
             req.action = action;
             req.addToHistory = true;
+            req.progressTimer = progressTimer;
 
             if (id) {
                 this.requests[id] = req;
@@ -537,6 +540,10 @@
                 return;
             }
 
+            if (typeof req.progressTimer !== 'undefined') {
+                this.icinga.timer.unregister(req.progressTimer);
+            }
+
             // .html() removes outer div we added above
             this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh);
             if (oldNotifications) {
@@ -636,6 +643,10 @@
             if (req.addToHistory && ! req.autorefresh && req.$target.data('icingaRefresh') > 0) {
                 req.$target.data('icingaRefresh', 0);
                 req.$target.data('icingaUrl', url);
+            }
+
+            if (typeof req.progressTimer !== 'undefined') {
+                this.icinga.timer.unregister(req.progressTimer);
             }
 
             if (req.status > 0) {
