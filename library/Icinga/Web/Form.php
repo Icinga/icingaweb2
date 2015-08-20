@@ -1203,7 +1203,7 @@ class Form extends Zend_Form
      * Load the default decorators
      *
      * Overwrites Zend_Form::loadDefaultDecorators to avoid having
-     * the HtmlTag-Decorator added and to provide viewscript usage
+     * the HtmlTag-Decorator added and to provide view script usage
      *
      * @return  $this
      */
@@ -1451,7 +1451,7 @@ class Form extends Zend_Form
     /**
      * Add a error notification and prevent the form from being successfully validated
      *
-     * @param   string|array    $message    The notfication's message
+     * @param   string|array    $message    The notification message
      *
      * @return  $this
      */
@@ -1465,7 +1465,7 @@ class Form extends Zend_Form
     /**
      * Add a warning notification and prevent the form from being successfully validated
      *
-     * @param   string|array    $message    The notfication's message
+     * @param   string|array    $message    The notification message
      *
      * @return  $this
      */
@@ -1479,7 +1479,7 @@ class Form extends Zend_Form
     /**
      * Add a info notification
      *
-     * @param   string|array    $message        The notfication's message
+     * @param   string|array    $message        The notification message
      * @param   bool            $markAsError    Whether to prevent the form from being successfully validated or not
      *
      * @return  $this
