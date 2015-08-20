@@ -80,7 +80,7 @@ class ErrorController extends ActionController
 
         if ($this->getRequest()->isApiRequest()) {
             // @TODO(el): Use ApiResponse class for unified response handling.
-            $this->getRequest()->sendJson(array(
+            $this->getResponse()->sendJson(array(
                 'status'    => 'error',
                 'message'   => $this->view->message
             ));

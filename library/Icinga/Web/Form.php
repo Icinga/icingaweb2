@@ -1072,7 +1072,7 @@ class Form extends Zend_Form
                         // notifications
                         $messages = Notification::getInstance()->popMessages();
                         // @TODO(el): Use ApiResponse class for unified response handling.
-                        $this->getRequest()->sendJson(array(
+                        $this->getResponse()->sendJson(array(
                             'status'    => 'success',
                             'message'   => array_pop($messages) // @TODO(el): Remove the type from the message
                         ));
@@ -1082,7 +1082,7 @@ class Form extends Zend_Form
                         $this->getView()->layout()->redirectUrl = $this->getRedirectUrl()->getAbsoluteUrl();
                     }
                 } elseif ($this->getIsApiTarget()) {
-                    $this->getRequest()->sendJson(array(
+                    $this->getResponse()->sendJson(array(
                         'status'    => 'fail',
                         'data'      => array_merge($this->getMessages(), $this->getErrorMessages())
                     ));
