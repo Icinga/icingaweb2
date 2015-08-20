@@ -369,6 +369,11 @@
                     }, null, 100);
                 } else if ($button.next().hasClass('spinner')) {
                     $('i', $button.next()).addClass('active');
+                } else if ($form.attr('data-progress-element')) {
+                    var $progressElement = $('#' + $form.attr('data-progress-element'));
+                    if ($progressElement.length) {
+                        $('i', $progressElement).addClass('active');
+                    }
                 }
             }
 
