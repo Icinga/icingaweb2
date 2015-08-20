@@ -246,6 +246,10 @@
                 encoding = 'application/x-www-form-urlencoded';
             }
 
+            if (typeof autosubmit === 'undefined') {
+                autosubmit = false;
+            }
+
             if ($button.length === 0) {
                 $button = $('input[type=submit]', $form).add('button[type=submit]', $form).first();
             }
@@ -271,7 +275,7 @@
             if (method === 'GET') {
                 var dataObj = $form.serializeObject();
 
-                if (typeof autosubmit === 'undefined' || ! autosubmit) {
+                if (! autosubmit) {
                     if ($button.length && $button.attr('name') !== 'undefined') {
                         dataObj[$button.attr('name')] = $button.attr('value');
                     }
@@ -289,7 +293,7 @@
                             $form.find(':input:not(:disabled)').prop('disabled', true);
                         }, 0);
 
-                        if (! typeof autosubmit === 'undefined' && autosubmit) {
+                        if (autosubmit) {
                             if ($button.length) {
                                 // We're autosubmitting the form so the button has not been clicked, however,
                                 // to be really safe, we're disabling the button explicitly, just in case..
@@ -310,7 +314,7 @@
                     data = $form.serializeArray();
                 }
 
-                if (typeof autosubmit === 'undefined' || ! autosubmit) {
+                if (! autosubmit) {
                     if ($button.length && $button.attr('name') !== 'undefined') {
                         if (encoding === 'multipart/form-data') {
                             data.append($button.attr('name'), $button.attr('value'));
