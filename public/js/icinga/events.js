@@ -340,18 +340,25 @@
                 if ($button.attr('data-progress-label')) {
                     var isInput = $button.is('input');
                     if (isInput) {
-                        $button.prop('value', $button.attr('data-progress-label'));
+                        $button.prop('value', $button.attr('data-progress-label') + '...');
                     } else {
-                        $button.html($button.attr('data-progress-label'));
+                        $button.html($button.attr('data-progress-label') + '...');
                     }
+
+                    // Use a fixed width to prevent the button from wobbling
+                    $button.css('width', $button.css('width'));
 
                     progressTimer = icinga.timer.register(function () {
                         var label = isInput ? $button.prop('value') : $button.html();
+                        var dots = label.substr(-3);
 
-                        if (label.substr(-3) === '...') {
-                            label = label.slice(0, -2);
-                        } else {
-                            label += '.';
+                        // Using empty spaces here to prevent centered labels from wobbling
+                        if (dots === '...') {
+                            label = label.slice(0, -2) + '  ';
+                        } else if (dots === '.. ') {
+                            label = label.slice(0, -1) + '.';
+                        } else if (dots === '.  ') {
+                            label = label.slice(0, -2) + '. ';
                         }
 
                         if (isInput) {
