@@ -770,6 +770,7 @@ class Module
     {
         $this->launchConfigScript();
         $tabs = Widget::create('tabs');
+        /** @var \Icinga\Web\Widget\Tabs $tabs */
         $tabs->add('info', array(
             'url'       => 'config/module',
             'urlParams' => array('name' => $this->getName()),
