@@ -773,7 +773,8 @@ class Form extends Zend_Form
                     'data-progress-label'   => $this->getProgressLabel(),
                     'decorators'            => array(
                         'ViewHelper',
-                        array('HtmlTag', array('tag' => 'div'))
+                        array('Spinner', array('separator' => '')),
+                        array('HtmlTag', array('tag' => 'div', 'class' => 'buttons'))
                     )
                 )
             );
