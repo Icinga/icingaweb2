@@ -14,11 +14,11 @@ use Icinga\User;
 class Request extends Zend_Controller_Request_Http
 {
     /**
-     * User if authenticated
+     * Response
      *
-     * @var User|null
+     * @var Response
      */
-    protected $user;
+    protected $response;
 
     /**
      * Unique identifier
@@ -35,20 +35,24 @@ class Request extends Zend_Controller_Request_Http
     protected $url;
 
     /**
-     * Response
+     * User if authenticated
      *
-     * @var Response
+     * @var User|null
      */
-    protected $response;
+    protected $user;
 
     /**
-     * Get whether the request seems to be an API request
+     * Get the response
      *
-     * @return bool
+     * @return Response
      */
-    public function getIsApiRequest()
+    public function getResponse()
     {
-        return $this->getHeader('Accept') === 'application/json';
+        if ($this->response === null) {
+            $this->response = Icinga::app()->getResponse();
+        }
+
+        return $this->response;
     }
 
     /**
@@ -88,17 +92,13 @@ class Request extends Zend_Controller_Request_Http
     }
 
     /**
-     * Get the response
+     * Get whether the request seems to be an API request
      *
-     * @return Response
+     * @return bool
      */
-    public function getResponse()
+    public function isApiRequest()
     {
-        if ($this->response === null) {
-            $this->response = Icinga::app()->getResponse();
-        }
-
-        return $this->response;
+        return $this->getHeader('Accept') === 'application/json';
     }
 
     /**

@@ -990,7 +990,7 @@ class Form extends Zend_Form
         if (! $this->tokenDisabled) {
             $request = $this->getRequest();
             if (! $request->isXmlHttpRequest()
-                && ($this->getIsApiTarget() || $request->getIsApiRequest())
+                && ($this->getIsApiTarget() || $request->isApiRequest())
             ) {
                 return $this;
             }
@@ -1067,7 +1067,7 @@ class Form extends Zend_Form
                     && (($this->onSuccess !== null && false !== call_user_func($this->onSuccess, $this))
                         || ($this->onSuccess === null && false !== $this->onSuccess()))
                 ) {
-                    if ($this->getIsApiTarget() || $this->getRequest()->getIsApiRequest()) {
+                    if ($this->getIsApiTarget() || $this->getRequest()->isApiRequest()) {
                         // API targets and API requests will never redirect but immediately respond w/ JSON-encoded
                         // notifications
                         $messages = Notification::getInstance()->popMessages();
