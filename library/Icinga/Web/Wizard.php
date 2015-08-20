@@ -655,8 +655,21 @@ class Wizard
             );
         }
 
+        $page->setAttrib('data-progress-element', 'wizard-progress');
+        $page->addElement(
+            'note',
+            'progress',
+            array(
+                'order'         => 99,
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('Spinner', array('id' => 'wizard-progress'))
+                )
+            )
+        );
+
         $page->addDisplayGroup(
-            array(static::BTN_PREV, static::BTN_NEXT),
+            array(static::BTN_PREV, static::BTN_NEXT, 'progress'),
             'buttons',
             array(
                 'decorators' => array(
