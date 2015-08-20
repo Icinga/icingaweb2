@@ -28,6 +28,11 @@ use Zend_Controller_Response_Abstract as Response;
  * Base class for all core action controllers
  *
  * All Icinga Web core controllers should extend this class
+ *
+ * @method \Icinga\Web\Request getRequest() {
+ *     {@inheritdoc}
+ *     @return  \Icinga\Web\Request
+ * }
  */
 class ActionController extends Zend_Controller_Action
 {

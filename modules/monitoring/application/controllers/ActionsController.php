@@ -9,11 +9,6 @@ use Icinga\Module\Monitoring\Object\HostList;
 
 /**
  * Monitoring API
- *
- * @method \Icinga\Web\Request getRequest() {
- *     {@inheritdoc}
- *     @return  \Icinga\Web\Request
- * }
  */
 class Monitoring_ActionsController extends Controller
 {
