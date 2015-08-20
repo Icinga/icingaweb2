@@ -61,6 +61,17 @@ class Form extends Zend_Form
     protected $created = false;
 
     /**
+     * Whether the form is an API target
+     *
+     * When the form is an API target, the form evaluates as submitted if the request method equals the form method.
+     * That means, that the submit button and form identification are not taken into account. In addition, the CSRF
+     * counter measure will not be added to the form's elements.
+     *
+     * @var bool
+     */
+    protected $isApiTarget = false;
+
+    /**
      * The request associated with this form
      *
      * @var Request
@@ -652,6 +663,29 @@ class Form extends Zend_Form
     }
 
     /**
+     * Get whether the form is an API target
+     *
+     * @return bool
+     */
+    public function getIsApiTarget()
+    {
+        return $this->isApiTarget;
+    }
+
+    /**
+     * Set whether the form is an API target
+     *
+     * @param   bool $isApiTarget
+     *
+     * @return  $this
+     */
+    public function setIsApiTarget($isApiTarget = true)
+    {
+        $this->isApiTarget = (bool) $isApiTarget;
+        return $this;
+    }
+
+    /**
      * Create this form
      *
      * @param   array   $formData   The data sent by the user
@@ -951,7 +985,7 @@ class Form extends Zend_Form
         if (! $this->tokenDisabled) {
             $request = $this->getRequest();
             if (! $request->isXmlHttpRequest()
-                && $request->getIsApiRequest()
+                && ($this->getIsApiTarget() || $request->getIsApiRequest())
             ) {
                 return $this;
             }
@@ -1016,17 +1050,26 @@ class Form extends Zend_Form
         }
 
         $formData = $this->getRequestData();
-        if ($this->getUidDisabled() || $this->wasSent($formData)) {
+        if ($this->getIsApiTarget() || $this->getUidDisabled() || $this->wasSent($formData)) {
             if (($frameUpload = (bool) $request->getUrl()->shift('_frameUpload', false))) {
                 $this->getView()->layout()->setLayout('wrapped');
             }
-
             $this->populate($formData); // Necessary to get isSubmitted() to work
             if (! $this->getSubmitLabel() || $this->isSubmitted()) {
                 if ($this->isValid($formData)
                     && (($this->onSuccess !== null && false !== call_user_func($this->onSuccess, $this))
-                        || ($this->onSuccess === null && false !== $this->onSuccess()))) {
-                    if (! $frameUpload) {
+                        || ($this->onSuccess === null && false !== $this->onSuccess()))
+                ) {
+                    if ($this->getIsApiTarget() || $this->getRequest()->getIsApiRequest()) {
+                        // API targets and API requests will never redirect but immediately respond w/ JSON-encoded
+                        // notifications
+                        $messages = Notification::getInstance()->popMessages();
+                        // @TODO(el): Use ApiResponse class for unified response handling.
+                        $this->getRequest()->sendJson(array(
+                            'status'    => 'success',
+                            'message'   => array_pop($messages) // @TODO(el): Remove the type from the message
+                        ));
+                    } elseif (! $frameUpload) {
                         $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                     } else {
                         $this->getView()->layout()->redirectUrl = $this->getRedirectUrl()->getAbsoluteUrl();
@@ -1052,6 +1095,12 @@ class Form extends Zend_Form
      */
     public function isSubmitted()
     {
+        if (strtolower($this->getRequest()->getMethod()) !== $this->getMethod()) {
+            return false;
+        }
+        if ($this->getIsApiTarget()) {
+            return true;
+        }
         if ($this->getSubmitLabel()) {
             return $this->getElement('btn_submit')->isChecked();
         }
