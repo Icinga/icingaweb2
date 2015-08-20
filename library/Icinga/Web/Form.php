@@ -801,9 +801,17 @@ class Form extends Zend_Form
                 && ! array_key_exists('disabledLoadDefaultDecorators', $options)
             ) {
                 $options['decorators'] = static::$defaultElementDecorators;
+                if (! isset($options['data-progress-label']) && ($type === 'submit'
+                    || ($type === 'button' && isset($options['type']) && $options['type'] === 'submit'))
+                ) {
+                    array_splice($options['decorators'], 1, 0, array(array('Spinner', array('separator' => ''))));
+                }
             }
         } else {
             $options = array('decorators' => static::$defaultElementDecorators);
+            if ($type === 'submit') {
+                array_splice($options['decorators'], 1, 0, array(array('Spinner', array('separator' => ''))));
+            }
         }
 
         $el = parent::createElement($type, $name, $options);

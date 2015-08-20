@@ -107,6 +107,25 @@ form.inline {
   display: inline;
 }
 
+div.spinner {
+  display: inline-block;
+  margin-top: 0.2em;
+  margin-left: 0.25em;
+
+  i {
+    visibility: hidden;
+
+    &.active {
+      visibility: visible;
+    }
+
+    &:before {
+      margin: 0; // Disables wobbling
+      .animate(spin 2s infinite linear);
+    }
+  }
+}
+
 button, .button-like {
   font-size: 0.9em;
   font-weight: bold;
