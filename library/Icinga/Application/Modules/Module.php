@@ -188,7 +188,7 @@ class Module
     /**
      * A set of menu elements
      *
-     * @var array
+     * @var Menu[]
      */
     protected $menuItems = array();
 
