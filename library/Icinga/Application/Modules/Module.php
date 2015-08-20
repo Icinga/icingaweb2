@@ -4,23 +4,23 @@
 namespace Icinga\Application\Modules;
 
 use Exception;
+use Zend_Controller_Router_Route;
 use Zend_Controller_Router_Route_Abstract;
-use Zend_Controller_Router_Route as Route;
-use Zend_Controller_Router_Route_Regex as RegexRoute;
+use Zend_Controller_Router_Route_Regex;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
+use Icinga\Exception\IcingaException;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Module\Setup\SetupWizard;
+use Icinga\Util\File;
 use Icinga\Util\Translator;
 use Icinga\Web\Hook;
 use Icinga\Web\Menu;
 use Icinga\Web\Widget;
 use Icinga\Web\Widget\Dashboard\Pane;
-use Icinga\Module\Setup\SetupWizard;
-use Icinga\Util\File;
-use Icinga\Exception\ProgrammingError;
-use Icinga\Exception\IcingaException;
 
 /**
  * Module handling
@@ -1044,7 +1044,7 @@ class Module
         }
         $router->addRoute(
             $this->name . '_jsprovider',
-            new Route(
+            new Zend_Controller_Router_Route(
                 'js/' . $this->name . '/:file',
                 array(
                     'controller'    => 'static',
@@ -1055,7 +1055,7 @@ class Module
         );
         $router->addRoute(
             $this->name . '_img',
-            new RegexRoute(
+            new Zend_Controller_Router_Route_Regex(
                 'img/' . $this->name . '/(.+)',
                 array(
                     'controller'    => 'static',
