@@ -958,14 +958,6 @@ class Module
             $loader->registerNamespace('Icinga\\Module\\' . $moduleName. '\\Forms', $moduleFormDir);
         }
 
-        $moduleControllerDir = $this->getControllerDir();
-        if (is_dir($moduleControllerDir)) {
-            $loader->registerNamespace(
-                'Icinga\\Module\\' . $moduleName . '\\' . Dispatcher::CONTROLLER_NAMESPACE,
-                $moduleControllerDir
-            );
-        }
-
         $this->registeredAutoloader = true;
 
         return $this;
@@ -1025,19 +1017,23 @@ class Module
      */
     protected function registerWebIntegration()
     {
-        if (!$this->app->isWeb()) {
+        if (! $this->app->isWeb()) {
             return $this;
         }
-
-        if (file_exists($this->controllerdir) && is_dir($this->controllerdir)) {
+        $moduleControllerDir = $this->getControllerDir();
+        if (is_dir($moduleControllerDir)) {
             $this->app->getfrontController()->addControllerDirectory(
-                $this->controllerdir,
-                $this->name
+                $moduleControllerDir,
+                $this->getName()
+            );
+            $this->app->getLoader()->registerNamespace(
+                'Icinga\\Module\\' . ucfirst($this->getName()) . '\\' . Dispatcher::CONTROLLER_NAMESPACE,
+                $moduleControllerDir
             );
         }
-
-        $this->registerLocales()
-             ->registerRoutes();
+        $this
+            ->registerLocales()
+            ->registerRoutes();
         return $this;
     }
 
