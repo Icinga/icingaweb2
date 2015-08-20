@@ -31,7 +31,10 @@ class Spinner extends Zend_Form_Decorator_Abstract
      */
     public function render($content = '')
     {
-        $spinner = '<div class="spinner ' . ($this->getOption('class') ?: '') . '">'
+        $spinner = '<div '
+            . ($this->getOption('id') !== null ? ' id="' . $this->getOption('id') . '"' : '')
+            . 'class="spinner ' . ($this->getOption('class') ?: '') . '"'
+            . '>'
             . $this->getView()->icon('spin6')
             . '</div>';
 
