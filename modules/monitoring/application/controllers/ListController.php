@@ -159,8 +159,8 @@ class Monitoring_ListController extends Controller
             'max_check_attempts'    => 'service_max_check_attempts'
         ), $this->addColumns());
         $query = $this->backend->select()->from('servicestatus', $columns);
-        $this->filterQuery($query);
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
         $this->view->services = $query;
 
         $this->setupLimitControl();
