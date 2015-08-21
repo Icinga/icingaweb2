@@ -44,7 +44,7 @@ $serviceFilter = '(service_description=' . implode('|service_description=', $ser
 foreach ($serviceDescriptions as $serviceDescription): ?>
             <span>
               <?= $this->qlink(
-                '<abbr>' . (strlen($serviceDescription) > 18 ? substr($serviceDescription, 0, 18) . '...' : $serviceDescription) . '</abbr>',
+                '<abbr>' . $this->ellipsis($serviceDescription, 18) . '</abbr>',
                 'monitoring/list/services?' . $hostFilter,
                 array(
                   'service_description' => $serviceDescription
