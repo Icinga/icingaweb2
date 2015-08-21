@@ -41,16 +41,16 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
 $serviceDescriptions = array_keys($serviceStates);
 $serviceFilter = '(service_description=' . implode('|service_description=', $serviceDescriptions) . ')';
 
-foreach ($serviceDescriptions as $service_description): ?>
+foreach ($serviceDescriptions as $serviceDescription): ?>
             <span>
               <?= $this->qlink(
-                '<abbr>' . (strlen($service_description) > 18 ? substr($service_description, 0, 18) . '...' : $service_description) . '</abbr>',
+                '<abbr>' . (strlen($serviceDescription) > 18 ? substr($serviceDescription, 0, 18) . '...' : $serviceDescription) . '</abbr>',
                 'monitoring/list/services?' . $hostFilter,
                 array(
-                  'service_description' => $service_description
+                  'service_description' => $serviceDescription
                 ),
                 array(
-                  'title' => sprintf($this->translate('List all services with the name "%s" on all reported hosts'), $service_description)
+                  'title' => sprintf($this->translate('List all services with the name "%s" on all reported hosts'), $serviceDescription)
                 ),
                 false
               ); ?>
