@@ -72,7 +72,7 @@ foreach ($serviceDescriptions as $serviceDescription): ?>
             array('title' => sprintf($this->translate('List all reported services on host %s'), $hostName))
           ); ?>
         </th>
-<?php foreach (array_values($services) as $service): ?>
+<?php foreach ($services as $service): ?>
 <?php if ($service !== null): ?>
         <td>
           <span class="sr-only" id="<?= $service->host_name . '_' . $service->service_description . '_desc'; ?>">
