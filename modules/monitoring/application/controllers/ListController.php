@@ -508,10 +508,8 @@ class Monitoring_ListController extends Controller
             'services_warning_handled',
             'services_warning_unhandled'
         ));
-        $this->filterQuery($query);
-
         $this->applyRestriction('monitoring/filter/objects', $query);
-
+        $this->filterQuery($query);
         $this->view->hostgroups = $query;
 
         $this->setupLimitControl();
