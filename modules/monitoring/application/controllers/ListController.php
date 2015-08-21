@@ -412,7 +412,7 @@ class Monitoring_ListController extends Controller
             'service_display_name'
         ));
         $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->filterQuery($query):
+        $this->filterQuery($query);
         $this->view->comments = $query;
 
         $this->setupLimitControl();
