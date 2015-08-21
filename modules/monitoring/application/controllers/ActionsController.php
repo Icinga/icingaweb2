@@ -5,7 +5,9 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommandForm;
 use Icinga\Module\Monitoring\Object\HostList;
+use Icinga\Module\Monitoring\Object\ServiceList;
 
 /**
  * Monitoring API
@@ -24,7 +26,7 @@ class Monitoring_ActionsController extends Controller
         $hostList->addFilter(Filter::fromQueryString((string) $this->params));
         if (! $hostList->count()) {
             // @TODO(el): Use ApiResponse class for unified response handling.
-            $this->getRequest()->sendJson(array(
+            $this->getResponse()->sendJson(array(
                 'status'    => 'fail',
                 'message'   => 'No hosts found matching the given filter'
             ));
@@ -51,7 +53,7 @@ class Monitoring_ActionsController extends Controller
             ->fetchAll();
         if (empty($downtimes)) {
             // @TODO(el): Use ApiResponse class for unified response handling.
-            $this->getRequest()->sendJson(array(
+            $this->getResponse()->sendJson(array(
                 'status'    => 'fail',
                 'message'   => 'No downtimes found matching the given filter'
             ));
@@ -63,5 +65,29 @@ class Monitoring_ActionsController extends Controller
             ->handleRequest($this->getRequest());
         // @TODO(el): Respond w/ the downtimes deleted instead of the notifiaction added by
         // DeleteDowntimesCommandForm::onSuccess().
+    }
+
+    /**
+     * Schedule service downtimes
+     */
+    public function scheduleServiceDowntimeAction()
+    {
+        // @TODO(el): Require a filter
+        // @TODO(el): $this->backend->list('service')->handleRequest()->fetchAll()
+        $serviceList = new ServiceList($this->backend);
+        $this->applyRestriction('monitoring/filter/objects', $serviceList);
+        $serviceList->addFilter(Filter::fromQueryString((string) $this->params));
+        if (! $serviceList->count()) {
+            // @TODO(el): Use ApiResponse class for unified response handling.
+            $this->getResponse()->sendJson(array(
+                'status'    => 'fail',
+                'message'   => 'No services found matching the given filter'
+            ));
+        }
+        $form = new ScheduleServiceDowntimeCommandForm();
+        $form
+            ->setIsApiTarget(true)
+            ->setObjects($serviceList->fetch())
+            ->handleRequest($this->getRequest());
     }
 }
