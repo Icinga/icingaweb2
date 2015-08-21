@@ -25,24 +25,6 @@ class Monitoring_ListController extends Controller
     }
 
     /**
-     * @deprecated DO NOT USE. THIS IS A HACK. This is removed once we fix the eventhistory action w/ filters.
-     */
-    protected function applyFilter($query)
-    {
-        $params = clone $this->params;
-        $params->shift('format');
-        $params->shift('limit');
-        $params->shift('page');
-        $params->shift('view');
-        if ($sort = $params->shift('sort')) {
-            $query->order($sort, $params->shift('dir'));
-        }
-        $query->applyFilter(Filter::fromQuerystring((string) $params));
-        $this->handleFormatRequest($query);
-        return $query;
-    }
-
-    /**
      * Overwrite the backend to use (used for testing)
      *
      * @param Backend $backend      The Backend that should be used for querying
