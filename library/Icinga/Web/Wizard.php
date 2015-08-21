@@ -39,6 +39,11 @@ class Wizard
     const BTN_PREV = 'btn_prev';
 
     /**
+     * The name and id of the element for showing the user an activity indicator when advancing the wizard
+     */
+    const PROGRESS_ELEMENT = 'wizard_progress';
+
+    /**
      * This wizard's parent
      *
      * @var Wizard
@@ -655,21 +660,21 @@ class Wizard
             );
         }
 
-        $page->setAttrib('data-progress-element', 'wizard-progress');
+        $page->setAttrib('data-progress-element', static::PROGRESS_ELEMENT);
         $page->addElement(
             'note',
-            'progress',
+            static::PROGRESS_ELEMENT,
             array(
-                'order'         => 99,
+                'order'         => 99, // Ensures that it's shown on the right even if a sub-class adds another button
                 'decorators'    => array(
                     'ViewHelper',
-                    array('Spinner', array('id' => 'wizard-progress'))
+                    array('Spinner', array('id' => static::PROGRESS_ELEMENT))
                 )
             )
         );
 
         $page->addDisplayGroup(
-            array(static::BTN_PREV, static::BTN_NEXT, 'progress'),
+            array(static::BTN_PREV, static::BTN_NEXT, static::PROGRESS_ELEMENT),
             'buttons',
             array(
                 'decorators' => array(
