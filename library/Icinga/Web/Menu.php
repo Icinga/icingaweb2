@@ -117,9 +117,19 @@ class Menu implements RecursiveIterator
             foreach ($props as $key => $value) {
                 $method = 'set' . implode('', array_map('ucfirst', explode('_', strtolower($key))));
                 if ($key === 'renderer') {
+                    // nested configuration is used to pass multiple arguments to the item renderer
+                    if ($value instanceof ConfigObject) {
+                        $args = $value;
+                        $value = $value->get('0');
+                    }
+
                     $value = '\\' . ltrim($value, '\\');
                     if (class_exists($value)) {
-                        $value = new $value;
+                        if (isset($args)) {
+                            $value = new $value($args);
+                        } else {
+                            $value = new $value;
+                        }
                     } else {
                         $class = '\Icinga\Web\Menu' . $value;
                         if (!class_exists($class)) {
@@ -127,7 +137,11 @@ class Menu implements RecursiveIterator
                                 sprintf('ItemRenderer with class "%s" does not exist', $class)
                             );
                         }
-                        $value = new $class;
+                        if (isset($args)) {
+                            $value = new $class($args);
+                        } else {
+                            $value = new $class;
+                        }
                     }
                 }
                 if (method_exists($this, $method)) {
@@ -226,7 +240,6 @@ class Menu implements RecursiveIterator
         $auth = Auth::getInstance();
 
         if ($auth->isAuthenticated()) {
-
             $this->add(t('Dashboard'), array(
                 'url'      => 'dashboard',
                 'icon'     => 'dashboard',
@@ -236,7 +249,10 @@ class Menu implements RecursiveIterator
             $section = $this->add(t('System'), array(
                 'icon'     => 'services',
                 'priority' => 700,
-                'renderer' => 'ProblemMenuItemRenderer'
+                'renderer' => array(
+                    'SummaryMenuItemRenderer',
+                    'state' => 'critical'
+                )
             ));
             $section->add(t('About'), array(
                 'url'       => 'about',
@@ -297,7 +313,10 @@ class Menu implements RecursiveIterator
             $section->add(t('Logout'), array(
                 'url'      => 'authentication/logout',
                 'priority' => 990,
-                'renderer' => 'ForeignMenuItemRenderer'
+                'renderer' => array(
+                    'MenuItemRenderer',
+                    'target' => '_self'
+                )
             ));
         }
     }
