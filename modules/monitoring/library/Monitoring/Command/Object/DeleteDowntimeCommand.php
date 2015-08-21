@@ -18,33 +18,20 @@ class DeleteDowntimeCommand extends IcingaCommand
     protected $downtimeId;
 
     /**
-     * If the command affects a service downtime
+     * Whether the command affects a service downtime
      *
      * @var boolean
      */
     protected $isService = false;
 
     /**
-     * Set if this command affects a service
+     * Get the ID of the downtime that is to be deleted
      *
-     * @param   bool $isService
-     *
-     * @return  $this
+     * @return int
      */
-    public function setIsService($isService = true)
+    public function getDowntimeId()
     {
-        $this->isService = (bool) $isService;
-        return $this;
-    }
-
-    /**
-     * Return whether the command affects a service
-     *
-     * @return bool
-     */
-    public function getIsService()
-    {
-        return $this->isService;
+        return $this->downtimeId;
     }
 
     /**
@@ -61,12 +48,25 @@ class DeleteDowntimeCommand extends IcingaCommand
     }
 
     /**
-     * Get the ID of the downtime that is to be deleted
+     * Get whether the command affects a service
      *
-     * @return int
+     * @return bool
      */
-    public function getDowntimeId()
+    public function getIsService()
     {
-        return $this->downtimeId;
+        return $this->isService;
+    }
+
+    /**
+     * Set whether the command affects a service
+     *
+     * @param   bool $isService
+     *
+     * @return  $this
+     */
+    public function setIsService($isService = true)
+    {
+        $this->isService = (bool) $isService;
+        return $this;
     }
 }
