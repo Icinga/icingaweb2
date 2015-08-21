@@ -13,7 +13,7 @@ use Icinga\Web\Notification;
 class DeleteCommentsCommandForm extends CommandForm
 {
     /**
-     * The comments deleted on success
+     * The comments to delete
      *
      * @var array
      */
@@ -25,6 +25,19 @@ class DeleteCommentsCommandForm extends CommandForm
     public function init()
     {
         $this->setAttrib('class', 'inline');
+    }
+
+    /**
+     * Set the comments to delete
+     *
+     * @param   array $comments
+     *
+     * @return  $this
+     */
+    public function setComments(array $comments)
+    {
+        $this->comments = $comments;
+        return $this;
     }
 
     /**
@@ -70,18 +83,5 @@ class DeleteCommentsCommandForm extends CommandForm
             $this->translatePlural('Deleting comment..', 'Deleting comments..', count($this->comments))
         );
         return true;
-    }
-
-    /**
-     * Set the comments to be deleted upon success
-     *
-     * @param   array $comments
-     *
-     * @return  $this
-     */
-    public function setComments(array $comments)
-    {
-        $this->comments = $comments;
-        return $this;
     }
 }
