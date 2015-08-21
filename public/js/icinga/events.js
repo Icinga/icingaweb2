@@ -336,6 +336,8 @@
             // Show a spinner depending on how the form is being submitted
             if (autosubmit && typeof $el !== 'undefined' && $el.next().hasClass('autosubmit-warning')) {
                 $el.next().addClass('spinning');
+            } else if ($button.length && $button.is('button') && $button.hasClass('animated')) {
+                $button.addClass('active');
             } else if ($button.length && $button.attr('data-progress-label')) {
                 var isInput = $button.is('input');
                 if (isInput) {
