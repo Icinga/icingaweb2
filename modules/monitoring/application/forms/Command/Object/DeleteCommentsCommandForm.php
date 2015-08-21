@@ -57,7 +57,8 @@ class DeleteCommentsCommandForm extends CommandForm
     {
         foreach ($this->comments as $comment) {
             $cmd = new DeleteCommentCommand();
-            $cmd->setCommentId($comment->id)
+            $cmd
+                ->setCommentId($comment->id)
                 ->setIsService(isset($comment->service_description));
             $this->getTransport($this->request)->send($cmd);
         }
@@ -65,7 +66,9 @@ class DeleteCommentsCommandForm extends CommandForm
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);
         }
-        Notification::success($this->translate('Deleting comment..'));
+        Notification::success(
+            $this->translatePlural('Deleting comment..', 'Deleting comments..', count($this->comments))
+        );
         return true;
     }
 
