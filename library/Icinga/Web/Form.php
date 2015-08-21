@@ -669,7 +669,7 @@ class Form extends Zend_Form
     {
         $this->useFormAutosubmit = (bool) $state;
         if ($this->useFormAutosubmit) {
-            $this->setAttrib('data-progress-element', 'form-header');
+            $this->setAttrib('data-progress-element', 'header-' . $this->getId());
         } else {
             $this->removeAttrib('data-progress-element');
         }
@@ -1206,13 +1206,16 @@ class Form extends Zend_Form
                     'form'          => $this
                 ));
             } else {
-                $this->addDecorator('Description', array('tag' => 'h1'));
-                if ($this->getUseFormAutosubmit()) {
-                    $this->addDecorator('Autosubmit', array('accessible' => true))
-                        ->addDecorator('HtmlTag', array('tag' => 'div', 'class' => 'header', 'id' => 'form-header'));
-                }
-
-                $this->addDecorator('FormDescriptions')
+                $this->addDecorator('Description', array('tag' => 'h1', 'escape' => !$this->getUseFormAutosubmit()))
+                    ->addDecorator(
+                        'HtmlTag',
+                        array(
+                            'tag'   => 'div',
+                            'class' => 'header',
+                            'id'    => 'header-' . $this->getId()
+                        )
+                    )
+                    ->addDecorator('FormDescriptions')
                     ->addDecorator('FormNotifications')
                     ->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
                     ->addDecorator('FormElements')
@@ -1254,6 +1257,25 @@ class Form extends Zend_Form
             $name = parent::getName();
         }
         return $name;
+    }
+
+    /**
+     * Retrieve form description
+     *
+     * This will return the escaped description with the autosubmit warning icon if form autosubmit is enabled.
+     *
+     * @return  string
+     */
+    public function getDescription()
+    {
+        $description = parent::getDescription();
+        if ($description && $this->getUseFormAutosubmit()) {
+            $autosubmit = $this->_getDecorator('Autosubmit', array('accessible' => true));
+            $autosubmit->setElement($this);
+            $description = $autosubmit->render($this->getView()->escape($description));
+        }
+
+        return $description;
     }
 
     /**
