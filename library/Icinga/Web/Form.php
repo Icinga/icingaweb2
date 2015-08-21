@@ -82,6 +82,13 @@ class Form extends Zend_Form
     protected $submitLabel;
 
     /**
+     * Label to use for showing the user an activity indicator when submitting the form
+     *
+     * @var string
+     */
+    protected $progressLabel;
+
+    /**
      * The url to redirect to upon success
      *
      * @var Url
@@ -261,6 +268,29 @@ class Form extends Zend_Form
     public function getSubmitLabel()
     {
         return $this->submitLabel;
+    }
+
+    /**
+     * Set the label to use for showing the user an activity indicator when submitting the form
+     *
+     * @param   string  $label
+     *
+     * @return  $this
+     */
+    public function setProgressLabel($label)
+    {
+        $this->progressLabel = $label;
+        return $this;
+    }
+
+    /**
+     * Return the label to use for showing the user an activity indicator when submitting the form
+     *
+     * @return  string
+     */
+    public function getProgressLabel()
+    {
+        return $this->progressLabel;
     }
 
     /**
@@ -638,6 +668,12 @@ class Form extends Zend_Form
     public function setUseFormAutosubmit($state = true)
     {
         $this->useFormAutosubmit = (bool) $state;
+        if ($this->useFormAutosubmit) {
+            $this->setAttrib('data-progress-element', 'header-' . $this->getId());
+        } else {
+            $this->removeAttrib('data-progress-element');
+        }
+
         return $this;
     }
 
@@ -738,11 +774,13 @@ class Form extends Zend_Form
                 'submit',
                 'btn_submit',
                 array(
-                    'ignore'        => true,
-                    'label'         => $submitLabel,
-                    'decorators'    => array(
+                    'ignore'                => true,
+                    'label'                 => $submitLabel,
+                    'data-progress-label'   => $this->getProgressLabel(),
+                    'decorators'            => array(
                         'ViewHelper',
-                        array('HtmlTag', array('tag' => 'div'))
+                        array('Spinner', array('separator' => '')),
+                        array('HtmlTag', array('tag' => 'div', 'class' => 'buttons'))
                     )
                 )
             );
@@ -801,9 +839,17 @@ class Form extends Zend_Form
                 && ! array_key_exists('disabledLoadDefaultDecorators', $options)
             ) {
                 $options['decorators'] = static::$defaultElementDecorators;
+                if (! isset($options['data-progress-label']) && ($type === 'submit'
+                    || ($type === 'button' && isset($options['type']) && $options['type'] === 'submit'))
+                ) {
+                    array_splice($options['decorators'], 1, 0, array(array('Spinner', array('separator' => ''))));
+                }
             }
         } else {
             $options = array('decorators' => static::$defaultElementDecorators);
+            if ($type === 'submit') {
+                array_splice($options['decorators'], 1, 0, array(array('Spinner', array('separator' => ''))));
+            }
         }
 
         $el = parent::createElement($type, $name, $options);
@@ -1160,10 +1206,16 @@ class Form extends Zend_Form
                     'form'          => $this
                 ));
             } else {
-                $this->addDecorator('Description', array('tag' => 'h1'));
-                if ($this->getUseFormAutosubmit()) {
-                    $this->addDecorator('Autosubmit', array('accessible' => true))
-                        ->addDecorator('HtmlTag', array('tag' => 'div', 'class' => 'header'));
+                if ($this->getDescription() !== null) {
+                    $this->addDecorator('Description', array('tag' => 'h1', 'escape' => !$this->getUseFormAutosubmit()))
+                        ->addDecorator(
+                        'HtmlTag',
+                        array(
+                            'tag'   => 'div',
+                            'class' => 'header',
+                            'id'    => 'header-' . $this->getId()
+                        )
+                    );
                 }
 
                 $this->addDecorator('FormDescriptions')
@@ -1208,6 +1260,25 @@ class Form extends Zend_Form
             $name = parent::getName();
         }
         return $name;
+    }
+
+    /**
+     * Retrieve form description
+     *
+     * This will return the escaped description with the autosubmit warning icon if form autosubmit is enabled.
+     *
+     * @return  string
+     */
+    public function getDescription()
+    {
+        $description = parent::getDescription();
+        if ($description && $this->getUseFormAutosubmit()) {
+            $autosubmit = $this->_getDecorator('Autosubmit', array('accessible' => true));
+            $autosubmit->setElement($this);
+            $description = $autosubmit->render($this->getView()->escape($description));
+        }
+
+        return $description;
     }
 
     /**
