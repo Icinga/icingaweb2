@@ -117,11 +117,14 @@ div.spinner {
 
     &.active {
       visibility: visible;
+
+      &:before {
+        .animate(spin 2s infinite linear);
+      }
     }
 
     &:before {
       margin: 0; // Disables wobbling
-      .animate(spin 2s infinite linear);
     }
   }
 }
