@@ -74,7 +74,7 @@
           undefined,
           undefined,
           'append'
-        );
+        ).addToHistory = false;
       }
     }
 
