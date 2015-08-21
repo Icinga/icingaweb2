@@ -606,7 +606,7 @@ class Wizard
                     'type'          => 'submit',
                     'value'         => $pages[1]->getName(),
                     'label'         => t('Next'),
-                    'decorators'    => array('ViewHelper')
+                    'decorators'    => array('ViewHelper', 'Spinner')
                 )
             );
         } elseif ($index < count($pages) - 1) {
