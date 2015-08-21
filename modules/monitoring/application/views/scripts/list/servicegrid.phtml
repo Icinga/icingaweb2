@@ -15,7 +15,7 @@ if (! $this->compact): ?>
 
 $hasHeader = false;
 $pivotData = $this->pivot->toArray();
-if (count($pivotData) === 0) {
+if (empty($pivotData)) {
     echo $this->translate('No services found matching the filter') . '</div>';
     return;
 }
