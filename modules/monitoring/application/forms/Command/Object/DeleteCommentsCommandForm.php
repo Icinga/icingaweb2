@@ -47,7 +47,7 @@ class DeleteCommentsCommandForm extends CommandForm
      */
     public function getSubmitLabel()
     {
-        return $this->translatePlural('Remove', 'Remove All', count($this->downtimes));
+        return $this->translatePlural('Remove', 'Remove All', count($this->comments));
     }
 
     /**
