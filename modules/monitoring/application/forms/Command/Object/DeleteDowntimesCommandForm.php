@@ -57,15 +57,18 @@ class DeleteDowntimesCommandForm extends CommandForm
     {
         foreach ($this->downtimes as $downtime) {
             $delDowntime = new DeleteDowntimeCommand();
-            $delDowntime->setDowntimeId($downtime->id);
-            $delDowntime->setIsService(isset($downtime->service_description));
+            $delDowntime
+                ->setDowntimeId($downtime->id)
+                ->setIsService(isset($downtime->service_description));
             $this->getTransport($this->request)->send($delDowntime);
         }
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);
         }
-        Notification::success($this->translate('Deleting downtime.'));
+        Notification::success(
+            $this->translatePlural('Deleting downtime..', 'Deleting downtimes..', count($this->downtimes))
+        );
         return true;
     }
 
