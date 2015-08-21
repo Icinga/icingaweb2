@@ -90,4 +90,33 @@ class Monitoring_ActionsController extends Controller
             ->setObjects($serviceList->fetch())
             ->handleRequest($this->getRequest());
     }
+
+    /**
+     * Remove service downtimes
+     */
+    public function removeServiceDowntimeAction()
+    {
+        // @TODO(el): Require a filter
+        $downtimes = $this->backend
+            ->select()
+            ->from('downtime', array('host_name', 'service_description', 'id' => 'downtime_internal_id'))
+            ->where('object_type', 'service')
+            ->applyFilter($this->getRestriction('monitoring/filter/objects'))
+            ->handleRequest($this->getRequest())
+            ->fetchAll();
+        if (empty($downtimes)) {
+            // @TODO(el): Use ApiResponse class for unified response handling.
+            $this->getResponse()->sendJson(array(
+                'status'    => 'fail',
+                'message'   => 'No downtimes found matching the given filter'
+            ));
+        }
+        $form = new DeleteDowntimesCommandForm();
+        $form
+            ->setIsApiTarget(true)
+            ->setDowntimes($downtimes)
+            ->handleRequest($this->getRequest());
+        // @TODO(el): Respond w/ the downtimes deleted instead of the notifiaction added by
+        // DeleteDowntimesCommandForm::onSuccess().
+    }
 }
