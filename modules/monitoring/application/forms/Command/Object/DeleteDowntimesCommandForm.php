@@ -13,7 +13,7 @@ use Icinga\Web\Notification;
 class DeleteDowntimesCommandForm extends CommandForm
 {
     /**
-     * The downtimes to delete on success
+     * The downtimes to delete
      *
      * @var array
      */
@@ -25,6 +25,19 @@ class DeleteDowntimesCommandForm extends CommandForm
     public function init()
     {
         $this->setAttrib('class', 'inline');
+    }
+
+    /**
+     * Set the downtimes to delete
+     *
+     * @param   array $downtimes
+     *
+     * @return  $this
+     */
+    public function setDowntimes(array $downtimes)
+    {
+        $this->downtimes = $downtimes;
+        return $this;
     }
 
     /**
@@ -70,18 +83,5 @@ class DeleteDowntimesCommandForm extends CommandForm
             $this->translatePlural('Deleting downtime..', 'Deleting downtimes..', count($this->downtimes))
         );
         return true;
-    }
-
-    /**
-     * Set the downtimes to be deleted upon success
-     *
-     * @param   array $downtimes
-     *
-     * @return  $this
-     */
-    public function setDowntimes(array $downtimes)
-    {
-        $this->downtimes = $downtimes;
-        return $this;
     }
 }
