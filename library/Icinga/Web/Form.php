@@ -1206,16 +1206,19 @@ class Form extends Zend_Form
                     'form'          => $this
                 ));
             } else {
-                $this->addDecorator('Description', array('tag' => 'h1', 'escape' => !$this->getUseFormAutosubmit()))
-                    ->addDecorator(
+                if ($this->getDescription() !== null) {
+                    $this->addDecorator('Description', array('tag' => 'h1', 'escape' => !$this->getUseFormAutosubmit()))
+                        ->addDecorator(
                         'HtmlTag',
                         array(
                             'tag'   => 'div',
                             'class' => 'header',
                             'id'    => 'header-' . $this->getId()
                         )
-                    )
-                    ->addDecorator('FormDescriptions')
+                    );
+                }
+
+                $this->addDecorator('FormDescriptions')
                     ->addDecorator('FormNotifications')
                     ->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
                     ->addDecorator('FormElements')
