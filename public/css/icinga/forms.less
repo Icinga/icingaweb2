@@ -340,9 +340,11 @@ i.autosubmit-warning {
   margin-left: 0.2em;
   margin-top: 0.25em;
 
-  &.spinning:before {
+  &:before {
     margin: 0; // Disables wobbling
-    font-size: 90%; // icon-spin6 seems to be bigger than icon-cw
+  }
+
+  &.spinning:before {
     content: '\e874'; // icon-spin6
     .animate(spin 2s infinite linear);
   }
