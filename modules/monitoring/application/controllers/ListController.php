@@ -272,8 +272,8 @@ class Monitoring_ListController extends Controller
             'host_display_name',
             'service_display_name'
         ));
-        $this->filterQuery($query);
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
         $this->view->notifications = $query;
 
         $this->setupLimitControl();
