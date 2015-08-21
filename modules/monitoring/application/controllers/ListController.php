@@ -564,8 +564,8 @@ class Monitoring_ListController extends Controller
             'service_output',
             'service_handled'
         ));
-        $this->filterQuery($query);
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
         $this->setupSortControl(array(
             'host_name'           => $this->translate('Hostname'),
             'service_description' => $this->translate('Service description')
