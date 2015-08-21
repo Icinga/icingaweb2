@@ -464,10 +464,8 @@ class Monitoring_ListController extends Controller
             'services_warning_last_state_change_unhandled' => 'services_warning_unhandled_last_state_change',
             'services_warning_unhandled'
         ));
-        $this->filterQuery($query);
-
         $this->applyRestriction('monitoring/filter/objects', $query);
-
+        $this->filterQuery($query);
         $this->view->servicegroups = $query;
 
         $this->setupLimitControl();
