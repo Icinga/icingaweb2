@@ -1206,9 +1206,10 @@ class Form extends Zend_Form
                     'form'          => $this
                 ));
             } else {
-                if ($this->getDescription() !== null) {
-                    $this->addDecorator('Description', array('tag' => 'h1', 'escape' => !$this->getUseFormAutosubmit()))
-                        ->addDecorator(
+                $this->addDecorator('Description', array('tag' => 'h1'));
+                if ($this->getUseFormAutosubmit()) {
+                    $this->getDecorator('Description')->setEscape(false);
+                    $this->addDecorator(
                         'HtmlTag',
                         array(
                             'tag'   => 'div',
