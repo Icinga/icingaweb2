@@ -39,7 +39,7 @@
         </td>
         <td data-base-target="_self">
 <?php if ($i > 0): ?>
-          <button type="submit" name="backend_newpos" class="link-like icon-only" value="<?= sprintf(
+          <button type="submit" name="backend_newpos" class="link-like icon-only animated move-up" value="<?= sprintf(
             '%s|%s',
             $backendNames[$i],
             $i - 1
@@ -53,7 +53,7 @@
           </button>
 <?php endif; ?>
 <?php if ($i + 1 < count($backendNames)): ?>
-          <button type="submit" name="backend_newpos" class="link-like icon-only" value="<?= sprintf(
+          <button type="submit" name="backend_newpos" class="link-like icon-only animated move-down" value="<?= sprintf(
             '%s|%s',
             $backendNames[$i],
             $i + 1

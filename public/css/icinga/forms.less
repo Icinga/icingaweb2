@@ -129,6 +129,16 @@ div.spinner {
   }
 }
 
+button.animated.active {
+  &.move-up i:before {
+    .animate(move-vertical 500ms infinite linear);
+  }
+
+  &.move-down i:before {
+    .animate(move-vertical 500ms infinite linear reverse);
+  }
+}
+
 button, .button-like {
   font-size: 0.9em;
   font-weight: bold;
