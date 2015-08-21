@@ -73,8 +73,8 @@ class Monitoring_ListController extends Controller
             'host_current_check_attempt',
             'host_max_check_attempts'
         ), $this->addColumns()));
-        $this->filterQuery($query);
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
         $this->view->hosts = $query;
         $stats = $this->backend->select()->from('hoststatussummary', array(
             'hosts_total',
