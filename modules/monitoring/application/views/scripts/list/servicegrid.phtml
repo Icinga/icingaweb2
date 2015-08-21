@@ -23,7 +23,7 @@ if (count($pivotData) === 0) {
 $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . ')';
 ?>
   <table class="pivot servicestates">
-<?php foreach ($pivotData as $hostName => $serviceStates): ?>
+<?php foreach ($pivotData as $hostName => $services): ?>
 <?php if (!$hasHeader): ?>
     <thead>
       <tr>
@@ -35,10 +35,10 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
             'yAxisPaginator' => $verticalPaginator
           )
         ); ?></th>
-        <th colspan="<?= count($serviceStates); ?>">
+        <th colspan="<?= count($services); ?>">
           <div>
 <?php
-$serviceDescriptions = array_keys($serviceStates);
+$serviceDescriptions = array_keys($services);
 $serviceFilter = '(service_description=' . implode('|service_description=', $serviceDescriptions) . ')';
 
 foreach ($serviceDescriptions as $serviceDescription): ?>
@@ -72,7 +72,7 @@ foreach ($serviceDescriptions as $serviceDescription): ?>
             array('title' => sprintf($this->translate('List all reported services on host %s'), $hostName))
           ); ?>
         </th>
-<?php foreach (array_values($serviceStates) as $service): ?>
+<?php foreach (array_values($services) as $service): ?>
 <?php if ($service !== null): ?>
         <td>
           <span class="sr-only" id="<?= $service->host_name . '_' . $service->service_description . '_desc'; ?>">
