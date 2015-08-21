@@ -295,8 +295,8 @@ class Monitoring_ListController extends Controller
             'contact_notify_service_timeperiod',
             'contact_notify_host_timeperiod'
         ));
-        $this->filterQuery($query);
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
         $this->view->contacts = $query;
 
         $this->setupLimitControl();
