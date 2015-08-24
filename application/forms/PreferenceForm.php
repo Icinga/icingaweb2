@@ -220,8 +220,20 @@ class PreferenceForm extends Form
             )
         );
 
+        $this->setAttrib('data-progress-element', 'preferences-progress');
+        $this->addElement(
+            'note',
+            'preferences-progress',
+            array(
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('Spinner', array('id' => 'preferences-progress'))
+                )
+            )
+        );
+
         $this->addDisplayGroup(
-            array('btn_submit_preferences', 'btn_submit_session'),
+            array('btn_submit_preferences', 'btn_submit_session', 'preferences-progress'),
             'submit_buttons',
             array(
                 'decorators' => array(
