@@ -338,3 +338,15 @@ li li .badge {
   text-overflow: ellipsis;
 }
 
+.progress-label span {
+  font-size: 1.5em;
+  .animate(blink 1.4s infinite both);
+
+  &:nth-child(2) {
+    animation-delay: .2s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: .4s;
+  }
+}
