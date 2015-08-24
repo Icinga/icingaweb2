@@ -212,9 +212,19 @@ class Web extends EmbeddedWeb
         $this->frontController = Zend_Controller_Front::getInstance();
         $this->frontController->setRequest($this->getRequest());
         $this->frontController->setControllerDirectory($this->getApplicationDir('/controllers'));
+
+        $displayExceptions = $this->config->get('global', 'show_stacktraces', true);
+        if ($this->user !== null && $this->user->can('application/stacktraces')) {
+            $displayExceptions = $this->user->getPreferences()->getValue(
+                'icingaweb',
+                'show_stacktraces',
+                $displayExceptions
+            );
+        }
+
         $this->frontController->setParams(
             array(
-                'displayExceptions' => true
+                'displayExceptions' => $displayExceptions
             )
         );
         return $this;

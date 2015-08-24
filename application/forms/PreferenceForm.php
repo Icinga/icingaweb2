@@ -5,6 +5,7 @@ namespace Icinga\Forms;
 
 use Exception;
 use DateTimeZone;
+use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\User\Preferences;
@@ -178,6 +179,19 @@ class PreferenceForm extends Form
             )
         );
 
+        if (Auth::getInstance()->hasPermission('application/stacktraces')) {
+            $this->addElement(
+                'checkbox',
+                'show_stacktraces',
+                array(
+                    'required'      => true,
+                    'value'         => $this->getDefaultShowStacktraces(),
+                    'label'         => $this->translate('Show Stacktraces'),
+                    'description'   => $this->translate('Set whether to show an exception\'s stacktrace.')
+                )
+            );
+        }
+
         $this->addElement(
             'checkbox',
             'show_benchmark',
@@ -268,5 +282,15 @@ class PreferenceForm extends Form
     {
         $locale = Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
         return $locale;
+    }
+
+    /**
+     * Return the default global setting for show_stacktraces
+     *
+     * @return  bool
+     */
+    protected function getDefaultShowStacktraces()
+    {
+        return Config::app()->get('global', 'show_stacktraces', true);
     }
 }
