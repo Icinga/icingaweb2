@@ -603,7 +603,27 @@ class Monitoring_ListController extends Controller
             $filter,
             $filter ? clone $filter : null
         );
-        $this->view->pivot = $pivot;
+        $pivotData = $pivot->toArray();
+        // TODO(el): list($pivotData, $pivotHeader) = $pivot->toArray();
+        $pivotHeader = array(
+            'cols'  => array(),
+            'rows'  => array()
+        );
+        foreach ($pivotData as $hostName => $services) {
+            foreach ($services as $serviceDescription => $service) {
+                if ($service === null) {
+                    continue;
+                }
+                if (! isset($pivotHeader['rows'][$hostName])) {
+                    $pivotHeader['rows'][$hostName] = $service->host_display_name;
+                }
+                if (! isset($pivotHeader['cols'][$serviceDescription])) {
+                    $pivotHeader['cols'][$serviceDescription] = $service->service_display_name;
+                }
+            }
+        }
+        $this->view->pivotData = $pivotData;
+        $this->view->pivotHeader = $pivotHeader;
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
         $this->view->verticalPaginator = $pivot->paginateYAxis();
     }
