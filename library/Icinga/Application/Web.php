@@ -212,9 +212,12 @@ class Web extends EmbeddedWeb
         $this->frontController = Zend_Controller_Front::getInstance();
         $this->frontController->setRequest($this->getRequest());
         $this->frontController->setControllerDirectory($this->getApplicationDir('/controllers'));
+
+        $displayExceptions = $this->config->get('global', 'show_stacktraces', true);
+
         $this->frontController->setParams(
             array(
-                'displayExceptions' => true
+                'displayExceptions' => $displayExceptions
             )
         );
         return $this;
