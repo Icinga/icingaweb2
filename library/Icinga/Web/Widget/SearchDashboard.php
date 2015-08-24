@@ -69,10 +69,10 @@ class SearchDashboard extends Dashboard
         usort($searchUrls, array($this, 'compareSearchUrls'));
 
         foreach (array_reverse($searchUrls) as $searchUrl) {
-            $pane->addDashlet(
+            $pane->createDashlet(
                 $searchUrl->title . ': ' . $searchString,
                 Url::fromPath($searchUrl->url, array('q' => $searchString))
-            );
+            )->setProgressLabel($this->view()->translate('Searching'));
         }
 
         return $this;
