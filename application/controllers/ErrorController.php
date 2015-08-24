@@ -3,6 +3,7 @@
 
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\Exception\Http\HttpMethodNotAllowedException;
 use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Exception\MissingParameterException;
@@ -63,6 +64,9 @@ class ErrorController extends ActionController
                             'X-Status-Reason',
                             'Missing parameter ' . $exception->getParameter()
                         );
+                        break;
+                    case $exception instanceof HttpBadRequestException:
+                        $this->getResponse()->setHttpResponseCode(400);
                         break;
                     case $exception instanceof SecurityException:
                         $this->getResponse()->setHttpResponseCode(403);
