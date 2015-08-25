@@ -14,6 +14,7 @@ class Hostgroup extends DataView
     public function getColumns()
     {
         return array(
+            'instance_name',
             'hostgroup_alias',
             'hostgroup_name'
         );
