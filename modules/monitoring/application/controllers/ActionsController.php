@@ -43,12 +43,12 @@ class Monitoring_ActionsController extends Controller
      */
     public function removeHostDowntimeAction()
     {
-        // @TODO(el): Require a filter
         $downtimes = $this->backend
             ->select()
             ->from('downtime', array('host_name', 'id' => 'downtime_internal_id'))
             ->where('object_type', 'host')
             ->applyFilter($this->getRestriction('monitoring/filter/objects'))
+            ->setRequiresFilter(true)
             ->handleRequest($this->getRequest())
             ->fetchAll();
         if (empty($downtimes)) {
