@@ -17,6 +17,9 @@ class ServicecommentQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'comments' => array(
             'comment_author'        => 'c.author_name COLLATE latin1_general_ci',
             'comment_author_name'   => 'c.author_name',
@@ -161,6 +164,18 @@ class ServicecommentQuery extends IdoQuery
         $this->select->join(
             array('ss' => $this->prefix . 'servicestatus'),
             'ss.service_object_id = so.object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = c.instance_id',
             array()
         );
     }

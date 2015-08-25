@@ -14,6 +14,7 @@ class Comment extends DataView
     public function getColumns()
     {
         return array(
+            'instance_name',
             'comment_author_name',
             'comment_data',
             'comment_expiration',
