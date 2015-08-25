@@ -32,6 +32,13 @@ class PivotTable implements Sortable
     protected $yAxisColumn;
 
     /**
+     * Column for sorting the result set
+     *
+     * @var array
+     */
+    protected $order = array();
+
+    /**
      * The filter being applied on the query for the x axis
      *
      * @var Filter
@@ -60,11 +67,18 @@ class PivotTable implements Sortable
     protected $yAxisQuery;
 
     /**
-     * Column for sorting the result set
+     * X-axis header
      *
-     * @var array
+     * @var string|null
      */
-    protected $order = array();
+    protected $xAxisHeader;
+
+    /**
+     * Y-axis header
+     *
+     * @var string|null
+     */
+    protected $yAxisHeader;
 
     /**
      * Create a new pivot table
@@ -132,6 +146,56 @@ class PivotTable implements Sortable
     }
 
     /**
+     * Get the x-axis header
+     *
+     * Defaults to {@link $xAxisColumn} in case no x-axis header has been set using {@link setXAxisHeader()}
+     *
+     * @return string
+     */
+    public function getXAxisHeader()
+    {
+        return $this->xAxisHeader !== null ? $this->xAxisHeader : $this->xAxisColumn;
+    }
+
+    /**
+     * Set the x-axis header
+     *
+     * @param   string $xAxisHeader
+     *
+     * @return  $this
+     */
+    public function setXAxisHeader($xAxisHeader)
+    {
+        $this->xAxisHeader = (string) $xAxisHeader;
+        return $this;
+    }
+
+    /**
+     * Get the y-axis header
+     *
+     * Defaults to {@link $yAxisColumn} in case no x-axis header has been set using {@link setYAxisHeader()}
+     *
+     * @return string
+     */
+    public function getYAxisHeader()
+    {
+        return $this->yAxisHeader !== null ? $this->yAxisHeader : $this->yAxisColumn;
+    }
+
+    /**
+     * Set the y-axis header
+     *
+     * @param   string $yAxisHeader
+     *
+     * @return  $this
+     */
+    public function setYAxisHeader($yAxisHeader)
+    {
+        $this->yAxisHeader = (string) $yAxisHeader;
+        return $this;
+    }
+
+    /**
      * Return the value for the given request parameter
      *
      * @param   string  $axis       The axis for which to return the parameter ('x' or 'y')
@@ -163,7 +227,7 @@ class PivotTable implements Sortable
         if ($this->xAxisQuery === null) {
             $this->xAxisQuery = clone $this->baseQuery;
             $this->xAxisQuery->group($this->xAxisColumn);
-            $this->xAxisQuery->columns(array($this->xAxisColumn));
+            $this->xAxisQuery->columns(array($this->xAxisColumn, $this->getXAxisHeader()));
 
             if ($this->xAxisFilter !== null) {
                 $this->xAxisQuery->addFilter($this->xAxisFilter);
@@ -188,7 +252,7 @@ class PivotTable implements Sortable
         if ($this->yAxisQuery === null) {
             $this->yAxisQuery = clone $this->baseQuery;
             $this->yAxisQuery->group($this->yAxisColumn);
-            $this->yAxisQuery->columns(array($this->yAxisColumn));
+            $this->yAxisQuery->columns(array($this->yAxisColumn, $this->getYAxisHeader()));
 
             if ($this->yAxisFilter !== null) {
                 $this->yAxisQuery->addFilter($this->yAxisFilter);
@@ -199,7 +263,6 @@ class PivotTable implements Sortable
                 isset($this->order[$this->yAxisColumn]) ? $this->order[$this->yAxisColumn] : self::SORT_ASC
             );
         }
-
         return $this->yAxisQuery;
     }
 
@@ -276,33 +339,39 @@ class PivotTable implements Sortable
             ($this->xAxisFilter === null && $this->yAxisFilter === null)
             || ($this->xAxisFilter !== null && $this->yAxisFilter !== null)
         ) {
-            $xAxis = $this->queryXAxis()->fetchColumn();
-            $yAxis = $this->queryYAxis()->fetchColumn();
+            $xAxis = $this->queryXAxis()->fetchPairs();
+            $yAxis = $this->queryYAxis()->fetchPairs();
         } else {
             if ($this->xAxisFilter !== null) {
-                $xAxis = $this->queryXAxis()->fetchColumn();
-                $yAxis = $this->queryYAxis()->where($this->xAxisColumn, $xAxis)->fetchColumn();
+                $xAxis = $this->queryXAxis()->fetchPairs();
+                $yAxis = $this->queryYAxis()->where($this->xAxisColumn, $xAxis)->fetchPairs();
             } else { // $this->yAxisFilter !== null
-                $yAxis = $this->queryYAxis()->fetchColumn();
-                $xAxis = $this->queryXAxis()->where($this->yAxisColumn, $yAxis)->fetchColumn();
+                $yAxis = $this->queryYAxis()->fetchPairs();
+                $xAxis = $this->queryXAxis()->where($this->yAxisColumn, $yAxis)->fetchPairs();
             }
         }
+        $pivotData = array();
+        $pivotHeader = array(
+            'cols'  => $xAxis,
+            'rows'  => $yAxis
+        );
+        if (! empty($xAxis) && ! empty($yAxis)) {
+            $xAxisKeys = array_keys($xAxis);
+            $yAxisKeys = array_keys($yAxis);
+            $this->baseQuery
+                ->where($this->xAxisColumn, $xAxisKeys)
+                ->where($this->yAxisColumn, $yAxisKeys);
 
-        $pivot = array();
-        if (!empty($xAxis) && !empty($yAxis)) {
-            $this->baseQuery->where($this->xAxisColumn, $xAxis)->where($this->yAxisColumn, $yAxis);
-
-            foreach ($yAxis as $yLabel) {
-                foreach ($xAxis as $xLabel) {
-                    $pivot[$yLabel][$xLabel] = null;
+            foreach ($yAxisKeys as $yAxisKey) {
+                foreach ($xAxisKeys as $xAxisKey) {
+                    $pivotData[$yAxisKey][$xAxisKey] = null;
                 }
             }
 
             foreach ($this->baseQuery as $row) {
-                $pivot[$row->{$this->yAxisColumn}][$row->{$this->xAxisColumn}] = $row;
+                $pivotData[$row->{$this->yAxisColumn}][$row->{$this->xAxisColumn}] = $row;
             }
         }
-
-        return $pivot;
+        return array($pivotData, $pivotHeader);
     }
 }

@@ -223,3 +223,9 @@ $dashboard->add(
     $this->translate('Host Problems'),
     'monitoring/list/hosts?host_problem=1&sort=host_severity'
 );
+
+/*
+ * CSS
+ */
+$this->provideCssFile('colors.less');
+$this->provideCssFile('service-grid.less');
