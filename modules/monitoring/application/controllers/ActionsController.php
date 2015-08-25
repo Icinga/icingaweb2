@@ -72,11 +72,15 @@ class Monitoring_ActionsController extends Controller
      */
     public function scheduleServiceDowntimeAction()
     {
-        // @TODO(el): Require a filter
+        $filter = Filter::fromQueryString((string) $this->params);
+        /** @var Filter $filter */
+        if ($filter->isEmpty()) {
+            $this->httpBadRequest('Filter must not be empty');
+        }
         // @TODO(el): $this->backend->list('service')->handleRequest()->fetchAll()
         $serviceList = new ServiceList($this->backend);
         $this->applyRestriction('monitoring/filter/objects', $serviceList);
-        $serviceList->addFilter(Filter::fromQueryString((string) $this->params));
+        $serviceList->addFilter($filter);
         if (! $serviceList->count()) {
             // @TODO(el): Use ApiResponse class for unified response handling.
             $this->getResponse()->sendJson(array(
