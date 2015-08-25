@@ -19,11 +19,15 @@ class Monitoring_ActionsController extends Controller
      */
     public function scheduleHostDowntimeAction()
     {
-        // @TODO(el): Require a filter
+        $filter = Filter::fromQueryString((string) $this->params);
+        /** @var Filter $filter */
+        if ($filter->isEmpty()) {
+            $this->httpBadRequest('Filter must not be empty');
+        }
         // @TODO(el): $this->backend->list('host')->handleRequest()->fetchAll()
         $hostList = new HostList($this->backend);
         $this->applyRestriction('monitoring/filter/objects', $hostList);
-        $hostList->addFilter(Filter::fromQueryString((string) $this->params));
+        $hostList->addFilter($filter);
         if (! $hostList->count()) {
             // @TODO(el): Use ApiResponse class for unified response handling.
             $this->getResponse()->sendJson(array(
