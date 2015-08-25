@@ -480,8 +480,7 @@
          * @param value     {String}  The value to set, can be '1', '0' and 'unchanged'
          * @param $checkbox {jQuery}  The checkbox
          */
-        setTriState: function(value, $checkbox)
-        {
+        setTriState: function(value, $checkbox) {
             switch (value) {
                 case ('1'):
                     $checkbox.prop('checked', true).prop('indeterminate', false);

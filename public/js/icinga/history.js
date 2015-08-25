@@ -4,7 +4,6 @@
  * Icinga.History
  *
  * This is where we care about the browser History API
- *
  */
 (function (Icinga, $) {
 
@@ -89,7 +88,6 @@
                 }
             });
 
-            // TODO: update navigation
             // Did we find any URL? Then push it!
             if (url !== '') {
                 this.push(url);
