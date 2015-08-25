@@ -212,6 +212,7 @@
             var method = $form.attr('method');
             var encoding = $form.attr('enctype');
             var $button = $('input[type=submit]:focus', $form).add('button[type=submit]:focus', $form);
+            var progressTimer;
             var $target;
             var data;
 
@@ -227,11 +228,11 @@
                     icinga.logger.debug('events/submitForm: Button is event.currentTarget');
                 }
 
-                if ($el && ($el.is('input[type=submit]') || $el.is('button[type=submit]'))) {
+                if ($el && ($el.is('input[type=submit]') || $el.is('button[type=submit]')) && $el.is(':focus')) {
                     $button = $el;
                 } else {
                     icinga.logger.debug(
-                        'events/submitForm: Can not determine submit button, using the first one in form'
+                        'events/submitForm: Can not determine submit button, using the last one in form'
                     );
                 }
             }
@@ -246,8 +247,12 @@
                 encoding = 'application/x-www-form-urlencoded';
             }
 
+            if (typeof autosubmit === 'undefined') {
+                autosubmit = false;
+            }
+
             if ($button.length === 0) {
-                $button = $('input[type=submit]', $form).add('button[type=submit]', $form).first();
+                $button = $('button[type=submit]', $form).add('input[type=submit]', $form).last();
             }
 
             if ($button.length) {
@@ -271,7 +276,7 @@
             if (method === 'GET') {
                 var dataObj = $form.serializeObject();
 
-                if (typeof autosubmit === 'undefined' || ! autosubmit) {
+                if (! autosubmit) {
                     if ($button.length && $button.attr('name') !== 'undefined') {
                         dataObj[$button.attr('name')] = $button.attr('value');
                     }
@@ -289,7 +294,7 @@
                             $form.find(':input:not(:disabled)').prop('disabled', true);
                         }, 0);
 
-                        if (! typeof autosubmit === 'undefined' && autosubmit) {
+                        if (autosubmit) {
                             if ($button.length) {
                                 // We're autosubmitting the form so the button has not been clicked, however,
                                 // to be really safe, we're disabling the button explicitly, just in case..
@@ -310,7 +315,7 @@
                     data = $form.serializeArray();
                 }
 
-                if (typeof autosubmit === 'undefined' || ! autosubmit) {
+                if (! autosubmit) {
                     if ($button.length && $button.attr('name') !== 'undefined') {
                         if (encoding === 'multipart/form-data') {
                             data.append($button.attr('name'), $button.attr('value'));
@@ -328,7 +333,55 @@
             // Note that disabled form inputs will not be enabled via JavaScript again
             $form.find(':input:not(#search):not(:disabled)').prop('disabled', true);
 
-            icinga.loader.loadUrl(url, $target, data, method);
+            // Show a spinner depending on how the form is being submitted
+            if (autosubmit && typeof $el !== 'undefined' && $el.next().hasClass('autosubmit-warning')) {
+                $el.next().addClass('spinning');
+            } else if ($button.length && $button.is('button') && $button.hasClass('animated')) {
+                $button.addClass('active');
+            } else if ($button.length && $button.attr('data-progress-label')) {
+                var isInput = $button.is('input');
+                if (isInput) {
+                    $button.prop('value', $button.attr('data-progress-label') + '...');
+                } else {
+                    $button.html($button.attr('data-progress-label') + '...');
+                }
+
+                // Use a fixed width to prevent the button from wobbling
+                $button.css('width', $button.css('width'));
+
+                progressTimer = icinga.timer.register(function () {
+                    var label = isInput ? $button.prop('value') : $button.html();
+                    var dots = label.substr(-3);
+
+                    // Using empty spaces here to prevent centered labels from wobbling
+                    if (dots === '...') {
+                        label = label.slice(0, -2) + '  ';
+                    } else if (dots === '.. ') {
+                        label = label.slice(0, -1) + '.';
+                    } else if (dots === '.  ') {
+                        label = label.slice(0, -2) + '. ';
+                    }
+
+                    if (isInput) {
+                        $button.prop('value', label);
+                    } else {
+                        $button.html(label);
+                    }
+                }, null, 100);
+            } else if ($button.length && $button.next().hasClass('spinner')) {
+                $('i', $button.next()).addClass('active');
+            } else if ($form.attr('data-progress-element')) {
+                var $progressElement = $('#' + $form.attr('data-progress-element'));
+                if ($progressElement.length) {
+                    if ($progressElement.hasClass('spinner')) {
+                        $('i', $progressElement).addClass('active');
+                    } else {
+                        $('i.autosubmit-warning', $progressElement).addClass('spinning');
+                    }
+                }
+            }
+
+            icinga.loader.loadUrl(url, $target, data, method).progressTimer = progressTimer;
 
             event.stopPropagation();
             event.preventDefault();
@@ -509,6 +562,9 @@
                     self.icinga.ui.layout1col();
                 } else {
                     $target = $('#' + targetId);
+                    if (! $target.length) {
+                        self.icinga.logger.warn('Link target "#' + targetId + '" does not exist in DOM.');
+                    }
                 }
 
             }

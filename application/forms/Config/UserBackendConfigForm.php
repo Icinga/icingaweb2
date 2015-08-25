@@ -464,9 +464,10 @@ class UserBackendConfigForm extends ConfigForm
             'submit',
             'backend_validation',
             array(
-                'ignore'        => true,
-                'label'         => $this->translate('Validate Configuration'),
-                'decorators'    => array('ViewHelper')
+                'ignore'                => true,
+                'label'                 => $this->translate('Validate Configuration'),
+                'data-progress-label'   => $this->translate('Validation In Progress'),
+                'decorators'            => array('ViewHelper')
             )
         );
         $this->addDisplayGroup(

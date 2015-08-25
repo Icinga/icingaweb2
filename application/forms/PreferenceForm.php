@@ -5,6 +5,7 @@ namespace Icinga\Forms;
 
 use Exception;
 use DateTimeZone;
+use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\User\Preferences;
@@ -178,6 +179,19 @@ class PreferenceForm extends Form
             )
         );
 
+        if (Auth::getInstance()->hasPermission('application/stacktraces')) {
+            $this->addElement(
+                'checkbox',
+                'show_stacktraces',
+                array(
+                    'required'      => true,
+                    'value'         => $this->getDefaultShowStacktraces(),
+                    'label'         => $this->translate('Show Stacktraces'),
+                    'description'   => $this->translate('Set whether to show an exception\'s stacktrace.')
+                )
+            );
+        }
+
         $this->addElement(
             'checkbox',
             'show_benchmark',
@@ -220,8 +234,20 @@ class PreferenceForm extends Form
             )
         );
 
+        $this->setAttrib('data-progress-element', 'preferences-progress');
+        $this->addElement(
+            'note',
+            'preferences-progress',
+            array(
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('Spinner', array('id' => 'preferences-progress'))
+                )
+            )
+        );
+
         $this->addDisplayGroup(
-            array('btn_submit_preferences', 'btn_submit_session'),
+            array('btn_submit_preferences', 'btn_submit_session', 'preferences-progress'),
             'submit_buttons',
             array(
                 'decorators' => array(
@@ -256,5 +282,15 @@ class PreferenceForm extends Form
     {
         $locale = Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
         return $locale;
+    }
+
+    /**
+     * Return the default global setting for show_stacktraces
+     *
+     * @return  bool
+     */
+    protected function getDefaultShowStacktraces()
+    {
+        return Config::app()->get('global', 'show_stacktraces', true);
     }
 }

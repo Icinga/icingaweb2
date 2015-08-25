@@ -68,7 +68,7 @@ class DeleteCommentCommandForm extends CommandForm
                 'ignore'        => true,
                 'escape'        => false,
                 'type'          => 'submit',
-                'class'         => 'link-like',
+                'class'         => 'link-like spinner',
                 'label'         => $this->getView()->icon('trash'),
                 'title'         => $this->translate('Delete this comment'),
                 'decorators'    => array('ViewHelper')

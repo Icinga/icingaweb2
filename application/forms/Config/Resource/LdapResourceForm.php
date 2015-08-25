@@ -81,22 +81,6 @@ class LdapResourceForm extends Form
             )
         );
 
-        if (isset($formData['encryption']) && $formData['encryption'] !== 'none') {
-            // TODO(jom): Do not show this checkbox unless the connection is actually failing due to certificate errors
-            $this->addElement(
-                'checkbox',
-                'reqcert',
-                array(
-                    'required'      => true,
-                    'label'         => $this->translate('Require Certificate'),
-                    'description'   => $this->translate(
-                        'When checked, the LDAP server must provide a valid and known (trusted) certificate.'
-                    ),
-                    'value'         => 1
-                )
-            );
-        }
-
         $this->addElement(
             'text',
             'root_dn',

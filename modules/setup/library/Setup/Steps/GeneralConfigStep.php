@@ -53,6 +53,10 @@ class GeneralConfigStep extends Step
 
         $generalHtml = ''
             . '<ul>'
+            . '<li>' . ($this->data['generalConfig']['global_show_stacktraces']
+                ? t('An exception\'s stacktrace is shown to every user by default.')
+                : t('An exception\'s stacktrace is hidden from every user by default.')
+            ) . '</li>'
             . '<li>' . sprintf(
                 $this->data['generalConfig']['global_config_backend'] === 'ini' ? sprintf(
                     t('Preferences will be stored per user account in INI files at: %s'),

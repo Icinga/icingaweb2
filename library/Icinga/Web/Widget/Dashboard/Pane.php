@@ -192,6 +192,21 @@ class Pane extends UserWidget
     }
 
     /**
+     * Create, add and return a new dashlet
+     *
+     * @param   string  $title
+     * @param   string  $url
+     *
+     * @return  Dashlet
+     */
+    public function createDashlet($title, $url = null)
+    {
+        $dashlet = new Dashlet($title, $url, $this);
+        $this->addDashlet($dashlet);
+        return $dashlet;
+    }
+
+    /**
      * Add a dashlet to this pane, optionally creating it if $dashlet is a string
      *
      * @param string|Dashlet $dashlet               The dashlet object or title
@@ -206,7 +221,7 @@ class Pane extends UserWidget
         if ($dashlet instanceof Dashlet) {
             $this->dashlets[$dashlet->getTitle()] = $dashlet;
         } elseif (is_string($dashlet) && $url !== null) {
-             $this->dashlets[$dashlet] = new Dashlet($dashlet, $url, $this);
+             $this->createDashlet($dashlet, $url);
         } else {
             throw new ConfigurationError('Invalid dashlet added: %s', $dashlet);
         }

@@ -479,8 +479,12 @@ abstract class IdoQuery extends DbQuery
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function addFilter(Filter $filter)
     {
+        $filter = clone $filter;
         $this->requireFilterColumns($filter);
         return parent::addFilter($filter);
     }
