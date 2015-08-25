@@ -72,7 +72,7 @@ class SearchDashboard extends Dashboard
             $pane->createDashlet(
                 $searchUrl->title . ': ' . $searchString,
                 Url::fromPath($searchUrl->url, array('q' => $searchString))
-            )->setProgressLabel($this->view()->translate('Searching'));
+            )->setProgressLabel(t('Searching'));
         }
 
         return $this;
