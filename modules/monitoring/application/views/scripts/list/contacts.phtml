@@ -9,8 +9,12 @@
 <?php endif ?>
 <div data-base-target="_next" class="content contacts">
     <?php foreach ($contacts->peekAhead($this->compact) as $contact): ?>
-        <div class="contact">
-            <?= $this->img('/static/gravatar', array('email' => $contact->contact_email)); ?>
+        <div class="contact"><!-- @TODO: $contact->contact_name reinsetzen als param-->
+            <?php if($this->gravatar !== null): ?>
+                <?= $this->img($this->gravatar->getAvatar($contact->contact_email)); ?>
+            <?php else: ?>
+                <?= $this->icon('user', null, array('class' =>'icon-avatar')); ?>
+            <?php endif; ?>
             <strong><?= $this->qlink(
                 $contact->contact_name,
                 'monitoring/show/contact',

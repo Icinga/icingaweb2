@@ -4,9 +4,16 @@
   <?= $this->tabs; ?>
  <?php endif ?>
   <h1><?= $this->translate('Contact details') ?></h1>
+  <?php if ($this->gravatar !== null): ?>
   <div class="circular" style="background-image: url('<?=
-      $this->href('static/gravatar', array('email' => $contact->contact_email))
-  ?>')"></div>
+      $this->href($this->gravatar->getAvatar($contact->contact_email))
+  ?>')">
+  </div>
+  <?php else: ?>
+  <div class="circular">
+      <?= $this->icon('user', null, array('class' =>'icon-avatar')); ?>
+  </div>
+  <?php endif; ?>
 
 <?php if (! $contact): ?>
   <?= $this->translate('No such contact') ?>: <?= $contactName ?>
