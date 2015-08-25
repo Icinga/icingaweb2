@@ -11,6 +11,7 @@ class Contact extends DataView
     public function getColumns()
     {
         return array(
+            'instance_name',
             'contact_object_id',
             'contact_id',
             'contact_name',
