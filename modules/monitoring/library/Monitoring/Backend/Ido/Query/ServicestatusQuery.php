@@ -19,6 +19,9 @@ class ServicestatusQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
@@ -278,6 +281,18 @@ class ServicestatusQuery extends IdoQuery
             array()
         );
         $this->joinedVirtualTables['services'] = true;
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = so.instance_id',
+            array()
+        );
     }
 
     /**
