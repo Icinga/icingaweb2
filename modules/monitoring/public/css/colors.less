@@ -1,0 +1,43 @@
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
+
+.bg-state-ok,
+.bg-state-up {
+  background-color: @colorOk;
+}
+
+.bg-state-warning {
+  background-color: @colorWarning;
+
+  &.handled {
+    background-color: @colorWarningHandled;
+  }
+}
+
+.bg-state-critical,
+.bg-state-down {
+  background-color: @colorCritical;
+
+  &.handled {
+    background-color: @colorCriticalHandled;
+  }
+}
+
+.bg-state-unreachable {
+  background-color: @colorUnreachable;
+
+  &.handled {
+    background-color: @colorUnreachableHandled;
+  }
+}
+
+.bg-state-unknown {
+  background-color: @colorUnknown;
+
+  &.handled {
+    background-color: @colorUnknownHandled;
+  }
+}
+
+.bg-state-pending {
+  background-color: @colorPending;
+}
