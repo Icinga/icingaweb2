@@ -2,6 +2,7 @@
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 use Icinga\Web\Url;
+use Icinga\Web\Hook;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
 
@@ -105,6 +106,10 @@ class Monitoring_ShowController extends Controller
             $this->view->notifications = $notifications;
             $this->setupLimitControl();
             $this->setupPaginationControl($this->view->notifications);
+        }
+
+        if (Hook::has('gravatar')) {
+            $this->view->gravatar = Hook::first('gravatar');
         }
 
         $this->view->contact = $contact;
