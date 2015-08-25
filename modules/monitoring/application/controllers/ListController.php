@@ -6,6 +6,7 @@ use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Web\Url;
+use Icinga\Web\Hook;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabs;
@@ -22,6 +23,9 @@ class Monitoring_ListController extends Controller
     {
         parent::init();
         $this->createTabs();
+        if (Hook::has('gravatar')) {
+            $this->view->gravatar = Hook::first('gravatar');
+        }
     }
 
     /**
