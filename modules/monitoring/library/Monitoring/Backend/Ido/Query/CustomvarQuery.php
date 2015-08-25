@@ -6,6 +6,9 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 class CustomvarQuery extends IdoQuery
 {
     protected $columnMap = array(
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'customvariablestatus' => array(
             'varname'  => 'cvs.varname',
             'varvalue' => 'cvs.varvalue',
@@ -52,6 +55,18 @@ class CustomvarQuery extends IdoQuery
         $this->joinedVirtualTables = array(
             'customvariablestatus'  => true,
             'objects'               => true
+        );
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = cvs.instance_id',
+            array()
         );
     }
 
