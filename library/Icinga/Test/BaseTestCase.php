@@ -22,12 +22,14 @@ namespace Icinga\Test {
 
     use Exception;
     use RuntimeException;
+    use stdClass;
     use Mockery;
     use PHPUnit_Framework_TestCase;
     use Icinga\Application\Icinga;
     use Icinga\Data\ConfigObject;
-    use Icinga\Data\ResourceFactory;
     use Icinga\Data\Db\DbConnection;
+    use Icinga\Data\ResourceFactory;
+    use Icinga\Web\View;
 
     /**
      * Class BaseTestCase
@@ -167,7 +169,12 @@ namespace Icinga\Test {
                     return $libDir;
                 })
                 ->shouldReceive('getRequest')->andReturn($requestMock)
-                ->shouldReceive('getResponse')->andReturn($responseMock);
+                ->shouldReceive('getResponse')->andReturn($responseMock)
+                ->shouldReceive('getViewRenderer')->andReturnUsing(function () {
+                    $viewRenderer = new stdClass();
+                    $viewRenderer->view = new View();
+                    return $viewRenderer;
+                });
 
             Icinga::setApp($bootstrapMock, true);
             return $bootstrapMock;
