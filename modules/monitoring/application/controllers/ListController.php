@@ -597,35 +597,20 @@ class Monitoring_ListController extends Controller
             'service_display_name'  => $this->translate('Service Name')
         ), $query);
         $filter = (bool) $this->params->shift('problems', false) ? Filter::where('service_problem', 1) : null;
-        $pivot = $query->pivot(
-            'service_description',
-            'host_name',
-            $filter,
-            $filter ? clone $filter : null
-        );
-        $pivotData = $pivot->toArray();
-        // TODO(el): list($pivotData, $pivotHeader) = $pivot->toArray();
-        $pivotHeader = array(
-            'cols'  => array(),
-            'rows'  => array()
-        );
-        foreach ($pivotData as $hostName => $services) {
-            foreach ($services as $serviceDescription => $service) {
-                if ($service === null) {
-                    continue;
-                }
-                if (! isset($pivotHeader['rows'][$hostName])) {
-                    $pivotHeader['rows'][$hostName] = $service->host_display_name;
-                }
-                if (! isset($pivotHeader['cols'][$serviceDescription])) {
-                    $pivotHeader['cols'][$serviceDescription] = $service->service_display_name;
-                }
-            }
-        }
-        $this->view->pivotData = $pivotData;
-        $this->view->pivotHeader = $pivotHeader;
+        $pivot = $query
+            ->pivot(
+                'service_description',
+                'host_name',
+                $filter,
+                $filter ? clone $filter : null
+            )
+            ->setXAxisHeader('service_display_name')
+            ->setYAxisHeader('host_display_name');
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
         $this->view->verticalPaginator = $pivot->paginateYAxis();
+        list($pivotData, $pivotHeader) = $pivot->toArray();
+        $this->view->pivotData = $pivotData;
+        $this->view->pivotHeader = $pivotHeader;
     }
 
     /**
