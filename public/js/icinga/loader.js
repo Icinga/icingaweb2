@@ -570,27 +570,20 @@
             if (! req.autorefresh) {
                 // TODO: Hook for response/url?
                 var url = req.url;
+
+                if (req.$target[0].id === 'col1') {
+                    self.icinga.behaviors.navigation.trySetActiveByUrl(url);
+                }
+
                 var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
                 var $matches = $.merge($('[href="' + url + '"]'), $forms);
-                $matches.each(function (idx, el) {
-                    if ($(el).closest('#menu').length) {
-                        if (req.$target[0].id === 'col1') {
-                            self.icinga.behaviors.navigation.resetActive();
-                        }
-                    }
-                });
-
                 $matches.each(function (idx, el) {
                     var $el = $(el);
                     if ($el.closest('#menu').length) {
                         if ($el.is('form')) {
                             $('input', $el).addClass('active');
-                        } else {
-                            if (req.$target[0].id === 'col1') {
-                                self.icinga.behaviors.navigation.setActive($el);
-                            }
                         }
-                        // Interrupt .each, only on menu item shall be active
+                        // Interrupt .each, only one menu item shall be active
                         return false;
                     }
                 });

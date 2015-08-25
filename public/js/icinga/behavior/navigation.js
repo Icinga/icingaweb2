@@ -158,6 +158,19 @@
     };
 
     /**
+     * Try to select a new URL by
+     *
+     * @param url
+     */
+    Navigation.prototype.trySetActiveByUrl = function(url) {
+        var active = this.active;
+        this.setActiveByUrl(url);
+        if (! this.active && active) {
+            this.setActive($(this.icinga.utils.getElementByDomPath(active)));
+        }
+    };
+
+    /**
      * Remove all active elements
      */
     Navigation.prototype.clear = function() {
