@@ -18,14 +18,14 @@ class PivotTable implements Sortable
     protected $baseQuery;
 
     /**
-     * The column that contains the labels for the x axis
+     * X-axis pivot column
      *
      * @var string
      */
     protected $xAxisColumn;
 
     /**
-     * The column that contains the labels for the y axis
+     * Y-axis pivot column
      *
      * @var string
      */
@@ -39,42 +39,42 @@ class PivotTable implements Sortable
     protected $order = array();
 
     /**
-     * The filter being applied on the query for the x axis
+     * The filter being applied on the query for the x-axis
      *
      * @var Filter
      */
     protected $xAxisFilter;
 
     /**
-     * The filter being applied on the query for the y axis
+     * The filter being applied on the query for the y-axis
      *
      * @var Filter
      */
     protected $yAxisFilter;
 
     /**
-     * The query to fetch the x axis labels
+     * The query to fetch the leading x-axis rows and their headers
      *
      * @var SimpleQuery
      */
     protected $xAxisQuery;
 
     /**
-     * The query to fetch the y axis labels
+     * The query to fetch the leading y-axis rows and their headers
      *
      * @var SimpleQuery
      */
     protected $yAxisQuery;
 
     /**
-     * X-axis header
+     * X-axis header column
      *
      * @var string|null
      */
     protected $xAxisHeader;
 
     /**
-     * Y-axis header
+     * Y-axis header column
      *
      * @var string|null
      */
@@ -84,8 +84,8 @@ class PivotTable implements Sortable
      * Create a new pivot table
      *
      * @param   SimpleQuery $query          The query to fetch as pivot table
-     * @param   string      $xAxisColumn    The column that contains the labels for the x axis
-     * @param   string      $yAxisColumn    The column that contains the labels for the y axis
+     * @param   string      $xAxisColumn    X-axis pivot column
+     * @param   string      $yAxisColumn    Y-axis pivot column
      */
     public function __construct(SimpleQuery $query, $xAxisColumn, $yAxisColumn)
     {
@@ -120,7 +120,7 @@ class PivotTable implements Sortable
     }
 
     /**
-     * Set the filter to apply on the query for the x axis
+     * Set the filter to apply on the query for the x-axis
      *
      * @param   Filter  $filter
      *
@@ -133,7 +133,7 @@ class PivotTable implements Sortable
     }
 
     /**
-     * Set the filter to apply on the query for the y axis
+     * Set the filter to apply on the query for the y-axis
      *
      * @param   Filter  $filter
      *
@@ -226,16 +226,18 @@ class PivotTable implements Sortable
     {
         if ($this->xAxisQuery === null) {
             $this->xAxisQuery = clone $this->baseQuery;
-            $this->xAxisQuery->group($this->xAxisColumn);
-            $this->xAxisQuery->columns(array($this->xAxisColumn, $this->getXAxisHeader()));
+            $xAxisHeader = $this->getXAxisHeader();
+            $columns = array($this->xAxisColumn, $xAxisHeader);
+            $this->xAxisQuery->group(array_unique($columns)); // xAxisColumn and header may be the same column
+            $this->xAxisQuery->columns($columns);
 
             if ($this->xAxisFilter !== null) {
                 $this->xAxisQuery->addFilter($this->xAxisFilter);
             }
 
             $this->xAxisQuery->order(
-                $this->xAxisColumn,
-                isset($this->order[$this->xAxisColumn]) ? $this->order[$this->xAxisColumn] : self::SORT_ASC
+                $xAxisHeader,
+                isset($this->order[$xAxisHeader]) ? $this->order[$xAxisHeader] : self::SORT_ASC
             );
         }
 
@@ -251,23 +253,25 @@ class PivotTable implements Sortable
     {
         if ($this->yAxisQuery === null) {
             $this->yAxisQuery = clone $this->baseQuery;
-            $this->yAxisQuery->group($this->yAxisColumn);
-            $this->yAxisQuery->columns(array($this->yAxisColumn, $this->getYAxisHeader()));
+            $yAxisHeader = $this->getYAxisHeader();
+            $columns = array($this->yAxisColumn, $yAxisHeader);
+            $this->yAxisQuery->group(array_unique($columns)); // yAxisColumn and header may be the same column
+            $this->yAxisQuery->columns($columns);
 
             if ($this->yAxisFilter !== null) {
                 $this->yAxisQuery->addFilter($this->yAxisFilter);
             }
 
             $this->yAxisQuery->order(
-                $this->yAxisColumn,
-                isset($this->order[$this->yAxisColumn]) ? $this->order[$this->yAxisColumn] : self::SORT_ASC
+                $yAxisHeader,
+                isset($this->order[$yAxisHeader]) ? $this->order[$yAxisHeader] : self::SORT_ASC
             );
         }
         return $this->yAxisQuery;
     }
 
     /**
-     * Return a pagination adapter for the x axis query
+     * Return a pagination adapter for the x-axis query
      *
      * $limit and $page are taken from the current request if not given.
      *
@@ -298,7 +302,7 @@ class PivotTable implements Sortable
     }
 
     /**
-     * Return a pagination adapter for the y axis query
+     * Return a pagination adapter for the y-axis query
      *
      * $limit and $page are taken from the current request if not given.
      *
@@ -329,7 +333,7 @@ class PivotTable implements Sortable
     }
 
     /**
-     * Return the pivot table as array
+     * Return the pivot table as an array of pivot data and pivot header
      *
      * @return array
      */
