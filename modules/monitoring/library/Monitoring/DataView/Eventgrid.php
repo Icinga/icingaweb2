@@ -50,6 +50,7 @@ class Eventgrid extends DataView
     public function getStaticFilterColumns()
     {
         return array(
+            'instance_name',
             'host', 'host_alias',
             'hostgroup', 'hostgroup_alias', 'hostgroup_name',
             'service', 'service_host_name',

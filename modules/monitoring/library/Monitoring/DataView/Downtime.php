@@ -14,6 +14,7 @@ class Downtime extends DataView
     public function getColumns()
     {
         return array(
+            'instance_name',
             'downtime_author_name',
             'downtime_comment',
             'downtime_duration',

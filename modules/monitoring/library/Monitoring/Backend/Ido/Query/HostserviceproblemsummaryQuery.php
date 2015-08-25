@@ -21,6 +21,9 @@ class HostserviceproblemsummaryQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'services' => array(
             'host_name'                 => 'so.name1',
             'service_description'       => 'so.name2'
@@ -74,6 +77,18 @@ class HostserviceproblemsummaryQuery extends IdoQuery
         $this->select->group(array('so.name1'));
         $this->select->where('so.is_active = 1');
         $this->joinedVirtualTables['services'] = true;
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = so.instance_id',
+            array()
+        );
     }
 
     /**

@@ -11,6 +11,7 @@ class HostStatus extends DataView
     public function getColumns()
     {
         return array(
+            'instance_name',
             'host_name',
             'host_display_name',
             'host_alias',
