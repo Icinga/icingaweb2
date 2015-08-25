@@ -47,6 +47,7 @@ class Hostgroupsummary extends DataView
     public function getStaticFilterColumns()
     {
         return array(
+            'instance_name',
             'hosts_severity',
             'host', 'host_alias', 'host_display_name', 'host_name',
             'hostgroup',
