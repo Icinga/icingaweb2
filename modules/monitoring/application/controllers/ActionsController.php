@@ -96,12 +96,12 @@ class Monitoring_ActionsController extends Controller
      */
     public function removeServiceDowntimeAction()
     {
-        // @TODO(el): Require a filter
         $downtimes = $this->backend
             ->select()
             ->from('downtime', array('host_name', 'service_description', 'id' => 'downtime_internal_id'))
             ->where('object_type', 'service')
             ->applyFilter($this->getRestriction('monitoring/filter/objects'))
+            ->setRequiresFilter(true)
             ->handleRequest($this->getRequest())
             ->fetchAll();
         if (empty($downtimes)) {
