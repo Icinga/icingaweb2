@@ -28,30 +28,6 @@ class StaticController extends ActionController
         $this->_helper->layout()->disableLayout();
     }
 
-    public function gravatarAction()
-    {
-        $cache = FileCache::instance();
-        $filename = md5(strtolower(trim($this->_request->getParam('email'))));
-        $cacheFile = 'gravatar-' . $filename;
-        header('Cache-Control: public');
-        header('Pragma: cache');
-        if ($etag = $cache->etagMatchesCachedFile($cacheFile)) {
-            header("HTTP/1.1 304 Not Modified");
-            return;
-        }
-
-        header('Content-Type: image/jpg');
-        if ($cache->has($cacheFile)) {
-            header('ETag: "' . $cache->etagForCachedFile($cacheFile) . '"');
-            $cache->send($cacheFile);
-            return;
-        }
-        $img = file_get_contents('http://www.gravatar.com/avatar/' . $filename . '?s=120&d=mm');
-        $cache->store($cacheFile, $img);
-        header('ETag: "' . $cache->etagForCachedFile($cacheFile) . '"');
-        echo $img;
-    }
-
     /**
      * Return an image from the application's or the module's public folder
      */
