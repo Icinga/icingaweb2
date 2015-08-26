@@ -6,6 +6,10 @@ $command = array_shift($parts);
 ?>
 
 <tr class="newsection">
+    <th><?= $this->translate('Instance'); ?></th>
+    <td><?= $this->escape($object->instance_name); ?></td>
+</tr>
+<tr class="newsection">
     <th><?= $this->translate('Command'); ?></th>
     <td>
         <?= $this->escape($command); ?>
