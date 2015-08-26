@@ -71,3 +71,20 @@ type = ssh
 user = icinga
 private_key = /etc/icingaweb2/ssh/icinga
 ````
+
+## Configuring transports for different Icinga instances
+
+If there are multiple but different Icinga instances writing to your IDO you can
+define which transport belongs to which Icinga instance by providing the
+directive 'instance'. This directive should contain the name of the Icinga
+instance you want to assign to the transport:
+
+````
+[icinga1]
+...
+instance = icinga1                      ; Optional. The default is "default"
+
+[icinga2]
+...
+instance = icinga2                      ; Optional. The default is "default"
+````
