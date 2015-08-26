@@ -13,36 +13,36 @@ use Icinga\Module\Monitoring\Forms\Config\Instance\LocalInstanceForm;
 use Icinga\Module\Monitoring\Forms\Config\Instance\RemoteInstanceForm;
 
 /**
- * Form for managing monitoring instances
+ * Form for managing command transports
  */
 class InstanceConfigForm extends ConfigForm
 {
     /**
-     * The instance to load when displaying the form for the first time
+     * The transport to load when displaying the form for the first time
      *
      * @var string
      */
-    protected $instanceToLoad;
+    protected $transportToLoad;
 
     /**
      * Initialize this form
      */
     public function init()
     {
-        $this->setName('form_config_monitoring_instance');
+        $this->setName('form_config_command_transports');
         $this->setSubmitLabel($this->translate('Save Changes'));
     }
 
     /**
-     * Return a form object for the given instance type
+     * Return a form object for the given transport type
      *
-     * @param   string  $type               The instance type for which to return a form
+     * @param   string  $type               The transport type for which to return a form
      *
      * @return  Form
      *
-     * @throws  InvalidArgumentException    In case the given instance type is invalid
+     * @throws  InvalidArgumentException    In case the given transport type is invalid
      */
-    public function getInstanceForm($type)
+    public function getTransportForm($type)
     {
         switch (strtolower($type)) {
             case LocalCommandFile::TRANSPORT:
@@ -51,41 +51,41 @@ class InstanceConfigForm extends ConfigForm
                 return new RemoteInstanceForm();
             default:
                 throw new InvalidArgumentException(
-                    sprintf($this->translate('Invalid monitoring instance type "%s" given'), $type)
+                    sprintf($this->translate('Invalid command transport type "%s" given'), $type)
                 );
         }
     }
 
     /**
-     * Populate the form with the given instance's config
+     * Populate the form with the given transport's config
      *
      * @param   string  $name
      *
      * @return  $this
      *
-     * @throws  NotFoundError   In case no instance with the given name is found
+     * @throws  NotFoundError   In case no transport with the given name is found
      */
     public function load($name)
     {
         if (! $this->config->hasSection($name)) {
-            throw new NotFoundError('No monitoring instance called "%s" found', $name);
+            throw new NotFoundError('No command transport called "%s" found', $name);
         }
 
-        $this->instanceToLoad = $name;
+        $this->transportToLoad = $name;
         return $this;
     }
 
     /**
-     * Add a new instance
+     * Add a new command transport
      *
-     * The instance to add is identified by the array-key `name'.
+     * The transport to add is identified by the array-key `name'.
      *
      * @param   array   $data
      *
      * @return  $this
      *
-     * @throws  InvalidArgumentException    In case $data does not contain a instance name
-     * @throws  IcingaException             In case a instance with the same name already exists
+     * @throws  InvalidArgumentException    In case $data does not contain a transport name
+     * @throws  IcingaException             In case a transport with the same name already exists
      */
     public function add(array $data)
     {
@@ -93,36 +93,36 @@ class InstanceConfigForm extends ConfigForm
             throw new InvalidArgumentException('Key \'name\' missing');
         }
 
-        $instanceName = $data['name'];
-        if ($this->config->hasSection($instanceName)) {
+        $transportName = $data['name'];
+        if ($this->config->hasSection($transportName)) {
             throw new IcingaException(
-                $this->translate('A monitoring instance with the name "%s" does already exist'),
-                $instanceName
+                $this->translate('A command transport with the name "%s" does already exist'),
+                $transportName
             );
         }
 
         unset($data['name']);
-        $this->config->setSection($instanceName, $data);
+        $this->config->setSection($transportName, $data);
         return $this;
     }
 
     /**
-     * Edit an existing instance
+     * Edit an existing command transport
      *
      * @param   string  $name
      * @param   array   $data
      *
      * @return  $this
      *
-     * @throws  NotFoundError   In case no instance with the given name is found
+     * @throws  NotFoundError   In case no transport with the given name is found
      */
     public function edit($name, array $data)
     {
         if (! $this->config->hasSection($name)) {
-            throw new NotFoundError('No monitoring instance called "%s" found', $name);
+            throw new NotFoundError('No command transport called "%s" found', $name);
         }
 
-        $instanceConfig = $this->config->getSection($name);
+        $transportConfig = $this->config->getSection($name);
         if (isset($data['name'])) {
             if ($data['name'] !== $name) {
                 $this->config->removeSection($name);
@@ -132,19 +132,19 @@ class InstanceConfigForm extends ConfigForm
             unset($data['name']);
         }
 
-        $instanceConfig->merge($data);
-        foreach ($instanceConfig->toArray() as $k => $v) {
+        $transportConfig->merge($data);
+        foreach ($transportConfig->toArray() as $k => $v) {
             if ($v === null) {
-                unset($instanceConfig->$k);
+                unset($transportConfig->$k);
             }
         }
 
-        $this->config->setSection($name, $instanceConfig);
+        $this->config->setSection($name, $transportConfig);
         return $this;
     }
 
     /**
-     * Remove a instance
+     * Remove a command transport
      *
      * @param   string  $name
      *
@@ -168,9 +168,9 @@ class InstanceConfigForm extends ConfigForm
             'name',
             array(
                 'required'      => true,
-                'label'         => $this->translate('Instance Name'),
+                'label'         => $this->translate('Transport Name'),
                 'description'   => $this->translate(
-                    'The name of this monitoring instance that is used to differentiate it from others'
+                    'The name of this command transport that is used to differentiate it from others'
                 ),
                 'validators'    => array(
                     array(
@@ -189,14 +189,14 @@ class InstanceConfigForm extends ConfigForm
             )
         );
 
-        $instanceTypes = array(
+        $transportTypes = array(
             LocalCommandFile::TRANSPORT     => $this->translate('Local Command File'),
             RemoteCommandFile::TRANSPORT    => $this->translate('Remote Command File')
         );
 
-        $instanceType = isset($formData['transport']) ? $formData['transport'] : null;
-        if ($instanceType === null) {
-            $instanceType = key($instanceTypes);
+        $transportType = isset($formData['transport']) ? $formData['transport'] : null;
+        if ($transportType === null) {
+            $transportType = key($transportTypes);
         }
 
         $this->addElements(array(
@@ -206,24 +206,23 @@ class InstanceConfigForm extends ConfigForm
                 array(
                     'required'      => true,
                     'autosubmit'    => true,
-                    'label'         => $this->translate('Instance Type'),
-                    'description'   => $this->translate('The type of transport to use for this monitoring instance'),
-                    'multiOptions'  => $instanceTypes
+                    'label'         => $this->translate('Transport Type'),
+                    'multiOptions'  => $transportTypes
                 )
             )
         ));
 
-        $this->addSubForm($this->getInstanceForm($instanceType)->create($formData), 'instance_form');
+        $this->addSubForm($this->getTransportForm($transportType)->create($formData), 'transport_form');
     }
 
     /**
-     * Populate the configuration of the instance to load
+     * Populate the configuration of the transport to load
      */
     public function onRequest()
     {
-        if ($this->instanceToLoad) {
-            $data = $this->config->getSection($this->instanceToLoad)->toArray();
-            $data['name'] = $this->instanceToLoad;
+        if ($this->transportToLoad) {
+            $data = $this->config->getSection($this->transportToLoad)->toArray();
+            $data['name'] = $this->transportToLoad;
             $this->populate($data);
         }
     }
@@ -238,8 +237,8 @@ class InstanceConfigForm extends ConfigForm
     public function getValues($suppressArrayNotation = false)
     {
         $values = parent::getValues();
-        $values = array_merge($values, $values['instance_form']);
-        unset($values['instance_form']);
+        $values = array_merge($values, $values['transport_form']);
+        unset($values['transport_form']);
         return $values;
     }
 }

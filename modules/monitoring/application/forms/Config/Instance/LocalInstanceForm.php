@@ -13,7 +13,7 @@ class LocalInstanceForm extends Form
      */
     public function init()
     {
-        $this->setName('form_config_monitoring_instance_local');
+        $this->setName('form_config_command_transport_local');
     }
 
     /**

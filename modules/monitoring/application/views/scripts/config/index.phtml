@@ -47,28 +47,28 @@
     <?php endforeach; ?>
     </tbody>
   </table>
-  <h1><?= $this->translate('Monitoring Instances') ?></h1>
+  <h1><?= $this->translate('Command Transports') ?></h1>
   <p>
-    <a href="<?= $this->href('/monitoring/config/createinstance'); ?>">
-      <?= $this->icon('plus'); ?> <?= $this->translate('Create New Instance'); ?>
+    <a href="<?= $this->href('/monitoring/config/createtransport'); ?>">
+      <?= $this->icon('plus'); ?> <?= $this->translate('Create New Transport'); ?>
     </a>
   </p>
   <table class="action alternating">
     <thead>
-      <th><?= $this->translate('Instance'); ?></th>
+      <th><?= $this->translate('Transport'); ?></th>
       <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
     </thead>
     <tbody>
-    <?php foreach ($this->instancesConfig as $instanceName => $config): ?>
+    <?php foreach ($this->transportConfig as $transportName => $config): ?>
       <tr>
         <td>
           <?= $this->qlink(
-            $instanceName,
-            '/monitoring/config/editinstance',
-            array('instance' => $instanceName),
+            $transportName,
+            '/monitoring/config/edittransport',
+            array('transport' => $transportName),
             array(
                 'icon'  => 'edit',
-                'title' => sprintf($this->translate('Edit monitoring instance %s'), $instanceName)
+                'title' => sprintf($this->translate('Edit command transport %s'), $transportName)
             )
           ); ?>
           <small>(<?= sprintf(
@@ -79,11 +79,11 @@
         <td>
           <?= $this->qlink(
             '',
-            '/monitoring/config/removeinstance',
-            array('instance' => $instanceName),
+            '/monitoring/config/removetransport',
+            array('transport' => $transportName),
             array(
                 'icon'  => 'trash',
-                'title' => sprintf($this->translate('Remove monitoring instance %s'), $instanceName)
+                'title' => sprintf($this->translate('Remove command transport %s'), $transportName)
             )
           ); ?>
         </td>

@@ -52,9 +52,9 @@ abstract class CommandForm extends Form
      */
     public function getTransport(Request $request)
     {
-        $instance = $request->getParam('instance');
-        if ($instance !== null) {
-            $transport = CommandTransport::create($instance);
+        $transportName = $request->getParam('transport');
+        if ($transportName !== null) {
+            $transport = CommandTransport::create($transportName);
         } else {
             $transport = CommandTransport::first();
         }

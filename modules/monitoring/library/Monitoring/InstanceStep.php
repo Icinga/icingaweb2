@@ -21,13 +21,13 @@ class InstanceStep extends Step
 
     public function apply()
     {
-        $instanceConfig = $this->data['instanceConfig'];
-        $instanceName = $instanceConfig['name'];
-        unset($instanceConfig['name']);
+        $transportConfig = $this->data['transportConfig'];
+        $transportName = $transportConfig['name'];
+        unset($transportConfig['name']);
 
         try {
-            Config::fromArray(array($instanceName => $instanceConfig))
-                ->setConfigFile(Config::resolvePath('modules/monitoring/instances.ini'))
+            Config::fromArray(array($transportName => $transportConfig))
+                ->setConfigFile(Config::resolvePath('modules/monitoring/commandtransports.ini'))
                 ->saveIni();
         } catch (Exception $e) {
             $this->error = $e;
@@ -40,16 +40,16 @@ class InstanceStep extends Step
 
     public function getSummary()
     {
-        $pageTitle = '<h2>' . mt('monitoring', 'Monitoring Instance', 'setup.page.title') . '</h2>';
+        $pageTitle = '<h2>' . mt('monitoring', 'Command Transport', 'setup.page.title') . '</h2>';
 
-        if (isset($this->data['instanceConfig']['host'])) {
+        if (isset($this->data['transportConfig']['host'])) {
             $pipeHtml = '<p>' . sprintf(
                 mt(
                     'monitoring',
                     'Icinga Web 2 will use the named pipe located on a remote machine at "%s" to send commands'
                     . ' to your monitoring instance by using the connection details listed below:'
                 ),
-                $this->data['instanceConfig']['path']
+                $this->data['transportConfig']['path']
             ) . '</p>';
 
             $pipeHtml .= ''
@@ -57,15 +57,15 @@ class InstanceStep extends Step
                 . '<tbody>'
                 . '<tr>'
                 . '<td><strong>' . mt('monitoring', 'Remote Host') . '</strong></td>'
-                . '<td>' . $this->data['instanceConfig']['host'] . '</td>'
+                . '<td>' . $this->data['transportConfig']['host'] . '</td>'
                 . '</tr>'
                 . '<tr>'
                 . '<td><strong>' . mt('monitoring', 'Remote SSH Port') . '</strong></td>'
-                . '<td>' . $this->data['instanceConfig']['port'] . '</td>'
+                . '<td>' . $this->data['transportConfig']['port'] . '</td>'
                 . '</tr>'
                 . '<tr>'
                 . '<td><strong>' . mt('monitoring', 'Remote SSH User') . '</strong></td>'
-                . '<td>' . $this->data['instanceConfig']['user'] . '</td>'
+                . '<td>' . $this->data['transportConfig']['user'] . '</td>'
                 . '</tr>'
                 . '</tbody>'
                 . '</table>';
@@ -76,7 +76,7 @@ class InstanceStep extends Step
                     'Icinga Web 2 will use the named pipe located at "%s"'
                     . ' to send commands to your monitoring instance.'
                 ),
-                $this->data['instanceConfig']['path']
+                $this->data['transportConfig']['path']
             ) . '</p>';
         }
 
@@ -87,17 +87,17 @@ class InstanceStep extends Step
     {
         if ($this->error === false) {
             return array(sprintf(
-                mt('monitoring', 'Monitoring instance configuration has been successfully created: %s'),
-                Config::resolvePath('modules/monitoring/instances.ini')
+                mt('monitoring', 'Command transport configuration has been successfully created: %s'),
+                Config::resolvePath('modules/monitoring/commandtransports.ini')
             ));
         } elseif ($this->error !== null) {
             return array(
                 sprintf(
                     mt(
                         'monitoring',
-                        'Monitoring instance configuration could not be written to: %s. An error occured:'
+                        'Command transport configuration could not be written to: %s. An error occured:'
                     ),
-                    Config::resolvePath('modules/monitoring/instances.ini')
+                    Config::resolvePath('modules/monitoring/commandtransports.ini')
                 ),
                 sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->error))
             );

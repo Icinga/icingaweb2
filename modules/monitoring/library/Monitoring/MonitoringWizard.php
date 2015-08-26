@@ -151,7 +151,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
 
         $setup->addStep(
             new InstanceStep(array(
-                'instanceConfig'    => $pageData['setup_monitoring_instance']
+                'transportConfig'    => $pageData['setup_command_transport']
             ))
         );
 

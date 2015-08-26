@@ -10,23 +10,23 @@ class InstancePage extends Form
 {
     public function init()
     {
-        $this->setName('setup_monitoring_instance');
-        $this->setTitle($this->translate('Monitoring Instance', 'setup.page.title'));
+        $this->setName('setup_command_transport');
+        $this->setTitle($this->translate('Command Transport', 'setup.page.title'));
         $this->addDescription($this->translate(
-            'Please define the settings specific to your monitoring instance below.'
+            'Please define below how you want to send commands to your monitoring instance.'
         ));
     }
 
     public function createElements(array $formData)
     {
-        $instanceConfigForm = new InstanceConfigForm();
-        $this->addSubForm($instanceConfigForm, 'instance_form');
-        $instanceConfigForm->create($formData);
-        $instanceConfigForm->getElement('name')->setValue('icinga');
+        $transportConfigForm = new InstanceConfigForm();
+        $this->addSubForm($transportConfigForm, 'transport_form');
+        $transportConfigForm->create($formData);
+        $transportConfigForm->getElement('name')->setValue('icinga2');
     }
 
     public function getValues($suppressArrayNotation = false)
     {
-        return $this->getSubForm('instance_form')->getValues($suppressArrayNotation);
+        return $this->getSubForm('transport_form')->getValues($suppressArrayNotation);
     }
 }
