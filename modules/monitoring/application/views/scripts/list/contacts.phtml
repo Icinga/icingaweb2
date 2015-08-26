@@ -9,7 +9,7 @@
 <?php endif ?>
 <div data-base-target="_next" class="content contacts">
     <?php foreach ($contacts->peekAhead($this->compact) as $contact): ?>
-        <div class="contact"><!-- @TODO: $contact->contact_name reinsetzen als param-->
+        <div class="contact">
             <?php if($this->gravatar !== null): ?>
                 <?= $this->img($this->gravatar->getAvatar($contact->contact_email)); ?>
             <?php else: ?>
