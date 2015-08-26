@@ -83,7 +83,9 @@
              *
              * fixes #7897
              */
-            $el.html($el.html());
+            if ($el.is('li')) {
+                $el.html($el.html());
+            }
         }
 
         // restore hovered menu to current hovered element
@@ -145,6 +147,11 @@
         // try to active the first item that has an exact URL match
         this.setActive($('#menu [href="' + url + '"]'));
 
+        // the url may point to the search field, which must be activated too
+        if (! this.active) {
+            this.setActive($('#menu form[action="' + this.icinga.utils.parseUrl(url).path + '"]'));
+        }
+
         // some urls may have custom filters which won't match any menu item, in that case search
         // for a menu item that points to the base action without any filters
         if (! this.active) {
@@ -175,7 +182,11 @@
      * Remove all active elements
      */
     Navigation.prototype.clear = function() {
+        // menu items
         $('#menu li.active', this.element).removeClass('active');
+
+        // search fields
+        $('#menu input.active', this.element).removeClass('active');
     };
 
     /**
@@ -185,15 +196,20 @@
      */
     Navigation.prototype.select = function($item) {
         // support selecting the url of the menu entry
+        var $input = $item.find('input');
         $item = $item.closest('li');
 
-        // select the current item
-        var $selectedMenu = $item.addClass('active');
+        if ($item.length) {
+            // select the current item
+            var $selectedMenu = $item.addClass('active');
 
-        // unfold the containing menu
-        var $outerMenu = $selectedMenu.parent().closest('li');
-        if ($outerMenu.size()) {
-            $outerMenu.addClass('active');
+            // unfold the containing menu
+            var $outerMenu = $selectedMenu.parent().closest('li');
+            if ($outerMenu.size()) {
+                $outerMenu.addClass('active');
+            }
+        } else if ($input.length) {
+            $input.addClass('active');
         }
     };
 
@@ -207,6 +223,8 @@
         this.select($el);
         if ($el.closest('li')[0]) {
             this.active = this.icinga.utils.getDomPath($el.closest('li')[0]);
+        } else if ($el.find('input')[0]) {
+            this.active = this.icinga.utils.getDomPath($el[0]);
         } else {
             this.active = null;
         }
