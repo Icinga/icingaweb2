@@ -163,7 +163,7 @@
 
             // notify behaviors of the state change
             $.each(this.icinga.behaviors, function (i, behavior) {
-                if (behavior.onPopState instanceof Function) {
+                if (behavior.onPopState instanceof Function && history.state) {
                     behavior.onPopState(location.href, history.state[i]);
                 }
             });
