@@ -7,8 +7,8 @@ use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Notification;
 use Icinga\Module\Monitoring\Forms\Config\BackendConfigForm;
-use Icinga\Module\Monitoring\Forms\Config\InstanceConfigForm;
 use Icinga\Module\Monitoring\Forms\Config\SecurityConfigForm;
+use Icinga\Module\Monitoring\Forms\Config\TransportConfigForm;
 
 /**
  * Configuration controller for editing monitoring resources
@@ -151,7 +151,7 @@ class Monitoring_ConfigController extends Controller
     {
         $transportName = $this->params->getRequired('transport');
 
-        $transportForm = new InstanceConfigForm();
+        $transportForm = new TransportConfigForm();
         $transportForm->setIniConfig($this->Config('commandtransports'));
         $form = new ConfirmRemovalForm();
         $form->setRedirectUrl('monitoring/config');
@@ -191,11 +191,11 @@ class Monitoring_ConfigController extends Controller
     {
         $transportName = $this->params->getRequired('transport');
 
-        $form = new InstanceConfigForm();
+        $form = new TransportConfigForm();
         $form->setRedirectUrl('monitoring/config');
         $form->setTitle(sprintf($this->translate('Edit Command Transport %s'), $transportName));
         $form->setIniConfig($this->Config('commandtransports'));
-        $form->setOnSuccess(function (InstanceConfigForm $form) use ($transportName) {
+        $form->setOnSuccess(function (TransportConfigForm $form) use ($transportName) {
             try {
                 $form->edit($transportName, array_map(
                     function ($v) {
@@ -232,11 +232,11 @@ class Monitoring_ConfigController extends Controller
      */
     public function createtransportAction()
     {
-        $form = new InstanceConfigForm();
+        $form = new TransportConfigForm();
         $form->setRedirectUrl('monitoring/config');
         $form->setTitle($this->translate('Create New Command Transport'));
         $form->setIniConfig($this->Config('commandtransports'));
-        $form->setOnSuccess(function (InstanceConfigForm $form) {
+        $form->setOnSuccess(function (TransportConfigForm $form) {
             try {
                 $form->add(array_filter($form->getValues()));
             } catch (Exception $e) {

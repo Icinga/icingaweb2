@@ -8,7 +8,7 @@ use Icinga\Module\Setup\Step;
 use Icinga\Application\Config;
 use Icinga\Exception\IcingaException;
 
-class InstanceStep extends Step
+class TransportStep extends Step
 {
     protected $data;
 

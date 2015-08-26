@@ -9,13 +9,13 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfigForm;
 use Icinga\Module\Monitoring\Command\Transport\LocalCommandFile;
 use Icinga\Module\Monitoring\Command\Transport\RemoteCommandFile;
-use Icinga\Module\Monitoring\Forms\Config\Instance\LocalInstanceForm;
-use Icinga\Module\Monitoring\Forms\Config\Instance\RemoteInstanceForm;
+use Icinga\Module\Monitoring\Forms\Config\Transport\LocalTransportForm;
+use Icinga\Module\Monitoring\Forms\Config\Transport\RemoteTransportForm;
 
 /**
  * Form for managing command transports
  */
-class InstanceConfigForm extends ConfigForm
+class TransportConfigForm extends ConfigForm
 {
     /**
      * The transport to load when displaying the form for the first time
@@ -46,9 +46,9 @@ class InstanceConfigForm extends ConfigForm
     {
         switch (strtolower($type)) {
             case LocalCommandFile::TRANSPORT:
-                return new LocalInstanceForm();
+                return new LocalTransportForm();
             case RemoteCommandFile::TRANSPORT;
-                return new RemoteInstanceForm();
+                return new RemoteTransportForm();
             default:
                 throw new InvalidArgumentException(
                     sprintf($this->translate('Invalid command transport type "%s" given'), $type)

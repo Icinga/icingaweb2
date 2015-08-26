@@ -4,9 +4,9 @@
 namespace Icinga\Module\Monitoring\Forms\Setup;
 
 use Icinga\Web\Form;
-use Icinga\Module\Monitoring\Forms\Config\InstanceConfigForm;
+use Icinga\Module\Monitoring\Forms\Config\TransportConfigForm;
 
-class InstancePage extends Form
+class TransportPage extends Form
 {
     public function init()
     {
@@ -19,7 +19,7 @@ class InstancePage extends Form
 
     public function createElements(array $formData)
     {
-        $transportConfigForm = new InstanceConfigForm();
+        $transportConfigForm = new TransportConfigForm();
         $this->addSubForm($transportConfigForm, 'transport_form');
         $transportConfigForm->create($formData);
         $transportConfigForm->getElement('name')->setValue('icinga2');

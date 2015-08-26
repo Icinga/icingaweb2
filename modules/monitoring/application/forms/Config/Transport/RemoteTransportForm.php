@@ -1,13 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Module\Monitoring\Forms\Config\Instance;
+namespace Icinga\Module\Monitoring\Forms\Config\Transport;
 
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Form;
 
-class RemoteInstanceForm extends Form
+class RemoteTransportForm extends Form
 {
     /**
      * The available resources split by type
