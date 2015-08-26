@@ -76,20 +76,19 @@
         * @param   {selector}   element     The element to check
         * @returns {Boolean}
         */
-        isVisible: function(element)
-        {
-          var $element = $(element);
-          if (!$element.length) {
-            return false;
-          }
+        isVisible: function(element) {
+            var $element = $(element);
+            if (!$element.length) {
+                return false;
+            }
 
-          var docViewTop = $(window).scrollTop();
-          var docViewBottom = docViewTop + $(window).height();
-          var elemTop = $element.offset().top;
-          var elemBottom = elemTop + $element.height();
+            var docViewTop = $(window).scrollTop();
+            var docViewBottom = docViewTop + $(window).height();
+            var elemTop = $element.offset().top;
+            var elemBottom = elemTop + $element.height();
 
-          return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom) &&
-              (elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+            return ((elemBottom >= docViewTop) && (elemTop <= docViewBottom) &&
+                 (elemBottom <= docViewBottom) && (elemTop >= docViewTop));
         },
 
         getUrlHelper: function () {
