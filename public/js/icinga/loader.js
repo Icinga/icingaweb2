@@ -589,9 +589,8 @@
                 });
             }
 
-            // Update history when necessary. Don't do so for requests triggered
-            // by history or autorefresh events
-            if (! req.autorefresh && req.addToHistory) {
+            // Update history when necessary
+            if (req.addToHistory) {
                 if (req.$target.hasClass('container')) {
                     // We only want to care about top-level containers
                     if (req.$target.parent().closest('.container').length === 0) {
@@ -633,9 +632,10 @@
             /*
              * Test if a manual actions comes in and autorefresh is active: Stop refreshing
              */
-            if (req.addToHistory && ! req.autorefresh && req.$target.data('icingaRefresh') > 0) {
+            if (req.addToHistory && ! req.autorefresh) {
                 req.$target.data('icingaRefresh', 0);
                 req.$target.data('icingaUrl', url);
+                icinga.history.pushCurrentState();
             }
 
             if (typeof req.progressTimer !== 'undefined') {
