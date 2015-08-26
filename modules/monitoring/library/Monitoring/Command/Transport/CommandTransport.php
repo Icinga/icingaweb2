@@ -30,10 +30,10 @@ abstract class CommandTransport
     public static function getConfig()
     {
         if (! isset(self::$config)) {
-            self::$config = Config::module('monitoring', 'instances');
+            self::$config = Config::module('monitoring', 'commandtransports');
             if (self::$config->isEmpty()) {
                 throw new ConfigurationError(
-                    'No instances have been configured in \'%s\'.',
+                    'No command transports have been configured in \'%s\'.',
                     self::$config->getConfigFile()
                 );
             }
