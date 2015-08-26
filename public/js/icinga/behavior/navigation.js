@@ -145,13 +145,14 @@
         // try to active the first item that has an exact URL match
         this.setActive($('#menu [href="' + url + '"]'));
 
-        // some urls may have custom filters which won't match any menu item. In that case, activate the first
-        // item that matches *just* the path.
+        // some urls may have custom filters which won't match any menu item, in that case search
+        // for a menu item that points to the base action without any filters
         if (! this.active) {
             this.setActive($('#menu [href="' + this.icinga.utils.parseUrl(url).path + '"]').first());
         }
 
-        // if no item to the base action exists, activate at least the first URL that matches the base path
+        // if no item with the base action exists, activate the first URL that beings with the base path
+        // but may have different filters
         if (! this.active) {
             this.setActive($('#menu [href^="' + this.icinga.utils.parseUrl(url).path + '"]').first());
         }
@@ -210,18 +211,6 @@
             this.active = null;
         }
         // TODO: push to history
-    };
-
-    /**
-     * Get the currently active element
-     *
-     * @returns {null|HTMLElement}
-     */
-    Navigation.prototype.getActive = function () {
-        if (! this.active) {
-           return null;
-        }
-        return this.icinga.utils.getElementByDomPath(this.active);
     };
 
     /**
