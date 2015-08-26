@@ -1,55 +1,73 @@
-# <a id="instances"></a> The instance.ini configuration file
+# <a id="commandtransports"></a> The commandtransports.ini configuration file
 
 ## Abstract
 
-The instance.ini defines how icingaweb accesses the command pipe of your icinga process in order to submit external
-commands. Depending on the config path (default: /etc/icingaweb2) of your icingaweb installation you can find it
-under ./modules/monitoring/instances.ini.
+The commandtransports.ini defines how Icinga Web 2 accesses the command pipe of
+your Icinga instance in order to submit external commands. Depending on the
+config path (default: /etc/icingaweb2) of your Icinga Web 2 installation you can
+find it under ./modules/monitoring/commandtransports.ini.
 
 ## Syntax
 
-You can define multiple instances in the instances.ini, icingaweb will use the first one as the default instance.
+You can define multiple command transports in the commandtransports.ini. Icinga
+Web 2 will utilize the first transport as the default for a specific Icinga
+instance.
 
-Every instance starts with a section header containing the name of the instance, followed by the config directives for
-this instance in the standard ini format used by icingaweb.
+Every transport starts with a section header containing its name, followed by
+the config directives for this transport in the standard INI-format.
 
-## Using a local icinga pipe
+## Using a local command pipe
 
-A local icinga instance can be easily setup and only requires the 'path' parameter:
+A local Icinga instance requires the following directives:
 
-    [icinga]
-    path=/usr/local/icinga/var/rw/icinga.cmd
+````
+[icinga2]
+transport = local
+path = /var/run/icinga2/cmd/icinga2.cmd
+````
 
-When sending commands to the icinga instance, icingaweb just opens the file found underneath 'path' and writes the external
-command to it.
+When sending commands to the Icinga instance, Icinga Web 2 opens the file found
+on the local filesystem underneath 'path' and writes the external command to it.
 
-## Using ssh for accessing an icinga pipe
+## Using SSH for accessing a remote command pipe
 
-When providing at least a host directive to the instances.ini, SSH will be used for accessing the pipe. You must have
-setup key authentication at the endpoint and allow your icingweb's user to access the machine without a password at this time:
+A command pipe on a remote host's filesystem can be accessed by configuring a
+SSH based command transport and requires the following directives:
 
-    [icinga]
-    path=/usr/local/icinga/var/rw/icinga.cmd ; the path on the remote machine where the icinga.cmd can be found
-    host=my.remote.machine.com               ; the hostname or address of the remote machine
-    port=22                                  ; the port to use (22 if none is given)
-    user=jdoe                                ; the user to authenticate with
+````
+[icinga2]
+transport = remote
+path = /var/run/icinga2/cmd/icinga2.cmd
+host = example.tld
+;port = 22                              ; Optional. The default is 22
+user = icinga
+````
 
-You can also make use of the ssh resource for accessing an icinga pipe with key-based authentication, which will give
-you the possibility to define the location of the private key for a specific user, let's have a look:
+To make this example work, you'll need to permit your web-server's user
+public-key based access to the defined remote host so that Icinga Web 2 can
+connect to it and login as the defined user.
 
-    [icinga]
-    path=/usr/local/icinga/var/rw/icinga.cmd ; the path on the remote machine where the icinga.cmd can be found
-    host=my.remote.machine.com               ; the hostname or address of the remote machine
-    port=22                                  ; the port to use (22 if none is given)
-    resource=ssh                             ; the ssh resource which contains the username and the location of the private key
+You can also make use of a dedicated SSH resource to permit access for a
+different user than the web-server's one. This way, you can provide a private
+key file on the local filesystem that is used to access the remote host.
 
-And the associated ssh resource:
+To accomplish this, a new resource is required that is defined in your
+transport's configuration instead of a user:
 
-    [ssh]
-    type                = "ssh"
-    user                = "ssh-user"
-    private_key        = "/etc/icingaweb2/ssh/ssh-user"
+````
+[icinga2]
+transport = remote
+path = /var/run/icinga2/cmd/icinga2.cmd
+host = example.tld
+;port = 22                              ; Optional. The default is 22
+resource = example.tld-icinga2
+````
 
+The resource's configuration needs to be put into the resources.ini file:
 
-
-
+````
+[example.tld-icinga2]
+type = ssh
+user = icinga
+private_key = /etc/icingaweb2/ssh/icinga
+````
