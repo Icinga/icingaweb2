@@ -6,6 +6,7 @@ namespace Icinga\Module\Monitoring\Controllers;
 use Exception;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Module\Monitoring\Forms\Config\BackendConfigForm;
 use Icinga\Module\Monitoring\Forms\Config\InstanceConfigForm;
