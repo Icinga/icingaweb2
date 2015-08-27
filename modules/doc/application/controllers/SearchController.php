@@ -1,6 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Doc\Controllers;
+
 use Icinga\Application\Icinga;
 use Icinga\Module\Doc\DocController;
 use Icinga\Module\Doc\DocParser;
@@ -9,7 +11,7 @@ use Icinga\Module\Doc\Renderer\DocSearchRenderer;
 use Icinga\Module\Doc\Search\DocSearch;
 use Icinga\Module\Doc\Search\DocSearchIterator;
 
-class Doc_SearchController extends DocController
+class SearchController extends DocController
 {
     /**
      * Render search
