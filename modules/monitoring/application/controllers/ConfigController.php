@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use Exception;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Forms\ConfirmRemovalForm;
