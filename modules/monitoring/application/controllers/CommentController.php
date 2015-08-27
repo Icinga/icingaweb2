@@ -43,7 +43,7 @@ class CommentController extends Controller
         ))->where('comment_internal_id', $commentId);
         $this->applyRestriction('monitoring/filter/objects', $query);
 
-        if (false === $this->comment = $query->getQuery()->fetchRow()) {
+        if (false === $this->comment = $query->fetchRow()) {
             $this->httpNotFound($this->translate('Comment not found'));
         }
 
@@ -52,9 +52,7 @@ class CommentController extends Controller
             array(
                 'icon'  => 'comment',
                 'label' => $this->translate('Comment'),
-                'title' => $this->translate(
-                    'Display detailed information about a comment.'
-                ),
+                'title' => $this->translate('Display detailed information about a comment.'),
                 'url'   =>'monitoring/comments/show'
             )
         )->activate('comment')->extend(new DashboardAction());
@@ -72,9 +70,9 @@ class CommentController extends Controller
             $form = new DeleteCommentCommandForm();
             $form
                 ->populate(array(
-                    'redirect'              => $listUrl,
                     'comment_id'            => $this->comment->id,
-                    'comment_is_service'    => isset($this->comment->service_description)
+                    'comment_is_service'    => isset($this->comment->service_description),
+                    'redirect'              => $listUrl
                 ))
                 ->handleRequest();
             $this->view->delCommentForm = $form;
