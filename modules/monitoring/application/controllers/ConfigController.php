@@ -4,11 +4,11 @@
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Forms\ConfirmRemovalForm;
-use Icinga\Web\Controller;
-use Icinga\Web\Notification;
 use Icinga\Module\Monitoring\Forms\Config\BackendConfigForm;
 use Icinga\Module\Monitoring\Forms\Config\InstanceConfigForm;
 use Icinga\Module\Monitoring\Forms\Config\SecurityConfigForm;
+use Icinga\Web\Controller;
+use Icinga\Web\Notification;
 
 /**
  * Configuration controller for editing monitoring resources
