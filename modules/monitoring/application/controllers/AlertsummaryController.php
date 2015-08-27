@@ -6,8 +6,8 @@ use Icinga\Chart\Unit\LinearUnit;
 use Icinga\Chart\Unit\StaticAxis;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Web\Widget\SelectBox;
-use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Url;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
 
 class Monitoring_AlertsummaryController extends Controller
 {
