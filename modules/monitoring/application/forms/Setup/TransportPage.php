@@ -22,6 +22,7 @@ class TransportPage extends Form
         $transportConfigForm = new TransportConfigForm();
         $this->addSubForm($transportConfigForm, 'transport_form');
         $transportConfigForm->create($formData);
+        $transportConfigForm->removeElement('instance');
         $transportConfigForm->getElement('name')->setValue('icinga2');
     }
 

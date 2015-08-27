@@ -165,6 +165,19 @@ class TransportConfigForm extends ConfigForm
     {
         $this->addElement(
             'text',
+            'instance',
+            array(
+                'placeholder'   => 'default',
+                'label'         => $this->translate('Instance Name'),
+                'description'   => $this->translate(
+                    'The name of the Icinga instance this transport should transfer commands to. You do not '
+                    . 'need to adjust this if you\'re not using a different instance name than the default.'
+                )
+            )
+        );
+
+        $this->addElement(
+            'text',
             'name',
             array(
                 'required'      => true,
