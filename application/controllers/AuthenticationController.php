@@ -6,7 +6,6 @@ namespace Icinga\Controllers;
 use Icinga\Application\Icinga;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Web\Controller;
-use Icinga\Web\Cookie;
 use Icinga\Web\Url;
 
 /**
