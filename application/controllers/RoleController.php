@@ -3,9 +3,9 @@
 
 namespace Icinga\Controllers;
 
-use InvalidArgumentException;
-use Zend_Controller_Action_Exception;
 use Icinga\Application\Config;
+use Icinga\Exception\AlreadyExistsException;
+use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Security\RoleForm;
 use Icinga\Web\Controller\AuthBackendController;
@@ -40,7 +40,7 @@ class RoleController extends AuthBackendController
                 $values = $role->getValues();
                 try {
                     $role->add($name, $values);
-                } catch (InvalidArgumentException $e) {
+                } catch (AlreadyExistsException $e) {
                     $role->addError($e->getMessage());
                     return false;
                 }
@@ -63,8 +63,6 @@ class RoleController extends AuthBackendController
 
     /**
      * Update a role
-     *
-     * @throws Zend_Controller_Action_Exception If the required parameter 'role' is missing or the role does not exist
      */
     public function editAction()
     {
@@ -77,11 +75,8 @@ class RoleController extends AuthBackendController
             $role
                 ->setIniConfig(Config::app('roles', true))
                 ->load($name);
-        } catch (InvalidArgumentException $e) {
-            throw new Zend_Controller_Action_Exception(
-                $e->getMessage(),
-                400
-            );
+        } catch (NotFoundError $e) {
+            $this->httpNotFound($e->getMessage());
         }
         $role
             ->setOnSuccess(function (RoleForm $role) use ($name) {
@@ -90,7 +85,7 @@ class RoleController extends AuthBackendController
                 $values = $role->getValues();
                 try {
                     $role->update($name, $values, $oldName);
-                } catch (InvalidArgumentException $e) {
+                } catch (NotFoundError $e) {
                     $role->addError($e->getMessage());
                     return false;
                 }
@@ -108,8 +103,6 @@ class RoleController extends AuthBackendController
 
     /**
      * Remove a role
-     *
-     * @throws Zend_Controller_Action_Exception If the required parameter 'role' is missing or the role does not exist
      */
     public function removeAction()
     {
@@ -120,17 +113,14 @@ class RoleController extends AuthBackendController
             $role
                 ->setIniConfig(Config::app('roles', true))
                 ->load($name);
-        } catch (InvalidArgumentException $e) {
-            throw new Zend_Controller_Action_Exception(
-                $e->getMessage(),
-                400
-            );
+        } catch (NotFoundError $e) {
+            $this->httpNotFound($e->getMessage());
         }
         $confirmation = new ConfirmRemovalForm(array(
             'onSuccess' => function (ConfirmRemovalForm $confirmation) use ($name, $role) {
                 try {
                     $role->remove($name);
-                } catch (InvalidArgumentException $e) {
+                } catch (NotFoundError $e) {
                     Notification::error($e->getMessage());
                     return false;
                 }
