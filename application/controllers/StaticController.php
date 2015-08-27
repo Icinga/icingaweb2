@@ -79,10 +79,7 @@ class StaticController extends Controller
         header(sprintf('ETag: "%x-%x-%x"', $s['ino'], $s['size'], (float) str_pad($s['mtime'], 16, '0')));
         header('Cache-Control: public, max-age=3600');
         header('Pragma: cache');
-        header('Last-Modified: ' . gmdate(
-            'D, d M Y H:i:s',
-            $s['mtime']
-        ) . ' GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $s['mtime']) . ' GMT');
 
         readfile($filePath);
     }
@@ -99,7 +96,7 @@ class StaticController extends Controller
             $basedir = Icinga::app()->getApplicationDir('../public/js/icinga/components/');
             $filePath = $basedir . $file;
         } else {
-            if (!Icinga::app()->getModuleManager()->hasEnabled($module)) {
+            if (! Icinga::app()->getModuleManager()->hasEnabled($module)) {
                 Logger::error(
                     'Non-existing frontend component "' . $module . '/' . $file
                     . '" was requested. The module "' . $module . '" does not exist or is not active.'
@@ -111,7 +108,7 @@ class StaticController extends Controller
             $filePath = $basedir . '/public/js/' . $file;
         }
 
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             Logger::error(
                 'Non-existing frontend component "' . $module . '/' . $file
                 . '" was requested, which would resolve to the the path: ' . $filePath
@@ -125,10 +122,7 @@ class StaticController extends Controller
 
         $response->setHeader(
             'Last-Modified',
-            gmdate(
-                'D, d M Y H:i:s',
-                filemtime($filePath)
-            ) . ' GMT'
+            gmdate('D, d M Y H:i:s', filemtime($filePath)) . ' GMT'
         );
 
         readfile($filePath);
@@ -174,7 +168,7 @@ class StaticController extends Controller
             }
         }
 
-        $this->_response->setHeader('Content-Type', 'text/css');
+        $this->getResponse()->setHeader('Content-Type', 'text/css');
         $this->setCacheHeader(3600);
 
         $lessCompiler->printStack();
