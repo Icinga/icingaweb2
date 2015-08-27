@@ -3,6 +3,7 @@
 
 namespace Icinga\Controllers;
 
+use Exception;
 use Icinga\Application\Config;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Config\UserGroup\UserGroupBackendForm;
