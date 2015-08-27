@@ -3,6 +3,11 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use stdClass;
+use DateInterval;
+use DatePeriod;
+use DateTime;
+use Zend_Controller_Action_Exception;
 use Icinga\Chart\GridChart;
 use Icinga\Chart\Unit\LinearUnit;
 use Icinga\Chart\Unit\StaticAxis;
