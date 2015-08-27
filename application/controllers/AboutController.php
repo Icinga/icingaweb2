@@ -3,8 +3,8 @@
 
 namespace Icinga\Controllers;
 
-use Icinga\Web\Controller\ActionController;
 use Icinga\Application\Version;
+use Icinga\Web\Controller\ActionController;
 
 class AboutController extends ActionController
 {
