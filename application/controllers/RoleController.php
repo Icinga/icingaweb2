@@ -69,13 +69,7 @@ class RoleController extends AuthBackendController
     public function editAction()
     {
         $this->assertPermission('config/authentication/roles/edit');
-        $name = $this->_request->getParam('role');
-        if (empty($name)) {
-            throw new Zend_Controller_Action_Exception(
-                sprintf($this->translate('Required parameter \'%s\' missing'), 'role'),
-                400
-            );
-        }
+        $name = $this->params->getRequired('role');
         $role = new RoleForm();
         $role->setTitle(sprintf($this->translate('Update Role %s'), $name));
         $role->setSubmitLabel($this->translate('Update Role'));
