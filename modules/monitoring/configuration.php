@@ -309,10 +309,6 @@ $dashboard->add(
     'monitoring/list/eventhistory?type=hard_state&sort=timestamp&dir=desc&limit=8'
 );
 $dashboard->add(
-    $this->translate('Critical Event Grid'),
-    'monitoring/list/eventgrid'
-);
-$dashboard->add(
     $this->translate('Downtimes Started'),
     'monitoring/list/eventhistory?type=dt_start&sort=timestamp&dir=desc&limit=8'
 );
