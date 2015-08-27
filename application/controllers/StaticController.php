@@ -121,7 +121,7 @@ class StaticController extends Controller
         }
         $response = $this->getResponse();
         $response->setHeader('Content-Type', 'text/javascript');
-        $this->setCacheHeader(3600);
+        $this->setCacheHeader();
 
         $response->setHeader(
             'Last-Modified',
@@ -135,22 +135,22 @@ class StaticController extends Controller
     }
 
     /**
-     * Set cache header for this response
+     * Set cache header for the response
      *
-     * @param integer $maxAge The maximum age to set
+     * @param int $maxAge The maximum age to set
      */
-    private function setCacheHeader($maxAge)
+    private function setCacheHeader($maxAge = 3600)
     {
-        $this->_response->setHeader('Cache-Control', 'max-age=3600', true);
-        $this->_response->setHeader('Pragma', 'cache', true);
-        $this->_response->setHeader(
-            'Expires',
-            gmdate(
-                'D, d M Y H:i:s',
-                time()+3600
-            ) . ' GMT',
-            true
-        );
+        $maxAge = (int) $maxAge;
+        $this
+            ->getResponse()
+            ->setHeader('Cache-Control', sprintf('max-age=%d', $maxAge), true)
+            ->setHeader('Pragma', 'cache', true)
+            ->setHeader(
+                'Expires',
+                gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT',
+                true
+            );
     }
 
     /**
