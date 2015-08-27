@@ -1,6 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentsCommandForm;
@@ -9,7 +11,7 @@ use Icinga\Web\Url;
 /**
  * Display detailed information about a comment
  */
-class Monitoring_CommentsController extends Controller
+class CommentsController extends Controller
 {
     /**
      * The fetched comments
