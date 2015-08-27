@@ -1,6 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
@@ -11,7 +13,7 @@ use Icinga\Web\Widget\Tabextension\DashboardAction;
 /**
  * Display detailed information about a downtime
  */
-class Monitoring_DowntimeController extends Controller
+class DowntimeController extends Controller
 {
     /**
      * The fetched downtime
