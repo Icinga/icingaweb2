@@ -13,8 +13,6 @@ use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 
 /**
- * Class ListController
- *
  * Application wide controller for various listing actions
  */
 class ListController extends Controller
