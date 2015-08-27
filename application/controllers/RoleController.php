@@ -149,15 +149,15 @@ class RoleController extends AuthBackendController
         $tabs->add(
             'role/list',
             array(
-                'title' => $this->translate(
+                'baseTarget'    => '_main',
+                'label'         => $this->translate('Roles'),
+                'title'         => $this->translate(
                     'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
                 ),
-                'label' => $this->translate('Roles'),
-                'url'   => 'role/list',
-                'baseTarget' => '_main'
+                'url'           => 'role/list'
+
             )
         );
-
         return $tabs;
     }
 }
