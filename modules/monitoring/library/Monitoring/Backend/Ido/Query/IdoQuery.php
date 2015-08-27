@@ -461,17 +461,23 @@ abstract class IdoQuery extends DbQuery
             if ($filter->getExpression() === '*') {
                 return; // Wildcard only filters are ignored so stop early here to avoid joining a table for nothing
             }
-
-            $col = $filter->getColumn();
-            $this->requireColumn($col);
-
-            if ($this->isCustomvar($col)) {
-                $col = $this->getCustomvarColumnName($col);
+            $alias = $filter->getColumn();
+            $this->requireColumn($alias);
+            if ($this->isCustomvar($alias)) {
+                $column = $this->getCustomvarColumnName($alias);
             } else {
-                $col = $this->aliasToColumnName($col);
+                $column = $this->aliasToColumnName($alias);
             }
+            if (isset($this->columnsWithoutCollation[$alias])) {
+                $expression = $filter->getExpression();
+                if (is_array($expression)) {
+                    $filter->setExpression(array_map('strtolower', $expression));
+                } else {
+                    $filter->setExpression(strtolower($expression));
 
-            $filter->setColumn($col);
+                }
+            }
+            $filter->setColumn($column);
         } else {
             foreach ($filter->filters() as $filter) {
                 $this->requireFilterColumns($filter);
@@ -489,48 +495,11 @@ abstract class IdoQuery extends DbQuery
         return parent::addFilter($filter);
     }
 
-    /**
-     * Recurse the given filter and ensure that any string conversion is case-insensitive
-     *
-     * @param Filter $filter
-     */
-    protected function lowerColumnsWithoutCollation(Filter $filter)
-    {
-        if ($filter instanceof FilterExpression) {
-            if (
-                in_array($filter->getColumn(), $this->columnsWithoutCollation)
-                && strpos($filter->getColumn(), 'LOWER') !== 0
-            ) {
-                $filter->setColumn('LOWER(' . $filter->getColumn() . ')');
-                $expression = $filter->getExpression();
-                if (is_array($expression)) {
-                    $filter->setExpression(array_map('strtolower', $expression));
-                } else {
-                    $filter->setExpression(strtolower($expression));
-                }
-            }
-        } else {
-            foreach ($filter->filters() as $chainedFilter) {
-                $this->lowerColumnsWithoutCollation($chainedFilter);
-            }
-        }
-    }
-
-    protected function applyFilterSql($select)
-    {
-        if (! empty($this->columnsWithoutCollation)) {
-            $this->lowerColumnsWithoutCollation($this->filter);
-        }
-
-        parent::applyFilterSql($select);
-    }
-
     public function where($condition, $value = null)
     {
         if ($value === '*') {
             return $this; // Wildcard only filters are ignored so stop early here to avoid joining a table for nothing
         }
-
         $this->requireColumn($condition);
         $col = $this->getMappedField($condition);
         if ($col === null) {
@@ -578,7 +547,6 @@ abstract class IdoQuery extends DbQuery
         if (! empty($this->columnsWithoutCollation)) {
             return in_array($column, $this->columnsWithoutCollation) || strpos($column, 'LOWER') !== 0;
         }
-
         return preg_match('/ COLLATE .+$/', $column) === 1;
     }
 
@@ -603,27 +571,27 @@ abstract class IdoQuery extends DbQuery
     }
 
     /**
-     * Apply postgresql specific query initialization
+     * Apply PostgreSQL specific query initialization
      */
     private function initializeForPostgres()
     {
         $this->customVarsJoinTemplate =
             '%1$s = %2$s.object_id AND LOWER(%2$s.varname) = %3$s';
-        foreach ($this->columnMap as $table => & $columns) {
-            foreach ($columns as $key => & $value) {
-                $value = preg_replace('/ COLLATE .+$/', '', $value, -1, $count);
-                if ($count > 0) {
-                    $this->columnsWithoutCollation[] = $this->getMappedField($key);
+        foreach ($this->columnMap as $table => &$columns) {
+            foreach ($columns as $alias => &$column) {
+                if (false !== $pos = strpos($column, ' COLLATE')) {
+                    $column = 'LOWER(' . substr($column, 0, $pos) . ')';
+                    $this->columnsWithoutCollation[$alias] = true;
                 }
-                $value = preg_replace(
+                $column = preg_replace(
                     '/inet_aton\(([[:word:].]+)\)/i',
                     '(CASE WHEN $1 ~ \'(?:[0-9]{1,3}\\\\.){3}[0-9]{1,3}\' THEN $1::inet - \'0.0.0.0\' ELSE NULL END)',
-                    $value
+                    $column
                 );
-                $value = preg_replace(
+                $column = preg_replace(
                     '/UNIX_TIMESTAMP(\((?>[^()]|(?-1))*\))/i',
                     'CASE WHEN ($1 < \'1970-01-03 00:00:00+00\'::timestamp with time zone) THEN 0 ELSE UNIX_TIMESTAMP($1) END',
-                    $value
+                    $column
                 );
             }
         }
