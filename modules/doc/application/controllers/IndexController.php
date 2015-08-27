@@ -5,8 +5,16 @@ namespace Icinga\Module\Doc\Controllers;
 
 use Icinga\Module\Doc\DocController;
 
+/**
+ * Documentation module index
+ */
 class IndexController extends DocController
 {
+    /**
+     * Documentation module landing page
+     *
+     * Lists documentation links
+     */
     public function indexAction()
     {
     }
