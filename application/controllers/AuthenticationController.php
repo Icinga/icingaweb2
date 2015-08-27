@@ -38,8 +38,11 @@ class AuthenticationController extends Controller
         }
         if (! $requiresSetup) {
             if (! $this->getRequest()->hasCookieSupport()) {
-                echo $this->translate("Cookies must be enabled to run this application.\n");
-                $this->getResponse()->setHttpResponseCode(403)->sendHeaders();
+                $this
+                    ->getResponse()
+                    ->setBody("Cookies must be enabled to run this application.\n")
+                    ->setHttpResponseCode(403)
+                    ->sendResponse();
                 exit();
             }
             $form->handleRequest();
