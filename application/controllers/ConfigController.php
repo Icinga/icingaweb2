@@ -19,7 +19,6 @@ use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Security\SecurityException;
 use Icinga\Web\Controller;
 use Icinga\Web\Notification;
-use Icinga\Web\Url;
 use Icinga\Web\Widget;
 
 /**
