@@ -1,6 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Chart\GridChart;
 use Icinga\Chart\Unit\LinearUnit;
 use Icinga\Chart\Unit\StaticAxis;
@@ -9,7 +11,7 @@ use Icinga\Module\Monitoring\Web\Widget\SelectBox;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 
-class Monitoring_AlertsummaryController extends Controller
+class AlertsummaryController extends Controller
 {
     /**
      * @var array
