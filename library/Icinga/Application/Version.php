@@ -3,6 +3,9 @@
 
 namespace Icinga\Application;
 
+/**
+ * Retrieve the version of Icinga Web 2
+ */
 class Version
 {
     /**
