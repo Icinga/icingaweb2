@@ -4,7 +4,6 @@
 namespace Icinga\Controllers;
 
 use Icinga\Web\Controller\ActionController;
-use Icinga\Application\Benchmark;
 use Icinga\Web\Url;
 
 /**
