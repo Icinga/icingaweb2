@@ -199,7 +199,7 @@ class RoleForm extends ConfigForm
     /**
      * Add a role
      *
-     * @param   string  $name               The name of the role
+     * @param   string  $name           The name of the role
      * @param   array   $values
      *
      * @return  $this
@@ -226,7 +226,7 @@ class RoleForm extends ConfigForm
     /**
      * Remove a role
      *
-     * @param   string  $name               The name of the role
+     * @param   string  $name           The name of the role
      *
      * @return  $this
      *
@@ -252,9 +252,9 @@ class RoleForm extends ConfigForm
     /**
      * Update a role
      *
-     * @param   string  $name               The possibly new name of the role
+     * @param   string  $name           The possibly new name of the role
      * @param   array   $values
-     * @param   string  $oldName            The name of the role to update
+     * @param   string  $oldName        The name of the role to update
      *
      * @return  $this
      *
