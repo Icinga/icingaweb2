@@ -11,6 +11,7 @@ use Zend_Controller_Action_Exception;
 use Icinga\Chart\GridChart;
 use Icinga\Chart\Unit\LinearUnit;
 use Icinga\Chart\Unit\StaticAxis;
+use Icinga\Data\Filter\FilterExpression;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Web\Widget\SelectBox;
 use Icinga\Web\Url;
@@ -102,7 +103,7 @@ class AlertsummaryController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
 
         $query->addFilter(
-            new Icinga\Data\Filter\FilterExpression(
+            new FilterExpression(
                 'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
@@ -151,7 +152,7 @@ class AlertsummaryController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
 
         $query->addFilter(
-            new Icinga\Data\Filter\FilterExpression(
+            new FilterExpression(
                 'notification_start_time',
                 '>=',
                 $beginDate->format('Y-m-d H:i:s')
@@ -219,7 +220,7 @@ class AlertsummaryController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
 
         $query->addFilter(
-            new Icinga\Data\Filter\FilterExpression(
+            new FilterExpression(
                 'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
@@ -270,7 +271,7 @@ class AlertsummaryController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
 
         $query->addFilter(
-            new Icinga\Data\Filter\FilterExpression(
+            new FilterExpression(
                 'timestamp',
                 '>=',
                 $this->getBeginDate($interval)->getTimestamp()
@@ -278,7 +279,7 @@ class AlertsummaryController extends Controller
         );
 
         $query->addFilter(
-            new Icinga\Data\Filter\FilterExpression(
+            new FilterExpression(
                 'state',
                 '>',
                 0
@@ -336,7 +337,7 @@ class AlertsummaryController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
 
         $query->addFilter(
-            new Icinga\Data\Filter\FilterExpression(
+            new FilterExpression(
                 'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
