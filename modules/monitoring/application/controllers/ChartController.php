@@ -1,6 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Chart\GridChart;
 use Icinga\Chart\PieChart;
 use Icinga\Chart\Unit\LogarithmicUnit;
@@ -12,8 +14,7 @@ use Icinga\Module\Monitoring\Controller;
  *
  * Interface to send commands and display forms
  */
-
-class Monitoring_ChartController extends Controller
+class ChartController extends Controller
 {
     private function drawLogChart1()
     {
