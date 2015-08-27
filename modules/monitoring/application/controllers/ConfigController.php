@@ -268,6 +268,5 @@ class Monitoring_ConfigController extends Controller
 
         $this->view->form = $form;
         $this->view->tabs = $this->Module()->getConfigTabs()->activate('security');
-        $this->render('form');
     }
 }
