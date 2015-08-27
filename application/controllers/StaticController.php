@@ -5,7 +5,6 @@ use Icinga\Web\Controller;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Web\FileCache;
-use Zend_Controller_Action_Exception as ActionException;
 
 /**
  * Delivery static content to clients
@@ -64,10 +63,7 @@ class StaticController extends Controller
         $filePath = realpath($basedir . '/public/img/' . $file);
 
         if (! $filePath || strpos($filePath, $basedir) !== 0) {
-            throw new ActionException(sprintf(
-                '%s does not exist',
-                $filePath
-            ), 404);
+            $this->httpNotFound('%s does not exist', $filePath);
         }
         if (preg_match('/\.([a-z]+)$/i', $file, $m)) {
             $extension = $m[1];
