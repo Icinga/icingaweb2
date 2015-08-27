@@ -258,9 +258,9 @@ class RoleForm extends ConfigForm
      *
      * @return  $this
      *
-     * @throws  LogicException              If the config is not set
-     * @throws  InvalidArgumentException    If the role to update does not exist
-     * @see     ConfigForm::setConfig()     For setting the config.
+     * @throws  LogicException          If the config is not set
+     * @throws  NotFoundError           If the role to update does not exist
+     * @see     ConfigForm::setConfig() For setting the config.
      */
     public function update($name, array $values, $oldName)
     {
@@ -273,10 +273,10 @@ class RoleForm extends ConfigForm
             $this->add($name, $values);
         } else {
             if (! $this->config->hasSection($name)) {
-                throw new InvalidArgumentException(sprintf(
+                throw new NotFoundError(
                     $this->translate('Can\'t update role \'%s\'. Role does not exist'),
                     $name
-                ));
+                );
             }
             $this->config->setSection($name, $values);
         }
