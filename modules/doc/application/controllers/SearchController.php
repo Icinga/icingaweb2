@@ -5,9 +5,9 @@ use Icinga\Application\Icinga;
 use Icinga\Module\Doc\DocController;
 use Icinga\Module\Doc\DocParser;
 use Icinga\Module\Doc\Exception\DocException;
+use Icinga\Module\Doc\Renderer\DocSearchRenderer;
 use Icinga\Module\Doc\Search\DocSearch;
 use Icinga\Module\Doc\Search\DocSearchIterator;
-use Icinga\Module\Doc\Renderer\DocSearchRenderer;
 
 class Doc_SearchController extends DocController
 {
