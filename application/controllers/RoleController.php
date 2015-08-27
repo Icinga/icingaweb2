@@ -3,6 +3,8 @@
 
 namespace Icinga\Controllers;
 
+use InvalidArgumentException;
+use Zend_Controller_Action_Exception;
 use Icinga\Application\Config;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Security\RoleForm;
