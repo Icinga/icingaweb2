@@ -1,12 +1,11 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Module\Monitoring\Controller;
 use Icinga\Chart\GridChart;
 use Icinga\Chart\PieChart;
-use Icinga\Chart\Unit\StaticAxis;
 use Icinga\Chart\Unit\LogarithmicUnit;
-use Icinga\Chart\Unit\LinearUnit;
+use Icinga\Chart\Unit\StaticAxis;
+use Icinga\Module\Monitoring\Controller;
 
 /**
  * Class Monitoring_CommandController
