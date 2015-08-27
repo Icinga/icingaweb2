@@ -1,10 +1,12 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Setup\Controllers;
+
 use Icinga\Module\Setup\WebWizard;
 use Icinga\Web\Controller;
 
-class Setup_IndexController extends Controller
+class IndexController extends Controller
 {
     /**
      * Whether the controller requires the user to be authenticated
