@@ -3,6 +3,7 @@
 
 namespace Icinga\Controllers;
 
+use Exception;
 use Icinga\Application\Logger;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\Filter\Filter;
