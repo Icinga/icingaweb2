@@ -10,9 +10,7 @@ use Icinga\Chart\Unit\StaticAxis;
 use Icinga\Module\Monitoring\Controller;
 
 /**
- * Class Monitoring_CommandController
- *
- * Interface to send commands and display forms
+ * @TODO(el): Fix and reuse the controller or remove it: https://dev.icinga.org/issues/10019
  */
 class ChartController extends Controller
 {
