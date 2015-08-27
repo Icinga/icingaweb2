@@ -1,6 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Instance\DisableNotificationsExpireCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Instance\ToggleInstanceFeaturesCommandForm;
@@ -9,7 +11,7 @@ use Icinga\Web\Widget\Tabextension\DashboardAction;
 /**
  * Display process and performance information of the monitoring host and program-wide commands
  */
-class Monitoring_ProcessController extends Controller
+class ProcessController extends Controller
 {
     /**
      * Add tabs
