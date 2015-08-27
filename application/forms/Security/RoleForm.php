@@ -5,7 +5,6 @@ namespace Icinga\Forms\Security;
 
 use Icinga\Exception\AlreadyExistsException;
 use Icinga\Exception\NotFoundError;
-use InvalidArgumentException;
 use LogicException;
 use Zend_Form_Element;
 use Icinga\Application\Icinga;
