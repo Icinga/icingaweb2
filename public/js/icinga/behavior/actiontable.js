@@ -379,9 +379,6 @@
 
         // initialize all rows with the correct link
         $('table.action tr', container).each(function(idx, el) {
-            // IE will not ignore user-select unless we cancel selectstart
-            $(el).on('selectstart', false);
-
             var $a = $('a[href].rowaction', el).first();
             if ($a.length) {
                 // TODO: Find out whether we leak memory on IE with this:
@@ -392,6 +389,11 @@
             if ($a.length) {
                 $(el).attr('href', $a.attr('href'));
             }
+        });
+
+        // IE will not ignore user-select unless we cancel selectstart
+        $('table.action.multiselect tr', container).each(function(idx, el) {
+            $(el).on('selectstart', false);
         });
 
         // draw all active selections that have disappeared on reload

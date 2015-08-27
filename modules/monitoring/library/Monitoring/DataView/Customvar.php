@@ -3,15 +3,10 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
-/**
- * Represent customvar view
- */
 class Customvar extends DataView
 {
     /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getColumns()
     {
@@ -28,9 +23,7 @@ class Customvar extends DataView
     }
 
     /**
-     * Retrieve default sorting rules for particular columns. These involve sort order and potential additional to sort
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getSortRules()
     {
@@ -44,7 +37,10 @@ class Customvar extends DataView
         );
     }
 
-    public function getFilterColumns()
+    /**
+     * {@inheritdoc}
+     */
+    public function getStaticFilterColumns()
     {
         return array('host', 'service', 'contact');
     }

@@ -57,19 +57,12 @@ class UserController extends AuthBackendController
         }
 
         $query = $backend->select(array('user_name'));
-        $filterEditor = Widget::create('filterEditor')
-            ->setQuery($query)
-            ->setSearchColumns(array('user'))
-            ->preserveParams('limit', 'sort', 'dir', 'view', 'backend')
-            ->ignoreParams('page')
-            ->handleRequest($this->getRequest());
-        $query->applyFilter($filterEditor->getFilter());
-        $this->setupFilterControl($filterEditor);
 
         $this->view->users = $query;
         $this->view->backend = $backend;
 
         $this->setupPaginationControl($query);
+        $this->setupFilterControl($query);
         $this->setupLimitControl();
         $this->setupSortControl(
             array(
@@ -103,15 +96,11 @@ class UserController extends AuthBackendController
 
         $memberships = $this->loadMemberships(new User($userName))->select();
 
-        $filterEditor = Widget::create('filterEditor')
-            ->setQuery($memberships)
-            ->setSearchColumns(array('group_name'))
-            ->preserveParams('limit', 'sort', 'dir', 'view', 'backend', 'user')
-            ->ignoreParams('page')
-            ->handleRequest($this->getRequest());
-        $memberships->applyFilter($filterEditor->getFilter());
-
-        $this->setupFilterControl($filterEditor);
+        $this->setupFilterControl(
+            $memberships,
+            array('group_name' => t('User Group')),
+            array('group_name')
+        );
         $this->setupPaginationControl($memberships);
         $this->setupLimitControl();
         $this->setupSortControl(
@@ -151,7 +140,7 @@ class UserController extends AuthBackendController
             $removeForm->addElement('button', 'btn_submit', array(
                 'escape'        => false,
                 'type'          => 'submit',
-                'class'         => 'link-like',
+                'class'         => 'link-like spinner',
                 'value'         => 'btn_submit',
                 'decorators'    => array('ViewHelper'),
                 'label'         => $this->view->icon('trash'),

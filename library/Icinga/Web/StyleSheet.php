@@ -12,6 +12,7 @@ class StyleSheet
     protected static $lessFiles = array(
         '../application/fonts/fontello-ifont/css/ifont-embedded.css',
         'css/vendor/tipsy.css',
+        'css/icinga/mixins.less',
         'css/icinga/defaults.less',
         'css/icinga/animation.less',
         'css/icinga/layout-colors.less',

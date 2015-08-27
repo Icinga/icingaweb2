@@ -62,6 +62,7 @@ class Controller extends IcingaWebController
     {
         $restrictions = Filter::matchAny();
         $restrictions->setAllowedFilterColumns(array(
+            'instance_name',
             'host_name',
             'hostgroup_name',
             'service_description',
@@ -85,6 +86,7 @@ class Controller extends IcingaWebController
                     $restriction,
                     $filter,
                     implode(', ', array(
+                        'instance_name',
                         'host_name',
                         'hostgroup_name',
                         'service_description',

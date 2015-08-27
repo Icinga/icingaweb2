@@ -126,7 +126,7 @@ if (! $this->compact): ?>
           </small>
         </td>
         <?php if (isset($delDowntimeForm)): // Form is unset if the current user lacks the respective permission ?>
-        <td style="width: 2em" data-base-target="self">
+        <td style="width: 2em" data-base-target="_self">
           <?php
           $delDowntimeForm = clone $delDowntimeForm;
           $delDowntimeForm->populate(

@@ -369,9 +369,10 @@ class WebWizard extends Wizard implements SetupWizard
                 'submit',
                 'backend_validation',
                 array(
-                    'ignore'        => true,
-                    'label'         => t('Validate Configuration'),
-                    'decorators'    => array('ViewHelper')
+                    'ignore'                => true,
+                    'label'                 => t('Validate Configuration'),
+                    'data-progress-label'   => t('Validation In Progress'),
+                    'decorators'            => array('ViewHelper')
                 )
             );
             $page->getDisplayGroup('buttons')->addElement($page->getElement('backend_validation'));

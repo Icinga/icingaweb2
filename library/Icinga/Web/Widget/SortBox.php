@@ -118,12 +118,12 @@ class SortBox extends AbstractWidget
             if ($request === null) {
                 $request = Icinga::app()->getRequest();
             }
-
-            if (($sort = $request->getParam('sort'))) {
-                $this->query->order($sort, $request->getParam('dir'));
-            } elseif (($dir = $request->getParam('dir'))) {
-                $this->query->order(null, $dir);
+            if (null === $sort = $request->getParam('sort')) {
+                list($sort, $dir) = $this->getSortDefaults();
+            } else {
+                list($_, $dir) = $this->getSortDefaults($sort);
             }
+            $this->query->order($sort, $request->getParam('dir', $dir));
         }
 
         return $this;
@@ -148,8 +148,10 @@ class SortBox extends AbstractWidget
             if ($column !== null && isset($sortRules[$column]['order'])) {
                 $direction = strtoupper($sortRules[$column]['order']) === Sortable::SORT_DESC ? 'desc' : 'asc';
             }
+        } elseif ($column === null) {
+            reset($this->sortFields);
+            $column = key($this->sortFields);
         }
-
         return array($column, $direction);
     }
 

@@ -49,6 +49,14 @@ class ServicestatussummaryQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    public function allowsCustomVars()
+    {
+        return $this->subSelect->allowsCustomVars();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function addFilter(Filter $filter)
     {
         $this->subSelect->applyFilter(clone $filter);

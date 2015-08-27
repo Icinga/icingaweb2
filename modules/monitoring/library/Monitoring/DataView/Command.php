@@ -9,9 +9,7 @@ namespace Icinga\Module\Monitoring\DataView;
 class Command extends DataView
 {
     /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getColumns()
     {

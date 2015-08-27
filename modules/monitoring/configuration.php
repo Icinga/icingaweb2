@@ -89,17 +89,34 @@ $this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/serv
  * Problems Section
  */
 $section = $this->menuSection($this->translate('Problems'), array(
-    'renderer'  => 'Icinga\Module\Monitoring\Web\Menu\ProblemMenuItemRenderer',
+    'renderer' => array(
+        'SummaryMenuItemRenderer',
+        'state' => 'critical'
+    ),
     'icon'      => 'block',
     'priority'  => 20
 ));
 $section->add($this->translate('Unhandled Hosts'), array(
-    'renderer'  => 'Icinga\Module\Monitoring\Web\Menu\UnhandledHostMenuItemRenderer',
+    'renderer'  => array(
+        'Icinga\Module\Monitoring\Web\Menu\MonitoringBadgeMenuItemRenderer',
+        'columns' => array(
+            'hosts_down_unhandled' => $this->translate('%d unhandled hosts down')
+        ),
+        'state'    => 'critical',
+        'dataView' => 'statussummary'
+    ),
     'url'       => 'monitoring/list/hosts?host_problem=1&host_handled=0',
     'priority'  => 30
 ));
 $section->add($this->translate('Unhandled Services'), array(
-    'renderer'  => 'Icinga\Module\Monitoring\Web\Menu\UnhandledServiceMenuItemRenderer',
+    'renderer'  => array(
+        'Icinga\Module\Monitoring\Web\Menu\MonitoringBadgeMenuItemRenderer',
+        'columns' => array(
+            'services_critical_unhandled' => $this->translate('%d unhandled services critical')
+        ),
+        'state'    => 'critical',
+        'dataView' => 'statussummary'
+    ),
     'url'       => 'monitoring/list/services?service_problem=1&service_handled=0&sort=service_severity',
     'priority'  => 40
 ));
@@ -204,7 +221,7 @@ $section = $this->menuSection($this->translate('System'));
 $section->add($this->translate('Monitoring Health'), array(
     'url'      => 'monitoring/process/info',
     'priority' => 720,
-    'renderer'  => 'Icinga\Module\Monitoring\Web\Menu\BackendAvailabilityMenuItemRenderer'
+    'renderer' => 'Icinga\Module\Monitoring\Web\Menu\BackendAvailabilityMenuItemRenderer'
 ));
 
 /*
@@ -223,3 +240,9 @@ $dashboard->add(
     $this->translate('Host Problems'),
     'monitoring/list/hosts?host_problem=1&sort=host_severity'
 );
+
+/*
+ * CSS
+ */
+$this->provideCssFile('colors.less');
+$this->provideCssFile('service-grid.less');

@@ -1,0 +1,38 @@
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
+
+table.service-grid-table {
+  white-space: nowrap;
+
+  th {
+    a {
+      color: @colorMainLink;
+      font-weight: normal;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  td {
+    text-align: center;
+    width: 1.5em;
+
+    a {
+      .rounded-corners(0.4em);
+      display: block;
+      height: 1.5em;
+      width: 1.5em;
+    }
+  }
+
+  th.rotate-45 {
+    height: 6em;
+
+    div {
+      .transform(translate(0.4em, 2.1em) rotate(315deg));
+      width: 1.5em;
+    }
+  }
+}

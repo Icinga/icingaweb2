@@ -25,7 +25,8 @@ class CommentQuery extends IdoQuery
             'comment_is_persistent' => 'c.comment_is_persistent',
             'comment_timestamp'     => 'c.comment_timestamp',
             'comment_type'          => 'c.comment_type',
-            'object_type'           => 'c.object_type'
+            'object_type'           => 'c.object_type',
+            'instance_name'         => 'c.instance_name'
         ),
         'hosts' => array(
             'host_display_name' => 'c.host_display_name',
@@ -53,6 +54,20 @@ class CommentQuery extends IdoQuery
      * @var IdoQuery[]
      */
     protected $subQueries = array();
+
+    /**
+     * {@inheritdoc}
+     */
+    public function allowsCustomVars()
+    {
+        foreach ($this->subQueries as $query) {
+            if (! $query->allowsCustomVars()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     /**
      * {@inheritdoc}

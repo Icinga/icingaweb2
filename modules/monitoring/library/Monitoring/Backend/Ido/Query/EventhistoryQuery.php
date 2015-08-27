@@ -9,7 +9,7 @@ use Icinga\Data\Filter\Filter;
 /**
  * Query for event history records
  */
-class EventHistoryQuery extends IdoQuery
+class EventhistoryQuery extends IdoQuery
 {
     /**
      * {@inheritdoc}
@@ -73,6 +73,20 @@ class EventHistoryQuery extends IdoQuery
         $sub = $this->db->select()->union($this->subQueries, Zend_Db_Select::SQL_UNION_ALL);
         $this->select->from(array('eh' => $sub), array());
         $this->joinedVirtualTables['eventhistory'] = true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function allowsCustomVars()
+    {
+        foreach ($this->subQueries as $query) {
+            if (! $query->allowsCustomVars()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

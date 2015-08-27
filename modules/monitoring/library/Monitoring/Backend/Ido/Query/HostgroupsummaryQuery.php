@@ -69,6 +69,20 @@ class HostgroupsummaryQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    public function allowsCustomVars()
+    {
+        foreach ($this->subQueries as $query) {
+            if (! $query->allowsCustomVars()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function addFilter(Filter $filter)
     {
         foreach ($this->subQueries as $sub) {

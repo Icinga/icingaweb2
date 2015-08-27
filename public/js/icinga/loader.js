@@ -42,13 +42,15 @@
         /**
          * Load the given URL to the given target
          *
-         * @param {string} url     URL to be loaded
-         * @param {object} target  Target jQuery element
-         * @param {object} data    Optional parameters, usually for POST requests
-         * @param {string} method  HTTP method, default is 'GET'
-         * @param {string} action  How to handle the response ('replace' or 'append'), default is 'replace'
+         * @param {string}  url             URL to be loaded
+         * @param {object}  target          Target jQuery element
+         * @param {object}  data            Optional parameters, usually for POST requests
+         * @param {string}  method          HTTP method, default is 'GET'
+         * @param {string}  action          How to handle the response ('replace' or 'append'), default is 'replace'
+         * @param {boolean} autorefresh     Whether the cause is a autorefresh or not
+         * @param {object}  progressTimer   A timer to be stopped when the request is done
          */
-        loadUrl: function (url, $target, data, method, action, autorefresh) {
+        loadUrl: function (url, $target, data, method, action, autorefresh, progressTimer) {
             var id = null;
 
             // Default method is GET
@@ -74,11 +76,13 @@
                 if (autorefresh) {
                     return false;
                 }
-                // ...ignore the new request if it is already pending with the same URL
-                if (this.requests[id].url === url) {
+                // ... ignore the new request if it is already pending with the same URL. Only abort GETs, as those
+                // are the only methods that are guaranteed to return the same value
+                if (this.requests[id].url === url && method === 'GET') {
                     this.icinga.logger.debug('Request to ', url, ' is already running for ', $target);
                     return this.requests[id];
                 }
+
                 // ...or abort the former request otherwise
                 this.icinga.logger.debug(
                     'Aborting pending request loading ',
@@ -129,6 +133,7 @@
             req.autorefresh = autorefresh;
             req.action = action;
             req.addToHistory = true;
+            req.progressTimer = progressTimer;
 
             if (id) {
                 this.requests[id] = req;
@@ -422,7 +427,9 @@
                 this.icinga.ui.reloadCss();
             }
 
-            if (req.getResponseHeader('X-Icinga-Redirect')) return;
+            if (req.getResponseHeader('X-Icinga-Redirect')) {
+                return;
+            }
 
             // div helps getting an XML tree
             var $resp = $('<div>' + req.responseText + '</div>');
@@ -513,8 +520,6 @@
                     var $el = $(el);
                     if ($el.hasClass('dashboard')) {
                         return;
-                    } else {
-
                     }
                     var url = $el.data('icingaUrl');
                     targets[i].data('icingaUrl', url);
@@ -531,28 +536,13 @@
 
             this.icinga.ui.initializeTriStates($resp);
 
-            /* Should we try to fiddle with responses containing full HTML? */
-            /*
-            if ($('body', $resp).length) {
-                req.responseText = $('script', $('body', $resp).html()).remove();
+            if (rendered) {
+                return;
             }
-            */
-            /*
 
-            var containers = [];
-
-            $('.dashboard .container').each(function(idx, el) {
-              urls.push($(el).data('icingaUrl'));
-            });
-            console.log(urls);
-                  $('.container[data-icinga-refresh]').each(function(idx, el) {
-                    var $el = $(el);
-                    self.loadUrl($el.data('icingaUrl'), $el).autorefresh = true;
-                    el = null;
-                  });
-            */
-
-            if (rendered) return;
+            if (typeof req.progressTimer !== 'undefined') {
+                this.icinga.timer.unregister(req.progressTimer);
+            }
 
             // .html() removes outer div we added above
             this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh);
@@ -580,35 +570,27 @@
             if (! req.autorefresh) {
                 // TODO: Hook for response/url?
                 var url = req.url;
+
+                if (req.$target[0].id === 'col1') {
+                    self.icinga.behaviors.navigation.trySetActiveByUrl(url);
+                }
+
                 var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
                 var $matches = $.merge($('[href="' + url + '"]'), $forms);
-                $matches.each(function (idx, el) {
-                    if ($(el).closest('#menu').length) {
-                        if (req.$target[0].id === 'col1') {
-                            self.icinga.behaviors.navigation.resetActive();
-                        }
-                    }
-                });
-
                 $matches.each(function (idx, el) {
                     var $el = $(el);
                     if ($el.closest('#menu').length) {
                         if ($el.is('form')) {
                             $('input', $el).addClass('active');
-                        } else {
-                            if (req.$target[0].id === 'col1') {
-                                self.icinga.behaviors.navigation.setActive($el);
-                            }
                         }
-                        // Interrupt .each, only on menu item shall be active
+                        // Interrupt .each, only one menu item shall be active
                         return false;
                     }
                 });
             }
 
-            // Update history when necessary. Don't do so for requests triggered
-            // by history or autorefresh events
-            if (! req.autorefresh && req.addToHistory) {
+            // Update history when necessary
+            if (req.addToHistory) {
                 if (req.$target.hasClass('container')) {
                     // We only want to care about top-level containers
                     if (req.$target.parent().closest('.container').length === 0) {
@@ -650,10 +632,14 @@
             /*
              * Test if a manual actions comes in and autorefresh is active: Stop refreshing
              */
-            if (req.addToHistory && ! req.autorefresh && req.$target.data('icingaRefresh') > 0
-            && req.$target.data('icingaUrl') !== url) {
+            if (req.addToHistory && ! req.autorefresh) {
                 req.$target.data('icingaRefresh', 0);
                 req.$target.data('icingaUrl', url);
+                icinga.history.pushCurrentState();
+            }
+
+            if (typeof req.progressTimer !== 'undefined') {
+                this.icinga.timer.unregister(req.progressTimer);
             }
 
             if (req.status > 0) {

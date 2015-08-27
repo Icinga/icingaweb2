@@ -10,13 +10,14 @@ use Icinga\Application\Benchmark;
 use Icinga\Application\Logger;
 use Icinga\Data\QueryInterface;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\FilterColumns;
 use Icinga\Data\SortRules;
 use Icinga\Exception\QueryException;
 
 /**
  * Query class supposed to mediate between a repository and its datasource's query
  */
-class RepositoryQuery implements QueryInterface, SortRules, Iterator
+class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Iterator
 {
     /**
      * The repository being used
@@ -139,6 +140,26 @@ class RepositoryQuery implements QueryInterface, SortRules, Iterator
         }
 
         return $columns;
+    }
+
+    /**
+     * Return this query's available filter columns with their optional label as key
+     *
+     * @return  array
+     */
+    public function getFilterColumns()
+    {
+        return $this->repository->getFilterColumns();
+    }
+
+    /**
+     * Return this query's available search columns
+     *
+     * @return  array
+     */
+    public function getSearchColumns()
+    {
+        return $this->repository->getSearchColumns();
     }
 
     /**

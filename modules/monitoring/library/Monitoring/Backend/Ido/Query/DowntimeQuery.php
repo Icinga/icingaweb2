@@ -30,7 +30,8 @@ class DowntimeQuery extends IdoQuery
             'downtime_scheduled_end'    => 'd.downtime_scheduled_end',
             'downtime_scheduled_start'  => 'd.downtime_scheduled_start',
             'downtime_start'            => 'd.downtime_start',
-            'object_type'               => 'd.object_type'
+            'object_type'               => 'd.object_type',
+            'instance_name'             => 'd.instance_name'
         ),
         'hosts' => array(
             'host_display_name'         => 'd.host_display_name',
@@ -58,6 +59,20 @@ class DowntimeQuery extends IdoQuery
      * @var IdoQuery[]
      */
     protected $subQueries = array();
+
+    /**
+     * {@inheritdoc}
+     */
+    public function allowsCustomVars()
+    {
+        foreach ($this->subQueries as $query) {
+            if (! $query->allowsCustomVars()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     /**
      * {@inheritdoc}

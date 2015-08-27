@@ -68,11 +68,7 @@ class DbResourcePage extends Form
         }
 
         if (false === isset($data['skip_validation']) || $data['skip_validation'] == 0) {
-            try {
-                $db = new DbTool($this->getValues());
-                $db->checkConnectivity();
-            } catch (PDOException $e) {
-                $this->error($e->getMessage());
+            if (! $this->validateConfiguration()) {
                 $this->addSkipValidationCheckbox();
                 return false;
             }
@@ -93,14 +89,7 @@ class DbResourcePage extends Form
     public function isValidPartial(array $formData)
     {
         if (isset($formData['backend_validation']) && parent::isValid($formData)) {
-            try {
-                $db = new DbTool($this->getValues());
-                $db->checkConnectivity();
-            } catch (PDOException $e) {
-                $this->warning(sprintf(
-                    $this->translate('Failed to successfully validate the configuration: %s'),
-                    $e->getMessage()
-                ));
+            if (! $this->validateConfiguration()) {
                 return false;
             }
 
@@ -114,7 +103,55 @@ class DbResourcePage extends Form
     }
 
     /**
-     * Add a checkbox to the form by which the user can skip the connection validation
+     * Return whether the configuration is valid
+     *
+     * @return  bool
+     */
+    protected function validateConfiguration()
+    {
+        try {
+            $db = new DbTool($this->getValues());
+            $db->checkConnectivity();
+        } catch (PDOException $e) {
+            $this->error(sprintf(
+                $this->translate('Failed to successfully validate the configuration: %s'),
+                $e->getMessage()
+            ));
+            return false;
+        }
+
+        if ($this->getValue('db') === 'pgsql') {
+            if (! $db->isConnected()) {
+                try {
+                    $db->connectToDb();
+                } catch (PDOException $e) {
+                    $this->warning($this->translate(sprintf(
+                        'Unable to check the server\'s version. This is usually not a critical error as there is'
+                        . ' probably only access to the database permitted which does not exist yet. If you are'
+                        . ' absolutely sure you are running PostgreSQL in a version equal to or newer than 9.1,'
+                        . ' you can skip the validation and safely proceed to the next step. The error was: %s',
+                        $e->getMessage()
+                    )));
+                    return false;
+                }
+            }
+
+            $version = $db->getServerVersion();
+            if (version_compare($version, '9.1', '<')) {
+                $this->error($this->translate(sprintf(
+                    'The server\'s version %s is too old. The minimum required version is %s.',
+                    $version,
+                    '9.1'
+                )));
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Add a checkbox to the form by which the user can skip the configuration validation
      */
     protected function addSkipValidationCheckbox()
     {
@@ -124,9 +161,7 @@ class DbResourcePage extends Form
             array(
                 'required'      => true,
                 'label'         => $this->translate('Skip Validation'),
-                'description'   => $this->translate(
-                    'Check this to not to validate connectivity with the given database server'
-                )
+                'description'   => $this->translate('Check this to not to validate the configuration')
             )
         );
     }

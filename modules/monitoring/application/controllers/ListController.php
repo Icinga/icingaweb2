@@ -10,7 +10,6 @@ use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Data\Filter\Filter;
-use Icinga\Web\Widget;
 use Icinga\Module\Monitoring\Forms\StatehistoryForm;
 use Icinga\Module\Monitoring\DataView\DataView;
 
@@ -23,24 +22,6 @@ class Monitoring_ListController extends Controller
     {
         parent::init();
         $this->createTabs();
-    }
-
-    /**
-     * @deprecated DO NOT USE. THIS IS A HACK. This is removed once we fix the eventhistory action w/ filters.
-     */
-    protected function applyFilter($query)
-    {
-        $params = clone $this->params;
-        $params->shift('format');
-        $params->shift('limit');
-        $params->shift('page');
-        $params->shift('view');
-        if ($sort = $params->shift('sort')) {
-            $query->order($sort, $params->shift('dir'));
-        }
-        $query->applyFilter(Filter::fromQuerystring((string) $params));
-        $this->handleFormatRequest($query);
-        return $query;
     }
 
     /**
@@ -92,8 +73,8 @@ class Monitoring_ListController extends Controller
             'host_current_check_attempt',
             'host_max_check_attempts'
         ), $this->addColumns()));
-        $this->filterQuery($query);
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
         $this->view->hosts = $query;
         $stats = $this->backend->select()->from('hoststatussummary', array(
             'hosts_total',
@@ -178,8 +159,8 @@ class Monitoring_ListController extends Controller
             'max_check_attempts'    => 'service_max_check_attempts'
         ), $this->addColumns());
         $query = $this->backend->select()->from('servicestatus', $columns);
-        $this->filterQuery($query);
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
         $this->view->services = $query;
 
         $this->setupLimitControl();
@@ -243,9 +224,8 @@ class Monitoring_ListController extends Controller
             'host_display_name',
             'service_display_name'
         ));
-        $this->filterQuery($query);
-
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
 
         $this->view->downtimes = $query;
 
@@ -292,8 +272,8 @@ class Monitoring_ListController extends Controller
             'host_display_name',
             'service_display_name'
         ));
-        $this->filterQuery($query);
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
         $this->view->notifications = $query;
 
         $this->setupLimitControl();
@@ -315,8 +295,8 @@ class Monitoring_ListController extends Controller
             'contact_notify_service_timeperiod',
             'contact_notify_host_timeperiod'
         ));
-        $this->filterQuery($query);
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
         $this->view->contacts = $query;
 
         $this->setupLimitControl();
@@ -387,8 +367,8 @@ class Monitoring_ListController extends Controller
             'contact_email',
             'contact_pager'
         ));
-        $this->filterQuery($query);
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
 
         $this->setupSortControl(array(
             'contactgroup_name'     => $this->translate('Contactgroup Name'),
@@ -431,10 +411,8 @@ class Monitoring_ListController extends Controller
             'host_display_name',
             'service_display_name'
         ));
-        $this->filterQuery($query);
-
         $this->applyRestriction('monitoring/filter/objects', $query);
-
+        $this->filterQuery($query);
         $this->view->comments = $query;
 
         $this->setupLimitControl();
@@ -486,10 +464,8 @@ class Monitoring_ListController extends Controller
             'services_warning_last_state_change_unhandled' => 'services_warning_unhandled_last_state_change',
             'services_warning_unhandled'
         ));
-        $this->filterQuery($query);
-
         $this->applyRestriction('monitoring/filter/objects', $query);
-
+        $this->filterQuery($query);
         $this->view->servicegroups = $query;
 
         $this->setupLimitControl();
@@ -532,10 +508,8 @@ class Monitoring_ListController extends Controller
             'services_warning_handled',
             'services_warning_unhandled'
         ));
-        $this->filterQuery($query);
-
         $this->applyRestriction('monitoring/filter/objects', $query);
-
+        $this->filterQuery($query);
         $this->view->hostgroups = $query;
 
         $this->setupLimitControl();
@@ -582,29 +556,36 @@ class Monitoring_ListController extends Controller
     {
         $this->addTitleTab('servicegrid', $this->translate('Service Grid'), $this->translate('Show the Service Grid'));
         $this->setAutorefreshInterval(15);
-        $problems = (bool) $this->params->shift('problems', 0);
         $query = $this->backend->select()->from('servicestatus', array(
+            'host_display_name',
             'host_name',
             'service_description',
-            'service_state',
+            'service_display_name',
+            'service_handled',
             'service_output',
-            'service_handled'
+            'service_state'
         ));
-        $this->filterQuery($query);
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $this->filterQuery($query);
+        $filter = (bool) $this->params->shift('problems', false) ? Filter::where('service_problem', 1) : null;
+        $pivot = $query
+            ->pivot(
+                'service_description',
+                'host_name',
+                $filter,
+                $filter ? clone $filter : null
+            )
+            ->setXAxisHeader('service_display_name')
+            ->setYAxisHeader('host_display_name');
         $this->setupSortControl(array(
-            'host_name'           => $this->translate('Hostname'),
-            'service_description' => $this->translate('Service description')
-        ), $query);
-        $pivot = $query->pivot(
-            'service_description',
-            'host_name',
-            $problems ? Filter::where('service_problem', 1) : null,
-            $problems ? Filter::where('service_problem', 1) : null
-        );
-        $this->view->pivot = $pivot;
+            'host_display_name'     => $this->translate('Hostname'),
+            'service_display_name'  => $this->translate('Service Name')
+        ), $pivot);
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
-        $this->view->verticalPaginator   = $pivot->paginateYAxis();
+        $this->view->verticalPaginator = $pivot->paginateYAxis();
+        list($pivotData, $pivotHeader) = $pivot->toArray();
+        $this->view->pivotData = $pivotData;
+        $this->view->pivotHeader = $pivotHeader;
     }
 
     /**
@@ -616,20 +597,7 @@ class Monitoring_ListController extends Controller
      */
     protected function filterQuery(DataView $dataView)
     {
-        $editor = Widget::create('filterEditor')
-            ->setQuery($dataView)
-            ->preserveParams(
-                'limit', 'sort', 'dir', 'format', 'view', 'backend',
-                'stateType', 'addColumns', '_dev', 'problems'
-            )
-            ->ignoreParams('page')
-            ->setSearchColumns($dataView->getSearchColumns())
-            ->handleRequest($this->getRequest());
-        $dataView->applyFilter($editor->getFilter());
-
-        $this->setupFilterControl($editor);
-        $this->view->filter = $editor->getFilter();
-
+        $this->setupFilterControl($dataView);
         $this->handleFormatRequest($dataView);
         return $dataView;
     }

@@ -27,6 +27,9 @@ class ServicestatehistoryQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'statehistory' => array(
             'host'                  => 'so.name1 COLLATE latin1_general_ci',
             'host_name'             => 'so.name1',
@@ -159,6 +162,18 @@ class ServicestatehistoryQuery extends IdoQuery
         $this->select->join(
             array('s' => $this->prefix . 'services'),
             's.service_object_id = so.object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = sh.instance_id',
             array()
         );
     }

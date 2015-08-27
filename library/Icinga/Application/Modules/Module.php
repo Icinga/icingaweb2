@@ -4,10 +4,9 @@
 namespace Icinga\Application\Modules;
 
 use Exception;
-use Icinga\Web\Controller\Dispatcher;
-use Zend_Controller_Router_Route as Route;
+use Zend_Controller_Router_Route;
 use Zend_Controller_Router_Route_Abstract;
-use Zend_Controller_Router_Route_Regex as RegexRoute;
+use Zend_Controller_Router_Route_Regex;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
@@ -18,6 +17,7 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
 use Icinga\Util\Translator;
+use Icinga\Web\Controller\Dispatcher;
 use Icinga\Web\Hook;
 use Icinga\Web\Menu;
 use Icinga\Web\Widget;
@@ -189,7 +189,7 @@ class Module
     /**
      * A set of menu elements
      *
-     * @var array
+     * @var Menu[]
      */
     protected $menuItems = array();
 
@@ -771,6 +771,7 @@ class Module
     {
         $this->launchConfigScript();
         $tabs = Widget::create('tabs');
+        /** @var \Icinga\Web\Widget\Tabs $tabs */
         $tabs->add('info', array(
             'url'       => 'config/module',
             'urlParams' => array('name' => $this->getName()),
@@ -1045,12 +1046,13 @@ class Module
     protected function registerRoutes()
     {
         $router = $this->app->getFrontController()->getRouter();
+        /** @var \Zend_Controller_Router_Rewrite $router */
         foreach ($this->routes as $name => $route) {
             $router->addRoute($name, $route);
         }
         $router->addRoute(
             $this->name . '_jsprovider',
-            new Route(
+            new Zend_Controller_Router_Route(
                 'js/' . $this->name . '/:file',
                 array(
                     'controller'    => 'static',
@@ -1061,7 +1063,7 @@ class Module
         );
         $router->addRoute(
             $this->name . '_img',
-            new RegexRoute(
+            new Zend_Controller_Router_Route_Regex(
                 'img/' . $this->name . '/(.+)',
                 array(
                     'controller'    => 'static',

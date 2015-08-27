@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\DataView;
 
 use IteratorAggregate;
+use Icinga\Data\FilterColumns;
 use Icinga\Data\QueryInterface;
 use Icinga\Data\SortRules;
 use Icinga\Data\Filter\Filter;
@@ -19,7 +20,7 @@ use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 /**
  * A read-only view of an underlying query
  */
-abstract class DataView implements QueryInterface, SortRules, IteratorAggregate
+abstract class DataView implements QueryInterface, SortRules, FilterColumns, IteratorAggregate
 {
     /**
      * The query used to populate the view
@@ -28,11 +29,16 @@ abstract class DataView implements QueryInterface, SortRules, IteratorAggregate
      */
     protected $query;
 
-    protected $filter;
-
     protected $connection;
 
     protected $isSorted = false;
+
+    /**
+     * The cache for all filter columns
+     *
+     * @var array
+     */
+    protected $filterColumns;
 
     /**
      * Create a new view
@@ -44,19 +50,6 @@ abstract class DataView implements QueryInterface, SortRules, IteratorAggregate
     {
         $this->connection = $connection;
         $this->query = $connection->query($this->getQueryName(), $columns);
-        $this->filter = Filter::matchAll();
-        $this->init();
-    }
-
-    /**
-     * Initializer for `distinct purposes
-     *
-     * Implemented for `distinct as workaround
-     *
-     * @TODO Subject to change, see #7344
-     */
-    public function init()
-    {
     }
 
     /**
@@ -95,7 +88,6 @@ abstract class DataView implements QueryInterface, SortRules, IteratorAggregate
 
     public function where($condition, $value = null)
     {
-        $this->filter->addFilter(Filter::where($condition, $value));
         $this->query->where($condition, $value);
         return $this;
     }
@@ -185,26 +177,101 @@ abstract class DataView implements QueryInterface, SortRules, IteratorAggregate
     }
 
     /**
-     * Check whether the given column is a valid filter column, i.e. the view actually provides the column or it's
-     * a non-queryable filter column
+     * Check whether the given column is a valid filter column
      *
-     * @param   string $column
+     * @param   string  $column
      *
      * @return  bool
      */
     public function isValidFilterTarget($column)
     {
-        return in_array($column, $this->getColumns()) || in_array($column, $this->getFilterColumns());
+        return in_array($column, $this->getFilterColumns());
     }
 
+    /**
+     * Return all filter columns with their optional label as key
+     *
+     * This will merge the results of self::getColumns(), self::getStaticFilterColumns() and
+     * self::getDynamicFilterColumns() *once*. (i.e. subsequent calls of this function will
+     * return the same result.)
+     *
+     * @return  array
+     */
     public function getFilterColumns()
+    {
+        if ($this->filterColumns === null) {
+            $columns = array_merge(
+                $this->getColumns(),
+                $this->getStaticFilterColumns(),
+                $this->getDynamicFilterColumns()
+            );
+
+            $this->filterColumns = array();
+            foreach ($columns as $label => $column) {
+                if (is_int($label)) {
+                    $label = ucwords(str_replace('_', ' ', $column));
+                }
+
+                if ($this->query->isCaseInsensitive($column)) {
+                    $label .= ' ' . t('(Case insensitive)');
+                }
+
+                $this->filterColumns[$label] = $column;
+            }
+        }
+
+        return $this->filterColumns;
+    }
+
+    /**
+     * Return all static filter columns
+     *
+     * @return  array
+     */
+    public function getStaticFilterColumns()
     {
         return array();
     }
 
+    /**
+     * Return all dynamic filter columns such as custom variables
+     *
+     * @return  array
+     */
+    public function getDynamicFilterColumns()
+    {
+        $columns = array();
+        if (! $this->query->allowsCustomVars()) {
+            return $columns;
+        }
+
+        $query = MonitoringBackend::instance()
+            ->select()
+            ->from('customvar', array('varname', 'object_type'))
+            ->where('is_json', 0)
+            ->where('object_type_id', array(1, 2))
+            ->getQuery()->group(array('varname', 'object_type'));
+        foreach ($query as $row) {
+            if ($row->object_type === 'host') {
+                $label = t('Host') . ' ' . ucwords(str_replace('_', ' ', $row->varname));
+                $columns[$label] = '_host_' . $row->varname;
+            } else { // $row->object_type === 'service'
+                $label = t('Service') . ' ' . ucwords(str_replace('_', ' ', $row->varname));
+                $columns[$label] = '_service_' . $row->varname;
+            }
+        }
+
+        return $columns;
+    }
+
+    /**
+     * Return the current filter
+     *
+     * @return  Filter
+     */
     public function getFilter()
     {
-        return $this->filter;
+        return $this->query->getFilter();
     }
 
     /**
@@ -405,8 +472,7 @@ abstract class DataView implements QueryInterface, SortRules, IteratorAggregate
      */
     public function addFilter(Filter $filter)
     {
-        $this->query->addFilter(clone($filter));
-        $this->filter = $filter; // TODO: Hmmmm.... and?
+        $this->query->addFilter($filter);
         return $this;
     }
 
@@ -430,7 +496,8 @@ abstract class DataView implements QueryInterface, SortRules, IteratorAggregate
      */
     public function peekAhead($state = true)
     {
-        return $this->query->peekAhead($state);
+        $this->query->peekAhead($state);
+        return $this;
     }
 
     /**

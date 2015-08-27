@@ -37,7 +37,7 @@ class UsergroupbackendController extends Controller
      */
     public function listAction()
     {
-        $this->view->backendNames = Config::app('groups')->keys();
+        $this->view->backendNames = Config::app('groups');
         $this->createListTabs()->activate('usergroupbackend');
     }
 

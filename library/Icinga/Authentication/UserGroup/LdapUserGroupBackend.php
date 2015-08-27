@@ -83,7 +83,14 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
      *
      * @var array
      */
-    protected $filterColumns = array('group', 'user');
+    protected $blacklistedQueryColumns = array('group', 'user');
+
+    /**
+     * The search columns being provided
+     *
+     * @var array
+     */
+    protected $searchColumns = array('group', 'user');
 
     /**
      * The default sort rules to be applied on a query
@@ -455,6 +462,21 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
             'last_modified' => $lastModifiedAttribute
         );
         return array('group' => $columns, 'group_membership' => $columns);
+    }
+
+    /**
+     * Initialize this repository's filter columns
+     *
+     * @return  array
+     */
+    protected function initializeFilterColumns()
+    {
+        return array(
+            t('Username')       => 'user',
+            t('User Group')     => 'group_name',
+            t('Created At')     => 'created_at',
+            t('Last Modified')  => 'last_modified'
+        );
     }
 
     /**

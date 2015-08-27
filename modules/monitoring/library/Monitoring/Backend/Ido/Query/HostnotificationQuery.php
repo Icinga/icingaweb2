@@ -17,6 +17,9 @@ class HostnotificationQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'notifications' => array(
             'notification_output'       => 'hn.output',
             'notification_start_time'   => 'UNIX_TIMESTAMP(hn.start_time)',
@@ -220,6 +223,18 @@ class HostnotificationQuery extends IdoQuery
         )->joinLeft(
             array('so' => $this->prefix . 'objects'),
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
+            array()
+        );
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = hn.instance_id',
             array()
         );
     }

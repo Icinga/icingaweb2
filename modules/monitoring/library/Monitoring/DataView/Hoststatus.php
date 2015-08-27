@@ -11,6 +11,7 @@ class HostStatus extends DataView
     public function getColumns()
     {
         return array(
+            'instance_name',
             'host_name',
             'host_display_name',
             'host_alias',
@@ -64,7 +65,7 @@ class HostStatus extends DataView
     /**
      * {@inheritdoc}
      */
-    public function getFilterColumns()
+    public function getStaticFilterColumns()
     {
         return array(
             'host',
@@ -83,9 +84,7 @@ class HostStatus extends DataView
     }
 
     /**
-     * The sort rules for this query
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getSortRules()
     {
@@ -111,18 +110,5 @@ class HostStatus extends DataView
                 'order' => self::SORT_ASC
             )
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_'
-            && preg_match('/^_(?:host|service)_/', $column)
-        ) {
-            return true;
-        }
-        return parent::isValidFilterTarget($column);
     }
 }

@@ -68,7 +68,7 @@ class DeleteDowntimeCommandForm extends CommandForm
                 'ignore'        => true,
                 'escape'        => false,
                 'type'          => 'submit',
-                'class'         => 'link-like',
+                'class'         => 'link-like spinner',
                 'label'         => $this->getView()->icon('trash'),
                 'title'         => $this->translate('Delete this downtime'),
                 'decorators'    => array('ViewHelper')

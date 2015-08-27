@@ -91,6 +91,7 @@ abstract class MonitoredObjectController extends Controller
             $delDowntimeForm->handleRequest();
             $this->view->delDowntimeForm = $delDowntimeForm;
         }
+        $this->view->showInstance = $this->backend->select()->from('instance')->count() > 1;
         $this->view->object = $this->object;
     }
 
