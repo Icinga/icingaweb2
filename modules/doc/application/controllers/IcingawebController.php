@@ -1,10 +1,12 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Doc\Controllers;
+
 use Icinga\Application\Icinga;
 use Icinga\Module\Doc\DocController;
 
-class Doc_IcingawebController extends DocController
+class IcingawebController extends DocController
 {
     /**
      * Get the path to Icinga Web 2's documentation
