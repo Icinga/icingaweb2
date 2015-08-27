@@ -79,9 +79,7 @@ class SearchController extends DocController
     /**
      * Get the path to Icinga Web 2's documentation
      *
-     * @return  string
-     *
-     * @throws  Zend_Controller_Action_Exception    If Icinga Web 2's documentation is not available
+     * @return string
      */
     protected function getWebPath()
     {
