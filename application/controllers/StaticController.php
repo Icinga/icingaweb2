@@ -1,7 +1,7 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Controller;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Web\FileCache;
@@ -10,7 +10,7 @@ use Zend_Controller_Action_Exception as ActionException;
 /**
  * Delivery static content to clients
  */
-class StaticController extends ActionController
+class StaticController extends Controller
 {
     /**
      * Static routes don't require authentication
