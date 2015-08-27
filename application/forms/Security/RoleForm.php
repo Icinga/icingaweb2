@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms\Security;
 
+use Icinga\Exception\AlreadyExistsException;
 use Icinga\Exception\NotFoundError;
 use InvalidArgumentException;
 use LogicException;
@@ -203,9 +204,9 @@ class RoleForm extends ConfigForm
      *
      * @return  $this
      *
-     * @throws  LogicException              If the config is not set
-     * @throws  InvalidArgumentException    If the role to add already exists
-     * @see     ConfigForm::setConfig()     For setting the config.
+     * @throws  LogicException          If the config is not set
+     * @throws  AlreadyExistsException  If the role to add already exists
+     * @see     ConfigForm::setConfig() For setting the config.
      */
     public function add($name, array $values)
     {
@@ -213,10 +214,10 @@ class RoleForm extends ConfigForm
             throw new LogicException(sprintf('Can\'t add role \'%s\'. Config is not set', $name));
         }
         if ($this->config->hasSection($name)) {
-            throw new InvalidArgumentException(sprintf(
+            throw new AlreadyExistsException(
                 $this->translate('Can\'t add role \'%s\'. Role already exists'),
                 $name
-            ));
+            );
         }
         $this->config->setSection($name, $values);
         return $this;
