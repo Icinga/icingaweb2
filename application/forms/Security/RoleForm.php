@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms\Security;
 
+use Icinga\Exception\NotFoundError;
 use InvalidArgumentException;
 use LogicException;
 use Zend_Form_Element;
@@ -170,10 +171,10 @@ class RoleForm extends ConfigForm
             throw new LogicException(sprintf('Can\'t load role \'%s\'. Config is not set', $name));
         }
         if (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(sprintf(
+            throw new NotFoundError(
                 $this->translate('Can\'t load role \'%s\'. Role does not exist'),
                 $name
-            ));
+            );
         }
         $role = $this->config->getSection($name)->toArray();
         $role['permissions'] = ! empty($role['permissions'])
