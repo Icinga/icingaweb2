@@ -7,6 +7,7 @@ use Icinga\Web\Controller;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Web\FileCache;
+use Icinga\Web\LessCompiler;
 
 /**
  * Delivery static content to clients
@@ -157,7 +158,7 @@ class StaticController extends Controller
      */
     public function stylesheetAction()
     {
-        $lessCompiler = new \Icinga\Web\LessCompiler();
+        $lessCompiler = new LessCompiler();
         $moduleManager = Icinga::app()->getModuleManager();
 
         $publicDir = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
