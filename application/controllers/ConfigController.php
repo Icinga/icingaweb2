@@ -3,6 +3,8 @@
 
 namespace Icinga\Controllers;
 
+use Exception;
+use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Modules\Module;
