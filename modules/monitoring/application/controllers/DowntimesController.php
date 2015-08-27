@@ -3,9 +3,9 @@
 
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Object\Service;
-use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Web\Url;
 
 /**
