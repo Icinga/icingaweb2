@@ -15,9 +15,9 @@ use Icinga\Web\Hook;
 
 class HostController extends MonitoredObjectController
 {
+
     /**
-     * (non-PHPDoc)
-     * @see MonitoredObjectController::$commandRedirectUrl For the property documentation.
+     * {@inheritdoc}
      */
     protected $commandRedirectUrl = 'monitoring/host/show';
 
@@ -27,9 +27,7 @@ class HostController extends MonitoredObjectController
     public function init()
     {
         $host = new Host($this->backend, $this->params->getRequired('host'));
-
         $this->applyRestriction('monitoring/filter/objects', $host);
-
         if ($host->fetch() === false) {
             $this->httpNotFound($this->translate('Host not found'));
         }
