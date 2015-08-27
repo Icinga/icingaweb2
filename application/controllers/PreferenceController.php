@@ -13,6 +13,8 @@ use Icinga\Web\Widget\Tab;
 
 /**
  * Application wide preference controller for user preferences
+ *
+ * @TODO(el): Rename to PreferencesController: https://dev.icinga.org/issues/10014
  */
 class PreferenceController extends BasePreferenceController
 {
