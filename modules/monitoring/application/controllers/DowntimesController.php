@@ -6,24 +6,22 @@ namespace Icinga\Module\Monitoring\Controllers;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
-use Icinga\Module\Monitoring\Object\Host;
-use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Web\Url;
 
 /**
- * Display detailed information about a downtime
+ * Display detailed information about downtimes
  */
 class DowntimesController extends Controller
 {
     /**
-     * The fetched downtimes
+     * The downtimes view
      *
-     * @var array
+     * @var \Icinga\Module\Monitoring\DataView\Downtime
      */
     protected $downtimes;
 
     /**
-     * A filter matching all current downtimes
+     * Filter from request
      *
      * @var Filter
      */
@@ -31,15 +29,13 @@ class DowntimesController extends Controller
 
     /**
      * Fetch all downtimes matching the current filter and add tabs
-     *
-     * @throws Zend_Controller_Action_Exception
      */
     public function init()
     {
         $this->filter = Filter::fromQueryString(str_replace(
             'downtime_id',
             'downtime_internal_id',
-            (string)$this->params
+            (string) $this->params
         ));
         $query = $this->backend->select()->from('downtime', array(
             'id'              => 'downtime_internal_id',
@@ -64,38 +60,17 @@ class DowntimesController extends Controller
         ))->addFilter($this->filter);
         $this->applyRestriction('monitoring/filter/objects', $query);
 
-        $this->downtimes = $query->getQuery()->fetchAll();
-        if (false === $this->downtimes) {
-            throw new Zend_Controller_Action_Exception(
-                $this->translate('Downtime not found')
-            );
-        }
+        $this->downtimes = $query;
 
         $this->getTabs()->add(
             'downtimes',
             array(
-                'title' => $this->translate(
-                    'Display detailed information about multiple downtimes.'
-                ),
                 'icon'  => 'plug',
-                'label' => $this->translate('Downtimes') . sprintf(' (%d)', count($this->downtimes)),
+                'label' => $this->translate('Downtimes') . sprintf(' (%d)', $query->count()),
+                'title' => $this->translate('Display detailed information about multiple downtimes.'),
                 'url'   =>'monitoring/downtimes/show'
             )
         )->activate('downtimes');
-
-        foreach ($this->downtimes as $downtime) {
-            if (isset($downtime->service_description)) {
-                $downtime->isService = true;
-            } else {
-                $downtime->isService = false;
-            }
-
-            if ($downtime->isService) {
-                $downtime->stateText = Service::getStateText($downtime->service_state);
-            } else {
-                $downtime->stateText = Host::getStateText($downtime->host_state);
-            }
-        }
     }
 
     /**
@@ -105,9 +80,8 @@ class DowntimesController extends Controller
     {
         $this->view->downtimes = $this->downtimes;
         $this->view->listAllLink = Url::fromPath('monitoring/list/downtimes')
-                ->setQueryString($this->filter->toQueryString());
-        $this->view->removeAllLink = Url::fromPath('monitoring/downtimes/delete-all')
-                ->setParams($this->params);
+            ->setQueryString($this->filter->toQueryString());
+        $this->view->removeAllLink = Url::fromPath('monitoring/downtimes/delete-all')->setParams($this->params);
     }
 
     /**
@@ -123,10 +97,10 @@ class DowntimesController extends Controller
         $delDowntimeForm->setTitle($this->view->translate('Remove all Downtimes'));
         $delDowntimeForm->addDescription(sprintf(
             $this->translate('Confirm removal of %d downtimes.'),
-            count($this->downtimes)
+            $this->downtimes->count()
         ));
         $delDowntimeForm->setRedirectUrl(Url::fromPath('monitoring/list/downtimes'));
-        $delDowntimeForm->setDowntimes($this->downtimes)->handleRequest();
+        $delDowntimeForm->setDowntimes($this->downtimes->fetchAll())->handleRequest();
         $this->view->delDowntimeForm = $delDowntimeForm;
     }
 }
