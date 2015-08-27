@@ -3,11 +3,11 @@
 
 namespace Icinga\Forms\Security;
 
-use Icinga\Exception\AlreadyExistsException;
-use Icinga\Exception\NotFoundError;
 use LogicException;
 use Zend_Form_Element;
 use Icinga\Application\Icinga;
+use Icinga\Exception\AlreadyExistsException;
+use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfigForm;
 use Icinga\Util\String;
 
