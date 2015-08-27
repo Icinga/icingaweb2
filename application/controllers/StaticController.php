@@ -152,6 +152,9 @@ class StaticController extends Controller
         );
     }
 
+    /**
+     * Send application's and modules' CSS
+     */
     public function stylesheetAction()
     {
         $lessCompiler = new \Icinga\Web\LessCompiler();
