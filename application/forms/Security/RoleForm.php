@@ -230,9 +230,9 @@ class RoleForm extends ConfigForm
      *
      * @return  $this
      *
-     * @throws  LogicException              If the config is not set
-     * @throws  InvalidArgumentException    If the role does not exist
-     * @see     ConfigForm::setConfig()     For setting the config.
+     * @throws  LogicException          If the config is not set
+     * @throws  NotFoundError           If the role does not exist
+     * @see     ConfigForm::setConfig() For setting the config.
      */
     public function remove($name)
     {
@@ -240,10 +240,10 @@ class RoleForm extends ConfigForm
             throw new LogicException(sprintf('Can\'t remove role \'%s\'. Config is not set', $name));
         }
         if (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(sprintf(
+            throw new NotFoundError(
                 $this->translate('Can\'t remove role \'%s\'. Role does not exist'),
                 $name
-            ));
+            );
         }
         $this->config->removeSection($name);
         return $this;
