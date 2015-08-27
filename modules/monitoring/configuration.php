@@ -225,7 +225,7 @@ $section->add($this->translate('Monitoring Health'), array(
 ));
 
 /*
- * Dashboard
+ * Current Incidents
  */
 $dashboard = $this->dashboard($this->translate('Current Incidents'));
 $dashboard->add(
@@ -240,3 +240,88 @@ $dashboard->add(
     $this->translate('Host Problems'),
     'monitoring/list/hosts?host_problem=1&sort=host_severity'
 );
+
+/*
+ * Overview
+ */
+$dashboard = $this->dashboard($this->translate('Overview'));
+$dashboard->add(
+    $this->translate('Service Grid'),
+    'monitoring/list/servicegrid?limit=15,18'
+);
+$dashboard->add(
+    $this->translate('Service Groups'),
+    '/monitoring/list/servicegroups'
+);
+$dashboard->add(
+    $this->translate('Host Groups'),
+    '/monitoring/list/hostgroups'
+);
+
+/*
+ * Most Overdue
+ */
+$dashboard = $this->dashboard($this->translate('Overdue'));
+$dashboard->add(
+    $this->translate('Acks Older Than Three Days'),
+    'monitoring/list/comments?comment_type=Ack&comment_timestamp<-3 days'
+);
+$dashboard->add(
+    $this->translate('Downtimes Older Than Three Days'),
+    'monitoring/list/downtimes?downtime_is_in_effect=1&downtime_scheduled_start<-3%20days&sort=downtime_start&dir=asc'
+);
+$dashboard->add(
+    $this->translate('Oldest Sticky Comments'),
+    'monitoring/list/comments?comment_type=Ack&TODO'
+);
+
+/*
+ * Muted Objects
+ */
+$dashboard = $this->dashboard($this->translate('Muted Objects'));
+$dashboard->add(
+    $this->translate('Disabled Service Notifications'),
+    'monitoring/list/services?service_notifications_enabled=0&limit=10'
+);
+$dashboard->add(
+    $this->translate('Disabled Host Notifications'),
+    'monitoring/list/hosts?host_notifications_enabled=0&limit=10'
+);
+$dashboard->add(
+    $this->translate('Disabled Service Checks'),
+    'monitoring/list/services?service_active_checks_enabled=0&limit=10'
+);
+$dashboard->add(
+    $this->translate('Disabled Host Checks'),
+    'monitoring/list/hosts?host_active_checks_enabled=0&limit=10'
+);
+
+/*
+ * Activity Stream
+ */
+$dashboard = $this->dashboard($this->translate('Activity Stream'));
+$dashboard->add(
+    $this->translate('Todays Events'),
+    'monitoring/list/eventhistory?timestamp>=-1%20days&sort=timestamp&dir=desc&limit=8'
+);
+$dashboard->add(
+    $this->translate('Hard State Changed'),
+    'monitoring/list/eventhistory?type=hard_state&sort=timestamp&dir=desc&limit=8'
+);
+$dashboard->add(
+    $this->translate('Critical Event Grid'),
+    'monitoring/list/eventgrid'
+);
+$dashboard->add(
+    $this->translate('Downtimes Started'),
+    'monitoring/list/eventhistory?type=dt_start&sort=timestamp&dir=desc&limit=8'
+);
+$dashboard->add(
+    $this->translate('Downtimes Ended'),
+    'monitoring/list/eventhistory?type=dt_end&sort=timestamp&dir=desc&limit=8'
+);
+$dashboard->add(
+    $this->translate('Notifications'),
+    'monitoring/list/eventhistory?type=notify&sort=timestamp&dir=desc&limit=8'
+);
+
