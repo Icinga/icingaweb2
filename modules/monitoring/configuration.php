@@ -309,6 +309,10 @@ $dashboard->add(
     'monitoring/list/eventhistory?type=hard_state&sort=timestamp&dir=desc&limit=8'
 );
 $dashboard->add(
+    $this->translate('Notifications'),
+    'monitoring/list/eventhistory?type=notify&sort=timestamp&dir=desc&limit=8'
+);
+$dashboard->add(
     $this->translate('Downtimes Started'),
     'monitoring/list/eventhistory?type=dt_start&sort=timestamp&dir=desc&limit=8'
 );
@@ -316,8 +320,3 @@ $dashboard->add(
     $this->translate('Downtimes Ended'),
     'monitoring/list/eventhistory?type=dt_end&sort=timestamp&dir=desc&limit=8'
 );
-$dashboard->add(
-    $this->translate('Notifications'),
-    'monitoring/list/eventhistory?type=notify&sort=timestamp&dir=desc&limit=8'
-);
-
