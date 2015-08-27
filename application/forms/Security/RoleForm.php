@@ -163,6 +163,7 @@ class RoleForm extends ConfigForm
      * @return  $this
      *
      * @throws  LogicException          If the config is not set
+     * @throws  NotFoundError           If the given role does not exist
      * @see     ConfigForm::setConfig() For setting the config.
      */
     public function load($name)
