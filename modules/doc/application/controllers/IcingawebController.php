@@ -13,7 +13,7 @@ class IcingawebController extends DocController
      *
      * @return  string
      *
-     * @throws  Zend_Controller_Action_Exception    If Icinga Web 2's documentation is not available
+     * @throws  \Icinga\Exception\Http\HttpNotFoundException If Icinga Web 2's documentation is not available
      */
     protected function getPath()
     {
