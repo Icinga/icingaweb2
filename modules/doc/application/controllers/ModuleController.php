@@ -4,7 +4,6 @@
 use Icinga\Application\Icinga;
 use Icinga\Module\Doc\DocController;
 use Icinga\Module\Doc\Exception\DocException;
-use Icinga\File\Ini\Parser;
 
 class Doc_ModuleController extends DocController
 {
