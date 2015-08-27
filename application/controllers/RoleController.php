@@ -7,6 +7,11 @@ use Icinga\Forms\Security\RoleForm;
 use Icinga\Web\Controller\AuthBackendController;
 use Icinga\Web\Notification;
 
+/**
+ * Manage user permissions and restrictions based on roles
+ *
+ * @TODO(el): Rename to RolesController: https://dev.icinga.org/issues/10015
+ */
 class RoleController extends AuthBackendController
 {
     /**
