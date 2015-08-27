@@ -124,20 +124,4 @@ class ProcessController extends Controller
             $this->view->form = $form;
         }
     }
-
-    /**
-     * @todo should be dropped later
-     */
-    public function performanceAction()
-    {
-        $this->getTabs()->activate('performance');
-        $this->setAutorefreshInterval(10);
-        $this->view->runtimevariables = (object) $this->backend->select()
-            ->from('runtimevariables', array('varname', 'varvalue'))
-            ->getQuery()->fetchPairs();
-
-        $this->view->checkperformance = $this->backend->select()
-            ->from('runtimesummary')
-            ->getQuery()->fetchAll();
-    }
 }
