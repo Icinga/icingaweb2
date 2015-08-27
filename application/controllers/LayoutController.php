@@ -1,10 +1,10 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Web\MenuRenderer;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Hook;
 use Icinga\Web\Menu;
+use Icinga\Web\MenuRenderer;
 use Icinga\Web\Url;
 
 /**
