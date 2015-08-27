@@ -23,7 +23,7 @@ class Dispatcher extends Zend_Controller_Dispatcher_Standard
      *
      * @var string
      */
-    const CONTROLLER_NAMESPACE = 'Controller';
+    const CONTROLLER_NAMESPACE = 'Controllers';
 
     /**
      * Dispatch request to a controller and action

@@ -1,7 +1,7 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Controller;
+namespace Icinga\Controllers;
 
 use Exception;
 use Zend_Controller_Action_Exception;
