@@ -1,12 +1,12 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Web\Url;
-use Icinga\Util\Format;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Timeline\TimeLine;
 use Icinga\Module\Monitoring\Timeline\TimeRange;
 use Icinga\Module\Monitoring\Web\Widget\SelectBox;
+use Icinga\Util\Format;
+use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 
 class Monitoring_TimelineController extends Controller
