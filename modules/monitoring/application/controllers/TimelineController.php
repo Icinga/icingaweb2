@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use DateInterval;
+use DateTime;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Timeline\TimeLine;
 use Icinga\Module\Monitoring\Timeline\TimeRange;
