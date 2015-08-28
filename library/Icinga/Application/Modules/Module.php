@@ -1055,8 +1055,9 @@ class Module
             new Zend_Controller_Router_Route(
                 'js/' . $this->name . '/:file',
                 array(
+                    'action'        => 'javascript',
                     'controller'    => 'static',
-                    'action'        =>'javascript',
+                    'module'        => 'default',
                     'module_name'   => $this->name
                 )
             )
@@ -1066,8 +1067,9 @@ class Module
             new Zend_Controller_Router_Route_Regex(
                 'img/' . $this->name . '/(.+)',
                 array(
-                    'controller'    => 'static',
                     'action'        => 'img',
+                    'controller'    => 'static',
+                    'module'        => 'default',
                     'module_name'   => $this->name
                 ),
                 array(
