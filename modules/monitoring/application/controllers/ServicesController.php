@@ -8,7 +8,6 @@ use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ObjectsCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
@@ -181,20 +180,6 @@ class ServicesController extends Controller
         $form->setTitle($this->translate('Add Service Comments'));
         $this->handleCommandForm($form);
     }
-
-
-    /**
-     * Delete a comment
-     */
-    public function deleteCommentAction()
-    {
-        $this->assertPermission('monitoring/command/comment/delete');
-
-        $form = new DeleteCommentCommandForm();
-        $form->setTitle($this->translate('Delete Service Comments'));
-        $this->handleCommandForm($form);
-    }
-
 
     /**
      * Acknowledge service problems
