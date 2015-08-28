@@ -49,14 +49,7 @@ class ShowController extends Controller
 
     public function contactAction()
     {
-        $contactName = $this->getParam('contact_name');
-
-        if (! $contactName) {
-            throw new Zend_Controller_Action_Exception(
-                $this->translate('The parameter `contact_name\' is required'),
-                404
-            );
-        }
+        $contactName = $this->params->getRequired('contact_name');
 
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
