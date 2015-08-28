@@ -59,13 +59,14 @@ class StaticController extends Controller
      */
     public function imgAction()
     {
+        // TODO(el): I think this action only retrieves images from modules
         $module = $this->_getParam('module_name');
         $file   = $this->_getParam('file');
         $basedir = Icinga::app()->getModuleManager()->getModule($module)->getBaseDir();
 
         $filePath = realpath($basedir . '/public/img/' . $file);
 
-        if (! $filePath || strpos($filePath, $basedir) !== 0) {
+        if ($filePath === false) {
             $this->httpNotFound('%s does not exist', $filePath);
         }
         if (preg_match('/\.([a-z]+)$/i', $file, $m)) {
