@@ -1,6 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Web\Url;
@@ -10,7 +12,7 @@ use Icinga\Web\Url;
  *
  * Actions for show context
  */
-class Monitoring_ShowController extends Controller
+class ShowController extends Controller
 {
     /**
      * @var Backend
