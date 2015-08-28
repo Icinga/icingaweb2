@@ -16,8 +16,7 @@ use Icinga\Web\Hook;
 class ServiceController extends MonitoredObjectController
 {
     /**
-     * (non-PHPDoc)
-     * @see MonitoredObjectController::$commandRedirectUrl For the property documentation.
+     * {@inheritdoc}
      */
     protected $commandRedirectUrl = 'monitoring/service/show';
 
