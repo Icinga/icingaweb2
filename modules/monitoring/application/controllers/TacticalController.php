@@ -1,11 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 
-class Monitoring_TacticalController extends Controller
+class TacticalController extends Controller
 {
     public function indexAction()
     {
