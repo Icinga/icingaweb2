@@ -17,6 +17,7 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
 use Icinga\Util\Translator;
+use Icinga\Web\Controller\Dispatcher;
 use Icinga\Web\Hook;
 use Icinga\Web\Menu;
 use Icinga\Web\Widget;
@@ -935,7 +936,7 @@ class Module
     }
 
     /**
-     * Register module namespaces on the autoloader
+     * Register module namespaces on our class loader
      *
      * @return $this
      */
@@ -945,16 +946,17 @@ class Module
             return $this;
         }
 
+        $loader = $this->app->getLoader();
         $moduleName = ucfirst($this->getName());
 
         $moduleLibraryDir = $this->getLibDir(). '/'. $moduleName;
         if (is_dir($moduleLibraryDir)) {
-            $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName, $moduleLibraryDir);
+            $loader->registerNamespace('Icinga\\Module\\' . $moduleName, $moduleLibraryDir);
         }
 
         $moduleFormDir = $this->getFormDir();
         if (is_dir($moduleFormDir)) {
-            $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName. '\\Forms',  $moduleFormDir);
+            $loader->registerNamespace('Icinga\\Module\\' . $moduleName. '\\Forms', $moduleFormDir);
         }
 
         $this->registeredAutoloader = true;
@@ -1016,19 +1018,23 @@ class Module
      */
     protected function registerWebIntegration()
     {
-        if (!$this->app->isWeb()) {
+        if (! $this->app->isWeb()) {
             return $this;
         }
-
-        if (file_exists($this->controllerdir) && is_dir($this->controllerdir)) {
+        $moduleControllerDir = $this->getControllerDir();
+        if (is_dir($moduleControllerDir)) {
             $this->app->getfrontController()->addControllerDirectory(
-                $this->controllerdir,
-                $this->name
+                $moduleControllerDir,
+                $this->getName()
+            );
+            $this->app->getLoader()->registerNamespace(
+                'Icinga\\Module\\' . ucfirst($this->getName()) . '\\' . Dispatcher::CONTROLLER_NAMESPACE,
+                $moduleControllerDir
             );
         }
-
-        $this->registerLocales()
-             ->registerRoutes();
+        $this
+            ->registerLocales()
+            ->registerRoutes();
         return $this;
     }
 
@@ -1049,8 +1055,9 @@ class Module
             new Zend_Controller_Router_Route(
                 'js/' . $this->name . '/:file',
                 array(
+                    'action'        => 'javascript',
                     'controller'    => 'static',
-                    'action'        =>'javascript',
+                    'module'        => 'default',
                     'module_name'   => $this->name
                 )
             )
@@ -1060,8 +1067,9 @@ class Module
             new Zend_Controller_Router_Route_Regex(
                 'img/' . $this->name . '/(.+)',
                 array(
-                    'controller'    => 'static',
                     'action'        => 'img',
+                    'controller'    => 'static',
+                    'module'        => 'default',
                     'module_name'   => $this->name
                 ),
                 array(

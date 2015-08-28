@@ -1,23 +1,24 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ObjectsCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\ServiceList;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 
-class Monitoring_ServicesController extends Controller
+class ServicesController extends Controller
 {
     /**
      * @var ServiceList
@@ -179,20 +180,6 @@ class Monitoring_ServicesController extends Controller
         $form->setTitle($this->translate('Add Service Comments'));
         $this->handleCommandForm($form);
     }
-
-
-    /**
-     * Delete a comment
-     */
-    public function deleteCommentAction()
-    {
-        $this->assertPermission('monitoring/command/comment/delete');
-
-        $form = new DeleteCommentCommandForm();
-        $form->setTitle($this->translate('Delete Service Comments'));
-        $this->handleCommandForm($form);
-    }
-
 
     /**
      * Acknowledge service problems

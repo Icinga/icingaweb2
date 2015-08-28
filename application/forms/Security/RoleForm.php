@@ -3,10 +3,11 @@
 
 namespace Icinga\Forms\Security;
 
-use InvalidArgumentException;
 use LogicException;
 use Zend_Form_Element;
 use Icinga\Application\Icinga;
+use Icinga\Exception\AlreadyExistsException;
+use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfigForm;
 use Icinga\Util\String;
 
@@ -168,6 +169,7 @@ class RoleForm extends ConfigForm
      * @return  $this
      *
      * @throws  LogicException          If the config is not set
+     * @throws  NotFoundError           If the given role does not exist
      * @see     ConfigForm::setConfig() For setting the config.
      */
     public function load($name)
@@ -176,10 +178,10 @@ class RoleForm extends ConfigForm
             throw new LogicException(sprintf('Can\'t load role \'%s\'. Config is not set', $name));
         }
         if (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(sprintf(
+            throw new NotFoundError(
                 $this->translate('Can\'t load role \'%s\'. Role does not exist'),
                 $name
-            ));
+            );
         }
         $role = $this->config->getSection($name)->toArray();
         $role['permissions'] = ! empty($role['permissions'])
@@ -202,14 +204,14 @@ class RoleForm extends ConfigForm
     /**
      * Add a role
      *
-     * @param   string  $name               The name of the role
+     * @param   string  $name           The name of the role
      * @param   array   $values
      *
      * @return  $this
      *
-     * @throws  LogicException              If the config is not set
-     * @throws  InvalidArgumentException    If the role to add already exists
-     * @see     ConfigForm::setConfig()     For setting the config.
+     * @throws  LogicException          If the config is not set
+     * @throws  AlreadyExistsException  If the role to add already exists
+     * @see     ConfigForm::setConfig() For setting the config.
      */
     public function add($name, array $values)
     {
@@ -217,10 +219,10 @@ class RoleForm extends ConfigForm
             throw new LogicException(sprintf('Can\'t add role \'%s\'. Config is not set', $name));
         }
         if ($this->config->hasSection($name)) {
-            throw new InvalidArgumentException(sprintf(
+            throw new AlreadyExistsException(
                 $this->translate('Can\'t add role \'%s\'. Role already exists'),
                 $name
-            ));
+            );
         }
         $this->config->setSection($name, $values);
         return $this;
@@ -229,13 +231,13 @@ class RoleForm extends ConfigForm
     /**
      * Remove a role
      *
-     * @param   string  $name               The name of the role
+     * @param   string  $name           The name of the role
      *
      * @return  $this
      *
-     * @throws  LogicException              If the config is not set
-     * @throws  InvalidArgumentException    If the role does not exist
-     * @see     ConfigForm::setConfig()     For setting the config.
+     * @throws  LogicException          If the config is not set
+     * @throws  NotFoundError           If the role does not exist
+     * @see     ConfigForm::setConfig() For setting the config.
      */
     public function remove($name)
     {
@@ -243,10 +245,10 @@ class RoleForm extends ConfigForm
             throw new LogicException(sprintf('Can\'t remove role \'%s\'. Config is not set', $name));
         }
         if (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException(sprintf(
+            throw new NotFoundError(
                 $this->translate('Can\'t remove role \'%s\'. Role does not exist'),
                 $name
-            ));
+            );
         }
         $this->config->removeSection($name);
         return $this;
@@ -255,15 +257,15 @@ class RoleForm extends ConfigForm
     /**
      * Update a role
      *
-     * @param   string  $name               The possibly new name of the role
+     * @param   string  $name           The possibly new name of the role
      * @param   array   $values
-     * @param   string  $oldName            The name of the role to update
+     * @param   string  $oldName        The name of the role to update
      *
      * @return  $this
      *
-     * @throws  LogicException              If the config is not set
-     * @throws  InvalidArgumentException    If the role to update does not exist
-     * @see     ConfigForm::setConfig()     For setting the config.
+     * @throws  LogicException          If the config is not set
+     * @throws  NotFoundError           If the role to update does not exist
+     * @see     ConfigForm::setConfig() For setting the config.
      */
     public function update($name, array $values, $oldName)
     {
@@ -276,10 +278,10 @@ class RoleForm extends ConfigForm
             $this->add($name, $values);
         } else {
             if (! $this->config->hasSection($name)) {
-                throw new InvalidArgumentException(sprintf(
+                throw new NotFoundError(
                     $this->translate('Can\'t update role \'%s\'. Role does not exist'),
                     $name
-                ));
+                );
             }
             $this->config->setSection($name, $values);
         }

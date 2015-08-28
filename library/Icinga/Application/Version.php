@@ -3,12 +3,15 @@
 
 namespace Icinga\Application;
 
+/**
+ * Retrieve the version of Icinga Web 2
+ */
 class Version
 {
     /**
      * Get the version of this instance of Icinga Web 2
      *
-     * @return array|bool   array on success, false otherwise
+     * @return array|false array on success, false otherwise
      */
     public static function get()
     {

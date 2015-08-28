@@ -1,19 +1,22 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Module\Monitoring\Controller;
+namespace Icinga\Module\Monitoring\Controllers;
+
+use Zend_Form;
+use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Controller;
+use Icinga\Module\Monitoring\DataView\DataView;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\StatehistoryForm;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabs;
-use Icinga\Data\Filter\Filter;
-use Icinga\Module\Monitoring\Forms\StatehistoryForm;
-use Icinga\Module\Monitoring\DataView\DataView;
 
-class Monitoring_ListController extends Controller
+class ListController extends Controller
 {
     /**
      * @see ActionController::init

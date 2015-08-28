@@ -78,9 +78,9 @@ abstract class ApplicationBootstrap
     protected $configDir;
 
     /**
-     * Icinga auto loader
+     * Icinga class loader
      *
-     * @var Loader
+     * @var ClassLoader
      */
     private $loader;
 
@@ -183,7 +183,7 @@ abstract class ApplicationBootstrap
     /**
      * Getter for class loader
      *
-     * @return Loader
+     * @return ClassLoader
      */
     public function getLoader()
     {
@@ -339,15 +339,15 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Setup Icinga auto loader
+     * Setup Icinga class loader
      *
      * @return $this
      */
     public function setupAutoloader()
     {
-        require $this->libDir . '/Icinga/Application/Loader.php';
+        require $this->libDir . '/Icinga/Application/ClassLoader.php';
 
-        $this->loader = new Loader();
+        $this->loader = new ClassLoader();
         $this->loader->registerNamespace('Icinga', $this->libDir. '/Icinga');
         $this->loader->register();
 
