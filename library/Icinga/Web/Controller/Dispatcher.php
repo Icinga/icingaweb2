@@ -44,7 +44,8 @@ class Dispatcher extends Zend_Controller_Dispatcher_Standard
             return;
         }
         $controllerName = ucfirst($controllerName) . 'Controller';
-        if ($this->_defaultModule === $moduleName = $request->getModuleName()) {
+        $moduleName = $request->getModuleName();
+        if ($moduleName === null || $moduleName === $this->_defaultModule) {
             $controllerClass = 'Icinga\\' . self::CONTROLLER_NAMESPACE . '\\' . $controllerName;
         } else {
             $controllerClass = 'Icinga\\Module\\' . ucfirst($moduleName) . '\\' . self::CONTROLLER_NAMESPACE . '\\'
