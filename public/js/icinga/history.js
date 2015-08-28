@@ -187,9 +187,13 @@
                 ).addToHistory = false;
             }
 
-            if (document.location.hash && document.location.hash.match(/^#!/)) {
+            if (this.getPaneAnchor(0)) {
+                $('#col1').data('icingaUrl', $('#col1').data('icingaUrl') + '#' + this.getPaneAnchor(0));
+            }
 
-                parts = document.location.hash.split(/#!/);
+            var hash = this.getPaneFragment();
+            if (hash && hash.match(/^#!/)) {
+                parts = hash.split(/#!/);
 
                 if ($('#layout > #login').length) {
                     // We are on the login page
@@ -213,6 +217,39 @@
                 // TODO: Replace with dynamic columns
                 icinga.ui.layout1col();
             }
+        },
+
+        /**
+         * Get the state of the selected pane
+         *
+         * @param   col {int}       The column index 0 or 1
+         *
+         * @returns     {String}    The string representing the state
+         */
+        getPaneAnchor: function (col) {
+            if (col !== 1 && col !== 0) {
+                throw 'Trying to get anchor for non-existing column: ' + col;
+            }
+            var panes = document.location.toString().split('#!')[col];
+            return panes && panes.split('#')[1];
+        },
+
+        /**
+         * Get the side-pane state fragment after (and including) the #!
+         *
+         * @returns     {String}    The pane url containing the '#!'
+         */
+        getPaneFragment: function () {
+            var hash = document.location.hash;
+            if (hash) {
+                if (hash.match(/^#[^!]/)) {
+                    var hashs = hash.split('#');
+                    hashs.shift();
+                    hashs.shift();
+                    hash = '#' + hashs.join('#');
+                }
+            }
+            return hash;
         },
 
         /**
