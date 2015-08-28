@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use Zend_Form;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
