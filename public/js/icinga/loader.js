@@ -590,7 +590,7 @@
             }
 
             // Update history when necessary
-            if (req.addToHistory) {
+            if (! req.autorefresh && req.addToHistory) {
                 if (req.$target.hasClass('container')) {
                     // We only want to care about top-level containers
                     if (req.$target.parent().closest('.container').length === 0) {
