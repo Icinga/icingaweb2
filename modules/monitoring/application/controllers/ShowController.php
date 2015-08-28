@@ -19,34 +19,6 @@ class ShowController extends Controller
      */
     protected $backend;
 
-    /**
-     * @deprecated
-     */
-    public function serviceAction()
-    {
-        $this->redirectNow(Url::fromRequest()->setPath('monitoring/service/show'));
-    }
-
-    /**
-     * @deprecated
-     */
-    public function hostAction()
-    {
-        $this->redirectNow(Url::fromRequest()->setPath('monitoring/host/show'));
-    }
-
-    /**
-     * @deprecated
-     */
-    public function historyAction()
-    {
-        if ($this->params->has('service')) {
-            $this->redirectNow(Url::fromRequest()->setPath('monitoring/service/history'));
-        }
-
-        $this->redirectNow(Url::fromRequest()->setPath('monitoring/host/history'));
-    }
-
     public function contactAction()
     {
         $contactName = $this->params->getRequired('contact_name');
