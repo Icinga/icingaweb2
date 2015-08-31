@@ -201,7 +201,7 @@ class Translator
     {
         $matches = array();
         $locale = $locale !== null ? $locale : setlocale(LC_ALL, 0);
-        if (preg_match('@([a-z]{2})[_-]([A-Z]{2})@', $locale, $matches)) {
+        if (preg_match('@([a-z]{2})[_-]([a-z]{2})@i', $locale, $matches)) {
             list($languageCode, $countryCode) = array_slice($matches, 1);
         } elseif ($locale === 'C') {
             list($languageCode, $countryCode) = preg_split('@[_-]@', static::DEFAULT_LOCALE, 2);
@@ -272,36 +272,40 @@ class Translator
             }
             $requestedLocales[] = str_replace('-', '_', $headerValue);
         }
+        $requestedLocales = array_combine(
+            array_map('strtolower', array_values($requestedLocales)),
+            array_values($requestedLocales)
+        );
+
+        $availableLocales = static::getAvailableLocaleCodes();
+        $availableLocales = array_combine(
+            array_map('strtolower', array_values($availableLocales)),
+            array_values($availableLocales)
+        );
 
         $similarMatch = null;
-        $availableLocales = static::getAvailableLocaleCodes();
-        $perfectMatch = array_shift((array_intersect($requestedLocales, $availableLocales)));
-        foreach ($requestedLocales as $requestedLocale) {
-            if ($perfectMatch === $requestedLocale) {
-                // The perfect match must be preferred when reached before a similar match is found
-                return $perfectMatch;
+
+        foreach ($requestedLocales as $requestedLocaleLowered => $requestedLocale) {
+            $localeObj = static::splitLocaleCode($requestedLocaleLowered);
+
+            if (isset($availableLocales[$requestedLocaleLowered])
+                && (! $similarMatch || static::splitLocaleCode($similarMatch)->language === $localeObj->language)
+            ) {
+                // Prefer perfect match only if no similar match has been found yet or the perfect match is more precise
+                // than the similar match
+                return $availableLocales[$requestedLocaleLowered];
             }
-            $similarMatches = array();
-            $localeObj = static::splitLocaleCode($requestedLocale);
-            foreach ($availableLocales as $availableLocale) {
-                if (static::splitLocaleCode($availableLocale)->language === $localeObj->language) {
-                    $similarMatches[] = $availableLocale;
+
+            if (! $similarMatch) {
+                foreach ($availableLocales as $availableLocaleLowered => $availableLocale) {
+                    if (static::splitLocaleCode($availableLocaleLowered)->language === $localeObj->language) {
+                        $similarMatch = $availableLocaleLowered;
+                        break;
+                    }
                 }
             }
-            if (!empty($similarMatches)) {
-                $similarMatch = array_shift($similarMatches); // There is no "best" similar match, just use the first
-                break;
-            }
         }
 
-        if (!$perfectMatch && $similarMatch) {
-            return $similarMatch;
-        } elseif ($similarMatch && static::splitLocaleCode($similarMatch)->language === static::splitLocaleCode($perfectMatch)->language) {
-            return $perfectMatch;
-        } elseif ($similarMatch) {
-            return $similarMatch;
-        }
-
-        return static::DEFAULT_LOCALE;
+        return $similarMatch ? $availableLocales[$similarMatch] : static::DEFAULT_LOCALE;
     }
 }
