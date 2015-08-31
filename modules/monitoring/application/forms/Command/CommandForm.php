@@ -3,10 +3,12 @@
 
 namespace Icinga\Module\Monitoring\Forms\Command;
 
-use Icinga\Module\Monitoring\Backend\MonitoringBackend;
-use Icinga\Module\Monitoring\Command\Transport\CommandTransport;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Form;
 use Icinga\Web\Request;
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
+use Icinga\Module\Monitoring\Command\Transport\CommandTransport;
+use Icinga\Module\Monitoring\Command\Transport\CommandTransportInterface;
 
 /**
  * Base class for command forms
@@ -46,18 +48,28 @@ abstract class CommandForm extends Form
     /**
      * Get the transport used to send commands
      *
-     * @param   Request $request
+     * @param   Request     $request
      *
-     * @return  \Icinga\Module\Monitoring\Command\Transport\CommandTransportInterface
+     * @return  CommandTransportInterface
+     *
+     * @throws  ConfigurationError
      */
     public function getTransport(Request $request)
     {
-        $transportName = $request->getParam('transport');
-        if ($transportName !== null) {
-            $transport = CommandTransport::create($transportName);
+        if (($transportName = $request->getParam('transport')) !== null) {
+            $config = CommandTransport::getConfig();
+            if ($config->hasSection($transportName)) {
+                $transport = CommandTransport::createTransport($config->getSection($transportName));
+            } else {
+                throw new ConfigurationError(sprintf(
+                    mt('monitoring', 'Command transport "%s" not found.'),
+                    $transportName
+                ));
+            }
         } else {
-            $transport = CommandTransport::first();
+            $transport = new CommandTransport();
         }
+
         return $transport;
     }
 }
