@@ -4,8 +4,8 @@
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Forms\ConfirmRemovalForm;
-use Icinga\Web\Controller;
 use Icinga\Web\Notification;
+use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Config\BackendConfigForm;
 use Icinga\Module\Monitoring\Forms\Config\SecurityConfigForm;
 use Icinga\Module\Monitoring\Forms\Config\TransportConfigForm;
