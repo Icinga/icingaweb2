@@ -1,11 +1,11 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Module\Monitoring\Forms\Config\Instance;
+namespace Icinga\Module\Monitoring\Forms\Config\Transport;
 
 use Icinga\Web\Form;
 
-class LocalInstanceForm extends Form
+class LocalTransportForm extends Form
 {
     /**
      * (non-PHPDoc)
@@ -13,7 +13,7 @@ class LocalInstanceForm extends Form
      */
     public function init()
     {
-        $this->setName('form_config_monitoring_instance_local');
+        $this->setName('form_config_command_transport_local');
     }
 
     /**

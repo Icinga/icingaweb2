@@ -1,16 +1,16 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Module\Monitoring\Forms\Config\Instance;
+namespace Icinga\Module\Monitoring\Forms\Config\Transport;
 
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Form;
 
-class RemoteInstanceForm extends Form
+class RemoteTransportForm extends Form
 {
     /**
-     * The available monitoring instance resources split by type
+     * The available resources split by type
      *
      * @var array
      */
@@ -22,7 +22,7 @@ class RemoteInstanceForm extends Form
      */
     public function init()
     {
-        $this->setName('form_config_monitoring_instance_remote');
+        $this->setName('form_config_command_transport_remote');
     }
 
     /**
@@ -44,7 +44,7 @@ class RemoteInstanceForm extends Form
         }
 
         if (empty($resources)) {
-            throw new ConfigurationError($this->translate('Could not find any valid monitoring instance resources'));
+            throw new ConfigurationError($this->translate('Could not find any valid SSH resources'));
         }
 
         $this->resources = $resources;

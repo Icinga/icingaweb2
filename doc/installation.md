@@ -275,9 +275,11 @@ The first release candidate of Icinga Web 2 introduces the following non-backwar
   `icingaweb_group_membership` were altered to ensure referential integrity.
   Please use the upgrade script located in **etc/schema/** to update your
   database schema
+
 * Users who are using PostgreSQL < v9.1 are required to upgrade their
   environment to v9.1+ as this is the new minimum required version
   for utilizing PostgreSQL as database backend
+
 * The restrictions `monitoring/hosts/filter` and `monitoring/services/filter`
   provided by the monitoring module were merged together. The new
   restriction is called `monitoring/filter/objects` and supports only a
@@ -287,12 +289,16 @@ The first release candidate of Icinga Web 2 introduces the following non-backwar
 ## <a id="upgrading-to-2.0.0"></a> Upgrading to Icinga Web 2 2.0.0
 
 * Icinga Web 2 installations from package on RHEL/CentOS 7 now depend on `php-ZendFramework` which is available through
-the [EPEL repository](http://fedoraproject.org/wiki/EPEL). Before, Zend was installed as Icinga Web 2 vendor library
-through the package `icingaweb2-vendor-zend`. After upgrading, please make sure to remove the package
-`icingaweb2-vendor-zend`.
+  the [EPEL repository](http://fedoraproject.org/wiki/EPEL). Before, Zend was installed as Icinga Web 2 vendor library
+  through the package `icingaweb2-vendor-zend`. After upgrading, please make sure to remove the package
+  `icingaweb2-vendor-zend`.
 
 * Icinga Web 2 version 2.0.0 requires permissions for accessing modules. Those permissions are automatically generated
-for each installed module in the format `module/<moduleName>`. Administrators have to grant the module permissions to
-users and/or user groups in the roles configuration for permitting access to specific modules.
-In addition, restrictions provided by modules are now configurable for each installed module too. Before,
-a module had to be enabled before having the possibility to configure restrictions.
+  for each installed module in the format `module/<moduleName>`. Administrators have to grant the module permissions to
+  users and/or user groups in the roles configuration for permitting access to specific modules.
+  In addition, restrictions provided by modules are now configurable for each installed module too. Before,
+  a module had to be enabled before having the possibility to configure restrictions.
+
+* The **instances.ini** configuration file provided by the monitoring module
+  has been renamed to **commandtransports.ini**. The content and location of
+  the file remains unchanged.

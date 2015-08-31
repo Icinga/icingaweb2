@@ -8,11 +8,11 @@ use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfirmRemovalForm;
-use Icinga\Module\Monitoring\Forms\Config\BackendConfigForm;
-use Icinga\Module\Monitoring\Forms\Config\InstanceConfigForm;
-use Icinga\Module\Monitoring\Forms\Config\SecurityConfigForm;
-use Icinga\Web\Controller;
 use Icinga\Web\Notification;
+use Icinga\Module\Monitoring\Controller;
+use Icinga\Module\Monitoring\Forms\Config\BackendConfigForm;
+use Icinga\Module\Monitoring\Forms\Config\SecurityConfigForm;
+use Icinga\Module\Monitoring\Forms\Config\TransportConfigForm;
 
 /**
  * Configuration controller for editing monitoring resources
@@ -20,12 +20,12 @@ use Icinga\Web\Notification;
 class ConfigController extends Controller
 {
     /**
-     * Display a list of available backends and instances
+     * Display a list of available backends and command transports
      */
     public function indexAction()
     {
         $this->view->backendsConfig = $this->Config('backends');
-        $this->view->instancesConfig = $this->Config('instances');
+        $this->view->transportConfig = $this->Config('commandtransports');
         $this->view->tabs = $this->Module()->getConfigTabs()->activate('backends');
     }
 
@@ -149,31 +149,34 @@ class ConfigController extends Controller
     }
 
     /**
-     * Remove a monitoring instance
+     * Remove a command transport
      */
-    public function removeinstanceAction()
+    public function removetransportAction()
     {
-        $instanceName = $this->params->getRequired('instance');
+        $transportName = $this->params->getRequired('transport');
 
-        $instanceForm = new InstanceConfigForm();
-        $instanceForm->setIniConfig($this->Config('instances'));
+        $transportForm = new TransportConfigForm();
+        $transportForm->setIniConfig($this->Config('commandtransports'));
         $form = new ConfirmRemovalForm();
         $form->setRedirectUrl('monitoring/config');
-        $form->setTitle(sprintf($this->translate('Remove Monitoring Instance %s'), $instanceName));
-        $form->addDescription($this->translate(
-            'If you have still any environments or views referring to this instance, '
-            . 'you won\'t be able to send commands anymore after deletion.'
-        ));
-        $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($instanceName, $instanceForm) {
+        $form->setTitle(sprintf($this->translate('Remove Command Transport %s'), $transportName));
+        $form->info(
+            $this->translate(
+                'If you have still any environments or views referring to this transport, '
+                . 'you won\'t be able to send commands anymore after deletion.'
+            ),
+            false
+        );
+        $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($transportName, $transportForm) {
             try {
-                $instanceForm->delete($instanceName);
+                $transportForm->delete($transportName);
             } catch (Exception $e) {
                 $form->error($e->getMessage());
                 return false;
             }
 
-            if ($instanceForm->save()) {
-                Notification::success(sprintf(t('Monitoring instance "%s" successfully removed'), $instanceName));
+            if ($transportForm->save()) {
+                Notification::success(sprintf(t('Command transport "%s" successfully removed'), $transportName));
                 return true;
             }
 
@@ -186,19 +189,20 @@ class ConfigController extends Controller
     }
 
     /**
-     * Edit a monitoring instance
+     * Edit a command transport
      */
-    public function editinstanceAction()
+    public function edittransportAction()
     {
-        $instanceName = $this->params->getRequired('instance');
+        $transportName = $this->params->getRequired('transport');
 
-        $form = new InstanceConfigForm();
+        $form = new TransportConfigForm();
         $form->setRedirectUrl('monitoring/config');
-        $form->setTitle(sprintf($this->translate('Edit Monitoring Instance %s'), $instanceName));
-        $form->setIniConfig($this->Config('instances'));
-        $form->setOnSuccess(function (InstanceConfigForm $form) use ($instanceName) {
+        $form->setTitle(sprintf($this->translate('Edit Command Transport %s'), $transportName));
+        $form->setIniConfig($this->Config('commandtransports'));
+        $form->setInstanceNames($this->backend->select()->from('instance', array('instance_name'))->fetchColumn());
+        $form->setOnSuccess(function (TransportConfigForm $form) use ($transportName) {
             try {
-                $form->edit($instanceName, array_map(
+                $form->edit($transportName, array_map(
                     function ($v) {
                         return $v !== '' ? $v : null;
                     },
@@ -210,7 +214,7 @@ class ConfigController extends Controller
             }
 
             if ($form->save()) {
-                Notification::success(sprintf(t('Monitoring instance "%s" successfully updated'), $instanceName));
+                Notification::success(sprintf(t('Command transport "%s" successfully updated'), $transportName));
                 return true;
             }
 
@@ -218,10 +222,10 @@ class ConfigController extends Controller
         });
 
         try {
-            $form->load($instanceName);
+            $form->load($transportName);
             $form->handleRequest();
         } catch (NotFoundError $_) {
-            $this->httpNotFound(sprintf($this->translate('Monitoring instance "%s" not found'), $instanceName));
+            $this->httpNotFound(sprintf($this->translate('Command transport "%s" not found'), $transportName));
         }
 
         $this->view->form = $form;
@@ -229,15 +233,16 @@ class ConfigController extends Controller
     }
 
     /**
-     * Create a new monitoring instance
+     * Create a new command transport
      */
-    public function createinstanceAction()
+    public function createtransportAction()
     {
-        $form = new InstanceConfigForm();
+        $form = new TransportConfigForm();
         $form->setRedirectUrl('monitoring/config');
-        $form->setTitle($this->translate('Create New Monitoring Instance'));
-        $form->setIniConfig($this->Config('instances'));
-        $form->setOnSuccess(function (InstanceConfigForm $form) {
+        $form->setTitle($this->translate('Create New Command Transport'));
+        $form->setIniConfig($this->Config('commandtransports'));
+        $form->setInstanceNames($this->backend->select()->from('instance', array('instance_name'))->fetchColumn());
+        $form->setOnSuccess(function (TransportConfigForm $form) {
             try {
                 $form->add(array_filter($form->getValues()));
             } catch (Exception $e) {
@@ -246,7 +251,7 @@ class ConfigController extends Controller
             }
 
             if ($form->save()) {
-                Notification::success(t('Monitoring instance successfully created'));
+                Notification::success(t('Command transport successfully created'));
                 return true;
             }
 
@@ -269,6 +274,5 @@ class ConfigController extends Controller
 
         $this->view->form = $form;
         $this->view->tabs = $this->Module()->getConfigTabs()->activate('security');
-        $this->render('form');
     }
 }
