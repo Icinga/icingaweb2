@@ -9,12 +9,14 @@ find it under ./modules/monitoring/commandtransports.ini.
 
 ## Syntax
 
-You can define multiple command transports in the commandtransports.ini. Icinga
-Web 2 will utilize the first transport as the default for a specific Icinga
-instance.
+You can define multiple command transports in the commandtransports.ini. Every
+transport starts with a section header containing its name, followed by the
+config directives for this transport in the standard INI-format.
 
-Every transport starts with a section header containing its name, followed by
-the config directives for this transport in the standard INI-format.
+Icinga Web 2 will try one transport after another to send a command, depending
+on the respective Icinga instance, until the command is successfully sent. The
+order in which Icinga Web 2 processes the configured transports is defined by
+the order of sections in the commandtransports.ini.
 
 ## Using a local command pipe
 
