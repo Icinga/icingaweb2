@@ -1,12 +1,16 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Controllers;
+
+use Exception;
+use Zend_Controller_Action_Exception;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Dashboard\DashletForm;
+use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
-use Icinga\Web\Controller\ActionController;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Widget\Tabextension\DashboardSettings;

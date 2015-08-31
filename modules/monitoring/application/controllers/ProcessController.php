@@ -1,15 +1,17 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Web\Widget\Tabextension\DashboardAction;
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Instance\DisableNotificationsExpireCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Instance\ToggleInstanceFeaturesCommandForm;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
 
 /**
  * Display process and performance information of the monitoring host and program-wide commands
  */
-class Monitoring_ProcessController extends Controller
+class ProcessController extends Controller
 {
     /**
      * Add tabs
@@ -121,21 +123,5 @@ class Monitoring_ProcessController extends Controller
                 ->handleRequest();
             $this->view->form = $form;
         }
-    }
-
-    /**
-     * @todo should be dropped later
-     */
-    public function performanceAction()
-    {
-        $this->getTabs()->activate('performance');
-        $this->setAutorefreshInterval(10);
-        $this->view->runtimevariables = (object) $this->backend->select()
-            ->from('runtimevariables', array('varname', 'varvalue'))
-            ->getQuery()->fetchPairs();
-
-        $this->view->checkperformance = $this->backend->select()
-            ->from('runtimesummary')
-            ->getQuery()->fetchAll();
     }
 }

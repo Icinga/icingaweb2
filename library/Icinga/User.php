@@ -452,16 +452,19 @@ class User
         if (isset($this->permissions['*']) || isset($this->permissions[$requiredPermission])) {
             return true;
         }
-        // If the permission to check contains a wildcard, grant the permission if any permit related to the permission
-        // matches
-        $any = strpos($requiredPermission, '*');
+
+        $requiredWildcard = strpos($requiredPermission, '*');
         foreach ($this->permissions as $grantedPermission) {
-            if ($any !== false) {
-                $wildcard = $any;
+            if ($requiredWildcard !== false) {
+                if (($grantedWildcard = strpos($grantedPermission, '*')) !== false) {
+                    $wildcard = min($requiredWildcard, $grantedWildcard);
+                } else {
+                    $wildcard = $requiredWildcard;
+                }
             } else {
-                // If the permit contains a wildcard, grant the permission if it's related to the permit
                 $wildcard = strpos($grantedPermission, '*');
             }
+
             if ($wildcard !== false) {
                 if (substr($requiredPermission, 0, $wildcard) === substr($grantedPermission, 0, $wildcard)) {
                     return true;
@@ -470,6 +473,7 @@ class User
                 return true;
             }
         }
+
         return false;
     }
 }

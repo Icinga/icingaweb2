@@ -4,9 +4,9 @@
 namespace Tests\Icinga\Application;
 
 use Icinga\Test\BaseTestCase;
-use Icinga\Application\Loader;
+use Icinga\Application\ClassLoader;
 
-class LoaderTest extends BaseTestCase
+class ClassLoaderTest extends BaseTestCase
 {
     private static $classFile = 'test/My/Library/TestStruct.php';
 
@@ -43,7 +43,7 @@ EOD;
 
     public function testObjectCreation1()
     {
-        $loader = new Loader();
+        $loader = new ClassLoader();
         $loader->register();
 
         $check = false;
@@ -56,7 +56,7 @@ EOD;
         }
         $this->assertTrue($check);
 
-        $loader->unRegister();
+        $loader->unregister();
 
         $check = true;
         foreach (spl_autoload_functions() as $functions) {
@@ -71,7 +71,7 @@ EOD;
 
     public function testNamespaces()
     {
-        $loader = new Loader();
+        $loader = new ClassLoader();
         $loader->registerNamespace('Test\\Laola', '/tmp');
         $loader->registerNamespace('Dings\\Var', '/var/tmp');
 
@@ -89,7 +89,7 @@ EOD;
         $classFile = $this->baseDir. self::$classFile;
         $this->assertFileExists($classFile);
 
-        $loader = new Loader();
+        $loader = new ClassLoader();
         $loader->registerNamespace('My\\Library', dirname($classFile));
         $this->assertFalse($loader->loadClass('DOES\\NOT\\EXISTS'));
         $this->assertTrue($loader->loadClass('My\\Library\\TestStruct'));
@@ -100,20 +100,11 @@ EOD;
         $classFile = $this->baseDir. self::$classFile;
         $this->assertFileExists($classFile);
 
-        $loader = new Loader();
+        $loader = new ClassLoader();
         $loader->registerNamespace('My\\Library', dirname($classFile));
         $loader->register();
 
         $o = new \My\Library\TestStruct();
         $this->assertTrue($o->testFlag());
-    }
-
-    /**
-     * @expectedException Icinga\Exception\ProgrammingError
-     */
-    public function testNonexistingDirectory()
-    {
-        $loader = new Loader();
-        $loader->registerNamespace('My\\Library', '/trullalla/123');
     }
 }

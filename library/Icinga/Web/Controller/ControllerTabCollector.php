@@ -8,26 +8,24 @@ use Icinga\Application\Icinga;
 use Icinga\Web\Widget\Tabs;
 
 /**
- *  Static helper class that collects tabs provided by the 'createProvidedTabs' method
- *  of controllers.
+ *  Static helper class that collects tabs provided by the 'createProvidedTabs' method of controllers
  */
 class ControllerTabCollector
 {
     /**
-     * Scan all controllers with the provided name
-     * in the application and (loaded) module folders and collects their provided tabs
+     * Scan all controllers with given name in the application and (loaded) module folders and collects their provided
+     * tabs
      *
-     * @param string $controller        The name of the controllers to use for tab collection
+     * @param   string  $controllerName The name of the controllers to use for tab collection
      *
-     * @return Tabs                     A @see Tabs instance containing the application tabs first
-     *                                  followed by the tabs provided from the modules
+     * @return  Tabs                    A {@link Tabs} instance containing the application tabs first followed by the
+     *                                  tabs provided from the modules
      */
-    public static function collectControllerTabs($controller)
+    public static function collectControllerTabs($controllerName)
     {
-        require_once(Icinga::app()->getApplicationDir('/controllers/'.$controller.'.php'));
-
+        $controller = '\Icinga\\' . Dispatcher::CONTROLLER_NAMESPACE . '\\' . $controllerName;
         $applicationTabs = $controller::createProvidedTabs();
-        $moduleTabs = self::collectModuleTabs($controller);
+        $moduleTabs = self::collectModuleTabs($controllerName);
 
         $tabs = new Tabs();
         foreach ($applicationTabs as $name => $tab) {
@@ -35,7 +33,7 @@ class ControllerTabCollector
         }
 
         foreach ($moduleTabs as $name => $tab) {
-            // don't overwrite application tabs if the module wants to
+            // Don't overwrite application tabs if the module wants to
             if ($tabs->has($name)) {
                 continue;
             }
@@ -66,29 +64,30 @@ class ControllerTabCollector
     /**
      * Collects the tabs from the createProvidedTabs() method in the configuration controller
      *
-     * If the module doesn't have the given controller or createProvidedTabs method in the controller
-     * an empty array will be returned
+     * If the module doesn't have the given controller or createProvidedTabs method in the controller an empty array
+     * will be returned
      *
-     * @param string $controller            The name of the controller that provides tabs via createProvidedTabs
-     * @param Module $module                The module instance that provides the controller
+     * @param   string  $controllerName The name of the controller that provides tabs via createProvidedTabs
+     * @param   Module  $module         The module instance that provides the controller
      *
-     * @return array
+     * @return  array
      */
-    private static function createModuleConfigurationTabs($controller, Module $module)
+    private static function createModuleConfigurationTabs($controllerName, Module $module)
     {
+        // TODO(el): Only works for controllers w/o namepsace: https://dev.icinga.org/issues/4149
         $controllerDir = $module->getControllerDir();
         $name = $module->getName();
 
-        $controllerDir = $controllerDir . '/' . $controller . '.php';
-        $controllerName = ucfirst($name) . '_' . $controller;
+        $controllerDir = $controllerDir . '/' . $controllerName . '.php';
+        $controllerName = ucfirst($name) . '_' . $controllerName;
 
         if (is_readable($controllerDir)) {
             require_once(realpath($controllerDir));
-            if (!method_exists($controllerName, "createProvidedTabs")) {
+            if (! method_exists($controllerName, 'createProvidedTabs')) {
                 return array();
             }
             $tab = $controllerName::createProvidedTabs();
-            if (!is_array($tab)) {
+            if (! is_array($tab)) {
                 $tab = array($name => $tab);
             }
             return $tab;

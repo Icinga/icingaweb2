@@ -1,8 +1,12 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
+use Exception;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Web\Notification;
 use Icinga\Module\Monitoring\Controller;
@@ -13,7 +17,7 @@ use Icinga\Module\Monitoring\Forms\Config\TransportConfigForm;
 /**
  * Configuration controller for editing monitoring resources
  */
-class Monitoring_ConfigController extends Controller
+class ConfigController extends Controller
 {
     /**
      * Display a list of available backends and command transports
