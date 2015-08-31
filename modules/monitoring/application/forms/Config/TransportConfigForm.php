@@ -25,12 +25,42 @@ class TransportConfigForm extends ConfigForm
     protected $transportToLoad;
 
     /**
+     * The names of all available Icinga instances
+     *
+     * @var array
+     */
+    protected $instanceNames;
+
+    /**
      * Initialize this form
      */
     public function init()
     {
         $this->setName('form_config_command_transports');
         $this->setSubmitLabel($this->translate('Save Changes'));
+    }
+
+    /**
+     * Set the names of all available Icinga instances
+     *
+     * @param   array   $names
+     *
+     * @return  $this
+     */
+    public function setInstanceNames(array $names)
+    {
+        $this->instanceNames = $names;
+        return $this;
+    }
+
+    /**
+     * Return the names of all available Icinga instances
+     *
+     * @return  array
+     */
+    public function getInstanceNames()
+    {
+        return $this->instanceNames ?: array();
     }
 
     /**
@@ -163,18 +193,21 @@ class TransportConfigForm extends ConfigForm
      */
     public function createElements(array $formData)
     {
-        $this->addElement(
-            'text',
-            'instance',
-            array(
-                'placeholder'   => 'default',
-                'label'         => $this->translate('Instance Name'),
-                'description'   => $this->translate(
-                    'The name of the Icinga instance this transport should transfer commands to. You do not '
-                    . 'need to adjust this if you\'re not using a different instance name than the default.'
+        $instanceNames = $this->getInstanceNames();
+        if (count($instanceNames) > 1) {
+            $options = array('none' => $this->translate('None', 'command transport instance association'));
+            $this->addElement(
+                'select',
+                'instance',
+                array(
+                    'label'         => $this->translate('Instance Link'),
+                    'description'   => $this->translate(
+                        'The name of the Icinga instance this transport should exclusively transfer commands to.'
+                    ),
+                    'multiOptions'  => array_merge($options, array_combine($instanceNames, $instanceNames))
                 )
-            )
-        );
+            );
+        }
 
         $this->addElement(
             'text',
