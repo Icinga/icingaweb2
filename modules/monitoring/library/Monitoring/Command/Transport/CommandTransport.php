@@ -8,6 +8,7 @@ use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
+use Icinga\Module\Monitoring\Command\Object\ObjectCommand;
 use Icinga\Module\Monitoring\Exception\CommandTransportException;
 
 /**
@@ -110,25 +111,61 @@ class CommandTransport implements CommandTransportInterface
      */
     public function send(IcingaCommand $command, $now = null)
     {
+        $tries = 0;
         foreach (static::getConfig() as $transportConfig) {
             $transport = static::createTransport($transportConfig);
 
-            try {
-                $transport->send($command, $now);
-            } catch (CommandTransportException $e) {
-                Logger::error($e);
-                continue; // Try the next transport
-            }
+            if ($this->transferPossible($command, $transport)) {
+                try {
+                    $transport->send($command, $now);
+                } catch (CommandTransportException $e) {
+                    Logger::error($e);
+                    $tries += 1;
+                    continue; // Try the next transport
+                }
 
-            return; // The command was successfully sent
+                return; // The command was successfully sent
+            }
+        }
+
+        if ($tries > 0) {
+            throw new CommandTransportException(
+                mt(
+                    'monitoring',
+                    'Failed to send external Icinga command. None of the configured transports'
+                    . ' was able to transfer the command. Please see the log for more details.'
+                )
+            );
         }
 
         throw new CommandTransportException(
             mt(
                 'monitoring',
-                'Failed to send external Icinga command. None of the configured transports'
-                . ' was able to transfer the command. Please see the log for more details.'
+                'Failed to send external Icinga command. No transport has been configured'
+                . ' for this instance. Please contact your Icinga Web administrator.'
             )
         );
+    }
+
+    /**
+     * Return whether it is possible to send the given command using the given transport
+     *
+     * @param   IcingaCommand               $command
+     * @param   CommandTransportInterface   $transport
+     *
+     * @return  bool
+     */
+    protected function transferPossible($command, $transport)
+    {
+        if (! method_exists($transport, 'getInstance') || !$command instanceof ObjectCommand) {
+            return true;
+        }
+
+        $transportInstance = $transport->getInstance();
+        if (! $transportInstance || $transportInstance === 'none') {
+            return true;
+        }
+
+        return strtolower($transportInstance) === strtolower($command->getObject()->instance_name);
     }
 }
