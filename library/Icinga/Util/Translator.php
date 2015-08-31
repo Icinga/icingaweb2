@@ -195,7 +195,7 @@ class Translator
      *
      * @param   string  $locale     The locale code to split, or null to split the current locale
      *
-     * @return  stdClass            An object with a 'language' and 'country' attribute
+     * @return  object              An object with a 'language' and 'country' attribute
      */
     public static function splitLocaleCode($locale = null)
     {
