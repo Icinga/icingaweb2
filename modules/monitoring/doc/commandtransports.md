@@ -82,9 +82,13 @@ instance you want to assign to the transport:
 ````
 [icinga1]
 ...
-instance = icinga1                      ; Optional. The default is "default"
+instance = icinga1
 
 [icinga2]
 ...
-instance = icinga2                      ; Optional. The default is "default"
+instance = icinga2
 ````
+
+Associating a transport to a specific Icinga instance causes this transport to
+be used to send commands to the linked instance only. Transports without a
+linked Icinga instance are utilized to send commands to all instances.
