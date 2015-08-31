@@ -271,8 +271,12 @@ $dashboard->add(
     'monitoring/list/downtimes?downtime_is_in_effect=1&downtime_scheduled_start<-3%20days&sort=downtime_start&dir=asc'
 );
 $dashboard->add(
-    $this->translate('Oldest Sticky Comments'),
-    'monitoring/list/comments?comment_type=Ack&TODO'
+    $this->translate('Host Sticky Acknowledgements Older Than Three Days'),
+    '/monitoring/list/hosts?host_acknowledgement_type=2&host_last_state_change<-3%20days'
+);
+$dashboard->add(
+    $this->translate('Service Sticky Acknowledgements, Older Than Three Days'),
+    '/monitoring/list/services?service_acknowledgement_type=2&service_last_state_change<-3%20days'
 );
 
 /*
