@@ -2,33 +2,36 @@
 # Copyright (C) 2015 Icinga Development Team
 # This file is distributed under the same license as Icinga Web 2.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
-#, fuzzy
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Icinga Web 2 (None)\n"
+"Project-Id-Version: Icinga Web 2\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
 "POT-Creation-Date: 2015-03-13 14:55+0100\n"
-"PO-Revision-Date: 2015-03-13 14:51+0100\n"
+"PO-Revision-Date: 2015-07-17 10:17+0200\n"
 "Last-Translator: Davide Demuru <davide.demuru@gmail.com>\n"
 "Language: it_IT\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.2\n"
+"X-Poedit-KeywordsList: translate\n"
+"X-Poedit-Basepath: ../..\n"
+"X-Poedit-SearchPath-0: .\n"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Form/Validator/InArray.php:16
 #, php-format
 msgid "\"%s\" is not in the list of allowed values."
-msgstr ""
+msgstr "\"%s\" non è tra i valori ammessi."
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Form/Validator/InArray.php:19
 #, php-format
 msgid ""
 "\"%s\" is not in the list of allowed values. Did you mean one of the "
 "following?: %s"
-msgstr ""
+msgstr "\"%s\" non è tra i valori ammessi. Intendevi uno dei seguenti?: %s"
 
 #: /usr/share/icingaweb2/application/forms/Config/Authentication/ExternalBackendForm.php:56
 #: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:50
@@ -38,23 +41,23 @@ msgstr "\"%value%\" non è un'espressione regolare valida"
 #: /usr/share/icingaweb2/library/Icinga/Web/Menu/MonitoringMenuItemRenderer.php:40
 #, php-format
 msgid "%d unhandled hosts down"
-msgstr ""
+msgstr "%d host down non gestiti"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Menu/MonitoringMenuItemRenderer.php:41
 #, php-format
 msgid "%d unhandled services critical"
-msgstr ""
+msgstr "%d servizi down non gestiti"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/View/DateTimeRenderer.php:185
 msgctxt "timespan"
 msgid "%im %ss"
-msgstr ""
+msgstr "%im %ss"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Form/ErrorLabeller.php:47
-#, fuzzy, php-format
+#, php-format
 msgctxt "config.path"
 msgid "%s does not exist"
-msgstr "%s non è scrivibile"
+msgstr "%s non esiste"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Form/ErrorLabeller.php:48
 #, php-format
@@ -81,10 +84,10 @@ msgstr "%s non è nel formato previsto: %%value%%"
 #: /usr/share/icingaweb2/application/views/scripts/pivottablePagination.phtml:9
 #, php-format
 msgid "%s: %d to %d of %d (on the %s-axis)"
-msgstr "%s: %d a %d di %d (nell asse %s)"
+msgstr "%s: %d a %d di %d (dell'asse %s)"
 
 #: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:9
-#, fuzzy, php-format
+#, php-format
 msgctxt "pagination.joystick"
 msgid "%s: Show %s %u to %u out of %u"
 msgstr "%s: Mostra %s %u a %u di %u"
@@ -100,7 +103,7 @@ msgstr "...e password"
 
 #: /usr/share/icingaweb2/application/layouts/scripts/parts/navigation.phtml:14
 msgid "Accessibility Skip Links"
-msgstr ""
+msgstr "Salta Controllo di Accessibilità"
 
 #: /usr/share/icingaweb2/application/controllers/DashboardController.php:69
 msgid "Add Dashlet To Dashboard"
@@ -112,9 +115,8 @@ msgid "Add To Dashboard"
 msgstr "Aggiungi alla Dashboard"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterEditor.php:327
-#, fuzzy
 msgid "Add another filter"
-msgstr "Cliccare per aggiungere un altro filtro"
+msgstr "Aggiungi un altro filtro"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterWidget.php:80
 msgid "Add filter..."
@@ -127,7 +129,7 @@ msgstr "Cambia la configurazione generale di Icinga Web 2"
 
 #: /usr/share/icingaweb2/application/controllers/PreferenceController.php:28
 msgid "Adjust the preferences of Icinga Web 2 according to your needs"
-msgstr ""
+msgstr "Modifica le preferenze di Icinga Web 2 in base alle tue esigenze"
 
 #: /usr/share/icingaweb2/application/controllers/AuthenticationController.php:111
 msgid ""
@@ -337,11 +339,11 @@ msgstr ""
 
 #: /usr/share/icingaweb2/library/Icinga/Chart/GridChart.php:90
 msgid "Contains data in a bar or line chart."
-msgstr ""
+msgstr "Contiene i dati in grafici a barre o linee"
 
 #: /usr/share/icingaweb2/library/Icinga/Chart/PieChart.php:56
 msgid "Contains data in a pie chart."
-msgstr ""
+msgstr "Contiene i dati in grafici a torta"
 
 #: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:37
 msgid ""
@@ -622,7 +624,7 @@ msgstr "Configurazione Generale"
 
 #: /usr/share/icingaweb2/library/Icinga/Chart/GridChart.php:89
 msgid "Grid Chart"
-msgstr ""
+msgstr "Grafico a Griglia"
 
 #: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:98
 #: /usr/share/icingaweb2/application/views/scripts/roles/index.phtml:16
@@ -700,8 +702,8 @@ msgstr "Tipo \"%s\" di risorsa non valido"
 msgid ""
 "It appears that you did not configure Icinga Web 2 yet so it's not possible "
 "to log in without any defined authentication method. Please define a "
-"authentication method by following the instructions in the %1$sdocumentation%"
-"3$s or by using our %2$sweb-based setup-wizard%3$s."
+"authentication method by following the instructions in the %1$sdocumentation"
+"%3$s or by using our %2$sweb-based setup-wizard%3$s."
 msgstr ""
 "Icinga Web 2 non è stato configurato e quindi non è possibile autenticarsi "
 "senza aver definito nessun metodo di autenticazione. Si prega di definire un "
@@ -951,7 +953,7 @@ msgstr "Permessi"
 
 #: /usr/share/icingaweb2/library/Icinga/Chart/PieChart.php:55
 msgid "Pie Chart"
-msgstr ""
+msgstr "Grafico a Torta"
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:4
 msgid "Please copy the following dashboard snippet to "
@@ -1007,12 +1009,16 @@ msgid ""
 "Push this button to update the form to reflect the change that was made in "
 "the field on the left"
 msgstr ""
+"Premere questo bottone per aggiornare il form e mostrare i cambiamenti "
+"effettuati nel campo a sinistra"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Form/Decorator/Autosubmit.php:119
 msgid ""
 "Push this button to update the form to reflect the changes that were made "
 "below"
 msgstr ""
+"Premere questo bottone per aggiornare il form e mostrare i cambiamenti "
+"effettuati sotto"
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Widget/SearchDashboard.php:63
 msgid "Ready to search"
@@ -1533,6 +1539,8 @@ msgid ""
 "Upon any of this form's fields were changed, this page is being updated "
 "automatically."
 msgstr ""
+"Cambiando un qualsiasi valore del form la pagina verrà ricaricata "
+"automaticamente."
 
 #: /usr/share/icingaweb2/library/Icinga/Web/Form.php:693
 #: /usr/share/icingaweb2/library/Icinga/Web/Form/Decorator/Autosubmit.php:100
