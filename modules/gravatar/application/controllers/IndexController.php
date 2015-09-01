@@ -27,23 +27,34 @@ class Gravatar_IndexController extends Controller
         $cache = FileCache::instance();
         $filename = md5(strtolower(trim($this->_request->getParam('email'))));
         $cacheFile = 'gravatar-' . $filename;
+
         header('Cache-Control: public');
         header('Pragma: cache');
-        if ($etag = $cache->etagMatchesCachedFile($cacheFile)) {
-            header("HTTP/1.1 304 Not Modified");
+        if ($cache->etagMatchesCachedFile($cacheFile)) {
+            $this
+                ->getResponse()
+                ->setHttpResponseCode(304)
+                ->sendHeaders();
             return;
         }
 
-        header('Content-Type: image/jpg');
         if ($cache->has($cacheFile)) {
-            header('ETag: "' . $cache->etagForCachedFile($cacheFile) . '"');
-            $cache->send($cacheFile);
+            $img = $cache->get($cacheFile);
+        } elseif (false === $img = @file_get_contents('http://www.gravatar.com/avatar/' . $filename . '?s=120&d=mm')) {
+            $this
+                ->getResponse()
+                ->setHttpResponseCode(500)
+                ->sendHeaders();
             return;
+        } else {
+            $cache->store($cacheFile, $img);
         }
-        $img = file_get_contents('http://www.gravatar.com/avatar/' . $filename . '?s=120&d=mm');
-        $cache->store($cacheFile, $img);
-        header('ETag: "' . $cache->etagForCachedFile($cacheFile) . '"');
 
-        return $img;
+        $this
+            ->getResponse()
+            ->setHeader('ETag', $cache->etagForCachedFile($cacheFile))
+            ->setHeader('Content-Type', 'image/jpg')
+            ->setBody($img)
+            ->sendResponse();
     }
 }
