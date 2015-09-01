@@ -8,6 +8,11 @@ use ArrayIterator;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
+use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
+use Icinga\Data\ConfigObject;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Util\String;
 
 /**
  * Container for navigation items
@@ -56,6 +61,13 @@ use IteratorAggregate;
 class Navigation implements ArrayAccess, Countable, IteratorAggregate
 {
     /**
+     * The class namespace where to locate navigation type classes
+     *
+     * @var string
+     */
+    const NAVIGATION_NS = 'Web\\Navigation';
+
+    /**
      * Flag for dropdown layout
      *
      * @var int
@@ -68,6 +80,13 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      * @var int
      */
     const LAYOUT_TABS = 2;
+
+    /**
+     * Known navigation types
+     *
+     * @var array
+     */
+    protected static $types;
 
     /**
      * Navigation items
@@ -132,7 +151,63 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
-     * Ad a navigation item
+     * Create and return a new navigation item for the given configuration
+     *
+     * @param   string              $name
+     * @param   array|ConfigObject  $properties
+     *
+     * @return  NavigationItem
+     *
+     * @throws  InvalidArgumentException    If the $properties argument is neither an array nor a ConfigObject
+     */
+    public function createItem($name, $properties)
+    {
+        if ($properties instanceof ConfigObject) {
+            $properties = $properties->toArray();
+        } elseif (! is_array($properties)) {
+            throw new InvalidArgumentException('Argument $properties must be of type array or ConfigObject');
+        }
+
+        $itemType = isset($properties['type']) ? String::cname($properties['type'], '-') : 'NavigationItem';
+        if (! empty($this->types) && isset($this->types[$itemType])) {
+            return new $this->types[$itemType]($name, $properties);
+        }
+
+        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
+            $classPath = 'Icinga\\Module\\' . $module->getName() . '\\' . static::NAVIGATION_NS . '\\' . $itemType;
+            if (class_exists($classPath)) {
+                $item = $classPath($name, $properties);
+                break;
+            }
+        }
+
+        if ($item === null) {
+            $classPath = 'Icinga\\' . static::NAVIGATION_NS . '\\' . $itemType;
+            if (class_exists($classPath)) {
+                $item = new $classPath($name, $properties);
+            }
+        }
+
+        if ($item === null) {
+            Logger::debug(
+                'Failed to find custom navigation item class %s for item %s. Using base class NavigationItem now',
+                $itemType,
+                $name
+            );
+
+            $item = new NavigationItem($name, $properties);
+            $this->types[$itemType] = 'Icinga\\Web\\Navigation\\NavigationItem';
+        } elseif (! $item instanceof NavigationItem) {
+            throw new ProgrammingError('Class %s must inherit from NavigationItem', $classPath);
+        } else {
+            $this->types[$itemType] = $classPath;
+        }
+
+        return $item;
+    }
+
+    /**
+     * Add a navigation item
      *
      * @param   NavigationItem|array    $item   The item to append
      *
