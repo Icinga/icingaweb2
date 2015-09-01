@@ -58,8 +58,7 @@ class HostStatus extends DataView
             'host_modified_host_attributes',
             'host_severity',
             'host_problem',
-            'host_ipv4',
-            'host_acknowledgement_type'
+            'host_ipv4'
         );
     }
 
