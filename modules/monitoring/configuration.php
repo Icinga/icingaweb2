@@ -184,7 +184,10 @@ $section->add($this->translate('Notifications'), array(
     'url'      => 'monitoring/list/notifications',
     'priority' => 80
 ));
-
+$section->add($this->translate('Acknowledgements'), array(
+    'url'      => 'monitoring/acknowledgement',
+    'priority' => 90
+));
 
 /*
  * History Section

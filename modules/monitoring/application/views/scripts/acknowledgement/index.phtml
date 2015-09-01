@@ -1,0 +1,104 @@
+<?php
+use Icinga\Module\Monitoring\Object\Service;
+use Icinga\Module\Monitoring\Object\Host;
+?>
+
+<?php if (! $this->compact): ?>
+<div class="controls">
+  <?= $this->tabs; ?>
+  <div class="dontprint">
+     <?= $this->render('list/components/selectioninfo.phtml'); ?>
+  </div>
+    <h1><?= $this->translate('Acknowledgements') ?></h1>
+    <?= $this->sortBox; ?>
+    <?= $this->limiter; ?>
+    <?= $this->paginator; ?>
+    <?= $this->filterEditor; ?>
+</div>
+<?php endif ?>
+<div class="content">
+  <table data-base-target="_next" class="action">
+    <tbody>
+    <?php foreach ($acknowledgements as $acknowledgement): ?>
+      <?php
+            $state = $acknowledgement->acknowledgement_is_service ?
+                Service::getStateText($acknowledgement->state) : Host::getStateText($acknowledgement->state);
+      ?>
+      <tr class="state handled <?= $state ?>" >
+        <td class="state" style="width: 10em;">
+          <?= $this->icon('ok') ?>
+          <?= $this->timeAgo($acknowledgement->entry_time, $this->compact); ?>
+          <br>
+          <?= sprintf($this->translate(
+              'State was %s.',
+              'Describes the past host or service state when an acknowledgement was set.'
+          ), $state) ?>
+        </td>
+
+        <td>
+          <?php if ($acknowledgement->acknowledgement_is_service): ?>
+            <?= $this->icon('service', $this->translate('Service Acknowledgement')) ?>
+              <?= $this->qlink(
+                $this->escape($acknowledgement->host) . ': ' . $this->escape($acknowledgement->service),
+                'monitoring/service/show',
+                array(
+                    'service' => $acknowledgement->service,
+                    'host' => $acknowledgement->host
+                ),
+                array(
+                    'title' => sprintf(
+                        $this->translate(
+                            'Show detailed information for this acknowledgement about service %s on host %s'
+                        ),
+                        $acknowledgement->service,
+                        $acknowledgement->host
+                    ),
+                    'class' => 'rowaction'
+                )
+              ); ?>
+          <?php else: ?>
+            <?= $this->icon('host', $this->translate('Host Acknowledgement')) ?>
+            <?= $this->qlink(
+                $this->escape($acknowledgement->host),
+                'monitoring/host/show',
+                array(
+                    'host' => $acknowledgement->host
+                ),
+                array(
+                    'title' => sprintf(
+                        $this->translate('Show detailed information for this acknowledgement on host %s'),
+                        $acknowledgement->host
+                    ),
+                    'class' => 'rowaction'
+                )
+            ); ?>
+          <?php endif; ?>
+
+          <br>
+          <?= $this->icon('comment_data', $this->translate('Comment')); ?>
+          <?= isset($acknowledgement->author_name) ? '[' . $this->escape($acknowledgement->author_name) . '] ' : ''; ?>
+          <strong><?= $this->escape($acknowledgement->comment_data); ?></strong>
+
+          <br>
+          <?= $acknowledgement->is_sticky ? $this->icon(
+                'attach',
+                 $this->translate('Sticky, all notifications are disabled until the host or services recovers'
+              )) : ''; ?>
+          <?= $acknowledgement->notify_contacts ? $this->icon(
+                'bell',
+                $this->translate('Contacts are being notified about this acknowledgement.'
+              )) : ''; ?>
+          <?= $acknowledgement->end_time ? sprintf(
+              $this->translate('Expires %s.'),
+              '<strong>' . $this->timeUntil($acknowledgement->end_time) . '</strong>'
+          ) : $this->translate('Does not expire.'); ?>
+        </td>
+      </tr>
+    <?php endforeach ?>
+    </tbody>
+  </table>
+
+  <?php if (! $acknowledgements): ?>
+    <?= $this->translate('No comments found matching the filter'); ?>
+   <?php endif ?>
+</div>
