@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms\Config;
 
+use Icinga\Forms\Config\General\ProxyConfigForm;
 use Icinga\Web\Notification;
 use Icinga\Forms\ConfigForm;
 use Icinga\Forms\Config\General\LoggingConfigForm;
@@ -30,8 +31,10 @@ class GeneralConfigForm extends ConfigForm
     {
         $appConfigForm = new ApplicationConfigForm();
         $loggingConfigForm = new LoggingConfigForm();
+        $proxyConfigForm = new ProxyConfigForm();
         $this->addElements($appConfigForm->createElements($formData)->getElements());
         $this->addElements($loggingConfigForm->createElements($formData)->getElements());
+        $this->addElements($proxyConfigForm->createElements($formData)->getElements());
     }
 
     /**
