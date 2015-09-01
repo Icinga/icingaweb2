@@ -59,7 +59,8 @@ class UserForm extends RepositoryForm
             'password',
             'password',
             array(
-                'label' => $this->translate('Password')
+                'description'   => $this->translate('Leave empty for not updating the user\'s password'),
+                'label'         => $this->translate('Password'),
             )
         );
 
