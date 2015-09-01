@@ -15,14 +15,16 @@
  * @category   Zend
  * @package    Zend_Wildfire
  * @subpackage Plugin
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
 /** Zend_Wildfire_Plugin_FirePhp */
+require_once 'Zend/Wildfire/Plugin/FirePhp.php';
 
 /** Zend_Wildfire_Plugin_FirePhp_Message */
+require_once 'Zend/Wildfire/Plugin/FirePhp/Message.php';
 
 /**
  * A message envelope that can be updated for the duration of the requet before
@@ -31,7 +33,7 @@
  * @category   Zend
  * @package    Zend_Wildfire
  * @subpackage Plugin
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Wildfire_Plugin_FirePhp_TableMessage extends Zend_Wildfire_Plugin_FirePhp_Message
@@ -107,6 +109,7 @@ class Zend_Wildfire_Plugin_FirePhp_TableMessage extends Zend_Wildfire_Plugin_Fir
         $count = $this->getRowCount();
 
         if($index < 0 || $index > $count-1) {
+            require_once 'Zend/Wildfire/Exception.php';
             throw new Zend_Wildfire_Exception('Row index('.$index.') out of bounds('.$count.')!');
         }
 
@@ -125,6 +128,7 @@ class Zend_Wildfire_Plugin_FirePhp_TableMessage extends Zend_Wildfire_Plugin_Fir
         $count = $this->getRowCount();
 
         if($index < 0 || $index > $count-1) {
+            require_once 'Zend/Wildfire/Exception.php';
             throw new Zend_Wildfire_Exception('Row index('.$index.') out of bounds('.$count.')!');
         }
 
@@ -152,6 +156,7 @@ class Zend_Wildfire_Plugin_FirePhp_TableMessage extends Zend_Wildfire_Plugin_Fir
         $count = $this->getRowCount();
 
         if($count==0) {
+            require_once 'Zend/Wildfire/Exception.php';
             throw new Zend_Wildfire_Exception('Cannot get last row as no rows exist!');
         }
 

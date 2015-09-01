@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: ActionMethod.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
@@ -23,10 +23,12 @@
 /**
  * @see Zend_Tool_Project_Context_Interface
  */
+require_once 'Zend/Tool/Project/Context/Interface.php';
 
 /**
  * @see Zend_Reflection_File
  */
+require_once 'Zend/Reflection/File.php';
 
 /**
  * This class is the front most class for utilizing Zend_Tool_Project
@@ -36,7 +38,7 @@
  *
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Project_Context_Zf_TestApplicationActionMethod implements Zend_Tool_Project_Context_Interface
@@ -74,6 +76,7 @@ class Zend_Tool_Project_Context_Zf_TestApplicationActionMethod implements Zend_T
         $this->_resource->setAppendable(false);
         $this->_testApplicationControllerResource = $this->_resource->getParentResource();
         if (!$this->_testApplicationControllerResource->getContext() instanceof Zend_Tool_Project_Context_Zf_TestApplicationControllerFile) {
+            require_once 'Zend/Tool/Project/Context/Exception.php';
             throw new Zend_Tool_Project_Context_Exception('ActionMethod must be a sub resource of a TestApplicationControllerFile');
         }
         // make the ControllerFile node appendable so we can tack on the actionMethod.
@@ -138,6 +141,7 @@ class Zend_Tool_Project_Context_Zf_TestApplicationActionMethod implements Zend_T
         $file = $this->_testApplicationControllerPath;
         
         if (!file_exists($file)) {
+            require_once 'Zend/Tool/Project/Context/Exception.php';
             throw new Zend_Tool_Project_Context_Exception(
                 'Could not create action within test controller ' . $file
                 . ' with action name ' . $this->_forActionName
