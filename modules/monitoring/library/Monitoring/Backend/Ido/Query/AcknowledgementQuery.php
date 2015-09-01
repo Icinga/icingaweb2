@@ -48,8 +48,9 @@ class AcknowledgementQuery extends IdoQuery
     protected function joinBaseTables()
     {
         $this->acknowledgementQuery = $this->db->select();
-        $this->select = $this->select->from(
-            array('o' => $this->prefix . 'objects')
+        $this->select->from(
+            array('o' => $this->prefix . 'objects'),
+            array()
         );
         $this->select->joinLeft(
             array('hs' => $this->prefix . 'hoststatus'),
