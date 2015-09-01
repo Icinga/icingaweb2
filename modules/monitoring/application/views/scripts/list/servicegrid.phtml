@@ -70,7 +70,7 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
                 </span>
               <?= $this->qlink(
                   '',
-                  'monitoring/show/service',
+                  'monitoring/service/show',
                   array(
                       'host'    => $hostName,
                       'service' => $serviceDescription
