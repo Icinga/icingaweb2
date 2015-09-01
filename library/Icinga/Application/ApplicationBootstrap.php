@@ -466,6 +466,7 @@ abstract class ApplicationBootstrap
 
         try {
             $this->config = Config::app();
+            $this->setupProxy();
         } catch (NotReadableError $e) {
             Logger::error(new IcingaException('Cannot load application configuration. An exception was thrown:', $e));
             $this->config = new Config();
@@ -622,6 +623,31 @@ abstract class ApplicationBootstrap
         } catch (Exception $error) {
             Logger::error($error);
         }
+
+        return $this;
+    }
+
+    /**
+     * Set up the proxy
+     *
+     * @return $this
+     */
+    protected function setupProxy()
+    {
+        if (! (bool) $this->config->get('global', 'use_proxy')) {
+            return $this;
+        }
+
+        $proxyConfig = $this->config->getSection('proxy');
+
+        $defaultOpts = array(
+            'http' => array(
+                'proxy'             => $proxyConfig->get('http'),
+                'request_fulluri'   => (bool) $proxyConfig->get('http_request_fulluri'),
+            )
+        );
+
+        stream_context_set_default($defaultOpts);
 
         return $this;
     }
