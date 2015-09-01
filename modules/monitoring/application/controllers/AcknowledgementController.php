@@ -52,14 +52,14 @@ class Monitoring_AcknowledgementController extends Controller
         $this->filterQuery($query);
         $this->view->acknowledgements = $query;
 
-        $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->acknowledgements);
-        $this->setupSortControl(array(
-            'entry_time' => $this->translate('Entry Time'),
-            'end_time' => $this->translate('End Time'),
-            'state' => $this->translate('Object State'),
-            'author_name' => $this->translate('Author Name')
-        ), $query);
+        $this->setupLimitControl()
+            ->setupPaginationControl($this->view->acknowledgements)
+            ->setupSortControl(array(
+                'entry_time' => $this->translate('Entry Time'),
+                'end_time' => $this->translate('End Time'),
+                'state' => $this->translate('Object State'),
+                'author_name' => $this->translate('Author Name')
+            ), $this->view->acknowledgements);
     }
 
     /**
