@@ -224,30 +224,21 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Add a child item to this item
+     * Add a child to this item
      *
-     * Bubbles active state.
+     * If the child is active this item gets activated as well.
      *
-     * @param   NavigationItem|array    $child  The child to add
+     * @param   NavigationItem  $child
      *
      * @return  $this
-     * @throws  InvalidArgumentException        If the child argument is invalid
      */
-    public function addChild($child)
+    public function addChild(NavigationItem $child)
     {
-        if (! $child instanceof NavigationItem) {
-            if (! is_array($child)) {
-                throw new InvalidArgumentException(
-                    'Argument child must be either an array or an instance of NavigationItem'
-                );
-            }
-            $child = new NavigationItem($child);
-        }
-        $child->parent = $this;
-        $this->children->addItem($child);
+        $this->getChildren()->addItem($child->setParent($this));
         if ($child->getActive()) {
             $this->setActive();
         }
+
         return $this;
     }
 
