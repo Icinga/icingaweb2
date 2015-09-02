@@ -4,9 +4,11 @@
 namespace Icinga\Web\Navigation;
 
 use Countable;
+use Exception;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Icinga\Application\Icinga;
+use Icinga\Exception\IcingaException;
 use Icinga\Web\View;
 use Icinga\Web\Url;
 
@@ -451,18 +453,20 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Render the navigation item to HTML
+     * Return this item rendered to HTML
      *
-     * @return string
+     * @return  string
      */
     public function render()
     {
         $view = $this->getView();
+
         $label = $view->escape($this->getLabel());
-        if (null !== $icon = $this->getIcon()) {
+        if (($icon = $this->getIcon()) !== null) {
             $label = $view->icon($icon) . $label;
         }
-        if (null !== $url = $this->getUrl()) {
+
+        if (($url = $this->getUrl()) !== null) {
             $content = sprintf(
                 '<a%s href="%s">%s</a>',
                 $view->propertiesToString($this->getAttributes()),
@@ -477,16 +481,21 @@ class NavigationItem implements Countable, IteratorAggregate
                 $label
             );
         }
+
         return $content;
     }
 
     /**
-     * Render the navigation item to HTML
+     * Return this item rendered to HTML
      *
-     * @return string
+     * @return  string
      */
     public function __toString()
     {
-        return $this->render();
+        try {
+            return $this->render();
+        } catch (Exception $e) {
+            return IcingaException::describe($e);
+        }
     }
 }
