@@ -8,6 +8,7 @@ use ArrayIterator;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
+use Icinga\Authentication\Auth;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
@@ -209,23 +210,36 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     /**
      * Add a navigation item
      *
-     * @param   NavigationItem|array    $item   The item to append
+     * If you do not pass an instance of NavigationItem, this will only add the item
+     * if it does not require a permission or the current user has the permission.
      *
-     * @return  $this
-     * @throws  InvalidArgumentException        If the item argument is invalid
+     * @param   string|NavigationItem   $name       The name of the item or an instance of NavigationItem
+     * @param   array                   $properties The properties of the item to add (Ignored if $name is not a string)
+     *
+     * @return  bool                                Whether the item was added or not
+     *
+     * @throws  InvalidArgumentException            In case $name is neither a string nor an instance of NavigationItem
      */
-    public function addItem(NavigationItem $item)
+    public function addItem($name, array $properties = array())
     {
-        if (! $item instanceof NavigationItem) {
-            if (! is_array($item)) {
-                throw new InvalidArgumentException(
-                    'Argument item must be either an array or an instance of NavigationItem'
-                );
+        if (is_string($name)) {
+            if (isset($properties['permission'])) {
+                if (! Auth::getInstance()->hasPermission($properties['permission'])) {
+                    return false;
+                }
+
+                unset($properties['permission']);
             }
-            $item = new NavigationItem($item);
+
+            $item = $this->createItem($name, $properties);
+        } elseif (! $name instanceof NavigationItem) {
+            throw new InvalidArgumentException('Argument $name must be of type string or NavigationItem');
+        } else {
+            $item = $name;
         }
+
         $this->items[] = $item;
-        return $this;
+        return true;
     }
 
     /**
