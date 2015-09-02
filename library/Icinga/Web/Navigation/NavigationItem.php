@@ -14,13 +14,11 @@ use Icinga\Web\Url;
 
 /**
  * A navigation item
- *
- * @see \Icinga\Web\Navigation\Navigation For a usage example.
  */
 class NavigationItem implements Countable, IteratorAggregate
 {
     /**
-     * Alternative markup element if the navigation item has no URL
+     * Alternative markup element for items without a url
      *
      * @var string
      */
@@ -48,9 +46,9 @@ class NavigationItem implements Countable, IteratorAggregate
     protected $children;
 
     /**
-     * Icon
+     * This item's icon
      *
-     * @var string|null
+     * @var string
      */
     protected $icon;
 
@@ -254,7 +252,7 @@ class NavigationItem implements Countable, IteratorAggregate
      */
     public function hasChildren()
     {
-        return ! $this->getChildren()->isEmpty();
+        return !$this->getChildren()->isEmpty();
     }
 
     /**
@@ -281,9 +279,9 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Get the icon
+     * Return this item's icon
      *
-     * @return string|null
+     * @return  string
      */
     public function getIcon()
     {
@@ -291,7 +289,7 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Set the icon
+     * Set this item's icon
      *
      * @param   string  $icon
      *
@@ -299,7 +297,7 @@ class NavigationItem implements Countable, IteratorAggregate
      */
     public function setIcon($icon)
     {
-        $this->icon = (string) $icon;
+        $this->icon = $icon;
         return $this;
     }
 
