@@ -244,9 +244,9 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Get the item's children
+     * Return this item's children
      *
-     * @return Navigation
+     * @return  Navigation
      */
     public function getChildren()
     {
@@ -264,7 +264,7 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Set children
+     * Set this item's children
      *
      * @param   array|Navigation  $children
      *
@@ -276,6 +276,10 @@ class NavigationItem implements Countable, IteratorAggregate
             $children = Navigation::fromArray($children);
         } elseif (! $children instanceof Navigation) {
             throw new InvalidArgumentException('Argument $children must be of type array or Navigation');
+        }
+
+        foreach ($children as $item) {
+            $item->setParent($this);
         }
 
         $this->children = $children;
