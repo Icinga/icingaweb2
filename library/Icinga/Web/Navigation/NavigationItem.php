@@ -27,11 +27,11 @@ class NavigationItem implements Countable, IteratorAggregate
     const LINK_ALTERNATIVE = 'span';
 
     /**
-     * Whether the item is active
+     * Whether this item is active
      *
      * @var bool
      */
-    protected $active = false;
+    protected $active;
 
     /**
      * The attributes of this item's element
@@ -139,19 +139,19 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Get whether the item is active
+     * Return whether this item is active
      *
-     * @return bool
+     * @return  bool
      */
     public function getActive()
     {
-        return $this->active;
+        return $this->active ?: false;
     }
 
     /**
-     * Set whether the item is active
+     * Set whether this item is active
      *
-     * Bubbles active state.
+     * If it's active and has a parent, the parent gets activated as well.
      *
      * @param   bool    $active
      *
@@ -160,10 +160,10 @@ class NavigationItem implements Countable, IteratorAggregate
     public function setActive($active = true)
     {
         $this->active = (bool) $active;
-        $parent = $this;
-        while (($parent = $parent->parent) !== null) {
-            $parent->setActive($active);
+        if ($this->active && $this->getParent() !== null) {
+            $this->getParent()->setActive();
         }
+
         return $this;
     }
 
