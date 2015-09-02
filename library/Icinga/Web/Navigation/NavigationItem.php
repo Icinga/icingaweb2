@@ -62,9 +62,9 @@ class NavigationItem implements Countable, IteratorAggregate
     protected $name;
 
     /**
-     * Label
+     * This item's label
      *
-     * @var string|null
+     * @var string
      */
     protected $label;
 
@@ -327,17 +327,17 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Get the label
+     * Return this item's label
      *
-     * @return string|null
+     * @return  string
      */
     public function getLabel()
     {
-        return $this->label;
+        return $this->label ?: $this->getName();
     }
 
     /**
-     * Set the label
+     * Set this item's label
      *
      * @param   string  $label
      *
@@ -345,7 +345,7 @@ class NavigationItem implements Countable, IteratorAggregate
      */
     public function setLabel($label)
     {
-        $this->label = (string) $label;
+        $this->label = $label;
         return $this;
     }
 
