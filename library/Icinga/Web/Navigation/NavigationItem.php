@@ -41,7 +41,7 @@ class NavigationItem implements Countable, IteratorAggregate
     protected $attributes = array();
 
     /**
-     * Item's children
+     * This item's children
      *
      * @var Navigation
      */
@@ -105,16 +105,17 @@ class NavigationItem implements Countable, IteratorAggregate
     public function __construct($name, array $properties = null)
     {
         $this->setName($name);
+        $this->children = new Navigation();
+
         if (! empty($properties)) {
             $this->setProperties($properties);
         }
 
-        $this->children = new Navigation();
         $this->init();
     }
 
     /**
-     * Initialize the navigation item
+     * Initialize this NavigationItem
      */
     public function init()
     {
@@ -126,7 +127,7 @@ class NavigationItem implements Countable, IteratorAggregate
      */
     public function count()
     {
-        return $this->children->count();
+        return $this->getChildren()->count();
     }
 
     /**
@@ -134,7 +135,7 @@ class NavigationItem implements Countable, IteratorAggregate
      */
     public function getIterator()
     {
-        return $this->children;
+        return $this->getChildren();
     }
 
     /**
@@ -253,13 +254,13 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Get whether the item has children
+     * Return whether this item has any children
      *
-     * @return bool
+     * @return  bool
      */
     public function hasChildren()
     {
-        return ! $this->children->isEmpty();
+        return ! $this->getChildren()->isEmpty();
     }
 
     /**
