@@ -227,16 +227,6 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
-     * Get whether the navigation has items
-     *
-     * @return bool
-     */
-    public function hasItems()
-    {
-        return ! empty($this->items);
-    }
-
-    /**
      * Return whether this navigation is empty
      *
      * @return  bool
