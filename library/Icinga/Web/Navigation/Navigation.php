@@ -9,9 +9,11 @@ use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Icinga\Authentication\Auth;
+use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Util\String;
 
@@ -319,6 +321,40 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     public function getRenderer()
     {
         return new RecursiveNavigationRenderer($this);
+    }
+
+    /**
+     * Create and return a new set of navigation items for the given configuration
+     *
+     * @param   Config  $config
+     *
+     * @return  Navigation
+     *
+     * @throws  ConfigurationError  In case a referenced parent does not exist
+     */
+    public static function fromConfig(Config $config)
+    {
+        $flattened = $topLevel = array();
+        foreach ($config as $sectionName => $sectionConfig) {
+            if (! $sectionConfig->parent) {
+                $topLevel[$sectionName] = $sectionConfig->toArray();
+                $flattened[$sectionName] = & $topLevel[$sectionName];
+            } elseif (isset($flattened[$sectionConfig->parent])) {
+                $flattened[$sectionConfig->parent]['children'][$sectionName] = $sectionConfig->toArray();
+                $flattened[$sectionName] = & $flattened[$sectionConfig->parent]['children'][$sectionName];
+            } else {
+                throw new ConfigurationError(
+                    t(
+                        'Failed to add navigation item "%s". Parent "%s" not found. Make'
+                        . ' sure that the parent is defined prior to its child(s).'
+                    ),
+                    $sectionName,
+                    $sectionConfig->parent
+                );
+            }
+        }
+
+        return static::fromArray($topLevel);
     }
 
     /**
