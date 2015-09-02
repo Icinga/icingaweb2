@@ -34,11 +34,11 @@ class NavigationItem implements Countable, IteratorAggregate
     protected $active = false;
 
     /**
-     * Attributes of the item's element
+     * The attributes of this item's element
      *
      * @var array
      */
-    protected $attributes = array();
+    protected $attributes;
 
     /**
      * This item's children
@@ -168,49 +168,45 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Get an attribute's value of the item's element
+     * Return the value of the given element attribute
      *
-     * @param   string      $name       Name of the attribute
-     * @param   mixed       $default    Default value
+     * @param   string  $name
+     * @param   mixed   $default
      *
      * @return  mixed
      */
     public function getAttribute($name, $default = null)
     {
-        $name = (string) $name;
-        if (array_key_exists($name, $this->attributes)) {
-            return $this->attributes[$name];
-        }
-        return $default;
+        $attributes = $this->getAttributes();
+        return array_key_exists($name, $attributes) ? $attributes[$name] : $default;
     }
 
     /**
-     * Set an attribute of the item's element
+     * Set the value of the given element attribute
      *
-     * @param   string  $name   Name of the attribute
-     * @param   mixed   $value  Value of the attribute
+     * @param   string  $name
+     * @param   mixed   $value
      *
      * @return  $this
      */
     public function setAttribute($name, $value)
     {
-        $name = (string) $name;
         $this->attributes[$name] = $value;
         return $this;
     }
 
     /**
-     * Get the item's attributes
+     * Return the attributes of this item's element
      *
-     * @return array
+     * @return  array
      */
     public function getAttributes()
     {
-        return $this->attributes;
+        return $this->attributes ?: array();
     }
 
     /**
-     * Set the item's attributes
+     * Set the attributes of this item's element
      *
      * @param   array   $attributes
      *
@@ -218,9 +214,7 @@ class NavigationItem implements Countable, IteratorAggregate
      */
     public function setAttributes(array $attributes)
     {
-        foreach ($attributes as $name => $value) {
-            $this->setAttribute($name, $value);
-        }
+        $this->attributes = $attributes;
         return $this;
     }
 
