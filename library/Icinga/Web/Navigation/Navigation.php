@@ -270,6 +270,24 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
+     * Merge this navigation with the given one
+     *
+     * Any duplicate items of this navigation will be overwritten by the given navigation's items.
+     *
+     * @param   Navigation  $navigation
+     *
+     * @return  $this
+     */
+    public function merge(Navigation $navigation)
+    {
+        foreach ($navigation as $item) {
+            $this->addItem($item);
+        }
+
+        return $this;
+    }
+
+    /**
      * Create and return a new set of navigation items for the given configuration
      *
      * @param   Config  $config
