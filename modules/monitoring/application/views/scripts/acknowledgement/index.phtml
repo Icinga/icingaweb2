@@ -9,7 +9,7 @@ use Icinga\Module\Monitoring\Object\Host;
   <div class="dontprint">
      <?= $this->render('list/components/selectioninfo.phtml'); ?>
   </div>
-    <h1><?= $this->translate('Acknowledgements') ?></h1>
+    <h1><?= count($acknowledgements) ?> <?= $this->translate('Acknowledgements') ?></h1>
     <?= $this->sortBox; ?>
     <?= $this->limiter; ?>
     <?= $this->paginator; ?>

@@ -18,7 +18,6 @@ class AcknowledgementQuery extends IdoQuery
             'acknowledgement_id'   => 'a.acknowledgement_id',
             'instance_id'          => 'a.instance_id',
             'entry_time'           => 'UNIX_TIMESTAMP(a.entry_time)',
-            'acknowledgement_type' => 'IF (a.acknowledgement_type = 0, \'host\', \'service\')',
             'object_id'            => 'a.object_id',
             'state'                => 'a.state',
             'author_name'          => 'a.author_name',
@@ -31,9 +30,9 @@ class AcknowledgementQuery extends IdoQuery
             'endpoint_object_id'   => 'a.endpoint_object_id'
         ),
         'objects' => array(
-            'acknowledgement_is_service' => 'IF (o.objecttype_id = 2, 1, 0)',
-            'host'                 => 'o.name1',
-            'service'              => 'o.name2'
+            'acknowledgement_is_service' => '(CASE WHEN o.objecttype_id = 2 THEN 1 ELSE 0 END)',
+            'host'                       => 'o.name1',
+            'service'                    => 'o.name2'
         )
     );
 
@@ -67,8 +66,8 @@ class AcknowledgementQuery extends IdoQuery
         $this->select->join(
             array('a' => $ackTable),
             'o.object_id = a.object_id ' .
-            'AND ((o.objecttype_id = 2 AND ss.problem_has_been_acknowledged AND ss.acknowledgement_type = 2) ' .
-            '  OR (o.objecttype_id = 1 AND hs.problem_has_been_acknowledged AND hs.acknowledgement_type = 2)) ' .
+            'AND ((o.objecttype_id = 2 AND ss.problem_has_been_acknowledged = 1 AND ss.acknowledgement_type = 2) ' .
+            '  OR (o.objecttype_id = 1 AND hs.problem_has_been_acknowledged = 1 AND hs.acknowledgement_type = 2)) ' .
             'AND o.is_active = 1 AND a.acknowledgement_id = ' . $subQuery,
             array()
         );

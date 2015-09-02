@@ -17,7 +17,6 @@ class Acknowledgement extends DataView
             'acknowledgement_id',
             'instance_id',
             'entry_time',
-            'acknowledgement_type',
             'object_id',
             'state',
             'author_name',
@@ -39,7 +38,6 @@ class Acknowledgement extends DataView
         return array(
             'acknowledgement_id',
             'entry_time',
-            'acknowledgement_type',
             'state',
             'author_name',
             'comment_data',

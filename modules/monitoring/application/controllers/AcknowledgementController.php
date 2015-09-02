@@ -31,7 +31,6 @@ class Monitoring_AcknowledgementController extends Controller
                 'acknowledgement_id',
                 'instance_id',
                 'entry_time',
-                'acknowledgement_type',
                 'object_id',
                 'state',
                 'author_name',
