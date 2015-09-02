@@ -69,11 +69,11 @@ class NavigationItem implements Countable, IteratorAggregate
     protected $label;
 
     /**
-     * Parent
+     * This item's parent
      *
-     * @var NavigationItem|null
+     * @var NavigationItem
      */
-    private $parent;
+    protected $parent;
 
     /**
      * URL
@@ -324,6 +324,29 @@ class NavigationItem implements Countable, IteratorAggregate
     {
         $this->name = $name;
         return $this;
+    }
+
+    /**
+     * Set this item's parent
+     *
+     * @param   NavigationItem  $parent
+     *
+     * @return  $this
+     */
+    public function setParent(NavigationItem $parent)
+    {
+        $this->parent = $parent;
+        return $this;
+    }
+
+    /**
+     * Return this item's parent
+     *
+     * @return  NavigationItem
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
 
     /**
