@@ -76,18 +76,18 @@ class NavigationItem implements Countable, IteratorAggregate
     protected $parent;
 
     /**
-     * URL
+     * This item's url
      *
-     * @var Url|null
+     * @var Url
      */
     protected $url;
 
     /**
-     * URL parameters
+     * Additional parameters for this item's url
      *
      * @var array
      */
-    protected $urlParameters = array();
+    protected $urlParameters;
 
     /**
      * View
@@ -373,43 +373,48 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Get the URL
+     * Return this item's url
      *
-     * @return Url|null
+     * @return  Url
      */
     public function getUrl()
     {
-        if ($this->url !== null && ! $this->url instanceof Url) {
-            $this->url = Url::fromPath((string) $this->url);
-        }
         return $this->url;
     }
 
     /**
-     * Set the URL
+     * Set this item's url
      *
-     * @param   Url|string $url
+     * @param   Url|string  $url
      *
      * @return  $this
+     *
+     * @throws  InvalidArgumentException    If the given url is neither of type
      */
     public function setUrl($url)
     {
+        if (is_string($url)) {
+            $url = Url::fromPath($url);
+        } elseif (! $url instanceof Url) {
+            throw new InvalidArgumentException('Argument $url must be of type string or Url');
+        }
+
         $this->url = $url;
         return $this;
     }
 
     /**
-     * Get the URL parameters
+     * Return all additional parameters for this item's url
      *
-     * @return array
+     * @return  array
      */
     public function getUrlParameters()
     {
-        return $this->urlParameters;
+        return $this->urlParameters ?: array();
     }
 
     /**
-     * Set the URL parameters
+     * Set additional parameters for this item's url
      *
      * @param   array   $urlParameters
      *
