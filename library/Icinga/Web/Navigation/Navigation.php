@@ -320,5 +320,22 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     {
         return new RecursiveNavigationRenderer($this);
     }
+
+    /**
+     * Create and return a new set of navigation items for the given array
+     *
+     * @param   array   $array
+     *
+     * @return  Navigation
+     */
+    public static function fromArray(array $array)
+    {
+        $navigation = new static();
+        foreach ($array as $name => $properties) {
+            $navigation->addItem($name, $properties);
+        }
+
+        return $navigation;
+    }
 }
 
