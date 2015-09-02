@@ -300,12 +300,15 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     {
         $flattened = $topLevel = array();
         foreach ($config as $sectionName => $sectionConfig) {
-            if (! $sectionConfig->parent) {
+            $parentName = $sectionConfig->parent;
+            unset($sectionConfig->parent);
+
+            if (! $parentName) {
                 $topLevel[$sectionName] = $sectionConfig->toArray();
                 $flattened[$sectionName] = & $topLevel[$sectionName];
-            } elseif (isset($flattened[$sectionConfig->parent])) {
-                $flattened[$sectionConfig->parent]['children'][$sectionName] = $sectionConfig->toArray();
-                $flattened[$sectionName] = & $flattened[$sectionConfig->parent]['children'][$sectionName];
+            } elseif (isset($flattened[$parentName])) {
+                $flattened[$parentName]['children'][$sectionName] = $sectionConfig->toArray();
+                $flattened[$sectionName] = & $flattened[$parentName]['children'][$sectionName];
             } else {
                 throw new ConfigurationError(
                     t(
@@ -313,7 +316,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
                         . ' sure that the parent is defined prior to its child(s).'
                     ),
                     $sectionName,
-                    $sectionConfig->parent
+                    $parentName
                 );
             }
         }
