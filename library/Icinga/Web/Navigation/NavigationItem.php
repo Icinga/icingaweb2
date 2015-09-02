@@ -425,13 +425,13 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Set properties for the item
+     * Set this item's properties
      *
      * @param   array   $properties
      *
      * @return  $this
      */
-    public function setProperties(array $properties = array())
+    public function setProperties(array $properties)
     {
         foreach ($properties as $name => $value) {
             $setter = 'set' . ucfirst($name);
@@ -439,6 +439,7 @@ class NavigationItem implements Countable, IteratorAggregate
                 $this->$setter($value);
             }
         }
+
         return $this;
     }
 
