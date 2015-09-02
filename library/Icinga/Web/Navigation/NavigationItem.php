@@ -269,12 +269,18 @@ class NavigationItem implements Countable, IteratorAggregate
     /**
      * Set children
      *
-     * @param   Navigation  $children
+     * @param   array|Navigation  $children
      *
      * @return  $this
      */
-    public function setChildren(Navigation $children)
+    public function setChildren($children)
     {
+        if (is_array($children)) {
+            $children = Navigation::fromArray($children);
+        } elseif (! $children instanceof Navigation) {
+            throw new InvalidArgumentException('Argument $children must be of type array or Navigation');
+        }
+
         $this->children = $children;
         return $this;
     }
