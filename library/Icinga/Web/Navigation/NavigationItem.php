@@ -92,7 +92,7 @@ class NavigationItem implements Countable, IteratorAggregate
     /**
      * View
      *
-     * @var View|null
+     * @var View
      */
     protected $view;
 
@@ -422,15 +422,16 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Get the view
+     * Return the view
      *
-     * @return View
+     * @return  View
      */
     public function getView()
     {
         if ($this->view === null) {
-            $this->view = Icinga::app()->getViewRenderer()->view;
+            $this->setView(Icinga::app()->getViewRenderer()->view);
         }
+
         return $this->view;
     }
 
