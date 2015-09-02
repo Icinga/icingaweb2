@@ -53,11 +53,11 @@ class NavigationItem implements Countable, IteratorAggregate
     protected $icon;
 
     /**
-     * Item's ID
+     * This item's name
      *
-     * @var mixed
+     * @var string
      */
-    protected $id;
+    protected $name;
 
     /**
      * Label
@@ -95,15 +95,18 @@ class NavigationItem implements Countable, IteratorAggregate
     protected $view;
 
     /**
-     * Create a new navigation item
+     * Create a new NavigationItem
      *
-     * @param array $properties
+     * @param   string  $name
+     * @param   array   $properties
      */
-    public function __construct(array $properties = array())
+    public function __construct($name, array $properties = null)
     {
+        $this->setName($name);
         if (! empty($properties)) {
             $this->setProperties($properties);
         }
+
         $this->children = new Navigation();
         $this->init();
     }
@@ -309,25 +312,25 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Get the item's ID
+     * Return this item's name
      *
-     * @return mixed
+     * @return  string
      */
-    public function getId()
+    public function getName()
     {
-        return $this->id;
+        return $this->name;
     }
 
     /**
-     * Set the item's ID
+     * Set this item's name
      *
-     * @param   mixed   $id ID of the item
+     * @param   string  $name
      *
      * @return  $this
      */
-    public function setId($id)
+    public function setName($name)
     {
-        $this->id = $id;
+        $this->name = $name;
         return $this;
     }
 

@@ -8,10 +8,10 @@ use ArrayIterator;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
-use Icinga\Authentication\Auth;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Authentication\Auth;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
@@ -19,47 +19,6 @@ use Icinga\Util\String;
 
 /**
  * Container for navigation items
- *
- * Usage example:
- * <code>
- * <?php
- *
- * namespace Icinga\Example;
- *
- * use Icinga\Web\Navigation\DropdownItem;
- * use Icinga\Web\Navigation\Navigation;
- * use Icinga\Web\Navigation\NavigationItem;
- *
- * $navigation = new Navigation();
- * $navigation->setLayout(Navigation::LAYOUT_TABS);
- * $home = new NavigationItem();
- * $home
- *     ->setIcon('home')
- *     ->setLabel('Home');
- *     ->setUrl('/home');
- * $logout = new NavigationItem();
- * $logout
- *     ->setIcon('logout')
- *     ->setLabel('Logout')
- *     ->setUrl('/logout');
- * $dropdown = new DropdownItem();
- * $dropdown
- *     ->setIcon('user')
- *     ->setLabel('Preferences');
- * $preferences = new NavigationItem();
- * $preferences
- *     ->setIcon('preferences');
- *     ->setLabel('preferences')
- *     ->setUrl('/preferences');
- * $dropdown->addChild($preferences);
- * $navigation
- *     ->addItem($home)
- *     ->addItem($logout);
- *     ->addItem($dropdown);
- * echo $navigation
- *     ->getRenderer()
- *     ->setCssClass('example-nav')
- *     ->render();
  */
 class Navigation implements ArrayAccess, Countable, IteratorAggregate
 {
@@ -92,14 +51,14 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     protected static $types;
 
     /**
-     * Navigation items
+     * This navigation's items
      *
      * @var NavigationItem[]
      */
     protected $items = array();
 
     /**
-     * Navigation layout
+     * This navigation's layout
      *
      * @var int
      */
@@ -240,30 +199,27 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
             $item = $name;
         }
 
-        $this->items[] = $item;
+        $this->items[$item->getName()] = $item;
         return true;
     }
 
     /**
-     * Get the item with the given ID
+     * Return the item with the given name
      *
-     * @param   mixed   $id
+     * @param   string  $name
      * @param   mixed   $default
      *
      * @return  NavigationItem|mixed
      */
-    public function getItem($id, $default = null)
+    public function getItem($name, $default = null)
     {
-        if (isset($this->items[$id])) {
-            return $this->items[$id];
-        }
-        return $default;
+        return isset($this->items[$name]) ? $this->items[$name] : $default;
     }
 
     /**
-     * Get the items
+     * Return this navigation's items
      *
-     * @return array
+     * @return  array
      */
     public function getItems()
     {
@@ -281,9 +237,9 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
-     * Get whether the navigation is empty
+     * Return whether this navigation is empty
      *
-     * @return bool
+     * @return  bool
      */
     public function isEmpty()
     {
@@ -291,9 +247,9 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
-     * Get the layout
+     * Return this navigation's layout
      *
-     * @return int
+     * @return  int
      */
     public function getLayout()
     {
@@ -301,9 +257,9 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
-     * Set the layout
+     * Set this navigation's layout
      *
-     * @param   int $layout
+     * @param   int     $layout
      *
      * @return  $this
      */
@@ -314,9 +270,9 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
-     * Get the navigation renderer
+     * Create and return the renderer for this navigation
      *
-     * @return RecursiveNavigationRenderer
+     * @return  RecursiveNavigationRenderer
      */
     public function getRenderer()
     {
