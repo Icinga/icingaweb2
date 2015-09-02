@@ -98,7 +98,7 @@ use Icinga\Module\Monitoring\Object\Host;
     </tbody>
   </table>
 
-  <?php if (! $acknowledgements): ?>
+  <?php if (! count($acknowledgements)): ?>
     <?= $this->translate('No comments found matching the filter'); ?>
    <?php endif ?>
 </div>
