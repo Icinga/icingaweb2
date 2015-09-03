@@ -646,7 +646,7 @@ class LdapConnection implements Selectable, Inspectable
 
         $ds = $this->getConnection();
 
-        $serverSorting = false;//$this->capabilities->hasOid(Capability::LDAP_SERVER_SORT_OID);
+        $serverSorting = $this->capabilities->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
         if ($serverSorting && $query->hasOrder()) {
             ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
                 array(
@@ -741,7 +741,7 @@ class LdapConnection implements Selectable, Inspectable
 
         $ds = $this->getConnection();
 
-        $serverSorting = false;//$this->capabilities->hasOid(Capability::LDAP_SERVER_SORT_OID);
+        $serverSorting = $this->capabilities->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
         if ($serverSorting && $query->hasOrder()) {
             ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
                 array(
