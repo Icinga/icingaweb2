@@ -9,7 +9,7 @@ use IteratorAggregate;
 use Icinga\Application\Icinga;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Web\View;
+use Icinga\Web\Navigation\Renderer\NavigationItemRenderer;
 use Icinga\Web\Url;
 
 /**
@@ -23,6 +23,11 @@ class NavigationItem implements IteratorAggregate
      * @var string
      */
     const LINK_ALTERNATIVE = 'span';
+
+    /**
+     * The class namespace where to locate navigation type renderer classes
+     */
+    const RENDERER_NS = 'Web\\Navigation\\Renderer';
 
     /**
      * Whether this item is active
@@ -97,11 +102,11 @@ class NavigationItem implements IteratorAggregate
     protected $urlParameters;
 
     /**
-     * View
+     * This item's renderer
      *
-     * @var View
+     * @var NavigationItemRenderer
      */
-    protected $view;
+    protected $renderer;
 
     /**
      * Create a new NavigationItem
@@ -501,33 +506,6 @@ class NavigationItem implements IteratorAggregate
     }
 
     /**
-     * Return the view
-     *
-     * @return  View
-     */
-    public function view()
-    {
-        if ($this->view === null) {
-            $this->setView(Icinga::app()->getViewRenderer()->view);
-        }
-
-        return $this->view;
-    }
-
-    /**
-     * Set the view
-     *
-     * @param   View    $view
-     *
-     * @return  $this
-     */
-    public function setView(View $view)
-    {
-        $this->view = $view;
-        return $this;
-    }
-
-    /**
      * Set this item's properties
      *
      * @param   array   $properties
@@ -601,34 +579,86 @@ class NavigationItem implements IteratorAggregate
     }
 
     /**
+     * Create and return the given renderer
+     *
+     * @param   string  $name
+     *
+     * @return  NavigationItemRenderer
+     */
+    protected function createRenderer($name)
+    {
+        $renderer = null;
+        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
+            $classPath = 'Icinga\\Module\\' . $module->getName() . '\\' . static::RENDERER_NS . '\\' . $name;
+            if (class_exists($classPath)) {
+                $renderer = new $classPath();
+                break;
+            }
+        }
+
+        if ($renderer === null) {
+            $classPath = 'Icinga\\' . static::RENDERER_NS . '\\' . $name;
+            if (class_exists($classPath)) {
+                $renderer = new $classPath();
+            }
+        }
+
+        if ($renderer === null) {
+            throw new ProgrammingError(
+                'Cannot find renderer "%s" for navigation item "%s"',
+                $name,
+                $this->getName()
+            );
+        } elseif (! $renderer instanceof NavigationItemRenderer) {
+            throw new ProgrammingError('Class %s must inherit from NavigationItemRenderer', $classPath);
+        }
+
+        return $renderer;
+    }
+
+    /**
+     * Set this item's renderer
+     *
+     * @param   string|NavigationItemRenderer   $renderer
+     *
+     * @return  $this
+     *
+     * @throws  InvalidArgumentException    If the $renderer argument is neither a string nor a NavigationItemRenderer
+     */
+    public function setRenderer($renderer)
+    {
+        if (is_string($renderer)) {
+            $renderer = $this->createRenderer($renderer);
+        } elseif (! $renderer instanceof NavigationItemRenderer) {
+            throw new InvalidArgumentException('Argument $renderer must be of type string or NavigationItemRenderer');
+        }
+
+        $this->renderer = $renderer;
+        return $this;
+    }
+
+    /**
+     * Return this item's renderer
+     *
+     * @return  NavigationItemRenderer
+     */
+    public function getRenderer()
+    {
+        if ($this->renderer === null) {
+            $this->setRenderer('NavigationItemRenderer');
+        }
+
+        return $this->renderer;
+    }
+
+    /**
      * Return this item rendered to HTML
      *
      * @return  string
      */
     public function render()
     {
-        $label = $this->view()->escape($this->getLabel());
-        if (($icon = $this->getIcon()) !== null) {
-            $label = $this->view()->icon($icon) . $label;
-        }
-
-        if (($url = $this->getUrl()) !== null) {
-            $content = sprintf(
-                '<a%s href="%s">%s</a>',
-                $this->view()->propertiesToString($this->getAttributes()),
-                $this->view()->url($url, $this->getUrlParameters()),
-                $label
-            );
-        } else {
-            $content = sprintf(
-                '<%1$s%2$s>%3$s</%1$s>',
-                static::LINK_ALTERNATIVE,
-                $this->view()->propertiesToString($this->getAttributes()),
-                $label
-            );
-        }
-
-        return $content;
+        $this->getRenderer()->render($this);
     }
 
     /**
