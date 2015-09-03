@@ -550,6 +550,7 @@ abstract class MonitoredObject implements Filterable
         if (empty($urlString)) {
             return array();
         }
+        $links = array();
         if (strpos($urlString, "' ") === false) {
             $links[] = $urlString;
         } else {
