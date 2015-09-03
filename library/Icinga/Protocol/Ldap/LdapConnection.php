@@ -538,9 +538,9 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function hasDn($dn)
     {
+        $ds = $this->getConnection();
         $this->bind();
 
-        $ds = $this->getConnection();
         $result = ldap_read($ds, $dn, '(objectClass=*)', array('objectClass'));
         return ldap_count_entries($ds, $result) > 0;
     }
@@ -556,9 +556,9 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function deleteRecursively($dn)
     {
+        $ds = $this->getConnection();
         $this->bind();
 
-        $ds = $this->getConnection();
         $result = @ldap_list($ds, $dn, '(objectClass=*)', array('objectClass'));
         if ($result === false) {
             if (ldap_errno($ds) === self::LDAP_NO_SUCH_OBJECT) {
@@ -591,9 +591,9 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function deleteDn($dn)
     {
+        $ds = $this->getConnection();
         $this->bind();
 
-        $ds = $this->getConnection();
         $result = @ldap_delete($ds, $dn);
         if ($result === false) {
             if (ldap_errno($ds) === self::LDAP_NO_SUCH_OBJECT) {
