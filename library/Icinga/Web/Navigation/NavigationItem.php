@@ -425,6 +425,34 @@ class NavigationItem implements IteratorAggregate
     }
 
     /**
+     * Return the value of the given url parameter
+     *
+     * @param   string  $name
+     * @param   mixed   $default
+     *
+     * @return  mixed
+     */
+    public function getUrlParameter($name, $default = null)
+    {
+        $parameters = $this->getUrlParameters();
+        return isset($parameters[$name]) ? $parameters[$name] : $default;
+    }
+
+    /**
+     * Set the value of the given url parameter
+     *
+     * @param   string  $name
+     * @param   mixed   $value
+     *
+     * @return  $this
+     */
+    public function setUrlParameter($name, $value)
+    {
+        $this->urlParameters[$name] = $value;
+        return $this;
+    }
+
+    /**
      * Return all additional parameters for this item's url
      *
      * @return  array
