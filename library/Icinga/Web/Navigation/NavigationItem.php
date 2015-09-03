@@ -505,7 +505,7 @@ class NavigationItem implements IteratorAggregate
      *
      * @return  View
      */
-    public function getView()
+    public function view()
     {
         if ($this->view === null) {
             $this->setView(Icinga::app()->getViewRenderer()->view);
@@ -607,25 +607,23 @@ class NavigationItem implements IteratorAggregate
      */
     public function render()
     {
-        $view = $this->getView();
-
-        $label = $view->escape($this->getLabel());
+        $label = $this->view()->escape($this->getLabel());
         if (($icon = $this->getIcon()) !== null) {
-            $label = $view->icon($icon) . $label;
+            $label = $this->view()->icon($icon) . $label;
         }
 
         if (($url = $this->getUrl()) !== null) {
             $content = sprintf(
                 '<a%s href="%s">%s</a>',
-                $view->propertiesToString($this->getAttributes()),
-                $view->url($url, $this->getUrlParameters()),
+                $this->view()->propertiesToString($this->getAttributes()),
+                $this->view()->url($url, $this->getUrlParameters()),
                 $label
             );
         } else {
             $content = sprintf(
                 '<%1$s%2$s>%3$s</%1$s>',
                 static::LINK_ALTERNATIVE,
-                $view->propertiesToString($this->getAttributes()),
+                $this->view()->propertiesToString($this->getAttributes()),
                 $label
             );
         }
