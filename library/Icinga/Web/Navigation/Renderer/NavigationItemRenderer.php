@@ -4,6 +4,7 @@
 namespace Icinga\Web\Navigation\Renderer;
 
 use Icinga\Application\Icinga;
+use Icinga\Util\String;
 use Icinga\Web\Navigation\NavigationItem;
 use Icinga\Web\View;
 
@@ -18,6 +19,35 @@ class NavigationItemRenderer
      * @var View
      */
     protected $view;
+
+    /**
+     * Create a new NavigationItemRenderer
+     *
+     * @param   array   $options
+     */
+    public function __construct(array $options = null)
+    {
+        if (! empty($options)) {
+            $this->setOptions($options);
+        }
+    }
+
+    /**
+     * Set the given options
+     *
+     * @param   array   $options
+     *
+     * @return  $this
+     */
+    public function setOptions(array $options)
+    {
+        foreach ($options as $name => $value) {
+            $setter = 'set' . String::cname($name);
+            if (method_exists($this, $setter)) {
+                $this->$setter($value);
+            }
+        }
+    }
 
     /**
      * Return the view

@@ -581,17 +581,24 @@ class NavigationItem implements IteratorAggregate
     /**
      * Create and return the given renderer
      *
-     * @param   string  $name
+     * @param   string|array    $name
      *
      * @return  NavigationItemRenderer
      */
     protected function createRenderer($name)
     {
+        if (is_array($name)) {
+            $options = array_splice($name, 1);
+            $name = $name[0];
+        } else {
+            $options = array();
+        }
+
         $renderer = null;
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
             $classPath = 'Icinga\\Module\\' . $module->getName() . '\\' . static::RENDERER_NS . '\\' . $name;
             if (class_exists($classPath)) {
-                $renderer = new $classPath();
+                $renderer = new $classPath($options);
                 break;
             }
         }
@@ -599,7 +606,7 @@ class NavigationItem implements IteratorAggregate
         if ($renderer === null) {
             $classPath = 'Icinga\\' . static::RENDERER_NS . '\\' . $name;
             if (class_exists($classPath)) {
-                $renderer = new $classPath();
+                $renderer = new $classPath($options);
             }
         }
 
@@ -619,7 +626,7 @@ class NavigationItem implements IteratorAggregate
     /**
      * Set this item's renderer
      *
-     * @param   string|NavigationItemRenderer   $renderer
+     * @param   string|array|NavigationItemRenderer     $renderer
      *
      * @return  $this
      *
@@ -627,10 +634,12 @@ class NavigationItem implements IteratorAggregate
      */
     public function setRenderer($renderer)
     {
-        if (is_string($renderer)) {
+        if (is_string($renderer) || is_array($renderer)) {
             $renderer = $this->createRenderer($renderer);
         } elseif (! $renderer instanceof NavigationItemRenderer) {
-            throw new InvalidArgumentException('Argument $renderer must be of type string or NavigationItemRenderer');
+            throw new InvalidArgumentException(
+                'Argument $renderer must be of type string, array or NavigationItemRenderer'
+            );
         }
 
         $this->renderer = $renderer;
