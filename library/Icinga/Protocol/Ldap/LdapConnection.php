@@ -910,28 +910,29 @@ class LdapConnection implements Selectable, Inspectable
      *
      * @param   array   $sortRules
      *
-     * @return  string
-     * @throws ProgrammingError
-     *
-     * @todo    Produces an invalid stream, obviously
+     * @return  string  Binary representation of the octet stream
      */
     protected function encodeSortRules(array $sortRules)
     {
-        if (count($sortRules) > 127) {
-            throw new ProgrammingError(
-                'Cannot encode more than 127 sort rules. Only length octets in short form are supported'
-            );
-        }
+        // TODO(el): Indefinite form of length octet
+        $sequenceOf = '';
 
-        $seq = '30' . str_pad(dechex(count($sortRules)), 2, '0', STR_PAD_LEFT);
         foreach ($sortRules as $rule) {
-            $hexdAttribute = unpack('H*', $rule[0]);
-            $seq .= '3002'
-                . '04' . str_pad(dechex(strlen($rule[0])), 2, '0', STR_PAD_LEFT) . $hexdAttribute[1]
-                . '0101' . ($rule[1] === Sortable::SORT_DESC ? 'ff' : '00');
-        }
+            $reversed = '0101' . ($rule[1] === Sortable::SORT_DESC ? 'ff' : '00');
 
-        return $seq;
+            $attributeType = unpack('H*', $rule[0]);
+            $attributeType = $attributeType[1];
+            $attributeType = '04' . str_pad(dechex(strlen($attributeType) / 2), 2, '0', STR_PAD_LEFT) . $attributeType;
+            $sequence = '30'
+                . str_pad(dechex(strlen($attributeType . $reversed) / 2), 2, '0', STR_PAD_LEFT)
+                . $attributeType
+                . $reversed;
+            $sequenceOf .= $sequence;
+        }
+        $sequenceOf = '30'
+            . str_pad(dechex(strlen($sequenceOf) / 2), 2, '0', STR_PAD_LEFT)
+            . $sequenceOf;
+        return hex2bin($sequenceOf);
     }
 
     /**
