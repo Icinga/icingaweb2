@@ -109,6 +109,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      */
     public function getIterator()
     {
+        $this->order();
         return new ArrayIterator($this->items);
     }
 
@@ -267,6 +268,40 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     public function getRenderer()
     {
         return new RecursiveNavigationRenderer($this);
+    }
+
+    /**
+     * Order this navigation's items
+     *
+     * @return  $this
+     */
+    public function order()
+    {
+        uasort($this->items, array($this, 'compareItems'));
+        foreach ($this->items as $item) {
+            if ($item->hasChildren()) {
+                $item->getChildren()->order();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return whether the first item is less than, more than or equal to the second one
+     *
+     * @param   NavigationItem  $a
+     * @param   NavigationItem  $b
+     *
+     * @return  int
+     */
+    protected function compareItems(NavigationItem $a, NavigationItem $b)
+    {
+        if ($a->getPriority() === $b->getPriority()) {
+            return strcasecmp($a->getLabel(), $b->getLabel());
+        }
+
+        return $a->getPriority() > $b->getPriority() ? 1 : -1;
     }
 
     /**
