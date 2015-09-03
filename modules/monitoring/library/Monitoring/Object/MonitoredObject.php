@@ -588,7 +588,8 @@ abstract class MonitoredObject implements Filterable
      * Resolve macros in all given strings in the current object context
      *
      * @param   array   $strs   An array of urls as string
-     * @return  type
+     *
+     * @return  array
      */
     protected function resolveAllStrings(array $strs)
     {
