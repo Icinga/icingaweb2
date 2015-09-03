@@ -5,9 +5,9 @@ namespace Icinga\Module\Monitoring\Object;
 
 use InvalidArgumentException;
 use Icinga\Application\Config;
-use Icinga\Exception\InvalidPropertyException;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
+use Icinga\Exception\InvalidPropertyException;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Web\UrlParams;
 
@@ -517,9 +517,11 @@ abstract class MonitoredObject implements Filterable
             ->fetchContactgroups()
             ->fetchCustomvars()
             ->fetchDowntimes();
+
         // Call fetchHostgroups or fetchServicegroups depending on the object's type
         $fetchGroups = 'fetch' . ucfirst($this->type) . 'groups';
         $this->$fetchGroups();
+
         return $this;
     }
 
