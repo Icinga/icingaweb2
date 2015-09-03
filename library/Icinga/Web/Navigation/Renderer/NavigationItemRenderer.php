@@ -21,6 +21,13 @@ class NavigationItemRenderer
     protected $view;
 
     /**
+     * The link target
+     *
+     * @var string
+     */
+    protected $target;
+
+    /**
      * Create a new NavigationItemRenderer
      *
      * @param   array   $options
@@ -50,6 +57,19 @@ class NavigationItemRenderer
     }
 
     /**
+     * Set the view
+     *
+     * @param   View    $view
+     *
+     * @return  $this
+     */
+    public function setView(View $view)
+    {
+        $this->view = $view;
+        return $this;
+    }
+
+    /**
      * Return the view
      *
      * @return  View
@@ -64,16 +84,26 @@ class NavigationItemRenderer
     }
 
     /**
-     * Set the view
+     * Set the link target
      *
-     * @param   View    $view
+     * @param   string  $target
      *
      * @return  $this
      */
-    public function setView(View $view)
+    public function setTarget($target)
     {
-        $this->view = $view;
+        $this->target = $target;
         return $this;
+    }
+
+    /**
+     * Return the link target
+     *
+     * @return  string
+     */
+    public function getTarget()
+    {
+        return $this->target;
     }
 
     /**
@@ -92,9 +122,10 @@ class NavigationItemRenderer
 
         if (($url = $item->getUrl()) !== null) {
             $content = sprintf(
-                '<a%s href="%s">%s</a>',
+                '<a%s href="%s"%s>%s</a>',
                 $this->view()->propertiesToString($item->getAttributes()),
                 $this->view()->url($url, $item->getUrlParameters()),
+                $this->target ? ' target="' . $this->view()->escape($this->target) . '"' : '',
                 $label
             );
         } else {
