@@ -5,6 +5,7 @@ namespace Icinga\Web\Navigation;
 
 use ArrayAccess;
 use ArrayIterator;
+use Exception;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
@@ -14,6 +15,7 @@ use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Util\String;
 
@@ -272,6 +274,16 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
+     * Return this navigation rendered to HTML
+     *
+     * @return  string
+     */
+    public function render()
+    {
+        return $this->getRenderer()->render();
+    }
+
+    /**
      * Order this navigation's items
      *
      * @return  $this
@@ -394,5 +406,18 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
 
         return $navigation;
     }
-}
 
+    /**
+     * Return this navigation rendered to HTML
+     *
+     * @return  string
+     */
+    public function __toString()
+    {
+        try {
+            return $this->render();
+        } catch (Exception $e) {
+            return IcingaException::describe($e);
+        }
+    }
+}
