@@ -32,6 +32,15 @@ class NavigationItem implements Countable, IteratorAggregate
     protected $active;
 
     /**
+     * This item's priority
+     *
+     * The priority defines when the item is rendered in relation to its parent's childs.
+     *
+     * @var int
+     */
+    protected $priority;
+
+    /**
      * The attributes of this item's element
      *
      * @var array
@@ -162,6 +171,29 @@ class NavigationItem implements Countable, IteratorAggregate
             $this->getParent()->setActive();
         }
 
+        return $this;
+    }
+
+    /**
+     * Return this item's priority
+     *
+     * @return  int
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
+     * Set this item's priority
+     *
+     * @param   int     $priority
+     *
+     * @return  $this
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = (int) $priority;
         return $this;
     }
 
