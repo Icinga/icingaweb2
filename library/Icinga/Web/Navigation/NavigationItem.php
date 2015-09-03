@@ -326,6 +326,30 @@ class NavigationItem implements IteratorAggregate
     }
 
     /**
+     * Return this item's name escaped with only ASCII chars and/or digits
+     *
+     * @return  string
+     */
+    protected function getEscapedName()
+    {
+        return preg_replace('~[^a-zA-Z0-9]~', '_', $this->getName());
+    }
+
+    /**
+     * Return a unique version of this item's name
+     *
+     * @return  string
+     */
+    public function getUniqueName()
+    {
+        if ($this->getParent() === null) {
+            return 'navigation-' . $this->getEscapedName();
+        }
+
+        return $this->getParent()->getEscapedName() . '-' . $this->getEscapedName();
+    }
+
+    /**
      * Return this item's name
      *
      * @return  string
