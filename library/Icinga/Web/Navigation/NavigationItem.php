@@ -8,6 +8,7 @@ use InvalidArgumentException;
 use IteratorAggregate;
 use Icinga\Application\Icinga;
 use Icinga\Exception\IcingaException;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Web\View;
 use Icinga\Web\Url;
 
@@ -519,6 +520,60 @@ class NavigationItem implements IteratorAggregate
         }
 
         return $this;
+    }
+
+    /**
+     * Merge this item with the given one
+     *
+     * @param   NavigationItem  $item
+     *
+     * @return  $this
+     */
+    public function merge(NavigationItem $item)
+    {
+        if ($this->conflictsWith($item)) {
+            throw new ProgrammingError('Cannot merge, conflict detected.');
+        }
+
+        if ($item->getActive()) {
+            $this->setActive();
+        }
+
+        if (! $this->getIcon()) {
+            $this->setIcon($item->getIcon());
+        }
+
+        if ($this->getLabel() === $this->getName()) {
+            $this->setLabel($item->getLabel());
+        }
+
+        foreach ($item->getAttributes() as $name => $value) {
+            $this->setAttribute($name, $value);
+        }
+
+        foreach ($item->getUrlParameters() as $name => $value) {
+            $this->setUrlParameter($name, $value);
+        }
+
+        if ($item->hasChildren()) {
+            $this->getChildren()->merge($item->getChildren());
+        }
+    }
+
+    /**
+     * Return whether it's possible to merge this item with the given one
+     *
+     * @param   NavigationItem  $item
+     *
+     * @return  bool
+     */
+    public function conflictsWith(NavigationItem $item)
+    {
+        if ($this->getUrl() === null || $item->getUrl() === null) {
+            return false;
+        }
+
+        return $this->getUrl() !== $item->getUrl();
     }
 
     /**
