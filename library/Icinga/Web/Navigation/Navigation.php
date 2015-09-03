@@ -316,7 +316,25 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     public function merge(Navigation $navigation)
     {
         foreach ($navigation as $item) {
-            $this->addItem($item);
+            /** @var $item NavigationItem */
+            if (($existingItem = $this->getItem($item->getName())) !== null) {
+                if ($existingItem->conflictsWith($item)) {
+                    $name = $item->getName();
+                    do {
+                        if (preg_match('~_(\d+)$~', $name, $matches)) {
+                            $name = preg_replace('~_\d+$~', $matches[1] + 1, $name);
+                        } else {
+                            $name .= '_2';
+                        }
+                    } while ($this->getItem($name) !== null);
+
+                    $this->addItem($item->setName($name));
+                } else {
+                    $existingItem->merge($item);
+                }
+            } else {
+                $this->addItem($item);
+            }
         }
 
         return $this;
