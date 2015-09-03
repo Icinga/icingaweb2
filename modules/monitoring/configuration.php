@@ -180,10 +180,6 @@ $section->add($this->translate('Downtimes'), array(
     'url'      => 'monitoring/list/downtimes',
     'priority' => 80
 ));
-$section->add($this->translate('Acknowledgements'), array(
-    'url'      => 'monitoring/acknowledgement',
-    'priority' => 90
-));
 
 /*
  * History Section
