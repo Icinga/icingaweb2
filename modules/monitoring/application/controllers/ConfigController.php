@@ -34,7 +34,7 @@ class ConfigController extends Controller
      */
     public function editbackendAction()
     {
-        $backendName = $this->params->getRequired('backend');
+        $backendName = $this->params->getRequired('backend-name');
 
         $form = new BackendConfigForm();
         $form->setRedirectUrl('monitoring/config');
@@ -120,7 +120,7 @@ class ConfigController extends Controller
      */
     public function removebackendAction()
     {
-        $backendName = $this->params->getRequired('backend');
+        $backendName = $this->params->getRequired('backend-name');
 
         $backendForm = new BackendConfigForm();
         $backendForm->setIniConfig($this->Config('backends'));

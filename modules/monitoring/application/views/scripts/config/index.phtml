@@ -21,7 +21,7 @@
           <?= $this->qlink(
             $backendName,
             '/monitoring/config/editbackend',
-            array('backend' => $backendName),
+            array('backend-name' => $backendName),
             array(
                 'icon'  => 'edit',
                 'title' => sprintf($this->translate('Edit monitoring backend %s'), $backendName)
@@ -36,7 +36,7 @@
           <?= $this->qlink(
             '',
             '/monitoring/config/removebackend',
-            array('backend' => $backendName),
+            array('backend-name' => $backendName),
             array(
                 'icon'  => 'trash',
                 'title' => sprintf($this->translate('Remove monitoring backend %s'), $backendName)
