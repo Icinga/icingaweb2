@@ -27,6 +27,13 @@ abstract class MonitoredObject implements Filterable
     const TYPE_SERVICE = 'service';
 
     /**
+     * Acknowledgement of the host or service if any
+     *
+     * @var object
+     */
+    protected $acknowledgement;
+
+    /**
      * Backend to fetch object information from
      *
      * @var MonitoringBackend
@@ -224,13 +231,15 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetch()
     {
-        $this->properties = $this->getDataView()->applyFilter($this->getFilter())->getQuery()->fetchRow();
-        if ($this->properties === false) {
+        $properties = $this->getDataView()->applyFilter($this->getFilter())->getQuery()->fetchRow();
+
+        if ($properties === false) {
             return false;
         }
-        if (isset($this->properties->host_contacts)) {
+
+        if (isset($properties->host_contacts)) {
             $this->contacts = array();
-            foreach (preg_split('~,~', $this->properties->host_contacts) as $contact) {
+            foreach (preg_split('~,~', $properties->host_contacts) as $contact) {
                 $this->contacts[] = (object) array(
                     'contact_name'  => $contact,
                     'contact_alias' => $contact,
@@ -239,7 +248,22 @@ abstract class MonitoredObject implements Filterable
                 );
             }
         }
+
+        $this->properties = $properties;
+
         return true;
+    }
+
+    /**
+     * Fetch the object's acknowledgement
+     */
+    public function fetchAcknowledgement()
+    {
+        if ($this->comments === null) {
+            $this->fetchComments();
+        }
+
+        return $this;
     }
 
     /**
@@ -253,23 +277,52 @@ abstract class MonitoredObject implements Filterable
             $this->comments = array();
             return $this;
         }
-        $comments = $this->backend->select()->from('comment', array(
-            'id'        => 'comment_internal_id',
-            'timestamp' => 'comment_timestamp',
-            'author'    => 'comment_author_name',
-            'comment'   => 'comment_data',
-            'type'      => 'comment_type',
-        ))
-            ->where('comment_type', array('comment'))
-            ->where('object_type', $this->type);
+
+        $commentsView = $this->backend->select()->from('comment', array(
+            'author'            => 'comment_author_name',
+            'comment'           => 'comment_data',
+            'expiration'        => 'comment_expiration',
+            'id'                => 'comment_internal_id',
+            'timestamp'         => 'comment_timestamp',
+            'type'              => 'comment_type'
+        ));
         if ($this->type === self::TYPE_SERVICE) {
-            $comments
+            $commentsView
                 ->where('service_host_name', $this->host_name)
                 ->where('service_description', $this->service_description);
         } else {
-            $comments->where('host_name', $this->host_name);
+            $commentsView->where('host_name', $this->host_name);
         }
-        $this->comments = $comments->getQuery()->fetchAll();
+        $commentsView
+            ->where('comment_type', array('ack', 'comment'))
+            ->where('object_type', $this->type);
+
+        $comments = $commentsView->fetchAll();
+
+        if ((bool) $this->properties->{$this->prefix . 'acknowledged'}) {
+            $ackCommentIdx = null;
+
+            foreach ($comments as $i => $comment) {
+                if ($comment->type === 'ack') {
+                    $this->acknowledgement = new Acknowledgement(array(
+                        'author'            => $comment->author,
+                        'comment'           => $comment->comment,
+                        'entry_time'        => $comment->timestamp,
+                        'expiration_time'   => $comment->expiration,
+                        'sticky'            => (int) $this->properties->{$this->prefix . 'acknowledgement_type'} === 2
+                    ));
+                    $ackCommentIdx = $i;
+                    break;
+                }
+            }
+
+            if ($ackCommentIdx !== null) {
+                unset($comments[$ackCommentIdx]);
+            }
+        }
+
+        $this->comments = $comments;
+
         return $this;
     }
 
@@ -573,8 +626,8 @@ abstract class MonitoredObject implements Filterable
     {
         $this
             ->fetchComments()
-            ->fetchContacts()
             ->fetchContactgroups()
+            ->fetchContacts()
             ->fetchCustomvars()
             ->fetchDowntimes();
 
