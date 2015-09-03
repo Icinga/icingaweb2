@@ -3,7 +3,6 @@
 
 namespace Icinga\Web\Navigation;
 
-use Countable;
 use Exception;
 use InvalidArgumentException;
 use IteratorAggregate;
@@ -15,7 +14,7 @@ use Icinga\Web\Url;
 /**
  * A navigation item
  */
-class NavigationItem implements Countable, IteratorAggregate
+class NavigationItem implements IteratorAggregate
 {
     /**
      * Alternative markup element for items without a url
@@ -127,14 +126,6 @@ class NavigationItem implements Countable, IteratorAggregate
     public function init()
     {
 
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function count()
-    {
-        return $this->getChildren()->count();
     }
 
     /**
