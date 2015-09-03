@@ -4,6 +4,7 @@
 namespace Icinga\Web\Navigation\Renderer;
 
 use Icinga\Application\Icinga;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Util\String;
 use Icinga\Web\Navigation\NavigationItem;
 use Icinga\Web\View;
@@ -19,6 +20,13 @@ class NavigationItemRenderer
      * @var View
      */
     protected $view;
+
+    /**
+     * The item being rendered
+     *
+     * @var NavigationItem
+     */
+    protected $item;
 
     /**
      * The link target
@@ -84,6 +92,29 @@ class NavigationItemRenderer
     }
 
     /**
+     * Set the navigation item to render
+     *
+     * @param   NavigationItem  $item
+     *
+     * @return  $this
+     */
+    public function setItem(NavigationItem $item)
+    {
+        $this->item = $item;
+        return $this;
+    }
+
+    /**
+     * Return the navigation item being rendered
+     *
+     * @return  NavigationItem
+     */
+    public function getItem()
+    {
+        return $this->item;
+    }
+
+    /**
      * Set the link target
      *
      * @param   string  $target
@@ -113,8 +144,17 @@ class NavigationItemRenderer
      *
      * @return  string
      */
-    public function render(NavigationItem $item)
+    public function render(NavigationItem $item = null)
     {
+        if ($item !== null) {
+            $this->setItem($item);
+        } elseif (($item = $this->getItem()) === null) {
+            throw new ProgrammingError(
+                'Cannot render nothing. Pass the item to render as part'
+                . ' of the call to render() or set it with setItem()'
+            );
+        }
+
         $label = $this->view()->escape($item->getLabel());
         if (($icon = $item->getIcon()) !== null) {
             $label = $this->view()->icon($icon) . $label;

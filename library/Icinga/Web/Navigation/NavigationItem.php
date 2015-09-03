@@ -667,7 +667,7 @@ class NavigationItem implements IteratorAggregate
      */
     public function render()
     {
-        $this->getRenderer()->render($this);
+        $this->getRenderer()->setItem($this)->render();
     }
 
     /**
