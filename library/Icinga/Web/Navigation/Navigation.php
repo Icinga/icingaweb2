@@ -132,10 +132,11 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
         }
 
         $itemType = isset($properties['type']) ? String::cname($properties['type'], '-') : 'NavigationItem';
-        if (! empty($this->types) && isset($this->types[$itemType])) {
-            return new $this->types[$itemType]($name, $properties);
+        if (! empty(static::$types) && isset(static::$types[$itemType])) {
+            return new static::$types[$itemType]($name, $properties);
         }
 
+        $item = null;
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
             $classPath = 'Icinga\\Module\\' . $module->getName() . '\\' . static::NAVIGATION_NS . '\\' . $itemType;
             if (class_exists($classPath)) {
@@ -159,11 +160,11 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
             );
 
             $item = new NavigationItem($name, $properties);
-            $this->types[$itemType] = 'Icinga\\Web\\Navigation\\NavigationItem';
+            static::$types[$itemType] = 'Icinga\\Web\\Navigation\\NavigationItem';
         } elseif (! $item instanceof NavigationItem) {
             throw new ProgrammingError('Class %s must inherit from NavigationItem', $classPath);
         } else {
-            $this->types[$itemType] = $classPath;
+            static::$types[$itemType] = $classPath;
         }
 
         return $item;
