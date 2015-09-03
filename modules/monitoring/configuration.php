@@ -180,10 +180,6 @@ $section->add($this->translate('Downtimes'), array(
     'url'      => 'monitoring/list/downtimes',
     'priority' => 80
 ));
-$section->add($this->translate('Notifications'), array(
-    'url'      => 'monitoring/list/notifications',
-    'priority' => 80
-));
 $section->add($this->translate('Acknowledgements'), array(
     'url'      => 'monitoring/acknowledgement',
     'priority' => 90
@@ -193,17 +189,24 @@ $section->add($this->translate('Acknowledgements'), array(
  * History Section
  */
 $section = $this->menuSection($this->translate('History'), array(
-    'icon'      => 'rewind'
+    'icon' => 'rewind'
 ));
 $section->add($this->translate('Event Grid'), array(
-    'url'      => 'monitoring/list/eventgrid',
-    'priority' => 50
+    'priority'  => 10,
+    'url'       => 'monitoring/list/eventgrid'
 ));
-$section->add($this->translate('Events'), array(
-    'title'    => $this->translate('Event Overview'),
-    'url'      => 'monitoring/list/eventhistory?timestamp>=-7%20days'
+$section->add($this->translate('Event Overview'), array(
+    'priority'  => 20,
+    'url'       => 'monitoring/list/eventhistory?timestamp>=-7%20days'
 ));
-$section->add($this->translate('Timeline'))->setUrl('monitoring/timeline');
+$section->add($this->translate('Notifications'), array(
+    'priority'  => 30,
+    'url'       => 'monitoring/list/notifications',
+));
+$section->add($this->translate('Timeline'), array(
+    'priority'  => 40,
+    'url'       => 'monitoring/timeline'
+));
 
 /*
  * Reporting Section
