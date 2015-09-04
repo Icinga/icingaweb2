@@ -580,11 +580,27 @@ abstract class MonitoredObject implements Filterable
     /**
      * Get the type of the object
      *
-     * @return string
+     * @param   bool $translate
+     *
+     * @return  string
      */
-    public function getType()
+    public function getType($translate = false)
     {
-        return $this->type;
+        if ($translate !== false) {
+            switch ($this->type) {
+                case self::TYPE_HOST:
+                    $type = mt('montiroing', 'host');
+                    break;
+                case self::TYPE_SERVICE:
+                    $type = mt('monitoring', 'service');
+                    break;
+                default:
+                    throw new InvalidArgumentException('Invalid type ' . $this->type);
+            }
+        } else {
+            $type = $this->type;
+        }
+        return $type;
     }
 
     /**
