@@ -124,7 +124,7 @@ class Url
             $request = self::getRequest();
         }
 
-        if (!is_string($url)) {
+        if (! is_string($url)) {
             throw new ProgrammingError(
                 'url "%s" is not a string',
                 $url
@@ -135,6 +135,11 @@ class Url
         $baseUrl = $request->getBaseUrl();
         $urlObject->setBaseUrl($baseUrl);
 
+        if ($url === '#') {
+            $urlObject->setPath($url);
+            return $urlObject;
+        }
+
         $urlParts = parse_url($url);
         if (isset($urlParts['path'])) {
             if ($baseUrl !== '' && strpos($urlParts['path'], $baseUrl) === 0) {
@@ -143,6 +148,7 @@ class Url
                 $urlObject->setPath($urlParts['path']);
             }
         }
+
         // TODO: This has been used by former filter implementation, remove it:
         if (isset($urlParts['query'])) {
             $params = UrlParams::fromQueryString($urlParts['query'])->mergeValues($params);
@@ -242,7 +248,12 @@ class Url
      */
     public function getAbsoluteUrl($separator = '&')
     {
-        return $this->baseUrl . ($this->baseUrl !== '/' ? '/' : '') . $this->getRelativeUrl($separator);
+        $relativeUrl = $this->getRelativeUrl($separator);
+        if ($relativeUrl === '#') {
+            return $relativeUrl;
+        }
+
+        return $this->baseUrl . ($this->baseUrl !== '/' ? '/' : '') . $relativeUrl;
     }
 
     /**
