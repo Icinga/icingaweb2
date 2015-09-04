@@ -319,6 +319,28 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
+     * Try to find and return a item with the given or a similar name
+     *
+     * @param   string  $name
+     *
+     * @return  NavigationItem
+     */
+    protected function findItem($name)
+    {
+        $item = $this->getItem($name);
+        if ($item !== null) {
+            return $item;
+        }
+
+        $loweredName = strtolower($name);
+        foreach ($this->getItems() as $item) {
+            if (strtolower($item->getName()) === $loweredName) {
+                return $item;
+            }
+        }
+    }
+
+    /**
      * Merge this navigation with the given one
      *
      * Any duplicate items of this navigation will be overwritten by the given navigation's items.
@@ -331,7 +353,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     {
         foreach ($navigation as $item) {
             /** @var $item NavigationItem */
-            if (($existingItem = $this->getItem($item->getName())) !== null) {
+            if (($existingItem = $this->findItem($item->getName())) !== null) {
                 if ($existingItem->conflictsWith($item)) {
                     $name = $item->getName();
                     do {
