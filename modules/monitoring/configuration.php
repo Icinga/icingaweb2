@@ -319,11 +319,11 @@ $dashboard->add(
     'monitoring/list/eventhistory?timestamp>=-3%20days&type=notify&sort=timestamp&dir=desc&limit=8'
 );
 $dashboard->add(
-    $this->translate('Recent Downtimes Started'),
+    $this->translate('Downtimes Recently Started'),
     'monitoring/list/eventhistory?timestamp>=-3%20days&type=dt_start&sort=timestamp&dir=desc&limit=8'
 );
 $dashboard->add(
-    $this->translate('Recent Downtimes Ended'),
+    $this->translate('Downtimes Recently Ended'),
     'monitoring/list/eventhistory?timestamp>=-3%20days&type=dt_end&sort=timestamp&dir=desc&limit=8'
 );
 
