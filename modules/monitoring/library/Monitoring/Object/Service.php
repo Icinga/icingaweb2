@@ -149,6 +149,7 @@ class Service extends MonitoredObject
             'service_last_state_change',
             'service_long_output',
             'service_next_check',
+            'service_next_update',
             'service_notes',
             'service_notes_url',
             'service_notifications_enabled',
