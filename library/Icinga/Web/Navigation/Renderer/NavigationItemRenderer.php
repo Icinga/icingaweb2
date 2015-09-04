@@ -45,6 +45,16 @@ class NavigationItemRenderer
         if (! empty($options)) {
             $this->setOptions($options);
         }
+
+        $this->init();
+    }
+
+    /**
+     * Initialize this renderer
+     */
+    public function init()
+    {
+        
     }
 
     /**
