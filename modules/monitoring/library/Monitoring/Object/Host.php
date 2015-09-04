@@ -93,6 +93,7 @@ class Host extends MonitoredObject
             'host_icon_image',
             'host_icon_image_alt',
             'host_acknowledged',
+            'host_acknowledgement_type',
             'host_action_url',
             'host_active_checks_enabled',
             'host_active_checks_enabled_changed',
