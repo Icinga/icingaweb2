@@ -339,7 +339,7 @@ class Module
      *
      * @return  MenuItemContainer
      */
-    protected function menuSection($name, array $properties = null)
+    protected function menuSection($name, array $properties = array())
     {
         if (array_key_exists($name, $this->menuItems)) {
             $this->menuItems[$name]->setProperties($properties);
