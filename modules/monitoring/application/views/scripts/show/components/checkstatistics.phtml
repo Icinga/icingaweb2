@@ -55,7 +55,9 @@ if ($object->getType() === $object::TYPE_HOST) {
               );
           }
       } ?>
-      <?= $this->timeUntil($object->next_check) ?>
+      <?php if ((int) $object->state !== 99) {
+          echo $this->timeUntil($object->next_check);
+      } ?>
   </td>
 </tr>
 <tr>
