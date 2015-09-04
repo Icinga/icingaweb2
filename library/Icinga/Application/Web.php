@@ -16,6 +16,7 @@ use Icinga\User;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Util\Translator;
 use Icinga\Web\Controller\Dispatcher;
+use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
 use Icinga\Web\Session\Session as BaseSession;
@@ -137,6 +138,118 @@ class Web extends EmbeddedWeb
     public function getViewRenderer()
     {
         return $this->viewRenderer;
+    }
+
+    /**
+     * Return the app's menu
+     *
+     * @return  Navigation
+     */
+    public function getMenu()
+    {
+        if ($this->user !== null) {
+            $menu = array(
+                'dashboard' => array(
+                    'label'     => t('Dashboard'),
+                    'url'       => 'dashboard',
+                    'icon'      => 'dashboard',
+                    'priority'  => 10
+                ),
+                'system' => array(
+                    'label'     => t('System'),
+                    'icon'      => 'services',
+                    'priority'  => 700,
+                    'renderer'  => array(
+                        'SummaryNavigationItemRenderer',
+                        'state' => 'critical'
+                    ),
+                    'children'  => array(
+                        'about' => array(
+                            'label'     => t('About'),
+                            'url'       => 'about',
+                            'priority'  => 701
+                        )
+                    )
+                ),
+                'configuration' => array(
+                    'label'         => t('Configuration'),
+                    'icon'          => 'wrench',
+                    'permission'    => 'config/*',
+                    'priority'      => 800,
+                    'children'      => array(
+                        'application'       => array(
+                            'label'         => t('Application'),
+                            'url'           => 'config/general',
+                            'permission'    => 'config/application/*',
+                            'priority'      => 810
+                        ),
+                        'authentication'    => array(
+                            'label'         => t('Authentication'),
+                            'url'           => 'config/userbackend',
+                            'permission'    => 'config/authentication/*',
+                            'priority'      => 820
+                        ),
+                        'roles'             => array(
+                            'label'         => t('Roles'),
+                            'url'           => 'role/list',
+                            'permission'    => 'config/authentication/roles/show',
+                            'priority'      => 830
+                        ),
+                        'users'             => array(
+                            'label'         => t('Users'),
+                            'url'           => 'user/list',
+                            'permission'    => 'config/authentication/users/show',
+                            'priority'      => 840
+                        ),
+                        'groups'            => array(
+                            'label'         => t('Usergroups'),
+                            'url'           => 'group/list',
+                            'permission'    => 'config/authentication/groups/show',
+                            'priority'      => 850
+                        ),
+                        'modules'           => array(
+                            'label'         => t('Modules'),
+                            'url'           => 'config/modules',
+                            'permission'    => 'config/modules',
+                            'priority'      => 890
+                        )
+                    )
+                ),
+                'user' => array(
+                    'label'     => $this->user->getUsername(),
+                    'icon'      => 'user',
+                    'priority'  => 900,
+                    'children'  => array(
+                        'preferences'   => array(
+                            'label'     => t('Preferences'),
+                            'url'       => 'preference',
+                            'priority'  => 910
+                        ),
+                        'logout'        => array(
+                            'label'     => t('Logout'),
+                            'url'       => 'authentication/logout',
+                            'priority'  => 990,
+                            'renderer'  => array(
+                                'NavigationItemRenderer',
+                                'target' => '_self'
+                            )
+                        )
+                    )
+                )
+            );
+
+            if (Logger::writesToFile()) {
+                $menu['system']['children']['application_log'] = array(
+                    'label'     => t('Application Log'),
+                    'url'       => 'list/applicationlog',
+                    'priority'  => 710
+                );
+            }
+        } else {
+            $menu = array();
+        }
+
+        return Navigation::fromArray($menu);
     }
 
     /**

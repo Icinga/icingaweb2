@@ -12,8 +12,5 @@ if ($searchDashboard->search('dummy')->getPane('search')->hasDashlets()): ?>
             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
         />
     </form>
-<? endif; ?>
-<nav>
-    <h1 id="navigation" class="sr-only"><?= t('Navigation'); ?></h1>
-    <?= $menuRenderer; ?>
-</nav>
+<?php endif; ?>
+<?= $menuRenderer->setHeading(t('Navigation')); ?>
