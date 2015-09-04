@@ -190,7 +190,8 @@ $section->add($this->translate('Notifications'), array(
  * History Section
  */
 $section = $this->menuSection($this->translate('History'), array(
-    'icon'      => 'rewind'
+    'icon'      => 'rewind',
+    'priority'  => 90
 ));
 $section->add($this->translate('Event Grid'), array(
     'url'      => 'monitoring/list/eventgrid',
