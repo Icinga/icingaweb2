@@ -107,8 +107,8 @@ abstract class BadgeNavigationItemRenderer extends NavigationItemRenderer
         if (($count = $this->getCount()) > 0) {
             return sprintf(
                 '<div title="%s" class="badge-container"><span class="badge badge-%s">%s</span></div>',
-                $this->getView()->escape($this->getTitle()),
-                $this->getView()->escape($this->getState()),
+                $this->view()->escape($this->getTitle()),
+                $this->view()->escape($this->getState()),
                 $count
             );
         }
