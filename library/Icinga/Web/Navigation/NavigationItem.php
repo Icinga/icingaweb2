@@ -614,7 +614,7 @@ class NavigationItem implements IteratorAggregate
 
         $renderer = null;
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
-            $classPath = 'Icinga\\Module\\' . $module->getName() . '\\' . static::RENDERER_NS . '\\' . $name;
+            $classPath = 'Icinga\\Module\\' . ucfirst($module->getName()) . '\\' . static::RENDERER_NS . '\\' . $name;
             if (class_exists($classPath)) {
                 $renderer = new $classPath($options);
                 break;
