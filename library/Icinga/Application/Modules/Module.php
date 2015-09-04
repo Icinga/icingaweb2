@@ -11,6 +11,7 @@ use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Application\Modules\DashboardContainer;
 use Icinga\Application\Modules\MenuItemContainer;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
@@ -21,7 +22,6 @@ use Icinga\Web\Controller\Dispatcher;
 use Icinga\Web\Hook;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Widget;
-use Icinga\Web\Widget\Dashboard\Pane;
 
 /**
  * Module handling
@@ -277,26 +277,53 @@ class Module
     }
 
     /**
-     * Get all pane items
+     * Return this module's dashboard
      *
-     * @return array
+     * @return  Navigation
      */
-    public function getPaneItems()
+    public function getDashboard()
     {
         $this->launchConfigScript();
-        return $this->paneItems;
+        return $this->createDashboard($this->paneItems);
     }
 
     /**
-     * Add a pane to dashboard
+     * Create and return a new navigation for the given dashboard panes
      *
-     * @param   string $name
+     * @param   DashboardContainer[]    $panes
      *
-     * @return  Pane
+     * @return  Navigation
+     */
+    public function createDashboard(array $panes)
+    {
+        $navigation = new Navigation();
+        foreach ($panes as $pane) {
+            /** @var DashboardContainer $pane */
+            foreach ($pane->getDashlets() as $dashletName => $dashletUrl) {
+                $navigation->addItem(
+                    $dashletName,
+                    array(
+                        'type'      => 'dashlet',
+                        'dashboard' => $pane->getName(),
+                        'url'       => $dashletUrl
+                    )
+                );
+            }
+        }
+
+        return $navigation;
+    }
+
+    /**
+     * Add or get a dashboard pane
+     *
+     * @param   string  $name
+     *
+     * @return  DashboardContainer
      */
     protected function dashboard($name)
     {
-        $this->paneItems[$name] = new Pane($name);
+        $this->paneItems[$name] = new DashboardContainer($name);
         return $this->paneItems[$name];
     }
 
