@@ -20,7 +20,9 @@ if ($object->getType() === $object::TYPE_HOST) {
         <?php if (isset($checkNowForm)) { // Form is unset if the current user lacks the respective permission
             echo $checkNowForm;
         } ?>
-        <?= $this->timeAgo($object->last_check) ?>
+        <?php if ((int) $object->state !== 99) {
+            echo $this->timeUntil($object->last_check);
+        } ?>
     </td>
 </tr>
 <tr>
