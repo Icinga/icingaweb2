@@ -1,9 +1,10 @@
 <?php
 /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+$activeChecksEnabled = (bool) $object->active_checks_enabled;
 ?>
 
 <tr>
-    <th><?= (bool) $object->active_checks_enabled ? $this->translate('Last check') : $this->translate('Last update') ?></th>
+    <th><?= $activeChecksEnabled ? $this->translate('Last check') : $this->translate('Last update') ?></th>
     <td data-base-target="_self">
         <?php if (isset($checkNowForm)) { // Form is unset if the current user lacks the respective permission
             echo $checkNowForm;
@@ -15,9 +16,9 @@
 </tr>
 
 <tr>
-    <th><?= (bool) $object->active_checks_enabled ? $this->translate('Next check') : $this->translate('Next update') ?></th>
+    <th><?= $activeChecksEnabled ? $this->translate('Next check') : $this->translate('Next update') ?></th>
     <td>
-    <?php if ((bool) $object->active_checks_enabled && $this->hasPermission('monitoring/command/schedule-check')) {
+    <?php if ($activeChecksEnabled && $this->hasPermission('monitoring/command/schedule-check')) {
         if ($object->getType() === $object::TYPE_SERVICE) {
             echo $this->qlink(
                 $this->translate('Reschedule'),
@@ -47,7 +48,7 @@
         }
     } ?>
     <?php if ((int) $object->state !== 99) {
-        if ((bool) $object->active_checks_enabled) {
+        if ($activeChecksEnabled) {
             echo $this->timeUntil($object->next_check);
         } else {
             echo sprintf($this->translate('expected %s'), $this->timeUntil($object->next_update));
