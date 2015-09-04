@@ -307,24 +307,24 @@ $dashboard->add(
  */
 $dashboard = $this->dashboard($this->translate('Activity Stream'));
 $dashboard->add(
-    $this->translate('Todays Events'),
-    'monitoring/list/eventhistory?timestamp>=-1%20days&sort=timestamp&dir=desc&limit=8'
+    $this->translate('Recent Events'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&sort=timestamp&dir=desc&limit=8'
 );
 $dashboard->add(
-    $this->translate('Hard State Changed'),
-    'monitoring/list/eventhistory?type=hard_state&sort=timestamp&dir=desc&limit=8'
+    $this->translate('Recent Hard State Changes'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&type=hard_state&sort=timestamp&dir=desc&limit=8'
 );
 $dashboard->add(
-    $this->translate('Notifications'),
-    'monitoring/list/eventhistory?type=notify&sort=timestamp&dir=desc&limit=8'
+    $this->translate('Recent Notifications'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&type=notify&sort=timestamp&dir=desc&limit=8'
 );
 $dashboard->add(
-    $this->translate('Downtimes Started'),
-    'monitoring/list/eventhistory?type=dt_start&sort=timestamp&dir=desc&limit=8'
+    $this->translate('Recent Downtimes Started'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&type=dt_start&sort=timestamp&dir=desc&limit=8'
 );
 $dashboard->add(
-    $this->translate('Downtimes Ended'),
-    'monitoring/list/eventhistory?type=dt_end&sort=timestamp&dir=desc&limit=8'
+    $this->translate('Recent Downtimes Ended'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&type=dt_end&sort=timestamp&dir=desc&limit=8'
 );
 
 /*
