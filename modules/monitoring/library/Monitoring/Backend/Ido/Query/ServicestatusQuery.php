@@ -19,9 +19,6 @@ class ServicestatusQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
-        'instances' => array(
-            'instance_name' => 'i.instance_name'
-        ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
@@ -48,8 +45,8 @@ class ServicestatusQuery extends IdoQuery
             'host_check_execution_time'             => 'hs.execution_time',
             'host_check_latency'                    => 'hs.latency',
             'host_check_source'                     => 'hs.check_source',
-            'host_check_type'                       => 'hs.check_type',
             'host_check_timeperiod_object_id'       => 'hs.check_timeperiod_object_id',
+            'host_check_type'                       => 'hs.check_type',
             'host_current_check_attempt'            => 'hs.current_check_attempt',
             'host_current_notification_number'      => 'hs.current_notification_number',
             'host_event_handler'                    => 'hs.event_handler',
@@ -92,10 +89,6 @@ class ServicestatusQuery extends IdoQuery
             'host_process_performance_data'         => 'hs.process_performance_data',
             'host_retry_check_interval'             => 'hs.retry_check_interval',
             'host_scheduled_downtime_depth'         => 'hs.scheduled_downtime_depth',
-            'host_state'                            => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
-            'host_state_type'                       => 'hs.state_type',
-            'host_status_update_time'               => 'hs.status_update_time',
-            'host_unhandled'                        => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END',
             'host_severity'                         => 'CASE WHEN hs.current_state = 0
             THEN
                 CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
@@ -131,7 +124,15 @@ class ServicestatusQuery extends IdoQuery
             CASE WHEN hs.state_type = 1
                 THEN 8
                 ELSE 0
-            END'
+            END',
+            'host_state'                            => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
+            'host_state_type'                       => 'hs.state_type',
+            'host_status_update_time'               => 'hs.status_update_time',
+            'host_unhandled'                        => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END'
+
+        ),
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
         ),
         'services' => array(
             'host'                      => 'so.name1 COLLATE latin1_general_ci',
@@ -154,65 +155,61 @@ class ServicestatusQuery extends IdoQuery
             'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
         ),
         'servicestatus' => array(
-            'service_state_type'                        => 'ss.state_type',
-            'service_output'                            => 'ss.output',
-            'service_long_output'                       => 'ss.long_output',
-            'service_perfdata'                          => 'ss.perfdata',
-            'service_check_source'                      => 'ss.check_source',
             'service_acknowledged'                      => 'ss.problem_has_been_acknowledged',
-            'service_check_command'                     => 'ss.check_command',
-            'service_last_time_ok'                      => 'ss.last_time_ok',
-            'service_last_time_warning'                 => 'ss.last_time_warning',
-            'service_last_time_critical'                => 'ss.last_time_critical',
-            'service_last_time_unknown'                 => 'ss.last_time_unknown',
-            'service_current_check_attempt'             => 'ss.current_check_attempt',
-            'service_max_check_attempts'                => 'ss.max_check_attempts',
-            'service_attempt'                           => 'ss.current_check_attempt || \'/\' || ss.max_check_attempts',
-            'service_last_check'                        => 'UNIX_TIMESTAMP(ss.last_check)',
-            'service_next_check'                        => 'UNIX_TIMESTAMP(ss.next_check)',
-            'service_check_type'                        => 'ss.check_type',
-            'service_last_hard_state_change'            => 'UNIX_TIMESTAMP(ss.last_hard_state_change)',
-            'service_last_hard_state'                   => 'ss.last_hard_state',
-            'service_last_notification'                 => 'UNIX_TIMESTAMP(ss.last_notification)',
-            'service_next_notification'                 => 'UNIX_TIMESTAMP(ss.next_notification)',
-            'service_no_more_notifications'             => 'ss.no_more_notifications',
-            'service_problem_has_been_acknowledged'     => 'ss.problem_has_been_acknowledged',
             'service_acknowledgement_type'              => 'ss.acknowledgement_type',
-            'service_current_notification_number'       => 'ss.current_notification_number',
-            'service_percent_state_change'              => 'ss.percent_state_change',
-            'service_check_latency'                     => 'ss.latency',
-            'service_check_execution_time'              => 'ss.execution_time',
-            'service_scheduled_downtime_depth'          => 'ss.scheduled_downtime_depth',
-            'service_failure_prediction_enabled'        => 'ss.failure_prediction_enabled',
-            'service_process_performance_data'          => 'ss.process_performance_data',
-            'service_modified_service_attributes'       => 'ss.modified_service_attributes',
-            'service_event_handler'                     => 'ss.event_handler',
-            'service_normal_check_interval'             => 'ss.normal_check_interval',
-            'service_retry_check_interval'              => 'ss.retry_check_interval',
-            'service_check_timeperiod_object_id'        => 'ss.check_timeperiod_object_id',
-            'service_status_update_time'                => 'ss.status_update_time',
-            'service_passive_checks_enabled'            => 'ss.passive_checks_enabled',
-            'service_is_reachable'                      => 'ss.is_reachable',
-            'service_passive_checks_enabled_changed'    => 'CASE WHEN ss.passive_checks_enabled=s.passive_checks_enabled THEN 0 ELSE 1 END',
             'service_active_checks_enabled'             => 'ss.active_checks_enabled',
             'service_active_checks_enabled_changed'     => 'CASE WHEN ss.active_checks_enabled=s.active_checks_enabled THEN 0 ELSE 1 END',
+            'service_attempt'                           => 'ss.current_check_attempt || \'/\' || ss.max_check_attempts',
+            'service_check_command'                     => 'ss.check_command',
+            'service_check_execution_time'              => 'ss.execution_time',
+            'service_check_latency'                     => 'ss.latency',
+            'service_check_source'                      => 'ss.check_source',
+            'service_check_timeperiod_object_id'        => 'ss.check_timeperiod_object_id',
+            'service_check_type'                        => 'ss.check_type',
+            'service_current_check_attempt'             => 'ss.current_check_attempt',
+            'service_current_notification_number'       => 'ss.current_notification_number',
+            'service_event_handler'                     => 'ss.event_handler',
             'service_event_handler_enabled'             => 'ss.event_handler_enabled',
             'service_event_handler_enabled_changed'     => 'CASE WHEN ss.event_handler_enabled=s.event_handler_enabled THEN 0 ELSE 1 END',
+            'service_failure_prediction_enabled'        => 'ss.failure_prediction_enabled',
             'service_flap_detection_enabled'            => 'ss.flap_detection_enabled',
             'service_flap_detection_enabled_changed'    => 'CASE WHEN ss.flap_detection_enabled=s.flap_detection_enabled THEN 0 ELSE 1 END',
-            'service_obsessing'                         => 'ss.obsess_over_service',
-            'service_obsessing_changed'                 => 'CASE WHEN ss.obsess_over_service=s.obsess_over_service THEN 0 ELSE 1 END',
             'service_handled'                           => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END',
             'service_hard_state'                        => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE CASE WHEN ss.state_type = 1 THEN ss.current_state ELSE ss.last_hard_state END END',
+            'service_in_downtime'                       => 'CASE WHEN (ss.scheduled_downtime_depth = 0 OR ss.scheduled_downtime_depth IS NULL) THEN 0 ELSE 1 END',
             'service_is_flapping'                       => 'ss.is_flapping',
             'service_is_passive_checked'                => 'CASE WHEN ss.active_checks_enabled = 0 AND ss.passive_checks_enabled = 1 THEN 1 ELSE 0 END',
+            'service_is_reachable'                      => 'ss.is_reachable',
+            'service_last_check'                        => 'UNIX_TIMESTAMP(ss.last_check)',
+            'service_last_hard_state'                   => 'ss.last_hard_state',
+            'service_last_hard_state_change'            => 'UNIX_TIMESTAMP(ss.last_hard_state_change)',
+            'service_last_notification'                 => 'UNIX_TIMESTAMP(ss.last_notification)',
             'service_last_state_change'                 => 'UNIX_TIMESTAMP(ss.last_state_change)',
+            'service_last_time_critical'                => 'ss.last_time_critical',
+            'service_last_time_ok'                      => 'ss.last_time_ok',
+            'service_last_time_unknown'                 => 'ss.last_time_unknown',
+            'service_last_time_warning'                 => 'ss.last_time_warning',
+            'service_long_output'                       => 'ss.long_output',
+            'service_max_check_attempts'                => 'ss.max_check_attempts',
+            'service_modified_service_attributes'       => 'ss.modified_service_attributes',
+            'service_next_check'                        => 'UNIX_TIMESTAMP(ss.next_check)',
+            'service_next_notification'                 => 'UNIX_TIMESTAMP(ss.next_notification)',
+            'service_no_more_notifications'             => 'ss.no_more_notifications',
+            'service_normal_check_interval'             => 'ss.normal_check_interval',
             'service_notifications_enabled'             => 'ss.notifications_enabled',
             'service_notifications_enabled_changed'     => 'CASE WHEN ss.notifications_enabled=s.notifications_enabled THEN 0 ELSE 1 END',
-            'service_in_downtime'                       => 'CASE WHEN (ss.scheduled_downtime_depth = 0 OR ss.scheduled_downtime_depth IS NULL) THEN 0 ELSE 1 END',
-            'service_state'                             => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
-            'service_unhandled'                         => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END',
+            'service_obsessing'                         => 'ss.obsess_over_service',
+            'service_obsessing_changed'                 => 'CASE WHEN ss.obsess_over_service=s.obsess_over_service THEN 0 ELSE 1 END',
+            'service_output'                            => 'ss.output',
+            'service_passive_checks_enabled'            => 'ss.passive_checks_enabled',
+            'service_passive_checks_enabled_changed'    => 'CASE WHEN ss.passive_checks_enabled=s.passive_checks_enabled THEN 0 ELSE 1 END',
+            'service_percent_state_change'              => 'ss.percent_state_change',
+            'service_perfdata'                          => 'ss.perfdata',
             'service_problem'                           => 'CASE WHEN COALESCE(ss.current_state, 0) = 0 THEN 0 ELSE 1 END',
+            'service_problem_has_been_acknowledged'     => 'ss.problem_has_been_acknowledged',
+            'service_process_performance_data'          => 'ss.process_performance_data',
+            'service_retry_check_interval'              => 'ss.retry_check_interval',
+            'service_scheduled_downtime_depth'          => 'ss.scheduled_downtime_depth',
             'service_severity'                          => 'CASE WHEN ss.current_state = 0
             THEN
                 CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL
@@ -253,7 +250,11 @@ class ServicestatusQuery extends IdoQuery
             CASE WHEN ss.state_type = 1
                 THEN 8
                 ELSE 0
-            END'
+            END',
+            'service_state'                             => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
+            'service_state_type'                        => 'ss.state_type',
+            'service_status_update_time'                => 'ss.status_update_time',
+            'service_unhandled'                         => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END'
         )
     );
 
@@ -280,18 +281,6 @@ class ServicestatusQuery extends IdoQuery
             array()
         );
         $this->joinedVirtualTables['services'] = true;
-    }
-
-    /**
-     * Join instances
-     */
-    protected function joinInstances()
-    {
-        $this->select->join(
-            array('i' => $this->prefix . 'instances'),
-            'i.instance_id = so.instance_id',
-            array()
-        );
     }
 
     /**
@@ -334,6 +323,18 @@ class ServicestatusQuery extends IdoQuery
         $this->select->join(
             array('hs' => $this->prefix . 'hoststatus'),
             'hs.host_object_id = s.host_object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = so.instance_id',
             array()
         );
     }
