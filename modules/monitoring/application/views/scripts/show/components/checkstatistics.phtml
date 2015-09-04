@@ -15,41 +15,41 @@
 </tr>
 
 <tr>
-  <th><?= $this->translate('Next check') ?></th>
-  <td>
-      <?php if ($this->hasPermission('monitoring/command/schedule-check')) {
-          if ($object->getType() === $object::TYPE_SERVICE) {
-              echo $this->qlink(
-                  $this->translate('Reschedule'),
-                  'monitoring/service/reschedule-check',
-                  array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
-                  array(
-                      'icon'                => 'reschedule',
-                      'data-base-target'    => '_self',
-                      'title'               => $this->translate(
-                          'Schedule the next active check at a different time than the current one'
-                      )
-                  )
-              );
-          } else {
-              echo $this->qlink(
-                  $this->translate('Reschedule'),
-                  'monitoring/host/reschedule-check',
-                  array('host' => $object->getName()),
-                  array(
-                      'icon'                => 'reschedule',
-                      'data-base-target'    => '_self',
-                      'title'               => $this->translate(
-                          'Schedule the next active check at a different time than the current one'
-                      )
-                  )
-              );
-          }
-      } ?>
-      <?php if ((int) $object->state !== 99) {
-          echo $this->timeUntil($object->next_check);
-      } ?>
-  </td>
+    <th><?= (bool) $object->active_checks_enabled ? $this->translate('Next check') : $this->translate('Next update') ?></th>
+    <td>
+    <?php if ($this->hasPermission('monitoring/command/schedule-check')) {
+        if ($object->getType() === $object::TYPE_SERVICE) {
+            echo $this->qlink(
+                $this->translate('Reschedule'),
+                'monitoring/service/reschedule-check',
+                array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
+                array(
+                    'icon'                => 'reschedule',
+                    'data-base-target'    => '_self',
+                    'title'               => $this->translate(
+                        'Schedule the next active check at a different time than the current one'
+                    )
+                )
+            );
+        } else {
+            echo $this->qlink(
+                $this->translate('Reschedule'),
+                'monitoring/host/reschedule-check',
+                array('host' => $object->getName()),
+                array(
+                    'icon'                => 'reschedule',
+                    'data-base-target'    => '_self',
+                    'title'               => $this->translate(
+                        'Schedule the next active check at a different time than the current one'
+                    )
+                )
+            );
+        }
+    } ?>
+    <?php if ((int) $object->state !== 99) {
+        echo $this->timeUntil($object->next_check);
+    } ?>
+    </td>
 </tr>
 
 <tr>
