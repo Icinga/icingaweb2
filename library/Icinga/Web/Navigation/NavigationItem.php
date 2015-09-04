@@ -149,7 +149,21 @@ class NavigationItem implements IteratorAggregate
      */
     public function getActive()
     {
-        return $this->active ?: false;
+        if ($this->active === null) {
+            $this->active = false;
+            if ($this->getUrl() !== null && Icinga::app()->getRequest()->getUrl()->matches($this->getUrl())) {
+                $this->setActive();
+            } elseif ($this->hasChildren()) {
+                foreach ($this->getChildren() as $item) {
+                    /** @var NavigationItem $item */
+                    if ($item->getActive()) {
+                        // Do nothing, a true active state is automatically passed to all parents
+                    }
+                }
+            }
+        }
+
+        return $this->active;
     }
 
     /**
