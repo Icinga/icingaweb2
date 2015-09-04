@@ -89,9 +89,6 @@ class Host extends MonitoredObject
     protected function getDataView()
     {
         $columns = array(
-            'instance_name',
-            'host_icon_image',
-            'host_icon_image_alt',
             'host_acknowledged',
             'host_acknowledgement_type',
             'host_action_url',
@@ -111,6 +108,8 @@ class Host extends MonitoredObject
             'host_flap_detection_enabled',
             'host_flap_detection_enabled_changed',
             'host_handled',
+            'host_icon_image',
+            'host_icon_image_alt',
             'host_in_downtime',
             'host_is_flapping',
             'host_is_reachable',
@@ -134,7 +133,8 @@ class Host extends MonitoredObject
             'host_perfdata',
             'host_process_perfdata' => 'host_process_performance_data',
             'host_state',
-            'host_state_type'
+            'host_state_type',
+            'instance_name',
         );
         if ($this->backend->getType() === 'livestatus') {
             $columns[] = 'host_contacts';
