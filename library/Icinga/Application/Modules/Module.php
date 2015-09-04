@@ -299,16 +299,13 @@ class Module
         $navigation = new Navigation();
         foreach ($panes as $pane) {
             /** @var DashboardContainer $pane */
-            foreach ($pane->getDashlets() as $dashletName => $dashletUrl) {
-                $navigation->addItem(
-                    $dashletName,
-                    array(
-                        'type'      => 'dashlet',
-                        'dashboard' => $pane->getName(),
-                        'url'       => $dashletUrl
-                    )
-                );
-            }
+            $navigation->addItem(
+                $pane->getName(),
+                array(
+                    'type'      => 'dashboard-pane',
+                    'dashlets'  => $pane->getDashlets()
+                )
+            );
         }
 
         return $navigation;
