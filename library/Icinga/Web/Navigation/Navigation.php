@@ -355,6 +355,30 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
+     * Extend this navigation set with all additional items of the given type
+     *
+     * This will fetch navigation items from the following sources:
+     * * User Shareables
+     * * User Preferences
+     * * Modules
+     * Any existing entry will be overwritten by one that is coming later in order.
+     *
+     * @param   string  $type
+     *
+     * @return  $this
+     */
+    public function load($type)
+    {
+        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
+            if ($type === 'menu-item') {
+                $this->merge($module->getMenu());
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Create and return a new set of navigation items for the given configuration
      *
      * @param   Config  $config
