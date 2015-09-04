@@ -249,7 +249,7 @@ class Web extends EmbeddedWeb
             $menu = array();
         }
 
-        return Navigation::fromArray($menu);
+        return Navigation::fromArray($menu)->load('menu-item');
     }
 
     /**
