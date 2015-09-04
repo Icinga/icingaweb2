@@ -47,7 +47,11 @@
         }
     } ?>
     <?php if ((int) $object->state !== 99) {
-        echo $this->timeUntil($object->next_check);
+        if ((bool) $object->active_checks_enabled) {
+            echo $this->timeUntil($object->next_check);
+        } else {
+            echo sprintf($this->translate('expected %s'), $this->timeUntil($object->next_update));
+        }
     } ?>
     </td>
 </tr>
