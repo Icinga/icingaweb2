@@ -206,7 +206,6 @@ class ServicestatusQuery extends IdoQuery
             'service_hard_state'                        => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE CASE WHEN ss.state_type = 1 THEN ss.current_state ELSE ss.last_hard_state END END',
             'service_is_flapping'                       => 'ss.is_flapping',
             'service_is_passive_checked'                => 'CASE WHEN ss.active_checks_enabled = 0 AND ss.passive_checks_enabled = 1 THEN 1 ELSE 0 END',
-            'service_last_hard_state_change'            => 'UNIX_TIMESTAMP(ss.last_hard_state_change)',
             'service_last_state_change'                 => 'UNIX_TIMESTAMP(ss.last_state_change)',
             'service_notifications_enabled'             => 'ss.notifications_enabled',
             'service_notifications_enabled_changed'     => 'CASE WHEN ss.notifications_enabled=s.notifications_enabled THEN 0 ELSE 1 END',
