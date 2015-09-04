@@ -121,6 +121,7 @@ class Host extends MonitoredObject
             'host_max_check_attempts',
             'host_name',
             'host_next_check',
+            'host_next_update',
             'host_notes',
             'host_notes_url',
             'host_notifications_enabled',
