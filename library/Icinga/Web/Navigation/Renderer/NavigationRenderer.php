@@ -316,9 +316,13 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
         }
 
         if (! empty($cssClass)) {
-            $content = sprintf('<li class="%s">', join(' ', $cssClass));
+            $content = sprintf(
+                '<li id="%s" class="%s">',
+                $this->view()->escape($item->getUniqueName()),
+                join(' ', $cssClass)
+            );
         } else {
-            $content = '<li>';
+            $content = '<li id="' . $this->view()->escape($item->getUniqueName()) . '">';
         }
 
         return $content;
