@@ -33,6 +33,7 @@ class ServicesController extends Controller
             (string) $this->params->without(array('service_problem', 'service_handled', 'view'))
         ));
         $this->serviceList = $serviceList;
+        $this->view->baseFilter = $this->serviceList->getFilter();
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/services');
         $this->getTabs()->add(
             'show',
@@ -163,7 +164,6 @@ class ServicesController extends Controller
             );
         $this->view->commentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
-        $this->view->baseFilter = $this->serviceList->getFilter();
         $this->view->sendCustomNotificationLink = Url::fromRequest()->setPath(
             'monitoring/services/send-custom-notification'
         );
