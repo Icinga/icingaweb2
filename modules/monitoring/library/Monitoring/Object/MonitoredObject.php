@@ -5,9 +5,9 @@ namespace Icinga\Module\Monitoring\Object;
 
 use InvalidArgumentException;
 use Icinga\Application\Config;
-use Icinga\Exception\InvalidPropertyException;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
+use Icinga\Exception\InvalidPropertyException;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Web\UrlParams;
 
@@ -27,6 +27,13 @@ abstract class MonitoredObject implements Filterable
     const TYPE_SERVICE = 'service';
 
     /**
+     * Acknowledgement of the host or service if any
+     *
+     * @var object
+     */
+    protected $acknowledgement;
+
+    /**
      * Backend to fetch object information from
      *
      * @var MonitoringBackend
@@ -34,11 +41,60 @@ abstract class MonitoredObject implements Filterable
     protected $backend;
 
     /**
-     * Type of the Icinga object, i.e. 'host' or 'service'
+     * Comments
      *
-     * @var string
+     * @var array
      */
-    protected $type;
+    protected $comments;
+
+    /**
+     * Custom variables
+     *
+     * @var array
+     */
+    protected $customvars;
+
+    /**
+     * Contact groups
+     *
+     * @var array
+     */
+    protected $contactgroups;
+
+    /**
+     * Contacts
+     *
+     * @var array
+     */
+    protected $contacts;
+
+    /**
+     * Downtimes
+     *
+     * @var array
+     */
+    protected $downtimes;
+
+    /**
+     * Event history
+     *
+     * @var \Icinga\Module\Monitoring\DataView\EventHistory
+     */
+    protected $eventhistory;
+
+    /**
+     * Filter
+     *
+     * @var Filter
+     */
+    protected $filter;
+
+    /**
+     * Host groups
+     *
+     * @var array
+     */
+    protected $hostgroups;
 
     /**
      * Prefix of the Icinga object, i.e. 'host_' or 'service_'
@@ -55,27 +111,6 @@ abstract class MonitoredObject implements Filterable
     protected $properties;
 
     /**
-     * Comments
-     *
-     * @var array
-     */
-    protected $comments;
-
-    /**
-     * Downtimes
-     *
-     * @var array
-     */
-    protected $downtimes;
-
-    /**
-     * Host groups
-     *
-     * @var array
-     */
-    protected $hostgroups;
-
-    /**
      * Service groups
      *
      * @var array
@@ -83,32 +118,11 @@ abstract class MonitoredObject implements Filterable
     protected $servicegroups;
 
     /**
-     * Contacts
+     * Type of the Icinga object, i.e. 'host' or 'service'
      *
-     * @var array
+     * @var string
      */
-    protected $contacts;
-
-    /**
-     * Contact groups
-     *
-     * @var array
-     */
-    protected $contactgroups;
-
-    /**
-     * Custom variables
-     *
-     * @var array
-     */
-    protected $customvars;
-
-    /**
-     * Event history
-     *
-     * @var \Icinga\Module\Monitoring\DataView\EventHistory
-     */
-    protected $eventhistory;
+    protected $type;
 
     /**
      * Stats
@@ -116,13 +130,6 @@ abstract class MonitoredObject implements Filterable
      * @var object
      */
     protected $stats;
-
-    /**
-     * Filter
-     *
-     * @var Filter
-     */
-    protected $filter;
 
     /**
      * Create a monitored object, i.e. host or service
@@ -141,68 +148,64 @@ abstract class MonitoredObject implements Filterable
      */
     abstract protected function getDataView();
 
-    public function applyFilter(Filter $filter)
-    {
-        $this->getFilter()->addFilter($filter);
-        return $this;
-    }
+    /**
+     * Get the notes for this monitored object
+     *
+     * @return string The notes as a string
+     */
+    public abstract function getNotes();
 
-    public function setFilter(Filter $filter)
-    {
-        // Left out on purpose. Interface is deprecated.
-    }
+    /**
+     * Get all note urls configured for this monitored object
+     *
+     * @return array All note urls as a string
+     */
+    public abstract function getNotesUrls();
 
-    public function getFilter()
-    {
-        if ($this->filter === null) {
-            $this->filter = Filter::matchAll();
-        }
-        return $this->filter;
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function addFilter(Filter $filter)
     {
         // Left out on purpose. Interface is deprecated.
     }
 
-    public function where($condition, $value = null)
+    /**
+     * {@inheritdoc}
+     */
+    public function applyFilter(Filter $filter)
+    {
+        $this->getFilter()->addFilter($filter);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFilter()
+    {
+        if ($this->filter === null) {
+            $this->filter = Filter::matchAll();
+        }
+
+        return $this->filter;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFilter(Filter $filter)
     {
         // Left out on purpose. Interface is deprecated.
     }
 
     /**
-     * Fetch the object's properties
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function fetch()
+    public function where($condition, $value = null)
     {
-        $this->properties = $this->getDataView()->applyFilter($this->getFilter())->getQuery()->fetchRow();
-        if ($this->properties === false) {
-            return false;
-        }
-        if (isset($this->properties->host_contacts)) {
-            $this->contacts = array();
-            foreach (preg_split('~,~', $this->properties->host_contacts) as $contact) {
-                $this->contacts[] = (object) array(
-                    'contact_name'  => $contact,
-                    'contact_alias' => $contact,
-                    'contact_email' => null,
-                    'contact_pager' => null,
-                );
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Get the type of the object
-     *
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
+        // Left out on purpose. Interface is deprecated.
     }
 
     /**
@@ -222,15 +225,44 @@ abstract class MonitoredObject implements Filterable
     }
 
     /**
-     * Set the object's properties
+     * Fetch the object's properties
      *
-     * @param   object $properties
-     *
-     * @return  $this
+     * @return bool
      */
-    public function setProperties($properties)
+    public function fetch()
     {
-        $this->properties = (object) $properties;
+        $properties = $this->getDataView()->applyFilter($this->getFilter())->getQuery()->fetchRow();
+
+        if ($properties === false) {
+            return false;
+        }
+
+        if (isset($properties->host_contacts)) {
+            $this->contacts = array();
+            foreach (preg_split('~,~', $properties->host_contacts) as $contact) {
+                $this->contacts[] = (object) array(
+                    'contact_name'  => $contact,
+                    'contact_alias' => $contact,
+                    'contact_email' => null,
+                    'contact_pager' => null,
+                );
+            }
+        }
+
+        $this->properties = $properties;
+
+        return true;
+    }
+
+    /**
+     * Fetch the object's acknowledgement
+     */
+    public function fetchAcknowledgement()
+    {
+        if ($this->comments === null) {
+            $this->fetchComments();
+        }
+
         return $this;
     }
 
@@ -245,75 +277,108 @@ abstract class MonitoredObject implements Filterable
             $this->comments = array();
             return $this;
         }
-        $comments = $this->backend->select()->from('comment', array(
-            'id'        => 'comment_internal_id',
-            'timestamp' => 'comment_timestamp',
-            'author'    => 'comment_author_name',
-            'comment'   => 'comment_data',
-            'type'      => 'comment_type',
-        ))
-            ->where('comment_type', array('comment', 'ack'))
+
+        $commentsView = $this->backend->select()->from('comment', array(
+            'author'            => 'comment_author_name',
+            'comment'           => 'comment_data',
+            'expiration'        => 'comment_expiration',
+            'id'                => 'comment_internal_id',
+            'timestamp'         => 'comment_timestamp',
+            'type'              => 'comment_type'
+        ));
+        if ($this->type === self::TYPE_SERVICE) {
+            $commentsView
+                ->where('service_host_name', $this->host_name)
+                ->where('service_description', $this->service_description);
+        } else {
+            $commentsView->where('host_name', $this->host_name);
+        }
+        $commentsView
+            ->where('comment_type', array('ack', 'comment'))
             ->where('object_type', $this->type);
-        if ($this->type === self::TYPE_SERVICE) {
-            $comments
-                ->where('service_host_name', $this->host_name)
-                ->where('service_description', $this->service_description);
-        } else {
-            $comments->where('host_name', $this->host_name);
+
+        $comments = $commentsView->fetchAll();
+
+        if ((bool) $this->properties->{$this->prefix . 'acknowledged'}) {
+            $ackCommentIdx = null;
+
+            foreach ($comments as $i => $comment) {
+                if ($comment->type === 'ack') {
+                    $this->acknowledgement = new Acknowledgement(array(
+                        'author'            => $comment->author,
+                        'comment'           => $comment->comment,
+                        'entry_time'        => $comment->timestamp,
+                        'expiration_time'   => $comment->expiration,
+                        'sticky'            => (int) $this->properties->{$this->prefix . 'acknowledgement_type'} === 2
+                    ));
+                    $ackCommentIdx = $i;
+                    break;
+                }
+            }
+
+            if ($ackCommentIdx !== null) {
+                unset($comments[$ackCommentIdx]);
+            }
         }
-        $this->comments = $comments->getQuery()->fetchAll();
+
+        $this->comments = $comments;
+
         return $this;
     }
 
     /**
-     * Fetch the object's downtimes
+     * Fetch the object's contact groups
      *
      * @return $this
      */
-    public function fetchDowntimes()
+    public function fetchContactgroups()
     {
-        $downtimes = $this->backend->select()->from('downtime', array(
-            'id'                => 'downtime_internal_id',
-            'objecttype'        => 'object_type',
-            'comment'           => 'downtime_comment',
-            'author_name'       => 'downtime_author_name',
-            'start'             => 'downtime_start',
-            'scheduled_start'   => 'downtime_scheduled_start',
-            'scheduled_end'     => 'downtime_scheduled_end',
-            'end'               => 'downtime_end',
-            'duration'          => 'downtime_duration',
-            'is_flexible'       => 'downtime_is_flexible',
-            'is_fixed'          => 'downtime_is_fixed',
-            'is_in_effect'      => 'downtime_is_in_effect',
-            'entry_time'        => 'downtime_entry_time'
-        ))
-            ->where('object_type', $this->type)
-            ->order('downtime_is_in_effect', 'DESC')
-            ->order('downtime_scheduled_start', 'ASC');
+        if ($this->backend->is('livestatus')) {
+            $this->contactgroups = array();
+            return $this;
+        }
+
+        $contactsGroups = $this->backend->select()->from('contactgroup', array(
+            'contactgroup_name',
+            'contactgroup_alias'
+        ));
         if ($this->type === self::TYPE_SERVICE) {
-            $downtimes
+            $contactsGroups
                 ->where('service_host_name', $this->host_name)
                 ->where('service_description', $this->service_description);
         } else {
-            $downtimes
-                ->where('host_name', $this->host_name);
+            $contactsGroups->where('host_name', $this->host_name);
         }
-        $this->downtimes = $downtimes->getQuery()->fetchAll();
+        $this->contactgroups = $contactsGroups->applyFilter($this->getFilter())->getQuery()->fetchAll();
         return $this;
     }
 
     /**
-     * Fetch the object's host groups
+     * Fetch the object's contacts
      *
      * @return $this
      */
-    public function fetchHostgroups()
+    public function fetchContacts()
     {
-        $this->hostgroups = $this->backend->select()
-            ->from('hostgroup', array('hostgroup_name', 'hostgroup_alias'))
-            ->where('host_name', $this->host_name)
-            ->applyFilter($this->getFilter())
-            ->fetchPairs();
+        if ($this->backend->is('livestatus')) {
+            $this->contacts = array();
+            return $this;
+        }
+
+        $contacts = $this->backend->select()->from('contact', array(
+            'contact_name',
+            'contact_alias',
+            'contact_email',
+            'contact_pager',
+        ));
+        if ($this->type === self::TYPE_SERVICE) {
+            $contacts
+                ->where('service_host_name', $this->host_name)
+                ->where('service_description', $this->service_description);
+        } else {
+            $contacts->where('host_name', $this->host_name);
+        }
+        $this->contacts = $contacts->applyFilter($this->getFilter())->getQuery()->fetchAll();
         return $this;
     }
 
@@ -372,74 +437,39 @@ abstract class MonitoredObject implements Filterable
     }
 
     /**
-     * Fetch the object's contacts
+     * Fetch the object's downtimes
      *
      * @return $this
      */
-    public function fetchContacts()
+    public function fetchDowntimes()
     {
-        if ($this->backend->is('livestatus')) {
-            $this->contacts = array();
-            return $this;
-        }
-
-        $contacts = $this->backend->select()->from('contact', array(
-                'contact_name',
-                'contact_alias',
-                'contact_email',
-                'contact_pager',
-        ));
+        $downtimes = $this->backend->select()->from('downtime', array(
+            'id'                => 'downtime_internal_id',
+            'objecttype'        => 'object_type',
+            'comment'           => 'downtime_comment',
+            'author_name'       => 'downtime_author_name',
+            'start'             => 'downtime_start',
+            'scheduled_start'   => 'downtime_scheduled_start',
+            'scheduled_end'     => 'downtime_scheduled_end',
+            'end'               => 'downtime_end',
+            'duration'          => 'downtime_duration',
+            'is_flexible'       => 'downtime_is_flexible',
+            'is_fixed'          => 'downtime_is_fixed',
+            'is_in_effect'      => 'downtime_is_in_effect',
+            'entry_time'        => 'downtime_entry_time'
+        ))
+            ->where('object_type', $this->type)
+            ->order('downtime_is_in_effect', 'DESC')
+            ->order('downtime_scheduled_start', 'ASC');
         if ($this->type === self::TYPE_SERVICE) {
-            $contacts
+            $downtimes
                 ->where('service_host_name', $this->host_name)
                 ->where('service_description', $this->service_description);
         } else {
-            $contacts->where('host_name', $this->host_name);
+            $downtimes
+                ->where('host_name', $this->host_name);
         }
-        $this->contacts = $contacts->applyFilter($this->getFilter())->getQuery()->fetchAll();
-        return $this;
-    }
-
-    /**
-     * Fetch the object's service groups
-     *
-     * @return $this
-     */
-    public function fetchServicegroups()
-    {
-        $this->servicegroups = $this->backend->select()
-            ->from('servicegroup', array('servicegroup_name', 'servicegroup_alias'))
-            ->where('host_name', $this->host_name)
-            ->where('service_description', $this->service_description)
-            ->applyFilter($this->getFilter())
-            ->fetchPairs();
-        return $this;
-    }
-
-    /**
-     * Fetch the object's contact groups
-     *
-     * @return $this
-     */
-    public function fetchContactgroups()
-    {
-        if ($this->backend->is('livestatus')) {
-            $this->contactgroups = array();
-            return $this;
-        }
-
-        $contactsGroups = $this->backend->select()->from('contactgroup', array(
-                'contactgroup_name',
-                'contactgroup_alias'
-        ));
-        if ($this->type === self::TYPE_SERVICE) {
-            $contactsGroups
-                ->where('service_host_name', $this->host_name)
-                ->where('service_description', $this->service_description);
-        } else {
-            $contactsGroups->where('host_name', $this->host_name);
-        }
-        $this->contactgroups = $contactsGroups->applyFilter($this->getFilter())->getQuery()->fetchAll();
+        $this->downtimes = $downtimes->getQuery()->fetchAll();
         return $this;
     }
 
@@ -478,6 +508,37 @@ abstract class MonitoredObject implements Filterable
     }
 
     /**
+     * Fetch the object's host groups
+     *
+     * @return $this
+     */
+    public function fetchHostgroups()
+    {
+        $this->hostgroups = $this->backend->select()
+            ->from('hostgroup', array('hostgroup_name', 'hostgroup_alias'))
+            ->where('host_name', $this->host_name)
+            ->applyFilter($this->getFilter())
+            ->fetchPairs();
+        return $this;
+    }
+
+    /**
+     * Fetch the object's service groups
+     *
+     * @return $this
+     */
+    public function fetchServicegroups()
+    {
+        $this->servicegroups = $this->backend->select()
+            ->from('servicegroup', array('servicegroup_name', 'servicegroup_alias'))
+            ->where('host_name', $this->host_name)
+            ->where('service_description', $this->service_description)
+            ->applyFilter($this->getFilter())
+            ->fetchPairs();
+        return $this;
+    }
+
+    /**
      * Fetch stats
      *
      * @return $this
@@ -505,6 +566,74 @@ abstract class MonitoredObject implements Filterable
     }
 
     /**
+     * Get all action urls configured for this monitored object
+     *
+     * @return array    All note urls as a string
+     */
+    public function getActionUrls()
+    {
+        return $this->resolveAllStrings(
+            MonitoredObject::parseAttributeUrls($this->action_url)
+        );
+    }
+
+    /**
+     * Get the type of the object
+     *
+     * @param   bool $translate
+     *
+     * @return  string
+     */
+    public function getType($translate = false)
+    {
+        if ($translate !== false) {
+            switch ($this->type) {
+                case self::TYPE_HOST:
+                    $type = mt('montiroing', 'host');
+                    break;
+                case self::TYPE_SERVICE:
+                    $type = mt('monitoring', 'service');
+                    break;
+                default:
+                    throw new InvalidArgumentException('Invalid type ' . $this->type);
+            }
+        } else {
+            $type = $this->type;
+        }
+        return $type;
+    }
+
+    /**
+     * Parse the content of the action_url or notes_url attributes
+     *
+     * Find all occurences of http links, separated by whitespaces and quoted
+     * by single or double-ticks.
+     *
+     * @link http://docs.icinga.org/latest/de/objectdefinitions.html
+     *
+     * @param   string  $urlString  A string containing one or more urls
+     * @return  array                   Array of urls as strings
+     */
+    public static function parseAttributeUrls($urlString)
+    {
+        if (empty($urlString)) {
+            return array();
+        }
+        $links = array();
+        if (strpos($urlString, "' ") === false) {
+            $links[] = $urlString;
+        } else {
+            // parse notes-url format
+            foreach (explode("' ", $urlString) as $url) {
+                $url = strpos($url, "'") === 0 ? substr($url, 1) : $url;
+                $url = strrpos($url, "'") === strlen($url) - 1 ? substr($url, 0, strlen($url) - 1) : $url;
+                $links[] = $url;
+            }
+        }
+        return $links;
+    }
+
+    /**
      * Fetch all available data of the object
      *
      * @return $this
@@ -513,14 +642,54 @@ abstract class MonitoredObject implements Filterable
     {
         $this
             ->fetchComments()
-            ->fetchContacts()
             ->fetchContactgroups()
+            ->fetchContacts()
             ->fetchCustomvars()
             ->fetchDowntimes();
+
         // Call fetchHostgroups or fetchServicegroups depending on the object's type
         $fetchGroups = 'fetch' . ucfirst($this->type) . 'groups';
         $this->$fetchGroups();
+
         return $this;
+    }
+
+    /**
+     * Resolve macros in all given strings in the current object context
+     *
+     * @param   array   $strs   An array of urls as string
+     *
+     * @return  array
+     */
+    protected function resolveAllStrings(array $strs)
+    {
+        foreach ($strs as $i => $str) {
+            $strs[$i] = Macro::resolveMacros($str, $this);
+        }
+        return $strs;
+    }
+
+    /**
+     * Set the object's properties
+     *
+     * @param   object $properties
+     *
+     * @return  $this
+     */
+    public function setProperties($properties)
+    {
+        $this->properties = (object) $properties;
+        return $this;
+    }
+
+    public function __isset($name)
+    {
+        if (property_exists($this->properties, $name)) {
+            return isset($this->properties->$name);
+        } elseif (property_exists($this, $name)) {
+            return isset($this->$name);
+        }
+        return false;
     }
 
     public function __get($name)
@@ -543,16 +712,6 @@ abstract class MonitoredObject implements Filterable
         throw new InvalidPropertyException('Can\'t access property \'%s\'. Property does not exist.', $name);
     }
 
-    public function __isset($name)
-    {
-        if (property_exists($this->properties, $name)) {
-            return isset($this->properties->$name);
-        } elseif (property_exists($this, $name)) {
-            return isset($this->$name);
-        }
-        return false;
-    }
-
     /**
      * @deprecated
      */
@@ -564,74 +723,5 @@ abstract class MonitoredObject implements Filterable
             return new Host(MonitoringBackend::instance(), $params->get('host'));
         }
         return null;
-    }
-
-    /**
-     * The notes for this monitored object
-     *
-     * @return string   The notes as a string
-     */
-    public abstract function getNotes();
-
-    /**
-     * Get all note urls configured for this monitored object
-     *
-     * @return array    All note urls as a string
-     */
-    public abstract function getNotesUrls();
-
-    /**
-     * Get all action urls configured for this monitored object
-     *
-     * @return array    All note urls as a string
-     */
-    public function getActionUrls()
-    {
-        return $this->resolveAllStrings(
-            MonitoredObject::parseAttributeUrls($this->action_url)
-        );
-    }
-
-    /**
-     * Resolve macros in all given strings in the current object context
-     *
-     * @param   array   $strs   An array of urls as string
-     * @return  type
-     */
-    protected function resolveAllStrings(array $strs)
-    {
-        foreach ($strs as $i => $str) {
-            $strs[$i] = Macro::resolveMacros($str, $this);
-        }
-        return $strs;
-    }
-
-    /**
-     * Parse the content of the action_url or notes_url attributes
-     *
-     * Find all occurences of http links, separated by whitespaces and quoted
-     * by single or double-ticks.
-     *
-     * @link http://docs.icinga.org/latest/de/objectdefinitions.html
-     *
-     * @param   string  $urlString  A string containing one or more urls
-     * @return  array                   Array of urls as strings
-     */
-    public static function parseAttributeUrls($urlString)
-    {
-        if (empty($urlString)) {
-            return array();
-        }
-        if (strpos($urlString, "' ") === false) {
-            $links[] = $urlString;
-        } else {
-            // parse notes-url format
-            foreach (explode("' ", $urlString) as $url) {
-                $url = strpos($url, "'") === 0 ? substr($url, 1) : $url;
-                $url = strrpos($url, "'") === strlen($url) - 1 ? substr($url, 0, strlen($url) - 1) : $url;
-                $links[] = $url;
-            }
-        }
-        return $links;
     }
 }

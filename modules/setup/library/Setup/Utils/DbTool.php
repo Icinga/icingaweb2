@@ -271,6 +271,8 @@ class DbTool
                 $this->config['db']
             );
         }
+
+        $this->zendConn->getConnection(); // Force connection attempt
     }
 
     /**

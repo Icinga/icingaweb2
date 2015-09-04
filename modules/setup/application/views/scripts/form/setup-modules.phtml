@@ -24,9 +24,5 @@ use Icinga\Web\Wizard;
 <?php endforeach ?>
   <?= $form->getElement($form->getTokenElementName()); ?>
   <?= $form->getElement($form->getUidElementName()); ?>
-  <div class="buttons">
-    <?= $form->getElement(Wizard::BTN_PREV); ?>
-    <?= $form->getElement(Wizard::BTN_NEXT); ?>
-    <?= $form->getElement(Wizard::PROGRESS_ELEMENT); ?>
-  </div>
+  <?= $form->getDisplayGroup('buttons'); ?>
 </form>

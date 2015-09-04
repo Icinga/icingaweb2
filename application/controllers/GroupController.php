@@ -1,10 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Controllers;
+
+use Exception;
 use Icinga\Application\Logger;
 use Icinga\Data\DataArray\ArrayDatasource;
-use Icinga\Data\Reducible;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Reducible;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Config\UserGroup\AddMemberForm;
 use Icinga\Forms\Config\UserGroup\UserGroupForm;

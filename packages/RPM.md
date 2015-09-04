@@ -89,7 +89,7 @@ By default the Icinga 2 DB IDO is used by the monitoring module in
 
 The external command pipe is required for sending commands
 and configured for Icinga 2 in
-`/etc/icingaweb2/modules/monitoring/instances.ini`
+`/etc/icingaweb2/modules/monitoring/commandtransports.ini`
 
 #### Authentication configuration
 

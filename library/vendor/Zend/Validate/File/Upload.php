@@ -14,7 +14,7 @@
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id$
  */
@@ -22,13 +22,14 @@
 /**
  * @see Zend_Validate_Abstract
  */
+require_once 'Zend/Validate/Abstract.php';
 
 /**
  * Validator for the maximum size of a file up to a max of 2GB
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_File_Upload extends Zend_Validate_Abstract
@@ -77,8 +78,7 @@ class Zend_Validate_File_Upload extends Zend_Validate_Abstract
      * If no files are given the $_FILES array will be used automatically.
      * NOTE: This validator will only work with HTTP POST uploads!
      *
-     * @param  array|Zend_Config $files Array of files in syntax of Zend_File_Transfer
-     * @return void
+     * @param array|Zend_Config $files Array of files in syntax of Zend_File_Transfer
      */
     public function __construct($files = array())
     {
@@ -92,7 +92,7 @@ class Zend_Validate_File_Upload extends Zend_Validate_Abstract
     /**
      * Returns the array of set files
      *
-     * @param  string $files (Optional) The file to return in detail
+     * @param  string $file (Optional) The file to return in detail
      * @return array
      * @throws Zend_Validate_Exception If file is not found
      */
@@ -111,6 +111,7 @@ class Zend_Validate_File_Upload extends Zend_Validate_Abstract
             }
 
             if (count($return) === 0) {
+                require_once 'Zend/Validate/Exception.php';
                 throw new Zend_Validate_Exception("The file '$file' was not found");
             }
 
@@ -155,6 +156,7 @@ class Zend_Validate_File_Upload extends Zend_Validate_Abstract
      *
      * @param  string $value Single file to check for upload errors, when giving null the $_FILES array
      *                       from initialization will be used
+     * @param  string|null   $file
      * @return boolean
      */
     public function isValid($value, $file = null)

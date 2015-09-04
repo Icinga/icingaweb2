@@ -124,6 +124,7 @@ class Service extends MonitoredObject
             'service_icon_image',
             'service_icon_image_alt',
             'service_acknowledged',
+            'service_acknowledgement_type',
             'service_action_url',
             'service_active_checks_enabled',
             'service_active_checks_enabled_changed',

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage Resource
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -32,7 +32,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage Resource
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Application_Resource_Translate extends Zend_Application_Resource_ResourceAbstract
@@ -90,7 +90,7 @@ class Zend_Application_Resource_Translate extends Zend_Application_Resource_Reso
             }
 
             if (isset($options['options'])) {
-                foreach($options['options'] as $key => $value) {
+                foreach ($options['options'] as $key => $value) {
                     $options[$key] = $value;
                 }
             }
@@ -115,12 +115,14 @@ class Zend_Application_Resource_Translate extends Zend_Application_Resource_Reso
                  : self::DEFAULT_REGISTRY_KEY;
             unset($options['registry_key']);
 
-            if(Zend_Registry::isRegistered($key)) {
+            if (Zend_Registry::isRegistered($key)) {
                 $translate = Zend_Registry::get($key);
-                if(!$translate instanceof Zend_Translate) {
-                    throw new Zend_Application_Resource_Exception($key
-                                   . ' already registered in registry but is '
-                                   . 'no instance of Zend_Translate');
+                if (!$translate instanceof Zend_Translate) {
+                    throw new Zend_Application_Resource_Exception(
+                        $key
+                        . ' already registered in registry but is '
+                        . 'no instance of Zend_Translate'
+                    );
                 }
 
                 $translate->addTranslation($options);

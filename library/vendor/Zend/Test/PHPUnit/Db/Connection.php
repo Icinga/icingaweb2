@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -23,10 +23,12 @@
 /**
  * @see Zend_Test_PHPUnit_Db_DataSet_QueryTable
  */
+require_once "Zend/Test/PHPUnit/Db/DataSet/QueryTable.php";
 
 /**
  * @see Zend_Test_PHPUnit_Db_Metadata_Generic
  */
+require_once "Zend/Test/PHPUnit/Db/Metadata/Generic.php";
 
 /**
  * Generic Abstraction of Zend_Db Connections in the PHPUnit Database Extension context.
@@ -36,7 +38,7 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Test_PHPUnit_Db_Connection extends PHPUnit_Extensions_Database_DB_DefaultDatabaseConnection

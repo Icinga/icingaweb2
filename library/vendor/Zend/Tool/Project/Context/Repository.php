@@ -14,16 +14,19 @@
  *
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
+require_once 'Zend/Tool/Project/Context/System/Interface.php';
+require_once 'Zend/Tool/Project/Context/System/TopLevelRestrictable.php';
+require_once 'Zend/Tool/Project/Context/System/NotOverwritable.php';
 
 /**
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Project_Context_Repository implements Countable
@@ -81,6 +84,7 @@ class Zend_Tool_Project_Context_Repository implements Countable
     public function addContextClass($contextClass)
     {
         if (!class_exists($contextClass)) {
+            require_once 'Zend/Loader.php';
             Zend_Loader::loadClass($contextClass);
         }
         $reflectionContextClass = new ReflectionClass($contextClass);
@@ -108,6 +112,7 @@ class Zend_Tool_Project_Context_Repository implements Countable
         $normalName = $this->_normalizeName($context->getName());
 
         if (isset($this->_shortContextNames[$normalName]) && ($this->_contexts[$this->_shortContextNames[$normalName]]['isOverwritable'] === false) ) {
+            require_once 'Zend/Tool/Project/Context/Exception.php';
             throw new Zend_Tool_Project_Context_Exception('Context ' . $context->getName() . ' is not overwriteable.');
         }
 
@@ -126,6 +131,7 @@ class Zend_Tool_Project_Context_Repository implements Countable
     public function getContext($name)
     {
         if (!$this->hasContext($name)) {
+            require_once 'Zend/Tool/Project/Context/Exception.php';
             throw new Zend_Tool_Project_Context_Exception('Context by name ' . $name . ' does not exist in the registry.');
         }
 

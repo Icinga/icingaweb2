@@ -15,21 +15,23 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
 /** Zend_Locale */
+require_once 'Zend/Locale.php';
 
 /** Zend_View_Helper_Abstract.php */
+require_once 'Zend/View/Helper/Abstract.php';
 
 /**
  * Translation view helper
  *
  * @category  Zend
  * @package   Zend_View
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_Translate extends Zend_View_Helper_Abstract
@@ -110,6 +112,7 @@ class Zend_View_Helper_Translate extends Zend_View_Helper_Abstract
         } else if ($translate instanceof Zend_Translate) {
             $this->_translator = $translate->getAdapter();
         } else {
+            require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception('You must set an instance of Zend_Translate or Zend_Translate_Adapter');
             $e->setView($this->view);
             throw $e;
@@ -126,6 +129,7 @@ class Zend_View_Helper_Translate extends Zend_View_Helper_Abstract
     public function getTranslator()
     {
         if ($this->_translator === null) {
+            require_once 'Zend/Registry.php';
             if (Zend_Registry::isRegistered('Zend_Translate')) {
                 $this->setTranslator(Zend_Registry::get('Zend_Translate'));
             }
@@ -145,6 +149,7 @@ class Zend_View_Helper_Translate extends Zend_View_Helper_Abstract
     {
         $translate = $this->getTranslator();
         if ($translate === null) {
+            require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception('You must set an instance of Zend_Translate or Zend_Translate_Adapter');
             $e->setView($this->view);
             throw $e;
@@ -164,6 +169,7 @@ class Zend_View_Helper_Translate extends Zend_View_Helper_Abstract
     {
         $translate = $this->getTranslator();
         if ($translate === null) {
+            require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception('You must set an instance of Zend_Translate or Zend_Translate_Adapter');
             $e->setView($this->view);
             throw $e;

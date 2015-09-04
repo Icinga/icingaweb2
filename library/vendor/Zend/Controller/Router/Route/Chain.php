@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Controller
  * @subpackage Router
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id$
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -27,12 +27,24 @@
  *
  * @package    Zend_Controller
  * @subpackage Router
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Controller_Router_Route_Chain extends Zend_Controller_Router_Route_Abstract
 {
+
+    /**
+     * Routes
+     *
+     * @var array
+     */
     protected $_routes = array();
+
+    /**
+     * Separators
+     *
+     * @var array
+     */
     protected $_separators = array();
 
     /**
@@ -44,6 +56,7 @@ class Zend_Controller_Router_Route_Chain extends Zend_Controller_Router_Route_Ab
     public static function getInstance(Zend_Config $config)
     {
         $defs = ($config->defaults instanceof Zend_Config) ? $config->defaults->toArray() : array();
+
         return new self($config->route, $defs);
     }
 
@@ -60,7 +73,6 @@ class Zend_Controller_Router_Route_Chain extends Zend_Controller_Router_Route_Ab
         $this->_separators[] = $separator;
 
         return $this;
-
     }
 
     /**
@@ -73,10 +85,10 @@ class Zend_Controller_Router_Route_Chain extends Zend_Controller_Router_Route_Ab
      */
     public function match($request, $partial = null)
     {
+        $rawPath     = $request->getPathInfo();
         $path        = trim($request->getPathInfo(), self::URI_DELIMITER);
         $subPath     = $path;
         $values      = array();
-        $numRoutes   = count($this->_routes);
         $matchedPath = null;
 
         foreach ($this->_routes as $key => $route) {
@@ -88,12 +100,12 @@ class Zend_Controller_Router_Route_Chain extends Zend_Controller_Router_Route_Ab
                 $separator = substr($subPath, 0, strlen($this->_separators[$key]));
 
                 if ($separator !== $this->_separators[$key]) {
+                    $request->setPathInfo($rawPath);
                     return false;
                 }
 
                 $subPath = substr($subPath, strlen($separator));
             }
-
             // TODO: Should be an interface method. Hack for 1.0 BC
             if (!method_exists($route, 'getVersion') || $route->getVersion() == 1) {
                 $match = $subPath;
@@ -102,16 +114,17 @@ class Zend_Controller_Router_Route_Chain extends Zend_Controller_Router_Route_Ab
                 $match = $request;
             }
 
-            $res = $route->match($match, true, ($key == $numRoutes - 1));
+            $res = $route->match($match, true);
+
             if ($res === false) {
+                $request->setPathInfo($rawPath);
                 return false;
             }
 
             $matchedPath = $route->getMatchedPath();
 
             if ($matchedPath !== null) {
-                $subPath     = substr($subPath, strlen($matchedPath));
-                $separator   = substr($subPath, 0, strlen($this->_separators[$key]));
+                $subPath   = substr($subPath, strlen($matchedPath));
             }
 
             $values = $res + $values;
@@ -174,7 +187,7 @@ class Zend_Controller_Router_Route_Chain extends Zend_Controller_Router_Route_Ab
             }
         }
     }
-    
+
     /**
      * Return a single parameter of route's defaults
      *

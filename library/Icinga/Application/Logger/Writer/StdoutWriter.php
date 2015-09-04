@@ -36,7 +36,7 @@ class StdoutWriter extends LogWriter
                 $color = 'red';
                 break;
             case Logger::WARNING:
-                $color = 'orange';
+                $color = 'yellow';
                 break;
             case Logger::INFO:
                 $color = 'green';

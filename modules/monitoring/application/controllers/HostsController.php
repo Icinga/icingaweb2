@@ -1,23 +1,25 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterEqual;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ObjectsCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandForm;
-use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\HostList;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 
-class Monitoring_HostsController extends Controller
+class HostsController extends Controller
 {
     /**
      * @var HostList
@@ -30,6 +32,7 @@ class Monitoring_HostsController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $hostList);
         $hostList->addFilter(Filter::fromQueryString((string) $this->params));
         $this->hostList = $hostList;
+        $this->view->baseFilter = $this->hostList->getFilter();
         $this->getTabs()->add(
             'show',
             array(
@@ -150,7 +153,6 @@ class Monitoring_HostsController extends Controller
                     ->toQueryString()
             );
         $this->view->commentsLink = Url::fromRequest()->setPath('monitoring/list/comments');
-        $this->view->baseFilter = $this->hostList->getFilter();
         $this->view->sendCustomNotificationLink = Url::fromRequest()->setPath('monitoring/hosts/send-custom-notification');
     }
 
@@ -163,18 +165,6 @@ class Monitoring_HostsController extends Controller
 
         $form = new AddCommentCommandForm();
         $form->setTitle($this->translate('Add Host Comments'));
-        $this->handleCommandForm($form);
-    }
-
-    /**
-     * Delete a comment
-     */
-    public function deleteCommentAction()
-    {
-        $this->assertPermission('monitoring/command/comment/delete');
-
-        $form = new DeleteCommentCommandForm();
-        $form->setTitle($this->translate('Delete Host Comments'));
         $this->handleCommandForm($form);
     }
 

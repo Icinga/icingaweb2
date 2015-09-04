@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Loader
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -23,12 +23,13 @@ if (class_exists('Zend_Loader_AutoloaderFactory')) return;
 
 /**
  * @package    Zend_Loader
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Loader_AutoloaderFactory
 {
-    const STANDARD_AUTOLOADER = 'Zend_Loader_StandardAutoloader';
+    const STANDARD_AUTOLOADER  = 'Zend_Loader_StandardAutoloader';
+    const CLASS_MAP_AUTOLOADER = 'Zend_Loader_ClassMapAutoloader';
 
     /**
      * @var array All autoloaders registered using the factory
@@ -87,6 +88,18 @@ abstract class Zend_Loader_AutoloaderFactory
 
         foreach ($options as $class => $options) {
             if (!isset(self::$loaders[$class])) {
+                // Check class map autoloader
+                if ($class == self::CLASS_MAP_AUTOLOADER) {
+                    if (!class_exists(self::CLASS_MAP_AUTOLOADER)) {
+                        // Extract the filename from the classname
+                        $classMapLoader = substr(
+                            strrchr(self::CLASS_MAP_AUTOLOADER, '_'), 1
+                        );
+
+                    }
+                }
+
+                // Autoload with standard autoloader
                 $autoloader = self::getStandardAutoloader();
                 if (!class_exists($class) && !$autoloader->autoload($class)) {
                     throw new Zend_Loader_Exception_InvalidArgumentException(sprintf(

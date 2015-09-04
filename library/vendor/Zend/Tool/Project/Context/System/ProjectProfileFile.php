@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -23,18 +23,22 @@
 /**
  * @see Zend_Tool_Project_Context_Filesystem_File
  */
+require_once 'Zend/Tool/Project/Context/Filesystem/File.php';
 
 /**
  * @see Zend_Tool_Project_Context_System_Interface
  */
+require_once 'Zend/Tool/Project/Context/System/Interface.php';
 
 /**
  * @see Zend_Tool_Project_Context_System_NotOverwritable
  */
+require_once 'Zend/Tool/Project/Context/System/NotOverwritable.php';
 
 /**
  * @see Zend_Tool_Project_Profile_FileParser_Xml
  */
+require_once 'Zend/Tool/Project/Profile/FileParser/Xml.php';
 
 /**
  * This class is the front most class for utilizing Zend_Tool_Project
@@ -44,7 +48,7 @@
  *
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Project_Context_System_ProjectProfileFile
