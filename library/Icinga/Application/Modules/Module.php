@@ -11,7 +11,7 @@ use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
-use Icinga\Data\ConfigObject;
+use Icinga\Application\Modules\MenuItemContainer;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Setup\SetupWizard;
@@ -19,7 +19,7 @@ use Icinga\Util\File;
 use Icinga\Util\Translator;
 use Icinga\Web\Controller\Dispatcher;
 use Icinga\Web\Hook;
-use Icinga\Web\Menu;
+use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Widget;
 use Icinga\Web\Widget\Dashboard\Pane;
 
@@ -189,7 +189,7 @@ class Module
     /**
      * A set of menu elements
      *
-     * @var Menu[]
+     * @var MenuItemContainer[]
      */
     protected $menuItems = array();
 
@@ -301,14 +301,34 @@ class Module
     }
 
     /**
-     * Get all menu items
+     * Return this module's menu
      *
-     * @return array
+     * @return  Navigation
      */
-    public function getMenuItems()
+    public function getMenu()
     {
         $this->launchConfigScript();
-        return $this->menuItems;
+        return $this->createMenu($this->menuItems);
+    }
+
+    /**
+     * Create and return a new navigation for the given menu items
+     *
+     * @param   MenuItemContainer[]     $items
+     *
+     * @return  Navigation
+     */
+    private function createMenu(array $items)
+    {
+        $navigation = new Navigation();
+        foreach ($items as $item) {
+            /** @var MenuItemContainer $item */
+            $navigationItem = $navigation->createItem($item->getName(), $item->getProperties());
+            $navigationItem->setChildren($this->createMenu($item->getChildren()));
+            $navigation->addItem($navigationItem);
+        }
+
+        return $navigation;
     }
 
     /**
@@ -317,14 +337,14 @@ class Module
      * @param   string  $name
      * @param   array   $properties
      *
-     * @return  Menu
+     * @return  MenuItemContainer
      */
-    protected function menuSection($name, array $properties = array())
+    protected function menuSection($name, array $properties = null)
     {
         if (array_key_exists($name, $this->menuItems)) {
             $this->menuItems[$name]->setProperties($properties);
         } else {
-            $this->menuItems[$name] = new Menu($name, new ConfigObject($properties));
+            $this->menuItems[$name] = new MenuItemContainer($name, $properties);
         }
 
         return $this->menuItems[$name];
