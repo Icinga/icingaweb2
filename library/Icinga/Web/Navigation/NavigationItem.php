@@ -117,6 +117,7 @@ class NavigationItem implements IteratorAggregate
     public function __construct($name, array $properties = null)
     {
         $this->setName($name);
+        $this->priority = 100;
         $this->children = new Navigation();
 
         if (! empty($properties)) {
