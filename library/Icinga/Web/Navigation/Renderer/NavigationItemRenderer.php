@@ -160,10 +160,6 @@ class NavigationItemRenderer
             $label = $this->view()->icon($icon) . $label;
         }
 
-        if (! $item->getAttribute('id')) {
-            $item->setAttribute('id', $item->getUniqueName());
-        }
-
         if (($url = $item->getUrl()) !== null) {
             $content = sprintf(
                 '<a%s href="%s"%s>%s</a>',
