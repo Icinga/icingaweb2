@@ -3,7 +3,7 @@
 ?>
 
 <tr>
-    <th><?= $this->translate('Last check') ?></th>
+    <th><?= (bool) $object->active_checks_enabled ? $this->translate('Last check') : $this->translate('Last update') ?></th>
     <td data-base-target="_self">
         <?php if (isset($checkNowForm)) { // Form is unset if the current user lacks the respective permission
             echo $checkNowForm;
