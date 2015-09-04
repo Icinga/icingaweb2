@@ -936,24 +936,44 @@ class LdapConnection implements Selectable, Inspectable
      */
     protected function encodeSortRules(array $sortRules)
     {
-        // TODO(el): Indefinite form of length octet
         $sequenceOf = '';
 
         foreach ($sortRules as $rule) {
-            $reversed = '0101' . ($rule[1] === Sortable::SORT_DESC ? 'ff' : '00');
+            if (false && $rule[1] === Sortable::SORT_DESC) {
+                $reversed = '0101ff';
+            } else {
+                $reversed = '';
+            }
 
             $attributeType = unpack('H*', $rule[0]);
             $attributeType = $attributeType[1];
-            $attributeType = '04' . str_pad(dechex(strlen($attributeType) / 2), 2, '0', STR_PAD_LEFT) . $attributeType;
-            $sequence = '30'
-                . str_pad(dechex(strlen($attributeType . $reversed) / 2), 2, '0', STR_PAD_LEFT)
-                . $attributeType
-                . $reversed;
+            $attributeOctets = strlen($attributeType) / 2;
+            if ($attributeOctets >= 127) {
+                // Use the indefinite form of the length octets (the long form would be another option)
+                $attributeType = '0440' . $attributeType . '0000';
+
+            } else {
+                $attributeType = '04' . str_pad(dechex($attributeOctets), 2, '0', STR_PAD_LEFT) . $attributeType;
+            }
+
+            $sequence = $attributeType . $reversed;
+            $sequenceOctects = strlen($sequence) / 2;
+            if ($sequenceOctects >= 127) {
+                $sequence = '3040' . $sequence . '0000';
+            } else {
+                $sequence = '30' . str_pad(dechex($sequenceOctects), 2, '0', STR_PAD_LEFT) . $sequence;
+            }
+
             $sequenceOf .= $sequence;
         }
-        $sequenceOf = '30'
-            . str_pad(dechex(strlen($sequenceOf) / 2), 2, '0', STR_PAD_LEFT)
-            . $sequenceOf;
+
+        $sequenceOfOctets = strlen($sequenceOf) / 2;
+        if ($sequenceOfOctets >= 127) {
+            $sequenceOf = '3040' . $sequenceOf . '0000';
+        } else {
+            $sequenceOf = '30' . str_pad(dechex($sequenceOfOctets), 2, '0', STR_PAD_LEFT) . $sequenceOf;
+        }
+
         return hex2bin($sequenceOf);
     }
 
