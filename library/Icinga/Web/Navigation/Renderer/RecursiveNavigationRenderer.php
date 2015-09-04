@@ -1,10 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Web\Navigation;
+namespace Icinga\Web\Navigation\Renderer;
 
+use Exception;
 use RecursiveIteratorIterator;
-use Icinga\Web\View;
+use Icinga\Exception\IcingaException;
+use Icinga\Web\Navigation\Navigation;
+use Icinga\Web\Navigation\NavigationItem;
 
 /**
  * Renderer for multi level navigation
@@ -16,22 +19,75 @@ use Icinga\Web\View;
 class RecursiveNavigationRenderer extends RecursiveIteratorIterator implements NavigationRendererInterface
 {
     /**
-     * Content to render
+     * The content rendered so far
      *
      * @var array
      */
-    private $content = array();
+    protected $content;
 
     /**
-     * Create a new recursive navigation renderer
+     * Create a new RecursiveNavigationRenderer
      *
      * @param   Navigation  $navigation
-     * @param   int         $flags
      */
-    public function __construct(Navigation $navigation, $flags = 0)
+    public function __construct(Navigation $navigation)
     {
-        $navigationRenderer = new NavigationRenderer($navigation, $flags & static::NAV_DISABLE);
-        parent::__construct($navigationRenderer, RecursiveIteratorIterator::SELF_FIRST);
+        $this->content = array();
+        parent::__construct(
+            new NavigationRenderer($navigation, true),
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setElementTag($tag)
+    {
+        $this->getInnerIterator()->setElementTag($tag);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getElementTag()
+    {
+        return $this->getInnerIterator()->getElementTag();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCssClass($class)
+    {
+        $this->getInnerIterator()->setCssClass($class);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCssClass()
+    {
+        return $this->getInnerIterator()->getCssClass();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setHeading($heading)
+    {
+        $this->getInnerIterator()->setHeading($heading);
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHeading()
+    {
+        return $this->getInnerIterator()->getHeading();
     }
 
     /**
@@ -69,50 +125,29 @@ class RecursiveNavigationRenderer extends RecursiveIteratorIterator implements N
     /**
      * {@inheritdoc}
      */
-    public function getCssClass()
-    {
-        return $this->getInnerIterator()->getCssClass();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setCssClass($class)
-    {
-        $this->getInnerIterator()->setCssClass($class);
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeading()
-    {
-        return $this->getInnerIterator()->getHeading();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setHeading($heading)
-    {
-        $this->getInnerIterator()->setHeading($heading);
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function render()
     {
-        foreach ($this as $navigationItem) {
-            /** @var \Icinga\Web\Navigation\NavigationItem $navigationItem */
-            $this->content[] = $this->getInnerIterator()->beginItemMarkup($navigationItem);
-            $this->content[] = $navigationItem->render();
-            if (! $navigationItem->hasChildren()) {
+        foreach ($this as $item) {
+            /** @var NavigationItem $item */
+            $this->content[] = $this->getInnerIterator()->beginItemMarkup($item);
+            $this->content[] = $item->render();
+            if (! $item->hasChildren()) {
                 $this->content[] = $this->getInnerIterator()->endItemMarkup();
             }
         }
-        return implode("\n", $this->content);
+
+        return join("\n", $this->content);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        try {
+            return $this->render();
+        } catch (Exception $e) {
+            return IcingaException::describe($e);
+        }
     }
 }

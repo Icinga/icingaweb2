@@ -1,12 +1,10 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Web\Navigation;
-
-use Icinga\Web\View;
+namespace Icinga\Web\Navigation\Renderer;
 
 /**
- * Interface for navigation renderer
+ * Interface for navigation renderers
  */
 interface NavigationRendererInterface
 {
@@ -25,7 +23,7 @@ interface NavigationRendererInterface
     const CSS_CLASS_DROPDOWN = 'dropdown';
 
     /**
-     * CSS class for dropdown's trigger
+     * CSS class for a dropdown item's trigger
      */
     const CSS_CLASS_DROPDOWN_TOGGLE = 'dropdown-toggle';
 
@@ -37,58 +35,58 @@ interface NavigationRendererInterface
     const CSS_CLASS_NAV = 'nav';
 
     /**
-     * CSS class for the ul element w/ dropdown layout
+     * CSS class for the ul element with dropdown layout
      *
      * @var string
      */
     const CSS_CLASS_NAV_DROPDOWN = 'dropdown-menu';
 
     /**
-     * CSS class for the ul element w/ tabs layout
+     * CSS class for the ul element with tabs layout
      *
      * @var string
      */
     const CSS_CLASS_NAV_TABS = 'nav-tabs';
 
     /**
-     * Icon for the dropdown's trigger
+     * Icon for a dropdown item's trigger
      *
      * @var string
      */
     const DROPDOWN_TOGGLE_ICON = 'menu';
 
     /**
-     * Heading rank
+     * Default tag for the outer element the navigation will be wrapped with
+     *
+     * @var string
+     */
+    const OUTER_ELEMENT_TAG = 'nav';
+
+    /**
+     * The heading's rank
      *
      * @var int
      */
-    const HEADING_RANK = 2;
+    const HEADING_RANK = 1;
 
     /**
-     * Flag for major navigation
+     * Set the tag for the outer element the navigation is wrapped with
      *
-     * With this flag the outer navigation element will be nav instead of div
+     * @param   string  $tag
      *
-     * @var int
+     * @return  $this
      */
-    const NAV_MAJOR = 1;
+    public function setElementTag($tag);
 
     /**
-     * Flag for disabling the outer navigation element
+     * Return the tag for the outer element the navigation is wrapped with
      *
-     * @var int
+     * @return  string
      */
-    const NAV_DISABLE = 2;
+    public function getElementTag();
 
     /**
-     * Get the CSS class for the outer element
-     *
-     * @return string|null
-     */
-    public function getCssClass();
-
-    /**
-     * Set the CSS class for the outer element
+     * Set the CSS class to use for the outer element
      *
      * @param   string  $class
      *
@@ -97,14 +95,14 @@ interface NavigationRendererInterface
     public function setCssClass($class);
 
     /**
-     * Get the heading
+     * Get the CSS class used for the outer element
      *
-     * @return string
+     * @return  string
      */
-    public function getHeading();
+    public function getCssClass();
 
     /**
-     * Set the heading
+     * Set the navigation's heading text
      *
      * @param   string  $heading
      *
@@ -113,10 +111,16 @@ interface NavigationRendererInterface
     public function setHeading($heading);
 
     /**
-     * Render navigation to HTML
+     * Return the navigation's heading text
      *
-     * @return string
+     * @return  string
+     */
+    public function getHeading();
+
+    /**
+     * Return the navigation rendered to HTML
+     *
+     * @return  string
      */
     public function render();
 }
-

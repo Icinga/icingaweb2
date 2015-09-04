@@ -18,6 +18,7 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Util\String;
+use Icinga\Web\Navigation\Renderer\RecursiveNavigationRenderer;
 
 /**
  * Container for navigation items

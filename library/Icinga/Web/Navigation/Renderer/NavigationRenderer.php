@@ -1,11 +1,15 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Web\Navigation;
+namespace Icinga\Web\Navigation\Renderer;
 
 use ArrayIterator;
+use Exception;
 use RecursiveIterator;
 use Icinga\Application\Icinga;
+use Icinga\Exception\IcingaException;
+use Icinga\Web\Navigation\Navigation;
+use Icinga\Web\Navigation\NavigationItem;
 use Icinga\Web\View;
 
 /**
@@ -14,72 +18,151 @@ use Icinga\Web\View;
 class NavigationRenderer implements RecursiveIterator, NavigationRendererInterface
 {
     /**
-     * Content to render
+     * The tag used for the outer element
      *
-     * @var array
+     * @var string
      */
-    private $content = array();
+    protected $elementTag;
 
     /**
-     * CSS class for the navigation element
+     * The CSS class used for the outer element
      *
-     * @var string|null
+     * @var string
      */
     protected $cssClass;
 
     /**
-     * Flags
-     *
-     * @var int
-     */
-    private $flags;
-
-    /**
-     * The heading for the navigation
+     * The navigation's heading text
      *
      * @var string
      */
     protected $heading;
 
     /**
-     * Flag for checking whether to call begin/endMarkup() or not
-     *7
-     * @var bool
+     * The content rendered so far
+     *
+     * @var array
      */
-    private $inIteration = false;
+    protected $content;
 
     /**
-     * Iterator over navigation
+     * Whether to skip rendering the outer element
+     *
+     * @var bool
+     */
+    protected $skipOuterElement;
+
+    /**
+     * The navigation's iterator
      *
      * @var ArrayIterator
      */
-    private $iterator;
+    protected $iterator;
 
     /**
-     * Current navigation
+     * The navigation
      *
      * @var Navigation
      */
-    private $navigation;
+    protected $navigation;
 
     /**
      * View
      *
-     * @var View|null
+     * @var View
      */
     protected $view;
 
     /**
-     * Create a new navigation renderer
+     * Create a new NavigationRenderer
      *
-     * @param   Navigation      $navigation
-     * @param   int             $flags
+     * @param   Navigation  $navigation
+     * @param   bool        $skipOuterElement
      */
-    public function __construct(Navigation $navigation, $flags = 0)
+    public function __construct(Navigation $navigation, $skipOuterElement = false)
     {
+        $this->skipOuterElement = $skipOuterElement;
         $this->iterator = $navigation->getIterator();
         $this->navigation = $navigation;
-        $this->flags = $flags;
+        $this->content = array();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setElementTag($tag)
+    {
+        $this->elementTag = $tag;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getElementTag()
+    {
+        return $this->elementTag ?: static::OUTER_ELEMENT_TAG;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCssClass($class)
+    {
+        $this->cssClass = $class;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCssClass()
+    {
+        return $this->cssClass;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setHeading($heading)
+    {
+        $this->heading = $heading;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHeading()
+    {
+        return $this->heading;
+    }
+
+    /**
+     * Return the view
+     *
+     * @return View
+     */
+    public function view()
+    {
+        if ($this->view === null) {
+            $this->setView(Icinga::app()->getViewRenderer()->view);
+        }
+
+        return $this->view;
+    }
+
+    /**
+     * Set the view
+     *
+     * @param   View    $view
+     *
+     * @return  $this
+     */
+    public function setView(View $view)
+    {
+        $this->view = $view;
+        return $this;
     }
 
     /**
@@ -87,7 +170,7 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
      */
     public function getChildren()
     {
-        return new static($this->current()->getChildren(), $this->flags & static::NAV_DISABLE);
+        return new static($this->current()->getChildren(), $this->skipOuterElement);
     }
 
     /**
@@ -100,7 +183,8 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
 
     /**
      * {@inheritdoc}
-     * @return \Icinga\Web\Navigation\NavigationItem
+     *
+     * @return  NavigationItem
      */
     public function current()
     {
@@ -129,9 +213,8 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
     public function rewind()
     {
         $this->iterator->rewind();
-        if (! (bool) ($this->flags & static::NAV_DISABLE) && ! $this->inIteration) {
+        if (! $this->skipOuterElement) {
             $this->content[] = $this->beginMarkup();
-            $this->inIteration = true;
         }
     }
 
@@ -141,83 +224,69 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
     public function valid()
     {
         $valid = $this->iterator->valid();
-        if (! (bool) ($this->flags & static::NAV_DISABLE) && ! $valid && $this->inIteration) {
+        if (! $this->skipOuterElement && !$valid) {
             $this->content[] = $this->endMarkup();
-            $this->inIteration = false;
         }
+
         return $valid;
     }
 
     /**
-     * Begin navigation markup
+     * Return the opening markup for the navigation
      *
-     * @return string
+     * @return  string
      */
     public function beginMarkup()
     {
         $content = array();
-        if ($this->flags & static::NAV_MAJOR) {
-            $el = 'nav';
-        } else {
-            $el = 'div';
-        }
-        if (($elCssClass = $this->getCssClass()) !== null) {
-            $elCss = ' class="' . $elCssClass . '"';
-        } else {
-            $elCss = '';
-        }
         $content[] = sprintf(
             '<%s%s role="navigation">',
-            $el,
-            $elCss
+            $this->getElementTag(),
+            $this->getCssClass() !== null ? ' class="' . $this->getCssClass() . '"' : ''
         );
         $content[] = sprintf(
             '<h%1$d class="sr-only" tabindex="-1">%2$s</h%1$d>',
             static::HEADING_RANK,
-            $this->getView()->escape($this->getHeading())
+            $this->view()->escape($this->getHeading())
         );
         $content[] = $this->beginChildrenMarkup();
-        return implode("\n", $content);
+        return join("\n", $content);
     }
 
     /**
-     * End navigation markup
+     * Return the closing markup for the navigation
      *
-     * @return string
+     * @return  string
      */
     public function endMarkup()
     {
         $content = array();
         $content[] = $this->endChildrenMarkup();
-        if ($this->flags & static::NAV_MAJOR) {
-            $content[] = '</nav>';
-        } else {
-            $content[] = '</div>';
-        }
-        return implode("\n", $content);
+        $content[] = '</' . $this->getElementTag() . '>';
+        return join("\n", $content);
     }
 
     /**
-     * Begin children markup
+     * Return the opening markup for multiple navigation items
      *
-     * @return string
+     * @return  string
      */
     public function beginChildrenMarkup()
     {
-        $ulCssClass = static::CSS_CLASS_NAV;
-        if ($this->navigation->getLayout() & Navigation::LAYOUT_TABS) {
-            $ulCssClass .= ' ' . static::CSS_CLASS_NAV_TABS;
+        $cssClass = array(static::CSS_CLASS_NAV);
+        if ($this->navigation->getLayout() === Navigation::LAYOUT_TABS) {
+            $cssClass[] = static::CSS_CLASS_NAV_TABS;
+        } elseif ($this->navigation->getLayout() === Navigation::LAYOUT_DROPDOWN) {
+            $cssClass[] = static::CSS_CLASS_NAV_DROPDOWN;
         }
-        if ($this->navigation->getLayout() & Navigation::LAYOUT_DROPDOWN) {
-            $ulCssClass .= ' ' . static::CSS_CLASS_NAV_DROPDOWN;
-        }
-        return '<ul class="' . $ulCssClass . '">';
+
+        return '<ul class="' . join(' ', $cssClass) . '">';
     }
 
     /**
-     * End children markup
+     * Return the closing markup for multiple navigation items
      *
-     * @return string
+     * @return  string
      */
     public function endChildrenMarkup()
     {
@@ -225,7 +294,7 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
     }
 
     /**
-     * Begin item markup
+     * Return the opening markup for the given navigation item
      *
      * @param   NavigationItem  $item
      *
@@ -237,27 +306,28 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
         if ($item->getActive()) {
             $cssClass[] = static::CSS_CLASS_ACTIVE;
         }
-        if ($item->hasChildren()
-            && $item->getChildren()->getLayout() === Navigation::LAYOUT_DROPDOWN
-        ) {
+
+        if ($item->hasChildren() && $item->getChildren()->getLayout() === Navigation::LAYOUT_DROPDOWN) {
             $cssClass[] = static::CSS_CLASS_DROPDOWN;
             $item
                 ->setAttribute('class', static::CSS_CLASS_DROPDOWN_TOGGLE)
                 ->setIcon(static::DROPDOWN_TOGGLE_ICON)
                 ->setUrl('#');
         }
+
         if (! empty($cssClass)) {
-            $content = sprintf('<li class="%s">', implode(' ', $cssClass));
+            $content = sprintf('<li class="%s">', join(' ', $cssClass));
         } else {
             $content = '<li>';
         }
+
         return $content;
     }
 
     /**
-     * End item markup
+     * Return the closing markup for a navigation item
      *
-     * @return string
+     * @return  string
      */
     public function endItemMarkup()
     {
@@ -267,74 +337,27 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
     /**
      * {@inheritdoc}
      */
-    public function getCssClass()
-    {
-        return $this->cssClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setCssClass($class)
-    {
-        $this->cssClass = trim((string) $class);
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getHeading()
-    {
-        return $this->heading;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setHeading($heading)
-    {
-        $this->heading = (string) $heading;
-        return $this;
-    }
-
-    /**
-     * Get the view
-     *
-     * @return View
-     */
-    public function getView()
-    {
-        if ($this->view === null) {
-            $this->view = Icinga::app()->getViewRenderer()->view;
-        }
-        return $this->view;
-    }
-
-    /**
-     * Set the view
-     *
-     * @param   View    $view
-     *
-     * @return  $this
-     */
-    public function setView(View $view)
-    {
-        $this->view = $view;
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function render()
     {
-        foreach ($this as $navigationItem) {
-            /** @var \Icinga\Web\Navigation\NavigationItem $navigationItem */
-            $this->content[] = $this->beginItemMarkup($navigationItem);
-            $this->content[] = $navigationItem->render();
+        foreach ($this as $item) {
+            /** @var NavigationItem $item */
+            $this->content[] = $this->beginItemMarkup($item);
+            $this->content[] = $item->render();
             $this->content[] = $this->endItemMarkup();
         }
-        return implode("\n", $this->content);
+
+        return join("\n", $this->content);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        try {
+            return $this->render();
+        } catch (Exception $e) {
+            return IcingaException::describe($e);
+        }
     }
 }
