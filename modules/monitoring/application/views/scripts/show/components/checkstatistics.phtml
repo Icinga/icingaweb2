@@ -1,17 +1,5 @@
 <?php
-
 /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
-
-if ($object->getType() === $object::TYPE_HOST) {
-    $isService = false;
-    $checkAttempts = $object->host_current_check_attempt . '/' . $object->host_max_check_attempts;
-    $stateType = (int) $object->host_state_type;
-} else {
-    $isService = true;
-    $checkAttempts = $object->service_attempt;
-    $stateType = (int) $object->service_state_type;
-}
-
 ?>
 
 <tr>
@@ -21,15 +9,16 @@ if ($object->getType() === $object::TYPE_HOST) {
             echo $checkNowForm;
         } ?>
         <?php if ((int) $object->state !== 99) {
-            echo $this->timeUntil($object->last_check);
+            echo $this->timeAgo($object->last_check);
         } ?>
     </td>
 </tr>
+
 <tr>
   <th><?= $this->translate('Next check') ?></th>
   <td>
       <?php if ($this->hasPermission('monitoring/command/schedule-check')) {
-          if ($isService) {
+          if ($object->getType() === $object::TYPE_SERVICE) {
               echo $this->qlink(
                   $this->translate('Reschedule'),
                   'monitoring/service/reschedule-check',
@@ -62,25 +51,25 @@ if ($object->getType() === $object::TYPE_HOST) {
       } ?>
   </td>
 </tr>
+
 <tr>
     <th><?= $this->translate('Check attempts') ?></th>
-    <?php if ($stateType === 0): ?>
-        <td><?= $checkAttempts ?> (<?= $this->translate('soft state') ?>)</td>
-    <?php else: ?>
-        <td><?= $checkAttempts ?> (<?= $this->translate('hard state') ?>)</td>
-    <?php endif; ?>
+    <td>
+        <?= $object->attempt ?>
+        (<?= (int) $object->state_type === 0 ? $this->translate('soft state') : $this->translate('hard state') ?>)
+    </td>
 </tr>
+
 <?php if ($object->check_execution_time): ?>
-    <tr>
-        <th><?= $this->translate('Check execution time') ?></th>
-        <td><?= $object->check_execution_time === null
-            ? '-' : round((float) $object->check_execution_time, 3)
-        ?>s</td>
-    </tr>
+<tr>
+    <th><?= $this->translate('Check execution time') ?></th>
+    <td><?= round((float) $object->check_execution_time, 3) ?>s</td>
+</tr>
 <?php endif ?>
+
 <?php if ($object->check_latency): ?>
-    <tr>
-        <th><?= $this->translate('Check latency') ?></th>
-        <td><?= $object->check_latency ?>s</td>
-    </tr>
+<tr>
+    <th><?= $this->translate('Check latency') ?></th>
+    <td><?= $object->check_latency ?>s</td>
+</tr>
 <?php endif ?>
