@@ -17,7 +17,7 @@
 <tr>
     <th><?= (bool) $object->active_checks_enabled ? $this->translate('Next check') : $this->translate('Next update') ?></th>
     <td>
-    <?php if ($this->hasPermission('monitoring/command/schedule-check')) {
+    <?php if ((bool) $object->active_checks_enabled && $this->hasPermission('monitoring/command/schedule-check')) {
         if ($object->getType() === $object::TYPE_SERVICE) {
             echo $this->qlink(
                 $this->translate('Reschedule'),
