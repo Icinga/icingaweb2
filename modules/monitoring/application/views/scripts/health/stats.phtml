@@ -23,7 +23,9 @@ if (! $this->compact): ?>
                             <?=
                             $this->qlink(
                                 $this->unhandledServiceProblems,
-                                'monitoring/list/services?service_problem=1&service_handled=0&sort=service_severity'
+                                'monitoring/list/services?service_problem=1&service_handled=0&sort=service_severity',
+                                null,
+                                array('data-base-target' => '_next')
                             )
                             ?>
                         </span>
@@ -36,7 +38,9 @@ if (! $this->compact): ?>
                             <?=
                             $this->qlink(
                                 $this->unhandledhostProblems,
-                                'monitoring/list/hosts?host_problem=1&host_handled=0'
+                                'monitoring/list/hosts?host_problem=1&host_handled=0',
+                                null,
+                                array('data-base-target' => '_next')
                             )
                             ?>
                         </span>
