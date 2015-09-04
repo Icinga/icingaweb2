@@ -332,10 +332,6 @@ $dashboard->add(
  */
 $dashboard = $this->dashboard($this->translate('Stats'));
 $dashboard->add(
-    $this->translate('Weekly Alert Summary'),
-    'monitoring/alertsummary/index?limit=5&interval=1w'
-);
-$dashboard->add(
     $this->translate('Check Stats'),
     'monitoring/health/stats'
 );
