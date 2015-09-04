@@ -129,6 +129,9 @@ class HealthController extends Controller
         ));
         $this->applyRestriction('monitoring/filter/objects', $servicestats);
         $this->view->servicestats = $servicestats->fetchRow();
+        $this->view->unhandledServiceProblems = $this->view->servicestats->services_critical_unhandled
+            + $this->view->servicestats->services_unknown_unhandled
+            + $this->view->servicestats->services_warning_unhandled;
 
         $hoststats = $this->backend->select()->from('hoststatussummary', array(
             'hosts_total',
@@ -142,7 +145,12 @@ class HealthController extends Controller
             'hosts_pending',
         ));
         $this->applyRestriction('monitoring/filter/objects', $hoststats);
-        $this->view->hoststats = $hoststats;
+        $this->view->hoststats = $hoststats->fetchRow();
+        $this->view->unhandledhostProblems = $this->view->hoststats->hosts_down_unhandled
+            + $this->view->hoststats->hosts_unreachable_unhandled;
+
+        $this->view->unhandledProblems = $this->view->unhandledhostProblems
+            + $this->view->unhandledServiceProblems;
 
         $this->view->runtimevariables  = (object) $this->backend->select()
             ->from('runtimevariables', array('varname', 'varvalue'))

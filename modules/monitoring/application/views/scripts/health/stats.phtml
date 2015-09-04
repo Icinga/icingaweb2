@@ -9,16 +9,56 @@ if (! $this->compact): ?>
 <?php endif ?>
 
 <div class="content processinfo">
-
     <div class="boxview">
-
         <div class="box left">
+            <h3><?= $this->unhandledProblems ?> <?= $this->translate('Unhandled Problems:') ?>
+                <span class="badge badge-critical"> <?= $this->unhandledProblems ?> </span>
+            </h3>
+            <table class="avp">
+                <tbody>
+                <tr>
+                    <th> <?= $this->translate('Service Problems:') ?> </th>
+                    <td>
+                        <span class="badge badge-critical">
+                            <?=
+                            $this->qlink(
+                                $this->unhandledServiceProblems,
+                                'monitoring/list/services?service_problem=1&service_handled=0&sort=service_severity'
+                            )
+                            ?>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th> <?= $this->translate('Host Problems:') ?> </th>
+                    <td>
+                        <span class="badge badge-critical">
+                            <?=
+                            $this->qlink(
+                                $this->unhandledhostProblems,
+                                'monitoring/list/hosts?host_problem=1&host_handled=0'
+                            )
+                            ?>
+                        </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <br>
+
             <h3 class="tinystatesummary" data-base-target="_next">
                 <?php $this->stats = $hoststats ?>
                 <?= $this->render('list/components/hostssummary.phtml') ?>
             </h3>
-
             <table class="avp">
+                <thead>
+                <tr>
+                    <th><strong><?= $this->translate('Runtime Variables') ?></strong></th>
+                    <th><?= $this->translate('Host Checks') ?></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
                 <tbody>
                 <tr>
                     <th> <?= $this->translate('Total') ?> </th>
@@ -30,17 +70,17 @@ if (! $this->compact): ?>
                 </tr>
                 </tbody>
             </table>
+            <br>
 
             <h3 class="tinystatesummary" data-base-target="_next">
                 <?php $this->stats = $servicestats ?>
                 <?= $this->render('list/components/servicesummary.phtml') ?>
             </h3>
-
             <table class="avp">
                 <thead>
                 <tr>
-                    <th></th>
-                    <th><?= $this->translate('Amount') ?></th>
+                    <th><strong> <?= $this->translate('Runtime Variables') ?> </strong></th>
+                    <th><?= $this->translate('Service Checks') ?></th>
                     <th><?= $this->translate('Per Host') ?></th>
                     <th></th>
                 </tr>
@@ -60,12 +100,13 @@ if (! $this->compact): ?>
                     </tr>
                 </tbody>
             </table>
+            <br>
 
             <h3><?= $this->translate('Active checks') ?></h3>
             <table class="avp">
                 <thead>
                 <tr>
-                    <th></th>
+                    <th><strong> <?= $this->translate('Check Performance') ?> </strong></th>
                     <th><?= $this->translate('Checks') ?></th>
                     <th><?= $this->translate('Latency') ?></th>
                     <th><?= $this->translate('Execution time') ?></th>
@@ -86,9 +127,18 @@ if (! $this->compact): ?>
                 </tr>
                 </tbody>
             </table>
+            <br>
 
             <h3><?= $this->translate('Passive checks') ?></h3>
             <table class="avp">
+                <thead>
+                <tr>
+                    <th><strong> <?= $this->translate('Check Performance') ?> </strong></th>
+                    <th><?= $this->translate('Passive Checks') ?></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
                 <tbody>
                 <tr>
                     <th><?= $this->translate('Host Checks') ?></th>
