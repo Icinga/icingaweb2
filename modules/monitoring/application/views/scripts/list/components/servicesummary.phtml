@@ -4,21 +4,16 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Web\Url;
 use Icinga\Module\Monitoring\Object\Service;
 
-function urlAddFilterOptional($url, $filter, $optional) {
-    $url = Url::fromPath($url);
-    $f = $filter;
-    if (isset($optional)) {
-        $f = Filter::matchAll($filter, $optional);
-    }
-    return $url->setQueryString($f->toQueryString());
-}
 $this->baseFilter = isset($this->baseFilter) ? $this->baseFilter : null;
 
-$stats = $stats->fetchRow();
+// don't fetch rows until they are actually needed, to improve dashlet performance
+if (!$stats instanceof stdClass) {
+    $stats = $stats->fetchRow();
+};
 $selfUrl = 'monitoring/list/services';
 $currentUrl = Url::fromRequest()->getRelativeUrl();
-?><h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
-<?= $this->qlink(
+
+echo $this->qlink(
     sprintf($this->translatePlural(
         '%u Service', '%u Services', $stats->services_total),
         $stats->services_total
@@ -36,7 +31,7 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     <?=
         $this->qlink(
             $stats->services_ok,
-            urlAddFilterOptional($selfUrl, Filter::where('service_state', 0), $this->baseFilter),
+            Url::urlAddFilterOptional($selfUrl, Filter::where('service_state', 0), $this->baseFilter),
             null,
             array('title' => sprintf(
                 $this->translatePlural(
@@ -81,7 +76,7 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
 
             echo $this->qlink(
                 $stats->$unhandled,
-                urlAddFilterOptional($selfUrl, $paramsUnhandled, $this->baseFilter),
+                Url::urlAddFilterOptional($selfUrl, $paramsUnhandled, $this->baseFilter),
                 null,
                 array('title' => sprintf(
                     $this->translatePlural(
@@ -106,7 +101,7 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
             }
             echo $this->qlink(
                 $stats->$handled,
-                urlAddFilterOptional($selfUrl, $paramsHandled, $this->baseFilter),
+                Url::urlAddFilterOptional($selfUrl, $paramsHandled, $this->baseFilter),
                 null,
                 array('title' => sprintf(
                     $this->translatePlural(
@@ -130,7 +125,7 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
 <span class="state pending<?= $currentUrl === Url::fromPath($selfUrl, array('service_state' => 99))->getRelativeUrl() ? ' active' : ''; ?>">
     <?= $this->qlink(
         $stats->services_pending,
-        urlAddFilterOptional($selfUrl, Filter::where('service_state', 99), $this->baseFilter),
+        Url::urlAddFilterOptional($selfUrl, Filter::where('service_state', 99), $this->baseFilter),
         null,
         array('title' => sprintf(
             $this->translatePlural(
@@ -144,4 +139,3 @@ foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $
 </span>
 <?php endif ?>
 </span>
-</h1>
