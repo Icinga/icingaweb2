@@ -265,22 +265,18 @@ $dashboard->add(
  */
 $dashboard = $this->dashboard($this->translate('Overdue'));
 $dashboard->add(
-    $this->translate('Acks Older Than Three Days'),
-    'monitoring/list/comments?comment_type=Ack&comment_timestamp<-3 days'
+    $this->translate('Acknowledgements Active For At Least Three Days'),
+    'monitoring/list/comments?comment_type=Ack&comment_timestamp<-3 days&sort=comment_timestamp&dir=asc'
 );
 $dashboard->add(
-    $this->translate('Downtimes Older Than Three Days'),
+    $this->translate('Downtimes Active For More Than Three Days'),
     'monitoring/list/downtimes?downtime_is_in_effect=1&downtime_scheduled_start<-3%20days&sort=downtime_start&dir=asc'
-);
-$dashboard->add(
-    $this->translate('Oldest Sticky Comments'),
-    'monitoring/list/comments?comment_type=Ack&TODO'
 );
 
 /*
  * Muted Objects
  */
-$dashboard = $this->dashboard($this->translate('Muted Objects'));
+$dashboard = $this->dashboard($this->translate('Muted'));
 $dashboard->add(
     $this->translate('Disabled Service Notifications'),
     'monitoring/list/services?service_notifications_enabled=0&limit=10'
@@ -296,6 +292,14 @@ $dashboard->add(
 $dashboard->add(
     $this->translate('Disabled Host Checks'),
     'monitoring/list/hosts?host_active_checks_enabled=0&limit=10'
+);
+$dashboard->add(
+    $this->translate('Acknowledged Problem Services'),
+    'monitoring/list/services?service_acknowledgement_type=2&service_problem=1&sort=service_state&limit=10'
+);
+$dashboard->add(
+    $this->translate('Acknowledged Problem Hosts'),
+    'monitoring/list/hosts?host_acknowledgement_type=2&host_problem=1&sort=host_severity&limit=10'
 );
 
 /*
@@ -324,8 +328,24 @@ $dashboard->add(
 );
 
 /*
+ * Stats
+ */
+$dashboard = $this->dashboard($this->translate('Stats'));
+$dashboard->add(
+    $this->translate('Weekly Alert Summary'),
+    'monitoring/alertsummary/index?limit=5&interval=1w'
+);
+$dashboard->add(
+    $this->translate('Check Stats'),
+    'monitoring/health/stats'
+);
+$dashboard->add(
+    $this->translate('Process Information'),
+    'monitoring/health/info'
+);
+
+/*
  * CSS
  */
 $this->provideCssFile('colors.less');
 $this->provideCssFile('service-grid.less');
-
