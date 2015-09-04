@@ -92,7 +92,8 @@ class ServiceStatus extends DataView
             'service_flap_detection_enabled',
             'service_flap_detection_enabled_changed',
             'service_modified_service_attributes',
-            'service_host_name'
+            'service_host_name',
+            'service_acknowledgement_type'
         );
     }
 
