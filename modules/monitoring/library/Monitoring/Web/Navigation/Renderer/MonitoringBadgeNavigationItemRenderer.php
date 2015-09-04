@@ -1,23 +1,26 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Module\Monitoring\Web\Menu;
+namespace Icinga\Module\Monitoring\Web\Navigation\Renderer;
 
+use Exception;
 use Icinga\Authentication\Auth;
-use Icinga\Data\ConfigObject;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
-use Icinga\Web\Menu;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
-use Icinga\Web\Menu\BadgeMenuItemRenderer;
+use Icinga\Web\Navigation\Renderer\SummaryNavigationItemRenderer;
 
 /**
  * Render generic dataView columns as badges in MenuItems
  *
  * Renders numeric data view column values into menu item badges, fully configurable
- * and with a caching mechanism to prevent needless requests to the same data view
+ * and with a caching mechanism to prevent needless requests to the same data view.
+ *
+ * It is possible to configure the class of the rendered badge as option 'class', the
+ * column to fetch using the option 'column' and the dataView from which the columns
+ * will be fetched using the option 'dataView'.
  */
-class MonitoringBadgeMenuItemRenderer extends BadgeMenuItemRenderer
+class MonitoringBadgeNavigationItemRenderer extends SummaryNavigationItemRenderer
 {
     /**
      * Caches the responses for all executed summaries
@@ -35,7 +38,7 @@ class MonitoringBadgeMenuItemRenderer extends BadgeMenuItemRenderer
     protected static $dataViews = array();
 
     /**
-     * The data view displayed by this menu item
+     * The dataview referred to by the navigation item
      *
      * @var string
      */
@@ -49,36 +52,56 @@ class MonitoringBadgeMenuItemRenderer extends BadgeMenuItemRenderer
     protected $columns;
 
     /**
-     * The titles that will be used to render this menu item tooltip
+     * Set the dataview referred to by the navigation item
      *
-     * @var String[]
+     * @param   string  $dataView
+     *
+     * @return  $this
      */
-    protected $titles;
-
-    /**
-     * The class of the badge element
-     *
-     * @var string
-     */
-    protected $state;
-
-    /**
-     * Create a new instance of ColumnMenuItemRenderer
-     *
-     * It is possible to configure the class of the rendered badge as option 'class', the column
-     * to fetch using the option 'column' and the dataView from which the columns will be
-     * fetched using the option 'dataView'.
-     *
-     * @param $configuration ConfigObject   The configuration to use
-     */
-    public function __construct(ConfigObject $configuration)
+    public function setDataView($dataView)
     {
-        parent::__construct($configuration);
+        $this->dataView = $dataView;
+        return $this;
+    }
 
-        $this->columns  = $configuration->get('columns');
-        $this->state    = $configuration->get('state');
-        $this->dataView = $configuration->get('dataView');
+    /**
+     * Return the dataview referred to by the navigation item
+     *
+     * @return  string
+     */
+    public function getDataView()
+    {
+        return $this->dataView;
+    }
 
+    /**
+     * Set the columns and titles displayed in the badge
+     *
+     * @param   array   $columns
+     *
+     * @return  $this
+     */
+    public function setColumns(array $columns)
+    {
+        $this->columns = $columns;
+        return $this;
+    }
+
+    /**
+     * Return the columns and titles displayed in the badge
+     *
+     * @return  array
+     */
+    public function getColumns()
+    {
+        return $this->columns;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
         // clear the outdated summary cache, since new columns are being added. Optimally all menu item are constructed
         // before any rendering is going on to avoid trashing too man old requests
         if (isset(self::$summaries[$this->dataView])) {
@@ -89,11 +112,11 @@ class MonitoringBadgeMenuItemRenderer extends BadgeMenuItemRenderer
         if (! isset(self::$dataViews[$this->dataView])) {
             self::$dataViews[$this->dataView] = array();
         }
+
         foreach ($this->columns as $column => $title) {
             if (! array_search($column, self::$dataViews[$this->dataView])) {
                 self::$dataViews[$this->dataView][] = $column;
             }
-            $this->titles[$column] = $title;
         }
     }
 
@@ -116,12 +139,11 @@ class MonitoringBadgeMenuItemRenderer extends BadgeMenuItemRenderer
     }
 
     /**
-     * Fetch the response from the database or access cache
+     * Fetch the dataview from the database or access cache
      *
-     * @param $view
+     * @param   string  $view
      *
-     * @return null
-     * @throws \Icinga\Exception\ConfigurationError
+     * @return  object
      */
     protected static function summary($view)
     {
@@ -133,51 +155,29 @@ class MonitoringBadgeMenuItemRenderer extends BadgeMenuItemRenderer
             static::applyRestriction('monitoring/filter/objects', $summary);
             self::$summaries[$view] = $summary->fetchRow();
         }
-        return isset(self::$summaries[$view]) ? self::$summaries[$view] : null;
+
+        return self::$summaries[$view];
     }
 
     /**
-     * Defines the color of the badge
-     *
-     * @return string
-     */
-    public function getState()
-    {
-        return $this->state;
-    }
-
-    /**
-     * The amount of items to display in the badge
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getCount()
     {
-        $sum = self::summary($this->dataView);
+        try {
+            $summary = self::summary($this->getDataView());
+        } catch (Exception $_) {
+            return 0;
+        }
+
         $count = 0;
-
-        foreach ($this->columns as $col => $title) {
-            if (isset($sum->$col)) {
-                $count += $sum->$col;
+        foreach ($this->getColumns() as $column => $title) {
+            if (isset($summary->$column) && $summary->$column > 0) {
+                $this->titles[] = sprintf($title, $summary->$column);
+                $count += $summary->$column;
             }
         }
+
         return $count;
-    }
-
-    /**
-     * The tooltip title
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        $titles = array();
-        $sum = $this->summary($this->dataView);
-        foreach ($this->columns as $column => $value) {
-            if (isset($sum->$column) && $sum->$column > 0) {
-                $titles[] = sprintf($this->titles[$column], $sum->$column);
-            }
-        }
-        return implode(', ', $titles);
     }
 }

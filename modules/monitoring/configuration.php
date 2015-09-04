@@ -90,7 +90,7 @@ $this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/serv
  */
 $section = $this->menuSection($this->translate('Problems'), array(
     'renderer' => array(
-        'SummaryMenuItemRenderer',
+        'SummaryNavigationItemRenderer',
         'state' => 'critical'
     ),
     'icon'      => 'block',
@@ -98,7 +98,7 @@ $section = $this->menuSection($this->translate('Problems'), array(
 ));
 $section->add($this->translate('Unhandled Hosts'), array(
     'renderer'  => array(
-        'Icinga\Module\Monitoring\Web\Menu\MonitoringBadgeMenuItemRenderer',
+        'MonitoringBadgeNavigationItemRenderer',
         'columns' => array(
             'hosts_down_unhandled' => $this->translate('%d unhandled hosts down')
         ),
@@ -110,7 +110,7 @@ $section->add($this->translate('Unhandled Hosts'), array(
 ));
 $section->add($this->translate('Unhandled Services'), array(
     'renderer'  => array(
-        'Icinga\Module\Monitoring\Web\Menu\MonitoringBadgeMenuItemRenderer',
+        'MonitoringBadgeNavigationItemRenderer',
         'columns' => array(
             'services_critical_unhandled' => $this->translate('%d unhandled services critical')
         ),
