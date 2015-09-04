@@ -351,7 +351,7 @@ class NavigationItem implements IteratorAggregate
             return 'navigation-' . $this->getEscapedName();
         }
 
-        return $this->getParent()->getEscapedName() . '-' . $this->getEscapedName();
+        return $this->getParent()->getUniqueName() . '-' . $this->getEscapedName();
     }
 
     /**
