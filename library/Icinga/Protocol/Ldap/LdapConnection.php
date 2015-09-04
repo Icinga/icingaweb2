@@ -358,10 +358,30 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function count(LdapQuery $query)
     {
+        $ds = $this->getConnection();
         $this->bind();
 
-        $res = $this->runQuery($query, array());
-        return count($res);
+        $results = @ldap_search(
+            $ds,
+            $query->getBase() ?: $this->getDn(),
+            (string) $query,
+            array('dn'),
+            0,
+            0
+        );
+
+        if ($results === false) {
+            if (ldap_errno($ds) !== self::LDAP_NO_SUCH_OBJECT) {
+                throw new LdapException(
+                    'LDAP count query "%s" (base %s) failed: %s',
+                    (string) $query,
+                    $query->getBase() ?: $this->getDn(),
+                    ldap_error($ds)
+                );
+            }
+        }
+
+        return ldap_count_entries($ds, $results);
     }
 
     /**
