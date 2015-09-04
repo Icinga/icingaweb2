@@ -208,7 +208,7 @@ class ServicestatusQuery extends IdoQuery
                 END * 60
                 + FLOOR(ss.execution_time) * 2
             END',
-            // TODO(el): Remove column once we support service_expected_update>now
+            // TODO(el): Remove column once we support service_next_update>now
             'service_next_update_is_late'               => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL
             THEN
                 0

@@ -77,6 +77,39 @@ class HoststatusQuery extends IdoQuery
             'host_modified_host_attributes'         => 'hs.modified_host_attributes',
             'host_next_check'                       => 'CASE hs.should_be_scheduled WHEN 1 THEN UNIX_TIMESTAMP(hs.next_check) ELSE NULL END',
             'host_next_notification'                => 'UNIX_TIMESTAMP(hs.next_notification)',
+            'host_next_update'                      => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
+            THEN
+                NULL
+            ELSE
+                UNIX_TIMESTAMP(hs.last_check)
+                + CASE WHEN
+                    COALESCE(hs.current_state, 0) = 0
+                THEN
+                    hs.normal_check_interval
+                ELSE
+                    hs.retry_check_interval
+                END * 60
+                + FLOOR(hs.execution_time) * 2
+            END',
+            // TODO(el): Remove column once we support host_next_update>now
+            'host_next_update_is_late'              => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
+            THEN
+                0
+            ELSE
+                CASE WHEN (UNIX_TIMESTAMP(hs.last_check)
+                    + CASE WHEN COALESCE(hs.current_state, 0) = 0
+                    THEN
+                        hs.normal_check_interval
+                    ELSE
+                        hs.retry_check_interval
+                    END * 60
+                    + FLOOR(hs.execution_time) * 2) > CURRENT_TIMESTAMP()
+                THEN
+                    1
+                ELSE
+                    0
+                END
+            END',
             'host_no_more_notifications'            => 'hs.no_more_notifications',
             'host_normal_check_interval'            => 'hs.normal_check_interval',
             'host_notifications_enabled'            => 'hs.notifications_enabled',
