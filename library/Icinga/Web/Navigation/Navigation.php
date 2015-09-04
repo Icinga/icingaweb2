@@ -222,6 +222,23 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
+     * Return the currently active item or the first one if none is active
+     *
+     * @return  NavigationItem
+     */
+    public function getActiveItem()
+    {
+        $firstItem = reset($this->items);
+        foreach ($this->items as $item) {
+            if ($item->getActive()) {
+                return $item;
+            }
+        }
+
+        return $firstItem->setActive();
+    }
+
+    /**
      * Return this navigation's items
      *
      * @return  array
