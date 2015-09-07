@@ -86,6 +86,14 @@ $this->provideSearchUrl($this->translate('Hostgroups'), 'monitoring/list/hostgro
 $this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/servicegroups?limit=10', 96);
 
 /*
+ * Available navigation items
+ */
+$this->provideNavigationItem('host-action');
+$this->provideNavigationItem('service-action');
+$this->provideNavigationItem('host-note');
+$this->provideNavigationItem('service-note');
+
+/*
  * Problems Section
  */
 $section = $this->menuSection($this->translate('Problems'), array(
