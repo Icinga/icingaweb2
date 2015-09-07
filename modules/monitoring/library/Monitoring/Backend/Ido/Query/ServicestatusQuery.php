@@ -205,8 +205,8 @@ class ServicestatusQuery extends IdoQuery
                     ss.retry_check_interval
                 ELSE
                     ss.normal_check_interval
-                END * 60
-                + CEIL(ss.execution_time) * 2
+                END * 60 * 2
+                + CEIL(ss.execution_time)
             END',
             'service_no_more_notifications'             => 'ss.no_more_notifications',
             'service_normal_check_interval'             => 'ss.normal_check_interval',

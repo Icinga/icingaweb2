@@ -88,8 +88,8 @@ class HoststatusQuery extends IdoQuery
                     hs.retry_check_interval
                 ELSE
                     hs.normal_check_interval
-                END * 60
-                + CEIL(hs.execution_time) * 2
+                END * 60 * 2
+                + CEIL(hs.execution_time)
             END',
             'host_no_more_notifications'            => 'hs.no_more_notifications',
             'host_normal_check_interval'            => 'hs.normal_check_interval',
