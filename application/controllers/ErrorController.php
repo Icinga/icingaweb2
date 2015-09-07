@@ -3,6 +3,7 @@
 
 namespace Icinga\Controllers;
 
+use Icinga\Web\Response\JsonResponse;
 use Zend_Controller_Plugin_ErrorHandler;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
@@ -86,11 +87,9 @@ class ErrorController extends ActionController
         }
 
         if ($this->getRequest()->isApiRequest()) {
-            // @TODO(el): Use ApiResponse class for unified response handling.
-            $this->getResponse()->sendJson(array(
-                'status'    => 'error',
-                'message'   => $this->view->message
-            ));
+            $this->getResponse()->json()
+                ->setErrorMessage($this->view->message)
+                ->sendResponse();
         }
 
         $this->view->request = $error->request;
