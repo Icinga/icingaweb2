@@ -637,7 +637,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      */
     public function handleRequest(Request $request)
     {
-        $params = $request->getUrl()->getParams();
+        $params = $request->getUrlParams();
         $this->applyFilter(Filter::fromQuerystring((string) $params));
         return $this;
     }
