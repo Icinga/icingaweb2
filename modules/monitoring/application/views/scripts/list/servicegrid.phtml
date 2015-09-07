@@ -1,5 +1,6 @@
 <?php
 use Icinga\Module\Monitoring\Object\Service;
+use Icinga\Web\Url;
 
 if (! $this->compact): ?>
 <div class="controls">
@@ -45,6 +46,8 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
         </tr>
     </thead>
     <tbody>
+
+    <?php $i = 0; ?>
     <?php foreach ($pivotHeader['rows'] as $hostName => $hostDisplayName): ?>
         <tr>
             <th><?php
@@ -88,8 +91,42 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
             ); ?>
             </td>
         <?php endforeach ?>
+        <?php if (! $this->compact && $this->horizontalPaginator->getPages()->pageCount > 1): ?>
+            <td>
+                <?php $expandLink = $this->qlink(
+                    $this->translate('more …'),
+                    Url::fromRequest(),
+                    array(
+                        'limit' => (
+                                $this->horizontalPaginator->getItemCountPerPage() + 20) . ','
+                             .  $this->verticalPaginator->getItemCountPerPage()
+                    ),
+                    array(
+                        'data-base-target'  => '_self',
+                    )
+                ) ?>
+                <?= ++$i === (int) (count($pivotHeader['rows']) / 2) ? $expandLink : '' ?>
+            </td>
+        <?php endif;?>
         </tr>
     <?php endforeach ?>
+    <?php if (! $this->compact && $this->verticalPaginator->getPages()->pageCount > 1): ;?>
+        <tr>
+            <td colspan="<?= count($pivotHeader['cols']) + 1?>" class="service-grid-table-more">
+                <?php echo $this->qlink(
+                    $this->translate('more …'),
+                    Url::fromRequest(),
+                    array(
+                        'limit' => $this->horizontalPaginator->getItemCountPerPage() . ',' .
+                            ($this->verticalPaginator->getItemCountPerPage() + 20)
+                    ),
+                    array(
+                        'data-base-target'  => '_self'
+                    )
+                ) ?>
+            </td>
+        </tr>
+    <?php endif;?>
     </tbody>
 </table>
 </div>
