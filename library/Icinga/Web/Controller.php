@@ -6,6 +6,7 @@ namespace Icinga\Web;
 use Icinga\Data\Filterable;
 use Icinga\Data\Sortable;
 use Icinga\Data\QueryInterface;
+use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Widget\Limiter;
@@ -49,6 +50,19 @@ class Controller extends ModuleActionController
 
             $this->redirectNow($url);
         }
+    }
+
+    /**
+     * Immediately respond w/ HTTP 400
+     *
+     * @param   string  $message    Exception message or exception format string
+     * @param   mixed   ...$arg     Format string argument
+     *
+     * @throws  HttpBadRequestException
+     */
+    public function httpBadRequest($message)
+    {
+        throw HttpBadRequestException::create(func_get_args());
     }
 
     /**
