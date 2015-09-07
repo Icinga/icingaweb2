@@ -236,10 +236,10 @@ class ResourceConfigForm extends ConfigForm
             'livestatus'    => 'Livestatus',
             'ssh'           => $this->translate('SSH Identity'),
         );
-        if ($resourceType === 'ldap' || Platform::extensionLoaded('ldap')) {
+        if ($resourceType === 'ldap' || Platform::hasLdapSupport()) {
             $resourceTypes['ldap'] = 'LDAP';
         }
-        if ($resourceType === 'db' || Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
+        if ($resourceType === 'db' || Platform::hasDatabaseSupport()) {
             $resourceTypes['db'] = $this->translate('SQL Database');
         }
 
