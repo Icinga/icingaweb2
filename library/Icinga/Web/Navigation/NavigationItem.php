@@ -527,6 +527,8 @@ class NavigationItem implements IteratorAggregate
     /**
      * Set this item's properties
      *
+     * Unknown properties (no matching setter) are considered as element attributes.
+     *
      * @param   array   $properties
      *
      * @return  $this
@@ -537,6 +539,8 @@ class NavigationItem implements IteratorAggregate
             $setter = 'set' . ucfirst($name);
             if (method_exists($this, $setter)) {
                 $this->$setter($value);
+            } else {
+                $this->setAttribute($name, $value);
             }
         }
 
