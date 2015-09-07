@@ -413,9 +413,12 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      */
     public function load($type)
     {
+        $user = Auth::getInstance()->getUser();
+        $this->merge($user->getNavigation($type));
+
         $moduleManager = Icinga::app()->getModuleManager();
         foreach ($moduleManager->getLoadedModules() as $module) {
-            if (Auth::getInstance()->hasPermission($moduleManager::MODULE_PERMISSION_NS . $module->getName())) {
+            if ($user->can($moduleManager::MODULE_PERMISSION_NS . $module->getName())) {
                 if ($type === 'menu-item') {
                     $this->merge($module->getMenu());
                 } elseif ($type === 'dashboard-pane') {
