@@ -1119,8 +1119,8 @@ class Form extends Zend_Form
                         $notifications = Notification::getInstance()->popMessages();
                         $message = null;
                         foreach ($notifications as $notification) {
-                            if ($notification['type'] === Notification::SUCCESS) {
-                                $message = $notification['message'];
+                            if ($notification->type === Notification::SUCCESS) {
+                                $message = $notification->message;
                                 break;
                             }
                         }
