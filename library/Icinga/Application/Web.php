@@ -255,29 +255,35 @@ class Web extends EmbeddedWeb
                             'permission'    => 'config/application/*',
                             'priority'      => 810
                         ),
+                        'navigation'        => array(
+                            'label'         => t('Shared Navigation'),
+                            'url'           => 'navigation/shared',
+                            'permission'    => 'config/application/navigation',
+                            'priority'      => 820,
+                        ),
                         'authentication'    => array(
                             'label'         => t('Authentication'),
                             'url'           => 'config/userbackend',
                             'permission'    => 'config/authentication/*',
-                            'priority'      => 820
+                            'priority'      => 830
                         ),
                         'roles'             => array(
                             'label'         => t('Roles'),
                             'url'           => 'role/list',
                             'permission'    => 'config/authentication/roles/show',
-                            'priority'      => 830
+                            'priority'      => 840
                         ),
                         'users'             => array(
                             'label'         => t('Users'),
                             'url'           => 'user/list',
                             'permission'    => 'config/authentication/users/show',
-                            'priority'      => 840
+                            'priority'      => 850
                         ),
                         'groups'            => array(
                             'label'         => t('Usergroups'),
                             'url'           => 'group/list',
                             'permission'    => 'config/authentication/groups/show',
-                            'priority'      => 850
+                            'priority'      => 860
                         ),
                         'modules'           => array(
                             'label'         => t('Modules'),
@@ -296,6 +302,11 @@ class Web extends EmbeddedWeb
                             'label'     => t('Preferences'),
                             'url'       => 'preference',
                             'priority'  => 910
+                        ),
+                        'navigation'    => array(
+                            'label'     => t('Navigation'),
+                            'url'       => 'navigation',
+                            'priority'  => 920
                         ),
                         'logout'        => array(
                             'label'     => t('Logout'),
