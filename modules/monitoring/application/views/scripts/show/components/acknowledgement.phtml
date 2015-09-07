@@ -43,6 +43,14 @@ if ($object->acknowledged): ?>
                         <span class="sr-only">(<?= $this->translate('Comment') ?>): </span>
                         <?= nl2br($this->createTicketLinks($acknowledgement->getComment()), false) ?>
                     </p>
+                <?php if ($acknowledgement->expires()): ?>
+                    <p class="info">
+                        <?= sprintf(
+                            $this->translate('Expires %s'),
+                            $this->timeUntil($acknowledgement->getExpirationTime())
+                        ) ?>
+                    </p>
+                <?php endif ?>
                 </li>
             </ul>
         </td>
