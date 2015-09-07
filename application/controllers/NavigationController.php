@@ -84,7 +84,30 @@ class NavigationController extends Controller
      */
     public function addAction()
     {
-        
+        $form = new NavigationConfigForm();
+        $form->setRedirectUrl('navigation');
+        $form->setTitle($this->translate('Create New Navigation Item'));
+        $form->addDescription($this->translate('Create a new navigation item, such as a menu entry or dashlet.'));
+        $form->setIniConfig($this->Auth()->getUser()->loadNavigationConfig());
+        $form->setOnSuccess(function (NavigationConfigForm $form) {
+            try {
+                $form->add(array_filter($form->getValues()));
+            } catch (Exception $e) {
+                $form->error($e->getMessage());
+                return false;
+            }
+
+            if ($form->save()) {
+                Notification::success(t('Navigation item successfully created'));
+                return true;
+            }
+
+            return false;
+        });
+        $form->handleRequest();
+
+        $this->view->form = $form;
+        $this->render('form');
     }
 
     /**
