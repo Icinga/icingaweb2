@@ -583,6 +583,8 @@ class NavigationItem implements IteratorAggregate
         if ($item->hasChildren()) {
             $this->getChildren()->merge($item->getChildren());
         }
+
+        return $this;
     }
 
     /**
