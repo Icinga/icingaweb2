@@ -8,14 +8,51 @@ if (in_array((int) $object->state, array(0, 99))) {
 }
 
 if ($object->acknowledged): ?>
+    <?php
+    $acknowledgement = $object->acknowledgement;
+    /** @var \Icinga\Module\Monitoring\Object\Acknowledgement $acknowledgement */
+    ?>
     <tr>
         <th><?= $this->translate('Acknowledged') ?></th>
         <td data-base-target="_self">
-            <?php if (isset($removeAckForm)) { // Form is unset if the current user lacks the respective permission
-                echo $removeAckForm;
-            } else {
-                echo '&#45;';
-            } ?>
+            <ul class="inline-comments">
+                <li class="comment-item">
+                    <h3>
+                        <?= sprintf(
+                            $this->translate('%s acknowledged %s'),
+                            '<span class="author">' . $this->escape($acknowledgement->getAuthor()) . '</span>',
+                            $this->timeAgo($acknowledgement->getEntryTime())
+                        ) ?>
+                        <?php
+                        if ($acknowledgement->getSticky()) {
+                            echo $this->icon('pin', sprintf(
+                                $this->translate(
+                                    'Acknowledgement remains until the %1$s recovers even if the %1$s changes state'
+                                ),
+                                $object->getType(true)
+                            ));
+                        }
+                        if (isset($removeAckForm)) {
+                            // Form is unset if the current user lacks the respective permission
+                            // Form is unset if the current user lacks the respective permission
+                            echo $removeAckForm;
+                        }
+                        ?>
+                    </h3>
+                    <p>
+                        <span class="sr-only">(<?= $this->translate('Comment') ?>): </span>
+                        <?= nl2br($this->createTicketLinks($acknowledgement->getComment()), false) ?>
+                    </p>
+                <?php if ($acknowledgement->expires()): ?>
+                    <p class="info">
+                        <?= sprintf(
+                            $this->translate('Expires %s'),
+                            $this->timeUntil($acknowledgement->getExpirationTime())
+                        ) ?>
+                    </p>
+                <?php endif ?>
+                </li>
+            </ul>
         </td>
     </tr>
 <?php else: ?>

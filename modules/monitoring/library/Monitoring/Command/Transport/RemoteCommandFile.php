@@ -23,6 +23,13 @@ class RemoteCommandFile implements CommandTransportInterface
     const TRANSPORT = 'remote';
 
     /**
+     * The name of the Icinga instance this transport will transfer commands to
+     *
+     * @var string
+     */
+    protected $instanceName;
+
+    /**
      * Remote host
      *
      * @var string
@@ -72,6 +79,29 @@ class RemoteCommandFile implements CommandTransportInterface
     public function __construct()
     {
         $this->renderer = new IcingaCommandFileCommandRenderer();
+    }
+
+    /**
+     * Set the name of the Icinga instance this transport will transfer commands to
+     *
+     * @param   string  $name
+     *
+     * @return  $this
+     */
+    public function setInstance($name)
+    {
+        $this->instanceName = $name;
+        return $this;
+    }
+
+    /**
+     * Return the name of the Icinga instance this transport will transfer commands to
+     *
+     * @return  string
+     */
+    public function getInstance()
+    {
+        return $this->instanceName;
     }
 
     /**

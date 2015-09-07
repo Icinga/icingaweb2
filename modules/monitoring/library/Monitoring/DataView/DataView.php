@@ -4,18 +4,18 @@
 namespace Icinga\Module\Monitoring\DataView;
 
 use IteratorAggregate;
-use Icinga\Data\FilterColumns;
-use Icinga\Data\QueryInterface;
-use Icinga\Data\SortRules;
+use Icinga\Data\ConnectionInterface;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterMatch;
+use Icinga\Data\FilterColumns;
 use Icinga\Data\PivotTable;
-use Icinga\Data\ConnectionInterface;
+use Icinga\Data\QueryInterface;
+use Icinga\Data\SortRules;
 use Icinga\Exception\QueryException;
-use Icinga\Web\Request;
-use Icinga\Web\Url;
 use Icinga\Module\Monitoring\Backend\Ido\Query\IdoQuery;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
+use Icinga\Web\Request;
+use Icinga\Web\Url;
 
 /**
  * A read-only view of an underlying query

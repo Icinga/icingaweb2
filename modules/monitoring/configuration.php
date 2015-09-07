@@ -180,27 +180,29 @@ $section->add($this->translate('Downtimes'), array(
     'url'      => 'monitoring/list/downtimes',
     'priority' => 80
 ));
-$section->add($this->translate('Notifications'), array(
-    'url'      => 'monitoring/list/notifications',
-    'priority' => 80
-));
-
 
 /*
  * History Section
  */
 $section = $this->menuSection($this->translate('History'), array(
-    'icon'      => 'rewind'
+    'icon' => 'rewind'
 ));
 $section->add($this->translate('Event Grid'), array(
-    'url'      => 'monitoring/list/eventgrid',
-    'priority' => 50
+    'priority'  => 10,
+    'url'       => 'monitoring/list/eventgrid'
 ));
-$section->add($this->translate('Events'), array(
-    'title'    => $this->translate('Event Overview'),
-    'url'      => 'monitoring/list/eventhistory?timestamp>=-7%20days'
+$section->add($this->translate('Event Overview'), array(
+    'priority'  => 20,
+    'url'       => 'monitoring/list/eventhistory?timestamp>=-7%20days'
 ));
-$section->add($this->translate('Timeline'))->setUrl('monitoring/timeline');
+$section->add($this->translate('Notifications'), array(
+    'priority'  => 30,
+    'url'       => 'monitoring/list/notifications',
+));
+$section->add($this->translate('Timeline'), array(
+    'priority'  => 40,
+    'url'       => 'monitoring/timeline'
+));
 
 /*
  * Reporting Section
@@ -219,13 +221,13 @@ $section->add($this->translate('Alert Summary'), array(
  */
 $section = $this->menuSection($this->translate('System'));
 $section->add($this->translate('Monitoring Health'), array(
-    'url'      => 'monitoring/process/info',
+    'url'      => 'monitoring/health/info',
     'priority' => 720,
     'renderer' => 'Icinga\Module\Monitoring\Web\Menu\BackendAvailabilityMenuItemRenderer'
 ));
 
 /*
- * Dashboard
+ * Current Incidents
  */
 $dashboard = $this->dashboard($this->translate('Current Incidents'));
 $dashboard->add(
@@ -240,3 +242,114 @@ $dashboard->add(
     $this->translate('Host Problems'),
     'monitoring/list/hosts?host_problem=1&sort=host_severity'
 );
+
+/*
+ * Overview
+ */
+$dashboard = $this->dashboard($this->translate('Overview'));
+$dashboard->add(
+    $this->translate('Service Grid'),
+    'monitoring/list/servicegrid?limit=15,18'
+);
+$dashboard->add(
+    $this->translate('Service Groups'),
+    '/monitoring/list/servicegroups'
+);
+$dashboard->add(
+    $this->translate('Host Groups'),
+    '/monitoring/list/hostgroups'
+);
+
+/*
+ * Most Overdue
+ */
+$dashboard = $this->dashboard($this->translate('Overdue'));
+$dashboard->add(
+    $this->translate('Late Host Check Results'),
+    'monitoring/list/hosts?host_next_update<now'
+);
+$dashboard->add(
+    $this->translate('Late Service Check Results'),
+    'monitoring/list/services?service_next_update<now'
+);
+$dashboard->add(
+    $this->translate('Acknowledgements Active For At Least Three Days'),
+    'monitoring/list/comments?comment_type=Ack&comment_timestamp<-3 days&sort=comment_timestamp&dir=asc'
+);
+$dashboard->add(
+    $this->translate('Downtimes Active For More Than Three Days'),
+    'monitoring/list/downtimes?downtime_is_in_effect=1&downtime_scheduled_start<-3%20days&sort=downtime_start&dir=asc'
+);
+
+/*
+ * Muted Objects
+ */
+$dashboard = $this->dashboard($this->translate('Muted'));
+$dashboard->add(
+    $this->translate('Disabled Service Notifications'),
+    'monitoring/list/services?service_notifications_enabled=0&limit=10'
+);
+$dashboard->add(
+    $this->translate('Disabled Host Notifications'),
+    'monitoring/list/hosts?host_notifications_enabled=0&limit=10'
+);
+$dashboard->add(
+    $this->translate('Disabled Service Checks'),
+    'monitoring/list/services?service_active_checks_enabled=0&limit=10'
+);
+$dashboard->add(
+    $this->translate('Disabled Host Checks'),
+    'monitoring/list/hosts?host_active_checks_enabled=0&limit=10'
+);
+$dashboard->add(
+    $this->translate('Acknowledged Problem Services'),
+    'monitoring/list/services?service_acknowledgement_type=2&service_problem=1&sort=service_state&limit=10'
+);
+$dashboard->add(
+    $this->translate('Acknowledged Problem Hosts'),
+    'monitoring/list/hosts?host_acknowledgement_type=2&host_problem=1&sort=host_severity&limit=10'
+);
+
+/*
+ * Activity Stream
+ */
+$dashboard = $this->dashboard($this->translate('Activity Stream'));
+$dashboard->add(
+    $this->translate('Recent Events'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&sort=timestamp&dir=desc&limit=8'
+);
+$dashboard->add(
+    $this->translate('Recent Hard State Changes'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&type=hard_state&sort=timestamp&dir=desc&limit=8'
+);
+$dashboard->add(
+    $this->translate('Recent Notifications'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&type=notify&sort=timestamp&dir=desc&limit=8'
+);
+$dashboard->add(
+    $this->translate('Downtimes Recently Started'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&type=dt_start&sort=timestamp&dir=desc&limit=8'
+);
+$dashboard->add(
+    $this->translate('Downtimes Recently Ended'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&type=dt_end&sort=timestamp&dir=desc&limit=8'
+);
+
+/*
+ * Stats
+ */
+$dashboard = $this->dashboard($this->translate('Stats'));
+$dashboard->add(
+    $this->translate('Check Stats'),
+    'monitoring/health/stats'
+);
+$dashboard->add(
+    $this->translate('Process Information'),
+    'monitoring/health/info'
+);
+
+/*
+ * CSS
+ */
+$this->provideCssFile('colors.less');
+$this->provideCssFile('service-grid.less');

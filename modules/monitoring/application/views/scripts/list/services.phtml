@@ -10,7 +10,9 @@ if (! $this->compact): ?>
   <?= $this->tabs ?>
   <div class="dontprint">
     <?= $this->render('list/components/selectioninfo.phtml') ?>
-    <?= $this->render('list/components/servicesummary.phtml') ?>
+    <h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
+      <?= $this->render('list/components/servicesummary.phtml') ?>
+    </h1>
   </div>
   <?= $this->sortBox ?>
   <?= $this->limiter ?>
@@ -33,7 +35,7 @@ if (! $this->compact): ?>
       )
     );
     $hostLink = $this->href(
-      'monitoring/show/host',
+      'monitoring/host/show',
       array(
         'host' => $service->host_name,
       )

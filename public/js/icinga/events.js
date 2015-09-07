@@ -228,11 +228,11 @@
                     icinga.logger.debug('events/submitForm: Button is event.currentTarget');
                 }
 
-                if ($el && ($el.is('input[type=submit]') || $el.is('button[type=submit]')) && $el.is(':focus')) {
+                if ($el && ($el.is('input[type=submit]') || $el.is('button[type=submit]'))) {
                     $button = $el;
                 } else {
                     icinga.logger.debug(
-                        'events/submitForm: Can not determine submit button, using the last one in form'
+                        'events/submitForm: Can not determine submit button, using the first one in form'
                     );
                 }
             }
@@ -252,7 +252,7 @@
             }
 
             if ($button.length === 0) {
-                $button = $('button[type=submit]', $form).add('input[type=submit]', $form).last();
+                $button = $('input[type=submit]', $form).add('button[type=submit]', $form).first();
             }
 
             if ($button.length) {

@@ -34,7 +34,7 @@ class UserForm extends RepositoryForm
             )
         );
         $this->addElement(
-            'text',
+            'password',
             'password',
             array(
                 'required'  => true,
@@ -56,10 +56,11 @@ class UserForm extends RepositoryForm
         $this->createInsertElements($formData);
 
         $this->addElement(
-            'text',
+            'password',
             'password',
             array(
-                'label' => $this->translate('Password')
+                'description'   => $this->translate('Leave empty for not updating the user\'s password'),
+                'label'         => $this->translate('Password'),
             )
         );
 

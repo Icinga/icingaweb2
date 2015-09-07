@@ -5,6 +5,7 @@ namespace Icinga\Web;
 
 use Zend_Controller_Response_Http;
 use Icinga\Application\Icinga;
+use Icinga\Web\Response\JsonResponse;
 
 class Response extends Zend_Controller_Response_Http
 {
@@ -94,6 +95,16 @@ class Response extends Zend_Controller_Response_Http
     {
         $this->rerenderLayout = (bool) $rerenderLayout;
         return $this;
+    }
+
+    /**
+     * Entry point for HTTP responses in JSON format
+     *
+     * @return JsonResponse
+     */
+    public static function json()
+    {
+        return new JsonResponse();
     }
 
     /**

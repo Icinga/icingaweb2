@@ -20,7 +20,7 @@ class InstanceQuery extends IdoQuery
      */
     protected function joinBaseTables()
     {
-        $this->select()->from(array('i' => $this->prefix . 'instances'));
+        $this->select()->from(array('i' => $this->prefix . 'instances'), array());
         $this->joinedVirtualTables['instances'] = true;
     }
 }

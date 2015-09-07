@@ -65,7 +65,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 $notificationDescription = sprintf(
                     '<a aria-label="%1$s" title="%1$s" href="%2$s" data-base-target="_next">%3$s</a>',
                     $this->translate('Disable notifications for a specific time on a program-wide basis'),
-                    $this->getView()->href('monitoring/process/disable-notifications'),
+                    $this->getView()->href('monitoring/health/disable-notifications'),
                     $this->translate('Disable temporarily')
                 );
             } else {

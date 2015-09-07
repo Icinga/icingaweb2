@@ -125,7 +125,7 @@ if (! $this->compact): ?>
               $this->translate('%s on %s', 'Service running on host'),
               $this->qlink(
                   $event->service_display_name,
-                  'monitoring/show/service',
+                  'monitoring/service/show',
                   array(
                       'host' => $event->host_name,
                       'service' => $event->service_description

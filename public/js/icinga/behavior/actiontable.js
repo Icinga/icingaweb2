@@ -320,7 +320,9 @@
 
         // some rows may contain form actions that trigger a different action, pass those through
         if (!$target.hasClass('rowaction') && $target.closest('form').length &&
-            ($target.closest('a').length || $target.closest('button').length)) {
+            ($target.closest('a').length ||                                         // allow regular link clinks
+             $target.closest('button').length ||                                    // allow submitting forms
+             $target.closest('input').length || $target.closest('label').length)) { // allow selecting form elements
             return;
         }
 

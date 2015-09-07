@@ -132,6 +132,20 @@ class NotificationQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    public function allowsCustomVars()
+    {
+        foreach ($this->subQueries as $query) {
+            if (! $query->allowsCustomVars()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function order($columnOrAlias, $dir = null)
     {
         foreach ($this->subQueries as $sub) {

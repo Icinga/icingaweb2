@@ -10,7 +10,7 @@ stored in `/etc/icingaweb2` by default (depending on your config setup).
   modules/monitoring		| Directory		| `monitoring` module specific configuration
   modules/monitoring		| config.ini		| Security settings (e.g. protected custom vars) for the `monitoring` module
   modules/monitoring		| backends.ini		| Backend type and resources (e.g. Icinga IDO DB)
-  modules/monitoring		| [instances.ini](instances.md#instances) | Instances and their transport (e.g. local external command pipe)
+  modules/monitoring		| [commandtransports.ini](commandtransports.md#commandtransports) | Command transports for specific Icinga instances
 
 
 

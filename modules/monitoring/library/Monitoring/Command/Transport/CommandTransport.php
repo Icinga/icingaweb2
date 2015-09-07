@@ -4,15 +4,19 @@
 namespace Icinga\Module\Monitoring\Command\Transport;
 
 use Icinga\Application\Config;
+use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Module\Monitoring\Command\IcingaCommand;
+use Icinga\Module\Monitoring\Command\Object\ObjectCommand;
+use Icinga\Module\Monitoring\Exception\CommandTransportException;
 
 /**
- * Command transport factory
+ * Command transport
  *
  * This class is subject to change as we do not have environments yet (#4471).
  */
-abstract class CommandTransport
+class CommandTransport implements CommandTransportInterface
 {
     /**
      * Transport configuration
@@ -24,21 +28,25 @@ abstract class CommandTransport
     /**
      * Get transport configuration
      *
-     * @return Config
-     * @throws ConfigurationError
+     * @return  Config
+     *
+     * @throws  ConfigurationError
      */
     public static function getConfig()
     {
-        if (! isset(self::$config)) {
-            self::$config = Config::module('monitoring', 'instances');
-            if (self::$config->isEmpty()) {
+        if (static::$config === null) {
+            $config = Config::module('monitoring', 'commandtransports');
+            if ($config->isEmpty()) {
                 throw new ConfigurationError(
-                    'No instances have been configured in \'%s\'.',
-                    self::$config->getConfigFile()
+                    mt('monitoring', 'No command transports have been configured in "%s".'),
+                    $config->getConfigFile()
                 );
             }
+
+            static::$config = $config;
         }
-        return self::$config;
+
+        return static::$config;
     }
 
     /**
@@ -47,9 +55,10 @@ abstract class CommandTransport
      * @param   ConfigObject  $config
      *
      * @return  LocalCommandFile|RemoteCommandFile
+     *
      * @throws  ConfigurationError
      */
-    public static function fromConfig(ConfigObject $config)
+    public static function createTransport(ConfigObject $config)
     {
         $config = clone $config;
         switch (strtolower($config->transport)) {
@@ -62,14 +71,18 @@ abstract class CommandTransport
                 break;
             default:
                 throw new ConfigurationError(
-                    'Can\'t create command transport \'%s\'. Invalid transport defined in \'%s\'.'
-                    . ' Use one of \'%s\' or \'%s\'.',
+                    mt(
+                        'monitoring',
+                        'Cannot create command transport "%s". Invalid transport'
+                        . ' defined in "%s". Use one of "%s" or "%s".'
+                    ),
                     $config->transport,
-                    self::$config->getConfigFile(),
+                    static::getConfig()->getConfigFile(),
                     LocalCommandFile::TRANSPORT,
                     RemoteCommandFile::TRANSPORT
                 );
         }
+
         unset($config->transport);
         foreach ($config as $key => $value) {
             $method = 'set' . ucfirst($key);
@@ -79,37 +92,80 @@ abstract class CommandTransport
                 // when being about to send a command
                 continue;
             }
+
             $transport->$method($value);
         }
+
         return $transport;
     }
 
     /**
-     * Create a transport by name
+     * Send the given command over an appropriate Icinga command transport
      *
-     * @param   string $name
+     * This will try one configured transport after another until the command has been successfully sent.
      *
-     * @return  LocalCommandFile|RemoteCommandFile
-     * @throws  ConfigurationError
+     * @param   IcingaCommand   $command    The command to send
+     * @param   int|null        $now        Timestamp of the command or null for now
+     *
+     * @throws  CommandTransportException   If sending the Icinga command failed
      */
-    public static function create($name)
+    public function send(IcingaCommand $command, $now = null)
     {
-        $config = self::getConfig()->getSection($name);
-        if ($config->isEmpty()) {
-            throw new ConfigurationError();
+        $tries = 0;
+        foreach (static::getConfig() as $transportConfig) {
+            $transport = static::createTransport($transportConfig);
+
+            if ($this->transferPossible($command, $transport)) {
+                try {
+                    $transport->send($command, $now);
+                } catch (CommandTransportException $e) {
+                    Logger::error($e);
+                    $tries += 1;
+                    continue; // Try the next transport
+                }
+
+                return; // The command was successfully sent
+            }
         }
-        return self::fromConfig($config);
+
+        if ($tries > 0) {
+            throw new CommandTransportException(
+                mt(
+                    'monitoring',
+                    'Failed to send external Icinga command. None of the configured transports'
+                    . ' was able to transfer the command. Please see the log for more details.'
+                )
+            );
+        }
+
+        throw new CommandTransportException(
+            mt(
+                'monitoring',
+                'Failed to send external Icinga command. No transport has been configured'
+                . ' for this instance. Please contact your Icinga Web administrator.'
+            )
+        );
     }
 
     /**
-     * Create a transport by the first section of the configuration
+     * Return whether it is possible to send the given command using the given transport
      *
-     * @return LocalCommandFile|RemoteCommandFile
+     * @param   IcingaCommand               $command
+     * @param   CommandTransportInterface   $transport
+     *
+     * @return  bool
      */
-    public static function first()
+    protected function transferPossible($command, $transport)
     {
-        $config = self::getConfig();
-        $config->rewind();
-        return self::fromConfig($config->current());
+        if (! method_exists($transport, 'getInstance') || !$command instanceof ObjectCommand) {
+            return true;
+        }
+
+        $transportInstance = $transport->getInstance();
+        if (! $transportInstance || $transportInstance === 'none') {
+            return true;
+        }
+
+        return strtolower($transportInstance) === strtolower($command->getObject()->instance_name);
     }
 }

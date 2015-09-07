@@ -1,19 +1,22 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Module\Monitoring\Controller;
+namespace Icinga\Module\Monitoring\Controllers;
+
+use Zend_Form;
+use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Backend;
+use Icinga\Module\Monitoring\Controller;
+use Icinga\Module\Monitoring\DataView\DataView;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
+use Icinga\Module\Monitoring\Forms\StatehistoryForm;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabs;
-use Icinga\Data\Filter\Filter;
-use Icinga\Module\Monitoring\Forms\StatehistoryForm;
-use Icinga\Module\Monitoring\DataView\DataView;
 
-class Monitoring_ListController extends Controller
+class ListController extends Controller
 {
     /**
      * @see ActionController::init
@@ -556,29 +559,36 @@ class Monitoring_ListController extends Controller
     {
         $this->addTitleTab('servicegrid', $this->translate('Service Grid'), $this->translate('Show the Service Grid'));
         $this->setAutorefreshInterval(15);
-        $problems = (bool) $this->params->shift('problems', 0);
         $query = $this->backend->select()->from('servicestatus', array(
+            'host_display_name',
             'host_name',
             'service_description',
-            'service_state',
+            'service_display_name',
+            'service_handled',
             'service_output',
-            'service_handled'
+            'service_state'
         ));
         $this->applyRestriction('monitoring/filter/objects', $query);
         $this->filterQuery($query);
+        $filter = (bool) $this->params->shift('problems', false) ? Filter::where('service_problem', 1) : null;
+        $pivot = $query
+            ->pivot(
+                'service_description',
+                'host_name',
+                $filter,
+                $filter ? clone $filter : null
+            )
+            ->setXAxisHeader('service_display_name')
+            ->setYAxisHeader('host_display_name');
         $this->setupSortControl(array(
-            'host_name'           => $this->translate('Hostname'),
-            'service_description' => $this->translate('Service description')
-        ), $query);
-        $pivot = $query->pivot(
-            'service_description',
-            'host_name',
-            $problems ? Filter::where('service_problem', 1) : null,
-            $problems ? Filter::where('service_problem', 1) : null
-        );
-        $this->view->pivot = $pivot;
+            'host_display_name'     => $this->translate('Hostname'),
+            'service_display_name'  => $this->translate('Service Name')
+        ), $pivot);
         $this->view->horizontalPaginator = $pivot->paginateXAxis();
-        $this->view->verticalPaginator   = $pivot->paginateYAxis();
+        $this->view->verticalPaginator = $pivot->paginateYAxis();
+        list($pivotData, $pivotHeader) = $pivot->toArray();
+        $this->view->pivotData = $pivotData;
+        $this->view->pivotHeader = $pivotHeader;
     }
 
     /**

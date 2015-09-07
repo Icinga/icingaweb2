@@ -1,6 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Web\Url;
@@ -9,12 +11,12 @@ use Icinga\Web\Widget\Tabextension\DashboardAction;
 /**
  * Display detailed information about a comment
  */
-class Monitoring_CommentController extends Controller
+class CommentController extends Controller
 {
     /**
      * The fetched comment
      *
-     * @var stdClass
+     * @var object
      */
     protected $comment;
 
@@ -41,19 +43,16 @@ class Monitoring_CommentController extends Controller
         ))->where('comment_internal_id', $commentId);
         $this->applyRestriction('monitoring/filter/objects', $query);
 
-        $this->comment = $query->getQuery()->fetchRow();
-        if ($this->comment === false) {
+        if (false === $this->comment = $query->fetchRow()) {
             $this->httpNotFound($this->translate('Comment not found'));
         }
 
         $this->getTabs()->add(
             'comment',
             array(
-                'title' => $this->translate(
-                    'Display detailed information about a comment.'
-                ),
-                'icon' => 'comment',
+                'icon'  => 'comment',
                 'label' => $this->translate('Comment'),
+                'title' => $this->translate('Display detailed information about a comment.'),
                 'url'   =>'monitoring/comments/show'
             )
         )->activate('comment')->extend(new DashboardAction());
@@ -64,37 +63,19 @@ class Monitoring_CommentController extends Controller
      */
     public function showAction()
     {
-        $listCommentsLink = Url::fromPath('monitoring/list/comments')
-            ->setQueryString('comment_type=(comment|ack)');
-
         $this->view->comment = $this->comment;
+
         if ($this->hasPermission('monitoring/command/comment/delete')) {
-            $this->view->delCommentForm = $this->createDelCommentForm();
-            $this->view->delCommentForm->populate(
-                array(
-                    'redirect' => $listCommentsLink,
-                    'comment_id' => $this->comment->id,
-                    'comment_is_service' => isset($this->comment->service_description)
-                )
-            );
+            $listUrl = Url::fromPath('monitoring/list/comments')->setQueryString('comment_type=(comment|ack)');
+            $form = new DeleteCommentCommandForm();
+            $form
+                ->populate(array(
+                    'comment_id'            => $this->comment->id,
+                    'comment_is_service'    => isset($this->comment->service_description),
+                    'redirect'              => $listUrl
+                ))
+                ->handleRequest();
+            $this->view->delCommentForm = $form;
         }
-    }
-
-    /**
-     * Create a command form to delete a single comment
-     *
-     * @return DeleteCommentsCommandForm
-     */
-    private function createDelCommentForm()
-    {
-        $this->assertPermission('monitoring/command/comment/delete');
-
-        $delCommentForm = new DeleteCommentCommandForm();
-        $delCommentForm->setAction(
-            Url::fromPath('monitoring/comment/show')
-                ->setParam('comment_id', $this->comment->id)
-        );
-        $delCommentForm->handleRequest();
-        return $delCommentForm;
     }
 }

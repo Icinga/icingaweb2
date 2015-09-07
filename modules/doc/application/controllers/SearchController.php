@@ -1,15 +1,17 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Doc\Controllers;
+
 use Icinga\Application\Icinga;
 use Icinga\Module\Doc\DocController;
 use Icinga\Module\Doc\DocParser;
 use Icinga\Module\Doc\Exception\DocException;
+use Icinga\Module\Doc\Renderer\DocSearchRenderer;
 use Icinga\Module\Doc\Search\DocSearch;
 use Icinga\Module\Doc\Search\DocSearchIterator;
-use Icinga\Module\Doc\Renderer\DocSearchRenderer;
 
-class Doc_SearchController extends DocController
+class SearchController extends DocController
 {
     /**
      * Render search
@@ -77,9 +79,7 @@ class Doc_SearchController extends DocController
     /**
      * Get the path to Icinga Web 2's documentation
      *
-     * @return  string
-     *
-     * @throws  Zend_Controller_Action_Exception    If Icinga Web 2's documentation is not available
+     * @return string
      */
     protected function getWebPath()
     {

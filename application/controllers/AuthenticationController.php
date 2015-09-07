@@ -1,12 +1,11 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-# namespace Icinga\Application\Controllers;
+namespace Icinga\Controllers;
 
 use Icinga\Application\Icinga;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Web\Controller;
-use Icinga\Web\Cookie;
 use Icinga\Web\Url;
 
 /**
@@ -39,8 +38,11 @@ class AuthenticationController extends Controller
         }
         if (! $requiresSetup) {
             if (! $this->getRequest()->hasCookieSupport()) {
-                echo $this->translate("Cookies must be enabled to run this application.\n");
-                $this->getResponse()->setHttpResponseCode(403)->sendHeaders();
+                $this
+                    ->getResponse()
+                    ->setBody("Cookies must be enabled to run this application.\n")
+                    ->setHttpResponseCode(403)
+                    ->sendResponse();
                 exit();
             }
             $form->handleRequest();
