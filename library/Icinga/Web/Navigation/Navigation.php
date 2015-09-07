@@ -141,7 +141,12 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
 
         $item = null;
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
-            $classPath = 'Icinga\\Module\\' . $module->getName() . '\\' . static::NAVIGATION_NS . '\\' . $itemType;
+            $classPath = 'Icinga\\Module\\'
+                . ucfirst($module->getName())
+                . '\\'
+                . static::NAVIGATION_NS
+                . '\\'
+                . $itemType;
             if (class_exists($classPath)) {
                 $item = new $classPath($name, $properties);
                 break;
