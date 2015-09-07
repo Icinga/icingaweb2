@@ -47,4 +47,17 @@ class DashboardPane extends NavigationItem
     {
         $this->setUrl(Url::fromPath('dashboard', array('pane' => $this->getName())));
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function merge(NavigationItem $item)
+    {
+        parent::merge($item);
+
+        $this->setDashlets(array_merge(
+            $this->getDashlets(),
+            $item->getDashlets()
+        ));
+    }
 }
