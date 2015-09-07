@@ -121,8 +121,14 @@ class NavigationController extends Controller
         $user = $this->Auth()->getUser();
 
         $config = $user->loadNavigationConfig();
-        if (! $config->hasSection($itemName) && $user->can('config/application/navigation')) {
-            $config = Config::app('navigation');
+        if (! $config->hasSection($itemName)) {
+            $shareConfig = Config::app('navigation');
+            if ($shareConfig->hasSection($itemName)
+                && ($shareConfig->get($itemName, 'owner') === $user->getUsername()
+                    || $user->can('config/application/navigation'))
+            ) {
+                $config = $shareConfig;
+            }
         }
 
         $form = new NavigationConfigForm();
@@ -169,9 +175,18 @@ class NavigationController extends Controller
     public function removeAction()
     {
         $itemName = $this->params->getRequired('name');
+        $user = $this->Auth()->getUser();
+
+        $config = $user->loadNavigationConfig();
+        if (! $config->hasSection($itemName)) {
+            $shareConfig = Config::app('navigation');
+            if ($shareConfig->hasSection($itemName) && $shareConfig->get($itemName, 'owner') === $user->getUsername()) {
+                $config = $shareConfig;
+            }
+        }
 
         $navigationConfigForm = new NavigationConfigForm();
-        $navigationConfigForm->setIniConfig($this->Auth()->getUser()->loadNavigationConfig());
+        $navigationConfigForm->setIniConfig($config);
         $form = new ConfirmRemovalForm();
         $form->setRedirectUrl('navigation');
         $form->setTitle(sprintf($this->translate('Remove Navigation Item %s'), $itemName));
