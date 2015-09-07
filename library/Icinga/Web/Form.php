@@ -1397,6 +1397,19 @@ class Form extends Zend_Form
     }
 
     /**
+     * Set the request
+     *
+     * @param   Request $request
+     *
+     * @return  $this
+     */
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
+        return $this;
+    }
+
+    /**
      * Return the current Response
      *
      * @return  Response
