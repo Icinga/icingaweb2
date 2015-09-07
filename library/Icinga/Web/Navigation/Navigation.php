@@ -228,14 +228,14 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      */
     public function getActiveItem()
     {
-        $firstItem = reset($this->items);
         foreach ($this->items as $item) {
             if ($item->getActive()) {
                 return $item;
             }
         }
 
-        return $firstItem->setActive();
+        $firstItem = reset($this->items);
+        return $firstItem ? $firstItem->setActive() : null;
     }
 
     /**
