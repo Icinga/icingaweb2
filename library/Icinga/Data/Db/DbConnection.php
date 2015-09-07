@@ -158,6 +158,9 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                     'lob_as_string' => true
                 );
                 break;
+            case 'oracle':
+                $adapter = 'Pdo_Oci';
+                break;
             case 'pgsql':
                 $adapter = 'Pdo_Pgsql';
                 $adapterParamaters['port'] = $this->config->get('port', 5432);
