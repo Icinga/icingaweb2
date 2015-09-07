@@ -244,11 +244,13 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
             $this->getElementTag(),
             $this->getCssClass() !== null ? ' class="' . $this->getCssClass() . '"' : ''
         );
-        $content[] = sprintf(
-            '<h%1$d id="navigation" class="sr-only" tabindex="-1">%2$s</h%1$d>',
-            static::HEADING_RANK,
-            $this->view()->escape($this->getHeading())
-        );
+        if (($heading = $this->getHeading()) !== null) {
+            $content[] = sprintf(
+                '<h%1$d id="navigation" class="sr-only" tabindex="-1">%2$s</h%1$d>',
+                static::HEADING_RANK,
+                $this->view()->escape($heading)
+            );
+        }
         $content[] = $this->beginChildrenMarkup();
         return join("\n", $content);
     }
