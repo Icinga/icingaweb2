@@ -27,11 +27,11 @@ class DbResourceForm extends Form
     public function createElements(array $formData)
     {
         $dbChoices = array();
-        if (Platform::hasMssqlSupport()) {
-            $dbChoices['mssql'] = 'MSSQL';
-        }
         if (Platform::hasMysqlSupport()) {
             $dbChoices['mysql'] = 'MySQL';
+        }
+        if (Platform::hasMssqlSupport()) {
+            $dbChoices['mssql'] = 'MSSQL';
         }
         if (Platform::hasOciSupport()) {
             $dbChoices['oci'] = 'Oracle (OCI8)';
