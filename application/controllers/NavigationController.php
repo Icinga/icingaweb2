@@ -6,9 +6,11 @@ namespace Icinga\Controllers;
 use Exception;
 use Icinga\Application\Config;
 use Icinga\Exception\NotFoundError;
+use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Navigation\NavigationConfigForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
+use Icinga\Web\Notification;
 use Icinga\Web\Url;
 
 /**
@@ -166,7 +168,32 @@ class NavigationController extends Controller
      */
     public function removeAction()
     {
-        
+        $itemName = $this->params->getRequired('name');
+
+        $navigationConfigForm = new NavigationConfigForm();
+        $navigationConfigForm->setIniConfig($this->Auth()->getUser()->loadNavigationConfig());
+        $form = new ConfirmRemovalForm();
+        $form->setRedirectUrl('navigation');
+        $form->setTitle(sprintf($this->translate('Remove Navigation Item %s'), $itemName));
+        $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($itemName, $navigationConfigForm) {
+            try {
+                $navigationConfigForm->delete($itemName);
+            } catch (Exception $e) {
+                $form->error($e->getMessage());
+                return false;
+            }
+
+            if ($navigationConfigForm->save()) {
+                Notification::success(sprintf(t('Navigation Item "%s" successfully removed'), $itemName));
+                return true;
+            }
+
+            return false;
+        });
+        $form->handleRequest();
+
+        $this->view->form = $form;
+        $this->render('form');
     }
 
     /**
