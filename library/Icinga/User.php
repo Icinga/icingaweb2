@@ -480,6 +480,22 @@ class User
     }
 
     /**
+     * Load and return this user's navigation configuration
+     *
+     * @return  Config
+     */
+    public function loadNavigationConfig()
+    {
+        return Config::fromIni(
+            Config::resolvePath('preferences')
+            . DIRECTORY_SEPARATOR
+            . $this->getUsername()
+            . DIRECTORY_SEPARATOR
+            . 'navigation.ini'
+        );
+    }
+
+    /**
      * Load and return this user's configured navigation of the given type
      *
      * @param   string  $type
@@ -488,14 +504,8 @@ class User
      */
     public function getNavigation($type)
     {
-        $config = Config::fromIni(
-            Config::resolvePath('preferences')
-            . DIRECTORY_SEPARATOR
-            . $this->getUsername()
-            . DIRECTORY_SEPARATOR
-            . 'navigation.ini'
-        )->getConfigObject();
-        $config->setKeyColumn('name');
+        $config = $this->loadNavigationConfig();
+        $config->getConfigObject()->setKeyColumn('name');
 
         $navigation = new Navigation();
         if ($type === 'dashboard-pane') {
