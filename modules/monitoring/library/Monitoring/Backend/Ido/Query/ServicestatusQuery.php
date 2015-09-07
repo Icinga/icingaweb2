@@ -200,32 +200,13 @@ class ServicestatusQuery extends IdoQuery
             ELSE
                 UNIX_TIMESTAMP(ss.last_check)
                 + CASE WHEN
-                    COALESCE(ss.current_state, 0) = 0
+                    COALESCE(ss.current_state, 0) > 0 AND ss.state_type = 0
                 THEN
-                    ss.normal_check_interval
-                ELSE
                     ss.retry_check_interval
-                END * 60
-                + FLOOR(ss.execution_time) * 2
-            END',
-            // TODO(el): Remove column once we support service_next_update>now
-            'service_next_update_is_late'               => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL
-            THEN
-                0
-            ELSE
-                CASE WHEN (UNIX_TIMESTAMP(ss.last_check)
-                    + CASE WHEN COALESCE(ss.current_state, 0) = 0
-                    THEN
-                        ss.normal_check_interval
-                    ELSE
-                        ss.retry_check_interval
-                    END * 60
-                    + FLOOR(ss.execution_time) * 2) > CURRENT_TIMESTAMP()
-                THEN
-                    1
                 ELSE
-                    0
-                END
+                    ss.normal_check_interval
+                END * 60
+                + CEIL(ss.execution_time) * 2
             END',
             'service_no_more_notifications'             => 'ss.no_more_notifications',
             'service_normal_check_interval'             => 'ss.normal_check_interval',
