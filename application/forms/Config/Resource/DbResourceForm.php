@@ -80,8 +80,7 @@ class DbResourceForm extends Form
             array(
                 'preserveDefault'   => true,
                 'label'             => $this->translate('Port'),
-                'description'       => $this->translate('The port to use'),
-                'value'             => ! array_key_exists('db', $formData) || $formData['db'] === 'mysql' ? 3306 : 5432
+                'description'       => $this->translate('The port to use')
             )
         );
         $this->addElement(
