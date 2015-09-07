@@ -145,7 +145,7 @@ class JsonResponse extends Response
      */
     public function getSuccessData()
     {
-        return $this->successData;
+        return (! is_array($this->successData) || empty($this->successData)) ? null : $this->successData;
     }
 
     /**
@@ -155,7 +155,7 @@ class JsonResponse extends Response
      *
      * @return  $this
      */
-    public function setSuccessData(array $successData)
+    public function setSuccessData(array $successData = null)
     {
         $this->successData = $successData;
         $this->status = static::STATUS_SUCCESS;
