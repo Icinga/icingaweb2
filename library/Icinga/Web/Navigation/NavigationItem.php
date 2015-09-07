@@ -446,7 +446,7 @@ class NavigationItem implements IteratorAggregate
     public function getUrl()
     {
         if ($this->url === null && $this->hasChildren()) {
-            return '#';
+            $this->setUrl(Url::fromPath('#'));
         }
 
         return $this->url;
