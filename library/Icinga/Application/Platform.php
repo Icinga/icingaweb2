@@ -343,6 +343,18 @@ class Platform
     }
 
     /**
+     * Return whether it's possible to connect to a Oracle database using OCI8
+     *
+     * Checks whether the OCI8 extension has been loaded and the Zend framework adapter for Oracle is available
+     *
+     * @return  bool
+     */
+    public static function hasOciSupport()
+    {
+        return static::extensionLoaded('oci8') && static::classExists('Zend_Db_Adapter_Oracle');
+    }
+
+    /**
      * Return whether it's possible to connect to a Oracle database using PDO_OCI
      *
      * Checks whether the OCI PDO extension has been loaded and the Zend framework adapter for Oci is available
