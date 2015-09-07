@@ -140,6 +140,78 @@ class Web extends EmbeddedWeb
         return $this->viewRenderer;
     }
 
+    private function hasAccessToSharedNavigationItem(& $config)
+    {
+        // TODO: Provide a more sophisticated solution
+
+        if (isset($config['owner']) && $config['owner'] === $this->user->getUsername()) {
+            unset($config['owner']);
+            return true;
+        }
+
+        if (isset($config['users'])) {
+            $users = array_map('trim', explode(',', strtolower($config['users'])));
+            if (in_array($this->user->getUsername(), $users, true)) {
+                unset($config['users']);
+                return true;
+            }
+        }
+
+        if (isset($config['groups'])) {
+            $groups = array_map('trim', explode(',', strtolower($config['groups'])));
+            $userGroups = array_map('strtolower', $this->user->getGroups());
+            $matches = array_intersect($userGroups, $groups);
+            if (! empty($matches)) {
+                unset($config['groups']);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Load and return the shared navigation of the given type
+     *
+     * @param   string  $type
+     *
+     * @return  Navigation
+     */
+    public function getSharedNavigation($type)
+    {
+        $config = Config::app('navigation')->getConfigObject();
+        $config->setKeyColumn('name');
+
+        $navigation = new Navigation();
+        if ($type === 'dashboard-pane') {
+            $panes = array();
+            foreach ($config->select()->where('type', 'dashlet') as $dashletName => $dashletConfig) {
+                if ($this->hasAccessToSharedNavigationItem($dashletConfig)) {
+                    // TODO: Throw ConfigurationError if pane or url is missing
+                    $panes[$dashletConfig->pane][$dashletName] = $dashletConfig->url;
+                }
+            }
+
+            foreach ($panes as $paneName => $dashlets) {
+                $navigation->addItem(
+                    $paneName,
+                    array(
+                        'type'      => 'dashboard-pane',
+                        'dashlets'  => $dashlets
+                    )
+                );
+            }
+        } else {
+            foreach ($config->select()->where('type', $type) as $name => $typeConfig) {
+                if ($this->hasAccessToSharedNavigationItem($typeConfig)) {
+                    $navigation->addItem($name, $typeConfig->toArray());
+                }
+            }
+        }
+
+        return $navigation;
+    }
+
     /**
      * Return the app's menu
      *
