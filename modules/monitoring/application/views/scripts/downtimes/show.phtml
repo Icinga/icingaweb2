@@ -1,23 +1,19 @@
 <div class="controls">
-   
-  <?php if (! $this->compact): ?>
-    <?= $this->tabs; ?>
-  <?php endif ?>
-
-  <?= $this->render('partials/downtime/downtimes-header.phtml'); ?> 
-</p>
+<?php if (! $this->compact): ?>
+    <?= $this->tabs ?>
+<?php endif ?>
+    <?= $this->render('partials/downtime/downtimes-header.phtml') ?>
 </div>
+
 <div class="content multi-commands">
-    <h3><?= $this->translate('Commands') ?> </h3>
+    <h3><?= $this->icon('reschedule') ?><?= $this->translate('Commands') ?></h3>
     <?= $this->qlink(
-        sprintf(
-            $this->translate('Remove all %d scheduled downtimes'),
-            count($downtimes)
-        ),
+        sprintf($this->translate('Remove all %d scheduled downtimes'), $downtimes->count()),
         $removeAllLink,
         null,
         array(
-            'icon' => 'trash'
+            'icon'  => 'trash',
+            'title' => $this->translate('Remove all selected downtimes')
         )
     ) ?>
 </div>

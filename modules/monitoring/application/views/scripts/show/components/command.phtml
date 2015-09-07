@@ -5,6 +5,12 @@ $command = array_shift($parts);
 
 ?>
 
+<?php if ($showInstance): ?>
+<tr class="newsection">
+    <th><?= $this->translate('Instance'); ?></th>
+    <td><?= $this->escape($object->instance_name); ?></td>
+</tr>
+<?php endif ?>
 <tr class="newsection">
     <th><?= $this->translate('Command'); ?></th>
     <td>

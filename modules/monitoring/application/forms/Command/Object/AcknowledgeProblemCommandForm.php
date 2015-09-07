@@ -111,8 +111,8 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                     'label'         => $this->translate('Sticky Acknowledgement'),
                     'value'         => true,
                     'description'   => $this->translate(
-                        'If you want the acknowledgement to disable notifications until the host or service recovers,'
-                        . ' check this option.'
+                        'If you want the acknowledgement to remain until the host or service recovers even if the host'
+                        . ' or service changes state, check this option.'
                     )
                 )
             ),

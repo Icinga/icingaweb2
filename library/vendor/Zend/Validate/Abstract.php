@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -22,11 +22,12 @@
 /**
  * @see Zend_Validate_Interface
  */
+require_once 'Zend/Validate/Interface.php';
 
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
@@ -148,6 +149,7 @@ abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
         }
 
         if (!isset($this->_messageTemplates[$messageKey])) {
+            require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception("No message template exists for key '$messageKey'");
         }
 
@@ -189,6 +191,7 @@ abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
         /**
          * @see Zend_Validate_Exception
          */
+        require_once 'Zend/Validate/Exception.php';
         throw new Zend_Validate_Exception("No property exists by the name '$property'");
     }
 
@@ -342,6 +345,7 @@ abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
      * Set translation object
      *
      * @param  Zend_Translate|Zend_Translate_Adapter|null $translator
+     * @throws Zend_Validate_Exception
      * @return Zend_Validate_Abstract
      */
     public function setTranslator($translator = null)
@@ -351,6 +355,7 @@ abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
         } elseif ($translator instanceof Zend_Translate) {
             $this->_translator = $translator->getAdapter();
         } else {
+            require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception('Invalid translator specified');
         }
         return $this;
@@ -388,7 +393,7 @@ abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
      * Set default translation object for all validate objects
      *
      * @param  Zend_Translate|Zend_Translate_Adapter|null $translator
-     * @return void
+     * @throws Zend_Validate_Exception
      */
     public static function setDefaultTranslator($translator = null)
     {
@@ -397,6 +402,7 @@ abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
         } elseif ($translator instanceof Zend_Translate) {
             self::$_defaultTranslator = $translator->getAdapter();
         } else {
+            require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception('Invalid translator specified');
         }
     }
@@ -409,6 +415,7 @@ abstract class Zend_Validate_Abstract implements Zend_Validate_Interface
     public static function getDefaultTranslator()
     {
         if (null === self::$_defaultTranslator) {
+            require_once 'Zend/Registry.php';
             if (Zend_Registry::isRegistered('Zend_Translate')) {
                 $translator = Zend_Registry::get('Zend_Translate');
                 if ($translator instanceof Zend_Translate_Adapter) {

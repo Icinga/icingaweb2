@@ -78,6 +78,7 @@ class Controller extends IcingaWebController
         $restriction->setAllowedFilterColumns(array(
             'host_name',
             'hostgroup_name',
+            'instance_name',
             'service_description',
             'servicegroup_name',
             function ($c) {
@@ -98,6 +99,7 @@ class Controller extends IcingaWebController
                     $name,
                     $filter,
                     implode(', ', array(
+                        'instance_name',
                         'host_name',
                         'hostgroup_name',
                         'service_description',

@@ -35,6 +35,7 @@ class Servicestatussummary extends DataView
     public function getStaticFilterColumns()
     {
         return array(
+            'instance_name',
             'host', 'host_alias', 'host_display_name', 'host_name',
             'hostgroup', 'hostgroup_alias', 'hostgroup_name',
             'service', 'service_description', 'service_display_name',

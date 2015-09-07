@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage Module
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id$
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
@@ -29,7 +29,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage Module
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Application_Module_Autoloader extends Zend_Loader_Autoloader_Resource
@@ -53,40 +53,42 @@ class Zend_Application_Module_Autoloader extends Zend_Loader_Autoloader_Resource
     public function initDefaultResourceTypes()
     {
         $basePath = $this->getBasePath();
-        $this->addResourceTypes(array(
-            'dbtable' => array(
-                'namespace' => 'Model_DbTable',
-                'path'      => 'models/DbTable',
-            ),
-            'mappers' => array(
-                'namespace' => 'Model_Mapper',
-                'path'      => 'models/mappers',
-            ),
-            'form'    => array(
-                'namespace' => 'Form',
-                'path'      => 'forms',
-            ),
-            'model'   => array(
-                'namespace' => 'Model',
-                'path'      => 'models',
-            ),
-            'plugin'  => array(
-                'namespace' => 'Plugin',
-                'path'      => 'plugins',
-            ),
-            'service' => array(
-                'namespace' => 'Service',
-                'path'      => 'services',
-            ),
-            'viewhelper' => array(
-                'namespace' => 'View_Helper',
-                'path'      => 'views/helpers',
-            ),
-            'viewfilter' => array(
-                'namespace' => 'View_Filter',
-                'path'      => 'views/filters',
-            ),
-        ));
+        $this->addResourceTypes(
+            array(
+                'dbtable'    => array(
+                    'namespace' => 'Model_DbTable',
+                    'path'      => 'models/DbTable',
+                ),
+                'mappers'    => array(
+                    'namespace' => 'Model_Mapper',
+                    'path'      => 'models/mappers',
+                ),
+                'form'       => array(
+                    'namespace' => 'Form',
+                    'path'      => 'forms',
+                ),
+                'model'      => array(
+                    'namespace' => 'Model',
+                    'path'      => 'models',
+                ),
+                'plugin'     => array(
+                    'namespace' => 'Plugin',
+                    'path'      => 'plugins',
+                ),
+                'service'    => array(
+                    'namespace' => 'Service',
+                    'path'      => 'services',
+                ),
+                'viewhelper' => array(
+                    'namespace' => 'View_Helper',
+                    'path'      => 'views/helpers',
+                ),
+                'viewfilter' => array(
+                    'namespace' => 'View_Filter',
+                    'path'      => 'views/filters',
+                ),
+            )
+        );
         $this->setDefaultResourceType('model');
     }
 }

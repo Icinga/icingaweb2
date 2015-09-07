@@ -570,34 +570,26 @@
             if (! req.autorefresh) {
                 // TODO: Hook for response/url?
                 var url = req.url;
+
+                if (req.$target[0].id === 'col1') {
+                    self.icinga.behaviors.navigation.trySetActiveByUrl(url);
+                }
+
                 var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
                 var $matches = $.merge($('[href="' + url + '"]'), $forms);
-                $matches.each(function (idx, el) {
-                    if ($(el).closest('#menu').length) {
-                        if (req.$target[0].id === 'col1') {
-                            self.icinga.behaviors.navigation.resetActive();
-                        }
-                    }
-                });
-
                 $matches.each(function (idx, el) {
                     var $el = $(el);
                     if ($el.closest('#menu').length) {
                         if ($el.is('form')) {
                             $('input', $el).addClass('active');
-                        } else {
-                            if (req.$target[0].id === 'col1') {
-                                self.icinga.behaviors.navigation.setActive($el);
-                            }
                         }
-                        // Interrupt .each, only on menu item shall be active
+                        // Interrupt .each, only one menu item shall be active
                         return false;
                     }
                 });
             }
 
-            // Update history when necessary. Don't do so for requests triggered
-            // by history or autorefresh events
+            // Update history when necessary
             if (! req.autorefresh && req.addToHistory) {
                 if (req.$target.hasClass('container')) {
                     // We only want to care about top-level containers
@@ -640,9 +632,10 @@
             /*
              * Test if a manual actions comes in and autorefresh is active: Stop refreshing
              */
-            if (req.addToHistory && ! req.autorefresh && req.$target.data('icingaRefresh') > 0) {
+            if (req.addToHistory && ! req.autorefresh) {
                 req.$target.data('icingaRefresh', 0);
                 req.$target.data('icingaUrl', url);
+                icinga.history.pushCurrentState();
             }
 
             if (typeof req.progressTimer !== 'undefined') {

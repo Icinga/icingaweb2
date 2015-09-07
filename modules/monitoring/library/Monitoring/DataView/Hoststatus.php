@@ -11,6 +11,7 @@ class HostStatus extends DataView
     public function getColumns()
     {
         return array(
+            'instance_name',
             'host_name',
             'host_display_name',
             'host_alias',
@@ -57,7 +58,8 @@ class HostStatus extends DataView
             'host_modified_host_attributes',
             'host_severity',
             'host_problem',
-            'host_ipv4'
+            'host_ipv4',
+            'host_acknowledgement_type'
         );
     }
 

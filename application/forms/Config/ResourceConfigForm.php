@@ -350,8 +350,21 @@ class ResourceConfigForm extends ConfigForm
                 'decorators'            => array('ViewHelper')
             )
         );
+
+        $this->setAttrib('data-progress-element', 'resource-progress');
+        $this->addElement(
+            'note',
+            'resource-progress',
+            array(
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('Spinner', array('id' => 'resource-progress'))
+                )
+            )
+        );
+
         $this->addDisplayGroup(
-            array('btn_submit', 'resource_validation'),
+            array('btn_submit', 'resource_validation', 'resource-progress'),
             'submit_validation',
             array(
                 'decorators' => array(

@@ -15,6 +15,7 @@ use Icinga\Authentication\Auth;
 use Icinga\User;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Util\Translator;
+use Icinga\Web\Controller\Dispatcher;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
 use Icinga\Web\Session\Session as BaseSession;
@@ -89,7 +90,7 @@ class Web extends EmbeddedWeb
             ->setupLogger()
             ->setupInternationalization()
             ->setupZendMvc()
-            ->setupFormNamespace()
+            ->setupNamespaces()
             ->setupModuleManager()
             ->loadSetupModuleIfNecessary()
             ->loadEnabledModules()
@@ -210,6 +211,7 @@ class Web extends EmbeddedWeb
     private function setupFrontController()
     {
         $this->frontController = Zend_Controller_Front::getInstance();
+        $this->frontController->setDispatcher(new Dispatcher());
         $this->frontController->setRequest($this->getRequest());
         $this->frontController->setControllerDirectory($this->getApplicationDir('/controllers'));
 
@@ -306,16 +308,22 @@ class Web extends EmbeddedWeb
     }
 
     /**
-     * Setup an autoloader namespace for Icinga\Forms
+     * Setup class loader namespaces for Icinga\Controllers and Icinga\Forms
      *
      * @return $this
      */
-    private function setupFormNamespace()
+    private function setupNamespaces()
     {
-        $this->getLoader()->registerNamespace(
-            'Icinga\\Forms',
-            $this->getApplicationDir('forms')
-        );
+        $this
+            ->getLoader()
+            ->registerNamespace(
+                'Icinga\\' . Dispatcher::CONTROLLER_NAMESPACE,
+                $this->getApplicationDir('controllers')
+            )
+            ->registerNamespace(
+                'Icinga\\Forms',
+                $this->getApplicationDir('forms')
+            );
         return $this;
     }
 }

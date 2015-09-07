@@ -541,6 +541,12 @@
       "src": "fontawesome"
     },
     {
+      "uid": "130380e481a7defc690dfb24123a1f0c",
+      "css": "circle",
+      "code": 59516,
+      "src": "fontawesome"
+    },
+    {
       "uid": "266d5d9adf15a61800477a5acf9a4462",
       "css": "chart-bar",
       "code": 59505,
@@ -671,6 +677,12 @@
       "css": "reschedule",
       "code": 59492,
       "src": "entypo"
+    },
+    {
+      "uid": "p57wgnf4glngbchbucdi029iptu8oxb8",
+      "css": "pin",
+      "code": 59513,
+      "src": "typicons"
     },
     {
       "uid": "c16a63e911bc47b46dc2a7129d2f0c46",

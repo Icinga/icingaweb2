@@ -3,7 +3,7 @@
 
 namespace Icinga\Module\Setup\Forms;
 
-use PDOException;
+use Exception;
 use Icinga\Web\Form;
 use Icinga\Forms\Config\Resource\DbResourceForm;
 use Icinga\Module\Setup\Utils\DbTool;
@@ -112,7 +112,7 @@ class DbResourcePage extends Form
         try {
             $db = new DbTool($this->getValues());
             $db->checkConnectivity();
-        } catch (PDOException $e) {
+        } catch (Exception $e) {
             $this->error(sprintf(
                 $this->translate('Failed to successfully validate the configuration: %s'),
                 $e->getMessage()
@@ -120,34 +120,49 @@ class DbResourcePage extends Form
             return false;
         }
 
-        if ($this->getValue('db') === 'pgsql') {
-            if (! $db->isConnected()) {
-                try {
-                    $db->connectToDb();
-                } catch (PDOException $e) {
-                    $this->warning($this->translate(sprintf(
-                        'Unable to check the server\'s version. This is usually not a critical error as there is'
-                        . ' probably only access to the database permitted which does not exist yet. If you are'
-                        . ' absolutely sure you are running PostgreSQL in a version equal to or newer than 9.1,'
-                        . ' you can skip the validation and safely proceed to the next step. The error was: %s',
-                        $e->getMessage()
-                    )));
-                    return false;
-                }
-            }
+        $state = true;
+        $connectionError = null;
 
-            $version = $db->getServerVersion();
-            if (version_compare($version, '9.1', '<')) {
-                $this->error($this->translate(sprintf(
-                    'The server\'s version %s is too old. The minimum required version is %s.',
-                    $version,
-                    '9.1'
+        try {
+            $db->connectToDb();
+        } catch (Exception $e) {
+            $connectionError = $e;
+        }
+
+        if ($connectionError === null && array_search('icinga_instances', $db->listTables(), true) !== false) {
+            $this->warning($this->translate(
+                'The database you\'ve configured to use for Icinga Web 2 seems to be the one of Icinga. Please be aware'
+                . ' that this database configuration is supposed to be used for Icinga Web 2\'s configuration and that'
+                . ' it is highly recommended to not mix different schemas in the same database. If this is intentional,'
+                . ' you can skip the validation and ignore this warning. If not, please provide a different database.'
+            ));
+            $state = false;
+        }
+
+        if ($this->getValue('db') === 'pgsql') {
+            if ($connectionError !== null) {
+                $this->warning($this->translate(sprintf(
+                    'Unable to check the server\'s version. This is usually not a critical error as there is'
+                    . ' probably only access to the database permitted which does not exist yet. If you are'
+                    . ' absolutely sure you are running PostgreSQL in a version equal to or newer than 9.1,'
+                    . ' you can skip the validation and safely proceed to the next step. The error was: %s',
+                    $connectionError->getMessage()
                 )));
-                return false;
+                $state = false;
+            } else {
+                $version = $db->getServerVersion();
+                if (version_compare($version, '9.1', '<')) {
+                    $this->error($this->translate(sprintf(
+                        'The server\'s version %s is too old. The minimum required version is %s.',
+                        $version,
+                        '9.1'
+                    )));
+                    $state = false;
+                }
             }
         }
 
-        return true;
+        return $state;
     }
 
     /**

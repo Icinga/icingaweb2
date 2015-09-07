@@ -42,6 +42,7 @@ class Servicegroupsummary extends DataView
     public function getStaticFilterColumns()
     {
         return array(
+            'instance_name',
             'services_severity',
             'host', 'host_alias', 'host_display_name', 'host_name',
             'hostgroup', 'hostgroup_alias', 'hostgroup_name',

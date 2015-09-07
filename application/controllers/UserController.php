@@ -1,12 +1,15 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Controllers;
+
+use Exception;
 use Icinga\Application\Logger;
+use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Config\User\CreateMembershipForm;
 use Icinga\Forms\Config\User\UserForm;
-use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\User;
 use Icinga\Web\Controller\AuthBackendController;
 use Icinga\Web\Form;

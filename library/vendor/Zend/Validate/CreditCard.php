@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -22,11 +22,12 @@
 /**
  * @see Zend_Validate_Abstract
  */
+require_once 'Zend/Validate/Abstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_CreditCard extends Zend_Validate_Abstract
@@ -135,7 +136,7 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
     /**
      * Constructor
      *
-     * @param string|array $type OPTIONAL Type of CCI to allow
+     * @param string|array|Zend_Config $options OPTIONAL Type of CCI to allow
      */
     public function __construct($options = array())
     {
@@ -175,7 +176,7 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
      * Sets CCIs which are accepted by validation
      *
      * @param string|array $type Type to allow for validation
-     * @return Zend_Validate_CreditCard Provides a fluid interface
+     * @return Zend_Validate_CreditCard Provides a fluent interface
      */
     public function setType($type)
     {
@@ -187,7 +188,7 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
      * Adds a CCI to be accepted by validation
      *
      * @param string|array $type Type to allow for validation
-     * @return Zend_Validate_CreditCard Provides a fluid interface
+     * @return Zend_Validate_CreditCard Provides a fluent interface
      */
     public function addType($type)
     {
@@ -221,11 +222,14 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
     /**
      * Sets a new callback for service validation
      *
-     * @param unknown_type $service
+     * @param mixed $service
+     * @throws Zend_Validate_Exception
+     * @return $this
      */
     public function setService($service)
     {
         if (!is_callable($service)) {
+            require_once 'Zend/Validate/Exception.php';
             throw new Zend_Validate_Exception('Invalid callback given');
         }
 
@@ -297,6 +301,7 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
 
         if (!empty($this->_service)) {
             try {
+                require_once 'Zend/Validate/Callback.php';
                 $callback = new Zend_Validate_Callback($this->_service);
                 $callback->setOptions($this->_type);
                 if (!$callback->isValid($value)) {

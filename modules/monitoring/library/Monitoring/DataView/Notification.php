@@ -11,6 +11,7 @@ class Notification extends DataView
     public function getColumns()
     {
         return array(
+            'instance_name',
             'notification_state',
             'notification_start_time',
             'notification_contact_name',

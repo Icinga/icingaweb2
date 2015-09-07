@@ -1,9 +1,17 @@
+<?php use Icinga\Data\Filter\Filter; ?>
+
 <div class="controls separated">
   <?php if (! $this->compact): ?>
     <?= $this->tabs; ?>
   <?php endif ?>
     <?= $this->render('partials/host/object-header.phtml') ?>
-    <?= $this->render('partials/host/servicesummary.phtml') ?>
+    <h3 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
+        <?php
+        $this->stats = $object->stats;
+        $this->baseFilter = Filter::where('host', $object->host_name);
+        echo $this->render('list/components/servicesummary.phtml');
+        ?>
+    </h3>
 </div>
 <div class="content" data-base-target="_next">
     <?= $this->render('show/components/output.phtml') ?>

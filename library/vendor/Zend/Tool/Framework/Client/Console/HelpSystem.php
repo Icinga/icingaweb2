@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -23,7 +23,7 @@
 /**
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Framework_Client_Console_HelpSystem
@@ -159,6 +159,7 @@ class Zend_Tool_Framework_Client_Console_HelpSystem
         /**
          * @see Zend_Version
          */
+        require_once 'Zend/Version.php';
         $this->_response->appendContent('Zend Framework', array('color' => array('hiWhite'), 'separator' => false));
         $this->_response->appendContent(' Command Line Console Tool v' . Zend_Version::VERSION . '');
         return $this;

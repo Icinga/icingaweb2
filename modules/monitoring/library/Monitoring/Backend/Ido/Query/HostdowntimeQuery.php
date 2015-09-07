@@ -17,6 +17,9 @@ class HostdowntimeQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'downtimes' => array(
             'downtime_author'           => 'sd.author_name COLLATE latin1_general_ci',
             'downtime_author_name'      => 'sd.author_name',
@@ -153,6 +156,18 @@ class HostdowntimeQuery extends IdoQuery
         )->joinLeft(
             array('so' => $this->prefix . 'objects'),
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
+            array()
+        );
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = sd.instance_id',
             array()
         );
     }

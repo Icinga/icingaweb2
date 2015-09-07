@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -23,15 +23,17 @@
 /**
  * @see Zend_Tool_Framework_Provider_Signature
  */
+require_once 'Zend/Tool/Framework/Provider/Signature.php';
 
 /**
  * @see Zend_Tool_Framework_Registry_EnabledInterface
  */
+require_once 'Zend/Tool/Framework/Registry/EnabledInterface.php';
 
 /**
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Framework_Provider_Repository
@@ -110,6 +112,7 @@ class Zend_Tool_Framework_Provider_Repository
             (array_key_exists($providerName, $this->_unprocessedProviders)
                 || array_key_exists($providerName, $this->_providers)))
         {
+            require_once 'Zend/Tool/Framework/Provider/Exception.php';
             throw new Zend_Tool_Framework_Provider_Exception('A provider by the name ' . $providerName
                 . ' is already registered and $overrideExistingProvider is set to false.');
         }

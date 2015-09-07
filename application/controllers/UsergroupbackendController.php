@@ -1,13 +1,15 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Controllers;
+
+use Exception;
 use Icinga\Application\Config;
 use Icinga\Exception\NotFoundError;
-use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Config\UserGroup\UserGroupBackendForm;
+use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Notification;
-use Icinga\Web\Url;
 
 /**
  * Controller to configure user group backends

@@ -1,32 +1,32 @@
-<table class="action">
-    <?php $i = 0; foreach ($comments as $comment):
-        if (++ $i > 5) {
-            continue;
+<table class="action" data-base-target="_next">
+    <tbody>
+    <?php
+    foreach ($comments as $i => $comment):
+        if ($i > 5) {
+            break;
         }
-        $this->comment = $comment;
     ?>
-
         <tr class="state invalid">
-          <td class="state" style="width: 12em;">
-            <?= $this->render('partials/comment/comment-description.phtml'); ?>
-          </td>
-          <td>
-            <?= $this->render('partials/comment/comment-detail.phtml'); ?>
-          </td>
+            <td class="state" style="width: 12em;">
+                <?= $this->partial('partials/comment/comment-description.phtml', array('comment' => $comment)) ?>
+            </td>
+            <td>
+                <?= $this->partial('partials/comment/comment-detail.phtml', array('comment' => $comment)) ?>
+            </td>
         </tr>
-    <?php endforeach; ?>
+    <?php endforeach ?>
+    </tbody>
 </table>
-
+<?php if ($comments->count() > 5): ?>
 <p>
-    <?php if ($i > 5): ?>
     <?= $this->qlink(
-        sprintf($this->translate('show all %d comments'), $i),
+        sprintf($this->translate('List all %d comments'), $comments->count()),
         $listAllLink,
         null,
         array(
-            'icon' => $i > 5 ? 'down-open' : '',
-            'data-base-target' => "_next"
+            'data-base-target'  => '_next',
+            'icon'              => 'down-open'
         )
     ) ?>
-    <?php endif ?>
 </p>
+<?php endif ?>

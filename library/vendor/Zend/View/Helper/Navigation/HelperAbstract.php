@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -23,10 +23,12 @@
 /**
  * @see Zend_View_Helper_Navigation_Helper
  */
+require_once 'Zend/View/Helper/Navigation/Helper.php';
 
 /**
  * @see Zend_View_Helper_HtmlElement
  */
+require_once 'Zend/View/Helper/HtmlElement.php';
 
 /**
  * Base class for navigational helpers
@@ -34,7 +36,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_View_Helper_Navigation_HelperAbstract
@@ -188,6 +190,7 @@ abstract class Zend_View_Helper_Navigation_HelperAbstract
     {
         if (null === $this->_container) {
             // try to fetch from registry first
+            require_once 'Zend/Registry.php';
             if (Zend_Registry::isRegistered('Zend_Navigation')) {
                 $nav = Zend_Registry::get('Zend_Navigation');
                 if ($nav instanceof Zend_Navigation_Container) {
@@ -196,6 +199,7 @@ abstract class Zend_View_Helper_Navigation_HelperAbstract
             }
 
             // nothing found in registry, create new container
+            require_once 'Zend/Navigation.php';
             $this->_container = new Zend_Navigation();
         }
 
@@ -420,6 +424,7 @@ abstract class Zend_View_Helper_Navigation_HelperAbstract
     public function getTranslator()
     {
         if (null === $this->_translator) {
+            require_once 'Zend/Registry.php';
             if (Zend_Registry::isRegistered('Zend_Translate')) {
                 $this->setTranslator(Zend_Registry::get('Zend_Translate'));
             }
@@ -483,6 +488,7 @@ abstract class Zend_View_Helper_Navigation_HelperAbstract
             $role instanceof Zend_Acl_Role_Interface) {
             $this->_role = $role;
         } else {
+            require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception(sprintf(
                 '$role must be a string, null, or an instance of '
                 .  'Zend_Acl_Role_Interface; %s given',
@@ -946,7 +952,7 @@ abstract class Zend_View_Helper_Navigation_HelperAbstract
      * Sets default ACL role(s) to use when iterating pages if not explicitly
      * set later with {@link setRole()}
      *
-     * @param  midex $role               [optional] role to set. Expects null,
+     * @param  mixed $role               [optional] role to set. Expects null,
      *                                   string, or an instance of
      *                                   {@link Zend_Acl_Role_Interface}.
      *                                   Default is null, which sets no default
@@ -961,6 +967,7 @@ abstract class Zend_View_Helper_Navigation_HelperAbstract
             $role instanceof Zend_Acl_Role_Interface) {
             self::$_defaultRole = $role;
         } else {
+            require_once 'Zend/View/Exception.php';
             throw new Zend_View_Exception(
                 '$role must be null|string|Zend_Acl_Role_Interface'
             );

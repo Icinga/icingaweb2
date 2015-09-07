@@ -15,12 +15,13 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
 /** @see Zend_Dom_Query */
+require_once 'Zend/Dom/Query.php';
 
 /**
  * Zend_Dom_Query-based PHPUnit Constraint
@@ -29,10 +30,10 @@
  * @category   Zend
  * @package    Zend_Test
  * @subpackage PHPUnit
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Test_PHPUnit_Constraint_DomQuery extends PHPUnit_Framework_Constraint
+class Zend_Test_PHPUnit_Constraint_DomQuery34 extends PHPUnit_Framework_Constraint
 {
     /**#@+
      * Assertion type constants
@@ -148,6 +149,7 @@ class Zend_Test_PHPUnit_Constraint_DomQuery extends PHPUnit_Framework_Constraint
         }
 
         if (!in_array($assertType, $this->_assertTypes)) {
+            require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
             throw new Zend_Test_PHPUnit_Constraint_Exception(sprintf('Invalid assertion type "%s" provided to %s constraint', $assertType, __CLASS__));
         }
 
@@ -163,6 +165,7 @@ class Zend_Test_PHPUnit_Constraint_DomQuery extends PHPUnit_Framework_Constraint
         switch ($assertType) {
             case self::ASSERT_CONTENT_CONTAINS:
                 if (3 > $argc) {
+                    require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
                     throw new Zend_Test_PHPUnit_Constraint_Exception('No content provided against which to match');
                 }
                 $this->_content = $content = $argv[2];
@@ -171,6 +174,7 @@ class Zend_Test_PHPUnit_Constraint_DomQuery extends PHPUnit_Framework_Constraint
                     : $this->_matchContent($result, $content);
             case self::ASSERT_CONTENT_REGEX:
                 if (3 > $argc) {
+                    require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
                     throw new Zend_Test_PHPUnit_Constraint_Exception('No pattern provided against which to match');
                 }
                 $this->_content = $content = $argv[2];
@@ -181,6 +185,7 @@ class Zend_Test_PHPUnit_Constraint_DomQuery extends PHPUnit_Framework_Constraint
             case self::ASSERT_CONTENT_COUNT_MIN:
             case self::ASSERT_CONTENT_COUNT_MAX:
                 if (3 > $argc) {
+                    require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
                     throw new Zend_Test_PHPUnit_Constraint_Exception('No count provided against which to compare');
                 }
                 $this->_content = $content = $argv[2];
@@ -207,6 +212,7 @@ class Zend_Test_PHPUnit_Constraint_DomQuery extends PHPUnit_Framework_Constraint
      */
     public function fail($other, $description, $not = false)
     {
+        require_once 'Zend/Test/PHPUnit/Constraint/Exception.php';
         switch ($this->_assertType) {
             case self::ASSERT_CONTENT_CONTAINS:
                 $failure = 'Failed asserting node denoted by %s CONTAINS content "%s"';

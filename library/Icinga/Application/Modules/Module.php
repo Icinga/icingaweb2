@@ -4,23 +4,24 @@
 namespace Icinga\Application\Modules;
 
 use Exception;
+use Zend_Controller_Router_Route;
 use Zend_Controller_Router_Route_Abstract;
-use Zend_Controller_Router_Route as Route;
-use Zend_Controller_Router_Route_Regex as RegexRoute;
+use Zend_Controller_Router_Route_Regex;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
+use Icinga\Exception\IcingaException;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Module\Setup\SetupWizard;
+use Icinga\Util\File;
 use Icinga\Util\Translator;
+use Icinga\Web\Controller\Dispatcher;
 use Icinga\Web\Hook;
 use Icinga\Web\Menu;
 use Icinga\Web\Widget;
 use Icinga\Web\Widget\Dashboard\Pane;
-use Icinga\Module\Setup\SetupWizard;
-use Icinga\Util\File;
-use Icinga\Exception\ProgrammingError;
-use Icinga\Exception\IcingaException;
 
 /**
  * Module handling
@@ -188,7 +189,7 @@ class Module
     /**
      * A set of menu elements
      *
-     * @var array
+     * @var Menu[]
      */
     protected $menuItems = array();
 
@@ -770,6 +771,7 @@ class Module
     {
         $this->launchConfigScript();
         $tabs = Widget::create('tabs');
+        /** @var \Icinga\Web\Widget\Tabs $tabs */
         $tabs->add('info', array(
             'url'       => 'config/module',
             'urlParams' => array('name' => $this->getName()),
@@ -934,7 +936,7 @@ class Module
     }
 
     /**
-     * Register module namespaces on the autoloader
+     * Register module namespaces on our class loader
      *
      * @return $this
      */
@@ -944,16 +946,17 @@ class Module
             return $this;
         }
 
+        $loader = $this->app->getLoader();
         $moduleName = ucfirst($this->getName());
 
         $moduleLibraryDir = $this->getLibDir(). '/'. $moduleName;
         if (is_dir($moduleLibraryDir)) {
-            $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName, $moduleLibraryDir);
+            $loader->registerNamespace('Icinga\\Module\\' . $moduleName, $moduleLibraryDir);
         }
 
         $moduleFormDir = $this->getFormDir();
         if (is_dir($moduleFormDir)) {
-            $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName. '\\Forms',  $moduleFormDir);
+            $loader->registerNamespace('Icinga\\Module\\' . $moduleName. '\\Forms', $moduleFormDir);
         }
 
         $this->registeredAutoloader = true;
@@ -1015,19 +1018,23 @@ class Module
      */
     protected function registerWebIntegration()
     {
-        if (!$this->app->isWeb()) {
+        if (! $this->app->isWeb()) {
             return $this;
         }
-
-        if (file_exists($this->controllerdir) && is_dir($this->controllerdir)) {
+        $moduleControllerDir = $this->getControllerDir();
+        if (is_dir($moduleControllerDir)) {
             $this->app->getfrontController()->addControllerDirectory(
-                $this->controllerdir,
-                $this->name
+                $moduleControllerDir,
+                $this->getName()
+            );
+            $this->app->getLoader()->registerNamespace(
+                'Icinga\\Module\\' . ucfirst($this->getName()) . '\\' . Dispatcher::CONTROLLER_NAMESPACE,
+                $moduleControllerDir
             );
         }
-
-        $this->registerLocales()
-             ->registerRoutes();
+        $this
+            ->registerLocales()
+            ->registerRoutes();
         return $this;
     }
 
@@ -1039,27 +1046,30 @@ class Module
     protected function registerRoutes()
     {
         $router = $this->app->getFrontController()->getRouter();
+        /** @var \Zend_Controller_Router_Rewrite $router */
         foreach ($this->routes as $name => $route) {
             $router->addRoute($name, $route);
         }
         $router->addRoute(
             $this->name . '_jsprovider',
-            new Route(
+            new Zend_Controller_Router_Route(
                 'js/' . $this->name . '/:file',
                 array(
+                    'action'        => 'javascript',
                     'controller'    => 'static',
-                    'action'        =>'javascript',
+                    'module'        => 'default',
                     'module_name'   => $this->name
                 )
             )
         );
         $router->addRoute(
             $this->name . '_img',
-            new RegexRoute(
+            new Zend_Controller_Router_Route_Regex(
                 'img/' . $this->name . '/(.+)',
                 array(
-                    'controller'    => 'static',
                     'action'        => 'img',
+                    'controller'    => 'static',
+                    'module'        => 'default',
                     'module_name'   => $this->name
                 ),
                 array(

@@ -11,6 +11,7 @@ class Servicegroup extends DataView
     public function getColumns()
     {
         return array(
+            'instance_name',
             'servicegroup_alias',
             'servicegroup_name'
         );
