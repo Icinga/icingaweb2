@@ -319,6 +319,29 @@ class Platform
     }
 
     /**
+     * Return whether it's possible to connect to a LDAP server
+     *
+     * Checks whether the ldap extension is loaded
+     *
+     * @return  bool
+     */
+    public static function hasLdapSupport()
+    {
+        return static::extensionLoaded('ldap');
+    }
+
+    /**
+     * Return whether it's possible to connect to any of the supported database servers
+     *
+     * @return bool
+     */
+    public static function hasDatabaseSupport()
+    {
+        return static::hasMssqlSupport() || static::hasMysqlSupport() || static::hasOciSupport()
+            || static::hasOracleSupport() || static::hasPostgresqlSupport();
+    }
+
+    /**
      * Return whether it's possible to connect to a MSSQL database
      *
      * Checks whether the Zend framework adapter for MSSQL is available
