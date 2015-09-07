@@ -11,7 +11,6 @@ use Icinga\Data\FilterColumns;
 use Icinga\Data\PivotTable;
 use Icinga\Data\QueryInterface;
 use Icinga\Data\SortRules;
-use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\Exception\QueryException;
 use Icinga\Module\Monitoring\Backend\Ido\Query\IdoQuery;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
@@ -40,13 +39,6 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      * @var array
      */
     protected $filterColumns;
-
-    /**
-     * Whether the data view requires a filter
-     *
-     * @var bool
-     */
-    protected $requiresFilter = false;
 
     /**
      * Create a new view
@@ -194,29 +186,6 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
     public function isValidFilterTarget($column)
     {
         return in_array($column, $this->getFilterColumns());
-    }
-
-    /**
-     * Get whether the data view requires a filter
-     *
-     * @return bool
-     */
-    public function getRequiresFilter()
-    {
-        return $this->requiresFilter;
-    }
-
-    /**
-     * Set whether the data view requires a filter
-     *
-     * @param   bool $requiresFilter
-     *
-     * @return  $this
-     */
-    public function setRequiresFilter($requiresFilter = true)
-    {
-        $this->requiresFilter = (bool) $requiresFilter;
-        return $this;
     }
 
     /**
@@ -669,12 +638,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
     public function handleRequest(Request $request)
     {
         $params = $request->getUrl()->getParams();
-        $filter = Filter::fromQuerystring((string) $params);
-        /** @var Filter $filter */
-        if ($this->getRequiresFilter() && $filter->isEmpty()) {
-            throw new HttpBadRequestException('Filter must not be empty');
-        }
-        $this->applyFilter($filter);
+        $this->applyFilter(Filter::fromQuerystring((string) $params));
         return $this;
     }
 }
