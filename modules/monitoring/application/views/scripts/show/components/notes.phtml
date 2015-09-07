@@ -3,6 +3,10 @@
 use Icinga\Web\Navigation\Navigation;
 
 $navigation = new Navigation();
+$navigation->load($object->getType() . '-note');
+foreach ($navigation as $item) {
+    $item->setObject($object);
+}
 
 $notes = trim($object->getNotes());
 if ($notes) {
