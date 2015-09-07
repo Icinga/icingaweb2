@@ -136,6 +136,10 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
         );
         $this->dbType = strtolower($this->config->get('db', 'mysql'));
         switch ($this->dbType) {
+            case 'mssql':
+                $adapter = 'Pdo_Mssql';
+                $adapterParamaters['pdoType'] = $this->config->get('pdoType', 'dblib');
+                break;
             case 'mysql':
                 $adapter = 'Pdo_Mysql';
                 /*
