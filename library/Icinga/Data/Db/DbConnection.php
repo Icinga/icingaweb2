@@ -150,19 +150,18 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                     . 'NO_AUTO_CREATE_USER,ANSI_QUOTES,PIPES_AS_CONCAT,NO_ENGINE_SUBSTITUTION\';';
                 $adapterParamaters['port'] = $this->config->get('port', 3306);
                 break;
+            case 'oci':
+                $adapter = 'Oracle';
+                unset($adapterParamaters['options']);
+                unset($adapterParamaters['driver_options']);
+                $adapterParamaters['driver_options'] = array(
+                    'lob_as_string' => true
+                );
+                break;
             case 'pgsql':
                 $adapter = 'Pdo_Pgsql';
                 $adapterParamaters['port'] = $this->config->get('port', 5432);
                 break;
-            /*case 'oracle':
-                if ($this->dbtype === 'oracle') {
-                    $attributes['persistent'] = true;
-                }
-                $this->db = ZfDb::factory($adapter, $attributes);
-                if ($adapter === 'Oracle') {
-                    $this->db->setLobAsString(false);
-                }
-                break;*/
             default:
                 throw new ConfigurationError(
                     'Backend "%s" is not supported',
