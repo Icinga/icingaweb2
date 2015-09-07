@@ -15,25 +15,35 @@ use Icinga\Module\Monitoring\Object\ServiceList;
 class Monitoring_ActionsController extends Controller
 {
     /**
+     * Get the filter from URL parameters or exit immediately if the filter is empty
+     *
+     * @return Filter
+     */
+    protected function getFilterOrExitIfEmpty()
+    {
+        $filter = Filter::fromQueryString((string) $this->params);
+        if ($filter->isEmpty()) {
+            $this->getResponse()->json()
+                ->setFailData(array('filter' => 'Filter is required and must not be empty'))
+                ->sendResponse();
+        }
+        return $filter;
+    }
+
+    /**
      * Schedule host downtimes
      */
     public function scheduleHostDowntimeAction()
     {
-        $filter = Filter::fromQueryString((string) $this->params);
-        /** @var Filter $filter */
-        if ($filter->isEmpty()) {
-            $this->httpBadRequest('Filter must not be empty');
-        }
-        // @TODO(el): $this->backend->list('host')->handleRequest()->fetchAll()
+        $filter = $this->getFilterOrExitIfEmpty();
         $hostList = new HostList($this->backend);
-        $this->applyRestriction('monitoring/filter/objects', $hostList);
-        $hostList->addFilter($filter);
+        $hostList
+            ->applyFilter($this->getRestriction('monitoring/filter/objects'))
+            ->applyFilter($filter);
         if (! $hostList->count()) {
-            // @TODO(el): Use ApiResponse class for unified response handling.
-            $this->getResponse()->sendJson(array(
-                'status'    => 'fail',
-                'message'   => 'No hosts found matching the given filter'
-            ));
+            $this->getResponse()->json()
+                ->setFailData(array('filter' => 'No hosts found matching the filter'))
+                ->sendResponse();
         }
         $form = new ScheduleHostDowntimeCommandForm();
         $form
@@ -47,25 +57,22 @@ class Monitoring_ActionsController extends Controller
      */
     public function removeHostDowntimeAction()
     {
+        $filter = $this->getFilterOrExitIfEmpty();
         $downtimes = $this->backend
             ->select()
             ->from('downtime', array('host_name', 'id' => 'downtime_internal_id'))
             ->where('object_type', 'host')
             ->applyFilter($this->getRestriction('monitoring/filter/objects'))
-            ->setRequiresFilter(true)
-            ->handleRequest($this->getRequest())
-            ->fetchAll();
-        if (empty($downtimes)) {
-            // @TODO(el): Use ApiResponse class for unified response handling.
-            $this->getResponse()->sendJson(array(
-                'status'    => 'fail',
-                'message'   => 'No downtimes found matching the given filter'
-            ));
+            ->applyFilter($filter);
+        if (! $downtimes->count()) {
+            $this->getResponse()->json()
+                ->setFailData(array('filter' => 'No downtimes found matching the filter'))
+                ->sendResponse();
         }
         $form = new DeleteDowntimesCommandForm();
         $form
             ->setIsApiTarget(true)
-            ->setDowntimes($downtimes)
+            ->setDowntimes($downtimes->fetchAll())
             ->handleRequest($this->getRequest());
         // @TODO(el): Respond w/ the downtimes deleted instead of the notifiaction added by
         // DeleteDowntimesCommandForm::onSuccess().
@@ -76,21 +83,15 @@ class Monitoring_ActionsController extends Controller
      */
     public function scheduleServiceDowntimeAction()
     {
-        $filter = Filter::fromQueryString((string) $this->params);
-        /** @var Filter $filter */
-        if ($filter->isEmpty()) {
-            $this->httpBadRequest('Filter must not be empty');
-        }
-        // @TODO(el): $this->backend->list('service')->handleRequest()->fetchAll()
+        $filter = $this->getFilterOrExitIfEmpty();
         $serviceList = new ServiceList($this->backend);
-        $this->applyRestriction('monitoring/filter/objects', $serviceList);
-        $serviceList->addFilter($filter);
+        $serviceList
+            ->applyFilter($this->getRestriction('monitoring/filter/objects'))
+            ->applyFilter($filter);
         if (! $serviceList->count()) {
-            // @TODO(el): Use ApiResponse class for unified response handling.
-            $this->getResponse()->sendJson(array(
-                'status'    => 'fail',
-                'message'   => 'No services found matching the given filter'
-            ));
+            $this->getResponse()->json()
+                ->setFailData(array('filter' => 'No services found matching the filter'))
+                ->sendResponse();
         }
         $form = new ScheduleServiceDowntimeCommandForm();
         $form
@@ -104,25 +105,22 @@ class Monitoring_ActionsController extends Controller
      */
     public function removeServiceDowntimeAction()
     {
+        $filter = $this->getFilterOrExitIfEmpty();
         $downtimes = $this->backend
             ->select()
             ->from('downtime', array('host_name', 'service_description', 'id' => 'downtime_internal_id'))
             ->where('object_type', 'service')
             ->applyFilter($this->getRestriction('monitoring/filter/objects'))
-            ->setRequiresFilter(true)
-            ->handleRequest($this->getRequest())
-            ->fetchAll();
-        if (empty($downtimes)) {
-            // @TODO(el): Use ApiResponse class for unified response handling.
-            $this->getResponse()->sendJson(array(
-                'status'    => 'fail',
-                'message'   => 'No downtimes found matching the given filter'
-            ));
+            ->applyFilter($filter);
+        if (! $downtimes->count()) {
+            $this->getResponse()->json()
+                ->setFailData(array('filter' => 'No downtimes found matching the filter'))
+                ->sendResponse();
         }
         $form = new DeleteDowntimesCommandForm();
         $form
             ->setIsApiTarget(true)
-            ->setDowntimes($downtimes)
+            ->setDowntimes($downtimes->fetchAll())
             ->handleRequest($this->getRequest());
         // @TODO(el): Respond w/ the downtimes deleted instead of the notifiaction added by
         // DeleteDowntimesCommandForm::onSuccess().
