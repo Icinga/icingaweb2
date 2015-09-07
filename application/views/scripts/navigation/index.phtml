@@ -1,0 +1,39 @@
+<?php if (! $this->compact): ?>
+<div class="controls">
+    <?= $this->tabs; ?>
+</div>
+<?php endif ?>
+<div class="content" data-base-target="_next">
+    <a href="<?= $this->href('navigation/add'); ?>">
+        <?= $this->icon('plus'); ?> <?= $this->translate('Create A New Navigation Item'); ?>
+    </a>
+    <table class="action alternating">
+        <thead>
+            <th><?= $this->translate('Navigation'); ?></th>
+            <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
+        </thead>
+        <tbody>
+        <?php foreach ($items as $name => $item): ?>
+            <tr>
+                <td><?= $this->qlink(
+                    $name,
+                    'navigation/edit',
+                    array('name' => $name),
+                    array(
+                        'title' => sprintf($this->translate('Edit navigation item %s'), $name)
+                    )
+                ); ?></td>
+                <td><?= $this->qlink(
+                    '',
+                    'navigation/remove',
+                    array('name' => $name),
+                    array(
+                        'icon'  => 'trash',
+                        'title' => sprintf($this->translate('Remove navigation item %s'), $name)
+                    )
+                ); ?></td>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+</div>

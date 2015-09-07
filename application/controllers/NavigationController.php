@@ -3,6 +3,7 @@
 
 namespace Icinga\Controllers;
 
+use Icinga\Application\Config;
 use Icinga\Web\Controller;
 
 /**
@@ -15,7 +16,23 @@ class NavigationController extends Controller
      */
     public function indexAction()
     {
-        
+        $user = $this->Auth()->getUser();
+        $userConfig = $user->loadNavigationConfig();
+        $sharedConfig = Config::app('navigation');
+
+        $this->view->items = array_merge(
+            $sharedConfig->select()->where('owner', $user->getUsername())->fetchAll(),
+            iterator_to_array($userConfig)
+        );
+
+        $this->getTabs()->add(
+            'navigation',
+            array(
+                'title'     => $this->translate('List and configure your own navigation items'),
+                'label'     => $this->translate('Navigation'),
+                'url'       => 'navigation'
+            )
+        )->activate('navigation');
     }
 
     /**
