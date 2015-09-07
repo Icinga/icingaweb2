@@ -3,9 +3,10 @@
 
 namespace Icinga\Controllers;
 
+use Exception;
 use Icinga\Application\Config;
 use Icinga\Exception\NotFoundError;
-use Icinga\Forms\Navigation\NavigationItemForm;
+use Icinga\Forms\Navigation\NavigationConfigForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
@@ -91,7 +92,50 @@ class NavigationController extends Controller
      */
     public function editAction()
     {
-        
+        $itemName = $this->params->getRequired('name');
+        $user = $this->Auth()->getUser();
+
+        $config = $user->loadNavigationConfig();
+        if (! $config->hasSection($itemName) && $user->can('config/application/navigation')) {
+            $config = Config::app('navigation');
+        }
+
+        $form = new NavigationConfigForm();
+        $form->setIniConfig($config);
+        $form->setRedirectUrl('navigation');
+        $form->setTitle(sprintf($this->translate('Edit Navigation Item %s'), $itemName));
+        $form->setOnSuccess(function (NavigationConfigForm $form) use ($itemName) {
+            try {
+                $form->edit($itemName, array_map(
+                    function ($v) {
+                        return $v !== '' ? $v : null;
+                    },
+                    $form->getValues()
+                ));
+            } catch (NotFoundError $e) {
+                throw $e;
+            } catch (Exception $e) {
+                $form->error($e->getMessage());
+                return false;
+            }
+
+            if ($form->save()) {
+                Notification::success(sprintf(t('Navigation item "%s" successfully updated'), $itemName));
+                return true;
+            }
+
+            return false;
+        });
+
+        try {
+            $form->load($itemName);
+            $form->handleRequest();
+        } catch (NotFoundError $_) {
+            $this->httpNotFound(sprintf($this->translate('Navigation item "%s" not found'), $itemName));
+        }
+
+        $this->view->form = $form;
+        $this->render('form');
     }
 
     /**
@@ -110,13 +154,13 @@ class NavigationController extends Controller
         $this->assertPermission('config/application/navigation');
         $this->assertHttpMethod('POST');
 
-        $navigationItemForm = new NavigationItemForm();
-        $navigationItemForm->setIniConfig(Config::app('navigation'));
+        $navigationConfigForm = new NavigationConfigForm();
+        $navigationConfigForm->setIniConfig(Config::app('navigation'));
 
         $form = new Form(array(
-            'onSuccess' => function ($form) use ($navigationItemForm) {
+            'onSuccess' => function ($form) use ($navigationConfigForm) {
                 try {
-                    if ($navigationItemForm->unshare($form->getValue('name'))) {
+                    if ($navigationConfigForm->unshare($form->getValue('name'))) {
                         Notification::success(sprintf(
                             t('Navigation item "%s" has been unshared'),
                             $form->getValue('name')
