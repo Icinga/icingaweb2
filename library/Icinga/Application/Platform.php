@@ -343,6 +343,18 @@ class Platform
     }
 
     /**
+     * Return whether it's possible to connect to a Oracle database using PDO_OCI
+     *
+     * Checks whether the OCI PDO extension has been loaded and the Zend framework adapter for Oci is available
+     *
+     * @return  bool
+     */
+    public static function hasOracleSupport()
+    {
+        return static::extensionLoaded('pdo_oci') && static::classExists('Zend_Db_Adapter_Pdo_Mysql');
+    }
+
+    /**
      * Return whether it's possible to connect to a PostgreSQL database
      *
      * Checks whether the pgsql pdo extension has been loaded and the Zend framework adapter for PostgreSQL is available
