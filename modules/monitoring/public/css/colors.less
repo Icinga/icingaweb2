@@ -41,3 +41,45 @@
 .bg-state-pending {
   background-color: @colorPending;
 }
+
+.fg-color-ok,
+.fg-color-up {
+  color: @colorOk;
+}
+
+.fg-color-warning {
+  color: @colorWarning;
+
+  &.handled {
+    color: @colorWarningHandled;
+  }
+}
+
+.fg-color-critical,
+.fg-color-down {
+  color: @colorCritical;
+
+  &.handled {
+    color: @colorCriticalHandled;
+  }
+}
+
+.fg-color-unreachable {
+  color: @colorUnreachable;
+
+  &.handled {
+    color: @colorUnreachableHandled;
+  }
+}
+
+.fg-color-unknown {
+  color: @colorUnknown;
+
+  &.handled {
+    color: @colorUnknownHandled;
+  }
+}
+
+.fg-color-pending {
+  color: @colorPending;
+}
