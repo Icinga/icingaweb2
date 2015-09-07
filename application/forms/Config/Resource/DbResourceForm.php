@@ -113,6 +113,17 @@ class DbResourceForm extends Form
                 'description'       => $this->translate('The password to use for authentication')
             )
         );
+        $this->addElement(
+            'checkbox',
+            'persistent',
+            array(
+                'description'   => $this->translate(
+                    'Check this box for persistent database connections. Persistent connections are not closed at the'
+                    . ' end of a request, but are cached and re-used. This is experimental'
+                ),
+                'label'         => $this->translate('Persistent')
+            )
+        );
 
         return $this;
     }
