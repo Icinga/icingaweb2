@@ -34,7 +34,7 @@ class IniStore extends PreferencesStore
     protected function init()
     {
         $this->preferencesFile = sprintf(
-            '%s/%s.ini',
+            '%s/%s/config.ini',
             $this->getStoreConfig()->location,
             strtolower($this->getUser()->getUsername())
         );

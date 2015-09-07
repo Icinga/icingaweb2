@@ -302,3 +302,8 @@ The first release candidate of Icinga Web 2 introduces the following non-backwar
 * The **instances.ini** configuration file provided by the monitoring module
   has been renamed to **commandtransports.ini**. The content and location of
   the file remains unchanged.
+
+* The location of a user's preferences has been changed from
+  **<config-dir>/preferences/<username>.ini** to
+  **<config-dir>/preferences/<username>/config.ini**.
+  The content of the file remains unchanged.
