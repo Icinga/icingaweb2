@@ -11,7 +11,7 @@ use Icinga\Web\Widget\Tabextension\DashboardAction;
 /**
  * Display process and performance information of the monitoring host and program-wide commands
  */
-class ProcessController extends Controller
+class HealthController extends Controller
 {
     /**
      * Add tabs
@@ -29,10 +29,21 @@ class ProcessController extends Controller
                         'Show information about the current monitoring instance\'s process'
                         . ' and it\'s performance as well as available features'
                     ),
-                    'label' => $this->translate('Monitoring Health'),
-                    'url'   =>'monitoring/process/info'
+                    'label' => $this->translate('Process Information'),
+                    'url'   =>'monitoring/health/info'
                 )
-            )->extend(new DashboardAction());
+            )
+            ->add(
+                'stats',
+                array(
+                    'title' => $this->translate(
+                        'Show statistics about the monitored objects'
+                    ),
+                    'label' => $this->translate('Stats'),
+                    'url'   =>'monitoring/health/stats'
+                )
+            )
+            ->extend(new DashboardAction());
     }
 
     /**
@@ -40,7 +51,7 @@ class ProcessController extends Controller
      */
     public function infoAction()
     {
-        $this->view->title = $this->translate('Monitoring Health');
+        $this->view->title = $this->translate('Process Information');
         $this->getTabs()->activate('info');
         $this->setAutorefreshInterval(10);
         $this->view->backendName = $this->backend->getName();
@@ -96,6 +107,61 @@ class ProcessController extends Controller
     }
 
     /**
+     * Display stats about current checks and monitored objects
+     */
+    public function statsAction()
+    {
+        $this->getTabs()->activate('stats');
+
+        $servicestats = $this->backend->select()->from('servicestatussummary', array(
+            'services_critical',
+            'services_critical_handled',
+            'services_critical_unhandled',
+            'services_ok',
+            'services_pending',
+            'services_total',
+            'services_unknown',
+            'services_unknown_handled',
+            'services_unknown_unhandled',
+            'services_warning',
+            'services_warning_handled',
+            'services_warning_unhandled'
+        ));
+        $this->applyRestriction('monitoring/filter/objects', $servicestats);
+        $this->view->servicestats = $servicestats->fetchRow();
+        $this->view->unhandledServiceProblems = $this->view->servicestats->services_critical_unhandled
+            + $this->view->servicestats->services_unknown_unhandled
+            + $this->view->servicestats->services_warning_unhandled;
+
+        $hoststats = $this->backend->select()->from('hoststatussummary', array(
+            'hosts_total',
+            'hosts_up',
+            'hosts_down',
+            'hosts_down_handled',
+            'hosts_down_unhandled',
+            'hosts_unreachable',
+            'hosts_unreachable_handled',
+            'hosts_unreachable_unhandled',
+            'hosts_pending',
+        ));
+        $this->applyRestriction('monitoring/filter/objects', $hoststats);
+        $this->view->hoststats = $hoststats->fetchRow();
+        $this->view->unhandledhostProblems = $this->view->hoststats->hosts_down_unhandled
+            + $this->view->hoststats->hosts_unreachable_unhandled;
+
+        $this->view->unhandledProblems = $this->view->unhandledhostProblems
+            + $this->view->unhandledServiceProblems;
+
+        $this->view->runtimevariables  = (object) $this->backend->select()
+            ->from('runtimevariables', array('varname', 'varvalue'))
+            ->getQuery()->fetchPairs();
+
+        $this->view->checkperformance = $this->backend->select()
+            ->from('runtimesummary')
+            ->getQuery()->fetchAll();
+    }
+
+    /**
      * Disable notifications w/ an optional expire time
      */
     public function disableNotificationsAction()
@@ -119,7 +185,7 @@ class ProcessController extends Controller
         } else {
             $form = new DisableNotificationsExpireCommandForm();
             $form
-                ->setRedirectUrl('monitoring/process/info')
+                ->setRedirectUrl('monitoring/health/info')
                 ->handleRequest();
             $this->view->form = $form;
         }

@@ -6,7 +6,7 @@ namespace Icinga\Web;
 use Icinga\Application\Icinga;
 use Icinga\Cli\FakeRequest;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Web\UrlParams;
+use Icinga\Data\Filter\Filter;
 
 /**
  * Url class that provides convenient access to parameters, allows to modify query parameters and
@@ -154,6 +154,26 @@ class Url
 
         $urlObject->setParams($params);
         return $urlObject;
+    }
+
+    /**
+     * Create a new filter that needs to fullfill the base filter and the optional filter (if it exists)
+     *
+     * @param string    $url        The url to apply the new filter to
+     * @param Filter    $filter     The base filter
+     * @param Filter    $optional   The optional filter
+     *
+     * @return Url                  The altered URL containing the new filter
+     * @throws ProgrammingError
+     */
+    public static function urlAddFilterOptional($url, $filter, $optional)
+    {
+        $url = Url::fromPath($url);
+        $f = $filter;
+        if (isset($optional)) {
+            $f = Filter::matchAll($filter, $optional);
+        }
+        return $url->setQueryString($f->toQueryString());
     }
 
     /**
