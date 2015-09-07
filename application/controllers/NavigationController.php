@@ -4,6 +4,8 @@
 namespace Icinga\Controllers;
 
 use Icinga\Application\Config;
+use Icinga\Exception\NotFoundError;
+use Icinga\Forms\Navigation\NavigationItemForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
@@ -98,5 +100,56 @@ class NavigationController extends Controller
     public function removeAction()
     {
         
+    }
+
+    /**
+     * Unshare a navigation item
+     */
+    public function unshareAction()
+    {
+        $this->assertPermission('config/application/navigation');
+        $this->assertHttpMethod('POST');
+
+        $navigationItemForm = new NavigationItemForm();
+        $navigationItemForm->setIniConfig(Config::app('navigation'));
+
+        $form = new Form(array(
+            'onSuccess' => function ($form) use ($navigationItemForm) {
+                try {
+                    if ($navigationItemForm->unshare($form->getValue('name'))) {
+                        Notification::success(sprintf(
+                            t('Navigation item "%s" has been unshared'),
+                            $form->getValue('name')
+                        ));
+                    } else {
+                        Notification::error(sprintf(
+                            t('Failed to unshare navigation item "%s"'),
+                            $form->getValue('name')
+                        ));
+                    }
+                } catch (NotFoundError $e) {
+                    throw $e;
+                } catch (Exception $e) {
+                    Notification::error($e->getMessage());
+                }
+
+                $redirect = $form->getValue('redirect');
+                if (! empty($redirect)) {
+                    $form->setRedirectUrl(htmlspecialchars_decode($redirect));
+                }
+
+                return true;
+            }
+        ));
+        $form->setUidDisabled();
+        $form->setSubmitLabel('btn_submit'); // Required to ensure that isSubmitted() is called
+        $form->addElement('hidden', 'name', array('required' => true));
+        $form->addElement('hidden', 'redirect');
+
+        try {
+            $form->handleRequest();
+        } catch (NotFoundError $_) {
+            $this->httpNotFound(sprintf($this->translate('Navigation item "%s" not found'), $form->getValue('name')));
+        }
     }
 }
