@@ -77,7 +77,7 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
                   ),
                 array(
                     'aria-describedby'    => $ariaDescribedById,
-                    'class'               => 'bg-state-' . Service::getStateText($service->service_state) . ($service->service_handled ? ' handled' : ''),
+                    'class'               => 'bg-color-' . Service::getStateText($service->service_state) . ($service->service_handled ? ' handled' : ''),
                     'title'               => $this->escape($service->service_output),
                     'aria-label'          => sprintf(
                         $this->translate('Show detailed information for service %s on host %s'),
