@@ -3,9 +3,9 @@
 
 namespace Icinga\Web;
 
-use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Response_Http;
 use Icinga\Application\Icinga;
+use Icinga\Web\Response\JsonResponse;
 
 class Response extends Zend_Controller_Response_Http
 {
@@ -98,6 +98,16 @@ class Response extends Zend_Controller_Response_Http
     }
 
     /**
+     * Entry point for HTTP responses in JSON format
+     *
+     * @return JsonResponse
+     */
+    public static function json()
+    {
+        return new JsonResponse();
+    }
+
+    /**
      * Prepare the request before sending
      */
     protected function prepare()
@@ -145,17 +155,5 @@ class Response extends Zend_Controller_Response_Http
     {
         $this->prepare();
         return parent::sendHeaders();
-    }
-
-    /**
-     * Immediately respond w/ the given data encoded in JSON
-     *
-     * @param array $data
-     */
-    public function sendJson(array $data)
-    {
-        $helper = Zend_Controller_Action_HelperBroker::getStaticHelper('json');
-        /** @var \Zend_Controller_Action_Helper_Json $helper */
-        $helper->sendJson($data);
     }
 }
