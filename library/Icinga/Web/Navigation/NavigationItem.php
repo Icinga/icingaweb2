@@ -596,11 +596,15 @@ class NavigationItem implements IteratorAggregate
      */
     public function conflictsWith(NavigationItem $item)
     {
+        if (! $item instanceof $this) {
+            return false;
+        }
+
         if ($this->getUrl() === null || $item->getUrl() === null) {
             return false;
         }
 
-        return $this->getUrl() !== $item->getUrl();
+        return !$this->getUrl()->matches($item->getUrl());
     }
 
     /**
