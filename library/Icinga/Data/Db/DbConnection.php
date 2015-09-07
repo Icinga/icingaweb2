@@ -43,7 +43,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     private $dbType;
 
     /**
-     * @var Zend_Db_Adapter_Abstract
+     * @var \Zend_Db_Adapter_Abstract
      */
     private $dbAdapter;
 
