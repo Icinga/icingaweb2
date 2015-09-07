@@ -60,7 +60,7 @@ interface NavigationRendererInterface
      *
      * @var string
      */
-    const OUTER_ELEMENT_TAG = 'nav';
+    const OUTER_ELEMENT_TAG = 'div';
 
     /**
      * The heading's rank
