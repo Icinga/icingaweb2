@@ -265,6 +265,14 @@ $dashboard->add(
  */
 $dashboard = $this->dashboard($this->translate('Overdue'));
 $dashboard->add(
+    $this->translate('Late Host Check Results'),
+    'monitoring/list/hosts?host_next_update<now'
+);
+$dashboard->add(
+    $this->translate('Late Service Check Results'),
+    'monitoring/list/services?service_next_update<now'
+);
+$dashboard->add(
     $this->translate('Acknowledgements Active For At Least Three Days'),
     'monitoring/list/comments?comment_type=Ack&comment_timestamp<-3 days&sort=comment_timestamp&dir=asc'
 );
