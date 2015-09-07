@@ -413,9 +413,14 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      */
     public function load($type)
     {
+        // Shareables
+        $this->merge(Icinga::app()->getSharedNavigation($type));
+
+        // User Preferences
         $user = Auth::getInstance()->getUser();
         $this->merge($user->getNavigation($type));
 
+        // Modules
         $moduleManager = Icinga::app()->getModuleManager();
         foreach ($moduleManager->getLoadedModules() as $module) {
             if ($user->can($moduleManager::MODULE_PERMISSION_NS . $module->getName())) {
