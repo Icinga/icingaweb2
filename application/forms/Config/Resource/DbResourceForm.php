@@ -78,7 +78,6 @@ class DbResourceForm extends Form
             'number',
             'port',
             array(
-                'required'          => true,
                 'preserveDefault'   => true,
                 'label'             => $this->translate('Port'),
                 'description'       => $this->translate('The port to use'),
