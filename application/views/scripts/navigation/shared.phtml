@@ -1,0 +1,28 @@
+<?php if (! $this->compact): ?>
+<div class="controls">
+    <?= $this->tabs; ?>
+</div>
+<?php endif ?>
+<div class="content" data-base-target="_next">
+    <table class="action alternating">
+        <thead>
+            <th><?= $this->translate('Shared Navigation'); ?></th>
+            <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
+        </thead>
+        <tbody>
+        <?php foreach ($items as $name => $item): ?>
+            <tr>
+                <td><?= $this->qlink(
+                    $name,
+                    'navigation/edit',
+                    array('name' => $name),
+                    array(
+                        'title' => sprintf($this->translate('Edit shared navigation item %s'), $name)
+                    )
+                ); ?></td>
+                <td><?= $removeForm->setDefault('name', $name); ?></td>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+</div>

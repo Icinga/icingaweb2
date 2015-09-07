@@ -5,6 +5,8 @@ namespace Icinga\Controllers;
 
 use Icinga\Application\Config;
 use Icinga\Web\Controller;
+use Icinga\Web\Form;
+use Icinga\Web\Url;
 
 /**
  * Navigation configuration
@@ -41,6 +43,37 @@ class NavigationController extends Controller
     public function sharedAction()
     {
         $this->assertPermission('config/application/navigation');
+        $this->view->items = Config::app('navigation');
+
+        $removeForm = new Form();
+        $removeForm->setUidDisabled();
+        $removeForm->setAction(Url::fromPath('navigation/unshare'));
+        $removeForm->addElement('hidden', 'name', array(
+            'decorators'    => array('ViewHelper')
+        ));
+        $removeForm->addElement('hidden', 'redirect', array(
+            'value'         => Url::fromPath('navigation/shared'),
+            'decorators'    => array('ViewHelper')
+        ));
+        $removeForm->addElement('button', 'btn_submit', array(
+            'escape'        => false,
+            'type'          => 'submit',
+            'class'         => 'link-like spinner',
+            'value'         => 'btn_submit',
+            'decorators'    => array('ViewHelper'),
+            'label'         => $this->view->icon('trash'),
+            'title'         => $this->translate('Unshare this navigation item')
+        ));
+        $this->view->removeForm = $removeForm;
+
+        $this->getTabs()->add(
+            'navigation/shared',
+            array(
+                'title'     => $this->translate('List and configure shared navigation items'),
+                'label'     => $this->translate('Shared Navigation'),
+                'url'       => 'navigation/shared'
+            )
+        )->activate('navigation/shared');
     }
 
     /**
