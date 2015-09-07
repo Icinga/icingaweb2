@@ -5,7 +5,9 @@ namespace Icinga;
 
 use DateTimeZone;
 use InvalidArgumentException;
+use Icinga\Application\Config;
 use Icinga\User\Preferences;
+use Icinga\Web\Navigation\Navigation;
 
 /**
  *  This class represents an authorized user
@@ -475,5 +477,49 @@ class User
         }
 
         return false;
+    }
+
+    /**
+     * Load and return this user's configured navigation of the given type
+     *
+     * @param   string  $type
+     *
+     * @return  Navigation
+     */
+    public function getNavigation($type)
+    {
+        $config = Config::fromIni(
+            Config::resolvePath('preferences')
+            . DIRECTORY_SEPARATOR
+            . $this->getUsername()
+            . DIRECTORY_SEPARATOR
+            . 'navigation.ini'
+        )->getConfigObject();
+        $config->setKeyColumn('name');
+
+        $navigation = new Navigation();
+        if ($type === 'dashboard-pane') {
+            $panes = array();
+            foreach ($config->select()->where('type', 'dashlet') as $dashletName => $dashletConfig) {
+                // TODO: Throw ConfigurationError if pane or url is missing
+                $panes[$dashletConfig->pane][$dashletName] = $dashletConfig->url;
+            }
+
+            foreach ($panes as $paneName => $dashlets) {
+                $navigation->addItem(
+                    $paneName,
+                    array(
+                        'type'      => 'dashboard-pane',
+                        'dashlets'  => $dashlets
+                    )
+                );
+            }
+        } else {
+            foreach ($config->select()->where('type', $type) as $name => $typeConfig) {
+                $navigation->addItem($name, $typeConfig->toArray());
+            }
+        }
+
+        return $navigation;
     }
 }
