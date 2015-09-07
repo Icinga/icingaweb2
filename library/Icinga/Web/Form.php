@@ -1116,10 +1116,16 @@ class Form extends Zend_Form
                     if ($this->getIsApiTarget() || $this->getRequest()->isApiRequest()) {
                         // API targets and API requests will never redirect but immediately respond w/ JSON-encoded
                         // notifications
-                        $messages = Notification::getInstance()->popMessages();
-                        // @TODO(el): Remove the type from the message
+                        $notifications = Notification::getInstance()->popMessages();
+                        $message = null;
+                        foreach ($notifications as $notification) {
+                            if ($notification['type'] === Notification::SUCCESS) {
+                                $message = $notification['message'];
+                                break;
+                            }
+                        }
                         $this->getResponse()->json()
-                            ->setSuccessData(array('message' => array_pop($messages)))
+                            ->setSuccessData($message !== null ? array('message' => $message) : null)
                             ->sendResponse();
                     } elseif (! $frameUpload) {
                         $this->getResponse()->redirectAndExit($this->getRedirectUrl());
