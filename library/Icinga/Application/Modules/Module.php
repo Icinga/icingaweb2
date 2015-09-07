@@ -222,6 +222,13 @@ class Module
     protected $userGroupBackends = array();
 
     /**
+     * This module's configurable navigation items
+     *
+     * @var array
+     */
+    protected $navigationItems = array();
+
+    /**
      * Create a new module object
      *
      * @param ApplicationBootstrap  $app
@@ -876,6 +883,17 @@ class Module
     }
 
     /**
+     * Return this module's configurable navigation items
+     *
+     * @return  array
+     */
+    public function getNavigationItems()
+    {
+        $this->launchConfigScript();
+        return $this->navigationItems;
+    }
+
+    /**
      * Provide a named permission
      *
      * @param   string $name        Unique permission name
@@ -976,6 +994,19 @@ class Module
     protected function provideUserGroupBackend($identifier, $className)
     {
         $this->userGroupBackends[strtolower($identifier)] = $className;
+        return $this;
+    }
+
+    /**
+     * Provide a new type of configurable navigation item
+     *
+     * @param   string  $type
+     *
+     * @return  $this
+     */
+    protected function provideNavigationItem($type)
+    {
+        $this->navigationItems[] = $type;
         return $this;
     }
 
