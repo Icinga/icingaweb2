@@ -1117,11 +1117,10 @@ class Form extends Zend_Form
                         // API targets and API requests will never redirect but immediately respond w/ JSON-encoded
                         // notifications
                         $messages = Notification::getInstance()->popMessages();
-                        // @TODO(el): Use ApiResponse class for unified response handling.
-                        $this->getResponse()->sendJson(array(
-                            'status'    => 'success',
-                            'message'   => array_pop($messages) // @TODO(el): Remove the type from the message
-                        ));
+                        // @TODO(el): Remove the type from the message
+                        $this->getResponse()->json()
+                            ->setSuccessData(array('message' => array_pop($messages)))
+                            ->sendResponse();
                     } elseif (! $frameUpload) {
                         $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                     } else {
