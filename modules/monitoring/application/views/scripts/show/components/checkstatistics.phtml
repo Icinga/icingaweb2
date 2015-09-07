@@ -12,9 +12,6 @@ $activeChecksEnabled = (bool) $object->active_checks_enabled;
     <?php if ((int) $object->state !== 99) {
         echo $this->timeAgo($object->last_check);
     } ?>
-    <?php if ($object->next_update < time()) {
-        echo $this->icon('circle', $this->translate('Check result is late'), array('class' => 'fg-color-critical'));
-    } ?>
     </td>
 </tr>
 
@@ -56,6 +53,9 @@ $activeChecksEnabled = (bool) $object->active_checks_enabled;
         } else {
             echo sprintf($this->translate('expected %s'), $this->timeUntil($object->next_update));
         }
+    } ?>
+    <?php if ($object->next_update < time()) {
+        echo $this->icon('circle', $this->translate('Check result is late'), array('class' => 'fg-color-critical'));
     } ?>
     </td>
 </tr>
