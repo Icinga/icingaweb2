@@ -78,9 +78,11 @@ class DbResourceForm extends Form
             'number',
             'port',
             array(
-                'preserveDefault'   => true,
+                'description'       => $this->translate('The port to use'),
                 'label'             => $this->translate('Port'),
-                'description'       => $this->translate('The port to use')
+                'preserveDefault'   => true,
+                'required'          => isset($formData['db']) && $formData['db'] === 'pgsql',
+                'value'             => isset($formData['db']) && $formData['db'] === 'pgsql' ? 5432 : null
             )
         );
         $this->addElement(
