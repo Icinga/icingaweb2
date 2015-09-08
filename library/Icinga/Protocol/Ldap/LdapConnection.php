@@ -939,8 +939,8 @@ class LdapConnection implements Selectable, Inspectable
         $sequenceOf = '';
 
         foreach ($sortRules as $rule) {
-            if (false && $rule[1] === Sortable::SORT_DESC) {
-                $reversed = '0101ff';
+            if ($rule[1] === Sortable::SORT_DESC) {
+                $reversed = '8101ff';
             } else {
                 $reversed = '';
             }
@@ -974,7 +974,11 @@ class LdapConnection implements Selectable, Inspectable
             $sequenceOf = '30' . str_pad(dechex($sequenceOfOctets), 2, '0', STR_PAD_LEFT) . $sequenceOf;
         }
 
-        return hex2bin($sequenceOf);
+        if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
+            return hex2bin($sequenceOf);
+        } else {
+            return pack('H*', $sequenceOf);
+        }
     }
 
     /**
