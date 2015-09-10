@@ -191,7 +191,7 @@
                 $('#col1').data('icingaUrl', $('#col1').data('icingaUrl') + '#' + this.getPaneAnchor(0));
             }
 
-            var hash = this.getPaneFragment();
+            var hash = this.getCol2State();
             if (hash && hash.match(/^#!/)) {
                 parts = hash.split(/#!/);
 
@@ -231,15 +231,15 @@
                 throw 'Trying to get anchor for non-existing column: ' + col;
             }
             var panes = document.location.toString().split('#!')[col];
-            return panes && panes.split('#')[1];
+            return panes && panes.split('#')[1] || '';
         },
 
         /**
-         * Get the side-pane state fragment after (and including) the #!
+         * Get the side pane state after (and including) the #!
          *
-         * @returns     {String}    The pane url containing the '#!'
+         * @returns {string}    The pane url
          */
-        getPaneFragment: function () {
+        getCol2State: function () {
             var hash = document.location.hash;
             if (hash) {
                 if (hash.match(/^#[^!]/)) {
@@ -249,7 +249,19 @@
                     hash = '#' + hashs.join('#');
                 }
             }
-            return hash;
+            return hash || '';
+        },
+
+        /**
+         * Return the main pane state fragment
+         *
+         * @returns {string}    The main url including anchors, without #!
+         */
+        getCol1State: function () {
+            var anchor = this.getPaneAnchor(0);
+            var hash = window.location.pathname + window.location.search +
+                (anchor.length ? ('#' + anchor) : '');
+            return hash || '';
         },
 
         /**

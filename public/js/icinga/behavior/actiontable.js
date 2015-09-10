@@ -261,10 +261,10 @@
          */
         refresh: function() {
             this.clear();
-            var hash = this.icinga.utils.parseUrl(window.location.href).hash;
+            var hash = icinga.history.getCol2State().replace(/^#!/, '');
             if (this.hasMultiselection()) {
                 var query = parseSelectionQuery(hash);
-                if (query.length > 1 && this.getMultiselectionUrl() === this.icinga.utils.parseUrl(hash.substr(1)).path) {
+                if (query.length > 1 && this.getMultiselectionUrl() === this.icinga.utils.parseUrl(hash).path) {
                     // select all rows with matching filters
                     var self = this;
                     $.each(query, function(i, selection) {
@@ -275,7 +275,7 @@
                     return;
                 }
             }
-            this.selectUrl(hash.substr(1));
+            this.selectUrl(hash);
         }
     };
 
@@ -348,13 +348,12 @@
         }
 
         // update history
-        var url = self.icinga.utils.parseUrl(window.location.href.split('#')[0]);
+        var state = icinga.history.getCol1State();
         var count = table.selections().length;
-        var state = url.path + url.query;
         if (count > 0) {
             var query = table.toQuery();
             self.icinga.loader.loadUrl(query, self.icinga.events.getLinkTargetFor($tr));
-            state +=  '#!' + query;
+            state += '#!' + query;
         } else {
             if (self.icinga.events.getLinkTargetFor($tr).attr('id') === 'col2') {
                 self.icinga.ui.layout1col();
