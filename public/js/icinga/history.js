@@ -94,6 +94,11 @@
             }
         },
 
+        /**
+         * Push the given url as the new history state, unless the history is disabled
+         *
+         * @param   {string}    url     The full url path, including anchor
+         */
         pushUrl: function (url) {
             // No history API, no action
             if (!this.enabled) {
@@ -102,6 +107,13 @@
             this.push(url);
         },
 
+        /**
+         * Execute the history state, preserving the current state of behaviors
+         *
+         * Used internally by the history and should not be called externally, instead use {@link pushUrl}.
+         *
+         * @param   {string}    url
+         */
         push: function (url) {
             url = url.replace(/[\?&]?_(render|reload)=[a-z0-9]+/g, '');
             if (this.lastPushUrl === url) {
@@ -169,6 +181,14 @@
             });
         },
 
+        /**
+         * Update the application containers to match the current url
+         *
+         * Read the pane url from the current URL and load the corresponding panes into containers to
+         * match the current history state.
+         *
+         * @param   {Boolean|Null}  onload  Set to true when the main pane should not be updated, defaults to false
+         */
         applyLocationBar: function (onload) {
             var icinga = this.icinga,
                 main,
@@ -187,9 +207,13 @@
                 ).addToHistory = false;
             }
 
-            if (document.location.hash && document.location.hash.match(/^#!/)) {
+            if (this.getPaneAnchor(0)) {
+                $('#col1').data('icingaUrl', $('#col1').data('icingaUrl') + '#' + this.getPaneAnchor(0));
+            }
 
-                parts = document.location.hash.split(/#!/);
+            var hash = this.getCol2State();
+            if (hash && hash.match(/^#!/)) {
+                parts = hash.split(/#!/);
 
                 if ($('#layout > #login').length) {
                     // We are on the login page
@@ -213,6 +237,51 @@
                 // TODO: Replace with dynamic columns
                 icinga.ui.layout1col();
             }
+        },
+
+        /**
+         * Get the state of the selected pane
+         *
+         * @param   col {int}       The column index 0 or 1
+         *
+         * @returns     {String}    The string representing the state
+         */
+        getPaneAnchor: function (col) {
+            if (col !== 1 && col !== 0) {
+                throw 'Trying to get anchor for non-existing column: ' + col;
+            }
+            var panes = document.location.toString().split('#!')[col];
+            return panes && panes.split('#')[1] || '';
+        },
+
+        /**
+         * Get the side pane state after (and including) the #!
+         *
+         * @returns {string}    The pane url
+         */
+        getCol2State: function () {
+            var hash = document.location.hash;
+            if (hash) {
+                if (hash.match(/^#[^!]/)) {
+                    var hashs = hash.split('#');
+                    hashs.shift();
+                    hashs.shift();
+                    hash = '#' + hashs.join('#');
+                }
+            }
+            return hash || '';
+        },
+
+        /**
+         * Return the main pane state fragment
+         *
+         * @returns {string}    The main url including anchors, without #!
+         */
+        getCol1State: function () {
+            var anchor = this.getPaneAnchor(0);
+            var hash = window.location.pathname + window.location.search +
+                (anchor.length ? ('#' + anchor) : '');
+            return hash || '';
         },
 
         /**
