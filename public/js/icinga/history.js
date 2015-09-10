@@ -30,11 +30,6 @@
          * Whether the History API is enabled
          */
         this.enabled = false;
-
-        /**
-         * Workaround for Chrome onload popstate event
-         */
-        this.pushedSomething = false;
     };
 
     Icinga.History.prototype = {
@@ -150,16 +145,9 @@
         onHistoryChange: function (event) {
 
             var self   = event.data.self,
-                icinga = self.icinga,
-                onload;
+                icinga = self.icinga;
 
             icinga.logger.debug('Got a history change');
-
-            // Chrome workaround:
-            onload = !self.pushedSomething && location.href === self.initialUrl;
-            self.pushedSomething = true;
-            // if (onload) { return; } // Temporarily disabled
-            // End of Chrome workaround
 
             // We might find browsers showing strange behaviour, this log could help
             if (event.originalEvent.state === null) {
