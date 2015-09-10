@@ -94,6 +94,11 @@
             }
         },
 
+        /**
+         * Push the given url as the new history state, unless the history is disabled
+         *
+         * @param   {string}    url     The full url path, including anchor
+         */
         pushUrl: function (url) {
             // No history API, no action
             if (!this.enabled) {
@@ -102,6 +107,13 @@
             this.push(url);
         },
 
+        /**
+         * Execute the history state, preserving the current state of behaviors
+         *
+         * Used internally by the history and should not be called externally, instead use {@link pushUrl}.
+         *
+         * @param   {string}    url
+         */
         push: function (url) {
             url = url.replace(/[\?&]?_(render|reload)=[a-z0-9]+/g, '');
             if (this.lastPushUrl === url) {
@@ -169,6 +181,14 @@
             });
         },
 
+        /**
+         * Update the application containers to match the current url
+         *
+         * Read the pane url from the current URL and load the corresponding panes into containers to
+         * match the current history state.
+         *
+         * @param   {Boolean|Null}  onload  Set to true when the main pane should not be updated, defaults to false
+         */
         applyLocationBar: function (onload) {
             var icinga = this.icinga,
                 main,
