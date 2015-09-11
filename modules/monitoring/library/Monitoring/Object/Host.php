@@ -137,6 +137,8 @@ class Host extends MonitoredObject
             'host_state',
             'host_state_type',
             'instance_name',
+            'host_check_timeperiod_alias',
+            'host_notification_timeperiod_alias'
         );
         if ($this->backend->getType() === 'livestatus') {
             $columns[] = 'host_contacts';

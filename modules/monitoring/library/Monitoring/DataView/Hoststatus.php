@@ -59,7 +59,9 @@ class HostStatus extends DataView
             'host_severity',
             'host_problem',
             'host_ipv4',
-            'host_acknowledgement_type'
+            'host_acknowledgement_type',
+            'host_check_timeperiod_alias',
+            'host_notification_timeperiod_alias'
         );
     }
 

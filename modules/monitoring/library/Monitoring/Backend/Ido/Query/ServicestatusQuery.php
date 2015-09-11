@@ -269,6 +269,12 @@ class ServicestatusQuery extends IdoQuery
             'service_state_type'                        => 'ss.state_type',
             'service_status_update_time'                => 'ss.status_update_time',
             'service_unhandled'                         => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END'
+        ),
+        'checktimeperiods' => array(
+            'service_check_timeperiod_alias'            => 'ctp.alias COLLATE latin1_general_ci'
+        ),
+        'notificationtimeperiods' => array(
+            'service_notification_timeperiod_alias'     => 'ntp.alias COLLATE latin1_general_ci'
         )
     );
 
@@ -382,6 +388,24 @@ class ServicestatusQuery extends IdoQuery
         $this->select->join(
             array('ss' => $this->prefix . 'servicestatus'),
             'ss.service_object_id = so.object_id',
+            array()
+        );
+    }
+
+    protected function joinNotificationtimeperiods()
+    {
+        $this->select->joinLeft(
+            array('ntp' => $this->prefix . 'timeperiods'),
+            'ntp.timeperiod_object_id = s.notification_timeperiod_object_id',
+            array()
+        );
+    }
+
+    protected function joinChecktimeperiods()
+    {
+        $this->select->joinLeft(
+            array('ctp' => $this->prefix . 'timeperiods'),
+            'ctp.timeperiod_object_id = s.check_timeperiod_object_id',
             array()
         );
     }

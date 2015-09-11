@@ -163,7 +163,9 @@ class Service extends MonitoredObject
             'service_perfdata',
             'service_process_perfdata' => 'service_process_performance_data',
             'service_state',
-            'service_state_type'
+            'service_state_type',
+            'service_check_timeperiod_alias',
+            'service_notification_timeperiod_alias'
         ))
             ->where('host_name', $this->host->getName())
             ->where('service_description', $this->service);

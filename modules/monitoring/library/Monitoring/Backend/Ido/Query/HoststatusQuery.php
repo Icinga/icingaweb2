@@ -157,6 +157,12 @@ class HoststatusQuery extends IdoQuery
             'service'                => 'so.name2 COLLATE latin1_general_ci',
             'service_description'    => 'so.name2',
             'service_display_name'   => 's.display_name COLLATE latin1_general_ci',
+        ),
+        'checktimeperiods' => array(
+            'host_check_timeperiod_alias'        => 'ctp.alias COLLATE latin1_general_ci'
+        ),
+        'notificationtimeperiods' => array(
+            'host_notification_timeperiod_alias' => 'ntp.alias COLLATE latin1_general_ci'
         )
     );
 
@@ -262,6 +268,24 @@ class HoststatusQuery extends IdoQuery
         $this->select->join(
             array('i' => $this->prefix . 'instances'),
             'i.instance_id = ho.instance_id',
+            array()
+        );
+    }
+
+    protected function joinNotificationtimeperiods()
+    {
+        $this->select->joinLeft(
+            array('ntp' => $this->prefix . 'timeperiods'),
+            'ntp.timeperiod_object_id = h.notification_timeperiod_object_id',
+            array()
+        );
+    }
+
+    protected function joinChecktimeperiods()
+    {
+        $this->select->joinLeft(
+            array('ctp' => $this->prefix . 'timeperiods'),
+            'ctp.timeperiod_object_id = h.check_timeperiod_object_id',
             array()
         );
     }
