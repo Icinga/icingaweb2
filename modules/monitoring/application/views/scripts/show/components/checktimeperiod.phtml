@@ -1,0 +1,21 @@
+<?php if (isset($object->service_check_timeperiod)): ?>
+
+<tr>
+    <th><?= $this->translate('Check Timeperiod') ?></th>
+    <td>
+        <?= $object->service_check_timeperiod ?>
+    </td>
+</tr>
+
+<?php endif ?>
+
+<?php if (isset($object->host_check_timeperiod)): ?>
+
+    <tr>
+        <th><?= $this->translate('Check Timeperiod') ?></th>
+        <td>
+            <?= $object->host_check_timeperiod ?>
+        </td>
+    </tr>
+
+<?php endif ?>
