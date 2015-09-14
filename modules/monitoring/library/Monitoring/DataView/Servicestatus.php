@@ -73,6 +73,7 @@ class ServiceStatus extends DataView
             'service_problem',
             'service_perfdata',
             'service_check_source',
+            'service_check_timeperiod',
             'service_active_checks_enabled',
             'service_active_checks_enabled_changed',
             'service_passive_checks_enabled',
@@ -94,8 +95,6 @@ class ServiceStatus extends DataView
             'service_modified_service_attributes',
             'service_host_name',
             'service_acknowledgement_type',
-            'service_check_timeperiod_alias',
-            'service_notification_timeperiod_alias'
         );
     }
 

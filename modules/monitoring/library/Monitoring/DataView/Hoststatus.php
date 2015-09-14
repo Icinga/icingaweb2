@@ -32,6 +32,7 @@ class HostStatus extends DataView
             'host_output',
             'host_long_output',
             'host_check_command',
+            'host_check_timeperiod',
             'host_perfdata',
             'host_check_source',
             'host_passive_checks_enabled',
@@ -59,9 +60,7 @@ class HostStatus extends DataView
             'host_severity',
             'host_problem',
             'host_ipv4',
-            'host_acknowledgement_type',
-            'host_check_timeperiod_alias',
-            'host_notification_timeperiod_alias'
+            'host_acknowledgement_type'
         );
     }
 

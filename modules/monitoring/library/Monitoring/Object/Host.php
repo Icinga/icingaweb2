@@ -101,6 +101,7 @@ class Host extends MonitoredObject
             'host_check_execution_time',
             'host_check_latency',
             'host_check_source',
+            'host_check_timeperiod',
             'host_current_check_attempt',
             'host_current_notification_number',
             'host_display_name',
@@ -136,9 +137,7 @@ class Host extends MonitoredObject
             'host_process_perfdata' => 'host_process_performance_data',
             'host_state',
             'host_state_type',
-            'instance_name',
-            'host_check_timeperiod_alias',
-            'host_notification_timeperiod_alias'
+            'instance_name'
         );
         if ($this->backend->getType() === 'livestatus') {
             $columns[] = 'host_contacts';
