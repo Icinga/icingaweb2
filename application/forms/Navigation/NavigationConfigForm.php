@@ -303,7 +303,7 @@ class NavigationConfigForm extends ConfigForm
                 'autosubmit'    => true,
                 'label'         => $this->translate('Type'),
                 'description'   => $this->translate('The type of this navigation item'),
-                'multiOptions'  => $itemTypes
+                'multiOptions'  => array_combine($itemTypes, $itemTypes)
             )
         );
 
