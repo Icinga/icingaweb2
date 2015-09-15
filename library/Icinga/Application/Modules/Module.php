@@ -308,9 +308,12 @@ class Module
             /** @var DashboardContainer $pane */
             $navigation->addItem(
                 $pane->getName(),
-                array(
-                    'type'      => 'dashboard-pane',
-                    'dashlets'  => $pane->getDashlets()
+                array_merge(
+                    $pane->getProperties(),
+                    array(
+                        'type'      => 'dashboard-pane',
+                        'dashlets'  => $pane->getDashlets()
+                    )
                 )
             );
         }
@@ -322,12 +325,18 @@ class Module
      * Add or get a dashboard pane
      *
      * @param   string  $name
+     * @param   array   $properties
      *
      * @return  DashboardContainer
      */
-    protected function dashboard($name)
+    protected function dashboard($name, array $properties = array())
     {
-        $this->paneItems[$name] = new DashboardContainer($name);
+        if (array_key_exists($name, $this->paneItems)) {
+            $this->paneItems[$name]->setProperties($properties);
+        } else {
+            $this->paneItems[$name] = new DashboardContainer($name, $properties);
+        }
+
         return $this->paneItems[$name];
     }
 
