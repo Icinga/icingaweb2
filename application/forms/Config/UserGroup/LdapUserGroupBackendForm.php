@@ -177,11 +177,23 @@ class LdapUserGroupBackendForm extends Form
                 'preserveDefault'   => true,
                 'ignore'            => $disabled,
                 'disabled'          => $disabled,
-                    'label'         => $this->translate('LDAP Group Name Attribute'),
+                'label'             => $this->translate('LDAP Group Name Attribute'),
                 'description'       => $this->translate(
                     'The attribute name used for storing a group\'s name on the LDAP server.'
                 ),
                 'value'             => $defaults->group_name_attribute
+            )
+        );
+        $this->addElement(
+            'text',
+            'group_member_attribute',
+            array(
+                'preserveDefault'   => true,
+                'ignore'            => $disabled,
+                'disabled'          => $disabled,
+                'label'             => $this->translate('LDAP Group Member Attribute'),
+                'description'       => $this->translate('The attribute name used for storing a group\'s members.'),
+                'value'             => $defaults->group_member_attribute
             )
         );
         $this->addElement(
@@ -258,7 +270,7 @@ class LdapUserGroupBackendForm extends Form
                 'preserveDefault'   => true,
                 'ignore'            => $disabled,
                 'disabled'          => $disabled,
-                    'label'         => $this->translate('LDAP User Name Attribute'),
+                'label'             => $this->translate('LDAP User Name Attribute'),
                 'description'       => $this->translate(
                     'The attribute name used for storing a user\'s name on the LDAP server.'
                 ),

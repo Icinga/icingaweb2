@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -23,12 +23,13 @@
 /**
  * @see Zend_View_Helper_Abstract
  */
+require_once 'Zend/View/Helper/Abstract.php';
 
 /**
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_View_Helper_HtmlElement extends Zend_View_Helper_Abstract
@@ -116,6 +117,7 @@ abstract class Zend_View_Helper_HtmlElement extends Zend_View_Helper_Abstract
                 // Don't escape event attributes; _do_ substitute double quotes with singles
                 if (!is_scalar($val)) {
                     // non-scalar data should be cast to JSON first
+                    require_once 'Zend/Json.php';
                     $val = Zend_Json::encode($val);
                 }
                 // Escape single quotes inside event attribute values.

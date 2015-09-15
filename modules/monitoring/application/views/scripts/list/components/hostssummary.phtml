@@ -3,20 +3,16 @@
 use Icinga\Web\Url;
 use Icinga\Data\Filter\Filter;
 
-function urlAddFilterOptional($url, $filter, $optional) {
-    $url = Url::fromPath($url);
-    $f = $filter;
-    if (isset($optional)) {
-        $f = Filter::matchAll($filter, $optional);
-    }
-    return $url->setQueryString($f->toQueryString());
-}
 $this->baseFilter = isset($this->baseFilter) ? $this->baseFilter : null;
 
-$stats = $stats->fetchRow();
+// don't fetch rows until they are actually needed to improve dashlet performance
+if (!$stats instanceof stdClass) {
+    $stats = $stats->fetchRow();
+}
+
 $selfUrl = 'monitoring/list/hosts';
 $currentUrl = Url::fromRequest()->getRelativeUrl();
-?><h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
+?>
   <?= $this->qlink(
       sprintf($this->translatePlural('%u Host', '%u Hosts', $stats->hosts_total), $stats->hosts_total),
       $selfUrl,
@@ -31,7 +27,7 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     <span class="state ok<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 0))->getRelativeUrl() ? ' active' : ''; ?>">
         <?= $this->qlink(
                 $stats->hosts_up,
-                urlAddFilterOptional(
+                Url::urlAddFilterOptional(
                     $selfUrl,
                     Filter::where('host_state', 0),
                     $this->baseFilter
@@ -54,7 +50,7 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     <span class="state critical<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 1, 'host_unhandled' => 1))->getRelativeUrl() ? ' active' : ''; ?>">
         <?= $this->qlink(
             $stats->hosts_down_unhandled,
-            urlAddFilterOptional(
+            Url::urlAddFilterOptional(
                 $selfUrl,
                 Filter::matchAll(Filter::where('host_state', 1), Filter::where('host_unhandled', 1)),
                 $this->baseFilter
@@ -75,7 +71,7 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     <span class="state handled critical<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 1, 'host_unhandled' =>0))->getRelativeUrl() ? ' active' : ''; ?>">
         <?= $this->qlink(
             $stats->hosts_down_handled,
-            urlAddFilterOptional(
+            Url::urlAddFilterOptional(
                 $selfUrl,
                 Filter::matchAll(Filter::where('host_state', 1), Filter::where('host_unhandled', 0)),
                 $this->baseFilter
@@ -101,7 +97,7 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     <span class="state unknown<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 2, 'host_unhandled' => 1))->getRelativeUrl() ? ' active' : ''; ?>">
         <?= $this->qlink(
             $stats->hosts_unreachable_unhandled,
-            urlAddFilterOptional(
+            Url::urlAddFilterOptional(
                 $selfUrl,
                 Filter::matchAll(Filter::where('host_state', 2), Filter::where('host_unhandled', 1)),
                 $this->baseFilter
@@ -122,7 +118,7 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     <span class="state handled unknown<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 2, 'host_unhandled' => 0))->getRelativeUrl() ? ' active' : '' ?>">
         <?= $this->qlink(
             $stats->hosts_unreachable_handled,
-            urlAddFilterOptional(
+            Url::urlAddFilterOptional(
                 $selfUrl,
                 Filter::matchAll(Filter::where('host_state', 2), Filter::where('host_unhandled', 0)),
                 $this->baseFilter
@@ -148,7 +144,7 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     <span class="state pending<?= $currentUrl === Url::fromPath($selfUrl, array('host_state' => 99))->getRelativeUrl() ? ' active' : ''; ?>">
         <?= $this->qlink(
             $stats->hosts_pending,
-            urlAddFilterOptional(
+            Url::urlAddFilterOptional(
                 $selfUrl,
                 Filter::where('host_state', 99),
                 $this->baseFilter
@@ -166,4 +162,3 @@ $currentUrl = Url::fromRequest()->getRelativeUrl();
     </span>
     <?php endif; ?>
   </span>
-</h1>

@@ -32,6 +32,7 @@ class HostsController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $hostList);
         $hostList->addFilter(Filter::fromQueryString((string) $this->params));
         $this->hostList = $hostList;
+        $this->view->baseFilter = $this->hostList->getFilter();
         $this->getTabs()->add(
             'show',
             array(
@@ -152,7 +153,6 @@ class HostsController extends Controller
                     ->toQueryString()
             );
         $this->view->commentsLink = Url::fromRequest()->setPath('monitoring/list/comments');
-        $this->view->baseFilter = $this->hostList->getFilter();
         $this->view->sendCustomNotificationLink = Url::fromRequest()->setPath('monitoring/hosts/send-custom-notification');
     }
 

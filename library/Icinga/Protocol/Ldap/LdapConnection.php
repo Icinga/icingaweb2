@@ -358,10 +358,30 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function count(LdapQuery $query)
     {
+        $ds = $this->getConnection();
         $this->bind();
 
-        $res = $this->runQuery($query, array());
-        return count($res);
+        $results = @ldap_search(
+            $ds,
+            $query->getBase() ?: $this->getDn(),
+            (string) $query,
+            array('dn'),
+            0,
+            0
+        );
+
+        if ($results === false) {
+            if (ldap_errno($ds) !== self::LDAP_NO_SUCH_OBJECT) {
+                throw new LdapException(
+                    'LDAP count query "%s" (base %s) failed: %s',
+                    (string) $query,
+                    $query->getBase() ?: $this->getDn(),
+                    ldap_error($ds)
+                );
+            }
+        }
+
+        return ldap_count_entries($ds, $results);
     }
 
     /**
@@ -538,9 +558,9 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function hasDn($dn)
     {
+        $ds = $this->getConnection();
         $this->bind();
 
-        $ds = $this->getConnection();
         $result = ldap_read($ds, $dn, '(objectClass=*)', array('objectClass'));
         return ldap_count_entries($ds, $result) > 0;
     }
@@ -556,9 +576,9 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function deleteRecursively($dn)
     {
+        $ds = $this->getConnection();
         $this->bind();
 
-        $ds = $this->getConnection();
         $result = @ldap_list($ds, $dn, '(objectClass=*)', array('objectClass'));
         if ($result === false) {
             if (ldap_errno($ds) === self::LDAP_NO_SUCH_OBJECT) {
@@ -591,9 +611,9 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function deleteDn($dn)
     {
+        $ds = $this->getConnection();
         $this->bind();
 
-        $ds = $this->getConnection();
         $result = @ldap_delete($ds, $dn);
         if ($result === false) {
             if (ldap_errno($ds) === self::LDAP_NO_SUCH_OBJECT) {
@@ -646,7 +666,7 @@ class LdapConnection implements Selectable, Inspectable
 
         $ds = $this->getConnection();
 
-        $serverSorting = false;//$this->capabilities->hasOid(Capability::LDAP_SERVER_SORT_OID);
+        $serverSorting = $this->getCapabilities()->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
         if ($serverSorting && $query->hasOrder()) {
             ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
                 array(
@@ -741,15 +761,8 @@ class LdapConnection implements Selectable, Inspectable
 
         $ds = $this->getConnection();
 
-        $serverSorting = false;//$this->capabilities->hasOid(Capability::LDAP_SERVER_SORT_OID);
-        if ($serverSorting && $query->hasOrder()) {
-            ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
-                array(
-                    'oid'   => LdapCapabilities::LDAP_SERVER_SORT_OID,
-                    'value' => $this->encodeSortRules($query->getOrder())
-                )
-            ));
-        } elseif ($query->hasOrder()) {
+        $serverSorting = $this->getCapabilities()->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
+        if (! $serverSorting && $query->hasOrder()) {
             foreach ($query->getOrder() as $rule) {
                 if (! in_array($rule[0], $fields)) {
                     $fields[] = $rule[0];
@@ -764,6 +777,15 @@ class LdapConnection implements Selectable, Inspectable
             // Do not request the pagination control as a critical extension, as we want the
             // server to return results even if the paged search request cannot be satisfied
             ldap_control_paged_result($ds, $pageSize, false, $cookie);
+
+            if ($serverSorting) {
+                ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
+                    array(
+                        'oid'   => LdapCapabilities::LDAP_SERVER_SORT_OID,
+                        'value' => $this->encodeSortRules($query->getOrder())
+                    )
+                ));
+            }
 
             $results = @ldap_search(
                 $ds,
@@ -910,28 +932,53 @@ class LdapConnection implements Selectable, Inspectable
      *
      * @param   array   $sortRules
      *
-     * @return  string
-     * @throws ProgrammingError
-     *
-     * @todo    Produces an invalid stream, obviously
+     * @return  string  Binary representation of the octet stream
      */
     protected function encodeSortRules(array $sortRules)
     {
-        if (count($sortRules) > 127) {
-            throw new ProgrammingError(
-                'Cannot encode more than 127 sort rules. Only length octets in short form are supported'
-            );
-        }
+        $sequenceOf = '';
 
-        $seq = '30' . str_pad(dechex(count($sortRules)), 2, '0', STR_PAD_LEFT);
         foreach ($sortRules as $rule) {
-            $hexdAttribute = unpack('H*', $rule[0]);
-            $seq .= '3002'
-                . '04' . str_pad(dechex(strlen($rule[0])), 2, '0', STR_PAD_LEFT) . $hexdAttribute[1]
-                . '0101' . ($rule[1] === Sortable::SORT_DESC ? 'ff' : '00');
+            if ($rule[1] === Sortable::SORT_DESC) {
+                $reversed = '8101ff';
+            } else {
+                $reversed = '';
+            }
+
+            $attributeType = unpack('H*', $rule[0]);
+            $attributeType = $attributeType[1];
+            $attributeOctets = strlen($attributeType) / 2;
+            if ($attributeOctets >= 127) {
+                // Use the indefinite form of the length octets (the long form would be another option)
+                $attributeType = '0440' . $attributeType . '0000';
+
+            } else {
+                $attributeType = '04' . str_pad(dechex($attributeOctets), 2, '0', STR_PAD_LEFT) . $attributeType;
+            }
+
+            $sequence = $attributeType . $reversed;
+            $sequenceOctects = strlen($sequence) / 2;
+            if ($sequenceOctects >= 127) {
+                $sequence = '3040' . $sequence . '0000';
+            } else {
+                $sequence = '30' . str_pad(dechex($sequenceOctects), 2, '0', STR_PAD_LEFT) . $sequence;
+            }
+
+            $sequenceOf .= $sequence;
         }
 
-        return $seq;
+        $sequenceOfOctets = strlen($sequenceOf) / 2;
+        if ($sequenceOfOctets >= 127) {
+            $sequenceOf = '3040' . $sequenceOf . '0000';
+        } else {
+            $sequenceOf = '30' . str_pad(dechex($sequenceOfOctets), 2, '0', STR_PAD_LEFT) . $sequenceOf;
+        }
+
+        if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
+            return hex2bin($sequenceOf);
+        } else {
+            return pack('H*', $sequenceOf);
+        }
     }
 
     /**

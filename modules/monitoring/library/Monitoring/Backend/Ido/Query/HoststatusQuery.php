@@ -77,6 +77,20 @@ class HoststatusQuery extends IdoQuery
             'host_modified_host_attributes'         => 'hs.modified_host_attributes',
             'host_next_check'                       => 'CASE hs.should_be_scheduled WHEN 1 THEN UNIX_TIMESTAMP(hs.next_check) ELSE NULL END',
             'host_next_notification'                => 'UNIX_TIMESTAMP(hs.next_notification)',
+            'host_next_update'                      => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
+            THEN
+                NULL
+            ELSE
+                UNIX_TIMESTAMP(hs.last_check)
+                + CASE WHEN
+                    COALESCE(hs.current_state, 0) > 0 AND hs.state_type = 0
+                THEN
+                    hs.retry_check_interval
+                ELSE
+                    hs.normal_check_interval
+                END * 60 * 2
+                + CEIL(hs.execution_time)
+            END',
             'host_no_more_notifications'            => 'hs.no_more_notifications',
             'host_normal_check_interval'            => 'hs.normal_check_interval',
             'host_notifications_enabled'            => 'hs.notifications_enabled',
@@ -143,6 +157,9 @@ class HoststatusQuery extends IdoQuery
             'service'                => 'so.name2 COLLATE latin1_general_ci',
             'service_description'    => 'so.name2',
             'service_display_name'   => 's.display_name COLLATE latin1_general_ci',
+        ),
+        'checktimeperiods' => array(
+            'host_check_timeperiod' => 'ctp.alias COLLATE latin1_general_ci'
         )
     );
 
@@ -248,6 +265,15 @@ class HoststatusQuery extends IdoQuery
         $this->select->join(
             array('i' => $this->prefix . 'instances'),
             'i.instance_id = ho.instance_id',
+            array()
+        );
+    }
+
+    protected function joinChecktimeperiods()
+    {
+        $this->select->joinLeft(
+            array('ctp' => $this->prefix . 'timeperiods'),
+            'ctp.timeperiod_object_id = h.check_timeperiod_object_id',
             array()
         );
     }

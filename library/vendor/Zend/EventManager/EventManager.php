@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_EventManager
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -27,7 +27,7 @@
  *
  * @category   Zend
  * @package    Zend_EventManager
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_EventManager_EventManager implements Zend_EventManager_EventCollection, Zend_EventManager_SharedEventCollectionAware
@@ -84,8 +84,8 @@ class Zend_EventManager_EventManager implements Zend_EventManager_EventCollectio
     /**
      * Set static collections container
      *
-     * @param  Zend_EventManager_StaticEventCollection $collections
-     * @return void
+     * @param  Zend_EventManager_SharedEventCollection $collections
+     * @return $this
      */
     public function setSharedCollections(Zend_EventManager_SharedEventCollection $collections)
     {

@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -23,6 +23,7 @@
 /**
  * @see Zend_View_Helper_Navigation_HelperAbstract
  */
+require_once 'Zend/View/Helper/Navigation/HelperAbstract.php';
 
 /**
  * Helper for printing breadcrumbs
@@ -30,7 +31,7 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_Navigation_Breadcrumbs
@@ -258,6 +259,7 @@ class Zend_View_Helper_Navigation_Breadcrumbs
         }
 
         if (empty($partial)) {
+            require_once 'Zend/View/Exception.php';
             $e = new Zend_View_Exception(
                 'Unable to render menu: No partial view script provided'
             );
@@ -289,6 +291,7 @@ class Zend_View_Helper_Navigation_Breadcrumbs
 
         if (is_array($partial)) {
             if (count($partial) != 2) {
+                require_once 'Zend/View/Exception.php';
                 $e = new Zend_View_Exception(
                     'Unable to render menu: A view partial supplied as '
                     .  'an array must contain two values: partial view '

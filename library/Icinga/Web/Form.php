@@ -30,6 +30,11 @@ use Icinga\Web\Form\Element\CsrfCounterMeasure;
  *
  *     @return  $this
  * }
+ *
+ * @method \Zend_Form_Element[] getElements() {
+ *     {@inheritdoc}
+ *     @return \Zend_Form_Element[]
+ * }
  */
 class Form extends Zend_Form
 {
@@ -59,6 +64,17 @@ class Form extends Zend_Form
      * @var bool
      */
     protected $created = false;
+
+    /**
+     * Whether the form is an API target
+     *
+     * When the form is an API target, the form evaluates as submitted if the request method equals the form method.
+     * That means, that the submit button and form identification are not taken into account. In addition, the CSRF
+     * counter measure will not be added to the form's elements.
+     *
+     * @var bool
+     */
+    protected $isApiTarget = false;
 
     /**
      * The request associated with this form
@@ -688,6 +704,29 @@ class Form extends Zend_Form
     }
 
     /**
+     * Get whether the form is an API target
+     *
+     * @return bool
+     */
+    public function getIsApiTarget()
+    {
+        return $this->isApiTarget;
+    }
+
+    /**
+     * Set whether the form is an API target
+     *
+     * @param   bool $isApiTarget
+     *
+     * @return  $this
+     */
+    public function setIsApiTarget($isApiTarget = true)
+    {
+        $this->isApiTarget = (bool) $isApiTarget;
+        return $this;
+    }
+
+    /**
      * Create this form
      *
      * @param   array   $formData   The data sent by the user
@@ -997,7 +1036,7 @@ class Form extends Zend_Form
         if (! $this->tokenDisabled) {
             $request = $this->getRequest();
             if (! $request->isXmlHttpRequest()
-                && $request->getIsApiRequest()
+                && ($this->getIsApiTarget() || $request->isApiRequest())
             ) {
                 return $this;
             }
@@ -1064,21 +1103,40 @@ class Form extends Zend_Form
         }
 
         $formData = $this->getRequestData();
-        if ($this->getUidDisabled() || $this->wasSent($formData)) {
+        if ($this->getIsApiTarget() || $this->getUidDisabled() || $this->wasSent($formData)) {
             if (($frameUpload = (bool) $request->getUrl()->shift('_frameUpload', false))) {
                 $this->getView()->layout()->setLayout('wrapped');
             }
-
             $this->populate($formData); // Necessary to get isSubmitted() to work
             if (! $this->getSubmitLabel() || $this->isSubmitted()) {
                 if ($this->isValid($formData)
                     && (($this->onSuccess !== null && false !== call_user_func($this->onSuccess, $this))
-                        || ($this->onSuccess === null && false !== $this->onSuccess()))) {
-                    if (! $frameUpload) {
+                        || ($this->onSuccess === null && false !== $this->onSuccess()))
+                ) {
+                    if ($this->getIsApiTarget() || $this->getRequest()->isApiRequest()) {
+                        // API targets and API requests will never redirect but immediately respond w/ JSON-encoded
+                        // notifications
+                        $notifications = Notification::getInstance()->popMessages();
+                        $message = null;
+                        foreach ($notifications as $notification) {
+                            if ($notification->type === Notification::SUCCESS) {
+                                $message = $notification->message;
+                                break;
+                            }
+                        }
+                        $this->getResponse()->json()
+                            ->setSuccessData($message !== null ? array('message' => $message) : null)
+                            ->sendResponse();
+                    } elseif (! $frameUpload) {
                         $this->getResponse()->redirectAndExit($this->getRedirectUrl());
                     } else {
                         $this->getView()->layout()->redirectUrl = $this->getRedirectUrl()->getAbsoluteUrl();
                     }
+                } elseif ($this->getIsApiTarget()) {
+                    $this->getResponse()->sendJson(array(
+                        'status'    => 'fail',
+                        'data'      => array_merge($this->getMessages(), $this->getErrorMessages())
+                    ));
                 }
             } elseif ($this->getValidatePartial()) {
                 // The form can't be processed but we may want to show validation errors though
@@ -1100,6 +1158,12 @@ class Form extends Zend_Form
      */
     public function isSubmitted()
     {
+        if (strtolower($this->getRequest()->getMethod()) !== $this->getMethod()) {
+            return false;
+        }
+        if ($this->getIsApiTarget()) {
+            return true;
+        }
         if ($this->getSubmitLabel()) {
             return $this->getElement('btn_submit')->isChecked();
         }
@@ -1190,7 +1254,7 @@ class Form extends Zend_Form
      * Load the default decorators
      *
      * Overwrites Zend_Form::loadDefaultDecorators to avoid having
-     * the HtmlTag-Decorator added and to provide viewscript usage
+     * the HtmlTag-Decorator added and to provide view script usage
      *
      * @return  $this
      */
@@ -1333,6 +1397,19 @@ class Form extends Zend_Form
     }
 
     /**
+     * Set the request
+     *
+     * @param   Request $request
+     *
+     * @return  $this
+     */
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
+        return $this;
+    }
+
+    /**
      * Return the current Response
      *
      * @return  Response
@@ -1464,7 +1541,7 @@ class Form extends Zend_Form
     /**
      * Add a error notification and prevent the form from being successfully validated
      *
-     * @param   string|array    $message    The notfication's message
+     * @param   string|array    $message    The notification message
      *
      * @return  $this
      */
@@ -1478,7 +1555,7 @@ class Form extends Zend_Form
     /**
      * Add a warning notification and prevent the form from being successfully validated
      *
-     * @param   string|array    $message    The notfication's message
+     * @param   string|array    $message    The notification message
      *
      * @return  $this
      */
@@ -1492,7 +1569,7 @@ class Form extends Zend_Form
     /**
      * Add a info notification
      *
-     * @param   string|array    $message        The notfication's message
+     * @param   string|array    $message        The notification message
      * @param   bool            $markAsError    Whether to prevent the form from being successfully validated or not
      *
      * @return  $this
