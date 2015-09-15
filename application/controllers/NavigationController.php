@@ -90,7 +90,8 @@ class NavigationController extends Controller
         $form->setRedirectUrl('navigation');
         $form->setTitle($this->translate('Create New Navigation Item'));
         $form->addDescription($this->translate('Create a new navigation item, such as a menu entry or dashlet.'));
-        $form->setIniConfig($this->Auth()->getUser()->loadNavigationConfig());
+        $form->setUser($this->Auth()->getUser());
+        $form->setShareConfig(Config::app('navigation'));
         $form->setOnSuccess(function (NavigationConfigForm $form) {
             try {
                 $form->add(array_filter($form->getValues()));
@@ -118,23 +119,12 @@ class NavigationController extends Controller
     public function editAction()
     {
         $itemName = $this->params->getRequired('name');
-        $user = $this->Auth()->getUser();
-
-        $config = $user->loadNavigationConfig();
-        if (! $config->hasSection($itemName)) {
-            $shareConfig = Config::app('navigation');
-            if ($shareConfig->hasSection($itemName)
-                && ($shareConfig->get($itemName, 'owner') === $user->getUsername()
-                    || $user->can('config/application/navigation'))
-            ) {
-                $config = $shareConfig;
-            }
-        }
 
         $form = new NavigationConfigForm();
-        $form->setIniConfig($config);
         $form->setRedirectUrl('navigation');
         $form->setTitle(sprintf($this->translate('Edit Navigation Item %s'), $itemName));
+        $form->setUser($this->Auth()->getUser());
+        $form->setShareConfig(Config::app('navigation'));
         $form->setOnSuccess(function (NavigationConfigForm $form) use ($itemName) {
             try {
                 $form->edit($itemName, array_map(
@@ -175,24 +165,19 @@ class NavigationController extends Controller
     public function removeAction()
     {
         $itemName = $this->params->getRequired('name');
-        $user = $this->Auth()->getUser();
-
-        $config = $user->loadNavigationConfig();
-        if (! $config->hasSection($itemName)) {
-            $shareConfig = Config::app('navigation');
-            if ($shareConfig->hasSection($itemName) && $shareConfig->get($itemName, 'owner') === $user->getUsername()) {
-                $config = $shareConfig;
-            }
-        }
 
         $navigationConfigForm = new NavigationConfigForm();
-        $navigationConfigForm->setIniConfig($config);
+        $navigationConfigForm->setUser($this->Auth()->getUser());
+        $navigationConfigForm->setShareConfig(Config::app('navigation'));
         $form = new ConfirmRemovalForm();
         $form->setRedirectUrl('navigation');
         $form->setTitle(sprintf($this->translate('Remove Navigation Item %s'), $itemName));
         $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($itemName, $navigationConfigForm) {
             try {
                 $navigationConfigForm->delete($itemName);
+            } catch (NotFoundError $e) {
+                Notification::success(sprintf(t('Navigation Item "%s" not found. No action required'), $itemName));
+                return true;
             } catch (Exception $e) {
                 $form->error($e->getMessage());
                 return false;
@@ -220,7 +205,8 @@ class NavigationController extends Controller
         $this->assertHttpMethod('POST');
 
         $navigationConfigForm = new NavigationConfigForm();
-        $navigationConfigForm->setIniConfig(Config::app('navigation'));
+        $navigationConfigForm->setUser($this->Auth()->getUser());
+        $navigationConfigForm->setShareConfig(Config::app('navigation'));
 
         $form = new Form(array(
             'onSuccess' => function ($form) use ($navigationConfigForm) {
