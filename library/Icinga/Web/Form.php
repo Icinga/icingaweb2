@@ -66,6 +66,15 @@ class Form extends Zend_Form
     protected $created = false;
 
     /**
+     * This form's parent
+     *
+     * Gets automatically set upon calling addSubForm().
+     *
+     * @var Form
+     */
+    protected $parent;
+
+    /**
      * Whether the form is an API target
      *
      * When the form is an API target, the form evaluates as submitted if the request method equals the form method.
@@ -241,6 +250,29 @@ class Form extends Zend_Form
         ));
 
         parent::__construct($options);
+    }
+
+    /**
+     * Set this form's parent
+     *
+     * @param   Form    $form
+     *
+     * @return  $this
+     */
+    public function setParent(Form $form)
+    {
+        $this->parent = $form;
+        return $this;
+    }
+
+    /**
+     * Return this form's parent
+     *
+     * @return  Form
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
 
     /**
@@ -844,6 +876,7 @@ class Form extends Zend_Form
             $form->setSubmitLabel('');
             $form->setTokenDisabled();
             $form->setUidDisabled();
+            $form->setParent($this);
         }
 
         if ($name === null) {
