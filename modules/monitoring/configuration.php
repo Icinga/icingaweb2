@@ -238,7 +238,7 @@ $section->add($this->translate('Monitoring Health'), array(
 /*
  * Current Incidents
  */
-$dashboard = $this->dashboard($this->translate('Current Incidents'));
+$dashboard = $this->dashboard($this->translate('Current Incidents'), array('priority' => 50));
 $dashboard->add(
     $this->translate('Service Problems'),
     'monitoring/list/services?service_problem=1&limit=10&sort=service_severity'
@@ -255,7 +255,7 @@ $dashboard->add(
 /*
  * Overview
  */
-$dashboard = $this->dashboard($this->translate('Overview'));
+$dashboard = $this->dashboard($this->translate('Overview'), array('priority' => 60));
 $dashboard->add(
     $this->translate('Service Grid'),
     'monitoring/list/servicegrid?limit=15,18'
@@ -272,7 +272,7 @@ $dashboard->add(
 /*
  * Most Overdue
  */
-$dashboard = $this->dashboard($this->translate('Overdue'));
+$dashboard = $this->dashboard($this->translate('Overdue'), array('priority' => 70));
 $dashboard->add(
     $this->translate('Late Host Check Results'),
     'monitoring/list/hosts?host_next_update<now'
@@ -293,7 +293,7 @@ $dashboard->add(
 /*
  * Muted Objects
  */
-$dashboard = $this->dashboard($this->translate('Muted'));
+$dashboard = $this->dashboard($this->translate('Muted'), array('priority' => 80));
 $dashboard->add(
     $this->translate('Disabled Service Notifications'),
     'monitoring/list/services?service_notifications_enabled=0&limit=10'
@@ -322,7 +322,7 @@ $dashboard->add(
 /*
  * Activity Stream
  */
-$dashboard = $this->dashboard($this->translate('Activity Stream'));
+$dashboard = $this->dashboard($this->translate('Activity Stream'), array('priority' => 90));
 $dashboard->add(
     $this->translate('Recent Events'),
     'monitoring/list/eventhistory?timestamp>=-3%20days&sort=timestamp&dir=desc&limit=8'
@@ -347,7 +347,7 @@ $dashboard->add(
 /*
  * Stats
  */
-$dashboard = $this->dashboard($this->translate('Stats'));
+$dashboard = $this->dashboard($this->translate('Stats'), array('priority' => 100));
 $dashboard->add(
     $this->translate('Check Stats'),
     'monitoring/health/stats'
