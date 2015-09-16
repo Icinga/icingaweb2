@@ -88,10 +88,10 @@ $this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/serv
 /*
  * Available navigation items
  */
-$this->provideNavigationItem('host-action');
-$this->provideNavigationItem('service-action');
-$this->provideNavigationItem('host-note');
-$this->provideNavigationItem('service-note');
+$this->provideNavigationItem('host-action', $this->translate('Host Action'));
+$this->provideNavigationItem('service-action', $this->translate('Service Action'));
+$this->provideNavigationItem('host-note', $this->translate('Host Note'));
+$this->provideNavigationItem('service-note', $this->translate('Service Note'));
 
 /*
  * Problems Section
