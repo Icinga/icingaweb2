@@ -34,5 +34,5 @@ if ($navigation->isEmpty()) {
 ?>
 <tr>
     <th><?= $this->translate('Actions'); ?></th>
-    <?= $navigation->getRenderer()->setElementTag('td'); ?>
+    <?= $navigation->getRenderer()->setElementTag('td')->setCssClass('actions'); ?>
 </tr>
