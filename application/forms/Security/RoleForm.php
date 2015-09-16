@@ -37,6 +37,8 @@ class RoleForm extends ConfigForm
     {
         $this->providedPermissions = array(
             '*'                                             => $this->translate('Allow everything') . ' (*)',
+            'application/share/navigation'                  => $this->translate('Allow to share navigation items')
+                . ' (application/share/navigation)',
             'application/stacktraces'                       => $this->translate(
                 'Allow to adjust in the preferences whether to show stacktraces'
             ) . ' (application/stacktraces)',
@@ -48,6 +50,7 @@ class RoleForm extends ConfigForm
             'config/application/resources'                  => 'config/application/resources',
             'config/application/userbackend'                => 'config/application/userbackend',
             'config/application/usergroupbackend'           => 'config/application/usergroupbackend',
+            'config/application/navigation'                 => 'config/application/navigation',
             'config/authentication/*'                       => 'config/authentication/*',
             'config/authentication/users/*'                 => 'config/authentication/users/*',
             'config/authentication/users/show'              => 'config/authentication/users/show',
