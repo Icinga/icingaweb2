@@ -10,6 +10,7 @@
     <table class="action alternating">
         <thead>
             <th><?= $this->translate('Navigation'); ?></th>
+            <th style="width: 10em"><?= $this->translate('Type'); ?></th>
             <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
         </thead>
         <tbody>
@@ -23,6 +24,9 @@
                         'title' => sprintf($this->translate('Edit navigation item %s'), $name)
                     )
                 ); ?></td>
+                <td><?= $item->type && isset($types[$item->type])
+                    ? $this->escape($types[$item->type])
+                    : $this->escape($this->translate('Unknown')); ?></td>
                 <td><?= $this->qlink(
                     '',
                     'navigation/remove',

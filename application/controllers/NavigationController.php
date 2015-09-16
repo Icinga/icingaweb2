@@ -66,6 +66,7 @@ class NavigationController extends Controller
         $userConfig = $user->loadNavigationConfig();
         $sharedConfig = Config::app('navigation');
 
+        $this->view->types = $this->listItemTypes();
         $this->view->items = array_merge(
             $sharedConfig->select()->where('owner', $user->getUsername())->fetchAll(),
             iterator_to_array($userConfig)
