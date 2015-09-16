@@ -4,6 +4,9 @@
 </div>
 <?php endif ?>
 <div class="content" data-base-target="_next">
+<?php if ($items->isEmpty()): ?>
+    <?= $this->translate('There are currently no navigation items being shared'); ?>
+<?php else: ?>
     <table class="action alternating">
         <thead>
             <th><?= $this->translate('Shared Navigation'); ?></th>
@@ -27,4 +30,5 @@
         <?php endforeach ?>
         </tbody>
     </table>
+<?php endif ?>
 </div>
