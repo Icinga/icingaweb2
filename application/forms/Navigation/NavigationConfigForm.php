@@ -22,10 +22,7 @@ class NavigationConfigForm extends ConfigForm
      *
      * @var array
      */
-    protected $defaultItemTypes = array(
-        'menu-item',
-        'dashlet'
-    );
+    protected $defaultItemTypes;
 
     /**
      * The secondary configuration to write
@@ -72,6 +69,11 @@ class NavigationConfigForm extends ConfigForm
     {
         $this->setName('form_config_navigation');
         $this->setSubmitLabel($this->translate('Save Changes'));
+
+        $this->defaultItemTypes = array(
+            'menu-item' => $this->translate('Menu Entry'),
+            'dashlet'   => 'Dashlet'
+        );
     }
 
     /**
@@ -328,7 +330,7 @@ class NavigationConfigForm extends ConfigForm
     public function createElements(array $formData)
     {
         $itemTypes = $this->listItemTypes();
-        $itemType = isset($formData['type']) ? $formData['type'] : reset($itemTypes);
+        $itemType = isset($formData['type']) ? $formData['type'] : key($itemTypes);
 
         $this->addElement(
             'text',
@@ -389,7 +391,7 @@ class NavigationConfigForm extends ConfigForm
                 'autosubmit'    => true,
                 'label'         => $this->translate('Type'),
                 'description'   => $this->translate('The type of this navigation item'),
-                'multiOptions'  => array_combine($itemTypes, $itemTypes)
+                'multiOptions'  => $itemTypes
             )
         );
 
@@ -440,10 +442,9 @@ class NavigationConfigForm extends ConfigForm
     protected function listItemTypes()
     {
         $types = $this->defaultItemTypes;
-        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
-            $moduleItems = $module->getNavigationItems();
-            if (! empty($moduleItems)) {
-                $types = array_merge($types, $moduleItems);
+        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $moduleName => $module) {
+            foreach ($module->getNavigationItems() as $type => $label) {
+                $types[$type] = mt($moduleName, $label);
             }
         }
 
