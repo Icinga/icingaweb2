@@ -1007,15 +1007,16 @@ class Module
     }
 
     /**
-     * Provide a new type of configurable navigation item
+     * Provide a new type of configurable navigation item with a optional label
      *
      * @param   string  $type
+     * @param   string  $label
      *
      * @return  $this
      */
-    protected function provideNavigationItem($type)
+    protected function provideNavigationItem($type, $label = null)
     {
-        $this->navigationItems[] = $type;
+        $this->navigationItems[$type] = $label ?: $type;
         return $this;
     }
 
