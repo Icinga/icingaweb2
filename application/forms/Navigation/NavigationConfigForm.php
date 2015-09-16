@@ -277,20 +277,6 @@ class NavigationConfigForm extends ConfigForm
                 'label'         => $this->translate('Name'),
                 'description'   => $this->translate(
                     'The name of this navigation item that is used to differentiate it from others'
-                ),
-                'validators'    => array(
-                    array(
-                        'Regex',
-                        false,
-                        array(
-                            'pattern'  => '/^[^\\[\\]:]+$/',
-                            'messages' => array(
-                                'regexNotMatch' => $this->translate(
-                                    'The name cannot contain \'[\', \']\' or \':\'.'
-                                )
-                            )
-                        )
-                    )
                 )
             )
         );
