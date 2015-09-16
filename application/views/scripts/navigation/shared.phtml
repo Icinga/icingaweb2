@@ -7,6 +7,7 @@
     <table class="action alternating">
         <thead>
             <th><?= $this->translate('Shared Navigation'); ?></th>
+            <th style="width: 10em"><?= $this->translate('Owner'); ?></th>
             <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
         </thead>
         <tbody>
@@ -20,6 +21,7 @@
                         'title' => sprintf($this->translate('Edit shared navigation item %s'), $name)
                     )
                 ); ?></td>
+                <td><?= $this->escape($item->owner); ?></td>
                 <td><?= $removeForm->setDefault('name', $name); ?></td>
             </tr>
         <?php endforeach ?>
