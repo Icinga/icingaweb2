@@ -290,6 +290,7 @@ class GettextTranslationHelper
                     '--keyword=t:1,2c',
                     '--keyword=tp:1,2',
                     '--keyword=tp:1,2,4c',
+                    '--keyword=N_',
                     '--sort-output',
                     '--force-po',
                     '--omit-header',
