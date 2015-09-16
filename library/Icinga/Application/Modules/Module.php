@@ -371,6 +371,7 @@ class Module
             /** @var MenuItemContainer $item */
             $navigationItem = $navigation->createItem($item->getName(), $item->getProperties());
             $navigationItem->setChildren($this->createMenu($item->getChildren()));
+            $navigationItem->setLabel($this->translate($item->getName()));
             $navigation->addItem($navigationItem);
         }
 

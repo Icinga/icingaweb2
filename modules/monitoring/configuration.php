@@ -96,7 +96,7 @@ $this->provideNavigationItem('service-note', $this->translate('Service Note'));
 /*
  * Problems Section
  */
-$section = $this->menuSection($this->translate('Problems'), array(
+$section = $this->menuSection(N_('Problems'), array(
     'renderer' => array(
         'SummaryNavigationItemRenderer',
         'state' => 'critical'
@@ -104,7 +104,7 @@ $section = $this->menuSection($this->translate('Problems'), array(
     'icon'      => 'block',
     'priority'  => 20
 ));
-$section->add($this->translate('Unhandled Hosts'), array(
+$section->add(N_('Unhandled Hosts'), array(
     'renderer'  => array(
         'MonitoringBadgeNavigationItemRenderer',
         'columns' => array(
@@ -116,7 +116,7 @@ $section->add($this->translate('Unhandled Hosts'), array(
     'url'       => 'monitoring/list/hosts?host_problem=1&host_handled=0',
     'priority'  => 30
 ));
-$section->add($this->translate('Unhandled Services'), array(
+$section->add(N_('Unhandled Services'), array(
     'renderer'  => array(
         'MonitoringBadgeNavigationItemRenderer',
         'columns' => array(
@@ -128,19 +128,19 @@ $section->add($this->translate('Unhandled Services'), array(
     'url'       => 'monitoring/list/services?service_problem=1&service_handled=0&sort=service_severity',
     'priority'  => 40
 ));
-$section->add($this->translate('Host Problems'), array(
+$section->add(N_('Host Problems'), array(
     'url'       => 'monitoring/list/hosts?host_problem=1&sort=host_severity',
     'priority'  => 50
 ));
-$section->add($this->translate('Service Problems'), array(
+$section->add(N_('Service Problems'), array(
     'url'       => 'monitoring/list/services?service_problem=1&sort=service_severity&dir=desc',
     'priority'  => 60
 ));
-$section->add($this->translate('Service Grid'), array(
+$section->add(N_('Service Grid'), array(
     'url'       => 'monitoring/list/servicegrid?problems',
     'priority'  => 70
 ));
-$section->add($this->translate('Current Downtimes'), array(
+$section->add(N_('Current Downtimes'), array(
     'url'       => 'monitoring/list/downtimes?downtime_is_in_effect=1',
     'priority'  => 80
 ));
@@ -148,43 +148,43 @@ $section->add($this->translate('Current Downtimes'), array(
 /*
  * Overview Section
  */
-$section = $this->menuSection($this->translate('Overview'), array(
+$section = $this->menuSection(N_('Overview'), array(
     'icon'      => 'sitemap',
     'priority'  => 30
 ));
-$section->add($this->translate('Tactical Overview'), array(
+$section->add(N_('Tactical Overview'), array(
     'url'      => 'monitoring/tactical',
     'priority' => 40
 ));
-$section->add($this->translate('Hosts'), array(
+$section->add(N_('Hosts'), array(
     'url'      => 'monitoring/list/hosts',
     'priority' => 50
 ));
-$section->add($this->translate('Services'), array(
+$section->add(N_('Services'), array(
     'url'      => 'monitoring/list/services',
     'priority' => 50
 ));
-$section->add($this->translate('Servicegroups'), array(
+$section->add(N_('Servicegroups'), array(
     'url'      => 'monitoring/list/servicegroups',
     'priority' => 60
 ));
-$section->add($this->translate('Hostgroups'), array(
+$section->add(N_('Hostgroups'), array(
     'url'      => 'monitoring/list/hostgroups',
     'priority' => 60
 ));
-$section->add($this->translate('Contacts'), array(
+$section->add(N_('Contacts'), array(
     'url'      => 'monitoring/list/contacts',
     'priority' => 70
 ));
-$section->add($this->translate('Contactgroups'), array(
+$section->add(N_('Contactgroups'), array(
     'url'      => 'monitoring/list/contactgroups',
     'priority' => 70
 ));
-$section->add($this->translate('Comments'), array(
+$section->add(N_('Comments'), array(
     'url'      => 'monitoring/list/comments?comment_type=(comment|ack)',
     'priority' => 80
 ));
-$section->add($this->translate('Downtimes'), array(
+$section->add(N_('Downtimes'), array(
     'url'      => 'monitoring/list/downtimes',
     'priority' => 80
 ));
@@ -192,23 +192,23 @@ $section->add($this->translate('Downtimes'), array(
 /*
  * History Section
  */
-$section = $this->menuSection($this->translate('History'), array(
+$section = $this->menuSection(N_('History'), array(
     'icon'      => 'rewind',
     'priority'  => 90
 ));
-$section->add($this->translate('Event Grid'), array(
+$section->add(N_('Event Grid'), array(
     'priority'  => 10,
     'url'       => 'monitoring/list/eventgrid'
 ));
-$section->add($this->translate('Event Overview'), array(
+$section->add(N_('Event Overview'), array(
     'priority'  => 20,
     'url'       => 'monitoring/list/eventhistory?timestamp>=-7%20days'
 ));
-$section->add($this->translate('Notifications'), array(
+$section->add(N_('Notifications'), array(
     'priority'  => 30,
     'url'       => 'monitoring/list/notifications',
 ));
-$section->add($this->translate('Timeline'), array(
+$section->add(N_('Timeline'), array(
     'priority'  => 40,
     'url'       => 'monitoring/timeline'
 ));
@@ -216,20 +216,20 @@ $section->add($this->translate('Timeline'), array(
 /*
  * Reporting Section
  */
-$section = $this->menuSection($this->translate('Reporting'), array(
+$section = $this->menuSection(N_('Reporting'), array(
     'icon'      => 'barchart',
     'priority'  => 100
 ));
 
-$section->add($this->translate('Alert Summary'), array(
+$section->add(N_('Alert Summary'), array(
    'url'    => 'monitoring/alertsummary/index'
 ));
 
 /*
  * System Section
  */
-$section = $this->menuSection($this->translate('System'));
-$section->add($this->translate('Monitoring Health'), array(
+$section = $this->menuSection(N_('System'));
+$section->add(N_('Monitoring Health'), array(
     'url'      => 'monitoring/health/info',
     'priority' => 720,
     'renderer' => 'BackendAvailabilityNavigationItemRenderer'
