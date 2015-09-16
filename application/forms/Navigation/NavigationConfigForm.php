@@ -5,7 +5,6 @@ namespace Icinga\Forms\Navigation;
 
 use InvalidArgumentException;
 use Icinga\Application\Config;
-use Icinga\Application\Icinga;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfigForm;
@@ -17,13 +16,6 @@ use Icinga\Web\Form;
  */
 class NavigationConfigForm extends ConfigForm
 {
-    /**
-     * The default item types provided by Icinga Web 2
-     *
-     * @var array
-     */
-    protected $defaultItemTypes;
-
     /**
      * The secondary configuration to write
      *
@@ -63,17 +55,19 @@ class NavigationConfigForm extends ConfigForm
     protected $shareConfig;
 
     /**
+     * The available navigation item types
+     *
+     * @var array
+     */
+    protected $itemTypes;
+
+    /**
      * Initialize this form
      */
     public function init()
     {
         $this->setName('form_config_navigation');
         $this->setSubmitLabel($this->translate('Save Changes'));
-
-        $this->defaultItemTypes = array(
-            'menu-item' => $this->translate('Menu Entry'),
-            'dashlet'   => 'Dashlet'
-        );
     }
 
     /**
@@ -147,6 +141,29 @@ class NavigationConfigForm extends ConfigForm
     public function getShareConfig()
     {
         return $this->shareConfig;
+    }
+
+    /**
+     * Set the available navigation item types
+     *
+     * @param   array   $itemTypes
+     *
+     * @return  $this
+     */
+    public function setItemTypes(array $itemTypes)
+    {
+        $this->itemTypes = $itemTypes;
+        return $this;
+    }
+
+    /**
+     * Return the available navigation item types
+     *
+     * @return  array
+     */
+    public function getItemTypes()
+    {
+        return $this->itemTypes ?: array();
     }
 
     /**
@@ -329,7 +346,7 @@ class NavigationConfigForm extends ConfigForm
      */
     public function createElements(array $formData)
     {
-        $itemTypes = $this->listItemTypes();
+        $itemTypes = $this->getItemTypes();
         $itemType = isset($formData['type']) ? $formData['type'] : key($itemTypes);
 
         $this->addElement(
@@ -432,23 +449,6 @@ class NavigationConfigForm extends ConfigForm
             $this->config = $this->secondaryConfig; // Causes the config being displayed to the user in case of an error
             parent::writeConfig($this->secondaryConfig);
         }
-    }
-
-    /**
-     * Return a list of available item types
-     *
-     * @return  array
-     */
-    protected function listItemTypes()
-    {
-        $types = $this->defaultItemTypes;
-        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $moduleName => $module) {
-            foreach ($module->getNavigationItems() as $type => $label) {
-                $types[$type] = mt($moduleName, $label);
-            }
-        }
-
-        return $types;
     }
 
     /**

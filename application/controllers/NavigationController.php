@@ -5,6 +5,7 @@ namespace Icinga\Controllers;
 
 use Exception;
 use Icinga\Application\Config;
+use Icinga\Application\Icinga;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Navigation\NavigationConfigForm;
@@ -18,6 +19,44 @@ use Icinga\Web\Url;
  */
 class NavigationController extends Controller
 {
+    /**
+     * The default item types provided by Icinga Web 2
+     *
+     * @var array
+     */
+    protected $defaultItemTypes;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+        parent::init();
+
+        $this->defaultItemTypes = array(
+            'menu-item' => $this->translate('Menu Entry'),
+            'dashlet'   => 'Dashlet'
+        );
+    }
+
+    /**
+     * Return a list of available navigation item types
+     *
+     * @return  array
+     */
+    protected function listItemTypes()
+    {
+        $types = $this->defaultItemTypes;
+        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
+            $moduleTypes = $module->getNavigationItems();
+            if (! empty($moduleTypes)) {
+                $types = array_merge($types, $moduleTypes);
+            }
+        }
+
+        return $types;
+    }
+
     /**
      * Show the current user a list of his/her navigation items
      */
@@ -88,6 +127,7 @@ class NavigationController extends Controller
     {
         $form = new NavigationConfigForm();
         $form->setRedirectUrl('navigation');
+        $form->setItemTypes($this->listItemTypes());
         $form->setTitle($this->translate('Create New Navigation Item'));
         $form->addDescription($this->translate('Create a new navigation item, such as a menu entry or dashlet.'));
         $form->setUser($this->Auth()->getUser());
@@ -122,6 +162,7 @@ class NavigationController extends Controller
 
         $form = new NavigationConfigForm();
         $form->setRedirectUrl('navigation');
+        $form->setItemTypes($this->listItemTypes());
         $form->setTitle(sprintf($this->translate('Edit Navigation Item %s'), $itemName));
         $form->setUser($this->Auth()->getUser());
         $form->setShareConfig(Config::app('navigation'));
