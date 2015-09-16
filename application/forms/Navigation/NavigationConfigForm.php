@@ -5,6 +5,7 @@ namespace Icinga\Forms\Navigation;
 
 use InvalidArgumentException;
 use Icinga\Application\Config;
+use Icinga\Authentication\Auth;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfigForm;
@@ -425,6 +426,63 @@ class NavigationConfigForm extends ConfigForm
             $data['name'] = $this->itemToLoad;
             $this->populate($data);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isValid($formData)
+    {
+        if (! parent::isValid($formData)) {
+            return false;
+        }
+
+        $valid = true;
+        if (isset($formData['users']) && $formData['users']) {
+            $parsedUserRestrictions = array();
+            foreach (Auth::getInstance()->getRestrictions('application/share/users') as $userRestriction) {
+                $parsedUserRestrictions[] = array_map('trim', explode(',', $userRestriction));
+            }
+
+            if (! empty($parsedUserRestrictions)) {
+                $desiredUsers = array_map('trim', explode(',', $formData['users']));
+                array_unshift($parsedUserRestrictions, $desiredUsers);
+                $forbiddenUsers = call_user_func_array('array_diff', $parsedUserRestrictions);
+                if (! empty($forbiddenUsers)) {
+                    $valid = false;
+                    $this->getElement('users')->addError(
+                        $this->translate(sprintf(
+                            'You are not permitted to share this navigation item with the following users: %s',
+                            implode(', ', $forbiddenUsers)
+                        ))
+                    );
+                }
+            }
+        }
+
+        if (isset($formData['groups']) && $formData['groups']) {
+            $parsedGroupRestrictions = array();
+            foreach (Auth::getInstance()->getRestrictions('application/share/groups') as $groupRestriction) {
+                $parsedGroupRestrictions[] = array_map('trim', explode(',', $groupRestriction));
+            }
+
+            if (! empty($parsedGroupRestrictions)) {
+                $desiredGroups = array_map('trim', explode(',', $formData['groups']));
+                array_unshift($parsedGroupRestrictions, $desiredGroups);
+                $forbiddenGroups = call_user_func_array('array_diff', $parsedGroupRestrictions);
+                if (! empty($forbiddenGroups)) {
+                    $valid = false;
+                    $this->getElement('groups')->addError(
+                        $this->translate(sprintf(
+                            'You are not permitted to share this navigation item with the following groups: %s',
+                            implode(', ', $forbiddenGroups)
+                        ))
+                    );
+                }
+            }
+        }
+
+        return $valid;
     }
 
     /**
