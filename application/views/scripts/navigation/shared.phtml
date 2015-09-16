@@ -25,7 +25,7 @@
                     )
                 ); ?></td>
                 <td><?= $this->escape($item->owner); ?></td>
-                <td><?= $removeForm->setDefault('name', $name); ?></td>
+                <td data-base-target="_self"><?= $removeForm->setDefault('name', $name); ?></td>
             </tr>
         <?php endforeach ?>
         </tbody>
