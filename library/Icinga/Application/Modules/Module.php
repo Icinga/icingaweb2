@@ -306,13 +306,19 @@ class Module
         $navigation = new Navigation();
         foreach ($panes as $pane) {
             /** @var DashboardContainer $pane */
+            $dashlets = array();
+            foreach ($pane->getDashlets() as $dashletName => $dashletUrl) {
+                $dashlets[$this->translate($dashletName)] = $dashletUrl;
+            }
+
             $navigation->addItem(
                 $pane->getName(),
                 array_merge(
                     $pane->getProperties(),
                     array(
+                        'label'     => $this->translate($pane->getName()),
                         'type'      => 'dashboard-pane',
-                        'dashlets'  => $pane->getDashlets()
+                        'dashlets'  => $dashlets
                     )
                 )
             );
