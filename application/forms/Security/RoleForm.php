@@ -28,7 +28,7 @@ class RoleForm extends ConfigForm
      *
      * @var array
      */
-    protected $providedRestrictions = array();
+    protected $providedRestrictions;
 
     /**
      * {@inheritdoc}
@@ -70,9 +70,23 @@ class RoleForm extends ConfigForm
             'config/modules'                                => 'config/modules'
 */
         );
-        
-        
+
         $helper = new Zend_Form_Element('bogus');
+        $this->providedRestrictions = array(
+            $helper->filterName('application/share/users') => array(
+                'name'          => 'application/share/users',
+                'description'   => $this->translate(
+                    'Restrict which users this role can share items and information with'
+                )
+            ),
+            $helper->filterName('application/share/groups') => array(
+                'name'          => 'application/share/groups',
+                'description'   => $this->translate(
+                    'Restrict which groups this role can share items and information with'
+                )
+            )
+        );
+
         $mm = Icinga::app()->getModuleManager();
         foreach ($mm->listInstalledModules() as $moduleName) {
             $modulePermission = $mm::MODULE_PERMISSION_NS . $moduleName;
