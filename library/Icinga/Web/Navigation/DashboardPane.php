@@ -33,11 +33,21 @@ class DashboardPane extends NavigationItem
     /**
      * Return this pane's dashlets
      *
+     * @param   bool    $order  Whether to order the dashlets first
+     *
      * @return  array
      */
-    public function getDashlets()
+    public function getDashlets($order = true)
     {
-        return $this->dashlets ?: array();
+        if ($this->dashlets === null) {
+            return array();
+        }
+
+        if ($order) {
+            ksort($this->dashlets);
+        }
+
+        return $this->dashlets;
     }
 
     /**
@@ -56,8 +66,8 @@ class DashboardPane extends NavigationItem
         parent::merge($item);
 
         $this->setDashlets(array_merge(
-            $this->getDashlets(),
-            $item->getDashlets()
+            $this->getDashlets(false),
+            $item->getDashlets(false)
         ));
     }
 }
