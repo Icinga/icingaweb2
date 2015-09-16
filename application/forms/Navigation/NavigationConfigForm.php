@@ -231,19 +231,7 @@ class NavigationConfigForm extends ConfigForm
         if ($this->hasBeenShared($name)) {
             if ((! isset($data['users']) || !$data['users']) && (! isset($data['groups']) || !$data['groups'])) {
                 // It is shared but shouldn't anymore
-                $config->removeSection($name);
-                $this->secondaryConfig = $config;
-
-                if (! $itemConfig->owner || $itemConfig->owner === $this->getUser()->getUsername()) {
-                    $config = $this->getUserConfig();
-                } else {
-                    $owner = new User($itemConfig->owner);
-                    $config = $owner->loadNavigationConfig();
-                }
-
-                unset($itemConfig->owner);
-                unset($itemConfig->users);
-                unset($itemConfig->groups);
+                $config = $this->unshare($name)->config; // unshare() calls setIniConfig()
             }
         } elseif ((isset($data['users']) && $data['users']) || (isset($data['groups']) && $data['groups'])) {
             if ($this->getUser()->can('application/share/navigation')) {
@@ -303,13 +291,35 @@ class NavigationConfigForm extends ConfigForm
      *
      * @param   string  $name
      *
-     * @return  bool
+     * @return  $this
      *
      * @throws  NotFoundError   In case no navigation item with the given name is found
      */
     public function unshare($name)
     {
-        throw new NotFoundError('No navigation item called "%s" found', $name);
+        $config = $this->getShareConfig();
+        if (! $config->hasSection($name)) {
+            throw new NotFoundError('No navigation item called "%s" found', $name);
+        }
+
+        $itemConfig = $config->getSection($name);
+        $config->removeSection($name);
+        $this->secondaryConfig = $config;
+
+        if (! $itemConfig->owner || $itemConfig->owner === $this->getUser()->getUsername()) {
+            $config = $this->getUserConfig();
+        } else {
+            $owner = new User($itemConfig->owner);
+            $config = $owner->loadNavigationConfig();
+        }
+
+        unset($itemConfig->owner);
+        unset($itemConfig->users);
+        unset($itemConfig->groups);
+
+        $config->setSection($name, $itemConfig);
+        $this->setIniConfig($config);
+        return $this;
     }
 
     /**
