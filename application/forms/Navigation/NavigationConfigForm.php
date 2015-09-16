@@ -184,8 +184,18 @@ class NavigationConfigForm extends ConfigForm
             throw new InvalidArgumentException('Key \'name\' missing');
         }
 
-        $itemName = $data['name'];
         $config = $this->getUserConfig();
+        if ((isset($data['users']) && $data['users']) || (isset($data['groups']) && $data['groups'])) {
+            if ($this->getUser()->can('application/share/navigation')) {
+                $data['owner'] = $this->getUser()->getUsername();
+                $config = $this->getShareConfig();
+            } else {
+                unset($data['users']);
+                unset($data['groups']);
+            }
+        }
+
+        $itemName = $data['name'];
         if ($config->hasSection($itemName)) {
             throw new IcingaException(
                 $this->translate('A navigation item with the name "%s" does already exist'),
@@ -217,6 +227,37 @@ class NavigationConfigForm extends ConfigForm
         }
 
         $itemConfig = $config->getSection($name);
+
+        if ($this->hasBeenShared($name)) {
+            if ((! isset($data['users']) || !$data['users']) && (! isset($data['groups']) || !$data['groups'])) {
+                // It is shared but shouldn't anymore
+                $config->removeSection($name);
+                $this->secondaryConfig = $config;
+
+                if (! $itemConfig->owner || $itemConfig->owner === $this->getUser()->getUsername()) {
+                    $config = $this->getUserConfig();
+                } else {
+                    $owner = new User($itemConfig->owner);
+                    $config = $owner->loadNavigationConfig();
+                }
+
+                unset($itemConfig->owner);
+                unset($itemConfig->users);
+                unset($itemConfig->groups);
+            }
+        } elseif ((isset($data['users']) && $data['users']) || (isset($data['groups']) && $data['groups'])) {
+            if ($this->getUser()->can('application/share/navigation')) {
+                // It is not shared yet but should be
+                $config->removeSection($name);
+                $this->secondaryConfig = $config;
+                $config = $this->getShareConfig();
+                $data['owner'] = $this->getUser()->getUsername();
+            } else {
+                unset($data['users']);
+                unset($data['groups']);
+            }
+        }
+
         if (isset($data['name'])) {
             if ($data['name'] !== $name) {
                 $config->removeSection($name);
@@ -290,6 +331,45 @@ class NavigationConfigForm extends ConfigForm
                 )
             )
         );
+
+        if ($this->getUser()->can('application/share/navigation')) {
+            $checked = isset($formData['shared']) ? null : (isset($formData['users']) || isset($formData['groups']));
+
+            $this->addElement(
+                'checkbox',
+                'shared',
+                array(
+                    'autosubmit'    => true,
+                    'ignore'        => true,
+                    'value'         => $checked,
+                    'label'         => $this->translate('Shared'),
+                    'description'   => $this->translate('Tick this box to share this item with others')
+                )
+            );
+
+            if ($checked || (isset($formData['shared']) && $formData['shared'])) {
+                $this->addElement(
+                    'text',
+                    'users',
+                    array(
+                        'label'         => $this->translate('Users'),
+                        'description'   => $this->translate(
+                            'Comma separated list of usernames to share this item with'
+                        )
+                    )
+                );
+                $this->addElement(
+                    'text',
+                    'groups',
+                    array(
+                        'label'         => $this->translate('Groups'),
+                        'description'   => $this->translate(
+                            'Comma separated list of group names to share this item with'
+                        )
+                    )
+                );
+            }
+        }
 
         $this->addElement(
             'select',
@@ -379,6 +459,18 @@ class NavigationConfigForm extends ConfigForm
                 return $this->getShareConfig();
             }
         }
+    }
+
+    /**
+     * Return whether the given navigation item has been shared
+     *
+     * @param   string  $name
+     *
+     * @return  bool
+     */
+    protected function hasBeenShared($name)
+    {
+        return $this->getConfigForItem($name) === $this->getShareConfig();
     }
 
     /**
