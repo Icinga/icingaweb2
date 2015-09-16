@@ -348,7 +348,7 @@ $dashboard->add(
 /*
  * Stats
  */
-$dashboard = $this->dashboard(N_('Stats'), array('priority' => 100));
+$dashboard = $this->dashboard(N_('Stats'), array('priority' => 99));
 $dashboard->add(
     N_('Check Stats'),
     'monitoring/health/stats'
