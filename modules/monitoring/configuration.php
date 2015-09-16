@@ -90,8 +90,9 @@ $this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/serv
  */
 $this->provideNavigationItem('host-action', $this->translate('Host Action'));
 $this->provideNavigationItem('service-action', $this->translate('Service Action'));
-$this->provideNavigationItem('host-note', $this->translate('Host Note'));
-$this->provideNavigationItem('service-note', $this->translate('Service Note'));
+// Notes are disabled as we're not sure whether to really make a difference between actions and notes
+//$this->provideNavigationItem('host-note', $this->translate('Host Note'));
+//$this->provideNavigationItem('service-note', $this->translate('Service Note'));
 
 /*
  * Problems Section
