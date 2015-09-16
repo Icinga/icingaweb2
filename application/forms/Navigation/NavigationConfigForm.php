@@ -28,6 +28,16 @@ class NavigationConfigForm extends ConfigForm
     );
 
     /**
+     * The secondary configuration to write
+     *
+     * This is always the reduced configuration and is only written to
+     * disk once the main configuration has been successfully written.
+     *
+     * @var Config
+     */
+    protected $secondaryConfig;
+
+    /**
      * The navigation item to load when displaying the form for the first time
      *
      * @var string
@@ -317,6 +327,19 @@ class NavigationConfigForm extends ConfigForm
         $values = array_merge($values, $values['item_form']);
         unset($values['item_form']);
         return $values;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function writeConfig(Config $config)
+    {
+        parent::writeConfig($config);
+
+        if ($this->secondaryConfig !== null) {
+            $this->config = $this->secondaryConfig; // Causes the config being displayed to the user in case of an error
+            parent::writeConfig($this->secondaryConfig);
+        }
     }
 
     /**

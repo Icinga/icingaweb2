@@ -211,21 +211,25 @@ class NavigationController extends Controller
         $form = new Form(array(
             'onSuccess' => function ($form) use ($navigationConfigForm) {
                 try {
-                    if ($navigationConfigForm->unshare($form->getValue('name'))) {
-                        Notification::success(sprintf(
-                            t('Navigation item "%s" has been unshared'),
-                            $form->getValue('name')
-                        ));
-                    } else {
-                        Notification::error(sprintf(
-                            t('Failed to unshare navigation item "%s"'),
-                            $form->getValue('name')
-                        ));
-                    }
+                    $navigationConfigForm->unshare($form->getValue('name'));
                 } catch (NotFoundError $e) {
                     throw $e;
                 } catch (Exception $e) {
                     Notification::error($e->getMessage());
+                }
+
+                if ($navigationConfigForm->save()) {
+                    Notification::success(sprintf(
+                        t('Navigation item "%s" has been unshared'),
+                        $form->getValue('name')
+                    ));
+                } else {
+                    // TODO: It failed obviously to write one of the configs, so we're leaving the user in
+                    //       a inconsistent state. Luckily, it's nothing lost but possibly duplicated...
+                    Notification::error(sprintf(
+                        t('Failed to unshare navigation item "%s"'),
+                        $form->getValue('name')
+                    ));
                 }
 
                 $redirect = $form->getValue('redirect');
