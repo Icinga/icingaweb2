@@ -89,6 +89,7 @@ class NavigationController extends Controller
     {
         $this->assertPermission('config/application/navigation');
         $this->view->items = Config::app('navigation');
+        $this->view->types = $this->listItemTypes();
 
         $removeForm = new Form();
         $removeForm->setUidDisabled();

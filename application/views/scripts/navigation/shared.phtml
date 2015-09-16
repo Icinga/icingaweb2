@@ -10,6 +10,7 @@
     <table class="action alternating">
         <thead>
             <th><?= $this->translate('Shared Navigation'); ?></th>
+            <th style="width: 10em"><?= $this->translate('Type'); ?></th>
             <th style="width: 10em"><?= $this->translate('Owner'); ?></th>
             <th style="width: 5em"><?= $this->translate('Unshare'); ?></th>
         </thead>
@@ -24,6 +25,9 @@
                         'title' => sprintf($this->translate('Edit shared navigation item %s'), $name)
                     )
                 ); ?></td>
+                <td><?= $item->type && isset($types[$item->type])
+                    ? $this->escape($types[$item->type])
+                    : $this->escape($this->translate('Unknown')); ?></td>
                 <td><?= $this->escape($item->owner); ?></td>
                 <td data-base-target="_self"><?= $removeForm->setDefault('name', $name); ?></td>
             </tr>
