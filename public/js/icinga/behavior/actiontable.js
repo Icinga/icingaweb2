@@ -50,6 +50,7 @@
     var Selection = function(table, icinga) {
         this.$el = $(table);
         this.icinga = icinga;
+        this.col = this.$el.closest('div.container').attr('id');
         
         if (this.hasMultiselection()) {
             if (! this.getMultiselectionKeys().length) {
@@ -62,6 +63,11 @@
     };
 
     Selection.prototype = {
+
+        /**
+         * The container id in which this selection happens
+         */
+        col: null,
 
         /**
          * Return all rows as jQuery selector
@@ -110,7 +116,7 @@
         },
 
         /**
-         * Return the target URL that is used when multi selecting rows
+         * Return the main target URL that is used when multi selecting rows
          *
          * This URL may differ from the url that is used when applying single rows
          *
@@ -118,6 +124,28 @@
          */
         getMultiselectionUrl: function() {
             return this.$el.data('icinga-multiselect-url');
+        },
+
+        /**
+         * Check whether the given url is
+         *
+         * @param {String}  url
+         */
+        hasMultiselectionUrl: function(url) {
+            var urls = this.$el.data('icinga-multiselect-url').split(' ');
+
+            var related = this.$el.data('icinga-multiselect-controllers');
+            if (related && related.length) {
+                urls = urls.concat(this.$el.data('icinga-multiselect-controllers').split(' '));
+            }
+
+            var hasSelection = false;
+            $.each(urls, function (i, object) {
+                if (url.indexOf(object) === 0) {
+                    hasSelection = true;
+                }
+            });
+            return hasSelection;
         },
 
         /**
@@ -227,7 +255,17 @@
          * @param   url     {String}    The target url
          */
         selectUrl: function(url) {
-            this.rows().filter('[href="' + url + '"]').addClass('active');
+            var $row = this.rows().filter('[href="' + url + '"]');
+            if ($row.length) {
+               $row.addClass('active');
+            } else {
+                // rows sometimes need to be displayed as active when related actions
+                // like command actions are being opened. Do not do this for col2, as it
+                // would always select the opened URL itself.
+                if (this.col !== 'col2') {
+                    this.rows().filter('[href$="' + icinga.utils.parseUrl(url).query + '"]').addClass('active');
+                }
+            }
         },
 
         /**
@@ -264,7 +302,7 @@
             var hash = icinga.history.getCol2State().replace(/^#!/, '');
             if (this.hasMultiselection()) {
                 var query = parseSelectionQuery(hash);
-                if (query.length > 1 && this.getMultiselectionUrl() === this.icinga.utils.parseUrl(hash).path) {
+                if (query.length > 1 && this.hasMultiselectionUrl(this.icinga.utils.parseUrl(hash).path)) {
                     // select all rows with matching filters
                     var self = this;
                     $.each(query, function(i, selection) {
