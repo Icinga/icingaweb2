@@ -507,7 +507,6 @@ class User
         $config = $this->loadNavigationConfig();
         $config->getConfigObject()->setKeyColumn('name');
 
-        $navigation = new Navigation();
         if ($type === 'dashboard-pane') {
             $panes = array();
             foreach ($config->select()->where('type', 'dashlet') as $dashletName => $dashletConfig) {
@@ -515,6 +514,7 @@ class User
                 $panes[$dashletConfig->pane][$dashletName] = $dashletConfig->url;
             }
 
+            $navigation = new Navigation();
             foreach ($panes as $paneName => $dashlets) {
                 $navigation->addItem(
                     $paneName,
@@ -525,9 +525,7 @@ class User
                 );
             }
         } else {
-            foreach ($config->select()->where('type', $type) as $name => $typeConfig) {
-                $navigation->addItem($name, $typeConfig->toArray());
-            }
+            $navigation = Navigation::fromConfig($config->select()->where('type', $type));
         }
 
         return $navigation;
