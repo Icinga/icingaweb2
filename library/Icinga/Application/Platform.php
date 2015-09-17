@@ -344,13 +344,13 @@ class Platform
     /**
      * Return whether it's possible to connect to a MSSQL database
      *
-     * Checks whether the Zend framework adapter for MSSQL is available
+     * Checks whether the mssql pdo extension has been loaded and Zend framework adapter for MSSQL is available
      *
      * @return  bool
      */
     public static function hasMssqlSupport()
     {
-        return static::classExists('Zend_Db_Adapter_Pdo_Mssql');
+        return static::extensionLoaded('mssql') && static::classExists('Zend_Db_Adapter_Pdo_Mssql');
     }
 
     /**
