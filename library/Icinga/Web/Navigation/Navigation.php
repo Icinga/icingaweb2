@@ -470,7 +470,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
             throw new InvalidArgumentException('Argument $config must be an array or a instance of Traversable');
         }
 
-        $flattened = $topLevel = array();
+        $flattened = $orphans = $topLevel = array();
         foreach ($config as $sectionName => $sectionConfig) {
             $parentName = $sectionConfig->parent;
             unset($sectionConfig->parent);
@@ -482,15 +482,38 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
                 $flattened[$parentName]['children'][$sectionName] = $sectionConfig->toArray();
                 $flattened[$sectionName] = & $flattened[$parentName]['children'][$sectionName];
             } else {
-                throw new ConfigurationError(
-                    t(
-                        'Failed to add navigation item "%s". Parent "%s" not found. Make'
-                        . ' sure that the parent is defined prior to its child(s).'
-                    ),
-                    $sectionName,
-                    $parentName
-                );
+                $orphans[$parentName][$sectionName] = $sectionConfig->toArray();
+                $flattened[$sectionName] = & $orphans[$parentName][$sectionName];
             }
+        }
+
+        do {
+            $match = false;
+            foreach ($orphans as $parentName => $children) {
+                if (isset($flattened[$parentName])) {
+                    if (isset($flattened[$parentName]['children'])) {
+                        $flattened[$parentName]['children'] = array_merge(
+                            $flattened[$parentName]['children'],
+                            $children
+                        );
+                    } else {
+                        $flattened[$parentName]['children'] = $children;
+                    }
+
+                    unset($orphans[$parentName]);
+                    $match = true;
+                }
+            }
+        } while ($match && !empty($orphans));
+
+        if (! empty($orphans)) {
+            throw new ConfigurationError(
+                t(
+                    'Failed to fully parse navigation configuration. Ensure that'
+                    . ' all referenced parents are existing navigation items: %s'
+                ),
+                join(', ', array_keys($orphans))
+            );
         }
 
         return static::fromArray($topLevel);
