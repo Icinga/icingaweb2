@@ -265,6 +265,10 @@ class HostnotificationQuery extends IdoQuery
             if ($this->hasJoinedVirtualTable('acknowledgements')) {
                 $group[] = 'a.acknowledgement_id';
             }
+
+            if ($this->hasJoinedVirtualTable('instances')) {
+                $group[] = 'i.instance_id';
+            }
         }
 
         return $group;

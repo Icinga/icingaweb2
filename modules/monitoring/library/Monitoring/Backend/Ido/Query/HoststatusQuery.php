@@ -336,6 +336,9 @@ class HoststatusQuery extends IdoQuery
                         $group[] = 'so.object_id';
                         $group[] = 's.service_id';
                         break;
+                    case 'instances':
+                        $group[] = 'i.instance_id';
+                        break;
                     default:
                         continue 2;
                 }

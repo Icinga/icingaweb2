@@ -452,6 +452,9 @@ class ServicestatusQuery extends IdoQuery
                     case 'hoststatus':
                         $group[] = 'hs.hoststatus_id';
                         break;
+                    case 'instances':
+                        $group[] = 'i.instance_id';
+                        break;
                     case 'servicestatus':
                         $group[] = 'ss.servicestatus_id';
                         break;
