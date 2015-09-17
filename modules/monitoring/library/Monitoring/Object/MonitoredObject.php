@@ -5,9 +5,11 @@ namespace Icinga\Module\Monitoring\Object;
 
 use InvalidArgumentException;
 use Icinga\Application\Config;
+use Icinga\Application\Logger;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 use Icinga\Exception\InvalidPropertyException;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Web\UrlParams;
 
@@ -206,6 +208,40 @@ abstract class MonitoredObject implements Filterable
     public function where($condition, $value = null)
     {
         // Left out on purpose. Interface is deprecated.
+    }
+
+    /**
+     * Return whether this object matches the given filter
+     *
+     * @param   Filter  $filter
+     *
+     * @return  bool
+     *
+     * @throws  ProgrammingError    In case the object cannot be found
+     */
+    public function matches(Filter $filter)
+    {
+        if ($this->properties === null && $this->fetch() === false) {
+            throw new ProgrammingError(
+                'Unable to apply filter. Object %s of type %s not found.',
+                $this->getName(),
+                $this->getType()
+            );
+        }
+
+        $row = clone $this->properties;
+
+        if ($this->customvars === null) {
+            $this->fetchCustomvars();
+        }
+
+        foreach ($this->customvars as $name => $value) {
+            if (! is_object($value)) {
+                $row->{'_' . $this->getType() . '_' . strtolower(str_replace(' ', '_', $name))} = $value;
+            }
+        }
+
+        return $filter->matches($row);
     }
 
     /**
