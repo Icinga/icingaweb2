@@ -194,6 +194,8 @@ class NavigationConfigForm extends ConfigForm
             }
         }
 
+        $children = $this->itemToLoad ? $this->getFlattenedChildren($this->itemToLoad) : array();
+
         $names = array();
         if ($shared) {
             foreach ($this->getShareConfig() as $sectionName => $sectionConfig) {
@@ -201,20 +203,49 @@ class NavigationConfigForm extends ConfigForm
                     $sectionName !== $this->itemToLoad
                     && $sectionConfig->type === $type
                     && $sectionConfig->owner === $this->getUser()->getUsername()
+                    && !in_array($sectionName, $children, true)
                 ) {
                     $names[] = $sectionName;
                 }
             }
         } else {
             foreach ($this->getUserConfig() as $sectionName => $sectionConfig) {
-                if ($sectionName !== $this->itemToLoad && $sectionConfig->type === $type) {
+                if (
+                    $sectionName !== $this->itemToLoad
+                    && $sectionConfig->type === $type
+                    && !in_array($sectionName, $children, true)
+                ) {
                     $names[] = $sectionName;
                 }
             }
         }
 
-        // TODO: Ensure that it's not possible to produce circular references
         return $names;
+    }
+
+    /**
+     * Recursively return all children of the given navigation item
+     *
+     * @param   string  $name
+     *
+     * @return  array
+     */
+    protected function getFlattenedChildren($name)
+    {
+        $config = $this->getConfigForItem($name);
+        if ($config === null) {
+            return array();
+        }
+
+        $children = array();
+        foreach ($config as $sectionName => $sectionConfig) {
+            if ($sectionConfig->parent === $name) {
+                $children[] = $sectionName;
+                $children = array_merge($children, $this->getFlattenedChildren($sectionName));
+            }
+        }
+
+        return $children;
     }
 
     /**
