@@ -5,11 +5,14 @@ namespace Icinga\Forms\Navigation;
 
 use InvalidArgumentException;
 use Icinga\Application\Config;
+use Icinga\Application\Logger;
+use Icinga\Application\Icinga;
 use Icinga\Authentication\Auth;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfigForm;
 use Icinga\User;
+use Icinga\Util\String;
 use Icinga\Web\Form;
 
 /**
@@ -17,6 +20,13 @@ use Icinga\Web\Form;
  */
 class NavigationConfigForm extends ConfigForm
 {
+    /**
+     * The class namespace where to locate navigation type forms
+     *
+     * @var string
+     */
+    const FORM_NS = 'Forms\\Navigation';
+
     /**
      * The secondary configuration to write
      *
@@ -551,7 +561,41 @@ class NavigationConfigForm extends ConfigForm
      */
     protected function getItemForm($type)
     {
-        // TODO: Load form classes dynamically
-        return new NavigationItemForm();
+        $className = String::cname($type, '-') . 'Form';
+
+        $form = null;
+        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
+            $classPath = 'Icinga\\Module\\'
+                . ucfirst($module->getName())
+                . '\\'
+                . static::FORM_NS
+                . '\\'
+                . $className;
+            if (class_exists($classPath)) {
+                $form = new $classPath();
+                break;
+            }
+        }
+
+        if ($form === null) {
+            $classPath = 'Icinga\\' . static::FORM_NS . '\\' . $className;
+            if (class_exists($classPath)) {
+                $form = new $classPath();
+            }
+        }
+
+        if ($form === null) {
+            Logger::debug(
+                'Failed to find custom navigation item form %s for item %s. Using form NavigationItemForm now',
+                $className,
+                $type
+            );
+
+            $form = new NavigationItemForm();
+        } elseif (! $form instanceof Form) {
+            throw new ProgrammingError('Class %s must inherit from Form', $classPath);
+        }
+
+        return $form;
     }
 }
