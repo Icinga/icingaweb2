@@ -347,9 +347,11 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
     {
         foreach ($this as $item) {
             /** @var NavigationItem $item */
-            $this->content[] = $this->beginItemMarkup($item);
-            $this->content[] = $item->render();
-            $this->content[] = $this->endItemMarkup();
+            if ($item->shouldRender()) {
+                $this->content[] = $this->beginItemMarkup($item);
+                $this->content[] = $item->render();
+                $this->content[] = $this->endItemMarkup();
+            }
         }
 
         return join("\n", $this->content);

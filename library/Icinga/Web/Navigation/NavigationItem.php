@@ -109,6 +109,13 @@ class NavigationItem implements IteratorAggregate
     protected $renderer;
 
     /**
+     * Whether to render this item
+     *
+     * @var bool
+     */
+    protected $render;
+
+    /**
      * Create a new NavigationItem
      *
      * @param   string  $name
@@ -117,6 +124,7 @@ class NavigationItem implements IteratorAggregate
     public function __construct($name, array $properties = null)
     {
         $this->setName($name);
+        $this->render = true;
         $this->priority = 100;
         $this->children = new Navigation();
 
@@ -687,6 +695,41 @@ class NavigationItem implements IteratorAggregate
         }
 
         return $this->renderer;
+    }
+
+    /**
+     * Set whether this item should be rendered
+     *
+     * @param   bool    $state
+     *
+     * @return  $this
+     */
+    public function setRender($state = true)
+    {
+        $this->render = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Return whether this item should be rendered
+     *
+     * @return  bool
+     */
+    public function getRender()
+    {
+        return $this->render;
+    }
+
+    /**
+     * Return whether this item should be rendered
+     *
+     * Alias for NavigationItem::getRender().
+     *
+     * @return  bool
+     */
+    public function shouldRender()
+    {
+        return $this->getRender();
     }
 
     /**
