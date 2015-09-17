@@ -178,6 +178,46 @@ class NavigationConfigForm extends ConfigForm
     }
 
     /**
+     * Return a list of available parent items for the given type of navigation item
+     *
+     * @return  array
+     */
+    public function listAvailableParents($type)
+    {
+        $shared = false;
+        if (($checkbox = $this->getElement('shared')) !== null) {
+            if ($checkbox->isChecked()) {
+                $shared = true;
+            } else {
+                $requestData = $this->getRequestData();
+                $shared = isset($requestData['shared']) && $requestData['shared'];
+            }
+        }
+
+        $names = array();
+        if ($shared) {
+            foreach ($this->getShareConfig() as $sectionName => $sectionConfig) {
+                if (
+                    $sectionName !== $this->itemToLoad
+                    && $sectionConfig->type === $type
+                    && $sectionConfig->owner === $this->getUser()->getUsername()
+                ) {
+                    $names[] = $sectionName;
+                }
+            }
+        } else {
+            foreach ($this->getUserConfig() as $sectionName => $sectionConfig) {
+                if ($sectionName !== $this->itemToLoad && $sectionConfig->type === $type) {
+                    $names[] = $sectionName;
+                }
+            }
+        }
+
+        // TODO: Ensure that it's not possible to produce circular references
+        return $names;
+    }
+
+    /**
      * Populate the form with the given navigation item's config
      *
      * @param   string  $name
