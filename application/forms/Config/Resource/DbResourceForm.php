@@ -30,20 +30,26 @@ class DbResourceForm extends Form
         if (Platform::hasMysqlSupport()) {
             $dbChoices['mysql'] = 'MySQL';
         }
+        if (Platform::hasPostgresqlSupport()) {
+            $dbChoices['pgsql'] = 'PostgreSQL';
+        }
         if (Platform::hasMssqlSupport()) {
             $dbChoices['mssql'] = 'MSSQL';
-        }
-        if (Platform::hasOciSupport()) {
-            $dbChoices['oci'] = 'Oracle (OCI8)';
         }
         if (Platform::hasOracleSupport()) {
             $dbChoices['oracle'] = 'Oracle';
         }
-        if (Platform::hasPostgresqlSupport()) {
-            $dbChoices['pgsql'] = 'PostgreSQL';
+        if (Platform::hasOciSupport()) {
+            $dbChoices['oci'] = 'Oracle (OCI8)';
         }
-
-
+        $offerPostgres = false;
+        if (isset($formData['db'])) {
+            if ($formData['db'] === 'pgsql') {
+                $offerPostgres = true;
+            }
+        } elseif (key($dbChoices) === 'pgsql') {
+            $offerPostgres = true;
+        }
         $this->addElement(
             'text',
             'name',
@@ -81,8 +87,8 @@ class DbResourceForm extends Form
                 'description'       => $this->translate('The port to use'),
                 'label'             => $this->translate('Port'),
                 'preserveDefault'   => true,
-                'required'          => isset($formData['db']) && $formData['db'] === 'pgsql',
-                'value'             => isset($formData['db']) && $formData['db'] === 'pgsql' ? 5432 : null
+                'required'          => $offerPostgres,
+                'value'             => $offerPostgres ? 5432 : null
             )
         );
         $this->addElement(
