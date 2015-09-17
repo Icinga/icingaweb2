@@ -264,6 +264,22 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
+     * Return whether this navigation has any renderable items
+     *
+     * @return  bool
+     */
+    public function hasRenderableItems()
+    {
+        foreach ($this->getItems() as $item) {
+            if ($item->shouldRender()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Return this navigation's layout
      *
      * @return  int

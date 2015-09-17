@@ -27,7 +27,7 @@ if (isset($this->actions)) {
     }
 }
 
-if ($navigation->isEmpty()) {
+if ($navigation->isEmpty() || !$navigation->hasRenderableItems()) {
     return;
 }
 
