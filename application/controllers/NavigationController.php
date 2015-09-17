@@ -88,8 +88,9 @@ class NavigationController extends Controller
     public function sharedAction()
     {
         $this->assertPermission('config/application/navigation');
-        $this->view->items = Config::app('navigation');
-        $this->view->types = $this->listItemTypes();
+        $config = Config::app('navigation');
+        $config->getConfigObject()->setKeyColumn('name');
+        $query = $config->select();
 
         $removeForm = new Form();
         $removeForm->setUidDisabled();
@@ -110,7 +111,10 @@ class NavigationController extends Controller
             'label'         => $this->view->icon('trash'),
             'title'         => $this->translate('Unshare this navigation item')
         ));
+
         $this->view->removeForm = $removeForm;
+        $this->view->types = $this->listItemTypes();
+        $this->view->items = $query;
 
         $this->getTabs()->add(
             'navigation/shared',
@@ -120,6 +124,14 @@ class NavigationController extends Controller
                 'url'       => 'navigation/shared'
             )
         )->activate('navigation/shared');
+        $this->setupSortControl(
+            array(
+                'name'  => $this->translate('Shared Navigation'),
+                'type'  => $this->translate('Type'),
+                'owner' => $this->translate('Owner')
+            ),
+            $query
+        );
     }
 
     /**
