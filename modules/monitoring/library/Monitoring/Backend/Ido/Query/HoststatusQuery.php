@@ -289,26 +289,26 @@ class HoststatusQuery extends IdoQuery
         }
         $groupedTables = array();
         if ($this->hasJoinedVirtualTable('servicegroups')) {
+            $group[] = 'ho.object_id';
+            $group[] = 'h.host_id';
+            $groupedTables['hosts'] = true;
             $serviceGroupColumns = array_keys($this->columnMap['servicegroups']);
             $selectedServiceGroupColumns = array_intersect($serviceGroupColumns, array_keys($this->columns));
             if (! empty($selectedServiceGroupColumns)) {
-                $group[] = 'ho.object_id';
-                $group[] = 'h.host_id';
                 $group[] = 'sgo.object_id';
                 $group[] = 'sg.servicegroup_id';
-                $groupedTables['hosts'] = true;
                 $groupedTables['servicegroups'] = true;
             }
         }
         if ($this->hasJoinedVirtualTable('hostgroups')) {
+            if (! isset($groupedTables['hosts'])) {
+                $group[] = 'ho.object_id';
+                $group[] = 'h.host_id';
+                $groupedTables['hosts'] = true;
+            }
             $hostGroupColumns = array_keys($this->columnMap['hostgroups']);
             $selectedHostGroupColumns = array_intersect($hostGroupColumns, array_keys($this->columns));
             if (! empty($selectedHostGroupColumns)) {
-                if (! isset($groupedTables['hosts'])) {
-                    $group[] = 'ho.object_id';
-                    $group[] = 'h.host_id';
-                    $groupedTables['hosts'] = true;
-                }
                 $group[] = 'hgo.object_id';
                 $group[] = 'hg.hostgroup_id';
                 $groupedTables['hostgroups'] = true;
