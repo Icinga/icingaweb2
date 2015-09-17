@@ -383,6 +383,17 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     }
 
     /**
+     * Clear the order if any
+     *
+     * @return $this
+     */
+    public function clearOrder()
+    {
+        $this->order = array();
+        return $this;
+    }
+
+    /**
      * Whether an order is set
      *
      * @return bool
