@@ -423,7 +423,9 @@ class NavigationConfigForm extends ConfigForm
             )
         );
 
-        $this->addSubForm($this->getItemForm($itemType)->create($formData), 'item_form');
+        $itemForm = $this->getItemForm($itemType);
+        $this->addSubForm($itemForm, 'item_form');
+        $itemForm->create($formData); // Requires a parent which gets set by addSubForm()
     }
 
     /**
