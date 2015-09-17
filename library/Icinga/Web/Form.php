@@ -72,7 +72,7 @@ class Form extends Zend_Form
      *
      * @var Form
      */
-    protected $parent;
+    protected $_parent;
 
     /**
      * Whether the form is an API target
@@ -261,7 +261,7 @@ class Form extends Zend_Form
      */
     public function setParent(Form $form)
     {
-        $this->parent = $form;
+        $this->_parent = $form;
         return $this;
     }
 
@@ -272,7 +272,7 @@ class Form extends Zend_Form
      */
     public function getParent()
     {
-        return $this->parent;
+        return $this->_parent;
     }
 
     /**
