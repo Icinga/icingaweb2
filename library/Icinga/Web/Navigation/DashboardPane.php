@@ -33,17 +33,17 @@ class DashboardPane extends NavigationItem
     /**
      * Return this pane's dashlets
      *
-     * @param   bool    $order  Whether to order the dashlets first
+     * @param   bool    $ordered    Whether to order the dashlets first
      *
      * @return  array
      */
-    public function getDashlets($order = true)
+    public function getDashlets($ordered = true)
     {
         if ($this->dashlets === null) {
             return array();
         }
 
-        if ($order) {
+        if ($ordered) {
             ksort($this->dashlets);
         }
 
