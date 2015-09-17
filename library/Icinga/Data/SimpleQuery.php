@@ -400,13 +400,13 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      */
     public function hasOrder()
     {
-        return !empty($this->order);
+        return ! empty($this->order);
     }
 
     /**
-     * Get the order if any
+     * Get the order
      *
-     * @return array|null
+     * @return array
      */
     public function getOrder()
     {
