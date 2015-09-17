@@ -182,7 +182,6 @@ class Web extends EmbeddedWeb
         $config = Config::app('navigation')->getConfigObject();
         $config->setKeyColumn('name');
 
-        $navigation = new Navigation();
         if ($type === 'dashboard-pane') {
             $panes = array();
             foreach ($config->select()->where('type', 'dashlet') as $dashletName => $dashletConfig) {
@@ -192,6 +191,7 @@ class Web extends EmbeddedWeb
                 }
             }
 
+            $navigation = new Navigation();
             foreach ($panes as $paneName => $dashlets) {
                 $navigation->addItem(
                     $paneName,
@@ -202,11 +202,14 @@ class Web extends EmbeddedWeb
                 );
             }
         } else {
+            $items = array();
             foreach ($config->select()->where('type', $type) as $name => $typeConfig) {
                 if ($this->hasAccessToSharedNavigationItem($typeConfig)) {
-                    $navigation->addItem($name, $typeConfig->toArray());
+                    $items[$name] = $typeConfig;
                 }
             }
+
+            $navigation = Navigation::fromConfig($items);
         }
 
         return $navigation;
