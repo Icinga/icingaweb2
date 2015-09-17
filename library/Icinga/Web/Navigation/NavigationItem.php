@@ -124,7 +124,6 @@ class NavigationItem implements IteratorAggregate
     public function __construct($name, array $properties = null)
     {
         $this->setName($name);
-        $this->render = true;
         $this->priority = 100;
         $this->children = new Navigation();
 
@@ -717,6 +716,10 @@ class NavigationItem implements IteratorAggregate
      */
     public function getRender()
     {
+        if ($this->render === null) {
+            return true;
+        }
+
         return $this->render;
     }
 

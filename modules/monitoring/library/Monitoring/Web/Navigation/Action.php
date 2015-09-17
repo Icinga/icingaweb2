@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Web\Navigation;
 
+use Icinga\Data\Filter\Filter;
 use Icinga\Web\Navigation\NavigationItem;
 use Icinga\Module\Monitoring\Object\Macro;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
@@ -25,6 +26,13 @@ class Action extends NavigationItem
      * @var MonitoredObject
      */
     protected $object;
+
+    /**
+     * The filter to use when being asked whether to render this action
+     *
+     * @var string
+     */
+    protected $filter;
 
     /**
      * Set this action's object
@@ -50,6 +58,29 @@ class Action extends NavigationItem
     }
 
     /**
+     * Set the filter to use when being asked whether to render this action
+     *
+     * @param   string  $filter
+     *
+     * @return  $this
+     */
+    public function setFilter($filter)
+    {
+        $this->filter = $filter;
+        return $this;
+    }
+
+    /**
+     * Return the filter to use when being asked whether to render this action
+     *
+     * @return  string
+     */
+    public function getFilter()
+    {
+        return $this->filter;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getUrl()
@@ -61,5 +92,18 @@ class Action extends NavigationItem
         }
 
         return $url;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRender()
+    {
+        if ($this->render === null) {
+            $filter = $this->getFilter();
+            $this->render = $filter ? $this->getObject()->matches(Filter::fromQueryString($filter)) : true;
+        }
+
+        return $this->render;
     }
 }
