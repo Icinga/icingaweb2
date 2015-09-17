@@ -9,7 +9,7 @@ use Exception;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
-use Icinga\Application\Config;
+use Traversable;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
@@ -454,14 +454,22 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     /**
      * Create and return a new set of navigation items for the given configuration
      *
-     * @param   Config  $config
+     * Note that this is supposed to be utilized for one dimensional structures
+     * only. Multi dimensional structures can be processed by fromArray().
+     *
+     * @param   Traversable|array   $config
      *
      * @return  Navigation
      *
-     * @throws  ConfigurationError  In case a referenced parent does not exist
+     * @throws  InvalidArgumentException    In case the given configuration is invalid
+     * @throws  ConfigurationError          In case a referenced parent does not exist
      */
-    public static function fromConfig(Config $config)
+    public static function fromConfig($config)
     {
+        if (! is_array($config) && !$config instanceof Traversable) {
+            throw new InvalidArgumentException('Argument $config must be an array or a instance of Traversable');
+        }
+
         $flattened = $topLevel = array();
         foreach ($config as $sectionName => $sectionConfig) {
             $parentName = $sectionConfig->parent;
