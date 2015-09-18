@@ -333,7 +333,6 @@ class NavigationConfigForm extends ConfigForm
         } elseif ((isset($data['users']) && $data['users']) || (isset($data['groups']) && $data['groups'])) {
             if ($this->getUser()->can('application/share/navigation')) {
                 // It is not shared yet but should be
-                $config->removeSection($name);
                 $this->secondaryConfig = $config;
                 $config = $this->getShareConfig();
                 $data['owner'] = $this->getUser()->getUsername();
@@ -344,7 +343,6 @@ class NavigationConfigForm extends ConfigForm
             }
         } elseif (isset($data['parent']) && $data['parent'] && $this->hasBeenShared($data['parent'])) {
             // Its parent is shared so should it itself
-            $config->removeSection($name);
             $this->secondaryConfig = $config;
             $config = $this->getShareConfig();
             $data['owner'] = $this->getUser()->getUsername();
