@@ -7,6 +7,7 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Exception\NotFoundError;
+use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Navigation\NavigationConfigForm;
 use Icinga\Web\Controller;
@@ -63,14 +64,16 @@ class NavigationController extends Controller
     public function indexAction()
     {
         $user = $this->Auth()->getUser();
-        $userConfig = $user->loadNavigationConfig();
-        $sharedConfig = Config::app('navigation');
+
+        $ds = new ArrayDatasource(array_merge(
+            Config::app('navigation')->select()->where('owner', $user->getUsername())->fetchAll(),
+            iterator_to_array($user->loadNavigationConfig())
+        ));
+        $ds->setKeyColumn('name');
+        $query = $ds->select();
 
         $this->view->types = $this->listItemTypes();
-        $this->view->items = array_merge(
-            $sharedConfig->select()->where('owner', $user->getUsername())->fetchAll(),
-            iterator_to_array($userConfig)
-        );
+        $this->view->items = $query;
 
         $this->getTabs()->add(
             'navigation',
@@ -80,6 +83,13 @@ class NavigationController extends Controller
                 'url'       => 'navigation'
             )
         )->activate('navigation');
+        $this->setupSortControl(
+            array(
+                'name'  => $this->translate('Shared Navigation'),
+                'type'  => $this->translate('Type')
+            ),
+            $query
+        );
     }
 
     /**

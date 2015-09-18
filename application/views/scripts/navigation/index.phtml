@@ -1,12 +1,19 @@
 <?php if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs; ?>
+    <?= $this->sortBox; ?>
+    <?= $this->limiter; ?>
+    <?= $this->paginator; ?>
+    <?= $this->filterEditor; ?>
 </div>
 <?php endif ?>
 <div class="content" data-base-target="_next">
     <a href="<?= $this->href('navigation/add'); ?>">
         <?= $this->icon('plus'); ?> <?= $this->translate('Create A New Navigation Item'); ?>
     </a>
+<?php if (count($items) === 0): ?>
+    <p><?= $this->translate('You did not create any navigation item yet'); ?></p>
+<?php else: ?>
     <table class="action alternating">
         <thead>
             <th><?= $this->translate('Navigation'); ?></th>
@@ -40,4 +47,5 @@
         <?php endforeach ?>
         </tbody>
     </table>
+<?php endif ?>
 </div>
