@@ -86,6 +86,7 @@ class NavigationController extends Controller
         $this->setupSortControl(
             array(
                 'type'  => $this->translate('Type'),
+                'owner' => $this->translate('Shared'),
                 'name'  => $this->translate('Shared Navigation')
             ),
             $query
