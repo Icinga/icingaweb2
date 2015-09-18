@@ -33,7 +33,20 @@
                     ? $this->escape($types[$item->type])
                     : $this->escape($this->translate('Unknown')); ?></td>
                 <td><?= $this->escape($item->owner); ?></td>
+            <?php if ($item->parent): ?>
+                <td><?= $this->icon(
+                    'block',
+                    sprintf(
+                        $this->translate(
+                            'This is a child of the navigation item %s. You can'
+                            . ' only unshare this item by unsharing its parent'
+                        ),
+                        $item->parent
+                    )
+                ); ?></td>
+            <?php else: ?>
                 <td data-base-target="_self"><?= $removeForm->setDefault('name', $name); ?></td>
+            <?php endif ?>
             </tr>
         <?php endforeach ?>
         </tbody>
