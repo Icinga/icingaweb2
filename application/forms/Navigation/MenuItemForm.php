@@ -16,8 +16,11 @@ class MenuItemForm extends NavigationItemForm
     public function createElements(array $formData)
     {
         parent::createElements($formData);
-        $this->getParent()->getElement('parent')->setDescription($this->translate(
-            'The parent menu to assign this menu entry to. Select "None" to make this a main menu entry'
-        ));
+        $parentElement = $this->getParent()->getElement('parent');
+        if ($parentElement !== null) {
+            $parentElement->setDescription($this->translate(
+                'The parent menu to assign this menu entry to. Select "None" to make this a main menu entry'
+            ));
+        }
     }
 }

@@ -431,6 +431,7 @@ class NavigationConfigForm extends ConfigForm
      */
     public function createElements(array $formData)
     {
+        $shared = false;
         $itemTypes = $this->getItemTypes();
         $itemType = isset($formData['type']) ? $formData['type'] : key($itemTypes);
         $itemForm = $this->getItemForm($itemType);
@@ -466,6 +467,7 @@ class NavigationConfigForm extends ConfigForm
             );
 
             if ($checked || (isset($formData['shared']) && $formData['shared'])) {
+                $shared = true;
                 $this->addElement(
                     'text',
                     'users',
@@ -501,7 +503,7 @@ class NavigationConfigForm extends ConfigForm
             )
         );
 
-        if ($itemForm->requiresParentSelection()) {
+        if (! $shared && $itemForm->requiresParentSelection()) {
             $availableParents = $this->listAvailableParents($itemType);
             $this->addElement(
                 'select',
