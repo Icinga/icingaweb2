@@ -327,7 +327,7 @@ class NavigationConfigForm extends ConfigForm
                 : ((! isset($data['users']) || !$data['users']) && (! isset($data['groups']) || !$data['groups']))
             ) {
                 // It is shared but shouldn't anymore
-                $config = $this->unshare($name)->config; // unshare() calls setIniConfig()
+                $config = $this->unshare($name, isset($data['parent']) ? $data['parent'] : null)->config;
             }
         } elseif ((isset($data['users']) && $data['users']) || (isset($data['groups']) && $data['groups'])) {
             if ($this->getUser()->can('application/share/navigation')) {
@@ -393,12 +393,14 @@ class NavigationConfigForm extends ConfigForm
      * Unshare the given navigation item
      *
      * @param   string  $name
+     * @param   string  $parent
      *
      * @return  $this
      *
-     * @throws  NotFoundError   In case no navigation item with the given name is found
+     * @throws  NotFoundError       In case no navigation item with the given name is found
+     * @throws  IcingaException     In case the navigation item has a parent assigned to it
      */
-    public function unshare($name)
+    public function unshare($name, $parent = null)
     {
         $config = $this->getShareConfig();
         if (! $config->hasSection($name)) {
@@ -406,6 +408,20 @@ class NavigationConfigForm extends ConfigForm
         }
 
         $itemConfig = $config->getSection($name);
+        if ($parent === null) {
+            $parent = $itemConfig->parent;
+        }
+
+        if ($parent && $this->hasBeenShared($parent)) {
+            throw new IcingaException(
+                'Unable to unshare navigation item "%s". It is dependent from item "%s".'
+                . ' Dependent items can only be unshared by unsharing their parent',
+                $name,
+                $parent
+            );
+        }
+
+        $children = $this->getFlattenedChildren($name);
         $config->removeSection($name);
         $this->secondaryConfig = $config;
 
@@ -414,6 +430,13 @@ class NavigationConfigForm extends ConfigForm
         } else {
             $owner = new User($itemConfig->owner);
             $config = $owner->loadNavigationConfig();
+        }
+
+        foreach ($children as $child) {
+            $childConfig = $this->secondaryConfig->getSection($child);
+            unset($childConfig->owner);
+            $this->secondaryConfig->removeSection($child);
+            $config->setSection($child, $childConfig);
         }
 
         unset($itemConfig->owner);
