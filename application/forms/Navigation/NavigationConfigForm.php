@@ -10,6 +10,7 @@ use Icinga\Application\Icinga;
 use Icinga\Authentication\Auth;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotFoundError;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Forms\ConfigForm;
 use Icinga\User;
 use Icinga\Util\String;
@@ -665,8 +666,8 @@ class NavigationConfigForm extends ConfigForm
             );
 
             $form = new NavigationItemForm();
-        } elseif (! $form instanceof Form) {
-            throw new ProgrammingError('Class %s must inherit from Form', $classPath);
+        } elseif (! $form instanceof NavigationItemForm) {
+            throw new ProgrammingError('Class %s must inherit from NavigationItemForm', $classPath);
         }
 
         return $form;

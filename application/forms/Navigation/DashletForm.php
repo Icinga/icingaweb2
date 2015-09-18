@@ -3,9 +3,7 @@
 
 namespace Icinga\Forms\Navigation;
 
-use Icinga\Web\Form;
-
-class DashletForm extends Form
+class DashletForm extends NavigationItemForm
 {
     /**
      * {@inheritdoc}
