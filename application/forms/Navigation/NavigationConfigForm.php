@@ -384,7 +384,7 @@ class NavigationConfigForm extends ConfigForm
                 }
             }
 
-            $config->removeSection($name);
+            $config->removeSection($oldName);
         }
 
         if ($this->secondaryConfig !== null) {
