@@ -322,7 +322,10 @@ class NavigationConfigForm extends ConfigForm
         $itemConfig = $config->getSection($name);
 
         if ($this->hasBeenShared($name)) {
-            if ((! isset($data['users']) || !$data['users']) && (! isset($data['groups']) || !$data['groups'])) {
+            if (isset($data['parent']) && $data['parent']
+                ? !$this->hasBeenShared($data['parent'])
+                : ((! isset($data['users']) || !$data['users']) && (! isset($data['groups']) || !$data['groups']))
+            ) {
                 // It is shared but shouldn't anymore
                 $config = $this->unshare($name)->config; // unshare() calls setIniConfig()
             }
