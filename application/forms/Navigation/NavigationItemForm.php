@@ -8,6 +8,23 @@ use Icinga\Web\Form;
 class NavigationItemForm extends Form
 {
     /**
+     * Whether to create a select input to choose a parent for a navigation item of a particular type
+     *
+     * @var bool
+     */
+    protected $requiresParentSelection = false;
+
+    /**
+     * Return whether to create a select input to choose a parent for a navigation item of a particular type
+     *
+     * @return  bool
+     */
+    public function requiresParentSelection()
+    {
+        return $this->requiresParentSelection;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function createElements(array $formData)

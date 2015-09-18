@@ -431,6 +431,7 @@ class NavigationConfigForm extends ConfigForm
     {
         $itemTypes = $this->getItemTypes();
         $itemType = isset($formData['type']) ? $formData['type'] : key($itemTypes);
+        $itemForm = $this->getItemForm($itemType);
 
         $this->addElement(
             'text',
@@ -444,7 +445,10 @@ class NavigationConfigForm extends ConfigForm
             )
         );
 
-        if ($this->getUser()->can('application/share/navigation')) {
+        if (
+            (! $itemForm->requiresParentSelection() || !isset($formData['parent']) || !$formData['parent'])
+            && $this->getUser()->can('application/share/navigation')
+        ) {
             $checked = isset($formData['shared']) ? null : (isset($formData['users']) || isset($formData['groups']));
 
             $this->addElement(
@@ -495,9 +499,29 @@ class NavigationConfigForm extends ConfigForm
             )
         );
 
-        $itemForm = $this->getItemForm($itemType);
+        if ($itemForm->requiresParentSelection()) {
+            $availableParents = $this->listAvailableParents($itemType);
+            $this->addElement(
+                'select',
+                'parent',
+                array(
+                    'allowEmpty'    => true,
+                    'autosubmit'    => true,
+                    'label'         => $this->translate('Parent'),
+                    'description'   => $this->translate(
+                        'The parent item to assign this navigation item to. '
+                        . 'Select "None" to make this a main navigation item'
+                    ),
+                    'multiOptions'  => array_merge(
+                        array('' => $this->translate('None', 'No parent for a navigation item')),
+                        empty($availableParents) ? array() : array_combine($availableParents, $availableParents)
+                    )
+                )
+            );
+        }
+
         $this->addSubForm($itemForm, 'item_form');
-        $itemForm->create($formData); // Requires a parent which gets set by addSubForm()
+        $itemForm->create($formData); // May require a parent which gets set by addSubForm()
     }
 
     /**
