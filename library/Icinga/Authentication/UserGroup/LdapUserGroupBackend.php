@@ -543,15 +543,22 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
                 $userQuery->where(new Expression($this->userFilter));
             }
 
-            if (($userDn = $userQuery->fetchDn()) === null) {
-                return array();
+            # Posix group only uses simple user name
+            if ($this->groupClass == 'posixGroup') {
+                $queryUsername = $user->getUsername();
+            }
+            # LDAP groups use the complete DN
+            else {
+                if (($queryUsername = $userQuery->fetchDn()) === null) {
+                    return array();
+                }
             }
         }
 
         $groupQuery = $this->ds
             ->select()
             ->from($this->groupClass, array($this->groupNameAttribute))
-            ->where($this->groupMemberAttribute, $userDn)
+            ->where($this->groupMemberAttribute, $queryUsername)
             ->setBase($this->groupBaseDn);
         if ($this->groupFilter) {
             $groupQuery->where(new Expression($this->groupFilter));
