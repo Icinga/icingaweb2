@@ -85,8 +85,8 @@ class NavigationController extends Controller
         )->activate('navigation');
         $this->setupSortControl(
             array(
-                'name'  => $this->translate('Shared Navigation'),
-                'type'  => $this->translate('Type')
+                'type'  => $this->translate('Type'),
+                'name'  => $this->translate('Shared Navigation')
             ),
             $query
         );
@@ -136,9 +136,9 @@ class NavigationController extends Controller
         )->activate('navigation/shared');
         $this->setupSortControl(
             array(
-                'name'  => $this->translate('Shared Navigation'),
                 'type'  => $this->translate('Type'),
-                'owner' => $this->translate('Owner')
+                'owner' => $this->translate('Owner'),
+                'name'  => $this->translate('Shared Navigation')
             ),
             $query
         );
