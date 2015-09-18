@@ -283,6 +283,9 @@ class NavigationConfigForm extends ConfigForm
                 unset($data['users']);
                 unset($data['groups']);
             }
+        } elseif (isset($data['parent']) && $data['parent'] && $this->hasBeenShared($data['parent'])) {
+            $data['owner'] = $this->getUser()->getUsername();
+            $config = $this->getShareConfig();
         }
 
         $itemName = $data['name'];
@@ -334,6 +337,13 @@ class NavigationConfigForm extends ConfigForm
                 unset($data['users']);
                 unset($data['groups']);
             }
+        } elseif (isset($data['parent']) && $data['parent'] && $this->hasBeenShared($data['parent'])) {
+            // Its parent is shared so should it itself
+            $config->removeSection($name);
+            $this->secondaryConfig = $config;
+            $config = $this->getShareConfig();
+            $data['owner'] = $this->getUser()->getUsername();
+            $shared = true;
         }
 
         if (isset($data['name'])) {
