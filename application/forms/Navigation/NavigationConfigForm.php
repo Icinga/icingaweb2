@@ -317,10 +317,11 @@ class NavigationConfigForm extends ConfigForm
         $config = $this->getConfigForItem($name);
         if ($config === null) {
             throw new NotFoundError('No navigation item called "%s" found', $name);
+        } else {
+            $itemConfig = $config->getSection($name);
         }
 
-        $itemConfig = $config->getSection($name);
-
+        $shared = false;
         if ($this->hasBeenShared($name)) {
             if (isset($data['parent']) && $data['parent']
                 ? !$this->hasBeenShared($data['parent'])
@@ -336,6 +337,7 @@ class NavigationConfigForm extends ConfigForm
                 $this->secondaryConfig = $config;
                 $config = $this->getShareConfig();
                 $data['owner'] = $this->getUser()->getUsername();
+                $shared = true;
             } else {
                 unset($data['users']);
                 unset($data['groups']);
@@ -352,12 +354,28 @@ class NavigationConfigForm extends ConfigForm
         $oldName = null;
         if (isset($data['name'])) {
             if ($data['name'] !== $name) {
-                $config->removeSection($name);
                 $oldName = $name;
                 $name = $data['name'];
             }
 
             unset($data['name']);
+        }
+
+        $itemConfig->merge($data);
+        foreach ($itemConfig->toArray() as $k => $v) {
+            if ($v === null) {
+                unset($itemConfig->$k);
+            }
+        }
+
+        if ($shared) {
+            // Share all descendant children
+            foreach ($this->getFlattenedChildren($oldName ?: $name) as $child) {
+                $childConfig = $this->secondaryConfig->getSection($child);
+                $this->secondaryConfig->removeSection($child);
+                $childConfig->owner = $this->getUser()->getUsername();
+                $config->setSection($child, $childConfig);
+            }
         }
 
         if ($oldName) {
@@ -367,13 +385,12 @@ class NavigationConfigForm extends ConfigForm
                     $sectionConfig->parent = $name;
                 }
             }
+
+            $config->removeSection($name);
         }
 
-        $itemConfig->merge($data);
-        foreach ($itemConfig->toArray() as $k => $v) {
-            if ($v === null) {
-                unset($itemConfig->$k);
-            }
+        if ($this->secondaryConfig !== null) {
+            $this->secondaryConfig->removeSection($oldName ?: $name);
         }
 
         $config->setSection($name, $itemConfig);
