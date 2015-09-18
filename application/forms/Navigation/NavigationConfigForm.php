@@ -185,41 +185,27 @@ class NavigationConfigForm extends ConfigForm
      */
     public function listAvailableParents($type)
     {
-        $shared = false;
-        $children = array();
-        if ($this->itemToLoad) {
-            $shared = $this->hasBeenShared($this->itemToLoad);
-            $children = $this->getFlattenedChildren($this->itemToLoad);
-        } elseif (($checkbox = $this->getElement('shared')) !== null) {
-            if ($checkbox->isChecked()) {
-                $shared = true;
-            } else {
-                $requestData = $this->getRequestData();
-                $shared = isset($requestData['shared']) && $requestData['shared'];
+        $children = $this->itemToLoad ? $this->getFlattenedChildren($this->itemToLoad) : array();
+
+        $names = array();
+        foreach ($this->getShareConfig() as $sectionName => $sectionConfig) {
+            if (
+                $sectionName !== $this->itemToLoad
+                && $sectionConfig->type === $type
+                && $sectionConfig->owner === $this->getUser()->getUsername()
+                && !in_array($sectionName, $children, true)
+            ) {
+                $names[] = $sectionName;
             }
         }
 
-        $names = array();
-        if ($shared) {
-            foreach ($this->getShareConfig() as $sectionName => $sectionConfig) {
-                if (
-                    $sectionName !== $this->itemToLoad
-                    && $sectionConfig->type === $type
-                    && $sectionConfig->owner === $this->getUser()->getUsername()
-                    && !in_array($sectionName, $children, true)
-                ) {
-                    $names[] = $sectionName;
-                }
-            }
-        } else {
-            foreach ($this->getUserConfig() as $sectionName => $sectionConfig) {
-                if (
-                    $sectionName !== $this->itemToLoad
-                    && $sectionConfig->type === $type
-                    && !in_array($sectionName, $children, true)
-                ) {
-                    $names[] = $sectionName;
-                }
+        foreach ($this->getUserConfig() as $sectionName => $sectionConfig) {
+            if (
+                $sectionName !== $this->itemToLoad
+                && $sectionConfig->type === $type
+                && !in_array($sectionName, $children, true)
+            ) {
+                $names[] = $sectionName;
             }
         }
 
