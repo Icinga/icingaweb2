@@ -227,8 +227,8 @@ class NavigationConfigForm extends ConfigForm
         }
 
         $children = array();
-        foreach ($config as $sectionName => $sectionConfig) {
-            if ($sectionConfig->parent === $name) {
+        foreach ($config->toArray() as $sectionName => $sectionConfig) {
+            if (isset($sectionConfig['parent']) && $sectionConfig['parent'] === $name) {
                 $children[] = $sectionName;
                 $children = array_merge($children, $this->getFlattenedChildren($sectionName));
             }
