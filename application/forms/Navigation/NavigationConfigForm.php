@@ -376,12 +376,23 @@ class NavigationConfigForm extends ConfigForm
      * @param   string  $name
      *
      * @return  $this
+     *
+     * @throws  IcingaException     In case the navigation item has still children
      */
     public function delete($name)
     {
         $config = $this->getConfigForItem($name);
         if ($config === null) {
             throw new NotFoundError('No navigation item called "%s" found', $name);
+        }
+
+        $children = $this->getFlattenedChildren($name);
+        if (! empty($children)) {
+            throw new IcingaException(
+                'Unable to delete navigation item "%s". There are other items dependent from it: %s',
+                $name,
+                join(', ', $children)
+            );
         }
 
         $config->removeSection($name);
