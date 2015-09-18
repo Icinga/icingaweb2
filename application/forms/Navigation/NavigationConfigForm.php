@@ -349,13 +349,24 @@ class NavigationConfigForm extends ConfigForm
             $shared = true;
         }
 
+        $oldName = null;
         if (isset($data['name'])) {
             if ($data['name'] !== $name) {
                 $config->removeSection($name);
+                $oldName = $name;
                 $name = $data['name'];
             }
 
             unset($data['name']);
+        }
+
+        if ($oldName) {
+            // Update the parent name on all direct children
+            foreach ($config as $sectionConfig) {
+                if ($sectionConfig->parent === $oldName) {
+                    $sectionConfig->parent = $name;
+                }
+            }
         }
 
         $itemConfig->merge($data);
