@@ -186,7 +186,11 @@ class NavigationConfigForm extends ConfigForm
     public function listAvailableParents($type)
     {
         $shared = false;
-        if (($checkbox = $this->getElement('shared')) !== null) {
+        $children = array();
+        if ($this->itemToLoad) {
+            $shared = $this->hasBeenShared($this->itemToLoad);
+            $children = $this->getFlattenedChildren($this->itemToLoad);
+        } elseif (($checkbox = $this->getElement('shared')) !== null) {
             if ($checkbox->isChecked()) {
                 $shared = true;
             } else {
@@ -194,8 +198,6 @@ class NavigationConfigForm extends ConfigForm
                 $shared = isset($requestData['shared']) && $requestData['shared'];
             }
         }
-
-        $children = $this->itemToLoad ? $this->getFlattenedChildren($this->itemToLoad) : array();
 
         $names = array();
         if ($shared) {
