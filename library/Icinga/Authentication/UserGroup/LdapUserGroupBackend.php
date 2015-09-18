@@ -532,18 +532,20 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
      */
     public function getMemberships(User $user)
     {
-        $userQuery = $this->ds
-            ->select()
-            ->from($this->userClass)
-            ->where($this->userNameAttribute, $user->getUsername())
-            ->setBase($this->userBaseDn)
-            ->setUsePagedResults(false);
-        if ($this->userFilter) {
-            $userQuery->where(new Expression($this->userFilter));
-        }
+        if (($userDn = $user->getAdditional('ldap_dn')) === null) {
+            $userQuery = $this->ds
+                ->select()
+                ->from($this->userClass)
+                ->where($this->userNameAttribute, $user->getUsername())
+                ->setBase($this->userBaseDn)
+                ->setUsePagedResults(false);
+            if ($this->userFilter) {
+                $userQuery->where(new Expression($this->userFilter));
+            }
 
-        if (($userDn = $userQuery->fetchDn()) === null) {
-            return array();
+            if (($userDn = $userQuery->fetchDn()) === null) {
+                return array();
+            }
         }
 
         $groupQuery = $this->ds
