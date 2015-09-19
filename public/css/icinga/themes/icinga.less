@@ -1,7 +1,8 @@
 // Gray colors
 @gray: #9E9E9E;
-@gray-light: #EEEEEE;
-@gray-lighter: #F7F7F7;
+@gray-light: #c9c9c9;
+@gray-lighter: #EEEEEE;
+@gray-lightest: #F7F7F7;
 
 // Icinga colors
 @icinga-blue: #0095BF;
@@ -12,8 +13,83 @@
 // Text color on <body>
 @text-color: #535353;
 @text-color-inverted: @body-bg-color;
+@text-color-light: @gray;
 
 // Text color on <a>
 @link-color: @text-color;
 
 @font-family: Calibri, Helvetica, sans-serif;
+@font-size: 14px;
+@font-size-small: 11px;
+
+@vertical-padding: 6px;
+@horizontal-padding: 12px;
+
+body {
+  background-color: @body-bg-color;
+  color: @text-color;
+  font-family: @font-family;
+  font-size: @font-size;
+}
+
+form {
+  i {
+    display: none;
+  }
+}
+
+.control-label {
+  display: inline-block;
+  font-size: @font-size-small;
+  color: @text-color-light;
+}
+
+.control-label-group {
+  display: inline-block;
+  padding-right: @horizontal-padding;
+  text-align: right;
+  width: 240px;
+}
+
+.control-group {
+  padding: @vertical-padding @horizontal-padding;
+}
+
+input {
+  border: none;
+  border-bottom: 1px solid @text-color-light;
+  color: inherit;
+  display: inline-block;
+  padding: @vertical-padding / 2 @horizontal-padding / 2;
+
+  &:focus {
+    border-bottom: 1px solid @text-color;
+  }
+}
+
+select {
+  display: table-cell;
+}
+
+input[type="submit"] {
+  background-color: @body-bg-color;
+  color: @icinga-blue;
+  border: 1px solid @icinga-blue;
+  cursor: pointer;
+  margin-top: @vertical-padding;
+
+  -webkit-transition: background 0.3s ease, color 0.3s ease;
+     -moz-transition: background 0.3s ease, color 0.3s ease;
+       -o-transition: background 0.3s ease, color 0.3s ease;
+          transition: background 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    background-color: @icinga-blue;
+    color: @text-color-inverted;
+
+  }
+}
+
+.buttons {
+  text-align: right;
+}
