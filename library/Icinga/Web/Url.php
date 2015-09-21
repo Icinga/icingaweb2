@@ -150,7 +150,7 @@ class Url
                 : '');
             $urlObject->setIsExternal();
         } elseif (
-            (isset($urlParts['host]']) && $urlParts['host'] !== $request->getServer('SERVER_NAME'))
+            (isset($urlParts['host']) && $urlParts['host'] !== $request->getServer('SERVER_NAME'))
             || (isset($urlParts['port']) && $urlParts['port'] != $request->getServer('SERVER_PORT'))
         ) {
             $baseUrl = $urlParts['host'] . (isset($urlParts['port']) ? (':' . $urlParts['port']) : '');
