@@ -16,6 +16,11 @@ class MenuItemForm extends NavigationItemForm
     public function createElements(array $formData)
     {
         parent::createElements($formData);
+
+        // Remove _self and _next as for menu entries only _main is valid
+        $this->getElement('target')->removeMultiOption('_self');
+        $this->getElement('target')->removeMultiOption('_next');
+
         $parentElement = $this->getParent()->getElement('parent');
         if ($parentElement !== null) {
             $parentElement->setDescription($this->translate(
