@@ -7,6 +7,7 @@ use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Util\String;
 use Icinga\Web\Navigation\NavigationItem;
+use Icinga\Web\Url;
 use Icinga\Web\View;
 
 /**
@@ -29,6 +30,13 @@ class NavigationItemRenderer
     protected $item;
 
     /**
+     * Internal link targets provided by Icinga Web 2
+     *
+     * @var array
+     */
+    protected $internalLinkTargets;
+
+    /**
      * Create a new NavigationItemRenderer
      *
      * @param   array   $options
@@ -39,6 +47,7 @@ class NavigationItemRenderer
             $this->setOptions($options);
         }
 
+        $this->internalLinkTargets = array('_main', '_self', '_next');
         $this->init();
     }
 
@@ -141,10 +150,17 @@ class NavigationItemRenderer
         }
 
         if (($url = $item->getUrl()) !== null) {
+            $url->overwriteParams($item->getUrlParameters());
+
+            $target = $item->getTarget();
+            if ($url->isExternal() && (!$target || in_array($target, $this->internalLinkTargets, true))) {
+                $url = Url::fromPath('iframe', array('url' => $url));
+            }
+
             $content = sprintf(
                 '<a%s href="%s"%s>%s</a>',
                 $this->view()->propertiesToString($item->getAttributes()),
-                $this->view()->url($url, $item->getUrlParameters()),
+                $url,
                 $this->renderTargetAttribute(),
                 $label
             );
@@ -172,7 +188,7 @@ class NavigationItemRenderer
             return '';
         }
 
-        if (! in_array($target, array('_main', '_self', '_next'))) {
+        if (! in_array($target, $this->internalLinkTargets, true)) {
             return ' target="' . $this->view()->escape($target) . '"';
         }
 
