@@ -181,9 +181,12 @@ class NavigationConfigForm extends ConfigForm
     /**
      * Return a list of available parent items for the given type of navigation item
      *
+     * @param   string  $type
+     * @param   string  $owner
+     *
      * @return  array
      */
-    public function listAvailableParents($type)
+    public function listAvailableParents($type, $owner = null)
     {
         $children = $this->itemToLoad ? $this->getFlattenedChildren($this->itemToLoad) : array();
 
@@ -192,7 +195,7 @@ class NavigationConfigForm extends ConfigForm
             if (
                 $sectionName !== $this->itemToLoad
                 && $sectionConfig->type === $type
-                && $sectionConfig->owner === $this->getUser()->getUsername()
+                && $sectionConfig->owner === ($owner ?: $this->getUser()->getUsername())
                 && !in_array($sectionName, $children, true)
             ) {
                 $names[] = $sectionName;
@@ -564,7 +567,13 @@ class NavigationConfigForm extends ConfigForm
         );
 
         if (! $shared && $itemForm->requiresParentSelection()) {
-            $availableParents = $this->listAvailableParents($itemType);
+            if ($this->itemToLoad && $this->hasBeenShared($this->itemToLoad)) {
+                $itemConfig = $this->getShareConfig()->getSection($this->itemToLoad);
+                $availableParents = $this->listAvailableParents($itemType, $itemConfig->owner);
+            } else {
+                $availableParents = $this->listAvailableParents($itemType);
+            }
+
             $this->addElement(
                 'select',
                 'parent',
