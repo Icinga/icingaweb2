@@ -29,13 +29,6 @@ class NavigationItemRenderer
     protected $item;
 
     /**
-     * The link target
-     *
-     * @var string
-     */
-    protected $target;
-
-    /**
      * Create a new NavigationItemRenderer
      *
      * @param   array   $options
@@ -125,29 +118,6 @@ class NavigationItemRenderer
     }
 
     /**
-     * Set the link target
-     *
-     * @param   string  $target
-     *
-     * @return  $this
-     */
-    public function setTarget($target)
-    {
-        $this->target = $target;
-        return $this;
-    }
-
-    /**
-     * Return the link target
-     *
-     * @return  string
-     */
-    public function getTarget()
-    {
-        return $this->target;
-    }
-
-    /**
      * Render the given navigation item as HTML anchor
      *
      * @param   NavigationItem  $item
@@ -175,7 +145,7 @@ class NavigationItemRenderer
                 '<a%s href="%s"%s>%s</a>',
                 $this->view()->propertiesToString($item->getAttributes()),
                 $this->view()->url($url, $item->getUrlParameters()),
-                $this->target ? ' target="' . $this->view()->escape($this->target) . '"' : '',
+                $this->renderTargetAttribute(),
                 $label
             );
         } else {
@@ -188,5 +158,24 @@ class NavigationItemRenderer
         }
 
         return $content;
+    }
+
+    /**
+     * Render and return the attribute to provide a non-default target for the url
+     *
+     * @return  string
+     */
+    protected function renderTargetAttribute()
+    {
+        $target = $this->getItem()->getTarget();
+        if ($target === null) {
+            return '';
+        }
+
+        if (! in_array($target, array('_main', '_self', '_next'))) {
+            return ' target="' . $this->view()->escape($target) . '"';
+        }
+
+        return ' data-base-target="' . $target . '"';
     }
 }

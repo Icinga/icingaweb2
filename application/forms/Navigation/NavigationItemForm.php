@@ -30,13 +30,29 @@ class NavigationItemForm extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
+            'select',
+            'target',
+            array(
+                'allowEmpty'    => true,
+                'label'         => $this->translate('Target'),
+                'description'   => $this->translate('The target where to open this navigation item\'s url'),
+                'multiOptions'  => array(
+                    '_blank'    => $this->translate('New Window'),
+                    '_next'     => $this->translate('New Column'),
+                    '_main'     => $this->translate('Single Column'),
+                    '_self'     => $this->translate('Current Column')
+                )
+            )
+        );
+
+        $this->addElement(
             'text',
             'url',
             array(
                 'allowEmpty'    => true,
                 'label'         => $this->translate('Url'),
                 'description'   => $this->translate(
-                    'The url of this navigation item. Leave blank if you only want the name being displayed.'
+                    'The url of this navigation item. Leave blank if you only want the name being displayed'
                 )
             )
         );
@@ -48,7 +64,7 @@ class NavigationItemForm extends Form
                 'allowEmpty'    => true,
                 'label'         => $this->translate('Icon'),
                 'description'   => $this->translate(
-                    'The icon of this navigation item. Leave blank if you do not want a icon being displayed.'
+                    'The icon of this navigation item. Leave blank if you do not want a icon being displayed'
                 )
             )
         );

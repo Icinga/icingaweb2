@@ -95,6 +95,13 @@ class NavigationItem implements IteratorAggregate
     protected $url;
 
     /**
+     * This item's url target
+     *
+     * @var string
+     */
+    protected $target;
+
+    /**
      * Additional parameters for this item's url
      *
      * @var array
@@ -443,6 +450,29 @@ class NavigationItem implements IteratorAggregate
     {
         $this->label = $label;
         return $this;
+    }
+
+    /**
+     * Set this item's url target
+     *
+     * @param   string  $target
+     *
+     * @return  $this
+     */
+    public function setTarget($target)
+    {
+        $this->target = $target;
+        return $this;
+    }
+
+    /**
+     * Return this item's url target
+     *
+     * @return  string
+     */
+    public function getTarget()
+    {
+        return $this->target;
     }
 
     /**
