@@ -47,11 +47,15 @@ class NavigationController extends Controller
      */
     protected function listItemTypes()
     {
+        $moduleManager = Icinga::app()->getModuleManager();
+
         $types = $this->defaultItemTypes;
-        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
-            $moduleTypes = $module->getNavigationItems();
-            if (! empty($moduleTypes)) {
-                $types = array_merge($types, $moduleTypes);
+        foreach ($moduleManager->getLoadedModules() as $module) {
+            if ($this->hasPermission($moduleManager::MODULE_PERMISSION_NS . $module->getName())) {
+                $moduleTypes = $module->getNavigationItems();
+                if (! empty($moduleTypes)) {
+                    $types = array_merge($types, $moduleTypes);
+                }
             }
         }
 
