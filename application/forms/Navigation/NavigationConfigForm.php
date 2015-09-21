@@ -403,6 +403,7 @@ class NavigationConfigForm extends ConfigForm
      *
      * @return  $this
      *
+     * @throws  NotFoundError       In case no navigation item with the given name is found
      * @throws  IcingaException     In case the navigation item has still children
      */
     public function delete($name)
