@@ -316,7 +316,7 @@ class Url
             return $relativeUrl;
         }
 
-        return $this->baseUrl . ($this->baseUrl !== '/' ? '/' : '') . $relativeUrl;
+        return $this->baseUrl . ($this->baseUrl !== '/' && $relativeUrl ? '/' : '') . $relativeUrl;
     }
 
     /**
