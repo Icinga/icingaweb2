@@ -72,7 +72,7 @@ if (! $this->compact): ?>
 <?php elseif ($notifications->hasMore()): ?>
   <?= $this->qlink(
     $this->translate('Show More'),
-    $this->url()->without(array('view', 'limit')),
+    $this->url(isset($notificationsUrl) ? $notificationsUrl : null)->without(array('view', 'limit')),
     null,
     array(
       'data-base-target'    => '_next',
