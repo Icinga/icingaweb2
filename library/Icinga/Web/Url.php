@@ -13,12 +13,17 @@ use Icinga\Data\Filter\Filter;
  * returns Urls reflecting all changes made to the url and to the parameters.
  *
  * Direct instantiation is prohibited and should be done either with @see Url::fromRequest() or
- * @see Url::fromUrlString()
- *
- * Currently, protocol, host and port are ignored and will be implemented when required
+ * @see Url::fromPath()
  */
 class Url
 {
+    /**
+     * Whether this url points to an external resource
+     *
+     * @var bool
+     */
+    protected $external;
+
     /**
      * An array of all parameters stored in this Url
      *
@@ -132,8 +137,6 @@ class Url
         }
 
         $urlObject = new Url();
-        $baseUrl = $request->getBaseUrl();
-        $urlObject->setBaseUrl($baseUrl);
 
         if ($url === '#') {
             $urlObject->setPath($url);
@@ -141,8 +144,25 @@ class Url
         }
 
         $urlParts = parse_url($url);
+        if (isset($urlParts['scheme']) && $urlParts['scheme'] !== $request->getScheme()) {
+            $baseUrl = $urlParts['scheme'] . '://' . $urlParts['host'] . (isset($urlParts['port'])
+                ? (':' . $urlParts['port'])
+                : '');
+            $urlObject->setIsExternal();
+        } elseif (
+            (isset($urlParts['host]']) && $urlParts['host'] !== $request->getServer('SERVER_NAME'))
+            || (isset($urlParts['port']) && $urlParts['port'] != $request->getServer('SERVER_PORT'))
+        ) {
+            $baseUrl = $urlParts['host'] . (isset($urlParts['port']) ? (':' . $urlParts['port']) : '');
+            $urlObject->setIsExternal();
+        } else {
+            $baseUrl = $request->getBaseUrl();
+        }
+
+        $urlObject->setBaseUrl($baseUrl);
+
         if (isset($urlParts['path'])) {
-            if ($baseUrl !== '' && strpos($urlParts['path'], $baseUrl) === 0) {
+            if ($baseUrl && !$urlObject->isExternal() && strpos($urlParts['path'], $baseUrl) === 0) {
                 $urlObject->setPath(substr($urlParts['path'], strlen($baseUrl)));
             } else {
                 $urlObject->setPath($urlParts['path']);
@@ -234,6 +254,29 @@ class Url
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Set whether this url points to an external resource
+     *
+     * @param   bool    $state
+     *
+     * @return  $this
+     */
+    public function setIsExternal($state = true)
+    {
+        $this->external = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Return whether this url points to an external resource
+     *
+     * @return  bool
+     */
+    public function isExternal()
+    {
+        return $this->external;
     }
 
     /**
