@@ -304,10 +304,7 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
      */
     public function beginItemMarkup(NavigationItem $item)
     {
-        $cssClass = array();
-        if ($item->getActive()) {
-            $cssClass[] = static::CSS_CLASS_ACTIVE;
-        }
+        $cssClass = array(static::CSS_CLASS_ITEM);
 
         if ($item->hasChildren() && $item->getChildren()->getLayout() === Navigation::LAYOUT_DROPDOWN) {
             $cssClass[] = static::CSS_CLASS_DROPDOWN;
@@ -317,16 +314,15 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
                 ->setUrl('#');
         }
 
-        if (! empty($cssClass)) {
-            $content = sprintf(
-                '<li id="%s" class="%s">',
-                $this->view()->escape($item->getUniqueName()),
-                join(' ', $cssClass)
-            );
-        } else {
-            $content = '<li id="' . $this->view()->escape($item->getUniqueName()) . '">';
+        if ($item->getActive()) {
+            $cssClass[] = static::CSS_CLASS_ACTIVE;
         }
 
+        $content = sprintf(
+            '<li id="%s" class="%s">',
+            $this->view()->escape($item->getUniqueName()),
+            join(' ', $cssClass)
+        );
         return $content;
     }
 

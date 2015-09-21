@@ -9,6 +9,13 @@ namespace Icinga\Web\Navigation\Renderer;
 interface NavigationRendererInterface
 {
     /**
+     * CSS class for items
+     *
+     * @var string
+     */
+    const CSS_CLASS_ITEM = 'nav-item';
+
+    /**
      * CSS class for active items
      *
      * @var string
@@ -20,10 +27,12 @@ interface NavigationRendererInterface
      *
      * @var string
      */
-    const CSS_CLASS_DROPDOWN = 'dropdown';
+    const CSS_CLASS_DROPDOWN = 'dropdown-nav-item';
 
     /**
      * CSS class for a dropdown item's trigger
+     *
+     * @var string
      */
     const CSS_CLASS_DROPDOWN_TOGGLE = 'dropdown-toggle';
 
@@ -39,14 +48,14 @@ interface NavigationRendererInterface
      *
      * @var string
      */
-    const CSS_CLASS_NAV_DROPDOWN = 'dropdown-menu';
+    const CSS_CLASS_NAV_DROPDOWN = 'dropdown-nav';
 
     /**
      * CSS class for the ul element with tabs layout
      *
      * @var string
      */
-    const CSS_CLASS_NAV_TABS = 'nav-tabs';
+    const CSS_CLASS_NAV_TABS = 'tab-nav';
 
     /**
      * Icon for a dropdown item's trigger
