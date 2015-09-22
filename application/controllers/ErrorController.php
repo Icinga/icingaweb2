@@ -29,12 +29,15 @@ class ErrorController extends ActionController
      */
     public function errorAction()
     {
-        $this->view->noAuthPageNotFound = false;
         $error      = $this->_getParam('error_handler');
         $exception  = $error->exception;
         /** @var \Exception $exception */
         Logger::error($exception);
         Logger::error('Stacktrace: %s', $exception->getTraceAsString());
+
+        if (! ($isAuthenticated = $this->Auth()->isAuthenticated())) {
+            $this->innerLayout = 'error';
+        }
 
         switch ($error->type) {
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
@@ -46,16 +49,13 @@ class ErrorController extends ActionController
                 $path = array_shift($path);
                 $this->getResponse()->setHttpResponseCode(404);
                 $this->view->message = $this->translate('Page not found.');
-                if ($this->Auth()->isAuthenticated()) {
+                if ($isAuthenticated) {
                     if ($modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
                         $this->view->message .= ' ' . sprintf(
                             $this->translate('Enabling the "%s" module might help!'),
                             $path
                         );
                     }
-                } else {
-                    $this->innerLayout = 'inline';
-                    $this->view->noAuthPageNotFound = true;
                 }
 
                 break;
@@ -99,5 +99,6 @@ class ErrorController extends ActionController
         }
 
         $this->view->request = $error->request;
+        $this->view->hideControls = ! $isAuthenticated;
     }
 }
