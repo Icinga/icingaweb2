@@ -12,6 +12,7 @@ use Icinga\Data\ConfigObject;
 use Icinga\Data\Selectable;
 use Icinga\Data\SimpleQuery;
 use Icinga\File\Ini\IniWriter;
+use Icinga\File\Ini\IniParser;
 use Icinga\Exception\NotReadableError;
 
 /**
@@ -313,7 +314,7 @@ class Config implements Countable, Iterator, Selectable
         if ($filepath === false) {
             $emptyConfig->setConfigFile($file);
         } elseif (is_readable($filepath)) {
-            $config = new static(new ConfigObject(parse_ini_file($filepath, true)));
+            $config = static::fromArray(IniParser::parseIniFile($filepath)->toArray());
             $config->setConfigFile($filepath);
             return $config;
         } elseif (@file_exists($filepath)) {
