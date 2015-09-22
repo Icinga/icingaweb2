@@ -85,7 +85,7 @@ foreach ($servicegroups as $s): ?>
         <td class="total">
           <?= $s->services_total; ?>
         </td>
-        <td class="state">
+        <td>
         <?php if ($s->services_ok): ?>
           <span class="state ok">
             <?= $this->qlink(

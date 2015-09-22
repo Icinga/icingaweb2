@@ -15,7 +15,7 @@
 }
 
 #menu a {
-  color: black;
+  color: @text-color-default;
 }
 
 #menu .separator {
@@ -47,12 +47,13 @@
 }
 
 #menu > nav > ul > li > a {
+  color: @icinga-blue;
   font-size: 0.9em;
   text-shadow: none;
 }
 
 #menu > nav > ul > li.active > a {
-  color: @colorTextDefault;
+  color: @icinga-blue;
   text-shadow: none;
 }
 
@@ -65,7 +66,6 @@
 }
 
 #menu > nav > ul > li {
-  border-bottom: 1px solid #d9d9d9;
 }
 
 #menu > nav > ul > li li {
@@ -75,7 +75,8 @@
 
 /* Collapsed menu item color */
 #menu > nav > ul > li > a {
-  color: @colorTextDefault;
+  color: @text-color-light;
+  font-weight: 500;
 }
 
 /* Sub item color */
@@ -90,7 +91,7 @@
 
 #menu ul li a {
   display: block;
-  line-height: 2.2em;
+  line-height: 2.8em;
   padding-left: 0.7em;
   text-decoration: none;
   overflow: hidden;
@@ -105,12 +106,16 @@
 }
 
 #menu ul ul li a {
-  line-height: 1.2em;
+  line-height: 1.5em;
   padding-bottom: 1em;
 }
 
 #menu > nav > ul > li {
-  margin-left: 5px;
+  border-left: solid 5px @gray-lighter;
+}
+
+#menu > nav > ul > li > a {
+  color: @text-color;
 }
 
 #menu > nav > ul > li.active {
@@ -118,14 +123,18 @@
   -webkit-box-shadow: none;
   box-shadow: none;
   border-left: solid 5px @icinga-blue;
+  -webkit-transition: border 0.5s;
+  -moz-transition: border 0.5s;
+  -o-transition: border 0.5s;
+  transition: border 0.5s;
 }
 
 /* BEGIN OF Hoverable menu */
 
 #menu li.hover {
-  width: 26em;
+  width: 28em;
   padding-left: 0.0em;
-  margin-left: 5px;
+  margin-left: 0px;
   margin-right: 5;
   position: relative;
 }
@@ -133,25 +142,27 @@
 #menu li.hover > ul {
   position: absolute;
   display: block;
-  left: 11.5em;
+  left: 10.9em;
   right: 0;
   top: -0.5em;
   padding-top: 1em;
   padding-left: 1em;
   padding-bottom: 0.5em;
   height: auto;
-  background-color: #222222;
+  background-color: @text-color;
+  font-size:15px;
 }
 
 #menu li.hover > a {
-  color: black;
+  color: @icinga-blue;
   overflow: visible;
 }
 
 #menu li.hover > ul a {
   width: 95%;
   display: block;
-  color: white;
+  color: @text-color-light;
+  color: @text-color-inverted;
 }
 
 #menu li.hover > ul a:hover {
@@ -164,7 +175,7 @@
 
 #menu li.hover > ul > li.active > a {
   font-weight: bold;
-  color: white;
+  color: @text-color-light;
 }
 
 #menu li.hover li {
@@ -205,7 +216,7 @@
   border: none;
   width: 100%;
   border-radius: 0;
-  height: 2.2em;
+  height: 2.7em;
   display: block;
   outline: none;
   background-color: transparent;
@@ -213,30 +224,33 @@
   background-repeat: no-repeat;
   background-position: 1.2em center;
   color: @colorTextDefault;
-  border-bottom: 1px solid #d9d9d9;
 }
 
 html.ie8 #menu input.search {
-  line-height: 2.5em;
+  line-height: 2.8em;
 }
 
 #menu input.search:-ms-input-placeholder {
-  color: @colorTextDefault;
+  color: @text-color;
 }
 
 #menu input.search::-webkit-input-placeholder {
-  color: @colorTextDefault;
+  color: @text-color;
 }
 
 #menu input.search::-moz-placeholder {
-  color: @colorTextDefault;
-  opacity: 1;
+  color: @text-color;
 }
 
 #menu input.search.active {
   background-color: white;
   color: #121212;
   text-shadow: none;
+  border-left: solid 5px @icinga-blue;
+  -webkit-transition: border 0.5s;
+  -moz-transition: border 0.5s;
+  -o-transition: border 0.5s;
+  transition: border 0.5s;
 }
 
 #menu input.search.active::-moz-placeholder {

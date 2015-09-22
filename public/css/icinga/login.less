@@ -1,21 +1,17 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 #login {
+  background-color: @icinga-blue;
   width: 100%;
   height: 100%;
 
   .logo {
-    background-color: @colorPetrol;
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 60%;
-    border-bottom: 1px solid #d9d9d9d;
+    bottom: 75%;
     text-align: center;
-    -webkit-box-shadow: 0 3px 7px -3px #000;
-    -moz-box-shadow: 0 3px 7px -3px #000;
-    box-shadow: 0 3px 7px -3px #000;
   }
 
   .image {
@@ -38,7 +34,7 @@
   .form {
     position: absolute;
     font-size: 0.9em;
-    top: 45%;
+    top: 30%;
     left: 0;
     bottom: 0;
     right: 0;
@@ -49,7 +45,7 @@
     font-size: 1.5em;
     margin-left: 2.3em;
     border: none;
-    color: @colorTextDefault;
+    color: @text-color-inverted;
     font-variant: unset;
   }
 
@@ -57,61 +53,78 @@
     margin: 0;
 
     ul.errors {
-      margin-left: 10.5em;
     }
   }
 
   .form label {
+    color: @text-color-inverted;
     font-weight: normal;
-    display: inline-block;
+    display: block;
     line-height: 2.5em;
     width: 10em;
     margin-right: 2.5em;
-    text-align: right;
+    text-align: left;
 
   }
 
   form {
     margin-left: auto;
     margin-right: auto;
-    width: 35em;
+    width: 19.5em;
+    font-size: 20px;
   }
 
   form input {
+    color: @text-color-inverted;
     width: 18em;
     padding: 0.5em;
-    background: #ddd;
-    color: #333;
-    border: 1px solid #ddd;
+    background: rgba(255,255,255,0.2);
     margin-left: 0;
+    padding: 6px 10px;
+    border: none;
+    border-bottom: solid 3px @body-bg-color;
+    -webkit-transition: border 0.3s;
+    -moz-transition: border 0.3s;
+    -o-transition: border 0.3s;
+    transition: border 0.3s;
   }
 
   form input:focus {
-    background: white;
+    border-bottom: solid 3px @body-bg-color;
+    background: rgba(255,255,255,0.4);
   }
 
   ul.errors {
   }
 
   input[type=submit] {
-    color: #fff;
-    border: 2px solid #ddd;
-    border-color: @colorPetrol;
-    background: @colorPetrol;
-    margin-top: 1.5em;
-    margin-left: 12.5em;
+    color: @text-color-inverted;
+    background: none;
+    border: none;
+    margin-top: 3em;
+    margin-right: 5px;
+    border: solid 3px @body-bg-color;
+    -webkit-transition: border 0.3s;
+    -moz-transition: border 0.3s;
+    -o-transition: border 0.3s;
   }
 
   input[type=submit]:hover, a.button:hover, input[type=submit]:focus {
-    background-color: #333;
-    border-color: #333;
+    background: @body-bg-color;
+    color: @icinga-blue;
   }
 
   .footer {
-    margin-top: 7em;
+    color: @text-color-inverted;
+    margin-top: 5em;
     font-size: 0.9em;
     text-align: center;
-    margin-left: 5em;
+    margin-left: 2em;
+
+    a {
+      color: @text-color-inverted;
+      font-weight: bold;
+    }
   }
 
   p.config-note {
@@ -123,7 +136,7 @@
     background-color: @colorCritical;
 
     a {
-      color: white;
+      color: @text-color-inverted;
       font-weight: bold;
     }
   }

@@ -80,16 +80,18 @@ span.state {
     font-weight: bold;
     color: white;
     font-weight: bold;
-    padding: 1px 2px;
+    padding: 2px 3px;
     margin-right: 5px;
 }
 
 span.state.active {
     border: 2px solid #555;
+    padding: 2px 4px;
+    margin-right: 4px;
 }
 
 span.state span.state {
-    margin: 0 -3px 0 5px;
+    margin: 0 -6px 0 5px;
 }
 
 span.state.ok {
@@ -338,13 +340,11 @@ tr.state img.icon {
   margin-right: 2px;
 }
 
-tr.state a {
-  color: #222;
-}
-
 /* Hostgroup badge quickfix */
 tr.state span a {
-  color: inherit;
+  color: white;
+  font-size: 0.857em;
+  padding: 2px 5px;
 }
 
 tr.state:hover a {
@@ -965,9 +965,11 @@ table.groupview {
   border-spacing: 0.1em;
 
   th {
-    font-size: 0.9em;
-    text-align: left;
+    font-size: 1.0em;
+    font-weight: normal;
+    text-align: center;
     white-space: nowrap;
+    border-bottom: 2px solid @gray-light;
   }
 
   td {
