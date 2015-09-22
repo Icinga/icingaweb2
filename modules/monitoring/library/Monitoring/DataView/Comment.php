@@ -14,7 +14,6 @@ class Comment extends DataView
     public function getColumns()
     {
         return array(
-            'instance_name',
             'comment_author_name',
             'comment_data',
             'comment_expiration',
@@ -40,6 +39,7 @@ class Comment extends DataView
             'comment_author',
             'host', 'host_alias',
             'hostgroup', 'hostgroup_alias', 'hostgroup_name',
+            'instance_name',
             'service',
             'servicegroup', 'servicegroup_alias', 'servicegroup_name'
         );
