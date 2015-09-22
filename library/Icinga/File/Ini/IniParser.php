@@ -9,6 +9,7 @@ use Icinga\File\Ini\Dom\Document;
 use Icinga\File\Ini\Dom\Directive;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\NotReadableError;
 
 class IniParser
 {
@@ -238,5 +239,26 @@ class IniParser
             $doc->setCommentsDangling($coms);
         }
         return $doc;
+    }
+
+    /**
+     * Read the ini file and parse it with ::parseIni()
+     *
+     * @param   string  $file       The ini file to read
+     *
+     * @return  Document            A mutable DOM object
+     * @throws  NotReadableError    When the file cannot be read
+     */
+    public static function parseIniFile($file)
+    {
+        if (false === ($path = realpath($file))) {
+            throw new NotReadableError('couldn\'t compute the absolute path of `%s\'', $file);
+        }
+
+        if (false === ($content = file_get_contents($path))) {
+            throw new NotReadableError('couldn\'t read the file `%s\'', $path);
+        }
+
+        return self::parseIni($content);
     }
 }
