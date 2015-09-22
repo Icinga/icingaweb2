@@ -533,23 +533,23 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
      */
     public function getMemberships(User $user)
     {
-        if (($userDn = $user->getAdditional('ldap_dn')) === null) {
-            $userQuery = $this->ds
-                ->select()
-                ->from($this->userClass)
-                ->where($this->userNameAttribute, $user->getUsername())
-                ->setBase($this->userBaseDn)
-                ->setUsePagedResults(false);
-            if ($this->userFilter) {
-                $userQuery->where(new Expression($this->userFilter));
-            }
+        if ($this->groupClass === 'posixGroup') {
+            # Posix group only uses simple user name
+            $userDn = $user->getUsername();
+        } else {
+            # LDAP groups use the complete DN
+            if (($userDn = $user->getAdditional('ldap_dn')) === null) {
+                $userQuery = $this->ds
+                    ->select()
+                    ->from($this->userClass)
+                    ->where($this->userNameAttribute, $user->getUsername())
+                    ->setBase($this->userBaseDn)
+                    ->setUsePagedResults(false);
+                if ($this->userFilter) {
+                    $userQuery->where(new Expression($this->userFilter));
+                }
 
-            if ($this->groupClass === 'posixGroup') {
-                # Posix group only uses simple user name
-                $queryUsername = $user->getUsername();
-            } else {
-                # LDAP groups use the complete DN
-                if (($queryUsername = $userQuery->fetchDn()) === null) {
+                if (($userDn = $userQuery->fetchDn()) === null) {
                     return array();
                 }
             }
@@ -558,7 +558,7 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
         $groupQuery = $this->ds
             ->select()
             ->from($this->groupClass, array($this->groupNameAttribute))
-            ->where($this->groupMemberAttribute, $queryUsername)
+            ->where($this->groupMemberAttribute, $userDn)
             ->setBase($this->groupBaseDn);
         if ($this->groupFilter) {
             $groupQuery->where(new Expression($this->groupFilter));
