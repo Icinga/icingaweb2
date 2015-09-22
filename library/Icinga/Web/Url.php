@@ -142,7 +142,7 @@ class Url
             return $urlObject;
         }
 
-        $urlParts = parse_url($url);
+        $urlParts = parse_url(static::resolveUrlMacros($url));
         if (isset($urlParts['scheme']) && $urlParts['scheme'] !== $request->getScheme()) {
             $baseUrl = $urlParts['scheme'] . '://' . $urlParts['host'] . (isset($urlParts['port'])
                 ? (':' . $urlParts['port'])
@@ -187,6 +187,33 @@ class Url
         $urlObject->setBaseUrl($baseUrl);
         $urlObject->setParams($params);
         return $urlObject;
+    }
+
+    /**
+     * Return the given url with all macros being resolved
+     *
+     * @param   string  $url
+     *
+     * @return  string
+     */
+    public static function resolveUrlMacros($url)
+    {
+        $serverName = static::getRequest()->getServer('SERVER_NAME');
+        $macros = array(
+            'HTTP_AUTHORITY'    => 'http://' . $serverName,
+            'HTTPS_AUTHORITY'   => 'https://' . $serverName
+        );
+
+        if (preg_match_all('@\$([^\$\s]+)\$@', $url, $matches)) {
+            foreach ($matches[1] as $macroIndex => $macroName) {
+                if (isset($macros[$macroName])) {
+                    $placeholder = $matches[0][$macroIndex];
+                    $url = str_replace($placeholder, $macros[$macroName], $url);
+                }
+            }
+        }
+
+        return $url;
     }
 
     /**
