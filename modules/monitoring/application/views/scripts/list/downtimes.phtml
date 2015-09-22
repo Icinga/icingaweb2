@@ -20,7 +20,7 @@ if (! $this->compact): ?>
 <div class="content">
   <table data-base-target="_next"
          class="action multiselect"
-         data-icinga-multiselect-url="/icingaweb2/monitoring/downtimes/show"
+         data-icinga-multiselect-url="<?= $this->href('monitoring/downtimes/show'); ?>"
          data-icinga-multiselect-data="downtime_id">
     <tbody>
     <?php foreach ($downtimes as $downtime): ?>

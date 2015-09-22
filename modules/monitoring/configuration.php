@@ -263,11 +263,11 @@ $dashboard->add(
 );
 $dashboard->add(
     N_('Service Groups'),
-    '/monitoring/list/servicegroups'
+    'monitoring/list/servicegroups'
 );
 $dashboard->add(
     N_('Host Groups'),
-    '/monitoring/list/hostgroups'
+    'monitoring/list/hostgroups'
 );
 
 /*

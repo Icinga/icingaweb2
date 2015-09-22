@@ -63,7 +63,7 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 <!--<![endif]-->
 <script type="text/javascript">
 var icinga = new Icinga({
-  baseUrl: '<?= $this->href('/') ?>'
+  baseUrl: '<?= $this->baseUrl(); ?>'
 });
 </script>
 </body>

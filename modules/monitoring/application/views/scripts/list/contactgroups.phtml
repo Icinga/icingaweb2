@@ -27,7 +27,7 @@ if (count($groupData) === 0) {
             <div class="box contents">
 <?php foreach ($groupInfo['contacts'] as $c): ?>
                 <div class="box entry">
-                    <?= $this->img('/static/gravatar', array('email' => $c->contact_email)); ?>
+                    <?= $this->img('static/gravatar', array('email' => $c->contact_email)); ?>
                     <?= $this->qlink(
                         $c->contact_alias,
                         'monitoring/show/contact',
