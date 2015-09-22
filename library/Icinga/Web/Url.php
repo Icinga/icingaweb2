@@ -143,16 +143,14 @@ class Url
         }
 
         $urlParts = parse_url($url);
-        if (isset($urlParts['scheme']) && $urlParts['scheme'] !== $request->getScheme()) {
+        if (isset($urlParts['scheme']) && (
+            $urlParts['scheme'] !== $request->getScheme()
+            || (isset($urlParts['host']) && $urlParts['host'] !== $request->getServer('SERVER_NAME'))
+            || (isset($urlParts['port']) && $urlParts['port'] != $request->getServer('SERVER_PORT')))
+        ) {
             $baseUrl = $urlParts['scheme'] . '://' . $urlParts['host'] . (isset($urlParts['port'])
                 ? (':' . $urlParts['port'])
                 : '');
-            $urlObject->setIsExternal();
-        } elseif (
-            (isset($urlParts['host']) && $urlParts['host'] !== $request->getServer('SERVER_NAME'))
-            || (isset($urlParts['port']) && $urlParts['port'] != $request->getServer('SERVER_PORT'))
-        ) {
-            $baseUrl = $urlParts['host'] . (isset($urlParts['port']) ? (':' . $urlParts['port']) : '');
             $urlObject->setIsExternal();
         } else {
             $baseUrl = '';
