@@ -17,9 +17,6 @@ class ContactQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
-        'instances' => array(
-            'instance_name' => 'i.instance_name'
-        ),
         'contacts' => array(
             'contact_id'                        => 'c.contact_id',
             'contact'                           => 'co.name1 COLLATE latin1_general_ci',
@@ -43,10 +40,6 @@ class ContactQuery extends IdoQuery
             'contact_notify_host_flapping'      => 'c.notify_host_flapping',
             'contact_notify_host_downtime'      => 'c.notify_host_downtime'
         ),
-        'timeperiods' => array(
-            'contact_notify_host_timeperiod'    => 'ht.alias COLLATE latin1_general_ci',
-            'contact_notify_service_timeperiod' => 'st.alias COLLATE latin1_general_ci'
-        ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
@@ -58,6 +51,9 @@ class ContactQuery extends IdoQuery
             'host_alias'        => 'h.alias',
             'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
         ),
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
             'servicegroup_name'     => 'sgo.name1',
@@ -68,6 +64,10 @@ class ContactQuery extends IdoQuery
             'service_description'   => 'so.name2',
             'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
             'service_host_name'     => 'so.name1'
+        ),
+        'timeperiods' => array(
+            'contact_notify_host_timeperiod'    => 'ht.alias COLLATE latin1_general_ci',
+            'contact_notify_service_timeperiod' => 'st.alias COLLATE latin1_general_ci'
         )
     );
 
