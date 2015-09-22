@@ -534,10 +534,10 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
     public function getMemberships(User $user)
     {
         if ($this->groupClass === 'posixGroup') {
-            # Posix group only uses simple user name
+            // Posix group only uses simple user name
             $userDn = $user->getUsername();
         } else {
-            # LDAP groups use the complete DN
+            // LDAP groups use the complete DN
             if (($userDn = $user->getAdditional('ldap_dn')) === null) {
                 $userQuery = $this->ds
                     ->select()
