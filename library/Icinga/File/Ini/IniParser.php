@@ -10,6 +10,7 @@ use Icinga\File\Ini\Dom\Directive;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
+use Icinga\Application\Config;
 
 class IniParser
 {
@@ -246,7 +247,7 @@ class IniParser
      *
      * @param   string  $file       The ini file to read
      *
-     * @return  Document            A mutable DOM object
+     * @return  Config
      * @throws  NotReadableError    When the file cannot be read
      */
     public static function parseIniFile($file)
@@ -259,6 +260,6 @@ class IniParser
             throw new NotReadableError('Couldn\'t read the file `%s\'', $path);
         }
 
-        return self::parseIni($content);
+        return Config::fromArray(self::parseIni($content)->toArray())->setConfigFile($file);
     }
 }

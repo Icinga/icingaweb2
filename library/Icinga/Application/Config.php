@@ -314,9 +314,7 @@ class Config implements Countable, Iterator, Selectable
         if ($filepath === false) {
             $emptyConfig->setConfigFile($file);
         } elseif (is_readable($filepath)) {
-            $config = static::fromArray(IniParser::parseIniFile($filepath)->toArray());
-            $config->setConfigFile($filepath);
-            return $config;
+            return IniParser::parseIniFile($filepath);
         } elseif (@file_exists($filepath)) {
             throw new NotReadableError(t('Cannot read config file "%s". Permission denied'), $filepath);
         }
