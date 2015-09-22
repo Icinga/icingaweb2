@@ -12,6 +12,7 @@ use Icinga\Protocol\Ldap\Expression;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
+use Icinga\Application\Logger;
 
 class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBackendInterface
 {
@@ -563,10 +564,12 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
             $groupQuery->where(new Expression($this->groupFilter));
         }
 
+        Logger::debug('Fetching groups for user %s using filter %s.', $user->getUsername(), $groupQuery->__toString());
         $groups = array();
         foreach ($groupQuery as $row) {
             $groups[] = $row->{$this->groupNameAttribute};
         }
+        Logger::debug('Fetched %d groups: %s.', count($groups), join(', ', $groups));
 
         return $groups;
     }
