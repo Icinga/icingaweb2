@@ -251,12 +251,12 @@ class IniParser
      */
     public static function parseIniFile($file)
     {
-        if (false === ($path = realpath($file))) {
-            throw new NotReadableError('couldn\'t compute the absolute path of `%s\'', $file);
+        if (($path = realpath($file)) === false) {
+            throw new NotReadableError('Couldn\'t compute the absolute path of `%s\'', $file);
         }
 
-        if (false === ($content = file_get_contents($path))) {
-            throw new NotReadableError('couldn\'t read the file `%s\'', $path);
+        if (($content = file_get_contents($path)) === false) {
+            throw new NotReadableError('Couldn\'t read the file `%s\'', $path);
         }
 
         return self::parseIni($content);
