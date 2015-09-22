@@ -29,6 +29,7 @@ class ErrorController extends ActionController
      */
     public function errorAction()
     {
+        $this->view->noAuthPageNotFound = false;
         $error      = $this->_getParam('error_handler');
         $exception  = $error->exception;
         /** @var \Exception $exception */
@@ -45,11 +46,16 @@ class ErrorController extends ActionController
                 $path = array_shift($path);
                 $this->getResponse()->setHttpResponseCode(404);
                 $this->view->message = $this->translate('Page not found.');
-                if ($this->Auth()->isAuthenticated() && $modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
-                    $this->view->message .= ' ' . sprintf(
-                        $this->translate('Enabling the "%s" module might help!'),
-                        $path
-                    );
+                if ($this->Auth()->isAuthenticated()) {
+                    if ($modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
+                        $this->view->message .= ' ' . sprintf(
+                            $this->translate('Enabling the "%s" module might help!'),
+                            $path
+                        );
+                    }
+                } else {
+                    $this->innerLayout = 'inline';
+                    $this->view->noAuthPageNotFound = true;
                 }
 
                 break;
