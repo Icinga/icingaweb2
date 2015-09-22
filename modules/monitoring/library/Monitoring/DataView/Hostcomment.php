@@ -36,6 +36,7 @@ class Hostcomment extends DataView
         return array(
             'host', 'host_alias',
             'hostgroup', 'hostgroup_alias', 'hostgroup_name',
+            'instance_name',
             'service', 'service_description', 'service_display_name',
             'servicegroup', 'servicegroup_alias', 'servicegroup_name'
         );
