@@ -25,7 +25,10 @@ class DashletForm extends NavigationItemForm
             array(
                 'required'      => true,
                 'label'         => $this->translate('Url'),
-                'description'   => $this->translate('The url to load in the dashlet')
+                'description'   => $this->translate(
+                    'The url to load in the dashlet. For external urls, make sure to prepend'
+                    . ' an appropriate protocol identifier (e.g. http://example.tld)'
+                )
             )
         );
     }
