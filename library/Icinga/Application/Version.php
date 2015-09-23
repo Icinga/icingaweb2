@@ -15,14 +15,21 @@ class Version
      */
     public static function get()
     {
-        if (false !== ($gitHead = @file_get_contents((
-            $gitDir = Icinga::app()->getBaseDir('.git')
-        ) . DIRECTORY_SEPARATOR . 'HEAD'))) {
+        $gitDir = Icinga::app()->getBaseDir('.git');
+        $gitHead = @file_get_contents($gitDir . DIRECTORY_SEPARATOR . 'HEAD');
+        if (false !== $gitHead) {
             $matches = array();
-            if ((1 !== @preg_match('/(?<!.)ref:\s+(?P<gitCommitID>.+?)$/ms', $gitHead, $matches) || false !== (
-                $gitHead = @file_get_contents($gitDir . DIRECTORY_SEPARATOR . $matches['gitCommitID'])
-            )) && 1 === @preg_match('/(?<!.)(?P<gitCommitID>[0-9a-f]+)$/ms', $gitHead, $matches)) {
-                return $matches;
+            if (@preg_match('/(?<!.)ref:\s+(.+?)$/ms', $gitHead, $matches)) {
+                $gitCommitID = @file_get_contents($gitDir . DIRECTORY_SEPARATOR . $matches[1]);
+            } else {
+                $gitCommitID = $gitHead;
+            }
+
+            if (false !== $gitCommitID) {
+                $matches = array();
+                if (@preg_match('/(?<!.)(?P<gitCommitID>[0-9a-f]+)$/ms', $gitCommitID, $matches)) {
+                    return $matches;
+                }
             }
         }
 
