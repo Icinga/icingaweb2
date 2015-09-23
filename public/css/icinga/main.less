@@ -1,0 +1,16 @@
+// Make padding not affect the final computed width of an element
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  .box-sizing(inherit);
+}
+
+body {
+  background-color: @body-bg-color;
+  color: @text-color;
+  font-family: @font-family;
+  font-size: @font-size;
+}
