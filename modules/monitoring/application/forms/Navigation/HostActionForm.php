@@ -3,28 +3,6 @@
 
 namespace Icinga\Module\Monitoring\Forms\Navigation;
 
-use Icinga\Forms\Navigation\NavigationItemForm;
-
-class HostActionForm extends NavigationItemForm
+class HostActionForm extends ActionForm
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function createElements(array $formData)
-    {
-        parent::createElements($formData);
-
-        $this->addElement(
-            'text',
-            'filter',
-            array(
-                'allowEmpty'    => true,
-                'label'         => $this->translate('Filter'),
-                'description'   => $this->translate(
-                    'Display this action only for hosts matching this filter. Leave'
-                    . ' blank if you want this action being displayed for all hosts'
-                )
-            )
-        );
-    }
 }
