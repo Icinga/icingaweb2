@@ -8,6 +8,16 @@ html {
   .box-sizing(inherit);
 }
 
+a {
+  color: @link-color;
+  font-weight: @font-weight-bold;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 body {
   background-color: @body-bg-color;
   color: @text-color;
