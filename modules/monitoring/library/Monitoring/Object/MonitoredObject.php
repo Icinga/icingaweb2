@@ -229,16 +229,35 @@ abstract class MonitoredObject implements Filterable
             );
         }
 
+        $queryString = $filter->toQueryString();
         $row = clone $this->properties;
 
-        if ($this->customvars === null) {
-            $this->fetchCustomvars();
+        if (strpos($queryString, '_host_') !== false || strpos($queryString, '_service_') !== false) {
+            if ($this->customvars === null) {
+                $this->fetchCustomvars();
+            }
+
+            foreach ($this->customvars as $name => $value) {
+                if (! is_object($value)) {
+                    $row->{'_' . $this->getType() . '_' . strtolower(str_replace(' ', '_', $name))} = $value;
+                }
+            }
         }
 
-        foreach ($this->customvars as $name => $value) {
-            if (! is_object($value)) {
-                $row->{'_' . $this->getType() . '_' . strtolower(str_replace(' ', '_', $name))} = $value;
+        if (strpos($queryString, 'hostgroup_name') !== false) {
+            if ($this->hostgroups === null) {
+                $this->fetchHostgroups();
             }
+
+            $row->hostgroup_name = array_keys($this->hostgroups);
+        }
+
+        if (strpos($queryString, 'servicegroup_name') !== false) {
+            if ($this->servicegroups === null) {
+                $this->fetchServicegroups();
+            }
+
+            $row->servicegroup_name = array_keys($this->servicegroups);
         }
 
         return $filter->matches($row);
