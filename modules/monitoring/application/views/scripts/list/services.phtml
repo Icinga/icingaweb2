@@ -80,7 +80,7 @@ if (! $this->compact): ?>
     )
 ) ?><br />
         <div class="sparkline-box"><?= $this->perfdata($service->service_perfdata, true, 5) ?> </div>
-        <p class="pluginoutput"><?= $this->pluginOutput($this->ellipsis($service->service_output, 10000), true) ?></p>
+        <p class="plugin-output"><?= $this->pluginOutput($this->ellipsis($service->service_output, 10000), true) ?></p>
       </td>
 <?php foreach($this->addColumns as $col): ?>
       <td><?= $this->escape($service->$col) ?></td>
