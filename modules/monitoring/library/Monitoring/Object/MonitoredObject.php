@@ -565,12 +565,15 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetchServicegroups()
     {
-        $this->servicegroups = $this->backend->select()
+        $query = $this->backend->select()
             ->from('servicegroup', array('servicegroup_name', 'servicegroup_alias'))
-            ->where('host_name', $this->host_name)
-            ->where('service_description', $this->service_description)
-            ->applyFilter($this->getFilter())
-            ->fetchPairs();
+            ->where('host_name', $this->host_name);
+
+        if ($this->type === self::TYPE_SERVICE) {
+            $query->where('service_description', $this->service_description);
+        }
+
+        $this->servicegroups = $query->applyFilter($this->getFilter())->fetchPairs();
         return $this;
     }
 
