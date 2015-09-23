@@ -44,17 +44,19 @@ if (! $this->compact): ?>
     $serviceStateName = Service::getStateText($service->service_state);
 ?>
     <tr class="state <?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
-      <td class="state">
-        <strong><?= Service::getStateText($service->service_state, true) ?></strong>
-        <?php if ((int) $service->service_state !== 99): ?>
-          <br />
-          <?= $this->timeSince($service->service_last_state_change, $this->compact) ?>
-          <?php if ((int) $service->service_state > 0 && (int) $service->service_state_type === 0): ?>
-            <br />
-            <strong>Soft <?= $service->service_attempt ?></strong>
-          <?php endif ?>
-        <?php endif ?>
-      </td>
+        <td class="state">
+            <p>
+                <span class="state-label"><?= Service::getStateText($service->service_state, true) ?></span>
+                <?php if ((int) $service->service_state !== 99): ?>
+                <br>
+                <?= $this->timeSince($service->service_last_state_change, $this->compact) ?>
+                <?php if ((int) $service->service_state > 0 && (int) $service->service_state_type === 0): ?>
+                <br>
+                <span class="text-small">Soft <?= $service->service_attempt ?></span>
+                <?php endif ?>
+                <?php endif ?>
+            </p>
+        </td>
 
       <td>
         <?= $this->iconImage()->service($service) ?>
@@ -64,7 +66,7 @@ if (! $this->compact): ?>
           $hostLink,
           null,
           array('title' => sprintf($this->translate('Show detailed information for host %s'), $service->host_display_name))
-        ) ?>: 
+        ) ?>:
 <?php endif ?><?= $this->qlink(
     $service->service_display_name,
     $serviceLink,
