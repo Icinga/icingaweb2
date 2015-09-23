@@ -24,7 +24,10 @@
                 <td><?= $this->qlink(
                     $name,
                     'navigation/edit',
-                    array('name' => $name),
+                    array(
+                        'name'      => $name,
+                        'referrer'  => 'shared'
+                    ),
                     array(
                         'title' => sprintf($this->translate('Edit shared navigation item %s'), $name)
                     )

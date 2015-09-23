@@ -188,9 +188,10 @@ class NavigationController extends Controller
     public function editAction()
     {
         $itemName = $this->params->getRequired('name');
+        $referrer = $this->params->get('referrer', 'index');
 
         $form = new NavigationConfigForm();
-        $form->setRedirectUrl('navigation');
+        $form->setRedirectUrl($referrer === 'shared' ? 'navigation/shared' : 'navigation');
         $form->setItemTypes($this->listItemTypes());
         $form->setTitle(sprintf($this->translate('Edit Navigation Item %s'), $itemName));
         $form->setUser($this->Auth()->getUser());
