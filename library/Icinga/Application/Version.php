@@ -33,26 +33,26 @@ class Version
             }
         }
 
-        if (false === ($appVersion = @file_get_contents(
-            Icinga::app()->getApplicationDir() . DIRECTORY_SEPARATOR . 'VERSION'
-        ))) {
+        if (false === ($appVersion = @file_get_contents(Icinga::app()->getApplicationDir('VERSION')))) {
             return false;
         }
 
         $matches = array();
-        if (false === ($res = preg_match(
-            '/(?<!.)\s*(?P<gitCommitID>\w+)(?:\s*\(.*?(?:(?<=[\(,])\s*tag\s*:\s*v(?P<appVersion>.+?)\s*(?=[\),]).*?)?\))?\s*(?P<gitCommitDate>\S+)/ms',
-            $appVersion,
-            $matches
-        )) || $res === 0) {
+        if (! @preg_match('/^(?P<gitCommitID>\S+)(?: \((.+?)\))? (?P<gitCommitDate>\S+)/', $appVersion, $matches)) {
             return false;
         }
 
-        foreach ($matches as $key => $value) {
-            if (is_int($key) || $value === '') {
-                unset($matches[$key]);
+        if (array_key_exists(1, $matches)) {
+            $tagMatches = array();
+            foreach (explode(', ', $matches[1]) as $gitRef) {
+                if (@preg_match('/^tag: v(.+)/', $gitRef, $tagMatches)) {
+                    $matches['appVersion'] = $tagMatches[1];
+                    break;
+                }
             }
+            unset($matches[1]);
         }
+
         return $matches;
     }
 }
