@@ -17,12 +17,14 @@ if (! $this->compact): ?>
 <?php return; endif ?>
 <table class="groupview action" data-base-target="_next">
     <thead>
-        <th><?= $this->translate('Last Problem') ?></th>
-        <th><?= $this->translate('Host Group') ?></th>
-        <th><?= $this->translate('Total Hosts') ?></th>
-        <th><?= $this->translate('Host States') ?></th>
-        <th><?= $this->translate('Total Services') ?></th>
-        <th><?= $this->translate('Service States') ?></th>
+        <tr>
+            <th><?= $this->translate('Last Problem') ?></th>
+            <th><?= $this->translate('Host Group') ?></th>
+            <th><?= $this->translate('Total Hosts') ?></th>
+            <th><?= $this->translate('Host States') ?></th>
+            <th><?= $this->translate('Total Services') ?></th>
+            <th><?= $this->translate('Service States') ?></th>
+        </tr>
     </thead>
     <tbody>
 <?php foreach ($hostgroups as $hostgroup):
