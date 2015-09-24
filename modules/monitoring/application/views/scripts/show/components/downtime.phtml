@@ -8,8 +8,9 @@ if ($this->hasPermission('monitoring/command/downtime/schedule')) {
             'monitoring/host/schedule-downtime',
             array('host' => $object->getName()),
             array(
-                'icon'              => 'plug',
+                'class'             => 'action-link',
                 'data-base-target'  => '_self',
+                'icon'              => 'plug',
                 'title'             => $this->translate(
                     'Schedule a downtime to suppress all problem notifications within a specific period of time'
                 )
@@ -21,8 +22,9 @@ if ($this->hasPermission('monitoring/command/downtime/schedule')) {
             'monitoring/service/schedule-downtime',
             array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
             array(
-                'icon'              => 'plug',
+                'class'             => 'action-link',
                 'data-base-target'  => '_self',
+                'icon'              => 'plug',
                 'title'             => $this->translate(
                     'Schedule a downtime to suppress all problem notifications within a specific period of time'
                 )
@@ -75,8 +77,8 @@ if (empty($object->comments) && ! $addLink) {
                 $deleteButton = clone($delDowntimeForm);
                 $deleteButton->populate(
                     array(
-                        'downtime_id' => $downtime->id,
-                        'downtime_is_service' => $object->getType() === $object::TYPE_SERVICE
+                        'downtime_id'           => $downtime->id,
+                        'downtime_is_service'   => $object->getType() === $object::TYPE_SERVICE
                     )
                 );
             } else {
