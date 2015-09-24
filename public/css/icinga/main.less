@@ -23,6 +23,19 @@
   display: table;
 }
 
+.name-value-table {
+  border-spacing: @vertical-padding 0;
+  line-height: @line-height;
+
+  th {
+    .text-left();
+    .text-small();
+    // Reset default font-weight
+    font-weight: normal;
+    width: 200px;
+  }
+}
+
 .pull-left {
   float: left;
 }
