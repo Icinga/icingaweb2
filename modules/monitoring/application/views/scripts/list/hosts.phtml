@@ -5,17 +5,17 @@ $hosts->peekAhead($this->compact);
 
 if (! $this->compact): ?>
 <div class="controls separated">
-  <?= $this->tabs; ?>
+  <?= $this->tabs ?>
   <div class="dontprint">
-    <?= $this->render('list/components/selectioninfo.phtml'); ?>
-    <h2 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>
-      <?= $this->render('list/components/hostssummary.phtml'); ?>
+    <?= $this->render('list/components/selectioninfo.phtml') ?>
+    <h2 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>
+      <?= $this->render('list/components/hostssummary.phtml') ?>
     </h2>
   </div>
-  <?= $this->sortBox; ?>
-  <?= $this->limiter; ?>
-  <?= $this->paginator; ?>
-  <?= $this->filterEditor; ?>
+  <?= $this->sortBox ?>
+  <?= $this->limiter ?>
+  <?= $this->paginator ?>
+  <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content">
@@ -37,7 +37,7 @@ if (! $this->compact): ?>
     <tr class="state <?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
       <!-- State -->
       <td class="state">
-        <strong><?= Host::getStateText($host->host_state, true); ?></strong>
+        <strong><?= Host::getStateText($host->host_state, true) ?></strong>
         <?php if ((int) $host->host_state !== 99): ?>
           <br />
           <?= $this->timeSince($host->host_last_state_change, $this->compact) ?>
@@ -60,7 +60,7 @@ if (! $this->compact): ?>
             'title' => sprintf($this->translate('Show detailed information for host %s'), $host->host_display_name),
             'class' => 'rowaction'
           )
-        ); ?>
+        ) ?>
         <?php if (isset($summary[$host->host_name])): ?>
         <span> (<?= $this->qlink(
           sprintf(
@@ -97,7 +97,7 @@ if (! $this->compact): ?>
   </tbody>
 </table>
 <?php if (! $hosts->hasResult()): ?>
-  <?= $this->translate('No hosts found matching the filter'); ?>
+  <?= $this->translate('No hosts found matching the filter') ?>
 <?php elseif ($hosts->hasMore()): ?>
   <?= $this->qlink(
     $this->translate('Show More'),
@@ -107,6 +107,6 @@ if (! $this->compact): ?>
       'data-base-target'    => '_next',
       'class'               => 'pull-right show-more'
     )
-  ); ?>
+  ) ?>
 <?php endif ?>
 </div>
