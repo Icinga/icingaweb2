@@ -5,8 +5,19 @@
 }
 
 .action-table {
-  tr:hover {
-    cursor: pointer;
+  td {
+    padding: @vertical-padding @horizontal-padding;
+  }
+
+  tr {
+    &.active {
+      background-color: @gray-lighter;
+    }
+
+    &:hover {
+      background-color: @gray-lightest;
+      cursor: pointer;
+    }
   }
 }
 
@@ -19,6 +30,6 @@
 }
 
 .text-small {
-  font-size: @font-size-small;
   color: @text-color-light;
+  font-size: @font-size-small;
 }
