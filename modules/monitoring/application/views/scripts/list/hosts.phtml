@@ -95,14 +95,16 @@ if (! $this->compact): ?>
 <?php if (! $hosts->hasResult()): ?>
     <?= $this->translate('No hosts found matching the filter') ?>
 <?php elseif ($hosts->hasMore()): ?>
-    <?= $this->qlink(
-        $this->translate('Show More'),
-        $this->url()->without(array('view', 'limit')),
-        null,
-        array(
-            'data-base-target'  => '_next',
-            'class'             => 'pull-right action-link'
-        )
-    ) ?>
+    <div class="text-right">
+        <?= $this->qlink(
+            $this->translate('Show More'),
+            $this->url()->without(array('view', 'limit')),
+            null,
+            array(
+                'data-base-target'  => '_next',
+                'class'             => 'action-link'
+            )
+        ) ?>
+    </div>
 <?php endif ?>
 </div>
