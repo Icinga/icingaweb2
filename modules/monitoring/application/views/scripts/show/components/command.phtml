@@ -3,12 +3,12 @@ $parts = explode('!', $object->check_command);
 $command = array_shift($parts);
 
 if ($showInstance): ?>
-<tr class="newsection">
+<tr>
     <th><?= $this->translate('Instance') ?></th>
     <td><?= $this->escape($object->instance_name) ?></td>
 </tr>
 <?php endif ?>
-<tr class="newsection">
+<tr>
     <th><?= $this->translate('Command') ?></th>
     <td>
         <?= $this->escape($command) ?>
