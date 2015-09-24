@@ -35,7 +35,6 @@ if (! $this->compact): ?>
 
     ?>
     <tr class="state <?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
-      <!-- State -->
       <td class="state">
         <strong><?= Host::getStateText($host->host_state, true) ?></strong>
         <?php if ((int) $host->host_state !== 99): ?>
@@ -47,8 +46,6 @@ if (! $this->compact): ?>
           <?php endif ?>
         <?php endif ?>
       </td>
-
-      <!-- Host / Status / Output -->
       <td>
         <?= $this->iconImage()->host($host) ?>
         <span class="objectflags"><?= implode(' ', $this->hostFlags($host)) ?></span>
