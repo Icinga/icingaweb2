@@ -292,7 +292,7 @@ class NavigationConfigForm extends ConfigForm
         }
 
         $itemName = $data['name'];
-        if ($config->hasSection($itemName)) {
+        if ($config->hasSection($itemName) || $this->getUserConfig()->hasSection($itemName)) {
             throw new IcingaException(
                 $this->translate('A navigation item with the name "%s" does already exist'),
                 $itemName
@@ -313,7 +313,8 @@ class NavigationConfigForm extends ConfigForm
      *
      * @return  $this
      *
-     * @throws  NotFoundError   In case no navigation item with the given name is found
+     * @throws  NotFoundError       In case no navigation item with the given name is found
+     * @throws  IcingaException     In case a navigation item with the same name already exists
      */
     public function edit($name, array $data)
     {
@@ -357,6 +358,13 @@ class NavigationConfigForm extends ConfigForm
             if ($data['name'] !== $name) {
                 $oldName = $name;
                 $name = $data['name'];
+
+                if ($config->hasSection($name) || $this->getUserConfig()->hasSection($name)) {
+                    throw new IcingaException(
+                        $this->translate('A navigation item with the name "%s" does already exist'),
+                        $name
+                    );
+                }
             }
 
             unset($data['name']);
