@@ -203,13 +203,15 @@ class NavigationController extends Controller
         $form->setUser($this->Auth()->getUser());
         $form->setShareConfig(Config::app('navigation'));
         $form->setOnSuccess(function (NavigationConfigForm $form) use ($itemName) {
+            $data = array_map(
+                function ($v) {
+                    return $v !== '' ? $v : null;
+                },
+                $form->getValues()
+            );
+
             try {
-                $form->edit($itemName, array_map(
-                    function ($v) {
-                        return $v !== '' ? $v : null;
-                    },
-                    $form->getValues()
-                ));
+                $form->edit($itemName, $data);
             } catch (NotFoundError $e) {
                 throw $e;
             } catch (Exception $e) {
@@ -218,6 +220,10 @@ class NavigationController extends Controller
             }
 
             if ($form->save()) {
+                if (isset($data['type']) && $data['type'] === 'menu-item') {
+                    $form->getResponse()->setRerenderLayout();
+                }
+
                 Notification::success(sprintf(t('Navigation item "%s" successfully updated'), $itemName));
                 return true;
             }
