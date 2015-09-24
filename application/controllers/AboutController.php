@@ -11,6 +11,7 @@ class AboutController extends ActionController
 {
     public function indexAction()
     {
+        $this->view->hasPermission = $this->hasPermission('config/modules');
         $this->view->version = Version::get();
         $this->view->modules = Icinga::app()->getModuleManager()->getLoadedModules();
     }

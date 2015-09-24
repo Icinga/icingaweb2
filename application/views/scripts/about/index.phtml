@@ -36,12 +36,12 @@
         $name = $module->getName();
       ?>
         <tr>
-          <td><?= $this->qlink(
+          <td><?= $hasPermission ? $this->qlink(
             $name,
             'config/module/',
             array('name' => $name),
             array('title' => sprintf($this->translate('Show the overview of the %s module'), $name))
-          ) ?></td>
+          ) : $name ?></td>
           <td><?= $module->getVersion() ?></td>
         </tr>
       <?php } ?>
