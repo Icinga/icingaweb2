@@ -25,9 +25,10 @@ $activeChecksEnabled = (bool) $object->active_checks_enabled;
                 'monitoring/service/reschedule-check',
                 array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
                 array(
-                    'icon'                => 'reschedule',
-                    'data-base-target'    => '_self',
-                    'title'               => $this->translate(
+                    'class'             => 'action-link',
+                    'data-base-target'  => '_self',
+                    'icon'              => 'reschedule',
+                    'title'             => $this->translate(
                         'Schedule the next active check at a different time than the current one'
                     )
                 )
@@ -38,9 +39,10 @@ $activeChecksEnabled = (bool) $object->active_checks_enabled;
                 'monitoring/host/reschedule-check',
                 array('host' => $object->getName()),
                 array(
-                    'icon'                => 'reschedule',
-                    'data-base-target'    => '_self',
-                    'title'               => $this->translate(
+                    'class'             => 'action-link',
+                    'data-base-target'  => '_self',
+                    'icon'              => 'reschedule',
+                    'title'             => $this->translate(
                         'Schedule the next active check at a different time than the current one'
                     )
                 )
