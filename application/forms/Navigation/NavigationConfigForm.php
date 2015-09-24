@@ -279,11 +279,13 @@ class NavigationConfigForm extends ConfigForm
             throw new InvalidArgumentException('Key \'name\' missing');
         }
 
+        $shared = false;
         $config = $this->getUserConfig();
         if ((isset($data['users']) && $data['users']) || (isset($data['groups']) && $data['groups'])) {
             if ($this->getUser()->can('application/share/navigation')) {
                 $data['owner'] = $this->getUser()->getUsername();
                 $config = $this->getShareConfig();
+                $shared = true;
             } else {
                 unset($data['users']);
                 unset($data['groups']);
@@ -291,10 +293,24 @@ class NavigationConfigForm extends ConfigForm
         } elseif (isset($data['parent']) && $data['parent'] && $this->hasBeenShared($data['parent'])) {
             $data['owner'] = $this->getUser()->getUsername();
             $config = $this->getShareConfig();
+            $shared = true;
         }
 
         $itemName = $data['name'];
-        if ($config->hasSection($itemName) || $this->getUserConfig()->hasSection($itemName)) {
+        $exists = $config->hasSection($itemName);
+        if (! $exists) {
+            if ($shared) {
+                $exists = $this->getUserConfig()->hasSection($itemName);
+            } else {
+                $exists = (bool) $this->getShareConfig()
+                    ->select()
+                    ->where('name', $itemName)
+                    ->where('owner', $this->getUser()->getUsername())
+                    ->count();
+            }
+        }
+
+        if ($exists) {
             throw new IcingaException(
                 $this->translate('A navigation item with the name "%s" does already exist'),
                 $itemName
@@ -361,7 +377,26 @@ class NavigationConfigForm extends ConfigForm
                 $oldName = $name;
                 $name = $data['name'];
 
-                if ($config->hasSection($name) || $this->getUserConfig()->hasSection($name)) {
+                $exists = $config->hasSection($name);
+                if (! $exists) {
+                    $ownerName = $itemConfig->owner ?: $this->getUser()->getUsername();
+                    if ($shared || $this->hasBeenShared($oldName)) {
+                        if ($ownerName === $this->getUser()->getUsername()) {
+                            $exists = $this->getUserConfig()->hasSection($name);
+                        } else {
+                            $owner = new User($ownerName);
+                            $exists = $owner->loadNavigationConfig()->hasSection($name);
+                        }
+                    } else {
+                        $exists = (bool) $this->getShareConfig()
+                            ->select()
+                            ->where('name', $name)
+                            ->where('owner', $ownerName)
+                            ->count();
+                    }
+                }
+
+                if ($exists) {
                     throw new IcingaException(
                         $this->translate('A navigation item with the name "%s" does already exist'),
                         $name
