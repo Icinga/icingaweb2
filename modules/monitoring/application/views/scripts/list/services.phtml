@@ -2,8 +2,6 @@
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
-$services->peekAhead($this->compact);
-
 if (! $this->compact): ?>
 <div class="controls separated">
     <?= $this->tabs ?>
