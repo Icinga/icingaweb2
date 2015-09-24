@@ -17,7 +17,6 @@ class StyleSheet
         'css/icinga/mixins.less',
         'css/icinga/base.less',
         'css/icinga/main.less',
-//        'css/icinga/defaults.less',
         'css/icinga/animation.less',
         'css/icinga/layout-colors.less',
         'css/icinga/layout-structure.less',
@@ -32,7 +31,8 @@ class StyleSheet
         'css/icinga/pagination.less',
         'css/icinga/selection-toolbar.less',
         'css/icinga/login.less',
-        'css/icinga/controls.less'
+        'css/icinga/controls.less',
+        'css/icinga/dev.less'
     );
 
     public static function compileForPdf()
